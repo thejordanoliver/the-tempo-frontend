@@ -144,8 +144,8 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo}
-          logoLight={team?.logoLight}
+          logo={team?.logo ? { uri: team.logo } : undefined}
+          logoLight={team?.logoLight ? { uri: team.logoLight } : undefined}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
@@ -227,7 +227,7 @@ export default function TeamDetailScreen() {
           key="stats"
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
+          <Text style={{ color: isDark ? "#fff" : "#000" }}>Forum (TODO)</Text>
         </View>
 
         {/* Forum Page */}
@@ -235,7 +235,7 @@ export default function TeamDetailScreen() {
           key="forum"
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Forum (TODO)</Text>
+          <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
         </View>
       </PagerView>
       {/* --- Bottom Sheet --- */}

@@ -11,12 +11,8 @@ import {
   Text,
   useColorScheme,
 } from "react-native";
-
-const OSEXTRALIGHT = "Oswald_200ExtraLight";
-const OSREGULAR = "Oswald_400Regular";
-const OSMEDIUM = "Oswald_500Medium";
-const OSBOLD = "Oswald_700Bold";
-const OSSEMIBOLD = "Oswald_600SemiBold";
+import { Fonts } from "constants/fonts";
+import { NFLTeam } from "types/nfl";
 
 type Props = {
   visible: boolean;
@@ -56,7 +52,6 @@ export default function TeamPreviewModal({
     "Washington Wizards",
     "Golden State Warriors",
     "Denver Nuggets",
-    "Dallas Mavericks",
     "Indiana Pacers",
     "Memphis Grizzlies",
     "Phoenix Suns",
@@ -66,6 +61,20 @@ export default function TeamPreviewModal({
     "New York Knicks",
     "New Orleans Pelicans",
     "Oklahoma City Thunder",
+    "Jacksonville Jaguars",
+    "Houston Texans",
+    "Cleveland Browns",
+    "Chicago Bears",
+    "Buffalo Bills",
+    "Indianapolis Colts",
+    "Denver Broncos",
+    "Pittsburgh Steelers",
+    "Green Bay Packers",
+    "Los Angeles Rams",
+    "Las Vegas Raiders",
+    "Minnesota Timberwolves",
+    "New England Patriots",
+    "Seattle Seahawks",
   ];
 
   const logoLightTeams = [
@@ -73,6 +82,8 @@ export default function TeamPreviewModal({
     "Philadelphia 76ers",
     "Toronto Raptors",
     "Utah Jazz",
+    "New York Giants",
+    "New York Jets",
   ];
 
   const teamName = team?.fullName?.trim() ?? "";
@@ -82,6 +93,7 @@ export default function TeamPreviewModal({
   const baseColor = useSecondary
     ? team?.secondaryColor || "#444"
     : team?.color || "#444";
+const est = team.firstSeason ?? (team as any).established ?? "—";
 
   return (
     <Modal animationType="fade" transparent visible={visible}>
@@ -134,7 +146,7 @@ export default function TeamPreviewModal({
                 <Text
                   style={{
                     fontSize: 20,
-                    fontFamily: OSSEMIBOLD,
+                    fontFamily: Fonts.OSSEMIBOLD,
                     color: isDark ? "#fff" : "#1d1d1d",
                   }}
                 >
@@ -143,16 +155,16 @@ export default function TeamPreviewModal({
                 <Text
                   style={{
                     marginBottom: 12,
-                    fontFamily: OSREGULAR,
+                    fontFamily: Fonts.OSREGULAR,
                     color: isDark ? "#fff" : "#1d1d1d",
                   }}
                 >
-                  EST. {team.firstSeason}{" "}
+                  EST. {est}{" "}
                 </Text>
                 <Text
                   style={{
                     marginVertical: 12,
-                    fontFamily: OSEXTRALIGHT,
+                    fontFamily: Fonts.OSEXTRALIGHT,
                     color: isDark ? "#fff" : "#1d1d1d",
                   }}
                 >
@@ -172,7 +184,7 @@ export default function TeamPreviewModal({
                   <Text
                     style={{
                       color: isDark ? "#1d1d1d" : "#fff",
-                      fontFamily: OSSEMIBOLD,
+                      fontFamily: Fonts.OSSEMIBOLD,
                     }}
                   >
                     Go to Team
@@ -194,7 +206,7 @@ export default function TeamPreviewModal({
                       alignItems: "center",
                     }}
                   >
-                    <Text style={{ color: "#fff", fontFamily: OSSEMIBOLD }}>
+                    <Text style={{ color: "#fff", fontFamily: Fonts.OSSEMIBOLD }}>
                       Remove from Favorites
                     </Text>
                   </Pressable>

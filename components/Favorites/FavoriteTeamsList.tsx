@@ -44,12 +44,23 @@ const FavoriteTeamsList = ({
     setModalVisible(true);
   };
 
-  const handleGoToTeam = () => {
-    if (previewTeam) {
-      router.push(`/team/${previewTeam.id}`);
-      setModalVisible(false);
-    }
-  };
+const handleGoToTeam = () => {
+  if (previewTeam) {
+    const route =
+      previewTeam.league === "NFL"
+        ? "/team/nfl/[teamId]"
+        : "/team/[teamId]";
+
+    router.push({
+      pathname: route,
+      params: { teamId: previewTeam.id.toString() },
+    });
+
+    setModalVisible(false);
+  }
+};
+
+
 
   const handleRemoveFavorite = async (team: TeamWithLeague) => {
     try {

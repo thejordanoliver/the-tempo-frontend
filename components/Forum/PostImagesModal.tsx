@@ -127,7 +127,7 @@ export default function PostImagesModal({
       onRequestClose={onClose}
     >
       <SafeAreaView style={styles.modalContainer}>
-        <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
+        <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
         <View style={styles.modalBackground} />
         {/* Image Gallery */}
 
