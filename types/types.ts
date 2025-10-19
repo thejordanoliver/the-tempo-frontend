@@ -82,6 +82,7 @@ export type Props = {
 
 export type Team = {
   id: string;
+  espnID?: string | number;
   name: string;
   fullName?: string;
   logo?: any;
@@ -108,8 +109,9 @@ export type Team = {
   all_time_record?: string;
   primary_color?: string;
   championships?: number[];
-  conference_championships?: string[]; // or number[]
+  conference_championships?: number[]; // or number[]
   conference?: string;
+  displayName?: string;
 };
 
 export type Arena = {
@@ -118,6 +120,11 @@ export type Arena = {
   state?: string | null;
   country?: string | null;
 };
+
+export type LeagueType = "NBA" | "NFL" | "CFB";
+
+export type LeagueTeam = Team & { league: LeagueType };
+
 
 export type Game = {
   id: number;
@@ -133,7 +140,10 @@ export type Game = {
     | "Postponed";
   home: Team;
   away: Team;
-
+scores?: {
+  home: { points: number },
+  visitors: { points: number },
+}
   code?: string;
   homeScore?: number;
   awayScore?: number;
@@ -151,7 +161,7 @@ export type Game = {
     total: number;
     endOfPeriod: boolean;
   };
-  arena?: {
+  venue?: {
     name: string;
     city: string;
     state?: string;
@@ -341,7 +351,19 @@ export type TeamResult = {
   city: string;
   logo_filename: string;
   type: "team";
+ 
 };
+
+export type NBAOrNFLTeam = {
+  id: string | number;
+  name: string;
+  fullName: string;
+  location?: string;
+  logo: any;
+  logoLight?: any;
+   city?: string,
+};
+
 
 export type UserResult = {
   id: number;

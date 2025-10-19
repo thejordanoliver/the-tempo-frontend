@@ -105,13 +105,14 @@ const RosterStats: React.FC<Props> = ({ rosterStats, playersDb, teamId }) => {
     );
   };
 
-  const statLeaders = [
-    { label: "Points", stat: "totalPoints", player: topScorer },
-    { label: "Rebounds", stat: "totalRebounds", player: topRebounder },
-    { label: "Assists", stat: "totalAssists", player: topPasser },
-    { label: "Blocks", stat: "totalBlocks", player: topBlocker },
-    { label: "Steals", stat: "totalBlocks", player: topStealer },
-  ];
+ const statLeaders = [
+  { label: "Points", stat: "totalPoints", player: topScorer },
+  { label: "Rebounds", stat: "totalRebounds", player: topRebounder },
+  { label: "Assists", stat: "totalAssists", player: topPasser },
+  { label: "Blocks", stat: "totalBlocks", player: topBlocker },
+  { label: "Steals", stat: "totalSteals", player: topStealer },
+];
+
   
 
   return (

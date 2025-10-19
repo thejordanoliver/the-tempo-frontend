@@ -1,6 +1,7 @@
 // ./NFL/GamePreview/NFLGameCenterInfo.tsx
 import { Fonts } from "constants/fonts";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NFLTeam } from "types/nfl";
@@ -46,12 +47,14 @@ export function NFLGameCenterInfo({
   downAndDistance,
   isPlayoff,
 }: NFLGameCenterInfoProps) {
+ // --- Broadcasts ---
   const { broadcasts, loading } = useNFLGameBroadcasts(
     homeTeam.code,
     awayTeam.code,
     apiDate
   );
 
+  const broadcastText = getBroadcastDisplay(broadcasts);
   // ✅ handles quarters & OT
   const formatQuarter = useMemo(
     () => (short: string) => {
@@ -83,10 +86,10 @@ export function NFLGameCenterInfo({
     (period && period.toUpperCase().includes("OT")) ||
     (status && ["AOT"].includes(status as string));
 
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, lighter);
   const dateColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
   const timeColor = lighter ? "#fff" : isDark ? "#333" : "#888";
-  const broadcastColor = lighter ? "#fff" : isDark ? "#333" : "#888";
+  const borderColor = lighter ? "#fff" : isDark ? "#333" : "#888";
 
   return (
     <View style={styles.container}>
@@ -98,14 +101,6 @@ export function NFLGameCenterInfo({
             {date || "TBD"}
           </Text>
           <Text style={[styles.time, { color: timeColor }]}>{time || ""}</Text>
-          {broadcasts.slice(0, 1).map((b, i) => (
-            <Text
-              key={i}
-              style={[styles.broadcasts, { color: broadcastColor }]}
-            >
-              {b.names.join("/")}
-            </Text>
-          ))}
         </>
       )}
 
@@ -129,14 +124,6 @@ export function NFLGameCenterInfo({
           {downAndDistance && (
             <Text style={styles.downAndDistance}>{downAndDistance}</Text>
           )}
-          {broadcasts.slice(0, 1).map((b, i) => (
-            <Text
-              key={i}
-              style={[styles.broadcasts, { color: broadcastColor }]}
-            >
-              {b.names.join("/")}
-            </Text>
-          ))}
         </>
       )}
 
@@ -144,14 +131,6 @@ export function NFLGameCenterInfo({
       {status === "Halftime" && (
         <>
           <Text style={styles.date}>Halftime</Text>
-          {broadcasts.slice(0, 1).map((b, i) => (
-            <Text
-              key={i}
-              style={[styles.broadcasts, { color: broadcastColor }]}
-            >
-              {b.names.join("/")}
-            </Text>
-          ))}
         </>
       )}
 
@@ -167,11 +146,14 @@ export function NFLGameCenterInfo({
       {(status === "Canceled" ||
         status === "Postponed" ||
         status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
+       {broadcastText && (
+            <Text style={styles.broadcasts}>{broadcastText}</Text>
+          )}
     </View>
   );
 }
 
-export const getStyles = (isDark: boolean) =>
+export const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     container: {
       justifyContent: "center",
@@ -192,7 +174,7 @@ export const getStyles = (isDark: boolean) =>
     broadcasts: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#aaa" : "#444",
+      color: lighter ? "#fff" : isDark ? "#333" : "#888",
     },
     period: {
       fontFamily: Fonts.OSMEDIUM,
@@ -208,7 +190,7 @@ export const getStyles = (isDark: boolean) =>
     downAndDistance: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 14,
-      color: isDark ? "#aaa" : "#555",
+      color: lighter ? "#aaa" : isDark ? "#aaa" : "#555",
       marginTop: 2,
       textAlign: "center",
     },
@@ -225,7 +207,11 @@ export const getStyles = (isDark: boolean) =>
     divider: {
       height: 16,
       width: 1,
-      backgroundColor: isDark ? "rgba(255,255,255, 1)" : "rgba(0, 0, 0, .5)",
+      backgroundColor: lighter
+        ? "rgba(255,255,255, 1)"
+        : isDark
+        ? "rgba(255,255,255, 1)"
+        : "rgba(0, 0, 0, .5)",
     },
     gameTitle: {
       position: "absolute",

@@ -1,14 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import NFLGamesList from "components/NFL/Games/NFLGamesList";
-import { NFLStandingsList } from "components/NFL/Standings/NFLStandingsList";
-import WeekSelector from "components/NFL/WeekSelector";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
+import NFLGamesList from "components/NFL/Games/NFLGamesList";
+import { NFLStandingsList } from "components/NFL/Standings/NFLStandingsList";
+import WeekSelector from "components/NFL/WeekSelector";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -95,6 +95,8 @@ export default function NFLLeagueScreen() {
     getCurrentWeekIndex(weeks)
   );
 
+  
+
   const selectedWeek = weeks[selectedWeekIndex];
   // --- Fetch games using the updated hook ---
   const {
@@ -129,7 +131,10 @@ export default function NFLLeagueScreen() {
           league="NFL"
           modalVisible={leagueModalVisible} // now updates
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => sportsModalRef.current?.present()}
+          onOpenLeagueModal={() => {
+            setLeagueModalVisible(true);
+            sportsModalRef.current?.present();
+          }}
           onBack={goBack}
         />
       ),
@@ -147,6 +152,36 @@ export default function NFLLeagueScreen() {
       setRefreshing(false);
     }
   };
+
+
+  // --- Sort games: live games first ---
+const sortedGames = React.useMemo(() => {
+  if (!nflGames) return [];
+
+  // Prioritize live games (based on status.long or status.short)
+  return [...nflGames].sort((a, b) => {
+    const aStatus = a?.game?.status?.long?.toLowerCase?.() || "";
+    const bStatus = b?.game?.status?.long?.toLowerCase?.() || "";
+
+    const aIsLive =
+      !["not started", "final", "finished", "postponed", "canceled"].includes(
+        aStatus
+      );
+    const bIsLive =
+      !["not started", "final", "finished", "postponed", "canceled"].includes(
+        bStatus
+      );
+
+    // Live games come first
+    if (aIsLive && !bIsLive) return -1;
+    if (!aIsLive && bIsLive) return 1;
+
+    // Otherwise sort by start time ascending
+    const aTime = a?.game?.date.timestamp ?? 0;
+    const bTime = b?.game?.date.timestamp ?? 0;
+    return aTime - bTime;
+  });
+}, [nflGames]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
@@ -200,13 +235,14 @@ export default function NFLLeagueScreen() {
                   />
                 }
               >
-                <NFLGamesList
-                  games={nflGames}
-                  loading={nflLoading}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  scrollEnabled={false}
-                />
+             <NFLGamesList
+  games={sortedGames}
+  loading={nflLoading}
+  refreshing={refreshing}
+  onRefresh={handleRefresh}
+  scrollEnabled={false}
+/>
+
               </ScrollView>
             </>
           )}

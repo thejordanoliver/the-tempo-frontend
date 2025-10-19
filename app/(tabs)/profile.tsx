@@ -11,6 +11,7 @@ import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/SkeletonProfileScreen";
 import { teams } from "constants/teams";
 import { teams as nflteams } from "constants/teamsNFL";
+import { teams as cfbteams } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -229,15 +230,7 @@ export default function ProfileScreen() {
     });
   }, [navigation, username, isDark]);
 
-  const favoriteTeams = favorites
-    .map((fav: string) => {
-      // fav format: "NBA:1610612737" or "NFL:13"
-      const [league, id] = fav.split(":");
-      if (league === "NBA") return teams.find((t) => t.id === id);
-      if (league === "NFL") return nflteams.find((t) => t.id === id);
-      return null;
-    })
-    .filter(Boolean); // remove nulls
+
   const styles = getStyles(isDark);
 
   const favoriteTeamsWithLeague = favorites
@@ -246,8 +239,9 @@ export default function ProfileScreen() {
       let team;
       if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
       if (!team) return null;
-      return { ...team, league: league as "NBA" | "NFL" };
+      return { ...team, league: league as "NBA" | "NFL" | "CFB" };
     })
     .filter(Boolean);
 

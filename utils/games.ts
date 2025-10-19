@@ -30,15 +30,26 @@ export const normalizeTeam = (team: any): TeamLike => {
   return { id: fallbackName, name: fallbackName, fullName: fallbackName };
 };
 
+
+
 export const localDateOnly = (date: string | Date) => {
   const d = new Date(date);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 };
 
-export const filterByDate = (games: any[], date: Date) =>
-  games.filter((game) =>
-    dayjs(game.date).isSame(dayjs(date).startOf("day"), "day")
-  );
+export function filterByDate(games: any[], date: Date) {
+  const selected = dayjs(date).tz("America/New_York");
+  return games.filter((g) => {
+    if (!g.date) return false;
+    const gameDate = dayjs(g.date).tz("America/New_York");
+    return (
+      gameDate.year() === selected.year() &&
+      gameDate.month() === selected.month() &&
+      gameDate.date() === selected.date()
+    );
+  });
+}
+
 
 // 🏈 Normalize NFL games with timezone fix
 export const normalizeNFLGames = (games: any[]) => {

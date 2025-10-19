@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Image, Text, View } from "react-native";
 import { teams, teamsById } from "../constants/teams";
 import { teams as teamsNFL, teamsNFLById } from "../constants/teamsNFL";
+import { teams as teamsCFB, teamsCFBById } from "../constants/teamsCFB";
 import { Fonts } from "constants/fonts";
 
 type TeamColors = {
@@ -16,7 +17,7 @@ type TeamColors = {
 
 type Props = {
   label: string;
-  value: string | number | ReactNode;
+  value: string | number | ReactNode | string[] | number[];
   image?: any;
   isDark: boolean;
   team: TeamColors;
@@ -39,43 +40,46 @@ export default function InfoCard({
   textColor,
   labelColor,
 }: Props) {
-  // Determine team colors from NBA/NFL ID or name
   let teamObj: TeamColors | undefined;
 
   // --- ID checks ---
-  if (teamId && (teamsById[teamId] || teamsNFLById[teamId])) {
-    teamObj = teamsById[teamId] ?? teamsNFLById[teamId];
+  if (teamId && (teamsById[teamId] || teamsNFLById[teamId] || teamsCFBById[teamId])) {
+    teamObj = teamsById[teamId] ?? teamsNFLById[teamId] ?? teamsCFBById[teamId];
   }
 
   // --- Name checks ---
   if (!teamObj && teamName) {
+    const cleanName = teamName.toLowerCase();
     teamObj =
-      teams.find((t) => t.fullName.toLowerCase() === teamName.toLowerCase()) ??
-      teamsNFL.find((t) => t.name.toLowerCase() === teamName.toLowerCase());
+      teams.find((t) => t.fullName.toLowerCase() === cleanName) ??
+      teamsNFL.find((t) => t.name.toLowerCase() === cleanName) ??
+      teamsCFB.find((t) => t.name.toLowerCase() === cleanName);
   }
 
   // --- Provided team object fallback ---
   if (!teamObj && team.fullName) {
+    const cleanName = team.fullName.toLowerCase();
     teamObj =
-      teams.find(
-        (t) => t.fullName?.toLowerCase() === team.fullName?.toLowerCase()
-      ) ??
-      teamsNFL.find(
-        (t) => t.name?.toLowerCase() === team.fullName?.toLowerCase()
-      );
+      teams.find((t) => t.fullName?.toLowerCase() === cleanName) ??
+      teamsNFL.find((t) => t.name?.toLowerCase() === cleanName) ??
+      teamsCFB.find((t) => t.name?.toLowerCase() === cleanName);
   }
 
   // Final fallback
-  if (!teamObj) {
-    teamObj = team;
-  }
+  if (!teamObj) teamObj = team;
 
-  // Define whether label requires wrapping
   const isConferenceChampionships = label === "Conference Championships";
 
-  // Fallback text colors logic
+  // 🧩 Format value: join arrays into a readable comma-separated string
+  let formattedValue: string | ReactNode;
+  if (Array.isArray(value)) {
+    formattedValue = value.join(", ");
+  } else {
+    formattedValue = value;
+  }
+
   const resolvedLabelColor = labelColor ?? (isDark ? "#fff" : "#000");
-  const resolvedTextColor = textColor ?? (isDark ? "#fff" : "#fff");
+  const resolvedTextColor = textColor ?? (isDark ? "#fff" : "#1d1d1d");
 
   return (
     <>
@@ -97,7 +101,7 @@ export default function InfoCard({
         style={{
           flexDirection: "row",
           alignItems: isConferenceChampionships ? "flex-start" : "center",
-          backgroundColor,
+          backgroundColor: backgroundColor ?? teamObj.color,
           borderRadius: 8,
           paddingHorizontal: 16,
           paddingVertical: 12,
@@ -122,24 +126,24 @@ export default function InfoCard({
               style={{
                 width: 54,
                 height: 54,
-                paddingTop: 4,
                 resizeMode: "contain",
                 backgroundColor: isDark ? "#444" : "#ddd",
               }}
             />
           </View>
         )}
+
         <Text
           style={{
             fontFamily: Fonts.OSREGULAR,
             fontSize: 16,
-            color: resolvedTextColor,
+            color: "#fff",
             flexShrink: 1,
             flex: 1,
             flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
           }}
         >
-          {value}
+          {formattedValue}
         </Text>
       </View>
     </>

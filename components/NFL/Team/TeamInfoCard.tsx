@@ -61,7 +61,7 @@ export default function TeamInfoCard({ teamId }: Props) {
       />
       <InfoCard
         label="Stadium"
-        value={team.stadium ?? "N/A"}
+        value={team.venue ?? "N/A"}
         isDark={isDark}
         team={team}
         backgroundColor={primaryColor}

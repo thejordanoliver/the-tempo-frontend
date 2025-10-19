@@ -4,7 +4,7 @@ import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
 import SectionHeaderWithToggle from "../SectionHeaderWithToggle";
 
 type Props = {
-  favoriteTeams: any[]; // type your teams here
+  favoriteTeams: any[]; // replace with proper team type if you have one
   isGridView: boolean;
   fadeAnim: Animated.Value;
   toggleFavoriteTeamsView: () => void;
@@ -24,8 +24,12 @@ export default function FavoriteTeamsSection({
   isCurrentUser,
   username,
 }: Props) {
+
+console.log(isCurrentUser)
+
   return (
     <>
+      {/* Header with toggle button (grid/list) */}
       <SectionHeaderWithToggle
         title="Favorite Teams"
         isGridView={isGridView}
@@ -39,7 +43,7 @@ export default function FavoriteTeamsSection({
           styles={styles}
           itemWidth={itemWidth}
           key={isGridView ? "grid" : "list"}
-          isCurrentUser={isCurrentUser}
+          isCurrentUser={isCurrentUser} // ✅ enforce current user
           username={username}
         />
       </Animated.View>

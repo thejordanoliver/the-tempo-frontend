@@ -77,7 +77,10 @@ export default function NFLTeamDrives({
         homeTeamAbbr={homeTeamAbbr}
         lighter={lighter} // <-- pass lighter
         renderLabel={(abbr, isSelected) => {
-          const logo = getNFLTeamsLogo(abbr, isDark);
+          // ✅ Show light logos in dark mode or when lighter prop is true
+          const useLightLogo = lighter || isDark;
+          const logo = getNFLTeamsLogo(abbr, useLightLogo);
+
           return (
             <View style={styles.tabLabel}>
               {logo && (

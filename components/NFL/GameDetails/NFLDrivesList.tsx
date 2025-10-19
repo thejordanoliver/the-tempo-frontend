@@ -1,13 +1,7 @@
-import { Fonts } from "constants/fonts";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { getStyles } from "styles/GameDetailStyles/DrivesList.styles";
+
+import { FlatList, Image, Text, useColorScheme, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 export type Drive = {
   id: string;
@@ -64,7 +58,9 @@ export default function NFLDrivesList({
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item }) => {
-            const teamLogo = getNFLTeamsLogo(item.team.abbreviation, isDark);
+            // ✅ Show light logos in dark mode or when lighter prop is true
+            const useLightLogo = lighter || isDark;
+            const logo = getNFLTeamsLogo(item.team.abbreviation, useLightLogo);
 
             const resultUpper = (item.result ?? "").toUpperCase();
 
@@ -104,7 +100,7 @@ export default function NFLDrivesList({
                 style={[styles.driveCard, { borderBottomColor: borderColor }]}
               >
                 <View style={styles.headerRow}>
-                  <Image style={styles.teamLogo} source={teamLogo} />
+                  <Image style={styles.teamLogo} source={logo} />
                   <Text style={[styles.driveTeam, { color: textColor }]}>
                     {item.team.shortDisplayName}
                   </Text>
@@ -125,50 +121,3 @@ export default function NFLDrivesList({
     </View>
   );
 }
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    listContainer: {
-      gap: 8,
-      marginTop: 8,
-    },
-    driveCard: {
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderBottomColor: isDark ? "#444" : "#ccc",
-      borderBottomWidth: 1,
-    },
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 6,
-    },
-    teamLogo: {
-      width: 28,
-      height: 28,
-      marginRight: 8,
-    },
-    driveDescription: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    driveDetail: {
-      fontSize: 12,
-      color: isDark ? "#aaa" : "#444",
-      marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    driveTeam: {
-      fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    emptyText: {
-      fontSize: 16,
-      color: "#888",
-      textAlign: "center",
-      marginTop: 20,
-      fontFamily: Fonts.OSBOLD,
-    },
-  });

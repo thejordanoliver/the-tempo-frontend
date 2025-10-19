@@ -54,11 +54,16 @@ export function GameInfo({
     day: "numeric",
   });
 
+  const displayDate = date
+  ? new Date(date).toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+  : "Unknown";
+
+
   return (
     <View style={styles.container}>
       {status === "Scheduled" && (
         <>
-          <Text style={[styles.date]}>{date}</Text>
+          <Text style={[styles.date]}>{displayDate}</Text>
           <Text style={[styles.time, { color: colors.secondaryText }]}>
             {time}
           </Text>
@@ -91,7 +96,7 @@ export function GameInfo({
             Final
           </Text>
           <Text style={[styles.dateFinal, { color: colors.secondaryText }]}>
-            {formattedDate}
+            {displayDate}
           </Text>
         </>
       )}
@@ -100,7 +105,7 @@ export function GameInfo({
           <Text style={[styles.finalText, { color: colors.finalText }]}>
             Canceled
           </Text>
-          <Text style={[styles.date]}>{date}</Text>
+          <Text style={[styles.date]}>{displayDate}</Text>
         </>
       )}
       {status === "Postponed" && (

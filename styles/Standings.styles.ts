@@ -35,15 +35,11 @@ export const getStyles = (isDark: boolean) =>
       height: ROW_HEIGHT,
       minHeight: ROW_HEIGHT,
       maxHeight: ROW_HEIGHT,
-      
-      
     },
     rankContainer: {
       width: RANK_WIDTH,
       justifyContent: "center",
       alignItems: "center",
-      
-      
     },
     rankText: {
       fontFamily: Fonts.OSSEMIBOLD,
@@ -62,10 +58,22 @@ export const getStyles = (isDark: boolean) =>
       marginRight: 6,
     },
     teamName: {
-      fontSize: 16,
+      fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
       color: isDark ? "#fff" : "#1d1d1d",
       width: 32,
+    },
+    collegeTeamName: {
+       fontSize: 14,
+      fontFamily: Fonts.OSSEMIBOLD,
+      color: isDark ? "#fff" : "#1d1d1d",
+      width: 40,
+    },
+    collegeTeamTrend: {
+       fontSize: 10,
+      fontFamily: Fonts.OSSEMIBOLD,
+      color: isDark ? "#fff" : "#1d1d1d",
+      width: 40,
     },
     teamHeaderText: {
       fontFamily: Fonts.OSSEMIBOLD,

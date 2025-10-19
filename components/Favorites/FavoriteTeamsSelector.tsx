@@ -1,16 +1,13 @@
-// components/FavoriteTeamsSelector.tsx
-import type { Team } from "types/types";
 import { useMemo } from "react";
 import { Animated, FlatList } from "react-native";
+import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "./FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
 
-
-
 type Props = {
-  teams: (Team & { league: "NBA" | "NFL" })[];
+  teams: LeagueTeam[];
   favorites: string[];
-  toggleFavorite: (league: "NBA" | "NFL", id: string) => void; // <-- 2 args now
+  toggleFavorite: (league: LeagueType, id: string) => void;
   isGridView: boolean;
   fadeAnim: Animated.Value;
   search: string;
@@ -28,13 +25,14 @@ const FavoriteTeamsSelector = ({
   itemWidth,
   loading = false,
 }: Props) => {
-  const filteredTeams = useMemo(
-    () =>
-      teams.filter((team) =>
-        team.fullName?.toLowerCase().includes(search.toLowerCase())
-      ),
-    [teams, search]
-  );
+  const filteredTeams = useMemo(() => {
+    const query = search.toLowerCase();
+    return teams.filter((team) => {
+      const name =
+        team.fullName || team.name || team.displayName || "";
+      return name.toLowerCase().includes(query);
+    });
+  }, [teams, search]);
 
   if (loading) {
     return (
@@ -47,32 +45,46 @@ const FavoriteTeamsSelector = ({
 
   return (
     <Animated.View style={{ flex: 1, opacity: fadeAnim, marginTop: 12 }}>
-  <FlatList
-  key={isGridView ? "grid" : "list"}
-  data={filteredTeams}
-  keyExtractor={(item) => item.id}
-  numColumns={isGridView ? 3 : 1}
-  columnWrapperStyle={
-    isGridView
-      ? {
-          gap: 10, // spacing between cards
-          flexWrap: "wrap",
+      <FlatList
+        key={isGridView ? "grid" : "list"}
+        data={filteredTeams}
+        keyExtractor={(item) => `${item.league}-${item.id}`}
+        numColumns={isGridView ? 3 : 1}
+        columnWrapperStyle={
+          isGridView
+            ? {
+                justifyContent: "flex-start",
+                gap: 10,
+                flexWrap: "wrap",
+              }
+            : undefined
         }
-      : undefined
-  }
-  renderItem={({ item }) => ( // <-- use 'item' here
-    <TeamCard
-      item={item} // <-- pass item
-      isSelected={favorites.includes(`${item.league}:${item.id}`)} // <-- use item
-      onPress={() => toggleFavorite(item.league, item.id)} // <-- use item
-      isGridView={isGridView}
-      itemWidth={itemWidth}
-    />
-  )}
-  showsVerticalScrollIndicator={false}
-  contentContainerStyle={{ paddingBottom: 16 }}
-/>
+        renderItem={({ item }) => {
+          // Only use fullName for NFL and NBA
+          const displayItem = {
+            ...item,
+            fullName:
+              item.league === "NFL" || item.league === "NBA"
+                ? item.fullName
+                : item.fullName || item.name,
+          };
 
+          return (
+            <TeamCard
+              item={displayItem}
+              isSelected={favorites.includes(`${item.league}:${item.id}`)}
+              onPress={() => toggleFavorite(item.league, item.id)}
+              isGridView={isGridView}
+              itemWidth={itemWidth}
+            />
+          );
+        }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 16,
+          paddingHorizontal: 0,
+        }}
+      />
     </Animated.View>
   );
 };

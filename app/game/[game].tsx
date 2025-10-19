@@ -2,7 +2,6 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
 import {
   BoxScore,
-  GameInfo,
   GameLeaders,
   GameTeamStats,
   LastFiveGamesSwitcher,
@@ -10,17 +9,17 @@ import {
   PredictionBar,
   TeamInjuriesTab,
   TeamLocationSection,
-  TeamRow,
   Weather,
 } from "components/GameDetails";
+import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
 import GameOfficials from "components/GameDetails/GameOfficials";
 import GameUniforms from "components/GameDetails/GameUniforms";
 import { Fonts } from "constants/fonts";
-import { arenaImages, neutralArenas, teams } from "constants/teams";
+import { neutralVenues, teams, venueImages } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
@@ -39,6 +38,8 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { matchBroadcastToGame } from "utils/matchBroadcast";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
@@ -48,6 +49,7 @@ export default function GameDetailsScreen() {
   const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
   const isScrollingRef = useRef(false);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
   const handleScrollStart = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
@@ -90,16 +92,37 @@ export default function GameDetailsScreen() {
     home,
     away,
     date,
+
     time,
     status,
     homeScore,
     awayScore,
     period,
     clock,
-    arena,
+    venue,
     linescore,
     id: gameId,
   } = parsedGame;
+
+
+  const gameDateObj = useMemo(() => {
+  if (!date) return new Date(); // fallback to now
+  const d = new Date(date);
+  return isNaN(d.getTime()) ? new Date() : d;
+}, [date]);
+
+const gameDate = useMemo(() => gameDateObj.toISOString().split("T")[0], [gameDateObj]);
+
+const formattedDate = useMemo(
+  () =>
+    gameDateObj
+      ? gameDateObj.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+      : "Unknown",
+  [gameDateObj]
+);
+
+const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
+
 
   const homeTeamData = teams.find(
     (t) =>
@@ -117,40 +140,37 @@ export default function GameDetailsScreen() {
   const homeColor = homeTeamData.color || "#007A33";
   const awayColor = awayTeamData.color || "#CE1141";
 
-  const arenaNameFromGame = arena?.name ?? "";
-  const arenaCityFromGame = arena?.city ?? "";
-  const neutralArenaData = neutralArenas[arenaNameFromGame];
+  const venueNameFromGame = venue?.name ?? "";
+  const venueCityFromGame = venue?.city ?? "";
+  const neutralArenaData = neutralVenues[venueNameFromGame];
 
-  const cleanedArenaName = arenaNameFromGame.replace(/\s*\(.*?\)/, "").trim();
-  const resolvedArenaName = cleanedArenaName || homeTeamData.arenaName;
-  const resolvedArenaCity = arenaCityFromGame || homeTeamData.location;
+  const cleanedArenaName = venueNameFromGame.replace(/\s*\(.*?\)/, "").trim();
+  const resolvedArenaName = cleanedArenaName || homeTeamData.venueName;
+  const resolvedArenaCity = venueCityFromGame || homeTeamData.location;
   const resolvedArenaAddress =
     neutralArenaData?.address || homeTeamData.address || "";
   const resolvedArenaCapacity =
-    neutralArenaData?.arenaCapacity || homeTeamData.arenaCapacity || "";
+    neutralArenaData?.venueCapacity || homeTeamData.venueCapacity || "";
   const resolvedArenaImage =
-    neutralArenaData?.arenaImage ||
-    arenaImages[arenaNameFromGame] ||
-    arenaImages[arenaCityFromGame] ||
-    arenaImages[homeTeamData.code] ||
-    homeTeamData.arenaImage;
+    neutralArenaData?.venueImage ||
+    venueImages[venueNameFromGame] ||
+    venueImages[venueCityFromGame] ||
+    venueImages[homeTeamData.code] ||
+    homeTeamData.venueImage;
 
-  const gameDate = useMemo(
-    () => new Date(date).toISOString().split("T")[0],
-    [date]
-  );
+
   const awayCode = useMemo(() => awayTeamData.code, [awayTeamData.code]);
   const homeCode = useMemo(() => homeTeamData.code, [homeTeamData.code]);
   const stableGameId = useMemo(() => gameId.toString(), [gameId]);
 
   const lat =
     neutralArenaData?.latitude ??
-    arena?.latitude ??
+    venue?.latitude ??
     homeTeamData.latitude ??
     null;
   const lon =
     neutralArenaData?.longitude ??
-    arena?.longitude ??
+    venue?.longitude ??
     homeTeamData.longitude ??
     null;
 
@@ -189,6 +209,7 @@ export default function GameDetailsScreen() {
     date
   );
 
+
   const currentPlayoffGame = playoffGames.find((g) => g.id === gameId);
   const awayIsWinner =
     status === "Final" && (awayScore ?? 0) > (homeScore ?? 0);
@@ -196,8 +217,8 @@ export default function GameDetailsScreen() {
     status === "Final" && (homeScore ?? 0) > (awayScore ?? 0);
 
   const cleanedArenaNameLower = cleanedArenaName.toLowerCase();
-  const homeArenaNameLower = homeTeamData.arenaName.toLowerCase();
-  const awayArenaNameLower = awayTeamData.arenaName.toLowerCase();
+  const homeArenaNameLower = homeTeamData.venueName.toLowerCase();
+  const awayArenaNameLower = awayTeamData.venueName.toLowerCase();
 
   const isNeutralSiteByArena =
     cleanedArenaNameLower !== "" &&
@@ -236,20 +257,14 @@ export default function GameDetailsScreen() {
       ? `Game ${currentPlayoffGame.gameNumber}`
       : null;
 
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    month: "numeric",
-    day: "numeric",
-  });
 
-  const { broadcasts } = useESPNBroadcasts();
-  const matched = matchBroadcastToGame(
-    { date, home: { name: home.name }, away: { name: away.name } },
-    broadcasts
+  const { broadcasts } = useGameBroadcasts(
+    homeTeamData.name,
+    awayTeamData.name,
+    gameDateStr
   );
-  const networkString = matched?.broadcasts
-    ?.map((b) => b.network)
-    .filter(Boolean)
-    .join(", ");
+
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const { data, detailsLoading, detailsError } = useGameDetails(
     gameDate,
@@ -257,6 +272,10 @@ export default function GameDetailsScreen() {
     awayTeamData.name
   );
 
+const homeScoreValue = parsedGame.scores?.home?.points ?? 0;
+const awayScoreValue = parsedGame.scores?.visitors?.points ?? 0;
+
+const statusDisplay = status?.long || status?.short || "Unknown";
   // Replace your currentClock logic
   const [refreshTick, setRefreshTick] = useState(0);
 
@@ -279,70 +298,31 @@ export default function GameDetailsScreen() {
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
+        stickyHeaderIndices={[0]}
       >
-        <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
-          <TeamRow
-            key={`away-${refreshTick}`} // forces re-render
-            team={{
-              id: awayTeamData.id,
-              code: awayTeamData.code,
-              name: away.name,
-              record: away.record,
-              logo:
-                isDark && awayTeamData.logoLight
-                  ? awayTeamData.logoLight
-                  : awayTeamData.logo || require("../../assets/Logos/NBA.png"),
-            }}
-            isDark={isDark}
-            score={awayScore}
-            isWinner={awayIsWinner}
-            colors={colors}
-          />
+   <GameHeader
+  homeTeamData={homeTeamData}
+  awayTeamData={awayTeamData}
+  home={home}
+  away={away}
+  homeScore={homeScoreValue}
+  awayScore={awayScoreValue}
+  status={statusDisplay}   // ← use this
+  period={period}
+  displayClock={clock}
+  colors={colors}
+  isDark={isDark}
+  formattedDate={formattedDate}
+  time={time}
+  networkString={broadcastText}
+  seriesSummary={seriesSummary}
+  getGameNumberLabel={getGameNumberLabel}
+  refreshTick={refreshTick}
+/>
 
-          <GameInfo
-            key={`gameinfo-${refreshTick}`} // forces re-render
-            status={status}
-            date={formattedDate}
-            time={time}
-            clock={clock}
-            period={period}
-            colors={colors}
-            isDark={isDark}
-            homeTeam={home.name}
-            awayTeam={away.name}
-            broadcastNetworks={networkString}
-            playoffInfo={[
-              getGameNumberLabel() ?? "",
-              seriesSummary ?? "",
-            ].filter(Boolean)}
-          />
-
-          <TeamRow
-            key={`home-${refreshTick}`} // forces re-render
-            team={{
-              id: homeTeamData.id,
-              code: homeTeamData.code,
-              name: home.name,
-              record: home.record,
-              logo:
-                isDark && homeTeamData.logoLight
-                  ? homeTeamData.logoLight
-                  : homeTeamData.logo || require("../../assets/Logos/NBA.png"),
-            }}
-            isDark={isDark}
-            isHome
-            score={homeScore}
-            isWinner={homeIsWinner}
-            colors={colors}
-          />
-        </View>
 
         <View style={{ gap: 20, marginTop: 20 }}>
-          {/* {isLoading || detailsLoading ? (
-            <GameDetailsSkeleton />
-          ) : ( */}
-          <>
-            {/* --- Odds Section (Upcoming + Historical) --- */}
+      
             <GameOddsSection
               date={date}
               gameDate={gameDate}
@@ -359,22 +339,7 @@ export default function GameDetailsScreen() {
               />
             )}
 
-            {/* --- Prediction --- */}
-            {prediction && !predictionLoading && !predictionError && (
-              <PredictionBar
-                homeWinProbability={prediction.homeWinProbability * 100}
-                awayWinProbability={prediction.awayWinProbability * 100}
-                homeColor={homeColor}
-                awayColor={awayColor}
-                homeSecondaryColor={homeTeamData.secondaryColor}
-                awaySecondaryColor={awayTeamData.secondaryColor}
-                homeTeamId={homeTeamData.id}
-                awayTeamId={awayTeamData.id}
-              />
-            )}
-            {predictionError && (
-              <Text style={{ color: "red" }}>{predictionError}</Text>
-            )}
+        
 
             <GameLeaders
               gameId={gameId.toString()}
@@ -388,7 +353,7 @@ export default function GameDetailsScreen() {
               awayTeamId={awayTeamIdNum}
             />
             {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
-            
+
             <LastFiveGamesSwitcher
               isDark={isDark}
               home={{
@@ -413,11 +378,11 @@ export default function GameDetailsScreen() {
             />
 
             <TeamLocationSection
-              arenaImage={resolvedArenaImage}
-              arenaName={resolvedArenaName}
+              venueImage={resolvedArenaImage}
+              venueName={resolvedArenaName}
               location={resolvedArenaCity}
               address={resolvedArenaAddress}
-              arenaCapacity={resolvedArenaCapacity}
+              venueCapacity={resolvedArenaCapacity}
               loading={weatherLoading}
               error={weatherError}
             />
@@ -428,7 +393,7 @@ export default function GameDetailsScreen() {
               loading={weatherLoading}
               error={weatherError}
             />
-          </>
+  
         </View>
       </ScrollView>
 

@@ -1,6 +1,5 @@
-import { Fonts } from "constants/fonts";
-import { WeatherData } from "hooks/useWeather";
 import { Ionicons } from "@expo/vector-icons";
+import { Fonts } from "constants/fonts";
 import {
   Alert,
   Image,
@@ -16,22 +15,22 @@ import HeadingTwo from "../Headings/HeadingTwo";
 import TeamLocationSkeleton from "./TeamLocationSkeleton";
 
 type Props = {
-  arenaImage?: any;
-  arenaName?: string;
+  venueImage?: any;
+  venueName?: string;
   location?: string;
   loading: boolean;
   error: string | null;
   address: string;
-  arenaCapacity: string;
+  venueCapacity: string;
   lighter?: boolean; // <-- new prop
 };
 
 const TeamLocationSection: React.FC<Props> = ({
-  arenaImage,
-  arenaName,
+  venueImage,
+  venueName,
   location,
   address,
-  arenaCapacity,
+  venueCapacity,
   loading,
   error,
   lighter = false,
@@ -41,11 +40,11 @@ const TeamLocationSection: React.FC<Props> = ({
 
   // ✅ Early return if values are missing or marked "Unknown"
   if (
-    !arenaName ||
+    !venueName ||
     !location ||
-    arenaName.trim() === "" ||
+    venueName.trim() === "" ||
     location.trim() === "" ||
-    arenaName === "Unknown" ||
+    venueName === "Unknown" ||
     location === "Unknown"
   ) {
     return null;
@@ -94,14 +93,14 @@ const TeamLocationSection: React.FC<Props> = ({
       ) : (
         <View style={styles.container}>
           <Image
-            source={arenaImage}
-            style={styles.arenaImage}
+            source={venueImage}
+            style={styles.venueImage}
             resizeMode="cover"
           />
 
           <View style={styles.textContainer}>
-            <Text style={[styles.arenaTitle, { color: textColor }]}>
-              {arenaName}
+            <Text style={[styles.venueTitle, { color: textColor }]}>
+              {venueName}
             </Text>
           </View>
 
@@ -110,10 +109,7 @@ const TeamLocationSection: React.FC<Props> = ({
             {address ? (
               <TouchableOpacity onPress={openInMaps}>
                 <Text
-                  style={[
-                    styles.subText,
-                    { color: textColor, marginLeft: 8 },
-                  ]}
+                  style={[styles.subText, { color: textColor, marginLeft: 8 }]}
                 >
                   {address}
                 </Text>
@@ -124,7 +120,7 @@ const TeamLocationSection: React.FC<Props> = ({
           <View style={styles.addressContainer}>
             <Ionicons name="person" size={20} color={textColor} />
             <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
-              Capacity: {arenaCapacity || "N/A"}
+              Capacity: {venueCapacity || "N/A"}
             </Text>
           </View>
         </View>
@@ -133,10 +129,9 @@ const TeamLocationSection: React.FC<Props> = ({
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {},
-  arenaImage: { width: "100%", height: 200, borderRadius: 8 },
+  venueImage: { width: "100%", height: 200, borderRadius: 8 },
   text: {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
@@ -146,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     opacity: 0.5,
   },
-  arenaTitle: {
+  venueTitle: {
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
     paddingVertical: 10,

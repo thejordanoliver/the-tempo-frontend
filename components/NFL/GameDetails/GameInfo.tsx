@@ -13,7 +13,7 @@ type NFLGameCenterInfoProps = {
   downAndDistance?: string;
   colors: Record<string, string>;
   isDark: boolean;
-  playoffInfo?: string | string[]; // 👈 accepted but not used yet
+  playoffInfo?: string | string[];
   homeTeam: NFLTeam;
   awayTeam: NFLTeam;
 };
@@ -40,7 +40,11 @@ export function NFLGameCenterInfo({
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    if (status === "In Progress" || status === "Halftime") {
+    if (
+      status?.toLowerCase().includes("progress") ||
+      status?.toLowerCase().includes("live") ||
+      status?.toLowerCase().includes("half")
+    ) {
       const interval = setInterval(() => {
         setTick((t) => t + 1);
       }, 30000);
@@ -50,53 +54,69 @@ export function NFLGameCenterInfo({
 
   const formatQuarter = useMemo(
     () => (short: string) => {
-      switch (short) {
-        case "Q1":
-          return "1st";
-        case "Q2":
-          return "2nd";
-        case "Q3":
-          return "3rd";
-        case "Q4":
-          return "4th";
-        case "OT":
-          return "OT";
-        default:
-          return short;
-      }
+      if (!short) return "";
+      const val = short.toUpperCase();
+      if (val.includes("Q1")) return "1st";
+      if (val.includes("Q2")) return "2nd";
+      if (val.includes("Q3")) return "3rd";
+      if (val.includes("Q4")) return "4th";
+      if (val.includes("OT")) return "OT";
+      if (val.includes("HALF")) return "Halftime";
+      if (val.includes("END")) return "End";
+      return short;
     },
     []
   );
 
-  let displayBroadcasts: string[] = [];
-  if (!loading && broadcasts.length > 0) {
-    const allNames = broadcasts.flatMap((b) => b.names);
-    if (allNames.includes("ABC") && allNames.includes("ESPN")) {
-      displayBroadcasts = ["ABC/ESPN"];
-    } else {
-      displayBroadcasts = [allNames[0]];
-    }
-  }
+  // ---- Derived State ----
+  const normalizedStatus = status?.toLowerCase() ?? "";
+  const isInProgress =
+    normalizedStatus.includes("progress") ||
+    normalizedStatus.includes("live") ||
+    normalizedStatus.includes("end");
+  const isHalftime = normalizedStatus.includes("half");
+  const isFinal = normalizedStatus.includes("final");
+  const isScheduled = normalizedStatus.includes("schedule");
+  const isCanceled =
+    normalizedStatus.includes("canceled") ||
+    normalizedStatus.includes("postponed") ||
+    normalizedStatus.includes("delayed");
+
+  const getBroadcastDisplay = () => {
+    if (!broadcasts.length) return "";
+    const names = broadcasts
+      .map((b) =>
+        Array.isArray(b.names) ? b.names.join("/") : b.name || b.shortName || ""
+      )
+      .filter(Boolean)
+      .map((n) => {
+        const lower = n.toLowerCase();
+        if (lower.includes("prime video")) return "Prime";
+        if (lower.includes("nfl net")) return "NFLN";
+        if (lower.includes("fox")) return "FOX";
+        if (lower.includes("espn") && lower.includes("abc")) return "ESPN/ABC";
+        if (lower.includes("tnt") && lower.includes("hbo max"))
+          return "TNT/MAX";
+        return n;
+      });
+    return names.includes("ESPN") && names.includes("ABC")
+      ? "ESPN/ABC"
+      : names[0];
+  };
 
   const styles = getStyles(isDark);
 
-  // 👇 helper for playoff stage display
+  // ---- Playoff Stage ----
   const renderPlayoffInfo = () => {
     if (!playoffInfo) return null;
-
     const validStages = ["Wild Card", "Divisional", "Conference", "Super Bowl"];
-
-    // normalize input into array
     const stages = Array.isArray(playoffInfo) ? playoffInfo : [playoffInfo];
-
     const filtered = stages.filter((stage) =>
       validStages.some((valid) =>
         stage.toLowerCase().includes(valid.toLowerCase())
       )
     );
-
     if (filtered.length === 0) return null;
-
     return (
       <View style={styles.playoffContainer}>
         {filtered.map((stage, i) => (
@@ -107,20 +127,39 @@ export function NFLGameCenterInfo({
       </View>
     );
   };
- 
+
+  // ---- Period Display ----
+  const renderPeriodDisplay = () => {
+    if (!period) return null;
+
+    const upper = period.toUpperCase();
+    if (upper.includes("END")) {
+      const q = upper.match(/Q\d/)?.[0] ?? "";
+      return (
+        <Text style={styles.date}>
+          End {q ? formatQuarter(q) : formatQuarter(period)}
+        </Text>
+      );
+    }
+
+    return <Text style={styles.date}>{formatQuarter(period)}</Text>;
+  };
+
+  // ---- Render ----
   return (
     <View style={styles.container}>
       {renderPlayoffInfo()}
+
       {/* Scheduled */}
-      {status === "Scheduled" && (
+      {isScheduled && (
         <>
           <Text style={styles.date}>{date || "TBD"}</Text>
           <Text style={styles.time}>{time || ""}</Text>
         </>
       )}
 
-      {/* In Progress */}
-      {status === "In Progress" && (
+      {/* In Progress + End of Period */}
+      {isInProgress && (
         <>
           <View
             style={{
@@ -130,11 +169,11 @@ export function NFLGameCenterInfo({
               gap: 8,
             }}
           >
-            <Text style={styles.date}>
-              {period ? formatQuarter(period) : ""}
-            </Text>
+            {renderPeriodDisplay()}
             <View style={styles.divider} />
-            {clock && <Text style={styles.clock}>{clock}</Text>}
+            {clock && !period?.toLowerCase().includes("end") && (
+              <Text style={styles.clock}>{clock}</Text>
+            )}
           </View>
           {downAndDistance && (
             <Text style={styles.downAndDistance}>{downAndDistance}</Text>
@@ -143,14 +182,10 @@ export function NFLGameCenterInfo({
       )}
 
       {/* Halftime */}
-      {status === "Halftime" && (
-        <>
-          <Text style={styles.date}>Halftime</Text>
-        </>
-      )}
+      {isHalftime && <Text style={styles.date}>Halftime</Text>}
 
       {/* Final */}
-      {status === "Final" && (
+      {isFinal && (
         <>
           <Text style={styles.finalText}>
             {period && period.toUpperCase().includes("OT")
@@ -161,24 +196,17 @@ export function NFLGameCenterInfo({
         </>
       )}
 
-      {/* Canceled, Postponed, Delayed */}
-      {(status === "Canceled" ||
-        status === "Postponed" ||
-        status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
+      {/* Canceled / Delayed / Postponed */}
+      {isCanceled && <Text style={styles.finalText}>{status}</Text>}
 
       {/* Broadcasts */}
-      {(status === "In Progress" ||
-        status === "Scheduled" ||
-        status === "Halftime") &&
-        displayBroadcasts.length > 0 && (
-          <View>
-            {displayBroadcasts.map((b, i) => (
-              <Text key={i} style={styles.broadcasts}>
-                {b}
-              </Text>
-            ))}
-          </View>
-        )}
+      {getBroadcastDisplay() && (
+        <View>
+          {broadcasts.length > 0 && (
+            <Text style={styles.broadcasts}>{getBroadcastDisplay()}</Text>
+          )}
+        </View>
+      )}
     </View>
   );
 }

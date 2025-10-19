@@ -1,4 +1,4 @@
-import { Team } from "types/types";
+import { Fonts } from "constants/fonts";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
@@ -11,8 +11,7 @@ import {
   Text,
   useColorScheme,
 } from "react-native";
-import { Fonts } from "constants/fonts";
-import { NFLTeam } from "types/nfl";
+import { Team } from "types/types";
 
 type Props = {
   visible: boolean;
@@ -75,6 +74,9 @@ export default function TeamPreviewModal({
     "Minnesota Timberwolves",
     "New England Patriots",
     "Seattle Seahawks",
+    "UCF Knights",
+    "California Golden Bears",
+     "Cincinnati Bearcats",
   ];
 
   const logoLightTeams = [
@@ -84,6 +86,9 @@ export default function TeamPreviewModal({
     "Utah Jazz",
     "New York Giants",
     "New York Jets",
+    "California Golden Bears",
+    "Alabama Crimson Tide",
+    "Cincinnati Bearcats",
   ];
 
   const teamName = team?.fullName?.trim() ?? "";
@@ -93,7 +98,7 @@ export default function TeamPreviewModal({
   const baseColor = useSecondary
     ? team?.secondaryColor || "#444"
     : team?.color || "#444";
-const est = team.firstSeason ?? (team as any).established ?? "—";
+  const est = team.firstSeason ?? (team as any).established ?? "—";
 
   return (
     <Modal animationType="fade" transparent visible={visible}>
@@ -206,7 +211,9 @@ const est = team.firstSeason ?? (team as any).established ?? "—";
                       alignItems: "center",
                     }}
                   >
-                    <Text style={{ color: "#fff", fontFamily: Fonts.OSSEMIBOLD }}>
+                    <Text
+                      style={{ color: "#fff", fontFamily: Fonts.OSSEMIBOLD }}
+                    >
                       Remove from Favorites
                     </Text>
                   </Pressable>

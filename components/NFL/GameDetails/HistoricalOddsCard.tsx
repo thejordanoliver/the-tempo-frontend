@@ -3,6 +3,7 @@ import { teams } from "constants/teamsNFL";
 import { HistoricalNFLGameOdds } from "hooks/NFLHooks/useNFLHistoricalOdds";
 import React from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { styles } from "styles/GameDetailStyles/Odds.styles";
 
 interface Props {
   game: HistoricalNFLGameOdds;
@@ -228,73 +229,6 @@ const HistoricalOddsCard: React.FC<Props> = ({ game }) => {
   );
 };
 
-const styles = StyleSheet.create({
 
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  headerText: {
-    fontSize: 12,
-    textAlign: "center",
-  },
-  headerTeamText: {
-    fontSize: 12,
-    textAlign: "left",
-    paddingLeft: 4,
-  },
-  teamRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  teamInfo: {
-    flex: 2,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingLeft: 4,
-  },
-  teamLogo: {
-    width: 28,
-    height: 28,
-  },
-  teamName: {
-    fontSize: 14,
-  },
-  oddsText: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-  },
-  divider: {
-    borderBottomWidth: 1,
-    marginVertical: 8,
-  },
-  bookmaker: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 12,
-  },
-
-  bookmakerWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  bookmakerImage: {
-    width: 60,
-    height: 20,
-    resizeMode: "contain",
-    marginLeft: 4,
-  },
-  subtext: {
-    color: "#888",
-    fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
-  },
-});
 
 export default HistoricalOddsCard;

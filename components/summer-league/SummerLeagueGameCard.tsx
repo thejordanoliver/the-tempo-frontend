@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "../../styles/SLGameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { teams } from "../../constants/teams";
 import type { summerGame } from "../../types/types";
 

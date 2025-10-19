@@ -11,33 +11,33 @@ import SportsListModal, {
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
+import { useCFBSeasonGames } from "hooks/CFBHooks/useCFBSeasonGames";
 import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
-import { useSeasonGames as useDBGames } from "hooks/useDBGames";
-import { useSeasonGames as useLiveSeasonGames } from "hooks/useSeasonGames";
+import { mapToInternalTeam } from "constants/teams";
+import { useSeasonGames} from "hooks/useSeasonGames";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState, useEffect } from "react";
-import {
-  Animated,
-  RefreshControl,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
+import { filterByDate, normalizeTeam } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
-import {
-  normalizeTeam,
-  localDateOnly,
-  filterByDate,
-  normalizeNFLGames,
-} from "utils/games";
+import { constructFromSymbol } from "date-fns/constants";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+// --- Helper to convert API game date to local timezone ---
+function toLocalDate(apiGameDate: any) {
+  if (!apiGameDate) return new Date();
+  if (apiGameDate.timestamp) {
+    return dayjs.unix(apiGameDate.timestamp).tz("America/New_York").toDate();
+  }
+  if (apiGameDate.date) {
+    return dayjs(apiGameDate.date).tz("America/New_York").toDate();
+  }
+  return new Date();
+}
 
 type TeamLike = {
   id: string;
@@ -47,64 +47,30 @@ type TeamLike = {
   fullName: string;
 };
 
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
-const CACHE_KEYS = {
-  liveGames: "liveGamesCache",
-  dbGames: "dbGamesCache",
-  summerGames: "summerGamesCache",
-  nflGames: "nflGamesCache",
-};
-
-// ... imports remain the same
-
 export default function ScoresScreen() {
   const currentYear = "2025";
 
   const {
-    games: liveGames,
+    games: nbaGames,
     loading: liveLoading,
     refreshGames: refreshLiveGames,
-  } = useLiveSeasonGames(currentYear);
-
+  } = useSeasonGames(currentYear);
   const {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFLGames,
   } = useNFLSeasonGames("2025", "1");
-
   const {
-    games: dbGames,
-    loading: dbLoading,
-    refreshGames: refreshDBGames,
-  } = useDBGames(currentYear);
+    games: cfbGames,
+    loading: cfbLoading,
+    refetch: refreshcfbGames,
+  } = useCFBSeasonGames("2025", "2");
 
   const {
     games: summerGames,
     loading: summerLoading,
     refreshGames: refreshSummerGames,
   } = useSummerLeagueGames();
-
-  const { news, refreshNews } = useNews();
-  const { highlights } = useHighlights("NBA highlights", 50);
 
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
@@ -141,100 +107,117 @@ export default function ScoresScreen() {
           tabName="League"
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => sportsModalRef.current?.present()}
+          onOpenLeagueModal={() => {
+            setLeagueModalVisible(true);
+            sportsModalRef.current?.present();
+          }}
         />
       ),
     });
   }, [navigation, leagueModalVisible]);
 
-  // --- Normalize games ---
-  const normalizedNFLGames = normalizeNFLGames(nflGames).map((game) => ({
+  // --- Normalize Games ---
+  const normalizedNFLGames = nflGames.map((game) => ({
     ...game,
-    date: game.game?.date?.date || new Date().toISOString(),
-    home: normalizeTeam(game.teams?.home),
-    away: normalizeTeam(game.teams?.away),
+    date: toLocalDate(game.game?.date),
+    home: {
+      ...normalizeTeam(game.teams?.home),
+      id: String(game.teams?.home?.id),
+    },
+    away: {
+      ...normalizeTeam(game.teams?.away),
+      id: String(game.teams?.away?.id),
+    },
   }));
 
-  const inProgressGames = liveGames.filter((g) => g.status === "In Progress");
-  const dbOnlyGames = dbGames.filter((g) => g.status === "Scheduled" || g.status === "Final");
-  const combinedSeasonGames = [...inProgressGames, ...dbOnlyGames];
+  const normalizedCFBGames = cfbGames.map((game) => ({
+    ...game,
+    date: toLocalDate(game.game?.date),
+    home: {
+      ...normalizeTeam(game.teams?.home),
+      id: String(game.teams?.home?.id),
+    },
+    away: {
+      ...normalizeTeam(game.teams?.away),
+      id: String(game.teams?.away?.id),
+    },
+  }));
 
-  const filteredSeasonGames = filterByDate(combinedSeasonGames, selectedDate);
-  const filteredSummerGames = filterByDate(summerGames, selectedDate);
+const normalizedSeasonGames = nbaGames.map((game: any) => {
+  const home = mapToInternalTeam(game.teams?.home ?? {});
+  const away = mapToInternalTeam(game.teams?.visitors ?? {});
+
+  const gameStart = game.date?.start ?? new Date().toISOString();
+  const easternDate = dayjs(gameStart).tz("America/New_York").toDate();
+
+  return {
+    ...game,
+    date: easternDate,
+    time: easternDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    home,
+    away,
+  };
+});
+
+
+  const normalizedSummerGames = summerGames.map((game) => ({
+    ...game,
+    date: game.date ? new Date(game.date) : new Date(),
+    home: normalizeTeam(game.home),
+    away: normalizeTeam(game.away),
+  }));
+
+  // --- Filter by selected date ---
   const filteredNFLGames = filterByDate(normalizedNFLGames, selectedDate);
+  const filteredCFBGames = filterByDate(normalizedCFBGames, selectedDate);
+  const filteredSeasonGames = filterByDate(normalizedSeasonGames, selectedDate);
+  const filteredSummerGames = filterByDate(normalizedSummerGames, selectedDate);
 
-  const normalizedSeasonGames = filteredSeasonGames.map((game) => ({
-    ...game,
-    date: game.date ? String(game.date) : new Date().toISOString(),
-    period: game.period !== undefined ? String(game.period) : undefined,
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
-  }));
+  // --- Favorites helper ---
+  const isFavoriteGame = (game: any, prefix: string) =>
+    favorites.includes(`${prefix}:${game.home.id}`.toString()) ||
+    favorites.includes(`${prefix}:${game.away.id}`.toString());
 
-  const normalizedSummerGames = filteredSummerGames.map((game) => ({
-    ...game,
-    date: game.date ? String(game.date) : new Date().toISOString(),
-    period: game.period !== undefined ? String(game.period) : undefined,
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
-  }));
-
-  // --- Favorites logic ---
+  // --- Build Favorites ---
   const favoriteGames = React.useMemo(() => {
     if (!favorites.length) return [];
 
-    const nbaFav = normalizedSeasonGames.filter(
-      (game) =>
-        favorites.includes(`NBA:${game.home.id}`) ||
-        favorites.includes(`NBA:${game.away.id}`)
-    ).map((game) => ({ ...game, league: { name: "NBA" } }));
+    const collect = (games: any[], prefix: string, name: string) =>
+      games
+        .filter((g) => isFavoriteGame(g, prefix))
+        .map((g) => ({ ...g, league: { name } }));
 
-    const nflFav = filteredNFLGames.filter(
-      (game) =>
-        favorites.includes(`NFL:${game.teams?.home?.id}`) ||
-        favorites.includes(`NFL:${game.teams?.away?.id}`)
-    ).map((game) => ({
-      ...game,
-      league: { name: "NFL" },
-      home: normalizeTeam(game.teams?.home),
-      away: normalizeTeam(game.teams?.away),
-    }));
+    return [
+      ...collect(filteredSeasonGames, "NBA", "NBA"),
+      ...collect(filteredNFLGames, "NFL", "NFL"),
+      ...collect(filteredCFBGames, "CFB", "College Football"),
+    ];
+  }, [favorites, filteredSeasonGames, filteredNFLGames, filteredCFBGames]);
 
-    return [...nbaFav, ...nflFav];
-  }, [favorites, normalizedSeasonGames, filteredNFLGames]);
 
-  const nbaWithoutFavorites = React.useMemo(() => {
-    if (!favorites.length) return normalizedSeasonGames;
-    return normalizedSeasonGames.filter(
-      (game) =>
-        !favorites.includes(`NBA:${game.home.id}`) &&
-        !favorites.includes(`NBA:${game.away.id}`)
-    );
-  }, [favorites, normalizedSeasonGames]);
+  // --- Limit non-favorites to 10 ---
+  const limitNonFavorites = (games: any[], prefix: string, max = 10) => {
+    const nonFavs = games.filter((g) => !isFavoriteGame(g, prefix));
+    return nonFavs.slice(0, max);
+  };
 
-  const nflWithoutFavorites = React.useMemo(() => {
-    if (!favorites.length) return filteredNFLGames;
-    return filteredNFLGames.filter(
-      (game) =>
-        !favorites.includes(`NFL:${game.teams?.home?.id}`) &&
-        !favorites.includes(`NFL:${game.teams?.away?.id}`)
-    ).map((game) => ({
-      ...game,
-      home: normalizeTeam(game.teams?.home),
-      away: normalizeTeam(game.teams?.away),
-    }));
-  }, [favorites, filteredNFLGames]);
+  // --- Apply limits (EXCLUDE favorites from other categories) ---
+  const limitedNBA = limitNonFavorites(filteredSeasonGames, "NBA");
+  const limitedNFL = limitNonFavorites(filteredNFLGames, "NFL");
+  const limitedCFB = limitNonFavorites(filteredCFBGames, "CFB");
+  const limitedSummer = limitNonFavorites(filteredSummerGames, "NBA");
 
-  // --- Combine games by category ---
+  // --- Combine sections ---
   const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
     const sections: CombinedGamesSection[] = [
       { category: "Favorites", data: favoriteGames },
-      { category: "NFL", data: nflWithoutFavorites },
-      { category: "NBA", data: nbaWithoutFavorites },
-      { category: "NBA Summer League", data: normalizedSummerGames },
+      { category: "NBA", data: limitedNBA },
+      { category: "NFL", data: limitedNFL },
+      { category: "College Football", data: limitedCFB },
+      { category: "NBA Summer League", data: limitedSummer },
     ];
-    return sections.filter((section) => section.data.length > 0);
-  }, [favoriteGames, nflWithoutFavorites, nbaWithoutFavorites, normalizedSummerGames]);
+    return sections.filter((s) => s.data.length > 0);
+  }, [favoriteGames, limitedCFB, limitedNFL, limitedNBA, limitedSummer]);
 
   // --- Refresh ---
   const handleRefresh = async () => {
@@ -242,10 +225,9 @@ export default function ScoresScreen() {
     try {
       await Promise.all([
         refreshLiveGames(),
-        refreshDBGames(),
+    
         refreshSummerGames(),
         refreshNFLGames(),
-        refreshNews(),
       ]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
@@ -262,8 +244,6 @@ export default function ScoresScreen() {
     });
   };
 
-
-
   return (
     <>
       <View style={styles.container}>
@@ -279,12 +259,20 @@ export default function ScoresScreen() {
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
             }
           >
             <CombinedGamesList
               gamesByCategory={gamesByCategory}
-              loading={liveLoading || dbLoading || summerLoading || nflLoading}
+              loading={
+                liveLoading ||
+                summerLoading ||
+                nflLoading ||
+                cfbLoading
+              }
               refreshing={refreshing}
               onRefresh={handleRefresh}
             />
@@ -301,18 +289,18 @@ export default function ScoresScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...[...combinedSeasonGames, ...summerGames].reduce(
-            (acc, game) => {
-              if (!game.date) return acc;
-              const localDate = localDateOnly(game.date);
-              const iso = `${localDate.getFullYear()}-${String(
-                localDate.getMonth() + 1
-              ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
-              acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
-              return acc;
-            },
-            {} as Record<string, { marked: boolean; dotColor: string }>
-          ),
+          ...[
+            ...normalizedSeasonGames,
+            ...normalizedSummerGames,
+            ...normalizedNFLGames,
+          ].reduce((acc, game) => {
+            if (!game.date) return acc;
+            const localDate = dayjs(game.date).tz("America/New_York");
+            if (!localDate.isValid()) return acc;
+            const iso = localDate.format("YYYY-MM-DD");
+            acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
+            return acc;
+          }, {} as Record<string, { marked: boolean; dotColor: string }>),
         }}
       />
 
@@ -324,4 +312,3 @@ export default function ScoresScreen() {
     </>
   );
 }
-

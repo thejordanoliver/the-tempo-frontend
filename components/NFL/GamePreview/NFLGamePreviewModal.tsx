@@ -8,8 +8,7 @@ import { TeamLocationSection } from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
 import Weather from "components/GameDetails/Weather";
 import { NFLGameCenterInfo } from "components/NFL/GamePreview/GameCenterInfo";
-import { arenaImages } from "constants/teams";
-import { neutralStadiums, stadiumImages, teams } from "constants/teamsNFL";
+import { neutralStadiums, teams, venueImages } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
@@ -43,7 +42,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
   // Ensure timestamp is a number
   const timestampNum = Number(gameInfo.date.timestamp);
-  const apiDateStr = new Date(timestampNum * 1000).toISOString().split("T")[0]; // ✅ for API hooks
+  const apiDateStr = new Date(timestampNum * 1000).toISOString();
   const displayDateStr = new Date(timestampNum * 1000).toLocaleDateString(
     "en-us",
     {
@@ -127,7 +126,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   // Weather
   const isNeutralSite =
     gameInfo.venue?.name &&
-    ![homeTeamData?.stadium, awayTeamData?.stadium].includes(
+    ![homeTeamData?.venue, awayTeamData?.venue].includes(
       gameInfo.venue?.name ?? ""
     );
 
@@ -154,14 +153,13 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     : null;
 
   // Snap points
-  const snapPoints = useMemo(() => ["40%", "60%", "80%", "94%"], []);
+  const snapPoints = useMemo(() => ["80%", "94%"], []);
 
   // Modal open/close
   useEffect(() => {
     if (visible) sheetRef.current?.present();
     else sheetRef.current?.dismiss();
   }, [visible]);
-
   // Colors for NFLGameCenterInfo
   const colorsRecord = useMemo(
     () => ({
@@ -187,33 +185,31 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
         : ""
     );
 
-  const formatPeriod = (raw: string | number | undefined | null) => {
-    if (!raw) return "";
-    const map: Record<string, string> = {
-      Q1: "1st",
-      Q2: "2nd",
-      Q3: "3rd",
-      Q4: "4th",
-      OT: "OT",
-      HT: "Halftime",
-      FT: "Final",
-    };
+  // --- Format quarter / period ---
+  const formatQuarter = (
+    short?: string | null,
+    long?: string | null
+  ): string => {
+    const val = short && short.trim() !== "" ? short : long ?? "";
+    if (!val) return "";
 
-    // If it matches keys (Q1..OT) use map
-    if (typeof raw === "string" && map[raw]) {
-      return map[raw];
+    const q = val.toLowerCase();
+    if (q.includes("1")) return "1st";
+    if (q.includes("2")) return "2nd";
+    if (q.includes("3")) return "3rd";
+    if (q.includes("4")) return "4th";
+    if (q.includes("ot") || q.includes("overtime")) return "OT";
+    if (q.includes("half")) return "Halftime";
+    if (q.includes("end")) return "End";
+
+    const asNumber = Number(val);
+    if (!isNaN(asNumber)) {
+      if (asNumber === 5) return "OT";
+      if (asNumber > 5) return `${asNumber - 4}OT`;
     }
 
-    // If it’s a number, format with ordinal suffix
-    if (typeof raw === "number") {
-      const suffix =
-        raw === 1 ? "st" : raw === 2 ? "nd" : raw === 3 ? "rd" : "th";
-      return `${raw}${suffix}`;
-    }
-
-    return String(raw);
+    return val;
   };
-
   const isLive =
     gameStatus === "In Progress" ||
     gameStatus === "Halftime" ||
@@ -245,6 +241,12 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     loading: possessionLoading,
   } = possessionData;
 
+  console.log("🔍 useNFLGamePossession input:", {
+    homeName: homeTeamData.name,
+    awayName: awayTeamData.name,
+    date: apiDateStr,
+  });
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -270,7 +272,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
         top: 0,
       }}
       handleIndicatorStyle={{
-             backgroundColor: "#888",
+        backgroundColor: "#888",
         width: 36,
         height: 4,
         borderRadius: 2,
@@ -343,6 +345,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   }
                   side="away"
                   timeouts={awayTimeouts ?? 0} // ✅ fallback to 0
+                  lighter
                 />
 
                 <NFLGameCenterInfo
@@ -351,7 +354,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   status={gameStatus}
                   date={displayDateStr}
                   time={displayTimeStr}
-                  period={formatPeriod(period ?? gameInfo.status.short ?? "")}
+                  period={formatQuarter(period ?? gameInfo.status.short ?? "")}
                   clock={displayClock ?? gameInfo?.status?.timer ?? ""} // ✅ main clock: displayClock, fallback: timer
                   isDark={isDark}
                   homeTeam={homeTeamData} // ✅ must have .code
@@ -399,7 +402,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     lighter
                   />
 
-             
                   {homeTeamData &&
                     awayTeamData &&
                     gameStatus !== "Scheduled" && (
@@ -418,7 +420,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     homeTeamAbbr={homeTeamData?.code} // 👈 use getTeamInfo result
                     lighter
                   />
-                  
+
                   <NFLInjuries
                     injuries={injuries}
                     loading={false}
@@ -428,58 +430,58 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     lighter
                   />
                   {gameStatus !== "Scheduled" && (
-                  <NFLOfficials
-                    officials={officials}
-                    loading={false}
-                    error={null}
-                    lighter
-                  />
-                   )}
-                    {gameStatus !== "Scheduled" && (
-                  <TeamLocationSection
-                    arenaImage={
-                      isNeutralSite
-                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                            ?.stadiumImage ||
-                          stadiumImages[gameInfo?.venue?.name ?? ""] ||
-                          arenaImages[gameInfo?.venue?.city ?? ""]
-                        : homeTeamData?.stadiumImage
-                    }
-                    arenaName={
-                      isNeutralSite
-                        ? gameInfo?.venue?.name ?? ""
-                        : homeTeamData?.stadium ?? ""
-                    }
-                    location={
-                      isNeutralSite
-                        ? gameInfo?.venue?.city ?? ""
-                        : homeTeamData?.location ?? ""
-                    }
-                    address={
-                      isNeutralSite
-                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                            ?.address ?? ""
-                        : homeTeamData?.address ?? ""
-                    }
-                    arenaCapacity={
-                      isNeutralSite
-                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                            ?.stadiumCapacity ?? ""
-                        : homeTeamData?.stadiumCapacity ?? ""
-                    }
-                    loading={false}
-                    error={null}
-                    lighter
-                  />  
-                   )}
+                    <NFLOfficials
+                      officials={officials}
+                      loading={false}
+                      error={null}
+                      lighter
+                    />
+                  )}
                   {gameStatus !== "Scheduled" && (
-                  <Weather
-                    weather={displayWeather}
-                    address={stadiumData?.city ?? ""}
-                    loading={false}
-                    error={null}
-                    lighter
-                  />
+                    <TeamLocationSection
+                      venueImage={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.venueImage ||
+                            venueImages[gameInfo?.venue?.name ?? ""] ||
+                            venueImages[gameInfo?.venue?.city ?? ""]
+                          : homeTeamData?.venueImage
+                      }
+                      venueName={
+                        isNeutralSite
+                          ? gameInfo?.venue?.name ?? ""
+                          : homeTeamData?.venue ?? ""
+                      }
+                      location={
+                        isNeutralSite
+                          ? gameInfo?.venue?.city ?? ""
+                          : homeTeamData?.location ?? ""
+                      }
+                      address={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.address ?? ""
+                          : homeTeamData?.address ?? ""
+                      }
+                      venueCapacity={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.venueCapacity ?? ""
+                          : homeTeamData?.venueCapacity ?? ""
+                      }
+                      loading={false}
+                      error={null}
+                      lighter
+                    />
+                  )}
+                  {gameStatus !== "Scheduled" && (
+                    <Weather
+                      weather={displayWeather}
+                      address={stadiumData?.city ?? ""}
+                      loading={false}
+                      error={null}
+                      lighter
+                    />
                   )}
                 </View>
               </BottomSheetScrollView>
@@ -492,8 +494,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                 awayTeamData.color ?? "#888",
                 homeTeamData.color ?? "#888",
               ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 0 }}
               style={StyleSheet.absoluteFill}
             />
             <LinearGradient
@@ -546,6 +548,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   }
                   side="away"
                   timeouts={awayTimeouts ?? 0} // ✅ fallback to 0
+                  lighter
                 />
 
                 <NFLGameCenterInfo
@@ -554,7 +557,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   status={gameStatus}
                   date={displayDateStr}
                   time={displayTimeStr}
-                  period={formatPeriod(period ?? gameInfo.status.short ?? "")}
+                  period={formatQuarter(period ?? gameInfo.status.short ?? "")}
                   clock={displayClock ?? gameInfo?.status?.timer ?? ""}
                   isDark={isDark}
                   homeTeam={homeTeamData}
@@ -585,6 +588,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   }
                   side="home"
                   timeouts={homeTimeouts ?? 0}
+                  lighter
                 />
               </View>
 
@@ -636,52 +640,50 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                       lighter
                     />
                   )}
-                  
-                    <TeamLocationSection
-                      arenaImage={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.stadiumImage ||
-                            stadiumImages[gameInfo?.venue?.name ?? ""] ||
-                            arenaImages[gameInfo?.venue?.city ?? ""]
-                          : homeTeamData?.stadiumImage
-                      }
-                      arenaName={
-                        isNeutralSite
-                          ? gameInfo?.venue?.name ?? ""
-                          : homeTeamData?.stadium ?? ""
-                      }
-                      location={
-                        isNeutralSite
-                          ? gameInfo?.venue?.city ?? ""
-                          : homeTeamData?.location ?? ""
-                      }
-                      address={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.address ?? ""
-                          : homeTeamData?.address ?? ""
-                      }
-                      arenaCapacity={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.stadiumCapacity ?? ""
-                          : homeTeamData?.stadiumCapacity ?? ""
-                      }
-                      loading={false}
-                      error={null}
-                      lighter
-                    />
-                  
-              
-                    <Weather
-                      weather={displayWeather}
-                      address={stadiumData?.city ?? ""}
-                      loading={false}
-                      error={null}
-                      lighter
-                    />
-               
+
+                  <TeamLocationSection
+                    venueImage={
+                      isNeutralSite
+                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                            ?.venueImage ||
+                          venueImages[gameInfo?.venue?.name ?? ""] ||
+                          venueImages[gameInfo?.venue?.city ?? ""]
+                        : homeTeamData?.venueImage
+                    }
+                    venueName={
+                      isNeutralSite
+                        ? gameInfo?.venue?.name ?? ""
+                        : homeTeamData?.venue ?? ""
+                    }
+                    location={
+                      isNeutralSite
+                        ? gameInfo?.venue?.city ?? ""
+                        : homeTeamData?.location ?? ""
+                    }
+                    address={
+                      isNeutralSite
+                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                            ?.address ?? ""
+                        : homeTeamData?.address ?? ""
+                    }
+                    venueCapacity={
+                      isNeutralSite
+                        ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                            ?.venueCapacity ?? ""
+                        : homeTeamData?.venueCapacity ?? ""
+                    }
+                    loading={false}
+                    error={null}
+                    lighter
+                  />
+
+                  <Weather
+                    weather={displayWeather}
+                    address={stadiumData?.city ?? ""}
+                    loading={false}
+                    error={null}
+                    lighter
+                  />
                 </View>
               </BottomSheetScrollView>
             </BlurView>

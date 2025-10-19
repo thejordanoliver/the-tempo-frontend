@@ -20,6 +20,7 @@ export interface NFLPlayer {
 export type NFLTeam = {
   id: number | string;
   espnID: string;
+  oddsID: string;
   name: string;
   fullName: string;
   code: string;
@@ -28,13 +29,11 @@ export type NFLTeam = {
   address?: string;
   coach: string;
   coachImage?: string;
-  owner: string;
-  stadium: string;
+  owner?: string;
+  venue: string;
   established: number;
   logo: string;
   logoLight?: string;
-  logo500x500: string;
-  logoLight500x500?: string;
   country: {
     name: string;
     code: string;
@@ -44,8 +43,8 @@ export type NFLTeam = {
   secondaryColor: string;
   latitude: number;
   longitude: number;
-  stadiumImage: any;
-  stadiumCapacity: string;
+  venueImage: any;
+  venueCapacity: string;
 };
 
 export type NFLGame = {
@@ -79,14 +78,14 @@ export type NFLGame = {
   };
 };
 
-export type Stadium = {
+export type Venue = {
   name: string;
   address: string;
   city: string;
   latitude?: number;
   longitude?: number;
-  stadiumCapacity?: string;
-  stadiumImage: any;
+  venueCapacity?: string;
+  venueImage: any;
 };
 
 export type NFLGamesResponse = {
@@ -165,16 +164,16 @@ export interface RawNFLGame {
 export const emptyTeam: NFLTeam = {
   id: 0,
   espnID: "0",
+  oddsID: "0",
   name: "Unknown",
   code: "UNK",
   city: "Unknown",
   location: "Unknown",
   coach: "Unknown",
   owner: "Unknown",
-  stadium: "Unknown",
+  venue: "Unknown",
   established: 0,
   logo: "",
-  logo500x500: "",
   country: {
     name: "Unknown",
     code: "UNK",
@@ -185,6 +184,6 @@ export const emptyTeam: NFLTeam = {
   secondaryColor: "#FFFFFF",
   latitude: 0,
   longitude: 0,
-  stadiumImage: null,
-  stadiumCapacity: "",
+  venueImage: null,
+  venueCapacity: "",
 };

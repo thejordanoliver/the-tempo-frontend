@@ -2,7 +2,7 @@ import { Fonts } from "constants/fonts";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useTeamInfo } from "hooks/useTeamInfo";
 import { useMemo } from "react";
 import {
@@ -14,10 +14,11 @@ import {
   useColorScheme,
 } from "react-native";
 import { matchBroadcastToGame } from "utils/matchBroadcast";
-
+import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
 import { teams } from "../../constants/teams";
 import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
 import { Game, Team } from "../../types/types";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function StackedGameCard({
   game,
@@ -124,13 +125,9 @@ export default function StackedGameCard({
     console.warn("away logo source is undefined", awayTeamData, awayTeam);
   }
 
-  const { broadcasts } = useESPNBroadcasts();
 
-  const matchedBroadcast = matchBroadcastToGame(game, broadcasts);
-  const broadcastNetworks = matchedBroadcast?.broadcasts
-    .map((b) => b.network)
-    .filter(Boolean)
-    .join(", ");
+
+ 
 
   const homeId = Number(homeTeamData?.id);
   const awayId = Number(awayTeamData?.id);
@@ -156,10 +153,21 @@ export default function StackedGameCard({
     : isNewYearsDay
     ? "New Year's Day"
     : null;
+  const gameDateStr = gameDate?.toISOString();
 
   const finalsScoreStyle = (isWinner: boolean): TextStyle => ({
     color: isWinner ? (dark ? "#1d1d1d" : "#1d1d1d") : "rgba(0, 0, 0, 0.4)",
   });
+
+
+   // --- Broadcasts ---
+  const { broadcasts } = useGameBroadcasts(
+    homeTeam.name,
+    awayTeam.name,
+    gameDateStr
+  );
+
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const gameNumberLabel = gameNumber ? `Game ${gameNumber}` : null;
 
@@ -330,7 +338,7 @@ export default function StackedGameCard({
                 </Text>
               </>
             ) : null}
-            {broadcastNetworks && (
+     
               <Text
                 style={[
                   styles.broadcast,
@@ -339,9 +347,9 @@ export default function StackedGameCard({
                   },
                 ]}
               >
-                {broadcastNetworks}
+                {broadcastText}
               </Text>
-            )}
+         
           </View>
           {(gameNumberLabel || seriesSummary || holidayLabel) && (
             <View
@@ -510,7 +518,7 @@ export default function StackedGameCard({
                   style={[
                     styles.time,
                     {
-                      fontFamily: Fonts.OSREGULAR,
+                  
                       color: dark
                         ? "rgba(255,255,255, .5)"
                         : "rgba(0, 0, 0, .5)",
@@ -559,9 +567,9 @@ export default function StackedGameCard({
                 ) : null}
               </>
             ) : null}
-            {broadcastNetworks && (
-              <Text style={styles.broadcast}>{broadcastNetworks}</Text>
-            )}
+    
+  {/* Only show broadcast if exists */}
+  {broadcastText ? <Text style={styles.broadcast}>{broadcastText}</Text> : null}
           </View>
 
           {(gameNumberLabel || seriesSummary || holidayLabel) && (
@@ -649,107 +657,3 @@ export default function StackedGameCard({
   );
 }
 
-export const getStyles = (dark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      flex: 1,
-      height: 110,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
-      justifyContent: "space-between",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 12,
-    },
-    cardWrapper: {
-      flexDirection: "column",
-      justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
-      borderRightWidth: 0.5,
-      paddingRight: 12,
-      gap: 4,
-      flex: 1,
-    },
-    teamSection: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
-    },
-    teamWrapper: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 8,
-      width: 80,
-      flex: 1,
-    },
-    logo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
-    },
-    teamName: {
-      fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
-      flexShrink: 1,
-      color: dark ? "#fff" : "#1d1d1d",
-      textAlign: "left",
-    },
-    teamScore: {
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
-      width: 40,
-    },
-    teamRecord: {
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 30,
-      width: 100,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
-      textAlign: "center",
-      width: 40,
-    },
-    date: {
-      fontSize: 12,
-      textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    time: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    broadcast: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-    },
-  });

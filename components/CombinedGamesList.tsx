@@ -13,15 +13,17 @@ import {
   ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import type { Game, Game as NFLGameType } from "types/nfl";
+import type { Game as CFBGameType } from "types/cfb";
+import type { Game as NFLGameType } from "types/nfl";
 import type { Game as NBAGameType, summerGame } from "types/types";
+import CFBGamePreviewModal from "./CFB/GamePreview/CFBGamePreviewModal";
 import GamePreviewModal from "./GamePreview/GamePreviewModal";
-import HeaderSkeleton from "./Headings/HeaderSkeleton"; // ✅ import
+import HeaderSkeleton from "./Headings/HeaderSkeleton";
 import HeadingTwo from "./Headings/HeadingTwo";
 import NFLGamePreviewModal from "./NFL/GamePreview/NFLGamePreviewModal";
 import SummerLeagueGamePreviewModal from "./summer-league/SummerLeagueGamePreviewModal";
 
-// ✅ shared skeletons
+// ✅ Shared skeletons
 import GameCardSkeleton from "components/Games/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
@@ -30,6 +32,11 @@ import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
 import NFLGameCard from "components/NFL/Games/NFLGameCard";
 import NFLGameSquareCard from "components/NFL/Games/NFLGameSquareCard";
 import NFLStackedGameCard from "components/NFL/Games/NFLStackedGameCard";
+
+// ✅ CFB cards
+import CFBGameCard from "components/CFB/Games/CFBGameCard";
+import CFBGameSquareCard from "components/CFB/Games/CFBGameSquareCard";
+import CFBStackedGameCard from "./CFB/Games/CFBStackedGameCard";
 
 // ✅ NBA cards
 import GameCard from "components/Games/GameCard";
@@ -41,17 +48,21 @@ import SummerGameSquareCard from "components/summer-league/SummerGameSquareCard"
 import SummerGameCard from "components/summer-league/SummerLeagueGameCard";
 import SummerStackedGameCard from "components/summer-league/SummerLeagueStackedGameCard";
 
-type SportsCategory = "NFL" | "NBA" | "NBA Summer League" | "Favorites";
-type League = "NBA" | "NFL" | "SL";
+type SportsCategory =
+  | "College Football"
+  | "NFL"
+  | "NBA"
+  | "NBA Summer League"
+  | "Favorites";
 
-// CombinedGamesList.tsx
 export type CombinedGamesSection =
+  | { category: "College Football"; data: CFBGameType[] }
   | { category: "NFL"; data: NFLGameType[] }
   | { category: "NBA"; data: NBAGameType[] }
   | { category: "NBA Summer League"; data: summerGame[] }
   | { category: "Favorites"; data: NBAGameType[] };
 
-type CombinedGame = NFLGameType | NBAGameType | summerGame;
+type CombinedGame = CFBGameType | NFLGameType | NBAGameType | summerGame;
 
 type CombinedGamesListProps = {
   gamesByCategory: CombinedGamesSection[];
@@ -60,22 +71,80 @@ type CombinedGamesListProps = {
   onRefresh: () => void;
   expectedCount?: number;
   day?: "todayTomorrow";
-  showHeaders?: boolean; // ✅ new prop
-  ListHeaderComponent?: React.ReactNode; // ✅ add this
+  showHeaders?: boolean;
+  ListHeaderComponent?: React.ReactNode;
 };
 
 type NFLGameExtended = NFLGameType & {
   league?: { id?: number; name?: string; season?: string; logo?: string };
 };
-
-const getCategoryForFavorites = (item: NBAGameType | NFLGameType | summerGame) => {
-  // @ts-ignore
-  const leagueName = (item as any).league?.name ?? "NBA";
-  if (leagueName === "NFL") return "NFL";
-  if (leagueName === "NBA Summer League") return "NBA Summer League";
-  return "NBA"; // default fallback
+type CFBGameExtended = CFBGameType & {
+  league?: { id?: number; name?: string; season?: string; logo?: string };
 };
 
+const getCategoryForFavorites = (
+  item: CFBGameType | NBAGameType | NFLGameType | summerGame
+): SportsCategory => {
+  const leagueName = (item as any).league?.name ?? "NBA";
+  if (leagueName === "NFL") return "NFL";
+  if (leagueName === "College Football") return "College Football";
+  if (leagueName === "NBA Summer League") return "NBA Summer League";
+  return "NBA";
+};
+
+const liveStatuses = [
+  "In Progress", "LIVE", "Live", "Playing",
+  "1Q", "2Q", "3Q", "4Q",
+  "1H", "2H",
+  "Q1", "Q2", "Q3", "Q4",
+  "H1", "H2",
+  "HT",
+  "OT", "AOT",
+  "ET", "2OT", "3OT", "OT1", "OT2",
+  "Mid", "End",
+  "1st", "2nd", "3rd", "4th",
+  "OT1", "OT2", "OT3",
+  "Suspended", "Delayed",
+];
+
+const hasGameProperty = (game: CombinedGame): game is CFBGameType | NFLGameType => {
+  return "game" in game && typeof game.game === "object";
+};
+
+const getGameStatus = (game: CombinedGame): string => {
+  if (hasGameProperty(game)) {
+    return String(game.game?.status?.short ?? game.game?.status ?? "");
+  } else {
+    return String((game as NBAGameType | summerGame)?.status ?? "");
+  }
+};
+
+export const isLiveGame = (game: CombinedGame): boolean => {
+  const status = getGameStatus(game);
+  return liveStatuses.some(
+    (live) => status?.toString()?.toUpperCase() === live.toUpperCase()
+  );
+};
+
+const getGameTimestamp = (game: CombinedGame): number => {
+  if (hasGameProperty(game)) {
+    return game.game?.date?.timestamp
+      ? game.game.date.timestamp * 1000
+      : new Date(game.game?.date?.date ?? "").getTime();
+  } else {
+    return new Date((game as NBAGameType | summerGame)?.date ?? "").getTime();
+  }
+};
+
+const sortByLiveFirst = (games: CombinedGame[]): CombinedGame[] => {
+  const sorted = [...games].sort((a, b) => {
+    const aLive = isLiveGame(a) ? 1 : 0;
+    const bLive = isLiveGame(b) ? 1 : 0;
+    if (aLive !== bLive) return bLive - aLive;
+    return getGameTimestamp(a) - getGameTimestamp(b);
+  });
+  return sorted;
+};
 
 export default function CombinedGamesList({
   gamesByCategory,
@@ -84,22 +153,19 @@ export default function CombinedGamesList({
   onRefresh,
   expectedCount,
   day,
-  showHeaders = true, // ✅ default true
+  showHeaders = true,
 }: CombinedGamesListProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
-  const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(
-    null
-  );
-  const [modalVisible, setModalVisible] = useState(false);
-
   const { viewMode } = usePreferences();
 
-  const getItemId = (item: NFLGameType | NBAGameType | summerGame): string => {
-    if ("game" in item) return String((item as NFLGameType).game.id);
-    if ("id" in item) return String((item as NBAGameType | summerGame).id);
+  const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
+  const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const getItemId = (item: CombinedGame): string => {
+    if ("game" in item) return String((item as any).game?.id ?? "unknown");
+    if ("id" in item) return String((item as any).id ?? "unknown");
     return "unknown";
   };
 
@@ -110,43 +176,60 @@ export default function CombinedGamesList({
     setModalVisible(true);
   };
 
-  const transformNFLGame = (nflGame: NFLGameExtended): Game => {
-    const gameId = String(nflGame.game?.id ?? "0");
-    const gameDate = nflGame.game?.date?.date ?? "";
-    const gameTime = nflGame.game?.date?.time ?? "";
-    const timestamp = nflGame.game?.date?.timestamp ?? 0;
+  const transformNFLGame = (nflGame: NFLGameExtended): NFLGameType => ({
+    game: {
+      id: String(nflGame.game?.id ?? "0"),
+      stage: nflGame.game?.stage ?? "regular",
+      week: nflGame.game?.week ?? "1",
+      date: {
+        timezone: nflGame.game?.date?.timezone ?? "UTC",
+        date: nflGame.game?.date?.date ?? "",
+        time: nflGame.game?.date?.time ?? "",
+        timestamp: nflGame.game?.date?.timestamp ?? 0,
+      },
+      venue: nflGame.game?.venue || { name: "Unknown", city: "Unknown" },
+      status: {
+        short: nflGame.game?.status?.short ?? "",
+        long: nflGame.game?.status?.long ?? "",
+        timer: nflGame.game?.status?.timer,
+      },
+    },
+    league: {
+      id: Number(nflGame.league?.id ?? 0),
+      name: nflGame.league?.name ?? "NFL",
+      season: nflGame.league?.season ?? "2025",
+      logo: nflGame.league?.logo ?? "",
+    },
+    teams: nflGame.teams,
+    scores: nflGame.scores,
+  });
 
-    return {
-      game: {
-        id: gameId,
-        stage: nflGame.game?.stage ?? "regular",
-        week: nflGame.game?.week ?? "1",
-        date: {
-          timezone: nflGame.game?.date?.timezone ?? "UTC",
-          date: gameDate,
-          time: gameTime,
-          timestamp,
-        },
-        venue: nflGame.game?.venue || { name: "Unknown", city: "Unknown" },
-        status: {
-          short: nflGame.game?.status?.short ?? "",
-          long: nflGame.game?.status?.long ?? "",
-          timer: nflGame.game?.status?.timer ?? undefined,
-        },
+  const transformCFBGame = (cfbgame: CFBGameExtended): CFBGameType => ({
+    game: {
+      id: String(cfbgame.game?.id ?? "0"),
+      stage: cfbgame.game?.stage,
+      week: cfbgame.game?.week,
+      date: cfbgame.game?.date,
+      venue: cfbgame.game?.venue,
+      status: {
+        short: cfbgame.game?.status?.short,
+        long: cfbgame.game?.status?.long,
+        timer: cfbgame.game?.status?.timer ?? undefined,
       },
-      league: {
-        id: Number(nflGame.league?.id ?? 0),
-        name: nflGame.league?.name ?? "NFL",
-        season: nflGame.league?.season ?? "2025",
-        logo: nflGame.league?.logo ?? "",
+    },
+    league: cfbgame.league,
+    teams: {
+      home: {
+        ...cfbgame.teams.home,
+        fullName: cfbgame.teams.home?.fullName ?? cfbgame.teams.home?.name,
       },
-      teams: nflGame.teams,
-      scores: {
-        home: nflGame.scores?.home || {},
-        away: nflGame.scores?.away || {},
+      away: {
+        ...cfbgame.teams.away,
+        fullName: cfbgame.teams.away?.fullName ?? cfbgame.teams.away?.name,
       },
-    };
-  };
+    },
+    scores: cfbgame.scores,
+  });
 
   const renderGameCard = (
     item: CombinedGame,
@@ -154,46 +237,35 @@ export default function CombinedGamesList({
     index?: number,
     total?: number
   ) => {
-    if ((item as any)?._isPlaceholder) {
-      return (
-        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
-      );
-    }
-
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
-      let itemStyle: ViewStyle =
-        viewMode === "grid" ? styles.gridItem : styles.listItem;
+      let itemStyle: ViewStyle = viewMode === "grid" ? styles.gridItem : styles.listItem;
 
-      // grid-specific margins
-      if (viewMode === "grid" && typeof indexInRow === "number") {
-        const isLastOdd =
-          typeof total === "number" &&
-          total % 2 === 1 &&
-          indexInRow === total - 1;
+  if (viewMode === "grid" && typeof indexInRow === "number") {
+  const isLastOdd = typeof total === "number" && total % 2 === 1 && indexInRow === total - 1;
+  if (isLastOdd) {
+    // Make last odd card span the full row
+    itemStyle = {
+      marginLeft: 12,
+      marginRight: 12,
+      flex: .49, // full width
+    };
+  } else {
+    const isFirst = indexInRow % 2 === 0;
+    itemStyle = {
+      ...itemStyle,
+      marginLeft: isFirst ? 12 : 6,
+      marginRight: isFirst ? 6 : 12,
+    };
+  }
+}
 
-        if (isLastOdd) {
-          // ✅ special style for last odd item
-          itemStyle = {
-            marginLeft: 12,
-            flex: 0, // only span one column
-          };
-        } else {
-          const isFirst = indexInRow % 2 === 0;
-          itemStyle = {
-            ...itemStyle,
-            marginLeft: isFirst ? 12 : 6,
-            marginRight: isFirst ? 6 : 12,
-          };
-        }
-      }
 
       return (
         <LongPressGestureHandler
           key={getItemId(item)}
           minDurationMs={300}
           onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE)
-              handleLongPress(item, category);
+            if (nativeEvent.state === State.ACTIVE) handleLongPress(item, category);
           }}
         >
           <View style={itemStyle}>{child}</View>
@@ -202,38 +274,30 @@ export default function CombinedGamesList({
     };
 
     if (category === "NFL") {
-      const nflGame = transformNFLGame(item as unknown as NFLGameExtended);
-      if (viewMode === "list")
-        return wrapper(<NFLGameCard game={nflGame} isDark={isDark} />);
-      if (viewMode === "grid")
-        return wrapper(
-          <NFLGameSquareCard game={nflGame} isDark={isDark} />,
-          index
-        );
+      const nflGame = transformNFLGame(item as NFLGameExtended);
+      if (viewMode === "list") return wrapper(<NFLGameCard game={nflGame} isDark={isDark} />);
+      if (viewMode === "grid") return wrapper(<NFLGameSquareCard game={nflGame} isDark={isDark} />, index);
       return wrapper(<NFLStackedGameCard game={nflGame} isDark={isDark} />);
+    }
+
+    if (category === "College Football") {
+      const cfbGame = transformCFBGame(item as CFBGameExtended);
+      if (viewMode === "list") return wrapper(<CFBGameCard game={cfbGame} isDark={isDark} />);
+      if (viewMode === "grid") return wrapper(<CFBGameSquareCard game={cfbGame} isDark={isDark} />, index);
+      return wrapper(<CFBStackedGameCard game={cfbGame} isDark={isDark} />);
     }
 
     if (category === "NBA") {
       const nbaGame = item as NBAGameType;
-      if (viewMode === "list")
-        return wrapper(<GameCard game={nbaGame} isDark={isDark} />);
-      if (viewMode === "grid")
-        return wrapper(
-          <GameSquareCard game={nbaGame} isDark={isDark} />,
-          index
-        );
+      if (viewMode === "list") return wrapper(<GameCard game={nbaGame} isDark={isDark} />);
+      if (viewMode === "grid") return wrapper(<GameSquareCard game={nbaGame} isDark={isDark} />, index);
       return wrapper(<StackedGameCard game={nbaGame} isDark={isDark} />);
     }
 
     if (category === "NBA Summer League") {
       const slGame = item as summerGame;
-      if (viewMode === "list")
-        return wrapper(<SummerGameCard game={slGame} isDark={isDark} />);
-      if (viewMode === "grid")
-        return wrapper(
-          <SummerGameSquareCard game={slGame} isDark={isDark} />,
-          index
-        );
+      if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} isDark={isDark} />);
+      if (viewMode === "grid") return wrapper(<SummerGameSquareCard game={slGame} isDark={isDark} />, index);
       return wrapper(<SummerStackedGameCard game={slGame} isDark={isDark} />);
     }
 
@@ -241,7 +305,7 @@ export default function CombinedGamesList({
   };
 
   const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
+    if (viewMode === "list")
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, idx) => (
@@ -249,13 +313,10 @@ export default function CombinedGamesList({
           ))}
         </View>
       );
-    }
 
     if (viewMode === "grid") {
       const dataWithPlaceholder =
-        count % 2 === 1
-          ? [...Array.from({ length: count }), { _isPlaceholder: true }]
-          : Array.from({ length: count });
+        count % 2 === 1 ? [...Array.from({ length: count }), { _isPlaceholder: true }] : Array.from({ length: count });
 
       return (
         <FlatList
@@ -267,7 +328,7 @@ export default function CombinedGamesList({
             const isPlaceholder = (item as any)?._isPlaceholder;
             const marginLeft = index % 2 === 0 ? 12 : 6;
             const marginRight = index % 2 === 0 ? 6 : 12;
-
+console.log(isPlaceholder)
             return (
               <View
                 key={index}
@@ -276,7 +337,7 @@ export default function CombinedGamesList({
                   {
                     marginLeft,
                     marginRight,
-                    backgroundColor: isPlaceholder ? "transparent" : undefined,
+                    backgroundColor: isPlaceholder ? "red" : undefined,
                   },
                 ]}
               >
@@ -313,72 +374,56 @@ export default function CombinedGamesList({
     );
   }
 
+  const sortedSections = gamesByCategory.map((section) => ({
+    ...section,
+    data: sortByLiveFirst(section.data as CombinedGame[]),
+  }));
+
   return (
     <>
-      <SectionList<CombinedGame, CombinedGamesSection>
-        sections={
-          gamesByCategory.filter(
-            (section) => section.data.length > 0
-          ) as SectionListData<CombinedGame, CombinedGamesSection>[]
-        }
+      <SectionList
+        sections={sortedSections.filter((section) => section.data.length > 0) as SectionListData<
+          CombinedGame,
+          CombinedGamesSection
+        >[]}
         keyExtractor={(item) => getItemId(item)}
-renderItem={({ item, section, index }) => {
-  if (viewMode === "grid") return null;
-
-  const category =
-    section.category === "Favorites" ? getCategoryForFavorites(item) : section.category;
-
-  return renderGameCard(item, category, index, section.data.length);
-}}
-
-
+        renderItem={({ item, section, index }) => {
+          if (viewMode === "grid") return null;
+          const category = section.category === "Favorites" ? getCategoryForFavorites(item) : section.category;
+          return renderGameCard(item, category, index, section.data.length);
+        }}
         renderSectionHeader={({ section }) => {
           if (!showHeaders) return null;
-
-          const multipleSections =
-            gamesByCategory.filter((s) => s.data.length > 0).length > 1;
-          const isFirstSection =
-            gamesByCategory.findIndex(
-              (s) => s.category === section.category
-            ) === 0;
+          const multipleSections = sortedSections.filter((s) => s.data.length > 0).length > 1;
+          const isFirstSection = sortedSections.findIndex((s) => s.category === section.category) === 0;
 
           return (
-            <View
-              style={{
-                marginHorizontal: 12,
-                marginTop: multipleSections && !isFirstSection ? 8 : 0,
-              }}
-            >
+            <View style={{ marginHorizontal: 12, marginTop: multipleSections && !isFirstSection ? 8 : 0 }}>
               <HeadingTwo>{section.category}</HeadingTwo>
             </View>
           );
         }}
         contentContainerStyle={styles.contentContainer}
         stickySectionHeadersEnabled={false}
-        scrollEnabled={false} // ✅ Disable scrolling
-        ItemSeparatorComponent={() =>
-          viewMode !== "grid" ? <View style={{ height: 12 }} /> : null
-        }
+        scrollEnabled={false}
+        ItemSeparatorComponent={() => (viewMode !== "grid" ? <View style={{ height: 12 }} /> : null)}
         renderSectionFooter={({ section }) => {
           if (viewMode === "grid") {
             return (
               <View style={{ marginBottom: 16 }}>
-                <FlatList<CombinedGame>
-                  data={section.data}
-                  keyExtractor={(item, index) =>
-                    getItemId(item) ?? `idx-${index}`
-                  }
+                <FlatList
+                  data={section.data as CombinedGame[]}
+                  keyExtractor={(item, index) => getItemId(item) ?? `idx-${index}`}
                   numColumns={2}
                   columnWrapperStyle={styles.gridRow}
-              renderItem={({ item, index }) =>
-  renderGameCard(
-    item,
-    section.category === "Favorites" ? getCategoryForFavorites(item) : section.category,
-    index,
-    section.data.length
-  )
-}
-
+                  renderItem={({ item, index }) =>
+                    renderGameCard(
+                      item,
+                      section.category === "Favorites" ? getCategoryForFavorites(item) : section.category,
+                      index,
+                      section.data.length
+                    )
+                  }
                   scrollEnabled={false}
                   contentContainerStyle={styles.gridListContainer}
                 />
@@ -396,7 +441,13 @@ renderItem={({ item, section, index }) => {
           onClose={() => setModalVisible(false)}
         />
       )}
-
+      {modalVisible && previewGame && previewCategory === "College Football" && (
+        <CFBGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as CFBGameType}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
       {modalVisible && previewGame && previewCategory === "NBA" && (
         <GamePreviewModal
           visible={modalVisible}
@@ -404,50 +455,26 @@ renderItem={({ item, section, index }) => {
           onClose={() => setModalVisible(false)}
         />
       )}
-
-      {modalVisible &&
-        previewGame &&
-        previewCategory === "NBA Summer League" && (
-          <SummerLeagueGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as summerGame}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+      {modalVisible && previewGame && previewCategory === "NBA Summer League" && (
+        <SummerLeagueGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as summerGame}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  skeletonWrapper: {
-    gap: 12,
-    marginHorizontal: 12,
-      paddingBottom: 12, // ✅ already there
-  },
-  skeletonGridWrapper: {
-    paddingBottom: 12, // ✅ already there
-    gap: 12,
-  },
-  gridRow: {
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  skeletonGridRow: {
-    justifyContent: "space-between",
-  },
-  gridItem: {
-    flex: 1,
-  },
-  listItem: {
-    marginHorizontal: 12,
-    
-  },
-  gridListContainer: {
-    paddingBottom: 100,
-  },
-  contentContainer: {
-    paddingTop: 10,
-  },
+  skeletonWrapper: { gap: 12, marginHorizontal: 12, paddingBottom: 12 },
+  skeletonGridWrapper: { paddingBottom: 12, gap: 12 },
+  gridRow: { justifyContent: "space-between", marginBottom: 12 },
+  skeletonGridRow: { justifyContent: "space-between" },
+  gridItem: { flex: 1 },
+  listItem: { marginHorizontal: 12 },
+  gridListContainer: { paddingBottom: 100 },
+  contentContainer: { paddingTop: 10 },
   emptyText: {
     textAlign: "center",
     marginTop: 20,

@@ -1,20 +1,19 @@
 import { Fonts } from "constants/fonts";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
-import { useTeamInfo } from "hooks/useTeamInfo";
-import { matchBroadcastToGame } from "utils/matchBroadcast";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useTeamInfo } from "hooks/useTeamInfo";
 import { useMemo } from "react";
 import {
-  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
-
+import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { teams } from "../../constants/teams";
 import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
 import { Game, Team } from "../../types/types";
@@ -90,32 +89,12 @@ export default function GameSquareCard({
       return fallbackLogo;
     }
 
-    if (typeof logo === "string") {
-      const lowerLogo = logo.toLowerCase();
-      if (
-        lowerLogo.endsWith(".gif") ||
-        lowerLogo.includes("giphy.com") ||
-        lowerLogo.endsWith(".webp")
-      ) {
-        return fallbackLogo;
-      }
-      return { uri: logo };
-    }
-
     if (dark && teamData?.logoLight) {
       return teamData.logoLight;
     }
 
     return logo;
   };
-
-  const { broadcasts } = useESPNBroadcasts();
-
-  const matchedBroadcast = matchBroadcastToGame(game, broadcasts);
-  const broadcastNetworks = matchedBroadcast?.broadcasts
-    .map((b) => b.network)
-    .filter(Boolean)
-    .join(", ");
 
   const homeId = Number(homeTeamData?.id);
   const awayId = Number(awayTeamData?.id);
@@ -141,6 +120,16 @@ export default function GameSquareCard({
     : isNewYearsDay
     ? "New Year's Day"
     : null;
+
+  const gameDateStr = gameDate?.toISOString();
+
+  const { broadcasts } = useGameBroadcasts(
+    homeTeam.name,
+    awayTeam.name,
+    gameDateStr
+  );
+
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const finalsScoreStyle = (isWinner: boolean): TextStyle => ({
     color: isWinner ? (dark ? "#000" : "#000") : "rgba(0, 0, 0, 0.4)",
@@ -309,21 +298,9 @@ export default function GameSquareCard({
               </>
             ) : null}
           </View>
-          {broadcastNetworks && (
-            <Text
-              style={[
-                styles.broadcast,
-                {
-                  color: "#000",
-                  position: "absolute",
-                  top: 2,
-                  left: 12,
-                },
-              ]}
-            >
-              {broadcastNetworks}
-            </Text>
-          )}
+  {/* Only show broadcast if exists */}
+  {broadcastText ? <Text style={styles.broadcast}>{broadcastText}</Text> : null}
+
           {(gameNumberLabel || seriesSummary || holidayLabel) && (
             <View
               style={{
@@ -542,22 +519,18 @@ export default function GameSquareCard({
                 ) : null}
               </>
             ) : null}
-          </View>
-          {broadcastNetworks && (
+
             <Text
               style={[
                 styles.broadcast,
                 {
                   color: dark ? "#fff" : "#000",
-                  position: "absolute",
-                  top: 2,
-                  left: 12,
                 },
               ]}
             >
-              {broadcastNetworks}
+              {broadcastText}
             </Text>
-          )}
+          </View>
           {(gameNumberLabel || seriesSummary || holidayLabel) && (
             <View
               style={{
@@ -642,114 +615,3 @@ export default function GameSquareCard({
     </TouchableOpacity>
   );
 }
-
-export const getStyles = (dark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      height: 120,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
-      justifyContent: "space-between",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 16,
-    },
-    cardWrapper: {
-      flexDirection: "column",
-      justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
-      borderRightWidth: 0.5,
-      paddingRight: 12,
-      gap: 8,
-    },
-    teamSection: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
-    },
-
-    teamWrapper: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 8,
-      width: 80,
-    },
-
-    logo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
-    },
-    teamName: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      flexShrink: 1,
-      color: dark ? "#fff" : "#1d1d1d",
-      textAlign: "left",
-    },
-    teamScore: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#aaa" : "#888",
-      width: 40,
-    },
-    teamRecord: {
-      width: 40,
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      marginVertical: 2,
-      color: dark ? "#fff" : "#1d1d1d",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 30,
-      width: 44,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
-      textAlign: "center",
-      width: 40,
-    },
-    date: {
-      fontSize: 12,
-      textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    time: {
-      fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    broadcast: {
-      fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      marginTop: 4,
-      color: dark ? "#fff" : "#1d1d1d",
-      position: "absolute",
-      top: 2,
-      left: 12,
-    },
-  });
-

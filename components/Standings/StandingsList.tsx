@@ -546,7 +546,7 @@ export function StandingsList() {
       style={{ backgroundColor: isDark ? "#1d1d1d" : "#fff" }}
       contentContainerStyle={{
         paddingBottom: 100,
-        paddingHorizontal: 16,
+        paddingHorizontal: 12,
         paddingTop: 10,
       }}
     >
@@ -564,7 +564,7 @@ export function StandingsList() {
           onPress={toggleDropdown}
           style={{
             paddingVertical: 8,
-            paddingHorizontal: 16,
+            paddingHorizontal: 12,
             borderRadius: 8,
             borderWidth: 1,
             borderColor: isDark ? "#888" : "#888",
@@ -634,7 +634,7 @@ export function StandingsList() {
                 }
                 style={{
                   paddingVertical: 12,
-                  paddingHorizontal: 16,
+                  paddingHorizontal: 12,
                   borderBottomWidth: mode === "division" ? 0 : 1,
                   borderBottomColor: isDark ? "#555" : "#ccc",
                 }}

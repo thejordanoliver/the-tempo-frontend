@@ -23,7 +23,7 @@ import {
 } from "react-native";
 import { getStyles } from "styles/Standings.styles";
 import { StatusBadge } from "./StatusBadge";
-
+import { Dropdown } from "components/Dropdown";
 type SectionType = {
   title: string;
   data: NFLTeamRankings[];
@@ -382,108 +382,16 @@ export const NFLStandingsList = () => {
         paddingBottom: 100,
       }}
     >
-      <View
-        style={{
-          marginBottom: 10,
-          alignItems: "flex-end",
-          position: "absolute",
-          right: 10,
-          top: 14,
-          zIndex: 999,
-        }}
-      >
-        <TouchableOpacity
-          onPress={toggleDropdown}
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            borderRadius: 8,
-            borderWidth: 1,
-            borderColor: isDark ? "#888" : "#888",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: isDark ? "#fff" : "#1d1d1d",
-              fontFamily: Fonts.OSMEDIUM,
-              marginRight: 8,
-            }}
-          >
-            {sortMode === "conference" ? "By Conference" : "By Division"}
-          </Text>
-          <Animated.View
-            style={{
-              transform: [
-                {
-                  rotate: dropdownAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0deg", "180deg"],
-                  }),
-                },
-              ],
-            }}
-          >
-            <Ionicons
-              name="chevron-down"
-              size={20}
-              color={isDark ? "#fff" : "#1d1d1d"}
-            />
-          </Animated.View>
-        </TouchableOpacity>
+<Dropdown
+  options={[
+    { label: "Conference", value: "conference" },
+    { label: "Division", value: "division" },
+  ]}
+  selectedValue={sortMode}
+  onSelect={(value) => setSortMode(value as "conference" | "division")}
+  isDark={isDark}
+/>
 
-        {dropdownVisible && (
-          <Animated.View
-            style={{
-              position: "absolute",
-              top: 48,
-              width: 180,
-              borderRadius: 12,
-              overflow: "hidden",
-              zIndex: 9999,
-              opacity: dropdownAnim,
-              transform: [{ translateY: dropdownTranslateY }],
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.35,
-              shadowRadius: 10,
-              elevation: 10,
-            }}
-          >
-            <BlurView
-              intensity={100}
-              tint="systemUltraThinMaterial"
-              style={StyleSheet.absoluteFillObject}
-            />
-            {["conference", "division"].map((mode) => (
-              <TouchableOpacity
-                key={mode}
-                onPress={() =>
-                  onSelectSortMode(mode as "conference" | "division")
-                }
-                style={{ paddingVertical: 12, paddingHorizontal: 16 }}
-              >
-                <Text
-                  style={{
-                    color:
-                      sortMode === mode
-                        ? isDark
-                          ? "#0af"
-                          : "#06f"
-                        : isDark
-                        ? "#fff"
-                        : "#000",
-                    fontFamily: Fonts.OSMEDIUM,
-                  }}
-                >
-                  {mode === "conference" ? "By Conference" : "By Division"}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </Animated.View>
-        )}
-      </View>
 
       {sortMode === "conference" ? (
         <>

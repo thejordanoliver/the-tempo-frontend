@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { Fonts } from "constants/fonts";
 import { useFocusEffect, useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useState } from "react";
@@ -12,14 +12,14 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import { LeagueType } from "types/types";
+import { getAccessToken } from "utils/authStorage";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
-import { getAccessToken } from "utils/authStorage";
-
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 type LeagueForumProps = {
-  league?: "NBA" | "NFL"; // extendable if more leagues later
+  league?: LeagueType; // extendable if more leagues later
 };
 
 export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {

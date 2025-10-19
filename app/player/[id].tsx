@@ -60,7 +60,7 @@ export default function PlayerDetailScreen() {
 
     if (Platform.OS === "android") {
       // Android emulator localhost workaround
-      return "http://10.0.2.2:4000";
+      return "http://localhost:4000";
     }
 
     // iOS simulator or web fallback
@@ -149,7 +149,7 @@ export default function PlayerDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          playerName={fullName}
+      
           logo={
             isTeamAvailable ? teamObj?.logo : require("../../assets/Logos/NBA.png")
           }
@@ -235,6 +235,7 @@ export default function PlayerDetailScreen() {
           </View>
         </>
       )}
+    
     </ScrollView>
   );
 }

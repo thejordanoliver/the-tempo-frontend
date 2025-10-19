@@ -1,10 +1,12 @@
 // components/NFL/NFLGameLeaders.tsx
-import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import Placeholder from "assets/images/placeholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/fonts";
+import { players } from "constants/nflPlayers";
 import { getNFLTeamsLogo, getTeamAbbreviation } from "constants/teamsNFL";
 import { NFLPlayer, useNFLGameLeaders } from "hooks/NFLHooks/useNFLGameLeaders";
+import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
+
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,7 +17,6 @@ import {
   View,
 } from "react-native";
 import ScrollableTabBar from "../TabBars/ScrollableTabBar";
-import { teams } from "constants/teams";
 const CATEGORIES = [
   "Passing",
   "Rushing",
@@ -54,17 +55,34 @@ const STAT_KEYS: Record<Category, string[]> = {
   Punting: ["Total", "Yards", "Average", "Touchbacks"],
 };
 
+const findLocalPlayer = (id: number, name: string) => {
+  return (
+    players.find(
+      (p) =>
+        p.id === id || p.name.trim().toLowerCase() === name.trim().toLowerCase()
+    ) || null
+  );
+};
+
 // ✅ Normalize raw NFLPlayer to DisplayPlayer
 const normalizePlayers = (
   players: NFLPlayer[] | undefined,
   teamIdProp: string
 ): DisplayPlayer[] =>
   (players ?? []).map((p) => {
-    const teamAbbr = getTeamAbbreviation(teamIdProp) || "UNK"; // fallback unknown
+    const teamAbbr = getTeamAbbreviation(teamIdProp) || "UNK";
+
+    const local = findLocalPlayer(Number(p.id), p.name);
+
     return {
       id: Number(p.id),
       name: p.name,
-      image: (p as any).image ?? "",
+      image: local?.image
+        ? // support both require() and remote URL
+          typeof local.image === "string"
+          ? { uri: local.image }
+          : local.image
+        : (p as any).image ?? "",
       teamId: teamIdProp,
       teamAbbr,
       group: p.group as Category,
@@ -217,13 +235,15 @@ export default function NFLGameLeaders({
       {[away, home].map((p) => {
         if (!p) return null;
 
-        const teamLogoUri = getNFLTeamsLogo(p.teamAbbr, isDark);
+        // ✅ Show light logos in dark mode or when lighter prop is true
+        const useLightLogo = lighter || isDark;
+        const logo = getNFLTeamsLogo(p.teamAbbr, useLightLogo);
 
-        const filteredStats = (STAT_KEYS[selectedCategory]
+        const filteredStats = STAT_KEYS[selectedCategory]
           .map((key) =>
             p.statistics.find((s) => s.name.toLowerCase() === key.toLowerCase())
           )
-          .filter(Boolean) as PlayerStat[]);
+          .filter(Boolean) as PlayerStat[];
 
         return (
           <View
@@ -234,16 +254,20 @@ export default function NFLGameLeaders({
             ]}
           >
             {/* Avatar */}
-            <View style={[styles.avatarWrapper, { backgroundColor: borderColor }]}>
+            <View
+              style={[styles.avatarWrapper, { backgroundColor: borderColor }]}
+            >
               <Image
-                source={p.image ? { uri: p.image } : Placeholder}
-                style={[styles.avatar]}
+                source={p.image ? p.image : Placeholder}
+                style={styles.avatar}
               />
             </View>
 
             {/* Player Info */}
             <View style={styles.infoSection}>
-              <Text style={[styles.playerName, { color: textColor }]}>{p.name}</Text>
+              <Text style={[styles.playerName, { color: textColor }]}>
+                {p.name}
+              </Text>
 
               {/* Stats */}
               <View style={styles.statRow}>
@@ -261,7 +285,7 @@ export default function NFLGameLeaders({
             </View>
 
             {/* Team Logo */}
-            <Image source={teamLogoUri} style={styles.teamLogo} resizeMode="contain" />
+            <Image source={logo} style={styles.teamLogo} resizeMode="contain" />
           </View>
         );
       })}
@@ -269,36 +293,3 @@ export default function NFLGameLeaders({
   );
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: { marginTop: 12, overflow: "hidden" },
-    center: { alignItems: "center", justifyContent: "center", padding: 16 },
-    error: { fontFamily: Fonts.OSREGULAR },
-    card: { flexDirection: "row", alignItems: "center", padding: 12 },
-    avatar: {
-      width: 45,
-      height: 45,
-     
-    },
-    avatarWrapper: {
-      width: 50,
-      height: 50,
-      paddingTop: 4,
-      borderRadius: 100,
-      overflow: "hidden",
-       justifyContent: "center",
-      alignItems: "center",
-    },
-    infoSection: { flex: 1, marginLeft: 10, justifyContent: "flex-end" },
-    playerName: { fontFamily: Fonts.OSBOLD, fontSize: 14 },
-    statRow: {
-      flexDirection: "row",
-      marginTop: 4,
-      justifyContent: "space-between",
-      paddingRight: 12,
-    },
-    statBlock: { alignItems: "flex-start", flex: 1 },
-    statLabel: { fontFamily: Fonts.OSMEDIUM, fontSize: 10 },
-    statText: { fontFamily: Fonts.OSREGULAR, fontSize: 14 },
-    teamLogo: { position: "absolute", top: 6, right: 6, width: 28, height: 28 },
-  });

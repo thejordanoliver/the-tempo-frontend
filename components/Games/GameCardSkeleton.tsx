@@ -90,12 +90,14 @@ export default function GameCardSkeleton() {
       <View style={styles.info}>
         <SkeletonWithShimmer style={styles.dateSkeleton} shimmerWidth={50} />
         <SkeletonWithShimmer style={styles.timeSkeleton} shimmerWidth={80} />
-        <SkeletonWithShimmer style={styles.broadcastSkeleton} shimmerWidth={50} />
+        <SkeletonWithShimmer
+          style={styles.broadcastSkeleton}
+          shimmerWidth={50}
+        />
       </View>
 
       {/* Bottom Score */}
       <SkeletonWithShimmer style={styles.scoreSkeleton} shimmerWidth={40} />
-
       {/* Bottom Team */}
       <View style={styles.teamSection}>
         <SkeletonWithShimmer style={styles.logoSkeleton} shimmerWidth={40} />
@@ -111,21 +113,21 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       backgroundColor: isDark ? "#2e2e2e" : "#eee",
       borderRadius: 8,
-      paddingVertical: 18,
-      paddingHorizontal: 20,
+      paddingVertical: 14,
+      paddingHorizontal: 10,
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "space-evenly",
     },
     teamSection: {
       alignItems: "center",
-      width: 60,
+      width: 80,
     },
     logoSkeleton: {
       width: 40,
       height: 40,
       borderRadius: 100,
       backgroundColor: isDark ? "#666" : "#bbb",
-      marginBottom: 6,
+      marginBottom: 4,
     },
     nameSkeleton: {
       width: 40,
@@ -134,7 +136,7 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark ? "#666" : "#bbb",
     },
     scoreSkeleton: {
-      width: 50,
+      width: 40,
       height: 20,
       borderRadius: 6,
       backgroundColor: isDark ? "#666" : "#bbb",
@@ -142,7 +144,7 @@ const getStyles = (isDark: boolean) =>
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 70,
+      width: 120,
     },
     dateSkeleton: {
       width: 50,

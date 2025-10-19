@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import { teams } from "../../constants/teams"; // NBA
 import { teams as nflteams } from "../../constants/teamsNFL"; // NFL
-
+import { teams as cfbteams } from "../../constants/teamsCFB"; // NFL
+import { LeagueType } from "types/types";
 type Props = {
   favoriteTeamIds: string[]; // e.g., ["NBA:17", "NFL:13"]
 };
@@ -28,8 +29,9 @@ export default function FavoritesScroll({ favoriteTeamIds }: Props) {
       let team;
       if (league === "NBA") team = teams.find((t) => t.id === id);
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
+      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
       if (!team) return null;
-      return { ...team, league: league as "NBA" | "NFL" };
+      return { ...team, league: league as LeagueType };
     })
     .filter(Boolean);
 
@@ -51,7 +53,7 @@ export default function FavoritesScroll({ favoriteTeamIds }: Props) {
               if (!team) return;
 
               const route =
-                team.league === "NFL" ? "/team/nfl/[teamId]" : "/team/[teamId]";
+                team.league === "NFL" ? "/team/nfl/[teamId]" : team.league === "NBA" ? "/team/[teamId]" : "/team/cfb/[teamId]";
 
               router.push({
                 pathname: route,

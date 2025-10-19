@@ -54,7 +54,7 @@ export const useUpcomingNFLOdds = ({
     if (team1) params.team1 = team1;
     if (team2) params.team2 = team2;
     params.markets = "h2h,spreads,totals";
-    params.bookmakers = "betmgm";
+    params.bookmakers = "draftkings";
 
     const key = JSON.stringify(params);
 

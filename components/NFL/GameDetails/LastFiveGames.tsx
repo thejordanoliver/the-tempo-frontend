@@ -4,8 +4,8 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teamsNFL";
 import { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-
+import { FlatList, Image, Text, View } from "react-native";
+import { styles } from "styles/GameDetailStyles/LastFiveGames.styles";
 type Props = {
   isDark: boolean;
   lighter?: boolean; // optional lighter theme
@@ -182,8 +182,8 @@ export default function LastFiveGamesSwitcher({
                 <Image
                   source={logoSource}
                   style={{
-                    width: 20,
-                    height: 20,
+                    width: 28,
+                    height: 28,
                     resizeMode: "contain",
                     opacity: isSelected ? 1 : 0.5,
                   }}
@@ -241,39 +241,3 @@ export default function LastFiveGamesSwitcher({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 6,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingBottom: 4,
-    borderBottomWidth: 1,
-    borderColor: "#aaa",
-    marginBottom: 6,
-  },
-  cell: {
-    fontSize: 14,
-    flex: 1,
-    textAlign: "center",
-    fontFamily: Fonts.OSREGULAR,
-  },
-  date: { flex: 1.2 },
-  team: { flex: 2 },
-  teamWithLogo: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  empty: {
-    textAlign: "center",
-    color: "#999",
-    marginTop: 12,
-    fontFamily: Fonts.OSREGULAR,
-  },
-});

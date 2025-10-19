@@ -2,67 +2,30 @@ import { Fonts } from "constants/fonts";
 import { teams } from "constants/teamsNFL";
 import { UpcomingNFLGameOdds } from "hooks/NFLHooks/useUpcomingNFLOdds";
 import React from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import HeadingTwo from "../../Headings/HeadingTwo";
+import { Image, Text, useColorScheme, View } from "react-native";
+import { styles } from "styles/GameDetailStyles/Odds.styles";
 
 interface Props {
   game: UpcomingNFLGameOdds;
 }
 
-// ✅ NFL Team Name Map (allow string indexing)
-const teamNameMapNFL: { [key: string]: string } = {
-  ARI: "Arizona Cardinals",
-  ATL: "Atlanta Falcons",
-  BAL: "Baltimore Ravens",
-  BUF: "Buffalo Bills",
-  CAR: "Carolina Panthers",
-  CHI: "Chicago Bears",
-  CIN: "Cincinnati Bengals",
-  CLE: "Cleveland Browns",
-  DAL: "Dallas Cowboys",
-  DEN: "Denver Broncos",
-  DET: "Detroit Lions",
-  GB: "Green Bay Packers",
-  HOU: "Houston Texans",
-  IND: "Indianapolis Colts",
-  JAX: "Jacksonville Jaguars",
-  KC: "Kansas City Chiefs",
-  LAC: "Los Angeles Chargers",
-  LAR: "Los Angeles Rams",
-  LV: "Las Vegas Raiders",
-  MIA: "Miami Dolphins",
-  MIN: "Minnesota Vikings",
-  NE: "New England Patriots",
-  NO: "New Orleans Saints",
-  NYG: "New York Giants",
-  NYJ: "New York Jets",
-  PHI: "Philadelphia Eagles",
-  PIT: "Pittsburgh Steelers",
-  SEA: "Seattle Seahawks",
-  SF: "San Francisco 49ers",
-  TB: "Tampa Bay Buccaneers",
-  TEN: "Tennessee Titans",
-  WAS: "Washington Commanders",
-};
-
 const getTeamFromApi = (teamIdentifier: string) => {
   if (!teamIdentifier) return undefined;
 
-  // Try by code (e.g. "LV")
+  // Match directly by oddsID
+  const byOddsId = teams.find((t) => t.oddsID === teamIdentifier);
+  if (byOddsId) return byOddsId;
+
+  // Fallback to code match (e.g. "LV")
   const byCode = teams.find((t) => t.code === teamIdentifier);
   if (byCode) return byCode;
 
-  // Try full name via map (e.g. "Las Vegas Raiders")
-  const fullName = teamNameMapNFL[teamIdentifier];
-  if (fullName) {
-    return teams.find((t) => t.fullName === fullName || t.name === fullName);
-  }
-
-  // Try direct match on fullName or name
+  // Fallback to full name or short name
   return teams.find(
     (t) => t.fullName === teamIdentifier || t.name === teamIdentifier
   );
 };
+
 
 const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   const colorScheme = useColorScheme();
@@ -121,8 +84,6 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
       outcome.point !== undefined ? ` (${outcome.point})` : ""
     }`;
   };
-
-  
 
   return (
     <>
@@ -233,68 +194,5 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  headerText: {
-    fontSize: 12,
-    textAlign: "center",
-  },
-  headerTeamText: {
-    fontSize: 12,
-    textAlign: "left",
-    paddingLeft: 4,
-  },
-  teamRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 4,
-  },
-  teamInfo: {
-    flex: 2,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingLeft: 4,
-  },
-  teamLogo: {
-    width: 28,
-    height: 28,
-  },
-  teamName: {
-    fontSize: 14,
-  },
-  oddsText: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-  },
-  divider: {
-    borderBottomWidth: 1,
-    marginVertical: 8,
-  },
-  bookmaker: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 12,
-  },
-  bookmakerWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  subtext: {
-    color: "#888",
-    fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
-  },
-});
 
 export default UpcomingOddsCard;

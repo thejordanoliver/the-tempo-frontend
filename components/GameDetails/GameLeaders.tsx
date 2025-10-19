@@ -1,17 +1,12 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
 import FixedWidthTabBar from "components/NFL/TabBars/GameLeadersTabBar"; // adjust path as needed
+import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
+
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -41,6 +36,7 @@ export default function GameLeaders({
   const isDark = colorScheme === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
   const tabWidth = SCREEN_WIDTH / STAT_CATEGORIES.length;
+  const styles = getStyles(isDark);
 
   // Memoized top players
   const topPlayers = useMemo(() => {
@@ -231,8 +227,8 @@ export default function GameLeaders({
                 lighter
                   ? team.logoLight || team.logo
                   : isDark
-                    ? team.logoLight || team.logo
-                    : team.logo
+                  ? team.logoLight || team.logo
+                  : team.logo
               }
               style={styles.teamLogo}
               resizeMode="contain"
@@ -243,74 +239,3 @@ export default function GameLeaders({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 12,
-    overflow: "hidden",
-  },
-  loading: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#ccc",
-    paddingTop: 4,
-  },
-  infoSection: {
-    flex: 1,
-    marginLeft: 10,
-    justifyContent: "flex-end",
-  },
-  playerName: {
-    fontFamily: Fonts.OSBOLD,
-    fontSize: 14,
-    color: "#1d1d1d",
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "flex-end", // Align text on the same baseline
-  },
-  jersey: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  statRow: {
-    flexDirection: "row",
-    marginTop: 4,
-    justifyContent: "space-between",
-    paddingRight: 12,
-  },
-  statText: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 14,
-    color: "#fff",
-  },
-  teamLogo: {
-    position: "absolute",
-    top: 6,
-    right: 6,
-    width: 28,
-    height: 28,
-  },
-  statBlock: {
-    alignItems: "flex-start",
-    flex: 1,
-  },
-  statLabel: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 10,
-  },
-});

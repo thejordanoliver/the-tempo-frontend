@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/fonts";
-import { Athlete, PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
+import { Athlete, PlayObject } from "hooks/CFBHooks/useCFBGamePossession";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Text, View } from "react-native";
 
@@ -119,7 +119,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
           fontFamily: Fonts.OSREGULAR,
           fontSize: 14,
           color: getTextColor(currentPlay.text),
-          marginTop: 12,
+         
         }}
       >
         {currentPlay.text}

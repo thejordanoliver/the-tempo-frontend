@@ -13,6 +13,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNewsStore } from "hooks/newsStore";
 import useDbPlayersByTeam from "hooks/useDbPlayersByTeam";
+import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamGames } from "hooks/useTeamGames";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
@@ -39,7 +40,6 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
   const teamIdNum = parseInt(teamId as string, 10);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false); // ✅ bottom sheet state
   const colorScheme = useColorScheme();
@@ -155,16 +155,6 @@ export default function TeamDetailScreen() {
     loadUser();
   }, []);
 
-  useEffect(() => {
-    const checkFavorites = async () => {
-      const stored = await AsyncStorage.getItem("favorites");
-      if (stored) {
-        const favorites = JSON.parse(stored);
-        setIsFavorite(favorites.includes(teamIdNum.toString()));
-      }
-    };
-    checkFavorites();
-  }, [teamIdNum]);
 
   const {
     rosterStats,
@@ -172,26 +162,7 @@ export default function TeamDetailScreen() {
     error: rosterStatsError,
   } = useTeamRosterStats(teamIdNum);
 
-  const toggleFavorite = async () => {
-    try {
-      const stored = await AsyncStorage.getItem("favorites");
-      const favorites: string[] = stored ? JSON.parse(stored) : [];
 
-      let updatedFavorites: string[];
-      if (favorites.includes(teamIdNum.toString())) {
-        updatedFavorites = favorites.filter(
-          (id) => id !== teamIdNum.toString()
-        );
-      } else {
-        updatedFavorites = [...favorites, teamIdNum.toString()];
-      }
-
-      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-      setIsFavorite(updatedFavorites.includes(teamIdNum.toString()));
-    } catch (err) {
-      console.error("Failed to update favorites:", err);
-    }
-  };
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -303,23 +274,30 @@ export default function TeamDetailScreen() {
     };
   });
 
+  // ✅ Use the favorite teams hook
+  const { toggleFavorite, isFavorite } = useFavoriteTeams();
+  const league = "NBA";
+  const favorited = team ? isFavorite(league, team.id) : false;
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo}
+        logo={team?.logo}
           logoLight={team?.logoLight}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
           teamCode={team?.code}
-          isFavorite={isFavorite}
-          onToggleFavorite={toggleFavorite}
+          isFavorite={favorited}
+          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
+          league={league}
         />
       ),
     });
-  }, [navigation, isDark, team, isFavorite]);
+  }, [navigation, isDark, team, favorited]);
+
 
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);

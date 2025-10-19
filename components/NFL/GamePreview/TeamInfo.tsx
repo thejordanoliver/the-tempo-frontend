@@ -1,11 +1,10 @@
-import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Fonts } from "constants/fonts";
-import { teams } from "constants/teamsNFL";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
+import { Image, Text, View } from "react-native";
 import { NFLTeam } from "types/nfl";
+
 type TeamInfoProps = {
   team: NFLTeam;
   teamName: string;
@@ -13,13 +12,13 @@ type TeamInfoProps = {
   opponentScore: number;
   record: string;
   isDark: boolean;
+  lighter?: boolean; // <-- add lighter prop
   isGameOver: boolean;
   hasStarted: boolean;
   possessionTeamId?: string;
   side: "home" | "away";
   timeouts: number;
 };
-
 
 export default function TeamInfo({
   team,
@@ -28,6 +27,7 @@ export default function TeamInfo({
   opponentScore,
   record,
   isDark,
+  lighter = false, // default false
   isGameOver,
   hasStarted,
   possessionTeamId,
@@ -36,14 +36,14 @@ export default function TeamInfo({
 }: TeamInfoProps) {
   const isTie = isGameOver && score === opponentScore;
   const isWinner = isGameOver && !isTie && score > opponentScore;
-
-
   const scoreOpacity = !isGameOver ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
 
-const logo = getNFLTeamsLogo(team?.id, isDark);
+  // ✅ Prefer light logo if lighter, fallback to normal
+  const logo =
+    (lighter ? getNFLTeamsLogo(team?.id, true) : null) ||
+    getNFLTeamsLogo(team?.id, false);
 
   const displayValue = !hasStarted ? record ?? "-" : score ?? "-";
-
   const hasPossession =
     hasStarted && String(possessionTeamId) === String(team?.id);
 
@@ -58,8 +58,8 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
             width: 8,
             height: 4,
             borderRadius: 4,
-            backgroundColor: isDark ? "#fff" : "#000",
-            opacity: i < remaining ? 1 : 0.3, // ✅ used timeouts are faded
+            backgroundColor: lighter ? "#fff" : isDark ? "#fff" : "#000",
+            opacity: i < remaining ? 1 : 0.3,
             marginHorizontal: 2,
           }}
         />
@@ -67,8 +67,6 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
     }
     return <View style={{ flexDirection: "row", marginTop: 2 }}>{dots}</View>;
   };
-
-  
 
   return (
     <View style={{ alignItems: "center", position: "relative" }}>
@@ -88,16 +86,13 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
         {teamName}
       </Text>
 
-      <View
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
         <View style={{ flexDirection: "row" }}>
           {side === "home" && hasPossession && (
             <Image
-              source={isDark ? FootballLight : Football}
+              source={
+                lighter ? FootballLight : isDark ? FootballLight : Football
+              }
               style={{
                 position: "absolute",
                 right: 40,
@@ -122,7 +117,9 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
 
           {side === "away" && hasPossession && (
             <Image
-              source={isDark ? FootballLight : Football}
+              source={
+                lighter ? FootballLight : isDark ? FootballLight : Football
+              }
               style={{
                 position: "absolute",
                 left: 40,
@@ -135,7 +132,6 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
           )}
         </View>
 
-        {/* Only show record when game is final */}
         {isGameOver && record && (
           <Text
             style={{
@@ -148,15 +144,8 @@ const logo = getNFLTeamsLogo(team?.id, isDark);
           </Text>
         )}
 
-        {/* Timeouts dots (only show if game started and not over) */}
         {hasStarted && !isGameOver && (
-          <View
-            style={{
-              width: "100%",
-              alignItems: "center",
-              marginTop: 4,
-            }}
-          >
+          <View style={{ width: "100%", alignItems: "center", marginTop: 4 }}>
             {renderTimeouts(timeouts)}
           </View>
         )}

@@ -1,32 +1,8 @@
-import { Fonts } from "constants/fonts";
 import { useRouter } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import Football from "../../../assets/icons8/Football.png";
 import FootballLight from "../../../assets/icons8/FootballLight.png";
-
-type Props = {
-  team: {
-    id: string;
-    name: string;
-    logo: any;
-    record?: string;
-  };
-  isDark: boolean;
-  isHome?: boolean;
-  score?: number | null;
-  isWinner?: boolean;
-  status?: string; // "Scheduled", "In Progress", "Final", etc.
-  colors: {
-    text: string;
-    record: string;
-    score: string;
-    winnerScore: string;
-  };
-  possessionTeamId?: string;
-  size?: number;
-  timeouts: number;
-  opponentScore?: number | null; // 👈 NEW: needed to detect ties
-};
+import { styles, sizeStyles, NFLProps, SizeType } from "styles/GameDetailStyles/TeamRow.styles";
 
 export const NFLTeamRow = ({
   team,
@@ -37,10 +13,10 @@ export const NFLTeamRow = ({
   status,
   colors,
   possessionTeamId,
-  size = 50,
+  size = "medium",
   timeouts,
   opponentScore,
-}: Props) => {
+}: NFLProps) => {
   const router = useRouter();
 
   const handleTeamPress = () => {
@@ -50,38 +26,24 @@ export const NFLTeamRow = ({
 
   const isScheduled = status === "Scheduled";
   const isLive =
-    status &&
-    status !== "Scheduled" &&
-    status !== "Final" &&
-    status !== undefined;
+    status && status !== "Scheduled" && status !== "Final" && status !== undefined;
   const isFinal = status === "Final";
 
   const hasPossession = isLive && String(possessionTeamId) === String(team.id);
 
-  const isTie =
-    isFinal &&
-    score != null &&
-    opponentScore != null &&
-    score === opponentScore;
+  const isTie = isFinal && score != null && opponentScore != null && score === opponentScore;
 
   const getScoreStyle = () => {
     if (score == null) return { color: colors.score, opacity: 0.5 };
-
-    if (isLive) {
-      return { color: isDark ? "#fff" : "#1d1d1d" }; // full bright
-    }
-
+    if (isLive) return { color: isDark ? "#fff" : "#1d1d1d" };
     if (isFinal) {
-      if (isTie) {
-        return { color: isDark ? "#fff" : "#1d1d1d", opacity: 1 }; // force full opacity
-      }
+      if (isTie) return { color: isDark ? "#fff" : "#1d1d1d", opacity: 1 };
       return {
         color: isWinner ? colors.winnerScore : colors.score,
         opacity: isWinner ? 1 : 0.5,
       };
     }
-
-    return { color: colors.score }; // default
+    return { color: colors.score };
   };
 
   const renderTimeouts = (remaining: number) => {
@@ -105,7 +67,6 @@ export const NFLTeamRow = ({
     );
   };
 
-  // Determine what to display in the score box
   const displayScore = isScheduled
     ? team.record ?? "0-0"
     : score != null
@@ -122,22 +83,8 @@ export const NFLTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [
-                    styles.preGameRecord,
-                    {
-                      color: colors.record,
-                      fontSize: size * 0.5,
-                      width: size + 10,
-                    },
-                  ]
-                : [
-                    styles.score,
-                    {
-                      ...getScoreStyle(),
-                      fontSize: size * 0.7,
-                      width: size + 10,
-                    },
-                  ],
+                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
             {displayScore}
@@ -146,14 +93,7 @@ export const NFLTeamRow = ({
           {hasPossession && (
             <Image
               source={isDark ? FootballLight : Football}
-              style={{
-                width: size * 0.5,
-                height: size * 0.8,
-                resizeMode: "contain",
-                position: "absolute",
-                top: "54%",
-                alignSelf: "center",
-              }}
+              style={styles.possessionIcon}
             />
           )}
         </View>
@@ -162,41 +102,28 @@ export const NFLTeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image
-            source={team.logo}
-            style={{ width: size, height: size, resizeMode: "contain" }}
-          />
+          <Image source={team.logo} style={sizeStyles[size].logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
           <View style={styles.nameRow}>
-            <Text
-              style={[
-                styles.teamName,
-                { color: colors.text, fontSize: size * 0.25 },
-              ]}
-            >
+            <Text style={[styles.teamName, { color: colors.text }]}>
               {team.name}
             </Text>
           </View>
 
-          {/* Timeouts */}
           {isLive && (
             <View style={{ alignItems: "center", marginTop: 2 }}>
               {renderTimeouts(timeouts)}
             </View>
           )}
 
-          {/* Record (only show final record if game finished) */}
           {isFinal && (
             <Text
               style={[
                 styles.record,
                 {
-                  color: isTie
-                    ? colors.text // neutral color for ties
-                    : colors.record,
-                  fontSize: size * 0.24,
+                  color: isTie ? colors.text : colors.record,
                 },
               ]}
             >
@@ -212,22 +139,8 @@ export const NFLTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [
-                    styles.preGameRecord,
-                    {
-                      color: colors.record,
-                      fontSize: size * 0.5,
-                      width: size + 10,
-                    },
-                  ]
-                : [
-                    styles.score,
-                    {
-                      ...getScoreStyle(),
-                      fontSize: size * 0.7,
-                      width: size + 10,
-                    },
-                  ],
+                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
             {displayScore}
@@ -236,14 +149,7 @@ export const NFLTeamRow = ({
           {hasPossession && (
             <Image
               source={isDark ? FootballLight : Football}
-              style={{
-                width: size * 0.5,
-                height: size * 0.8,
-                resizeMode: "contain",
-                position: "absolute",
-                top: "54%",
-                alignSelf: "center",
-              }}
+              style={styles.possessionIcon}
             />
           )}
         </View>
@@ -252,47 +158,3 @@ export const NFLTeamRow = ({
   );
 };
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 4,
-  },
-  teamInfoContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  teamInfo: {
-    justifyContent: "center",
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  teamName: {
-    fontFamily: Fonts.OSREGULAR,
-    textAlign: "center",
-  },
-  record: {
-    fontFamily: Fonts.OSREGULAR,
-    textAlign: "center",
-  },
-  score: {
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-    marginHorizontal: 16,
-  },
-  preGameRecord: {
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-    marginHorizontal: 16,
-  },
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-});

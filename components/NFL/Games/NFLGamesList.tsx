@@ -59,38 +59,56 @@ export default function NFLGamesList({
   const [modalVisible, setModalVisible] = useState(false);
 
   // --- Group games by seasonType ---
-  const sections: NFLGameSection[] = useMemo(() => {
-    const grouped: { [season: string]: any[] } = {};
+const sections: NFLGameSection[] = useMemo(() => {
+  if (!games || games.length === 0) return [];
 
-    games.forEach((g) => {
-      const dateStr = g.game?.date?.date;
-      let season = "Unknown";
+  const grouped: { [season: string]: any[] } = {
+    Preseason: [],
+    "Regular Season": [],
+  };
 
-      if (dateStr) {
-        const gameDate = new Date(dateStr);
-        const month = gameDate.getMonth();
-        const dayOfMonth = gameDate.getDate();
+  games.forEach((g) => {
+    const status = g?.game?.status?.short || g?.game?.status || "";
+    const isLive =
+      ["LIVE", "HT", "Q1", "Q2", "Q3", "Q4", "OT"].some((s) =>
+        status?.toUpperCase()?.includes(s)
+      );
 
-        if (month === 7) season = "Preseason";
-        else if (
-          (month >= 8 && month <= 11) ||
-          (month === 0 && dayOfMonth <= 8)
-        )
-          season = "Regular Season";
+    const dateStr = g.game?.date?.date;
+    let season = "Unknown";
+
+    if (dateStr) {
+      const gameDate = new Date(dateStr);
+      const month = gameDate.getMonth();
+      const dayOfMonth = gameDate.getDate();
+
+      if (month === 7) season = "Preseason";
+      else if (
+        (month >= 8 && month <= 11) ||
+        (month === 0 && dayOfMonth <= 8)
+      ) {
+        season = "Regular Season";
       }
-
-      if (!grouped[season]) grouped[season] = [];
-      grouped[season].push(g);
-    });
-
-    if (!showHeaders) {
-      return [{ title: "All", data: games }];
     }
 
-    return ["Preseason", "Regular Season"]
-      .filter((s) => grouped[s] && grouped[s].length > 0)
-      .map((s) => ({ title: s, data: grouped[s] }));
-  }, [games, showHeaders]);
+    if (!grouped[season]) grouped[season] = [];
+
+    // Push live games to front of their section
+    if (isLive) grouped[season].unshift(g);
+    else grouped[season].push(g);
+  });
+
+  // If headers are off, merge everything
+  if (!showHeaders) {
+    const all = Object.values(grouped).flat();
+    return [{ title: "All", data: all }];
+  }
+
+  const order = ["Preseason", "Regular Season"];
+  return order
+    .filter((s) => grouped[s] && grouped[s].length > 0)
+    .map((s) => ({ title: s, data: grouped[s] }));
+}, [games, showHeaders]);
 
   const handleLongPress = (game: any) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -251,13 +269,16 @@ if (loading) {
   renderItem={({ item, index }) =>
     viewMode === "grid" ? null : renderGameCard(item, index)
   }
-  renderSectionHeader={({ section }) =>
-    showHeaders && section.data.length > 0 ? (
-      <View style={styles.headerWrapper}>
-        <HeadingTwo>{section.title}</HeadingTwo>
-      </View>
-    ) : null
-  }
+renderSectionHeader={({ section }) =>
+  showHeaders && section.data.length > 0 ? (
+    <View style={styles.headerWrapper}>
+      <HeadingTwo>
+        {section.title === "Live" ? "🏈 Live Games" : section.title}
+      </HeadingTwo>
+    </View>
+  ) : null
+}
+
   refreshing={refreshing}
   onRefresh={onRefresh}
   contentContainerStyle={styles.contentContainer}
@@ -312,7 +333,7 @@ if (loading) {
 
 const styles = StyleSheet.create({
   skeletonWrapper: {
-    paddingTop: 10,
+    
     paddingHorizontal: 12,
     gap: 12,
   },
@@ -326,7 +347,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   contentContainer: {
-    paddingTop: 10,
+  
   },
   gridRow: {
     justifyContent: "space-between",

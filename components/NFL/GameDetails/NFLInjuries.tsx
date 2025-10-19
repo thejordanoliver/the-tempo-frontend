@@ -181,7 +181,10 @@ export default function NFLInjuries({
           const team = injuries.find(
             (t) => t.team.abbreviation.toUpperCase() === tab
           );
-          const teamLogo = getNFLTeamsLogo(team?.team.abbreviation, isDark);
+       
+          // ✅ Show light logos in dark mode or when lighter prop is true
+          const useLightLogo = lighter || isDark;
+          const logo = getNFLTeamsLogo(team?.team.abbreviation, useLightLogo);
 
           return (
             <View
@@ -193,7 +196,7 @@ export default function NFLInjuries({
               }}
             >
               <Image
-                source={teamLogo}
+                source={logo}
                 style={{
                   width: 28,
                   height: 28,

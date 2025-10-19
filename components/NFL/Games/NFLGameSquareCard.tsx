@@ -1,4 +1,5 @@
-import { Fonts } from "constants/fonts";
+import Football from "assets/icons8/Football.png";
+import FootballLight from "assets/icons8/FootballLight.png";
 import {
   getNFLTeamsLogo,
   getTeamAbbreviation,
@@ -8,19 +9,18 @@ import { useRouter } from "expo-router";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
-import { memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import {
   Image,
-  StyleSheet,
   Text,
-  TextStyle,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-
+import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 type Props = {
-  game: any; // TODO: replace with proper type
+  game: any;
   isDark?: boolean;
 };
 
@@ -32,48 +32,51 @@ function NFLGameSquareCard({ game, isDark }: Props) {
 
   const homeId = String(game?.teams?.home?.id);
   const awayId = String(game?.teams?.away?.id);
-  const gameId = game?.game?.id;
 
-  // Compute game date
-  const gameDate = useMemo(() => {
-    return game?.game?.date?.timestamp
-      ? new Date(game.game.date.timestamp * 1000)
-      : null;
-  }, [game?.game?.date?.timestamp]);
+  // --- Game date ---
+  const gameDate = useMemo(
+    () =>
+      game?.game?.date?.timestamp
+        ? new Date(game.game.date.timestamp * 1000)
+        : null,
+    [game?.game?.date?.timestamp]
+  );
   const gameDateStr = gameDate?.toISOString();
 
-  // ✅ Fetch dynamic records for both teams
+  // --- Records ---
   const { record: awayRecord } = useNFLTeamRecord(awayId);
   const { record: homeRecord } = useNFLTeamRecord(homeId);
 
-  // ✅ Status builder with OT handling
+  // --- Status ---
   const status = useMemo(() => {
-    const long = game.game.status.long ?? "";
-    const short = game.game.status.short?.toLowerCase() ?? "";
-    const longLower = long.toLowerCase();
+    const s = game?.game?.status ?? {};
+    const long = s.long ?? "";
+    const short = s.short ?? "";
+    const lower = long.toLowerCase();
 
     const wentOT =
-      longLower.includes("ot") ||
-      longLower.includes("over time") ||
-      longLower.includes("after over") ||
-      longLower.includes("aot") ||
-      short.includes("ot");
+      lower.includes("ot") ||
+      lower.includes("overtime") ||
+      lower.includes("after over") ||
+      lower.includes("aot") ||
+      short.toLowerCase().includes("ot");
 
     const isFinal =
       long === "Finished" ||
-      longLower.includes("final") ||
-      longLower.includes("after over") ||
-      longLower.includes("aot") ||
-      short.includes("ft");
+      lower.includes("final") ||
+      lower.includes("after over") ||
+      lower.includes("aot") ||
+      short.toLowerCase().includes("ft");
 
-    const live = ![
-      "Not Started",
-      "Finished",
-      "Canceled",
-      "Delayed",
-      "Postponed",
-      "Halftime",
-    ].includes(long);
+    const isLive =
+      !["Not Started", "Finished", "Canceled", "Delayed", "Postponed"].includes(
+        long
+      ) && !isFinal;
+
+    const isEndOfPeriod =
+      lower.includes("end") &&
+      !lower.includes("final") &&
+      !lower.includes("half");
 
     return {
       isScheduled: long === "Not Started",
@@ -83,16 +86,17 @@ function NFLGameSquareCard({ game, isDark }: Props) {
       isDelayed: long === "Delayed",
       isPostponed: long === "Postponed",
       isHalftime: long === "Halftime",
-      isLive: live && !isFinal,
-      short: game.game.status.short,
+      isEndOfPeriod,
+      isLive,
+      short,
       long,
-      timer: game.game.status.timer,
+      timer: s.timer,
     };
-  }, [game.game.status]);
+  }, [game?.game?.status]);
 
-
-
-    const possession = status.isLive
+  // --- Possession ---
+  const possession =
+    status.isLive && homeId && awayId
       ? useNFLGamePossession(
           getTeamName(homeId, "Home"),
           getTeamName(awayId, "Away"),
@@ -104,13 +108,18 @@ function NFLGameSquareCard({ game, isDark }: Props) {
           shortDownDistanceText: undefined,
           downDistanceText: undefined,
           period: undefined,
+          score: {
+            home: { total: game?.scores?.home?.total ?? 0 },
+            away: { total: game?.scores?.away?.total ?? 0 },
+          },
           refresh: () => {},
         };
-  
-    const { possessionTeamId, displayClock, shortDownDistanceText } = possession;
-  
 
-const awayTeam = useMemo(
+  const { possessionTeamId, displayClock, period, score } = possession;
+  const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
+
+  // --- Teams ---
+  const awayTeam = useMemo(
     () => ({
       logo: getNFLTeamsLogo(awayId, dark),
       code: getTeamAbbreviation(awayId, "AWY"),
@@ -134,15 +143,53 @@ const awayTeam = useMemo(
     [homeId, homeRecord?.overall, dark, possessionTeamId]
   );
 
-
-  // Fetch broadcasts
+  // --- Broadcast ---
   const { broadcasts } = useNFLGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
     gameDateStr
   );
 
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
+  // --- Quarter formatter ---
+  const formatQuarter = (period?: number | string) => {
+    if (!period) return "";
+    const val =
+      typeof period === "string" ? period.toLowerCase() : String(period);
+    if (val.includes("end")) return "End";
+    if (val.includes("half")) return "Halftime";
+    if (val.includes("ot")) return "OT";
+    if (val.includes("q1")) return "1st";
+    if (val.includes("q2")) return "2nd";
+    if (val.includes("q3")) return "3rd";
+    if (val.includes("q4")) return "4th";
+    const num = Number(val);
+    if (!isNaN(num)) {
+      if (num >= 1 && num <= 4) return ["1st", "2nd", "3rd", "4th"][num - 1];
+      if (num >= 5) return `${num - 4}OT`;
+    }
+    return val;
+  };
+
+  // --- Winner/loser style ---
+  const getTeamStyle = useMemo(
+    () => (isHome: boolean) => {
+      const homeScore = safeScore.home.total;
+      const awayScore = safeScore.away.total;
+      let isWinner = true;
+      if (status.isFinal && homeScore !== awayScore) {
+        isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
+      }
+      return {
+        color: dark ? "#fff" : "#1d1d1d",
+        opacity: isWinner ? 1 : 0.55,
+      };
+    },
+    [dark, status, safeScore]
+  );
+
+  // --- Date formatting ---
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
     : "";
@@ -155,52 +202,7 @@ const awayTeam = useMemo(
       })
     : "";
 
-  // ✅ Quarter formatter with live OT handling
-  const formatQuarter = (short?: string | null, long?: string | null): string => {
-    const val = short && short.trim() !== "" ? short : long ?? "";
-    if (!val) return "";
-
-    const q = val.toLowerCase();
-
-    if (q.includes("1")) return "1st";
-    if (q.includes("2")) return "2nd";
-    if (q.includes("3")) return "3rd";
-    if (q.includes("4")) return "4th";
-
-    if (q.includes("ot") || q.includes("overtime")) return "OT";
-    if (q.includes("half")) return "Halftime";
-    if (q.includes("end")) return "End";
-
-    const asNumber = Number(val);
-    if (!isNaN(asNumber)) {
-      if (asNumber === 5) return "OT";
-      if (asNumber > 5) return `${asNumber - 4}OT`;
-    }
-
-    return val; // fallback
-  };
-
-  const getTeamStyle = useMemo(
-    () =>
-      (isHome: boolean): TextStyle => {
-        const homeScore = game.scores.home?.total ?? 0;
-        const awayScore = game.scores.away?.total ?? 0;
-        let isWinner = true;
-
-        if (status.isFinal) {
-          if (homeScore !== awayScore) {
-            isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
-          }
-        }
-
-        return {
-          color: dark ? "#fff" : "#1d1d1d",
-          opacity: isWinner ? 1 : 0.5,
-        };
-      },
-    [dark, status, game.scores]
-  );
-
+  // --- UI ---
   return (
     <TouchableOpacity
       activeOpacity={0.85}
@@ -213,43 +215,47 @@ const awayTeam = useMemo(
     >
       <View style={styles.card}>
         <View style={styles.cardWrapper}>
-          {/* Away Team */}
+          {/* Away */}
           <View style={styles.teamSection}>
             <View style={styles.teamWrapper}>
               <Image source={awayTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>{awayTeam.code}</Text>
+              {awayTeam.hasPossession && (
+                <Image
+                  source={dark ? FootballLight : Football}
+                  style={styles.footballIcon}
+                />
+              )}
             </View>
             <Text
               style={[
-                status.isScheduled || status.isCanceled || status.isPostponed
-                  ? styles.teamRecord
-                  : styles.teamScore,
+                status.isScheduled ? styles.teamRecord : styles.teamScore,
                 getTeamStyle(false),
               ]}
             >
-              {status.isScheduled || status.isCanceled || status.isPostponed
-                ? awayTeam.record
-                : game.scores.away?.total}
+              {status.isScheduled ? awayTeam.record : safeScore.away.total ?? 0}
             </Text>
           </View>
 
-          {/* Home Team */}
+          {/* Home */}
           <View style={styles.teamSection}>
             <View style={styles.teamWrapper}>
               <Image source={homeTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>{homeTeam.code}</Text>
+              {homeTeam.hasPossession && (
+                <Image
+                  source={dark ? FootballLight : Football}
+                  style={styles.footballIcon}
+                />
+              )}
             </View>
             <Text
               style={[
-                status.isScheduled || status.isCanceled || status.isPostponed
-                  ? styles.teamRecord
-                  : styles.teamScore,
+                status.isScheduled ? styles.teamRecord : styles.teamScore,
                 getTeamStyle(true),
               ]}
             >
-              {status.isScheduled || status.isCanceled || status.isPostponed
-                ? homeTeam.record
-                : game.scores.home?.total}
+              {status.isScheduled ? homeTeam.record : safeScore.home.total ?? 0}
             </Text>
           </View>
         </View>
@@ -262,29 +268,29 @@ const awayTeam = useMemo(
               <Text
                 style={[
                   styles.time,
-                  {
-                    fontFamily: Fonts.OSREGULAR,
-                    color: isDark
-                      ? "rgba(255,255,255, .5)"
-                      : "rgba(0, 0, 0, .5)",
-                  },
+                  { color: dark ? "rgba(255,255,255,.6)" : "rgba(0,0,0,.6)" },
                 ]}
               >
                 {formattedTime}
               </Text>
             </>
           )}
+
           {status.isLive && (
             <>
-              <Text style={[styles.date, { fontSize: 14 }]}>
-                {formatQuarter(status.short, status.long)}
-              </Text>
-              <Text style={styles.clock}>{status.timer}</Text>
+              <Text style={styles.date}>{formatQuarter(period)}</Text>
+              {status.isEndOfPeriod ? (
+                <Text style={styles.finalText}>
+                  End of {formatQuarter(period)}
+                </Text>
+              ) : (
+                <Text style={styles.clock}>{displayClock}</Text>
+              )}
             </>
           )}
-          {status.isHalftime && (
-            <Text style={[styles.date, { fontSize: 14 }]}>{status.short}</Text>
-          )}
+
+          {status.isHalftime && <Text style={styles.date}>Halftime</Text>}
+
           {status.isFinal && (
             <>
               <Text style={styles.finalText}>
@@ -293,141 +299,15 @@ const awayTeam = useMemo(
               <Text style={styles.dateFinal}>{formattedDate}</Text>
             </>
           )}
-          {status.isCanceled && <Text style={styles.finalText}>Cancelled</Text>}
+
+          {status.isCanceled && <Text style={styles.finalText}>Canceled</Text>}
           {status.isDelayed && <Text style={styles.finalText}>Delayed</Text>}
+
+          <Text style={styles.broadcast}>{broadcastText}</Text>
         </View>
-
-        {/* Broadcasts */}
-        {broadcasts.length > 0 &&
-          (() => {
-            const names = broadcasts
-              .map((b) =>
-                Array.isArray(b.names)
-                  ? b.names.join("/")
-                  : b.name || b.shortName || ""
-              )
-              .filter(Boolean);
-
-            let display = "";
-            if (names.includes("ESPN") && names.includes("ABC")) {
-              display = "ESPN/ABC";
-            } else {
-              display = names[0];
-            }
-
-            return <Text style={styles.broadcast}>{display}</Text>;
-          })()}
       </View>
     </TouchableOpacity>
   );
 }
 
 export default memo(NFLGameSquareCard);
-
-export const getStyles = (dark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      height: 120,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
-      justifyContent: "space-between",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 16,
-    },
-    cardWrapper: {
-      flexDirection: "column",
-      justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
-      borderRightWidth: 0.5,
-      paddingRight: 12,
-      gap: 8,
-    },
-    teamSection: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
-    },
-    teamWrapper: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 8,
-      width: 80,
-    },
-    logo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
-    },
-    teamName: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      flexShrink: 1,
-      color: dark ? "#fff" : "#1d1d1d",
-      textAlign: "left",
-    },
-    teamScore: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#aaa" : "#888",
-      width: 40,
-    },
-    teamRecord: {
-      width: 40,
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      marginVertical: 2,
-      color: dark ? "#aaa" : "#888",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 30,
-      width: 44,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
-      textAlign: "center",
-      width: 40,
-    },
-    date: {
-      fontSize: 12,
-      textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    time: {
-     fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    broadcast: {
-      fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      marginTop: 4,
-      color: dark ? "#fff" : "#1d1d1d",
-      position: "absolute",
-      top: 2,
-      left: 12,
-    },
-  });

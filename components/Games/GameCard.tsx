@@ -1,21 +1,45 @@
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
-import { useTeamInfo } from "hooks/useTeamInfo";
-import { matchBroadcastToGame } from "utils/matchBroadcast";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useTeamRecord } from "hooks/useTeamRecords";
+import { useMemo, useState } from "react";
 import {
+  Pressable,
   Text,
   TextStyle,
   TouchableOpacity,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
-import { getStyles } from "../../styles/GameCard.styles";
-import { teams } from "../../constants/teams";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getTeamLogo, teams } from "../../constants/teams";
 import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
+import { getStyles } from "../../styles/GamecardStyles/GameCard.styles";
 import { Game, Team } from "../../types/types";
+// --- Helper function to normalize API status ---
+function mapStatus(apiStatus: {
+  short: number;
+  long?: string;
+}): Game["status"] {
+  switch (apiStatus.short) {
+    case 1:
+      return "Scheduled";
+    case 2:
+    case 3: // finished
+      return "Final";
+    case 4:
+      return "Postponed";
+    case 5:
+      return "Delayed";
+    case 6:
+      return "Canceled";
+    default:
+      if (apiStatus.long?.toLowerCase() === "finished") return "Final";
+      return "Scheduled";
+  }
+}
 
 export default function GameCard({
   game,
@@ -28,72 +52,98 @@ export default function GameCard({
   const dark = isDark ?? colorScheme === "dark";
   const styles = getStyles(dark);
   const router = useRouter();
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const homeTeam =
-    game.home ??
-    ({ name: "Unknown", logo: "", record: "-", fullName: "Unknown" } as Team);
+    game.home ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
   const awayTeam =
-    game.away ??
-    ({ name: "Unknown", logo: "", record: "-", fullName: "Unknown" } as Team);
+    game.away ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
 
+  const getTeamById = (id?: number | string) =>
+    teams.find((t) => String(t.id) === String(id));
+
+  const getTeamName = (id?: number | string): string => {
+    const team = getTeamById(id);
+    return team?.name ?? "Unknown";
+  };
+
+  // IDs
+  const homeId = Number(game.home?.id ?? (game as any).homeTeamId ?? 0);
+  const awayId = Number(game.away?.id ?? (game as any).awayTeamId ?? 0);
+
+  // ESPN IDs
+  const homeEspnId = getTeamById(homeId)?.espnID;
+  const awayEspnId = getTeamById(awayId)?.espnID;
+
+  // Team records
+  const { record: homeRecord } = useTeamRecord(homeEspnId);
+  const { record: awayRecord } = useTeamRecord(awayEspnId);
+
+  // Memoized team data
   const homeTeamData = useMemo(
-    () =>
-      teams.find(
-        (t) =>
-          t.name === homeTeam.name ||
-          t.code === homeTeam.name ||
-          t.name.includes(homeTeam.name)
-      ),
-    [homeTeam.name]
+    () => ({
+      id: String(homeId),
+      espnID: homeEspnId ?? "",
+      name: getTeamName(homeId),
+      logo: getTeamLogo(homeId, dark),
+      record: homeRecord?.overall ?? "0-0",
+    }),
+    [homeId, homeEspnId, homeRecord?.overall, dark]
   );
 
   const awayTeamData = useMemo(
-    () =>
-      teams.find(
-        (t) =>
-          t.name === awayTeam.name ||
-          t.code === awayTeam.name ||
-          t.name.includes(awayTeam.name)
-      ),
-    [awayTeam.name]
+    () => ({
+      id: String(awayId),
+      espnID: awayEspnId ?? "",
+      name: getTeamName(awayId),
+      logo: getTeamLogo(awayId, dark),
+      record: awayRecord?.overall ?? "0-0",
+    }),
+    [awayId, awayEspnId, awayRecord?.overall, dark]
   );
 
-  const { team: homeInfo } = useTeamInfo(homeTeamData?.id?.toString());
-  const { team: awayInfo } = useTeamInfo(awayTeamData?.id?.toString());
+  const homeRecordData = homeRecord?.overall;
+  const awayRecordData = awayRecord?.overall;
 
   const currentPeriod = Number(game.periods?.current ?? game.period);
 
-  const isFinal = game.status === "Final";
-  const inProgress = game.status === "In Progress";
-  const isCanceled = game.status === "Canceled";
-  const isDelayed = game.status === "Delayed";
-  const isPostponed = game.status === "Postponed";
+  const status = mapStatus(game.status as any);
+  const isFinal = status === "Final";
+  const inProgress = status === "In Progress";
+  const isCanceled = status === "Canceled";
+  const isDelayed = status === "Delayed";
+  const isPostponed = status === "Postponed";
   const isEndOfPeriod = game.periods?.endOfPeriod === true;
 
-  const homeWins = isFinal && (game.homeScore ?? 0) > (game.awayScore ?? 0);
-  const awayWins = isFinal && (game.awayScore ?? 0) > (game.homeScore ?? 0);
+  const homeScore = game.scores?.home?.points ?? game.homeScore;
+  const awayScore = game.scores?.visitors?.points ?? game.awayScore;
+
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
 
   const winnerStyle = (teamWins: boolean): TextStyle => ({
     color: dark ? "#fff" : "#1d1d1d",
     opacity: inProgress ? 1 : teamWins ? 1 : 0.5,
   });
 
-  const getLogoSource = (teamData?: Team, teamFallback?: Team) => {
-    if (!teamData && teamFallback?.logo) return { uri: teamFallback.logo };
-    if (!teamData) return require("../../assets/Logos/NBA.png");
-    if (dark && teamData.logoLight) return teamData.logoLight;
-    return teamData.logo;
+  const getLogo = (teamData?: Team, fallback?: Team) => {
+    if (!teamData)
+      return (
+        fallback?.logo ??
+        require("../../assets/Placeholders/teamPlaceholder.png")
+      );
+    return getTeamLogo(teamData.id, dark);
   };
 
-  const { broadcasts } = useESPNBroadcasts();
-  const matchedBroadcast = matchBroadcastToGame(game, broadcasts);
-  const broadcastNetworks = matchedBroadcast?.broadcasts
-    .map((b) => b.network)
-    .filter(Boolean)
-    .join(", ");
+  function safeDate(date?: string | null) {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
 
-  const homeId = Number(homeTeamData?.id);
-  const awayId = Number(awayTeamData?.id);
+  const gameDate = safeDate(game.date);
+  const gameDateStr = gameDate.toISOString();
+
   const playoffGames =
     homeId && awayId ? useFetchPlayoffGames(homeId, awayId, 2024).games : [];
   const currentPlayoffGame = playoffGames.find((g) => g.id === game.id);
@@ -102,7 +152,6 @@ export default function GameCard({
     : null;
   const seriesSummary = currentPlayoffGame?.seriesSummary;
 
-  const gameDate = new Date(game.date);
   const isNBAFinals =
     gameDate.getMonth() === 5 &&
     gameDate.getDate() >= 5 &&
@@ -116,17 +165,13 @@ export default function GameCard({
     ? "New Year's Day"
     : null;
 
-  function getTeamRecord(
-    team: Team,
-    teamData?: Team,
-    fallbackInfo?: Team | null
-  ) {
-    return team.record && team.record.trim() !== "" && team.record !== "0-0"
-      ? team.record
-      : teamData?.current_season_record ??
-          fallbackInfo?.current_season_record ??
-          "-";
-  }
+  const { broadcasts } = useGameBroadcasts(
+    homeTeam.name,
+    awayTeam.name,
+    gameDateStr
+  );
+
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
   function getQuarterLabel(period?: number) {
     if (!period) return "Live";
@@ -143,45 +188,47 @@ export default function GameCard({
   }
 
   const ScoreText = ({
-    team,
-    teamData,
-    fallbackInfo,
     score,
+    recordData,
     teamWins,
-  }: any) => {
-    const isScheduled =
-      game.status === "Scheduled" || isCanceled || isDelayed || isPostponed;
-    const displayValue =
-      isCanceled || isScheduled
-        ? getTeamRecord(team, teamData, fallbackInfo)
-        : score ?? "-";
-    const style = isScheduled
-      ? styles.teamRecord
-      : [styles.teamScore, winnerStyle(teamWins)];
+  }: {
+    score?: number;
+    recordData?: string;
+    teamWins: boolean;
+  }) => {
+    const hasScore = score != null;
+    const style = hasScore
+      ? [styles.teamScore, winnerStyle(teamWins)]
+      : styles.teamRecord;
+    const displayValue = hasScore ? score : recordData ?? "-";
     return <Text style={style}>{displayValue}</Text>;
   };
 
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
       <View style={styles.teamSection}>
         <Image
-          source={getLogoSource(awayTeamData, awayTeam)}
+          source={getLogo(awayTeamData, awayTeam)}
           style={styles.logo}
           accessibilityLabel={`${awayTeam.name} logo`}
         />
-        <Text style={styles.teamName}>{awayTeam.name}</Text>
+        <Text style={styles.teamName}>{getTeamName(awayId)}</Text>
       </View>
       <ScoreText
-        team={awayTeam}
-        teamData={awayTeamData}
-        fallbackInfo={awayInfo}
-        score={game.awayScore}
+        score={awayScore}
+        recordData={awayRecordData ?? undefined} // <-- coerce null to undefined
         teamWins={awayWins}
       />
 
-      {/* Game Info */}
-      <View style={styles.info}>
+      <View
+        style={[
+          styles.info,
+          !broadcastText && {
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
         {(gameNumberLabel || seriesSummary || holidayLabel) && (
           <View
             style={{
@@ -236,16 +283,6 @@ export default function GameCard({
               })}
             </Text>
           </>
-        ) : game.status === "Scheduled" ? (
-          <>
-            <Text style={styles.date}>
-              {gameDate.toLocaleDateString("en-US", {
-                month: "numeric",
-                day: "numeric",
-              })}
-            </Text>
-            <Text style={styles.time}>{game.time}</Text>
-          </>
         ) : inProgress ? (
           <>
             <Text style={styles.date}>
@@ -259,28 +296,50 @@ export default function GameCard({
               <Text style={styles.clock}>{game.clock}</Text>
             )}
           </>
-        ) : null}
-        {broadcastNetworks && (
-          <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+        ) : (
+          <>
+            <Text style={styles.date}>
+              {gameDate.toLocaleDateString("en-US", {
+                month: "numeric",
+                day: "numeric",
+              })}
+            </Text>
+            <Text style={styles.time}>{game.time ?? "TBD"}</Text>
+          </>
         )}
+
+        {broadcastText ? (
+          <Text style={styles.broadcast}>{broadcastText}</Text>
+        ) : null}
       </View>
 
-      {/* Home Score & Team */}
       <ScoreText
-        team={homeTeam}
-        teamData={homeTeamData}
-        fallbackInfo={homeInfo}
-        score={game.homeScore}
+        score={homeScore}
+        recordData={homeRecordData ?? undefined} // <-- coerce null to undefined
         teamWins={homeWins}
       />
       <View style={styles.teamSection}>
         <Image
-          source={getLogoSource(homeTeamData, homeTeam)}
+          source={getLogo(homeTeamData, homeTeam)}
           style={styles.logo}
           accessibilityLabel={`${homeTeam.name} logo`}
         />
-        <Text style={styles.teamName}>{homeTeam.name}</Text>
+        <Text style={styles.teamName}>{getTeamName(homeId)}</Text>
       </View>
+
+      <Pressable
+        onPress={() => setNotifEnabled((prev) => !prev)}
+        style={({ pressed }) => [
+          styles.notificationBell,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Ionicons
+          name={notifEnabled ? "notifications" : "notifications-outline"}
+          size={16}
+          color={dark ? "#fff" : "#1d1d1d"}
+        />
+      </Pressable>
     </>
   );
 

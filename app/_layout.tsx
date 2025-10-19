@@ -5,6 +5,8 @@ import FollowersModal from "components/Profile/FollowersModal";
 import { PreferencesProvider } from "contexts/PreferencesContext";
 import { useChatStore } from "store/chatStore";
 import { useFollowersModalStore } from "store/followersModalStore";
+import { NotificationProvider } from "contexts/NotificationContext";
+
 import {
   Oswald_200ExtraLight,
   Oswald_300Light,
@@ -135,7 +137,9 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+            <NotificationProvider>
       <BottomSheetModalProvider>
+
         <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
           <PreferencesProvider>
             <Stack
@@ -228,7 +232,9 @@ export default function RootLayout() {
             )}
           </PreferencesProvider>
         </ThemeProvider>
+
       </BottomSheetModalProvider>
+            </NotificationProvider>
     </GestureHandlerRootView>
   );
 }

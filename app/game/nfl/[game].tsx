@@ -3,30 +3,22 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
 import { LineScore, TeamLocationSection } from "components/GameDetails";
 import Weather from "components/GameDetails/Weather";
-import { NFLGameCenterInfo } from "components/NFL/GameDetails/GameInfo";
+import LastFiveGamesSwitcher from "components/NFL/GameDetails/LastFiveGames";
 import LastPlay from "components/NFL/GameDetails/LastPlay";
+import NFLGameHeader from "components/NFL/GameDetails/NFLGameHeader";
 import NFLGameLeaders from "components/NFL/GameDetails/NFLGameLeaders";
 import NFLGameOddsSection from "components/NFL/GameDetails/NFLGameOddsSection";
 import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
 import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
 import NFLOfficials from "components/NFL/GameDetails/NFLOfficials";
 import NFLTeamDrives from "components/NFL/GameDetails/NFLTeamDrives";
-import { NFLTeamRow } from "components/NFL/GameDetails/NFLTeamRow";
-import LastFiveGamesSwitcher from "components/NFL/GameDetails/LastFiveGames";
-import { arenaImages } from "constants/teams";
-import {
-  getNFLTeamsLogo,
-  getTeamInfo,
-  getTeamName,
-  neutralStadiums,
-  stadiumImages,
-} from "constants/teamsNFL";
+import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
+import { getTeamInfo, neutralStadiums, venueImages } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLGameOfficialsAndInjuries } from "hooks/NFLHooks/useNFLOfficials";
-import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
-
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useNFLTeamStats } from "hooks/NFLHooks/useNFLTeamStats";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -41,8 +33,6 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { emptyTeam } from "types/nfl";
-
-
 
 export default function NFLGameDetailsScreen() {
   const params = useLocalSearchParams();
@@ -127,13 +117,13 @@ export default function NFLGameDetailsScreen() {
   const awayTeam = away ? getTeamInfo(away.id) ?? emptyTeam : emptyTeam;
 
   const homeTeamNickname =
-    getTeamInfo(parsedGame?.teams?.home?.id ?? 0)?.nickname ?? "Home";
+    getTeamInfo(parsedGame?.teams?.home?.id ?? 0)?.name ?? "Home";
   const awayTeamNickname =
-    getTeamInfo(parsedGame?.teams?.away?.id ?? 0)?.nickname ?? "Away";
+    getTeamInfo(parsedGame?.teams?.away?.id ?? 0)?.name ?? "Away";
 
   const isNeutralSite =
     gameInfo?.venue?.name &&
-    ![homeTeam?.stadium, awayTeam?.stadium].includes(gameInfo.venue.name);
+    ![homeTeam?.venue, awayTeam?.venue].includes(gameInfo.venue.name);
 
   useLayoutEffect(() => {
     const safeHomeCode =
@@ -179,7 +169,6 @@ export default function NFLGameDetailsScreen() {
         : ""
     );
 
-
   type GameStatus =
     | "Scheduled"
     | "In Progress"
@@ -209,10 +198,10 @@ export default function NFLGameDetailsScreen() {
     if (!raw) return "";
 
     const map: Record<string, string> = {
-      Q1: "1st",
-      Q2: "2nd",
-      Q3: "3rd",
-      Q4: "4th",
+      1: "1st",
+      2: "2nd",
+      3: "3rd",
+      4: "4th",
       OT: "OT",
       OVERTIME: "OT",
       HT: "Halftime",
@@ -252,7 +241,6 @@ export default function NFLGameDetailsScreen() {
   const homeIsWinner =
     gameStatus === "Final" &&
     (scores?.home?.total ?? 0) > (scores?.away?.total ?? 0);
-
 
   const gameDateObj = useMemo(() => {
     if (!gameInfo?.date) return null;
@@ -337,19 +325,22 @@ export default function NFLGameDetailsScreen() {
 
   const homeTeamName = homeTeam?.name ?? ""; // e.g., "Green Bay Packers"
   const awayTeamName = awayTeam?.name ?? ""; // e.g., "Washington Commanders"
-    const homeTeamIdNum = Number(homeTeam.id);
+  const homeTeamIdNum = Number(homeTeam.id);
   const awayTeamIdNum = Number(awayTeam.id);
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
   const {
     possessionTeamId,
     shortDownDistanceText,
+    gameStatusDescription,
     downDistanceText,
     lastPlay,
     displayClock,
     period,
     homeTimeouts,
     awayTimeouts,
+    possessionText,
+    score: liveScore,
     loading: possessionLoading,
   } = useNFLGamePossession(homeTeamName, awayTeamName, gameDateStr);
 
@@ -362,75 +353,46 @@ export default function NFLGameDetailsScreen() {
         style={{ backgroundColor: colors.background }}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
+        stickyHeaderIndices={[0]}
       >
         {/* Teams & Score Section */}
-        <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
-          <NFLTeamRow
-            team={{
-              id: String(awayTeam.id),
-              name:
-                getTeamName(away.id, away.nickname) || away.nickname || "Away",
-              logo: getNFLTeamsLogo(away.id, isDark),
-              record: awayRecord?.overall ?? "0-0",
-            }}
-            isDark={isDark}
-            isHome={false}
-            score={scores?.away?.total}
-            opponentScore={scores?.home?.total} // 👈 add this
-            isWinner={awayIsWinner}
-            colors={colors}
-            status={gameStatus}
-            possessionTeamId={
-              possessionTeamId !== undefined
-                ? String(possessionTeamId)
-                : undefined
-            }
-            timeouts={awayTimeouts ?? 0}
-          />
-
-          <NFLGameCenterInfo
-            status={gameStatus}
-            date={formattedDate}
-            time={formattedTime}
-            period={formatPeriod(period ?? gameInfo?.status?.short ?? "")}
-            clock={displayClock ?? gameInfo?.status?.timer ?? ""}
-            colors={colors}
-            isDark={isDark}
-            playoffInfo={gameInfo?.week}
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            downAndDistance={shortDownDistanceText ?? ""}
-          />
-
-          <NFLTeamRow
-            team={{
-              id: String(homeTeam.id),
-              name:
-                getTeamName(home.id, home.nickname) || home.nickname || "Home",
-              logo: getNFLTeamsLogo(home.id, isDark),
-              record: homeRecord?.overall ?? "0-0",
-            }}
-            isDark={isDark}
-            isHome
-            score={scores?.home?.total}
-            opponentScore={scores?.away?.total}
-            isWinner={homeIsWinner}
-            colors={colors}
-            status={gameStatus}
-            possessionTeamId={
-              possessionTeamId !== undefined
-                ? String(possessionTeamId)
-                : undefined
-            }
-            timeouts={homeTimeouts ?? 0}
-          />
-        </View>
+        <NFLGameHeader
+          homeTeam={homeTeam}
+          awayTeam={awayTeam}
+          scores={liveScore ?? scores} // ✅ liveScore from possession hook, fallback to parsed game scores
+          possessionTeamId={
+            possessionTeamId !== undefined
+              ? String(possessionTeamId)
+              : undefined
+          }
+          homeTimeouts={homeTimeouts}
+          awayTimeouts={awayTimeouts}
+          colors={colors}
+          status={gameStatusDescription ?? gameStatus}
+          period={formatPeriod(period ?? gameInfo?.status?.short ?? "")}
+          displayClock={displayClock ?? gameInfo?.status?.timer ?? ""}
+          possessionText={possessionText ?? ""}
+          isDark={isDark}
+          homeRecord={homeRecord?.overall ?? undefined}
+          awayRecord={awayRecord?.overall ?? undefined}
+          formattedDate={formattedDate}
+          formattedTime={formattedTime}
+          playoffInfo={gameInfo?.week}
+        />
 
         {/* Lazy-loaded Section */}
         {showDetails && (
           <View style={{ gap: 20, marginTop: 20 }}>
             {/* Last Play Section */}
             <LastPlay lastPlay={lastPlay} isDark={isDark} />
+
+            <LastPlayField
+              lastPlay={lastPlay}
+              possessionTeamId={possessionTeamId}
+              homeTeamId={Number(homeTeam.id)} // ensure number
+              awayTeamId={Number(awayTeam.id)} // ensure number
+              isDark={isDark}
+            />
 
             <LineScore
               linescore={linescore}
@@ -474,22 +436,21 @@ export default function NFLGameDetailsScreen() {
 
             {stats && <NFLGameTeamStats stats={stats} />}
 
-
             <LastFiveGamesSwitcher
-                          isDark={isDark}
-                          home={{
-                            teamCode: homeTeam.code,
-                            teamLogo: homeTeam.logo,
-                            teamLogoLight: homeTeam.logoLight,
-                            games: homeLastGames.games,
-                          }}
-                          away={{
-                            teamCode: awayTeam.code,
-                            teamLogo: awayTeam.logo,
-                            teamLogoLight: awayTeam.logoLight,
-                            games: awayLastGames.games,
-                          }}
-                        />
+              isDark={isDark}
+              home={{
+                teamCode: homeTeam.code,
+                teamLogo: homeTeam.logo,
+                teamLogoLight: homeTeam.logoLight,
+                games: homeLastGames.games,
+              }}
+              away={{
+                teamCode: awayTeam.code,
+                teamLogo: awayTeam.logo,
+                teamLogoLight: awayTeam.logoLight,
+                games: awayLastGames.games,
+              }}
+            />
 
             <NFLInjuries
               injuries={injuries}
@@ -504,19 +465,19 @@ export default function NFLGameDetailsScreen() {
             {(
               isNeutralSite
                 ? gameInfo?.venue?.name || gameInfo?.venue?.city
-                : homeTeam?.stadium || homeTeam?.location
+                : homeTeam?.venue || homeTeam?.location
             ) ? (
               <TeamLocationSection
-                arenaImage={
+                venueImage={
                   isNeutralSite
-                    ? stadiumImages[gameInfo?.venue?.name ?? ""] ||
-                      arenaImages[gameInfo?.venue?.city ?? ""]
-                    : homeTeam?.stadiumImage
+                    ? venueImages[gameInfo?.venue?.name ?? ""] ||
+                      venueImages[gameInfo?.venue?.city ?? ""]
+                    : homeTeam?.venueImage
                 }
-                arenaName={
+                venueName={
                   isNeutralSite
                     ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.name ?? ""
-                    : homeTeam?.stadium ?? ""
+                    : homeTeam?.venue ?? ""
                 }
                 location={
                   isNeutralSite
@@ -529,11 +490,11 @@ export default function NFLGameDetailsScreen() {
                       ""
                     : homeTeam?.address ?? ""
                 }
-                arenaCapacity={
+                venueCapacity={
                   isNeutralSite
                     ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                        ?.stadiumCapacity ?? ""
-                    : homeTeam?.stadiumCapacity ?? ""
+                        ?.venueCapacity ?? ""
+                    : homeTeam?.venueCapacity ?? ""
                 }
                 loading={false}
                 error={null}

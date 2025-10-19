@@ -5,6 +5,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CFBLogo from "assets/Football/CFB_Logos/CFB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import { Fonts } from "constants/fonts";
@@ -19,18 +20,18 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-
+import { LeagueType } from "types/types";
 export type SportsListModalRef = {
   present: () => void;
   dismiss: () => void;
 };
 
 type SportsListModalProps = {
-  onSelect: (league: "NBA" | "NFL") => void;
+  onSelect: (league: LeagueType) => void;
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: ("NBA" | "NFL")[] = ["NBA", "NFL"];
+const leagues: LeagueType[] = ["NBA", "NFL", "CFB"];
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
@@ -49,14 +50,19 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
     }));
 
     const styles = getStyles(isDark);
-    type LeagueRoute = "/league/nba" | "/league/nfl";
+    type LeagueRoute = "/league/nba" | "/league/nfl" | "/league/cfb";
 
-    const goToLeague = (league: "NBA" | "NFL") => {
+    const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
       onClose?.(); // 👈 tell parent it closed
 
       const route: LeagueRoute =
-        league === "NBA" ? "/league/nba" : "/league/nfl";
+        league === "NBA"
+          ? "/league/nba"
+          : league === "NFL"
+          ? "/league/nfl"
+          : "/league/cfb";
+
       router.push(route);
       onSelect(league);
     };
@@ -65,7 +71,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       <BottomSheetModal
         ref={sheetRef as any}
         index={2}
-        snapPoints={["60%","80%", "90%"]}
+        snapPoints={["60%", "80%", "90%"]}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}
@@ -112,7 +118,13 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                 <View style={styles.buttonWrapper}>
                   <Image
                     style={styles.leagueLogo}
-                    source={league === "NBA" ? NBALogo : NFLLogo}
+                    source={
+                      league === "NBA"
+                        ? NBALogo
+                        : league === "NFL"
+                        ? NFLLogo
+                        : CFBLogo
+                    }
                   />
                   <Text style={styles.leagueText}>{league}</Text>
                 </View>
@@ -196,9 +208,9 @@ const getStyles = (isDark: boolean) =>
       marginRight: 8,
     },
     leagueText: {
+     color: isDark ? "#fff" : "#1d1d1d",
       fontSize: 18,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.OSREGULAR,
     },
   });
 

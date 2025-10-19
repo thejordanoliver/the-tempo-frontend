@@ -11,12 +11,19 @@ import {
   teams as nflTeams,
 } from "../constants/teamsNFL";
 
+import { Fonts } from "constants/fonts";
+import { LeagueType } from "types/types";
+import {
+  logoMap as cfbLogoMap,
+  teams as cfbTeams,
+} from "../constants/teamsCFB";
+
 type Props = {
   years: number[];
   logo?: any;
   teamId?: string | number;
   teamName?: string;
-  league?: "NBA" | "NFL"; // 👈 NEW
+  league?: LeagueType;
 };
 
 export default function ChampionshipBanner({
@@ -24,14 +31,15 @@ export default function ChampionshipBanner({
   logo,
   teamId,
   teamName,
-  league = "NBA", // default NBA
+  league = "NBA",
 }: Props) {
   const isDark = useColorScheme() === "dark";
-
   const cleanName = teamName?.replace(/"/g, "") || "";
 
-  const teams = league === "NFL" ? nflTeams : nbaTeams;
-  const logoMap = league === "NFL" ? nflLogoMap : nbaLogoMap;
+  const teams =
+    league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : nbaTeams;
+  const logoMap =
+    league === "NFL" ? nflLogoMap : league === "CFB" ? cfbLogoMap : nbaLogoMap;
 
   const team =
     teams.find((t) => String(t.id) === String(teamId)) ||
@@ -46,7 +54,6 @@ export default function ChampionshipBanner({
   const isNone = years.length === 0;
   const isManyYears = years.length > 10;
   const banners = isNone ? [null] : isManyYears ? [years.length] : years;
-
   const textColor = "#fff";
 
   return (
@@ -63,11 +70,23 @@ export default function ChampionshipBanner({
         const yearShort = isNone
           ? "NONE"
           : isManyYears
-            ? `x${yearVal}`
-            : `'${yearVal?.toString().slice(-2)}`;
+          ? league === "CFB"
+            ? `x${yearVal}` // Show "xN" even for CFB
+            : `x${yearVal}`
+          : `'${yearVal?.toString().slice(-2)}`;
 
         const bannerSource = getBannerImage(team?.id, league, isDark);
+        let championshipLabel = `${league} CHAMPIONS`;
 
+        // For CFB, handle year vs. many championships
+        if (league === "CFB") {
+          if (isManyYears) {
+            championshipLabel = "CFB CHAMPIONS"; // show generic label for >10 championships
+          } else if (typeof yearVal === "number") {
+            championshipLabel =
+              yearVal <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
+          }
+        }
         return (
           <ImageBackground
             key={index}
@@ -85,7 +104,7 @@ export default function ChampionshipBanner({
               style={{
                 color: textColor,
                 fontSize: 22,
-                fontFamily: "Oswald_700Bold",
+                fontFamily: Fonts.OSBOLD,
               }}
             >
               {yearShort}
@@ -93,7 +112,11 @@ export default function ChampionshipBanner({
 
             {team && (
               <Image
-                source={getTeamLogoFromMap(team.name, logoMap, isDark) || logo}
+                source={
+                  getTeamLogoFromMap(team.name, logoMap, isDark, league) ||
+                  team.logo ||
+                  logo
+                }
                 style={{
                   width: 40,
                   height: 60,
@@ -107,11 +130,11 @@ export default function ChampionshipBanner({
               style={{
                 color: textColor,
                 fontSize: 12,
-                fontFamily: "Oswald_700Bold",
+                fontFamily: Fonts.OSBOLD,
                 marginTop: 0,
               }}
             >
-              {league} CHAMPIONS
+              {championshipLabel}
             </Text>
           </ImageBackground>
         );
@@ -123,33 +146,34 @@ export default function ChampionshipBanner({
 function getTeamLogoFromMap(
   name?: string,
   logoMap?: Record<string, any>,
-  isDark?: boolean
+  isDark?: boolean,
+  league?: LeagueType
 ) {
   if (!name || !logoMap) return null;
 
-  let cleanName = name.replace(/\s+/g, "");
-  if (cleanName === "76ers") cleanName = "Sixers"; // NBA fix
+  const cleanName = name.replace(/\s+/g, "");
+
+  // For CFB, always use logoLight if available
+  if (league === "CFB" && logoMap[`${cleanName}LogoLight`]) {
+    return logoMap[`${cleanName}LogoLight`];
+  }
 
   const logoKey = `${cleanName}Logo`;
   const logoLightKey = `${cleanName}LogoLight`;
 
+  // Teams that should always use light logo in NBA
   const alwaysLightTeams = ["Jazz", "Rockets", "Sixers"];
   const isAlwaysLight = alwaysLightTeams.includes(cleanName);
 
-  if (isAlwaysLight && logoMap[logoLightKey]) {
-    return logoMap[logoLightKey];
-  }
-
-  if (isDark && logoMap[logoLightKey]) {
+  if ((isAlwaysLight || isDark) && logoMap[logoLightKey]) {
     return logoMap[logoLightKey];
   }
 
   return logoMap[logoKey] ?? null;
 }
 
-// --- BANNER MAPS (NBA + NFL) ---
+// --- BANNER MAPS ---
 
-// NBA (your existing maps)
 const nbaBannerMap: Record<string, any> = {
   "1": require("../assets/banners/HAWKS.png"),
   "2": require("../assets/banners/CELTICS.png"),
@@ -183,8 +207,6 @@ const nbaBannerMap: Record<string, any> = {
   "41": require("../assets/banners/WIZARDS.png"),
 };
 
-
-// NFL (you’ll need to add assets like these)
 const nflBannerMap: Record<string, any> = {
   "1": require("../assets/bannersNFL/RAIDERS.png"),
   "2": require("../assets/bannersNFL/JAGUARS.png"),
@@ -220,16 +242,25 @@ const nflBannerMap: Record<string, any> = {
   "32": require("../assets/bannersNFL/VIKINGS.png"),
 };
 
+const cfbBannerMap: Record<string, any> = {
+  "113": require("../assets/bannersCFB/FLORIDA.png"),
+  "107": require("../assets/bannersCFB/OHIOSTATE.png"),
+  "195": require("../assets/bannersCFB/TEXAS.png"),
+  "71": require("../assets/bannersCFB/UCF.png"),
+  "106": require("../assets/bannersCFB/ALABAMA.png"),
+};
 
 function getBannerImage(
   teamId?: string | number,
-  league: "NBA" | "NFL" = "NBA",
+  league: LeagueType = "NBA",
   isDark?: boolean
 ) {
   const fallback =
     league === "NFL"
       ? require("../assets/bannersNFL/DEFAULT.png")
-      : require("../assets/banners/DEFAULT.png");
+      : league === "NBA"
+      ? require("../assets/banners/DEFAULT.png")
+      : require("../assets/bannersCFB/DEFAULT.png");
 
   if (!teamId) return fallback;
 
@@ -237,13 +268,13 @@ function getBannerImage(
 
   const maps =
     league === "NFL"
-      ? { map: nflBannerMap }
-      : { map: nbaBannerMap};
+      ? nflBannerMap
+      : league === "NBA"
+      ? nbaBannerMap
+      : cfbBannerMap;
 
-
-
-  if (maps.map[id]) {
-    return maps.map[id];
+  if (maps[id]) {
+    return maps[id];
   }
 
   console.warn(`Banner not found for ${league} team ID:`, id);

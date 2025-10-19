@@ -71,10 +71,10 @@ type AggregatedStats = {
 
 const API_HEADERS = {
   "x-rapidapi-key": API_KEY,
-  "x-rapidapi-host": "api-nba-v1.p.rapidapi.com",
+  "x-rapidapi-host": "v2.nba.api-sports.io",
 };
 
-export function useTeamRosterStats(teamId: number, season = "2024") {
+export function useTeamRosterStats(teamId: number, season = "2025") {
   const [rosterStats, setRosterStats] = useState<AggregatedStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -87,7 +87,7 @@ export function useTeamRosterStats(teamId: number, season = "2024") {
       setError(null);
 
       try {
-        const playersRes = await axios.get("https://api-nba-v1.p.rapidapi.com/players", {
+        const playersRes = await axios.get("https://v2.nba.api-sports.io/players", {
           params: { team: teamId, season },
           headers: API_HEADERS,
         });
@@ -97,7 +97,7 @@ export function useTeamRosterStats(teamId: number, season = "2024") {
         const statPromises = players.map(async (player) => {
           try {
             const statsRes = await axios.get<{ response: PlayerStat[] }>(
-              "https://api-nba-v1.p.rapidapi.com/players/statistics",
+              "https://v2.nba.api-sports.io/teams/statistics",
               {
                 params: { id: player.id, season },
                 headers: API_HEADERS,

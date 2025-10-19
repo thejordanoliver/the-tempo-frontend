@@ -22,7 +22,8 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
-
+import { teams as nflteams } from "constants/teamsNFL";
+import { teams as cfbteams } from "constants/teamsCFB";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { useFollowersModalStore } from "store/followersModalStore";
 
@@ -221,6 +222,18 @@ useFocusEffect(
     }
   };
 
+    const favoriteTeamsWithLeague = favorites
+      .map((fav: string) => {
+        const [league, id] = fav.split(":");
+        let team;
+        if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
+        if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
+        if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
+        if (!team) return null;
+        return { ...team, league: league as "NBA" | "NFL" | "CFB" };
+      })
+      .filter(Boolean);
+
   const favoriteTeams = teams.filter((team) => favorites.includes(team.id));
   const styles = getStyles(isDark);
 
@@ -253,7 +266,6 @@ useFocusEffect(
 
   const isCurrentUser =
     currentUserId !== null && String(currentUserId) === userId;
-
   return (
     <>
       <ScrollView
@@ -291,13 +303,13 @@ useFocusEffect(
 
         <View style={styles.favoritesContainer}>
           <FavoriteTeamsSection
-            favoriteTeams={favoriteTeams}
+            favoriteTeams={favoriteTeamsWithLeague}
             isGridView={isGridView}
             fadeAnim={fadeAnim}
             toggleFavoriteTeamsView={toggleFavoriteTeamsView}
             styles={styles}
             itemWidth={itemWidth}
-            isCurrentUser={false}
+            isCurrentUser={isCurrentUser}
             username={username ?? undefined}
           />
         </View>

@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
-import { useSeasonGames as useDBGames } from "hooks/useDBGames";
+
 import { useSeasonGames as useLiveSeasonGames } from "hooks/useSeasonGames";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
@@ -92,11 +92,7 @@ export default function NBALeagueScreen() {
     refreshGames: refreshLiveGames,
   } = useLiveSeasonGames(currentYear);
 
-  const {
-    games: dbGames,
-    loading: dbLoading,
-    refreshGames: refreshDBGames,
-  } = useDBGames(currentYear);
+
   const {
     games: summerGames,
     loading: summerLoading,
@@ -156,8 +152,10 @@ useLayoutEffect(() => {
         league="NBA"
         modalVisible={leagueModalVisible} // now updates
         setModalVisible={setLeagueModalVisible}
-        onOpenLeagueModal={() => sportsModalRef.current?.present()}
-        onBack={goBack}
+onOpenLeagueModal={() => {
+  setLeagueModalVisible(true);
+  sportsModalRef.current?.present();
+}}        onBack={goBack}
       />
     ),
   });
@@ -213,10 +211,8 @@ useLayoutEffect(() => {
 
   // --- Combine NBA games ---
   const inProgressGames = liveGames.filter((g) => g.status === "In Progress");
-  const dbOnlyGames = dbGames.filter(
-    (g) => g.status === "Scheduled" || g.status === "Final"
-  );
-  const combinedSeasonGames = [...inProgressGames, ...dbOnlyGames];
+ 
+  const combinedSeasonGames = [...inProgressGames, ];
 
   const filteredSeasonGames = filterByDate(combinedSeasonGames, selectedDate);
   const filteredSummerGames = filterByDate(summerGames, selectedDate);
@@ -242,7 +238,7 @@ useLayoutEffect(() => {
     try {
       await Promise.all([
         refreshLiveGames(),
-        refreshDBGames(),
+     
         refreshSummerGames(),
         refreshNews(),
       ]);
@@ -314,7 +310,7 @@ useLayoutEffect(() => {
                 {normalizedSeasonGames.length > 0 ? (
                   <GamesList
                     games={normalizedSeasonGames}
-                    loading={liveLoading || dbLoading}
+                    loading={liveLoading}
                     refreshing={refreshing}
                     onRefresh={handleRefresh}
                     scrollEnabled={false}
@@ -380,11 +376,12 @@ useLayoutEffect(() => {
         }}
       />
 
-    <SportsListModal
+  <SportsListModal
   ref={sportsModalRef}
   onSelect={() => {}}
   onClose={() => setLeagueModalVisible(false)}
 />
+
     </>
   );
 }

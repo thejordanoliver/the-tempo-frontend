@@ -1,16 +1,16 @@
 import { Fonts } from "constants/fonts";
-import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import { useRouter } from "expo-router";
+import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
-  StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
+import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
 import { teams } from "../../constants/teams";
 import type { summerGame, Team } from "../../types/types";
 
@@ -310,102 +310,3 @@ export default function SummerLeagueGameSquareCard({
     </TouchableOpacity>
   );
 }
-
-const getStyles = (dark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      width: "100%",
-      height: 120,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
-      justifyContent: "space-between",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 16,
-    },
-    cardWrapper: {
-      flexDirection: "column",
-      justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
-      borderRightWidth: 0.5,
-      paddingRight: 12,
-      gap: 8,
-    },
-    teamSection: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
-    },
-
-    teamWrapper: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 8,
-      width: 80,
-    },
-
-    logo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
-    },
-    teamName: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      flexShrink: 1,
-      color: dark ? "#fff" : "#000",
-      textAlign: "left",
-    },
-    teamScore: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#aaa" : "#888",
-      width: 40,
-    },
-    teamRecord: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      marginVertical: 2,
-      color: dark ? "#bbb" : "#888",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 30,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
-      textAlign: "center",
-      width: 40,
-    },
-    date: {
-      fontSize: 12,
-      fontFamily: Fonts.OSEXTRALIGHT,
-      textAlign: "center",
-      color: dark ? "#fff" : "#000",
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, 1)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    time: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "#fff" : "#000",
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      color: dark ? "#fff" : "#000",
-    },
-  });

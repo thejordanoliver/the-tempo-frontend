@@ -49,7 +49,6 @@ export default function GameInjuries({ injuries, lighter }: Props) {
   const isDark = useColorScheme() === "dark";
 
   if (!injuries?.length) {
-    console.log("No injuries to display.");
     return null;
   }
 
@@ -57,7 +56,6 @@ export default function GameInjuries({ injuries, lighter }: Props) {
   const teamIds = injuries.map((t) => {
     const feedId = t.team.id.toString();
     const dbId = TEAM_ID_MAP[feedId] || feedId; // fallback if no mapping
-    console.log(`Mapping feed team ID ${feedId} → DB team ID ${dbId}`);
     return dbId;
   });
 
@@ -65,10 +63,7 @@ export default function GameInjuries({ injuries, lighter }: Props) {
   const teamPlayersMap: Record<string, Player[]> = {};
   teamIds.forEach((teamId) => {
     const { players } = useDbPlayersByTeam(teamId);
-    console.log(
-      `📦 Fetched ${players.length} DB players for team ID ${teamId}:`,
-      players.map((p) => p.full_name)
-    );
+  
     teamPlayersMap[teamId] = players;
   });
 
@@ -83,17 +78,12 @@ export default function GameInjuries({ injuries, lighter }: Props) {
         const feedTeamId = team.team.id.toString();
         const dbTeamId = TEAM_ID_MAP[feedTeamId] || feedTeamId;
         const teamPlayers = teamPlayersMap[dbTeamId] || [];
-        console.log(
-          `🏀 Team ${team.team.displayName} (Feed ID: ${feedTeamId}, DB ID: ${dbTeamId}) has ${teamPlayers.length} DB players`
-        );
-
+     
         return (
           <View key={team.team.id} style={getStyles.teamBlock}>
             {team.injuries.map((inj, idx) => {
               const fullName = inj.athlete.fullName;
-              console.log(
-                `🩺 Processing injury for player: ${fullName} (Team DB ID: ${dbTeamId})`
-              );
+           
 
               // Match player by full_name from DB
               const dbPlayer = teamPlayers.find((p) => {
@@ -102,21 +92,14 @@ export default function GameInjuries({ injuries, lighter }: Props) {
                 const injName = fullName.toLowerCase().trim();
                 const matched =
                   dbName.includes(injName) || injName.includes(dbName);
-                if (matched)
-                  console.log(
-                    `✅ Name match found: DB "${p.full_name}" ↔ Injury "${fullName}"`
-                  );
+              
                 return matched;
               });
 
-              if (!dbPlayer) {
-                console.log(`❌ No DB match found for ${fullName}`);
-              }
-
+            
               // Fallback to headshot map using full name
               const avatarUrl =
                 dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
-              console.log(`🖼 Avatar URL for ${fullName}: ${avatarUrl}`);
 
               return (
                 <View
