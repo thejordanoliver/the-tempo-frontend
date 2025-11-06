@@ -41,7 +41,9 @@ export function matchBroadcastToGame(
 ) {
   if (!Array.isArray(broadcastData)) return null;
 
-const gameDate = (game.date instanceof Date ? game.date.toISOString() : game.date).split("T")[0];
+  const gameDate = (
+    game.date instanceof Date ? game.date.toISOString() : game.date
+  ).split("T")[0];
   const awayName = normalizeTeamName(game.away.name);
   const homeName = normalizeTeamName(game.home.name);
 
@@ -53,9 +55,6 @@ const gameDate = (game.date instanceof Date ? game.date.toISOString() : game.dat
     return dateMatch && homeMatch && awayMatch;
   });
 }
-
-
-
 
 export function getBroadcastDisplay(broadcasts: Broadcast[]) {
   if (!broadcasts?.length) return "";
@@ -71,7 +70,69 @@ export function getBroadcastDisplay(broadcasts: Broadcast[]) {
     espn: "ESPN",
     espn2: "ESPN2",
     espn3: "ESPN3",
+    "espn+": "ESPN+",
+    "sec network": "SECN",
+    "acc netweork": "ACCN",
     abc: "ABC",
+    "nba league pass": "NBA League Pass",
+    tnt: "TNT",
+    tbs: "TBS",
+    fox: "FOX",
+    "fox sports": "FS1",
+    fs1: "FS1",
+    cbs: "CBS",
+    nbcsn: "NBC",
+    nbc: "NBC",
+    "nfl network": "NFLN",
+    "nfl net": "NFLN",
+    "prime video": "Prime",
+    amazon: "Prime",
+    "nba tv": "NBA TV",
+    "hbo max": "MAX",
+    "youtube": "YouTube"
+  };
+
+  // special cases
+  const hasABC = allNames.some((n) => n.includes("abc"));
+  const hasESPN = allNames.some((n) => n.includes("espn"));
+  const hasTNT = allNames.some((n) => n.includes("tnt"));
+  const hasHBOMax = allNames.some(
+    (n) => n.includes("hbo max") || n.includes("max")
+  );
+
+  if (hasABC && hasESPN) return "ABC/ESPN";
+  if (hasTNT && hasHBOMax) return "TNT/MAX";
+
+  // find first main network match
+  for (const key in networkMap) {
+    if (allNames.some((n) => n.includes(key))) {
+      return networkMap[key];
+    }
+  }
+
+  // fallback: first valid name (capitalized)
+  const first = broadcasts[0]?.name || broadcasts[0]?.shortName || "";
+  return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
+}
+
+export function getShortBroadcastDisplay(broadcasts: Broadcast[]) {
+  if (!broadcasts?.length) return "";
+
+  const allNames = broadcasts
+    .map((b) =>
+      Array.isArray(b.names) ? b.names.join("/") : b.name || b.shortName || ""
+    )
+    .filter(Boolean)
+    .map((n) => n.toLowerCase());
+
+  const networkMap: Record<string, string> = {
+    espn: "ESPN",
+    espn2: "ESPN2",
+    espn3: "ESPN3",
+    "sec network": "SECN",
+    "acc netweork": "ACCN",
+    abc: "ABC",
+    "nba league pass": "NBA LP",
     tnt: "TNT",
     tbs: "TBS",
     fox: "FOX",
@@ -92,7 +153,9 @@ export function getBroadcastDisplay(broadcasts: Broadcast[]) {
   const hasABC = allNames.some((n) => n.includes("abc"));
   const hasESPN = allNames.some((n) => n.includes("espn"));
   const hasTNT = allNames.some((n) => n.includes("tnt"));
-  const hasHBOMax = allNames.some((n) => n.includes("hbo max") || n.includes("max"));
+  const hasHBOMax = allNames.some(
+    (n) => n.includes("hbo max") || n.includes("max")
+  );
 
   if (hasABC && hasESPN) return "ABC/ESPN";
   if (hasTNT && hasHBOMax) return "TNT/MAX";
@@ -108,5 +171,3 @@ export function getBroadcastDisplay(broadcasts: Broadcast[]) {
   const first = broadcasts[0]?.name || broadcasts[0]?.shortName || "";
   return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
 }
-
-

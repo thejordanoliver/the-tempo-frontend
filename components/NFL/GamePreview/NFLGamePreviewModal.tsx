@@ -4,13 +4,17 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { TeamLocationSection } from "components/GameDetails";
+import {
+  LastFiveGamesSwitcher,
+  TeamLocationSection,
+} from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
 import Weather from "components/GameDetails/Weather";
-import { NFLGameCenterInfo } from "components/NFL/GamePreview/GameCenterInfo";
+import { NFLCenterInfo } from "components/NFL/GamePreview/CenterInfo";
 import { neutralStadiums, teams, venueImages } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLGameOfficialsAndInjuries } from "hooks/NFLHooks/useNFLOfficials";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
@@ -21,9 +25,8 @@ import { Game } from "types/nfl";
 import NFLGameLeaders from "../GameDetails/NFLGameLeaders";
 import NFLInjuries from "../GameDetails/NFLInjuries";
 import NFLOfficials from "../GameDetails/NFLOfficials";
-import NFLTeamDrives from "../GameDetails/NFLTeamDrives";
+import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamInfo from "./TeamInfo";
-
 type Props = {
   game: Game; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -46,7 +49,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const displayDateStr = new Date(timestampNum * 1000).toLocaleDateString(
     "en-us",
     {
-      month: "numeric",
+      month: "short",
       day: "numeric",
     }
   ); // ✅ for UI
@@ -174,6 +177,10 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   // Records
   const { record: awayRecord } = useNFLTeamRecord(String(awayTeamData.id));
   const { record: homeRecord } = useNFLTeamRecord(String(homeTeamData.id));
+  const homeTeamIdNum = Number(homeTeamData.id);
+  const awayTeamIdNum = Number(awayTeamData.id);
+  const homeLastGames = useLastFiveGames(homeTeamIdNum);
+  const awayLastGames = useLastFiveGames(awayTeamIdNum);
 
   // Officials & Injuries
   const { officials, injuries, previousDrives, currentDrives } =
@@ -240,12 +247,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     awayTimeouts,
     loading: possessionLoading,
   } = possessionData;
-
-  console.log("🔍 useNFLGamePossession input:", {
-    homeName: homeTeamData.name,
-    awayName: awayTeamData.name,
-    date: apiDateStr,
-  });
 
   return (
     <BottomSheetModal
@@ -348,7 +349,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   lighter
                 />
 
-                <NFLGameCenterInfo
+                <NFLCenterInfo
                   isPlayoff={true}
                   week={`${gameInfo.week} LX`}
                   status={gameStatus}
@@ -413,6 +414,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                       />
                     )}
 
+                    
+
                   <NFLTeamDrives
                     previousDrives={previousDrives ?? []}
                     currentDrives={currentDrives ?? []}
@@ -420,6 +423,25 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     homeTeamAbbr={homeTeamData?.code} // 👈 use getTeamInfo result
                     lighter
                   />
+
+                    <LastFiveGamesSwitcher
+                    isDark={isDark}
+                    home={{
+                      teamCode: homeTeamData.code,
+                      teamLogo: homeTeamData.logo,
+                      teamLogoLight: homeTeamData.logoLight,
+                      games: homeLastGames.games,
+                    }}
+                    away={{
+                      teamCode: awayTeamData.code,
+                      teamLogo: awayTeamData.logo,
+                      teamLogoLight: awayTeamData.logoLight,
+                      games: awayLastGames.games,
+                    }}
+                    league="NFL"
+                    lighter
+                  />
+
 
                   <NFLInjuries
                     injuries={injuries}
@@ -551,7 +573,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   lighter
                 />
 
-                <NFLGameCenterInfo
+                <NFLCenterInfo
                   isPlayoff={isPlayoff}
                   week={gameInfo.week}
                   status={gameStatus}
@@ -624,6 +646,25 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     homeTeamAbbr={homeTeamData?.code} // 👈 use getTeamInfo result
                     lighter
                   />
+
+                  <LastFiveGamesSwitcher
+                    isDark={isDark}
+                    home={{
+                      teamCode: homeTeamData.code,
+                      teamLogo: homeTeamData.logo,
+                      teamLogoLight: homeTeamData.logoLight,
+                      games: homeLastGames.games,
+                    }}
+                    away={{
+                      teamCode: awayTeamData.code,
+                      teamLogo: awayTeamData.logo,
+                      teamLogoLight: awayTeamData.logoLight,
+                      games: awayLastGames.games,
+                    }}
+                    league="NFL"
+                    lighter
+                  />
+
                   <NFLInjuries
                     injuries={injuries}
                     loading={false}

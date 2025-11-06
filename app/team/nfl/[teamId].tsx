@@ -20,7 +20,10 @@ import { Game } from "types/nfl";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
-
+import { useTeamNews } from "hooks/useTeamNews";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
+import { useTeamHighlights } from "hooks/useTeamHighlights";
+import TeamForum from "components/Forum/TeamForum";
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -31,7 +34,7 @@ export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
-
+  const league = "NFL";
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -59,27 +62,48 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-  const teamGames = useMemo(
-    () => rawTeamGames.filter((g: Game) => g?.game?.date?.date),
-    [rawTeamGames]
-  );
+   const {
+      highlights: teamHighlights,
+      loading: highlightsLoading,
+      error: highlightsError,
+    } = useTeamHighlights(team?.fullName ?? "", 5);
+    const {
+      articles: newsArticles,
+      loading: newsLoading,
+      error: newsError,
+      refreshNews,
+    } = useTeamNews(team?.fullName ?? "", "NFL");
 
-  const flattenedGames = useMemo(() => {
-    const grouped: { [stage: string]: Game[] } = {};
-    teamGames.forEach((g) => {
-      const stage = g.game.stage || "Unknown";
-      if (!grouped[stage]) grouped[stage] = [];
-      grouped[stage].push(g);
+
+      const combinedNewsAndHighlights = useMemo(() => {
+    const taggedNews = newsArticles.map((item) => ({
+      ...item,
+      itemType: "news" as const,
+      publishedAt: item.publishedAt ?? new Date().toISOString(),
+    }));
+
+    const taggedHighlights = teamHighlights.map((item) => ({
+      ...item,
+      itemType: "highlight" as const,
+      publishedAt: item.publishedAt ?? new Date().toISOString(),
+      duration: String(item.duration), // ✅ fix type mismatch
+    }));
+
+    const combined = [...taggedNews, ...taggedHighlights];
+
+    combined.sort((a, b) => {
+      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+      return bDate - aDate;
     });
 
-    const flat: any[] = [];
-    Object.keys(grouped).forEach((stage) => {
-      flat.push({ type: "header", title: stage });
-      grouped[stage].forEach((game) => flat.push({ type: "game", game }));
-    });
+    return combined;
+  }, [newsArticles, teamHighlights]);
 
-    return flat;
-  }, [teamGames]);
+  
+
+
+
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -98,7 +122,7 @@ export default function TeamDetailScreen() {
 
   // ✅ Use the favorite teams hook
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const league = "NFL";
+
   const favorited = team ? isFavorite(league, team.id) : false;
 
   useLayoutEffect(() => {
@@ -163,15 +187,16 @@ export default function TeamDetailScreen() {
           />
         </ScrollView>
 
-        {/* News Page */}
-        <View
-          key="news"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>
-            Team News (TODO)
-          </Text>
-        </View>
+
+      {/* News Page */}
+        <ScrollView key="news" style={{ flex: 1 }}>
+          <NewsHighlightsList
+            items={combinedNewsAndHighlights}
+            loading={newsLoading || highlightsLoading}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        </ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -191,13 +216,10 @@ export default function TeamDetailScreen() {
           <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
         </View>
 
-        {/* Forum Page */}
-        <View
-          key="forum"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Forum (TODO)</Text>
-        </View>
+          {/* Forum Page */}
+              <View key="forum" style={{ flex: 1 }}>
+                <TeamForum teamId={teamId as string} league="NFL" />
+              </View>
       </PagerView>
 
       {/* --- Bottom Sheet --- */}

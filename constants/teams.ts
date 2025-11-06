@@ -1342,21 +1342,29 @@ export const neutralVenues: Record<string, Venue> = {
     venueCapacity: "17,654",
     venueImage: require("../assets/Arenas/LegacyArena.webp"),
   },
+  "Arena CDMX": {
+    name: "Arena CDMX",
+    address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco",
+    latitude: 19.4977,
+    longitude: -99.1751,
+    venueCapacity: "22,300",
+    venueImage: require("../assets/Arenas/CDMXArena.webp"),
+  },
   // add more neutral venues if needed here
 };
 
 
-const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
-const teamMapByESPNID = Object.fromEntries(teams.map((t) => [t.espnID, t]));
+export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
+export const teamMapByESPNID = Object.fromEntries(teams.map((t) => [t.espnID, t]));
 
 
 export function mapToInternalTeam(apiTeam: any) {
   if (!apiTeam) return {};
-  // Try by id first, then by espnID
   const team = teamMapByID[apiTeam.id] || teamMapByESPNID[apiTeam.id];
   if (!team) {
     return {
       id: String(apiTeam.id),
+      espnID: apiTeam.espnID || String(apiTeam.id), // ✅ add this
       name: apiTeam.name || apiTeam.nickname,
       fullName: apiTeam.fullName || apiTeam.name || apiTeam.nickname,
       logo: apiTeam.logo,

@@ -1,6 +1,7 @@
-// components/CFB/TeamInfoBottomSheetCFB.tsx
+// components/TeamInfoBottomSheet.tsx
 import ChampionshipBanner from "components/ChampionshipBanner";
-import { getTeamInfo } from "constants/teamsCFB";
+import { getTeamInfo as getCFBTeamInfo, logoMap as logoMapCFB } from "constants/teamsCFB";
+import { getTeamInfo as getCBBTeamInfo, logoMap as logoMapCBB } from "constants/teamsCBB";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -12,19 +13,36 @@ import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TeamInfoCard from "./TeamInfoCard";
 import { Fonts } from "constants/fonts";
-import { logoMap } from "constants/teamsCFB";
+
 type Props = {
   visible: boolean;
   onClose: () => void;
   teamId?: string | number;
+  league: "CFB" | "CBB"; // ✅ added league prop
 };
 
-export default function TeamInfoBottomSheetCFB({ visible, onClose, teamId }: Props) {
+export default function TeamInfoBottomSheet({
+  visible,
+  onClose,
+  teamId,
+  league,
+}: Props) {
   const isDark = useColorScheme() === "dark";
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
 
-const team = teamId ? getTeamInfo(teamId) : undefined;
+  // ✅ Select correct team info source
+  const team =
+    league === "CFB"
+      ? teamId
+        ? getCFBTeamInfo(teamId)
+        : undefined
+      : teamId
+      ? getCBBTeamInfo(teamId)
+      : undefined;
+
+  // ✅ Select correct logo map
+  const logoMap = league === "CFB" ? logoMapCFB : logoMapCBB;
 
   useEffect(() => {
     if (visible) sheetRef.current?.present();
@@ -111,26 +129,21 @@ const team = teamId ? getTeamInfo(teamId) : undefined;
                 color: isDark ? "#fff" : "#1d1d1d",
               }}
             >
-            Championships
+              Championships
             </Text>
 
-             <ChampionshipBanner
-                       years={
-                         team?.championships
-                           ? team?.championships.map((year: string | number) => Number(year))
-         
-                           : []
-                       }
-                       logo={
-                         team?.logo
-                           ? logoMap[team.logo]
-                           : undefined
-                       }
-                       teamName={team?.name}
-                       teamId={team?.id}
-                       league="CFB"
-                     />
-         
+            <ChampionshipBanner
+              years={
+                team?.championships
+                  ? team?.championships.map((year: string | number) => Number(year))
+                  : []
+              }
+              logo={team?.logo ? logoMap[team.logo] : undefined}
+              teamName={team?.name}
+              teamId={team?.id}
+              league={league} // ✅ pass dynamic league prop
+            />
+
             <TeamInfoCard teamId={teamId} />
           </BottomSheetScrollView>
         </View>

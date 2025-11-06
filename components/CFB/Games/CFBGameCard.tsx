@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
+import { Colors } from "constants/Colors";
 import { getTeamLogo, teams } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
-import { useCFBGameInfo } from "hooks/CFBHooks/useGameInfo";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
@@ -20,10 +20,13 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { Game } from "types/cfb";
+import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
+
 type Props = {
-  game: any; // TODO: replace with proper CFB Game type
+  game: Game; // TODO: replace with proper CFB Game type
   isDark?: boolean;
 };
 
@@ -43,23 +46,8 @@ function CFBGameCard({ game, isDark }: Props) {
     : null;
   const gameDateStr = gameDate?.toISOString();
 
-  const { rankings } = useCFBRankings();
-  // --- Extract AP Top 25 ---
-  const apTop25 = useMemo(() => {
-    if (!rankings) return [];
-    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
-    if (!apPoll) return [];
-    return apPoll.ranks.slice(0, 25).map((r) => ({
-      name: r.team?.nickname, // use the same key as your game data
-      rank: r.current,
-    }));
-  }, [rankings]);
-
-  // --- Helper to get rank for a team ---
-  const getTeamRank = (teamName: string) => {
-    const found = apTop25.find((t) => t.name === teamName);
-    return found ? found.rank : undefined;
-  };
+  const apTop25 = useAPTop25();
+const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
 
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
@@ -67,6 +55,9 @@ function CFBGameCard({ game, isDark }: Props) {
 
   const getTeamName = (id?: number | string): string =>
     getTeamById(id)?.name ?? "Unknown";
+
+  const getTeamShortName = (id?: number | string): string =>
+    getTeamById(id)?.shortName ?? "";
 
   // 🏈 Use ESPN team IDs, not internal IDs
   const awayEspnId = getTeamById(awayId)?.espnID;
@@ -132,10 +123,11 @@ function CFBGameCard({ game, isDark }: Props) {
         refresh: () => {},
       };
 
-  const { headlineText } = useCFBGameInfo(
+  const { headlineText } = useGameInfo(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
+    "cfb"
   );
 
   const {
@@ -147,7 +139,6 @@ function CFBGameCard({ game, isDark }: Props) {
     gameStatusShortDetail,
     period,
   } = possession;
-
   // --- Use possession score when live; fallback to static game scores ---
   const displayAwayScore =
     possession?.score?.away ?? game?.scores?.away?.total ?? 0;
@@ -168,6 +159,18 @@ function CFBGameCard({ game, isDark }: Props) {
     // ✅ Live: always prefer possession hook’s live score
     return isHome ? displayHomeScore : displayAwayScore;
   };
+
+  const displayStatusShortDetail =
+    gameStatusShortDetail ?? (status.isHalftime ? "Halftime" : undefined);
+
+  const getGameStatusShort = () => {
+    if (status.isLive) return gameStatusShortDetail ?? displayClock ?? "Live";
+    if (status.isHalftime) return "Halftime";
+    if (status.isFinal) return "Final";
+    return undefined;
+  };
+
+  const displayShortStatus = getGameStatusShort();
 
   const displayStatus = (() => {
     const base =
@@ -197,6 +200,7 @@ function CFBGameCard({ game, isDark }: Props) {
       id: awayId,
       espnID: awayEspnId,
       name: getTeamName(awayId),
+      shortName: getTeamShortName(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
       hasPossession:
@@ -217,6 +221,7 @@ function CFBGameCard({ game, isDark }: Props) {
       id: homeId,
       espnID: homeEspnId,
       name: getTeamName(homeId),
+      shortName: getTeamShortName(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
       hasPossession:
@@ -241,29 +246,30 @@ function CFBGameCard({ game, isDark }: Props) {
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   // --- Helpers ---
-const formatQuarter = (
-  short?: string | number | null,
-  long?: string | number | null
-): string => {
-  const shortStr = typeof short === "string" ? short.trim() : String(short ?? "");
-  const longStr = typeof long === "string" ? long.trim() : String(long ?? "");
+  const formatQuarter = (period?: number | string, statusText?: string) => {
+    if (!period) return "";
 
-  const val = shortStr !== "" ? shortStr : longStr;
-  if (!val) return "";
+    // If period is a string like "OT" or "1st" from API
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) return "OT";
+      if (val.includes("1")) return "1st";
+      if (val.includes("2")) return "2nd";
+      if (val.includes("3")) return "3rd";
+      if (val.includes("4")) return "4th";
+      if (val.includes("half")) return "Halftime";
+      return period;
+    }
 
-  const q = val.toLowerCase();
-  if (q.includes("1")) return "1st";
-  if (q.includes("2")) return "2nd";
-  if (q.includes("3")) return "3rd";
-  if (q.includes("4")) return "4th";
-  if (q.includes("ot")) return "OT";
-  if (q.includes("half")) return "Halftime";
-  return val;
-};
-
+    // If period is a number
+    const p = Number(period);
+    if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
+    const otNumber = p - 4;
+    return otNumber === 1 ? "OT" : `OT${otNumber}`;
+  };
 
   const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : "";
   const formattedTime = gameDate
     ? gameDate.toLocaleTimeString("en-US", {
@@ -285,12 +291,13 @@ const formatQuarter = (
       (isHome: boolean): TextStyle => {
         const homeScore = game?.scores?.home?.total ?? 0;
         const awayScore = game?.scores?.away?.total ?? 0;
+
         let isWinner = true;
         if (status.isFinal && homeScore !== awayScore) {
           isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
         }
         return {
-          color: dark ? "#fff" : "#1d1d1d",
+          color: dark ? "#fff" : Colors.netural.black,
           opacity: isWinner ? 1 : 0.5,
         };
       },
@@ -321,7 +328,7 @@ const formatQuarter = (
               <Image
                 source={dark ? FootballLight : Football}
                 style={{
-                    width: 20,
+                  width: 20,
                   height: 20,
                   resizeMode: "contain",
                   position: "absolute",
@@ -334,15 +341,21 @@ const formatQuarter = (
             <Text
               style={[
                 styles.teamName,
-                { width: 100, flexDirection: "row", color: "#1d1d1d" },
+                {
+                  width: 100,
+                  flexDirection: "row",
+                  color: Colors.netural.black,
+                },
               ]}
             >
-              {getTeamRank(awayTeam.name) && (
-                <Text style={{ fontSize: 10, color: "#444" }}>
-                  {getTeamRank(awayTeam.name)}
-                </Text>
-              )}{" "}
-              {awayTeam.name}
+  {awayEspnId && getTeamRank(String(awayEspnId)) && (
+  <Text style={{ fontSize: 10, color: "#aaa" }}>
+    {getTeamRank(String(awayEspnId))}
+  </Text>
+)}{" "}
+{awayTeam.shortName || awayTeam.name}
+
+
             </Text>
           </View>
 
@@ -351,7 +364,7 @@ const formatQuarter = (
             style={[
               status.isScheduled ? styles.teamRecord : styles.teamScore,
               getTeamStyle(false),
-              { color: "#1d1d1d" },
+              { color: Colors.netural.black },
             ]}
           >
             {getDisplayValue(false)}
@@ -360,67 +373,63 @@ const formatQuarter = (
           {/* Game Info */}
           <View style={styles.info}>
             {status.isScheduled ? (
-              <>
-                <Text style={[styles.date, { color: "#1d1d1d" }]}>
+              <View style={styles.infoWrapper}>
+                <Text style={[styles.date, { color: Colors.netural.black }]}>
                   {formattedDate}
                 </Text>
-                <Text style={[styles.time, { color: "#555" }]}>
+                <View
+                  style={[
+                    styles.statusDivider,
+                    { backgroundColor: Colors.netural.black },
+                  ]}
+                />
+                <Text style={[styles.date, { color: Colors.netural.black }]}>
                   {formattedTime}
                 </Text>
-              </>
+              </View>
             ) : status.isLive ? (
               <>
                 {displayClock === "0:00" &&
                 gameStatusDescription?.toLowerCase().includes("end of") ? (
                   //  ✅ Special case: end of quarter
-                  <Text style={[styles.date, { color: "#1d1d1d" }]}>
+                  <Text style={[styles.clock, { color: Colors.light.red }]}>
                     {gameStatusShortDetail}
                   </Text>
                 ) : (
                   // ✅ Normal live display
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <Text style={[styles.date, { color: "#1d1d1d" }]}>
+                  <View style={styles.infoWrapper}>
+                    <Text
+                      style={[styles.date, { color: Colors.netural.black }]}
+                    >
                       {formatQuarter(status.short, displayStatus)}
                     </Text>
-                    <View
-                      style={{
-                        height: 14,
-                        width: 1,
-                        backgroundColor: "#444",
-                      }}
-                    />
-                    <Text style={[styles.clock, { color: "#cc0000" }]}>
+                    <View style={styles.statusDivider} />
+                    <Text style={[styles.clock, { color: Colors.light.red }]}>
                       {displayClock ?? "0:00"}
                     </Text>
                   </View>
                 )}
                 {shortDownDistanceText && (
-                  <Text style={[styles.downDistance, { color: "#555" }]}>
+                  <Text
+                    style={[
+                      styles.downDistance,
+                      { color: Colors.netural.darkGray },
+                    ]}
+                  >
                     {possessionText}
                   </Text>
                 )}
               </>
             ) : status.isHalftime ? (
               <>
-                <Text style={[styles.date, { color: "#1d1d1d" }]}>
-                  {displayStatus}
-                </Text>
+                <Text style={styles.clock}>{displayShortStatus}</Text>
               </>
             ) : (
               <>
-                <Text style={[styles.finalText, { color: "#cc0000" }]}>
+                <Text style={[styles.finalText, { color: Colors.light.red }]}>
                   {displayStatus}
                 </Text>
-                <Text
-                  style={[styles.dateFinal, { color: "rgba(0, 0, 0, .5)" }]}
-                >
+                <Text style={[styles.date, { color: "rgba(0, 0, 0, .5)" }]}>
                   {formattedDate}
                 </Text>
               </>
@@ -432,7 +441,9 @@ const formatQuarter = (
           </View>
 
           {status.isScheduled || status.isLive ? (
-            <Text style={[styles.headlineText, { color: "#444" }]}>
+            <Text
+              style={[styles.headlineText, { color: Colors.netural.darkGray }]}
+            >
               {headlineText}
             </Text>
           ) : null}
@@ -442,163 +453,7 @@ const formatQuarter = (
             style={[
               status.isScheduled ? styles.teamRecord : styles.teamScore,
               getTeamStyle(true),
-              { color: "#1d1d1d" },
-            ]}
-          >
-            {getDisplayValue(true)}
-          </Text>
-
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            {homeTeam.hasPossession && (
-              <Image
-                source={dark ? FootballLight : Football}
-                style={{
-                   width: 20,
-                  height: 20,
-                  resizeMode: "contain",
-                  position: "absolute",
-                  left: -70,
-                  top: 24,
-                }}
-              />
-            )}
-            <Image source={homeTeam.logo} style={[styles.logo]} />
-            <Text
-              style={[
-                styles.teamName,
-                { width: 100, flexDirection: "row", color: "#1d1d1d" },
-              ]}
-            >
-              {getTeamRank(homeTeam.name) && (
-                <Text style={{ fontSize: 10, color: "#1d1d1d" }}>
-                  {getTeamRank(homeTeam.name)}
-                </Text>
-              )}{" "}
-              {homeTeam.name}
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => setNotifEnabled((prev) => !prev)}
-            style={({ pressed }) => [
-              styles.notificationBell,
-              pressed && { opacity: 0.6 },
-            ]}
-          >
-            <Ionicons
-              name={notifEnabled ? "notifications" : "notifications-outline"}
-              size={20}
-              color={"#1d1d1d"}
-            />
-          </Pressable>
-          {/* ... rest of the card unchanged */}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>
-          {/* Away Team */}
-          <View style={styles.teamSection}>
-            {awayTeam.hasPossession && (
-              <Image
-                source={dark ? FootballLight : Football}
-                style={{
-                width: 20,
-                  height: 20,
-                  resizeMode: "contain",
-                  position: "absolute",
-                  right: -70,
-                  top: 24,
-                }}
-              />
-            )}
-            <Image source={awayTeam.logo} style={styles.logo} />
-            <Text
-              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
-            >
-              {getTeamRank(awayTeam.name) && (
-                <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(awayTeam.name)}
-                </Text>
-              )}{" "}
-              {awayTeam.name}
-            </Text>
-          </View>
-
-          {/* Away Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(false),
-            ]}
-          >
-            {getDisplayValue(false)}
-          </Text>
-
-          {/* Game Info */}
-          <View style={styles.info}>
-            {status.isScheduled ? (
-              <>
-                <Text style={styles.date}>{formattedDate}</Text>
-                <Text style={styles.time}>{formattedTime}</Text>
-              </>
-            ) : status.isLive ? (
-              <>
-                {displayClock === "0:00" &&
-                gameStatusDescription?.toLowerCase().includes("end of") ? (
-                  //  ✅ Special case: end of quarter
-                  <Text style={styles.clock}>{gameStatusShortDetail}</Text>
-                ) : (
-                  // ✅ Normal live display
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <Text style={styles.date}>
-                      {formatQuarter(period)}
-                    </Text>
-                    <View
-                      style={{
-                        height: 14,
-                        width: 1,
-                        backgroundColor: dark ? "#fff" : "#333",
-                      }}
-                    />
-                    <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
-                  </View>
-                )}
-                {shortDownDistanceText && (
-                  <Text style={styles.downDistance}>{possessionText}</Text>
-                )}
-              </>
-            ) : status.isHalftime ? (
-              <>
-                <Text style={styles.date}>{displayStatus}</Text>
-              </>
-            ) : (
-              <>
-                <Text style={styles.finalText}>{displayStatus}</Text>
-                <Text style={styles.dateFinal}>{formattedDate}</Text>
-              </>
-            )}
-
-            {broadcastText && (
-              <Text style={styles.broadcast}>{broadcastText}</Text>
-            )}
-          </View>
-
-          {status.isScheduled ? (
-            <Text style={styles.headlineText}>{headlineText}</Text>
-          ) : null}
-
-          {/* Home Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(true),
+              { color: Colors.netural.black },
             ]}
           >
             {getDisplayValue(true)}
@@ -619,16 +474,25 @@ const formatQuarter = (
                 }}
               />
             )}
-            <Image source={homeTeam.logo} style={styles.logo} />
+            <Image source={homeTeam.logo} style={[styles.logo]} />
             <Text
-              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
+              style={[
+                styles.teamName,
+                {
+                  width: 100,
+                  flexDirection: "row",
+                  color: Colors.netural.black,
+                },
+              ]}
             >
-              {getTeamRank(homeTeam.name) && (
-                <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(homeTeam.name)}
-                </Text>
-              )}{" "}
-              {homeTeam.name}
+ {homeEspnId && getTeamRank(String(homeEspnId)) && (
+  <Text style={{ fontSize: 10, color: "#aaa" }}>
+    {getTeamRank(String(homeEspnId))}
+  </Text>
+)}{" "}
+{homeTeam.shortName || homeTeam.name}
+
+
             </Text>
           </View>
 
@@ -641,8 +505,147 @@ const formatQuarter = (
           >
             <Ionicons
               name={notifEnabled ? "notifications" : "notifications-outline"}
-size={16}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              size={20}
+              color={Colors.netural.black}
+            />
+          </Pressable>
+          {/* ... rest of the card unchanged */}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>
+          {/* Away Team */}
+          <View style={styles.teamSection}>
+            {awayTeam.hasPossession && (
+              <Image
+                source={dark ? FootballLight : Football}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: "contain",
+                  position: "absolute",
+                  right: -70,
+                  top: 24,
+                }}
+              />
+            )}
+            <Image source={awayTeam.logo} style={styles.logo} />
+            <Text
+              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
+            >
+              {getTeamRank(awayTeam.name) && (
+                <Text style={{ fontSize: 10, color: "#aaa" }}>
+                  {getTeamRank(awayTeam.name)}
+                </Text>
+              )}{" "}
+              {awayTeam.shortName ? awayTeam.shortName : awayTeam.name}
+            </Text>
+          </View>
+
+          {/* Away Record / Score */}
+          <Text
+            style={[
+              status.isScheduled ? styles.teamRecord : styles.teamScore,
+              getTeamStyle(false),
+            ]}
+          >
+            {getDisplayValue(false)}
+          </Text>
+
+          {/* headlineText */}
+          <Text style={[styles.headlineText]}>{headlineText}</Text>
+
+          {/* Game Info */}
+          <View style={styles.info}>
+            {status.isScheduled ? (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.date}>{formattedDate}</Text>
+                <View style={styles.statusDivider} />
+                <Text style={styles.date}>{formattedTime}</Text>
+              </View>
+            ) : status.isLive ? (
+              <>
+                {displayClock === "0:00" &&
+                gameStatusDescription?.toLowerCase().includes("end of") ? (
+                  //  ✅ Special case: end of quarter
+                  <Text style={styles.clock}>{gameStatusShortDetail}</Text>
+                ) : (
+                  // ✅ Normal live display
+                  <View style={styles.infoWrapper}>
+                    <Text style={styles.date}>{formatQuarter(period)}</Text>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
+                  </View>
+                )}
+                {shortDownDistanceText && (
+                  <Text style={styles.downDistance}>{possessionText}</Text>
+                )}
+              </>
+            ) : status.isHalftime ? (
+              <>
+                <Text style={styles.date}>{displayStatus}</Text>
+              </>
+            ) : (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.finalText}>{displayStatus}</Text>
+                <View style={styles.finalStatusDivider} />
+                <Text style={styles.finalText}>{formattedDate}</Text>
+              </View>
+            )}
+
+            {!status.isFinal && broadcastText && (
+              <Text style={styles.broadcast}>{broadcastText}</Text>
+            )}
+          </View>
+
+          {/* Home Record / Score */}
+          <Text
+            style={[
+              status.isScheduled ? styles.teamRecord : styles.teamScore,
+              getTeamStyle(true),
+            ]}
+          >
+            {getDisplayValue(true)}
+          </Text>
+
+          {/* Home Team */}
+          <View style={styles.teamSection}>
+            {homeTeam.hasPossession && (
+              <Image
+                source={dark ? FootballLight : Football}
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: "contain",
+                  position: "absolute",
+                  left: -70,
+                  top: 24,
+                }}
+              />
+            )}
+            <Image source={homeTeam.logo} style={styles.logo} />
+            <Text
+              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
+            >
+              {getTeamRank(homeTeam.name) && (
+                <Text style={{ fontSize: 10, color: "#aaa" }}>
+                  {getTeamRank(homeTeam.name)}
+                </Text>
+              )}{" "}
+              {homeTeam.shortName ? homeTeam.shortName : homeTeam.name}
+            </Text>
+          </View>
+
+          <Pressable
+            onPress={() => setNotifEnabled((prev) => !prev)}
+            style={({ pressed }) => [
+              styles.notificationBell,
+              pressed && { opacity: 0.6 },
+            ]}
+          >
+            <Ionicons
+              name={notifEnabled ? "notifications" : "notifications-outline"}
+              size={20}
+              color={isDark ? "#fff" : Colors.netural.black}
             />
           </Pressable>
         </View>

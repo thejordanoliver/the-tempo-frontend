@@ -4,22 +4,15 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { Fonts } from "constants/fonts";
+import { Colors } from "constants/Colors";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { useFollowers } from "hooks/useFollowers";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Pressable, Text, TextInput, useColorScheme, View } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
+import { followersListModalStyles } from "styles/ModalsStyles/FollowersListModal.styles";
 import FollowersList from "./FollowersList";
-
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -43,7 +36,7 @@ export default function FollowersModal({
   const [loadingIds, setLoadingIds] = useState<string[]>([]);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = followersListModalStyles(isDark);
   // Custom hook for followers/following data & toggle
   const {
     users: usersFromHook,
@@ -136,19 +129,20 @@ export default function FollowersModal({
       )}
       handleComponent={() => (
         <View style={styles.header}>
-          <View
-            style={{
-              backgroundColor: "#aaa",
-              width: 36,
-              height: 4,
-              borderRadius: 2,
-              zIndex: 9999,
-              marginBottom: 4,
-            }}
-          ></View>
-          <Text style={[styles.title, { color: isDark ? "#fff" : "#1d1d1d" }]}>
+          <View style={styles.handleIndicatorStyle}></View>
+          <Text
+            style={[styles.headerText, { color: isDark ? "#fff" : "#1d1d1d" }]}
+          >
             {type === "followers" ? "Followers" : "Following"}
           </Text>
+
+          <Pressable style={styles.closeButton} onPress={onClose}>
+            <Ionicons
+              name="close"
+              size={28}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
+            />
+          </Pressable>
         </View>
       )}
       backgroundStyle={{ backgroundColor: "transparent" }}
@@ -164,27 +158,10 @@ export default function FollowersModal({
             placeholderTextColor={isDark ? "#aaa" : "#1d1d1d"}
             value={search}
             onChangeText={setSearch}
-            style={[
-              styles.searchInput,
-              {
-                borderColor: isDark ? "#aaa" : "#1d1d1d",
-                color: isDark ? "#fff" : "#1d1d1d",
-              },
-            ]}
+            style={styles.searchInput}
           />
 
-          {error && (
-            <Text
-              style={{
-                color: "red",
-                textAlign: "center",
-                marginVertical: 8,
-                fontFamily: Fonts.OSREGULAR,
-              }}
-            >
-              {error}
-            </Text>
-          )}
+          {error && <Text style={styles.error}>{error}</Text>}
 
           <BottomSheetScrollView
             showsVerticalScrollIndicator={false}
@@ -198,82 +175,8 @@ export default function FollowersModal({
               onToggleFollow={handleToggleFollow}
             />
           </BottomSheetScrollView>
-
-          <Pressable style={styles.closeButton} onPress={onClose}>
-            <Ionicons
-              name="close"
-              size={28}
-              color={isDark ? "#fff" : "#1d1d1d"}
-            />
-          </Pressable>
         </View>
       </BlurView>
     </BottomSheetModal>
   );
 }
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    blurContainer: {
-      flex: 1,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
-      overflow: "hidden",
-    },
-    modalContainer: {
-      paddingTop: 68,
-      paddingHorizontal: 20,
-      paddingBottom: 40,
-    },
-    header: {
-      position: "absolute",
-      width: "100%",
-      top: 0,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: isDark ? "#444" : "#aaa",
-      paddingVertical: 12,
-    },
-    title: {
-      textAlign: "center",
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontSize: 18,
-    },
-    searchInput: {
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      fontSize: 16,
-      fontFamily: Fonts.OSLIGHT,
-    },
-    userItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-    },
-    avatar: {
-      width: 48,
-      height: 48,
-      borderRadius: 100,
-      marginRight: 12,
-    },
-    username: {
-      flex: 1,
-      fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    closeButton: {
-      position: "absolute",
-      top: 15,
-      right: 20,
-    },
-  });

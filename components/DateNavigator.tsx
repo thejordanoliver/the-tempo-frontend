@@ -1,7 +1,12 @@
 // components/DateNavigator.tsx
 import React from "react";
 import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 type Props = {
   selectedDate: Date;
   onChangeDate: (days: number) => void;
@@ -30,17 +35,12 @@ export default function DateNavigator({
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={onOpenCalendar}
-        style={styles.dateNavButton}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.dateNavText}>
-          {`${selectedDate.toLocaleString("default", {
-            month: "short",
-          })} ${selectedDate.getDate()}`}
-        </Text>
-      </TouchableOpacity>
+ <TouchableOpacity onPress={onOpenCalendar} style={styles.dateNavButton} activeOpacity={0.7}>
+  <Text style={styles.dateNavText}>
+    {dayjs(selectedDate).tz("America/New_York").format("MMM D")}
+  </Text>
+</TouchableOpacity>
+
 
       <TouchableOpacity
         onPress={() => onChangeDate(1)}

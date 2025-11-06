@@ -6,6 +6,8 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import type { Game } from "types/cfb";
+import { useMemo } from "react";
+import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -144,26 +146,29 @@ export function formatPeriod(raw: string | number | null | undefined) {
 export function buildLineScore(scores: any) {
   if (!scores) return { home: [], away: [] };
 
-  const homePeriods = [
-    scores.home?.quarter_1,
-    scores.home?.quarter_2,
-    scores.home?.quarter_3,
-    scores.home?.quarter_4,
-  ];
-  const awayPeriods = [
-    scores.away?.quarter_1,
-    scores.away?.quarter_2,
-    scores.away?.quarter_3,
-    scores.away?.quarter_4,
-  ];
+  const extractPeriods = (teamScores: any) => {
+    if (!teamScores) return [];
 
-  if (scores.home?.overtime != null) homePeriods.push(scores.home.overtime);
-  if (scores.away?.overtime != null) awayPeriods.push(scores.away.overtime);
+    const base = [
+      teamScores.quarter_1,
+      teamScores.quarter_2,
+      teamScores.quarter_3,
+      teamScores.quarter_4,
+    ];
 
-  return {
-    home: homePeriods.map((v) => (v != null ? String(v) : "-")),
-    away: awayPeriods.map((v) => (v != null ? String(v) : "-")),
+    // Collect all overtime fields that might exist (overtime, overtime_1, overtime_2, etc.)
+    const otFields = Object.keys(teamScores)
+      .filter((key) => key.toLowerCase().startsWith("overtime"))
+      .map((key) => teamScores[key])
+      .filter((v) => v != null);
+
+    return [...base, ...otFields].map((v) => (v != null ? String(v) : "-"));
   };
+
+  const home = extractPeriods(scores.home);
+  const away = extractPeriods(scores.away);
+
+  return { home, away };
 }
 
 export function resolveVenue(homeTeam: any, awayTeam: any) {
@@ -277,3 +282,46 @@ gamesToFilter = uniqueGames.filter((game) => {
     return liveB - liveA;
   });
 }
+
+
+
+// --- Hook: Build AP Top 25 ---
+export function useAPTop25() {
+  const { rankings } = useCFBRankings();
+
+  const apTop25 = useMemo(() => {
+    if (!rankings) return [];
+
+    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
+    if (!apPoll) return [];
+
+    return apPoll.ranks.slice(0, 25).map((r) => ({
+      name:
+        r.team?.name ||
+        r.team?.shortDisplayName ||
+        r.team?.name ||
+        r.team?.nickname ||
+        "Unknown",
+      rank: r.current,
+    }));
+  }, [rankings]);
+
+  return apTop25;
+}
+
+// --- Helper: Normalize names for fuzzy matching ---
+export const normalizeTeamName = (name?: string) =>
+  (name || "")
+    .toLowerCase()
+    .replace(/[\s.]+/g, "")
+    .replace(/(university|state|college|football|team)/gi, "")
+    .trim();
+
+// --- Helper: Get rank by team name ---
+export const getTeamRankFromAPById = (teamId: number | string, apTop25: any[]) => {
+  if (!teamId) return null;
+  const rank = apTop25.find(
+    (t) => String(t.team?.id) === String(teamId)
+  );
+  return rank ? `#${rank.current}` : null;
+};

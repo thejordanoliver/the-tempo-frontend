@@ -1,5 +1,13 @@
 import { Fonts } from "constants/fonts";
-import { getNFLTeamsLogo, getTeamInfo } from "constants/teamsNFL";
+import {
+  getTeamInfo as getCFBTeamInfo,
+  getTeamLogo as getCFBTeamLogo,
+  getTeamByESPNId as getCFBTeamByESPNId,
+} from "constants/teamsCFB";
+import {
+  getTeamInfo as getNFLTeamInfo,
+  getNFLTeamsLogo,
+} from "constants/teamsNFL";
 import { PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -10,12 +18,14 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {
   lastPlay?: string | PlayObject;
   possessionTeamId?: number;
   homeTeamId: number;
   awayTeamId: number;
+  league?: LeagueType;
   isDark?: boolean;
 };
 
@@ -24,95 +34,101 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   possessionTeamId,
   homeTeamId,
   awayTeamId,
+  league = "NFL",
 }) => {
   const playAnim = useRef(new Animated.Value(50)).current;
   const [fieldWidth, setFieldWidth] = useState(0);
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-  const [firstDownPercent, setFirstDownPercent] = useState<number | null>(null);
+  const glowAnim = useRef(new Animated.Value(0)).current;
+
   const [highlightEndzone, setHighlightEndzone] = useState<
     "home" | "away" | null
   >(null);
+  const [scoreAnimation, setScoreAnimation] = useState<{
+    team: "home" | "away";
+    text: string;
+  } | null>(null);
 
+  const scoreAnim = useRef(new Animated.Value(0)).current;
+  const scoreReveal = useRef(new Animated.Value(0)).current;
+
+  // 🏈 League helpers
+  const getTeamInfo =
+    league === "NFL" ? getNFLTeamInfo : getCFBTeamInfo || getNFLTeamInfo;
+  const getLogo =
+    league === "NFL" ? getNFLTeamsLogo : getCFBTeamLogo || getNFLTeamsLogo;
+
+  // 🧩 Team lookup
   const homeTeam = getTeamInfo(homeTeamId) ?? {
     code: "HOM",
     color: "#888",
+    secondaryColor: "#777",
     name: "Home",
     id: 0,
+    espnID: 0,
   };
   const awayTeam = getTeamInfo(awayTeamId) ?? {
     code: "AWY",
     color: "#444",
+    secondaryColor: "#555",
     name: "Away",
     id: 0,
+    espnID: 0,
   };
 
   const homeColor = homeTeam.color;
   const awayColor = awayTeam.color;
-  const markerColor = possessionTeamId
-    ? getTeamInfo(possessionTeamId)?.color || "#FFF"
-    : "#FFF";
-  const textColor = isDark ? "#fff" : "#000";
+  const homeEspnID = homeTeam.espnID;
+  const awayEspnID = awayTeam.espnID;
 
-  // ✅ Compute marker position (0-100%) accounting for yardLineSide
+  // ⚡ Endzone glow pulse
+  useEffect(() => {
+    if (highlightEndzone) {
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(glowAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(glowAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+        ])
+      );
+      loop.start();
+      return () => loop.stop();
+    } else {
+      glowAnim.setValue(0);
+    }
+  }, [highlightEndzone]);
+
+  // ⚙️ Compute field position
   const computePercent = (play?: PlayObject) => {
     if (!play) return 50;
-
     const yardLine = play.end?.yardLine ?? play.start?.yardLine;
-    const yardSide = play.end?.yardLineSide ?? play.start?.yardLineSide;
     if (yardLine == null) return 50;
-
-    const home = getTeamInfo(homeTeamId);
-    const away = getTeamInfo(awayTeamId);
-
-    if (!home || !away) return 50;
-
-    // Determine percent based on possession
-    if (possessionTeamId === homeTeamId) {
-      // Home has ball: 0 = away endzone, 100 = home endzone
-      if (yardSide === home.code || yardSide === home.name) {
-        // Ball is on own side
-        return 100 - yardLine;
-      } else {
-        // Ball on opponent side
-        return 100 - yardLine; // Actually same formula works if we assume 0=away, 100=home
-      }
-    } else if (possessionTeamId === awayTeamId) {
-      // Away has ball: 0 = away endzone, 100 = home endzone
-      if (yardSide === away.code || yardSide === away.name) {
-        return yardLine;
-      } else {
-        return yardLine;
-      }
-    }
-
-    return 50; // fallback
+    return Math.min(100, Math.max(0, Number(yardLine)));
   };
 
-  const glowAnim = useRef(new Animated.Value(0)).current;
+  // 🎯 Animate marker + detect scores
+  useEffect(() => {
+    if (typeof lastPlay !== "object") return;
 
-useEffect(() => {
-  if (highlightEndzone) {
-    Animated.sequence([
-      Animated.timing(glowAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: false,
-      }),
-      Animated.timing(glowAnim, {
-        toValue: 0,
-        duration: 400,
-        delay: 2200,
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }
-}, [highlightEndzone]);
+    const play = lastPlay as PlayObject;
+    const targetPercent = computePercent(play);
 
+    console.log("🟩 ---- NEW PLAY ANIMATION ----");
+    console.log("📄 Play ID:", (play as any).id ?? (play as any).sequence);
+    console.log("📊 Drive Result:", play.drive?.result);
+    console.log("📍 YardLine Start:", play.start?.yardLine);
+    console.log("📍 YardLine End:", play.end?.yardLine);
+    console.log("🎯 Computed targetPercent:", targetPercent);
 
-useEffect(() => {
-  if (typeof lastPlay === "object") {
-    const targetPercent = computePercent(lastPlay);
+    // 🔸 Animate the marker
     Animated.spring(playAnim, {
       toValue: targetPercent,
       useNativeDriver: false,
@@ -121,17 +137,112 @@ useEffect(() => {
       mass: 1,
     }).start();
 
-    const playTextLower = lastPlay.text?.toLowerCase() ?? "";
-    if (playTextLower.includes("touchdown")) {
-      if (possessionTeamId === homeTeamId) setHighlightEndzone("home");
-      else if (possessionTeamId === awayTeamId) setHighlightEndzone("away");
-      setTimeout(() => setHighlightEndzone(null), 3000);
-    }
-  }
-}, [lastPlay, possessionTeamId]);
+    // 🔸 Deduplicate animation
+    const lastAnimatedRef = (PlayByPlayField as any)._lastAnimatedRef ?? {
+      playId: null,
+      result: null,
+    };
 
-  const playText =
-    typeof lastPlay === "string" ? lastPlay : lastPlay?.text ?? "";
+    const playId =
+      (play as any).id ??
+      (play as any).sequence ??
+      (play.start as any)?.playId ??
+      Math.random();
+
+    const playResult = play.drive?.result?.toUpperCase();
+
+    if (
+      lastAnimatedRef.playId === playId &&
+      lastAnimatedRef.result === playResult
+    ) {
+      console.log("⚠️ Skipping duplicate animation for same play");
+      return;
+    }
+
+    (PlayByPlayField as any)._lastAnimatedRef = {
+      playId,
+      result: playResult,
+    };
+
+    // ✅ Use ESPN IDs for consistent mapping
+    const scoringEspnId =
+      play.start?.team?.id ??
+      play.team?.id ??
+      possessionTeamId ??
+      null;
+
+    console.log("🏆 Scoring ESPN ID:", scoringEspnId);
+    console.log("🏠 Home ESPN ID:", homeEspnID);
+    console.log("🛫 Away ESPN ID:", awayEspnID);
+
+    let endzone: "home" | "away" | null = null;
+    let scoreText: string | null = null;
+
+ // 🏈 Endzone determination (fixed)
+const scoringIdNum = Number(scoringEspnId);
+const homeIdNum = Number(homeEspnID);
+const awayIdNum = Number(awayEspnID);
+
+if (playResult === "TD" || playResult === "TOUCHDOWN") {
+  endzone =
+    scoringIdNum === homeIdNum
+      ? "home"
+      : scoringIdNum === awayIdNum
+      ? "away"
+      : null;
+  scoreText = "TOUCHDOWN";
+} else if (playResult === "FG" || playResult === "FIELD GOAL") {
+  endzone =
+    scoringIdNum === homeIdNum
+      ? "home"
+      : scoringIdNum === awayIdNum
+      ? "away"
+      : null;
+  scoreText = "FIELD GOAL IS GOOD";
+}
+
+
+    console.log("🏁 FINAL DECISION → Endzone:", endzone);
+    console.log("🧾 Score text:", scoreText);
+    console.log("-----------------------------------");
+
+    if (endzone) {
+      setHighlightEndzone(endzone);
+
+      if (scoreText) {
+        setScoreAnimation({ team: endzone, text: scoreText });
+        scoreAnim.setValue(0);
+        scoreReveal.setValue(0);
+
+        Animated.sequence([
+          Animated.spring(scoreAnim, {
+            toValue: 1.2,
+            useNativeDriver: true,
+            friction: 4,
+            tension: 80,
+          }),
+          Animated.spring(scoreAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+            friction: 6,
+          }),
+        ]).start();
+
+        Animated.timing(scoreReveal, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: false,
+        }).start();
+      }
+
+      const timeout = setTimeout(() => {
+        setScoreAnimation(null);
+        setHighlightEndzone(null);
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [lastPlay]);
 
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
@@ -145,35 +256,30 @@ useEffect(() => {
             {
               backgroundColor: awayColor,
               borderRightColor: "#fff",
-              borderTopLeftRadius: 4,
-              borderBottomLeftRadius: 4,
             },
             highlightEndzone === "away" && styles.endzoneHighlight,
           ]}
         >
-{highlightEndzone === "away" && (
-  <Animated.View
-    style={[
-      styles.glowOverlay,
-      { backgroundColor: glowAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["rgba(255,255,0,0)", "rgba(255,255,0,0.4)"],
-        }),
-      },
-    ]}
-  />
-)}
-
-
+          {highlightEndzone === "away" && (
+            <Animated.View
+              style={[
+                styles.glowOverlay,
+                {
+                  backgroundColor: glowAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [
+                      "rgba(255,255,255,0)",
+                      "rgba(255,255,255,0.52)",
+                    ],
+                  }),
+                },
+              ]}
+            />
+          )}
           <Image
-            source={getNFLTeamsLogo(awayTeam.name, isDark)}
+            source={getLogo(awayTeam.name, true)}
             style={[styles.endzoneLogo, { transform: [{ rotate: "-90deg" }] }]}
           />
-          <Text
-            style={[styles.endzoneText, { transform: [{ rotate: "-90deg" }] }]}
-          >
-            {awayTeam.code}
-          </Text>
         </View>
 
         {/* Field */}
@@ -181,34 +287,52 @@ useEffect(() => {
           style={styles.field}
           onLayout={(e) => setFieldWidth(e.nativeEvent.layout.width)}
         >
-          {/* 10-yard lines + numbers */}
+          {Array.from({ length: 10 }, (_, i) => (
+            <View
+              key={`stripe-${i}`}
+              style={[
+                styles.fieldStripe,
+                {
+                  left: `${i * 10}%`,
+                  backgroundColor:
+                    i % 2 === 0
+                      ? isDark
+                        ? "#2a2a2a"
+                        : "#e6e6e6"
+                      : isDark
+                      ? "#1d1d1d"
+                      : "#fff",
+                },
+              ]}
+            />
+          ))}
+
+          {/* Yard lines */}
           {yardNumbers.map((yard, i) => {
-            const isMajorMarker = yard % 10 === 0;
+            const isMajor = yard % 10 === 0;
             const leftPercent = (i / (yardNumbers.length - 1)) * 100;
             const lineWidth = yard === 50 ? 4 : 2;
-
             return (
-              <React.Fragment key={`major-${i}`}>
-                {isMajorMarker && (
+              <React.Fragment key={`yard-${i}`}>
+                {isMajor && (
                   <View
                     style={[
                       styles.yardLine,
                       {
                         left: `${leftPercent}%`,
                         width: lineWidth,
-                        opacity: yard === 50 ? 1 : 0.85,
                         transform: [{ translateX: -lineWidth / 2 }],
                       },
                     ]}
                   />
                 )}
-                {isMajorMarker && yard !== 0 && (
+                {isMajor && yard !== 0 && (
                   <Text
                     style={[
                       styles.yardNumber,
                       {
                         left: `${leftPercent}%`,
-                        transform: [{ translateX: -8 }],
+                        transform: [{ translateX: -(lineWidth / 2) - 10 }],
                       },
                     ]}
                   >
@@ -219,75 +343,67 @@ useEffect(() => {
             );
           })}
 
-          {/* 5-yard lines */}
-          {Array.from({ length: 21 }, (_, i) => i * 5).map((yard) => {
-            if (yard === 0 || yard === 100) return null;
-            const leftPercent = (yard / 100) * 100;
-            return (
-              <View
-                key={`five-yard-${yard}`}
-                style={[styles.fiveYardLine, { left: `${leftPercent}%` }]}
-              />
-            );
-          })}
-
-          {/* Hash marks every yard */}
-          {Array.from({ length: 101 }, (_, yard) => {
-            if (yard === 0 || yard === 100) return null;
-            const leftPercent = (yard / 100) * 100;
-            const tickWidth = 1;
-            const tickHeight = 6;
-            const verticalOffset = 30;
-            return (
-              <React.Fragment key={`hash-${yard}`}>
-                <View
-                  style={[
-                    styles.tickMark,
-                    {
-                      left: `${leftPercent}%`,
-                      top: verticalOffset,
-                      height: tickHeight,
-                      width: tickWidth,
-                      transform: [{ translateX: -tickWidth / 2 }],
-                    },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.tickMark,
-                    {
-                      left: `${leftPercent}%`,
-                      bottom: verticalOffset,
-                      height: tickHeight,
-                      width: tickWidth,
-                      transform: [{ translateX: -tickWidth / 2 }],
-                    },
-                  ]}
-                />
-              </React.Fragment>
-            );
-          })}
-
-          {/* First Down Line */}
-          {firstDownPercent !== null && (
-            <View
-              style={[styles.firstDownLine, { left: `${firstDownPercent}%` }]}
-            />
-          )}
-
-          {/* Animated marker */}
+          {/* Ball Marker */}
           <Animated.View
             style={[
               styles.marker,
               {
-                backgroundColor: isDark ? "#ff0000" : "#ff0000",
+                backgroundColor: "#ff0000",
                 left: playAnim.interpolate({
                   inputRange: [0, 100],
-                  outputRange: [0, fieldWidth],
+                  outputRange: [fieldWidth, 0],
                 }),
               },
             ]}
           />
+
+       {/* Score Overlay */}
+{scoreAnimation && (
+  <Animated.View
+    style={[
+      styles.scoreOverlay,
+      {
+        opacity: scoreAnim,
+        transform: [
+          { translateX: -125 },
+          { translateY: -20 },
+          { scale: scoreAnim },
+        ],
+      },
+    ]}
+  >
+    <Animated.View
+      style={{
+        width: scoreReveal.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 250],
+        }),
+        overflow: "hidden",
+      }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Image
+          source={getLogo(
+            scoreAnimation.team === "home"
+              ? homeTeam.name
+              : awayTeam.name,
+            true
+          )}
+          style={styles.scoreLogo}
+        />
+        <Text
+          style={[
+            styles.scoreText,
+            { color: isDark ? "#fff" : "#1d1d1d" },
+          ]}
+        >
+          {scoreAnimation.text}
+        </Text>
+      </View>
+    </Animated.View>
+  </Animated.View>
+)}
+
         </View>
 
         {/* Home Endzone */}
@@ -297,38 +413,32 @@ useEffect(() => {
             {
               backgroundColor: homeColor,
               borderLeftColor: "#fff",
-              borderTopRightRadius: 4,
-              borderBottomRightRadius: 4,
             },
             highlightEndzone === "home" && styles.endzoneHighlight,
           ]}
         >
-{highlightEndzone === "home" && (
-  <Animated.View
-    style={[
-      styles.glowOverlay,
-      { backgroundColor: glowAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["rgba(255,255,0,0)", "rgba(255,255,0,0.4)"],
-        }),
-      },
-    ]}
-  />
-)}
-
+          {highlightEndzone === "home" && (
+            <Animated.View
+              style={[
+                styles.glowOverlay,
+                {
+                  backgroundColor: glowAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [
+                      "rgba(255,255,255,0)",
+                      "rgba(255,255,255,0.52)",
+                    ],
+                  }),
+                },
+              ]}
+            />
+          )}
           <Image
-            source={getNFLTeamsLogo(homeTeam.name, isDark)}
+            source={getLogo(homeTeam.name, true)}
             style={[styles.endzoneLogo, { transform: [{ rotate: "90deg" }] }]}
           />
-          <Text
-            style={[styles.endzoneText, { transform: [{ rotate: "90deg" }] }]}
-          >
-            {homeTeam.code}
-          </Text>
         </View>
       </View>
-
-      {/* <Text style={[styles.playText, { color: textColor }]}>{playText}</Text> */}
     </View>
   );
 };
@@ -342,52 +452,49 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       width: "100%",
-      borderWidth: 1,
-      borderColor: isDark ? "#fff" : "#ccc",
+      borderWidth: 2,
+      borderColor: isDark ? "#fff" : "#444",
       borderRadius: 4,
     },
     endzone: {
       width: 40,
-      height: 120,
+      height: 200,
       justifyContent: "center",
       alignItems: "center",
       overflow: "hidden",
     },
+    fieldStripe: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      width: "10%",
+      zIndex: 0,
+    },
     glowOverlay: {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  borderRadius: 4,
-  zIndex: 2,
-},
-
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: 4,
+      zIndex: 5,
+    },
     endzoneLogo: {
-      width: 80,
-      height: 80,
+      width: 100,
+      height: 100,
       resizeMode: "contain",
       position: "absolute",
-      opacity: 0.2,
-    },
-    endzoneText: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 18,
-      textTransform: "uppercase",
-      color: "#fff",
+      opacity: 0.4,
     },
     endzoneHighlight: {
-      shadowColor: "yellow",
       shadowOpacity: 0.9,
       shadowRadius: 15,
       elevation: 10,
-      borderWidth: 2,
-      borderColor: "yellow",
     },
     field: {
       flex: 1,
-      height: 120,
-      backgroundColor: isDark ? "#1d1d1d" : "#ffff",
+      height: 200,
+      backgroundColor: isDark ? "#1d1d1d" : "#fff",
       position: "relative",
     },
     marker: {
@@ -396,53 +503,47 @@ const getStyles = (isDark: boolean) =>
       width: 2,
       height: "100%",
       borderRadius: 2,
-      zIndex: 1, // ensure it's below firstDownLine
+      zIndex: 1,
     },
-    firstDownLine: {
-      position: "absolute",
-      top: 0,
-      height: "100%",
-      width: 3,
-      backgroundColor: "yellow",
-      opacity: 0.9,
-      zIndex: 2, // now above marker
-    },
-
-    playText: { fontFamily: Fonts.OSREGULAR, marginTop: 4 },
     yardLine: {
       position: "absolute",
       top: 0,
       height: "100%",
-      backgroundColor: "#fff",
+      backgroundColor: isDark ? "#fff" : "#888",
       borderRadius: 1,
       zIndex: 1,
     },
     yardNumber: {
       position: "absolute",
-      top: -18,
-      fontSize: 10,
+      top: -22,
+      fontSize: 12,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? "#fff" : "#1d1d1d",
       textAlign: "center",
       zIndex: 3,
       width: 20,
     },
-    tickMark: {
-      position: "absolute",
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
-      opacity: 0.9,
-      zIndex: 2,
-      borderRadius: 1,
-    },
+  scoreOverlay: {
+  position: "absolute",
+  top: "50%",                // Center vertically on field
+  left: "50%",               // Center horizontally
+  transform: [{ translateX: -125 }, { translateY: -20 }], // center offset based on logo+text width
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 5,
+},
 
-    fiveYardLine: {
-      position: "absolute",
-      top: 0,
-      height: "100%",
-      width: 2,
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
-      opacity: 0.5,
-      zIndex: 1,
-      borderRadius: 1,
+    scoreLogo: {
+      width: 40,
+      height: 40,
+      resizeMode: "contain",
+      marginRight: 8,
+    },
+    scoreText: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 20,
+      textAlign: "center",
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 5,
     },
   });

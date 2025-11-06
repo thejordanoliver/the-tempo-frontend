@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import rateLimit from "axios-rate-limit";
 import { teams } from "constants/teams";
-import type { Game, APIGame } from "types/types";
+import { useEffect, useRef, useState } from "react";
+import type { APIGame, Game } from "types/types";
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
 // Limit requests to avoid rate limiting
-const http = rateLimit(axios.create(), { maxRequests: 2, perMilliseconds: 1000 });
+const http = rateLimit(axios.create(), {
+  maxRequests: 2,
+  perMilliseconds: 1000,
+});
 
 export function useLastTeamGame(teamId: string | number) {
   const [lastGame, setLastGame] = useState<Game | null>(null);
@@ -30,13 +33,16 @@ export function useLastTeamGame(teamId: string | number) {
     }
 
     try {
-      const res = await http.get<{ response: APIGame[] }>(`https://${RAPIDAPI_HOST}/games`, {
-        params: { team: teamId, season: "2024" },
-        headers: {
-          "X-RapidAPI-Key": RAPIDAPI_KEY,
-          "X-RapidAPI-Host": RAPIDAPI_HOST,
-        },
-      });
+      const res = await http.get<{ response: APIGame[] }>(
+        `https://${RAPIDAPI_HOST}/games`,
+        {
+          params: { team: teamId, season: "2025" },
+          headers: {
+            "X-RapidAPI-Key": RAPIDAPI_KEY,
+            "X-RapidAPI-Host": RAPIDAPI_HOST,
+          },
+        }
+      );
 
       const games = res.data.response;
 
@@ -53,18 +59,24 @@ export function useLastTeamGame(teamId: string | number) {
 
       // Sort descending by game date
       const sorted = completedGames.sort(
-        (a, b) => new Date(b.date.start).getTime() - new Date(a.date.start).getTime()
+        (a, b) =>
+          new Date(b.date.start).getTime() - new Date(a.date.start).getTime()
       );
 
       const last = sorted[0];
 
       // Map to local team info
-      const homeTeamLocal = teams.find((t) => t.id === String(last.teams.home.id));
-      const awayTeamLocal = teams.find((t) => t.id === String(last.teams.visitors.id));
+      const homeTeamLocal = teams.find(
+        (t) => t.id === String(last.teams.home.id)
+      );
+      const awayTeamLocal = teams.find(
+        (t) => t.id === String(last.teams.visitors.id)
+      );
 
-      if (!homeTeamLocal || !awayTeamLocal) throw new Error("Local team info missing");
+      if (!homeTeamLocal || !awayTeamLocal)
+        throw new Error("Local team info missing");
 
-      // Build enriched Game object
+      // ✅ Build enriched Game object
       const enrichedGame: Game = {
         id: last.id,
         date: last.date.start,
@@ -72,12 +84,19 @@ export function useLastTeamGame(teamId: string | number) {
           hour: "numeric",
           minute: "2-digit",
         }),
-        status:
-          last.status.long?.toLowerCase() === "finished"
-            ? "Final"
-            : "Scheduled",
+        status: {
+          long: last.status.long,
+          short: Number(last.status.short) ?? 0,
+          clock: last.status.clock ?? undefined,
+          halftime: false,
+        },
         home: { ...homeTeamLocal },
         away: { ...awayTeamLocal },
+        // ✅ Match the Game type’s scores shape
+        scores: {
+          home: { points: last.scores.home.points ?? 0 },
+          visitors: { points: last.scores.visitors.points ?? 0 },
+        },
         homeScore: last.scores.home.points ?? undefined,
         awayScore: last.scores.visitors.points ?? undefined,
         isPlayoff: false,

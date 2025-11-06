@@ -2,12 +2,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Fonts } from "constants/fonts";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import type { Team } from "types/types"; // Team type should include `league: "NBA" | "NFL"`
+import type { Team } from "types/types"; // Team type should include `league: "NBA" | "NFL" | "CFB" | "CBB"`
 import { LeagueType } from "types/types";
 import TeamPreviewModal from "./../Team/TeamPreviewModal";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -31,41 +32,13 @@ const FavoriteTeamsList = ({
 }: Props) => {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-  const [favorites, setFavorites] = useState<TeamWithLeague[]>(
-    favoriteTeams.map((t) => ({
-      ...t,
-      league:
-        (t as any).league || (t.fullName?.includes("State") ? "CFB" : "NBA"), // fallback guess
-    }))
-  );
-  useEffect(() => {}, [favoriteTeams]);
-
+  const [favorites, setFavorites] = useState<TeamWithLeague[]>(favoriteTeams);
   const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (team: TeamWithLeague) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setPreviewTeam(team);
-    setModalVisible(true);
-  };
-
-  const handleGoToTeam = () => {
-    if (previewTeam) {
-      const route =
-        previewTeam.league === "NFL"
-          ? "/team/nfl/[teamId]"
-          : previewTeam.league === "NBA"
-          ? "/team/[teamId]"
-          : "/team/cfb/[teamId]";
-      router.push({
-        pathname: route,
-        params: { teamId: previewTeam.id.toString() },
-      });
-      setModalVisible(false);
-    }
-  };
   const alwaysLightLogoTeams = [
     "Alabama",
+    "Arkansas",
     "Duke",
     "Texas",
     "Tennessee",
@@ -87,6 +60,29 @@ const FavoriteTeamsList = ({
     "Eastern Michigan",
     "Cincinnati",
   ]; // add more teams as needed
+
+  const handleLongPress = (team: TeamWithLeague) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setPreviewTeam(team);
+    setModalVisible(true);
+  };
+
+  const handleGoToTeam = () => {
+    if (!previewTeam) return;
+    const route =
+      previewTeam.league === "NFL"
+        ? "/team/nfl/[teamId]"
+        : previewTeam.league === "NBA"
+        ? "/team/[teamId]"
+        : previewTeam.league === "CFB"
+        ? "/team/cfb/[teamId]"
+        : "/team/cbb/[teamId]";
+    router.push({
+      pathname: route,
+      params: { teamId: previewTeam.id.toString() },
+    });
+    setModalVisible(false);
+  };
 
   const handleRemoveFavorite = async (team: TeamWithLeague) => {
     try {
@@ -113,7 +109,6 @@ const FavoriteTeamsList = ({
     setFavorites(favoriteTeams);
   }, [favoriteTeams]);
 
-  // ✅ The .map() block must be inside return()
   return (
     <>
       {previewTeam && (
@@ -123,19 +118,21 @@ const FavoriteTeamsList = ({
           onClose={() => setModalVisible(false)}
           onGo={handleGoToTeam}
           onRemove={() => handleRemoveFavorite(previewTeam)}
+          currentUser={isCurrentUser}
         />
       )}
 
       <View
         style={[
           isGridView ? styles.teamGrid : {},
-          { columnGap: isGridView ? 6 : 0 },
-          { rowGap: isGridView ? 8 : 0 },
-          { justifyContent: "flex-start" },
+          {
+            columnGap: isGridView ? 6 : 0,
+            rowGap: isGridView ? 8 : 0,
+            justifyContent: "flex-start",
+          },
         ]}
       >
         {favorites.map((team) => {
-          // ✅ Moved inside .map()
           const useSecondaryInDark = [
             "Grizzlies",
             "Suns",
@@ -149,7 +146,7 @@ const FavoriteTeamsList = ({
             "Jaguars",
             "UCF",
             "Cincinnati",
-          ].includes(team.name ?? "");
+          ].includes(team.name ?? team.fullName ?? "");
 
           const teamBackgroundColor = isDark
             ? useSecondaryInDark
@@ -163,14 +160,28 @@ const FavoriteTeamsList = ({
           const city = split?.slice(0, -1).join(" ");
           const nickname = split?.at(-1) || "";
 
+          const displayName =
+            team.league === "CFB" || team.league === "CBB"
+              ? team.name || team.fullName || "Unknown Team"
+              : city;
+
+          const displayNickname =
+            team.league === "CFB" || team.league === "CBB" ? null : nickname;
+
+          const logoSource =
+            (alwaysLightLogoTeams.includes(team.name ?? team.fullName ?? "") &&
+              team.logoLight) ||
+            (isDark && team.logoLight) ||
+            team.logo ||
+            team.logoLight ||
+            require("assets/Placeholders/teamPlaceholder.png"); // fallback
+
           return (
             <LongPressGestureHandler
               key={`${team.league}:${team.id}`}
               minDurationMs={300}
               onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) {
-                  handleLongPress(team);
-                }
+                if (nativeEvent.state === State.ACTIVE) handleLongPress(team);
               }}
             >
               <Pressable
@@ -184,7 +195,9 @@ const FavoriteTeamsList = ({
                       ? "/team/nfl/[teamId]"
                       : team.league === "NBA"
                       ? "/team/[teamId]"
-                      : "/team/cfb/[teamId]";
+                      : team.league === "CFB"
+                      ? "/team/cfb/[teamId]"
+                      : "/team/cbb/[teamId]";
                   router.push({
                     pathname: route,
                     params: { teamId: team.id.toString() },
@@ -203,23 +216,48 @@ const FavoriteTeamsList = ({
                       marginBottom: isGridView ? 0 : 8,
                       paddingHorizontal: 12,
                       paddingVertical: isGridView ? 20 : 12,
+                      position: "relative", // ensure badge overlays correctly
+                      overflow: "hidden",
                     },
                   ]}
                 >
+                  {/* League Tag for CFB / CBB */}
+                  {(team.league === "CFB" || team.league === "CBB") && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        paddingLeft: 12,
+                        paddingRight: 6,
+                        paddingVertical: 4,
+                        borderTopLeftRadius: 6,
+                        borderBottomLeftRadius: 100,
+                        zIndex: 2,
+                        backgroundColor:
+                          team.league === "CFB" ? "#228B22" : "#1E90FF",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontSize: 11,
+                          fontFamily: Fonts.OSBOLD,
+                        }}
+                      >
+                        {team.league}
+                      </Text>
+                    </View>
+                  )}
+
                   <Image
-                    source={
-                      alwaysLightLogoTeams.includes(team.name ?? "") &&
-                      team.logoLight
-                        ? team.logoLight
-                        : isDark && team.logoLight
-                        ? team.logoLight
-                        : team.logo || team.logoLight
-                    }
+                    source={logoSource}
                     style={[
                       styles.teamLogo,
                       isGridView ? { marginBottom: 8 } : { marginRight: 10 },
                     ]}
                   />
+
                   {isGridView ? (
                     <View style={{ alignItems: "center" }}>
                       <Text
@@ -228,33 +266,27 @@ const FavoriteTeamsList = ({
                           { fontSize: 12, textAlign: "center" },
                         ]}
                       >
-                        {team.league === "CFB" ? team.name : city}
+                        {displayName}
                       </Text>
-                      <Text
-                        style={[
-                          styles.teamName,
-                          {
-                            fontSize: 12,
-                            textAlign: "center",
-                            marginTop: 2,
-                          },
-                        ]}
-                      >
-                        {team.league === "CFB" ? null : nickname}
-                      </Text>
+                      {displayNickname && (
+                        <Text
+                          style={[
+                            styles.teamName,
+                            { fontSize: 12, textAlign: "center", marginTop: 2 },
+                          ]}
+                        >
+                          {displayNickname}
+                        </Text>
+                      )}
                     </View>
                   ) : (
                     <Text
                       style={[
                         styles.teamName,
-                        {
-                          textAlign: "left",
-                          fontSize: 14,
-                          marginLeft: 10,
-                        },
+                        { textAlign: "left", fontSize: 14, marginLeft: 10 },
                       ]}
                     >
-                      {team.fullName}
+                      {team.fullName || displayName}
                     </Text>
                   )}
                 </View>
@@ -282,7 +314,7 @@ const FavoriteTeamsList = ({
                 style={styles.editIcon}
                 name="create"
                 size={20}
-                color={isDark ? "#000" : "#fff"}
+                color={isDark ? "#1d1d1d" : "#fff"}
               />
             </View>
           </Pressable>

@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
 
 type DropdownOption = {
@@ -21,6 +22,7 @@ type DropdownProps = {
   onSelect: (value: string) => void;
   isDark: boolean;
   width?: number;
+  style?: ViewStyle; // ✅ make it a proper type
 };
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -29,6 +31,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   onSelect,
   isDark,
   width = 180,
+  style, // ✅ accept style prop
 }) => {
   const [visible, setVisible] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
@@ -65,14 +68,17 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <View
-      style={{
-        alignItems: "flex-end",
-        marginBottom: 10,
-        position: "absolute",
-        right: 16,
-        top: 14,
-        zIndex: 999,
-      }}
+      style={[
+        {
+          alignItems: "flex-end",
+          marginBottom: 10,
+          position: "absolute",
+          right: 16,
+          top: 14,
+          zIndex: 999,
+        },
+        style, // ✅ merge custom styles (user overrides last)
+      ]}
     >
       <TouchableOpacity
         onPress={toggleDropdown}

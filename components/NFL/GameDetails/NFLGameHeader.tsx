@@ -1,8 +1,9 @@
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { getNFLTeamsLogo, getTeamName } from "constants/teamsNFL";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { NFLGameCenterInfo } from "./GameInfo";
 import { NFLTeamRow } from "./NFLTeamRow";
-
 type Props = {
   homeTeam: any;
   awayTeam: any;
@@ -21,6 +22,8 @@ type Props = {
   formattedDate?: string;
   formattedTime?: string;
   playoffInfo?: string;
+  networkString?: string;
+  headlineText?: string;
 };
 
 export default function NFLGameHeader({
@@ -38,83 +41,123 @@ export default function NFLGameHeader({
   isDark,
   homeRecord,
   awayRecord,
+  networkString = "",
   formattedDate = "",
   formattedTime = "",
   playoffInfo = "",
+  headlineText,
 }: Props) {
   const styles = getStyles(isDark);
 
   return (
-    <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
-      {/* Away Team */}
-      <NFLTeamRow
-        team={{
-          id: String(awayTeam.id),
-          name:
-            getTeamName(awayTeam.id, awayTeam.nickname) ||
-            awayTeam.nickname ||
-            "Away",
-          logo: getNFLTeamsLogo(awayTeam.id, isDark),
-          record: awayRecord ?? "0-0",
-        }}
-        isDark={isDark}
-        isHome={false}
-        score={scores?.away?.total}
-        opponentScore={scores?.home?.total}
-        isWinner={(scores?.away?.total ?? 0) > (scores?.home?.total ?? 0)}
-        colors={colors}
-        status={status}
-        possessionTeamId={possessionTeamId}
-        timeouts={awayTimeouts}
-      />
+    <View style={[styles.container, { borderColor: colors.border }]}>
+      <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
+        {/* Away Team */}
+        <NFLTeamRow
+          team={{
+            id: String(awayTeam.id),
+            code: awayTeam.code,
+            name:
+              getTeamName(awayTeam.id, awayTeam.nickname) ||
+              awayTeam.nickname ||
+              "Away",
+            logo: getNFLTeamsLogo(awayTeam.id, isDark),
+            record: awayRecord ?? "0-0",
+          }}
+          isDark={isDark}
+          isHome={false}
+          score={scores?.away?.total}
+          opponentScore={scores?.home?.total}
+          isWinner={(scores?.away?.total ?? 0) > (scores?.home?.total ?? 0)}
+          colors={colors}
+          status={status}
+          possessionTeamId={possessionTeamId}
+          timeouts={awayTimeouts}
+        />
 
-      {/* Game Info */}
-      <NFLGameCenterInfo
-        status={status}
-        date={formattedDate}
-        time={formattedTime}
-        period={period}
-        clock={displayClock}
-        colors={colors}
-        isDark={isDark}
-        playoffInfo={playoffInfo}
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        downAndDistance={possessionText}
-      />
+        <View>
 
-      {/* Home Team */}
-      <NFLTeamRow
-        team={{
-          id: String(homeTeam.id),
-          name:
-            getTeamName(homeTeam.id, homeTeam.nickname) ||
-            homeTeam.nickname ||
-            "Home",
-          logo: getNFLTeamsLogo(homeTeam.id, isDark),
-          record: homeRecord ?? "0-0",
-        }}
-        isDark={isDark}
-        isHome
-        score={scores?.home?.total}
-        opponentScore={scores?.away?.total}
-        isWinner={(scores?.home?.total ?? 0) > (scores?.away?.total ?? 0)}
-        colors={colors}
-        status={status}
-        possessionTeamId={possessionTeamId}
-        timeouts={homeTimeouts}
-      />
+            {/* Headline (optional) */}
+          {headlineText ? (
+            <View style={styles.headlineContainer}>
+              <Text style={styles.headlineText} numberOfLines={2}>
+                {headlineText}
+              </Text>
+            </View>
+          ) : null}
+
+       
+          {/* Game Info */}
+          <NFLGameCenterInfo
+            headlineText={headlineText}
+            status={status}
+            date={formattedDate}
+            time={formattedTime}
+            period={period}
+            clock={displayClock}
+            colors={colors}
+            isDark={isDark}
+            playoffInfo={playoffInfo}
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            broadcastNetworks={networkString}
+            downAndDistance={possessionText}
+          />
+        </View>
+        {/* Home Team */}
+        <NFLTeamRow
+          team={{
+            id: String(homeTeam.id),
+            code: homeTeam.code,
+            name:
+              getTeamName(homeTeam.id, homeTeam.nickname) ||
+              homeTeam.nickname ||
+              "Home",
+            logo: getNFLTeamsLogo(homeTeam.id, isDark),
+            record: homeRecord ?? "0-0",
+          }}
+          isDark={isDark}
+          isHome
+          score={scores?.home?.total}
+          opponentScore={scores?.away?.total}
+          isWinner={(scores?.home?.total ?? 0) > (scores?.away?.total ?? 0)}
+          colors={colors}
+          status={status}
+          possessionTeamId={possessionTeamId}
+          timeouts={homeTimeouts}
+        />
+      </View>
     </View>
   );
 }
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
+    container: {
+      borderBottomWidth: 1,
+      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+    },
+
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
-      borderBottomWidth: 1,
-      paddingBottom: 12,
-      backgroundColor: isDark ? "#1d1d1d" : "#fff",
+      alignItems: "center",
+      paddingTop: 4,
+      paddingBottom: 4,
+    },
+    headlineContainer: {
+      paddingHorizontal: 12,
+      paddingTop: 10,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headlineText: {
+      fontSize: 12,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontFamily: Fonts.OSEXTRALIGHT,
+      textAlign: "center",
+      position: "absolute",
+      width: 200,
+      top: -8,
     },
   });

@@ -15,15 +15,16 @@ import {
 } from "react-native";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
-import { getAccessToken } from "utils/authStorage"; // ✅ central token getter
+import { getAccessToken } from "utils/authStorage"; // ✅ centralized token getter
 
 interface TeamForumProps {
   teamId: string;
+  league: string; // ✅ added league prop
 }
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
-export default function TeamForum({ teamId }: TeamForumProps) {
+export default function TeamForum({ teamId, league }: TeamForumProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -40,11 +41,11 @@ export default function TeamForum({ teamId }: TeamForumProps) {
   const isDark = colorScheme === "dark";
   const styles = getPostItemStyles(isDark);
 
-  // Load token and decode user ID
+  // ✅ Load token and decode user ID
   useEffect(() => {
     (async () => {
       try {
-        const storedToken = await getAccessToken(); // ✅ centralized call
+        const storedToken = await getAccessToken();
         setToken(storedToken);
         if (storedToken) {
           const decoded: { id: number } = jwtDecode(storedToken);
@@ -56,61 +57,64 @@ export default function TeamForum({ teamId }: TeamForumProps) {
     })();
   }, []);
 
-  // Fetch posts
-  const fetchPosts = useCallback(
-    async (pageNumber = 1) => {
-      if (!teamId) return;
+ // ✅ Fixed: fetchPosts route path updated to match backend
 
-      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
-      setError(null);
+const fetchPosts = useCallback(
+  async (pageNumber = 1) => {
+    if (!teamId || !league) return;
 
-      try {
-        const res = await axios.get(`${BASE_URL}/api/forum/team/${teamId}`, {
+    pageNumber === 1 ? setLoading(true) : setRefreshing(true);
+    setError(null);
+
+    try {
+      // ✅ Corrected URL order
+      const res = await axios.get(
+        `${BASE_URL}/api/forum/team/${league}/${teamId}`,
+        {
           params: { page: pageNumber, limit: 10 },
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
-
-        const data = res.data;
-
-        if (pageNumber === 1) {
-          setPosts(data.posts);
-        } else {
-          setPosts((prev) => [...prev, ...data.posts]);
         }
+      );
 
-        setPage(data.pagination.page);
-        setTotalPages(data.pagination.totalPages);
+      const data = res.data;
 
-        const likedSet = new Set<string>(
-          data.posts
-            .filter((post: Post) => post.liked_by_current_user)
-            .map((post: Post) => String(post.id))
-        );
-
-        setLikedPosts(likedSet);
-      } catch (err: any) {
-        setError(
-          err.response?.data?.error || err.message || "Error loading posts"
-        );
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
+      if (pageNumber === 1) {
+        setPosts(data.posts);
+      } else {
+        setPosts((prev) => [...prev, ...data.posts]);
       }
-    },
-    [teamId, token]
-  );
 
-  useEffect(() => {
-    if (token) {
-      fetchPosts(1);
+      setPage(data.pagination.page);
+      setTotalPages(data.pagination.totalPages);
+
+      const likedSet = new Set<string>(
+        data.posts
+          .filter((post: Post) => post.liked_by_current_user)
+          .map((post: Post) => String(post.id))
+      );
+
+      setLikedPosts(likedSet);
+    } catch (err: any) {
+      console.error("Fetch posts error:", err);
+      setError(
+        err.response?.data?.error || err.message || "Error loading posts"
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
+  },
+  [teamId, league, token]
+);
+
+  // ✅ Initial + focus refetch
+  useEffect(() => {
+    if (token) fetchPosts(1);
   }, [token, fetchPosts]);
 
   useFocusEffect(
     useCallback(() => {
-      if (token) {
-        fetchPosts(1);
-      }
+      if (token) fetchPosts(1);
     }, [fetchPosts, token])
   );
 
@@ -162,9 +166,10 @@ export default function TeamForum({ teamId }: TeamForumProps) {
     }
   };
 
+  // ✅ Cleanup on unmount
   useEffect(() => {
     return () => {
-      setGlobalImage([], 0); // Clear global images on unmount
+      setGlobalImage([], 0);
     };
   }, []);
 
@@ -187,7 +192,7 @@ export default function TeamForum({ teamId }: TeamForumProps) {
             editPost={editPost}
             BASE_URL={BASE_URL}
             onImagePress={(imgUri) => {
-              setGlobalImage([], 0); // Reset first
+              setGlobalImage([], 0);
               setGlobalImage([imgUri], 0);
             }}
           />
@@ -214,10 +219,14 @@ export default function TeamForum({ teamId }: TeamForumProps) {
         }
       />
 
+      {/* ✅ Pass league and teamId to Create Post */}
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() =>
-          router.push({ pathname: "/create-post", params: { teamId } })
+          router.push({
+            pathname: "/create-post",
+            params: { teamId, league },
+          })
         }
         activeOpacity={0.8}
       >

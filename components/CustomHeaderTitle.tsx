@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Fonts } from "constants/fonts";
+import { Colors } from "constants/Colors";
 import { teams as nbaTeams } from "constants/teams";
-import { teams as cfbTeams, conferenceObjectListMap } from "constants/teamsCFB";
+import { teams as cfbTeams, } from "constants/teamsCFB";
+import { teams as cbbTeams, conferenceObjectListMap  } from "constants/teamsCBB";
 import { teams as nflTeams } from "constants/teamsNFL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useRef } from "react";
@@ -51,7 +53,7 @@ type CustomHeaderTitleProps = {
   selectedConferenceName?: string;
   isPlayerScreen?: boolean;
   showBackButton?: boolean;
-  league?: "NBA" | "NFL" | "CFB" | "Leagues";
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
   isNotified?: boolean;
@@ -83,7 +85,7 @@ const TeamBackground = ({
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
 }) => {
-  const defaultBgColor = isDark ? "#1d1d1d" : "#fff";
+  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
 
   if (!(isTeamScreen || isPlayerScreen)) {
     return (
@@ -143,7 +145,7 @@ const ConferenceBackground = ({
   conferenceColor?: string;
   isConferenceScreen: boolean;
 }) => {
-  const defaultBgColor = isDark ? "#1d1d1d" : "#fff";
+  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
 
   if (!isConferenceScreen) {
     return (
@@ -206,44 +208,83 @@ const GameHeader = ({
   const awayColor = awayTeam?.color || "#777";
   const dividerText = isNeutralSite ? "vs" : "@";
 
-  // --- Animation setup ---
+  // --- Main animations ---
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
 
-  useEffect(() => {
-    Animated.sequence([
+  // --- Letter-level animations ---
+  const awayLetters: string[] = awayTeam.code.split("");
+  const homeLetters: string[] = homeTeam.code.split("");
+const awayLetterAnims: Animated.Value[] = useMemo(
+  () => awayTeam.code.split("").map(() => new Animated.Value(0)),
+  [awayTeam.code]
+);
+
+const homeLetterAnims: Animated.Value[] = useMemo(
+  () => homeTeam.code.split("").map(() => new Animated.Value(0)),
+  [homeTeam.code]
+);
+
+useEffect(() => {
+  Animated.sequence([
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+      Animated.timing(dividerScale, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]),
+    Animated.parallel([
       Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(dividerScale, {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.stagger(200, [
         Animated.timing(scaleAway, {
           toValue: 1,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
+          duration: 1000,
+          easing: Easing.out(Easing.exp),
           useNativeDriver: true,
         }),
         Animated.timing(scaleHome, {
           toValue: 1,
-          duration: 1200,
-          easing: Easing.out(Easing.quad),
+          duration: 1000,
+          easing: Easing.out(Easing.exp),
           useNativeDriver: true,
         }),
       ]),
-    ]).start();
-  }, []);
+      Animated.parallel([
+        Animated.stagger(
+          100,
+          awayLetterAnims.map(a =>
+            Animated.timing(a, {
+              toValue: 1,
+              duration: 600,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true,
+            })
+          )
+        ),
+        Animated.stagger(
+          100,
+          homeLetterAnims.map(a =>
+            Animated.timing(a, {
+              toValue: 1,
+              duration: 600,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true,
+            })
+          )
+        ),
+      ]),
+    ]),
+  ]).start();
+}, [awayTeam.code, homeTeam.code]);
 
   return (
     <Animated.View
@@ -252,6 +293,7 @@ const GameHeader = ({
         { flexDirection: "row", zIndex: -10, opacity },
       ]}
     >
+      {/* Gradient background */}
       <LinearGradient
         colors={[awayColor, awayColor, homeColor, homeColor]}
         locations={[0, 0.5, 0.5, 1]}
@@ -259,6 +301,8 @@ const GameHeader = ({
         end={{ x: 1.08, y: 1.2 }}
         style={StyleSheet.absoluteFillObject}
       />
+
+      {/* Away team */}
       <View style={styles.teamHalfWrapper}>
         <Animated.View
           style={[
@@ -271,20 +315,49 @@ const GameHeader = ({
             style={styles.bgLogo}
             resizeMode="contain"
           />
-          <Text style={styles.teamCode}>{awayTeam.code}</Text>
+          <View style={{ flexDirection: "row" }}>
+            {awayLetters.map((char: string, i: number) => (
+              <Animated.Text
+                key={i}
+                style={[
+                  styles.teamCode,
+                  {
+                    opacity: awayLetterAnims[i],
+                    transform: [
+                      {
+                        scale: awayLetterAnims[i].interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.7, 1],
+                        }),
+                      },
+                      {
+                        translateY: awayLetterAnims[i].interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [10, 0],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                {char}
+              </Animated.Text>
+            ))}
+          </View>
         </Animated.View>
       </View>
+
+      {/* Divider */}
       <Animated.View
         style={[
           styles.dividerWrapper,
-          {
-            opacity,
-            transform: [{ scale: dividerScale }],
-          },
+          { opacity, transform: [{ scale: dividerScale }] },
         ]}
       >
         <Text style={styles.dividerText}>{dividerText}</Text>
       </Animated.View>
+
+      {/* Home team */}
       <View style={styles.teamHalfWrapper}>
         <Animated.View
           style={[
@@ -297,12 +370,42 @@ const GameHeader = ({
             style={styles.bgLogo}
             resizeMode="contain"
           />
-          <Text style={styles.teamCode}>{homeTeam.code}</Text>
+          <View style={{ flexDirection: "row" }}>
+            {homeLetters.map((char: string, i: number) => (
+              <Animated.Text
+                key={i}
+                style={[
+                  styles.teamCode,
+                  {
+                    opacity: homeLetterAnims[i],
+                    transform: [
+                      {
+                        scale: homeLetterAnims[i].interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.7, 1],
+                        }),
+                      },
+                      {
+                        translateY: homeLetterAnims[i].interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [10, 0],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                {char}
+              </Animated.Text>
+            ))}
+          </View>
         </Animated.View>
       </View>
     </Animated.View>
   );
 };
+
+
 
 // ---------- MAIN COMPONENT ----------
 export function CustomHeaderTitle({
@@ -352,6 +455,7 @@ export function CustomHeaderTitle({
     "Sun Belt": "Sun Belt",
     CUSA: "CUSA",
     MAC: "MAC",
+   "Atlantic 10": "Atlantic 10",
     "FBS Independents": "FBS Independents",
   };
 
@@ -370,7 +474,7 @@ export function CustomHeaderTitle({
 
   const conferenceLogo = selectedConference?.logo ?? null;
   const primaryColor =
-    selectedConference?.color?.primary || (isDark ? "#1d1d1d" : "#fff");
+    selectedConference?.color?.primary || (isDark ? Colors.netural.black : Colors.netural.white);
   const secondaryColor = selectedConference?.color?.secondary || primaryColor;
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -389,12 +493,13 @@ export function CustomHeaderTitle({
   const selectedTeam = useMemo(() => {
     if (league === "NFL") return nflTeams.find((t) => t.code === teamCode);
     if (league === "CFB") return cfbTeams.find((t) => t.code === teamCode);
+    if (league === "CBB") return cbbTeams.find((t) => t.code === teamCode);
     return nbaTeams.find((t) => t.code === teamCode);
   }, [teamCode, league]);
 
   const homeTeam = useMemo(() => {
     const teams =
-      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : nbaTeams;
+      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : league === "CBB" ? cbbTeams : nbaTeams;
     return (
       teams.find((t) => t.code === homeTeamCode) ?? {
         code: homeTeamCode ?? "HOM",
@@ -406,7 +511,7 @@ export function CustomHeaderTitle({
 
   const awayTeam = useMemo(() => {
     const teams =
-      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : nbaTeams;
+      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : league === "CBB" ? cbbTeams : nbaTeams;
     return (
       teams.find((t) => t.code === awayTeamCode) ?? {
         code: awayTeamCode ?? "AWY",
@@ -416,18 +521,18 @@ export function CustomHeaderTitle({
     );
   }, [awayTeamCode, league]);
 
-  const defaultBgColor = isDark ? "#1d1d1d" : "#fff";
+  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
-    color: isDark ? "#fff" : "#1d1d1d",
+    color: isDark ? Colors.netural.white : Colors.netural.black,
     textAlign: "center",
   };
   const constantTextStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
-    color: "#fff",
+    color: Colors.netural.white,
     textAlign: "center",
   };
 
@@ -471,7 +576,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="log-out-outline"
               size={24}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
             />
           </TouchableOpacity>
         ) : showBackButton && onBack ? (
@@ -481,10 +586,10 @@ export function CustomHeaderTitle({
               size={24}
               color={
                 tabName === "Game" || selectedConference || isTeamScreen
-                  ? "#fff"
+                  ? Colors.netural.white
                   : isDark
-                  ? "#fff"
-                  : "#1d1d1d"
+                  ? Colors.netural.white
+                  : Colors.netural.black
               }
             />
           </TouchableOpacity>
@@ -524,7 +629,7 @@ export function CustomHeaderTitle({
                   name="chevron-down"
                   size={20}
                   color={
-                    selectedConference ? "#fff" : isDark ? "#fff" : "#1d1d1d"
+                    selectedConference ? Colors.netural.white : isDark ? Colors.netural.white : Colors.netural.black
                   }
                 />
               </Animated.View>
@@ -535,7 +640,7 @@ export function CustomHeaderTitle({
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <HeaderTitle style={textStyle}>
-              {title || playerName || tabName || ""}
+              {title  || tabName || ""}
             </HeaderTitle>
           </View>
         )}
@@ -551,7 +656,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name={isFavorite ? "star" : "star-outline"}
                   size={24}
-                  color="#fff"
+                  color={Colors.netural.white}
                 />
               </TouchableOpacity>
             )}
@@ -563,7 +668,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name={isNotified ? "notifications" : "notifications-outline"}
                   size={24}
-                  color="#fff"
+                  color={Colors.netural.white}
                 />
               </TouchableOpacity>
             )}
@@ -572,7 +677,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name="information-circle-outline"
                   size={24}
-                  color="#fff"
+                  color={Colors.netural.white}
                 />
               </TouchableOpacity>
             )}
@@ -582,7 +687,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="settings-outline"
               size={24}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
             />
           </TouchableOpacity>
         ) : tabName === "League" && onCalendarPress ? (
@@ -590,7 +695,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="calendar-outline"
               size={24}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
             />
           </TouchableOpacity>
         ) : tabName === "Explore" && onSearchToggle ? (
@@ -598,7 +703,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="search"
               size={24}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
             />
           </TouchableOpacity>
         ) : onToggleLayout !== undefined ? (
@@ -606,7 +711,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name={isGrid ? "list" : "grid"}
               size={22}
-              color={isDark ? "#fff" : "#000"}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
             />
           </TouchableOpacity>
         ) : (
@@ -650,7 +755,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   teamCode: {
-    color: "#fff",
+    color: Colors.netural.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
     zIndex: 2,
@@ -662,7 +767,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   dividerText: {
-    color: "#fff",
+    color: Colors.netural.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
   },

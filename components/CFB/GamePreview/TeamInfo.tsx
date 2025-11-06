@@ -4,10 +4,11 @@ import { Fonts } from "constants/fonts";
 import { getTeamLogo } from "constants/teamsCFB";
 import { Image, Text, View } from "react-native";
 import { CFBTeam } from "types/cfb";
-
+import { Colors } from "constants/Colors";
 type TeamInfoProps = {
   team: CFBTeam;
   teamName: string;
+  rank?: number;
   score: number;
   opponentScore: number;
   record: string;
@@ -17,12 +18,13 @@ type TeamInfoProps = {
   possessionTeamId?: string;
   side: "home" | "away";
   timeouts: number;
-  lighter?: boolean
+  lighter?: boolean;
 };
 
 export default function TeamInfo({
   team,
   teamName,
+  rank,
   score,
   opponentScore,
   record,
@@ -31,7 +33,8 @@ export default function TeamInfo({
   hasStarted,
   possessionTeamId,
   side,
-  timeouts, lighter
+  timeouts,
+  lighter,
 }: TeamInfoProps) {
   const isTie = isGameOver && score === opponentScore;
   const isWinner = isGameOver && !isTie && score > opponentScore;
@@ -70,7 +73,6 @@ export default function TeamInfo({
     return <View style={{ flexDirection: "row", marginTop: 2 }}>{dots}</View>;
   };
 
-
   return (
     <View style={{ alignItems: "center", position: "relative" }}>
       <Image
@@ -79,15 +81,20 @@ export default function TeamInfo({
       />
 
       <Text
-        style={{
-          fontSize: 14,
-          fontFamily: Fonts.OSREGULAR,
-          color: "#fff",
-          marginTop: 6,
-        }}
-      >
-        {teamName}
-      </Text>
+            style={{
+              fontSize: 14,
+              fontFamily: Fonts.OSREGULAR,
+              color: Colors.netural.white,
+              marginTop: 6,
+            }}
+          >
+            {rank && (
+              <Text style={{ fontSize: 10, color: Colors.netural.lightGray }}>
+                {rank}
+              </Text>
+            )}{" "}
+            {teamName}
+          </Text>
 
       <View style={{ flexDirection: "column", alignItems: "center" }}>
         <View style={{ flexDirection: "row" }}>

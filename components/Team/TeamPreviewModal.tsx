@@ -19,6 +19,7 @@ type Props = {
   onClose: () => void;
   onGo: () => void;
   onRemove?: (teamId: string) => void; // optional remove callback
+  currentUser?: boolean; // add currentUser id or username
 };
 
 export default function TeamPreviewModal({
@@ -27,6 +28,7 @@ export default function TeamPreviewModal({
   onClose,
   onGo,
   onRemove,
+  currentUser,
 }: Props) {
   const scaleAnim = useRef(new Animated.Value(0.85)).current;
   const colorScheme = useColorScheme();
@@ -76,7 +78,8 @@ export default function TeamPreviewModal({
     "Seattle Seahawks",
     "UCF Knights",
     "California Golden Bears",
-     "Cincinnati Bearcats",
+    "Cincinnati Bearcats",
+    "Auburn Tigers",
   ];
 
   const logoLightTeams = [
@@ -89,12 +92,13 @@ export default function TeamPreviewModal({
     "California Golden Bears",
     "Alabama Crimson Tide",
     "Cincinnati Bearcats",
+    "Auburn Tigers",
   ];
 
   const teamName = team?.fullName?.trim() ?? "";
   const useSecondary = specialTeams.includes(teamName);
   const useLogoLight = logoLightTeams.includes(teamName);
-  const light = useLogoLight ? team?.logoLight : team?.logo;
+  const light = team?.logoLight ? team?.logoLight : team?.logo;
   const baseColor = useSecondary
     ? team?.secondaryColor || "#444"
     : team?.color || "#444";
@@ -129,7 +133,7 @@ export default function TeamPreviewModal({
                 borderTopRightRadius: 18.5,
                 overflow: "hidden",
                 transform: [{ scale: scaleAnim }],
-                backgroundColor: "transparent", // IMPORTANT: allow BlurView to shine through
+                backgroundColor: "transparent",
               }}
             >
               <BlurView
@@ -140,7 +144,7 @@ export default function TeamPreviewModal({
                   borderTopRightRadius: 18.5,
                   paddingHorizontal: 20,
                   paddingVertical: 40,
-                  backgroundColor: "rgba(255,255,255,0.05)", // optional subtle fog
+                  backgroundColor: "rgba(255,255,255,0.05)",
                 }}
               >
                 <Image
@@ -164,7 +168,7 @@ export default function TeamPreviewModal({
                     color: isDark ? "#fff" : "#1d1d1d",
                   }}
                 >
-                  EST. {est}{" "}
+                  EST. {est}
                 </Text>
                 <Text
                   style={{
@@ -196,11 +200,11 @@ export default function TeamPreviewModal({
                   </Text>
                 </Pressable>
 
-                {onRemove && (
+                {onRemove && currentUser && (
                   <Pressable
                     onPress={async () => {
                       if (onRemove) {
-                        await onRemove(team.id);
+                        await onRemove(team.id.toString());
                       }
                       onClose();
                     }}

@@ -7,17 +7,19 @@ export const getStyles = (isDark: boolean) =>
     error: { fontFamily: Fonts.OSREGULAR },
     card: { flexDirection: "row", alignItems: "center", padding: 12 },
     avatar: {
-      width: 48,
-      height: 48,
+      width: 52,
+      height: 52,
     },
     avatarWrapper: {
-      width: 50,
-      height: 50,
-
+      width: 60,
+      height: 60,
       borderRadius: 100,
+      paddingTop: 8,
       overflow: "hidden",
       justifyContent: "center",
       alignItems: "center",
+      borderWidth: 0.5,
+      borderColor: isDark ? "#fff" : "#1d1d1d",
     },
     jersey: {
       fontFamily: Fonts.OSREGULAR,

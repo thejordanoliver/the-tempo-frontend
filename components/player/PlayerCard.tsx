@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-
+import { playerCardStyles } from "styles/PlayerStyles/PlayerCard.styles";
 export interface PlayerCardProps {
   id: number;
   playerId: number;
@@ -21,63 +21,6 @@ export interface PlayerCardProps {
   jerseyNumber?: string | number | null;
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: isDark ? "#2e2e2e" : "#eee",
-      borderRadius: 8,
-      paddingHorizontal: 20,
-      paddingVertical: 12,
-    },
-    avatar: {
-      width: 50,
-      height: 50,
-      borderRadius: 30,
-      paddingTop: 4,
-    },
-    avatarPlaceholder: {
-      width: 50,
-      height: 50,
-      borderRadius: 30,
-      backgroundColor: isDark ? "#444" : "#888",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    initial: {
-      fontSize: 24,
-      color: "#fff",
-      fontFamily: Fonts.OSBOLD,
-    },
-    info: {
-      flex: 1,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginLeft: 12,
-      height: "100%",
-    },
-    nameContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    name: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-    },
-    jerseyNumber: {
-      fontSize: 16,
-      marginLeft: 6,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    position: {
-      fontSize: 16,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSBOLD,
-    },
-  });
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
   name,
@@ -89,7 +32,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = playerCardStyles(isDark);
   const router = useRouter();
 
   const cleanTeam = team.replace(/"/g, "");
@@ -158,5 +101,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
     </Pressable>
   );
 };
+
 
 export default PlayerCard;

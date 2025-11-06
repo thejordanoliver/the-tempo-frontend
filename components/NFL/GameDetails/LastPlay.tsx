@@ -1,9 +1,9 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/fonts";
-import { Athlete, PlayObject } from "hooks/CFBHooks/useCFBGamePossession";
+import { Athlete, PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Text, View } from "react-native";
-
+import { Colors } from "constants/Colors";
 type LastPlayProps = {
   lastPlay?: string | PlayObject;
   isDark?: boolean;
@@ -61,14 +61,16 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
               }}
             >
               {athlete.headshot && (
-                <Image
+              <Image
                   source={{ uri: athlete.headshot }}
                   style={{
                     width: 40,
                     height: 40,
                     borderRadius: 100,
                     marginRight: 6,
-                    backgroundColor: isDark ? "#888" : "#ccc",
+                    borderColor: isDark ? "#fff" : "#1d1d1d",
+                    borderWidth: .5,
+                    paddingTop: 4,
                   }}
                 />
               )}
@@ -130,9 +132,10 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
           style={{
             fontFamily: Fonts.OSREGULAR,
             fontSize: 12,
-            color: textColor,
+
             opacity: 0.7,
             marginTop: 4,
+            color: Colors.netural.midTone,
           }}
         >
           Drive: {currentPlay.drive.description}

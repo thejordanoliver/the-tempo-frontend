@@ -12,6 +12,7 @@ import { SkeletonProfileScreen } from "components/SkeletonProfileScreen";
 import { teams } from "constants/teams";
 import { teams as nflteams } from "constants/teamsNFL";
 import { teams as cfbteams } from "constants/teamsCFB";
+import { teams as cbbteams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -25,6 +26,7 @@ import {
 import { useFollowersModalStore } from "store/followersModalStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
 import { getStyles } from "styles/ProfileScreen.styles";
+
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
@@ -240,8 +242,9 @@ export default function ProfileScreen() {
       if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string
       if (!team) return null;
-      return { ...team, league: league as "NBA" | "NFL" | "CFB" };
+      return { ...team, league: league as "NBA" | "NFL" | "CFB" | "CBB" };
     })
     .filter(Boolean);
 

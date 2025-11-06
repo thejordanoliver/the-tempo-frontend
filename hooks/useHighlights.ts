@@ -26,56 +26,21 @@ function decodeHTMLEntities(text: string): string {
 }
 
 const ACRONYMS = new Set([
-  // Leagues
-  "NBA", "WNBA", "G League", "FIBA", "USA", "NCAA",
-
-  // Awards
-  "MVP", "DPOY", "ROY", "MIP", "6MOY", "FMVP", "ASG", "HOF", "COY", "SMOY", "EOTY",
-
-  // Stats / Terms
-  "3PT", "FG", "FT", "FTA", "FT%", "FG%", "TP", "TO", "AST", "REB", "PTS", "BLK", "STL", "MIN", "EFF", "PER", "TS%", "eFG%",
-  "TRB", "ORB", "DRB", "AST%", "USG%", "WS", "VORP", "BPM", "DBPM", "OBPM",
-
-  // Positions
-  "PG", "SG", "SF", "PF", "C", "G", "F", "BIG", "GUARD", "FORWARD", "CENTER",
-
-  // Common player initials & short names
-  "AD", "KD", "CP3", "LBJ", "AI", "MJ", "JR", "Jr.", "RJ", "MPJ", "MJP", "JB", "JT", "BI", "ZL", "JP", "GSJ", "JJJ", "TT", "DW", "DR", "DM", "HM", "VC", "KM", "KAT", "KP", "OG", "GTJ", "WEMBY",
-  "BKN", "WIGGS", "LOONEY", "DRAY", "KLAY", "BRON", "DAME", "BOOK", "ZION", "MELO", "MOBLEY", "BANE", "MURRAY", "FOX", "SABONIS", "SCOOT", "CAM", "BAM", "TYRESE", "KUZ", "REAVES", "DLO",
-
-  // WNBA Players
-  "AJA", "SAB", "SABRINA", "PAIGE", "CAITLIN", "ALIYAH", "KLS", "BRITTNEY", "BRI", "NNEKA", "SYD", "GRINER", "STEWIE", "JEWELL", "SKY", "AT", "NAF", "CP", "EDD", "KATIE", "KLS",
-
-  // Nicknames / Brands
-  "GOAT", "ISO", "AND1", "HOF", "BIG3", "AAU", "2K", "NBA2K", "SLAM", "OT", "B2B", "FTW", "W", "L", "RIP", "BUST", "BUCKETS", "CLUTCH", "COLD", "BANGER", "DIME", "COOKED",
-
-  // NBA Arenas / Venues
-  "MSG", "STAPLES", "CHASE", "KIA", "BALL", "FEDEX", "GARDEN", "SMOOTHIE", "TD", "BARCLAYS", "WELLS", "ROCKET", "STATEFARM", "UNITED", "KASEYA", "AMWAY", "MODA",
-
-  // Broadcasters
-  "TNT", "ESPN", "NBA TV", "ABC", "FOX", "FS1", "CBS", "NBATV", "BLEACHER", "HOUSEOFHIGHLIGHTS",
-
-  // NBA Teams
-  "ATL", "BOS", "BKN", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM",
-  "MIA", "MIL", "MIN", "NOP", "NYK", "OKC", "ORL", "PHI", "PHX", "POR", "SAC", "SAS", "TOR", "UTA", "WAS",
-
-  // WNBA Teams
-  "NYL", "LV", "CHI", "CON", "PHX", "IND", "ATL", "MIN", "DAL", "SEA", "LA", "WAS",
-
-  // G League Teams
-  "IGNITE", "CAPITANS", "SKYFORCE", "BLUE", "CRUISE", "WOLVES", "BULLS", "BREEZE", "STARS", "VIPERS", "WARRIORS", "87ERS", "HUSTLE", "SWARM", "KNICKS", "NETS", "MAD ANTS", "LEGENDS", "CAVS", "SPURS"
+  "NBA", "NFL", "MLB", "NHL", "CFB", "WNBA", "FIBA", "USA", "NCAA",
+  "MVP", "DPOY", "ROY", "MIP", "6MOY", "FMVP", "ASG", "HOF", "COY",
+  "3PT", "FG", "FT", "FTA", "PTS", "AST", "REB", "STL", "BLK",
+  "PG", "SG", "SF", "PF", "C", "GOAT", "OT", "B2B", "FTW", "HOF",
+  "LAL", "BOS", "NYK", "CHI", "DAL", "MIA", "PHX", "GSW", "LAC",
 ]);
 
-
 const PROPER_NOUNS = new Set([
-  "Lakers", "Celtics", "Warriors", "Nuggets", "Clippers", "Suns", "Kings", "Grizzlies", "Spurs", "Mavericks",
-  "Timberwolves", "Rockets", "Pelicans", "Thunder", "Jazz", "Bucks", "Heat", "Knicks", "Sixers", "76ers",
-  "Cavaliers", "Bulls", "Pistons", "Pacers", "Hawks", "Hornets", "Magic", "Wizards", "Raptors", "Nets",
-  "Los Angeles", "Boston", "Golden State", "Denver", "Phoenix", "Sacramento", "Memphis", "San Antonio", "Dallas",
-  "Minnesota", "Houston", "New Orleans", "Oklahoma City", "Utah", "Milwaukee", "Miami", "New York",
-  "Philadelphia", "Cleveland", "Chicago", "Detroit", "Indiana", "Atlanta", "Charlotte", "Orlando",
-  "Washington", "Toronto", "Brooklyn",
-  // Add more names if needed
+  "Lakers", "Celtics", "Warriors", "Nuggets", "Clippers", "Suns",
+  "Cowboys", "Chiefs", "Packers", "Steelers", "49ers", "Eagles",
+  "Yankees", "Dodgers", "Cubs", "Red Sox", "Braves", "Astros",
+  "Rangers", "Cardinals", "Mets", "Mariners", "Orioles", "Twins",
+  "Rangers", "Panthers", "Penguins", "Bruins", "Blackhawks", "Avalanche",
+  "United", "Barcelona", "Arsenal", "Liverpool", "Chelsea", "PSG", "Bayern",
+  "Real Madrid", "Manchester City", "Manchester United",
 ]);
 
 function capitalize(word: string) {
@@ -91,7 +56,7 @@ function toSentenceCasePreserveAcronyms(str: string): string {
 
     const twoWord = i < arr.length - 1 ? `${capitalize(word)} ${capitalize(arr[i + 1])}` : "";
     if (PROPER_NOUNS.has(twoWord)) {
-      arr[i + 1] = ""; // Skip the next word
+      arr[i + 1] = "";
       return twoWord;
     }
 
@@ -102,15 +67,23 @@ function toSentenceCasePreserveAcronyms(str: string): string {
   return words.filter(Boolean).join(" ");
 }
 
+/**
+ * Fetches and caches YouTube highlights for the given sport.
+ * @param sport - One of "nba", "nfl", "mlb", "nhl", "cfb", "soccer"
+ * @param query - Optional search query (defaults to league highlights)
+ * @param maxResults - Max results (1–50)
+ */
 export function useHighlights(
-  query = "NBA highlights OR game highlights OR full highlights OR best plays OR top plays",
-  maxResults = 50
+  sport: string = "nba",
+  query: string = "",
+  maxResults: number = 50
 ) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheKey = `cachedHighlights-${query}-${maxResults}`;
+  // Include sport in cache key
+  const cacheKey = `cachedHighlights-${sport}-${query}-${maxResults}`;
 
   useEffect(() => {
     const fetchHighlights = async () => {
@@ -125,22 +98,21 @@ export function useHighlights(
           setLoading(false);
         }
 
+        // ✅ New unified endpoint call
         const response = await axios.get<Highlight[]>(`${BASE_URL}/api/highlights`, {
-          params: { query, maxResults },
+          params: { sport, query, maxResults },
         });
 
         const data = response.data;
 
-     const cleanedData = data
-  .filter(item => !/tickets|playstation/i.test(item.title))
-  .map(item => ({
-    ...item,
-    title: toSentenceCasePreserveAcronyms(decodeHTMLEntities(item.title)),
-    channelName: item.channelName || "Unknown", // <-- flatten here
-        duration: item.duration, // <-- add this line
-
-  }));
-
+        const cleanedData = data
+          .filter((item) => !/tickets|playstation/i.test(item.title))
+          .map((item) => ({
+            ...item,
+            title: toSentenceCasePreserveAcronyms(decodeHTMLEntities(item.title)),
+            channelName: item.channelName || "Unknown",
+            duration: item.duration,
+          }));
 
         setHighlights(cleanedData);
         await AsyncStorage.setItem(cacheKey, JSON.stringify(cleanedData));
@@ -153,7 +125,7 @@ export function useHighlights(
     };
 
     fetchHighlights();
-  }, [query, maxResults]);
+  }, [sport, query, maxResults]);
 
   return { highlights, loading, error };
 }

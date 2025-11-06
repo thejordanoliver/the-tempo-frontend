@@ -25,8 +25,7 @@ import { generateNFLWeeks, getCurrentWeekIndex, NFLWeek } from "utils/nflWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
-
+import { useLeagueNews } from "hooks/useLeagueNews";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -86,7 +85,7 @@ export default function NFLLeagueScreen() {
   const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
 
   // --- Fetch News & Highlights ---
-  const { news, loading: newsLoading, refreshNews } = useNews();
+const { news: nflNews, loading: newsLoading } = useLeagueNews("nfl");
   const { highlights } = useHighlights("NFL Highlights", 50);
 
   // --- Week handling ---
@@ -145,7 +144,7 @@ export default function NFLLeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshNews(), refreshNFLGames()]);
+      await Promise.all([ refreshNFLGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -185,7 +184,7 @@ const sortedGames = React.useMemo(() => {
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = news.map((item) => ({
+    const taggedNews: CombinedItem[] = nflNews.map((item) => ({
       ...item,
       itemType: "news",
       // ensure publishedAt is always defined
@@ -203,7 +202,7 @@ const sortedGames = React.useMemo(() => {
         new Date(b.publishedAt || new Date().toISOString()).getTime()
     );
     return combined;
-  }, [news, highlights]);
+  }, [nflNews, highlights]);
 
   return (
     <>

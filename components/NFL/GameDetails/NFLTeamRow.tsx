@@ -108,7 +108,7 @@ export const NFLTeamRow = ({
         <View style={styles.teamInfo}>
           <View style={styles.nameRow}>
             <Text style={[styles.teamName, { color: colors.text }]}>
-              {team.name}
+              {team.code}
             </Text>
           </View>
 

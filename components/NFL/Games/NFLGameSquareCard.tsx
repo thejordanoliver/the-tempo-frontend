@@ -1,10 +1,5 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import {
-  getNFLTeamsLogo,
-  getTeamAbbreviation,
-  getTeamName,
-} from "constants/teamsNFL";
 import { useRouter } from "expo-router";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
@@ -19,6 +14,14 @@ import {
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import {
+  formatQuarter,
+  getNFLGameStatus,
+  getNFLTeamData,
+  getTeamTextStyle,
+  isSuperBowlGame,
+  normalizeDisplayStatus,
+} from "utils/nflGameCardUtils";
 type Props = {
   game: any;
   isDark?: boolean;
@@ -48,58 +51,17 @@ function NFLGameSquareCard({ game, isDark }: Props) {
   const { record: homeRecord } = useNFLTeamRecord(homeId);
 
   // --- Status ---
-  const status = useMemo(() => {
-    const s = game?.game?.status ?? {};
-    const long = s.long ?? "";
-    const short = s.short ?? "";
-    const lower = long.toLowerCase();
+  const status = getNFLGameStatus(game);
 
-    const wentOT =
-      lower.includes("ot") ||
-      lower.includes("overtime") ||
-      lower.includes("after over") ||
-      lower.includes("aot") ||
-      short.toLowerCase().includes("ot");
+  // --- Super Bowl ---
+  const isSuperBowl = isSuperBowlGame(game, gameDate);
 
-    const isFinal =
-      long === "Finished" ||
-      lower.includes("final") ||
-      lower.includes("after over") ||
-      lower.includes("aot") ||
-      short.toLowerCase().includes("ft");
-
-    const isLive =
-      !["Not Started", "Finished", "Canceled", "Delayed", "Postponed"].includes(
-        long
-      ) && !isFinal;
-
-    const isEndOfPeriod =
-      lower.includes("end") &&
-      !lower.includes("final") &&
-      !lower.includes("half");
-
-    return {
-      isScheduled: long === "Not Started",
-      isFinal,
-      wentOT,
-      isCanceled: long === "Canceled",
-      isDelayed: long === "Delayed",
-      isPostponed: long === "Postponed",
-      isHalftime: long === "Halftime",
-      isEndOfPeriod,
-      isLive,
-      short,
-      long,
-      timer: s.timer,
-    };
-  }, [game?.game?.status]);
-
-  // --- Possession ---
+  // --- Possession & live data (only if live) ---
   const possession =
     status.isLive && homeId && awayId
       ? useNFLGamePossession(
-          getTeamName(homeId, "Home"),
-          getTeamName(awayId, "Away"),
+          game?.teams?.home?.name,
+          game?.teams?.away?.name,
           gameDateStr
         )
       : {
@@ -108,38 +70,54 @@ function NFLGameSquareCard({ game, isDark }: Props) {
           shortDownDistanceText: undefined,
           downDistanceText: undefined,
           period: undefined,
+          possessionText: undefined,
+          lastPlay: undefined,
+          homeTimeouts: undefined,
+          awayTimeouts: undefined,
           score: {
             home: { total: game?.scores?.home?.total ?? 0 },
             away: { total: game?.scores?.away?.total ?? 0 },
           },
+          loading: false,
+          error: null,
+          gameStatusDescription: undefined,
+          gameStatusDetail: undefined,
+          gameStatusShortDetail: undefined,
           refresh: () => {},
         };
+  const {
+    possessionTeamId,
+    displayClock,
+    shortDownDistanceText,
+    downDistanceText,
+    period,
+    possessionText,
+    gameStatusDescription,
+    score,
+  } = possession;
 
-  const { possessionTeamId, displayClock, period, score } = possession;
   const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
 
   // --- Teams ---
   const awayTeam = useMemo(
-    () => ({
-      logo: getNFLTeamsLogo(awayId, dark),
-      code: getTeamAbbreviation(awayId, "AWY"),
-      name: getTeamName(awayId, "Away"),
-      record: awayRecord?.overall ?? "0-0",
-      id: awayId,
-      hasPossession: String(possessionTeamId) === String(awayId),
-    }),
+    () =>
+      getNFLTeamData(
+        String(awayId ?? ""),
+        dark,
+        awayRecord?.overall ?? "0-0",
+        possessionTeamId
+      ),
     [awayId, awayRecord?.overall, dark, possessionTeamId]
   );
 
   const homeTeam = useMemo(
-    () => ({
-      logo: getNFLTeamsLogo(homeId, dark),
-      code: getTeamAbbreviation(homeId, "HME"),
-      name: getTeamName(homeId, "Home"),
-      record: homeRecord?.overall ?? "0-0",
-      id: homeId,
-      hasPossession: String(possessionTeamId) === String(homeId),
-    }),
+    () =>
+      getNFLTeamData(
+        String(homeId ?? ""),
+        dark,
+        homeRecord?.overall ?? "0-0",
+        possessionTeamId
+      ),
     [homeId, homeRecord?.overall, dark, possessionTeamId]
   );
 
@@ -152,41 +130,16 @@ function NFLGameSquareCard({ game, isDark }: Props) {
 
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  // --- Quarter formatter ---
-  const formatQuarter = (period?: number | string) => {
-    if (!period) return "";
-    const val =
-      typeof period === "string" ? period.toLowerCase() : String(period);
-    if (val.includes("end")) return "End";
-    if (val.includes("half")) return "Halftime";
-    if (val.includes("ot")) return "OT";
-    if (val.includes("q1")) return "1st";
-    if (val.includes("q2")) return "2nd";
-    if (val.includes("q3")) return "3rd";
-    if (val.includes("q4")) return "4th";
-    const num = Number(val);
-    if (!isNaN(num)) {
-      if (num >= 1 && num <= 4) return ["1st", "2nd", "3rd", "4th"][num - 1];
-      if (num >= 5) return `${num - 4}OT`;
-    }
-    return val;
-  };
-
-  // --- Winner/loser style ---
+  // --- Team Style (winner/loser) ---
   const getTeamStyle = useMemo(
-    () => (isHome: boolean) => {
-      const homeScore = safeScore.home.total;
-      const awayScore = safeScore.away.total;
-      let isWinner = true;
-      if (status.isFinal && homeScore !== awayScore) {
-        isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
-      }
-      return {
-        color: dark ? "#fff" : "#1d1d1d",
-        opacity: isWinner ? 1 : 0.55,
-      };
-    },
-    [dark, status, safeScore]
+    () => (isHome: boolean) =>
+      getTeamTextStyle(isHome, dark, status, safeScore, isSuperBowl),
+    [dark, status, safeScore, isSuperBowl]
+  );
+
+  // --- Display Status ---
+  const displayStatus = normalizeDisplayStatus(
+    gameStatusDescription ?? status.long ?? status.short ?? ""
   );
 
   // --- Date formatting ---
@@ -265,31 +218,20 @@ function NFLGameSquareCard({ game, isDark }: Props) {
           {status.isScheduled && (
             <>
               <Text style={styles.date}>{formattedDate}</Text>
-              <Text
-                style={[
-                  styles.time,
-                  { color: dark ? "rgba(255,255,255,.6)" : "rgba(0,0,0,.6)" },
-                ]}
-              >
-                {formattedTime}
-              </Text>
+              <Text style={styles.time}>{formattedTime}</Text>
             </>
           )}
 
           {status.isLive && (
             <>
               <Text style={styles.date}>{formatQuarter(period)}</Text>
-              {status.isEndOfPeriod ? (
-                <Text style={styles.finalText}>
-                  End of {formatQuarter(period)}
-                </Text>
-              ) : (
-                <Text style={styles.clock}>{displayClock}</Text>
-              )}
+              <Text style={styles.clock}>{displayClock}</Text>
             </>
           )}
 
-          {status.isHalftime && <Text style={styles.date}>Halftime</Text>}
+          {status.isHalftime && (
+            <Text style={styles.date}>{displayStatus}</Text>
+          )}
 
           {status.isFinal && (
             <>

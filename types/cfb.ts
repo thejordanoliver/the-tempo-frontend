@@ -50,8 +50,10 @@ export type CFBTeam = {
   secondaryColor?: string;
   championships?: number[];
   conference_championships?: string[]; // or number[]
+    banner?: any; // <-- add this
 
 };
+
 
 export type CFBGame = {
   game: {

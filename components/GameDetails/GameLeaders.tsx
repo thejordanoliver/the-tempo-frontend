@@ -1,16 +1,15 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
 import FixedWidthTabBar from "components/NFL/TabBars/GameLeadersTabBar"; // adjust path as needed
-import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
-
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
+import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 import HeadingTwo from "../Headings/HeadingTwo";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const STAT_CATEGORIES = ["points", "rebounds", "assists"] as const;
+const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type Category = (typeof STAT_CATEGORIES)[number];
 
 type Props = {
@@ -80,7 +79,6 @@ export default function GameLeaders({
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
@@ -121,7 +119,9 @@ export default function GameLeaders({
               { borderBottomWidth: 1, borderBottomColor: borderColor },
             ]}
           >
-            <Image source={{ uri: p?.headshot_url }} style={styles.avatar} />
+            <View style={styles.avatarWrapper}>
+              <Image source={{ uri: p?.headshot_url }} style={styles.avatar} />
+            </View>
             <View style={styles.infoSection}>
               <View style={styles.nameRow}>
                 <Text style={[styles.playerName, { color: textColor }]}>
@@ -207,6 +207,34 @@ export default function GameLeaders({
                       </Text>
                       <Text style={[styles.statText, { color: textColor }]}>
                         {player.turnovers ?? "-"}
+                      </Text>
+                    </View>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        MIN
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.min ?? "-"}
+                      </Text>
+                    </View>
+                  </>
+                )}
+                {selectedCategory === "steals" && (
+                  <>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        STLS
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.steals ?? "-"}
+                      </Text>
+                    </View>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        FOULS
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.pfouls ?? "-"}
                       </Text>
                     </View>
                     <View style={styles.statBlock}>

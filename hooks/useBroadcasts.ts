@@ -20,16 +20,18 @@ function parseDateString(d: string) {
   return null;
 }
 
+type LeagueType = "nba" | "mens-college-basketball";
+
 export const useGameBroadcasts = (
   home: string,
   away: string,
-  date: string | { date?: string; utc?: string; timestamp?: number } | undefined
+  date: string | { date?: string; utc?: string; timestamp?: number } | undefined,
+  league: LeagueType = "nba" // 👈 default to NBA
 ) => {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ Memoize normalized date
   const normalizedDate = useMemo(() => {
     if (!date) return "";
     if (typeof date === "string") return date;
@@ -42,7 +44,7 @@ export const useGameBroadcasts = (
   useEffect(() => {
     if (!home || !away || !normalizedDate) return;
 
-    let cancelled = false; // to avoid setting state after unmount
+    let cancelled = false;
 
     const fetchBroadcasts = async () => {
       setLoading(true);
@@ -73,13 +75,25 @@ export const useGameBroadcasts = (
 
         let foundGame: any = null;
 
+        // 👇 Choose ESPN path and parameters per league
+        const leaguePath =
+          league === "mens-college-basketball"
+            ? "basketball/mens-college-basketball"
+            : "basketball/nba";
+
+        // ESPN group codes and limits vary by league
+        const params =
+          league === "mens-college-basketball"
+            ? "&groups=50&limit=500" // 50 = NCAA Division I Men
+            : "&limit=300"; // NBA doesn’t need groups
+
         for (const yyyymmdd of datesToCheck) {
-          const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${yyyymmdd}`;
+          const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${leaguePath}/scoreboard?dates=${yyyymmdd}${params}`;
           const scoreboardRes = await axios.get(scoreboardUrl);
           const games = scoreboardRes.data.events || [];
 
           const game = games.find((g: any) => {
-            const competitors = g.competitions[0].competitors;
+            const competitors = g.competitions?.[0]?.competitors || [];
             const teamNames = competitors.flatMap((c: any) => [
               c.team.abbreviation?.toLowerCase(),
               c.team.displayName?.toLowerCase(),
@@ -123,7 +137,7 @@ export const useGameBroadcasts = (
     return () => {
       cancelled = true;
     };
-  }, [home, away, normalizedDate]);
+  }, [home, away, normalizedDate, league]);
 
   return { broadcasts, loading, error };
 };

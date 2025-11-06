@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { Animated, Text, View } from "react-native";
+import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
 import PlayoffsLogo from "../../assets/Logos/NBAPlayoffs.png";
 import PlayoffsLogoLight from "../../assets/Logos/NBAPlayoffsLight.png";
 import FinalsLogo from "../../assets/Logos/TheNBAFinals.png";
@@ -23,13 +23,14 @@ type CenterInfoProps = {
   seriesSummary?: string;
   isPlayoffs?: boolean;
   totalPeriodsPlayed?: number;
+  lighter: boolean;
 };
 
 export default function CenterInfo({
   isNBAFinals,
   isFinal,
   isCanceled,
-  isHalftime,
+  isHalftime = false,
   broadcastNetworks,
   showLiveInfo,
   period,
@@ -42,18 +43,39 @@ export default function CenterInfo({
   seriesSummary,
   isPlayoffs,
   totalPeriodsPlayed,
+  lighter,
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
+  const styles = getStyles(isDark, lighter);
 
-  function getLivePeriodLabel(period?: number) {
-    if (!period) return "Live";
-    if (period <= 4) {
-      return ["1st", "2nd", "3rd", "4th"][period - 1];
+  const getQuarterLabel = (
+    currentPeriod: number | string,
+    totalPeriods: number = 4
+  ) => {
+    const periodNum =
+      typeof currentPeriod === "number"
+        ? currentPeriod
+        : parseInt(currentPeriod as string);
+    if (isNaN(periodNum)) return { label: "Live" };
+
+    switch (periodNum) {
+      case 1:
+        return { label: "1st" };
+      case 2:
+        return { label: "2nd" };
+      case 3:
+        return { label: "3rd" };
+      case 4:
+        return { label: "4th" };
+      default:
+        const otNumber = periodNum - totalPeriods;
+        return { label: `OT${otNumber}` };
     }
-    const overtimeNumber = period - 4;
-    return overtimeNumber === 1 ? "OT" : `OT${overtimeNumber}`;
-  }
+  };
+
+  const { label: periodLabelRaw } = getQuarterLabel(period, totalPeriodsPlayed);
+  const periodLabel = isFinal && !isCanceled ? "Final" : periodLabelRaw;
 
   useEffect(() => {
     if (isNBAFinals || isPlayoffs) {
@@ -89,115 +111,54 @@ export default function CenterInfo({
 
       {(gameNumberLabel || seriesSummary) && (
         <View style={styles.gameInfoRow}>
-          {gameNumberLabel && <Text style={styles.gameNumberLabel}>{gameNumberLabel}</Text>}
-          {gameNumberLabel && seriesSummary && <View style={styles.divider} />}
-          {seriesSummary && <Text style={styles.gameNumberLabel}>{seriesSummary}</Text>}
+          {gameNumberLabel && (
+            <Text style={styles.gameNumberLabel}>{gameNumberLabel}</Text>
+          )}
+          {gameNumberLabel && seriesSummary && (
+            <View style={styles.statusDivider} />
+          )}
+          {seriesSummary && (
+            <Text style={styles.gameNumberLabel}>{seriesSummary}</Text>
+          )}
         </View>
       )}
 
       {isCanceled ? (
-        <Text style={styles.canceled}>Cancelled</Text>
+        <Text style={styles.finalText}>Cancelled</Text>
       ) : isFinal ? (
-        <Text style={styles.final}>Final</Text>
-      ) : null}
-
-      {showLiveInfo && clock ? (
-        <>
-          <Text style={styles.livePeriod}>
+        // 🏁 FINAL GAME — show "Final" and date
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{periodLabel}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      ) : showLiveInfo || isHalftime ? (
+        // 🕒 LIVE or HALFTIME
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>
             {isHalftime
               ? "Halftime"
-              : endOfPeriod && typeof period === "number"
-              ? `End of ${getLivePeriodLabel(period)}`
-              : typeof period === "number"
-              ? getLivePeriodLabel(period)
-              : period}
+              : endOfPeriod
+              ? `End of ${periodLabelRaw}`
+              : periodLabelRaw}
           </Text>
-
-          {!endOfPeriod && <Text style={styles.clock}>{clock}</Text>}
-        </>
+          {!isHalftime && !endOfPeriod && <View style={styles.statusDivider} />}
+          {!endOfPeriod && !isHalftime && clock && (
+            <Text style={styles.clock}>{clock}</Text>
+          )}
+        </View>
       ) : (
-        !showLiveInfo && (
-          <>
-            <Text style={styles.formattedDate}>{formattedDate}</Text>
-            {!isFinal && !isCanceled && time && <Text style={styles.time}>{time}</Text>}
-          </>
-        )
+        // ⏰ SCHEDULED GAME
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time}</Text>
+        </View>
       )}
 
-      {broadcastNetworks && <Text style={styles.broadcast}>{broadcastNetworks}</Text>}
+      {broadcastNetworks && (
+        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
-  logoWrapper: {
-    width: 100,
-    height: 60,
-    position: "relative",
-  },
-  logo: {
-    width: 100,
-    height: 60,
-    resizeMode: "contain",
-    position: "absolute",
-    top: 0,
-    left: 0,
-  },
-  gameInfoRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 6,
-  },
-  gameNumberLabel: {
-    fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
-    color: "#ccc",
-  },
-  divider: {
-    height: 12,
-    width: 0.5,
-    backgroundColor: "#ccc",
-    marginHorizontal: 8,
-  },
-  canceled: {
-    fontSize: 20,
-    fontFamily: Fonts.OSBOLD,
-    color: "#ff5555",
-    marginTop: 6,
-  },
-  final: {
-    fontSize: 20,
-    fontFamily: Fonts.OSBOLD,
-    color: "#ff4444",
-  },
-  livePeriod: {
-    fontSize: 18,
-    fontFamily: Fonts.OSMEDIUM,
-    marginTop: 4,
-  },
-  clock: {
-    fontSize: 20,
-    fontFamily: Fonts.OSMEDIUM,
-    color: "#ff4444",
-  },
-  formattedDate: {
-    fontSize: 16,
-    fontFamily: Fonts.OSREGULAR,
-    color: "#fff",
-  },
-  time: {
-    fontFamily: Fonts.OSREGULAR,
-    color: "#fff",
-    fontSize: 16,
-  },
-  broadcast: {
-    fontSize: 12,
-    fontFamily: Fonts.OSREGULAR,
-    color: "#fff",
-    textAlign: "center",
-  },
-});

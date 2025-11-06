@@ -10,7 +10,6 @@ import WeekSelector from "components/CFB/WeekSelector";
 import LeagueForum from "components/Forum/LeagueForum";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import { conferenceObjectListMap, modalToMapKey } from "constants/teamsCFB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -19,17 +18,17 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
+import { useLeagueNews } from "hooks/useLeagueNews";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
-import { CFBWeek, generateCFBWeeks, getCurrentWeekIndex, } from "utils/cfbWeeks";
-import { filterCFBGames } from "utils/CFBUtils/cfbGameUtils";
+import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import { CFBWeek, generateCFBWeeks, getCurrentWeekIndex } from "utils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -93,8 +92,8 @@ export default function CFBeagueScreen() {
   const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
 
   // --- News & Highlights ---
-  const { news, loading: newsLoading, refreshNews } = useNews();
-  const { highlights } = useHighlights("College Football Highlights", 50);
+  const { news: cfbNews, loading: cfbLoading } = useLeagueNews("CFB");
+  const { highlights } = useHighlights("College Football Highlights", "10");
 
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
@@ -103,27 +102,27 @@ export default function CFBeagueScreen() {
   );
   const selectedWeek = weeks[selectedWeekIndex];
 
-const top25Teams = React.useMemo(() => {
-  if (!rankings) return [];
-  const apPoll = rankings.find((poll) => poll.shortName === "AP Poll");
-  if (!apPoll) return [];
-  return apPoll.ranks
-    .slice(0, 25)
-    .map((team) => team.team?.nickname)
-    .filter((n): n is string => !!n); // <-- removes undefined
-}, [rankings]);
+  // --- AP Top 25 from rankings ---
+  const apTop25 = useAPTop25();
 
-const selectedWeekForAPI = React.useMemo(() => {
-  // If user selects Championship, use Bowls API week
-  if (selectedWeek.label.toLowerCase() === "championship") {
-    const bowlsWeek = weeks.find((w) => w.label.toLowerCase() === "bowls");
-    return bowlsWeek ?? selectedWeek;
-  }
-  return selectedWeek;
-}, [selectedWeek, weeks]);
+  const top25Teams = React.useMemo(() => {
+    return apTop25.map((t) => t.name);
+  }, [apTop25]);
 
-const { games: cfbgames, loading: cfbloading, refresh: refreshcfbgames } =
-  useCFBGamesByWeek({ week: selectedWeekForAPI, weeks });
+  const selectedWeekForAPI = React.useMemo(() => {
+    // If user selects Championship, use Bowls API week
+    if (selectedWeek.label.toLowerCase() === "championship") {
+      const bowlsWeek = weeks.find((w) => w.label.toLowerCase() === "bowls");
+      return bowlsWeek ?? selectedWeek;
+    }
+    return selectedWeek;
+  }, [selectedWeek, weeks]);
+
+  const {
+    games: cfbgames,
+    loading: cfbloading,
+    refresh: refreshcfbgames,
+  } = useCFBGamesByWeek({ week: selectedWeekForAPI, weeks });
 
   // --- Load favorites ---
   useFocusEffect(
@@ -161,7 +160,7 @@ const { games: cfbgames, loading: cfbloading, refresh: refreshcfbgames } =
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshNews(), refreshcfbgames()]);
+      await Promise.all([refreshcfbgames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -171,7 +170,7 @@ const { games: cfbgames, loading: cfbloading, refresh: refreshcfbgames } =
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = news.map((item) => ({
+    const taggedNews: CombinedItem[] = cfbNews.map((item) => ({
       ...item,
       itemType: "news",
       publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
@@ -188,50 +187,54 @@ const { games: cfbgames, loading: cfbloading, refresh: refreshcfbgames } =
         new Date(a.publishedAt || new Date().toISOString()).getTime()
     );
     return combined;
-  }, [news, highlights]);
+  }, [cfbNews, highlights]);
 
-// --- Filter games by selected conference ---
-const filteredGames = React.useMemo(() => {
-  const weekLabel = selectedWeek.label.toLowerCase();
+  // --- Filter games by selected conference ---
+  const filteredGames = React.useMemo(() => {
+    const weekLabel = selectedWeek.label.toLowerCase();
 
-  // Bowl or Championship logic
-  if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
-    if (selectedWeek.label.toLowerCase().includes("championship")) {
-      // Championship week: show only the final game
-      return cfbgames.length ? [cfbgames[cfbgames.length - 1]] : [];
+    // 🧠 Debug: Log all games when viewing Bowls week
+    // if (weekLabel.includes("week 1")) {
+    //   console.log(
+    //     "📅 All games during Bowls week:",
+    //     cfbgames.map((g) => ({
+    //       id: g.game.id,
+    //       home: g.teams.home?.name,
+    //       away: g.teams.away?.name,
+    //       date: g.game.date ?? g.game.week,
+    //     }))
+    //   );
+    // }
+
+    if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
+      if (selectedWeek.label.toLowerCase().includes("championship")) {
+        // Championship week: show only the final game
+        return cfbgames.length ? [cfbgames[cfbgames.length - 1]] : [];
+      }
+
+      // 🧠 Otherwise (Bowls week): exclude the latest game, which is the championship
+      if (cfbgames.length > 0) {
+        // Sort games by date to identify the last one (championship)
+        const sorted = [...cfbgames].sort(
+          (a, b) =>
+            new Date(a.game?.date?.date ?? 0).getTime() -
+            new Date(b.game?.date?.date ?? 0).getTime()
+        );
+
+        // Remove the last (latest) game — usually the championship
+        return sorted.slice(0, -1);
+      }
+
+      return cfbgames;
     }
-    // Otherwise, show all bowl games
-    return cfbgames;
-  }
 
-  // Regular weeks: filter by conference / top 25
-  return filterCFBGames({
-    games: cfbgames,
-    selectedConference,
-    top25Teams,
-  });
-}, [cfbgames, selectedConference, top25Teams, selectedWeek]);
-
-// --- Debug log: print games for current week ---
-React.useEffect(() => {
-  console.log(
-    `📅 Selected Week: ${selectedWeek.label} (${selectedWeek.start.format(
-      "MMM D"
-    )} – ${selectedWeek.end.format("MMM D")})`
-  );
-  console.log(
-    `🎮 Total games this week: ${filteredGames.length}`,
-filteredGames.map((g) => ({
-  home: g.teams.home.name,
-  away: g.teams.away.name,
-  date: g.game?.date?.timestamp
-    ? new Date(g.game.date.timestamp * 1000).toISOString()
-    : "N/A",
-}))
-
-
-  );
-}, [filteredGames, selectedWeek]);
+    // Regular weeks: filter by conference / top 25
+    return filterCFBGames({
+      games: cfbgames,
+      selectedConference,
+      top25Teams,
+    });
+  }, [cfbgames, selectedConference, top25Teams, selectedWeek]);
 
   return (
     <>
@@ -287,7 +290,7 @@ filteredGames.map((g) => ({
             >
               <NewsHighlightsList
                 items={combinedNewsAndHighlights}
-                loading={newsLoading}
+                loading={cfbLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />

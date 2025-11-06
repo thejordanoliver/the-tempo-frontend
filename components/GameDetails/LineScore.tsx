@@ -10,12 +10,15 @@ import HeadingTwo from "../Headings/HeadingTwo";
 import LineScoreSkeleton from "./LineScoreSkeleton";
 
 type Props = {
-  linescore: {
-    home: (string | null | undefined)[];
-    away: (string | null | undefined)[];
-  } | null | undefined;
-  homeCode: string;
-  awayCode: string;
+  linescore:
+    | {
+        home: (string | null | undefined)[];
+        away: (string | null | undefined)[];
+      }
+    | null
+    | undefined;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
   lighter?: boolean;
   loading?: boolean; // ✅ new optional prop
 };

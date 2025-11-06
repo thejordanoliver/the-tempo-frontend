@@ -3,8 +3,9 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
-import { teams as nflteams } from "constants/teamsNFL";
+import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
+import { teams as nflteams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useLayoutEffect } from "react";
@@ -19,7 +20,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import type { LeagueType, Team } from "types/types";
-
+import Button from "components/Button";
 // Create a lookup map at the top of your component
 const leagueMap: Record<string, LeagueType> = {};
 [...teams].forEach((t) => {
@@ -30,6 +31,9 @@ const leagueMap: Record<string, LeagueType> = {};
 });
 [...cfbteams].forEach((t) => {
   leagueMap[t.id.toString()] = "CFB";
+});
+[...cbbTeams].forEach((t) => {
+  leagueMap[t.id.toString()] = "CBB";
 });
 
 export default function EditFavoritesScreen() {
@@ -58,7 +62,7 @@ export default function EditFavoritesScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, isGridView);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -89,64 +93,72 @@ export default function EditFavoritesScreen() {
         autoCapitalize="none"
       />
 
- <Animated.View style={{ flex: 1, opacity: fadeAnim, marginTop: 12 }}>
-  <FavoriteTeamsSelector
-    teams={[
-      ...teams.map(
-        (t) =>
-          ({ ...t, league: "NBA", id: t.id.toString() } as Team & {
-            league: "NBA";
-          })
-      ),
-      ...nflteams.map(
-        (t) =>
-          ({ ...t, league: "NFL", id: t.id.toString() } as Team & {
-            league: "NFL";
-          })
-      ),
+      <Animated.View style={{ flex: 1, opacity: fadeAnim}}>
+        <FavoriteTeamsSelector
+          teams={[
+            ...teams.map(
+              (t) =>
+                ({ ...t, league: "NBA", id: t.id.toString() } as Team & {
+                  league: "NBA";
+                })
+            ),
+            ...nflteams.map(
+              (t) =>
+                ({ ...t, league: "NFL", id: t.id.toString() } as Team & {
+                  league: "NFL";
+                })
+            ),
 
-      // ✅ Only show CFB teams that appear in the FBS conference map
-      ...cfbteams
-        .filter((t) => {
-          // Flatten all conference team names into one array
-          const fbsTeamNames = Object.values(conferenceListMap).flat();
-          return fbsTeamNames.includes(t.fullName || t.name);
-        })
-        .map(
-          (t) =>
-            ({ ...t, league: "CFB", id: t.id.toString() } as Team & {
-              league: "CFB";
-            })
-        ),
-    ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
-    favorites={favorites}
-    toggleFavorite={(league: LeagueType, id: string) =>
-      toggleFavorite(league, id)
-    }
-    isGridView={isGridView}
-    fadeAnim={fadeAnim}
-    search={search}
-    itemWidth={itemWidth}
-  />
-</Animated.View>
+            // ✅ Only show CFB teams that appear in the FBS conference map
+            ...cfbteams
+              .filter((t) => {
+                // Flatten all conference team names into one array
+                const fbsTeamNames = Object.values(conferenceListMap).flat();
+                return fbsTeamNames.includes(t.fullName || t.name);
+              })
+              .map(
+                (t) =>
+                  ({ ...t, league: "CFB", id: t.id.toString() } as Team & {
+                    league: "CFB";
+                  })
+              ),
+            ...cbbTeams
+              .filter((t) => {
+                // Flatten all conference team names into one array
+                const fbsTeamNames = Object.values(conferenceListMap).flat();
+                return fbsTeamNames.includes(t.fullName || t.name);
+              })
+              .map(
+                (t) =>
+                  ({ ...t, league: "CBB", id: t.id.toString() } as Team & {
+                    league: "CBB";
+                  })
+              ),
+          ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
+          favorites={favorites}
+          toggleFavorite={(league: LeagueType, id: string) =>
+            toggleFavorite(league, id)
+          }
+          isGridView={isGridView}
+          fadeAnim={fadeAnim}
+          search={search}
+          itemWidth={itemWidth}
+        />
+      </Animated.View>
 
+      <Button onPress={handleSave} style={styles.saveButton}/>
 
-      <Pressable
-        onPress={handleSave}
-        disabled={!username}
-        style={[styles.saveButton, !username && { opacity: 0.5 }]}
-      >
-        <Text style={styles.saveText}>Save</Text>
-      </Pressable>
+     
     </View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const getStyles = (isDark: boolean, isGridView: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      padding: 12,
+      alignItems: isGridView ? "center" : "stretch",
     },
     input: {
       borderWidth: 1,
@@ -157,6 +169,7 @@ const getStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? "#fff" : "#1d1d1d",
       fontFamily: Fonts.OSLIGHT,
+      width: '100%'
     },
     saveButton: {
       backgroundColor: isDark ? "#fff" : "#1d1d1d",
@@ -165,6 +178,7 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       marginTop: 16,
       marginBottom: 20,
+      width: '96%'
     },
     saveText: {
       color: isDark ? "#000" : "#fff",

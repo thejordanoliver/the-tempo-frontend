@@ -1,18 +1,13 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Fonts } from "constants/fonts";
-import {
-  getTeamCode,
-  getTeamLogo,
-  getTeamName,
-  teams,
-} from "constants/teamsCFB";
+import { getTeamCode, getTeamLogo, teams } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
-import { memo, useMemo } from "react";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
+import { memo, useMemo, useState } from "react";
 import {
   Image,
   Text,
@@ -22,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getTeamRankFromAP, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 type Props = {
@@ -34,82 +30,79 @@ function CFBGameSquareCard({ game, isDark }: Props) {
   const dark = isDark ?? colorScheme === "dark";
   const styles = getStyles(dark);
   const router = useRouter();
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
-  const homeId = String(game?.teams?.home?.id);
-  const awayId = String(game?.teams?.away?.id);
-  const gameId = game?.game?.id;
+  const homeId = game?.teams?.home?.id;
+  const awayId = game?.teams?.away?.id;
 
-  // --- Rankings ---
-  const { rankings } = useCFBRankings();
-  const apTop25 = useMemo(() => {
-    if (!rankings) return [];
-    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
-    return (
-      apPoll?.ranks.slice(0, 25).map((r) => ({
-        name: r.team?.nickname,
-        rank: r.current,
-      })) ?? []
-    );
-  }, [rankings]);
-
-  const getTeamRank = (teamName: string) =>
-    apTop25.find((t) => t.name === teamName)?.rank;
-
-  // --- Game date ---
-  const gameDate = useMemo(
-    () =>
-      game?.game?.date?.timestamp
-        ? new Date(game.game.date.timestamp * 1000)
-        : null,
-    [game?.game?.date?.timestamp]
-  );
+  // --- Date ---
+  const gameDate = game?.game?.date?.timestamp
+    ? new Date(game.game.date.timestamp * 1000)
+    : null;
   const gameDateStr = gameDate?.toISOString();
 
-  // --- Team records ---
+  const apTop25 = useAPTop25();
+  const getTeamRank = (name: string) => getTeamRankFromAP(name, apTop25);
+
+  // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
+
+  const getTeamName = (id?: number | string): string =>
+    getTeamById(id)?.name ?? "Unknown";
+
+  const getTeamShortName = (id?: number | string): string =>
+    getTeamById(id)?.shortName ?? "";
+
+  // 🏈 Use ESPN team IDs, not internal IDs
   const awayEspnId = getTeamById(awayId)?.espnID;
   const homeEspnId = getTeamById(homeId)?.espnID;
 
-  const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
-  const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
-
   // --- Game status ---
   const status = useMemo(() => {
-    const { long = "", short = "", timer } = game.game.status;
-    const l = long.toLowerCase();
-    const s = short.toLowerCase();
+    const long = game.game.status.long ?? "";
+    const short = game.game.status.short?.toLowerCase() ?? "";
+    const longLower = long.toLowerCase();
+
+    const wentOT =
+      longLower.includes("ot") ||
+      longLower.includes("overtime") ||
+      short.includes("ot");
 
     const isFinal =
-      long === "Final" ||
-      l.includes("final") ||
-      s.includes("ft") ||
-      l.includes("after over");
+      longLower === "final" ||
+      longLower === "finished" || // ✅ Added
+      longLower.includes("final") ||
+      longLower.includes("finished") || // ✅ Added
+      longLower.includes("after over") ||
+      longLower.includes("aot") ||
+      short.includes("ft");
+
     const live = ![
-      "Not Started",
-      "Final",
-      "Canceled",
-      "Delayed",
-      "Postponed",
-      "Halftime",
-    ].includes(long);
+      "not started",
+      "final",
+      "finished", // ✅ Added
+      "canceled",
+      "delayed",
+      "postponed",
+      "halftime",
+    ].includes(longLower);
 
     return {
-      isScheduled: long === "Not Started",
+      isScheduled: longLower === "not started",
       isFinal,
-      wentOT: l.includes("ot") || l.includes("over time") || s.includes("ot"),
-      isCanceled: long === "Canceled",
-      isDelayed: long === "Delayed",
-      isPostponed: long === "Postponed",
-      isHalftime: long === "Halftime",
+      wentOT,
+      isCanceled: longLower === "canceled",
+      isDelayed: longLower === "delayed",
+      isPostponed: longLower === "postponed",
+      isHalftime: longLower === "halftime",
       isLive: live && !isFinal,
-      short,
-      long: long === "Finished" ? "Final" : long,
-      timer,
+      short: game.game.status.short,
+      long,
+      timer: game.game.status.timer,
     };
   }, [game.game.status]);
 
-  // --- Possession ---
   const possession = status.isLive
     ? useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
     : {
@@ -125,9 +118,21 @@ function CFBGameSquareCard({ game, isDark }: Props) {
         refresh: () => {},
       };
 
-  const { possessionTeamId, displayClock, gameStatusDescription } = possession;
-  const displayStatus =
-    gameStatusDescription ?? status.long ?? status.short ?? "Scheduled";
+  const { headlineText } = useGameInfo(
+    Number(homeEspnId),
+    Number(awayEspnId),
+    gameDateStr
+  );
+
+  const {
+    possessionTeamId,
+    displayClock,
+    shortDownDistanceText,
+    possessionText,
+    gameStatusDescription,
+    gameStatusShortDetail,
+    period,
+  } = possession;
 
   // --- Use possession score when live; fallback to static game scores ---
   const displayAwayScore =
@@ -150,17 +155,40 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
-  // --- Teams ---
+  const displayStatus = (() => {
+    const base =
+      gameStatusDescription ??
+      status.long ??
+      status.short ??
+      game.game.status.long ??
+      game.game.status.short ??
+      "Scheduled";
+
+    const lower = base.toLowerCase();
+
+    if (lower === "finished") return "Final";
+    if (lower.includes("after over")) return "Final/OT"; // ✅ Added
+    if (lower.includes("overtime")) return "OT"; // ✅ Optional, handles ESPN variant
+    if (lower.includes("postponed")) return "Postponed";
+    if (lower.includes("canceled")) return "Canceled";
+    return base;
+  })();
+
+  const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
+  const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
+
+  // --- Memoized team objects ---
   const awayTeam = useMemo(
     () => ({
       id: awayId,
       espnID: awayEspnId,
       code: getTeamCode(awayId),
       name: getTeamName(awayId),
+      shortName: getTeamShortName(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
       hasPossession:
-        status.isLive && String(possessionTeamId) === String(awayEspnId),
+        status.isLive && String(possessionTeamId) === String(awayEspnId), // ONLY if live
     }),
     [
       awayId,
@@ -178,10 +206,11 @@ function CFBGameSquareCard({ game, isDark }: Props) {
       espnID: homeEspnId,
       code: getTeamCode(homeId),
       name: getTeamName(homeId),
+      shortName: getTeamShortName(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
       hasPossession:
-        status.isLive && String(possessionTeamId) === String(homeEspnId),
+        status.isLive && String(possessionTeamId) === String(homeEspnId), // ONLY if live
     }),
     [
       homeId,
@@ -192,16 +221,38 @@ function CFBGameSquareCard({ game, isDark }: Props) {
       status.isLive,
     ]
   );
-
   // --- Broadcasts ---
   const { broadcasts } = useCFBGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
     gameDateStr
   );
+
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  // --- Formatting ---
+  // --- Helpers ---
+  const formatQuarter = (period?: number | string, statusText?: string) => {
+    if (!period) return "";
+
+    // If period is a string like "OT" or "1st" from API
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) return "OT";
+      if (val.includes("1")) return "1st";
+      if (val.includes("2")) return "2nd";
+      if (val.includes("3")) return "3rd";
+      if (val.includes("4")) return "4th";
+      if (val.includes("half")) return "Halftime";
+      return period;
+    }
+
+    // If period is a number
+    const p = Number(period);
+    if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
+    const otNumber = p - 4;
+    return otNumber === 1 ? "OT" : `OT${otNumber}`;
+  };
+
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
     : "";
@@ -213,33 +264,30 @@ function CFBGameSquareCard({ game, isDark }: Props) {
       })
     : "";
 
-  const formatQuarter = (
-    short?: string | null,
-    long?: string | null
-  ): string => {
-    const val = short?.trim() || long || "";
-    const q = val.toLowerCase();
-    if (!val) return "";
-    if (q.includes("1")) return "1st";
-    if (q.includes("2")) return "2nd";
-    if (q.includes("3")) return "3rd";
-    if (q.includes("4")) return "4th";
-    if (q.includes("ot") || q.includes("overtime")) return "OT";
-    if (q.includes("half")) return "Halftime";
-    if (q.includes("end")) return "End";
-    const asNumber = Number(val);
-    if (!isNaN(asNumber)) return asNumber > 5 ? `${asNumber - 4}OT` : "OT";
-    return val;
-  };
+  // Championship Game Detection (Jan 19, 2026)
+  const isChampionshipGame =
+    gameDate &&
+    gameDate.getFullYear() === 2026 &&
+    gameDate.getMonth() === 0 && // January = 0
+    gameDate.getDate() === 19;
 
-  const getTeamStyle = (isHome: boolean): TextStyle => {
-    const homeScore = game.scores.home?.total ?? 0;
-    const awayScore = game.scores.away?.total ?? 0;
-    let isWinner = true;
-    if (status.isFinal && homeScore !== awayScore)
-      isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
-    return { color: dark ? "#fff" : "#1d1d1d", opacity: isWinner ? 1 : 0.5 };
-  };
+  const getTeamStyle = useMemo(
+    () =>
+      (isHome: boolean): TextStyle => {
+        const homeScore = game?.scores?.home?.total ?? 0;
+        const awayScore = game?.scores?.away?.total ?? 0;
+
+        let isWinner = true;
+        if (status.isFinal && homeScore !== awayScore) {
+          isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
+        }
+        return {
+          color: dark ? "#fff" : "#1d1d1d",
+          opacity: isWinner ? 1 : 0.5,
+        };
+      },
+    [dark, status, game?.scores]
+  );
 
   return (
     <TouchableOpacity

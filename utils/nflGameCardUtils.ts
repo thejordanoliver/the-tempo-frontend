@@ -1,5 +1,5 @@
 // utils/nflGameCardUtils.ts
-import { getTeamName, getNFLTeamsLogo } from "constants/teamsNFL";
+import { getTeamName, getNFLTeamsLogo, getTeamAbbreviation } from "constants/teamsNFL";
 
 /**
  * Format date from timestamp (seconds → readable date)
@@ -13,7 +13,7 @@ export const getGameDate = (timestamp?: number | null) => {
   return {
     date,
     iso,
-    formattedDate: date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" }),
+    formattedDate: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     formattedTime: date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
@@ -54,6 +54,14 @@ export const getNFLGameStatus = (game: any) => {
     longLower.includes("aot") ||
     short.includes("ft");
 
+  // ✅ New logic: label “after overtime” as Final/OT instead of Final
+  const displayStatus =
+    longLower.includes("after over") || longLower.includes("after overtime")
+      ? "Final/OT"
+      : longLower.includes("final")
+      ? "Final"
+      : long;
+
   const live = ![
     "not started",
     "final",
@@ -74,7 +82,7 @@ export const getNFLGameStatus = (game: any) => {
     isHalftime: longLower === "halftime",
     isLive: live && !isFinal,
     short: game.game.status.short,
-    long,
+    long: displayStatus, // ✅ now shows “Final/OT” when applicable
     timer: game.game.status.timer,
   };
 };
@@ -126,14 +134,25 @@ export const formatQuarter = (
  */
 export const getNFLTeamData = (
   id: string | number | undefined,
+  espnID: string | number | undefined,
   dark: boolean,
   record: string,
-  possessionTeamId?: string | number | undefined // ← fix here
-) => ({
+  possessionTeamId?: string | number
+): {
+  logo: any;
+  name: string;
+  code: string | null;
+  record: string;
+  id: string | number | undefined;
+  espnID: string | number | undefined;
+  hasPossession: boolean;
+} => ({
   logo: getNFLTeamsLogo(String(id ?? ""), dark),
   name: getTeamName(String(id ?? ""), "Team"),
+  code: getTeamAbbreviation(String(id ?? "")),
   record,
   id,
+  espnID,
   hasPossession: String(possessionTeamId ?? "") === String(id ?? ""),
 });
 

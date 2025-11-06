@@ -1,12 +1,11 @@
-import { Fonts } from "constants/fonts";
 import players from "constants/players"; // fallback headshot map
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
 import { TeamInjury } from "hooks/useGameDetails";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
-
+import { Image, Text, View, useColorScheme } from "react-native";
+import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 type Props = {
   injuries: TeamInjury[];
-  lighter: boolean
+  lighter: boolean;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
@@ -45,7 +44,7 @@ const TEAM_ID_MAP: Record<string, string> = {
   "27": "41",
 };
 
-export default function GameInjuries({ injuries, lighter }: Props) {
+export default function TeamInjuriesList({ injuries, lighter }: Props) {
   const isDark = useColorScheme() === "dark";
 
   if (!injuries?.length) {
@@ -63,14 +62,11 @@ export default function GameInjuries({ injuries, lighter }: Props) {
   const teamPlayersMap: Record<string, Player[]> = {};
   teamIds.forEach((teamId) => {
     const { players } = useDbPlayersByTeam(teamId);
-  
+
     teamPlayersMap[teamId] = players;
   });
 
-  const getStyles = styles(isDark);
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#888";
+  const getStyles = styles(isDark, lighter);
 
   return (
     <View style={getStyles.container}>
@@ -78,12 +74,11 @@ export default function GameInjuries({ injuries, lighter }: Props) {
         const feedTeamId = team.team.id.toString();
         const dbTeamId = TEAM_ID_MAP[feedTeamId] || feedTeamId;
         const teamPlayers = teamPlayersMap[dbTeamId] || [];
-     
+
         return (
           <View key={team.team.id} style={getStyles.teamBlock}>
             {team.injuries.map((inj, idx) => {
               const fullName = inj.athlete.fullName;
-           
 
               // Match player by full_name from DB
               const dbPlayer = teamPlayers.find((p) => {
@@ -92,11 +87,10 @@ export default function GameInjuries({ injuries, lighter }: Props) {
                 const injName = fullName.toLowerCase().trim();
                 const matched =
                   dbName.includes(injName) || injName.includes(dbName);
-              
+
                 return matched;
               });
 
-            
               // Fallback to headshot map using full name
               const avatarUrl =
                 dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
@@ -109,23 +103,26 @@ export default function GameInjuries({ injuries, lighter }: Props) {
                     {
                       borderBottomWidth:
                         idx === team.injuries.length - 1 ? 0 : 1,
-                        borderBottomColor: borderColor
                     },
                   ]}
                 >
-                  <Image
-                    source={{ uri: avatarUrl }}
-                    style={getStyles.headshot}
-                  />
-                  <View style={getStyles.injuryText}>
+                  <View style={getStyles.avatarWrapper}>
+                    <Image
+                      source={{ uri: avatarUrl }}
+                      style={getStyles.avatar}
+                    />
+                  </View>
+                  <View style={getStyles.infoSection}>
                     <View style={getStyles.playerHeader}>
-                      <Text style={[getStyles.player, {color: textColor}]}>{fullName}</Text>
-                      <Text style={[getStyles.jerseyNumber, {color: subTextColor}]}>
+                      <Text style={[getStyles.name]}>{fullName}</Text>
+                      <Text style={[getStyles.jersey]}>
+                        {dbPlayer?.position ?? "—"}{" "}
                         {dbPlayer?.jersey_number
                           ? `#${dbPlayer.jersey_number}`
                           : "N/A"}
                       </Text>
                     </View>
+                    <Text style={[getStyles.status]}>{inj.status}</Text>
                     {inj.details?.detail && (
                       <Text style={getStyles.details}>
                         {inj.details.detail}
@@ -133,7 +130,12 @@ export default function GameInjuries({ injuries, lighter }: Props) {
                     )}
                   </View>
                   <View>
-                    <Text style={[getStyles.status, {color: subTextColor}]}>{inj.status}</Text>
+                    {inj.details?.returnDate && (
+                      <Text style={[getStyles.status]}>
+                        Return:{" "}
+                        {new Date(inj.details.returnDate).toLocaleDateString()}
+                      </Text>
+                    )}
                   </View>
                 </View>
               );
@@ -144,49 +146,3 @@ export default function GameInjuries({ injuries, lighter }: Props) {
     </View>
   );
 }
-
-const styles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {},
-    teamBlock: { marginBottom: 12 },
-    injuryItem: {
-      flexDirection: "row",
-      padding: 8,
-      alignItems: "center",
-    
-    },
-    headshot: {
-      width: 50,
-      height: 50,
-      borderRadius: 100,
-      paddingTop: 4,
-      marginRight: 8,
-      backgroundColor: isDark ? "#444" : "#ddd",
-    },
-    injuryText: { flex: 1 },
-    player: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    playerHeader: {
-      flexDirection: "row",
-      alignItems: "flex-end",
-    },
-    status: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? "#aaa" : "#888",
-    },
-    jerseyNumber: {
-      fontSize: 12,
-      marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#aaa" : "#888",
-    },
-    details: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? "#ff4444" : "#cc0000",
-    },
-  });

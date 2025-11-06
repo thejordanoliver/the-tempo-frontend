@@ -1,4 +1,5 @@
 import PlaceHolderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { useEffect, useRef } from "react";
 import {
@@ -9,7 +10,9 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import type { Team } from "types/types";
+import type { LeagueType, Team } from "types/types";
+
+type TeamWithLeague = Team & { league: LeagueType };
 
 type Props = {
   item: TeamWithLeague;
@@ -19,9 +22,6 @@ type Props = {
   itemWidth: number;
   onImageLoad?: () => void;
 };
-
-type TeamWithLeague = Team & { league: "NBA" | "NFL" | "CFB" };
-
 
 export default function TeamCard({
   item,
@@ -33,6 +33,7 @@ export default function TeamCard({
 }: Props) {
   const isDark = useColorScheme() === "dark";
 
+  // Split fullName into city + nickname
   const [city, nickname] = (() => {
     const parts = item.fullName?.split(" ");
     return [parts?.slice(0, -1).join(" "), parts?.slice(-1).join(" ")];
@@ -94,7 +95,6 @@ export default function TeamCard({
     "Indiana State",
     "Colgate",
     "Charlotte",
-  
   ];
 
   const shouldShowLight =
@@ -140,21 +140,27 @@ export default function TeamCard({
         "Pelicans",
         "Timberwolves",
         "Jaguars",
-        "Charlotte", "North Texas"
+        "Charlotte",
+        "North Texas",
       ].includes(item.name ?? "")
       ? secondaryColor ?? "#888"
       : item.color ?? "#888"
     : item.color ?? "#888";
-    
 
   const backgroundColor = selectionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? "#222" : "#eee", selectedColor],
+    outputRange: [
+      isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+      selectedColor,
+    ],
   });
 
   const textColor = selectionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? "#fff" : "#000", "#fff"],
+    outputRange: [
+      isDark ? Colors.dark.text : Colors.light.text,
+      Colors.dark.text,
+    ],
   });
 
   useEffect(() => {
@@ -169,8 +175,10 @@ export default function TeamCard({
     }
   }, [shouldShowLight]);
 
-  // ✅ Choose correct logo or fallback
   const logoSource = item.logo || item.logoLight || PlaceHolderLogo;
+
+  // Adjust logo size based on mode
+  const logoSize = isGridView ? 50 : 40;
 
   return (
     <Pressable
@@ -179,68 +187,90 @@ export default function TeamCard({
         {
           opacity: pressed ? 0.6 : 1,
           width: isGridView ? itemWidth : "100%",
-          marginBottom: 10,
+          marginBottom: isGridView ? 0 : 12,
         },
       ]}
     >
-  <Animated.View
-  style={[
-    styles.teamCard,
-    {
-      width: isGridView ? itemWidth : "100%", // <-- add this
-      backgroundColor,
-      flexDirection: isGridView ? "column" : "row",
-      justifyContent: isGridView ? "center" : "flex-start",
-      alignItems: "center",
-      paddingHorizontal: isGridView ? 20 : 12,
-      paddingVertical: 12,
-      height: isGridView ? 130 : "auto",
-    },
-  ]}
->
-
-  <View style={styles.logoWrapper}>
-    <Animated.Image
-      source={logoSource}
-      style={[
-        styles.logo,
-        isGridView ? { marginBottom: 8 } : { marginRight: 12 },
-      ]}
-      onLoad={onImageLoad}
-    />
-    {item.logoLight && (
-      <Animated.Image
-        source={item.logoLight}
+      <Animated.View
         style={[
-          styles.logo,
-          StyleSheet.absoluteFillObject,
-          isGridView ? { marginBottom: 8 } : { marginRight: 12 },
-          { opacity: lightLogoOpacity },
+          styles.teamCard,
+          {
+            width: isGridView ? itemWidth : "100%",
+            backgroundColor,
+            flexDirection: isGridView ? "column" : "row",
+            justifyContent: isGridView ? "center" : "flex-start",
+            alignItems: "center",
+            paddingHorizontal: isGridView ? 0 : 12,
+            paddingVertical: 12,
+            height: isGridView ? 130 : "auto",
+          },
         ]}
-      />
-    )}
-  </View>
+      >
+        {/* League Tag for CFB / CBB */}
+        {(item.league === "CFB" || item.league === "CBB") && (
+          <View
+            style={[
+              styles.sportTag,
+              {
+                backgroundColor: item.league === "CFB" ? "#228B22" : "#1E90FF",
+              },
+            ]}
+          >
+            <Animated.Text style={styles.sportTagText}>
+              {item.league}
+            </Animated.Text>
+          </View>
+        )}
 
-  {isGridView ? (
-    <View style={{ alignItems: "center" }}>
-      <Animated.Text style={[styles.teamName, { color: textColor }]}>
-        {item.league === "CFB" ? item.name : city}
-      </Animated.Text>
-      {item.league !== "CFB" && (
-        <Animated.Text style={[styles.teamName, { color: textColor }]}>
-          {nickname}
-        </Animated.Text>
-      )}
-    </View>
-  ) : (
-    <Animated.Text
-      style={[styles.teamName, { color: textColor, marginLeft: 8 }]}
-    >
-      {item.fullName}
-    </Animated.Text>
-  )}
-</Animated.View>
+        {/* Logo */}
+        <View
+          style={[
+            styles.logoWrapper,
+            !isGridView && {
+              marginRight: 12,
+              width: logoSize,
+              height: logoSize,
+            },
+          ]}
+        >
+          <Animated.Image
+            source={logoSource}
+            style={[styles.logo, { width: logoSize, height: logoSize }]}
+            onLoad={onImageLoad}
+          />
+          {item.logoLight && (
+            <Animated.Image
+              source={item.logoLight}
+              style={[
+                styles.logo,
+                StyleSheet.absoluteFillObject,
+                {
+                  opacity: lightLogoOpacity,
+                  width: logoSize,
+                  height: logoSize,
+                },
+              ]}
+            />
+          )}
+        </View>
 
+        {/* Team Name */}
+        <View
+          style={{
+            alignItems: isGridView ? "center" : "flex-start",
+            flexDirection: isGridView ? "column" : "row",
+          }}
+        >
+          <Animated.Text style={[styles.teamName, { color: textColor }]}>
+            {item.league === "CFB" || item.league === "CBB" ? item.name : city}{" "}
+          </Animated.Text>
+          {item.league !== "CFB" && item.league !== "CBB" && (
+            <Animated.Text style={[styles.teamName, { color: textColor }]}>
+              {nickname}
+            </Animated.Text>
+          )}
+        </View>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -248,6 +278,7 @@ export default function TeamCard({
 const styles = StyleSheet.create({
   teamCard: {
     borderRadius: 8,
+    overflow: "hidden",
   },
   teamName: {
     fontFamily: Fonts.OSREGULAR,
@@ -264,5 +295,21 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     resizeMode: "contain",
+  },
+  sportTag: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    paddingLeft: 12,
+    paddingRight: 6,
+    paddingVertical: 4,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 100,
+    zIndex: 2,
+  },
+  sportTagText: {
+    color: "#fff",
+    fontSize: 11,
+    fontFamily: Fonts.OSBOLD,
   },
 });

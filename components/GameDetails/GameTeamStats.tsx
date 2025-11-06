@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
 
+
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
 

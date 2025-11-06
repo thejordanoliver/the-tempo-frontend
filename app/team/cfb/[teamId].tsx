@@ -1,12 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
-import TeamInfoBottomSheetCFB from "components/CFB/Team/TeamInfoModal";
+import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
+import TeamForum from "components/Forum/TeamForum";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { teams } from "constants/teamsCFB";
+import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBTeamGames } from "hooks/CFBHooks/useCFBTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useTeamHighlights } from "hooks/useTeamHighlights";
+import { useTeamNews } from "hooks/useTeamNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -21,8 +26,6 @@ import { User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
-import { useNotifications } from "contexts/NotificationContext";
-
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -67,6 +70,43 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refreshGames: refreshTeamGames,
   } = useCFBTeamGames(teamIdNum ? teamIdNum.toString() : "");
+
+  const {
+    highlights: teamHighlights,
+    loading: highlightsLoading,
+    error: highlightsError,
+  } = useTeamHighlights(team?.fullName ?? "", 5);
+  const {
+    articles: newsArticles,
+    loading: newsLoading,
+    error: newsError,
+    refreshNews,
+  } = useTeamNews(team?.fullName ?? "", "CFB");
+
+  const combinedNewsAndHighlights = useMemo(() => {
+    const taggedNews = newsArticles.map((item) => ({
+      ...item,
+      itemType: "news" as const,
+      publishedAt: item.publishedAt ?? new Date().toISOString(),
+    }));
+
+    const taggedHighlights = teamHighlights.map((item) => ({
+      ...item,
+      itemType: "highlight" as const,
+      publishedAt: item.publishedAt ?? new Date().toISOString(),
+      duration: String(item.duration), // ✅ fix type mismatch
+    }));
+
+    const combined = [...taggedNews, ...taggedHighlights];
+
+    combined.sort((a, b) => {
+      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+      return bDate - aDate;
+    });
+
+    return combined;
+  }, [newsArticles, teamHighlights]);
 
   // --- Load cached games on mount ---
   useEffect(() => {
@@ -164,33 +204,41 @@ export default function TeamDetailScreen() {
 
   // ✅ Use the favorite teams hook
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const {toggleNotifications, isNotified} = useNotifications()
+  const { toggleNotifications, isNotified } = useNotifications();
   const league = "CFB";
   const favorited = team ? isFavorite(league, team.id) : false;
 
-// --- Header ---
-useLayoutEffect(() => {
-  if (!team) return;
+  // --- Header ---
+  useLayoutEffect(() => {
+    if (!team) return;
 
-  navigation.setOptions({
-    header: () => (
-      <CustomHeaderTitle
-        logo={team.logo ? { uri: team.logo } : undefined}
-        logoLight={team.logoLight ? { uri: team.logoLight } : undefined}
-        teamColor={team.color}
-        onBack={goBack}
-        isTeamScreen={true}
-        teamCode={team.code}
-        isFavorite={isFavorite(league, team.id)} // recompute here
-        isNotified={isNotified(league, team.id)} // recompute here
-        onToggleFavorite={() => toggleFavorite(league, team.id)}
-        onToggleNotifications={() => toggleNotifications(league, team.id)}
-        onOpenInfo={() => setModalVisible(true)}
-        league={league}
-      />
-    ),
-  });
-}, [navigation, isDark, team, isFavorite, isNotified, toggleFavorite, toggleNotifications]);
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          logo={team.logo ? { uri: team.logo } : undefined}
+          logoLight={team.logoLight ? { uri: team.logoLight } : undefined}
+          teamColor={team.color}
+          onBack={goBack}
+          isTeamScreen={true}
+          teamCode={team.code}
+          isFavorite={isFavorite(league, team.id)} // recompute here
+          isNotified={isNotified(league, team.id)} // recompute here
+          onToggleFavorite={() => toggleFavorite(league, team.id)}
+          onToggleNotifications={() => toggleNotifications(league, team.id)}
+          onOpenInfo={() => setModalVisible(true)}
+          league={league}
+        />
+      ),
+    });
+  }, [
+    navigation,
+    isDark,
+    team,
+    isFavorite,
+    isNotified,
+    toggleFavorite,
+    toggleNotifications,
+  ]);
 
   if (!teamIdNum || !team) {
     return (
@@ -236,14 +284,14 @@ useLayoutEffect(() => {
         </ScrollView>
 
         {/* News Page */}
-        <View
-          key="news"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>
-            Team News (TODO)
-          </Text>
-        </View>
+        <ScrollView key="news" style={{ flex: 1 }}>
+          <NewsHighlightsList
+            items={combinedNewsAndHighlights}
+            loading={newsLoading || highlightsLoading}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        </ScrollView>
 
         {/* Roster Page */}
         <View
@@ -264,20 +312,18 @@ useLayoutEffect(() => {
         </View>
 
         {/* Forum Page */}
-        <View
-          key="forum"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Forum (TODO)</Text>
+        <View key="forum" style={{ flex: 1 }}>
+          <TeamForum teamId={teamId as string} league="CFB" />
         </View>
       </PagerView>
 
       {/* --- Bottom Sheet --- */}
       {team && (
-        <TeamInfoBottomSheetCFB
+        <TeamInfoBottomSheet
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
+            league="CFB"
         />
       )}
     </View>

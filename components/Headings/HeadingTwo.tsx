@@ -1,4 +1,5 @@
 // components/Heading.tsx
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import React from "react";
 import { StyleSheet, Text, useColorScheme } from "react-native";
@@ -11,8 +12,16 @@ const HeadingTwo: React.FC<Props> = ({ children, lighter }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const borderColor = lighter ? "#bbb" : isDark ? "#888" : "#888";
+  const textColor = lighter
+    ? Colors.dark.white
+    : isDark
+    ? Colors.dark.white
+    : Colors.light.black;
+  const borderColor = lighter
+    ? Colors.netural.midTone
+    : isDark
+    ? Colors.netural.midTone
+    : Colors.netural.midTone;
 
   return (
     <Text

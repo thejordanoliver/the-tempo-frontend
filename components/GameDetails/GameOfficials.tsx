@@ -2,11 +2,11 @@ import { Fonts } from "constants/fonts";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import HeadingTwo from "components/Headings/HeadingTwo";
 
-type Official = {
-  fullName: string;
-  displayName: string;
-  position: { name: string; displayName: string; id: string };
-  order: number;
+export type Official = {
+  fullName?: string;
+  displayName?: string;
+  position?: { name?: string; displayName?: string; id?: string };
+  order?: number;
 };
 
 type Props = {
@@ -18,30 +18,39 @@ export default function GameOfficials({ officials, lighter }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark, lighter ?? false);
 
-  if (!officials?.length) return null;
+  // Filter out invalid or empty officials
+  const validOfficials =
+    officials?.filter(
+      (o) => o && (o.fullName || o.displayName || o.position?.displayName)
+    ) ?? [];
 
-  const getInitials = (name: string) =>
-    name
+  if (validOfficials.length === 0) return null;
+
+  const getInitials = (name?: string) => {
+    if (!name || typeof name !== "string") return "?";
+    return name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
+  };
 
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Officials</HeadingTwo>
       <View style={styles.row}>
-        {officials.map((official) => {
-          const initials = getInitials(official.fullName);
+        {validOfficials.map((official, index) => {
+          const name = official.fullName || official.displayName || "Unknown";
+          const initials = getInitials(name);
+          const position = official.position?.displayName ?? "Official";
+
           return (
-            <View key={official.order} style={styles.card}>
+            <View key={official.order ?? index} style={styles.card}>
               <View style={styles.placeholder}>
                 <Text style={styles.initials}>{initials}</Text>
               </View>
-              <Text style={styles.position}>
-                {official.position?.displayName ?? "Official"}
-              </Text>
-              <Text style={styles.name}>{official.displayName}</Text>
+              <Text style={styles.position}>{position}</Text>
+              <Text style={styles.name}>{name}</Text>
             </View>
           );
         })}

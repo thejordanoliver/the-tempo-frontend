@@ -3,19 +3,22 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
+import GamesList from "components/Games/GamesList";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { StandingsList } from "components/Standings/StandingsList";
 import SummerGamesList from "components/summer-league/SummerGamesList";
+import { mapToInternalTeam } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
-
-import { useSeasonGames as useLiveSeasonGames } from "hooks/useSeasonGames";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueNews } from "hooks/useLeagueNews";
+import { useSeasonGames } from "hooks/useSeasonGames";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
@@ -31,10 +34,8 @@ import { getScoresStyles } from "styles/leagueStyles";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
+import { filterByDate } from "utils/games";
 
-import GamesList from "components/Games/GamesList";
-import { goBack } from "expo-router/build/global-state/routing";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -54,56 +55,24 @@ function StatsTabContent() {
   );
 }
 
-type TeamLike = {
-  id: string;
-  name: string;
-  record?: string;
-  logo?: any;
-  fullName: string;
-};
-
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
 export default function NBALeagueScreen() {
   const currentYear = "2025";
-
-  // --- Fetch games ---
   const {
-    games: liveGames,
+    games,
     loading: liveLoading,
     refreshGames: refreshLiveGames,
-  } = useLiveSeasonGames(currentYear);
-
-
+  } = useSeasonGames(currentYear);
   const {
     games: summerGames,
     loading: summerLoading,
     refreshGames: refreshSummerGames,
   } = useSummerLeagueGames();
-
-  const { news, loading: newsLoading, refreshNews } = useNews();
+  const { news, loading: newsLoading, refreshNews } = useLeagueNews("NBA");
   const { highlights, loading: highlightsLoading } = useHighlights(
     "NBA highlights",
-    50
+    10
   );
+
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
@@ -113,12 +82,13 @@ export default function NBALeagueScreen() {
   const styles = getScoresStyles(isDark);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [selectedLeague, setSelectedLeague] = useState<"NBA" | "NFL">("NBA");
-
-  const tabs = ["scores", "news", "standings", "stats", "forum",] as const;
-  type TabType = (typeof tabs)[number];
-  const [selectedTab, setSelectedTab] = useState<TabType>("scores");
+  // --- State ---
+  const [selectedDate, setSelectedDate] = React.useState<Date>(
+    dayjs().tz("America/New_York").startOf("day").toDate()
+  );
+  const [selectedTab, setSelectedTab] = useState<
+    "scores" | "news" | "standings" | "stats" | "forum"
+  >("scores");
 
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
@@ -128,7 +98,7 @@ export default function NBALeagueScreen() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // --- Load favorites ---
+  // Load favorites
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -143,28 +113,30 @@ export default function NBALeagueScreen() {
     }, [])
   );
 
-  // --- Header ---
-useLayoutEffect(() => {
-  navigation.setOptions({
-    header: () => (
-      <CustomHeaderTitle
-        tabName="League"
-        league="NBA"
-        modalVisible={leagueModalVisible} // now updates
-        setModalVisible={setLeagueModalVisible}
-onOpenLeagueModal={() => {
-  setLeagueModalVisible(true);
-  sportsModalRef.current?.present();
-}}        onBack={goBack}
-      />
-    ),
-  });
-}, [navigation, leagueModalVisible]);
+  // Header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          tabName="League"
+          league="NBA"
+          modalVisible={leagueModalVisible}
+          setModalVisible={setLeagueModalVisible}
+          onOpenLeagueModal={() => {
+            setLeagueModalVisible(true);
+            sportsModalRef.current?.present();
+          }}
+          onBack={goBack}
+        />
+      ),
+    });
+  }, [navigation, leagueModalVisible]);
 
-  // --- Tab handling ---
-  const handleTabPress = (tab: TabType) => {
+  const handleTabPress = (tab: typeof selectedTab) => {
     setSelectedTab(tab);
-    const index = tabs.indexOf(tab);
+    const index = ["scores", "news", "standings", "stats", "forum"].indexOf(
+      tab
+    );
     if (tabMeasurements.current[index]) {
       Animated.parallel([
         Animated.timing(underlineX, {
@@ -181,64 +153,57 @@ onOpenLeagueModal={() => {
     }
   };
 
-  // --- Helpers ---
-  const localDateOnly = (date: string | Date) => {
-    const d = new Date(date);
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  };
-
-  const filterByDate = (games: any[], date: Date) =>
-    games.filter((game) =>
-      dayjs(game.date).isSame(dayjs(date).startOf("day"), "day")
-    );
-
-  const hasIdAndName = (team: any): team is TeamLike =>
-    team && typeof team.id === "string" && typeof team.name === "string";
-
-  const normalizeTeam = (team: any): TeamLike => {
-    if (hasIdAndName(team)) {
-      return {
-        id: team.id,
-        name: team.name,
-        record: team.record,
-        logo: team.logo,
-        fullName: team.fullName ?? team.name ?? "Unknown Team",
-      };
-    }
-    const fallbackName = team?.name ?? "Unknown Team";
-    return { id: fallbackName, name: fallbackName, fullName: fallbackName };
-  };
-
-  // --- Combine NBA games ---
-  const inProgressGames = liveGames.filter((g) => g.status === "In Progress");
  
-  const combinedSeasonGames = [...inProgressGames, ];
 
-  const filteredSeasonGames = filterByDate(combinedSeasonGames, selectedDate);
-  const filteredSummerGames = filterByDate(summerGames, selectedDate);
+  const normalizedSeasonGames = games.map((game: any) => {
+    const home = mapToInternalTeam(game.teams?.home ?? {});
+    const away = mapToInternalTeam(game.teams?.visitors ?? {});
+    const rawDate = game.date?.start ?? game.date;
+    const date = dayjs.utc(rawDate).tz("America/New_York");
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      time: date.format("h:mm A"),
+      home,
+      away,
+    };
+  });
 
-  // --- Normalize NBA / Summer ---
-  const normalizedSeasonGames = filteredSeasonGames.map((game) => ({
+  // Normalize Summer League games
+  const normalizedSummerGames = summerGames.map((game) => ({
     ...game,
     period: game.period === undefined ? undefined : String(game.period),
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
+    home: game.home,
+    away: game.away,
   }));
 
-  const normalizedSummerGames = filteredSummerGames.map((game) => ({
-    ...game,
-    period: game.period === undefined ? undefined : String(game.period),
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
-  }));
+  // --- Helper to sort live games on top ---
+  const sortLiveGamesFirst = (gamesArray: any[]) =>
+    [...gamesArray].sort((a, b) => {
+      const aStatus = a.status?.long?.toLowerCase() || "";
+      const bStatus = b.status?.long?.toLowerCase() || "";
 
-  // --- Refresh handler ---
+      if (aStatus === "in play" && bStatus !== "in play") return -1;
+      if (aStatus !== "in play" && bStatus === "in play") return 1;
+
+      // Otherwise, sort by date/time
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+
+  // Filter both sets by selectedDate
+  const filteredSeasonGames = sortLiveGamesFirst(
+    filterByDate(normalizedSeasonGames, selectedDate)
+  );
+  const filteredSummerGames = sortLiveGamesFirst(
+    filterByDate(normalizedSummerGames, selectedDate)
+  );
+
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
       await Promise.all([
         refreshLiveGames(),
-     
         refreshSummerGames(),
         refreshNews(),
       ]);
@@ -249,40 +214,56 @@ onOpenLeagueModal={() => {
     }
   };
 
+  // --- Change Date (always Eastern) ---
   const changeDateByDays = (days: number) => {
-    setSelectedDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    });
+    setSelectedDate((prev) =>
+      dayjs(prev)
+        .tz("America/New_York")
+        .add(days, "day")
+        .startOf("day")
+        .toDate()
+    );
   };
 
-  // --- Combine news + highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = news.map((item) => ({
+  // Combine news + highlights
+  const combinedNewsAndHighlights = React.useMemo(() => {
+    const taggedNews = news.map((item) => ({
       ...item,
-      itemType: "news",
+      itemType: "news" as const,
       publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
     }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
+
+    const taggedHighlights = highlights.map((item) => ({
       ...item,
-      itemType: "highlight",
+      itemType: "highlight" as const,
+      // convert numeric duration to string
+      duration: String(item.duration),
       publishedAt: item.publishedAt ?? new Date().toISOString(),
     }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort(
+
+    return [...taggedNews, ...taggedHighlights].sort(
       (a, b) =>
         new Date(b.publishedAt ?? 0).getTime() -
         new Date(a.publishedAt ?? 0).getTime()
     );
-    return combined;
   }, [news, highlights]);
+
+  // Helper to mark games on calendar
+  const markDates = (gamesArray: any[]) =>
+    gamesArray.reduce((acc, game) => {
+      const localDate = new Date(game.date);
+      const iso = `${localDate.getFullYear()}-${String(
+        localDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+      acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
+      return acc;
+    }, {} as Record<string, { marked: boolean; dotColor: string }>);
 
   return (
     <>
       <View style={styles.container}>
         <TabBar
-          tabs={tabs}
+          tabs={["scores", "news", "standings", "stats", "forum"]}
           selected={selectedTab}
           onTabPress={handleTabPress}
         />
@@ -296,10 +277,7 @@ onOpenLeagueModal={() => {
                 onOpenCalendar={() => setShowCalendarModal(true)}
                 isDark={isDark}
               />
-
               <ScrollView
-                contentContainerStyle={{ paddingBottom: 100 }}
-                showsVerticalScrollIndicator={false}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -307,9 +285,9 @@ onOpenLeagueModal={() => {
                   />
                 }
               >
-                {normalizedSeasonGames.length > 0 ? (
+                {filteredSeasonGames.length > 0 ? (
                   <GamesList
-                    games={normalizedSeasonGames}
+                    games={filteredSeasonGames}
                     loading={liveLoading}
                     refreshing={refreshing}
                     onRefresh={handleRefresh}
@@ -317,7 +295,7 @@ onOpenLeagueModal={() => {
                   />
                 ) : (
                   <SummerGamesList
-                    games={normalizedSummerGames}
+                    games={filteredSummerGames}
                     loading={summerLoading}
                     refreshing={refreshing}
                     onRefresh={handleRefresh}
@@ -330,8 +308,7 @@ onOpenLeagueModal={() => {
 
           {selectedTab === "news" && (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }} // optional bottom padding
-              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
@@ -341,12 +318,13 @@ onOpenLeagueModal={() => {
             >
               <NewsHighlightsList
                 items={combinedNewsAndHighlights}
-                loading={newsLoading}
+                loading={newsLoading || highlightsLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
             </ScrollView>
           )}
+
           {selectedTab === "standings" && <StandingsList />}
           {selectedTab === "stats" && <StatsTabContent />}
           {selectedTab === "forum" && <LeagueForum league="NBA" />}
@@ -357,31 +335,23 @@ onOpenLeagueModal={() => {
         visible={showCalendarModal}
         onClose={() => setShowCalendarModal(false)}
         onSelectDate={(dateString) => {
-          const [year, month, day] = dateString.split("-").map(Number);
-          setSelectedDate(new Date(year, month - 1, day));
+          const easternSelected = dayjs
+            .tz(dateString, "YYYY-MM-DD", "America/New_York")
+            .startOf("day")
+            .toDate();
+          setSelectedDate(easternSelected);
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...[...combinedSeasonGames, ...summerGames].reduce((acc, game) => {
-            const localDate = localDateOnly(game.date);
-            const iso = `${localDate.getFullYear()}-${String(
-              localDate.getMonth() + 1
-            ).padStart(2, "0")}-${String(localDate.getDate()).padStart(
-              2,
-              "0"
-            )}`;
-            acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
-            return acc;
-          }, {} as Record<string, { marked: boolean; dotColor: string }>),
+          ...markDates([...normalizedSeasonGames, ...normalizedSummerGames]),
         }}
       />
 
-  <SportsListModal
-  ref={sportsModalRef}
-  onSelect={() => {}}
-  onClose={() => setLeagueModalVisible(false)}
-/>
-
+      <SportsListModal
+        ref={sportsModalRef}
+        onSelect={() => {}}
+        onClose={() => setLeagueModalVisible(false)}
+      />
     </>
   );
 }

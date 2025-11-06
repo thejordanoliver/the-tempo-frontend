@@ -38,40 +38,6 @@ import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
 //Logos 500x500
-import NinersLogo500x500 from "assets/Football/NFL_Logos500x500/49ers.png";
-import BearsLogo500x500 from "assets/Football/NFL_Logos500x500/Bears.png";
-import BengalsLogo500x500 from "assets/Football/NFL_Logos500x500/Bengals.png";
-import BillsLogo500x500 from "assets/Football/NFL_Logos500x500/Bills.png";
-import BroncosLogo500x500 from "assets/Football/NFL_Logos500x500/Broncos.png";
-import BrownsLogo500x500 from "assets/Football/NFL_Logos500x500/Browns.png";
-import BuccaneersLogo500x500 from "assets/Football/NFL_Logos500x500/Buccaneers.png";
-import CardinalsLogo500x500 from "assets/Football/NFL_Logos500x500/Cardinals.png";
-import ChargersLogo500x500 from "assets/Football/NFL_Logos500x500/Chargers.png";
-import ChiefsLogo500x500 from "assets/Football/NFL_Logos500x500/Chiefs.png";
-import ColtsLogo500x500 from "assets/Football/NFL_Logos500x500/Colts.png";
-import CommandersLogo500x500 from "assets/Football/NFL_Logos500x500/Commanders.png";
-import CowboysLogo500x500 from "assets/Football/NFL_Logos500x500/Cowboys.png";
-import DolphinsLogo500x500 from "assets/Football/NFL_Logos500x500/Dolphins.png";
-import EaglesLogo500x500 from "assets/Football/NFL_Logos500x500/Eagles.png";
-import FalconsLogo500x500 from "assets/Football/NFL_Logos500x500/Falcons.png";
-import GiantsLogo500x500 from "assets/Football/NFL_Logos500x500/Giants.png";
-import GiantsLogoLight500x500 from "assets/Football/NFL_Logos500x500/GiantsLight.png";
-import JaguarsLogo500x500 from "assets/Football/NFL_Logos500x500/Jaguars.png";
-import JetsLogo500x500 from "assets/Football/NFL_Logos500x500/Jets.png";
-import JetsLogoLight500x500 from "assets/Football/NFL_Logos500x500/JetsLight.png";
-import LionsLogo500x500 from "assets/Football/NFL_Logos500x500/Lions.png";
-import PackersLogo500x500 from "assets/Football/NFL_Logos500x500/Packers.png";
-import PanthersLogo500x500 from "assets/Football/NFL_Logos500x500/Panthers.png";
-import PatriotsLogo500x500 from "assets/Football/NFL_Logos500x500/Patriots.png";
-import RaidersLogo500x500 from "assets/Football/NFL_Logos500x500/Raiders.png";
-import RamsLogo500x500 from "assets/Football/NFL_Logos500x500/Rams.png";
-import RavensLogo500x500 from "assets/Football/NFL_Logos500x500/Ravens.png";
-import SaintsLogo500x500 from "assets/Football/NFL_Logos500x500/Saints.png";
-import SeahawksLogo500x500 from "assets/Football/NFL_Logos500x500/Seahawks.png";
-import SteelersLogo500x500 from "assets/Football/NFL_Logos500x500/Steelers.png";
-import TexansLogo500x500 from "assets/Football/NFL_Logos500x500/Texans.png";
-import TitansLogo500x500 from "assets/Football/NFL_Logos500x500/Titans.png";
-import VikingsLogo500x500 from "assets/Football/NFL_Logos500x500/Vikings.png";
 
 //Stadiums
 import BearsStadium from "assets/Football/Arenas/BearsStadium.webp";
@@ -183,7 +149,7 @@ export const teams: NFLTeam[] = [
     venue: "EverBank Stadium",
     established: 1995,
     logo: JaguarsLogo,
-  
+
     country: {
       name: "USA",
       code: "US",
@@ -211,7 +177,7 @@ export const teams: NFLTeam[] = [
     venue: "Gillette Stadium",
     established: 1960,
     logo: PatriotsLogo,
- 
+
     coachImage: PatriotsCoach,
     country: {
       name: "USA",
@@ -270,7 +236,7 @@ export const teams: NFLTeam[] = [
     venue: "M&T Bank Stadium",
     established: 1996,
     logo: RavensLogo,
- 
+
     country: {
       name: "USA",
       code: "US",
@@ -299,7 +265,7 @@ export const teams: NFLTeam[] = [
     venue: "Nissan Stadium",
     established: 1960,
     logo: TitansLogo,
-   
+
     country: {
       name: "USA",
       code: "US",
@@ -356,7 +322,7 @@ export const teams: NFLTeam[] = [
     venue: "Mercedes-Benz Stadium",
     established: 1966,
     logo: FalconsLogo,
-  
+
     country: {
       name: "USA",
       code: "US",
@@ -472,7 +438,7 @@ export const teams: NFLTeam[] = [
     venue: "Lincoln Financial Field",
     established: 1933,
     logo: EaglesLogo,
-   
+
     country: {
       name: "USA",
       code: "US",
@@ -527,7 +493,7 @@ export const teams: NFLTeam[] = [
     coach: "Kyle Shanahan",
     coachImage: NinersCoach,
     owner: "Jed York",
-    venue: "Levi's® Stadium",
+    venue: "Levi's Stadium",
     established: 1946,
     logo: NinersLogo,
     country: {
@@ -761,7 +727,7 @@ export const teams: NFLTeam[] = [
     venue: "Acrisure Stadium",
     established: 1933,
     logo: SteelersLogo,
- 
+
     country: {
       name: "USA",
       code: "US",
@@ -1100,6 +1066,7 @@ export const venueImages: Record<string, any> = {
   "Croke Park": require("assets/Football/Arenas/CrokePark.webp"),
   "Tottenham Hotspur Stadium": require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
   "Olympic Stadium Berlin": require("assets/Football/Arenas/OlympicStadium.webp"),
+  "Wembley Stadium": require("assets/Football/Arenas/WembleyStadium.webp"),
   // Add more if you have non-NBA arenas...
 };
 
@@ -1154,7 +1121,7 @@ export const neutralStadiums: Record<string, Venue> = {
     name: "Wembley Stadium",
     city: "London",
     address: "Wembley HA9 0WS, United Kingdom",
-    latitude: 51.5560,
+    latitude: 51.556,
     longitude: 0.2796,
     venueCapacity: "68,500",
     venueImage: require("assets/Football/Arenas/WembleyStadium.webp"),
@@ -1186,9 +1153,7 @@ export function getNFLTeamsLogo(
   if (!team) return PlaceholderLogo;
 
   if (use500x500) {
-    return isDark
-      ?  team.logoLight ||team.logo
-      :  team.logo;
+    return isDark ? team.logoLight || team.logo : team.logo;
   }
 
   return isDark ? team.logoLight || team.logo : team.logo;
@@ -1207,7 +1172,7 @@ export function getTeamAbbreviation(
   fallback?: string
 ): string | null {
   const team = getTeamInfo(teamId);
-  return team?.code || fallback || "Unknown Team";
+  return team?.code || fallback || "UKNW";
 }
 
 export const logoMap: Record<string, any> = {

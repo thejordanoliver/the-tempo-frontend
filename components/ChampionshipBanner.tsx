@@ -7,16 +7,20 @@ import {
 } from "react-native";
 import { logoMap as nbaLogoMap, teams as nbaTeams } from "../constants/teams";
 import {
+  logoMap as cbbLogoMap,
+  teams as cbbTeams,
+} from "../constants/teamsCBB";
+import {
+  logoMap as cfbLogoMap,
+  teams as cfbTeams,
+} from "../constants/teamsCFB";
+import {
   logoMap as nflLogoMap,
   teams as nflTeams,
 } from "../constants/teamsNFL";
 
 import { Fonts } from "constants/fonts";
 import { LeagueType } from "types/types";
-import {
-  logoMap as cfbLogoMap,
-  teams as cfbTeams,
-} from "../constants/teamsCFB";
 
 type Props = {
   years: number[];
@@ -37,9 +41,21 @@ export default function ChampionshipBanner({
   const cleanName = teamName?.replace(/"/g, "") || "";
 
   const teams =
-    league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : nbaTeams;
+    league === "NFL"
+      ? nflTeams
+      : league === "CFB"
+      ? cfbTeams
+      : league === "CBB"
+      ? cbbTeams
+      : nbaTeams;
   const logoMap =
-    league === "NFL" ? nflLogoMap : league === "CFB" ? cfbLogoMap : nbaLogoMap;
+    league === "NFL"
+      ? nflLogoMap
+      : league === "CFB"
+      ? cfbLogoMap
+      : league === "CBB"
+      ? cbbLogoMap
+      : nbaLogoMap;
 
   const team =
     teams.find((t) => String(t.id) === String(teamId)) ||
@@ -249,6 +265,13 @@ const cfbBannerMap: Record<string, any> = {
   "71": require("../assets/bannersCFB/UCF.png"),
   "106": require("../assets/bannersCFB/ALABAMA.png"),
 };
+const cbbBannerMap: Record<string, any> = {
+  "1909": require("../assets/bannersCFB/FLORIDA.png"),
+  "2058": require("../assets/bannersCFB/OHIOSTATE.png"),
+  "203": require("../assets/bannersCFB/TEXAS.png"),
+  "2165": require("../assets/bannersCFB/UCF.png"),
+  "176": require("../assets/bannersCFB/ALABAMA.png"),
+};
 
 function getBannerImage(
   teamId?: string | number,
@@ -271,6 +294,8 @@ function getBannerImage(
       ? nflBannerMap
       : league === "NBA"
       ? nbaBannerMap
+      : league === "CBB"
+      ? cbbBannerMap
       : cfbBannerMap;
 
   if (maps[id]) {

@@ -34,6 +34,8 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import PagerView from "react-native-pager-view";
 import { style } from "styles/TeamDetails.styles";
 import { User } from "types/types";
+import GameCard from "components/Games/GameCard";
+import { mockGames } from "mocks/games";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -92,7 +94,7 @@ export default function TeamDetailScreen() {
     highlights: teamHighlights,
     loading: highlightsLoading,
     error: highlightsError,
-  } = useTeamHighlights(team?.fullName ?? "", 30);
+  } = useTeamHighlights(team?.fullName ?? "", 5);
   const {
     articles: newsArticles,
     loading: newsLoading,
@@ -100,12 +102,7 @@ export default function TeamDetailScreen() {
     refreshNews,
   } = useTeamNews(team?.fullName ?? "");
 
-  const combinedNewsItems = useMemo(() => {
-    return newsArticles.map((article) => ({
-      ...article,
-      itemType: "news" as const,
-    }));
-  }, [newsArticles]);
+
 
   const combinedNewsAndHighlights = useMemo(() => {
     const taggedNews = newsArticles.map((item) => ({
@@ -187,36 +184,42 @@ export default function TeamDetailScreen() {
     });
   });
 
-  useEffect(() => {
-    if (!gamesLoading && teamGames.length > 0 && !selectedDate) {
-      const today = new Date();
+useEffect(() => {
+  if (!gamesLoading && teamGames.length > 0 && !selectedDate && monthsToShow.length > 0) {
+    const today = new Date();
+    
+    // Try to find a month that matches the current month/year
+    const currentMonthWithGames = monthsToShow.find(
+      ({ month, year }) =>
+        month === today.getMonth() && year === today.getFullYear()
+    );
 
-      // Find the closest month from monthsToShow
-      const closestMonth = monthsToShow.reduce((closest, m) => {
-        const monthDate = new Date(m.year, m.month, 1);
-        const diff = Math.abs(monthDate.getTime() - today.getTime());
-        const closestDiff = Math.abs(
-          new Date(closest.year, closest.month, 1).getTime() - today.getTime()
-        );
-        return diff < closestDiff ? m : closest;
-      }, monthsToShow[0]);
+    const startingMonth = currentMonthWithGames ?? monthsToShow[0];
 
-      setSelectedDate(new Date(closestMonth.year, closestMonth.month, 1));
+    setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
 
-      // Scroll to that month’s tab
-      setTimeout(() => {
+    // Scroll to that month
+    setTimeout(() => {
+      if (scrollViewRef.current) {
         const index = monthsToShow.findIndex(
-          (m) => m.month === closestMonth.month && m.year === closestMonth.year
+          (m) =>
+            m.month === startingMonth.month && m.year === startingMonth.year
         );
-        if (index >= 0 && scrollViewRef.current) {
-          scrollViewRef.current.scrollTo({
-            x: index * 70,
-            animated: true,
-          });
-        }
-      }, 150);
-    }
-  }, [gamesLoading, teamGames, selectedDate, monthsToShow]);
+        const itemWidth = 70;
+        const spacing = 12;
+        const screenWidth = Dimensions.get("window").width;
+        const scrollToX =
+          index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
+
+        scrollViewRef.current.scrollTo({
+          x: Math.max(0, scrollToX),
+          animated: true,
+        });
+      }
+    }, 150);
+  }
+}, [gamesLoading, teamGames, selectedDate, monthsToShow]);
+
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
@@ -398,17 +401,28 @@ export default function TeamDetailScreen() {
             onRefresh={handleRefresh}
             expectedCount={filteredGames.length}
           />
+
+          
+          {/* <GamesList
+            games={mockGames}
+            loading={gamesLoading}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            expectedCount={filteredGames.length}
+          /> */}
+
+       
         </View>
 
         {/* News Page */}
-        <View key="news" style={{ flex: 1 }}>
+        <ScrollView key="news" style={{ flex: 1 }}>
           <NewsHighlightsList
             items={combinedNewsAndHighlights}
             loading={newsLoading || highlightsLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
           />
-        </View>
+        </ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -490,7 +504,7 @@ export default function TeamDetailScreen() {
 
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
-          <TeamForum teamId={teamId as string} />
+          <TeamForum teamId={teamId as string} league="NBA" />
         </View>
       </PagerView>
       {/* --- Bottom Sheet --- */}

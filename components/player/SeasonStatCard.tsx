@@ -1,34 +1,34 @@
-import { usePlayerStats } from "hooks/usePlayerStats";
 import { useLocalSearchParams } from "expo-router";
+import { usePlayerStats } from "hooks/usePlayerStats";
 import {
   ActivityIndicator,
-  StyleSheet,
   Text,
   useColorScheme,
   View,
 } from "react-native";
 import { teams } from "../../constants/teams";
-import { Fonts } from "constants/fonts";
 import CenteredHeader from "../Headings/CenteredHeader";
+import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
 type Props = {
   playerId: number;
   teamColor?: string;
   teamColorDark?: string;
-    season?: string; // 👈 add this
-
+  season?: string; // 👈 add this
 };
 
 export default function SeasonStatCard({
   playerId,
-  teamColor,
-  teamColorDark,
+  season,
 }: Props) {
-  const { aggregatedStats, loading, error } = usePlayerStats(playerId, "2024");
+  const { aggregatedStats, loading, error } = usePlayerStats(playerId, "2025");
   const isDark = useColorScheme() === "dark";
+  const styles = seasonStatCardStyles(isDark);
 
   if (loading) return <ActivityIndicator style={{ marginVertical: 20 }} />;
   if (error || !aggregatedStats)
     return <Text style={styles.error}>Failed to load stats</Text>;
+
+  const displayYear = season || new Date().getFullYear().toString();
 
   const {
     gamesPlayed,
@@ -48,75 +48,89 @@ export default function SeasonStatCard({
   const fgPercent =
     totalFGA > 0 ? safeFixed((totalFGM / totalFGA) * 100) : "0.0";
 
-  const activeColor = isDark ? teamColorDark || teamColor : teamColor;
-  const { id, teamId } = useLocalSearchParams<{ id: string; teamId: string }>();
-
+  const { teamId } = useLocalSearchParams<{ teamId: string }>();
   const sanitizedTeamId = String(teamId).replace(/"/g, "").trim();
 
   const teamObj = teams.find((t) => String(t.id) === sanitizedTeamId);
-const forceWhiteTextTeams = [
-  "Heat",
-  "Clippers",
-  "Rockets",
-  "Pistons",
-  "Bulls",
-  "Hornets",
-  "Trail Blazers",
-  "Kings",
-];
+  const forceWhiteTextTeams = [
+    "Heat",
+    "Clippers",
+    "Rockets",
+    "Pistons",
+    "Bulls",
+    "Hornets",
+    "Trail Blazers",
+    "Kings",
+  ];
+
+  // 👇 Move StatItem inside component so it can use styles
+  function StatItem({
+    label,
+    value,
+    color,
+  }: {
+    label: string;
+    value: string | number;
+    color?: string;
+  }) {
+    return (
+      <View style={styles.statItem}>
+        <Text style={[styles.statValue, { color: color || "#000" }]}>
+          {value}
+        </Text>
+        <Text style={styles.statLabel}>{label}</Text>
+      </View>
+    );
+  }
 
   return (
     <>
-      <CenteredHeader>
-        2024 Season
-      </CenteredHeader>
-      <View
-        style={[styles.card, { backgroundColor: isDark ? "#2e2e2e" : "#eee" }]}
-      >
+      <CenteredHeader>{displayYear} Season</CenteredHeader>
+      <View style={styles.card}>
         <View style={styles.statsRow}>
           <StatItem
             label="PTS"
             value={ppg}
-color={
-  isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
-    ? "#fff"
-    : isDark
-    ? teamObj?.secondaryColor
-    : teamObj?.color
-}
+            color={
+              isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
+                ? "#fff"
+                : isDark
+                ? teamObj?.secondaryColor
+                : teamObj?.color
+            }
           />
           <StatItem
             label="AST"
             value={apg}
-color={
-  isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
-    ? "#fff"
-    : isDark
-    ? teamObj?.secondaryColor
-    : teamObj?.color
-}
+            color={
+              isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
+                ? "#fff"
+                : isDark
+                ? teamObj?.secondaryColor
+                : teamObj?.color
+            }
           />
           <StatItem
             label="REB"
             value={rpg}
-color={
-  isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
-    ? "#fff"
-    : isDark
-    ? teamObj?.secondaryColor
-    : teamObj?.color
-}
+            color={
+              isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
+                ? "#fff"
+                : isDark
+                ? teamObj?.secondaryColor
+                : teamObj?.color
+            }
           />
           <StatItem
             label="FG%"
             value={fgPercent}
-color={
-  isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
-    ? "#fff"
-    : isDark
-    ? teamObj?.secondaryColor
-    : teamObj?.color
-}
+            color={
+              isDark && teamObj && forceWhiteTextTeams.includes(teamObj.name)
+                ? "#fff"
+                : isDark
+                ? teamObj?.secondaryColor
+                : teamObj?.color
+            }
           />
         </View>
       </View>
@@ -124,58 +138,3 @@ color={
   );
 }
 
-function StatItem({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: string | number;
-  color?: string;
-}) {
-  return (
-    <View style={styles.statItem}>
-      <Text style={[styles.statValue, { color: color || "#000" }]}>
-        {value}
-      </Text>
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 8,
-    padding: 16,
-
-  },
-  title: {
-    fontSize: 14,
-    fontFamily: Fonts.OSSEMIBOLD,
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    fontSize: 18,
-    fontFamily: Fonts.OSBOLD,
-    color: "#000",
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: Fonts.OSREGULAR,
-    color: "#666",
-    marginTop: 2,
-  },
-  error: {
-    color: "red",
-    textAlign: "center",
-    marginVertical: 20,
-  },
-});

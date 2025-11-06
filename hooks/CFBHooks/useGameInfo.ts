@@ -9,22 +9,25 @@ type ESPNDateInput =
       timestamp?: number;
     };
 
-interface CFBGameInfoResult {
+interface GameInfoResult {
   headlineText?: string;
   loading: boolean;
   error: string | null;
   refresh: () => void;
 }
 
+type League = "cfb" | "nfl";
+
 /**
- * Fetches ESPN CFB game headline from competition.notes[0].headline only.
+ * Fetches ESPN game headline from competition.notes[0].headline.
  * Handles both regular matchups and bowl/championship games with TBD teams.
  */
-export const useCFBGameInfo = (
+export const useGameInfo = (
   homeEspnId?: number,
   awayEspnId?: number,
-  date?: ESPNDateInput
-): CFBGameInfoResult => {
+  date?: ESPNDateInput,
+  league: League = "cfb"
+): GameInfoResult => {
   const [headlineText, setHeadlineText] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,9 +73,9 @@ export const useCFBGameInfo = (
       const urls = dateOffsets.map((offset) => {
         const d = new Date(targetDate);
         d.setUTCDate(d.getUTCDate() + offset);
-        return `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${makeYMD(
-          d
-        )}`;
+        return `https://site.api.espn.com/apis/site/v2/sports/football/${
+          league === "cfb" ? "college-football" : "nfl"
+        }/scoreboard?dates=${makeYMD(d)}`;
       });
 
       // 🔄 Fetch all days in parallel
@@ -82,7 +85,7 @@ export const useCFBGameInfo = (
         .flatMap((r) => r.value.data?.events || []);
 
       if (!allEvents.length) {
-        console.warn("[CFB Headline] No events found in ESPN response.");
+        console.warn(`[${league.toUpperCase()} Headline] No events found in ESPN response.`);
         setHeadlineText(undefined);
         return;
       }
@@ -111,10 +114,9 @@ export const useCFBGameInfo = (
           const diff = Math.abs(eventTs - targetTs);
 
           if (
-            note.includes("bowl") ||
-            note.includes("championship") ||
-            name.includes("bowl") ||
-            name.includes("championship")
+            (league === "cfb" &&
+              (note.includes("bowl") || note.includes("championship") || name.includes("bowl") || name.includes("championship"))) ||
+            (league === "nfl" && diff < bestDiff)
           ) {
             if (diff < bestDiff) {
               bestDiff = diff;
@@ -132,17 +134,16 @@ export const useCFBGameInfo = (
       }
 
       const competition = game.competitions?.[0];
-      const noteHeadline =
-        competition?.notes?.[0]?.headline 
+      const noteHeadline = competition?.notes?.[0]?.headline;
 
       setHeadlineText(noteHeadline);
     } catch (err: any) {
-      console.error("[CFB Headline] Error fetching headline:", err.message);
+      console.error(`[${league.toUpperCase()} Headline] Error fetching headline:`, err.message);
       setError(err?.message || "Failed to fetch headline");
     } finally {
       setLoading(false);
     }
-  }, [homeEspnId, awayEspnId, date, skipFetch]);
+  }, [homeEspnId, awayEspnId, date, league, skipFetch]);
 
   useEffect(() => {
     if (!skipFetch) fetchData();

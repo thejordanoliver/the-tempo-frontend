@@ -28,8 +28,7 @@ const FavoriteTeamsSelector = ({
   const filteredTeams = useMemo(() => {
     const query = search.toLowerCase();
     return teams.filter((team) => {
-      const name =
-        team.fullName || team.name || team.displayName || "";
+      const name = team.fullName || team.name || team.displayName || "";
       return name.toLowerCase().includes(query);
     });
   }, [teams, search]);
@@ -54,7 +53,8 @@ const FavoriteTeamsSelector = ({
           isGridView
             ? {
                 justifyContent: "flex-start",
-                gap: 10,
+                gap: 12,
+                marginBottom: 12,
                 flexWrap: "wrap",
               }
             : undefined
@@ -72,18 +72,16 @@ const FavoriteTeamsSelector = ({
           return (
             <TeamCard
               item={displayItem}
-              isSelected={favorites.includes(`${item.league}:${item.id}`)}
-              onPress={() => toggleFavorite(item.league, item.id)}
+              isSelected={favorites.includes(
+                `${item.league}:${item.id.toString()}`
+              )}
+              onPress={() => toggleFavorite(item.league, item.id.toString())}
               isGridView={isGridView}
               itemWidth={itemWidth}
             />
           );
         }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 16,
-          paddingHorizontal: 0,
-        }}
       />
     </Animated.View>
   );

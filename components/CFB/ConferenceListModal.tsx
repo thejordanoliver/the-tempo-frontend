@@ -4,7 +4,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { Fonts } from "constants/fonts";
 import { BlurView } from "expo-blur";
 import React, {
   forwardRef,
@@ -20,6 +19,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModal.styles";
 
 export type ConferenceListModalRef = {
   present: () => void;
@@ -30,9 +30,10 @@ type Props = {
   onSelect: (conference: string | null) => void;
   onOpen?: () => void;
   onClose?: () => void;
+  league?: string; // ✅ Added
 };
 
-const conferences = [
+const baseConferences = [
   "All Conferences",
   "Top 25",
   "SEC",
@@ -49,11 +50,18 @@ const conferences = [
 ];
 
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
-  ({ onSelect, onOpen, onClose }, ref) => {
+  ({ onSelect, onOpen, onClose, league }, ref) => {
     const [selected, setSelected] = useState<string | null>(null);
     const colorScheme = useColorScheme();
     const isDark = colorScheme === "dark";
-    const styles = getStyles(isDark);
+    const styles = conferenceListModalStyles(isDark);
+
+    // ✅ Conditionally add A10 for CBB
+    const conferences = useMemo(() => {
+      return league === "cbb"
+        ? [...baseConferences.slice(0, 12), "Atlantic 10", ...baseConferences.slice(12)]
+        : baseConferences;
+    }, [league]);
 
     const snapPoints = useMemo(() => ["80%", "90%"], []);
     const modalRef = useRef<BottomSheetModal>(null);
@@ -66,7 +74,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
     return (
       <BottomSheetModal
         ref={modalRef}
-          index={2} // ✅ Start fully at 80%
+        index={2}
         snapPoints={snapPoints}
         onChange={(index) => {
           if (index >= 0) onOpen?.();
@@ -79,30 +87,32 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             disappearsOnIndex={-1}
           />
         )}
-        handleStyle={styles.handleStyle}
-        handleIndicatorStyle={styles.handleIndicatorStyle}
-        backgroundStyle={{ backgroundColor: "transparent", overflow: "hidden" }}
+        backgroundStyle={{
+          backgroundColor: "transparent",
+          overflow: "hidden",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+        }}
         handleComponent={() => (
           <View style={styles.header}>
-            <View
-              style={{
-                backgroundColor: "#777",
-                width: 36,
-                height: 4,
-                borderRadius: 2,
-                zIndex: 9999,
-                marginBottom: 4,
-              }}
-            />
-            <Text style={styles.headerText}>Leagues</Text>
+            <View style={styles.handleIndicatorStyle} />
+            <Text style={styles.headerText}>Conferences</Text>
           </View>
         )}
       >
-        <BlurView
-          intensity={80}
-          tint={"systemThinMaterial"}
-          style={{ flex: 1 }}
+        <View
+          style={{
+            flex: 1,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            overflow: "hidden",
+          }}
         >
+          <BlurView
+            intensity={80}
+            tint="systemThinMaterial"
+            style={StyleSheet.absoluteFill}
+          />
           <BottomSheetScrollView
             contentContainerStyle={{ padding: 16, paddingTop: 60 }}
           >
@@ -133,65 +143,10 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
               );
             })}
           </BottomSheetScrollView>
-        </BlurView>
+        </View>
       </BottomSheetModal>
     );
   }
 );
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    handleStyle: {
-      backgroundColor: "transparent",
-      height: 40,
-      justifyContent: "center",
-      alignItems: "center",
-      position: "absolute",
-      left: 8,
-      right: 8,
-      top: 0,
-    },
-    handleIndicatorStyle: {
-      backgroundColor: "#888",
-      width: 36,
-      height: 4,
-      borderRadius: 2,
-    },
-    header: {
-      position: "absolute",
-      width: "100%",
-      top: 0,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: isDark ? "#444" : "#aaa",
-      paddingVertical: 12,
-    },
-    headerText: {
-      textAlign: "center",
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontSize: 18,
-    },
-    leagueButton: {
-      paddingVertical: 12,
-      backgroundColor: "transparent",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? "#444" : "#777",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    leagueText: {
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
-    },
-  });
 
 export default ConferenceListModal;

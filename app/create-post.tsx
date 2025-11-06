@@ -118,9 +118,15 @@ const createPost = async () => {
     return;
   }
 
+  if (!league) {
+    Alert.alert("Error", "League is required to create a post.");
+    return;
+  }
+
   setLoading(true);
   const formData = new FormData();
   formData.append("text", newPostText);
+  formData.append("league", league); // ALWAYS include league
 
   media.forEach((item) => {
     const filename = item.uri.split("/").pop()!;
@@ -134,15 +140,10 @@ const createPost = async () => {
     } as any);
   });
 
-  // Include league if this is a league post
-  if (league && !teamId) {
-    formData.append("league", league);
-  }
-
   try {
-   const endpoint = teamId
-  ? `${BASE_URL}/api/forum/team/${teamId}`
-  : `${BASE_URL}/api/forum/league/${league}`; // league post
+    const endpoint = teamId
+      ? `${BASE_URL}/api/forum/team/${teamId}`
+      : `${BASE_URL}/api/forum/league/${league}`; // league post
 
     await axios.post(endpoint, formData, {
       headers: {

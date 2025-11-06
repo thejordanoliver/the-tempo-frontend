@@ -4,7 +4,11 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { TeamLocationSection, Weather } from "components/GameDetails";
+import {
+  LastFiveGamesSwitcher,
+  TeamLocationSection,
+  Weather,
+} from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
 import { neutralSiteGames, teams } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
@@ -12,18 +16,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
 import { useCFBGameOfficialsAndInjuries } from "hooks/CFBHooks/useCFBOfficials";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
-import { useCFBGameInfo } from "hooks/CFBHooks/useGameInfo";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { CFBGame } from "types/cfb";
+import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import CFBGameLeaders from "../GameDetails/CFBGameLeaders";
 import CFBTeamDrives from "../GameDetails/CFBTeamDrives";
-import LastFiveGamesSwitcher from "../GameDetails/LastFiveGames";
-import { CFBGameCenterInfo } from "./GameCenterInfo";
+import { CFBCenterInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
-
 type Props = {
   game: CFBGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -46,7 +49,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const displayDateStr = new Date(timestampNum * 1000).toLocaleDateString(
     "en-us",
     {
-      month: "numeric",
+      month: "short",
       day: "numeric",
     }
   ); // ✅ for UI
@@ -117,7 +120,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const awayLastGames = useLastFiveGames(Number(awayTeamData?.id || 0));
 
   // Snap points
-  const snapPoints = useMemo(() => ["60%", "80%", "94%"], []);
+  const snapPoints = useMemo(() => ["80%", "94%"], []);
 
   // Modal open/close
   useEffect(() => {
@@ -150,6 +153,10 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const { record: homeRecord } = useCFBTeamRecord(
     homeEspnId ? Number(homeEspnId) : undefined
   );
+
+  const apTop25 = useAPTop25();
+  const getTeamRank = (id: number | string) =>
+    getTeamRankFromAPById(id, apTop25);
 
   // Officials & Injuries
   const { officials, injuries, previousDrives, currentDrives } =
@@ -255,6 +262,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
         period: undefined,
         homeTimeouts: undefined,
         awayTimeouts: undefined,
+        score: undefined,
         refresh: () => {},
       };
 
@@ -265,13 +273,19 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     period,
     homeTimeouts,
     awayTimeouts,
+    score,
   } = possession;
 
-  const { headlineText } = useCFBGameInfo(
+  const { headlineText } = useGameInfo(
     Number(homeEspnId),
     Number(awayEspnId),
     gameDateStr
   );
+
+  const displayAwayScore =
+    possession?.score?.away ?? game?.scores?.away?.total ?? 0;
+  const displayHomeScore =
+    possession?.score?.home ?? game?.scores?.home?.total ?? 0;
 
   // Championship Game Detection (Jan 19, 2026)
   const isChampionshipGame =
@@ -375,8 +389,13 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
               <TeamInfo
                 team={awayTeamData}
                 teamName={awayTeamData.name ?? "Away"}
-                score={scores?.away?.total ?? 0}
-                opponentScore={scores?.home?.total ?? 0} // 👈 add this
+                rank={
+                  getTeamRank(away?.name ?? "") != null
+                    ? Number(getTeamRank(away?.name ?? ""))
+                    : undefined
+                }
+                score={displayAwayScore}
+                opponentScore={displayHomeScore} // 👈 add this
                 record={awayRecord?.overall ?? "0-0"}
                 isDark={isDark}
                 isGameOver={
@@ -395,7 +414,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                 lighter
               />
 
-              <CFBGameCenterInfo
+              <CFBCenterInfo
                 week={gameInfo?.week ?? "0"} // fallback
                 status={gameStatus}
                 date={displayDateStr}
@@ -415,8 +434,13 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
               <TeamInfo
                 team={homeTeamData}
                 teamName={homeTeamData.name ?? "Home"}
-                score={scores?.home?.total ?? 0}
-                opponentScore={scores?.away?.total ?? 0} // 👈 add this
+                rank={
+                  getTeamRank(home?.name ?? "") != null
+                    ? Number(getTeamRank(home?.name ?? ""))
+                    : undefined
+                }
+                score={displayHomeScore}
+                opponentScore={displayAwayScore} // 👈 add this
                 record={homeRecord?.overall ?? "0-0"}
                 isDark={isDark}
                 isGameOver={
@@ -468,15 +492,20 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
                 <LastFiveGamesSwitcher
                   isDark={isDark}
+                  lighter
                   home={{
                     teamCode: homeTeamData?.code ?? "",
-                    games: homeLastGames?.games ?? [],
+                    teamLogo: homeTeamData?.logo,
+                    teamLogoLight: homeTeamData?.logoLight,
+                    games: homeLastGames.games,
                   }}
                   away={{
                     teamCode: awayTeamData?.code ?? "",
-                    games: awayLastGames?.games ?? [],
+                    teamLogo: awayTeamData?.logo,
+                    teamLogoLight: awayTeamData?.logoLight,
+                    games: awayLastGames.games,
                   }}
-                  lighter
+                  league="CFB"
                 />
 
                 <TeamLocationSection

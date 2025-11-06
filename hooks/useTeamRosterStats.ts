@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
+const API_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY;
 
 type Player = {
   id: number;
@@ -97,7 +97,7 @@ export function useTeamRosterStats(teamId: number, season = "2025") {
         const statPromises = players.map(async (player) => {
           try {
             const statsRes = await axios.get<{ response: PlayerStat[] }>(
-              "https://v2.nba.api-sports.io/teams/statistics",
+              "https://v2.nba.api-sports.io/players/statistics",
               {
                 params: { id: player.id, season },
                 headers: API_HEADERS,

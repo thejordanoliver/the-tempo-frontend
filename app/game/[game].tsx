@@ -1,30 +1,31 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FloatingChatButton from "components/FloatingButton";
 import {
   BoxScore,
   GameLeaders,
   GameTeamStats,
   LastFiveGamesSwitcher,
   LineScore,
-  PredictionBar,
   TeamInjuriesTab,
   TeamLocationSection,
   Weather,
 } from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
-import GameOfficials from "components/GameDetails/GameOfficials";
 import GameUniforms from "components/GameDetails/GameUniforms";
-import { Fonts } from "constants/fonts";
+import LastPlay from "components/GameDetails/LastPlay";
+import WinPredictionVote from "components/GameDetails/WinPredictionVote";
+import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
+import { useGameInfo } from "hooks/useGameInfo";
+import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
-import { useGamePrediction } from "hooks/usePredictions";
+import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -32,14 +33,11 @@ import {
   Easing,
   ScrollView,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from "react-native";
 import { useChatStore } from "store/chatStore";
-import { matchBroadcastToGame } from "utils/matchBroadcast";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
@@ -49,7 +47,6 @@ export default function GameDetailsScreen() {
   const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
   const isScrollingRef = useRef(false);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
 
   const handleScrollStart = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
@@ -87,42 +84,42 @@ export default function GameDetailsScreen() {
     return null;
   }
   if (!parsedGame?.id) return null;
-
   const {
     home,
     away,
     date,
-
     time,
     status,
     homeScore,
     awayScore,
     period,
     clock,
-    venue,
+    arena,
     linescore,
     id: gameId,
   } = parsedGame;
 
-
   const gameDateObj = useMemo(() => {
-  if (!date) return new Date(); // fallback to now
-  const d = new Date(date);
-  return isNaN(d.getTime()) ? new Date() : d;
-}, [date]);
+    if (!date) return new Date(); // fallback to now
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }, [date]);
 
-const gameDate = useMemo(() => gameDateObj.toISOString().split("T")[0], [gameDateObj]);
+  const gameDate = useMemo(
+    () => gameDateObj.toISOString().split("T")[0],
+    [gameDateObj]
+  );
 
-const formattedDate = useMemo(
-  () =>
-    gameDateObj
-      ? gameDateObj.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
-      : "Unknown",
-  [gameDateObj]
-);
+  const formattedDate = useMemo(() => {
+    if (!gameDateObj || isNaN(gameDateObj.getTime())) return "Unknown";
 
-const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
+    return gameDateObj.toLocaleDateString("en-US", {
+      month: "short", // 👈 short month name (Jan, Feb, Mar, etc.)
+      day: "numeric",
+    });
+  }, [gameDateObj]);
 
+  const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
 
   const homeTeamData = teams.find(
     (t) =>
@@ -140,8 +137,8 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
   const homeColor = homeTeamData.color || "#007A33";
   const awayColor = awayTeamData.color || "#CE1141";
 
-  const venueNameFromGame = venue?.name ?? "";
-  const venueCityFromGame = venue?.city ?? "";
+  const venueNameFromGame = arena?.name ?? "";
+  const venueCityFromGame = arena?.city ?? "";
   const neutralArenaData = neutralVenues[venueNameFromGame];
 
   const cleanedArenaName = venueNameFromGame.replace(/\s*\(.*?\)/, "").trim();
@@ -158,19 +155,18 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
     venueImages[homeTeamData.code] ||
     homeTeamData.venueImage;
 
-
   const awayCode = useMemo(() => awayTeamData.code, [awayTeamData.code]);
   const homeCode = useMemo(() => homeTeamData.code, [homeTeamData.code]);
   const stableGameId = useMemo(() => gameId.toString(), [gameId]);
 
   const lat =
     neutralArenaData?.latitude ??
-    venue?.latitude ??
+    arena?.latitude ??
     homeTeamData.latitude ??
     null;
   const lon =
     neutralArenaData?.longitude ??
-    venue?.longitude ??
+    arena?.longitude ??
     homeTeamData.longitude ??
     null;
 
@@ -189,7 +185,7 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
     [isDark]
   );
 
-  const season = 2024;
+  const season = 2025;
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
   const { data: gameStats, loading: statsLoading } = useGameStatistics(gameId);
@@ -198,17 +194,15 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
     awayTeamIdNum,
     season
   );
-  const {
-    data: prediction,
-    loading: predictionLoading,
-    error: predictionError,
-  } = useGamePrediction(homeTeamIdNum, awayTeamIdNum, season);
+
   const { weather, weatherLoading, weatherError } = useWeatherForecast(
     lat,
     lon,
     date
   );
 
+  const { record: awayRecord } = useTeamRecord(away?.espnID);
+  const { record: homeRecord } = useTeamRecord(home?.espnID);
 
   const currentPlayoffGame = playoffGames.find((g) => g.id === gameId);
   const awayIsWinner =
@@ -257,7 +251,6 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
       ? `Game ${currentPlayoffGame.gameNumber}`
       : null;
 
-
   const { broadcasts } = useGameBroadcasts(
     homeTeamData.name,
     awayTeamData.name,
@@ -272,15 +265,78 @@ const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
     awayTeamData.name
   );
 
-const homeScoreValue = parsedGame.scores?.home?.points ?? 0;
-const awayScoreValue = parsedGame.scores?.visitors?.points ?? 0;
+  // ESPN IDs
+  const homeEspnId = homeTeamData?.espnID;
+  const awayEspnId = awayTeamData?.espnID;
 
-const statusDisplay = status?.long || status?.short || "Unknown";
+  const { score: liveScore, isLive } = useGameScores(
+    "nba",
+    homeEspnId?.toString(),
+    awayEspnId?.toString(),
+    gameDate
+  );
+
+  const { headlineText } = useGameInfo(
+    Number(homeEspnId),
+    Number(awayEspnId),
+    gameDateStr
+  );
+
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
+
+  const homeScoreValue =
+    liveScore?.home.total ?? parsedGame.scores?.home?.points ?? 0;
+  const awayScoreValue =
+    liveScore?.away.total ?? parsedGame.scores?.visitors?.points ?? 0;
+
+  const statusDisplay =
+    typeof status === "string"
+      ? status
+      : status?.long || status?.short || "Unknown";
+
+  // --- Clock display ---
+  const displayClock = liveScore?.displayClock ?? parsedGame.status?.clock;
+  const displayPeriod = liveScore?.period ?? parsedGame.status?.period;
+
+  // --- Quarter / period label + halftime flag ---
+  const getQuarterLabel = (
+    currentPeriod: number,
+    totalPeriods: number = 4,
+    statusText?: string
+  ) => {
+    if (statusText?.toLowerCase() === "halftime")
+      return { label: "Halftime", halftime: true };
+
+    switch (currentPeriod) {
+      case 1:
+        return { label: "1st", halftime: false };
+      case 2:
+        return { label: "2nd", halftime: false };
+      case 3:
+        return { label: "3rd", halftime: false };
+      case 4:
+        return { label: "4th", halftime: false };
+      default:
+        const otNumber = currentPeriod - totalPeriods;
+        return { label: `OT${otNumber}`, halftime: false };
+    }
+  };
+
+  const { label: quarterLabel, halftime } = getQuarterLabel(
+    displayPeriod,
+    4,
+    liveScore?.statusText
+  );
+
   // Replace your currentClock logic
   const [refreshTick, setRefreshTick] = useState(0);
-
   useEffect(() => {
-    if (status !== "In Progress") return;
+    if (status !== "In Play") return;
 
     const interval = setInterval(() => {
       // increment the tick to trigger re-render
@@ -289,6 +345,14 @@ const statusDisplay = status?.long || status?.short || "Unknown";
 
     return () => clearInterval(interval);
   }, [status]);
+  const normalizedStatus = (() => {
+    if (typeof status === "string") return status;
+    if (status?.long) return status.long;
+    if (status?.short) return status.short;
+    return "Unknown";
+  })();
+  const showBoxScore =
+    normalizedStatus === "Finished" || normalizedStatus === "In ProgrPlayess";
 
   return (
     <>
@@ -300,143 +364,118 @@ const statusDisplay = status?.long || status?.short || "Unknown";
         onScrollEndDrag={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
-   <GameHeader
-  homeTeamData={homeTeamData}
-  awayTeamData={awayTeamData}
-  home={home}
-  away={away}
-  homeScore={homeScoreValue}
-  awayScore={awayScoreValue}
-  status={statusDisplay}   // ← use this
-  period={period}
-  displayClock={clock}
-  colors={colors}
-  isDark={isDark}
-  formattedDate={formattedDate}
-  time={time}
-  networkString={broadcastText}
-  seriesSummary={seriesSummary}
-  getGameNumberLabel={getGameNumberLabel}
-  refreshTick={refreshTick}
-/>
-
-
+        <GameHeader
+          headlineText={headlineText}
+          homeTeamData={homeTeamData}
+          awayTeamData={awayTeamData}
+          home={home}
+          away={away}
+          halftime={halftime}
+          homeScore={homeScoreValue}
+          awayScore={awayScoreValue}
+          status={statusDisplay}
+          period={quarterLabel}
+          displayClock={displayClock}
+          colors={colors}
+          isDark={isDark}
+          formattedDate={formattedDate}
+          time={time}
+          networkString={broadcastText}
+          seriesSummary={seriesSummary}
+          getGameNumberLabel={getGameNumberLabel}
+          refreshTick={refreshTick}
+          homeRecord={homeRecord}
+          awayRecord={awayRecord}
+        />
         <View style={{ gap: 20, marginTop: 20 }}>
-      
-            <GameOddsSection
-              date={date}
-              gameDate={gameDate}
-              homeCode={homeCode}
-              awayCode={awayCode}
-              gameId={stableGameId}
+          <LastPlay lastPlay={liveScore?.lastPlay} />
+          <GameOddsSection
+            date={date}
+            gameDate={gameDate}
+            homeCode={homeCode}
+            awayCode={awayCode}
+            gameId={stableGameId}
+          />
+          <WinPredictionVote
+            gameId={parsedGame.id}
+            awayTeam={{
+              id: awayTeamData.id,
+              name: awayTeamData.name || awayTeamData.code,
+              code: awayTeamData.code || awayTeamData.code,
+              logo: awayTeamData.logo,
+              logoLight: awayTeamData.logoLight,
+              color: awayTeamData.color,
+            }}
+            homeTeam={{
+              id: homeTeamData.id,
+              name: homeTeamData.name || homeTeamData.code,
+              code: homeTeamData.code || homeTeamData.code,
+              logo: homeTeamData.logo,
+              logoLight: homeTeamData.logoLight,
+              color: homeTeamData.color,
+            }}
+          />
+          {lineScore && (
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeTeamData.code}
+              awayCode={awayTeamData.code}
             />
-
-            {linescore && (
-              <LineScore
-                linescore={linescore}
-                homeCode={homeTeamData.code}
-                awayCode={awayTeamData.code}
-              />
-            )}
-
-        
-
-            <GameLeaders
-              gameId={gameId.toString()}
-              awayTeamId={awayTeamIdNum}
-              homeTeamId={homeTeamIdNum}
-            />
-
-            <BoxScore
-              gameId={gameId.toString()}
-              homeTeamId={homeTeamIdNum}
-              awayTeamId={awayTeamIdNum}
-            />
-            {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
-
-            <LastFiveGamesSwitcher
-              isDark={isDark}
-              home={{
-                teamCode: homeTeamData.code,
-                teamLogo: homeTeamData.logo,
-                teamLogoLight: homeTeamData.logoLight,
-                games: homeLastGames.games,
-              }}
-              away={{
-                teamCode: awayTeamData.code,
-                teamLogo: awayTeamData.logo,
-                teamLogoLight: awayTeamData.logoLight,
-                games: awayLastGames.games,
-              }}
-            />
-            <GameOfficials officials={data?.officials ?? []} />
-            <TeamInjuriesTab injuries={data?.injuries ?? []} />
-
-            <GameUniforms
-              homeTeamId={homeTeamData.id}
-              awayTeamId={awayTeamData.id}
-            />
-
-            <TeamLocationSection
-              venueImage={resolvedArenaImage}
-              venueName={resolvedArenaName}
-              location={resolvedArenaCity}
-              address={resolvedArenaAddress}
-              venueCapacity={resolvedArenaCapacity}
-              loading={weatherLoading}
-              error={weatherError}
-            />
-
-            <Weather
-              address={resolvedArenaAddress}
-              weather={weather}
-              loading={weatherLoading}
-              error={weatherError}
-            />
-  
+          )}
+          <GameLeaders
+            gameId={gameId.toString()}
+            awayTeamId={awayTeamIdNum}
+            homeTeamId={homeTeamIdNum}
+          />
+          <BoxScore
+            gameId={gameId.toString()}
+            homeTeamId={homeTeamIdNum}
+            awayTeamId={awayTeamIdNum}
+            gameStatus={parsedGame.status.long}
+          />
+          {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
+          <LastFiveGamesSwitcher
+            isDark={isDark}
+            home={{
+              teamCode: homeTeamData.code,
+              teamLogo: homeTeamData.logo,
+              teamLogoLight: homeTeamData.logoLight,
+              games: homeLastGames.games,
+            }}
+            away={{
+              teamCode: awayTeamData.code,
+              teamLogo: awayTeamData.logo,
+              teamLogoLight: awayTeamData.logoLight,
+              games: awayLastGames.games,
+            }}
+            league="NBA"
+          />
+          <TeamInjuriesTab injuries={data?.injuries ?? []} />
+          <GameUniforms
+            homeTeamId={homeTeamData.id}
+            awayTeamId={awayTeamData.id}
+          />
+          <TeamLocationSection
+            venueImage={resolvedArenaImage}
+            venueName={resolvedArenaName}
+            location={resolvedArenaCity}
+            address={resolvedArenaAddress}
+            venueCapacity={resolvedArenaCapacity}
+            loading={weatherLoading}
+            error={weatherError}
+          />
+          <Weather
+            address={resolvedArenaAddress}
+            weather={weather}
+            loading={weatherLoading}
+            error={weatherError}
+          />
         </View>
       </ScrollView>
-
-      <Animated.View
-        style={{
-          opacity: opacityAnim,
-          position: "absolute",
-          bottom: 100,
-          left: 0,
-          right: 0,
-        }}
-        pointerEvents={isChatOpen ? "none" : "auto"}
-      >
-        <FloatingChatButton gameId={gameId} openChat={openChat} />
-      </Animated.View>
+      <MemoizedFloatingChatButton gameId={gameId} />
     </>
   );
 }
-
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 24,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-  teamsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    borderBottomWidth: 1,
-    paddingBottom: 12,
-    position: "relative",
-  },
-  playoffSummaryContainer: {
-    marginHorizontal: 12,
-    position: "absolute",
-    top: -16,
-    borderRadius: 6,
-    backgroundColor: "#22222222",
-    alignItems: "center",
-  },
-  playoffSummaryText: {
-    fontFamily: Fonts.OSEXTRALIGHT,
-    fontSize: 12,
-    textAlign: "center",
-  },
+  container: { paddingVertical: 24, paddingHorizontal: 12, paddingBottom: 60 },
 });

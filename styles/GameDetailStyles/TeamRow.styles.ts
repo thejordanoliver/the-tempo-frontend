@@ -36,6 +36,7 @@ export type NFLProps = {
   team: {
     id: string;
     name: string;
+    code: string;
     logo: any;
     record?: string;
   };
@@ -62,7 +63,7 @@ export type NBAProps = {
     record?: string;
     logo: any;
     code?: string;
-    id?: string;
+    id?: number;
   };
   size?: SizeType
   isDark: boolean;
@@ -155,7 +156,7 @@ export const sizeStyles = {
   },
   medium: {
     score: { fontSize: 36, width: 60 },
-    preGameRecord: { fontSize: 30, width: 60 },
+    preGameRecord: { fontSize: 24, width: 60 },
     logo: { width: 50, height: 50 },
     teamName: { fontSize: 12 },
     record: { fontSize: 12 },

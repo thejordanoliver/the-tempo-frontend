@@ -42,10 +42,10 @@ type AggregatedStats = {
   minutesPlayed: number;
 };
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
-export function usePlayerStats(playerId: number, season = "2024") {
+export function usePlayerStats(playerId: number, season = "2025") {
   const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

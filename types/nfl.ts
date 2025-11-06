@@ -15,6 +15,7 @@ export interface NFLPlayer {
   experience?: number | null;
   image?: string;
   teamId: number;
+  
 }
 
 export type NFLTeam = {
@@ -45,6 +46,8 @@ export type NFLTeam = {
   longitude: number;
   venueImage: any;
   venueCapacity: string;
+    banner?: any; // <-- add this
+
 };
 
 export type NFLGame = {

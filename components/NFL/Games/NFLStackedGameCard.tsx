@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter } from "utils/nflGameCardUtils";
 
 type Props = {
   game: any;
@@ -152,26 +153,6 @@ function NFLStackedGameCard({ game, isDark }: Props) {
   );
 
   const broadcastText = getBroadcastDisplay(broadcasts);
-
-  // --- Quarter formatter ---
-  const formatQuarter = (period?: number | string) => {
-    if (!period) return "";
-    const val =
-      typeof period === "string" ? period.toLowerCase() : String(period);
-    if (val.includes("end")) return "End";
-    if (val.includes("half")) return "Halftime";
-    if (val.includes("ot")) return "OT";
-    if (val.includes("q1")) return "1st";
-    if (val.includes("q2")) return "2nd";
-    if (val.includes("q3")) return "3rd";
-    if (val.includes("q4")) return "4th";
-    const num = Number(val);
-    if (!isNaN(num)) {
-      if (num >= 1 && num <= 4) return ["1st", "2nd", "3rd", "4th"][num - 1];
-      if (num >= 5) return `${num - 4}OT`;
-    }
-    return val;
-  };
 
   // --- Winner/loser style ---
   const getTeamStyle = useMemo(

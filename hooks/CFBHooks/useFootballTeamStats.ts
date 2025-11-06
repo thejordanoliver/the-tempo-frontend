@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-
-const KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY
+const KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
 
 export function useFootballTeamStats(gameId: string | number) {
   const [stats, setStats] = useState<any[] | null>(null);
@@ -10,7 +9,14 @@ export function useFootballTeamStats(gameId: string | number) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!gameId) return;
+    // Convert gameId to number safely
+    const numericGameId = typeof gameId === "string" ? parseInt(gameId, 10) : gameId;
+
+    if (!numericGameId || numericGameId <= 0) {
+      setStats(null);
+      setLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
       setLoading(true);
@@ -18,7 +24,7 @@ export function useFootballTeamStats(gameId: string | number) {
         const response = await axios.get(
           "https://api-american-football.p.rapidapi.com/games/statistics/teams",
           {
-            params: { id: gameId },
+            params: { id: numericGameId },
             headers: {
               "x-rapidapi-key": KEY,
               "x-rapidapi-host": "api-american-football.p.rapidapi.com",
@@ -26,7 +32,6 @@ export function useFootballTeamStats(gameId: string | number) {
           }
         );
         setStats(response.data.response || []);
-
       } catch (err: any) {
         setError(err.message || "Failed to fetch team stats");
       } finally {

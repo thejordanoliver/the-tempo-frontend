@@ -56,7 +56,9 @@ export default function CalendarModal({
 }: Props) {
   const systemColorScheme = useColorScheme();
   const [isDark, setIsDark] = useState(systemColorScheme === "dark");
-  const [selectedDate, setSelectedDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
+const [selectedDate, setSelectedDate] = useState(
+  dayjs().tz("America/New_York").format("YYYY-MM-DD")
+);
   const [calendarKey, setCalendarKey] = useState(0); // force re-render to update `initialDate`
 
   useEffect(() => {
@@ -117,7 +119,8 @@ export default function CalendarModal({
           {/* Calendar */}
          <Calendar
   key={calendarKey}
-  current={selectedDate}
+  current={dayjs(selectedDate).tz("America/New_York").format("YYYY-MM-DD")}
+
   markedDates={{
     ...markedDates,
     [selectedDate]: {

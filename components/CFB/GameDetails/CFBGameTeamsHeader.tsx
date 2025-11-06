@@ -1,11 +1,12 @@
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { getTeamLogo, getTeamName } from "constants/teamsCFB";
-import { StyleSheet, View } from "react-native";
-import { CFBGameCenterInfo } from "./CFBGameCenterInfo";
+import { StyleSheet, Text, View } from "react-native";
 import { CFBTeamRow } from "./CFBTeamRow";
-
+import { CFBGameCenterInfo } from "./GameInfo";
 type Props = {
-  homeTeam: any;
   awayTeam: any;
+  homeTeam: any;
   scores: any;
   possessionTeamId?: string;
   homeTimeouts?: number;
@@ -20,11 +21,13 @@ type Props = {
   awayRecord?: string;
   formattedDate?: string; // ✅ new props
   formattedTime?: string; // ✅ new props
+  networkString?: string;
+  headlineText?: string;
 };
 
 export default function CFBGameHeader({
-  homeTeam,
   awayTeam,
+  homeTeam,
   scores,
   possessionTeamId,
   homeTimeouts = 0,
@@ -37,83 +40,111 @@ export default function CFBGameHeader({
   isDark,
   homeRecord,
   awayRecord,
+  networkString = "",
+  headlineText,
   formattedDate = "", // default
   formattedTime = "", // default
 }: Props) {
   const styles = getStyles(isDark);
 
   return (
-    <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
-      <CFBTeamRow
-        team={{
-          id: String(awayTeam.id),
-          espnID: String(awayTeam.espnID),
-          shortName: awayTeam.shortName,
-          name:
-            getTeamName(awayTeam.id, awayTeam.nickname) ||
-            awayTeam.nickname ||
-            "Away",
-          logo: getTeamLogo(awayTeam.id, isDark),
-          record: awayRecord ?? "0-0",
-        }}
-        isDark={isDark}
-        isHome={false}
-        score={scores?.away?.total}
-        opponentScore={scores?.home?.total}
-        isWinner={scores?.away?.total > scores?.home?.total}
-        colors={colors}
-        status={status}
-        possessionTeamId={possessionTeamId}
-        timeouts={awayTimeouts}
-      />
+    <View style={[styles.container, { borderColor: colors.border }]}>
+      {/* Headline (optional) */}
+      {headlineText ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText} numberOfLines={1}>
+            {headlineText}
+          </Text>
+        </View>
+      ) : null}
 
-      <CFBGameCenterInfo
-        status={status}
-        date={formattedDate} // ✅ pass formatted date
-        time={formattedTime} // ✅ pass formatted time
-        period={period}
-        clock={displayClock}
-        colors={colors}
-        isDark={isDark}
-        playoffInfo=""
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        downAndDistance={downAndDistance}
-      />
+      <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
+        <CFBTeamRow
+          team={{
+            id: String(awayTeam.id),
+            espnID: String(awayTeam.espnID),
+            shortName: awayTeam.code,
+            name:
+              getTeamName(awayTeam.id, awayTeam.nickname) ||
+              awayTeam.nickname ||
+              "Away",
+            logo: getTeamLogo(awayTeam.id, isDark),
+            record: awayRecord ?? "0-0",
+          }}
+          isDark={isDark}
+          isHome={false}
+          score={scores?.away?.total}
+          opponentScore={scores?.home?.total}
+          isWinner={scores?.away?.total > scores?.home?.total}
+          colors={colors}
+          status={status}
+          possessionTeamId={possessionTeamId}
+          timeouts={awayTimeouts}
+        />
 
-      <CFBTeamRow
-        team={{
-          id: String(homeTeam.id),
-          espnID: String(homeTeam.espnID),
-          shortName: homeTeam.shortName,
-          name:
-            getTeamName(homeTeam.id, homeTeam.nickname) ||
-            homeTeam.nickname ||
-            "Home",
-          logo: getTeamLogo(homeTeam.id, isDark),
-          record: homeRecord ?? "0-0",
-        }}
-        isDark={isDark}
-        isHome
-        score={scores?.home?.total}
-        opponentScore={scores?.away?.total}
-        isWinner={scores?.home?.total > scores?.away?.total}
-        colors={colors}
-        status={status}
-        possessionTeamId={possessionTeamId}
-        timeouts={homeTimeouts}
-      />
+        <View>
+          <CFBGameCenterInfo
+            status={status}
+            date={formattedDate} // ✅ pass formatted date
+            time={formattedTime} // ✅ pass formatted time
+            period={period}
+            clock={displayClock}
+            colors={colors}
+            isDark={isDark}
+            playoffInfo=""
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            downAndDistance={downAndDistance}
+            broadcastNetworks={networkString}
+          />
+        </View>
+        <CFBTeamRow
+          team={{
+            id: String(homeTeam.id),
+            espnID: String(homeTeam.espnID),
+            shortName: homeTeam.code,
+            name:
+              getTeamName(homeTeam.id, homeTeam.nickname) ||
+              homeTeam.nickname ||
+              "Home",
+            logo: getTeamLogo(homeTeam.id, isDark),
+            record: homeRecord ?? "0-0",
+          }}
+          isDark={isDark}
+          isHome
+          score={scores?.home?.total}
+          opponentScore={scores?.away?.total}
+          isWinner={scores?.home?.total > scores?.away?.total}
+          colors={colors}
+          status={status}
+          possessionTeamId={possessionTeamId}
+          timeouts={homeTimeouts}
+        />
+      </View>
     </View>
   );
 }
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
+    container: {
+      borderBottomWidth: 1,
+      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+    },
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
-      borderBottomWidth: 1,
-      paddingBottom: 12,
-      backgroundColor: isDark ? "#1d1d1d" : "#fff",
+      alignItems: "center",
+      paddingBottom: 4,
+    },
+    headlineContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headlineText: {
+      fontSize: 12,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontFamily: Fonts.OSEXTRALIGHT,
+      textAlign: "center",
     },
   });

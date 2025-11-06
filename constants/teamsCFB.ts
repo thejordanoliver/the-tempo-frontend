@@ -1,294 +1,301 @@
 // constants/teams.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { CFBTeam, Conference, Game, Venue } from "types/cfb";
+import { CFBTeam, Conference, Venue } from "types/cfb";
 
 //Logos
-import AirForceLogo from "assets/Football/CFB_Logos/AirForce.png";
-import AirForceLogoLight from "assets/Football/CFB_Logos/AirForceLight.png";
-import AkronLogo from "assets/Football/CFB_Logos/Akron.png";
-import AlabamaLogo from "assets/Football/CFB_Logos/Alabama.png";
-import AlabamaAMLogo from "assets/Football/CFB_Logos/AlabamaA&M.png";
-import AlabamaAMLogoLight from "assets/Football/CFB_Logos/AlabamaA&MLight.png";
-import AlabamaLogoLight from "assets/Football/CFB_Logos/AlabamaLight.png";
-import AlabamaStLogo from "assets/Football/CFB_Logos/AlabamaSt.png";
-import AppalachianStateLogo from "assets/Football/CFB_Logos/AppalachianState.png";
-import ArizonaLogo from "assets/Football/CFB_Logos/Arizona.png";
-import ArizonaStateLogo from "assets/Football/CFB_Logos/ArizonaState.png";
-import ArkansasPineBluffLogo from "assets/Football/CFB_Logos/Arkansas-PineBluff.png";
-import ArkansasLogo from "assets/Football/CFB_Logos/Arkansas.png";
-import ArkansasLogoLight from "assets/Football/CFB_Logos/ArkansasLight.png";
-import AuburnLogo from "assets/Football/CFB_Logos/Auburn.png";
-import AuburnLogoLight from "assets/Football/CFB_Logos/AuburnLight.png";
-import AustinPeayLogo from "assets/Football/CFB_Logos/AustinPeay.png";
-import BallStateLogo from "assets/Football/CFB_Logos/BallState.png";
-import BaylorLogo from "assets/Football/CFB_Logos/Baylor.png";
-import BaylorLogoLight from "assets/Football/CFB_Logos/BaylorLight.png";
-import BethuneCookmanLogo from "assets/Football/CFB_Logos/Bethune-Cookman.png";
-import BoiseStateLogo from "assets/Football/CFB_Logos/BoiseState.png";
-import BostonCollegeLogo from "assets/Football/CFB_Logos/BostonCollege.png";
-import BowlingGreenLogo from "assets/Football/CFB_Logos/BowlingGreen.png";
-import BryantLogo from "assets/Football/CFB_Logos/Bryant.png";
-import BucknellLogo from "assets/Football/CFB_Logos/Bucknell.png";
-import BuffaloLogo from "assets/Football/CFB_Logos/Buffalo.png";
-import BuffaloStateLogo from "assets/Football/CFB_Logos/BuffaloState.png";
-import ButlerLogo from "assets/Football/CFB_Logos/Butler.png";
-import BYULogo from "assets/Football/CFB_Logos/BYU.png";
-import BYULogoLight from "assets/Football/CFB_Logos/BYULight.png";
-import CaliforniaLogo from "assets/Football/CFB_Logos/California.png";
-import CaliforniaLogoLight from "assets/Football/CFB_Logos/CaliforniaLight.png";
-import CampbellLogo from "assets/Football/CFB_Logos/Campbell.png";
-import CentralConnecticutLogo from "assets/Football/CFB_Logos/CentralConnecticut.png";
-import CentralMichiganLogo from "assets/Football/CFB_Logos/CentralMichigan.png";
-import CentralMichiganLogoLight from "assets/Football/CFB_Logos/CentralMichiganLight.png";
-import CentralWashingtonLogo from "assets/Football/CFB_Logos/CentralWashington.png";
-import CharlestonSouthernLogo from "assets/Football/CFB_Logos/CharlestonSouthern.png";
-import CharlotteLogo from "assets/Football/CFB_Logos/Charlotte.png";
-import CharlotteLogoLight from "assets/Football/CFB_Logos/CharlotteLight.png";
-import ChattanoogaLogo from "assets/Football/CFB_Logos/Chattanooga.png";
-import CincinnatiLogo from "assets/Football/CFB_Logos/Cincinnati.png";
-import CincinnatiLogoLight from "assets/Football/CFB_Logos/CincinnatiLight.png";
-import ClemsonLogo from "assets/Football/CFB_Logos/Clemson.png";
-import ClemsonLogoLight from "assets/Football/CFB_Logos/ClemsonLight.png";
-import CoastalCarolinaLogo from "assets/Football/CFB_Logos/CoastalCarolina.png";
-import ColgateLogo from "assets/Football/CFB_Logos/Colgate.png";
-import ColgateLogoLight from "assets/Football/CFB_Logos/ColgateLight.png";
-import ColoradoLogo from "assets/Football/CFB_Logos/Colorado.png";
-import ColoradoStateLogo from "assets/Football/CFB_Logos/ColoradoState.png";
-import DelawareLogo from "assets/Football/CFB_Logos/Delaware.png";
-import DelawareStateLogo from "assets/Football/CFB_Logos/DelawareState.png";
-import DukeLogo from "assets/Football/CFB_Logos/Duke.png";
-import DukeLogoLight from "assets/Football/CFB_Logos/DukeLight.png";
-import DuquesneLogo from "assets/Football/CFB_Logos/Duquesne.png";
-import DuquesneLogoLight from "assets/Football/CFB_Logos/DuquesneLight.png";
-import EasternKentuckyLogo from "assets/Football/CFB_Logos/EasternKentucky.png";
-import EasternKentuckyLogoLight from "assets/Football/CFB_Logos/EasternKentuckyLight.png";
-import EasternMichiganLogo from "assets/Football/CFB_Logos/EasternMichigan.png";
-import EasternMichiganLogoLight from "assets/Football/CFB_Logos/EasternMichiganLight.png";
-import FAMULogo from "assets/Football/CFB_Logos/FAMU.png";
-import FAULogo from "assets/Football/CFB_Logos/FAU.png";
-import FIULogo from "assets/Football/CFB_Logos/FIU.png";
-import FloridaLogo from "assets/Football/CFB_Logos/Florida.png";
-import FloridaStateLogo from "assets/Football/CFB_Logos/FSU.png";
-import GeorgetownLogo from "assets/Football/CFB_Logos/Georgetown.png";
-import GeorgiaLogo from "assets/Football/CFB_Logos/Georgia.png";
-import GeorgiaSouthernLogo from "assets/Football/CFB_Logos/GeorgiaSouthern.png";
-import HawaiiLogo from "assets/Football/CFB_Logos/Hawaii.png";
-import HolyCrossLogo from "assets/Football/CFB_Logos/HolyCross.png";
-import HoustonLogo from "assets/Football/CFB_Logos/Houston.png";
-import IdahoStateLogo from "assets/Football/CFB_Logos/IdahoState.png";
-import IllinoisLogo from "assets/Football/CFB_Logos/Illinois.png";
-import IllinoisStateLogo from "assets/Football/CFB_Logos/IllinoisState.png";
-import IndianaLogo from "assets/Football/CFB_Logos/Indiana.png";
-import IndianaLogoLight from "assets/Football/CFB_Logos/IndianaLight.png";
-import IowaLogo from "assets/Football/CFB_Logos/Iowa.png";
-import IowaLogoLight from "assets/Football/CFB_Logos/IowaLight.png";
-import KansasLogo from "assets/Football/CFB_Logos/Kansas.png";
-import KansasStLogo from "assets/Football/CFB_Logos/KansasSt.png";
-import KansasStLogoLight from "assets/Football/CFB_Logos/KansasStLight.png";
-import KentuckyLogo from "assets/Football/CFB_Logos/Kentucky.png";
-import KentuckyLogoLight from "assets/Football/CFB_Logos/KentuckyLight.png";
-import LATechLogo from "assets/Football/CFB_Logos/LATech.png";
-import LIULogo from "assets/Football/CFB_Logos/LIU.png";
-import LSULogo from "assets/Football/CFB_Logos/LSU.png";
-import LSULogoLight from "assets/Football/CFB_Logos/LSULight.png";
-import MarshallLogo from "assets/Football/CFB_Logos/Marshall.png";
-import MarylandLogo from "assets/Football/CFB_Logos/Maryland.png";
-import MiamiOHLogo from "assets/Football/CFB_Logos/Miami(OH).png";
-import MiamiLogo from "assets/Football/CFB_Logos/Miami.png";
-import MichiganLogo from "assets/Football/CFB_Logos/Michigan.png";
-import MichiganStateLogo from "assets/Football/CFB_Logos/MichiganState.png";
-import MichiganStateLogoLight from "assets/Football/CFB_Logos/MichiganStateLight.png";
-import MinnesotaLogo from "assets/Football/CFB_Logos/Minnesota.png";
-import MinnesotaLogoLight from "assets/Football/CFB_Logos/MinnesotaLight.png";
-import MissouriLogo from "assets/Football/CFB_Logos/Missouri.png";
-import MissStLogo from "assets/Football/CFB_Logos/MissSt.png";
-import MiddleTennesseeLogo from "assets/Football/CFB_Logos/MTSU.png";
-import NavyLogo from "assets/Football/CFB_Logos/Navy.png";
-import NCStateLogo from "assets/Football/CFB_Logos/NCState.png";
-import NebraskaLogo from "assets/Football/CFB_Logos/Nebraska.png";
-import NebraskaLogoLight from "assets/Football/CFB_Logos/NebraskaLight.png";
-import NevadaLogo from "assets/Football/CFB_Logos/Nevada.png";
-import NevadaLogoLight from "assets/Football/CFB_Logos/NevadaLight.png";
-import NichollsLogo from "assets/Football/CFB_Logos/Nicholls.png";
-import NorfolkStLogo from "assets/Football/CFB_Logos/NorfolkSt.png";
-import NorthernArizonaLogo from "assets/Football/CFB_Logos/NorthernArizona.png";
-import NorthernArizonaLogoLight from "assets/Football/CFB_Logos/NorthernArizonaLight.png";
-import NorthernIllinoisLogo from "assets/Football/CFB_Logos/NorthernIllinois.png";
-import NorthTexasLogo from "assets/Football/CFB_Logos/NorthTexas.png";
-import NorthwesternLogo from "assets/Football/CFB_Logos/Northwestern.png";
-import NotreDameLogo from "assets/Football/CFB_Logos/NotreDame.png";
-import NotreDameLogoLight from "assets/Football/CFB_Logos/NotreDameLight.png";
-import OhioLogo from "assets/Football/CFB_Logos/Ohio.png";
-import OhioStLogo from "assets/Football/CFB_Logos/OhioState.png";
-import OhioStLogoLight from "assets/Football/CFB_Logos/OhioStateLight.png";
-import OklahomaLogo from "assets/Football/CFB_Logos/Oklahoma.png";
-import OklahomaLogoLight from "assets/Football/CFB_Logos/OklahomaLight.png";
-import OKStateLogo from "assets/Football/CFB_Logos/OklahomaState.png";
-import ODULogo from "assets/Football/CFB_Logos/OldDominion.png";
-import OleMissLogo from "assets/Football/CFB_Logos/OleMiss.png";
-import OleMissLogoLight from "assets/Football/CFB_Logos/OleMissLight.png";
-import OregonLogo from "assets/Football/CFB_Logos/Oregon.png";
-import OregonLogoLight from "assets/Football/CFB_Logos/OregonLight.png";
-import OregonStateLogo from "assets/Football/CFB_Logos/OregonState.png";
-import PennLogo from "assets/Football/CFB_Logos/Penn.png";
-import PennStateLogo from "assets/Football/CFB_Logos/PennState.png";
-import PittsburghLogo from "assets/Football/CFB_Logos/Pittsburgh.png";
-import PittsburghLogoLight from "assets/Football/CFB_Logos/PittsburghLight.png";
-import PrincetonLogo from "assets/Football/CFB_Logos/Princeton.png";
-import PurdueLogo from "assets/Football/CFB_Logos/Purdue.png";
-import RiceLogo from "assets/Football/CFB_Logos/Rice.png";
-import RiceLogoLight from "assets/Football/CFB_Logos/RiceLight.png";
-import RichmondLogo from "assets/Football/CFB_Logos/Richmond.png";
-import RichmondLogoLight from "assets/Football/CFB_Logos/RichmondLight.png";
-import RutgersLogo from "assets/Football/CFB_Logos/Rutgers.png";
-import SamHoustonLogo from "assets/Football/CFB_Logos/SamHouston.png";
-import SamHoustonLogoLight from "assets/Football/CFB_Logos/SamHoustonLight.png";
-import SanDiegoStLogo from "assets/Football/CFB_Logos/SanDiegoSt..png";
-import SouthDakotaStateLogo from "assets/Football/CFB_Logos/SDST.png";
-import SouthAlabamaLogo from "assets/Football/CFB_Logos/SouthAlabama.png";
-import StonehillLogo from "assets/Football/CFB_Logos/Stonehill.png";
-import TCULogo from "assets/Football/CFB_Logos/TCU.png";
-import TCULogoLight from "assets/Football/CFB_Logos/TCULight.png";
-import TempleLogo from "assets/Football/CFB_Logos/Temple.png";
-import TempleLogoLight from "assets/Football/CFB_Logos/TempleLight.png";
-import TennesseeLogo from "assets/Football/CFB_Logos/Tennessee.png";
-import TennesseeLogoLight from "assets/Football/CFB_Logos/TennesseeLight.png";
-import TennesseeTechLogo from "assets/Football/CFB_Logos/TennesseeTech.png";
-import TexasLogo from "assets/Football/CFB_Logos/Texas.png";
-import TexasAMLogo from "assets/Football/CFB_Logos/TexasA&M.png";
-import TexasAMLogoLight from "assets/Football/CFB_Logos/TexasA&MLight.png";
-import TexasLogoLight from "assets/Football/CFB_Logos/TexasLight.png";
-import TroyLogo from "assets/Football/CFB_Logos/Troy.png";
-import TulaneLogo from "assets/Football/CFB_Logos/Tulane.png";
-import TulsaLogo from "assets/Football/CFB_Logos/Tulsa.png";
-import TulsaLogoLight from "assets/Football/CFB_Logos/TulsaLight.png";
-import UCFLogo from "assets/Football/CFB_Logos/UCF.png";
-import UConnLogo from "assets/Football/CFB_Logos/UCONN.png";
-import UNCLogo from "assets/Football/CFB_Logos/UNC.png";
-import UNLVLogo from "assets/Football/CFB_Logos/UNLV.png";
-import UNLVLogoLight from "assets/Football/CFB_Logos/UNLVLight.png";
-import USCLogo from "assets/Football/CFB_Logos/USC.png";
-import USFLogo from "assets/Football/CFB_Logos/USF.png";
-import UtahLogo from "assets/Football/CFB_Logos/Utah.png";
-import UtahStateLogo from "assets/Football/CFB_Logos/UtahState.png";
-import UTEPLogo from "assets/Football/CFB_Logos/UTEP.png";
-import UTEPLogoLight from "assets/Football/CFB_Logos/UTEPLight.png";
-import UTSALogo from "assets/Football/CFB_Logos/UTSA.png";
-import VanderbiltLogo from "assets/Football/CFB_Logos/Vanderbilt.png";
-import VirginiaLogo from "assets/Football/CFB_Logos/Virginia.png";
-import VirginiaLogoLight from "assets/Football/CFB_Logos/VirginiaLight.png";
-import VirginiaTechLogo from "assets/Football/CFB_Logos/VirginiaTech.png";
-import VirginiaTechLogoLight from "assets/Football/CFB_Logos/VirginiaTechLight.png";
-import WakeForestLogo from "assets/Football/CFB_Logos/WakeForest.png";
-import WakeForestLogoLight from "assets/Football/CFB_Logos/WakeForestLight.png";
-import WesternKentuckyLogo from "assets/Football/CFB_Logos/WesternKentucky.png";
-import WesternMichiganLogo from "assets/Football/CFB_Logos/WesternMichigan.png";
-import WestVirginiaLogo from "assets/Football/CFB_Logos/WestVirginia.png";
-import WestVirginiaLogoLight from "assets/Football/CFB_Logos/WestVirginiaLight.png";
-import WisconsinLogo from "assets/Football/CFB_Logos/Wisconsin.png";
-import WyomingLogo from "assets/Football/CFB_Logos/Wyoming.png";
-import WyomingLogoLight from "assets/Football/CFB_Logos/WyomingLight.png";
-import ArkansasStateLogo from "../assets/Football/CFB_Logos/ArkansasState.png";
-import ArmyLogo from "../assets/Football/CFB_Logos/Army.png";
-import CentralArkansasLogo from "../assets/Football/CFB_Logos/CentralArkansas.png";
-import CornellLogo from "../assets/Football/CFB_Logos/Cornell.png";
-import DavidsonLogo from "../assets/Football/CFB_Logos/Davidson.png";
-import DrakeLogo from "../assets/Football/CFB_Logos/Drake.png";
-import ECULogo from "../assets/Football/CFB_Logos/EastCarolina.png";
-import EasternIllinoisLogo from "../assets/Football/CFB_Logos/EasternIllinois.png";
-import ElonLogo from "../assets/Football/CFB_Logos/Elon.png";
-import ETAMLogo from "../assets/Football/CFB_Logos/ETA&M.png";
-import FordhamLogo from "../assets/Football/CFB_Logos/Fordham.png";
-import FresnoStLogo from "../assets/Football/CFB_Logos/FresnoState.png";
-import Furman from "../assets/Football/CFB_Logos/Furman.png";
-import GardnerWebbLogo from "../assets/Football/CFB_Logos/Gardner-Webb.png";
-import GeorgiaStateLogo from "../assets/Football/CFB_Logos/GeorgiaState.png";
-import GeorgiaTechLogo from "../assets/Football/CFB_Logos/GeorgiaTech.png";
-import GramblingLogo from "../assets/Football/CFB_Logos/Grambling.png";
-import HarvardLogo from "../assets/Football/CFB_Logos/Harvard.png";
-import HoustonChristianLogo from "../assets/Football/CFB_Logos/HoustonChristian.png";
-import HowardLogo from "../assets/Football/CFB_Logos/Howard.png";
-import IdahoLogo from "../assets/Football/CFB_Logos/Idaho.png";
-import IncarnateWordLogo from "../assets/Football/CFB_Logos/IncarnateWord.png";
-import IndianaStateLogo from "../assets/Football/CFB_Logos/IndianaState.png";
-import IowaStateLogo from "../assets/Football/CFB_Logos/IowaState.png";
-import JamesMadisonLogo from "../assets/Football/CFB_Logos/JamesMadison.png";
-import JaxStateLogo from "../assets/Football/CFB_Logos/JaxState.png";
-import KennesawStateLogo from "../assets/Football/CFB_Logos/KennesawState.png";
-import KentStateLogo from "../assets/Football/CFB_Logos/KentState.png";
-import LafayetteLogo from "../assets/Football/CFB_Logos/Lafayette.png";
-import LibertyLogo from "../assets/Football/CFB_Logos/Liberty.png";
-import LouisianaLogo from "../assets/Football/CFB_Logos/Louisiana.png";
-import LouisvilleLogo from "../assets/Football/CFB_Logos/Louisville.png";
-import MaineLogo from "../assets/Football/CFB_Logos/Maine.png";
-import MaristLogo from "../assets/Football/CFB_Logos/Marist.png";
-import McNeeseLogo from "../assets/Football/CFB_Logos/McNeese.png";
-import MemphisLogo from "../assets/Football/CFB_Logos/Memphis.png";
-import MercerLogo from "../assets/Football/CFB_Logos/Mercer.png";
-import MerrimackLogo from "../assets/Football/CFB_Logos/Merrimack.png";
-import MississippiValleyStateLogo from "../assets/Football/CFB_Logos/MississippiValleyState.png";
-import MissouriStateLogo from "../assets/Football/CFB_Logos/MissouriState.png";
-import MonmouthLogo from "../assets/Football/CFB_Logos/Monmouth.png";
-import MontanaLogo from "../assets/Football/CFB_Logos/Montana.png";
-import MontanaLogoLight from "../assets/Football/CFB_Logos/MontanaLight.png";
-import MontanaStateLogo from "../assets/Football/CFB_Logos/MontanaState.png";
-import MorganStateLogo from "../assets/Football/CFB_Logos/MorganState.png";
-import NewMexicoLogo from "../assets/Football/CFB_Logos/NewMexico.png";
-import NewMexicoStateLogo from "../assets/Football/CFB_Logos/NewMexicoState.png";
-import NicholsLogo from "../assets/Football/CFB_Logos/Nichols.png";
-import NorthAlabamaLogo from "../assets/Football/CFB_Logos/NorthAlabama.png";
-import NorthCarolinaATLogo from "../assets/Football/CFB_Logos/NorthCarolinaA&T.png";
-import NorthDakotaLogo from "../assets/Football/CFB_Logos/NorthDakota.png";
-import NorthDakotaStateLogo from "../assets/Football/CFB_Logos/NorthDakotaState.png";
-import NorhternColoradoLogo from "../assets/Football/CFB_Logos/NorthernColorado.png";
-import RhodeIslandLogo from "../assets/Football/CFB_Logos/RhodeIsland.png";
-import RobertMorrisLogo from "../assets/Football/CFB_Logos/RobertMorris.png";
-import SacredHeartLogo from "../assets/Football/CFB_Logos/SacredHeart.png";
-import SaintFrancisLogo from "../assets/Football/CFB_Logos/SaintFrancis.png";
-import SamfordLogo from "../assets/Football/CFB_Logos/Samford.png";
-import SanDiegoLogo from "../assets/Football/CFB_Logos/SanDiego.png";
-import SanJoseStateLogo from "../assets/Football/CFB_Logos/SanJoséState.png";
-import SELouisianaLogo from "../assets/Football/CFB_Logos/SELouisiana.png";
-import SMULogo from "../assets/Football/CFB_Logos/SMU.png";
-import SouthCarolinaLogo from "../assets/Football/CFB_Logos/SouthCarolina.png";
-import SouthCarolinaLogoLight from "../assets/Football/CFB_Logos/SouthCarolinaLight.png";
-import SouthDakotaLogo from "../assets/Football/CFB_Logos/SouthDakota.png";
-import SoutheastMissouriStateLogo from "../assets/Football/CFB_Logos/SoutheastMissouriState.png";
-import SouthernLogo from "../assets/Football/CFB_Logos/Southern.png";
-import SouthernMissLogo from "../assets/Football/CFB_Logos/SouthernMiss.png";
-import SouthernUtahLogo from "../assets/Football/CFB_Logos/SouthernUtah.png";
-import StanfordLogo from "../assets/Football/CFB_Logos/Stanford.png";
-import StetsonLogo from "../assets/Football/CFB_Logos/Stetson.png";
-import SyracuseLogo from "../assets/Football/CFB_Logos/Syracuse.png";
-import TennesseeStateLogo from "../assets/Football/CFB_Logos/TennesseeState.png";
-import TexasStLogo from "../assets/Football/CFB_Logos/TexasSt.png";
-import TexasTechLogo from "../assets/Football/CFB_Logos/TexasTech.png";
-import TheCitadelLogo from "../assets/Football/CFB_Logos/TheCitadel.png";
-import ToledoLogo from "../assets/Football/CFB_Logos/Toledo.png";
-import ToledoLogoLight from "../assets/Football/CFB_Logos/ToledoLight.png";
-import UABLogo from "../assets/Football/CFB_Logos/UAB.png";
-import UAlbanyLogo from "../assets/Football/CFB_Logos/UAlbany.png";
-import UCLALogo from "../assets/Football/CFB_Logos/UCLA.png";
-import UCLALogoLight from "../assets/Football/CFB_Logos/UCLALight.png";
-import ULMLogo from "../assets/Football/CFB_Logos/ULM.png";
-import UmassLogo from "../assets/Football/CFB_Logos/Umass.png";
-import UtahLogoLight from "../assets/Football/CFB_Logos/UtahLight.png";
-import UtahStateLogoLight from "../assets/Football/CFB_Logos/UtahStateLight.png";
-import UTMartinLogo from "../assets/Football/CFB_Logos/UTMartin.png";
-import VillanovaLogo from "../assets/Football/CFB_Logos/Villanova.png";
-import VMILogo from "../assets/Football/CFB_Logos/VMI.png";
-import WashingtonLogo from "../assets/Football/CFB_Logos/Washington.png";
-import WashingtonLogoLight from "../assets/Football/CFB_Logos/WashingtonLight.png";
-import WashingtonStateLogo from "../assets/Football/CFB_Logos/WashingtonState.png";
-import WashingtonStateLogoLight from "../assets/Football/CFB_Logos/WashingtonStateLight.png";
-import WCarolinaLogo from "../assets/Football/CFB_Logos/WCarolina.png";
-import WeberStateLogo from "../assets/Football/CFB_Logos/WeberState.png";
-import WIllinoisLogo from "../assets/Football/CFB_Logos/WIllinois.png";
-import WoffordLogo from "../assets/Football/CFB_Logos/Wofford.png";
-import YaleLogo from "../assets/Football/CFB_Logos/Yale.png";
-import YoungstownStateLogo from "../assets/Football/CFB_Logos/YoungstownState.png";
-import SouthCarolinaStateLogo from "../assets/Football/CFB_Logos/SouthCarolinaState.png";
-import AlcornStLogo from "assets/Football/CFB_Logos/AlcornSt.png"
+import AirForceLogo from "assets/College_Logos/AirForce.png";
+import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
+import AkronLogo from "assets/College_Logos/Akron.png";
+import AlabamaLogo from "assets/College_Logos/Alabama.png";
+import AlabamaAMLogo from "assets/College_Logos/AlabamaA&M.png";
+import AlabamaAMLogoLight from "assets/College_Logos/AlabamaA&MLight.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLight.png";
+import AlabamaStLogo from "assets/College_Logos/AlabamaSt.png";
+import AlcornStLogo from "assets/College_Logos/AlcornSt.png";
+import AppalachianStateLogo from "assets/College_Logos/AppalachianState.png";
+import ArizonaLogo from "assets/College_Logos/Arizona.png";
+import ArizonaStateLogo from "assets/College_Logos/ArizonaState.png";
+import ArkansasPineBluffLogo from "assets/College_Logos/Arkansas-PineBluff.png";
+import ArkansasLogo from "assets/College_Logos/Arkansas.png";
+import ArkansasLogoLight from "assets/College_Logos/ArkansasLight.png";
+import AuburnLogo from "assets/College_Logos/Auburn.png";
+import AuburnLogoLight from "assets/College_Logos/AuburnLight.png";
+import AustinPeayLogo from "assets/College_Logos/AustinPeay.png";
+import BallStateLogo from "assets/College_Logos/BallState.png";
+import BaylorLogo from "assets/College_Logos/Baylor.png";
+import BaylorLogoLight from "assets/College_Logos/BaylorLight.png";
+import BethuneCookmanLogo from "assets/College_Logos/Bethune-Cookman.png";
+import BoiseStateLogo from "assets/College_Logos/BoiseState.png";
+import BostonCollegeLogo from "assets/College_Logos/BostonCollege.png";
+import BostonCollegeLogoLight from "assets/College_Logos/BostonCollegeLight.png";
+import BowlingGreenLogo from "assets/College_Logos/BowlingGreen.png";
+import BryantLogo from "assets/College_Logos/Bryant.png";
+import BucknellLogo from "assets/College_Logos/Bucknell.png";
+import BuffaloLogo from "assets/College_Logos/Buffalo.png";
+import BuffaloStateLogo from "assets/College_Logos/BuffaloState.png";
+import ButlerLogo from "assets/College_Logos/Butler.png";
+import BYULogo from "assets/College_Logos/BYU.png";
+import BYULogoLight from "assets/College_Logos/BYULight.png";
+import CaliforniaLogo from "assets/College_Logos/California.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLight.png";
+import CampbellLogo from "assets/College_Logos/Campbell.png";
+import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticut.png";
+import CentralMichiganLogo from "assets/College_Logos/CentralMichigan.png";
+import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLight.png";
+import CentralWashingtonLogo from "assets/College_Logos/CentralWashington.png";
+import CharlestonSouthernLogo from "assets/College_Logos/CharlestonSouthern.png";
+import CharlotteLogo from "assets/College_Logos/Charlotte.png";
+import CharlotteLogoLight from "assets/College_Logos/CharlotteLight.png";
+import ChattanoogaLogo from "assets/College_Logos/Chattanooga.png";
+import CincinnatiLogo from "assets/College_Logos/Cincinnati.png";
+import CincinnatiLogoLight from "assets/College_Logos/CincinnatiLight.png";
+import ClemsonLogo from "assets/College_Logos/Clemson.png";
+import ClemsonLogoLight from "assets/College_Logos/ClemsonLight.png";
+import CoastalCarolinaLogo from "assets/College_Logos/CoastalCarolina.png";
+import ColgateLogo from "assets/College_Logos/Colgate.png";
+import ColgateLogoLight from "assets/College_Logos/ColgateLight.png";
+import ColoradoLogo from "assets/College_Logos/Colorado.png";
+import ColoradoStateLogo from "assets/College_Logos/ColoradoState.png";
+import DelawareLogo from "assets/College_Logos/Delaware.png";
+import DelawareStateLogo from "assets/College_Logos/DelawareState.png";
+import DukeLogo from "assets/College_Logos/Duke.png";
+import DukeLogoLight from "assets/College_Logos/DukeLight.png";
+import DuquesneLogo from "assets/College_Logos/Duquesne.png";
+import DuquesneLogoLight from "assets/College_Logos/DuquesneLight.png";
+import EasternKentuckyLogo from "assets/College_Logos/EasternKentucky.png";
+import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLight.png";
+import EasternMichiganLogo from "assets/College_Logos/EasternMichigan.png";
+import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLight.png";
+import FAMULogo from "assets/College_Logos/FAMU.png";
+import FAULogo from "assets/College_Logos/FAU.png";
+import FIULogo from "assets/College_Logos/FIU.png";
+import FloridaLogo from "assets/College_Logos/Florida.png";
+import FloridaStateLogo from "assets/College_Logos/FSU.png";
+import GeorgetownLogo from "assets/College_Logos/Georgetown.png";
+import GeorgiaLogo from "assets/College_Logos/Georgia.png";
+import GeorgiaSouthernLogo from "assets/College_Logos/GeorgiaSouthern.png";
+import HawaiiLogo from "assets/College_Logos/Hawaii.png";
+import HolyCrossLogo from "assets/College_Logos/HolyCross.png";
+import HoustonLogo from "assets/College_Logos/Houston.png";
+import IdahoStateLogo from "assets/College_Logos/IdahoState.png";
+import IllinoisLogo from "assets/College_Logos/Illinois.png";
+import IllinoisStateLogo from "assets/College_Logos/IllinoisState.png";
+import IndianaLogo from "assets/College_Logos/Indiana.png";
+import IndianaLogoLight from "assets/College_Logos/IndianaLight.png";
+import IowaLogo from "assets/College_Logos/Iowa.png";
+import IowaLogoLight from "assets/College_Logos/IowaLight.png";
+import KansasLogo from "assets/College_Logos/Kansas.png";
+import KansasStLogo from "assets/College_Logos/KansasSt.png";
+import KansasStLogoLight from "assets/College_Logos/KansasStLight.png";
+import KentuckyLogo from "assets/College_Logos/Kentucky.png";
+import KentuckyLogoLight from "assets/College_Logos/KentuckyLight.png";
+import LATechLogo from "assets/College_Logos/LATech.png";
+import LindenwoodLogo from "assets/College_Logos/Lindenwood.png";
+import LIULogo from "assets/College_Logos/LIU.png";
+import LSULogo from "assets/College_Logos/LSU.png";
+import LSULogoLight from "assets/College_Logos/LSULight.png";
+import MarshallLogo from "assets/College_Logos/Marshall.png";
+import MarylandLogo from "assets/College_Logos/Maryland.png";
+import MiamiOHLogo from "assets/College_Logos/Miami(OH).png";
+import MiamiLogo from "assets/College_Logos/Miami.png";
+import MichiganLogo from "assets/College_Logos/Michigan.png";
+import MichiganStateLogo from "assets/College_Logos/MichiganState.png";
+import MichiganStateLogoLight from "assets/College_Logos/MichiganStateLight.png";
+import MinnesotaLogo from "assets/College_Logos/Minnesota.png";
+import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLight.png";
+import MissouriLogo from "assets/College_Logos/Missouri.png";
+import MissStLogo from "assets/College_Logos/MissSt.png";
+import MiddleTennesseeLogo from "assets/College_Logos/MTSU.png";
+import NavyLogo from "assets/College_Logos/Navy.png";
+import NCStateLogo from "assets/College_Logos/NCState.png";
+import NebraskaLogo from "assets/College_Logos/Nebraska.png";
+import NebraskaLogoLight from "assets/College_Logos/NebraskaLight.png";
+import NevadaLogo from "assets/College_Logos/Nevada.png";
+import NevadaLogoLight from "assets/College_Logos/NevadaLight.png";
+import NichollsLogo from "assets/College_Logos/Nicholls.png";
+import NorfolkStLogo from "assets/College_Logos/NorfolkSt.png";
+import NorthernArizonaLogo from "assets/College_Logos/NorthernArizona.png";
+import NorthernArizonaLogoLight from "assets/College_Logos/NorthernArizonaLight.png";
+import NorthernIllinoisLogo from "assets/College_Logos/NorthernIllinois.png";
+import NorthTexasLogo from "assets/College_Logos/NorthTexas.png";
+import NorthwesternLogo from "assets/College_Logos/Northwestern.png";
+import NotreDameLogo from "assets/College_Logos/NotreDame.png";
+import NotreDameLogoLight from "assets/College_Logos/NotreDameLight.png";
+import OhioLogo from "assets/College_Logos/Ohio.png";
+import OhioStLogo from "assets/College_Logos/OhioState.png";
+import OhioStLogoLight from "assets/College_Logos/OhioStateLight.png";
+import OklahomaLogo from "assets/College_Logos/Oklahoma.png";
+import OklahomaLogoLight from "assets/College_Logos/OklahomaLight.png";
+import OKStateLogo from "assets/College_Logos/OklahomaState.png";
+import ODULogo from "assets/College_Logos/OldDominion.png";
+import OleMissLogo from "assets/College_Logos/OleMiss.png";
+import OleMissLogoLight from "assets/College_Logos/OleMissLight.png";
+import OregonLogo from "assets/College_Logos/Oregon.png";
+import OregonLogoLight from "assets/College_Logos/OregonLight.png";
+import OregonStateLogo from "assets/College_Logos/OregonState.png";
+import PennLogo from "assets/College_Logos/Penn.png";
+import PennStateLogo from "assets/College_Logos/PennState.png";
+import PittsburghLogo from "assets/College_Logos/Pittsburgh.png";
+import PittsburghLogoLight from "assets/College_Logos/PittsburghLight.png";
+import PrincetonLogo from "assets/College_Logos/Princeton.png";
+import PurdueLogo from "assets/College_Logos/Purdue.png";
+import RiceLogo from "assets/College_Logos/Rice.png";
+import RiceLogoLight from "assets/College_Logos/RiceLight.png";
+import RichmondLogo from "assets/College_Logos/Richmond.png";
+import RichmondLogoLight from "assets/College_Logos/RichmondLight.png";
+import RutgersLogo from "assets/College_Logos/Rutgers.png";
+import SamHoustonLogo from "assets/College_Logos/SamHouston.png";
+import SamHoustonLogoLight from "assets/College_Logos/SamHoustonLight.png";
+import SanDiegoStLogo from "assets/College_Logos/SanDiegoSt..png";
+import SouthDakotaStateLogo from "assets/College_Logos/SDST.png";
+import SouthAlabamaLogo from "assets/College_Logos/SouthAlabama.png";
+import StonehillLogo from "assets/College_Logos/Stonehill.png";
+import TCULogo from "assets/College_Logos/TCU.png";
+import TCULogoLight from "assets/College_Logos/TCULight.png";
+import TempleLogo from "assets/College_Logos/Temple.png";
+import TempleLogoLight from "assets/College_Logos/TempleLight.png";
+import TennesseeLogo from "assets/College_Logos/Tennessee.png";
+import TennesseeLogoLight from "assets/College_Logos/TennesseeLight.png";
+import TennesseeTechLogo from "assets/College_Logos/TennesseeTech.png";
+import TexasLogo from "assets/College_Logos/Texas.png";
+import TexasAMLogo from "assets/College_Logos/TexasA&M.png";
+import TexasAMLogoLight from "assets/College_Logos/TexasA&MLight.png";
+import TexasLogoLight from "assets/College_Logos/TexasLight.png";
+import TroyLogo from "assets/College_Logos/Troy.png";
+import TulaneLogo from "assets/College_Logos/Tulane.png";
+import TulsaLogo from "assets/College_Logos/Tulsa.png";
+import TulsaLogoLight from "assets/College_Logos/TulsaLight.png";
+import UABLogoLight from "assets/College_Logos/UABLight.png";
+import UCFLogo from "assets/College_Logos/UCF.png";
+import UConnLogo from "assets/College_Logos/UCONN.png";
+import UNCLogo from "assets/College_Logos/UNC.png";
+import UNLVLogo from "assets/College_Logos/UNLV.png";
+import UNLVLogoLight from "assets/College_Logos/UNLVLight.png";
+import USCLogo from "assets/College_Logos/USC.png";
+import USFLogo from "assets/College_Logos/USF.png";
+import UtahLogo from "assets/College_Logos/Utah.png";
+import UtahStateLogo from "assets/College_Logos/UtahState.png";
+import UTEPLogo from "assets/College_Logos/UTEP.png";
+import UTEPLogoLight from "assets/College_Logos/UTEPLight.png";
+import UTSALogo from "assets/College_Logos/UTSA.png";
+import VanderbiltLogo from "assets/College_Logos/Vanderbilt.png";
+import VirginiaLogo from "assets/College_Logos/Virginia.png";
+import VirginiaLogoLight from "assets/College_Logos/VirginiaLight.png";
+import VirginiaTechLogo from "assets/College_Logos/VirginiaTech.png";
+import VirginiaTechLogoLight from "assets/College_Logos/VirginiaTechLight.png";
+import WakeForestLogo from "assets/College_Logos/WakeForest.png";
+import WakeForestLogoLight from "assets/College_Logos/WakeForestLight.png";
+import WesternKentuckyLogo from "assets/College_Logos/WesternKentucky.png";
+import WesternMichiganLogo from "assets/College_Logos/WesternMichigan.png";
+import WestVirginiaLogo from "assets/College_Logos/WestVirginia.png";
+import WestVirginiaLogoLight from "assets/College_Logos/WestVirginiaLight.png";
+import WisconsinLogo from "assets/College_Logos/Wisconsin.png";
+import WyomingLogo from "assets/College_Logos/Wyoming.png";
+import WyomingLogoLight from "assets/College_Logos/WyomingLight.png";
+import ArkansasStateLogo from "../assets/College_Logos/ArkansasState.png";
+import ArmyLogo from "../assets/College_Logos/Army.png";
+import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
+import CornellLogo from "../assets/College_Logos/Cornell.png";
+import DavidsonLogo from "../assets/College_Logos/Davidson.png";
+import DrakeLogo from "../assets/College_Logos/Drake.png";
+import ECULogo from "../assets/College_Logos/EastCarolina.png";
+import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
+import ElonLogo from "../assets/College_Logos/Elon.png";
+import ETAMLogo from "../assets/College_Logos/ETA&M.png";
+import FordhamLogo from "../assets/College_Logos/Fordham.png";
+import FresnoStLogo from "../assets/College_Logos/FresnoState.png";
+import Furman from "../assets/College_Logos/Furman.png";
+import GardnerWebbLogo from "../assets/College_Logos/Gardner-Webb.png";
+import GeorgiaStateLogo from "../assets/College_Logos/GeorgiaState.png";
+import GeorgiaTechLogo from "../assets/College_Logos/GeorgiaTech.png";
+import GeorgiaTechLogoLight from "../assets/College_Logos/GeorgiaTechLight.png";
+import GramblingLogo from "../assets/College_Logos/Grambling.png";
+import HarvardLogo from "../assets/College_Logos/Harvard.png";
+import HoustonChristianLogo from "../assets/College_Logos/HoustonChristian.png";
+import HowardLogo from "../assets/College_Logos/Howard.png";
+import IdahoLogo from "../assets/College_Logos/Idaho.png";
+import IncarnateWordLogo from "../assets/College_Logos/IncarnateWord.png";
+import IndianaStateLogo from "../assets/College_Logos/IndianaState.png";
+import IowaStateLogo from "../assets/College_Logos/IowaState.png";
+import JamesMadisonLogo from "../assets/College_Logos/JamesMadison.png";
+import JaxStateLogo from "../assets/College_Logos/JaxState.png";
+import KennesawStateLogo from "../assets/College_Logos/KennesawState.png";
+import KentStateLogo from "../assets/College_Logos/KentState.png";
+import LafayetteLogo from "../assets/College_Logos/Lafayette.png";
+import LibertyLogo from "../assets/College_Logos/Liberty.png";
+import LouisianaLogo from "../assets/College_Logos/Louisiana.png";
+import LouisvilleLogo from "../assets/College_Logos/Louisville.png";
+import MaineLogo from "../assets/College_Logos/Maine.png";
+import MaristLogo from "../assets/College_Logos/Marist.png";
+import McNeeseLogo from "../assets/College_Logos/McNeese.png";
+import MemphisLogo from "../assets/College_Logos/Memphis.png";
+import MercerLogo from "../assets/College_Logos/Mercer.png";
+import MerrimackLogo from "../assets/College_Logos/Merrimack.png";
+import MississippiValleyStateLogo from "../assets/College_Logos/MississippiValleyState.png";
+import MissouriStateLogo from "../assets/College_Logos/MissouriState.png";
+import MonmouthLogo from "../assets/College_Logos/Monmouth.png";
+import MontanaLogo from "../assets/College_Logos/Montana.png";
+import MontanaLogoLight from "../assets/College_Logos/MontanaLight.png";
+import MontanaStateLogo from "../assets/College_Logos/MontanaState.png";
+import MorganStateLogo from "../assets/College_Logos/MorganState.png";
+import NewMexicoLogo from "../assets/College_Logos/NewMexico.png";
+import NewMexicoStateLogo from "../assets/College_Logos/NewMexicoState.png";
+import NicholsLogo from "../assets/College_Logos/Nichols.png";
+import NorthAlabamaLogo from "../assets/College_Logos/NorthAlabama.png";
+import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
+import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
+import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
+import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
+import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
+import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
+import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
+import SaintFrancisLogo from "../assets/College_Logos/SaintFrancis.png";
+import SamfordLogo from "../assets/College_Logos/Samford.png";
+import SanDiegoLogo from "../assets/College_Logos/SanDiego.png";
+import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
+import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
+import SMULogo from "../assets/College_Logos/SMU.png";
+import SouthCarolinaLogo from "../assets/College_Logos/SouthCarolina.png";
+import SouthCarolinaLogoLight from "../assets/College_Logos/SouthCarolinaLight.png";
+import SouthCarolinaStateLogo from "../assets/College_Logos/SouthCarolinaState.png";
+import SouthDakotaLogo from "../assets/College_Logos/SouthDakota.png";
+import SoutheastMissouriStateLogo from "../assets/College_Logos/SoutheastMissouriState.png";
+import SouthernLogo from "../assets/College_Logos/Southern.png";
+import SouthernMissLogo from "../assets/College_Logos/SouthernMiss.png";
+import SouthernUtahLogo from "../assets/College_Logos/SouthernUtah.png";
+import StanfordLogo from "../assets/College_Logos/Stanford.png";
+import StetsonLogo from "../assets/College_Logos/Stetson.png";
+import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
+import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
+import TexasStLogo from "../assets/College_Logos/TexasSt.png";
+import TexasTechLogo from "../assets/College_Logos/TexasTech.png";
+import TheCitadelLogo from "../assets/College_Logos/TheCitadel.png";
+import TheCitadelLogoLight from "../assets/College_Logos/TheCitadelLight.png";
+import ToledoLogo from "../assets/College_Logos/Toledo.png";
+import ToledoLogoLight from "../assets/College_Logos/ToledoLight.png";
+import UABLogo from "../assets/College_Logos/UAB.png";
+import UAlbanyLogo from "../assets/College_Logos/UAlbany.png";
+import UCLALogo from "../assets/College_Logos/UCLA.png";
+import UCLALogoLight from "../assets/College_Logos/UCLALight.png";
+import ULMLogo from "../assets/College_Logos/ULM.png";
+import UmassLogo from "../assets/College_Logos/Umass.png";
+import USCLogoLight from "../assets/College_Logos/USCLight.png";
+import UtahLogoLight from "../assets/College_Logos/UtahLight.png";
+import UtahStateLogoLight from "../assets/College_Logos/UtahStateLight.png";
+import UTMartinLogo from "../assets/College_Logos/UTMartin.png";
+import VillanovaLogo from "../assets/College_Logos/Villanova.png";
+import VMILogo from "../assets/College_Logos/VMI.png";
+import WashingtonLogo from "../assets/College_Logos/Washington.png";
+import WashingtonLogoLight from "../assets/College_Logos/WashingtonLight.png";
+import WashingtonStateLogo from "../assets/College_Logos/WashingtonState.png";
+import WashingtonStateLogoLight from "../assets/College_Logos/WashingtonStateLight.png";
+import WCarolinaLogo from "../assets/College_Logos/WCarolina.png";
+import WeberStateLogo from "../assets/College_Logos/WeberState.png";
+import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
+import WoffordLogo from "../assets/College_Logos/Wofford.png";
+import YaleLogo from "../assets/College_Logos/Yale.png";
+import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
+
 // Stadiums
 import MiamiStadium from "assets/Football/Arenas/DolphinsStadium.webp";
 import EverBankStadium from "assets/Football/Arenas/FloridaGeorgiaStadium.webp";
@@ -298,12 +305,14 @@ import AuburnStadium from "../assets/Football/Arenas/AuburnStadium.webp";
 import BoiseStStadium from "../assets/Football/Arenas/BoiseStStadium.webp";
 import ClemsonStadium from "../assets/Football/Arenas/ClemsonStadium.webp";
 import CottonBowl from "../assets/Football/Arenas/CottonBowl.webp";
+import FIUStadium from "../assets/Football/Arenas/FIUStadium.webp";
 import FloridaStadium from "../assets/Football/Arenas/FloridaStadium.webp";
 import FloridaStStadium from "../assets/Football/Arenas/FloridaStStadium.webp";
 import GeorgiaStadium from "../assets/Football/Arenas/GeorgiaStadium.webp";
 import KentuckyStadium from "../assets/Football/Arenas/KentuckyStadium.webp";
 import LSUStadium from "../assets/Football/Arenas/LSUStadium.webp";
 import MichiganStadium from "../assets/Football/Arenas/MichiganStadium.webp";
+import MinnesotaStadium from "../assets/Football/Arenas/MinnesotaStadium.webp";
 import MissouriStadium from "../assets/Football/Arenas/MissouriStadium.webp";
 import MissStStadium from "../assets/Football/Arenas/MissStStadium.webp";
 import OhioStStadium from "../assets/Football/Arenas/OhioStStadium.webp";
@@ -319,21 +328,19 @@ import UCFStadium from "../assets/Football/Arenas/UCFStadium.webp";
 import VanderbiltStadium from "../assets/Football/Arenas/VanderbiltStadium.webp";
 import VTechStadium from "../assets/Football/Arenas/VTechStadium.webp";
 import WisconsinStadium from "../assets/Football/Arenas/WisconsinStadium.webp";
-import MinnesotaStadium from "../assets/Football/Arenas/MinnesotaStadium.webp";
-
 
 //Conference Logos
-import MountainWestConference from "assets/Football/CFB_Logos/MWC.png";
-import NCAALogo from "assets/Football/CFB_Logos/NCAA.png";
-import AtlanticCoastConference from "../assets/Football/CFB_Logos/ACC.png";
-import AmericanAthleticConference from "../assets/Football/CFB_Logos/American.png";
-import BIG10Conference from "../assets/Football/CFB_Logos/BIG10.png";
-import BIG12Conference from "../assets/Football/CFB_Logos/BIG12.png";
-import ConferenceUSA from "../assets/Football/CFB_Logos/CUSA.png";
-import MidAmericanConference from "../assets/Football/CFB_Logos/MAC.png";
-import PAC12Conference from "../assets/Football/CFB_Logos/PAC12.png";
-import SoutheasternConference from "../assets/Football/CFB_Logos/SEC.png";
-import SunBeltConference from "../assets/Football/CFB_Logos/SunBelt.png";
+import MountainWestConference from "assets/College_Logos/MWC.png";
+import NCAALogo from "assets/College_Logos/NCAA.png";
+import AtlanticCoastConference from "../assets/College_Logos/ACC.png";
+import AmericanAthleticConference from "../assets/College_Logos/American.png";
+import BIG10Conference from "../assets/College_Logos/BIG10.png";
+import BIG12Conference from "../assets/College_Logos/BIG12.png";
+import ConferenceUSA from "../assets/College_Logos/CUSA.png";
+import MidAmericanConference from "../assets/College_Logos/MAC.png";
+import PAC12Conference from "../assets/College_Logos/PAC12.png";
+import SoutheasternConference from "../assets/College_Logos/SEC.png";
+import SunBeltConference from "../assets/College_Logos/SunBelt.png";
 
 export const teams: CFBTeam[] = [
   {
@@ -342,8 +349,8 @@ export const teams: CFBTeam[] = [
     name: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
-    color: "#d1d5d8",
-    secondaryColor: "#003d7d",
+    color: "#003d7d",
+    secondaryColor: "#d1d5d8",
     logo: RiceLogo,
     logoLight: RiceLogoLight,
   },
@@ -352,6 +359,7 @@ export const teams: CFBTeam[] = [
     id: 39,
     espnID: 98,
     name: "Western Kentucky",
+    shortName: "W Kentucky",
     fullName: "Western Kentucky Hilltoppers",
     code: "WKU",
     color: "#F32026",
@@ -546,6 +554,7 @@ export const teams: CFBTeam[] = [
     id: 55,
     espnID: 166,
     name: "New Mexico State",
+    shortName: "New Mexico St",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
     color: "#891216",
@@ -765,6 +774,9 @@ export const teams: CFBTeam[] = [
     color: "#001538",
     secondaryColor: "#c5960c",
     logo: FIULogo,
+    venueImage: FIUStadium,
+    venue: "Pitbull Stadium",
+    venueCapacity: "20,000",
   },
   {
     id: 74,
@@ -864,6 +876,7 @@ export const teams: CFBTeam[] = [
     color: "#003b28",
     secondaryColor: "#ffc845",
     logo: UABLogo,
+    logoLight: UABLogoLight,
   },
   {
     id: 82,
@@ -898,6 +911,7 @@ export const teams: CFBTeam[] = [
     id: 84,
     espnID: 2348,
     name: "Louisiana Tech",
+    shortName: "LA Tech",
     fullName: "Louisiana Tech Bulldogs",
     code: "LT",
     color: "#002d65",
@@ -1304,7 +1318,6 @@ export const teams: CFBTeam[] = [
     latitude: 29.652,
     longitude: -82.325,
     venueImage: FloridaStadium,
-
     championships: [1996, 2006, 2008],
     conference_championships: [
       "1991",
@@ -1419,6 +1432,7 @@ export const teams: CFBTeam[] = [
     color: "#9e2237",
     secondaryColor: "#ffcc00",
     logo: USCLogo,
+    logoLight: USCLogoLight,
     coach: "Lincoln Riley",
     location: "Los Angeles, CA",
     city: "Los Angeles",
@@ -1713,6 +1727,7 @@ export const teams: CFBTeam[] = [
     color: "#8c2232",
     secondaryColor: "#dbcca6",
     logo: BostonCollegeLogo,
+    logoLight: BostonCollegeLogoLight,
   },
   {
     id: 143,
@@ -2011,6 +2026,7 @@ export const teams: CFBTeam[] = [
     id: 170,
     espnID: 2393,
     name: "Middle Tennessee",
+    shortName: "Mid Tenn",
     fullName: "Middle Tennessee Blue Raiders",
     code: "MTSU",
     color: "#006db6",
@@ -2468,6 +2484,7 @@ export const teams: CFBTeam[] = [
     color: "#003057",
     secondaryColor: "#b3a369",
     logo: GeorgiaTechLogo,
+    logoLight: GeorgiaTechLogoLight,
   },
   {
     id: 209,
@@ -2556,6 +2573,7 @@ export const teams: CFBTeam[] = [
     espnID: 338,
     name: "Kennesaw State",
     fullName: "Kennesaw State Owls",
+    shortName: "Kenn St",
     code: "KENN",
     color: "#fdbb30",
     secondaryColor: "#000000",
@@ -2758,6 +2776,7 @@ export const teams: CFBTeam[] = [
     id: 239,
     espnID: 2623,
     name: "Missouri State",
+    shortName: "Missouri St",
     fullName: "Missouri State Bears",
     code: "MOST",
     color: "#5F0000",
@@ -2969,6 +2988,7 @@ export const teams: CFBTeam[] = [
     color: "#7badd3",
     secondaryColor: "#002856",
     logo: TheCitadelLogo,
+    logoLight: TheCitadelLogoLight,
   },
   {
     id: 261,
@@ -3361,9 +3381,13 @@ export const teams: CFBTeam[] = [
   },
   {
     id: 316,
+    espnID: 2815,
     name: "Lindenwood",
-
-    logo: "https://media.api-sports.io/american-football/teams/316.png",
+    fullName: "Lindenwood Lions",
+    shortName: "Lindenwood",
+    code: "LIN",
+    color: "#000000",
+    logo: LindenwoodLogo,
   },
   {
     id: 317,
@@ -6437,19 +6461,22 @@ export const getTeamInfo = (teamId: number | string) => {
 };
 
 export function getTeamLogo(idOrAbbr: number | string, isDark: boolean) {
-  const idOrAbbrLower = String(idOrAbbr).toLowerCase();
+  const key = String(idOrAbbr).toLowerCase();
 
   const team = teams.find(
     (t) =>
       String(t.id) === String(idOrAbbr) ||
-      t.code?.toLowerCase() === idOrAbbrLower ||
-      t.abbreviation?.toLowerCase() === idOrAbbrLower
+      t.code?.toLowerCase() === key ||
+      t.abbreviation?.toLowerCase() === key ||
+      t.name?.toLowerCase() === key ||
+      t.fullName?.toLowerCase() === key
   );
 
-  if (!team) return PlaceholderLogo; // fallback
+  if (!team) return PlaceholderLogo;
 
   return isDark ? team.logoLight || team.logo : team.logo;
 }
+
 export function getTeamLogoESPN(idOrAbbr: number | string, isDark: boolean) {
   const idOrAbbrLower = String(idOrAbbr).toLowerCase();
 
@@ -6471,12 +6498,12 @@ export const getTeamName = (teamId: number | string, fallback?: string) => {
 };
 export const getTeamCode = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
-  return team?.code || fallback || "Unknown Team";
+  return team?.code || fallback || "UKNW";
 };
 export const getTeamCodeESPN = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   const teamESPN = teams.find((t) => String(t.espnID) === String(teamId));
-  return teamESPN?.code || fallback || "Unknown Team";
+  return teamESPN?.code || fallback || "UKNW";
 };
 
 export function getCFBTeamAbbreviation(
@@ -6484,7 +6511,7 @@ export function getCFBTeamAbbreviation(
   fallback?: string
 ): string | null {
   const team = getTeamInfo(teamId);
-  return team?.code || fallback || "Unknown Team";
+  return team?.code || fallback || "UKNW";
 }
 
 export const teamsCFBById: Record<string, CFBTeam> = teams.reduce(
@@ -6713,10 +6740,6 @@ export const logoMap: Record<string, any> = {
   WashingtonStateLogoLight: WashingtonStateLogoLight,
 };
 
-
-
-
-
 // Define known neutral-site matchups
 export const neutralSiteGames: Record<string, Venue> = {
   "Florida-Georgia": {
@@ -6765,4 +6788,8 @@ export const neutralSiteGames: Record<string, Venue> = {
     longitude: -81.636528,
     venueCapacity: "67,838",
   },
+};
+
+export const getTeamByESPNId = (espnId: number | string) => {
+  return teams.find((t) => t.espnID?.toString() === espnId?.toString());
 };

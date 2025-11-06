@@ -3,17 +3,29 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CombinedGamesList, {
   CombinedGamesSection,
 } from "components/CombinedGamesList";
-import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
-import FavoritesScrollSkeleton from "../../components/Favorites/FavoritesScrollSkeleton";
-import TabBar from "../../components/TabBar";
-import { useNewsStore } from "../../hooks/newsStore";
-import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
-import { useWeeklyGames } from "../../hooks/useWeeklyGames";
-import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
-import { usetodayYesterday } from "hooks/NFLHooks/usetodayYesterday";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import FavoritesScroll from "components/Favorites/FavoritesScroll";
+import FavoritesScrollSkeleton from "components/Favorites/FavoritesScrollSkeleton";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
+import TabBar from "components/TabBar";
+import { mapToInternalTeam } from "constants/teams";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { usetodayYesterday as useCFBtodayYesterday } from "hooks/CFBHooks/usetodayYesterday";
+import { useNewsStore } from "hooks/newsStore";
+import { usetodayYesterday } from "hooks/NFLHooks/usetodayYesterday";
+import { useHighlights } from "hooks/useHighlights";
+import { useNews } from "hooks/useNews";
+import { useWeeklyGames } from "hooks/useWeeklyGames";
 import * as React from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Animated,
   RefreshControl,
@@ -22,106 +34,102 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import type { summerGame, Game, Team } from "types/types";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { getStyles } from "../../styles/indexStyles";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { getStyles } from "styles/indexStyles";
+import { isLiveGame, normalizeTeam } from "utils/games";
 
-// --- Types ---
+// 👇 Required
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 type Tab = "scores" | "news";
 
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
-// --- Helpers ---
-const isValidDate = (dateString?: string) => {
-  if (!dateString) return false;
-  const d = new Date(dateString);
-  return !isNaN(d.getTime());
-};
-const isTodayOrTomorrow = (dateString?: string) => {
-  if (!isValidDate(dateString) || !dateString) return false;
-const gameDate = new Date(dateString ?? new Date().toISOString());
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  return (
-    (gameDate >= today && gameDate < new Date(today.getTime() + 86400000)) ||
-    (gameDate >= tomorrow && gameDate < new Date(tomorrow.getTime() + 86400000))
-  );
-};
-
-function mapSummerGameToGame(g: summerGame): Game {
-  return {
-    ...g,
-    home: { ...g.home, espnID: Number(g.home?.id ?? 0) },
-    away: { ...g.away, espnID: Number(g.away?.id ?? 0) },
-    venue: typeof g.venue === "string" ? { name: g.venue, city: "" } : g.venue,
-    status:
-      g.status?.short === "FT"
-        ? "Final"
-        : g.status?.short === "NS"
-        ? "Scheduled"
-        : "In Progress",
-    period: g.period !== undefined ? String(g.period) : undefined,
-    date: isValidDate(g.date) ? g.date : new Date().toISOString(),
-  };
-}
-
-// --- HomeScreen ---
 export default function HomeScreen() {
-  // --- Hooks for games & news ---
-  const { games: weeklyGames, loading: weeklyGamesLoading, refreshGames: refreshWeeklyGames } = useWeeklyGames();
-  const { games: summerGames, loading: summerLoading, refreshGames: refreshSummerGames } = useSummerLeagueGames() as {
-    games: summerGame[];
-    loading: boolean;
-    refreshGames: () => Promise<void>;
-  };
-  const { games: nflGames, loading: nflLoading, refetch: refreshNFLGames } = usetodayYesterday();
-  const { games: cfbGames, loading: cfbLoading, refetch: refreshCFBGames } = useCFBtodayYesterday();
-  const { news, loading: newsLoading, error: newsError, refreshNews } = useNews();
-  const { highlights, loading: highlightsLoading } = useHighlights("NBA highlights", 50);
+  const {
+    games: weeklyGames,
+    loading: weeklyGamesLoading,
+    refreshGames: refreshWeeklyGames,
+  } = useWeeklyGames();
 
-  // --- Setup ---
+  const {
+    games: nflGames,
+    loading: nflLoading,
+    refetch: refreshNFLGames,
+  } = usetodayYesterday();
+
+  const {
+    games: cfbGames,
+    loading: cfbLoading,
+    refetch: refreshCFBGames,
+  } = useCFBtodayYesterday();
+
+  const {
+    news: allNews,
+    loading: allNewsLoading,
+    error: allNewsError,
+    refresh: refreshAllNews,
+  } = useNews();
+
+  const { highlights, loading: highlightsLoading } = useHighlights("10");
+
+  // --- Types ---
+  type Tab = "scores" | "news";
+
+  type NewsItem = {
+    id: string;
+    title: string;
+    source: string;
+    url: string;
+    thumbnail?: string;
+    publishedAt?: string;
+  };
+
+  type HighlightItem = {
+    videoId: string;
+    title: string;
+    publishedAt: string;
+    thumbnail: string;
+  };
+
+  type CombinedItem =
+    | (NewsItem & { itemType: "news" })
+    | (HighlightItem & { itemType: "highlight" });
+
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getStyles(isDark);
   const setArticles = useNewsStore((state) => state.setArticles);
 
-  // --- Tabs ---
+  // --- Ensure selectedDate is normalized to ET start-of-day ---
+  const [selectedDate, setSelectedDate] = React.useState(() =>
+    dayjs().tz("America/New_York").startOf("day").toDate()
+  );
   const tabs: Tab[] = ["scores", "news"];
   const [selectedTab, setSelectedTab] = useState<Tab>("scores");
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
   const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
-
-  // --- Favorites ---
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    if (news && news.length > 0) setArticles(news);
-  }, [news, setArticles]);
+  const toLocalDate = (dateString?: string | null) => {
+    if (!dateString) return dayjs(); // fallback to now
+    return dayjs(dateString).local(); // convert to device local time
+  };
 
+  // --- Helpers ---
+  const isValidDate = (dateString?: string) => {
+    if (!dateString) return false;
+    const d = toLocalDate(dateString);
+    return !isNaN(d.valueOf());
+  };
+
+  // 📰 Cache news
+  useEffect(() => {
+    if (allNews && allNews.length > 0) setArticles(allNews);
+  }, [allNews, setArticles]);
+
+  // 🌟 Load favorites on focus
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -136,36 +144,46 @@ export default function HomeScreen() {
     }, [])
   );
 
-  useEffect(() => {
-    useNewsStore.getState().loadCachedArticles();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeaderTitle title="Home" tabName="Home" isTeamScreen={false} />,
+      header: () => (
+        <CustomHeaderTitle title="Home" tabName="Home" isTeamScreen={false} />
+      ),
     });
   }, [navigation, isDark]);
 
-  // --- Tabs logic ---
+  // --- Tab underline animation
   const handleTabPress = (tab: Tab) => {
     setSelectedTab(tab);
     const index = tabs.indexOf(tab);
     if (tabMeasurements.current[index]) {
       Animated.parallel([
-        Animated.timing(underlineX, { toValue: tabMeasurements.current[index].x, duration: 200, useNativeDriver: false }),
-        Animated.timing(underlineWidth, { toValue: tabMeasurements.current[index].width, duration: 200, useNativeDriver: false }),
+        Animated.timing(underlineX, {
+          toValue: tabMeasurements.current[index].x,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(underlineWidth, {
+          toValue: tabMeasurements.current[index].width,
+          duration: 200,
+          useNativeDriver: false,
+        }),
       ]).start();
     }
   };
 
-  // --- Pull to refresh ---
+  // --- Refresh
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
       if (selectedTab === "scores") {
-        await Promise.all([refreshWeeklyGames?.(), refreshSummerGames?.(), refreshNFLGames?.(), refreshCFBGames?.()]);
-      } else if (selectedTab === "news") {
-        await refreshNews?.();
+        await Promise.all([
+          refreshWeeklyGames(),
+          refreshNFLGames(),
+          refreshCFBGames(),
+        ]);
+      } else {
+        await refreshAllNews();
       }
     } catch (err) {
       console.warn("Refresh failed:", err);
@@ -174,90 +192,190 @@ export default function HomeScreen() {
     }
   };
 
-  // --- Filter & sort games ---
-  const filteredWeeklyNBA = weeklyGames.filter((g) => isValidDate(g.date) && isTodayOrTomorrow(g.date));
-  const filteredSummerNBA = summerGames.filter((g) => isValidDate(g.date) && isTodayOrTomorrow(g.date)).map(mapSummerGameToGame);
+  // --- Convert date to ET and return a dayjs object in ET ---
+  const toEastern = (dateString?: string | Date) =>
+    dayjs(dateString).tz("America/New_York");
 
-  const sortGamesByLiveStatus = (games: Game[]) => {
-    return [...games].sort((a, b) => {
-      const liveStatuses = ["In Progress", "Live", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"];
-      const aLive = liveStatuses.includes(a.status) ? 1 : 0;
-      const bLive = liveStatuses.includes(b.status) ? 1 : 0;
-      if (aLive !== bLive) return bLive - aLive;
-      const aTime = isValidDate(a.date) ? new Date(a.date).getTime() : 0;
-      const bTime = isValidDate(b.date) ? new Date(b.date).getTime() : 0;
-      return aTime - bTime;
-    });
-  };
+  // --- Normalize NBA games using LeagueScreen logic ---
+  const normalizedNBA = weeklyGames.map((game: any) => {
+    const home = mapToInternalTeam(game.home ?? {});
+    const away = mapToInternalTeam(game.away ?? {});
+    const rawDate = game.date?.start ?? game.date; // raw API UTC string
+    const date = dayjs.utc(rawDate).tz("America/New_York"); // ✅ convert once to ET
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      time: date.format("h:mm A"),
+      home,
+      away,
+    };
+  });
 
-  const sortedWeeklyNBA = sortGamesByLiveStatus(filteredWeeklyNBA);
-  const sortedSummerNBA = sortGamesByLiveStatus(filteredSummerNBA);
+  const normalizedNFL = nflGames.map((game) => {
+    const dateInfo = game.game?.date;
 
-  // --- Favorites helper ---
-  const isFavoriteGame = (game: any, prefix: string) => {
-    const homeId = game.home?.id;
-    const awayId = game.away?.id;
-    if (!homeId && !awayId) return false;
-    return (homeId && favorites.includes(`${prefix}:${homeId}`)) || (awayId && favorites.includes(`${prefix}:${awayId}`));
-  };
+    let date = dayjs().tz("America/New_York"); // fallback
 
-  // --- Build Favorites ---
-  const favoriteGames = React.useMemo(() => {
-    if (!favorites.length) return [];
-    const collect = (games: any[], prefix: string, leagueName: string) =>
-      games.filter((g) => isFavoriteGame(g, prefix)).map((g) => ({ ...g, league: { name: leagueName } }));
-    return [
-      ...collect(weeklyGames, "NBA", "NBA"),
-      ...collect(summerGames.map(mapSummerGameToGame), "NBA", "NBA Summer League"),
-      ...collect(nflGames, "NFL", "NFL"),
-      ...collect(cfbGames, "CFB", "College Football"),
-    ];
-  }, [favorites, weeklyGames, summerGames, nflGames, cfbGames]);
+    if (dateInfo) {
+      if ("utc" in dateInfo && typeof dateInfo.utc === "string") {
+        date = dayjs.utc(dateInfo.utc).tz("America/New_York");
+      } else if (typeof dateInfo.timestamp === "number") {
+        date = dayjs.unix(dateInfo.timestamp).tz("America/New_York");
+      } else if (typeof dateInfo.date === "string") {
+        date = dayjs.utc(dateInfo.date).tz("America/New_York");
+      }
+    }
 
-  // --- Limit non-favorites ---
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      time: date.isValid() ? date.format("h:mm A") : "TBD",
+      home: {
+        ...normalizeTeam(game.teams?.home),
+        id: String(game.teams?.home?.id),
+      },
+      away: {
+        ...normalizeTeam(game.teams?.away),
+        id: String(game.teams?.away?.id),
+      },
+    };
+  });
+
+  const normalizedCFB = cfbGames.map((game) => {
+    const raw = game.game?.date?.date ?? game.game?.date;
+    const date = toEastern(raw);
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      home: {
+        ...normalizeTeam(game.teams?.home),
+        id: String(game.teams?.home?.id),
+      },
+      away: {
+        ...normalizeTeam(game.teams?.away),
+        id: String(game.teams?.away?.id),
+      },
+      time: date.format("h:mm A"),
+    };
+  });
+
+  // --- Filter by selected Eastern date ---
+  const filteredNBA = normalizedNBA.filter((g) => {
+    const gameET = dayjs(g.date).tz("America/New_York");
+    const selectedET = dayjs(selectedDate).tz("America/New_York");
+    return gameET.isSame(selectedET, "day");
+  });
+
+  // --- Filter NFL games: same-day or next upcoming ---
+  const filteredNFL = React.useMemo(() => {
+    const selectedET = toEastern(selectedDate);
+    let games = normalizedNFL.filter((g) =>
+      dayjs(g.date).isSame(selectedET, "day")
+    );
+
+    // If no same-day games, show the next available date’s games
+    if (games.length === 0 && normalizedNFL.length > 0) {
+      // Find the earliest game after selectedDate
+      const nextGame = normalizedNFL
+        .map((g) => dayjs(g.date))
+        .filter((d) => d.isAfter(selectedET))
+        .sort((a, b) => a.valueOf() - b.valueOf())[0];
+
+      if (nextGame) {
+        games = normalizedNFL.filter((g) =>
+          dayjs(g.date).isSame(nextGame, "day")
+        );
+      }
+    }
+
+    return games;
+  }, [normalizedNFL, selectedDate]);
+
+  const filteredCFB = normalizedCFB.filter((g) => {
+    const gameET = toEastern(g.date);
+    const selectedET = toEastern(selectedDate);
+    return gameET.isSame(selectedET, "day");
+  });
+
+  // --- Favorites Helper ---
+  const isFavoriteGame = (game: any, prefix: string) =>
+    favorites.includes(`${prefix}:${String(game.home.id)}`) ||
+    favorites.includes(`${prefix}:${String(game.away.id)}`);
+
+  const sortLiveFirst = (games: any[]) =>
+    [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+
   const limitNonFavorites = (games: any[], prefix: string, max = 10) =>
     games.filter((g) => !isFavoriteGame(g, prefix)).slice(0, max);
 
-  const limitedWeeklyNBA = limitNonFavorites(sortedWeeklyNBA, "NBA");
-  const limitedSummerNBA = limitNonFavorites(sortedSummerNBA, "NBA");
-  const limitedNFL = limitNonFavorites(nflGames.filter((g) => isValidDate(g.game.date.date)), "NFL");
-  const limitedCFB = limitNonFavorites(cfbGames.filter((g) => isValidDate(g.game.date.date)), "CFB");
+  // --- Favorite & Limited Sections ---
+  const favoriteGames = React.useMemo(() => {
+    if (!favorites.length) return [];
+    const collect = (games: any[], prefix: string, name: string) =>
+      games
+        .filter((g) => isFavoriteGame(g, prefix))
+        .map((g) => ({ ...g, league: { name } }));
 
-  // --- Combine sections ---
+    return [
+      ...collect(filteredNBA, "NBA", "NBA"),
+
+      ...collect(filteredNFL, "NFL", "NFL"),
+      ...collect(filteredCFB, "CFB", "College Football"),
+    ];
+  }, [favorites, filteredNBA, filteredNFL, filteredCFB]);
+
+  const limitedNBA = limitNonFavorites(filteredNBA, "NBA");
+
+  const limitedNFL = limitNonFavorites(filteredNFL, "NFL");
+
+  const limitedCFB = limitNonFavorites(filteredCFB, "CFB");
+
+  // --- Combine Sections ---
   const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
     const sections: CombinedGamesSection[] = [
-      { category: "Favorites", data: favoriteGames },
-      { category: "NBA", data: limitedWeeklyNBA },
-      { category: "NBA Summer League", data: limitedSummerNBA },
-      { category: "NFL", data: limitedNFL },
-      { category: "College Football", data: limitedCFB },
+      { category: "Favorites", data: sortLiveFirst(favoriteGames) },
+      { category: "NBA", data: sortLiveFirst(limitedNBA) },
+      { category: "NFL", data: sortLiveFirst(limitedNFL) },
+      { category: "College Football", data: sortLiveFirst(limitedCFB) },
     ];
     return sections.filter((s) => s.data.length > 0);
-  }, [favoriteGames, limitedWeeklyNBA, limitedSummerNBA, limitedNFL, limitedCFB]);
+  }, [favoriteGames, limitedNBA, limitedNFL, limitedCFB]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = news.map((item) => ({
+    const taggedNews: CombinedItem[] = allNews.map((item) => ({
       ...item,
       itemType: "news",
-      publishedAt: isValidDate(item.publishedAt) ? item.publishedAt! : new Date().toISOString(),
+      publishedAt: isValidDate(item.publishedAt)
+        ? item.publishedAt!
+        : new Date().toISOString(),
     }));
     const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
       ...item,
       itemType: "highlight",
-      publishedAt: isValidDate(item.publishedAt) ? item.publishedAt : new Date().toISOString(),
+      publishedAt: isValidDate(item.publishedAt)
+        ? item.publishedAt
+        : new Date().toISOString(),
     }));
     return [...taggedNews, ...taggedHighlights].sort(
-      (a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime()
+      (a, b) =>
+        new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime()
     );
-  }, [news, highlights]);
+  }, [allNews, highlights]);
 
   // --- Render ---
   return (
     <View style={styles.container}>
       <View style={styles.contentArea}>
         <View style={styles.tabBarWrapper}>
-          <TabBar tabs={tabs} selected={selectedTab} onTabPress={handleTabPress} />
+          <TabBar
+            tabs={tabs}
+            selected={selectedTab}
+            onTabPress={handleTabPress}
+          />
         </View>
 
         <ScrollView
@@ -273,27 +391,32 @@ export default function HomeScreen() {
         >
           {selectedTab === "scores" ? (
             <>
-              {weeklyGamesLoading || summerLoading ? (
+              {weeklyGamesLoading ? (
                 <FavoritesScrollSkeleton />
               ) : (
-                <FavoritesScroll favoriteTeamIds={favorites} />
+                <FavoritesScroll
+                  favoriteTeamIds={favorites}
+                  onFavoritesChange={setFavorites}
+                />
               )}
 
               <CombinedGamesList
                 gamesByCategory={gamesByCategory}
-                loading={weeklyGamesLoading || summerLoading || nflLoading || cfbLoading}
+                loading={weeklyGamesLoading || nflLoading || cfbLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
             </>
-          ) : newsError ? (
-            <Text style={styles.emptyText}>{newsError}</Text>
+          ) : allNewsError ? (
+            <Text style={styles.emptyText}>{allNewsError}</Text>
           ) : combinedNewsAndHighlights.length === 0 && !refreshing ? (
-            <Text style={styles.emptyText}>No news or highlights available.</Text>
+            <Text style={styles.emptyText}>
+              No news or highlights available.
+            </Text>
           ) : (
             <NewsHighlightsList
               items={combinedNewsAndHighlights}
-              loading={newsLoading || highlightsLoading}
+              loading={allNewsLoading || highlightsLoading}
               refreshing={refreshing}
               onRefresh={handleRefresh}
             />

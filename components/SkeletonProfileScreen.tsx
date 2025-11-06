@@ -1,86 +1,77 @@
-import { getStyles } from "styles/ProfileScreen.styles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
-  Dimensions,
   ScrollView,
   View,
   ViewProps,
+  Dimensions,
+  StyleSheet,
+  Easing,
 } from "react-native";
+import { getStyles } from "styles/ProfileScreen.styles";
+import { Colors } from "constants/Colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
   const styles = getStyles(isDark);
 
-  // Animated value for shimmer translation
-  const shimmerTranslate = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
+  // Smooth breathing pulse animation
+  const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
-    // Loop shimmer animation left to right
-    Animated.loop(
+    const pulse = Animated.loop(
       Animated.sequence([
-        Animated.timing(shimmerTranslate, {
-          toValue: SCREEN_WIDTH,
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
           duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerTranslate, {
-          toValue: -SCREEN_WIDTH,
+        Animated.timing(pulseAnim, {
+          toValue: 0.3,
           duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
-    ).start();
-  }, [shimmerTranslate]);
+      ]),
+      { resetBeforeIteration: false }
+    );
 
-  // Basic shimmer overlay style, a translucent white block with rotation
-  const shimmerStyle = {
-    position: "absolute" as const,
-    top: 0,
-    bottom: 0,
-    width: 100,
-    backgroundColor: isDark
-      ? "rgba(255,255,255,0.15)"
-      : "rgba(255,255,255,0.4)",
-    opacity: 0.7,
-    borderRadius: 8,
-    transform: [{ rotate: "45deg" }],
-  };
+    pulse.start();
+    return () => pulse.stop();
+  }, [pulseAnim]);
 
-  // Wrapper style for each skeleton block
+  // Base + overlay colors
+  const baseColor = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
+  const overlayColor = isDark
+    ? "rgba(136,136,136,0.5)"
+    : "rgba(136,136,136,0.25)";
+
+  // Each block background + overlay pulse
   const skeletonBlock = {
-    backgroundColor: isDark ? "#333" : "#e0e0e0",
+    backgroundColor: baseColor,
     borderRadius: 8,
     marginBottom: 10,
     overflow: "hidden" as const,
   };
 
-  // Helper component to wrap shimmer inside a block
-  const ShimmerBlock = (props: ViewProps & { style: any }) => {
-    return (
-      <View {...props} style={[props.style, skeletonBlock]}>
-        <Animated.View
-          style={[
-            shimmerStyle,
-            {
-              transform: [{ translateX: shimmerTranslate }, { rotate: "0deg" }],
-            },
-          ]}
-        />
-      </View>
-    );
-  };
+  // Reusable skeleton wrapper
+  const ShimmerBlock = (props: ViewProps & { style?: any }) => (
+    <View {...props} style={[props.style, skeletonBlock]}>
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          {
+            backgroundColor: overlayColor,
+            opacity: pulseAnim,
+          },
+        ]}
+      />
+    </View>
+  );
 
-  // Mimicking grid layout from FavoriteTeamsList
-  const isGridView = true;
-  const numColumns = 3;
-  const horizontalPadding = 40; // match your ProfileScreen padding
-  const columnGap = 6;
-  const rowGap = 8;
-  const totalGap = columnGap * (numColumns - 1);
-  const availableWidth = SCREEN_WIDTH - horizontalPadding - totalGap;
-  const itemWidth = "30%";
+  const itemWidth = "32%";
 
   return (
     <ScrollView
@@ -88,16 +79,15 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
       contentContainerStyle={{ paddingBottom: 30 }}
       testID="skeleton-profile-screen"
     >
+      {/* Banner + profile pic */}
       <View style={styles.bannerContainer}>
         <ShimmerBlock style={styles.banner} testID="skeleton-banner" />
         <View style={styles.profilePicWrapper}>
-          <ShimmerBlock
-            style={styles.profilePic}
-            testID="skeleton-profile-pic"
-          />
+          <ShimmerBlock style={styles.profilePic} testID="skeleton-profile-pic" />
         </View>
       </View>
 
+      {/* Followers */}
       <View style={styles.followContainer}>
         {[0, 1].map((key) => (
           <View key={key} style={styles.followItem}>
@@ -113,6 +103,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
         ))}
       </View>
 
+      {/* Bio + edit button */}
       <View style={styles.bioContainer}>
         <View style={styles.wrapper}>
           <View style={styles.nameContainer}>
@@ -130,12 +121,10 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
             testID="skeleton-edit-profile-btn"
           />
         </View>
-        <ShimmerBlock
-          style={{ height: 40, width: "100%" }}
-          testID="skeleton-bio"
-        />
+        <ShimmerBlock style={{ height: 40, width: "100%" }} testID="skeleton-bio" />
       </View>
 
+      {/* Favorites */}
       <View style={[styles.favoritesContainer, { marginTop: 80 }]}>
         <View style={styles.favoritesHeader}>
           <ShimmerBlock
@@ -152,8 +141,6 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
-            columnGap,
-            rowGap,
             justifyContent: "space-between",
             marginTop: 10,
           }}
@@ -165,7 +152,6 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
                 width: itemWidth,
                 height: 130,
                 borderRadius: 8,
-                marginBottom: 4,
                 paddingHorizontal: 2,
                 paddingVertical: 20,
               }}
@@ -174,7 +160,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           ))}
         </View>
 
-        {/* Skeleton Edit Teams button */}
+        {/* Edit Teams button */}
         <View style={{ width: "100%", marginTop: 10 }}>
           <ShimmerBlock
             style={{
@@ -182,7 +168,6 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
               width: "100%",
               alignSelf: "center",
               borderRadius: 20,
-              // Center content style mimicking button
             }}
             testID="skeleton-edit-teams-button"
           />

@@ -15,7 +15,8 @@ import FallbackImage from "../../assets/Logos/ThumbnailFallback.png";
 type NewsCardProps = {
   id: string;
   title: string;
-  source: string;
+  source: string | { id?: string; name?: string };
+
   url: string;
   thumbnail?: string;
   publishedAt?: string;
@@ -33,6 +34,8 @@ export default function NewsCard({
   const styles = getStyles(isDark);
 
   const [imageError, setImageError] = useState(false);
+  const displaySource =
+    typeof source === "string" ? source : source?.name ?? "Unknown Source";
 
   const handlePress = () => {
     router.push({
@@ -53,7 +56,7 @@ export default function NewsCard({
           <Text numberOfLines={2} style={styles.title}>
             {title}
           </Text>
-          <Text style={styles.source}>{source}</Text>
+          <Text style={styles.source}>{displaySource}</Text>
         </View>
       </View>
     </TouchableOpacity>

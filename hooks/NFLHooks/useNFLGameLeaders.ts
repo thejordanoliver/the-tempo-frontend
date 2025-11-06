@@ -16,6 +16,7 @@ export interface NFLPlayer {
 }
 
 const KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
+const HOST = process.env.EXPO_PUBLIC_FOOTBALL_RAPIDAPI_HOST;
 
 export function useNFLGameLeaders(gameId: string, teamId: string) {
   const [leaders, setLeaders] = useState<NFLPlayer[]>([]);
@@ -31,12 +32,12 @@ export function useNFLGameLeaders(gameId: string, teamId: string) {
 
       try {
         const response = await axios.get(
-          "https://api-american-football.p.rapidapi.com/games/statistics/players",
+          "https://v1.american-football.api-sports.io/games/statistics/players",
           {
             params: { id: gameId, team: teamId },
             headers: {
               "x-rapidapi-key": KEY,
-              "x-rapidapi-host": "api-american-football.p.rapidapi.com",
+              "x-rapidapi-host": HOST,
             },
           }
         );

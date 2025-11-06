@@ -1,168 +1,245 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colors } from "constants/Colors";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
-import { teams } from "../../constants/teams"; // NBA
-import { teams as nflteams } from "../../constants/teamsNFL"; // NFL
-import { teams as cfbteams } from "../../constants/teamsCFB"; // NFL
+import { useEffect, useState } from "react";
+import { Pressable, Text, View, useColorScheme } from "react-native";
+import DraggableFlatList, {
+  RenderItemParams,
+} from "react-native-draggable-flatlist";
+import { favoritesScrollStyles } from "styles/FavoritesScroll.styles";
 import { LeagueType } from "types/types";
-type Props = {
-  favoriteTeamIds: string[]; // e.g., ["NBA:17", "NFL:13"]
+import { teams } from "../../constants/teams";
+import { teams as cbbteams } from "../../constants/teamsCBB";
+import { teams as cfbteams } from "../../constants/teamsCFB";
+import { teams as nflteams } from "../../constants/teamsNFL";
+type TeamWithLeague = {
+  id: string | number;
+  name: string;
+  logo: any;
+  logoLight?: string;
+  color?: string;
+  league: LeagueType;
+  key: string;
 };
 
-export default function FavoritesScroll({ favoriteTeamIds }: Props) {
+type Props = {
+  favoriteTeamIds: string[];
+  onFavoritesChange?: (ids: string[]) => void;
+};
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
+export default function FavoritesScroll({
+  favoriteTeamIds,
+  onFavoritesChange,
+}: Props) {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = favoritesScrollStyles(isDark);
+  const [username, setUsername] = useState<string | null>(null);
 
-  const favoriteTeams = favoriteTeamIds
+  const initialTeams: TeamWithLeague[] = favoriteTeamIds
     .map((fav) => {
       const [league, id] = fav.split(":");
-      let team;
-      if (league === "NBA") team = teams.find((t) => t.id === id);
-      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
-      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
-      if (!team) return null;
-      return { ...team, league: league as LeagueType };
+      let baseTeam:
+        | {
+            id: string | number;
+            name: string;
+            logo: any;
+            logoLight?: string;
+            color?: string;
+          }
+        | undefined;
+
+      switch (league) {
+        case "NBA":
+          baseTeam = teams.find((t) => String(t.id) === id);
+          break;
+        case "NFL":
+          baseTeam = nflteams.find((t) => String(t.id) === id);
+          break;
+        case "CFB":
+          baseTeam = cfbteams.find((t) => String(t.id) === id);
+          break;
+        case "CBB":
+          baseTeam = cbbteams.find((t) => String(t.id) === id);
+          break;
+      }
+
+      if (!baseTeam) return null;
+      return {
+        ...baseTeam,
+        league: league as LeagueType,
+        key: `${league}-${id}`,
+      } as TeamWithLeague;
     })
-    .filter(Boolean);
+    .filter((t): t is TeamWithLeague => t !== null);
+
+  const [data, setData] = useState<TeamWithLeague[]>(initialTeams);
+
+  useEffect(() => {
+    AsyncStorage.getItem("username").then((u) => {
+      if (u) setUsername(u);
+    });
+  }, []);
+
+  useEffect(() => {
+    setData(initialTeams);
+  }, [favoriteTeamIds]);
+
+  const renderItem = ({
+    item,
+    drag,
+    isActive,
+  }: RenderItemParams<TeamWithLeague>) => (
+    <Pressable
+      onLongPress={async () => {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        drag();
+      }}
+      key={item.key}
+      style={({ pressed }) => [
+        styles.teamIcon,
+        pressed && { opacity: 0.6 },
+        isActive && { opacity: 0.8, transform: [{ scale: 1.05 }] },
+      ]}
+      onPress={async () => {
+        await Haptics.selectionAsync();
+
+        const route =
+          item.league === "NFL"
+            ? "/team/nfl/[teamId]"
+            : item.league === "NBA"
+            ? "/team/[teamId]"
+            : item.league === "CFB"
+            ? "/team/cfb/[teamId]"
+            : "/team/cbb/[teamId]";
+
+        router.push({
+          pathname: route,
+          params: { teamId: item.id.toString() },
+        });
+      }}
+    >
+      <View
+        style={[
+          styles.logoWrapper,
+          {
+            backgroundColor: isDark
+              ? item.color || Colors.dark.itemBackground
+              : item.color || Colors.light.itemBackground,
+          },
+        ]}
+      >
+        <Image
+          source={
+            isDark && item.logoLight
+              ? item.logoLight
+              : item.logoLight || item.logo
+          }
+          style={styles.logo}
+        />
+      </View>
+      <View style={styles.teamLabelContainer}>
+        <Text style={styles.teamLabel}>{item.name}</Text>
+        {(item.league === "CFB" || item.league === "CBB") && (
+          <>
+            <View style={styles.divider} />
+            <Text style={styles.teamLabel}>{item.league}</Text>
+          </>
+        )}
+      </View>
+    </Pressable>
+  );
 
   return (
     <View style={styles.favoritesWrapper}>
-      <ScrollView
+      <DraggableFlatList
+        data={data}
         horizontal
+        keyExtractor={(item) => item.key}
         showsHorizontalScrollIndicator={false}
-        style={styles.favorites}
-      >
-        {favoriteTeams.map((team) => (
-          <Pressable
-            key={`${team?.league}-${team?.id}`}
-            style={({ pressed }) => [
-              styles.teamIcon,
-              pressed && { opacity: 0.6 },
-            ]}
-            onPress={() => {
-              if (!team) return;
+        contentContainerStyle={styles.favorites}
+        // 👇 Start of drag
+        onDragBegin={async () => {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        }}
+        // 👇 Fires when the placeholder position changes during drag
+        onPlaceholderIndexChange={async () => {
+          await Haptics.selectionAsync();
+        }}
+        // 👇 End of drag
+        onDragEnd={async ({ data }) => {
+          await Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+          );
 
-              const route =
-                team.league === "NFL" ? "/team/nfl/[teamId]" : team.league === "NBA" ? "/team/[teamId]" : "/team/cfb/[teamId]";
+          setData(data);
+          const orderedIds = data.map((t) => `${t.league}:${t.id}`);
+          await AsyncStorage.setItem("favorites", JSON.stringify(orderedIds));
+          onFavoritesChange?.(orderedIds);
 
-              router.push({
-                pathname: route,
-                params: { teamId: team.id.toString() },
-              });
-            }}
-          >
-            <View
-              style={[
-                styles.logoWrapper,
-                {
-                  backgroundColor: isDark
-                    ? team?.color || "#333"
-                    : team?.color || "#eee",
-                },
-              ]}
-            >
-              <Image
-                source={
-                  isDark && team?.logoLight
-                    ? team?.logoLight
-                    : team?.logoLight || team?.logo
-                }
-                style={styles.logo}
-              />
-            </View>
-            <Text style={styles.teamLabel}>{team?.name}</Text>
-          </Pressable>
-        ))}
-
-        {/* Add or Edit favorites button */}
-        <Pressable
-          onPress={() => router.push("/edit-favorites")}
-          accessibilityRole="button"
-          accessibilityLabel={
-            favoriteTeams.length === 0
-              ? "Add favorite teams"
-              : "Edit favorite teams"
+          const storedUsername = await AsyncStorage.getItem("username");
+          if (!storedUsername) {
+            console.warn("No username found — will sync favorites later.");
+            return;
           }
-        >
-          <View style={styles.teamIcon}>
+
+          try {
+            const res = await fetch(
+              `${BASE_URL}/api/users/${storedUsername}/favorites`,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ favorites: orderedIds }),
+              }
+            );
+
+            if (!res.ok) {
+              console.warn(
+                "Failed to update backend favorites:",
+                await res.text()
+              );
+            } else {
+              console.log("✅ Favorites reordered and synced successfully.");
+            }
+          } catch (err) {
+            console.warn("❌ Network error syncing favorites:", err);
+          }
+        }}
+        renderItem={renderItem}
+        activationDistance={30}
+        ListFooterComponent={() => (
+          <Pressable
+            onPress={async () => {
+              await Haptics.selectionAsync();
+              router.push("/edit-favorites");
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={
+              data.length === 0 ? "Add favorite teams" : "Edit favorite teams"
+            }
+            style={[styles.teamIcon, styles.editButton]}
+          >
             <View style={styles.editIcon}>
               <Ionicons
-                name={favoriteTeams.length === 0 ? "add" : "create"}
+                name={data.length === 0 ? "add" : "create"}
                 size={32}
-                color={isDark ? "#000" : "#fff"}
+                color={
+                  isDark ? Colors.dark.background : Colors.light.background
+                }
               />
             </View>
             <Text style={styles.teamLabel}>
-              {favoriteTeams.length === 0 ? "Add teams" : "Edit"}
+              {data.length === 0 ? "Add teams" : "Edit"}
             </Text>
-          </View>
-        </Pressable>
-      </ScrollView>
+          </Pressable>
+        )}
+      />
     </View>
   );
 }
-
-export const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: { flex: 1, backgroundColor: isDark ? "#1d1d1d" : "#fff" },
-    favoritesWrapper: { padding: 0 },
-    favorites: {
-      flexDirection: "row",
-      marginBottom: 20,
-      paddingBottom: 0,
-      paddingTop: 24,
-      paddingHorizontal: 16,
-    },
-    teamIcon: { alignItems: "center", marginRight: 16, marginBottom: 0 },
-    logoWrapper: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      alignItems: "center",
-      justifyContent: "center",
-      overflow: "hidden",
-      borderWidth: 0.5,
-      borderColor: isDark ? "#fff" : "#1d1d1d",
-    },
-    logo: { width: 50, height: 50, resizeMode: "contain" },
-    editIcon: {
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
-      width: 80,
-      height: 80,
-      borderRadius: 100,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    teamLabel: {
-      marginTop: 4,
-      fontSize: 12,
-      color: isDark ? "#ccc" : "#1d1d1d",
-      fontFamily: "Oswald_400Regular",
-    },
-    heading: {
-      fontSize: 24,
-      fontFamily: "Oswald_500Medium",
-      marginBottom: 8,
-      marginTop: 8,
-      paddingBottom: 4,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? "#444" : "#ccc",
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    emptyText: {
-      textAlign: "center",
-      color: isDark ? "#aaa" : "#999",
-      marginTop: 20,
-      fontSize: 14,
-    },
-  });

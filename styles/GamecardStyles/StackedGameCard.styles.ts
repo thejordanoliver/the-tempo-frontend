@@ -1,14 +1,16 @@
-import { StyleSheet } from "react-native";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
+import { StyleSheet } from "react-native";
 
-
-export const getStyles = (dark: boolean) =>
+export const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
       flex: 1,
       height: 110,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 12,
       paddingHorizontal: 12,
@@ -17,10 +19,10 @@ export const getStyles = (dark: boolean) =>
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
+      borderRightColor: isDark ? Colors.netural.darkGray : Colors.netural.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
-      gap: 4,
+      gap: 12,
       flex: 1,
     },
     teamSection: {
@@ -43,21 +45,21 @@ export const getStyles = (dark: boolean) =>
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
       flexShrink: 1,
-      color: dark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "left",
     },
     teamScore: {
       fontSize: 18,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
       width: 40,
     },
     teamRecord: {
       fontSize: 18,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     info: {
       alignItems: "center",
@@ -68,8 +70,7 @@ export const getStyles = (dark: boolean) =>
     finalText: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
       width: 60,
     },
@@ -77,33 +78,38 @@ export const getStyles = (dark: boolean) =>
       fontSize: 12,
       fontFamily: Fonts.OSMEDIUM,
       textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     dateFinal: {
       fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
+      color: isDark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
       fontSize: 14,
     },
     time: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     clock: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     broadcast: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
+      color: isDark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
     },
-       downDistance: {
+    downDistance: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
+    },
+    statusDivider: {
+      height: 14,
+      width: 1,
+      backgroundColor: isDark ? Colors.dark.text : Colors.light.text,
     },
   });

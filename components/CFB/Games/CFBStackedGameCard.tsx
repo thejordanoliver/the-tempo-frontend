@@ -4,7 +4,6 @@ import { getTeamLogo, teams } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { memo, useMemo } from "react";
 import {
@@ -16,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
+import { getTeamRankFromAP, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 type Props = {
   game: any;
@@ -34,21 +34,8 @@ function CFBStackedGameCard({ game, isDark }: Props) {
   const awayId = String(game?.teams?.away?.id);
   const gameId = game?.game?.id;
 
-  const { rankings } = useCFBRankings();
-  const apTop25 = useMemo(() => {
-    if (!rankings) return [];
-    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
-    if (!apPoll) return [];
-    return apPoll.ranks.slice(0, 25).map((r) => ({
-      name: r.team?.nickname,
-      rank: r.current,
-    }));
-  }, [rankings]);
-
-  const getTeamRank = (teamName: string) => {
-    const found = apTop25.find((t) => t.name === teamName);
-    return found ? found.rank : undefined;
-  };
+  const apTop25 = useAPTop25();
+  const getTeamRank = (name: string) => getTeamRankFromAP(name, apTop25);
 
   const gameDate = useMemo(() => {
     return game?.game?.date?.timestamp

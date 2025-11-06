@@ -31,7 +31,7 @@ type SeasonStat = {
 };
 
 const cache = new Map<string, SeasonStat[]>();
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 export function usePlayerStatsBySeason(playerId: number, seasons: string[]) {
   const [data, setData] = useState<SeasonStat[]>([]);

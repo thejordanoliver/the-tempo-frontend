@@ -45,7 +45,10 @@ export default function GameUniforms({
       <View style={styles.container}>
         {/* Away Team Away uniforms */}
         <View style={styles.uniformsContainer}>
-          <Image source={awayTeam.uniforms?.away} style={styles.uniformsImage} />
+          <Image
+            source={awayTeam.uniforms?.away}
+            style={styles.uniformsImage}
+          />
           <Text style={[styles.teamName, { color: textColor }]}>
             {awayTeam.name} Away
           </Text>
@@ -56,7 +59,10 @@ export default function GameUniforms({
 
         {/* Home Team Home uniforms */}
         <View style={styles.uniformsContainer}>
-          <Image source={homeTeam.uniforms?.home} style={styles.uniformsImage} />
+          <Image
+            source={homeTeam.uniforms?.home}
+            style={styles.uniformsImage}
+          />
           <Text style={[styles.teamName, { color: textColor }]}>
             {homeTeam.name} Home
           </Text>
@@ -104,4 +110,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
 });
-

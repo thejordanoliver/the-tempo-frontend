@@ -27,10 +27,25 @@ export type PlayObject = {
     start?: { yardLine?: number; text?: string };
     end?: { yardLine?: number; text?: string };
     timeElapsed?: { displayValue?: string };
+    result?: string;
+    team?: { id: number }; // <-- add this
   };
-  start?: { yardLine?: number; yardLineSide?: string; yardLineText?: string; team?: { id: number } };
-  end?: { yardLine?: number; yardLineSide?: string; yardLineText?: string; team?: { id: number } };
+
+  start?: {
+    yardLine?: number;
+    yardLineSide?: string;
+    yardLineText?: string;
+    distance?: number; // ✅ add this
+    team?: { id: number };
+  };
+  end?: {
+    yardLine?: number;
+    yardLineSide?: string;
+    yardLineText?: string;
+    team?: { id: number };
+  };
   team?: { id: number };
+  possession?: string; // ✅ Added this
   distance?: number;
   statYardage?: number;
   athletesInvolved?: Athlete[];
@@ -49,9 +64,15 @@ export const useNFLGamePossession = (
   away: string | null | undefined,
   date: string | { date?: string; utc?: string; timestamp?: number } | undefined
 ) => {
-  const [possessionTeamId, setPossessionTeamId] = useState<number | undefined>();
-  const [shortDownDistanceText, setShortDownDistanceText] = useState<string | undefined>();
-  const [downDistanceText, setDownDistanceText] = useState<string | undefined>();
+  const [possessionTeamId, setPossessionTeamId] = useState<
+    number | undefined
+  >();
+  const [shortDownDistanceText, setShortDownDistanceText] = useState<
+    string | undefined
+  >();
+  const [downDistanceText, setDownDistanceText] = useState<
+    string | undefined
+  >();
   const [displayClock, setDisplayClock] = useState<string | undefined>();
   const [period, setPeriod] = useState<string | undefined>();
   const [lastPlay, setLastPlay] = useState<string | PlayObject | undefined>();
@@ -60,9 +81,15 @@ export const useNFLGamePossession = (
   const [score, setScore] = useState<NFLScore | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [gameStatusDescription, setGameStatusDescription] = useState<string | undefined>();
-  const [gameStatusDetail, setGameStatusDetail] = useState<string | undefined>();
-  const [gameStatusShortDetail, setGameStatusShortDetail] = useState<string | undefined>();
+  const [gameStatusDescription, setGameStatusDescription] = useState<
+    string | undefined
+  >();
+  const [gameStatusDetail, setGameStatusDetail] = useState<
+    string | undefined
+  >();
+  const [gameStatusShortDetail, setGameStatusShortDetail] = useState<
+    string | undefined
+  >();
   const [possessionText, setPossessionText] = useState<string | undefined>();
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -90,7 +117,9 @@ export const useNFLGamePossession = (
         if (!targetDate) return;
 
         const makeYMD = (d: Date) => {
-          const usDate = d.toLocaleDateString("en-US", { timeZone: "America/New_York" });
+          const usDate = d.toLocaleDateString("en-US", {
+            timeZone: "America/New_York",
+          });
           const [month, day, year] = usDate.split("/");
           return `${year}${month.padStart(2, "0")}${day.padStart(2, "0")}`;
         };
@@ -118,7 +147,9 @@ export const useNFLGamePossession = (
         });
 
         if (!game) {
-          console.warn(`[NFL Possession] Game not found on ESPN for ${home} vs ${away}`);
+          console.warn(
+            `[NFL Possession] Game not found on ESPN for ${home} vs ${away}`
+          );
           return;
         }
 
@@ -126,7 +157,13 @@ export const useNFLGamePossession = (
         if (!competition) throw new Error("No competition data found");
 
         const statusObj = competition.status?.type;
-        setGameStatusDescription(statusObj?.description ?? statusObj?.detail ?? statusObj?.shortDetail ?? statusObj?.name ?? statusObj?.state);
+        setGameStatusDescription(
+          statusObj?.description ??
+            statusObj?.detail ??
+            statusObj?.shortDetail ??
+            statusObj?.name ??
+            statusObj?.state
+        );
         setGameStatusDetail(statusObj?.detail);
         setGameStatusShortDetail(statusObj?.shortDetail);
 
@@ -142,7 +179,10 @@ export const useNFLGamePossession = (
         const awayComp = competitors.find((c: any) => c.homeAway === "away");
 
         if (homeComp && awayComp) {
-          const maxPeriods = Math.max(homeComp.linescores?.length ?? 0, awayComp.linescores?.length ?? 0);
+          const maxPeriods = Math.max(
+            homeComp.linescores?.length ?? 0,
+            awayComp.linescores?.length ?? 0
+          );
           const periodScores = Array.from({ length: maxPeriods }, (_, idx) => ({
             period: idx + 1,
             home: homeComp.linescores?.[idx]?.value ?? 0,
@@ -161,8 +201,11 @@ export const useNFLGamePossession = (
 
         // --- Update possession & play info only if live ---
         if (isLive && competition.situation) {
-          const espnPossessionId: string | undefined = competition.situation.possession;
-          setPossessionTeamId(espnPossessionId ? espnToInternal[espnPossessionId] : undefined);
+          const espnPossessionId: string | undefined =
+            competition.situation.possession;
+          setPossessionTeamId(
+            espnPossessionId ? espnToInternal[espnPossessionId] : undefined
+          );
 
           setShortDownDistanceText(competition.situation.shortDownDistanceText);
           setDownDistanceText(competition.situation.downDistanceText);
@@ -172,7 +215,11 @@ export const useNFLGamePossession = (
 
           const downInfo = competition.situation.shortDownDistanceText ?? "";
           const fieldPosition = competition.situation.possessionText ?? "";
-          setPossessionText(downInfo && fieldPosition ? `${downInfo}, ${fieldPosition}` : downInfo || fieldPosition);
+          setPossessionText(
+            downInfo && fieldPosition
+              ? `${downInfo}, ${fieldPosition}`
+              : downInfo || fieldPosition
+          );
 
           if (competition.situation.lastPlay) {
             const playObj = competition.situation.lastPlay as PlayObject;
@@ -189,13 +236,25 @@ export const useNFLGamePossession = (
             };
 
             if (playObj.drive?.start?.text) {
-              const { side, yardLineText } = extractSide(playObj.drive.start.text);
-              playObj.start = { ...playObj.start, yardLineSide: side, yardLineText };
+              const { side, yardLineText } = extractSide(
+                playObj.drive.start.text
+              );
+              playObj.start = {
+                ...playObj.start,
+                yardLineSide: side,
+                yardLineText,
+              };
             }
 
             if (playObj.drive?.end?.text) {
-              const { side, yardLineText } = extractSide(playObj.drive.end.text);
-              playObj.end = { ...playObj.end, yardLineSide: side, yardLineText };
+              const { side, yardLineText } = extractSide(
+                playObj.drive.end.text
+              );
+              playObj.end = {
+                ...playObj.end,
+                yardLineSide: side,
+                yardLineText,
+              };
             }
 
             setLastPlay(playObj);

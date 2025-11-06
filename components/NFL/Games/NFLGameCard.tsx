@@ -25,7 +25,7 @@ import {
   isSuperBowlGame,
   normalizeDisplayStatus,
 } from "utils/nflGameCardUtils";
-
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 type Props = {
   game: any; // TODO: replace with proper Game type
   isDark?: boolean;
@@ -48,6 +48,8 @@ function NFLGameCard({ game, isDark }: Props) {
     formattedDate,
     formattedTime,
   } = getGameDate(game?.game?.date?.timestamp);
+
+  
 
   // --- Status ---
   const status = getNFLGameStatus(game);
@@ -106,29 +108,42 @@ function NFLGameCard({ game, isDark }: Props) {
   const displayStatus = normalizeDisplayStatus(
     gameStatusDescription ?? status.long ?? status.short ?? ""
   );
+const awayTeamEspnID = awayId;
+const homeTeamEspnID = homeId;
 
   // --- Teams ---
-  const awayTeam = useMemo(
-    () =>
-      getNFLTeamData(
-        String(awayId ?? ""),
-        dark,
-        awayRecord?.overall ?? "0-0",
-        possessionTeamId
-      ),
-    [awayId, awayRecord?.overall, dark, possessionTeamId]
-  );
+const awayTeam = useMemo(
+  () =>
+    getNFLTeamData(
+      awayId,
+      awayTeamEspnID, // ✅ replace with the actual ESPN ID variable
+      dark,
+      awayRecord?.overall ?? "0-0",
+      possessionTeamId
+    ),
+  [awayId, awayTeamEspnID, awayRecord?.overall, possessionTeamId, dark]
+);
 
-  const homeTeam = useMemo(
-    () =>
-      getNFLTeamData(
-        String(homeId ?? ""),
-        dark,
-        homeRecord?.overall ?? "0-0",
-        possessionTeamId
-      ),
-    [homeId, homeRecord?.overall, dark, possessionTeamId]
-  );
+const homeTeam = useMemo(
+  () =>
+    getNFLTeamData(
+      homeId,
+      homeTeamEspnID, // ✅ replace with the actual ESPN ID variable
+      dark,
+      homeRecord?.overall ?? "0-0",
+      possessionTeamId
+    ),
+  [homeId, homeTeamEspnID, homeRecord?.overall, possessionTeamId, dark]
+);
+
+
+   const { headlineText } = useGameInfo(
+      Number(  homeTeam?.espnID ),
+      Number(  awayTeam?.espnID ),
+      gameDateStr,
+      "nfl"
+    );
+  
 
   // --- Broadcasts ---
   const { broadcasts } = useNFLGameBroadcasts(
@@ -164,12 +179,12 @@ function NFLGameCard({ game, isDark }: Props) {
             <Image
               source={dark ? FootballLight : Football}
               style={{
-                  width: 20,
-                  height: 20,
-                  resizeMode: "contain",
-                  position: "absolute",
-                  right: -70,
-                  top: 24,
+                width: 20,
+                height: 20,
+                resizeMode: "contain",
+                position: "absolute",
+                right: -70,
+                top: 24,
               }}
             />
           )}
@@ -190,45 +205,51 @@ function NFLGameCard({ game, isDark }: Props) {
         {/* Game Info */}
         <View style={styles.info}>
           {status.isScheduled ? (
-            <>
+            <View style={styles.infoWrapper}>
               <Text style={styles.date}>{formattedDate}</Text>
-              <Text style={styles.time}>{formattedTime}</Text>
-            </>
+              <View style={styles.statusDivider} />
+              <Text style={styles.date}>{formattedTime}</Text>
+            </View>
           ) : status.isLive ? (
             <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                }}
-              >
+              <View style={styles.infoWrapper}>
                 <Text style={styles.date}>{formatQuarter(period)}</Text>
-                <View
-                  style={{
-                    height: 14,
-                    width: 1,
-                    backgroundColor: dark ? "#fff" : "#333",
-                  }}
-                />
+                <View style={styles.statusDivider} />
                 <Text style={styles.clock}>{displayClock}</Text>
               </View>
               {shortDownDistanceText && possessionText && (
                 <Text style={styles.downDistance}>{possessionText}</Text>
               )}
             </>
-          ) : status.isHalftime ? (
+          ) : status.isHalftime && !status.isLive ? (
+            // Only show "Halftime" if not live and no active clock
             <>
-              <Text style={styles.date}>{displayStatus}</Text>
+              <Text style={styles.date}>Halftime</Text>
+            </>
+          ) : status.isLive ? (
+            // Live state overrides halftime
+            <>
+              <View style={styles.infoWrapper}>
+                <Text style={styles.date}>{formatQuarter(period)}</Text>
+                <View style={styles.statusDivider} />
+                <Text style={styles.clock}>
+                  {displayClock && displayClock !== "0:00" ? displayClock : ""}
+                </Text>
+              </View>
+              {shortDownDistanceText && possessionText && (
+                <Text style={styles.downDistance}>{possessionText}</Text>
+              )}
             </>
           ) : (
-            <>
+            <View style={styles.infoWrapper}>
               <Text style={styles.finalText}>{displayStatus}</Text>
-              <Text style={styles.dateFinal}>{formattedDate}</Text>
-            </>
+              <View style={styles.finalStatusDivider} />
+              <Text style={styles.finalText}>{formattedDate}</Text>
+            </View>
           )}
-          <Text style={styles.broadcast}>{broadcastText}</Text>
+          {!status.isFinal && broadcastText && (
+            <Text style={styles.broadcast}>{broadcastText}</Text>
+          )}
         </View>
 
         {/* Home Score / Record */}
@@ -247,12 +268,12 @@ function NFLGameCard({ game, isDark }: Props) {
             <Image
               source={dark ? FootballLight : Football}
               style={{
-                 width: 20,
-                  height: 20,
-                  resizeMode: "contain",
-                  position: "absolute",
-                  left: -70,
-                  top: 24,
+                width: 20,
+                height: 20,
+                resizeMode: "contain",
+                position: "absolute",
+                left: -70,
+                top: 24,
               }}
             />
           )}
@@ -268,7 +289,7 @@ function NFLGameCard({ game, isDark }: Props) {
         >
           <Ionicons
             name={notifEnabled ? "notifications" : "notifications-outline"}
-            size={16}
+            size={20}
             color={isDark ? "#fff" : "#1d1d1d"}
           />
         </Pressable>

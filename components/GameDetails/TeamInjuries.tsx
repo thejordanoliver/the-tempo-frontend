@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import FixedWidthTabBar from "../FixedWidthTabBar";
 import HeadingTwo from "../Headings/HeadingTwo";
-import GameInjuries from "./TeamInjuriesList";
+import TeamInjuriesList from "./TeamInjuriesList";
 
 type Props = {
   injuries: TeamInjury[];
@@ -79,10 +79,7 @@ export default function TeamInjuriesTab({ injuries, lighter = false }: Props) {
                 {tab.logo && (
                   <Image
                     source={isDark ? tab.logoLight || tab.logo : tab.logo}
-                    style={[
-                      styles.logo,
-                      { width: 20, height: 20, opacity: isSelected ? 1 : 0.5 },
-                    ]}
+                    style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
                     resizeMode="contain"
                   />
                 )}
@@ -102,7 +99,7 @@ export default function TeamInjuriesTab({ injuries, lighter = false }: Props) {
         />
       </View>
 
-      <GameInjuries injuries={[currentInjuries]} lighter={lighter} />
+      <TeamInjuriesList injuries={[currentInjuries]} lighter={lighter} />
     </View>
   );
 }
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   logo: {
-    width: 20,
-    height: 20,
+    width: 28,
+    height: 28,
   },
 });

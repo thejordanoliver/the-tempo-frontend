@@ -1,68 +1,47 @@
+import { Colors } from "constants/Colors";
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import { Animated, Easing, StyleSheet, useColorScheme, View } from "react-native";
 
 export default function StackedGameCardSkeleton() {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
-  const shimmerTranslate = useRef(new Animated.Value(-100)).current;
-  const shimmerOpacity = useRef(new Animated.Value(0.5)).current;
+  // Smooth breathing pulse animation
+  const pulse = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(shimmerTranslate, {
-          toValue: 140,
+        Animated.timing(pulse, {
+          toValue: 1.1,
           duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerTranslate, {
-          toValue: -100,
+        Animated.timing(pulse, {
+          toValue: 0.3,
           duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
-    ).start();
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmerOpacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmerOpacity, {
-          toValue: 0.5,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  function Skeleton({
-    style,
-    shimmerWidth,
-  }: {
-    style: any;
-    shimmerWidth: number;
-  }) {
-    return (
-      <View style={[style, styles.shimmerClipper]}>
-        <View style={style} />
-        <Animated.View
-          style={[
-            styles.shimmer,
-            {
-              width: shimmerWidth,
-              opacity: shimmerOpacity,
-              transform: [{ translateX: shimmerTranslate }],
-            },
-          ]}
-        />
-      </View>
+      ]),
+      { resetBeforeIteration: false } // ensures a perfect continuous loop
     );
-  }
+
+    animation.start();
+    return () => animation.stop();
+  }, [pulse]);
+
+  const Skeleton = ({ style }: { style: any }) => (
+    <Animated.View
+      style={[
+        style,
+        {
+          opacity: pulse,
+        },
+      ]}
+    />
+  );
 
   return (
     <View style={styles.card}>
@@ -70,10 +49,10 @@ export default function StackedGameCardSkeleton() {
       <View style={styles.cardWrapper}>
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} shimmerWidth={40} />
-            <Skeleton style={styles.nameSkeleton} shimmerWidth={80} />
+            <Skeleton style={styles.logoSkeleton} />
+            <Skeleton style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} shimmerWidth={40} />
+          <Skeleton style={styles.scoreSkeleton} />
         </View>
 
         {/* Spacer */}
@@ -82,16 +61,17 @@ export default function StackedGameCardSkeleton() {
         {/* Home Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} shimmerWidth={40} />
-            <Skeleton style={styles.nameSkeleton} shimmerWidth={80} />
+            <Skeleton style={styles.logoSkeleton} />
+            <Skeleton style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} shimmerWidth={40} />
+          <Skeleton style={styles.scoreSkeleton} />
         </View>
       </View>
+
       {/* Game Info */}
       <View style={styles.info}>
-        <Skeleton style={styles.dateSkeleton} shimmerWidth={60} />
-        <Skeleton style={styles.timeSkeleton} shimmerWidth={60} />
+        <Skeleton style={styles.dateSkeleton} />
+        <Skeleton style={styles.timeSkeleton} />
       </View>
     </View>
   );
@@ -101,15 +81,19 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
-      backgroundColor: isDark ? "#2e2e2e" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 12,
-      padding: 12,  
+      padding: 12,
       justifyContent: "space-between",
-      minHeight: 100,
+      height: 110,
     },
     cardWrapper: {
       flexDirection: "column",
-      borderRightColor: isDark ? "#444" : "#888",
+      borderRightColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       justifyContent: "center",
       borderRightWidth: 0.5,
       paddingRight: 12,
@@ -123,30 +107,34 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "space-between",
       marginBottom: 6,
     },
-
     teamWrapper: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
     },
     logoSkeleton: {
       width: 24,
       height: 24,
       borderRadius: 12,
-      backgroundColor: isDark ? "#666" : "#bbb",
+      backgroundColor: isDark
+        ? Colors.netural.darkGray
+        : Colors.netural.lightGray,
     },
     nameSkeleton: {
       width: 120,
       height: 18,
       borderRadius: 4,
-      backgroundColor: isDark ? "#666" : "#bbb",
+      backgroundColor: isDark
+        ? Colors.netural.darkGray
+        : Colors.netural.lightGray,
       marginHorizontal: 8,
     },
     scoreSkeleton: {
       width: 40,
       height: 18,
       borderRadius: 6,
-      backgroundColor: isDark ? "#666" : "#bbb",
+      backgroundColor: isDark
+        ? Colors.netural.darkGray
+        : Colors.netural.lightGray,
     },
     info: {
       flexDirection: "column",
@@ -158,24 +146,16 @@ const getStyles = (isDark: boolean) =>
       width: 40,
       height: 12,
       borderRadius: 4,
-      backgroundColor: isDark ? "#666" : "#bbb",
+      backgroundColor: isDark
+        ? Colors.netural.darkGray
+        : Colors.netural.lightGray,
     },
     timeSkeleton: {
       width: 40,
       height: 12,
       borderRadius: 4,
-      backgroundColor: isDark ? "#666" : "#bbb",
-    },
-    shimmerClipper: {
-      position: "relative",
-      overflow: "hidden",
-    },
-    shimmer: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
       backgroundColor: isDark
-        ? "rgba(255,255,255,0.15)"
-        : "rgba(255,255,255,0.4)",
+        ? Colors.netural.darkGray
+        : Colors.netural.lightGray,
     },
   });

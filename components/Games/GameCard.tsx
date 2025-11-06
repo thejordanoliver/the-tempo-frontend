@@ -3,6 +3,8 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameInfo } from "hooks/useGameInfo";
+import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useMemo, useState } from "react";
 import {
@@ -20,15 +22,27 @@ import { getStyles } from "../../styles/GamecardStyles/GameCard.styles";
 import { Game, Team } from "../../types/types";
 // --- Helper function to normalize API status ---
 function mapStatus(apiStatus: {
-  short: number;
+  short: number | string;
   long?: string;
-}): Game["status"] {
-  switch (apiStatus.short) {
+}): string {
+  const long = apiStatus.long?.toLowerCase();
+
+  // ✅ prioritize 'long' from API
+  if (long === "in play") return "In Play";
+  if (long === "finished") return "Final";
+  if (long === "scheduled") return "Scheduled";
+  if (long === "canceled") return "Canceled";
+  if (long === "delayed") return "Delayed";
+  if (long === "postponed") return "Postponed";
+
+  // fallback using numeric 'short' codes
+  const short = Number(apiStatus.short);
+  switch (short) {
     case 1:
       return "Scheduled";
     case 2:
-    case 3: // finished
-      return "Final";
+    case 3:
+      return "Final"; // only if 'long' was missing
     case 4:
       return "Postponed";
     case 5:
@@ -36,7 +50,6 @@ function mapStatus(apiStatus: {
     case 6:
       return "Canceled";
     default:
-      if (apiStatus.long?.toLowerCase() === "finished") return "Final";
       return "Scheduled";
   }
 }
@@ -61,16 +74,12 @@ export default function GameCard({
 
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
-
-  const getTeamName = (id?: number | string): string => {
-    const team = getTeamById(id);
-    return team?.name ?? "Unknown";
-  };
+  const getTeamName = (id?: number | string) =>
+    getTeamById(id)?.name ?? "Unknown";
 
   // IDs
   const homeId = Number(game.home?.id ?? (game as any).homeTeamId ?? 0);
   const awayId = Number(game.away?.id ?? (game as any).awayTeamId ?? 0);
-
   // ESPN IDs
   const homeEspnId = getTeamById(homeId)?.espnID;
   const awayEspnId = getTeamById(awayId)?.espnID;
@@ -105,22 +114,56 @@ export default function GameCard({
   const homeRecordData = homeRecord?.overall;
   const awayRecordData = awayRecord?.overall;
 
-  const currentPeriod = Number(game.periods?.current ?? game.period);
+  const safeDate = (date?: string | null) => {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
 
-  const status = mapStatus(game.status as any);
-  const isFinal = status === "Final";
-  const inProgress = status === "In Progress";
-  const isCanceled = status === "Canceled";
-  const isDelayed = status === "Delayed";
-  const isPostponed = status === "Postponed";
+  const gameDate = safeDate(game.date);
+  const gameDateStr = gameDate.toISOString();
+
+  // ✅ Use full ESPN-style names
+  const getFullTeamName = (id?: number | string) => {
+    const team = teams.find((t) => String(t.id) === String(id));
+    return team?.fullName ?? team?.name ?? "";
+  };
+
+  const homeFullName = getFullTeamName(homeId);
+  const awayFullName = getFullTeamName(awayId);
+
+  const { score: liveScore } = useGameScores(
+    "nba",
+    homeFullName,
+    awayFullName,
+    gameDateStr
+  );
+
+  const currentPeriod =
+    liveScore?.period ?? Number(game.periods?.current ?? game.period);
+  const endOfPeriod = Number(game.periods?.current ?? game.period);
+  const homeScore =
+    liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
+  const awayScore =
+    liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+
+  // Status
+  const statusObj = game.status;
+  const statusText =
+    typeof game.status === "string" ? game.status : mapStatus(game.status);
+  const isFinal = statusText === "Final";
+  const inProgress = statusText === "In Play";
+  const isCanceled = statusText === "Canceled";
+  const isDelayed = statusText === "Delayed";
+  const isPostponed = statusText === "Postponed";
   const isEndOfPeriod = game.periods?.endOfPeriod === true;
-
-  const homeScore = game.scores?.home?.points ?? game.homeScore;
-  const awayScore = game.scores?.visitors?.points ?? game.awayScore;
-
+  // ✅ Smarter halftime detection
+  const isHalftime =
+    liveScore?.statusText?.toLowerCase() === "halftime" ||
+    statusObj?.long?.toLowerCase() === "halftime" ||
+    statusText === "Halftime";
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
-
   const winnerStyle = (teamWins: boolean): TextStyle => ({
     color: dark ? "#fff" : "#1d1d1d",
     opacity: inProgress ? 1 : teamWins ? 1 : 0.5,
@@ -134,15 +177,6 @@ export default function GameCard({
       );
     return getTeamLogo(teamData.id, dark);
   };
-
-  function safeDate(date?: string | null) {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  }
-
-  const gameDate = safeDate(game.date);
-  const gameDateStr = gameDate.toISOString();
 
   const playoffGames =
     homeId && awayId ? useFetchPlayoffGames(homeId, awayId, 2024).games : [];
@@ -170,7 +204,6 @@ export default function GameCard({
     awayTeam.name,
     gameDateStr
   );
-
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   function getQuarterLabel(period?: number) {
@@ -184,28 +217,43 @@ export default function GameCard({
     if (!period) return "Final";
     if (period <= 4) return `Final`;
     const ot = period - 4;
-    return ot === 1 ? "Final OT" : `Final OT${ot}`;
+    return ot === 1 ? "Final/OT" : `Final/OT${ot}`;
   }
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  const { headlineText } = useGameInfo(
+    Number(homeEspnId),
+    Number(awayEspnId),
+    gameDateStr
+  );
 
   const ScoreText = ({
     score,
     recordData,
     teamWins,
+    showRecord,
   }: {
     score?: number;
     recordData?: string;
     teamWins: boolean;
+    showRecord?: boolean;
   }) => {
-    const hasScore = score != null;
-    const style = hasScore
-      ? [styles.teamScore, winnerStyle(teamWins)]
-      : styles.teamRecord;
-    const displayValue = hasScore ? score : recordData ?? "-";
+    const hasScore = typeof score === "number" && !isNaN(score);
+    const displayValue =
+      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+    const style =
+      showRecord || !hasScore
+        ? styles.teamRecord
+        : [styles.teamScore, winnerStyle(teamWins)];
     return <Text style={style}>{displayValue}</Text>;
   };
 
   const renderCardContent = () => (
     <>
+      {/* Away Team */}
       <View style={styles.teamSection}>
         <Image
           source={getLogo(awayTeamData, awayTeam)}
@@ -216,10 +264,15 @@ export default function GameCard({
       </View>
       <ScoreText
         score={awayScore}
-        recordData={awayRecordData ?? undefined} // <-- coerce null to undefined
+        recordData={awayRecordData ?? undefined}
         teamWins={awayWins}
+        showRecord={statusText === "Scheduled"}
       />
 
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headlineText}</Text>
+      
+      {/* Center Info */}
       <View
         style={[
           styles.info,
@@ -229,94 +282,68 @@ export default function GameCard({
           },
         ]}
       >
-        {(gameNumberLabel || seriesSummary || holidayLabel) && (
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: 6,
-              paddingHorizontal: 4,
-              width: "100%",
-              position: "absolute",
-              top: -20,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-              }}
-            >
-              {gameNumberLabel && (
-                <Text style={styles.seriesStatus}>{gameNumberLabel}</Text>
-              )}
-              {gameNumberLabel && (seriesSummary || holidayLabel) && (
-                <View style={styles.seriesDivider} />
-              )}
-              {seriesSummary && (
-                <Text style={styles.seriesStatus}>{seriesSummary}</Text>
-              )}
-              {holidayLabel && (
-                <Text style={styles.seriesStatus}>{holidayLabel}</Text>
-              )}
-            </View>
-          </View>
-        )}
-
+        {/* Status / Score */}
         {isCanceled ? (
           <Text style={styles.finalText}>Canceled</Text>
         ) : isDelayed ? (
           <Text style={styles.finalText}>Delayed</Text>
         ) : isPostponed ? (
           <Text style={styles.finalText}>Postponed</Text>
+        ) : isHalftime ? (
+          // 🏀 Explicitly handle halftime
+          <Text style={styles.date}>Halftime</Text>
         ) : isFinal ? (
-          <>
+          <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>
               {getFinalWithQuarterLabel(currentPeriod)}
             </Text>
-            <Text style={styles.dateFinal}>
-              {gameDate.toLocaleDateString("en-US", {
-                month: "numeric",
-                day: "numeric",
-              })}
-            </Text>
-          </>
+            <View style={styles.finalStatusDivider} />
+            <Text style={styles.finalText}>{formattedDate}</Text>
+          </View>
         ) : inProgress ? (
-          <>
-            <Text style={styles.date}>
-              {game.isHalftime
-                ? "Halftime"
-                : isEndOfPeriod
-                ? `End of ${getQuarterLabel(currentPeriod)}`
-                : getQuarterLabel(currentPeriod)}
-            </Text>
-            {!game.isHalftime && !isEndOfPeriod && game.clock && (
-              <Text style={styles.clock}>{game.clock}</Text>
+          <View style={styles.infoWrapper}>
+            {liveScore?.statusText?.toLowerCase()?.startsWith("end of") ||
+            isEndOfPeriod ? (
+              // 🏁 Show end-of-period message (e.g. "End of 1st Quarter")
+              <Text style={styles.date}>
+                {liveScore?.statusText ??
+                  `End of ${getQuarterLabel(endOfPeriod)}`}
+              </Text>
+            ) : (
+              // 🕒 Show current period + live clock when game is in progress
+              <View style={styles.infoWrapper}>
+                <Text style={styles.date}>
+                  {getQuarterLabel(currentPeriod)}
+                </Text>
+                {liveScore?.displayClock || statusObj?.clock ? (
+                  <>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>
+                      {liveScore?.displayClock ?? statusObj?.clock ?? ""}
+                    </Text>
+                  </>
+                ) : null}
+              </View>
             )}
-          </>
+          </View>
         ) : (
-          <>
-            <Text style={styles.date}>
-              {gameDate.toLocaleDateString("en-US", {
-                month: "numeric",
-                day: "numeric",
-              })}
-            </Text>
-            <Text style={styles.time}>{game.time ?? "TBD"}</Text>
-          </>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.date}>{formattedDate}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.date}>{game.time ?? "TBD"}</Text>
+          </View>
         )}
-
-        {broadcastText ? (
+        {!isFinal && broadcastText && (
           <Text style={styles.broadcast}>{broadcastText}</Text>
-        ) : null}
+        )}
       </View>
 
+      {/* Home Team */}
       <ScoreText
         score={homeScore}
-        recordData={homeRecordData ?? undefined} // <-- coerce null to undefined
+        recordData={homeRecordData ?? undefined}
         teamWins={homeWins}
+        showRecord={statusText === "Scheduled"}
       />
       <View style={styles.teamSection}>
         <Image
@@ -327,6 +354,7 @@ export default function GameCard({
         <Text style={styles.teamName}>{getTeamName(homeId)}</Text>
       </View>
 
+      {/* Notification Bell */}
       <Pressable
         onPress={() => setNotifEnabled((prev) => !prev)}
         style={({ pressed }) => [
@@ -336,7 +364,7 @@ export default function GameCard({
       >
         <Ionicons
           name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={16}
+          size={20}
           color={dark ? "#fff" : "#1d1d1d"}
         />
       </Pressable>

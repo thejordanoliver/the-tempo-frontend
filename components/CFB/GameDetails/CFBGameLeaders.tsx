@@ -134,22 +134,23 @@ export default function CFBGameLeaders({
   const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
   const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#ccc";
 
-  const teamLogos = useMemo(() => {
-    if (!homeTeamId || !awayTeamId) return {};
+const teamLogos = useMemo(() => {
+  if (!homeTeamId || !awayTeamId) return {};
 
-    const logos: Record<string, any> = {};
-    [homeTeamId, awayTeamId].forEach((id) => {
-      const teamAbbr = getCFBTeamAbbreviation(id) || "UNK";
+  const logos: Record<string, any> = {};
+  [homeTeamId, awayTeamId].forEach((id) => {
+    const teamAbbr = getCFBTeamAbbreviation(id) || "UNK";
 
-      // Ensure a stable reference to the Image source
-      const lightLogo = getTeamLogo(teamAbbr, true);
-      const darkLogo = getTeamLogo(teamAbbr, false);
+    // Use light logo only in dark mode or lighter mode
+    if (isDark || lighter) {
+      logos[id] = getTeamLogo(teamAbbr, true) ?? getTeamLogo(teamAbbr, false);
+    } else {
+      logos[id] = getTeamLogo(teamAbbr, false) ?? getTeamLogo(teamAbbr, true);
+    }
+  });
 
-      logos[id] = lighter ? lightLogo ?? darkLogo : darkLogo;
-    });
-
-    return logos;
-  }, [homeTeamId, awayTeamId, lighter]);
+  return logos;
+}, [homeTeamId, awayTeamId, isDark, lighter]);
 
   // Early return
   if (!homeTeamId || !awayTeamId) return null;
@@ -252,7 +253,7 @@ export default function CFBGameLeaders({
             ]}
           >
             <View
-              style={[styles.avatarWrapper, { backgroundColor: borderColor }]}
+              style={[styles.avatarWrapper]}
             >
               <Image
                 source={p.image ? { uri: p.image } : Placeholder}
@@ -279,11 +280,12 @@ export default function CFBGameLeaders({
               </View>
             </View>
 
-            <Image
-              source={teamLogos[teamId]}
-              style={styles.teamLogo}
-              resizeMode="contain"
-            />
+          <Image
+  source={teamLogos[teamId]}
+  style={styles.teamLogo}
+  resizeMode="contain"
+/>
+
           </View>
         );
       })}

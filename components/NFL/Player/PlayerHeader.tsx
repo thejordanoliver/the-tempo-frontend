@@ -31,11 +31,7 @@ export default function PlayerHeader({
 }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
 
-  const useWhiteTextTeams = [
-    "cin",
-    "bal",
-
-  ];
+  const useWhiteTextTeams = ["cin", "bal", "tb"];
 
   const getPrimaryTextColor = (
     isDark: boolean,

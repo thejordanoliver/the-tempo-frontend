@@ -104,7 +104,8 @@ const NFLRoster = forwardRef(({ teamId, teamName }: NFLRosterProps, ref) => {
 const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 100,
-    padding: 12,
+    paddingHorizontal: 12,
+    gap: 12,
   },
 
   message: {

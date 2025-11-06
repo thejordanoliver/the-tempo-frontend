@@ -1,5 +1,12 @@
 // components/FollowersList.tsx
-import { Pressable, Image, Text, View, useColorScheme } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  Image,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import { Fonts } from "constants/fonts";
 import FollowingButton from "./ModalFollowingButton";
 
@@ -43,54 +50,65 @@ export default function FollowersList({
     );
   }
 
-  return (
-    <>
-      {users.map((item) => {
-        const imageUri = item.profile_image.startsWith("http")
-          ? item.profile_image
-          : `${process.env.EXPO_PUBLIC_API_URL}${item.profile_image}`;
+  const renderItem = ({ item }: { item: User }) => {
+    const imageUri = item.profile_image.startsWith("http")
+      ? item.profile_image
+      : `${process.env.EXPO_PUBLIC_API_URL}${item.profile_image}`;
 
-        const isCurrentUser = item.id.toString() === currentUserId;
+    const isCurrentUser = item.id.toString() === currentUserId;
 
-        return (
-          <Pressable
-            key={item.id.toString()}
-            onPress={() => onUserPress(item.id.toString())}
+    return (
+      <Pressable onPress={() => onUserPress(item.id.toString())}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingVertical: 12,
+            borderBottomWidth: 1,
+            borderBottomColor: isDark
+              ? "rgba(255,255,255,0.2)"
+              : "rgba(120, 120, 120, 0.5)",
+          }}
+        >
+          <Image
+            source={{ uri: imageUri }}
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 100,
+              marginRight: 12,
+            }}
+          />
+          <Text
+            style={{
+              flex: 1,
+              fontSize: 16,
+              fontFamily: Fonts.OSREGULAR,
+              color: isDark ? "#fff" : "#1d1d1d",
+            }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 12,
-                borderBottomWidth: 1,
-                borderBottomColor: isDark
-                  ? "rgba(255,255,255,0.2)"
-                  : "rgba(120, 120, 120, 0.5)",
-              }}
-            >
-              <Image source={{ uri: imageUri }} style={{ width: 48, height: 48, borderRadius: 100, marginRight: 12 }} />
-              <Text
-                style={{
-                  flex: 1,
-                  fontSize: 16,
-                  fontFamily: Fonts.OSREGULAR,
-                  color: isDark ? "#fff" : "#1d1d1d",
-                }}
-              >
-                {item.username}
-              </Text>
+            {item.username}
+          </Text>
 
-              {!isCurrentUser && (
-                <FollowingButton
-                  isFollowing={item.isFollowing}
-                  loading={loadingIds.includes(item.id.toString())}
-                  onToggle={() => onToggleFollow(item.id.toString())}
-                />
-              )}
-            </View>
-          </Pressable>
-        );
-      })}
-    </>
+          {!isCurrentUser && (
+            <FollowingButton
+              isFollowing={item.isFollowing}
+              loading={loadingIds.includes(item.id.toString())}
+              onToggle={() => onToggleFollow(item.id.toString())}
+            />
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  return (
+    <FlatList
+      data={users}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={renderItem}
+      showsVerticalScrollIndicator={false}
+      scrollEnabled={false}
+    />
   );
 }

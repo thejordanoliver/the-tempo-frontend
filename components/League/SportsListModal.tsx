@@ -5,7 +5,8 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CFBLogo from "assets/Football/CFB_Logos/CFB.png";
+import CFBLogo from "assets/College_Logos/CFB.png";
+import CBBLogo from "assets/College_Logos/CBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import { Fonts } from "constants/fonts";
@@ -21,6 +22,7 @@ import {
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
+
 export type SportsListModalRef = {
   present: () => void;
   dismiss: () => void;
@@ -31,7 +33,7 @@ type SportsListModalProps = {
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: LeagueType[] = ["NBA", "NFL", "CFB"];
+const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB"];
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
@@ -50,7 +52,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
     }));
 
     const styles = getStyles(isDark);
-    type LeagueRoute = "/league/nba" | "/league/nfl" | "/league/cfb";
+    type LeagueRoute = "/league/nba" | "/league/nfl" | "/league/cfb" | "/league/cbb";
 
     const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
@@ -61,7 +63,9 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
           ? "/league/nba"
           : league === "NFL"
           ? "/league/nfl"
-          : "/league/cfb";
+          : league === "CFB"
+          ? "/league/cfb"
+          : "/league/cbb";
 
       router.push(route);
       onSelect(league);
@@ -123,7 +127,9 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                         ? NBALogo
                         : league === "NFL"
                         ? NFLLogo
-                        : CFBLogo
+                        : league === "CFB"
+                        ? CFBLogo
+                        : CBBLogo
                     }
                   />
                   <Text style={styles.leagueText}>{league}</Text>

@@ -1,7 +1,7 @@
-import { Fonts } from "constants/fonts";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useEffect, useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
 import { NFLTeam } from "types/nfl";
 
 type NFLGameCenterInfoProps = {
@@ -16,6 +16,8 @@ type NFLGameCenterInfoProps = {
   playoffInfo?: string | string[];
   homeTeam: NFLTeam;
   awayTeam: NFLTeam;
+  broadcastNetworks?: string,
+  headlineText?: string;
 };
 
 export function NFLGameCenterInfo({
@@ -25,19 +27,21 @@ export function NFLGameCenterInfo({
   period,
   clock,
   downAndDistance,
-  colors,
   isDark,
   playoffInfo,
   homeTeam,
   awayTeam,
+  broadcastNetworks,
+  headlineText
 }: NFLGameCenterInfoProps) {
   const { broadcasts, loading } = useNFLGameBroadcasts(
-    homeTeam.code,
-    awayTeam.code,
-    date
+    homeTeam.code ?? "",
+    awayTeam.code ?? "",
+    date ?? ""
   );
-
   const [tick, setTick] = useState(0);
+
+
 
   useEffect(() => {
     if (
@@ -82,29 +86,9 @@ export function NFLGameCenterInfo({
     normalizedStatus.includes("postponed") ||
     normalizedStatus.includes("delayed");
 
-  const getBroadcastDisplay = () => {
-    if (!broadcasts.length) return "";
-    const names = broadcasts
-      .map((b) =>
-        Array.isArray(b.names) ? b.names.join("/") : b.name || b.shortName || ""
-      )
-      .filter(Boolean)
-      .map((n) => {
-        const lower = n.toLowerCase();
-        if (lower.includes("prime video")) return "Prime";
-        if (lower.includes("nfl net")) return "NFLN";
-        if (lower.includes("fox")) return "FOX";
-        if (lower.includes("espn") && lower.includes("abc")) return "ESPN/ABC";
-        if (lower.includes("tnt") && lower.includes("hbo max"))
-          return "TNT/MAX";
-        return n;
-      });
-    return names.includes("ESPN") && names.includes("ABC")
-      ? "ESPN/ABC"
-      : names[0];
-  };
 
   const styles = getStyles(isDark);
+
 
   // ---- Playoff Stage ----
   const renderPlayoffInfo = () => {
@@ -148,29 +132,23 @@ export function NFLGameCenterInfo({
   // ---- Render ----
   return (
     <View style={styles.container}>
-      {renderPlayoffInfo()}
+ 
 
       {/* Scheduled */}
       {isScheduled && (
-        <>
+        <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date || "TBD"}</Text>
-          <Text style={styles.time}>{time || ""}</Text>
-        </>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time || ""}</Text>
+        </View>
       )}
 
       {/* In Progress + End of Period */}
       {isInProgress && (
         <>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }}
-          >
+          <View style={styles.infoWrapper}>
             {renderPeriodDisplay()}
-            <View style={styles.divider} />
+            <View style={styles.statusDivider} />
             {clock && !period?.toLowerCase().includes("end") && (
               <Text style={styles.clock}>{clock}</Text>
             )}
@@ -186,93 +164,25 @@ export function NFLGameCenterInfo({
 
       {/* Final */}
       {isFinal && (
-        <>
+        <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>
             {period && period.toUpperCase().includes("OT")
               ? "Final/OT"
               : "Final"}
           </Text>
-          <Text style={styles.dateFinal}>{date || ""}</Text>
-        </>
+                    <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{date || ""}</Text>
+        </View>
       )}
 
       {/* Canceled / Delayed / Postponed */}
       {isCanceled && <Text style={styles.finalText}>{status}</Text>}
 
-      {/* Broadcasts */}
-      {getBroadcastDisplay() && (
-        <View>
-          {broadcasts.length > 0 && (
-            <Text style={styles.broadcasts}>{getBroadcastDisplay()}</Text>
-          )}
-        </View>
+   
+       {/* 📺 Broadcast */}
+      {broadcastNetworks && (
+        <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}
     </View>
   );
 }
-
-export const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      justifyContent: "center",
-      alignItems: "center",
-      marginHorizontal: 8,
-      marginBottom: 8,
-    },
-    date: {
-      fontFamily: Fonts.OSMEDIUM,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontSize: 14,
-    },
-    time: {
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#aaa" : "#555",
-      fontSize: 12,
-    },
-    broadcasts: {
-      fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#aaa" : "#555",
-      textAlign: "center",
-    },
-    clock: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-      color: isDark ? "#ff4444" : "#cc0000",
-      textAlign: "center",
-    },
-    downAndDistance: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 12,
-      color: isDark ? "#aaa" : "#555",
-      marginTop: 2,
-      textAlign: "center",
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "rgba(255,255,255, 1)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: isDark ? "#ff4444" : "#cc0000",
-      textAlign: "center",
-    },
-    divider: {
-      height: 14,
-      width: 1,
-      backgroundColor: isDark ? "rgba(255,255,255, 1)" : "rgba(0, 0, 0, .5)",
-    },
-    playoffContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 6,
-    },
-    playoffText: {
-      fontSize: 13,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSEXTRALIGHT,
-      textAlign: "center",
-    },
-  });

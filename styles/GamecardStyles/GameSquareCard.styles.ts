@@ -1,13 +1,15 @@
-import { StyleSheet } from "react-native";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-
+import { StyleSheet } from "react-native";
 
 export const getStyles = (dark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
       height: 120,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
+      backgroundColor: dark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 12,
       paddingHorizontal: 8,
@@ -16,7 +18,7 @@ export const getStyles = (dark: boolean) =>
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
+      borderRightColor: dark ? Colors.netural.darkGray : Colors.netural.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
       gap: 8,
@@ -45,7 +47,7 @@ export const getStyles = (dark: boolean) =>
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
-      color: dark ? "#fff" : "#1d1d1d",
+      color: dark ? Colors.dark.text : Colors.light.text,
     },
     teamScore: {
       fontSize: 14,
@@ -59,41 +61,42 @@ export const getStyles = (dark: boolean) =>
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: dark ? "#aaa" : "#888",
+      color: dark ? Colors.dark.text : Colors.light.text,
     },
     info: { alignItems: "center", justifyContent: "center", width: 60 },
     date: {
       fontSize: 12,
-      fontFamily: Fonts.OSMEDIUM,
-      color: dark ? "#fff" : "#1d1d1d",
+      fontFamily: Fonts.OSREGULAR,
+      color: dark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     dateFinal: {
-     fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
+      fontFamily: Fonts.OSREGULAR,
+      color: dark ? Colors.dark.text : Colors.light.text,
       fontSize: 12,
     },
     time: {
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
+      color: dark ? Colors.dark.text : Colors.light.text,
     },
     clock: {
       fontSize: 12,
       fontFamily: Fonts.OSBOLD,
-      color: dark ? "#ff4444" : "#cc0000",
+     color: dark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     finalText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 12,
-      color: dark ? "#ff4444" : "#cc0000",
+     color: dark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     broadcast: {
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
+      color: dark ? Colors.dark.text : Colors.light.text,
     },
   });
