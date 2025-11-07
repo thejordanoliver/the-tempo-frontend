@@ -215,12 +215,17 @@ import AbileneChristianLogo from "../assets/College_Logos/AbileneChristian.png";
 import ArkansasStateLogo from "../assets/College_Logos/ArkansasState.png";
 import ArlingtonBaptistLogo from "../assets/College_Logos/ArlingtonBaptist.png";
 import ArmyLogo from "../assets/College_Logos/Army.png";
+import BethanyWVLogo from "../assets/College_Logos/Bethany(WV).png";
+import BethesdaLogo from "../assets/College_Logos/Bethesda.png";
 import BinghamtonLogo from "../assets/College_Logos/Binghamton.png";
 import BradleyLogo from "../assets/College_Logos/Bradley.png";
 import CalPolyLogo from "../assets/College_Logos/CalPoly.png";
+import CalStateNorthridgeLogo from "../assets/College_Logos/CalStateNorthridge.png";
 import CarolinaUniversityLogo from "../assets/College_Logos/CarolinaUniversity.png";
 import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
+import ChicagoStateLogo from "../assets/College_Logos/ChicagoState.png";
 import CollegeOfBiblicalStudiesLogo from "../assets/College_Logos/CollegeOfBiblicalStudies.png";
+import ColumbiaLogo from "../assets/College_Logos/Columbia.png";
 import CoppinStateLogo from "../assets/College_Logos/CoppinState.png";
 import CornellLogo from "../assets/College_Logos/Cornell.png";
 import CreightonLogo from "../assets/College_Logos/Creighton.png";
@@ -275,6 +280,7 @@ import LafayetteLogo from "../assets/College_Logos/Lafayette.png";
 import LamarLogo from "../assets/College_Logos/Lamar.png";
 import LaSalleLogo from "../assets/College_Logos/LaSalle.png";
 import LehighLogo from "../assets/College_Logos/Lehigh.png";
+import LeMoyneLogo from "../assets/College_Logos/LeMoyne.png";
 import LibertyLogo from "../assets/College_Logos/Liberty.png";
 import LipscombLogo from "../assets/College_Logos/Lipscomb.png";
 import LongwoodLogo from "../assets/College_Logos/Longwood.png";
@@ -298,6 +304,9 @@ import MonmouthLogo from "../assets/College_Logos/Monmouth.png";
 import MontanaLogo from "../assets/College_Logos/Montana.png";
 import MontanaLogoLight from "../assets/College_Logos/MontanaLight.png";
 import MontanaStateLogo from "../assets/College_Logos/MontanaState.png";
+import MoreheadStateLogo from "../assets/College_Logos/MoreheadState.png";
+import MorehouseCollegeLogo from "../assets/College_Logos/MorehouseCollege.png";
+import MorehouseCollegeLogoLight from "../assets/College_Logos/MorehouseCollegeLight.png";
 import MorganStateLogo from "../assets/College_Logos/MorganState.png";
 import MountSaintMarys from "../assets/College_Logos/MountSt.Mary's.png";
 import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
@@ -309,15 +318,20 @@ import NicholsLogo from "../assets/College_Logos/Nichols.png";
 import NorthFloridaLogo from "../assets/College_Logos/NorhFlorida.png";
 import NorthAlabamaLogo from "../assets/College_Logos/NorthAlabama.png";
 import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
+import NorthCarolinaCentralLogo from "../assets/College_Logos/NorthCarolinaCentral.png";
 import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
 import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
 import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
+import NorthernIowaLogo from "../assets/College_Logos/NorthernIowa.png";
+import NorthwesternStateLogo from "../assets/College_Logos/NorthwesternState.png";
+import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
 import OaklandLogo from "../assets/College_Logos/Oakland.png";
 import OmahaLogo from "../assets/College_Logos/Omaha.png";
 import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
 import PortlandStateLogo from "../assets/College_Logos/PortlandState.png";
 import PrairieViewAMLogo from "../assets/College_Logos/PrairieViewA&M.png";
 import QueensLogo from "../assets/College_Logos/Queens.png";
+import QuinnipiacLogo from "../assets/College_Logos/Quinnipiac.png";
 import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
 import RiderLogo from "../assets/College_Logos/Rider.png";
 import RITLogo from "../assets/College_Logos/RIT.png";
@@ -342,6 +356,7 @@ import SouthDakotaLogo from "../assets/College_Logos/SouthDakota.png";
 import SoutheastMissouriStateLogo from "../assets/College_Logos/SoutheastMissouriState.png";
 import SouthernLogo from "../assets/College_Logos/Southern.png";
 import SouthernIllinoisLogo from "../assets/College_Logos/SouthernIllinois.png";
+import SouthernIndianaLogo from "../assets/College_Logos/SouthernIndiana.png";
 import SouthernMissLogo from "../assets/College_Logos/SouthernMiss.png";
 import SouthernUtahLogo from "../assets/College_Logos/SouthernUtah.png";
 import StJohnsLogo from "../assets/College_Logos/St.Johns.png";
@@ -352,6 +367,7 @@ import StBonaventureLogoLight from "../assets/College_Logos/StBonaventureLight.p
 import StetsonLogo from "../assets/College_Logos/Stetson.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
+import TexasAMCCLogo from "../assets/College_Logos/TexasA&M-CorpusChristi.png";
 import TexasAMSALogo from "../assets/College_Logos/TexasA&MSA.png";
 import TexasSouthernLogo from "../assets/College_Logos/TexasSouthern.png";
 import TexasStLogo from "../assets/College_Logos/TexasSt.png";
@@ -362,8 +378,11 @@ import ToledoLogoLight from "../assets/College_Logos/ToledoLight.png";
 import TowsonLogo from "../assets/College_Logos/Towson.png";
 import UABLogo from "../assets/College_Logos/UAB.png";
 import UAlbanyLogo from "../assets/College_Logos/UAlbany.png";
+import UCDavisLogo from "../assets/College_Logos/UCDavis.png";
+import UCDavisLogoLight from "../assets/College_Logos/UCDavisLight.png";
 import UCLALogo from "../assets/College_Logos/UCLA.png";
 import UCLALogoLight from "../assets/College_Logos/UCLALight.png";
+import UCRiversideLogo from "../assets/College_Logos/UCRiverside.png";
 import ULMLogo from "../assets/College_Logos/ULM.png";
 import UmassLogo from "../assets/College_Logos/Umass.png";
 import UMassLowellLogo from "../assets/College_Logos/UMassLowell.png";
@@ -371,6 +390,7 @@ import UMBCLogo from "../assets/College_Logos/UMBC.png";
 import UNCGreensboroLogo from "../assets/College_Logos/UNCGreensboro.png";
 import UtahLogoLight from "../assets/College_Logos/UtahLight.png";
 import UtahStateLogoLight from "../assets/College_Logos/UtahStateLight.png";
+import UtahTechLogo from "../assets/College_Logos/UtahTech.png";
 import UTMartinLogo from "../assets/College_Logos/UTMartin.png";
 import ValparaisoLogo from "../assets/College_Logos/Valparaiso.png";
 import VCULogo from "../assets/College_Logos/VCU.png";
@@ -382,6 +402,7 @@ import WashingtonStateLogo from "../assets/College_Logos/WashingtonState.png";
 import WashingtonStateLogoLight from "../assets/College_Logos/WashingtonStateLight.png";
 import WCarolinaLogo from "../assets/College_Logos/WCarolina.png";
 import WeberStateLogo from "../assets/College_Logos/WeberState.png";
+import WestGeorgiaLogo from "../assets/College_Logos/WestGeorgia.png";
 import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
 import WinthropLogo from "../assets/College_Logos/Winthrop.png";
@@ -1325,6 +1346,16 @@ export const teams: CBBTeam[] = [
     longitude: -86.5256,
   },
   {
+    id: 5566,
+    espnID: 88,
+    name: "Southern Indiana",
+    fullName: "Southern Indiana Screaming Eagles",
+    code: "IU",
+    color: "#CF102D",
+    secondaryColor: "#002D5D",
+    logo: SouthernIndianaLogo,
+  },
+  {
     id: 181,
     espnID: 38,
     name: "Colorado",
@@ -1428,6 +1459,17 @@ export const teams: CBBTeam[] = [
     city: "College Station",
     latitude: 30.6105,
     longitude: -96.3398,
+  },
+  {
+    id: 2145,
+    espnID: 357,
+    name: "Texas A&M-Corpus Christi",
+    fullName: "Texas A&M-Corpus Christi Islanders",
+    shortName: "Texas A&M-CC",
+    code: "AMCC",
+    color: "#0067c5",
+    secondaryColor: "#007f3e",
+    logo: TexasAMCCLogo,
   },
   {
     id: 1909,
@@ -1888,7 +1930,17 @@ export const teams: CBBTeam[] = [
     code: "UNI",
     color: "#473282",
     secondaryColor: "#ffffff",
-    logo: "https://media.api-sports.io/american-football/teams/150.png",
+    logo: NorthernIowaLogo,
+  },
+  {
+    id: 209,
+    espnID: 2463,
+    name: "Cal State Northridge",
+    fullName: "Cal State Northridge Matadors",
+    shortName: "CSU Northridge",
+    code: "CSUN",
+    color: "#b50000",
+    logo: CalStateNorthridgeLogo,
   },
   {
     id: 1951,
@@ -2023,14 +2075,35 @@ export const teams: CBBTeam[] = [
     logoLight: CaliforniaLogoLight,
   },
   {
-    id: 2161,
+    id: 2163,
     espnID: 302,
+    name: "UC Riverside",
+    fullName: "UC Riverside Highlanders",
+    shortName: "UC Riverside",
+    code: "UCR",
+    color: "#14234F",
+    logo: UCRiversideLogo,
+  },
+  {
+    id: 2161,
+    espnID: 27,
     name: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
     color: "#002855",
     secondaryColor: "#c3c4c6",
-    logo: "https://media.api-sports.io/american-football/teams/162.png",
+    logo: UCDavisLogo,
+    logoLight: UCDavisLogoLight,
+  },
+  {
+    id: 1828,
+    espnID: 302,
+    name: "Bethesda",
+    fullName: "Bethesda University Flames",
+    code: "BTHS",
+    color: "#8B2520",
+    secondaryColor: "#ffffff",
+    logo: BethesdaLogo,
   },
   {
     id: 2115,
@@ -2909,6 +2982,27 @@ export const teams: CBBTeam[] = [
     logo: EasternWashingtonLogo,
     logoLight: EasternWashingtonLogoLight,
   },
+
+  {
+    id: 3299,
+    espnID: 2886,
+    name: "Northwood",
+    fullName: "Northwood (MI) Timberwolves",
+    code: "NAR",
+    color: "#15223B",
+    secondaryColor: "#ffffffff",
+    logo: NorthwoodLogo,
+  },
+  {
+    id: 3274,
+    espnID: 2330,
+    name: "Le Moyne",
+    fullName: "Le Moyne Dolphins",
+    code: "LEM",
+    color: "#00452A",
+    secondaryColor: "#FCE300",
+    logo: LeMoyneLogo,
+  },
   {
     id: 237,
     espnID: 2029,
@@ -2963,7 +3057,7 @@ export const teams: CBBTeam[] = [
     logo: WoffordLogo,
   },
   {
-    id: 241,
+    id: 1803,
     espnID: 2000,
     name: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
@@ -3063,14 +3157,14 @@ export const teams: CBBTeam[] = [
     logo: JaxStateLogo,
   },
   {
-    id: 251,
+    id: 2054,
     espnID: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
     code: "NWST",
     color: "#492F91",
     secondaryColor: "#ed6118",
-    logo: "https://media.api-sports.io/american-football/teams/251.png",
+    logo: NorthwesternStateLogo,
   },
   {
     id: 252,
@@ -3179,7 +3273,7 @@ export const teams: CBBTeam[] = [
     logo: "https://media.api-sports.io/american-football/teams/262.png",
   },
   {
-    id: 263,
+    id: 2038,
     espnID: 2453,
     name: "North Alabama",
     fullName: "North Alabama Lions",
@@ -3189,14 +3283,14 @@ export const teams: CBBTeam[] = [
     logo: NorthAlabamaLogo,
   },
   {
-    id: 264,
+    id: 2379,
     espnID: 3101,
     name: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
     code: "UTU",
     color: "#000000",
     secondaryColor: "null",
-    logo: "https://media.api-sports.io/american-football/teams/264.png",
+    logo: UtahTechLogo,
   },
   {
     id: 265,
@@ -3206,7 +3300,7 @@ export const teams: CBBTeam[] = [
     code: "MORE",
     color: "#094FA3",
     secondaryColor: "#fed91a",
-    logo: "https://media.api-sports.io/american-football/teams/265.png",
+    logo: MoreheadStateLogo,
   },
   {
     id: 266,
@@ -3635,16 +3729,20 @@ export const teams: CBBTeam[] = [
     logo: SanDiegoLogo,
   },
   {
-    id: 301,
+    id: 3271,
     name: "La Verne",
-
     logo: "https://media.api-sports.io/american-football/teams/301.png",
   },
   {
     id: 302,
+    espnID: 2428,
     name: "North Carolina Central",
-
-    logo: "https://media.api-sports.io/american-football/teams/302.png",
+    fullName: "North Carolina Central Eagles",
+    shortName: "NC Central",
+    code: "NCCU",
+    color: "#880023",
+    secondaryColor: "#c2c3c0",
+    logo: NorthCarolinaCentralLogo,
   },
   {
     id: 1952,
@@ -3660,49 +3758,36 @@ export const teams: CBBTeam[] = [
   {
     id: 304,
     name: "Assumption",
-
     logo: "https://media.api-sports.io/american-football/teams/304.png",
   },
   {
     id: 305,
     name: "Thomas More College",
-
     logo: "https://media.api-sports.io/american-football/teams/305.png",
   },
   {
     id: 306,
     name: "Virginia Lynchburg",
-
     logo: "https://media.api-sports.io/american-football/teams/306.png",
   },
   {
     id: 307,
     name: "Post University",
-
     logo: "https://media.api-sports.io/american-football/teams/307.png",
   },
   {
     id: 308,
     name: "Missouri S&T",
-
     logo: "https://media.api-sports.io/american-football/teams/308.png",
   },
   {
-    id: 309,
+    id: 6659,
     name: "Michigan Tech",
-
     logo: "https://media.api-sports.io/american-football/teams/309.png",
   },
   {
-    id: 310,
-    name: "Winston-Salem",
-
-    logo: "https://media.api-sports.io/american-football/teams/310.png",
-  },
-  {
-    id: 311,
+    id: 6679,
     name: "Taylor",
-
     logo: "",
   },
   {
@@ -3757,29 +3842,15 @@ export const teams: CBBTeam[] = [
   {
     id: 317,
     name: "Barton College",
-
     logo: "",
   },
   {
-    id: 318,
-    name: "North American University",
-
-    logo: "",
-  },
-  {
-    id: 319,
+    id: 2417,
     name: "Chadron State",
-
     logo: "",
   },
   {
-    id: 320,
-    name: "Tuskegee",
-
-    logo: "",
-  },
-  {
-    id: 321,
+    id: 187,
     espnID: 108,
     name: "Harvard",
     fullName: "Harvard Crimson",
@@ -3789,7 +3860,7 @@ export const teams: CBBTeam[] = [
     logo: HarvardLogo,
   },
   {
-    id: 323,
+    id: 2084,
     espnID: 163,
     name: "Princeton",
     fullName: "Princeton Tigers",
@@ -3799,7 +3870,7 @@ export const teams: CBBTeam[] = [
     logo: PrincetonLogo,
   },
   {
-    id: 324,
+    id: 2072,
     espnID: 219,
     name: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
@@ -3809,9 +3880,8 @@ export const teams: CBBTeam[] = [
     logo: PennLogo,
   },
   {
-    id: 325,
+    id: 5773,
     name: "Kentucky State",
-
     logo: "https://media.api-sports.io/american-football/teams/325.png",
   },
   {
@@ -3881,239 +3951,32 @@ export const teams: CBBTeam[] = [
     logoLight: WisconsinGreenBayLogoLight,
   },
   {
-    id: 329,
+    id: 2017,
     name: "Morehouse College",
-
-    logo: "https://media.api-sports.io/american-football/teams/329.png",
+    logo: MorehouseCollegeLogo,
+    logoLight: MorehouseCollegeLogoLight,
   },
   {
-    id: 330,
+    id: 1871,
+    espnID: 171,
     name: "Columbia",
-
-    logo: "https://media.api-sports.io/american-football/teams/330.png",
+    fullName: "Columbia Lions",
+    shortName: "Columbia",
+    code: "COLU",
+    color: "#7ba4db",
+    secondaryColor: "#183863",
+    logo: ColumbiaLogo,
   },
   {
-    id: 332,
-    name: "Eastern New Mexico",
-
-    logo: "https://media.api-sports.io/american-football/teams/332.png",
+    id: 241,
+    espnID: 2514,
+    name: "Quinnipiac",
+    fullName: "Quinnipiac Bobcats",
+    code: "QUIN",
+    color: "#041B43",
+    logo: QuinnipiacLogo,
   },
-  {
-    id: 333,
-    name: "St. Andrews",
 
-    logo: "https://media.api-sports.io/american-football/teams/333.png",
-  },
-  {
-    id: 334,
-    name: "Delta State",
-
-    logo: "https://media.api-sports.io/american-football/teams/334.png",
-  },
-  {
-    id: 335,
-    name: "Keiser University",
-
-    logo: "https://media.api-sports.io/american-football/teams/335.png",
-  },
-  {
-    id: 336,
-    name: "Warner",
-
-    logo: "https://media.api-sports.io/american-football/teams/336.png",
-  },
-  {
-    id: 337,
-    name: "Western New Mexico",
-
-    logo: "https://media.api-sports.io/american-football/teams/337.png",
-  },
-  {
-    id: 338,
-    name: "Mississippi College",
-
-    logo: "https://media.api-sports.io/american-football/teams/338.png",
-  },
-  {
-    id: 339,
-    name: "Southern Conn St",
-
-    logo: "https://media.api-sports.io/american-football/teams/339.png",
-  },
-  {
-    id: 340,
-    name: "Edward Waters",
-
-    logo: "https://media.api-sports.io/american-football/teams/340.png",
-  },
-  {
-    id: 342,
-    name: "Southwest Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/342.png",
-  },
-  {
-    id: 343,
-    name: "William Jewell College",
-
-    logo: "https://media.api-sports.io/american-football/teams/343.png",
-  },
-  {
-    id: 344,
-    name: "McKendree",
-
-    logo: "https://media.api-sports.io/american-football/teams/344.png",
-  },
-  {
-    id: 346,
-    name: "Virginia Union",
-
-    logo: "https://media.api-sports.io/american-football/teams/346.png",
-  },
-  {
-    id: 347,
-    name: "Benedict College",
-
-    logo: "https://media.api-sports.io/american-football/teams/347.png",
-  },
-  {
-    id: 348,
-    name: "Savannah State",
-
-    logo: "https://media.api-sports.io/american-football/teams/348.png",
-  },
-  {
-    id: 349,
-    name: "Bentley",
-
-    logo: "https://media.api-sports.io/american-football/teams/349.png",
-  },
-  {
-    id: 350,
-    name: "Westfield State",
-
-    logo: "https://media.api-sports.io/american-football/teams/350.png",
-  },
-  {
-    id: 351,
-    name: "Western Connecticut State",
-
-    logo: "https://media.api-sports.io/american-football/teams/351.png",
-  },
-  {
-    id: 352,
-    name: "Pace University",
-
-    logo: "https://media.api-sports.io/american-football/teams/352.png",
-  },
-  {
-    id: 353,
-    name: "St. Lawrence",
-
-    logo: "https://media.api-sports.io/american-football/teams/353.png",
-  },
-  {
-    id: 354,
-    name: "SUNY Morrisville",
-
-    logo: "https://media.api-sports.io/american-football/teams/354.png",
-  },
-  {
-    id: 355,
-    name: "Elizabeth City State",
-
-    logo: "https://media.api-sports.io/american-football/teams/355.png",
-  },
-  {
-    id: 356,
-    name: "Dean College",
-
-    logo: "https://media.api-sports.io/american-football/teams/356.png",
-  },
-  {
-    id: 357,
-    name: "Curry College",
-
-    logo: "https://media.api-sports.io/american-football/teams/357.png",
-  },
-  {
-    id: 358,
-    name: "Husson",
-
-    logo: "https://media.api-sports.io/american-football/teams/358.png",
-  },
-  {
-    id: 359,
-    name: "Alfred State College",
-
-    logo: "https://media.api-sports.io/american-football/teams/359.png",
-  },
-  {
-    id: 360,
-    name: "University of New England",
-
-    logo: "https://media.api-sports.io/american-football/teams/360.png",
-  },
-  {
-    id: 361,
-    name: "Gallaudet",
-
-    logo: "https://media.api-sports.io/american-football/teams/361.png",
-  },
-  {
-    id: 362,
-    name: "Rose-Hulman",
-
-    logo: "https://media.api-sports.io/american-football/teams/362.png",
-  },
-  {
-    id: 363,
-    name: "Albion",
-
-    logo: "https://media.api-sports.io/american-football/teams/363.png",
-  },
-  {
-    id: 364,
-    name: "Walsh",
-
-    logo: "https://media.api-sports.io/american-football/teams/364.png",
-  },
-  {
-    id: 365,
-    name: "Quincy",
-
-    logo: "https://media.api-sports.io/american-football/teams/365.png",
-  },
-  {
-    id: 366,
-    name: "Findlay",
-
-    logo: "https://media.api-sports.io/american-football/teams/366.png",
-  },
-  {
-    id: 368,
-    name: "Northern Michigan",
-
-    logo: "https://media.api-sports.io/american-football/teams/368.png",
-  },
-  {
-    id: 369,
-    name: "Shorter",
-
-    logo: "https://media.api-sports.io/american-football/teams/369.png",
-  },
-  {
-    id: 370,
-    name: "Charleston (WV)",
-
-    logo: "https://media.api-sports.io/american-football/teams/370.png",
-  },
-  {
-    id: 371,
-    name: "Frostburg State",
-
-    logo: "https://media.api-sports.io/american-football/teams/371.png",
-  },
   {
     id: 373,
     espnID: 2699,
@@ -4165,78 +4028,6 @@ export const teams: CBBTeam[] = [
     logo: "https://media.api-sports.io/american-football/teams/377.png",
   },
   {
-    id: 378,
-    name: "Edinboro",
-
-    logo: "https://media.api-sports.io/american-football/teams/378.png",
-  },
-  {
-    id: 379,
-    name: "Shepherd",
-
-    logo: "https://media.api-sports.io/american-football/teams/379.png",
-  },
-  {
-    id: 380,
-    name: "California (PA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/380.png",
-  },
-  {
-    id: 381,
-    name: "Mercyhurst",
-
-    logo: "https://media.api-sports.io/american-football/teams/381.png",
-  },
-  {
-    id: 382,
-    name: "Kutztown",
-
-    logo: "https://media.api-sports.io/american-football/teams/382.png",
-  },
-  {
-    id: 384,
-    name: "Slippery Rock",
-
-    logo: "https://media.api-sports.io/american-football/teams/384.png",
-  },
-  {
-    id: 385,
-    name: "Seton Hill",
-
-    logo: "https://media.api-sports.io/american-football/teams/385.png",
-  },
-  {
-    id: 386,
-    name: "East Stroudsburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/386.png",
-  },
-  {
-    id: 387,
-    name: "Gannon",
-
-    logo: "https://media.api-sports.io/american-football/teams/387.png",
-  },
-  {
-    id: 388,
-    name: "West Chester",
-
-    logo: "https://media.api-sports.io/american-football/teams/388.png",
-  },
-  {
-    id: 390,
-    name: "Central State (OH)",
-
-    logo: "https://media.api-sports.io/american-football/teams/390.png",
-  },
-  {
-    id: 392,
-    name: "Brockport",
-
-    logo: "https://media.api-sports.io/american-football/teams/392.png",
-  },
-  {
     id: 393,
     espnID: 2884,
     name: "Nichols",
@@ -4247,2170 +4038,36 @@ export const teams: CBBTeam[] = [
     logo: NicholsLogo,
   },
   {
-    id: 394,
-    name: "Coast Guard",
-
-    logo: "https://media.api-sports.io/american-football/teams/394.png",
-  },
-  {
-    id: 395,
-    name: "FDU-Florham",
-
-    logo: "https://media.api-sports.io/american-football/teams/395.png",
-  },
-  {
-    id: 396,
-    name: "Lebanon Valley",
-
-    logo: "https://media.api-sports.io/american-football/teams/396.png",
-  },
-  {
-    id: 397,
-    name: "Fitchburg State",
-
-    logo: "https://media.api-sports.io/american-football/teams/397.png",
-  },
-  {
-    id: 398,
-    name: "Worcester State College",
-
-    logo: "https://media.api-sports.io/american-football/teams/398.png",
-  },
-  {
-    id: 399,
-    name: "Hilbert College",
-
-    logo: "https://media.api-sports.io/american-football/teams/399.png",
-  },
-  {
-    id: 400,
-    name: "Willamette",
-
-    logo: "https://media.api-sports.io/american-football/teams/400.png",
-  },
-  {
-    id: 403,
-    name: "SUNY Cortland",
-
-    logo: "https://media.api-sports.io/american-football/teams/403.png",
-  },
-  {
-    id: 404,
-    name: "Albright",
-
-    logo: "https://media.api-sports.io/american-football/teams/404.png",
-  },
-  {
-    id: 405,
-    name: "Misericordia",
-
-    logo: "https://media.api-sports.io/american-football/teams/405.png",
-  },
-  {
-    id: 406,
-    name: "Wilkes University",
-
-    logo: "https://media.api-sports.io/american-football/teams/406.png",
-  },
-  {
-    id: 407,
-    name: "Widener University",
-
-    logo: "https://media.api-sports.io/american-football/teams/407.png",
-  },
-  {
-    id: 409,
-    name: "Bridgewater State (MA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/409.png",
-  },
-  {
-    id: 410,
-    name: "Bowdoin",
-
-    logo: "https://media.api-sports.io/american-football/teams/410.png",
-  },
-  {
-    id: 411,
-    name: "Hamilton",
-
-    logo: "https://media.api-sports.io/american-football/teams/411.png",
-  },
-  {
-    id: 412,
-    name: "Salisbury University",
-
-    logo: "https://media.api-sports.io/american-football/teams/412.png",
-  },
-  {
-    id: 413,
-    name: "Ave Maria",
-
-    logo: "https://media.api-sports.io/american-football/teams/413.png",
-  },
-  {
-    id: 414,
-    name: "Endicott College",
-
-    logo: "https://media.api-sports.io/american-football/teams/414.png",
-  },
-  {
-    id: 415,
-    name: "The College of New Jersey",
-
-    logo: "https://media.api-sports.io/american-football/teams/415.png",
-  },
-  {
-    id: 416,
-    name: "Fayetteville State",
-
-    logo: "https://media.api-sports.io/american-football/teams/416.png",
-  },
-  {
-    id: 417,
-    name: "Chowan",
-
-    logo: "https://media.api-sports.io/american-football/teams/417.png",
-  },
-  {
-    id: 418,
-    name: "Johnson C Smith",
-
-    logo: "https://media.api-sports.io/american-football/teams/418.png",
-  },
-  {
-    id: 420,
-    name: "Dubuque",
-
-    logo: "https://media.api-sports.io/american-football/teams/420.png",
-  },
-  {
-    id: 421,
-    name: "Wartburg College",
-
-    logo: "https://media.api-sports.io/american-football/teams/421.png",
-  },
-  {
-    id: 422,
-    name: "Luther",
-
-    logo: "https://media.api-sports.io/american-football/teams/422.png",
-  },
-  {
-    id: 423,
-    name: "Johns Hopkins",
-
-    logo: "https://media.api-sports.io/american-football/teams/423.png",
-  },
-  {
-    id: 424,
-    name: "Juniata",
-
-    logo: "https://media.api-sports.io/american-football/teams/424.png",
-  },
-  {
-    id: 425,
-    name: "Ithaca",
-
-    logo: "https://media.api-sports.io/american-football/teams/425.png",
-  },
-  {
-    id: 426,
-    name: "Alfred",
-
-    logo: "https://media.api-sports.io/american-football/teams/426.png",
-  },
-  {
-    id: 427,
-    name: "Hanover",
-
-    logo: "https://media.api-sports.io/american-football/teams/427.png",
-  },
-  {
-    id: 428,
-    name: "Olivet College",
-
-    logo: "https://media.api-sports.io/american-football/teams/428.png",
-  },
-  {
-    id: 429,
-    name: "Mass Maritime",
-
-    logo: "https://media.api-sports.io/american-football/teams/429.png",
-  },
-  {
-    id: 430,
-    name: "Anna Maria College",
-
-    logo: "https://media.api-sports.io/american-football/teams/430.png",
-  },
-  {
-    id: 431,
-    name: "Chicago",
-
-    logo: "https://media.api-sports.io/american-football/teams/431.png",
-  },
-  {
-    id: 432,
-    name: "Beloit College",
-
-    logo: "https://media.api-sports.io/american-football/teams/432.png",
-  },
-  {
-    id: 434,
-    name: "Grinnell",
-
-    logo: "https://media.api-sports.io/american-football/teams/434.png",
-  },
-  {
-    id: 435,
-    name: "Cornell College (IA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/435.png",
-  },
-  {
-    id: 436,
-    name: "Ripon",
-
-    logo: "https://media.api-sports.io/american-football/teams/436.png",
-  },
-  {
-    id: 437,
-    name: "Hillsdale",
-
-    logo: "https://media.api-sports.io/american-football/teams/437.png",
-  },
-  {
-    id: 438,
-    name: "Truman State",
-
-    logo: "https://media.api-sports.io/american-football/teams/438.png",
-  },
-  {
-    id: 441,
-    name: "Alderson Broaddus",
-
-    logo: "https://media.api-sports.io/american-football/teams/441.png",
-  },
-  {
-    id: 443,
-    name: "Glenville State",
-
-    logo: "https://media.api-sports.io/american-football/teams/443.png",
-  },
-  {
-    id: 446,
-    name: "Augustana University (SD)",
-
-    logo: "https://media.api-sports.io/american-football/teams/446.png",
-  },
-  {
-    id: 447,
-    name: "Susquehanna University",
-
-    logo: "https://media.api-sports.io/american-football/teams/447.png",
-  },
-  {
-    id: 448,
-    name: "Moravian",
-
-    logo: "https://media.api-sports.io/american-football/teams/448.png",
-  },
-  {
-    id: 449,
-    name: "Kenyon",
-
-    logo: "https://media.api-sports.io/american-football/teams/449.png",
-  },
-  {
-    id: 451,
-    name: "Denison",
-
-    logo: "https://media.api-sports.io/american-football/teams/451.png",
-  },
-  {
-    id: 452,
-    name: "Oberlin",
-
-    logo: "https://media.api-sports.io/american-football/teams/452.png",
-  },
-  {
-    id: 454,
-    name: "Newberry",
-
-    logo: "https://media.api-sports.io/american-football/teams/454.png",
-  },
-  {
-    id: 455,
-    name: "LaGrange College",
-
-    logo: "https://media.api-sports.io/american-football/teams/455.png",
-  },
-  {
-    id: 456,
-    name: "Ferrum",
-
-    logo: "https://media.api-sports.io/american-football/teams/456.png",
-  },
-  {
-    id: 457,
-    name: "Hampden Sydney",
-
-    logo: "https://media.api-sports.io/american-football/teams/457.png",
-  },
-  {
-    id: 458,
-    name: "Greensboro College",
-
-    logo: "https://media.api-sports.io/american-football/teams/458.png",
-  },
-  {
-    id: 461,
-    name: "Methodist",
-
-    logo: "https://media.api-sports.io/american-football/teams/461.png",
-  },
-  {
-    id: 463,
-    name: "Carnegie Mellon",
-
-    logo: "https://media.api-sports.io/american-football/teams/463.png",
-  },
-  {
-    id: 464,
-    name: "Grove City College",
-
-    logo: "https://media.api-sports.io/american-football/teams/464.png",
-  },
-  {
-    id: 466,
-    name: "Geneva College",
-
-    logo: "https://media.api-sports.io/american-football/teams/466.png",
-  },
-  {
-    id: 467,
-    name: "Berry College",
-
-    logo: "https://media.api-sports.io/american-football/teams/467.png",
-  },
-  {
-    id: 468,
-    name: "Wisconsin-Whitewater",
-
-    logo: "https://media.api-sports.io/american-football/teams/468.png",
-  },
-  {
-    id: 469,
-    name: "Shippensburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/469.png",
-  },
-  {
-    id: 471,
-    name: "Carson-Newman",
-
-    logo: "https://media.api-sports.io/american-football/teams/471.png",
-  },
-  {
-    id: 472,
-    name: "Western New England",
-
-    logo: "https://media.api-sports.io/american-football/teams/472.png",
-  },
-  {
-    id: 473,
-    name: "Utica College",
-
-    logo: "https://media.api-sports.io/american-football/teams/473.png",
-  },
-  {
-    id: 474,
-    name: "Catholic University",
-
-    logo: "https://media.api-sports.io/american-football/teams/474.png",
-  },
-  {
-    id: 475,
-    name: "Kean University",
-
-    logo: "https://media.api-sports.io/american-football/teams/475.png",
-  },
-  {
-    id: 476,
-    name: "Merchant Marine",
-
-    logo: "https://media.api-sports.io/american-football/teams/476.png",
-  },
-  {
-    id: 477,
-    name: "SUNY Maritime",
-
-    logo: "https://media.api-sports.io/american-football/teams/477.png",
-  },
-  {
-    id: 478,
-    name: "Guilford",
-
-    logo: "https://media.api-sports.io/american-football/teams/478.png",
-  },
-  {
-    id: 480,
-    name: "McDaniel College",
-
-    logo: "https://media.api-sports.io/american-football/teams/480.png",
-  },
-  {
-    id: 481,
-    name: "Franklin & Marshall",
-
-    logo: "https://media.api-sports.io/american-football/teams/481.png",
-  },
-  {
-    id: 482,
-    name: "New Haven",
-
-    logo: "https://media.api-sports.io/american-football/teams/482.png",
-  },
-  {
-    id: 483,
-    name: "American International",
-
-    logo: "https://media.api-sports.io/american-football/teams/483.png",
-  },
-  {
-    id: 484,
-    name: "Hobart",
-
-    logo: "https://media.api-sports.io/american-football/teams/484.png",
-  },
-  {
-    id: 486,
-    name: "West Virginia State",
-
-    logo: "https://media.api-sports.io/american-football/teams/486.png",
-  },
-  {
-    id: 487,
-    name: "Fairmont State",
-
-    logo: "https://media.api-sports.io/american-football/teams/487.png",
-  },
-  {
-    id: 489,
-    name: "Montclair State",
-
-    logo: "https://media.api-sports.io/american-football/teams/489.png",
-  },
-  {
-    id: 491,
-    name: "Southern Virginia",
-
-    logo: "https://media.api-sports.io/american-football/teams/491.png",
-  },
-  {
-    id: 495,
-    name: "Bates College",
-
-    logo: "https://media.api-sports.io/american-football/teams/495.png",
-  },
-  {
-    id: 496,
-    name: "William Paterson",
-
-    logo: "https://media.api-sports.io/american-football/teams/496.png",
-  },
-  {
-    id: 497,
-    name: "Keystone",
-
-    logo: "https://media.api-sports.io/american-football/teams/497.png",
-  },
-  {
-    id: 499,
-    name: "Muhlenberg",
-
-    logo: "https://media.api-sports.io/american-football/teams/499.png",
-  },
-  {
-    id: 502,
-    name: "Catawba",
-
-    logo: "https://media.api-sports.io/american-football/teams/502.png",
-  },
-  {
-    id: 504,
-    name: "Delaware Valley",
-
-    logo: "https://media.api-sports.io/american-football/teams/504.png",
-  },
-  {
-    id: 505,
-    name: "Ohio Dominican",
-
-    logo: "https://media.api-sports.io/american-football/teams/505.png",
-  },
-  {
-    id: 506,
-    name: "Colby College",
-
-    logo: "https://media.api-sports.io/american-football/teams/506.png",
-  },
-  {
-    id: 508,
-    name: "Gettysburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/508.png",
-  },
-  {
-    id: 510,
-    name: "Franklin",
-
-    logo: "https://media.api-sports.io/american-football/teams/510.png",
-  },
-  {
-    id: 511,
-    name: "Trine University",
-
-    logo: "https://media.api-sports.io/american-football/teams/511.png",
-  },
-  {
-    id: 512,
-    name: "Mount St. Joseph",
-
-    logo: "https://media.api-sports.io/american-football/teams/512.png",
-  },
-  {
-    id: 513,
-    name: "Hope",
-
-    logo: "https://media.api-sports.io/american-football/teams/513.png",
-  },
-  {
-    id: 514,
-    name: "UMASS Dartmouth",
-
-    logo: "https://media.api-sports.io/american-football/teams/514.png",
-  },
-  {
-    id: 515,
-    name: "Framingham State",
-
-    logo: "https://media.api-sports.io/american-football/teams/515.png",
-  },
-  {
-    id: 516,
-    name: "Defiance",
-
-    logo: "https://media.api-sports.io/american-football/teams/516.png",
-  },
-  {
-    id: 517,
-    name: "Kalamazoo",
-
-    logo: "https://media.api-sports.io/american-football/teams/517.png",
-  },
-  {
-    id: 518,
-    name: "John Carroll",
-
-    logo: "https://media.api-sports.io/american-football/teams/518.png",
-  },
-  {
-    id: 519,
-    name: "Baldwin Wallace",
-
-    logo: "https://media.api-sports.io/american-football/teams/519.png",
-  },
-  {
-    id: 520,
-    name: "Mount Union",
-
-    logo: "https://media.api-sports.io/american-football/teams/520.png",
-  },
-  {
-    id: 521,
-    name: "Marietta",
-
-    logo: "https://media.api-sports.io/american-football/teams/521.png",
-  },
-  {
-    id: 522,
-    name: "Tufts University",
-
-    logo: "https://media.api-sports.io/american-football/teams/522.png",
-  },
-  {
-    id: 525,
-    name: "Austin College",
-
-    logo: "https://media.api-sports.io/american-football/teams/525.png",
-  },
-  {
-    id: 527,
-    name: "North Central",
-
-    logo: "https://media.api-sports.io/american-football/teams/527.png",
-  },
-  {
-    id: 528,
-    name: "Elmhurst",
-
-    logo: "https://media.api-sports.io/american-football/teams/528.png",
-  },
-  {
-    id: 529,
-    name: "Augustana College (IL)",
-
-    logo: "https://media.api-sports.io/american-football/teams/529.png",
-  },
-  {
-    id: 531,
-    name: "Augsburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/531.png",
-  },
-  {
-    id: 532,
-    name: "Concordia-Chicago",
-
-    logo: "https://media.api-sports.io/american-football/teams/532.png",
-  },
-  {
-    id: 533,
-    name: "Aurora",
-
-    logo: "https://media.api-sports.io/american-football/teams/533.png",
-  },
-  {
-    id: 534,
-    name: "Washburn",
-
-    logo: "https://media.api-sports.io/american-football/teams/534.png",
-  },
-  {
-    id: 535,
-    name: "Nebraska-Kearney",
-
-    logo: "https://media.api-sports.io/american-football/teams/535.png",
-  },
-  {
-    id: 536,
-    name: "West Virginia Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/536.png",
-  },
-  {
-    id: 537,
-    name: "Concord",
-
-    logo: "https://media.api-sports.io/american-football/teams/537.png",
-  },
-  {
-    id: 538,
-    name: "Fort Valley State",
-
-    logo: "https://media.api-sports.io/american-football/teams/538.png",
-  },
-  {
-    id: 539,
-    name: "Allen",
-
-    logo: "https://media.api-sports.io/american-football/teams/539.png",
-  },
-  {
-    id: 540,
-    name: "Emporia State",
-
-    logo: "https://media.api-sports.io/american-football/teams/540.png",
-  },
-  {
-    id: 541,
-    name: "Missouri Western",
-
-    logo: "https://media.api-sports.io/american-football/teams/541.png",
-  },
-  {
-    id: 542,
-    name: "Central College",
-
-    logo: "https://media.api-sports.io/american-football/teams/542.png",
-  },
-  {
-    id: 543,
-    name: "Loras College",
-
-    logo: "https://media.api-sports.io/american-football/teams/543.png",
-  },
-  {
-    id: 544,
-    name: "Wisconsin-Platteville",
-
-    logo: "https://media.api-sports.io/american-football/teams/544.png",
-  },
-  {
-    id: 545,
-    name: "Hardin-Simmons",
-
-    logo: "https://media.api-sports.io/american-football/teams/545.png",
-  },
-  {
-    id: 546,
-    name: "Benedictine University (IL)",
-
-    logo: "https://media.api-sports.io/american-football/teams/546.png",
-  },
-  {
-    id: 547,
-    name: "Concordia (WI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/547.png",
-  },
-  {
-    id: 548,
-    name: "Wooster",
-
-    logo: "https://media.api-sports.io/american-football/teams/548.png",
-  },
-  {
-    id: 549,
-    name: "Wabash College",
-
-    logo: "https://media.api-sports.io/american-football/teams/549.png",
-  },
-  {
-    id: 551,
-    name: "Otterbein",
-
-    logo: "https://media.api-sports.io/american-football/teams/551.png",
-  },
-  {
-    id: 552,
-    name: "Sewanee Univ. of the South",
-
-    logo: "https://media.api-sports.io/american-football/teams/552.png",
-  },
-  {
-    id: 555,
-    name: "St. Scholastica",
-
-    logo: "https://media.api-sports.io/american-football/teams/555.png",
-  },
-  {
-    id: 556,
-    name: "Gustavus Adolphus",
-
-    logo: "https://media.api-sports.io/american-football/teams/556.png",
-  },
-  {
-    id: 557,
-    name: "Wisconsin-Stout",
-
-    logo: "https://media.api-sports.io/american-football/teams/557.png",
-  },
-  {
-    id: 558,
-    name: "Minot State",
-
-    logo: "https://media.api-sports.io/american-football/teams/558.png",
-  },
-  {
-    id: 559,
-    name: "Wayne State (NE)",
-
-    logo: "https://media.api-sports.io/american-football/teams/559.png",
-  },
-  {
-    id: 560,
-    name: "Lock Haven",
-
-    logo: "https://media.api-sports.io/american-football/teams/560.png",
-  },
-  {
-    id: 561,
-    name: "Clarion",
-
-    logo: "https://media.api-sports.io/american-football/teams/561.png",
-  },
-  {
-    id: 562,
-    name: "McMurry",
-
-    logo: "https://media.api-sports.io/american-football/teams/562.png",
-  },
-  {
-    id: 563,
-    name: "East Texas Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/563.png",
-  },
-  {
-    id: 564,
-    name: "New Mexico Highlands",
-
-    logo: "https://media.api-sports.io/american-football/teams/564.png",
-  },
-  {
-    id: 565,
-    name: "Fort Lewis",
-
-    logo: "https://media.api-sports.io/american-football/teams/565.png",
-  },
-  {
-    id: 567,
-    name: "Millikin",
-
-    logo: "https://media.api-sports.io/american-football/teams/567.png",
-  },
-  {
-    id: 568,
-    name: "Eureka College",
-
-    logo: "https://media.api-sports.io/american-football/teams/568.png",
-  },
-  {
-    id: 570,
-    name: "Monmouth (IL)",
-
-    logo: "https://media.api-sports.io/american-football/teams/570.png",
-  },
-  {
-    id: 571,
-    name: "Illinois College",
-
-    logo: "https://media.api-sports.io/american-football/teams/571.png",
-  },
-  {
-    id: 572,
-    name: "Norwich",
-
-    logo: "https://media.api-sports.io/american-football/teams/572.png",
-  },
-  {
-    id: 573,
-    name: "Castleton",
-
-    logo: "https://media.api-sports.io/american-football/teams/573.png",
-  },
-  {
-    id: 574,
-    name: "Greenville",
-
-    logo: "https://media.api-sports.io/american-football/teams/574.png",
-  },
-  {
-    id: 575,
-    name: "Manchester",
-
-    logo: "https://media.api-sports.io/american-football/teams/575.png",
-  },
-  {
-    id: 576,
-    name: "California Lutheran",
-
-    logo: "https://media.api-sports.io/american-football/teams/576.png",
-  },
-  {
-    id: 577,
-    name: "Puget Sound",
-
-    logo: "https://media.api-sports.io/american-football/teams/577.png",
-  },
-  {
-    id: 579,
-    name: "Lewis & Clark",
-
-    logo: "https://media.api-sports.io/american-football/teams/579.png",
-  },
-  {
-    id: 580,
-    name: "Amherst College",
-
-    logo: "https://media.api-sports.io/american-football/teams/580.png",
-  },
-  {
-    id: 581,
-    name: "Middlebury",
-
-    logo: "https://media.api-sports.io/american-football/teams/581.png",
-  },
-  {
-    id: 582,
-    name: "Iowa Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/582.png",
-  },
-  {
-    id: 584,
-    name: "Millsaps",
-
-    logo: "https://media.api-sports.io/american-football/teams/584.png",
-  },
-  {
-    id: 585,
-    name: "Wisconsin-Oshkosh",
-
-    logo: "https://media.api-sports.io/american-football/teams/585.png",
-  },
-  {
-    id: 586,
-    name: "Northwest Missouri State",
-
-    logo: "https://media.api-sports.io/american-football/teams/586.png",
-  },
-  {
-    id: 587,
-    name: "Central Missouri",
-
-    logo: "https://media.api-sports.io/american-football/teams/587.png",
-  },
-  {
-    id: 588,
-    name: "Lake Forest",
-
-    logo: "https://media.api-sports.io/american-football/teams/588.png",
-  },
-  {
-    id: 589,
-    name: "Knox College",
-
-    logo: "https://media.api-sports.io/american-football/teams/589.png",
-  },
-  {
-    id: 590,
-    name: "Southern Nazarene",
-
-    logo: "https://media.api-sports.io/american-football/teams/590.png",
-  },
-  {
-    id: 591,
-    name: "East Central",
-
-    logo: "https://media.api-sports.io/american-football/teams/591.png",
-  },
-  {
-    id: 592,
-    espnID: 2695,
-    name: "West Alabama",
-    fullName: "West Alabama Tigers",
-    code: "WES",
-    color: "#d31d33",
-    secondaryColor: "#ffffff",
-    logo: "https://media.api-sports.io/american-football/teams/592.png",
-  },
-  {
-    id: 593,
-    name: "Bemidji State",
-
-    logo: "https://media.api-sports.io/american-football/teams/593.png",
-  },
-  {
-    id: 594,
-    name: "Winona State",
-
-    logo: "https://media.api-sports.io/american-football/teams/594.png",
-  },
-  {
-    id: 595,
-    name: "University of Mary",
-
-    logo: "https://media.api-sports.io/american-football/teams/595.png",
-  },
-  {
-    id: 596,
-    name: "Southwest Minnesota State",
-
-    logo: "https://media.api-sports.io/american-football/teams/596.png",
-  },
-  {
-    id: 597,
-    name: "Adams State",
-
-    logo: "https://media.api-sports.io/american-football/teams/597.png",
-  },
-  {
-    id: 598,
-    name: "Colorado School of Mines",
-
-    logo: "https://media.api-sports.io/american-football/teams/598.png",
-  },
-  {
-    id: 599,
-    name: "Colorado Mesa",
-
-    logo: "https://media.api-sports.io/american-football/teams/599.png",
-  },
-  {
-    id: 600,
-    name: "South Dakota Mines",
-
-    logo: "https://media.api-sports.io/american-football/teams/600.png",
-  },
-  {
-    id: 601,
-    name: "Carleton College",
-
-    logo: "https://media.api-sports.io/american-football/teams/601.png",
-  },
-  {
-    id: 603,
-    name: "Clark Atlanta",
-
-    logo: "https://media.api-sports.io/american-football/teams/603.png",
-  },
-  {
-    id: 604,
-    name: "Shaw",
-
-    logo: "https://media.api-sports.io/american-football/teams/604.png",
-  },
-  {
-    id: 605,
-    name: "Bowie State",
-
-    logo: "https://media.api-sports.io/american-football/teams/605.png",
-  },
-  {
-    id: 606,
-    name: "Hendrix College",
-
-    logo: "https://media.api-sports.io/american-football/teams/606.png",
-  },
-  {
-    id: 607,
-    name: "Howard Payne",
-
-    logo: "https://media.api-sports.io/american-football/teams/607.png",
-  },
-  {
     id: 609,
     name: "Central Washington",
-
     logo: CentralWashingtonLogo,
   },
   {
-    id: 610,
-    name: "Erskine",
-
-    logo: "https://media.api-sports.io/american-football/teams/610.png",
-  },
-  {
-    id: 611,
-    name: "Lenoir-Rhyne",
-
-    logo: "https://media.api-sports.io/american-football/teams/611.png",
-  },
-  {
-    id: 612,
-    name: "Linfield",
-
-    logo: "https://media.api-sports.io/american-football/teams/612.png",
-  },
-  {
-    id: 613,
-    name: "Redlands",
-
-    logo: "https://media.api-sports.io/american-football/teams/613.png",
-  },
-  {
-    id: 614,
-    name: "Whitworth",
-
-    logo: "https://media.api-sports.io/american-football/teams/614.png",
-  },
-  {
-    id: 615,
-    name: "Claremont Mudd Scripps College",
-
-    logo: "https://media.api-sports.io/american-football/teams/615.png",
-  },
-  {
-    id: 616,
-    name: "Colorado State-Pueblo",
-
-    logo: "https://media.api-sports.io/american-football/teams/616.png",
-  },
-  {
-    id: 617,
-    name: "Western Colorado",
-
-    logo: "https://media.api-sports.io/american-football/teams/617.png",
-  },
-  {
-    id: 618,
-    name: "Rensselaer",
-
-    logo: "https://media.api-sports.io/american-football/teams/618.png",
-  },
-  {
-    id: 620,
-    name: "Virginia State",
-
-    logo: "https://media.api-sports.io/american-football/teams/620.png",
-  },
-  {
-    id: 622,
-    name: "Livingstone",
-
-    logo: "https://media.api-sports.io/american-football/teams/622.png",
-  },
-  {
-    id: 623,
-    name: "Buena Vista",
-
-    logo: "https://media.api-sports.io/american-football/teams/623.png",
-  },
-  {
-    id: 624,
-    name: "Coe College",
-
-    logo: "https://media.api-sports.io/american-football/teams/624.png",
-  },
-  {
-    id: 625,
-    name: "Bluffton",
-
-    logo: "https://media.api-sports.io/american-football/teams/625.png",
-  },
-  {
-    id: 626,
-    name: "Adrian",
-
-    logo: "https://media.api-sports.io/american-football/teams/626.png",
-  },
-  {
-    id: 627,
-    name: "Anderson (IN)",
-
-    logo: "https://media.api-sports.io/american-football/teams/627.png",
-  },
-  {
-    id: 628,
-    name: "Alma College",
-
-    logo: "https://media.api-sports.io/american-football/teams/628.png",
-  },
-  {
-    id: 630,
-    name: "Wayne State (MI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/630.png",
-  },
-  {
-    id: 631,
-    name: "Wisconsin-La Crosse",
-
-    logo: "https://media.api-sports.io/american-football/teams/631.png",
-  },
-  {
-    id: 632,
-    name: "Missouri Southern State",
-
-    logo: "https://media.api-sports.io/american-football/teams/632.png",
-  },
-  {
-    id: 633,
-    name: "Central Oklahoma",
-
-    logo: "https://media.api-sports.io/american-football/teams/633.png",
-  },
-  {
-    id: 634,
-    name: "Franklin Pierce",
-
-    logo: "https://media.api-sports.io/american-football/teams/634.png",
-  },
-  {
-    id: 635,
-    name: "St. Anselm",
-
-    logo: "https://media.api-sports.io/american-football/teams/635.png",
-  },
-  {
-    id: 636,
-    name: "Averett",
-
-    logo: "https://media.api-sports.io/american-football/teams/636.png",
-  },
-  {
-    id: 637,
-    name: "Brevard College",
-
-    logo: "https://media.api-sports.io/american-football/teams/637.png",
-  },
-  {
-    id: 638,
-    name: "Tusculum",
-
-    logo: "https://media.api-sports.io/american-football/teams/638.png",
-  },
-  {
-    id: 639,
-    name: "Wingate",
-
-    logo: "https://media.api-sports.io/american-football/teams/639.png",
-  },
-  {
-    id: 640,
-    name: "Arkansas Tech",
-
-    logo: "https://media.api-sports.io/american-football/teams/640.png",
-  },
-  {
-    id: 641,
-    name: "Ouachita Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/641.png",
-  },
-  {
-    id: 642,
-    name: "Henderson State",
-
-    logo: "https://media.api-sports.io/american-football/teams/642.png",
-  },
-  {
-    id: 643,
-    name: "Arkansas-Monticello",
-
-    logo: "https://media.api-sports.io/american-football/teams/643.png",
-  },
-  {
-    id: 644,
-    name: "Mary Hardin-Baylor",
-
-    logo: "https://media.api-sports.io/american-football/teams/644.png",
-  },
-  {
-    id: 645,
-    name: "Southwestern University",
-
-    logo: "https://media.api-sports.io/american-football/teams/645.png",
-  },
-  {
-    id: 646,
-    name: "Trinity University (TX)",
-
-    logo: "https://media.api-sports.io/american-football/teams/646.png",
-  },
-  {
-    id: 647,
-    name: "Texas Lutheran",
-
-    logo: "https://media.api-sports.io/american-football/teams/647.png",
-  },
-  {
-    id: 648,
-    name: "Carroll (WI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/648.png",
-  },
-  {
-    id: 649,
-    name: "North Park",
-
-    logo: "https://media.api-sports.io/american-football/teams/649.png",
-  },
-  {
-    id: 651,
-    name: "Illinois Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/651.png",
-  },
-  {
-    id: 652,
-    name: "Harding University",
-
-    logo: "https://media.api-sports.io/american-football/teams/652.png",
-  },
-  {
-    id: 653,
-    name: "Southern Arkansas",
-
-    logo: "https://media.api-sports.io/american-football/teams/653.png",
-  },
-  {
-    id: 654,
-    name: "Northwestern Oklahoma State",
-
-    logo: "https://media.api-sports.io/american-football/teams/654.png",
-  },
-  {
-    id: 655,
-    name: "Oklahoma Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/655.png",
-  },
-  {
-    id: 656,
-    name: "Southwestern Oklahoma",
-
-    logo: "https://media.api-sports.io/american-football/teams/656.png",
-  },
-  {
-    id: 657,
-    name: "Southeastern Oklahoma",
-
-    logo: "https://media.api-sports.io/american-football/teams/657.png",
-  },
-  {
-    id: 659,
-    name: "Indianapolis",
-
-    logo: "https://media.api-sports.io/american-football/teams/659.png",
-  },
-  {
-    id: 660,
-    name: "Grand Valley State",
-
-    logo: "https://media.api-sports.io/american-football/teams/660.png",
-  },
-  {
-    id: 661,
-    name: "Lincoln (MO)",
-
-    logo: "https://media.api-sports.io/american-football/teams/661.png",
-  },
-  {
-    id: 662,
-    name: "Fort Hays State",
-
-    logo: "https://media.api-sports.io/american-football/teams/662.png",
-  },
-  {
-    id: 663,
-    name: "Valdosta State",
-    code: "VAL",
-    logo: "https://media.api-sports.io/american-football/teams/663.png",
-  },
-  {
-    id: 664,
-    name: "Minnesota Duluth",
-
-    logo: "https://media.api-sports.io/american-football/teams/664.png",
-  },
-  {
-    id: 665,
-    name: "Upper Iowa",
-
-    logo: "https://media.api-sports.io/american-football/teams/665.png",
-  },
-  {
-    id: 666,
-    name: "Northern State",
-
-    logo: "https://media.api-sports.io/american-football/teams/666.png",
-  },
-  {
-    id: 667,
-    name: "Minnesota State",
-
-    logo: "https://media.api-sports.io/american-football/teams/667.png",
-  },
-  {
-    id: 668,
-    name: "Wisconsin-Stevens Point",
-
-    logo: "https://media.api-sports.io/american-football/teams/668.png",
-  },
-  {
-    id: 670,
-    name: "Wisconsin Lutheran",
-
-    logo: "https://media.api-sports.io/american-football/teams/670.png",
-  },
-  {
-    id: 671,
-    name: "Lakeland University",
-
-    logo: "https://media.api-sports.io/american-football/teams/671.png",
-  },
-  {
-    id: 672,
-    name: "Heidelberg",
-
-    logo: "https://media.api-sports.io/american-football/teams/672.png",
-  },
-  {
-    id: 673,
-    name: "Ohio Northern",
-
-    logo: "https://media.api-sports.io/american-football/teams/673.png",
-  },
-  {
-    id: 675,
-    name: "Allegheny",
-
-    logo: "https://media.api-sports.io/american-football/teams/675.png",
-  },
-  {
-    id: 676,
-    name: "Case Western Reserve",
-
-    logo: "https://media.api-sports.io/american-football/teams/676.png",
-  },
-  {
-    id: 677,
-    name: "Washington & Jefferson",
-
-    logo: "https://media.api-sports.io/american-football/teams/677.png",
-  },
-  {
-    id: 678,
-    name: "Wisconsin-River Falls",
-
-    logo: "https://media.api-sports.io/american-football/teams/678.png",
-  },
-  {
-    id: 680,
-    name: "Muskingum",
-
-    logo: "https://media.api-sports.io/american-football/teams/680.png",
-  },
-  {
-    id: 681,
-    name: "Capital University",
-
-    logo: "https://media.api-sports.io/american-football/teams/681.png",
-  },
-  {
-    id: 682,
-    name: "Concordia-St. Paul",
-
-    logo: "https://media.api-sports.io/american-football/teams/682.png",
-  },
-  {
-    id: 683,
-    name: "Sioux Falls",
-
-    logo: "https://media.api-sports.io/american-football/teams/683.png",
-  },
-  {
-    id: 684,
-    name: "Kentucky Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/684.png",
-  },
-  {
-    id: 685,
-    name: "Midwestern State",
-
-    logo: "https://media.api-sports.io/american-football/teams/685.png",
-  },
-  {
-    id: 687,
-    name: "Angelo State",
-
-    logo: "https://media.api-sports.io/american-football/teams/687.png",
-  },
-  {
-    id: 688,
-    name: "Pittsburg State",
-
-    logo: "https://media.api-sports.io/american-football/teams/688.png",
-  },
-  {
-    id: 689,
-    name: "Northeastern State",
-
-    logo: "https://media.api-sports.io/american-football/teams/689.png",
-  },
-  {
-    id: 690,
-    name: "Black Hills State",
-
-    logo: "https://media.api-sports.io/american-football/teams/690.png",
-  },
-  {
-    id: 691,
-    name: "West Texas A&M",
-
-    logo: "https://media.api-sports.io/american-football/teams/691.png",
-  },
-
-  {
-    id: 692,
-    name: "Texas A&M-Kingsville",
-
-    logo: "https://media.api-sports.io/american-football/teams/692.png",
-  },
-  {
-    id: 694,
-    name: "Chapman University",
-
-    logo: "https://media.api-sports.io/american-football/teams/694.png",
-  },
-  {
-    id: 695,
-    name: "Pacific (OR)",
-
-    logo: "https://media.api-sports.io/american-football/teams/695.png",
-  },
-  {
-    id: 697,
-    name: "Pacific Lutheran",
-
-    logo: "https://media.api-sports.io/american-football/teams/697.png",
-  },
-  {
-    id: 698,
-    name: "Lycoming",
-
-    logo: "https://media.api-sports.io/american-football/teams/698.png",
-  },
-  {
-    id: 699,
-    name: "MIT",
-
-    logo: "https://media.api-sports.io/american-football/teams/699.png",
-  },
-  {
-    id: 700,
-    name: "Ohio Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/700.png",
-  },
-  {
-    id: 701,
-    name: "Rowan",
-
-    logo: "https://media.api-sports.io/american-football/teams/701.png",
-  },
-  {
-    id: 702,
-    name: "Belhaven University",
-
-    logo: "https://media.api-sports.io/american-football/teams/702.png",
-  },
-  {
-    id: 703,
-    name: "Wisconsin-Eau Claire",
-
-    logo: "https://media.api-sports.io/american-football/teams/703.png",
-  },
-  {
-    id: 704,
-    name: "Concordia-Moorhead",
-
-    logo: "https://media.api-sports.io/american-football/teams/704.png",
-  },
-  {
-    id: 705,
-    name: "Hamline",
-
-    logo: "https://media.api-sports.io/american-football/teams/705.png",
-  },
-  {
-    id: 706,
-    name: "Bethel (MN)",
-
-    logo: "https://media.api-sports.io/american-football/teams/706.png",
-  },
-  {
-    id: 709,
-    name: "Ashland",
-
-    logo: "https://media.api-sports.io/american-football/teams/709.png",
-  },
-  {
-    id: 710,
-    name: "Christopher Newport",
-
-    logo: "https://media.api-sports.io/american-football/teams/710.png",
-  },
-  {
-    id: 711,
-    name: "Rhodes College",
-
-    logo: "https://media.api-sports.io/american-football/teams/711.png",
-  },
-  {
-    id: 712,
-    name: "Macalester",
-
-    logo: "https://media.api-sports.io/american-football/teams/712.png",
-  },
-  {
-    id: 714,
-    name: "Centre College",
-
-    logo: "https://media.api-sports.io/american-football/teams/714.png",
-  },
-  {
-    id: 715,
-    name: "Hartwick",
-
-    logo: "https://media.api-sports.io/american-football/teams/715.png",
-  },
-  {
-    id: 716,
+    id: 6686,
     espnID: 2698,
     name: "West Georgia",
     fullName: "West Georgia Wolves",
     code: "WGA",
     color: "#0033a1",
     secondaryColor: "#db1a21",
-    logo: "https://media.api-sports.io/american-football/teams/716.png",
+    logo: WestGeorgiaLogo,
   },
   {
-    id: 717,
-    name: "Ferris State",
-
-    logo: "https://media.api-sports.io/american-football/teams/717.png",
-  },
-  {
-    id: 719,
+    id: 1827,
+    espnID: 2062,
     name: "Bethany (WV)",
-
-    logo: "https://media.api-sports.io/american-football/teams/719.png",
-  },
-  {
-    id: 720,
-    name: "West Florida",
-
-    logo: "https://media.api-sports.io/american-football/teams/720.png",
-  },
-  {
-    id: 721,
-    name: "Birmingham-Southern",
-
-    logo: "https://media.api-sports.io/american-football/teams/721.png",
-  },
-  {
-    id: 722,
-    name: "Point University",
-
-    logo: "https://media.api-sports.io/american-football/teams/722.png",
-  },
-  {
-    id: 723,
-    name: "Apprentice School",
-
-    logo: "https://media.api-sports.io/american-football/teams/723.png",
-  },
-  {
-    id: 724,
-    name: "UFTL",
-
-    logo: "https://media.api-sports.io/american-football/teams/724.png",
-  },
-  {
-    id: 727,
-    name: "Arkansas Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/727.png",
-  },
-  {
-    id: 728,
-    name: "Northwestern (IA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/728.png",
-  },
-  {
-    id: 729,
-    name: "Webber International",
-
-    logo: "https://media.api-sports.io/american-football/teams/729.png",
+    code: "BCWV",
+    fullName: "Bethany (WV) Bison",
+    color: "#01573e",
+    logo: BethanyWVLogo,
   },
   {
     id: 730,
     name: "UAlbany",
-
     logo: UAlbanyLogo,
   },
   {
-    id: 731,
-    name: "Tarleton State",
-
-    logo: "https://media.api-sports.io/american-football/teams/731.png",
-  },
-  {
-    id: 732,
-    name: "Lincoln (CA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/732.png",
-  },
-  {
-    id: 733,
-    name: "College of Idaho",
-
-    logo: "https://media.api-sports.io/american-football/teams/733.png",
-  },
-  {
-    id: 734,
-    name: "Northwood (MI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/734.png",
-  },
-  {
-    id: 735,
-    name: "Saginaw Valley State",
-
-    logo: "https://media.api-sports.io/american-football/teams/735.png",
-  },
-  {
-    id: 736,
-    name: "UNC Pembroke",
-
-    logo: "https://media.api-sports.io/american-football/teams/736.png",
-  },
-  {
-    id: 737,
-    name: "Indiana-Pennsylvania",
-
-    logo: "https://media.api-sports.io/american-football/teams/737.png",
-  },
-  {
-    id: 738,
-    name: "Millersville",
-
-    logo: "https://media.api-sports.io/american-football/teams/738.png",
-  },
-  {
-    id: 739,
-    name: "Minnesota State Moorhead",
-
-    logo: "https://media.api-sports.io/american-football/teams/739.png",
-  },
-  {
-    id: 740,
-    name: "Rockford",
-
-    logo: "https://media.api-sports.io/american-football/teams/740.png",
-  },
-  {
-    id: 741,
-    name: "Dakota State",
-
-    logo: "https://media.api-sports.io/american-football/teams/741.png",
-  },
-  {
-    id: 742,
-    name: "Salve Regina",
-
-    logo: "https://media.api-sports.io/american-football/teams/742.png",
-  },
-  {
-    id: 743,
-    name: "WPI",
-
-    logo: "https://media.api-sports.io/american-football/teams/743.png",
-  },
-  {
-    id: 744,
-    name: "Ursinus",
-    code: "URS",
-    logo: "https://media.api-sports.io/american-football/teams/744.png",
-  },
-  {
-    id: 745,
-    name: "Alvernia",
-
-    logo: "https://media.api-sports.io/american-football/teams/745.png",
-  },
-  {
-    id: 746,
-    name: "Valley City State",
-
-    logo: "https://media.api-sports.io/american-football/teams/746.png",
-  },
-  {
-    id: 747,
-    name: "Lyon College",
-
-    logo: "https://media.api-sports.io/american-football/teams/747.png",
-  },
-  {
-    id: 748,
-    name: "Notre Dame College (OH)",
-
-    logo: "https://media.api-sports.io/american-football/teams/748.png",
-  },
-  {
-    id: 749,
-    name: "Lake Erie",
-
-    logo: "https://media.api-sports.io/american-football/teams/749.png",
-  },
-  {
-    id: 750,
-    name: "Tiffin",
-
-    logo: "https://media.api-sports.io/american-football/teams/750.png",
-  },
-  {
-    id: 751,
-    name: "Randolph-Macon",
-
-    logo: "https://media.api-sports.io/american-football/teams/751.png",
-  },
-  {
-    id: 752,
-    name: "University of Rochester (NY)",
-
-    logo: "https://media.api-sports.io/american-football/teams/752.png",
-  },
-  {
-    id: 753,
-    name: "Davenport University-Grand Rapids",
-
-    logo: "https://media.api-sports.io/american-football/teams/753.png",
-  },
-  {
-    id: 754,
-    name: "Union (NY)",
-
-    logo: "https://media.api-sports.io/american-football/teams/754.png",
-  },
-  {
-    id: 755,
-    name: "Kings College (PA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/755.png",
-  },
-  {
-    id: 756,
-    name: "Eastern University",
-
-    logo: "https://media.api-sports.io/american-football/teams/756.png",
-  },
-  {
-    id: 757,
-    name: "Springfield",
-
-    logo: "https://media.api-sports.io/american-football/teams/757.png",
-  },
-  {
-    id: 758,
-    name: "St. John Fisher University",
-
-    logo: "https://media.api-sports.io/american-football/teams/758.png",
-  },
-  {
-    id: 759,
-    name: "Emory & Henry College",
-
-    logo: "https://media.api-sports.io/american-football/teams/759.png",
-  },
-  {
-    id: 760,
-    name: "Dickinson (PA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/760.png",
-  },
-  {
-    id: 761,
-    name: "Shenandoah",
-
-    logo: "https://media.api-sports.io/american-football/teams/761.png",
-  },
-  {
-    id: 762,
-    name: "Plymouth State",
-
-    logo: "https://media.api-sports.io/american-football/teams/762.png",
-  },
-  {
-    id: 763,
-    name: "Maryville College (TN)",
-
-    logo: "https://media.api-sports.io/american-football/teams/763.png",
-  },
-  {
-    id: 764,
-    name: "Westminster (PA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/764.png",
-  },
-  {
-    id: 765,
-    name: "Wittenberg",
-
-    logo: "https://media.api-sports.io/american-football/teams/765.png",
-  },
-  {
-    id: 766,
-    name: "Nebraska Wesleyan",
-
-    logo: "https://media.api-sports.io/american-football/teams/766.png",
-  },
-  {
-    id: 767,
-    name: "Carthage",
-
-    logo: "https://media.api-sports.io/american-football/teams/767.png",
-  },
-  {
-    id: 768,
-    name: "Martin Luther",
-
-    logo: "https://media.api-sports.io/american-football/teams/768.png",
-  },
-  {
-    id: 769,
-    name: "Northwestern (MN)",
-
-    logo: "https://media.api-sports.io/american-football/teams/769.png",
-  },
-  {
-    id: 770,
-    name: "Crown College",
-
-    logo: "https://media.api-sports.io/american-football/teams/770.png",
-  },
-  {
-    id: 771,
-    name: "St. Norbert",
-
-    logo: "https://media.api-sports.io/american-football/teams/771.png",
-  },
-  {
-    id: 772,
-    name: "St. Ambrose",
-
-    logo: "https://media.api-sports.io/american-football/teams/772.png",
-  },
-  {
-    id: 773,
-    name: "Westminster (MO)",
-
-    logo: "https://media.api-sports.io/american-football/teams/773.png",
-  },
-  {
-    id: 774,
-    name: "Roosevelt",
-
-    logo: "https://media.api-sports.io/american-football/teams/774.png",
-  },
-  {
-    id: 775,
-    name: "Bluefield State University",
-
-    logo: "https://media.api-sports.io/american-football/teams/775.png",
-  },
-  {
-    id: 776,
-    name: "Huntingdon College (AL)",
-
-    logo: "https://media.api-sports.io/american-football/teams/776.png",
-  },
-  {
-    id: 777,
-    name: "Saint Augustine's",
-
-    logo: "https://media.api-sports.io/american-football/teams/777.png",
-  },
-  {
-    id: 778,
-    name: "Simpson College (IA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/778.png",
-  },
-  {
-    id: 779,
-    name: "Southeastern University",
-
-    logo: "https://media.api-sports.io/american-football/teams/779.png",
-  },
-  {
-    id: 780,
-    name: "George Fox",
-
-    logo: "https://media.api-sports.io/american-football/teams/780.png",
-  },
-  {
-    id: 781,
-    name: "Union College",
-
-    logo: "https://media.api-sports.io/american-football/teams/781.png",
-  },
-  {
-    id: 782,
-    name: "Minnesota Morris",
-
-    logo: "https://media.api-sports.io/american-football/teams/782.png",
-  },
-  {
-    id: 783,
-    name: "Oklahoma Panhandle State",
-
-    logo: "https://media.api-sports.io/american-football/teams/783.png",
-  },
-  {
-    id: 784,
-    name: "UT Permian Basin",
-
-    logo: "https://media.api-sports.io/american-football/teams/784.png",
-  },
-  {
-    id: 785,
-    name: "Wheeling",
-
-    logo: "https://media.api-sports.io/american-football/teams/785.png",
-  },
-  {
-    id: 786,
-    name: "Mayville State",
-
-    logo: "https://media.api-sports.io/american-football/teams/786.png",
-  },
-  {
-    id: 787,
-    name: "Saint Vincent",
-
-    logo: "https://media.api-sports.io/american-football/teams/787.png",
-  },
-  {
-    id: 788,
-    name: "Thiel",
-
-    logo: "https://media.api-sports.io/american-football/teams/788.png",
-  },
-  {
-    id: 789,
-    name: "Sul Ross State",
-
-    logo: "https://media.api-sports.io/american-football/teams/789.png",
-  },
-  {
-    id: 790,
-    name: "Stevenson",
-
-    logo: "https://media.api-sports.io/american-football/teams/790.png",
-  },
-  {
-    id: 791,
-    name: "Waynesburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/791.png",
-  },
-  {
-    id: 792,
-    name: "Wilmington (OH)",
-
-    logo: "https://media.api-sports.io/american-football/teams/792.png",
-  },
-  {
-    id: 793,
-    name: "Pomona Pitzer",
-
-    logo: "https://media.api-sports.io/american-football/teams/793.png",
-  },
-  {
-    id: 794,
-    name: "Wheaton",
-
-    logo: "https://media.api-sports.io/american-football/teams/794.png",
-  },
-  {
-    id: 795,
-    name: "Madonna University (Mich.)",
-
-    logo: "https://media.api-sports.io/american-football/teams/795.png",
-  },
-  {
-    id: 796,
-    name: "Saint John's (MN)",
-
-    logo: "https://media.api-sports.io/american-football/teams/796.png",
-  },
-  {
-    id: 797,
-    name: "Lawrence University",
-
-    logo: "https://media.api-sports.io/american-football/teams/797.png",
-  },
-  {
-    id: 798,
-    name: "Dickinson State",
-
-    logo: "https://media.api-sports.io/american-football/teams/798.png",
-  },
-  {
-    id: 799,
-    name: "St. Olaf",
-
-    logo: "https://media.api-sports.io/american-football/teams/799.png",
-  },
-  {
-    id: 800,
-    name: "Eastern Oregon",
-
-    logo: "https://media.api-sports.io/american-football/teams/800.png",
-  },
-  {
-    id: 801,
-    name: "Columbus State",
-
-    logo: "https://media.api-sports.io/american-football/teams/801.png",
-  },
-  {
-    id: 802,
-    name: "Southwestern Assemblies of God",
-
-    logo: "https://media.api-sports.io/american-football/teams/802.png",
-  },
-  {
-    id: 803,
-    name: "Arizona Christian",
-
-    logo: "https://media.api-sports.io/american-football/teams/803.png",
-  },
-  {
-    id: 804,
-    name: "Wayland Baptist",
-
-    logo: "https://media.api-sports.io/american-football/teams/804.png",
-  },
-  {
-    id: 805,
-    name: "Wesleyan University (CT)",
-
-    logo: "https://media.api-sports.io/american-football/teams/805.png",
-  },
-  {
-    id: 806,
-    name: "Trinity (CT)",
-
-    logo: "https://media.api-sports.io/american-football/teams/806.png",
-  },
-  {
-    id: 807,
-    name: "Montana-Western",
-
-    logo: "https://media.api-sports.io/american-football/teams/807.png",
-  },
-  {
-    id: 808,
-    name: "Southern Oregon",
-
-    logo: "https://media.api-sports.io/american-football/teams/808.png",
-  },
-  {
-    id: 809,
-    name: "Williams",
-
-    logo: "https://media.api-sports.io/american-football/teams/809.png",
-  },
-  {
-    id: 810,
-    name: "Washington University (St. Louis)",
-
-    logo: "https://media.api-sports.io/american-football/teams/810.png",
-  },
-  {
-    id: 811,
-    name: "Washington and Lee",
-
-    logo: "https://media.api-sports.io/american-football/teams/811.png",
-  },
-  {
-    id: 812,
-    name: "St. Xavier (IL)",
-
-    logo: "https://media.api-sports.io/american-football/teams/812.png",
-  },
-  {
-    id: 813,
+    id: 198,
     espnID: 2534,
     name: "Sam Houston",
     fullName: "Sam Houston Bearkats",
@@ -6505,6 +4162,15 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#101010",
     logo: StJohnsLogo,
     logoLight: StJohnsLogoLight,
+  },
+  {
+    id: 1863,
+    espnID: 2130,
+    name: "Chicago State",
+    fullName: "Chicago State Cougars",
+    code: "CHST",
+    color: "#006700",
+    logo: ChicagoStateLogo,
   },
 ];
 

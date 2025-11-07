@@ -61,7 +61,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       {avatarUrl ? (
         <Image
           source={{ uri: avatarUrl }}
-          style={[styles.avatar, { backgroundColor: isDark ? "#444" : "#ddd" }]}
+          style={styles.avatar}
           accessibilityLabel={`Avatar for ${name}`}
         />
       ) : (

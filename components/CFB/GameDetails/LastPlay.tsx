@@ -14,7 +14,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
   const styles = lastPlayStyles(isDark);
-  const textColor = isDark ? "#fff" : "#1d1d1d";
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
 
   const onLayout = (e: LayoutChangeEvent) =>
     setContainerWidth(e.nativeEvent.layout.width);
@@ -25,7 +25,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
 
   const getTextColor = (text?: string) => {
     if (text === "Two-minute warning") return "red";
-    return isDark ? "#fff" : "#1d1d1d";
+    return isDark ? Colors.dark.text : Colors.light.text;
   };
 
   if (!currentPlay) return null;
@@ -86,9 +86,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
       </Text>
 
       {currentPlay.drive?.description && (
-        <Text
-          style={styles.description}
-        >
+        <Text style={styles.description}>
           Drive: {currentPlay.drive.description}
           {currentPlay.drive.timeElapsed?.displayValue
             ? ` (${currentPlay.drive.timeElapsed.displayValue})`

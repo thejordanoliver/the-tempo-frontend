@@ -1,17 +1,18 @@
 // types/cfb.ts
 const DefaultLogo = require("assets/Placeholders/teamPlaceholder.png");
 import { ImageSourcePropType } from "react-native";
+
 export interface CFBPlayer {
   id: number;
   name: string;
   birth_date?: string;
   age?: number | null;
-  height?: string;
-  weight?: string;
+  height?: string | null;
+  weight?: string | null;
   college?: string | null;
-  group?: string;
-  position?: string;
-  number?: number;
+  group?: string | null;
+  position?: string | null;
+  number?: number | null;
   salary?: string | null;
   experience?: number | null;
   image?: string;
@@ -50,10 +51,8 @@ export type CFBTeam = {
   secondaryColor?: string;
   championships?: number[];
   conference_championships?: string[]; // or number[]
-    banner?: any; // <-- add this
-
+  banner?: any; // <-- add this
 };
-
 
 export type CFBGame = {
   game: {

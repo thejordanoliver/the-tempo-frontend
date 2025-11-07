@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 import HeadingTwo from "../Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
@@ -67,9 +68,9 @@ export default function GameLeaders({
   // Add this check:
   if (!topPlayers.length) return null;
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#888";
+  const textColor = lighter ? Colors.netural.lightGray  : isDark ? "#fff" : "#1d1d1d";
+  const subTextColor = lighter ? Colors.netural.lightGray : isDark ? Colors.netural.midTone : "#555";
+  const borderColor = lighter ? Colors.netural.lightGray : isDark ? Colors.netural.midTone : Colors.netural.midTone;
 
   if (isLoading) {
     return (

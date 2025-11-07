@@ -5,7 +5,7 @@ import ScrollableTabBar from "components/NFL/TabBars/ScrollableTabBar";
 import { Fonts } from "constants/fonts";
 import { getCFBTeamAbbreviation, getTeamLogo } from "constants/teamsCFB";
 import { CFBPlayer, useCFBGameLeaders } from "hooks/CFBHooks/useCFBGameLeaders";
-
+import { players } from "constants/cfbPlayers";
 import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 
 import { useMemo, useState } from "react";
@@ -54,19 +54,22 @@ const STAT_KEYS: Record<Category, string[]> = {
   Punting: ["Total", "Yards", "Average", "Touchbacks"],
 };
 
-// Normalize raw CFBPlayer to DisplayPlayer and use real player teamAbbr if available
+// Normalize raw CFBPlayer to DisplayPlayer and use real player teamAbbr and image
 const normalizePlayers = (
-  players: CFBPlayer[] | undefined,
+  rawPlayers: CFBPlayer[] | undefined,
   fallbackTeamId: string
 ): DisplayPlayer[] =>
-  (players ?? []).map((p) => {
+  (rawPlayers ?? []).map((p) => {
     const teamId = p.team?.id ? String(p.team.id) : fallbackTeamId;
     const teamAbbr = getCFBTeamAbbreviation(teamId) || "UNK";
+
+    // Find the original player in the players array to get image if available
+    const originalPlayer = players.find((pl) => pl.id === Number(p.id));
 
     return {
       id: Number(p.id),
       name: p.name,
-      image: (p as any).image ?? "",
+      image: originalPlayer?.image ?? "", // 👈 always use the real player's image if present
       teamId,
       teamAbbr,
       group: p.group as Category,
@@ -77,6 +80,7 @@ const normalizePlayers = (
         })) ?? [],
     };
   });
+
 
 const getAbbreviation = (category: Category, name: string) => {
   const lower = name.toLowerCase();

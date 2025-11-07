@@ -298,10 +298,11 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     }, [game, home, neutralVenueData]);
 
   const getFinalWithOTLabel = (homePeriods: number, awayPeriods: number) => {
-    const maxPeriod = Math.max(homePeriods, awayPeriods);
-    if (maxPeriod <= 2) return "Final";
-    const ot = maxPeriod - 2;
-    return ot === 1 ? "Final/OT" : `Final/OT${ot}`;
+    const maxPeriods = Math.max(homePeriods, awayPeriods);
+    const regulationPeriods = 2; // college basketball halves
+    if (maxPeriods <= regulationPeriods) return "Final";
+    const otCount = maxPeriods - regulationPeriods;
+    return otCount === 1 ? "Final/OT" : `Final/OT${otCount}`;
   };
 
   const homeLastGames = useLastFiveGames(Number(game.teams.home?.id) || 0);
@@ -317,6 +318,24 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       : week === "NCAA - Quarter-finals"
       ? "Elite Eight"
       : week ?? "";
+
+  console.log("🧩 Debug Period Info:", {
+    status: {
+      isLive: status.isLive,
+      isFinal: status.isFinal,
+      isHalftime: status.isHalftime,
+      long: status.long,
+      short: status.short,
+    },
+    possessionPeriod: possession.period,
+    displayClock,
+    homePeriods: lineScore.home.length,
+    awayPeriods: lineScore.away.length,
+    finalLabel: getFinalWithOTLabel(
+      lineScore.home.length,
+      lineScore.away.length
+    ),
+  });
 
   return (
     <BottomSheetModal
@@ -370,7 +389,7 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
           <View style={styles.header}>
             <TeamInfo
               team={away}
-              teamName={away?.name ?? ""}
+              teamName={away?.code ?? away?.shortName ?? away?.name ?? "Away"}
               score={awayScore}
               opponentScore={homeScore}
               record={awayRecord?.overall ?? "0-0"}
@@ -396,11 +415,26 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
               clock={displayClock ?? possession.displayClock ?? null}
               period={
                 status.isLive || status.isHalftime
-                  ? possession.period ?? status.long
-                  : getFinalWithOTLabel(
+                  ? (() => {
+                      const rawPeriod = possession.period ?? status.long;
+                      if (typeof rawPeriod === "number") {
+                        if (rawPeriod === 3) return "OT";
+                        if (rawPeriod === 4) return "OT2";
+                        if (rawPeriod > 4) return `OT${rawPeriod - 2}`;
+                      } else if (typeof rawPeriod === "string") {
+                        const p = rawPeriod.toLowerCase();
+                        if (p.includes("3rd")) return "OT";
+                        if (p.includes("4th")) return "OT2";
+                        if (p.includes("5th")) return "OT3";
+                      }
+                      return rawPeriod;
+                    })()
+                  : status.isFinal
+                  ? getFinalWithOTLabel(
                       lineScore.home.length,
                       lineScore.away.length
                     )
+                  : status.long
               }
               formattedDate={formattedDate}
               isDark={isDark}
@@ -410,7 +444,7 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
 
             <TeamInfo
               team={home}
-              teamName={home?.name ?? ""}
+              teamName={home?.code ?? home?.shortName ?? home?.name ?? "Home"}
               score={homeScore}
               opponentScore={awayScore}
               record={homeRecord?.overall ?? "0-0"}

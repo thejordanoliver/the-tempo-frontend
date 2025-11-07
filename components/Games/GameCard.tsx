@@ -134,8 +134,8 @@ export default function GameCard({
 
   const { score: liveScore } = useGameScores(
     "nba",
-    homeFullName,
-    awayFullName,
+    homeEspnId,
+    awayEspnId,
     gameDateStr
   );
 

@@ -1123,7 +1123,7 @@ export const players: NFLPlayer[] = [
     number: 16,
     salary: "$7,000,000",
     experience: 5,
-    image: "https://media.api-sports.io/american-football/players/69.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4360310.png",
     teamId: 2,
   },
   {

@@ -59,21 +59,19 @@ export const useGameScores = (
           else baseDate = dayjs();
         } else baseDate = dayjs();
 
-        // Convert base date into Eastern Time and then floor to ET midnight
-        const baseET = baseDate.tz("America/New_York").startOf("day");
+        // Use UTC for ESPN scoreboard queries
+        const baseUtc = baseDate.utc();
 
-        // Try ET day, day before, and day after — in that order
-        const datesToTry = [0, -1, 1].map((offset) =>
-          baseET.add(offset, "day").tz("America/New_York")
+        // Try day before, day of, and day after
+        const datesToTry = [-1, 0, 1].map(offset =>
+          baseUtc.add(offset, "day").format("YYYYMMDD")
         );
 
         let foundGame: any = null;
         const homeNorm = normalize(String(homeIdOrName));
         const awayNorm = normalize(String(awayIdOrName));
 
-        for (const d of datesToTry) {
-          const yyyymmdd = d.format("YYYYMMDD");
-
+        for (const yyyymmdd of datesToTry) {
           const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/${league}/scoreboard?dates=${yyyymmdd}`;
           const { data } = await axios.get(url);
           const games = data.events || [];
@@ -100,21 +98,9 @@ export const useGameScores = (
               )
                 return g;
 
-              // Normalized name match
-              const namesA = [
-                teamA.abbrev,
-                teamA.display,
-                teamA.short,
-                teamA.location,
-                teamA.full,
-              ];
-              const namesB = [
-                teamB.abbrev,
-                teamB.display,
-                teamB.short,
-                teamB.location,
-                teamB.full,
-              ];
+              // Name match
+              const namesA = [teamA.abbrev, teamA.display, teamA.short, teamA.location, teamA.full];
+              const namesB = [teamB.abbrev, teamB.display, teamB.short, teamB.location, teamB.full];
 
               if (
                 (namesA.includes(homeNorm) && namesB.includes(awayNorm)) ||
@@ -126,17 +112,13 @@ export const useGameScores = (
           };
 
           foundGame = findMatch(games);
-          if (foundGame) {
-            break;
-          }
+          if (foundGame) break;
         }
 
         if (!foundGame) {
           if (!warnedOnceRef.current) {
             console.warn(
-              `[${league.toUpperCase()} Score] ❌ No match found for ${homeIdOrName} vs ${awayIdOrName} around ET date ${baseET.format(
-                "YYYY-MM-DD HH:mm"
-              )}`
+              `[${league.toUpperCase()} Score] ❌ No match found for ${homeIdOrName} vs ${awayIdOrName} around UTC date ${baseUtc.format("YYYY-MM-DD HH:mm")}`
             );
             warnedOnceRef.current = true;
           }
@@ -152,9 +134,7 @@ export const useGameScores = (
         const mappedStatus =
           state === "in" ? "in_play" : state === "post" ? "final" : "scheduled";
         const statusText =
-          statusObj?.type?.shortDetail ||
-          statusObj?.type?.description ||
-          "Scheduled";
+          statusObj?.type?.shortDetail || statusObj?.type?.description || "Scheduled";
 
         const displayClock = statusObj?.displayClock ?? "0.0";
         const period = statusObj?.period ?? 0;
@@ -191,13 +171,6 @@ export const useGameScores = (
                   })) ?? [],
               }
             : undefined;
-          // console.log(
-          //   `[${league.toUpperCase()}] Status: ${mappedStatus.toUpperCase()} (${statusText}) | ${
-          //     homeComp.team.displayName
-          //   } ${homeComp.score} - ${awayComp.score} ${
-          //     awayComp.team.displayName
-          //   }`
-          // );
 
           setScore({
             home: { total: Number(homeComp.score) },
@@ -215,9 +188,7 @@ export const useGameScores = (
         }
       } catch (err: any) {
         console.error(`[${league.toUpperCase()} Score] Error:`, err);
-        setError(
-          err.message || `Failed to fetch ${league.toUpperCase()} score`
-        );
+        setError(err.message || `Failed to fetch ${league.toUpperCase()} score`);
         setScore(undefined);
       } finally {
         setLoading(false);

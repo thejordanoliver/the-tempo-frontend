@@ -296,6 +296,7 @@ export function useAPTop25() {
     if (!apPoll) return [];
 
     return apPoll.ranks.slice(0, 25).map((r) => ({
+      id: String(r.team?.id), // ✅ include ESPN ID
       name:
         r.team?.name ||
         r.team?.shortDisplayName ||
@@ -309,6 +310,7 @@ export function useAPTop25() {
   return apTop25;
 }
 
+
 // --- Helper: Normalize names for fuzzy matching ---
 export const normalizeTeamName = (name?: string) =>
   (name || "")
@@ -319,9 +321,7 @@ export const normalizeTeamName = (name?: string) =>
 
 // --- Helper: Get rank by team name ---
 export const getTeamRankFromAPById = (teamId: number | string, apTop25: any[]) => {
-  if (!teamId) return null;
-  const rank = apTop25.find(
-    (t) => String(t.team?.id) === String(teamId)
-  );
-  return rank ? `#${rank.current}` : null;
+  if (!teamId || !apTop25?.length) return null;
+  const entry = apTop25.find((t) => String(t.id) === String(teamId));
+  return entry ? `${entry.rank}` : null;
 };

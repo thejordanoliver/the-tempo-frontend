@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
+import CFBRosterStats from "components/CFB/Team/RosterStats";
 import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
+import Roster from "components/NFL/Team/Roster";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { teams } from "constants/teamsCFB";
@@ -155,24 +157,6 @@ export default function TeamDetailScreen() {
     [cachedGames, rawTeamGames]
   );
 
-  // --- Memoize flattened grouping ---
-  const flattenedGames = useMemo(() => {
-    const grouped: { [stage: string]: Game[] } = {};
-    teamGames.forEach((g) => {
-      const stage = g.game.stage || "Unknown";
-      if (!grouped[stage]) grouped[stage] = [];
-      grouped[stage].push(g);
-    });
-
-    const flat: any[] = [];
-    Object.keys(grouped).forEach((stage) => {
-      flat.push({ type: "header", title: stage });
-      grouped[stage].forEach((game) => flat.push({ type: "game", game }));
-    });
-
-    return flat;
-  }, [teamGames]);
-
   // --- Refresh handler ---
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -206,7 +190,6 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const { toggleNotifications, isNotified } = useNotifications();
   const league = "CFB";
-  const favorited = team ? isFavorite(league, team.id) : false;
 
   // --- Header ---
   useLayoutEffect(() => {
@@ -247,6 +230,7 @@ export default function TeamDetailScreen() {
       </View>
     );
   }
+
 
   return (
     <View style={styles.container}>
@@ -293,23 +277,30 @@ export default function TeamDetailScreen() {
           />
         </ScrollView>
 
-        {/* Roster Page */}
-        <View
-          key="roster"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>
-            Team Roster (TODO)
-          </Text>
+          {/* Roster Page */}
+        <View key="roster" style={{ flex: 1 }}>
+          <Roster
+            ref={rosterRef}
+            teamId={String(team.id)}
+            teamName={team.name}
+            refreshing={refreshing}
+            league="CFB"
+          />
         </View>
 
         {/* Stats Page */}
-        <View
+      <ScrollView
           key="stats"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          contentContainerStyle={{ paddingBottom: 100 }}
         >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
-        </View>
+       {team?.espnID && team?.id && (
+  <CFBRosterStats
+    espnID={Number(team.espnID)}
+    teamID={Number(team.id)}
+  />
+)}
+
+        </ScrollView>
 
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
@@ -323,7 +314,7 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-            league="CFB"
+          league="CFB"
         />
       )}
     </View>

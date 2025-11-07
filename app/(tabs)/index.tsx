@@ -12,6 +12,7 @@ import { mapToInternalTeam } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { useCBBWeeklyGames } from "hooks/CBBHooks/useCBBWeeklyGames";
 import { usetodayYesterday as useCFBtodayYesterday } from "hooks/CFBHooks/usetodayYesterday";
 import { useNewsStore } from "hooks/newsStore";
 import { usetodayYesterday } from "hooks/NFLHooks/usetodayYesterday";
@@ -49,6 +50,12 @@ export default function HomeScreen() {
     loading: weeklyGamesLoading,
     refreshGames: refreshWeeklyGames,
   } = useWeeklyGames();
+
+  const {
+    cbbGames,
+    cbbLoading,
+    refresh: refreshCBBGames,
+  } = useCBBWeeklyGames();
 
   const {
     games: nflGames,
@@ -262,6 +269,26 @@ export default function HomeScreen() {
     };
   });
 
+  const normalizedCBB = cbbGames.map((game: any) => {
+    const raw = game.date || game.dateUTC || game.dateLocal;
+    const date = toEastern(raw);
+
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      time: date.format("h:mm A"),
+      home: {
+        ...normalizeTeam(game.teams?.home),
+        id: String(game.teams?.home?.id),
+      },
+      away: {
+        ...normalizeTeam(game.teams?.away),
+        id: String(game.teams?.away?.id),
+      },
+    };
+  });
+
   // --- Filter by selected Eastern date ---
   const filteredNBA = normalizedNBA.filter((g) => {
     const gameET = dayjs(g.date).tz("America/New_York");
@@ -300,6 +327,12 @@ export default function HomeScreen() {
     return gameET.isSame(selectedET, "day");
   });
 
+  const filteredCBB = normalizedCBB.filter((g) => {
+    const gameET = toEastern(g.date);
+    const selectedET = toEastern(selectedDate);
+    return gameET.isSame(selectedET, "day");
+  });
+
   // --- Favorites Helper ---
   const isFavoriteGame = (game: any, prefix: string) =>
     favorites.includes(`${prefix}:${String(game.home.id)}`) ||
@@ -321,17 +354,19 @@ export default function HomeScreen() {
 
     return [
       ...collect(filteredNBA, "NBA", "NBA"),
-
       ...collect(filteredNFL, "NFL", "NFL"),
       ...collect(filteredCFB, "CFB", "College Football"),
+      ...collect(filteredCBB, "CBB", "College Basketball"),
     ];
-  }, [favorites, filteredNBA, filteredNFL, filteredCFB]);
+  }, [favorites, filteredNBA, filteredNFL, filteredCFB, filteredCBB]);
 
   const limitedNBA = limitNonFavorites(filteredNBA, "NBA");
 
   const limitedNFL = limitNonFavorites(filteredNFL, "NFL");
 
   const limitedCFB = limitNonFavorites(filteredCFB, "CFB");
+
+  const limitedCBB = limitNonFavorites(filteredCBB, "CBB");
 
   // --- Combine Sections ---
   const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
@@ -340,9 +375,10 @@ export default function HomeScreen() {
       { category: "NBA", data: sortLiveFirst(limitedNBA) },
       { category: "NFL", data: sortLiveFirst(limitedNFL) },
       { category: "College Football", data: sortLiveFirst(limitedCFB) },
+      { category: "Men's College Basketball", data: sortLiveFirst(limitedCBB) },
     ];
     return sections.filter((s) => s.data.length > 0);
-  }, [favoriteGames, limitedNBA, limitedNFL, limitedCFB]);
+  }, [favoriteGames, limitedNBA, limitedNFL, limitedCFB, limitedCBB]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {

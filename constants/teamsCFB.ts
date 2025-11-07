@@ -200,6 +200,8 @@ import DavidsonLogo from "../assets/College_Logos/Davidson.png";
 import DrakeLogo from "../assets/College_Logos/Drake.png";
 import ECULogo from "../assets/College_Logos/EastCarolina.png";
 import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
+import EasternWashingtonLogo from "../assets/College_Logos/EasternWashington.png";
+import EasternWashingtonLogoLight from "../assets/College_Logos/EasternWashingtonLight.png";
 import ElonLogo from "../assets/College_Logos/Elon.png";
 import ETAMLogo from "../assets/College_Logos/ETA&M.png";
 import FordhamLogo from "../assets/College_Logos/Fordham.png";
@@ -246,6 +248,7 @@ import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
 import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
 import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
 import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
+import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
 import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
 import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
 import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
@@ -310,6 +313,7 @@ import FloridaStadium from "../assets/Football/Arenas/FloridaStadium.webp";
 import FloridaStStadium from "../assets/Football/Arenas/FloridaStStadium.webp";
 import GeorgiaStadium from "../assets/Football/Arenas/GeorgiaStadium.webp";
 import KentuckyStadium from "../assets/Football/Arenas/KentuckyStadium.webp";
+import LouisvilleStadium from "../assets/Football/Arenas/LouisvilleStadium.webp";
 import LSUStadium from "../assets/Football/Arenas/LSUStadium.webp";
 import MichiganStadium from "../assets/Football/Arenas/MichiganStadium.webp";
 import MinnesotaStadium from "../assets/Football/Arenas/MinnesotaStadium.webp";
@@ -388,7 +392,7 @@ export const teams: CFBTeam[] = [
     coach: "David Braun",
     location: "Evanston, IL",
     city: "Evanston",
-    venue: "Ryan Field (new stadium under construction)",
+    venue: "Ryan Field",
     address: "1501 Central St, Evanston, IL 60208",
     venueCapacity: "47,000",
     established: 1882,
@@ -2361,6 +2365,15 @@ export const teams: CFBTeam[] = [
     color: "#c9001f",
     secondaryColor: "#000000",
     logo: LouisvilleLogo,
+    location: "Louisville, KY",
+    city: "Louisville",
+    venueImage: LouisvilleStadium,
+    venue: "L&N Federal Credit Union Stadium",
+    address: "2800 South Floyd Street, Louisville, Kentucky 40209",
+    venueCapacity: "60,800",
+    established: 1912,
+    latitude: 38.2058,
+    longitude: -85.7589,
   },
   {
     id: 199,
@@ -2746,11 +2759,12 @@ export const teams: CFBTeam[] = [
     espnID: 331,
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
+    shortName: "East. Washington",
     code: "EWU",
     color: "#a10022",
     secondaryColor: "#abb4bc",
-
-    logo: "https://media.api-sports.io/american-football/teams/236.png",
+    logo: EasternWashingtonLogo,
+    logoLight: EasternWashingtonLogoLight,
   },
   {
     id: 237,
@@ -5528,9 +5542,13 @@ export const teams: CFBTeam[] = [
   },
   {
     id: 734,
-    name: "Northwood (MI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/734.png",
+    espnID: 2886,
+    name: "Northwood",
+    fullName: "Northwood (MI) Timberwolves",
+    code: "NAR",
+    color: "#15223B",
+    secondaryColor: "#ffffffff",
+    logo: NorthwoodLogo,
   },
   {
     id: 735,

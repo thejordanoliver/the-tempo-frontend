@@ -56,7 +56,7 @@ export const useCFBRankings = () => {
         CACHE_KEY,
         JSON.stringify({ timestamp: Date.now(), data })
       );
-      console.log("💾 Cached CFB rankings");
+  
     } catch (err) {
       console.warn("⚠️ Failed to cache CFB rankings:", err);
     }
@@ -69,7 +69,6 @@ export const useCFBRankings = () => {
 
       const { timestamp, data } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_TTL) {
-        console.log("✅ Using cached CFB rankings");
         return data;
       } else {
         console.log("⚠️ Cache expired — will refetch");
@@ -144,8 +143,7 @@ export const useCFBRankings = () => {
       setRankings(polls);
       await saveCache(polls);
 
-      console.log("✅ Updated CFB rankings from server");
-      console.log("📊 AP Poll team count:", polls[0]?.ranks?.length);
+
     } catch (err: any) {
       console.error("❌ Fetch latest rankings failed:", err);
       setError(err.message || "Failed to fetch rankings");
@@ -172,7 +170,6 @@ export const useCFBRankings = () => {
 
       setRankings(polls);
       await saveCache(polls);
-      console.log("🔄 Background refreshed CFB rankings");
     } catch (err) {
       console.warn("⚠️ Background refresh failed:", err);
     }

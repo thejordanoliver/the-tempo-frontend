@@ -1,12 +1,11 @@
 // components/NFLRoster.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { players as allPlayers } from "constants/nflPlayers";
-
+import NFLPlayerCard from "components/NFL/Player/PlayerCard";
+import { players as allPlayers } from "constants/cfbPlayers";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { SectionList, StyleSheet, Text } from "react-native";
-import NFLPlayerCard from "../Player/NFLPlayerCard";
 
-interface NFLRosterProps {
+interface CFBRosterProps {
   teamId: string;
   teamName: string;
   refreshing?: boolean;
@@ -34,7 +33,7 @@ const POSITION_ORDER = [
   "LS",
 ];
 
-const NFLRoster = forwardRef(({ teamId, teamName }: NFLRosterProps, ref) => {
+const CFBRoster = forwardRef(({ teamId, teamName }: CFBRosterProps, ref) => {
   // Filter players by team
   const teamPlayers = useMemo(
     () => allPlayers.filter((p) => p.teamId === Number(teamId)),
@@ -91,6 +90,7 @@ const NFLRoster = forwardRef(({ teamId, teamName }: NFLRosterProps, ref) => {
           avatarUrl={item.image}
           number={item.number}
           team={teamName}
+          league="CFB"
         />
       )}
       renderSectionHeader={({ section: { title } }) => (
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NFLRoster;
+export default CFBRoster;

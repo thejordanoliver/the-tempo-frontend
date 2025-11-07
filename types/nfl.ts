@@ -18,6 +18,9 @@ export interface NFLPlayer {
   
 }
 
+
+
+
 export type NFLTeam = {
   id: number | string;
   espnID: string;

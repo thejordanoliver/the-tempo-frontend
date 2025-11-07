@@ -24,7 +24,6 @@ import { Game } from "types/cfb";
 import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-
 type Props = {
   game: Game; // TODO: replace with proper CFB Game type
   isDark?: boolean;
@@ -47,7 +46,8 @@ function CFBGameCard({ game, isDark }: Props) {
   const gameDateStr = gameDate?.toISOString();
 
   const apTop25 = useAPTop25();
-const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
+  const getTeamRank = (id: number | string) =>
+    getTeamRankFromAPById(id, apTop25);
 
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
@@ -172,24 +172,15 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
 
   const displayShortStatus = getGameStatusShort();
 
-  const displayStatus = (() => {
-    const base =
-      gameStatusDescription ??
-      status.long ??
-      status.short ??
-      game.game.status.long ??
-      game.game.status.short ??
-      "Scheduled";
-
-    const lower = base.toLowerCase();
-
-    if (lower === "finished") return "Final";
-    if (lower.includes("after over")) return "Final/OT"; // ✅ Added
-    if (lower.includes("overtime")) return "OT"; // ✅ Optional, handles ESPN variant
-    if (lower.includes("postponed")) return "Postponed";
-    if (lower.includes("canceled")) return "Canceled";
-    return base;
-  })();
+  // Unified game status from possession hook
+  const displayStatus =
+    possession?.gameStatusDescription ??
+    possession?.gameStatusShortDetail ??
+    (status.isFinal
+      ? "Final"
+      : status.isLive
+      ? "Live"
+      : status.long ?? "Scheduled");
 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
@@ -348,14 +339,12 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
                 },
               ]}
             >
-  {awayEspnId && getTeamRank(String(awayEspnId)) && (
-  <Text style={{ fontSize: 10, color: "#aaa" }}>
-    {getTeamRank(String(awayEspnId))}
-  </Text>
-)}{" "}
-{awayTeam.shortName || awayTeam.name}
-
-
+              {awayEspnId && getTeamRank(String(awayEspnId)) && (
+                <Text style={{ fontSize: 10, color: "#aaa" }}>
+                  {getTeamRank(String(awayEspnId))}
+                </Text>
+              )}{" "}
+              {awayTeam.shortName || awayTeam.name}
             </Text>
           </View>
 
@@ -485,14 +474,12 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
                 },
               ]}
             >
- {homeEspnId && getTeamRank(String(homeEspnId)) && (
-  <Text style={{ fontSize: 10, color: "#aaa" }}>
-    {getTeamRank(String(homeEspnId))}
-  </Text>
-)}{" "}
-{homeTeam.shortName || homeTeam.name}
-
-
+              {homeEspnId && getTeamRank(String(homeEspnId)) && (
+                <Text style={{ fontSize: 10, color: "#aaa" }}>
+                  {getTeamRank(String(homeEspnId))}
+                </Text>
+              )}{" "}
+              {homeTeam.shortName || homeTeam.name}
             </Text>
           </View>
 
@@ -509,7 +496,6 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
               color={Colors.netural.black}
             />
           </Pressable>
-          {/* ... rest of the card unchanged */}
         </LinearGradient>
       ) : (
         <View style={styles.card}>
@@ -532,12 +518,12 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
             <Text
               style={[styles.teamName, { width: 100, flexDirection: "row" }]}
             >
-              {getTeamRank(awayTeam.name) && (
+              {awayEspnId && getTeamRank(String(awayEspnId)) && (
                 <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(awayTeam.name)}
+                  {getTeamRank(String(awayEspnId))}
                 </Text>
               )}{" "}
-              {awayTeam.shortName ? awayTeam.shortName : awayTeam.name}
+              {awayTeam.shortName || awayTeam.name}
             </Text>
           </View>
 
@@ -626,9 +612,9 @@ const getTeamRank = (id: number | string) => getTeamRankFromAPById(id, apTop25);
             <Text
               style={[styles.teamName, { width: 100, flexDirection: "row" }]}
             >
-              {getTeamRank(homeTeam.name) && (
+              {homeEspnId && getTeamRank(String(homeEspnId)) && (
                 <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(homeTeam.name)}
+                  {getTeamRank(String(homeEspnId))}
                 </Text>
               )}{" "}
               {homeTeam.shortName ? homeTeam.shortName : homeTeam.name}

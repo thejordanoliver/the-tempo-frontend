@@ -1,5 +1,5 @@
-import { Fonts } from "constants/fonts";
 import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
 export const playerCardStyles = (isDark: boolean) =>
@@ -7,7 +7,7 @@ export const playerCardStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       alignItems: "center",
-     backgroundColor: isDark
+      backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
@@ -15,22 +15,24 @@ export const playerCardStyles = (isDark: boolean) =>
       paddingVertical: 12,
     },
     avatar: {
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       borderRadius: 30,
+      borderWidth: 1,
+      borderColor: Colors.netural.midTone,
       paddingTop: 4,
     },
     avatarPlaceholder: {
       width: 50,
       height: 50,
       borderRadius: 30,
-      backgroundColor: isDark ? "#444" : "#888",
+      borderWidth: 1,
       justifyContent: "center",
       alignItems: "center",
     },
     initial: {
       fontSize: 24,
-      color: "#fff",
+      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSBOLD,
     },
     info: {
@@ -53,11 +55,11 @@ export const playerCardStyles = (isDark: boolean) =>
       fontSize: 16,
       marginLeft: 6,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     position: {
       fontSize: 16,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSBOLD,
     },
   });

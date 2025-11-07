@@ -388,10 +388,15 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
             >
               <TeamInfo
                 team={awayTeamData}
-                teamName={awayTeamData.name ?? "Away"}
+                teamName={
+                  awayTeamData.code ??
+                  awayTeamData.shortName ??
+                  awayTeamData.name ??
+                  "Away"
+                }
                 rank={
-                  getTeamRank(away?.name ?? "") != null
-                    ? Number(getTeamRank(away?.name ?? ""))
+                  getTeamRank(awayEspnId ?? "") != null
+                    ? Number(getTeamRank(awayEspnId ?? ""))
                     : undefined
                 }
                 score={displayAwayScore}
@@ -433,10 +438,15 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
               <TeamInfo
                 team={homeTeamData}
-                teamName={homeTeamData.name ?? "Home"}
+                teamName={
+                  homeTeamData.code ??
+                  homeTeamData.shortName ??
+                  homeTeamData.name ??
+                  "Home"
+                }
                 rank={
-                  getTeamRank(home?.name ?? "") != null
-                    ? Number(getTeamRank(home?.name ?? ""))
+                  getTeamRank(homeEspnId ?? "") != null
+                    ? Number(getTeamRank(homeEspnId ?? ""))
                     : undefined
                 }
                 score={displayHomeScore}
