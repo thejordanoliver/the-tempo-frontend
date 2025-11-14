@@ -24,11 +24,8 @@ export function useFollowers(
 
   useEffect(() => {
     if (!targetUserId) {
-      console.log("[useFollowers] No targetUserId provided, skipping fetch");
       return;
     }
-
-    console.log(`[useFollowers] Fetching ${type} for user:`, targetUserId);
 
     setLoading(true);
     setError(null);
@@ -59,7 +56,6 @@ const toggleFollow = async (followeeId: string) => {
     return;
   }
 
-  console.log("[useFollowers] Toggling follow for:", followeeId);
 
   try {
     const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/follows/toggle`, {

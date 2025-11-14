@@ -3,6 +3,7 @@ import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoLis
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { LineScore, TeamLocationSection } from "components/GameDetails";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
+import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
@@ -12,20 +13,18 @@ import NFLGameLeaders from "components/NFL/GameDetails/NFLGameLeaders";
 import NFLGameOddsSection from "components/NFL/GameDetails/NFLGameOddsSection";
 import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
 import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
-import NFLOfficials from "components/NFL/GameDetails/NFLOfficials";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
+import { Colors } from "constants/Colors";
 import { getTeamInfo, neutralStadiums, venueImages } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
+import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
-import {
-  PlayObject,
-  useNFLGamePossession,
-} from "hooks/NFLHooks/useNFLGamePossession";
-import { useNFLHighlights } from "hooks/NFLHooks/useNFLHighLights";
-import { useNFLGameOfficialsAndInjuries } from "hooks/NFLHooks/useNFLOfficials";
+import { useNFLGameDetails } from "hooks/NFLHooks/useNFLGameDetails";
+import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useNFLTeamStats } from "hooks/NFLHooks/useNFLTeamStats";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -41,7 +40,6 @@ import {
 import { useChatStore } from "store/chatStore";
 import { emptyTeam } from "types/nfl";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 export default function NFLGameDetailsScreen() {
   const params = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
@@ -124,15 +122,12 @@ export default function NFLGameDetailsScreen() {
   const homeTeam = home ? getTeamInfo(home.id) ?? emptyTeam : emptyTeam;
   const awayTeam = away ? getTeamInfo(away.id) ?? emptyTeam : emptyTeam;
 
-  const homeTeamNickname =
-    getTeamInfo(parsedGame?.teams?.home?.id ?? 0)?.name ?? "Home";
-  const awayTeamNickname =
-    getTeamInfo(parsedGame?.teams?.away?.id ?? 0)?.name ?? "Away";
 
   const isNeutralSite =
     gameInfo?.venue?.name &&
     ![homeTeam?.venue, awayTeam?.venue].includes(gameInfo.venue.name);
 
+    
   useLayoutEffect(() => {
     const safeHomeCode =
       homeTeam?.code && homeTeam.code !== "UNK" ? homeTeam.code : "HOM";
@@ -154,24 +149,25 @@ export default function NFLGameDetailsScreen() {
     });
   }, [homeTeam, awayTeam, isNeutralSite, navigation]);
 
+  // --- Colors ---
   const colors = useMemo(
     () => ({
-      background: isDark ? "#1d1d1d" : "#ffffff",
-      text: isDark ? "#ffffff" : "#1d1d1d",
-      record: isDark ? "#fff" : "#1d1d1d",
-      score: isDark ? "#fff" : "#1d1d1d",
-      winnerScore: isDark ? "#fff" : "#000",
-      border: isDark ? "#333" : "#ccc",
-      secondaryText: isDark ? "#ccc" : "#555",
-      finalText: isDark ? "#fff" : "#000",
+      background: isDark ? Colors.black : Colors.white,
+      text: isDark ? Colors.dark.white : Colors.light.black,
+      secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
+      record: isDark ? Colors.dark.white : Colors.light.black,
+      score: isDark ? Colors.lightGray : Colors.darkGray,
+      winnerScore: isDark ? Colors.dark.white : Colors.light.black,
+      border: isDark ? Colors.darkGray : Colors.lightGray,
+      finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
     }),
     [isDark]
   );
 
-  const { officials, injuries, previousDrives, currentDrives } =
-    useNFLGameOfficialsAndInjuries(
-      awayTeamNickname ?? "",
-      homeTeamNickname ?? "",
+  const { officials, injuries, previousDrives, currentDrives, venue } =
+    useNFLGameDetails(
+      homeTeam.espnID,
+      awayTeam.espnID,
       gameInfo?.date?.timestamp
         ? new Date(gameInfo.date.timestamp * 1000).toISOString()
         : ""
@@ -289,17 +285,15 @@ export default function NFLGameDetailsScreen() {
     gameDateStr,
     stadiumData?.city ?? ""
   );
-  const { highlights, highlightsLoading, highlightsError } = useNFLHighlights(
+  const { highlights } = useGameHighlights(
+    "nfl",
     homeTeam?.espnID ? Number(homeTeam.espnID) : undefined,
     awayTeam?.espnID ? Number(awayTeam.espnID) : undefined,
-    parsedGame?.game?.date
-      ? { timestamp: parsedGame.game.date } // ✅ date is third argument
-      : undefined
+    gameDateStr
   );
   const displayWeather = weather
     ? { ...weather, cityName: stadiumData?.city ?? "Unknown" }
     : null;
-
 
   const formattedDate = gameDateObj
     ? gameDateObj.toLocaleDateString("en-US", {
@@ -357,6 +351,7 @@ export default function NFLGameDetailsScreen() {
     shortDownDistanceText,
     gameStatusDescription,
     downDistanceText,
+    firstDownYardLine,
     lastPlay,
     displayClock,
     period,
@@ -367,27 +362,16 @@ export default function NFLGameDetailsScreen() {
     loading: possessionLoading,
   } = useNFLGamePossession(homeTeamName, awayTeamName, gameDateStr);
 
+  
 
   const { headlineText } = useGameInfo(
-    Number(  homeTeam?.espnID ),
-    Number(  awayTeam?.espnID ),
+    Number(homeTeam?.espnID),
+    Number(awayTeam?.espnID),
     gameDateStr,
     "nfl"
   );
 
-
   if (!parsedGame || !homeTeam || !awayTeam) return <View />;
-
-  const fgPlay: PlayObject = {
-    id: "60",
-    start: { yardLine: 20 },
-    end: { yardLine: 50 }, // simulate FG in away endzone
-    text: "K.Fairbairn 36 yard field goal is GOOD, Center-A.Brinkman, Holder-T.Townsend.",
-    type: { abbreviation: "TD", text: "Touchdown" },
-    drive: { result: "TD" },
-    possession: "14",
-  };
-
 
   return (
     <>
@@ -400,7 +384,7 @@ export default function NFLGameDetailsScreen() {
       >
         {/* Teams & Score Section */}
         <NFLGameHeader
-        headlineText={headlineText}
+          headlineText={headlineText}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
           scores={liveScore ?? scores} // ✅ liveScore from possession hook, fallback to parsed game scores
@@ -451,7 +435,7 @@ export default function NFLGameDetailsScreen() {
                 possessionTeamId={possessionTeamId}
                 homeTeamId={Number(homeTeam.id)} // ensure number
                 awayTeamId={Number(awayTeam.id)} // ensure number
-        
+  firstDownYardLine={firstDownYardLine} // 95
               />
             )}
 
@@ -472,20 +456,20 @@ export default function NFLGameDetailsScreen() {
               awayTeam={{
                 id: awayTeam.id,
                 name: awayTeam.name || awayTeam.code,
-                   code: awayTeam.code ?? awayTeam.code,
+                code: awayTeam.code ?? awayTeam.code,
                 logo: awayTeam.logo,
                 logoLight: awayTeam.logoLight,
                 color: awayTeam.color,
-                secondaryColor: awayTeam.secondaryColor
+                secondaryColor: awayTeam.secondaryColor,
               }}
               homeTeam={{
                 id: homeTeam.id,
                 name: homeTeam.name || homeTeam.code,
-                   code: homeTeam.code ?? homeTeam.code,
+                code: homeTeam.code ?? homeTeam.code,
                 logo: homeTeam.logo,
                 logoLight: homeTeam.logoLight,
                 color: homeTeam.color,
-                secondaryColor: homeTeam.secondaryColor
+                secondaryColor: homeTeam.secondaryColor,
               }}
             />
 
@@ -535,7 +519,7 @@ export default function NFLGameDetailsScreen() {
               awayTeamAbbr={awayTeam.code}
               homeTeamAbbr={homeTeam.code}
             />
-            <NFLOfficials officials={officials} loading={false} error={null} />
+            <Officials officials={officials} loading={false} error={null} />
 
             {/* Location */}
             {(
@@ -572,6 +556,8 @@ export default function NFLGameDetailsScreen() {
                         ?.venueCapacity ?? ""
                     : homeTeam?.venueCapacity ?? ""
                 }
+                surface="football"
+                grass={venue?.grass ?? undefined}
                 loading={false}
                 error={null}
                 lighter={false}
@@ -599,14 +585,9 @@ export default function NFLGameDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 0,
     paddingVertical: 24,
     paddingHorizontal: 12,
-  },
-  teamsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    borderBottomWidth: 1,
-    paddingBottom: 12,
-    position: "relative",
+    paddingBottom: 60,
   },
 });

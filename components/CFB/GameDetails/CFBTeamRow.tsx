@@ -1,12 +1,16 @@
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
+import {
+  CFBProps,
+  sizeStyles,
+  styles,
+} from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../assets/icons8/Football.png";
 import FootballLight from "../../../assets/icons8/FootballLight.png";
-import { styles, sizeStyles, CFBProps } from "styles/GameDetailStyles/TeamRow.styles";
-
-
+import { Colors } from "constants/Colors";
 export const CFBTeamRow = ({
   team,
+  rank,
   isDark,
   isHome = false,
   score,
@@ -27,12 +31,20 @@ export const CFBTeamRow = ({
 
   const isScheduled = status === "Scheduled";
   const isLive =
-    status && status !== "Scheduled" && status !== "Final" && status !== undefined;
+    status &&
+    status !== "Scheduled" &&
+    status !== "Final" &&
+    status !== undefined;
   const isFinal = status === "Final";
 
-  const hasPossession = isLive && String(possessionTeamId) === String(team.espnID);
+  const hasPossession =
+    isLive && String(possessionTeamId) === String(team.espnID);
 
-  const isTie = isFinal && score != null && opponentScore != null && score === opponentScore;
+  const isTie =
+    isFinal &&
+    score != null &&
+    opponentScore != null &&
+    score === opponentScore;
 
   const getScoreStyle = () => {
     if (score == null) return { color: colors.score, opacity: 0.5 };
@@ -58,7 +70,7 @@ export const CFBTeamRow = ({
               width: 8,
               height: 2,
               borderRadius: 4,
-              backgroundColor: isDark ? "#fff" : "#1d1d1d",
+              backgroundColor: isDark ? Colors.white: Colors.black,
               opacity: i < remaining ? 1 : 0.5,
               marginHorizontal: 2,
             }}
@@ -84,7 +96,11 @@ export const CFBTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
@@ -109,6 +125,7 @@ export const CFBTeamRow = ({
         <View style={styles.teamInfo}>
           <View style={styles.nameRow}>
             <Text style={[styles.teamName, { color: colors.text }]}>
+              <Text style={{ fontSize: 10, color: Colors.lightGray }}>{rank}</Text>{" "}
               {team.shortName || team.name}
             </Text>
           </View>
@@ -140,7 +157,11 @@ export const CFBTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >

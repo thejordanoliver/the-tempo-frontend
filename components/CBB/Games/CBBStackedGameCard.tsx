@@ -69,50 +69,74 @@ function CBBStackedGameCard({ game, isDark }: Props) {
   const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
 
   // --- Game status ---
+  const statusData = game?.status ?? game?.status ?? {};
+
   const status = useMemo(() => {
-    let long = game.game.status.long ?? "";
-    const short = game.game.status.short?.toLowerCase() ?? "";
+    const long = statusData?.long ?? "";
+    const short = String(statusData?.short ?? "").toLowerCase();
     const longLower = long.toLowerCase();
 
-    if (longLower === "finished") long = "Final";
+    const livePhrases = [
+      "in play",
+      "playing",
+      "live",
+      "in progress",
+      "1st half",
+      "2nd half",
+      "quarter 1",
+      "quarter 2",
+      "quarter 3",
+      "quarter 4",
+      "q1",
+      "q2",
+      "q3",
+      "q4",
+      "overtime",
+      "ot",
+    ];
 
-    const wentOT =
-      longLower.includes("ot") ||
-      longLower.includes("over time") ||
-      longLower.includes("after over") ||
-      longLower.includes("aot") ||
-      short.includes("ot");
+    const isHalftime =
+      longLower.includes("halftime") ||
+      statusData?.long.toLowerCase?.() === "halftime" ||
+      statusData?.short.toLowerCase?.() === "halftime";
 
-    const isFinal =
-      long === "Final" ||
-      longLower.includes("final") ||
-      longLower.includes("after over") ||
-      longLower.includes("aot") ||
+    let isFinal =
+      ["final", "ended"].some((s) => longLower.includes(s)) ||
       short.includes("ft");
 
-    const live = ![
-      "Not Started",
-      "Final",
-      "Canceled",
-      "Delayed",
-      "Postponed",
-      "Halftime",
-    ].includes(long);
+    // ✅ Treat "AOT" as final
+    if (longLower.includes("aot") || short.includes("aot")) {
+      isFinal = true;
+    }
+
+    const isScheduled = ["not started", "scheduled", "upcoming"].some((s) =>
+      longLower.includes(s)
+    );
+
+    const isLive =
+      !isHalftime &&
+      (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
+        (statusData?.timer && statusData.timer !== "")) &&
+      !longLower.includes("end of") &&
+      !longLower.includes("final");
 
     return {
-      isScheduled: long === "Not Started",
+      isScheduled,
       isFinal,
-      wentOT,
-      isCanceled: long === "Canceled",
-      isDelayed: long === "Delayed",
-      isPostponed: long === "Postponed",
-      isHalftime: long === "Halftime",
-      isLive: live && !isFinal,
-      short: game.game.status.short,
+      wentOT:
+        longLower.includes("ot") ||
+        longLower.includes("overtime") ||
+        short.includes("ot"),
+      isCanceled: longLower.includes("canceled"),
+      isDelayed: longLower.includes("delayed"),
+      isPostponed: longLower.includes("postponed"),
+      isHalftime,
+      isLive,
+      short: statusData?.short,
       long,
-      timer: game.game.status.timer,
+      timer: statusData?.timer,
     };
-  }, [game.game.status]);
+  }, [statusData]);
 
   // --- Possession hook ---
   const possession = status.isLive

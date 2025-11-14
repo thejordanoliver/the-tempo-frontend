@@ -62,7 +62,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) =>
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 10,
-      color: Colors.netural.midTone,
+      color: Colors.midTone,
       textAlign: "center",
       width: 140,
       position: "absolute",
@@ -91,7 +91,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) =>
     gameNumberLabel: {
       fontSize: 12,
       fontFamily: Fonts.OSLIGHT,
-      color: Colors.netural.midTone,
+      color: Colors.midTone,
     },
 
     headline: {

@@ -116,16 +116,16 @@ const getStyles = (isDark: boolean) =>
       height: 24,
       borderRadius: 12,
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     nameSkeleton: {
       width: 120,
       height: 18,
       borderRadius: 4,
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
       marginHorizontal: 8,
     },
     scoreSkeleton: {
@@ -133,8 +133,8 @@ const getStyles = (isDark: boolean) =>
       height: 18,
       borderRadius: 6,
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     info: {
       flexDirection: "column",
@@ -147,15 +147,15 @@ const getStyles = (isDark: boolean) =>
       height: 12,
       borderRadius: 4,
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     timeSkeleton: {
       width: 40,
       height: 12,
       borderRadius: 4,
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
   });

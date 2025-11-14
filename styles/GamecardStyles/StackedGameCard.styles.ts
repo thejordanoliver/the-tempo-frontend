@@ -7,22 +7,22 @@ export const getStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       flex: 1,
-      height: 110,
+      height: 90,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       justifyContent: "space-between",
-      borderRadius: 12,
+      borderRadius: 8,
       paddingHorizontal: 12,
       paddingVertical: 12,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? Colors.netural.darkGray : Colors.netural.lightGray,
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
-      gap: 12,
+      gap: 8,
       flex: 1,
     },
     teamSection: {
@@ -39,24 +39,24 @@ export const getStyles = (isDark: boolean) =>
       width: 100,
       flex: 1,
     },
-    logo: { width: 32, height: 32, resizeMode: "contain" },
+    logo: { width: 24, height: 24, resizeMode: "contain" },
     footballIcon: { width: 28, height: 28, resizeMode: "contain" },
     teamName: {
-      fontSize: 16,
+      fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       flexShrink: 1,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "left",
     },
     teamScore: {
-      fontSize: 18,
+      fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
       color: isDark ? Colors.dark.text : Colors.light.text,
       width: 40,
     },
     teamRecord: {
-      fontSize: 18,
+      fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
       color: isDark ? Colors.dark.text : Colors.light.text,
@@ -69,7 +69,7 @@ export const getStyles = (isDark: boolean) =>
     },
     finalText: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
+      fontSize: 12,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
       width: 60,
@@ -82,8 +82,8 @@ export const getStyles = (isDark: boolean) =>
     },
     dateFinal: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 12,
     },
     time: {
       fontSize: 12,
@@ -98,10 +98,10 @@ export const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     broadcast: {
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     downDistance: {
       fontSize: 14,

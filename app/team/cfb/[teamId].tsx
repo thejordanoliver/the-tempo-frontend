@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
-import CFBRosterStats from "components/CFB/Team/RosterStats";
+import FootballRosterStats from "components/CFB/Team/RosterStats";
 import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
-import Roster from "components/NFL/Team/Roster";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import Roster from "components/NFL/Team/Roster";
 import { teams } from "constants/teamsCFB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
@@ -18,7 +18,6 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
-  Text,
   View,
   useColorScheme,
 } from "react-native";
@@ -73,11 +72,12 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useCFBTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights(team?.fullName ?? "", 5);
+const {
+  highlights: teamHighlights,
+  loading: highlightsLoading,
+  error: highlightsError,
+} = useTeamHighlights("cfb", team?.fullName ?? "", 5);
+
   const {
     articles: newsArticles,
     loading: newsLoading,
@@ -231,7 +231,6 @@ export default function TeamDetailScreen() {
     );
   }
 
-
   return (
     <View style={styles.container}>
       <TabBar
@@ -277,7 +276,7 @@ export default function TeamDetailScreen() {
           />
         </ScrollView>
 
-          {/* Roster Page */}
+        {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
           <Roster
             ref={rosterRef}
@@ -289,17 +288,13 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Stats Page */}
-      <ScrollView
-          key="stats"
-          contentContainerStyle={{ paddingBottom: 100 }}
-        >
-       {team?.espnID && team?.id && (
-  <CFBRosterStats
-    espnID={Number(team.espnID)}
-    teamID={Number(team.id)}
-  />
-)}
-
+        <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
+          {team?.espnID && team?.id && (
+            <FootballRosterStats
+              espnID={Number(team.espnID)}
+              teamID={Number(team.id)}
+            />
+          )}
         </ScrollView>
 
         {/* Forum Page */}

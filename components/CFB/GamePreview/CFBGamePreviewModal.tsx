@@ -10,11 +10,10 @@ import {
   Weather,
 } from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
-import { neutralSiteGames, teams } from "constants/teamsCFB";
+import { neutralStadiums, teams } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBGameOfficialsAndInjuries } from "hooks/CFBHooks/useCFBOfficials";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
@@ -23,6 +22,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { CFBGame } from "types/cfb";
 import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import CFBGameLeaders from "../GameDetails/CFBGameLeaders";
 import CFBTeamDrives from "../GameDetails/CFBTeamDrives";
 import { CFBCenterInfo } from "./CenterInfo";
@@ -91,6 +91,16 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   ).toUpperCase();
   const gameStatus: GameStatus = statusMap[rawStatus] ?? "Scheduled";
 
+
+    // --- Compute game date ---
+  const gameDate = useMemo(() => {
+    return game?.game?.date?.timestamp
+      ? new Date(game.game.date.timestamp * 1000)
+      : null;
+  }, [game?.game?.date?.timestamp]);
+  const gameDateStr = gameDate?.toISOString();
+
+
   // Linescore
   const linescore = useMemo(() => {
     const homePeriods = [
@@ -158,14 +168,13 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const getTeamRank = (id: number | string) =>
     getTeamRankFromAPById(id, apTop25);
 
-  // Officials & Injuries
-  const { officials, injuries, previousDrives, currentDrives } =
-    useCFBGameOfficialsAndInjuries(
-      homeTeamData.name ?? "",
-      awayTeamData.name ?? "",
-      gameInfo?.date?.timestamp
-        ? new Date(gameInfo.date.timestamp * 1000).toISOString()
-        : ""
+
+   // --- Officials & Injuries
+  const { officials, injuries, previousDrives, currentDrives, venue } =
+    useCFBGameDetails(
+      String(awayEspnId),
+      String(homeEspnId),
+   gameDateStr
     );
 
   const formatPeriod = (raw: string | number | undefined | null) => {
@@ -200,47 +209,39 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     gameStatus === "Halftime" ||
     gameStatus === "Delayed";
 
-  // --- Compute game date ---
-  const gameDate = useMemo(() => {
-    return game?.game?.date?.timestamp
-      ? new Date(game.game.date.timestamp * 1000)
-      : null;
-  }, [game?.game?.date?.timestamp]);
-  const gameDateStr = gameDate?.toISOString();
 
-  const neutralSiteKey1 = `${homeTeamData.name}-${awayTeamData.name}`;
-  const neutralSiteKey2 = `${awayTeamData.name}-${homeTeamData.name}`;
-  const isNeutralSite =
-    neutralSiteGames[neutralSiteKey1] || neutralSiteGames[neutralSiteKey2];
+    // --- Neutral Site Detection Using neutralStadiums ---
+    const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
+    
+    const neutralStadiumEntry = Object.entries(neutralStadiums).find(
+      ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+    );
+    
 
-  const resolvedVenueName = isNeutralSite
-    ? isNeutralSite.name
-    : homeTeamData?.venue ?? "Unknown Stadium";
 
-  const resolvedVenueCity = isNeutralSite
-    ? isNeutralSite.city
-    : homeTeamData?.city ?? "Unknown City";
+const isNeutralSite = !!neutralStadiumEntry;
+const neutralStadiumData = isNeutralSite ? neutralStadiumEntry[1] : null;
+const neutralStadiumName = isNeutralSite ? neutralStadiumEntry[0] : null;
 
-  const resolvedVenueAddress = isNeutralSite
-    ? isNeutralSite.address
-    : homeTeamData?.address ?? "";
+  // --- Final Venue Resolution ---
+  let resolvedVenueName = venue?.name ?? homeTeamData?.venue ?? "Unknown Stadium";
+  let resolvedVenueCity = homeTeamData?.city ?? "Unknown City";
+  let resolvedVenueAddress = homeTeamData?.address ?? "";
+  let resolvedVenueCapacity = homeTeamData?.venueCapacity?.toString() ?? "";
+  let resolvedVenueImage = venue?.image ?? homeTeamData?.venueImage ?? "";
+  let lat = homeTeamData?.latitude ?? null;
+  let lon = homeTeamData?.longitude ?? null;
 
-  const resolvedVenueCapacity = isNeutralSite
-    ? isNeutralSite.venueCapacity
-    : homeTeamData?.venueCapacity ?? "";
-
-  const resolvedVenueImage = isNeutralSite
-    ? isNeutralSite.venueImage
-    : homeTeamData?.venueImage ?? "";
-
-  const lat = isNeutralSite
-    ? isNeutralSite.latitude ?? null
-    : homeTeamData?.latitude ?? null;
-
-  const lon = isNeutralSite
-    ? isNeutralSite.longitude ?? null
-    : homeTeamData?.longitude ?? null;
-
+  if (isNeutralSite && neutralStadiumData) {
+    resolvedVenueName = neutralStadiumName ?? resolvedVenueName;
+    resolvedVenueCity = neutralStadiumData.city ?? resolvedVenueCity;
+    resolvedVenueAddress = neutralStadiumData.address ?? resolvedVenueAddress;
+    resolvedVenueCapacity =
+      neutralStadiumData.venueCapacity?.toString() ?? resolvedVenueCapacity;
+    resolvedVenueImage = neutralStadiumData.venueImage ?? resolvedVenueImage;
+    lat = neutralStadiumData.latitude ?? lat;
+    lon = neutralStadiumData.longitude ?? lon;
+  }
   const { weather } = useWeatherForecast(
     lat,
     lon,
@@ -281,6 +282,9 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     Number(awayEspnId),
     gameDateStr
   );
+
+
+ 
 
   const displayAwayScore =
     possession?.score?.away ?? game?.scores?.away?.total ?? 0;
@@ -518,16 +522,27 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                   league="CFB"
                 />
 
-                <TeamLocationSection
-                  venueImage={resolvedVenueImage}
-                  venueName={resolvedVenueName}
-                  location={resolvedVenueCity}
-                  address={resolvedVenueAddress ?? ""}
-                  venueCapacity={resolvedVenueCapacity ?? ""}
-                  loading={false} // default value
-                  error={null} // default value
-                  lighter
-                />
+                 {/* ✅ Team Location / Venue Section */}
+            <TeamLocationSection
+              venueImage={resolvedVenueImage}
+              venueName={resolvedVenueName}
+              location={resolvedVenueCity}
+              address={resolvedVenueAddress}
+              venueCapacity={resolvedVenueCapacity}
+              venueAttendancee={
+                venue?.attendance
+                  ? String(venue.attendance)
+                  : venue?.capacity
+                  ? String(venue.capacity)
+                  : "N/A"
+              }
+              loading={false}
+              error={null}
+              lighter={false}
+              surface="football"
+              grass={venue?.grass ?? undefined}
+            />
+
 
                 {/* Weather */}
                 {displayWeather ? (

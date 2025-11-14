@@ -21,20 +21,20 @@ export const getStyles = (isDark: boolean) =>
       paddingBottom: 6,
       borderBottomWidth: 1,
       borderBottomColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     heading: {
       fontSize: 22,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     row: {
       flexDirection: "row",
       borderBottomWidth: 1,
       borderBottomColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
       paddingVertical: 10,
       height: ROW_HEIGHT,
       minHeight: ROW_HEIGHT,
@@ -48,7 +48,7 @@ export const getStyles = (isDark: boolean) =>
     rankText: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 16,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     teamInfo: {
       width: TEAM_COL_WIDTH,
@@ -64,25 +64,25 @@ export const getStyles = (isDark: boolean) =>
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
       width: 32,
     },
     collegeTeamName: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
       width: 40,
     },
     collegeTeamTrend: {
       fontSize: 10,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
       width: 40,
     },
     teamHeaderText: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 16,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     statCell: {
       width: STAT_COL_WIDTH,
@@ -93,12 +93,12 @@ export const getStyles = (isDark: boolean) =>
     statText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     statTextSecondary: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: isDark ? Colors.netural.darkGray : Colors.netural.lightGray,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     statTextPositive: {
       fontFamily: Fonts.OSREGULAR,
@@ -122,7 +122,7 @@ export const getStyles = (isDark: boolean) =>
     statusBadgeText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 10,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     legendContainer: {
       marginTop: 20,
@@ -139,11 +139,11 @@ export const getStyles = (isDark: boolean) =>
     },
     legendLabel: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     droppedoutNames: {
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.OSLIGHT,
       fontSize: 16,
       marginVertical: 2,

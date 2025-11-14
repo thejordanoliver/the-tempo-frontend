@@ -21,7 +21,12 @@ import {
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { Game } from "types/cfb";
-import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import {
+  getTeamRankFromAPById,
+  getTeamRankFromCFPById,
+  useAPTop25,
+  useCFPTop25,
+} from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 type Props = {
@@ -45,10 +50,24 @@ function CFBGameCard({ game, isDark }: Props) {
     : null;
   const gameDateStr = gameDate?.toISOString();
 
+  // ✅ Load both CFP and AP rankings
+  const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-  const getTeamRank = (id: number | string) =>
-    getTeamRankFromAPById(id, apTop25);
 
+  // ✅ Get ranking, falling back to AP poll if CFP is missing
+  // Check if CFP rankings are active (after they’ve been released)
+  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
+
+  // Main helper to get rank with conditional fallback
+  const getTeamRank = (id: number | string) => {
+    if (isCFPActive) {
+      // ✅ Use CFP ranking if rankings are active
+      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
+    }
+    // 🕓 Early season — fallback to AP Top 25
+    return getTeamRankFromAPById(id, apTop25) ?? "";
+  };
+  
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
@@ -288,7 +307,7 @@ function CFBGameCard({ game, isDark }: Props) {
           isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
         }
         return {
-          color: dark ? "#fff" : Colors.netural.black,
+          color: dark ? "#fff" : Colors.black,
           opacity: isWinner ? 1 : 0.5,
         };
       },
@@ -335,7 +354,7 @@ function CFBGameCard({ game, isDark }: Props) {
                 {
                   width: 100,
                   flexDirection: "row",
-                  color: Colors.netural.black,
+                  color: Colors.black,
                 },
               ]}
             >
@@ -353,7 +372,7 @@ function CFBGameCard({ game, isDark }: Props) {
             style={[
               status.isScheduled ? styles.teamRecord : styles.teamScore,
               getTeamStyle(false),
-              { color: Colors.netural.black },
+              { color: Colors.black },
             ]}
           >
             {getDisplayValue(false)}
@@ -363,16 +382,16 @@ function CFBGameCard({ game, isDark }: Props) {
           <View style={styles.info}>
             {status.isScheduled ? (
               <View style={styles.infoWrapper}>
-                <Text style={[styles.date, { color: Colors.netural.black }]}>
+                <Text style={[styles.date, { color: Colors.black }]}>
                   {formattedDate}
                 </Text>
                 <View
                   style={[
                     styles.statusDivider,
-                    { backgroundColor: Colors.netural.black },
+                    { backgroundColor: Colors.black },
                   ]}
                 />
-                <Text style={[styles.date, { color: Colors.netural.black }]}>
+                <Text style={[styles.date, { color: Colors.black }]}>
                   {formattedTime}
                 </Text>
               </View>
@@ -387,9 +406,7 @@ function CFBGameCard({ game, isDark }: Props) {
                 ) : (
                   // ✅ Normal live display
                   <View style={styles.infoWrapper}>
-                    <Text
-                      style={[styles.date, { color: Colors.netural.black }]}
-                    >
+                    <Text style={[styles.date, { color: Colors.black }]}>
                       {formatQuarter(status.short, displayStatus)}
                     </Text>
                     <View style={styles.statusDivider} />
@@ -400,10 +417,7 @@ function CFBGameCard({ game, isDark }: Props) {
                 )}
                 {shortDownDistanceText && (
                   <Text
-                    style={[
-                      styles.downDistance,
-                      { color: Colors.netural.darkGray },
-                    ]}
+                    style={[styles.downDistance, { color: Colors.darkGray }]}
                   >
                     {possessionText}
                   </Text>
@@ -430,9 +444,7 @@ function CFBGameCard({ game, isDark }: Props) {
           </View>
 
           {status.isScheduled || status.isLive ? (
-            <Text
-              style={[styles.headlineText, { color: Colors.netural.darkGray }]}
-            >
+            <Text style={[styles.headlineText, { color: Colors.darkGray }]}>
               {headlineText}
             </Text>
           ) : null}
@@ -442,7 +454,7 @@ function CFBGameCard({ game, isDark }: Props) {
             style={[
               status.isScheduled ? styles.teamRecord : styles.teamScore,
               getTeamStyle(true),
-              { color: Colors.netural.black },
+              { color: Colors.black },
             ]}
           >
             {getDisplayValue(true)}
@@ -470,7 +482,7 @@ function CFBGameCard({ game, isDark }: Props) {
                 {
                   width: 100,
                   flexDirection: "row",
-                  color: Colors.netural.black,
+                  color: Colors.black,
                 },
               ]}
             >
@@ -493,7 +505,7 @@ function CFBGameCard({ game, isDark }: Props) {
             <Ionicons
               name={notifEnabled ? "notifications" : "notifications-outline"}
               size={20}
-              color={Colors.netural.black}
+              color={Colors.black}
             />
           </Pressable>
         </LinearGradient>
@@ -631,7 +643,7 @@ function CFBGameCard({ game, isDark }: Props) {
             <Ionicons
               name={notifEnabled ? "notifications" : "notifications-outline"}
               size={20}
-              color={isDark ? "#fff" : Colors.netural.black}
+              color={isDark ? "#fff" : Colors.black}
             />
           </Pressable>
         </View>

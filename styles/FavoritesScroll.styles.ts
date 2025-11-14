@@ -44,7 +44,7 @@ export const favoritesScrollStyles = (isDark: boolean) =>
     divider: {
       width: 1,
       height: 12,
-      backgroundColor: Colors.netural.lightGray,
+      backgroundColor: Colors.lightGray,
       marginHorizontal: 4,
     },
     teamLabel: {

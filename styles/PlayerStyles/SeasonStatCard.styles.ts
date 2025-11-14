@@ -32,12 +32,13 @@ export const seasonStatCardStyles = (isDark: boolean) =>
     statLabel: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.midTone : Colors.netural.midTone,
+      color: isDark ? Colors.midTone : Colors.midTone,
       marginTop: 2,
     },
     error: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
       marginVertical: 20,
+          fontFamily: Fonts.OSREGULAR,
     },
   });

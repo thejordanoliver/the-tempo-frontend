@@ -9,7 +9,7 @@ export type CBBTeamRank = {
   trend: string;
   recordSummary: string;
   team: {
-    id: string;
+    id: string; // we will use this
     nickname?: string;
     name?: string;
     abbreviation: string;
@@ -69,7 +69,7 @@ export const useCBBRankings = () => {
       if (Date.now() - timestamp < CACHE_TTL) {
         return data;
       }
-      console.log("⚠️ Cache expired — will refetch");
+      // console.log("⚠️ Cache expired — will refetch");
       return null;
     } catch (err) {
       console.warn("⚠️ Failed to read CBB cache:", err);
@@ -102,7 +102,7 @@ export const useCBBRankings = () => {
 
       await fetchLatest();
       await AsyncStorage.setItem(LAST_REFRESH_KEY, Date.now().toString());
-      console.log("🔄 Background refreshed CBB rankings");
+      // console.log("🔄 Background refreshed CBB rankings");
     } catch (err) {
       console.warn("⚠️ Background refresh failed:", err);
     }
@@ -135,5 +135,14 @@ export const useCBBRankings = () => {
     fetchRankings();
   }, [fetchRankings]);
 
-  return { rankings, loading, error, refresh: fetchLatest };
+  // --- Helper: get ranking by team ID ---
+  const getTeamRankingById = (teamId: string): CBBTeamRank | null => {
+    for (const poll of rankings) {
+      const found = poll.ranks.find((r) => r.team?.id === teamId);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  return { rankings, loading, error, refresh: fetchLatest, getTeamRankingById };
 };

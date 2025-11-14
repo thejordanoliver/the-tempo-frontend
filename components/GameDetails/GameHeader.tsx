@@ -18,8 +18,12 @@ type Props = {
   awayTeamData: any;
   home: { name: string; record?: string };
   away: { name: string; record?: string };
+  rankHome?: string;
+  rankAway?: string;
   homeScore: number;
   awayScore: number;
+  homeTimeouts?: number;
+  awayTimeouts?: number;
   status: StatusType;
   period?: string;
   displayClock?: string;
@@ -44,8 +48,12 @@ export default function GameHeader({
   headlineText,
   home,
   away,
+  rankHome,
+  rankAway,
   homeScore,
   awayScore,
+  homeTimeouts = 0,
+  awayTimeouts = 0,
   status,
   period,
   displayClock,
@@ -91,15 +99,6 @@ export default function GameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
-      {/* Headline (optional) */}
-      {headlineText ? (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText} numberOfLines={2}>
-            {headlineText}
-          </Text>
-        </View>
-      ) : null}
-
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
@@ -119,17 +118,26 @@ export default function GameHeader({
                   require("../../assets/Placeholders/teamPlaceholder.png"),
           }}
           isDark={isDark}
+          rank={rankAway}
           score={awayScore}
           isWinner={awayIsWinner}
           colors={colors}
           status={normalizedStatus}
           league={league}
+          timeouts={awayTimeouts}
         />
 
         <View>
+          {headlineText ? (
+            <View style={styles.headlineContainer}>
+              <Text style={styles.headlineText} numberOfLines={2}>
+                {headlineText}
+              </Text>
+            </View>
+          ) : null}
+
           {/* Game Info */}
           <GameInfo
-            headlineText={headlineText}
             key={`gameinfo-${refreshTick}`}
             status={normalizedStatus}
             date={formattedDate || new Date().toISOString()}
@@ -167,12 +175,14 @@ export default function GameHeader({
                   require("../../assets/Placeholders/teamPlaceholder.png"),
           }}
           isDark={isDark}
+          rank={rankHome}
           isHome
           score={homeScore}
           isWinner={homeIsWinner}
           colors={colors}
           status={normalizedStatus}
           league={league}
+          timeouts={homeTimeouts}
         />
       </View>
     </View>
@@ -183,20 +193,23 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderBottomWidth: 1,
-      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      paddingVertical: 8,
     },
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
       alignItems: "center",
-      paddingBottom: 4,
     },
     headlineContainer: {
       alignItems: "center",
       justifyContent: "center",
     },
     headlineText: {
-      fontSize: 12,
+      position: "absolute",
+      width: 200,
+     top: -20,
+      fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,
       textAlign: "center",

@@ -81,7 +81,7 @@ export const useCFBHighlights = (
       ).padStart(2, "0")}${String(targetDate.getDate()).padStart(2, "0")}`;
 
       // --- Fetch from your backend route ---
-      const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/highlights/cfb`;
+      const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/game-highlights/cfb`;
       const { data } = await axios.get(apiUrl, {
         params: { date: yyyymmdd, homeEspnID, awayEspnID },
       });

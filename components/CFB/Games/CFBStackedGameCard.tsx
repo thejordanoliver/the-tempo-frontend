@@ -15,7 +15,12 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
-import { getTeamRankFromAP, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import {
+  getTeamRankFromAPById,
+  getTeamRankFromCFPById,
+  useAPTop25,
+  useCFPTop25,
+} from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 type Props = {
   game: any;
@@ -34,8 +39,23 @@ function CFBStackedGameCard({ game, isDark }: Props) {
   const awayId = String(game?.teams?.away?.id);
   const gameId = game?.game?.id;
 
+  // ✅ Load both CFP and AP rankings
+  const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-  const getTeamRank = (name: string) => getTeamRankFromAP(name, apTop25);
+
+  // ✅ Get ranking, falling back to AP poll if CFP is missing
+  // Check if CFP rankings are active (after they’ve been released)
+  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
+
+  // Main helper to get rank with conditional fallback
+  const getTeamRank = (id: number | string) => {
+    if (isCFPActive) {
+      // ✅ Use CFP ranking if rankings are active
+      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
+    }
+    // 🕓 Early season — fallback to AP Top 25
+    return getTeamRankFromAPById(id, apTop25) ?? "";
+  };
 
   const gameDate = useMemo(() => {
     return game?.game?.date?.timestamp
@@ -195,7 +215,7 @@ function CFBStackedGameCard({ game, isDark }: Props) {
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : "";
 
   const formattedTime = gameDate
@@ -270,9 +290,9 @@ function CFBStackedGameCard({ game, isDark }: Props) {
               <Image source={awayTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
                 {" "}
-                {getTeamRank(awayTeam.name) && (
+                {awayEspnId && getTeamRank(String(awayEspnId)) && (
                   <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(awayTeam.name)}
+                    {getTeamRank(String(awayEspnId))}
                   </Text>
                 )}{" "}
                 {awayTeam.name}
@@ -301,9 +321,9 @@ function CFBStackedGameCard({ game, isDark }: Props) {
               <Image source={homeTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
                 {" "}
-                {getTeamRank(homeTeam.name) && (
+                {homeEspnId && getTeamRank(String(homeEspnId)) && (
                   <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(homeTeam.name)}
+                    {getTeamRank(String(homeEspnId))}
                   </Text>
                 )}{" "}
                 {homeTeam.name}

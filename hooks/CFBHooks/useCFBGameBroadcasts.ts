@@ -19,7 +19,7 @@ function parseDateString(d: string) {
   const parsed = Date.parse(d);
   if (!isNaN(parsed)) return new Date(parsed);
 
-  console.warn("Cannot parse date:", d);
+
   return null;
 }
 

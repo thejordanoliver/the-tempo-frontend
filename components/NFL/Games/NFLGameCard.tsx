@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { useRouter } from "expo-router";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
@@ -25,7 +26,6 @@ import {
   isSuperBowlGame,
   normalizeDisplayStatus,
 } from "utils/nflGameCardUtils";
-import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 type Props = {
   game: any; // TODO: replace with proper Game type
   isDark?: boolean;
@@ -48,8 +48,6 @@ function NFLGameCard({ game, isDark }: Props) {
     formattedDate,
     formattedTime,
   } = getGameDate(game?.game?.date?.timestamp);
-
-  
 
   // --- Status ---
   const status = getNFLGameStatus(game);
@@ -95,6 +93,7 @@ function NFLGameCard({ game, isDark }: Props) {
     possessionTeamId,
     displayClock,
     shortDownDistanceText,
+    gameStatusShortDetail,
     downDistanceText,
     period,
     possessionText,
@@ -104,46 +103,49 @@ function NFLGameCard({ game, isDark }: Props) {
 
   const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
 
+  const showStatusDetail =
+    gameStatusShortDetail &&
+    (gameStatusShortDetail.toLowerCase().includes("halftime") ||
+      gameStatusShortDetail.toLowerCase().includes("end of"));
+
   // --- Display Status ---
   const displayStatus = normalizeDisplayStatus(
     gameStatusDescription ?? status.long ?? status.short ?? ""
   );
-const awayTeamEspnID = awayId;
-const homeTeamEspnID = homeId;
+  const awayTeamEspnID = awayId;
+  const homeTeamEspnID = homeId;
 
   // --- Teams ---
-const awayTeam = useMemo(
-  () =>
-    getNFLTeamData(
-      awayId,
-      awayTeamEspnID, // ✅ replace with the actual ESPN ID variable
-      dark,
-      awayRecord?.overall ?? "0-0",
-      possessionTeamId
-    ),
-  [awayId, awayTeamEspnID, awayRecord?.overall, possessionTeamId, dark]
-);
+  const awayTeam = useMemo(
+    () =>
+      getNFLTeamData(
+        awayId,
+        awayTeamEspnID, // ✅ replace with the actual ESPN ID variable
+        dark,
+        awayRecord?.overall ?? "0-0",
+        possessionTeamId
+      ),
+    [awayId, awayTeamEspnID, awayRecord?.overall, possessionTeamId, dark]
+  );
 
-const homeTeam = useMemo(
-  () =>
-    getNFLTeamData(
-      homeId,
-      homeTeamEspnID, // ✅ replace with the actual ESPN ID variable
-      dark,
-      homeRecord?.overall ?? "0-0",
-      possessionTeamId
-    ),
-  [homeId, homeTeamEspnID, homeRecord?.overall, possessionTeamId, dark]
-);
+  const homeTeam = useMemo(
+    () =>
+      getNFLTeamData(
+        homeId,
+        homeTeamEspnID, // ✅ replace with the actual ESPN ID variable
+        dark,
+        homeRecord?.overall ?? "0-0",
+        possessionTeamId
+      ),
+    [homeId, homeTeamEspnID, homeRecord?.overall, possessionTeamId, dark]
+  );
 
-
-   const { headlineText } = useGameInfo(
-      Number(  homeTeam?.espnID ),
-      Number(  awayTeam?.espnID ),
-      gameDateStr,
-      "nfl"
-    );
-  
+  const { headlineText } = useGameInfo(
+    Number(homeTeam?.espnID),
+    Number(awayTeam?.espnID),
+    gameDateStr,
+    "nfl"
+  );
 
   // --- Broadcasts ---
   const { broadcasts } = useNFLGameBroadcasts(
@@ -205,48 +207,44 @@ const homeTeam = useMemo(
         {/* Game Info */}
         <View style={styles.info}>
           {status.isScheduled ? (
+            // --- Upcoming game ---
             <View style={styles.infoWrapper}>
               <Text style={styles.date}>{formattedDate}</Text>
               <View style={styles.statusDivider} />
               <Text style={styles.date}>{formattedTime}</Text>
             </View>
           ) : status.isLive ? (
+            // --- Live game ---
             <>
-              <View style={styles.infoWrapper}>
-                <Text style={styles.date}>{formatQuarter(period)}</Text>
-                <View style={styles.statusDivider} />
-                <Text style={styles.clock}>{displayClock}</Text>
-              </View>
-              {shortDownDistanceText && possessionText && (
-                <Text style={styles.downDistance}>{possessionText}</Text>
-              )}
-            </>
-          ) : status.isHalftime && !status.isLive ? (
-            // Only show "Halftime" if not live and no active clock
-            <>
-              <Text style={styles.date}>Halftime</Text>
-            </>
-          ) : status.isLive ? (
-            // Live state overrides halftime
-            <>
-              <View style={styles.infoWrapper}>
-                <Text style={styles.date}>{formatQuarter(period)}</Text>
-                <View style={styles.statusDivider} />
-                <Text style={styles.clock}>
-                  {displayClock && displayClock !== "0:00" ? displayClock : ""}
-                </Text>
-              </View>
-              {shortDownDistanceText && possessionText && (
-                <Text style={styles.downDistance}>{possessionText}</Text>
+              {showStatusDetail ? (
+                <Text style={styles.date}>{gameStatusShortDetail}</Text>
+              ) : (
+                <>
+                  <View style={styles.infoWrapper}>
+                    <Text style={styles.date}>{formatQuarter(period)}</Text>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>
+                      {displayClock && displayClock !== "0:00"
+                        ? displayClock
+                        : "0:00"}
+                    </Text>
+                  </View>
+                  {shortDownDistanceText && possessionText && (
+                    <Text style={styles.downDistance}>{possessionText}</Text>
+                  )}
+                </>
               )}
             </>
           ) : (
+            // --- Final or other completed states ---
             <View style={styles.infoWrapper}>
               <Text style={styles.finalText}>{displayStatus}</Text>
               <View style={styles.finalStatusDivider} />
               <Text style={styles.finalText}>{formattedDate}</Text>
             </View>
           )}
+
+          {/* Broadcast */}
           {!status.isFinal && broadcastText && (
             <Text style={styles.broadcast}>{broadcastText}</Text>
           )}

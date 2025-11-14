@@ -272,7 +272,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           <View style={styles.header}>
             <TeamInfo
               team={away}
-              teamName={away?.name ?? ""}
+              teamName={away?.code ?? ""}
               score={awayScore}
               opponentScore={homeScore}
               record={awayRecord?.overall ?? "-"}
@@ -304,7 +304,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
             <TeamInfo
               team={home}
-              teamName={home?.name ?? ""}
+              teamName={home?.code ?? ""}
               score={homeScore}
               opponentScore={awayScore}
               record={homeRecord?.overall ?? "-"}

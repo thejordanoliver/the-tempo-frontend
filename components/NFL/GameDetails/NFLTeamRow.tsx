@@ -1,9 +1,13 @@
+import { Colors } from "constants/Colors";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
+import {
+  NFLProps,
+  sizeStyles,
+  styles,
+} from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../assets/icons8/Football.png";
 import FootballLight from "../../../assets/icons8/FootballLight.png";
-import { styles, sizeStyles, NFLProps, SizeType } from "styles/GameDetailStyles/TeamRow.styles";
-
 export const NFLTeamRow = ({
   team,
   isDark,
@@ -26,18 +30,26 @@ export const NFLTeamRow = ({
 
   const isScheduled = status === "Scheduled";
   const isLive =
-    status && status !== "Scheduled" && status !== "Final" && status !== undefined;
+    status &&
+    status !== "Scheduled" &&
+    status !== "Final" &&
+    status !== undefined;
   const isFinal = status === "Final";
 
   const hasPossession = isLive && String(possessionTeamId) === String(team.id);
 
-  const isTie = isFinal && score != null && opponentScore != null && score === opponentScore;
+  const isTie =
+    isFinal &&
+    score != null &&
+    opponentScore != null &&
+    score === opponentScore;
 
   const getScoreStyle = () => {
     if (score == null) return { color: colors.score, opacity: 0.5 };
-    if (isLive) return { color: isDark ? "#fff" : "#1d1d1d" };
+    if (isLive) return { color: isDark ? Colors.white : Colors.black };
     if (isFinal) {
-      if (isTie) return { color: isDark ? "#fff" : "#1d1d1d", opacity: 1 };
+      if (isTie)
+        return { color: isDark ? Colors.white : Colors.black, opacity: 1 };
       return {
         color: isWinner ? colors.winnerScore : colors.score,
         opacity: isWinner ? 1 : 0.5,
@@ -49,7 +61,7 @@ export const NFLTeamRow = ({
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 3;
     return (
-      <View style={{ flexDirection: "row", marginTop: 2 }}>
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
         {Array.from({ length: totalTimeouts }).map((_, i) => (
           <View
             key={i}
@@ -57,7 +69,7 @@ export const NFLTeamRow = ({
               width: 8,
               height: 2,
               borderRadius: 4,
-              backgroundColor: isDark ? "#fff" : "#1d1d1d",
+              backgroundColor: isDark ? Colors.white : Colors.black,
               opacity: i < remaining ? 1 : 0.5,
               marginHorizontal: 2,
             }}
@@ -83,7 +95,11 @@ export const NFLTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
@@ -113,7 +129,7 @@ export const NFLTeamRow = ({
           </View>
 
           {isLive && (
-            <View style={{ alignItems: "center", marginTop: 2 }}>
+            <View style={{ alignItems: "center" }}>
               {renderTimeouts(timeouts)}
             </View>
           )}
@@ -139,7 +155,11 @@ export const NFLTeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord, { color: colors.record }]
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
@@ -157,4 +177,3 @@ export const NFLTeamRow = ({
     </View>
   );
 };
-

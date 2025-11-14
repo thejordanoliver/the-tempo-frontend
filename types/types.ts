@@ -43,6 +43,7 @@ export type Follow = {
 export type PlayerStats = {
   playerId: number;
   name: string;
+  headshot_url?: string;
   gamesPlayed: number;
   minutesPlayed: number;
   totalPoints: number;
@@ -54,16 +55,33 @@ export type PlayerStats = {
   totalFouls: number;
   totalFGM: number;
   totalFGA: number;
-  totalFGP: number; // string percentage if you want, else calculate per game
+  totalFGP: number;
   total3PM: number;
   total3PA: number;
-  total3PP: number; // 3-point percentage if you want
+  total3PP: number;
   totalFTM: number;
   totalFTA: number;
-  totalFTP: number; // free throw percentage
+  totalFTP: number;
   totalOffReb: number;
   totalDefReb: number;
   plusMinus: number;
+};
+
+export type TeamStats = {
+  gamesPlayed: number;
+  pointsPerGame: number;
+  reboundsPerGame: number;
+  assistsPerGame: number;
+  stealsPerGame: number;
+  blocksPerGame: number;
+  turnoversPerGame: number;
+  foulsPerGame: number;
+  fgPercent: number;
+  ftPercent: number;
+  tpPercent: number;
+  totalPoints: number;
+  totalRebounds: number;
+  totalAssists: number;
 };
 
 export type PlayerInfo = {

@@ -60,7 +60,7 @@ export function useWeatherForecast(
       setError(null);
 
       try {
-        const apiKey = "09f079f11f3ea22e5846e249da888468";
+        const apiKey = process.env.EXPO_PUBLIC_WEATHER_KEY;
 
         // If lat/lon not provided, resolve from location
         let resolvedLat = lat;

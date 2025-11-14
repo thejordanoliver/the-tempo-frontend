@@ -1,9 +1,11 @@
 import { Fonts } from "constants/fonts";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme } from "react-native";
+
 export default function SignupSuccessScreen() {
   const router = useRouter();
+  const { token, id } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
 
   const screenFade = useRef(new Animated.Value(0)).current;
@@ -22,8 +24,8 @@ export default function SignupSuccessScreen() {
         duration: 600,
         useNativeDriver: true,
       }).start(() => {
-        // Step 3: Wait 1.2s, then fade out both
-        setTimeout(() => {
+        // Step 3: Wait, then fade out both
+        const timeout = setTimeout(() => {
           Animated.parallel([
             Animated.timing(textFade, {
               toValue: 0,
@@ -36,9 +38,15 @@ export default function SignupSuccessScreen() {
               useNativeDriver: true,
             }),
           ]).start(() => {
-            router.replace("/(tabs)/profile");
+            // ✅ Redirect to profile with token + id
+            router.replace({
+              pathname: "/(tabs)/profile",
+              params: { id, token },
+            });
           });
-        }, 5000);
+        }, 3500); // shorter delay for smoother UX
+
+        return () => clearTimeout(timeout);
       });
     });
   }, []);

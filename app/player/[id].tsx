@@ -1,21 +1,15 @@
+import axios from "axios";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameCard from "components/Games/GameCard";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import PlayerHeader from "components/player/PlayerHeader";
-import PlayerStatTable from "components/player/PlayerStatTable";
-import SeasonStatCard from "components/player/SeasonStatCard";
+import PlayerHeader from "components/Player/PlayerHeader";
+import PlayerStatTable from "components/Player/PlayerStatTable";
+import SeasonStatCard from "components/Player/SeasonStatCard";
 import players from "constants/players"; // player image map
-import { useLastTeamGame } from "hooks/useLastTeamGame";
-import axios from "axios";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLastTeamGame } from "hooks/useLastTeamGame";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Platform, ScrollView, useColorScheme, View } from "react-native";
 import { teams } from "../../constants/teams";
 import type { Game } from "../../types/types";
 import { DBPlayer } from "../../types/types";
@@ -113,45 +107,16 @@ export default function PlayerDetailScreen() {
 
   const avatarUrl = player?.headshot_url || players[fullName];
 
-  // Memoize styles based on dark mode
-  const dynamicStyles = useMemo(() => {
-    return StyleSheet.create({
-      scrollView: {
-        backgroundColor: isDark ? "#1d1d1d" : "#fff",
-      },
-      containerBorder: {
-        borderBottomColor: isDark ? "#444" : "#ccc",
-      },
-      textColor: {
-        color: isDark ? "#fff" : "#000",
-      },
-      nameColor: {
-        color: isDark ? "#fff" : teamObj?.color,
-      },
-      errorTextColor: {
-        color: isDark ? "red" : "darkred",
-      },
-      avatarBorder: {
-        borderRightColor: isDark ? "#444" : "#ddd",
-      },
-      avatarBackground: {
-        backgroundColor: isDark ? "#444" : "#ddd",
-      },
-      jerseyText: {
-        color: isDark ? "#fff" : teamObj?.color,
-      },
-    });
-  }, [isDark, teamObj]);
-
   useLayoutEffect(() => {
     const isTeamAvailable = !!teamObj;
 
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-      
           logo={
-            isTeamAvailable ? teamObj?.logo : require("../../assets/Logos/NBA.png")
+            isTeamAvailable
+              ? teamObj?.logo
+              : require("../../assets/Logos/NBA.png")
           }
           logoLight={teamObj?.logoLight}
           teamColor={isTeamAvailable ? teamObj?.color : "#1D428A"} // NBA blue
@@ -235,7 +200,6 @@ export default function PlayerDetailScreen() {
           </View>
         </>
       )}
-    
     </ScrollView>
   );
 }

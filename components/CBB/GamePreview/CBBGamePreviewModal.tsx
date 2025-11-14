@@ -10,6 +10,7 @@ import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
+import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -319,23 +320,7 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       ? "Elite Eight"
       : week ?? "";
 
-  console.log("🧩 Debug Period Info:", {
-    status: {
-      isLive: status.isLive,
-      isFinal: status.isFinal,
-      isHalftime: status.isHalftime,
-      long: status.long,
-      short: status.short,
-    },
-    possessionPeriod: possession.period,
-    displayClock,
-    homePeriods: lineScore.home.length,
-    awayPeriods: lineScore.away.length,
-    finalLabel: getFinalWithOTLabel(
-      lineScore.home.length,
-      lineScore.away.length
-    ),
-  });
+
 
   return (
     <BottomSheetModal

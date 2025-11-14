@@ -1,29 +1,34 @@
 import { useNavigation } from "@react-navigation/native";
+import CFBGameHeader from "components/CFB/GameDetails/CFBGameHeader";
 import CFBGameLeaders from "components/CFB/GameDetails/CFBGameLeaders";
-import CFBGameHeader from "components/CFB/GameDetails/CFBGameTeamsHeader";
 import CFBGameTeamStats from "components/CFB/GameDetails/FootballGameTeamStats";
 import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
 import LastPlay from "components/CFB/GameDetails/LastPlay";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { LastFiveGamesSwitcher, LineScore, TeamLocationSection } from "components/GameDetails";
-import GameLocation from "components/GameDetails/GameLocation";
+import {
+  LastFiveGamesSwitcher,
+  LineScore,
+  TeamLocationSection,
+} from "components/GameDetails";
+import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
-import { getTeamInfo, neutralSiteGames, teams } from "constants/teamsCFB";
+import { Colors } from "constants/Colors";
+import { getTeamInfo, neutralStadiums, teams } from "constants/teamsCFB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
+import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBHighlights } from "hooks/CFBHooks/useCFBHighlights";
 import { useCFBLineScore } from "hooks/CFBHooks/useCFBLineScore";
-import { useCFBGameOfficialsAndInjuries } from "hooks/CFBHooks/useCFBOfficials";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
+import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -35,10 +40,15 @@ import {
   View,
 } from "react-native";
 import { useChatStore } from "store/chatStore";
+import { CFBGame } from "types/cfb";
 import {
   formatGameDateTime,
   getGameStatus,
+  getTeamRankFromAPById,
+  getTeamRankFromCFPById,
   parseGameDate,
+  useAPTop25,
+  useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -46,7 +56,7 @@ export default function CFBGameDetailsScreen() {
   const params = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
-  const [parsedGame, setParsedGame] = useState<any>(null);
+  const [parsedGame, setParsedGame] = useState<CFBGame | null>(null);
   const { openChat, isOpen: isChatOpen } = useChatStore();
   const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
   const isScrollingRef = useRef(false);
@@ -120,7 +130,7 @@ export default function CFBGameDetailsScreen() {
     setParsedGame(data);
   }, [params?.game]);
 
-  const { stats } = useFootballTeamStats(parsedGame?.game?.id);
+  const { stats } = useFootballTeamStats(parsedGame?.game?.id ?? "");
 
   const { game: gameInfo, teams: teamsData, scores } = parsedGame || {};
   const home = teamsData?.home;
@@ -148,18 +158,71 @@ export default function CFBGameDetailsScreen() {
       : undefined
   );
 
-  const { highlights, highlightsLoading, highlightsError } = useCFBHighlights(
-    homeTeam?.espnID ? Number(homeTeam.espnID) : undefined,
-    awayTeam?.espnID ? Number(awayTeam.espnID) : undefined,
+  const { highlights } = useGameHighlights(
+    "cfb",
+    homeEspnId ? Number(homeEspnId) : undefined,
+    awayEspnId ? Number(awayEspnId) : undefined,
     parsedGame?.game?.date
       ? { timestamp: parsedGame.game.date } // ✅ date is third argument
       : undefined
   );
 
+  // ✅ Safe game date parsing
+  const gameDateObj = useMemo(() => {
+    const rawDate = parsedGame?.game?.date;
+    if (!rawDate) return null;
+
+    if (typeof rawDate === "number") return new Date(rawDate * 1000);
+    if (typeof rawDate === "string") return new Date(rawDate);
+    if (typeof rawDate === "object" && rawDate.timestamp)
+      return new Date(rawDate.timestamp * 1000);
+
+    return null;
+  }, [parsedGame?.game?.date]);
+
+  // --- Officials & Injuries
+  const { officials, injuries, previousDrives, currentDrives, venue } =
+    useCFBGameDetails(
+      String(awayEspnId),
+      String(homeEspnId),
+      gameDateObj?.toISOString()
+    );
+
   const linescore = lineScore ?? { home: [], away: [] };
 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
+
+// --- Neutral Site Detection Using neutralStadiums ---
+const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
+
+const neutralStadiumEntry = Object.entries(neutralStadiums).find(
+  ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+);
+
+const isNeutralSite = !!neutralStadiumEntry;
+const neutralStadiumData = isNeutralSite ? neutralStadiumEntry[1] : null;
+const neutralStadiumName = isNeutralSite ? neutralStadiumEntry[0] : null;
+
+  // --- Final Venue Resolution ---
+  let resolvedVenueName = venue?.name ?? homeTeam?.venue ?? "Unknown Stadium";
+  let resolvedVenueCity = homeTeam?.city ?? "Unknown City";
+  let resolvedVenueAddress = homeTeam?.address ?? "";
+  let resolvedVenueCapacity = homeTeam?.venueCapacity?.toString() ?? "";
+  let resolvedVenueImage = venue?.image ??  "";
+  let lat = homeTeam?.latitude ?? null;
+  let lon = homeTeam?.longitude ?? null;
+
+  if (isNeutralSite && neutralStadiumData) {
+    resolvedVenueName = neutralStadiumName ?? resolvedVenueName;
+    resolvedVenueCity = neutralStadiumData.city ?? resolvedVenueCity;
+    resolvedVenueAddress = neutralStadiumData.address ?? resolvedVenueAddress;
+    resolvedVenueCapacity =
+      neutralStadiumData.venueCapacity?.toString() ?? resolvedVenueCapacity;
+    resolvedVenueImage = neutralStadiumData.venueImage ?? resolvedVenueImage;
+    lat = neutralStadiumData.latitude ?? lat;
+    lon = neutralStadiumData.longitude ?? lon;
+  }
 
   useLayoutEffect(() => {
     const safeHomeCode =
@@ -176,21 +239,23 @@ export default function CFBGameDetailsScreen() {
           homeTeamCode={safeHomeCode}
           awayTeamCode={safeAwayCode}
           isTeamScreen={false}
+          isNeutralSite={!!isNeutralSite}
         />
       ),
     });
-  }, [homeTeam, awayTeam, navigation]);
+  }, [homeTeam, awayTeam, isNeutralSite, navigation]);
 
+  // --- Colors ---
   const colors = useMemo(
     () => ({
-      background: isDark ? "#1d1d1d" : "#ffffff",
-      text: isDark ? "#ffffff" : "#1d1d1d",
-      record: isDark ? "#fff" : "#1d1d1d",
-      score: isDark ? "#fff" : "#1d1d1d",
-      winnerScore: isDark ? "#fff" : "#000",
-      border: isDark ? "#333" : "#ccc",
-      secondaryText: isDark ? "#ccc" : "#555",
-      finalText: isDark ? "#fff" : "#000",
+      background: isDark ? Colors.black : Colors.white,
+      text: isDark ? Colors.dark.white : Colors.light.black,
+      secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
+      record: isDark ? Colors.dark.white : Colors.light.black,
+      score: isDark ? Colors.lightGray : Colors.darkGray,
+      winnerScore: isDark ? Colors.dark.white : Colors.light.black,
+      border: isDark ? Colors.darkGray : Colors.lightGray,
+      finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
     }),
     [isDark]
   );
@@ -241,20 +306,6 @@ export default function CFBGameDetailsScreen() {
     return String(raw);
   };
 
-  // ✅ safer game date parsing
-  const gameDateObj = useMemo(() => {
-    const rawDate = parsedGame?.game?.date;
-    if (!rawDate) return null;
-
-    // handle multiple formats: timestamp, ISO string, nested object
-    if (typeof rawDate === "number") return new Date(rawDate * 1000);
-    if (typeof rawDate === "string") return new Date(rawDate);
-    if (typeof rawDate === "object" && rawDate.timestamp)
-      return new Date(rawDate.timestamp * 1000);
-
-    return null;
-  }, [parsedGame?.game?.date]);
-
   const formattedDate = gameDateObj
     ? gameDateObj.toLocaleDateString("en-US", {
         month: "short",
@@ -302,68 +353,41 @@ export default function CFBGameDetailsScreen() {
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
 
-  // Officials & Injuries
-  const { officials, injuries, previousDrives, currentDrives } =
-    useCFBGameOfficialsAndInjuries(
-      homeTeamName,
-      awayTeamName,
-      gameInfo?.date?.timestamp
-        ? new Date(gameInfo.date.timestamp * 1000).toISOString()
-        : ""
-    );
+  // ✅ Load both CFP and AP rankings
+  const cfpTop25 = useCFPTop25();
+  const apTop25 = useAPTop25();
 
-  // Determine arena info for TeamLocationSection
-  const isNeutralSite =
-    neutralSiteGames[`${homeTeamName}-${awayTeamName}`] ||
-    neutralSiteGames[`${awayTeamName}-${homeTeamName}`];
+  // ✅ Get ranking, falling back to AP poll if CFP is missing
+  // Check if CFP rankings are active (after they’ve been released)
+  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
 
-  const resolvedVenueName = isNeutralSite
-    ? isNeutralSite.name
-    : homeTeam?.venue ?? "Unknown Stadium";
+  // Main helper to get rank with conditional fallback
+  const getTeamRank = (id: number | string) => {
+    if (isCFPActive) {
+      // ✅ Use CFP ranking if rankings are active
+      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
+    }
+    // 🕓 Early season — fallback to AP Top 25
+    return getTeamRankFromAPById(id, apTop25) ?? "";
+  };
 
-  const resolvedVenueCity = isNeutralSite
-    ? isNeutralSite.city
-    : homeTeam?.city ?? "Unknown City";
-
-  const resolvedVenueAddress = isNeutralSite
-    ? isNeutralSite.address
-    : homeTeam?.address ?? "";
-
-  const resolvedVenueCapacity = isNeutralSite
-    ? isNeutralSite.venueCapacity
-    : homeTeam?.venueCapacity ?? "";
-
-  const resolvedVenueImage = isNeutralSite
-    ? isNeutralSite.venueImage // No image for neutral site
-    : homeTeam?.venueImage ?? "";
-
-  const lat = isNeutralSite
-    ? neutralSiteGames[`${homeTeamName}-${awayTeamName}`]?.latitude ??
-      neutralSiteGames[`${awayTeamName}-${homeTeamName}`]?.latitude ??
-      null
-    : homeTeam?.latitude ?? null;
-
-  const lon = isNeutralSite
-    ? neutralSiteGames[`${homeTeamName}-${awayTeamName}`]?.longitude ??
-      neutralSiteGames[`${awayTeamName}-${homeTeamName}`]?.longitude ??
-      null
-    : homeTeam?.longitude ?? null;
-
+  // --- Weather data ---
   const { weather } = useWeatherForecast(
     lat,
     lon,
     gameDateStr,
-    resolvedVenueCity ?? homeTeam?.city ?? ""
+    resolvedVenueCity
   );
 
   const displayWeather = weather
-    ? { ...weather, cityName: resolvedVenueCity ?? "Unknown" }
+    ? { ...weather, cityName: resolvedVenueCity }
     : null;
 
   const {
     possessionTeamId,
     shortDownDistanceText,
     downDistanceText,
+    firstDownYardLine,
     lastPlay,
     displayClock,
     period,
@@ -377,7 +401,9 @@ export default function CFBGameDetailsScreen() {
     awayTeam ? Number(awayTeam.espnID) : undefined,
     gameDateStr
   );
+
   if (!parsedGame || !homeTeam || !awayTeam) return <View />;
+
   return (
     <>
       <ScrollView
@@ -393,8 +419,8 @@ export default function CFBGameDetailsScreen() {
           homeTeam={homeTeam}
           // ✅ Use live score if available, fallback to parsed score
           scores={{
-            away: { total: score?.away ?? scores.away.total },
-            home: { total: score?.home ?? scores.home.total },
+            away: { total: score?.away ?? scores?.away?.total },
+            home: { total: score?.home ?? scores?.home?.total },
           }}
           possessionTeamId={
             possessionTeamId !== undefined
@@ -403,6 +429,8 @@ export default function CFBGameDetailsScreen() {
           }
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
+          rankHome={getTeamRank(String(homeEspnId)) ?? ""}
+          rankAway={getTeamRank(String(awayEspnId)) ?? ""}
           colors={colors}
           status={gameStatus}
           period={formatPeriod(period ?? gameInfo?.status?.short ?? "")}
@@ -419,8 +447,11 @@ export default function CFBGameDetailsScreen() {
         {/* Lazy-loaded Section */}
         {showDetails && (
           <View style={{ gap: 20, marginTop: 20 }}>
-            <WinPredictionVote
-              gameId={gameInfo.id}
+
+            {gameStatus !== "Final"  &&
+
+              <WinPredictionVote
+              gameId={gameInfo?.id ?? ""}
               awayTeam={{
                 id: awayTeam.id,
                 name: awayTeam.name ?? awayTeam.code,
@@ -437,7 +468,8 @@ export default function CFBGameDetailsScreen() {
                 logoLight: homeTeam.logoLight,
                 color: homeTeam.color,
               }}
-            />
+              />
+            }
 
             {/* Last Play Section */}
             <LastPlay lastPlay={lastPlay} isDark={isDark} />
@@ -448,6 +480,7 @@ export default function CFBGameDetailsScreen() {
                 possessionTeamId={possessionTeamId}
                 homeTeamId={Number(homeTeam.id)} // ensure number
                 awayTeamId={Number(awayTeam.id)} // ensure number
+                firstDownYardLine={firstDownYardLine}
                 league="CFB"
               />
             )}
@@ -469,6 +502,7 @@ export default function CFBGameDetailsScreen() {
                 }
               />
             )}
+
             {/* Odds */}
             {/* {homeTeam?.code && awayTeam?.code && gameDateStr ? (
               <CFBGameOddsSection
@@ -489,7 +523,7 @@ export default function CFBGameDetailsScreen() {
 
             {homeTeam && awayTeam && gameStatus !== "Scheduled" && (
               <CFBGameLeaders
-                gameId={String(gameInfo.id)}
+                gameId={String(gameInfo?.id)}
                 homeTeamId={String(homeTeam.id)}
                 awayTeamId={String(awayTeam.id)}
               />
@@ -514,20 +548,32 @@ export default function CFBGameDetailsScreen() {
               league="CFB"
             />
 
+            <Officials officials={officials} loading={false} error={null} />
+
             {highlights.length > 0 && (
               <HighlightVideoList highlights={highlights} />
             )}
 
+            {/* ✅ Team Location / Venue Section */}
             <TeamLocationSection
-                  venueImage={resolvedVenueImage ?? ""}
-                  venueName={resolvedVenueName}
-                  location={resolvedVenueCity}
-                  address={resolvedVenueAddress ?? ""}
-                  venueCapacity={resolvedVenueCapacity ?? ""}
-                  loading={false} // default value
-                  error={null} // default value
-                  lighter
-                />
+              venueImage={resolvedVenueImage}
+              venueName={resolvedVenueName}
+              location={resolvedVenueCity}
+              address={resolvedVenueAddress}
+              venueCapacity={resolvedVenueCapacity}
+              venueAttendancee={
+                venue?.attendance
+                  ? String(venue.attendance)
+                  : venue?.capacity
+                  ? String(venue.capacity)
+                  : "N/A"
+              }
+              loading={false}
+              error={null}
+              lighter={false}
+              surface="football"
+              grass={venue?.grass ?? undefined}
+            />
 
             {/* Weather */}
             {displayWeather ? (
@@ -549,14 +595,9 @@ export default function CFBGameDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 0,
     paddingVertical: 24,
     paddingHorizontal: 12,
-  },
-  teamsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    borderBottomWidth: 1,
-    paddingBottom: 12,
-    position: "relative",
+    paddingBottom: 60,
   },
 });

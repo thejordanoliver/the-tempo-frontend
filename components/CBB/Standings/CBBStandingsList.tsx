@@ -74,8 +74,11 @@ export const CBBStandingsList = () => {
       </View>
     );
 
-  const selectedPoll = rankings.find((r) => r.type === pollMode);
-  const filteredRankings = selectedPoll?.ranks ?? [];
+const selectedPoll = rankings.find((r) =>
+  pollMode === "ap" ? r.shortName === "AP Poll" : r.shortName === "Coaches Poll"
+);
+
+const filteredRankings = selectedPoll?.ranks ?? [];
 const droppedOutTeams = selectedPoll?.droppedOut ?? [];
 
   // --- Render functions ---

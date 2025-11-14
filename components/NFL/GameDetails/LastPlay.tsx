@@ -135,7 +135,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
 
             opacity: 0.7,
             marginTop: 4,
-            color: Colors.netural.midTone,
+            color: Colors.midTone,
           }}
         >
           Drive: {currentPlay.drive.description}

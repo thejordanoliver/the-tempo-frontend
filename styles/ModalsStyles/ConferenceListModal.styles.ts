@@ -15,7 +15,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       top: 0,
     },
     handleIndicatorStyle: {
-      backgroundColor: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
       width: 36,
       height: 4,
       borderRadius: 2,
@@ -30,7 +30,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: isDark ? Colors.netural.darkGray : Colors.netural.midTone,
+      backgroundColor: isDark ? Colors.darkGray : Colors.midTone,
     },
     headerText: {
       textAlign: "center",
@@ -46,7 +46,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       paddingVertical: 12,
       backgroundColor: "transparent",
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.netural.darkGray : Colors.netural.midTone,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.midTone,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",

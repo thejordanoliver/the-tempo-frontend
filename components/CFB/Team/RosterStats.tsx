@@ -3,7 +3,12 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { players } from "constants/cfbPlayers";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { StatCategory, useCFBTeamStats } from "hooks/CFBHooks/useCFBTeamStats";
+import { players as nflPlayers } from "constants/nflPlayers";
+import { useRouter } from "expo-router";
+import {
+  StatCategory,
+  useFootballRosterStats,
+} from "hooks/CFBHooks/useFootballRosterStats";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,6 +25,7 @@ interface CFBRosterStatsProps {
   espnID: number;
   teamID: number;
   category?: StatCategory;
+  league?: "cfb" | "nfl";
 }
 
 const SHORT_HEADER_MAP: Record<string, string> = {
@@ -87,68 +93,48 @@ const SHORT_HEADER_MAP: Record<string, string> = {
   "extra points made pct": "XP %",
 };
 
-const formatDisplayName = (fullName: string, number?: string) => {
-  if (!fullName) return "Unknown";
-
-  const parts = fullName.split(" ");
-  if (parts.length === 1)
-    return (
-      <Text>
-        {parts[0]}{" "}
-        {number && (
-          <Text
-            style={{
-              fontSize: 10,
-              color: "#888",
-              textAlignVertical: "bottom",
-              lineHeight: 14,
-              transform: [{ translateY: 3 }],
-            }}
-          >
-            #{number}
-          </Text>
-        )}
-      </Text>
-    );
-
-  const firstInitial = parts[0][0].toUpperCase();
-  const lastName = parts.slice(1).join(" ");
-
-  return (
-    <Text>
-      {firstInitial}. {lastName}{" "}
-      {number && (
-        <Text
-          style={{
-            fontSize: 10,
-            color: "#888",
-            textAlignVertical: "bottom",
-            lineHeight: 14,
-            transform: [{ translateY: 3 }],
-          }}
-        >
-          #{number}
-        </Text>
-      )}
-    </Text>
-  );
-};
-
-const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
+const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
   espnID,
   teamID,
   category,
+  league = "cfb", // ✅ default league
 }) => {
   const [viewMode, setViewMode] = useState<"team" | "players">("players");
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
+  const playerDataList = league === "nfl" ? nflPlayers : players;
+  const router = useRouter();
 
-  const { data, loading, error } = useCFBTeamStats(
+  // ✅ Pass league to the stats hook
+  const { data, loading, error } = useFootballRosterStats(
     espnID?.toString(),
     teamID?.toString(),
     category,
-    viewMode
+    viewMode,
+    league
   );
+
+  const formatDisplayName = (fullName: string, number?: string) => {
+    if (!fullName) return "Unknown";
+
+    const parts = fullName.split(" ");
+    if (parts.length === 1)
+      return (
+        <Text>
+          {parts[0]} {number && <Text style={styles.number}>#{number}</Text>}
+        </Text>
+      );
+
+    const firstInitial = parts[0][0].toUpperCase();
+    const lastName = parts.slice(1).join(" ");
+
+    return (
+      <Text>
+        {firstInitial}. {lastName}{" "}
+        {number && <Text style={styles.number}>#{number}</Text>}
+      </Text>
+    );
+  };
 
   if (loading) return <ActivityIndicator size="large" style={{ margin: 20 }} />;
   if (error)
@@ -223,61 +209,39 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
     statName: string;
     index: number;
     total: number;
-  }) => (
-    <View style={styles.cardWrapper}>
-      <View style={styles.cardContainer}>
-        {/* Stat Name */}
-        <Text
-          style={[styles.cardLabel, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
-          {statName}
-        </Text>
+  }) => {
 
-        <TouchableOpacity>
-          <View
-            style={[
-              styles.statCard,
-              { backgroundColor: isDark ? "#2e2e2e" : "#f2f2f2" },
-            ]}
-          >
-            <Image
-              source={{ uri: player.image }}
-              style={[
-                styles.avatar,
-   
-              ]}
-            />
-            <View style={styles.nameValue}>
-              <Text
-                style={[styles.cardName, { color: isDark ? "#eee" : "#222" }]}
-              >
-                {formatDisplayName(player.playerName, player.jersey)}
-              </Text>
-              {/* Stat Value */}
-              <Text
-                style={[styles.cardValue, { color: isDark ? "#aaa" : "#888" }]}
-              >
-                {stat}
-              </Text>
+    const handlePress = () => {
+      if (!player) return;
+      const leaguePath = league === "nfl" ? "nfl" : "cfb";
+      router.push(`/player/${leaguePath}/${player.id}`);
+    };
+
+    return (
+      <View style={styles.cardWrapper}>
+        <View style={styles.cardContainer}>
+          {/* Stat Name */}
+          <Text style={styles.cardLabel}>{statName}</Text>
+
+          <TouchableOpacity onPress={handlePress}>
+            <View style={styles.statCard}>
+              <Image source={{ uri: player.image }} style={[styles.avatar]} />
+              <View style={styles.nameValue}>
+                <Text style={styles.cardName}>
+                  {formatDisplayName(player.playerName, player.jersey)}
+                </Text>
+                {/* Stat Value */}
+                <Text style={styles.cardValue}>{stat}</Text>
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+        </View>
 
-      {/* Vertical divider between cards (except last one) */}
-      {index < total - 1 && (
-        <View
-          style={{
-            width: 1,
-            height: "100%",
-            backgroundColor: isDark ? "#444" : "#ccc",
-            alignSelf: "flex-end",
-            marginHorizontal: 16,
-          }}
-        />
-      )}
-    </View>
-  );
+        {/* Vertical divider between cards (except last one) */}
+        {index < total - 1 && <View style={styles.divider} />}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -340,15 +304,14 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
               horizontal
               showsHorizontalScrollIndicator={false}
               style={{ marginBottom: 16 }}
+              snapToInterval={276} // width of card (260) + margin (16)
+              decelerationRate="fast"
+              snapToAlignment="start"
             >
               {(() => {
                 // Define categories and stats you care about
                 const statKeysMap: Record<string, string[]> = {
-                  passing: [
-                    "yards",
-                    "passing touchdowns",
-                    "completion pct",
-                  ],
+                  passing: ["yards", "passing touchdowns", "completion pct"],
                   rushing: [
                     "rushing yards",
                     "rushing touchdowns",
@@ -369,7 +332,6 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
                   statName: string;
                 }[] = [];
 
-                // Flatten and process each stat
                 Object.entries(statKeysMap).forEach(
                   ([categoryName, statKeys]) => {
                     statKeys.forEach((statKey) => {
@@ -379,7 +341,7 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
 
                       const topPlayer = allRows
                         .map((row) => {
-                          const playerData = players.find(
+                          const playerData = playerDataList.find(
                             (p) =>
                               p.teamId === teamID && p.name === row.playerName
                           );
@@ -387,14 +349,15 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
                             ...row,
                             image: playerData?.image,
                             jersey: playerData?.number,
+                            id: playerData?.id, // ✅ add this
                           };
                         })
-                        .filter((row) => row.values[statKey]) // only players with valid stat
+                        .filter((row) => row.values[statKey])
                         .sort(
                           (a, b) =>
                             Number(b.values[statKey] ?? 0) -
                             Number(a.values[statKey] ?? 0)
-                        )[0]; // take top 1
+                        )[0];
 
                       if (topPlayer) {
                         allTopPlayers.push({
@@ -406,7 +369,6 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
                     });
                   }
                 );
-
                 // Render only one card per category (first available stat per group)
                 const uniqueByCategory: { [key: string]: boolean } = {};
                 const filteredLeaders = allTopPlayers.filter(({ statName }) => {
@@ -420,34 +382,38 @@ const CFBRosterStats: React.FC<CFBRosterStatsProps> = ({
                 });
 
                 // Helper function to title-case the stat name
-           // Helper function to format stat names
-const formatStatName = (statName: string, categoryName?: string) => {
-  if (categoryName === "passing" && statName === "yards") return "Passing Yards";
-  return statName
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+                // Helper function to format stat names
+                const formatStatName = (
+                  statName: string,
+                  categoryName?: string
+                ) => {
+                  if (categoryName === "passing" && statName === "yards")
+                    return "Passing Yards";
+                  return statName
+                    .split(" ")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ");
+                };
 
+                return filteredLeaders.map(
+                  ({ player, stat, statName }, idx) => {
+                    // detect the category this stat belongs to
+                    const categoryName = Object.keys(statKeysMap).find((k) =>
+                      statKeysMap[k].includes(statName)
+                    );
 
-             return filteredLeaders.map(({ player, stat, statName }, idx) => {
-  // detect the category this stat belongs to
-  const categoryName = Object.keys(statKeysMap).find((k) =>
-    statKeysMap[k].includes(statName)
-  );
-
-  return (
-    <LeaderCard
-      key={`${player.playerName}-${idx}`}
-      player={player}
-      stat={stat}
-      statName={formatStatName(statName, categoryName)} // ✅ pass category name
-      index={idx}
-      total={filteredLeaders.length}
-    />
-  );
-});
-
+                    return (
+                      <LeaderCard
+                        key={`${player.playerName}-${idx}`}
+                        player={player}
+                        stat={stat}
+                        statName={formatStatName(statName, categoryName)} // ✅ pass category name
+                        index={idx}
+                        total={filteredLeaders.length}
+                      />
+                    );
+                  }
+                );
               })()}
             </ScrollView>
 
@@ -575,20 +541,20 @@ const getStyles = (isDark: boolean) =>
     },
     table: {
       borderWidth: 1,
-      borderColor: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      borderColor: Colors.midTone,
       borderRadius: 8,
       overflow: "hidden",
     },
     tableRow: {
       flexDirection: "row",
       borderBottomWidth: 1,
-      borderBottomColor: isDark
-        ? Colors.netural.lightGray
-        : Colors.netural.darkGray,
+      borderBottomColor: Colors.midTone,
       justifyContent: "space-between",
     },
     headerRow: {
-      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     tableCell: {
       paddingVertical: 10,
@@ -613,12 +579,12 @@ const getStyles = (isDark: boolean) =>
     },
     statValue: {
       fontFamily: Fonts.OSMEDIUM,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     categoryTitle: {
       fontSize: 16,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       marginBottom: 8,
       marginLeft: 4,
     },
@@ -629,11 +595,15 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       width: 260,
       flexDirection: "row",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     cardLabel: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 20,
       marginBottom: 4,
+      color: isDark ? Colors.white : Colors.black,
     },
     nameValue: {
       marginLeft: 12,
@@ -644,31 +614,46 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "flex-end",
     },
-
     cardName: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 14,
       marginTop: 4,
       textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
     },
     cardValue: {
       fontSize: 24,
       fontFamily: Fonts.OSBOLD,
+      color: Colors.midTone,
     },
     avatar: {
       width: 60,
       height: 60,
       borderRadius: 30,
       marginVertical: 4,
-      paddingTop: 4,
+      paddingTop: 8,
       borderWidth: 1,
-      borderColor: isDark ? Colors.netural.midTone : Colors.netural.midTone
+      borderColor: Colors.midTone,
     },
     cardContainer: {
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "flex-start",
     },
+    divider: {
+      width: 1,
+      height: "72%",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      alignSelf: "flex-end",
+      marginHorizontal: 16,
+    },
+    number: {
+      fontSize: 10,
+      color: Colors.midTone,
+      textAlignVertical: "bottom",
+      lineHeight: 14,
+      transform: [{ translateY: 3 }],
+    },
   });
 
-export default CFBRosterStats;
+export default FootballRosterStats;

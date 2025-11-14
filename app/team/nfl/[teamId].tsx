@@ -1,4 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
+import FootballRosterStats from "components/CFB/Team/RosterStats";
+import TeamForum from "components/Forum/TeamForum";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
 import NFLGamesList from "components/NFL/Games/NFLGamesList";
 import NFLRoster from "components/NFL/Team/Roster";
 import TeamInfoBottomSheetNFL from "components/NFL/Team/TeamInfoModal";
@@ -7,23 +10,20 @@ import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNFLTeamGames } from "hooks/NFLHooks/useNFLTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useTeamHighlights } from "hooks/useTeamHighlights";
+import { useTeamNews } from "hooks/useTeamNews";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
-  Text,
   View,
   useColorScheme,
 } from "react-native";
 import PagerView from "react-native-pager-view";
-import { Game } from "types/nfl";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
-import { useTeamNews } from "hooks/useTeamNews";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import TeamForum from "components/Forum/TeamForum";
+
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -62,20 +62,20 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-   const {
-      highlights: teamHighlights,
-      loading: highlightsLoading,
-      error: highlightsError,
-    } = useTeamHighlights(team?.fullName ?? "", 5);
-    const {
-      articles: newsArticles,
-      loading: newsLoading,
-      error: newsError,
-      refreshNews,
-    } = useTeamNews(team?.fullName ?? "", "NFL");
+const {
+  highlights: teamHighlights,
+  loading: highlightsLoading,
+  error: highlightsError,
+} = useTeamHighlights("nfl", team?.fullName ?? "", 5);
 
+  const {
+    articles: newsArticles,
+    loading: newsLoading,
+    error: newsError,
+    refreshNews,
+  } = useTeamNews(team?.fullName ?? "", "NFL");
 
-      const combinedNewsAndHighlights = useMemo(() => {
+  const combinedNewsAndHighlights = useMemo(() => {
     const taggedNews = newsArticles.map((item) => ({
       ...item,
       itemType: "news" as const,
@@ -99,11 +99,6 @@ export default function TeamDetailScreen() {
 
     return combined;
   }, [newsArticles, teamHighlights]);
-
-  
-
-
-
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -187,8 +182,7 @@ export default function TeamDetailScreen() {
           />
         </ScrollView>
 
-
-      {/* News Page */}
+        {/* News Page */}
         <ScrollView key="news" style={{ flex: 1 }}>
           <NewsHighlightsList
             items={combinedNewsAndHighlights}
@@ -209,17 +203,19 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Stats Page */}
-        <View
-          key="stats"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
+        <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
+          {team?.espnID && team?.id && (
+            <FootballRosterStats
+              espnID={Number(team.espnID)}
+              teamID={Number(team.id)}
+              league="nfl"
+            />
+          )}
+        </ScrollView>
+        {/* Forum Page */}
+        <View key="forum" style={{ flex: 1 }}>
+          <TeamForum teamId={teamId as string} league="NFL" />
         </View>
-
-          {/* Forum Page */}
-              <View key="forum" style={{ flex: 1 }}>
-                <TeamForum teamId={teamId as string} league="NFL" />
-              </View>
       </PagerView>
 
       {/* --- Bottom Sheet --- */}

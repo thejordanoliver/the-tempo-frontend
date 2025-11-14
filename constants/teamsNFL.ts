@@ -1059,15 +1059,12 @@ export const nflCoachImages: { [key: string]: any } = {
 };
 
 export const venueImages: Record<string, any> = {
-  // Map team codes or arena names to images
-
-  // You can also map some arena names if you want:
   "Corinthians Arena": require("assets/Football/Arenas/CorinthiansArena.webp"),
   "Croke Park": require("assets/Football/Arenas/CrokePark.webp"),
   "Tottenham Hotspur Stadium": require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
   "Olympic Stadium Berlin": require("assets/Football/Arenas/OlympicStadium.webp"),
   "Wembley Stadium": require("assets/Football/Arenas/WembleyStadium.webp"),
-  // Add more if you have non-NBA arenas...
+  "Cotton Bowl": require("assets/Football/Arenas/CottonBowl.webp"),
 };
 
 export const neutralStadiums: Record<string, Venue> = {

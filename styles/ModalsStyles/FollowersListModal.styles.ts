@@ -16,8 +16,8 @@ export const followersListModalStyles = (isDark: boolean) =>
     },
     handleIndicatorStyle: {
       backgroundColor: isDark
-        ? Colors.netural.lightGray
-        : Colors.netural.darkGray,
+        ? Colors.lightGray
+        : Colors.darkGray,
       width: 36,
       height: 4,
       borderRadius: 2,
@@ -33,8 +33,8 @@ export const followersListModalStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: isDark
-        ? Colors.netural.darkGray
-        : Colors.netural.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     headerText: {
       textAlign: "center",
@@ -65,8 +65,8 @@ export const followersListModalStyles = (isDark: boolean) =>
       fontSize: 16,
       fontFamily: Fonts.OSLIGHT,
       marginBottom: 12,
-      borderColor: isDark ? Colors.netural.midTone : Colors.netural.midTone,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      borderColor: isDark ? Colors.midTone : Colors.midTone,
+      color: isDark ? Colors.white : Colors.black,
     },
     userItem: {
       flexDirection: "row",

@@ -84,12 +84,12 @@ export default function TeamInfo({
             style={{
               fontSize: 14,
               fontFamily: Fonts.OSREGULAR,
-              color: Colors.netural.white,
+              color: Colors.white,
               marginTop: 6,
             }}
           >
             {rank && (
-              <Text style={{ fontSize: 10, color: Colors.netural.lightGray }}>
+              <Text style={{ fontSize: 10, color: Colors.lightGray }}>
                 {rank}
               </Text>
             )}{" "}

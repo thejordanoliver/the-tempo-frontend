@@ -66,33 +66,34 @@ export function getBroadcastDisplay(broadcasts: Broadcast[]) {
     .filter(Boolean)
     .map((n) => n.toLowerCase());
 
-  const networkMap: Record<string, string> = {
-    espn: "ESPN",
-    espn2: "ESPN2",
-    espn3: "ESPN3",
-    "espn+": "ESPN+",
-    "sec network": "SECN",
-    "secn+": "SECN+",
-    "acc netweork": "ACCN",
-    "acc extra": "ACC Extra",
-    abc: "ABC",
-    "nba league pass": "NBA League Pass",
-    tnt: "TNT",
-    tbs: "TBS",
-    fox: "FOX",
-    "fox sports": "FS1",
-    fs1: "FS1",
-    cbs: "CBS",
-    nbcsn: "NBC",
-    nbc: "NBC",
-    "nfl network": "NFLN",
-    "nfl net": "NFLN",
-    "prime video": "Prime",
-    amazon: "Prime",
-    "nba tv": "NBA TV",
-    "hbo max": "MAX",
-    "youtube": "YouTube"
-  };
+const networkMap: [string, string][] = [
+  ["espn2", "ESPN2"],
+  ["espn3", "ESPN3"],
+  ["espn+", "ESPN+"],
+  ["espnu", "ESPNU"],
+  ["sec network", "SECN"],
+  ["secn+", "SECN+"],
+  ["acc network", "ACCN"],
+  ["abc", "ABC"],
+  ["tnt", "TNT"],
+  ["tbs", "TBS"],
+  ["fox sports", "FS1"],
+  ["fs1", "FS1"],
+  ["fox", "FOX"],
+  ["cbs", "CBS"],
+  ["nbcsn", "NBC"],
+  ["nbc", "NBC"],
+  ["nfl network", "NFLN"],
+  ["prime video", "Prime"],
+  ["amazon", "Prime"],
+  ["nba league pass", "NBA League Pass"],
+  ["nba tv", "NBA TV"],
+  ["hbo max", "MAX"],
+  ["max", "MAX"],
+  // LAST — generic ESPN
+  ["espn", "ESPN"],
+];
+
 
   // special cases
   const hasABC = allNames.some((n) => n.includes("abc"));
@@ -106,11 +107,12 @@ export function getBroadcastDisplay(broadcasts: Broadcast[]) {
   if (hasTNT && hasHBOMax) return "TNT/MAX";
 
   // find first main network match
-  for (const key in networkMap) {
-    if (allNames.some((n) => n.includes(key))) {
-      return networkMap[key];
-    }
+ for (const [key, value] of networkMap) {
+  if (allNames.some((n) => n.includes(key))) {
+    return value;
   }
+}
+
 
   // fallback: first valid name (capitalized)
   const first = broadcasts[0]?.name || broadcasts[0]?.shortName || "";
@@ -141,7 +143,7 @@ export function getShortBroadcastDisplay(broadcasts: Broadcast[]) {
     "fox sports": "FS1",
     fs1: "FS1",
     cbs: "CBS",
-    nbcsn: "NBC",
+    nbcsn: "NBCSN",
     nbc: "NBC",
     "nfl network": "NFLN",
     "nfl net": "NFLN",

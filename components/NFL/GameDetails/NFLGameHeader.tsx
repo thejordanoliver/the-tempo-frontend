@@ -51,7 +51,7 @@ export default function NFLGameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
-      <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
+      <View style={styles.teamsContainer}>
         {/* Away Team */}
         <NFLTeamRow
           team={{
@@ -76,8 +76,6 @@ export default function NFLGameHeader({
         />
 
         <View>
-
-            {/* Headline (optional) */}
           {headlineText ? (
             <View style={styles.headlineContainer}>
               <Text style={styles.headlineText} numberOfLines={2}>
@@ -86,7 +84,6 @@ export default function NFLGameHeader({
             </View>
           ) : null}
 
-       
           {/* Game Info */}
           <NFLGameCenterInfo
             headlineText={headlineText}
@@ -104,6 +101,7 @@ export default function NFLGameHeader({
             downAndDistance={possessionText}
           />
         </View>
+
         {/* Home Team */}
         <NFLTeamRow
           team={{
@@ -131,33 +129,30 @@ export default function NFLGameHeader({
   );
 }
 
+
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderBottomWidth: 1,
-      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      paddingVertical: 8,
     },
-
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
       alignItems: "center",
-      paddingTop: 4,
-      paddingBottom: 4,
     },
     headlineContainer: {
-      paddingHorizontal: 12,
-      paddingTop: 10,
       alignItems: "center",
       justifyContent: "center",
     },
     headlineText: {
-      fontSize: 12,
+      position: "absolute",
+      width: 200,
+     top: -20,
+      fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,
       textAlign: "center",
-      position: "absolute",
-      width: 200,
-      top: -8,
     },
   });

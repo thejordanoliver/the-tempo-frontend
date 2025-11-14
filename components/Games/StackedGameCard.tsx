@@ -147,6 +147,11 @@ export default function StackedGameCard({
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
   // ✅ Use full ESPN-style names
   const getFullTeamName = (id?: number | string) => {
     const team = teams.find((t) => String(t.id) === String(id));
@@ -330,12 +335,7 @@ export default function StackedGameCard({
                 <Text style={styles.finalText}>
                   {getFinalWithQuarterLabel(currentPeriod)}
                 </Text>
-                <Text style={styles.dateFinal}>
-                  {gameDate.toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
+                <Text style={styles.dateFinal}>{formattedDate}</Text>
               </>
             ) : inProgress ? (
               <View
@@ -366,12 +366,7 @@ export default function StackedGameCard({
               </View>
             ) : (
               <>
-                <Text style={styles.date}>
-                  {gameDate.toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
+                <Text style={styles.date}>{formattedDate}</Text>
                 <Text style={styles.time}>{game.time ?? "TBD"}</Text>
               </>
             )}
@@ -446,12 +441,7 @@ export default function StackedGameCard({
                 <Text style={styles.finalText}>
                   {getFinalWithQuarterLabel(currentPeriod)}
                 </Text>
-                <Text style={styles.dateFinal}>
-                  {gameDate.toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
+                <Text style={styles.dateFinal}>{formattedDate}</Text>
               </>
             ) : inProgress ? (
               <View
@@ -482,12 +472,7 @@ export default function StackedGameCard({
               </View>
             ) : (
               <>
-                <Text style={styles.date}>
-                  {gameDate.toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
+                <Text style={styles.date}>{formattedDate}</Text>
                 <Text style={styles.time}>{game.time ?? "TBD"}</Text>
               </>
             )}

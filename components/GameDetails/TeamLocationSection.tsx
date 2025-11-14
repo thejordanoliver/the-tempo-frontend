@@ -22,7 +22,10 @@ type Props = {
   error: string | null;
   address: string;
   venueCapacity: string;
-  lighter?: boolean; // <-- new prop
+  venueAttendancee?: number | string;
+  lighter?: boolean;
+  surface?: "football" | "default";
+  grass?: boolean; // <-- new prop
 };
 
 const TeamLocationSection: React.FC<Props> = ({
@@ -31,14 +34,17 @@ const TeamLocationSection: React.FC<Props> = ({
   location,
   address,
   venueCapacity,
+  venueAttendancee,
   loading,
   error,
   lighter = false,
+  surface = "default",
+  grass,
 }) => {
   const isDark = useColorScheme() === "dark";
   const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
 
-  // ✅ Early return if values are missing or marked "Unknown"
+  // Early return if values are missing or marked "Unknown"
   if (
     !venueName ||
     !location ||
@@ -93,7 +99,11 @@ const TeamLocationSection: React.FC<Props> = ({
       ) : (
         <View style={styles.container}>
           <Image
-            source={venueImage}
+            source={
+              typeof venueImage === "string"
+                ? { uri: venueImage }
+                : venueImage
+            }
             style={styles.venueImage}
             resizeMode="cover"
           />
@@ -106,7 +116,7 @@ const TeamLocationSection: React.FC<Props> = ({
 
           <View style={styles.addressContainer}>
             <Ionicons name="location" size={20} color={textColor} />
-            {address ? (
+            {address && (
               <TouchableOpacity onPress={openInMaps}>
                 <Text
                   style={[styles.subText, { color: textColor, marginLeft: 8 }]}
@@ -114,7 +124,7 @@ const TeamLocationSection: React.FC<Props> = ({
                   {address}
                 </Text>
               </TouchableOpacity>
-            ) : null}
+            )}
           </View>
 
           <View style={styles.addressContainer}>
@@ -123,6 +133,23 @@ const TeamLocationSection: React.FC<Props> = ({
               Capacity: {venueCapacity || "N/A"}
             </Text>
           </View>
+
+          <View style={styles.addressContainer}>
+            <Ionicons name="person" size={20} color={textColor} />
+            <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
+              Attendance: {venueAttendancee || "N/A"}
+            </Text>
+          </View>
+
+          {/* Grass indicator */}
+          {typeof grass === "boolean" && (
+            <View style={styles.addressContainer}>
+              <Ionicons name="leaf" size={20} color={textColor} />
+              <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
+                {grass ? "Natural Grass" : "Artificial Turf"}
+              </Text>
+            </View>
+          )}
         </View>
       )}
     </View>

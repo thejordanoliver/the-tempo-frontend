@@ -68,9 +68,9 @@ export default function GameLeaders({
   // Add this check:
   if (!topPlayers.length) return null;
 
-  const textColor = lighter ? Colors.netural.lightGray  : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? Colors.netural.lightGray : isDark ? Colors.netural.midTone : "#555";
-  const borderColor = lighter ? Colors.netural.lightGray : isDark ? Colors.netural.midTone : Colors.netural.midTone;
+  const textColor = lighter ? Colors.lightGray  : isDark ? "#fff" : "#1d1d1d";
+  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : "#555";
+  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.midTone;
 
   if (isLoading) {
     return (

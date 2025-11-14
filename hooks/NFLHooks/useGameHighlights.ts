@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { teams } from "constants/teamsNFL";
 
-export type NFLHighlight = {
+export type Highlight = {
   id: string;
   headline: string;
   description: string;
@@ -15,18 +14,15 @@ export type NFLHighlight = {
   };
 };
 
-export type NFLGameHighlights = {
+export type GameHighlights = {
   gameId: string;
-  highlights: NFLHighlight[];
+  highlights: Highlight[];
 };
 
-// --- ESPN → internal mapping ---
-const espnToInternal: Record<string, number> = {};
-teams.forEach((t) => {
-  if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
-});
+type SportType = "nfl" | "cfb" | "nba" | "cbb";
 
-export const useNFLHighlights = (
+export const useGameHighlights = (
+  sport: SportType,
   homeEspnID?: number,
   awayEspnID?: number,
   date?:
@@ -37,11 +33,11 @@ export const useNFLHighlights = (
         timestamp?: number | { timestamp?: number; utc?: string; date?: string };
       }
 ) => {
-  const [highlights, setHighlights] = useState<NFLHighlight[]>([]);
+  const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [highlightsLoading, setLoading] = useState(false);
   const [highlightsError, setError] = useState<string | null>(null);
 
-  const skipFetch = !homeEspnID || !awayEspnID || !date;
+  const skipFetch = !sport || !homeEspnID || !awayEspnID || !date;
 
   const fetchHighlights = async () => {
     if (skipFetch) return;
@@ -49,7 +45,7 @@ export const useNFLHighlights = (
     setError(null);
 
     try {
-      // --- Parse target date into YYYYMMDD ---
+      // --- Parse the date into YYYYMMDD ---
       let targetDate: Date | null = null;
 
       if (typeof date === "string") {
@@ -73,15 +69,17 @@ export const useNFLHighlights = (
       }
 
       if (!targetDate || isNaN(targetDate.getTime())) {
-        throw new Error("Invalid date provided to useNFLHighlights");
+        throw new Error("Invalid date provided to useGameHighlights");
       }
 
       const yyyymmdd = `${targetDate.getFullYear()}${String(
         targetDate.getMonth() + 1
       ).padStart(2, "0")}${String(targetDate.getDate()).padStart(2, "0")}`;
 
-      // --- Fetch from your backend route ---
-      const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/highlights/nfl`;
+      // --- Call correct backend route ---
+      const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/game-highlights/${sport}`;
+
+
       const { data } = await axios.get(apiUrl, {
         params: { date: yyyymmdd, homeEspnID, awayEspnID },
       });
@@ -89,18 +87,18 @@ export const useNFLHighlights = (
       const highlightsList = data?.response || [];
       setHighlights(highlightsList);
     } catch (err: any) {
+      console.error("Highlights fetch error:", err.message);
       setError(err.message || "Failed to fetch highlights");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Only trigger when stable values actually change
   useEffect(() => {
     if (skipFetch) return;
     fetchHighlights();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeEspnID, awayEspnID, JSON.stringify(date)]); // stabilize date changes
+  }, [sport, homeEspnID, awayEspnID, JSON.stringify(date)]);
 
   return { highlights, highlightsLoading, highlightsError, refresh: fetchHighlights };
 };

@@ -33,7 +33,7 @@ export const lastPlayStyles = (isDark: boolean) =>
       marginRight: 6,
       borderWidth: 0.5,
       paddingTop: 4,
-      borderColor: isDark ? Colors.netural.white : Colors.netural.black,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     athleteDetails: {
       flexDirection: "row",
@@ -43,13 +43,13 @@ export const lastPlayStyles = (isDark: boolean) =>
     athleteName: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     athleteMeta: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
       marginLeft: 4,
-      color: isDark ? Colors.netural.midTone : Colors.netural.midTone,
+      color: isDark ? Colors.midTone : Colors.midTone,
     },
     playText: {
       fontFamily: Fonts.OSREGULAR,
@@ -61,7 +61,7 @@ export const lastPlayStyles = (isDark: boolean) =>
     description: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: Colors.netural.midTone,
+      color: Colors.midTone,
       opacity: 0.7,
       marginTop: 4,
     },

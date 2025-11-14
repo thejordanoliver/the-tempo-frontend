@@ -9030,7 +9030,7 @@ export const players: NFLPlayer[] = [
     number: 9,
     salary: "-",
     experience: 2,
-    image: "https://media.api-sports.io/american-football/players/25532.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4360423.png",
     teamId: 8,
   },
   {

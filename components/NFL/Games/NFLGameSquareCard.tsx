@@ -144,7 +144,7 @@ function NFLGameSquareCard({ game, isDark }: Props) {
 
   // --- Date formatting ---
   const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : "";
 
   const formattedTime = gameDate

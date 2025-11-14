@@ -18,6 +18,7 @@ import { useTeamGames } from "hooks/useTeamGames";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useTeamRosterStats } from "hooks/useTeamRosterStats";
+import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -34,8 +35,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import PagerView from "react-native-pager-view";
 import { style } from "styles/TeamDetails.styles";
 import { User } from "types/types";
-import GameCard from "components/Games/GameCard";
-import { mockGames } from "mocks/games";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -90,19 +89,18 @@ export default function TeamDetailScreen() {
     error: gamesError,
   } = useTeamGames(teamIdNum.toString());
 
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights(team?.fullName ?? "", 5);
+ const {
+  highlights: teamHighlights,
+  loading: highlightsLoading,
+  error: highlightsError,
+} = useTeamHighlights("nba", team?.fullName ?? "", 5);
+
   const {
     articles: newsArticles,
     loading: newsLoading,
     error: newsError,
     refreshNews,
   } = useTeamNews(team?.fullName ?? "");
-
-
 
   const combinedNewsAndHighlights = useMemo(() => {
     const taggedNews = newsArticles.map((item) => ({
@@ -152,14 +150,17 @@ export default function TeamDetailScreen() {
     loadUser();
   }, []);
 
-
   const {
     rosterStats,
     loading: rosterStatsLoading,
     error: rosterStatsError,
   } = useTeamRosterStats(teamIdNum);
 
-
+  const {
+    teamStats,
+    loading: teamStatsLoading,
+    error: teamStatsError,
+  } = useTeamStats(teamIdNum);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -184,42 +185,49 @@ export default function TeamDetailScreen() {
     });
   });
 
-useEffect(() => {
-  if (!gamesLoading && teamGames.length > 0 && !selectedDate && monthsToShow.length > 0) {
-    const today = new Date();
-    
-    // Try to find a month that matches the current month/year
-    const currentMonthWithGames = monthsToShow.find(
-      ({ month, year }) =>
-        month === today.getMonth() && year === today.getFullYear()
-    );
+  useEffect(() => {
+    if (
+      !gamesLoading &&
+      teamGames.length > 0 &&
+      !selectedDate &&
+      monthsToShow.length > 0
+    ) {
+      const today = new Date();
 
-    const startingMonth = currentMonthWithGames ?? monthsToShow[0];
+      // Try to find a month that matches the current month/year
+      const currentMonthWithGames = monthsToShow.find(
+        ({ month, year }) =>
+          month === today.getMonth() && year === today.getFullYear()
+      );
 
-    setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
+      const startingMonth = currentMonthWithGames ?? monthsToShow[0];
 
-    // Scroll to that month
-    setTimeout(() => {
-      if (scrollViewRef.current) {
-        const index = monthsToShow.findIndex(
-          (m) =>
-            m.month === startingMonth.month && m.year === startingMonth.year
-        );
-        const itemWidth = 70;
-        const spacing = 12;
-        const screenWidth = Dimensions.get("window").width;
-        const scrollToX =
-          index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
+      setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
 
-        scrollViewRef.current.scrollTo({
-          x: Math.max(0, scrollToX),
-          animated: true,
-        });
-      }
-    }, 150);
-  }
-}, [gamesLoading, teamGames, selectedDate, monthsToShow]);
+      // Scroll to that month
+      setTimeout(() => {
+        if (scrollViewRef.current) {
+          const index = monthsToShow.findIndex(
+            (m) =>
+              m.month === startingMonth.month && m.year === startingMonth.year
+          );
+          const itemWidth = 70;
+          const spacing = 12;
+          const screenWidth = Dimensions.get("window").width;
+          const scrollToX =
+            index * itemWidth +
+            index * spacing -
+            screenWidth / 2 +
+            itemWidth / 2;
 
+          scrollViewRef.current.scrollTo({
+            x: Math.max(0, scrollToX),
+            animated: true,
+          });
+        }
+      }, 150);
+    }
+  }, [gamesLoading, teamGames, selectedDate, monthsToShow]);
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
@@ -286,7 +294,7 @@ useEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-        logo={team?.logo}
+          logo={team?.logo}
           logoLight={team?.logoLight}
           teamColor={team?.color}
           onBack={goBack}
@@ -300,7 +308,6 @@ useEffect(() => {
       ),
     });
   }, [navigation, isDark, team, favorited]);
-
 
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
@@ -346,15 +353,23 @@ useEffect(() => {
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <View style={styles.monthSelector}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={70}
-              decelerationRate="fast"
-              scrollEventThrottle={16}
-              contentContainerStyle={{ paddingHorizontal: 12 }}
-            >
+                  <ScrollView
+  ref={scrollViewRef}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  snapToInterval={82} // slightly wider for spacing
+  decelerationRate="fast"
+  scrollEventThrottle={16}
+  contentContainerStyle={{
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  }}
+>
+
               {monthsToShow.map(({ label, month, year }, index) => {
                 const isSelected =
                   selectedDate.getMonth() === month &&
@@ -402,7 +417,6 @@ useEffect(() => {
             expectedCount={filteredGames.length}
           />
 
-          
           {/* <GamesList
             games={mockGames}
             loading={gamesLoading}
@@ -410,8 +424,6 @@ useEffect(() => {
             onRefresh={handleRefresh}
             expectedCount={filteredGames.length}
           /> */}
-
-       
         </View>
 
         {/* News Page */}
@@ -496,6 +508,7 @@ useEffect(() => {
                   rosterStats={rosterStats}
                   playersDb={playersForRosterStats}
                   teamId={teamId as string}
+                  teamStats={teamStats} // ✅ must pass this
                 />
               )}
             </View>

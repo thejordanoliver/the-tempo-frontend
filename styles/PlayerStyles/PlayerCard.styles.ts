@@ -15,12 +15,12 @@ export const playerCardStyles = (isDark: boolean) =>
       paddingVertical: 12,
     },
     avatar: {
-      width: 60,
-      height: 60,
+      width: 50,
+      height: 50,
       borderRadius: 30,
       borderWidth: 1,
-      borderColor: Colors.netural.midTone,
-      paddingTop: 4,
+      borderColor: Colors.midTone,
+      paddingTop: 8,
     },
     avatarPlaceholder: {
       width: 50,
@@ -29,6 +29,7 @@ export const playerCardStyles = (isDark: boolean) =>
       borderWidth: 1,
       justifyContent: "center",
       alignItems: "center",
+      borderColor: Colors.midTone,
     },
     initial: {
       fontSize: 24,

@@ -4,9 +4,12 @@ import { getTeamLogo, getTeamName } from "constants/teamsCFB";
 import { StyleSheet, Text, View } from "react-native";
 import { CFBTeamRow } from "./CFBTeamRow";
 import { CFBGameCenterInfo } from "./GameInfo";
+
 type Props = {
   awayTeam: any;
   homeTeam: any;
+  rankHome: string;
+  rankAway: string;
   scores: any;
   possessionTeamId?: string;
   homeTimeouts?: number;
@@ -28,6 +31,8 @@ type Props = {
 export default function CFBGameHeader({
   awayTeam,
   homeTeam,
+  rankHome,
+  rankAway,
   scores,
   possessionTeamId,
   homeTimeouts = 0,
@@ -49,15 +54,6 @@ export default function CFBGameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
-      {/* Headline (optional) */}
-      {headlineText ? (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText} numberOfLines={1}>
-            {headlineText}
-          </Text>
-        </View>
-      ) : null}
-
       <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
         <CFBTeamRow
           team={{
@@ -71,6 +67,7 @@ export default function CFBGameHeader({
             logo: getTeamLogo(awayTeam.id, isDark),
             record: awayRecord ?? "0-0",
           }}
+          rank={rankAway}
           isDark={isDark}
           isHome={false}
           score={scores?.away?.total}
@@ -83,6 +80,14 @@ export default function CFBGameHeader({
         />
 
         <View>
+          {/* Headline (optional) */}
+          {headlineText ? (
+            <View style={styles.headlineContainer}>
+              <Text style={styles.headlineText} numberOfLines={1}>
+                {headlineText}
+              </Text>
+            </View>
+          ) : null}
           <CFBGameCenterInfo
             status={status}
             date={formattedDate} // ✅ pass formatted date
@@ -110,6 +115,7 @@ export default function CFBGameHeader({
             logo: getTeamLogo(homeTeam.id, isDark),
             record: homeRecord ?? "0-0",
           }}
+          rank={rankHome}
           isDark={isDark}
           isHome
           score={scores?.home?.total}
@@ -129,20 +135,23 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderBottomWidth: 1,
-      backgroundColor: isDark ? Colors.netural.black : Colors.netural.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      paddingVertical: 8,
     },
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
       alignItems: "center",
-      paddingBottom: 4,
     },
     headlineContainer: {
       alignItems: "center",
       justifyContent: "center",
     },
     headlineText: {
-      fontSize: 12,
+      position: "absolute",
+      width: 200,
+     top: -20,
+      fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,
       textAlign: "center",

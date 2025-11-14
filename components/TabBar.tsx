@@ -1,7 +1,7 @@
-// TabBar.tsx
 import React, { useRef, useEffect } from "react";
 import {
   Animated,
+  Easing,
   LayoutChangeEvent,
   Pressable,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
   StyleProp,
 } from "react-native";
 import { Fonts } from "constants/fonts";
+
 export interface TabBarProps<T extends string> {
   tabs: readonly T[];
   selected: T;
@@ -82,12 +83,14 @@ export default function TabBar<T extends string>({
       Animated.parallel([
         Animated.timing(underlineX, {
           toValue: x,
-          duration: 150,
+          duration: 250,
+          easing: Easing.bezier(0.25, 1, 0.5, 1), // smooth ease-out curve
           useNativeDriver: false,
         }),
         Animated.timing(underlineWidth, {
           toValue: textMeasurement.width,
-          duration: 150,
+          duration: 250,
+          easing: Easing.bezier(0.25, 1, 0.5, 1),
           useNativeDriver: false,
         }),
       ]).start();

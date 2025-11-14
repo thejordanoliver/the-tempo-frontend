@@ -1,6 +1,6 @@
 import axios from "axios";
 import { teams } from "constants/teamsCFB";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type Athlete = {
   id: string;
@@ -34,22 +34,6 @@ export type CFBScore = {
   periodScores?: { period: number; home: number; away: number }[];
 };
 
-type GameState = {
-  possessionTeamId?: number;
-  shortDownDistanceText?: string;
-  downDistanceText?: string;
-  displayClock?: string;
-  period?: string;
-  lastPlay?: string | PlayObject;
-  homeTimeouts?: number;
-  awayTimeouts?: number;
-  score?: CFBScore;
-  gameStatusDescription?: string;
-  gameStatusDetail?: string;
-  gameStatusShortDetail?: string;
-  possessionText?: string;
-};
-
 // --- ESPN → internal mapping ---
 const espnToInternal: Record<string, number> = {};
 teams.forEach((t) => {
@@ -61,11 +45,24 @@ export const useCFBGamePossession = (
   awayEspnId?: number,
   date?: string | { date?: string; utc?: string; timestamp?: number }
 ) => {
-  const [gameState, setGameState] = useState<GameState>({});
+  const [possessionTeamId, setPossessionTeamId] = useState<number>();
+  const [shortDownDistanceText, setShortDownDistanceText] = useState<string>();
+  const [downDistanceText, setDownDistanceText] = useState<string>();
+  const [firstDownYardLine, setFirstDownYardLine] = useState<number>();
+  const [displayClock, setDisplayClock] = useState<string>();
+  const [period, setPeriod] = useState<string>();
+  const [lastPlay, setLastPlay] = useState<string | PlayObject>();
+  const [homeTimeouts, setHomeTimeouts] = useState<number>();
+  const [awayTimeouts, setAwayTimeouts] = useState<number>();
+  const [score, setScore] = useState<CFBScore>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [gameStatusDescription, setGameStatusDescription] = useState<string>();
+  const [gameStatusDetail, setGameStatusDetail] = useState<string>();
+  const [gameStatusShortDetail, setGameStatusShortDetail] = useState<string>();
+  const [possessionText, setPossessionText] = useState<string>();
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const skipFetch = !homeEspnId || !awayEspnId || !date;
 
   const fetchData = useCallback(
@@ -75,6 +72,7 @@ export const useCFBGamePossession = (
       setError(null);
 
       try {
+        // --- Parse date ---
         let targetDate: Date | null = null;
         if (typeof date === "string") targetDate = new Date(date);
         else if (typeof date === "object") {
@@ -89,9 +87,7 @@ export const useCFBGamePossession = (
         if (!targetDate) return;
 
         const makeYMD = (d: Date) => {
-          const usDate = d.toLocaleDateString("en-US", {
-            timeZone: "America/New_York",
-          });
+          const usDate = d.toLocaleDateString("en-US", { timeZone: "America/New_York" });
           const [month, day, year] = usDate.split("/");
           return `${year}${month.padStart(2, "0")}${day.padStart(2, "0")}`;
         };
@@ -116,68 +112,77 @@ export const useCFBGamePossession = (
         const competition = game.competitions?.[0];
         if (!competition) throw new Error("No competition data found");
 
-        const gameStateStr = competition.status?.type?.state;
-        if (gameStateStr !== "in") return;
-
-        const situation = competition.situation || {};
         const status = competition.status || {};
+        const situation = competition.situation || {};
+        const gameStateStr = status.type?.state;
+        const isLive = gameStateStr === "in";
 
-        const downInfo = situation.shortDownDistanceText ?? "";
-        const fieldPosition = situation.possessionText ?? "";
-        const possessionText =
-          downInfo && fieldPosition
-            ? `${downInfo}, ${fieldPosition}`
-            : downInfo || fieldPosition || undefined;
+        // --- Always update clock + period ---
+        setDisplayClock(status.displayClock);
+        setPeriod(status.period?.toString());
+        setGameStatusDescription(status.type?.description);
+        setGameStatusDetail(status.type?.detail);
+        setGameStatusShortDetail(status.type?.shortDetail);
 
+        // --- Score ---
         const competitors = competition.competitors || [];
         const homeComp = competitors.find((c: any) => c.homeAway === "home");
         const awayComp = competitors.find((c: any) => c.homeAway === "away");
 
-        let score: CFBScore | undefined;
         if (homeComp && awayComp) {
-          const maxPeriods = Math.max(
-            homeComp.linescores?.length ?? 0,
-            awayComp.linescores?.length ?? 0
-          );
+          const maxPeriods = Math.max(homeComp.linescores?.length ?? 0, awayComp.linescores?.length ?? 0);
           const periodScores = Array.from({ length: maxPeriods }, (_, idx) => ({
             period: idx + 1,
             home: homeComp.linescores?.[idx]?.value ?? 0,
             away: awayComp.linescores?.[idx]?.value ?? 0,
           }));
 
-          score = {
+          setScore({
             home: Number(homeComp.score),
             away: Number(awayComp.score),
             homeTeam: homeComp.team.displayName,
             awayTeam: awayComp.team.displayName,
             periodScores,
-          };
+          });
         }
 
-        // Build the new state
-        const newState: GameState = {
-          possessionTeamId: Number(situation.possession),
-          shortDownDistanceText: situation.shortDownDistanceText,
-          downDistanceText: situation.downDistanceText,
-          displayClock: status.displayClock,
-          period: status.period,
-          lastPlay: situation.lastPlay || status.lastPlay,
-          homeTimeouts: situation.homeTimeouts,
-          awayTimeouts: situation.awayTimeouts,
-          score,
-          gameStatusDescription: status.type?.description,
-          gameStatusDetail: status.type?.detail,
-          gameStatusShortDetail: status.type?.shortDetail,
-          possessionText,
-        };
+        if (isLive) {
+          // --- Possession & field info ---
+          const espnPossessionId: string | undefined = situation.possession;
+          setPossessionTeamId(espnPossessionId ? espnToInternal[espnPossessionId] : undefined);
 
-        // ✅ Only update if data changed (prevents redundant re-renders)
-        setGameState((prev) => {
-          return JSON.stringify(prev) !== JSON.stringify(newState) ? newState : prev;
-        });
+          const downInfo = situation.shortDownDistanceText ?? "";
+          const lineOfScrimmage = situation.yardLine ?? 0;
+          const yardsToGo = situation.distance ?? 0;
+          setFirstDownYardLine(lineOfScrimmage + yardsToGo);
+
+          const fieldPosition = situation.possessionText ?? "";
+          setShortDownDistanceText(downInfo);
+          setDownDistanceText(situation.downDistanceText);
+          setPossessionText(downInfo && fieldPosition ? `${downInfo}, ${fieldPosition}` : downInfo || fieldPosition);
+          setHomeTimeouts(situation.homeTimeouts);
+          setAwayTimeouts(situation.awayTimeouts);
+
+          if (situation.lastPlay) {
+            const playObj = situation.lastPlay as PlayObject;
+            playObj.statYardage = situation.distance;
+            setLastPlay(playObj);
+          } else if (status.lastPlay) {
+            setLastPlay(status.lastPlay as string);
+          } else setLastPlay(undefined);
+        } else {
+          setPossessionTeamId(undefined);
+          setShortDownDistanceText(undefined);
+          setDownDistanceText(undefined);
+          setFirstDownYardLine(undefined);
+          setPossessionText(undefined);
+          setHomeTimeouts(undefined);
+          setAwayTimeouts(undefined);
+          setLastPlay(undefined);
+        }
       } catch (err: any) {
         console.error("[CFB Possession] Error fetching:", err);
-        setError(err.message || "Failed to fetch possession data");
+        setError(err.message || "Failed to fetch possession");
       } finally {
         setLoading(false);
       }
@@ -185,11 +190,12 @@ export const useCFBGamePossession = (
     [homeEspnId, awayEspnId, date, skipFetch]
   );
 
-  // --- Poll every 60s ---
+  // --- Poll every 30s ---
   useEffect(() => {
     if (skipFetch) return;
+
     fetchData();
-    intervalRef.current = setInterval(() => fetchData(true), 60000);
+    intervalRef.current = setInterval(() => fetchData(true), 30000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -197,13 +203,23 @@ export const useCFBGamePossession = (
 
   const refresh = useCallback(() => fetchData(false), [fetchData]);
 
-  return useMemo(
-    () => ({
-      ...gameState,
-      loading,
-      error,
-      refresh,
-    }),
-    [gameState, loading, error, refresh]
-  );
+  return {
+    possessionTeamId,
+    shortDownDistanceText,
+    firstDownYardLine,
+    downDistanceText,
+    displayClock,
+    period,
+    lastPlay,
+    homeTimeouts,
+    awayTimeouts,
+    score,
+    loading,
+    error,
+    gameStatusDescription,
+    gameStatusDetail,
+    gameStatusShortDetail,
+    possessionText,
+    refresh,
+  };
 };

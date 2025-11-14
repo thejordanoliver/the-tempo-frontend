@@ -74,7 +74,7 @@ export function formatGameDateTime(date: Date | null) {
   if (!date) return { formattedDate: "", formattedTime: "", iso: "" };
   return {
     iso: date.toISOString(),
-    formattedDate: date.toLocaleDateString("en-US", { month: "numeric", day: "numeric" }),
+    formattedDate: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     formattedTime: date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
@@ -309,6 +309,29 @@ export function useAPTop25() {
 
   return apTop25;
 }
+export function useCFPTop25() {
+  const { rankings } = useCFBRankings();
+
+  const cfpTop25 = useMemo(() => {
+    if (!rankings) return [];
+
+    const cfpPoll = rankings.find((p) => p.shortName === "CFP Rankings");
+    if (!cfpPoll) return [];
+
+    return cfpPoll.ranks.slice(0, 25).map((r) => ({
+      id: String(r.team?.id), // ✅ include ESPN ID
+      name:
+        r.team?.name ||
+        r.team?.shortDisplayName ||
+        r.team?.name ||
+        r.team?.nickname ||
+        "Unknown",
+      rank: r.current,
+    }));
+  }, [rankings]);
+
+  return cfpTop25;
+}
 
 
 // --- Helper: Normalize names for fuzzy matching ---
@@ -323,5 +346,10 @@ export const normalizeTeamName = (name?: string) =>
 export const getTeamRankFromAPById = (teamId: number | string, apTop25: any[]) => {
   if (!teamId || !apTop25?.length) return null;
   const entry = apTop25.find((t) => String(t.id) === String(teamId));
+  return entry ? `${entry.rank}` : null;
+};
+export const getTeamRankFromCFPById = (teamId: number | string, cfpTop25: any[]) => {
+  if (!teamId || !cfpTop25?.length) return null;
+  const entry = cfpTop25.find((t) => String(t.id) === String(teamId));
   return entry ? `${entry.rank}` : null;
 };

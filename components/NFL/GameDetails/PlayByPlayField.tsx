@@ -2,7 +2,6 @@ import { Fonts } from "constants/fonts";
 import {
   getTeamInfo as getCFBTeamInfo,
   getTeamLogo as getCFBTeamLogo,
-  getTeamByESPNId as getCFBTeamByESPNId,
 } from "constants/teamsCFB";
 import {
   getTeamInfo as getNFLTeamInfo,
@@ -23,6 +22,7 @@ import { LeagueType } from "types/types";
 type PlayByPlayFieldProps = {
   lastPlay?: string | PlayObject;
   possessionTeamId?: number;
+  firstDownYardLine?: number;
   homeTeamId: number;
   awayTeamId: number;
   league?: LeagueType;
@@ -35,13 +35,15 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   homeTeamId,
   awayTeamId,
   league = "NFL",
+  firstDownYardLine,
 }) => {
   const playAnim = useRef(new Animated.Value(50)).current;
-  const [fieldWidth, setFieldWidth] = useState(0);
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const firstDownAnim = useRef(new Animated.Value(50)).current;
+  const scoreAnim = useRef(new Animated.Value(0)).current;
+  const scoreReveal = useRef(new Animated.Value(0)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
 
+  const [fieldWidth, setFieldWidth] = useState(0);
   const [highlightEndzone, setHighlightEndzone] = useState<
     "home" | "away" | null
   >(null);
@@ -50,16 +52,15 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     text: string;
   } | null>(null);
 
-  const scoreAnim = useRef(new Animated.Value(0)).current;
-  const scoreReveal = useRef(new Animated.Value(0)).current;
+  const isDark = useColorScheme() === "dark";
+  const styles = getStyles(isDark);
 
-  // 🏈 League helpers
+  // League helpers
   const getTeamInfo =
     league === "NFL" ? getNFLTeamInfo : getCFBTeamInfo || getNFLTeamInfo;
   const getLogo =
     league === "NFL" ? getNFLTeamsLogo : getCFBTeamLogo || getNFLTeamsLogo;
 
-  // 🧩 Team lookup
   const homeTeam = getTeamInfo(homeTeamId) ?? {
     code: "HOM",
     color: "#888",
@@ -82,7 +83,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const homeEspnID = homeTeam.espnID;
   const awayEspnID = awayTeam.espnID;
 
-  // ⚡ Endzone glow pulse
+  // Endzone glow pulse
   useEffect(() => {
     if (highlightEndzone) {
       const loop = Animated.loop(
@@ -106,29 +107,24 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     }
   }, [highlightEndzone]);
 
-  // ⚙️ Compute field position
+  // Compute field position
   const computePercent = (play?: PlayObject) => {
     if (!play) return 50;
     const yardLine = play.end?.yardLine ?? play.start?.yardLine;
-    if (yardLine == null) return 50;
-    return Math.min(100, Math.max(0, Number(yardLine)));
+    return yardLine != null ? Math.min(100, Math.max(0, Number(yardLine))) : 50;
   };
 
-  // 🎯 Animate marker + detect scores
+  const computeFirstDownPercent = (yard?: number) => {
+    return yard != null ? Math.min(100, Math.max(0, Number(yard))) : 50;
+  };
+
+  // Animate ball marker + detect scores
   useEffect(() => {
     if (typeof lastPlay !== "object") return;
 
     const play = lastPlay as PlayObject;
     const targetPercent = computePercent(play);
 
-    console.log("🟩 ---- NEW PLAY ANIMATION ----");
-    console.log("📄 Play ID:", (play as any).id ?? (play as any).sequence);
-    console.log("📊 Drive Result:", play.drive?.result);
-    console.log("📍 YardLine Start:", play.start?.yardLine);
-    console.log("📍 YardLine End:", play.end?.yardLine);
-    console.log("🎯 Computed targetPercent:", targetPercent);
-
-    // 🔸 Animate the marker
     Animated.spring(playAnim, {
       toValue: targetPercent,
       useNativeDriver: false,
@@ -137,74 +133,50 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
       mass: 1,
     }).start();
 
-    // 🔸 Deduplicate animation
     const lastAnimatedRef = (PlayByPlayField as any)._lastAnimatedRef ?? {
       playId: null,
       result: null,
     };
-
     const playId =
       (play as any).id ??
       (play as any).sequence ??
       (play.start as any)?.playId ??
       Math.random();
-
     const playResult = play.drive?.result?.toUpperCase();
 
     if (
       lastAnimatedRef.playId === playId &&
       lastAnimatedRef.result === playResult
-    ) {
-      console.log("⚠️ Skipping duplicate animation for same play");
+    )
       return;
-    }
+    (PlayByPlayField as any)._lastAnimatedRef = { playId, result: playResult };
 
-    (PlayByPlayField as any)._lastAnimatedRef = {
-      playId,
-      result: playResult,
-    };
-
-    // ✅ Use ESPN IDs for consistent mapping
     const scoringEspnId =
-      play.start?.team?.id ??
-      play.team?.id ??
-      possessionTeamId ??
-      null;
-
-    console.log("🏆 Scoring ESPN ID:", scoringEspnId);
-    console.log("🏠 Home ESPN ID:", homeEspnID);
-    console.log("🛫 Away ESPN ID:", awayEspnID);
-
+      play.start?.team?.id ?? play.team?.id ?? possessionTeamId ?? null;
     let endzone: "home" | "away" | null = null;
     let scoreText: string | null = null;
 
- // 🏈 Endzone determination (fixed)
-const scoringIdNum = Number(scoringEspnId);
-const homeIdNum = Number(homeEspnID);
-const awayIdNum = Number(awayEspnID);
+    const scoringIdNum = Number(scoringEspnId);
+    const homeIdNum = Number(homeEspnID);
+    const awayIdNum = Number(awayEspnID);
 
-if (playResult === "TD" || playResult === "TOUCHDOWN") {
-  endzone =
-    scoringIdNum === homeIdNum
-      ? "home"
-      : scoringIdNum === awayIdNum
-      ? "away"
-      : null;
-  scoreText = "TOUCHDOWN";
-} else if (playResult === "FG" || playResult === "FIELD GOAL") {
-  endzone =
-    scoringIdNum === homeIdNum
-      ? "home"
-      : scoringIdNum === awayIdNum
-      ? "away"
-      : null;
-  scoreText = "FIELD GOAL IS GOOD";
-}
-
-
-    console.log("🏁 FINAL DECISION → Endzone:", endzone);
-    console.log("🧾 Score text:", scoreText);
-    console.log("-----------------------------------");
+    if (playResult === "TD" || playResult === "TOUCHDOWN") {
+      endzone =
+        scoringIdNum === homeIdNum
+          ? "home"
+          : scoringIdNum === awayIdNum
+          ? "away"
+          : null;
+      scoreText = "TOUCHDOWN";
+    } else if (playResult === "FG" || playResult === "FIELD GOAL") {
+      endzone =
+        scoringIdNum === homeIdNum
+          ? "home"
+          : scoringIdNum === awayIdNum
+          ? "away"
+          : null;
+      scoreText = "FIELD GOAL IS GOOD";
+    }
 
     if (endzone) {
       setHighlightEndzone(endzone);
@@ -244,6 +216,24 @@ if (playResult === "TD" || playResult === "TOUCHDOWN") {
     }
   }, [lastPlay]);
 
+  // Animate first down line
+  useEffect(() => {
+    if (firstDownYardLine == null) return;
+
+    const target = computeFirstDownPercent(firstDownYardLine);
+
+    // Determine offense team for correct direction
+    const firstDownIsHome =
+      possessionTeamId != null ? possessionTeamId === homeTeamId : true;
+
+    Animated.spring(firstDownAnim, {
+      toValue: target,
+      useNativeDriver: false,
+      stiffness: 120,
+      damping: 14,
+    }).start();
+  }, [firstDownYardLine, possessionTeamId]);
+
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
   return (
@@ -253,10 +243,7 @@ if (playResult === "TD" || playResult === "TOUCHDOWN") {
         <View
           style={[
             styles.endzone,
-            {
-              backgroundColor: awayColor,
-              borderRightColor: "#fff",
-            },
+            { backgroundColor: awayColor, borderRightColor: "#fff" },
             highlightEndzone === "away" && styles.endzoneHighlight,
           ]}
         >
@@ -357,63 +344,74 @@ if (playResult === "TD" || playResult === "TOUCHDOWN") {
             ]}
           />
 
-       {/* Score Overlay */}
-{scoreAnimation && (
-  <Animated.View
-    style={[
-      styles.scoreOverlay,
-      {
-        opacity: scoreAnim,
-        transform: [
-          { translateX: -125 },
-          { translateY: -20 },
-          { scale: scoreAnim },
-        ],
-      },
-    ]}
-  >
-    <Animated.View
-      style={{
-        width: scoreReveal.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 250],
-        }),
-        overflow: "hidden",
-      }}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image
-          source={getLogo(
-            scoreAnimation.team === "home"
-              ? homeTeam.name
-              : awayTeam.name,
-            true
+          {/* First Down Line */}
+          {firstDownYardLine != null && (
+            <Animated.View
+              style={[
+                styles.firstDownLine,
+                {
+                  left: firstDownAnim.interpolate({
+                    inputRange: [0, 100],
+                    outputRange: [fieldWidth, 0], // flip if away offense
+                  }),
+                },
+              ]}
+            />
           )}
-          style={styles.scoreLogo}
-        />
-        <Text
-          style={[
-            styles.scoreText,
-            { color: isDark ? "#fff" : "#1d1d1d" },
-          ]}
-        >
-          {scoreAnimation.text}
-        </Text>
-      </View>
-    </Animated.View>
-  </Animated.View>
-)}
 
+          {/* Score Overlay */}
+          {scoreAnimation && (
+            <Animated.View
+              style={[
+                styles.scoreOverlay,
+                {
+                  opacity: scoreAnim,
+                  transform: [
+                    { translateX: -125 },
+                    { translateY: -20 },
+                    { scale: scoreAnim },
+                  ],
+                },
+              ]}
+            >
+              <Animated.View
+                style={{
+                  width: scoreReveal.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 250],
+                  }),
+                  overflow: "hidden",
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Image
+                    source={getLogo(
+                      scoreAnimation.team === "home"
+                        ? homeTeam.name
+                        : awayTeam.name,
+                      true
+                    )}
+                    style={styles.scoreLogo}
+                  />
+                  <Text
+                    style={[
+                      styles.scoreText,
+                      { color: isDark ? "#fff" : "#1d1d1d" },
+                    ]}
+                  >
+                    {scoreAnimation.text}
+                  </Text>
+                </View>
+              </Animated.View>
+            </Animated.View>
+          )}
         </View>
 
         {/* Home Endzone */}
         <View
           style={[
             styles.endzone,
-            {
-              backgroundColor: homeColor,
-              borderLeftColor: "#fff",
-            },
+            { backgroundColor: homeColor, borderLeftColor: "#fff" },
             highlightEndzone === "home" && styles.endzoneHighlight,
           ]}
         >
@@ -486,11 +484,7 @@ const getStyles = (isDark: boolean) =>
       position: "absolute",
       opacity: 0.4,
     },
-    endzoneHighlight: {
-      shadowOpacity: 0.9,
-      shadowRadius: 15,
-      elevation: 10,
-    },
+    endzoneHighlight: { shadowOpacity: 0.9, shadowRadius: 15, elevation: 10 },
     field: {
       flex: 1,
       height: 200,
@@ -504,6 +498,15 @@ const getStyles = (isDark: boolean) =>
       height: "100%",
       borderRadius: 2,
       zIndex: 1,
+    },
+    firstDownLine: {
+      position: "absolute",
+      top: 0,
+      height: "100%",
+      width: 3,
+      backgroundColor: "yellow",
+      zIndex: 2,
+      opacity: 0.7,
     },
     yardLine: {
       position: "absolute",
@@ -523,22 +526,16 @@ const getStyles = (isDark: boolean) =>
       zIndex: 3,
       width: 20,
     },
-  scoreOverlay: {
-  position: "absolute",
-  top: "50%",                // Center vertically on field
-  left: "50%",               // Center horizontally
-  transform: [{ translateX: -125 }, { translateY: -20 }], // center offset based on logo+text width
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 5,
-},
-
-    scoreLogo: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
-      marginRight: 8,
+    scoreOverlay: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: [{ translateX: -125 }, { translateY: -20 }],
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 5,
     },
+    scoreLogo: { width: 40, height: 40, resizeMode: "contain", marginRight: 8 },
     scoreText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 20,

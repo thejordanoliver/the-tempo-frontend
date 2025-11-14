@@ -49,7 +49,7 @@ export default function DeleteAccountSplashScreen() {
               useNativeDriver: true,
             }),
           ]).start(() => {
-            router.replace("/");
+            router.replace("/login");
           });
         }, 5000);
       });

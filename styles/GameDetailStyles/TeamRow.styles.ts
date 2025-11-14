@@ -1,9 +1,8 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
-import { StyleSheet, TextStyle, ViewStyle, ImageStyle } from "react-native";
 import { Fonts } from "constants/fonts";
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";
-
 
 export type CFBProps = {
   team: {
@@ -14,6 +13,7 @@ export type CFBProps = {
     logo: any;
     record?: string;
   };
+  rank?: string;
   isDark: boolean;
   isHome?: boolean;
   score?: number | null;
@@ -30,7 +30,6 @@ export type CFBProps = {
   timeouts: number;
   opponentScore?: number | null; // 👈 needed to detect ties
 };
-
 
 export type NFLProps = {
   team: {
@@ -65,7 +64,9 @@ export type NBAProps = {
     code?: string;
     id?: number;
   };
-  size?: SizeType
+  timeouts: number;
+  size?: SizeType;
+  rank?: string;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
@@ -76,9 +77,7 @@ export type NBAProps = {
     score: string;
     winnerScore: string;
   };
-
 };
-
 
 // Main static styles
 export const styles = StyleSheet.create<{
@@ -97,7 +96,7 @@ export const styles = StyleSheet.create<{
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 4,
+    paddingVertical: 8,
   },
   teamInfoContainer: {
     flexDirection: "column",

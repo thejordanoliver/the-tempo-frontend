@@ -10,7 +10,6 @@ import RainNight from "../../assets/Weather/rain-night.json";
 import Rain from "../../assets/Weather/rain.json";
 import HeadingTwo from "../Headings/HeadingTwo";
 import TeamLocationSkeleton from "./TeamLocationSkeleton";
-import { Platform } from "react-native";
 import React from "react";
 
 

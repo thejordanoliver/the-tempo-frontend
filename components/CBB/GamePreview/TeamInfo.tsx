@@ -55,12 +55,12 @@ export default function TeamInfo({
         style={{
           fontSize: 14,
           fontFamily: Fonts.OSREGULAR,
-          color: Colors.netural.white,
+          color: Colors.white,
           marginTop: 6,
         }}
       >
         {rank && (
-          <Text style={{ fontSize: 10, color: Colors.netural.lightGray }}>
+          <Text style={{ fontSize: 10, color: Colors.lightGray }}>
             {rank}
           </Text>
         )}{" "}
@@ -72,7 +72,7 @@ export default function TeamInfo({
         style={{
           fontSize: 30,
           fontFamily: Fonts.OSBOLD,
-          color: Colors.netural.white,
+          color: Colors.white,
           opacity: displayOpacity,
           marginTop: isScheduled && record ? 4 : 0,
         }}
@@ -86,7 +86,7 @@ export default function TeamInfo({
           style={{
             fontSize: 12,
             fontFamily: Fonts.OSREGULAR,
-            color: Colors.netural.white,
+            color: Colors.white,
             opacity: 0.7,
             marginTop: 2,
           }}

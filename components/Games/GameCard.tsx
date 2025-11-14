@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -123,14 +124,6 @@ export default function GameCard({
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-  // ✅ Use full ESPN-style names
-  const getFullTeamName = (id?: number | string) => {
-    const team = teams.find((t) => String(t.id) === String(id));
-    return team?.fullName ?? team?.name ?? "";
-  };
-
-  const homeFullName = getFullTeamName(homeId);
-  const awayFullName = getFullTeamName(awayId);
 
   const { score: liveScore } = useGameScores(
     "nba",
@@ -146,27 +139,44 @@ export default function GameCard({
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
     liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
-
+ 
   // Status
+  // 🧠 Smarter reactive status
   const statusObj = game.status;
-  const statusText =
+  const baseStatus =
     typeof game.status === "string" ? game.status : mapStatus(game.status);
-  const isFinal = statusText === "Final";
-  const inProgress = statusText === "In Play";
-  const isCanceled = statusText === "Canceled";
-  const isDelayed = statusText === "Delayed";
-  const isPostponed = statusText === "Postponed";
+
+  // Prefer live status text when available
+  const liveStatusText = liveScore?.statusText?.toLowerCase() ?? "";
+
+  // Dynamically resolve final state from live data
+  const effectiveStatus = liveStatusText.includes("final")
+    ? "Final"
+    : liveStatusText.includes("halftime")
+    ? "Halftime"
+    : liveStatusText.includes("in progress") ||
+      liveStatusText.includes("in play") ||
+      liveStatusText.includes("qtr") ||
+      liveStatusText.includes("quarter")
+    ? "In Play"
+    : baseStatus;
+
+  // Now derive booleans reactively
+  const isFinal = effectiveStatus === "Final";
+  const inProgress = effectiveStatus === "In Play";
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = effectiveStatus === "Postponed";
+  const isHalftime = effectiveStatus === "Halftime";
+
   const isEndOfPeriod = game.periods?.endOfPeriod === true;
   // ✅ Smarter halftime detection
-  const isHalftime =
-    liveScore?.statusText?.toLowerCase() === "halftime" ||
-    statusObj?.long?.toLowerCase() === "halftime" ||
-    statusText === "Halftime";
+
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
   const winnerStyle = (teamWins: boolean): TextStyle => ({
-    color: dark ? "#fff" : "#1d1d1d",
-    opacity: inProgress ? 1 : teamWins ? 1 : 0.5,
+    color: dark ? Colors.white : Colors.black,
+    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
   });
 
   const getLogo = (teamData?: Team, fallback?: Team) => {
@@ -266,12 +276,12 @@ export default function GameCard({
         score={awayScore}
         recordData={awayRecordData ?? undefined}
         teamWins={awayWins}
-        showRecord={statusText === "Scheduled"}
+        showRecord={effectiveStatus === "Scheduled"}
       />
 
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headlineText}</Text>
-      
+
       {/* Center Info */}
       <View
         style={[
@@ -290,7 +300,6 @@ export default function GameCard({
         ) : isPostponed ? (
           <Text style={styles.finalText}>Postponed</Text>
         ) : isHalftime ? (
-          // 🏀 Explicitly handle halftime
           <Text style={styles.date}>Halftime</Text>
         ) : isFinal ? (
           <View style={styles.infoWrapper}>
@@ -302,28 +311,21 @@ export default function GameCard({
           </View>
         ) : inProgress ? (
           <View style={styles.infoWrapper}>
-            {liveScore?.statusText?.toLowerCase()?.startsWith("end of") ||
-            isEndOfPeriod ? (
-              // 🏁 Show end-of-period message (e.g. "End of 1st Quarter")
-              <Text style={styles.date}>
-                {liveScore?.statusText ??
-                  `End of ${getQuarterLabel(endOfPeriod)}`}
-              </Text>
+            {liveScore?.statusText?.toLowerCase().includes("end of") ||
+            liveScore?.statusText?.toLowerCase().includes("final") ? (
+              <Text style={styles.clock}>{liveScore.statusText}</Text>
             ) : (
-              // 🕒 Show current period + live clock when game is in progress
-              <View style={styles.infoWrapper}>
+              <>
                 <Text style={styles.date}>
                   {getQuarterLabel(currentPeriod)}
                 </Text>
-                {liveScore?.displayClock || statusObj?.clock ? (
+                {liveScore?.displayClock && (
                   <>
                     <View style={styles.statusDivider} />
-                    <Text style={styles.clock}>
-                      {liveScore?.displayClock ?? statusObj?.clock ?? ""}
-                    </Text>
+                    <Text style={styles.clock}>{liveScore.displayClock}</Text>
                   </>
-                ) : null}
-              </View>
+                )}
+              </>
             )}
           </View>
         ) : (
@@ -333,6 +335,7 @@ export default function GameCard({
             <Text style={styles.date}>{game.time ?? "TBD"}</Text>
           </View>
         )}
+
         {!isFinal && broadcastText && (
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
@@ -343,7 +346,7 @@ export default function GameCard({
         score={homeScore}
         recordData={homeRecordData ?? undefined}
         teamWins={homeWins}
-        showRecord={statusText === "Scheduled"}
+        showRecord={effectiveStatus === "Scheduled"}
       />
       <View style={styles.teamSection}>
         <Image

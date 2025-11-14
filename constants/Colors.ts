@@ -12,7 +12,7 @@ export const Colors = {
     text: "#1d1d1d",
     itemBackground: "#eee",
     red: "#cc0000",
-   green: "#01796f",
+    green: "#01796f",
     black: "#1d1d1d",
     background: "#fff",
     tint: tintColorLight,
@@ -33,11 +33,10 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 
-  netural: {
-    midTone: "#888",
-    lightGray: "#aaa",
-    darkGray: "#555",
-    white: "#fff",
-    black: "#1d1d1d",
-  },
+
+  white: "#fff",
+  black: "#1d1d1d",
+  midTone: "#888",
+  lightGray: "#aaa",
+  darkGray: "#555",
 };

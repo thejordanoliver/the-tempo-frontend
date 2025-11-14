@@ -44,11 +44,12 @@ export interface CFBStatsResponse {
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-export function useCFBTeamStats(
+export function useFootballRosterStats(
   espnID: string,
   teamId: string,
   category?: StatCategory,
-  viewMode: "team" | "players" = "team"
+  viewMode: "team" | "players" = "team",
+  league: "cfb" | "nfl" = "cfb" // 👈 added optional league param
 ) {
   const [data, setData] = useState<CFBStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +63,7 @@ export function useCFBTeamStats(
       setLoading(true);
       setError(null);
 
-      const cacheKey = `cfb_stats_${viewMode}_${espnID || teamId}_${
+      const cacheKey = `${league}_${viewMode}_${espnID || teamId}_${
         category || "all"
       }`;
 
@@ -72,7 +73,7 @@ export function useCFBTeamStats(
         if (cached) {
           const { timestamp, data: cachedData } = JSON.parse(cached);
           if (Date.now() - timestamp < CACHE_TTL) {
-            console.log("📦 Loaded cached CFB stats:", cacheKey);
+            console.log("📦 Loaded cached stats:", cacheKey);
             setData(cachedData);
             setLoading(false);
             return;
@@ -84,21 +85,28 @@ export function useCFBTeamStats(
 
         let response;
 
+        // --- ESPN team stats ---
         if (viewMode === "team") {
-          const url = `${BASE_URL}/api/cfb/teams/${espnID}/stats${
-            category ? `?category=${category}` : ""
-          }`;
-          console.log("🌐 Fetching CFB team stats:", url);
+          // 👇 call either /api/cfb/teams or /api/cfb/nfl/teams
+          const endpoint =
+            league === "nfl"
+              ? `${BASE_URL}/api/nfl/teams/${espnID}/stats`
+              : `${BASE_URL}/api/teams/${espnID}/stats`;
+
+          const url = `${endpoint}${category ? `?category=${category}` : ""}`;
+          console.log("🌐 Fetching team stats:", url);
           response = await axios.get<CFBStatsResponse>(url);
-        } else {
-          const url = `${BASE_URL}/api/cfb/${teamId}/players/stats${
+        }
+
+        // --- RapidAPI player stats ---
+        else {
+          const url = `${BASE_URL}/api/${teamId}/players/stats${
             category ? `?category=${category}` : ""
           }`;
-          console.log("🌐 Fetching CFB player stats:", url);
+          console.log("🌐 Fetching player stats:", url);
           response = await axios.get(url);
 
           const players = response.data?.players || response.data?.response || [];
-
           if (!Array.isArray(players) || players.length === 0) {
             console.warn("⚠️ No players found in response.");
             setData({
@@ -179,10 +187,10 @@ export function useCFBTeamStats(
           })
         );
 
-        console.log("✅ Cached CFB stats:", cacheKey);
+        console.log("✅ Cached stats:", cacheKey);
         setData(responseData);
       } catch (err: any) {
-        console.error("❌ Error fetching CFB stats:", err.message || err);
+        console.error("❌ Error fetching stats:", err.message || err);
         setError(err.message || "Failed to fetch stats");
       } finally {
         setLoading(false);
@@ -190,7 +198,7 @@ export function useCFBTeamStats(
     };
 
     fetchStats();
-  }, [espnID, teamId, category, viewMode]);
+  }, [espnID, teamId, category, viewMode, league]);
 
   return { data, loading, error };
 }

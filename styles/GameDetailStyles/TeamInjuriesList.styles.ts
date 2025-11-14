@@ -9,7 +9,7 @@ export const styles = (isDark: boolean, lighter: boolean) =>
       flexDirection: "row",
       padding: 8,
       alignItems: "center",
-      borderBottomColor: lighter? Colors.netural.midTone : isDark ? Colors.netural.midTone : Colors.netural.midTone,
+      borderBottomColor: lighter? Colors.midTone : isDark ? Colors.midTone : Colors.midTone,
     },
     avatar: {
       width: 52,
@@ -48,12 +48,12 @@ export const styles = (isDark: boolean, lighter: boolean) =>
     status: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: lighter? Colors.netural.lightGray : isDark ? Colors.netural.midTone : Colors.netural.midTone,
+      color: lighter? Colors.lightGray : isDark ? Colors.midTone : Colors.midTone,
     },
     jersey: {
  fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: lighter? Colors.netural.lightGray : isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: lighter? Colors.lightGray : isDark ? Colors.lightGray : Colors.darkGray,
    marginLeft: 4
     },
 
@@ -83,7 +83,7 @@ export const styles = (isDark: boolean, lighter: boolean) =>
     position: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      color: lighter? Colors.netural.lightGray : isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: lighter? Colors.lightGray : isDark ? Colors.lightGray : Colors.darkGray,
       marginBottom: 4,
     },
     detail: {
@@ -104,7 +104,7 @@ export const styles = (isDark: boolean, lighter: boolean) =>
     divder: {
       width: 1,
       height: 16,
-      backgroundColor: lighter? Colors.netural.midTone : isDark ? Colors.netural.midTone : Colors.netural.lightGray,
+      backgroundColor: lighter? Colors.midTone : isDark ? Colors.midTone : Colors.lightGray,
       marginHorizontal: 4,
     },
   });

@@ -1,3 +1,4 @@
+import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import {
   BoxScore,
@@ -13,14 +14,18 @@ import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
 import GameUniforms from "components/GameDetails/GameUniforms";
 import LastPlay from "components/GameDetails/LastPlay";
+import Officials from "components/GameDetails/Officials";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
+import { Colors } from "constants/Colors";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
 import { useGameInfo } from "hooks/useGameInfo";
+import { useGameOfficials } from "hooks/useGameOfficials";
 import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
@@ -134,9 +139,6 @@ export default function GameDetailsScreen() {
   const homeTeamIdNum = Number(homeTeamData.id);
   const awayTeamIdNum = Number(awayTeamData.id);
 
-  const homeColor = homeTeamData.color || "#007A33";
-  const awayColor = awayTeamData.color || "#CE1141";
-
   const venueNameFromGame = arena?.name ?? "";
   const venueCityFromGame = arena?.city ?? "";
   const neutralArenaData = neutralVenues[venueNameFromGame];
@@ -170,17 +172,17 @@ export default function GameDetailsScreen() {
     homeTeamData.longitude ??
     null;
 
+  // --- Colors ---
   const colors = useMemo(
     () => ({
-      background: isDark ? "#1d1d1d" : "#ffffff",
-      text: isDark ? "#ffffff" : "#000000",
-      secondaryText: isDark ? "#aaa" : "#444",
-      record: isDark ? "#fff" : "#1d1d1d",
-      score: isDark ? "#aaa" : "rgba(0, 0, 0, 0.4)",
-      winnerScore: isDark ? "#fff" : "#000",
-      live: isDark ? "#0f0" : "#090",
-      border: isDark ? "#333" : "#ccc",
-      finalText: isDark ? "#ff4c4c" : "#d10000",
+      background: isDark ? Colors.black : Colors.white,
+      text: isDark ? Colors.dark.white : Colors.light.black,
+      secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
+      record: isDark ? Colors.dark.white : Colors.light.black,
+      score: isDark ? Colors.lightGray : Colors.darkGray,
+      winnerScore: isDark ? Colors.dark.white : Colors.light.black,
+      border: isDark ? Colors.darkGray : Colors.lightGray,
+      finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
     }),
     [isDark]
   );
@@ -265,6 +267,8 @@ export default function GameDetailsScreen() {
     awayTeamData.name
   );
 
+  console.log("Game Details Data:", data);
+
   // ESPN IDs
   const homeEspnId = homeTeamData?.espnID;
   const awayEspnId = awayTeamData?.espnID;
@@ -276,9 +280,22 @@ export default function GameDetailsScreen() {
     gameDate
   );
 
+  const {
+    officials,
+    loading: officialsLoading,
+    error: officialsError,
+  } = useGameOfficials("nba", homeEspnId, awayEspnId, gameDate);
+
   const { headlineText } = useGameInfo(
     Number(homeEspnId),
     Number(awayEspnId),
+    gameDateStr
+  );
+
+  const { highlights } = useGameHighlights(
+    "nba",
+    homeEspnId ? Number(homeEspnId) : undefined,
+    awayEspnId ? Number(awayEspnId) : undefined,
     gameDateStr
   );
 
@@ -373,6 +390,8 @@ export default function GameDetailsScreen() {
           halftime={halftime}
           homeScore={homeScoreValue}
           awayScore={awayScoreValue}
+          awayTimeouts={data?.timeouts?.away?.remaining}
+          homeTimeouts={data?.timeouts?.home?.remaining}
           status={statusDisplay}
           period={quarterLabel}
           displayClock={displayClock}
@@ -387,6 +406,7 @@ export default function GameDetailsScreen() {
           homeRecord={homeRecord}
           awayRecord={awayRecord}
         />
+
         <View style={{ gap: 20, marginTop: 20 }}>
           <LastPlay lastPlay={liveScore?.lastPlay} />
           <GameOddsSection
@@ -451,10 +471,18 @@ export default function GameDetailsScreen() {
             league="NBA"
           />
           <TeamInjuriesTab injuries={data?.injuries ?? []} />
+
+          {highlights.length > 0 && (
+            <HighlightVideoList highlights={highlights} />
+          )}
+
           <GameUniforms
             homeTeamId={homeTeamData.id}
             awayTeamId={awayTeamData.id}
           />
+
+          <Officials officials={officials ?? []} loading={false} error={null} />
+
           <TeamLocationSection
             venueImage={resolvedArenaImage}
             venueName={resolvedArenaName}
@@ -477,5 +505,10 @@ export default function GameDetailsScreen() {
   );
 }
 const styles = StyleSheet.create({
-  container: { paddingVertical: 24, paddingHorizontal: 12, paddingBottom: 60 },
+  container: {
+    paddingTop: 0,
+    paddingVertical: 24,
+    paddingHorizontal: 12,
+    paddingBottom: 60,
+  },
 });

@@ -324,7 +324,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
           <View
             style={[
               styles.cardWrapper,
-              { borderRightColor: Colors.netural.darkGray },
+              { borderRightColor: Colors.darkGray },
             ]}
           >
             {/* Away Team */}
@@ -334,7 +334,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                 <Text style={[styles.teamName, { color: Colors.light.text }]}>
                   {getTeamRank(awayTeam.name) && (
                     <Text
-                      style={{ fontSize: 10, color: Colors.netural.darkGray }}
+                      style={{ fontSize: 10, color: Colors.darkGray }}
                     >
                       {getTeamRank(awayTeam.name)}
                     </Text>
@@ -362,7 +362,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                 <Text style={[styles.teamName, { color: Colors.light.text }]}>
                   {getTeamRank(homeTeam.name) && (
                     <Text
-                      style={{ fontSize: 10, color: Colors.netural.darkGray }}
+                      style={{ fontSize: 10, color: Colors.darkGray }}
                     >
                       {getTeamRank(homeTeam.name)}
                     </Text>
@@ -389,7 +389,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
             {status.isScheduled && (
               <>
                 <Text style={styles.date}>{formattedDate}</Text>
-                <Text style={[styles.time, { color: Colors.netural.darkGray }]}>
+                <Text style={[styles.time, { color: Colors.darkGray }]}>
                   {formattedTime}
                 </Text>
               </>

@@ -73,6 +73,10 @@ export const useNFLGamePossession = (
   const [downDistanceText, setDownDistanceText] = useState<
     string | undefined
   >();
+  const [firstDownYardLine, setFirstDownYardLine] = useState<
+    number | undefined
+  >();
+
   const [displayClock, setDisplayClock] = useState<string | undefined>();
   const [period, setPeriod] = useState<string | undefined>();
   const [lastPlay, setLastPlay] = useState<string | PlayObject | undefined>();
@@ -206,6 +210,9 @@ export const useNFLGamePossession = (
           setPossessionTeamId(
             espnPossessionId ? espnToInternal[espnPossessionId] : undefined
           );
+          const downInfo = competition.situation.shortDownDistanceText ?? "";
+          const lineOfScrimmage = competition.situation.yardLine; // 85
+          const yardsToGo = competition.situation.distance; // 10
 
           setShortDownDistanceText(competition.situation.shortDownDistanceText);
           setDownDistanceText(competition.situation.downDistanceText);
@@ -213,8 +220,8 @@ export const useNFLGamePossession = (
           setHomeTimeouts(competition.situation.homeTimeouts);
           setAwayTimeouts(competition.situation.awayTimeouts);
 
-          const downInfo = competition.situation.shortDownDistanceText ?? "";
           const fieldPosition = competition.situation.possessionText ?? "";
+          setFirstDownYardLine(lineOfScrimmage + yardsToGo);
           setPossessionText(
             downInfo && fieldPosition
               ? `${downInfo}, ${fieldPosition}`
@@ -306,6 +313,7 @@ export const useNFLGamePossession = (
   return {
     possessionTeamId,
     shortDownDistanceText,
+    firstDownYardLine,
     downDistanceText,
     displayClock,
     period,

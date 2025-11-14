@@ -47,6 +47,12 @@ export type TeamInjury = {
   }[];
 };
 
+// ✅ Add timeouts type
+export type Timeouts = {
+  home: { used: number; remaining: number };
+  away: { used: number; remaining: number };
+};
+
 // Response type
 export type GameDetailsResponse = {
   gameId: string;
@@ -64,16 +70,13 @@ export type GameDetailsResponse = {
   officials: string[] | Official[];
   injuries: TeamInjury[];
   boxScore?: any;
+  timeouts?: Timeouts; // ✅ include timeouts
 };
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 /**
- * Fetch detailed game info (officials, injuries, box score, etc.)
- * @param date - Game date (YYYY-MM-DD or YYYYMMDD)
- * @param home - Home team code (e.g. 'lal')
- * @param away - Away team code (e.g. 'bos')
- * @param league - League (default: 'nba')
+ * Fetch detailed game info (officials, injuries, box score, timeouts, etc.)
  */
 export function useGameDetails(
   date: string,
@@ -95,7 +98,6 @@ export function useGameDetails(
       setError(null);
 
       try {
-        // Ensure date is compact (YYYYMMDD)
         const compactDate = date.replace(/-/g, "");
 
         const url = `${BASE_URL}/api/espn/game-details?date=${compactDate}&home=${home.toLowerCase()}&away=${away.toLowerCase()}&league=${league.toLowerCase()}`;
@@ -107,7 +109,9 @@ export function useGameDetails(
       } catch (err: any) {
         if (!cancelled) {
           console.error("❌ useGameDetails fetch error:", err);
-          setError(err.response?.data?.error || err.message || "Failed to fetch game details");
+          setError(
+            err.response?.data?.error || err.message || "Failed to fetch game details"
+          );
         }
       } finally {
         if (!cancelled) {

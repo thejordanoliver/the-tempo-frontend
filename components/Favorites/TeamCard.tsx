@@ -1,7 +1,9 @@
+// ...
 import PlaceHolderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef,  } from "react";
+
 import {
   Animated,
   Easing,
@@ -11,6 +13,7 @@ import {
   View,
 } from "react-native";
 import type { LeagueType, Team } from "types/types";
+import React from "react";
 
 type TeamWithLeague = Team & { league: LeagueType };
 
@@ -23,7 +26,7 @@ type Props = {
   onImageLoad?: () => void;
 };
 
-export default function TeamCard({
+function TeamCard({
   item,
   isSelected,
   isGridView,
@@ -38,73 +41,6 @@ export default function TeamCard({
     const parts = item.fullName?.split(" ");
     return [parts?.slice(0, -1).join(" "), parts?.slice(-1).join(" ")];
   })();
-
-  const teamsWithLightLogoInDark = [
-    "Raptors",
-    "Jazz",
-    "76ers",
-    "Rockets",
-    "Giants",
-    "Jets",
-    "Duke",
-    "Duquesne",
-    "Indiana",
-    "Michigan State",
-    "Nevada",
-    "Northern Arizona",
-    "Rice",
-    "South Carolina",
-    "Texas",
-    "Ohio State",
-    "Tulsa",
-    "Washington",
-    "Texas A&M",
-    "Tennessee",
-    "UNLV",
-    "West Virginia",
-    "Virginia",
-    "Oregon",
-    "Oklahoma",
-    "Nebraska",
-    "Central Michigan",
-    "LSU",
-    "Iowa",
-    "Kansas State",
-    "Cincinnati",
-    "Clemson",
-    "California",
-    "BYU",
-    "TCU",
-    "Auburn",
-    "Baylor",
-    "Arkansas",
-    "Air Force",
-    "Alabama",
-    "UTEP",
-    "Eastern Michigan",
-    "Eastern Kentucky",
-    "UCLA",
-    "Utah",
-    "Washington State",
-    "Temple",
-    "Toledo",
-    "Wyoming",
-    "Kentucky",
-    "Utah State",
-    "Alabama A&M",
-    "Indiana State",
-    "Colgate",
-    "Charlotte",
-  ];
-
-  const shouldShowLight =
-    (isDark && teamsWithLightLogoInDark.includes(item.name ?? "")) ||
-    (!isDark && isSelected && !!item.logoLight);
-
-  const lightLogoOpacity = useRef(
-    new Animated.Value(shouldShowLight ? 1 : 0)
-  ).current;
-  const previousShouldShowLight = useRef(shouldShowLight);
 
   const selectionAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
   const previousSelected = useRef(isSelected);
@@ -128,32 +64,21 @@ export default function TeamCard({
       ? item.secondaryColor
       : undefined;
 
-  const selectedColor = isDark
-    ? [
-        "Grizzlies",
-        "Suns",
-        "Ravens",
-        "Texans",
-        "Cowboys",
-        "Broncos",
-        "Bears",
-        "Pelicans",
-        "Timberwolves",
-        "Jaguars",
-        "Charlotte",
-        "North Texas",
-      ].includes(item.name ?? "")
-      ? secondaryColor ?? "#888"
-      : item.color ?? "#888"
-    : item.color ?? "#888";
+const selectedColor =
+  typeof item.color === "string" && item.color.startsWith("#")
+    ? item.color
+    : Colors.midTone;
 
-  const backgroundColor = selectionAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [
-      isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
-      selectedColor,
-    ],
-  });
+const backgroundColor = selectionAnim.interpolate({
+  inputRange: [0, 1],
+  outputRange: [
+    isDark
+      ? Colors.dark.itemBackground || "#121212"
+      : Colors.light.itemBackground || "#f5f5f5",
+    selectedColor || "#888",
+  ],
+});
+
 
   const textColor = selectionAnim.interpolate({
     inputRange: [0, 1],
@@ -163,21 +88,20 @@ export default function TeamCard({
     ],
   });
 
-  useEffect(() => {
-    if (previousShouldShowLight.current !== shouldShowLight) {
-      Animated.timing(lightLogoOpacity, {
-        toValue: shouldShowLight ? 1 : 0,
-        duration: 300,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }).start();
-      previousShouldShowLight.current = shouldShowLight;
+  // ✅ Always use logoLight in dark mode if available, otherwise fallback
+  // ✅ Choose correct logo based on theme and selection
+  const logoSource = (() => {
+    if (isDark) {
+      return item.logoLight || item.logo || PlaceHolderLogo;
     }
-  }, [shouldShowLight]);
+    // In light mode: use logoLight when selected, if available
+    if (isSelected && item.logoLight) {
+      return item.logoLight;
+    }
+    return item.logo || PlaceHolderLogo;
+  })();
 
-  const logoSource = item.logo || item.logoLight || PlaceHolderLogo;
 
-  // Adjust logo size based on mode
   const logoSize = isGridView ? 50 : 40;
 
   return (
@@ -238,20 +162,6 @@ export default function TeamCard({
             style={[styles.logo, { width: logoSize, height: logoSize }]}
             onLoad={onImageLoad}
           />
-          {item.logoLight && (
-            <Animated.Image
-              source={item.logoLight}
-              style={[
-                styles.logo,
-                StyleSheet.absoluteFillObject,
-                {
-                  opacity: lightLogoOpacity,
-                  width: logoSize,
-                  height: logoSize,
-                },
-              ]}
-            />
-          )}
         </View>
 
         {/* Team Name */}
@@ -308,8 +218,9 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   sportTagText: {
-    color: "#fff",
+    color: Colors.white,
     fontSize: 11,
     fontFamily: Fonts.OSBOLD,
   },
 });
+export default React.memo(TeamCard);

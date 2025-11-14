@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -9,6 +10,7 @@ import { useTeamInfo } from "../../hooks/useTeamInfo";
 
 export const TeamRow = ({
   team,
+  rank,
   isDark,
   isHome = false,
   score,
@@ -16,10 +18,32 @@ export const TeamRow = ({
   colors,
   size = "medium",
   status,
+  timeouts,
   league = "nba", // ✅ defaults to NBA
 }: NBAProps & { status?: string; league?: "nba" | "cbb" }) => {
   const router = useRouter();
   const { team: detailedTeam } = useTeamInfo(team.id?.toString());
+
+  const renderTimeouts = (remaining: number) => {
+    const totalTimeouts = 6;
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: totalTimeouts }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 4,
+              height: 2,
+              borderRadius: 4,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              opacity: i < remaining ? 1 : 0.5,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };
 
   // ✅ Normalize CBB statuses to shared terms
   const normalizedStatus =
@@ -74,9 +98,9 @@ export const TeamRow = ({
     color: showRecordInsteadOfScore
       ? colors.record
       : isLive && isDark
-      ? "#ffffff"
+      ? Colors.white
       : isLive
-      ? "#1d1d1d"
+      ? Colors.black
       : isWinner
       ? colors.winnerScore
       : colors.score,
@@ -114,10 +138,13 @@ export const TeamRow = ({
               sizeStyles[size].teamName,
             ]}
           >
+            <Text style={{ fontSize: 10, color: Colors.lightGray }}>
+              {rank}
+            </Text>{" "}
             {team.code}
           </Text>
 
-          {!showRecordInsteadOfScore && (
+          {!showRecordInsteadOfScore && !isLive && (
             <Text
               style={[
                 styles.record,
@@ -127,6 +154,12 @@ export const TeamRow = ({
             >
               {displayRecord}
             </Text>
+          )}
+
+          {isLive && (
+            <View style={{ alignItems: "center" }}>
+              {renderTimeouts(timeouts)}
+            </View>
           )}
         </View>
       </View>

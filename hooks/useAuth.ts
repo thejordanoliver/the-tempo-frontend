@@ -1,4 +1,3 @@
-// hooks/useAuth.ts
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
@@ -19,12 +18,15 @@ export function useAuth() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  // Load user from AsyncStorage on mount
+  // 🔹 Load user & token from AsyncStorage
   useEffect(() => {
     const loadUser = async () => {
       try {
         const values = await AsyncStorage.multiGet([
+          "token",
+          "accessToken", // backward compatibility
           "userId",
           "username",
           "fullName",
@@ -35,24 +37,47 @@ export function useAuth() {
         ]);
 
         const userData: Record<string, string | null> = Object.fromEntries(values);
-        if (!userData.userId || !userData.username) return;
+        const storedToken = userData.token ?? userData.accessToken;
+        if (storedToken) setToken(storedToken);
 
-        setUser({
-          id: parseInt(userData.userId, 10),
-          username: userData.username,
-          full_name: userData.fullName ?? "",
-          bio: userData.bio ?? "",
-          profile_image: userData.profileImage ?? "",
-          banner_image: userData.bannerImage ?? "",
-          favorites: userData.favorites ? JSON.parse(userData.favorites) : [],
-        });
+        if (userData.userId && userData.username) {
+          setUser({
+            id: parseInt(userData.userId, 10),
+            username: userData.username,
+            full_name: userData.fullName ?? "",
+            bio: userData.bio ?? "",
+            profile_image: userData.profileImage ?? "",
+            banner_image: userData.bannerImage ?? "",
+            favorites: userData.favorites ? JSON.parse(userData.favorites) : [],
+          });
+        }
       } catch (err) {
-        console.error("Failed to load user from storage:", err);
+        console.error("Failed to load user:", err);
       }
     };
-
     loadUser();
   }, []);
+
+  // 🔹 Helper: store everything consistently
+  const handleAuthSuccess = async (token: string, user: User) => {
+    try {
+      setToken(token);
+      setUser(user);
+
+      await AsyncStorage.multiSet([
+        ["token", token],
+        ["userId", user.id.toString()],
+        ["username", user.username],
+        ["fullName", user.full_name ?? ""],
+        ["bio", user.bio ?? ""],
+        ["profileImage", user.profile_image ?? ""],
+        ["bannerImage", user.banner_image ?? ""],
+        ["favorites", JSON.stringify(user.favorites ?? [])],
+      ]);
+    } catch (err) {
+      console.error("Failed to save auth data:", err);
+    }
+  };
 
   const login = async (username: string, password: string) => {
     try {
@@ -67,18 +92,7 @@ export function useAuth() {
 
       const { token, user } = await res.json();
 
-      await AsyncStorage.multiSet([
-        ["token", token],
-        ["userId", user.id.toString()],
-        ["username", user.username],
-        ["fullName", user.full_name ?? ""],
-        ["bio", user.bio ?? ""],
-        ["profileImage", user.profile_image ?? ""],
-        ["bannerImage", user.banner_image ?? ""],
-        ["favorites", JSON.stringify(user.favorites ?? [])],
-      ]);
-
-      setUser(user);
+      await handleAuthSuccess(token, user);
       router.replace("/(tabs)/profile");
     } catch (err) {
       console.error("Login error:", err);
@@ -100,18 +114,7 @@ export function useAuth() {
 
       const { token, user } = await res.json();
 
-      await AsyncStorage.multiSet([
-        ["token", token],
-        ["userId", user.id.toString()],
-        ["username", user.username],
-        ["fullName", user.full_name ?? ""],
-        ["bio", user.bio ?? ""],
-        ["profileImage", user.profile_image ?? ""],
-        ["bannerImage", user.banner_image ?? ""],
-        ["favorites", JSON.stringify(user.favorites ?? [])],
-      ]);
-
-      setUser(user);
+      await handleAuthSuccess(token, user);
       router.replace("/(tabs)/profile");
     } catch (err) {
       console.error("Signup error:", err);
@@ -128,17 +131,14 @@ export function useAuth() {
       }
 
       await AsyncStorage.clear();
-
       setUser(null);
+      setToken(null);
       router.replace("/login");
     } catch (err) {
       console.warn("Logout error:", err);
     }
   };
 
-  /**
-   * Delete account with password confirmation
-   */
   const deleteAccount = async (password: string) => {
     try {
       const username = await AsyncStorage.getItem("username");
@@ -147,7 +147,7 @@ export function useAuth() {
       const res = await fetch(`${BASE_URL}/api/delete-account`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }), // 👈 send both
+        body: JSON.stringify({ username, password }),
       });
 
       if (!res.ok) {
@@ -157,6 +157,7 @@ export function useAuth() {
 
       await AsyncStorage.clear();
       setUser(null);
+      setToken(null);
       router.replace("/login");
     } catch (err) {
       console.error("Delete error:", err);
@@ -164,12 +165,5 @@ export function useAuth() {
     }
   };
 
-  return {
-    user,
-    login,
-    signup,
-    logout,
-    deleteAccount,
-    loading,
-  };
+  return { user, token, login, signup, logout, deleteAccount, loading };
 }

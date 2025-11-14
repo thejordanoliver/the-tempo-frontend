@@ -165,21 +165,20 @@ export default function CBBLeagueScreen() {
   };
 
   // --- Calendar marked dates ---
-  const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce((acc, game) => {
-      const localDate = new Date(game.date);
-      const iso = `${localDate.getFullYear()}-${String(
-        localDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
-      acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
-      return acc;
-    }, {} as Record<string, { marked: boolean; dotColor: string }>);
+const markDates = (gamesArray: any[]) =>
+  gamesArray.reduce((acc, game) => {
+    const d = dayjs.utc(game).local();
+    const iso = d.format("YYYY-MM-DD");
+    acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
+    return acc;
+  }, {});
 
   // ✅ Use centralized utility for filtering
   const filteredGames = React.useMemo(() => {
-    const gamesForDate = seasonGames.filter((game) =>
-      dayjs(game.date).isSame(selectedDate, "day")
-    );
+const gamesForDate = seasonGames.filter((game) =>
+  dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
+);
+
 
     return filterCBBGames({
       games: gamesForDate,

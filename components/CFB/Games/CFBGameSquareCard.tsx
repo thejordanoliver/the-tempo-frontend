@@ -17,7 +17,12 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
-import { getTeamRankFromAP, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import {
+  getTeamRankFromAPById,
+  getTeamRankFromCFPById,
+  useAPTop25,
+  useCFPTop25,
+} from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 type Props = {
@@ -41,9 +46,24 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     : null;
   const gameDateStr = gameDate?.toISOString();
 
+  // ✅ Load both CFP and AP rankings
+  const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-  const getTeamRank = (name: string) => getTeamRankFromAP(name, apTop25);
 
+  // ✅ Get ranking, falling back to AP poll if CFP is missing
+  // Check if CFP rankings are active (after they’ve been released)
+  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
+
+  // Main helper to get rank with conditional fallback
+  const getTeamRank = (id: number | string) => {
+    if (isCFPActive) {
+      // ✅ Use CFP ranking if rankings are active
+      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
+    }
+    // 🕓 Early season — fallback to AP Top 25
+    return getTeamRankFromAPById(id, apTop25) ?? "";
+  };
+  
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
@@ -254,7 +274,7 @@ function CFBGameSquareCard({ game, isDark }: Props) {
   };
 
   const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
+    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : "";
   const formattedTime = gameDate
     ? gameDate.toLocaleTimeString("en-US", {
@@ -306,9 +326,9 @@ function CFBGameSquareCard({ game, isDark }: Props) {
             <View style={styles.teamWrapper}>
               <Image source={awayTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
-                {getTeamRank(awayTeam.name) && (
+                {awayEspnId && getTeamRank(String(awayEspnId)) && (
                   <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(awayTeam.name)}
+                    {getTeamRank(String(awayEspnId))}
                   </Text>
                 )}{" "}
                 {awayTeam.code}
@@ -344,9 +364,9 @@ function CFBGameSquareCard({ game, isDark }: Props) {
             <View style={styles.teamWrapper}>
               <Image source={homeTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
-                {getTeamRank(homeTeam.name) && (
+                {homeEspnId && getTeamRank(String(homeEspnId)) && (
                   <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(homeTeam.name)}
+                    {getTeamRank(String(homeEspnId))}
                   </Text>
                 )}{" "}
                 {homeTeam.code}

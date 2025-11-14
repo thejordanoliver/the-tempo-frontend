@@ -1,8 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
+import TeamPlayerList from "components/CBB/Team/TeamRoster";
 import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
+import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import { players } from "constants/cbbPlayers";
 import { teams } from "constants/teamsCBB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
@@ -26,7 +29,6 @@ import { CBBGame, User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
-import TeamForum from "components/Forum/TeamForum";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -77,7 +79,8 @@ export default function TeamDetailScreen() {
     highlights: teamHighlights,
     loading: highlightsLoading,
     error: highlightsError,
-  } = useTeamHighlights(team?.fullName ?? "", 5);
+  } = useTeamHighlights("cbb", team?.fullName ?? "", 5);
+
   const {
     articles: newsArticles,
     loading: newsLoading,
@@ -353,10 +356,16 @@ export default function TeamDetailScreen() {
               ref={scrollViewRef}
               horizontal
               showsHorizontalScrollIndicator={false}
-              snapToInterval={70}
+              snapToInterval={82} // slightly wider for spacing
               decelerationRate="fast"
               scrollEventThrottle={16}
-              contentContainerStyle={{ paddingHorizontal: 12 }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 12,
+                paddingHorizontal: 20,
+              }}
             >
               {monthsToShow.map(({ label, month, year }, index) => {
                 const isSelected =
@@ -406,13 +415,17 @@ export default function TeamDetailScreen() {
         </ScrollView>
 
         {/* Roster Page */}
-        <View
-          key="roster"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>
-            Team Roster (TODO)
-          </Text>
+        <View key="roster" style={{ flex: 1 }}>
+          <TeamPlayerList
+            players={players.filter((p) => p.teamId === String(team.espnID))}
+            loading={false}
+            error={null}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            teamFullName={team?.fullName ?? "Unknown Team"}
+            teamColor={team?.color ?? "#888"}
+            isDark={isDark}
+          />
         </View>
 
         {/* Stats Page */}
@@ -424,9 +437,9 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Forum Page */}
-       <View key="forum" style={{ flex: 1 }}>
-               <TeamForum teamId={teamId as string} league="CBB" />
-             </View>
+        <View key="forum" style={{ flex: 1 }}>
+          <TeamForum teamId={teamId as string} league="CBB" />
+        </View>
       </PagerView>
 
       {/* --- Bottom Sheet --- */}

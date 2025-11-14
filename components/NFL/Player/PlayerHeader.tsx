@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
-import { Image, StyleSheet, Text, View } from "react-native";
-
+import { Image, Text, View } from "react-native";
+import { Colors } from "constants/Colors";
+import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeader.styles";
 type Props = {
   player: {
     first_name: string;
@@ -31,8 +31,6 @@ export default function PlayerHeader({
 }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
 
-  const useWhiteTextTeams = ["cin", "bal", "tb"];
-
   const getPrimaryTextColor = (
     isDark: boolean,
     teamName?: string,
@@ -40,51 +38,20 @@ export default function PlayerHeader({
   ): string => {
     const normalizedTeamName = teamName?.trim().toLowerCase() ?? "";
 
-    if (isDark && useWhiteTextTeams.includes(normalizedTeamName)) {
-      return secondaryTextColor;
-    }
-
-    return teamColor ?? (isDark ? "#fff" : "#000");
+    return teamColor ?? (isDark ? Colors.white : Colors.black);
   };
 
   const primaryTextColor = getPrimaryTextColor(isDark, team_name, teamColor);
 
-  // Use secondary color only in dark mode, fallback white; else black in light mode
-  const getSecondaryTextColor = (
-    isDark: boolean,
-    teamName?: string,
-    teamSecondaryColor?: string
-  ): string => {
-    const normalizedTeamName = teamName?.trim().toLowerCase() ?? "";
-
-    if (isDark) {
-      if (useWhiteTextTeams.includes(normalizedTeamName)) {
-        return "#fff";
-      }
-      return teamSecondaryColor ?? "#fff";
-    }
-
-    return "#1d1d1d"; // light mode
-  };
-
-  const secondaryTextColor = getSecondaryTextColor(
-    isDark,
-    team_name,
-    teamSecondaryColor
-  );
-
-  const dividerColor = isDark ? "#444" : "#ddd";
-  const avatarBg = isDark ? "#444" : "#ddd";
+  const styles = playerHeaderStyles(isDark);
 
   return (
     <View style={styles.playerHeader}>
-      <View
-        style={[styles.avatarContainer, { borderRightColor: dividerColor }]}
-      >
+      <View style={styles.avatarContainer}>
         {avatarUrl ? (
           <Image
             source={{ uri: avatarUrl }}
-            style={[styles.avatar, { backgroundColor: avatarBg }]}
+            style={styles.avatar}
             accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
           />
         ) : (
@@ -93,144 +60,36 @@ export default function PlayerHeader({
           </View>
         )}
         <View style={styles.jerseyNumber}>
-          <Text
-            style={[
-              styles.jersey,
-              { color: isDark ? secondaryTextColor : primaryTextColor },
-            ]}
-          >
+          <Text style={[styles.jersey]}>
             {player.position ?? "N"} #{player.jersey_number ?? "?"}
           </Text>
         </View>
       </View>
 
       <View style={styles.infoContainer}>
-        <Text
-          style={[
-            styles.name,
-            { color: isDark ? secondaryTextColor : primaryTextColor },
-          ]}
-        >
-          {player.first_name}
-        </Text>
-        <Text
-          style={[
-            styles.name,
-            { color: isDark ? secondaryTextColor : primaryTextColor },
-          ]}
-        >
-          {player.last_name}
-        </Text>
+        <Text style={styles.name}>{player.first_name}</Text>
+        <Text style={styles.name}>{player.last_name}</Text>
 
-        <Text
-          style={[styles.playerInfo, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              color: isDark ? secondaryTextColor : primaryTextColor,
-            }}
-          >
-            School:{" "}
-          </Text>
+        <Text style={[styles.playerInfo]}>
+          <Text style={styles.playerInfoLabel}>School: </Text>
           {player.college || "Unknown"}
         </Text>
 
-        <Text
-          style={[styles.playerInfo, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              color: isDark ? secondaryTextColor : primaryTextColor,
-            }}
-          >
-            Height:{" "}
-          </Text>
+        <Text style={[styles.playerInfo]}>
+          <Text style={styles.playerInfoLabel}>Height: </Text>
           {player.height ?? "?"}
         </Text>
 
-        <Text
-          style={[styles.playerInfo, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              color: isDark ? secondaryTextColor : primaryTextColor,
-            }}
-          >
-            Weight:{" "}
-          </Text>
+        <Text style={[styles.playerInfo]}>
+          <Text style={styles.playerInfoLabel}>Weight: </Text>
           {player.weight ?? "?"} lbs
         </Text>
 
-        <Text
-          style={[styles.playerInfo, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              color: isDark ? secondaryTextColor : primaryTextColor,
-            }}
-          >
-            Age:{" "}
-          </Text>
+        <Text style={[styles.playerInfo]}>
+          <Text style={styles.playerInfoLabel}>Age: </Text>
           {age != null ? `${age} years old` : "Unknown"}
         </Text>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  playerHeader: {
-    marginTop: 50,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-  },
-  avatarContainer: {
-    marginRight: 20,
-    paddingRight: 20,
-    borderRightWidth: 1,
-    alignItems: "center",
-  },
-  avatar: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-  },
-  avatarPlaceholder: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: "#888",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  initial: {
-    fontSize: 48,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  jerseyNumber: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  jersey: {
-    fontSize: 36,
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-  },
-  infoContainer: {
-    justifyContent: "center",
-  },
-  name: {
-    fontSize: 24,
-    fontFamily: Fonts.OSBOLD,
-  },
-  playerInfo: {
-    fontFamily: Fonts.OSLIGHT,
-  },
-});

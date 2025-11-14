@@ -14,7 +14,6 @@ type GameInfoProps = {
   homeTeam: string;
   awayTeam: string;
   broadcastNetworks?: string;
-  headlineText?: string;
 };
 
 export function GameInfo({
@@ -24,7 +23,6 @@ export function GameInfo({
   period,
   clock,
   halftime, // 👈 added here
-  headlineText,
   isDark,
   playoffInfo,
   homeTeam,

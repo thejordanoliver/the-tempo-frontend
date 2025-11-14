@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Animated, FlatList } from "react-native";
 import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "./FavoriteTeamsSelectorSkeleton";
@@ -33,6 +33,31 @@ const FavoriteTeamsSelector = ({
     });
   }, [teams, search]);
 
+
+
+  const renderItem = useCallback(
+  ({ item }: { item: LeagueTeam }) => {
+    const displayItem = {
+      ...item,
+      fullName:
+        item.league === "NFL" || item.league === "NBA"
+          ? item.fullName
+          : item.fullName || item.name,
+    };
+
+    return (
+      <TeamCard
+        item={displayItem}
+        isSelected={favorites.includes(`${item.league}:${item.id.toString()}`)}
+        onPress={() => toggleFavorite(item.league, item.id.toString())}
+        isGridView={isGridView}
+        itemWidth={itemWidth}
+      />
+    );
+  },
+  [favorites, isGridView, itemWidth, toggleFavorite]
+);
+
   if (loading) {
     return (
       <FavoriteTeamsSelectorSkeleton
@@ -59,28 +84,8 @@ const FavoriteTeamsSelector = ({
               }
             : undefined
         }
-        renderItem={({ item }) => {
-          // Only use fullName for NFL and NBA
-          const displayItem = {
-            ...item,
-            fullName:
-              item.league === "NFL" || item.league === "NBA"
-                ? item.fullName
-                : item.fullName || item.name,
-          };
+       renderItem={renderItem}
 
-          return (
-            <TeamCard
-              item={displayItem}
-              isSelected={favorites.includes(
-                `${item.league}:${item.id.toString()}`
-              )}
-              onPress={() => toggleFavorite(item.league, item.id.toString())}
-              isGridView={isGridView}
-              itemWidth={itemWidth}
-            />
-          );
-        }}
         showsVerticalScrollIndicator={false}
       />
     </Animated.View>

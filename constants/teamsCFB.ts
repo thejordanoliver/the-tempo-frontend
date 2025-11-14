@@ -197,6 +197,8 @@ import ArmyLogo from "../assets/College_Logos/Army.png";
 import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
 import CornellLogo from "../assets/College_Logos/Cornell.png";
 import DavidsonLogo from "../assets/College_Logos/Davidson.png";
+import DaytonLogo from "../assets/College_Logos/Dayton.png";
+import DaytonLogoLight from "../assets/College_Logos/DaytonLight.png";
 import DrakeLogo from "../assets/College_Logos/Drake.png";
 import ECULogo from "../assets/College_Logos/EastCarolina.png";
 import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
@@ -301,13 +303,11 @@ import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
 // Stadiums
 import MiamiStadium from "assets/Football/Arenas/DolphinsStadium.webp";
-import EverBankStadium from "assets/Football/Arenas/FloridaGeorgiaStadium.webp";
 import AlabamaStadium from "../assets/Football/Arenas/AlabamaStadium.webp";
 import ArkansasStadium from "../assets/Football/Arenas/ArkansasStadium.webp";
 import AuburnStadium from "../assets/Football/Arenas/AuburnStadium.webp";
 import BoiseStStadium from "../assets/Football/Arenas/BoiseStStadium.webp";
 import ClemsonStadium from "../assets/Football/Arenas/ClemsonStadium.webp";
-import CottonBowl from "../assets/Football/Arenas/CottonBowl.webp";
 import FIUStadium from "../assets/Football/Arenas/FIUStadium.webp";
 import FloridaStadium from "../assets/Football/Arenas/FloridaStadium.webp";
 import FloridaStStadium from "../assets/Football/Arenas/FloridaStStadium.webp";
@@ -2759,7 +2759,7 @@ export const teams: CFBTeam[] = [
     espnID: 331,
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
-    shortName: "East. Washington",
+    shortName: "EWU",
     code: "EWU",
     color: "#a10022",
     secondaryColor: "#abb4bc",
@@ -3118,9 +3118,15 @@ export const teams: CFBTeam[] = [
   },
   {
     id: 277,
+    espnID: 2168,
     name: "Dayton",
+    fullName: "Dayton Flyers",
+    shortName: "Dayton",
     code: "DAY",
-    logo: "https://media.api-sports.io/american-football/teams/277.png",
+    color: "#004B8D",
+    secondaryColor: "#ffffff",
+    logo: DaytonLogo,
+    logoLight: DaytonLogoLight,
   },
   {
     id: 278,
@@ -5518,10 +5524,16 @@ export const teams: CFBTeam[] = [
   },
   {
     id: 730,
+    espnID: 399,
     name: "UAlbany",
-
+    fullName: "UAlbany Great Danes",
+    shortName: "UAlbany",
+    code: "UALB",
+    color: "#3D2777",
+    secondaryColor: "#ffffff",
     logo: UAlbanyLogo,
   },
+
   {
     id: 731,
     name: "Tarleton State",
@@ -6514,10 +6526,12 @@ export const getTeamName = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   return team?.name || fallback || "Unknown Team";
 };
+
 export const getTeamCode = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   return team?.code || fallback || "UKNW";
 };
+
 export const getTeamCodeESPN = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   const teamESPN = teams.find((t) => String(t.espnID) === String(teamId));
@@ -6758,54 +6772,100 @@ export const logoMap: Record<string, any> = {
   WashingtonStateLogoLight: WashingtonStateLogoLight,
 };
 
-// Define known neutral-site matchups
-export const neutralSiteGames: Record<string, Venue> = {
-  "Florida-Georgia": {
-    name: "EverBank Stadium",
-    city: "Jacksonville, FL",
-    venueImage: EverBankStadium,
-    address: "1 EverBank Stadium Dr, Jacksonville, FL 32202",
-    latitude: 30.323471,
-    longitude: -81.636528,
-    venueCapacity: "67,838",
+export const neutralStadiums: Record<string, Venue> = {
+  "Corinthians Arena": {
+    name: "Corinthians Arena",
+    city: "São Paulo",
+    address:
+      "Av. Miguel Ignácio Curi, 111 - Vila Carmosina, São Paulo - SP, 08295-005, Brazil",
+    latitude: 23.5453,
+    longitude: -46.4742,
+    venueCapacity: "49,205",
+    venueImage: require("assets/Football/Arenas/CorinthiansArena.webp"),
   },
-  "Georgia-Florida": {
-    name: "EverBank Stadium",
-    city: "Jacksonville, FL",
-    venueImage: EverBankStadium,
-    address: "1 EverBank Stadium Dr, Jacksonville, FL 32202",
-    latitude: 30.323471,
-    longitude: -81.636528,
-    venueCapacity: "67,838",
+  "Croke Park": {
+    name: "Croke Park",
+    city: "Dublin",
+    address: "Jones Road Dublin 3 D03 P6K7 Ireland",
+    latitude: 53.3607,
+    longitude: 6.2511,
+    venueCapacity: "82,300",
+    venueImage: require("assets/Football/Arenas/CrokePark.webp"),
   },
-  "Texas-Oklahoma": {
-    name: "Cotton Bowl",
-    city: "Dallas, TX",
-    venueImage: CottonBowl,
-    address: "3750 The Midway, Dallas, TX 75215",
-    latitude: 32.7796,
-    longitude: 96.7596,
-    venueCapacity: "92,100",
+  "Tottenham Hotspur Stadium": {
+    name: "Tottenham Hotspur Stadium",
+    city: "London",
+    address: "782 High Rd, London N17 0BX, United Kingdom",
+    latitude: 51.6043,
+    longitude: 0.0662,
+    venueCapacity: "62,850",
+    venueImage: require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
   },
-  "Oklahoma-Texas": {
-    name: "Cotton Bowl",
-    city: "Dallas, TX",
-    venueImage: CottonBowl,
-    address: "3750 The Midway, Dallas, TX 75215",
-    latitude: 32.7796,
-    longitude: 96.7596,
-    venueCapacity: "92,100",
+  "Olympic Stadium Berlin": {
+    name: "Olympiastadion Berlin",
+    city: "Berlin",
+    address: "Olympischer Platz 3, 14053 Berlin, Germany",
+    latitude: 51.5387,
+    longitude: 0.0165,
+    venueCapacity: "74,475",
+    venueImage: require("assets/Football/Arenas/OlympicStadium.webp"),
   },
-  "Army-Navy": { name: "Lincoln Financial Field", city: "Philadelphia, PA" },
+  "Levi's® Stadium": {
+    name: "Levi's® Stadium",
+    city: "San Francisco",
+    address: "4900 Marie P DeBartolo Way, Santa Clara, CA 95054",
+    latitude: 37.4033,
+    longitude: -121.9694,
+    venueCapacity: "68,500",
+    venueImage: require("assets/Football/Arenas/NinersStadium.webp"),
+  },
+  "Wembley Stadium": {
+    name: "Wembley Stadium",
+    city: "London",
+    address: "Wembley HA9 0WS, United Kingdom",
+    latitude: 51.556,
+    longitude: 0.2796,
+    venueCapacity: "68,500",
+    venueImage: require("assets/Football/Arenas/WembleyStadium.webp"),
+  },
   "Aer Lingus Classic": {
     name: "Aviva Stadium",
-    city: "Dublin, Ireland",
-    venueImage: EverBankStadium,
+    city: "Dublin",
+    venueImage: require("assets/Football/Arenas/AvivaStadium.webp"),
     address: "Lansdowne Rd, Dublin 4, Ireland",
     latitude: 30.323471,
     longitude: -81.636528,
     venueCapacity: "67,838",
   },
+  "Everbank Stadium": {
+    name: "Everbank Stadium",
+    city: "Jacksonville",
+    venueImage: require("assets/Football/Arenas/FloridaGeorgiaStadium.webp"),
+    address: "1 EverBank Stadium Dr, Jacksonville, FL 32202",
+    latitude: 30.323471,
+    longitude: -81.636528,
+    venueCapacity: "67,838",
+  },
+  "Wrigley Field": {
+    name: "Wrigley Field",
+    city: "Chicago",
+    venueImage: require("assets/Football/Arenas/WrigleyField.webp"),
+    address: "1060 W Addison St, Chicago, IL 60613",
+    latitude:  41.5653,
+    longitude: -87.3920,
+    venueCapacity: "41,649",
+  },
+};
+
+export const venueImages: Record<string, any> = {
+  "Corinthians Arena": require("assets/Football/Arenas/CorinthiansArena.webp"),
+  "Croke Park": require("assets/Football/Arenas/CrokePark.webp"),
+  "Tottenham Hotspur Stadium": require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
+  "Olympic Stadium Berlin": require("assets/Football/Arenas/OlympicStadium.webp"),
+  "Wembley Stadium": require("assets/Football/Arenas/WembleyStadium.webp"),
+  "Levi's® Stadium": require("assets/Football/Arenas/NinersStadium.webp"),
+  "Everbank Stadium": require("assets/Football/Arenas/FloridaGeorgiaStadium.webp"),
+  "Cotton Bowl": require("assets/Football/Arenas/CottonBowl.webp"),
 };
 
 export const getTeamByESPNId = (espnId: number | string) => {

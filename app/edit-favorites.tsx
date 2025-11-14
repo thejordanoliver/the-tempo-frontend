@@ -21,8 +21,10 @@ import {
 } from "react-native";
 import type { LeagueType, Team } from "types/types";
 import Button from "components/Button";
+
+
 // Create a lookup map at the top of your component
-const leagueMap: Record<string, LeagueType> = {};
+export const leagueMap: Record<string, LeagueType> = {};
 [...teams].forEach((t) => {
   leagueMap[t.id.toString()] = "NBA";
 });
@@ -94,56 +96,37 @@ export default function EditFavoritesScreen() {
       />
 
       <Animated.View style={{ flex: 1, opacity: fadeAnim}}>
-        <FavoriteTeamsSelector
-          teams={[
-            ...teams.map(
-              (t) =>
-                ({ ...t, league: "NBA", id: t.id.toString() } as Team & {
-                  league: "NBA";
-                })
-            ),
-            ...nflteams.map(
-              (t) =>
-                ({ ...t, league: "NFL", id: t.id.toString() } as Team & {
-                  league: "NFL";
-                })
-            ),
+    
+<FavoriteTeamsSelector
+  teams={[
+    ...teams.map((t) => ({ ...t, league: "NBA", id: t.id.toString() } as Team & { league: "NBA" })),
+    ...nflteams.map((t) => ({ ...t, league: "NFL", id: t.id.toString() } as Team & { league: "NFL" })),
 
-            // ✅ Only show CFB teams that appear in the FBS conference map
-            ...cfbteams
-              .filter((t) => {
-                // Flatten all conference team names into one array
-                const fbsTeamNames = Object.values(conferenceListMap).flat();
-                return fbsTeamNames.includes(t.fullName || t.name);
-              })
-              .map(
-                (t) =>
-                  ({ ...t, league: "CFB", id: t.id.toString() } as Team & {
-                    league: "CFB";
-                  })
-              ),
-            ...cbbTeams
-              .filter((t) => {
-                // Flatten all conference team names into one array
-                const fbsTeamNames = Object.values(conferenceListMap).flat();
-                return fbsTeamNames.includes(t.fullName || t.name);
-              })
-              .map(
-                (t) =>
-                  ({ ...t, league: "CBB", id: t.id.toString() } as Team & {
-                    league: "CBB";
-                  })
-              ),
-          ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
-          favorites={favorites}
-          toggleFavorite={(league: LeagueType, id: string) =>
-            toggleFavorite(league, id)
-          }
-          isGridView={isGridView}
-          fadeAnim={fadeAnim}
-          search={search}
-          itemWidth={itemWidth}
-        />
+    // ✅ Show all CFB teams, but prioritize matching names in FBS map if available
+    ...cfbteams
+ .filter((t) => {
+  const fbsTeamNames = Object.values(conferenceListMap).flat().map((n) => n.toLowerCase());
+  const name = (t.fullName || t.name || "").toLowerCase();
+  // Include team if its name partially matches any FBS team
+  return (
+    fbsTeamNames.length === 0 ||
+    fbsTeamNames.some((n) => n.includes(name) || name.includes(n))
+  );
+})
+
+      .map((t) => ({ ...t, league: "CFB", id: t.id.toString() } as Team & { league: "CFB" })),
+
+    // ✅ Show all CBB teams (don’t depend on FBS map)
+    ...cbbTeams.map((t) => ({ ...t, league: "CBB", id: t.id.toString() } as Team & { league: "CBB" })),
+  ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
+  favorites={favorites}
+  toggleFavorite={(league: LeagueType, id: string) => toggleFavorite(league, id)}
+  isGridView={isGridView}
+  fadeAnim={fadeAnim}
+  search={search}
+  itemWidth={itemWidth}
+/>
+
       </Animated.View>
 
       <Button onPress={handleSave} style={styles.saveButton}/>

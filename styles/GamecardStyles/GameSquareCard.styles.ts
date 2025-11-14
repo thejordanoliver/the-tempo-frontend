@@ -12,15 +12,14 @@ export const getStyles = (dark: boolean) =>
         : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 12,
-      paddingHorizontal: 8,
       paddingVertical: 16,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: dark ? Colors.netural.darkGray : Colors.netural.lightGray,
+      borderRightColor: dark ? Colors.darkGray : Colors.lightGray,
       borderRightWidth: 0.5,
-      paddingRight: 12,
+     
       gap: 8,
     },
     teamSection: {
@@ -28,12 +27,13 @@ export const getStyles = (dark: boolean) =>
       justifyContent: "flex-start",
       alignItems: "center",
       gap: 4,
+      paddingHorizontal: 8,
     },
     teamWrapper: {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
-      width: 80,
+      width: 72,
     },
     logo: { width: 28, height: 28, resizeMode: "contain" },
     footballIcon: {

@@ -1,4 +1,5 @@
 import { Fonts } from "constants/fonts";
+import { players } from "constants/nflPlayers";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { useMemo, useState } from "react";
 import {
@@ -12,7 +13,6 @@ import {
 import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import FixedWidthTabBar from "../TabBars/FixedWidthTabBar";
-import { players } from "constants/nflPlayers";
 
 type Injury = {
   status: string;
@@ -121,9 +121,7 @@ export default function NFLInjuries({
     );
 
     const avatarUrl =
-      playerMatch?.image ||
-      player.headshot?.href ||
-      DEFAULT_HEADSHOT;
+      playerMatch?.image || player.headshot?.href || DEFAULT_HEADSHOT;
 
     return (
       <View
@@ -166,8 +164,7 @@ export default function NFLInjuries({
         {item.details?.returnDate && (
           <View style={getStyles.bottom}>
             <Text style={getStyles.status}>
-              Return:{" "}
-              {new Date(item.details.returnDate).toLocaleDateString()}
+              Return: {new Date(item.details.returnDate).toLocaleDateString()}
             </Text>
           </View>
         )}
@@ -213,7 +210,7 @@ export default function NFLInjuries({
               <Image
                 source={logo}
                 style={[
-                  { width: 20, height: 20, opacity: isSelected ? 1 : 0.5 },
+                  { width: 28, height: 28, opacity: isSelected ? 1 : 0.5 },
                 ]}
                 resizeMode="contain"
               />

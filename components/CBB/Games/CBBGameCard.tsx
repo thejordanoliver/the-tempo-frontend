@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-
 import { getTeamLogo, teams } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -7,6 +6,7 @@ import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { memo, useMemo, useState } from "react";
 import {
@@ -47,20 +47,21 @@ function CBBGameCard({ game, isDark }: Props) {
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
   const { rankings } = useCBBRankings();
+
   // --- Extract AP Top 25 ---
   const apTop25 = useMemo(() => {
     if (!rankings) return [];
     const apPoll = rankings.find((p) => p.shortName === "AP Poll");
     if (!apPoll) return [];
     return apPoll.ranks.slice(0, 25).map((r) => ({
-      name: r.team?.nickname, // use the same key as your game data
+      id: r.team?.id, // <-- use team id
       rank: r.current,
     }));
   }, [rankings]);
 
-  // --- Helper to get rank for a team ---
-  const getTeamRank = (teamName: string) => {
-    const found = apTop25.find((t) => t.name === teamName);
+  const getTeamRank = (teamId: string | number) => {
+    const idStr = String(teamId);
+    const found = apTop25.find((t) => t.id === idStr);
     return found ? found.rank : undefined;
   };
 
@@ -81,72 +82,71 @@ function CBBGameCard({ game, isDark }: Props) {
   // --- Game status ---
   const statusData = game?.status ?? game?.status ?? {};
 
-  const status = useMemo(() => {
-    const long = statusData?.long ?? "";
-    const short = String(statusData?.short ?? "").toLowerCase();
-    const longLower = long.toLowerCase();
+const status = useMemo(() => {
+  const long = statusData?.long ?? "";
+  const short = String(statusData?.short ?? "").toLowerCase();
+  const longLower = long.toLowerCase();
 
-    const livePhrases = [
-      "in play",
-      "playing",
-      "live",
-      "in progress",
-      "1st half",
-      "2nd half",
-      "quarter 1",
-      "quarter 2",
-      "quarter 3",
-      "quarter 4",
-      "q1",
-      "q2",
-      "q3",
-      "q4",
-      "overtime",
-      "ot",
-    ];
+  const livePhrases = [
+    "in play",
+    "playing",
+    "live",
+    "in progress",
+    "1st half",
+    "2nd half",
+    "quarter 1",
+    "quarter 2",
+    "quarter 3",
+    "quarter 4",
+    "q1",
+    "q2",
+    "q3",
+    "q4",
+  ];
 
-    const isHalftime =
-      longLower.includes("halftime") ||
-      statusData?.long.toLowerCase?.() === "halftime" ||
-      statusData?.short.toLowerCase?.() === "halftime";
+  const isHalftime =
+    longLower.includes("halftime") ||
+    statusData?.long?.toLowerCase?.() === "halftime" ||
+    statusData?.short?.toLowerCase?.() === "halftime";
 
-    let isFinal =
-      ["final", "game finished", "ended"].some((s) => longLower.includes(s)) ||
-      short.includes("ft");
+  let isFinal =
+    ["final", "game finished", "ended"].some((s) => longLower.includes(s)) ||
+    short.includes("ft");
 
-    // ✅ Treat "AOT" as final
-    if (longLower.includes("aot") || short.includes("aot")) {
-      isFinal = true;
-    }
+  // ✅ Treat "AOT" as final
+  if (longLower.includes("aot") || short.includes("aot")) {
+    isFinal = true;
+  }
 
-    const isScheduled = ["not started", "scheduled", "upcoming"].some((s) =>
-      longLower.includes(s)
-    );
+  const isScheduled = ["not started", "scheduled", "upcoming"].some((s) =>
+    longLower.includes(s)
+  );
 
-    const isLive =
-      !isHalftime &&
-      (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
-        (statusData?.timer && statusData.timer !== "")) &&
-      !longLower.includes("end of") &&
-      !longLower.includes("final");
+  // ✅ Live only if not final
+  const isLive =
+    !isFinal &&
+    !isHalftime &&
+    (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
+      (statusData?.timer && statusData.timer !== "")) &&
+    !longLower.includes("end of");
 
-    return {
-      isScheduled,
-      isFinal,
-      wentOT:
-        longLower.includes("ot") ||
-        longLower.includes("overtime") ||
-        short.includes("ot"),
-      isCanceled: longLower.includes("canceled"),
-      isDelayed: longLower.includes("delayed"),
-      isPostponed: longLower.includes("postponed"),
-      isHalftime,
-      isLive,
-      short: statusData?.short,
-      long,
-      timer: statusData?.timer,
-    };
-  }, [statusData]);
+  return {
+    isScheduled,
+    isFinal,
+    wentOT:
+      longLower.includes("ot") ||
+      longLower.includes("overtime") ||
+      short.includes("ot"),
+    isCanceled: longLower.includes("canceled"),
+    isDelayed: longLower.includes("delayed"),
+    isPostponed: longLower.includes("postponed"),
+    isHalftime,
+    isLive,
+    short: statusData?.short,
+    long,
+    timer: statusData?.timer,
+  };
+}, [statusData]);
 
   const possession = status.isLive
     ? useCBBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
@@ -167,6 +167,13 @@ function CBBGameCard({ game, isDark }: Props) {
   const { headlineText } = useCBBHeadline(
     Number(homeEspnId),
     Number(awayEspnId),
+    gameDateStr
+  );
+
+  const { score: liveScore, isLive } = useGameScores(
+    "mens-college-basketball",
+    homeEspnId?.toString(),
+    awayEspnId?.toString(),
     gameDateStr
   );
 
@@ -193,6 +200,9 @@ function CBBGameCard({ game, isDark }: Props) {
     return isHome ? homeScore : awayScore;
   };
 
+
+  
+
   const displayStatus = (() => {
     const base =
       gameStatusDescription ??
@@ -215,6 +225,8 @@ function CBBGameCard({ game, isDark }: Props) {
 
   const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
   const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
+  const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
 
   // --- Memoized team objects ---
   const awayTeam = useMemo(
@@ -258,6 +270,7 @@ function CBBGameCard({ game, isDark }: Props) {
       status.isLive,
     ]
   );
+
   // --- Broadcasts ---
   const { broadcasts } = useGameBroadcasts(
     homeTeam.name,
@@ -265,9 +278,6 @@ function CBBGameCard({ game, isDark }: Props) {
     gameDateStr,
     "mens-college-basketball"
   );
-
-  const homeScore = possession.score?.home ?? game.scores?.home?.total ?? 0;
-  const awayScore = possession.score?.away ?? game.scores?.away?.total ?? 0;
 
   const broadcastText = getBroadcastDisplay(broadcasts);
 
@@ -334,12 +344,12 @@ function CBBGameCard({ game, isDark }: Props) {
     <TouchableOpacity
       activeOpacity={0.85}
       onPress={() =>
-router.push({
-  pathname: "/game/cbb/[game]",
-  params: {
-    game: `${homeId}-${awayId}-${gameDateStr}`,
-  },
-})
+        router.push({
+          pathname: "/game/cbb/[game]",
+          params: {
+            game: `${homeId}-${awayId}-${gameDateStr}`,
+          },
+        })
       }
     >
       {isChampionshipGame ? (
@@ -358,9 +368,9 @@ router.push({
                 { width: 100, flexDirection: "row", color: "#1d1d1d" },
               ]}
             >
-              {getTeamRank(awayTeam.name) && (
-                <Text style={{ fontSize: 10, color: "#444" }}>
-                  {getTeamRank(awayTeam.name)}
+              {getTeamRank(String(awayTeam.espnID)) && (
+                <Text style={{ fontSize: 10, color: "#1d1d1d" }}>
+                  {getTeamRank(String(awayTeam.espnID))}
                 </Text>
               )}{" "}
               {awayTeam.shortName || awayTeam.name}
@@ -423,7 +433,7 @@ router.push({
                   </View>
                 )}
               </>
-            ) : status.isHalftime ? (
+            ) : gameStatusShortDetail?.toLowerCase() === "halftime" ? (
               <>
                 <Text style={[styles.date, { color: "#1d1d1d" }]}>
                   {displayStatus}
@@ -471,9 +481,9 @@ router.push({
                 { width: 100, flexDirection: "row", color: "#1d1d1d" },
               ]}
             >
-              {getTeamRank(homeTeam.name) && (
+              {getTeamRank(String(homeTeam.espnID)) && (
                 <Text style={{ fontSize: 10, color: "#1d1d1d" }}>
-                  {getTeamRank(homeTeam.name)}
+                  {getTeamRank(String(homeTeam.espnID))}
                 </Text>
               )}{" "}
               {homeTeam.shortName || homeTeam.name}
@@ -503,9 +513,9 @@ router.push({
             <Text
               style={[styles.teamName, { width: 100, flexDirection: "row" }]}
             >
-              {getTeamRank(awayTeam.name) && (
+              {getTeamRank(String(awayTeam.espnID)) && (
                 <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(awayTeam.name)}
+                  {getTeamRank(String(awayTeam.espnID))}
                 </Text>
               )}{" "}
               {awayTeam.shortName ? awayTeam.shortName : awayTeam.name}
@@ -581,9 +591,9 @@ router.push({
             <Text
               style={[styles.teamName, { width: 100, flexDirection: "row" }]}
             >
-              {getTeamRank(homeTeam.name) && (
+              {getTeamRank(String(homeTeam.espnID)) && (
                 <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(homeTeam.name)}
+                  {getTeamRank(String(homeTeam.espnID))}
                 </Text>
               )}{" "}
               {homeTeam.shortName ? homeTeam.shortName : homeTeam.name}

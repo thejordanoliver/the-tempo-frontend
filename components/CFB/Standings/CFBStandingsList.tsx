@@ -116,8 +116,8 @@ export const CFBStandingsList = () => {
                       : isDown
                       ? Colors.dark.lightRed
                       : isDark
-                      ? Colors.netural.white
-                      : Colors.netural.black,
+                      ? Colors.white
+                      : Colors.black,
                   },
                 ]}
               >

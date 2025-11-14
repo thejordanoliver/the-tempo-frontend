@@ -1,18 +1,24 @@
+import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
 import { LastFiveGamesSwitcher } from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
+import LastPlay from "components/GameDetails/LastPlay";
+import Officials from "components/GameDetails/Officials";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
+import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
+import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
+import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useGameStatistics } from "hooks/useGameStatistics";
-import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
+import { useGameOfficials } from "hooks/useGameOfficials";
+import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, {
@@ -35,10 +41,10 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
-const parts = String(game).split("-");
-const homeId = parts[0];
-const awayId = parts[1];
-const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11-04")
+  const parts = String(game).split("-");
+  const homeId = parts[0];
+  const awayId = parts[1];
+  const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11-04")
 
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
@@ -105,35 +111,44 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
   });
   const gameDateStr = gameDateObj.toISOString();
 
+  const { rankings } = useCBBRankings();
+
+  // --- Extract AP Top 25 ---
+  const apTop25 = useMemo(() => {
+    if (!rankings) return [];
+    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
+    if (!apPoll) return [];
+    return apPoll.ranks.slice(0, 25).map((r) => ({
+      id: r.team?.id, // <-- use team id
+      rank: r.current,
+    }));
+  }, [rankings]);
+
+  const getTeamRank = (teamId: string | number) => {
+    const idStr = String(teamId);
+    const found = apTop25.find((t) => t.id === idStr);
+    return found ? found.rank : undefined;
+  };
+
   // --- Colors ---
   const colors = useMemo(
     () => ({
-      background: isDark ? "#1d1d1d" : "#ffffff",
-      text: isDark ? "#ffffff" : "#000000", 
-      secondaryText: isDark ? "#aaa" : "#444",
-      record: isDark ? "#fff" : "#1d1d1d",
-      score: isDark ? "#aaa" : "rgba(0, 0, 0, 0.4)",
-      winnerScore: isDark ? "#fff" : "#000",
-      live: isDark ? "#0f0" : "#090",
-      border: isDark ? "#333" : "#ccc",
-      finalText: isDark ? "#ff4c4c" : "#d10000",
+      background: isDark ? Colors.black : Colors.white,
+      text: isDark ? Colors.dark.white : Colors.light.black,
+      secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
+      record: isDark ? Colors.dark.white : Colors.light.black,
+      score: isDark ? Colors.lightGray : Colors.darkGray,
+      winnerScore: isDark ? Colors.dark.white : Colors.light.black,
+      border: isDark ? Colors.darkGray : Colors.lightGray,
+      finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
     }),
     [isDark]
   );
 
-  // --- Hooks ---
-  const season = 2025;
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
   const { record: homeRecord } = useTeamRecord(homeTeamData.espnID, "cbb");
   const { record: awayRecord } = useTeamRecord(awayTeamData.espnID, "cbb");
-  const gameId = Number(`${homeTeamId}${awayTeamId}`);
-  const { data: gameStats } = useGameStatistics(gameId);
-  const { games: playoffGames } = useFetchPlayoffGames(
-    homeTeamId,
-    awayTeamId,
-    season
-  );
 
   const lat = homeTeamData.latitude ?? null;
   const lon = homeTeamData.longitude ?? null;
@@ -159,13 +174,33 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
   const livePossession = useCBBGamePossession(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr,
+    gameDateStr
+  );
+
+  const { score: liveScore, isLive } = useGameScores(
+    "mens-college-basketball",
+    homeEspnId?.toString(),
+    awayEspnId?.toString(),
+    gameDate
+  );
+
+  const {
+    officials,
+    loading: officialsLoading,
+    error: officialsError,
+  } = useGameOfficials("cbb", homeEspnId, awayEspnId, gameDate);
+
+  const { highlights } = useGameHighlights(
+    "cbb",
+    homeEspnId ? Number(homeEspnId) : undefined,
+    awayEspnId ? Number(awayEspnId) : undefined,
+    gameDate
   );
 
   // --- Derived Data ---
-  const displayHomeScore = livePossession?.score?.home ?? 0;
-  const displayAwayScore = livePossession?.score?.away ?? 0;
-  const displayClock = livePossession?.displayClock ?? "";
+  const displayHomeScore = liveScore?.home.total ?? 0;
+  const displayAwayScore = liveScore?.away.total ?? 0;
+  const displayClock = liveScore?.displayClock ?? "";
   const statusDisplay = livePossession?.gameStatusDescription ?? "Scheduled";
   const periodNum = Number(livePossession?.period ?? 0);
   const quarterLabel =
@@ -212,6 +247,8 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
           awayTeamData={awayTeamData}
           home={{ name: homeTeamData.name }}
           away={{ name: awayTeamData.name }}
+          rankHome={`${getTeamRank(String(homeEspnId)) ?? ""}`}
+          rankAway={`${getTeamRank(String(awayEspnId)) ?? ""}`}
           homeScore={displayHomeScore}
           awayScore={displayAwayScore}
           status={statusDisplay}
@@ -236,6 +273,8 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
             awayCode={awayTeamData.code!}
             gameId={`${homeTeamId}-${awayTeamId}`}
           />
+
+          <LastPlay lastPlay={liveScore?.lastPlay} />
 
           <WinPredictionVote
             gameId={`${homeTeamId}-${awayTeamId}`}
@@ -273,6 +312,22 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
             }}
             league="CBB"
           />
+
+          {highlights.length > 0 && (
+            <HighlightVideoList highlights={highlights} />
+          )}
+
+          <Officials officials={officials ?? []} loading={false} error={null} />
+
+          {/* <TeamLocationSection
+            venueImage={}
+            venueName={}
+            location={}
+            address={resolvedArenaAddress}
+            venueCapacity={resolvedArenaCapacity}
+            loading={weatherLoading}
+            error={weatherError}
+          /> */}
         </View>
       </ScrollView>
 
@@ -297,8 +352,8 @@ const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 24,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
+    paddingTop: 0,         // remove top padding
+    paddingBottom: 60,     // keep bottom padding
+    paddingHorizontal: 12, // horizontal padding stays
   },
 });

@@ -15,16 +15,16 @@ import { neutralStadiums, teams, venueImages } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
+import { useNFLGameOfficialsAndInjuries } from "hooks/NFLHooks/useNFLGameDetails";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
-import { useNFLGameOfficialsAndInjuries } from "hooks/NFLHooks/useNFLOfficials";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { Game } from "types/nfl";
+import NFLOfficials from "../../GameDetails/Officials";
 import NFLGameLeaders from "../GameDetails/NFLGameLeaders";
 import NFLInjuries from "../GameDetails/NFLInjuries";
-import NFLOfficials from "../GameDetails/NFLOfficials";
 import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamInfo from "./TeamInfo";
 type Props = {
@@ -328,7 +328,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
               >
                 <TeamInfo
                   team={awayTeamData}
-                  teamName={awayTeamData.name ?? "Away"}
+                  teamName={awayTeamData.code ?? "Away"}
                   score={scores?.away?.total ?? 0}
                   opponentScore={scores?.home?.total ?? 0} // 👈 add this
                   record={awayRecord?.overall ?? "0-0"}
@@ -368,7 +368,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
                 <TeamInfo
                   team={homeTeamData}
-                  teamName={homeTeamData.name ?? "Home"}
+                  teamName={homeTeamData.code ?? "Home"}
                   score={scores?.home?.total ?? 0}
                   opponentScore={scores?.away?.total ?? 0} // 👈 add this
                   record={homeRecord?.overall ?? "0-0"}
@@ -414,8 +414,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                       />
                     )}
 
-                    
-
                   <NFLTeamDrives
                     previousDrives={previousDrives ?? []}
                     currentDrives={currentDrives ?? []}
@@ -424,7 +422,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     lighter
                   />
 
-                    <LastFiveGamesSwitcher
+                  <LastFiveGamesSwitcher
                     isDark={isDark}
                     home={{
                       teamCode: homeTeamData.code,
@@ -441,7 +439,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     league="NFL"
                     lighter
                   />
-
 
                   <NFLInjuries
                     injuries={injuries}
@@ -552,7 +549,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
               >
                 <TeamInfo
                   team={awayTeamData}
-                  teamName={awayTeamData.name ?? "Away"}
+                  teamName={awayTeamData.code ?? "Away"}
                   score={scores?.away?.total ?? 0}
                   opponentScore={scores?.home?.total ?? 0} // 👈 add this
                   record={awayRecord?.overall ?? "0-0"}
@@ -592,7 +589,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
                 <TeamInfo
                   team={homeTeamData}
-                  teamName={homeTeamData.name ?? "Home"}
+                  teamName={homeTeamData.code ?? "Home"}
                   score={scores?.home?.total ?? 0}
                   opponentScore={scores?.away?.total ?? 0} // 👈 add this
                   record={homeRecord?.overall ?? "0-0"}

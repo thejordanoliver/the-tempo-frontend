@@ -85,7 +85,7 @@ const TeamBackground = ({
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
 }) => {
-  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
+  const defaultBgColor = isDark ? Colors.black : Colors.white;
 
   if (!(isTeamScreen || isPlayerScreen)) {
     return (
@@ -145,7 +145,7 @@ const ConferenceBackground = ({
   conferenceColor?: string;
   isConferenceScreen: boolean;
 }) => {
-  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
+  const defaultBgColor = isDark ? Colors.black : Colors.white;
 
   if (!isConferenceScreen) {
     return (
@@ -474,7 +474,7 @@ export function CustomHeaderTitle({
 
   const conferenceLogo = selectedConference?.logo ?? null;
   const primaryColor =
-    selectedConference?.color?.primary || (isDark ? Colors.netural.black : Colors.netural.white);
+    selectedConference?.color?.primary || (isDark ? Colors.black : Colors.white);
   const secondaryColor = selectedConference?.color?.secondary || primaryColor;
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -521,18 +521,18 @@ export function CustomHeaderTitle({
     );
   }, [awayTeamCode, league]);
 
-  const defaultBgColor = isDark ? Colors.netural.black : Colors.netural.white;
+  const defaultBgColor = isDark ? Colors.black : Colors.white;
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
-    color: isDark ? Colors.netural.white : Colors.netural.black,
+    color: isDark ? Colors.white : Colors.black,
     textAlign: "center",
   };
   const constantTextStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
-    color: Colors.netural.white,
+    color: Colors.white,
     textAlign: "center",
   };
 
@@ -576,7 +576,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="log-out-outline"
               size={24}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : showBackButton && onBack ? (
@@ -586,10 +586,10 @@ export function CustomHeaderTitle({
               size={24}
               color={
                 tabName === "Game" || selectedConference || isTeamScreen
-                  ? Colors.netural.white
+                  ? Colors.white
                   : isDark
-                  ? Colors.netural.white
-                  : Colors.netural.black
+                  ? Colors.white
+                  : Colors.black
               }
             />
           </TouchableOpacity>
@@ -629,7 +629,7 @@ export function CustomHeaderTitle({
                   name="chevron-down"
                   size={20}
                   color={
-                    selectedConference ? Colors.netural.white : isDark ? Colors.netural.white : Colors.netural.black
+                    selectedConference ? Colors.white : isDark ? Colors.white : Colors.black
                   }
                 />
               </Animated.View>
@@ -656,7 +656,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name={isFavorite ? "star" : "star-outline"}
                   size={24}
-                  color={Colors.netural.white}
+                  color={Colors.white}
                 />
               </TouchableOpacity>
             )}
@@ -668,7 +668,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name={isNotified ? "notifications" : "notifications-outline"}
                   size={24}
-                  color={Colors.netural.white}
+                  color={Colors.white}
                 />
               </TouchableOpacity>
             )}
@@ -677,7 +677,7 @@ export function CustomHeaderTitle({
                 <Ionicons
                   name="information-circle-outline"
                   size={24}
-                  color={Colors.netural.white}
+                  color={Colors.white}
                 />
               </TouchableOpacity>
             )}
@@ -687,7 +687,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="settings-outline"
               size={24}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : tabName === "League" && onCalendarPress ? (
@@ -695,7 +695,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="calendar-outline"
               size={24}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : tabName === "Explore" && onSearchToggle ? (
@@ -703,7 +703,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name="search"
               size={24}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : onToggleLayout !== undefined ? (
@@ -711,7 +711,7 @@ export function CustomHeaderTitle({
             <Ionicons
               name={isGrid ? "list" : "grid"}
               size={22}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : (
@@ -749,13 +749,13 @@ const styles = StyleSheet.create({
   bgLogo: {
     position: "absolute",
     width: "100%",
-    height: 200,
-    opacity: 0.15,
+    height: 180,
+    opacity: 0.25,
     alignSelf: "center",
     marginTop: 10,
   },
   teamCode: {
-    color: Colors.netural.white,
+    color: Colors.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
     zIndex: 2,
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   dividerText: {
-    color: Colors.netural.white,
+    color: Colors.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
   },

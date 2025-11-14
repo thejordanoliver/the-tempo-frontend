@@ -7,7 +7,6 @@ export const getStyles = (isDark: boolean) =>
     container: {
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 8,
     },
     date: {
       fontFamily: Fonts.OSREGULAR,
@@ -20,9 +19,9 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 12,
     },
     broadcasts: {
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.midTone : Colors.netural.midTone,
+      color: isDark ? Colors.midTone : Colors.midTone,
       textAlign: "center",
     },
     clock: {
@@ -32,9 +31,9 @@ export const getStyles = (isDark: boolean) =>
       textAlign: "center",
     },
     downAndDistance: {
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
-      color: Colors.netural.midTone,
+      color: Colors.midTone,
       textAlign: "center",
     },
     dateFinal: {
@@ -48,7 +47,6 @@ export const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
-
     playoffContainer: {
       alignItems: "center",
       justifyContent: "center",
@@ -60,7 +58,6 @@ export const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSEXTRALIGHT,
       textAlign: "center",
     },
-
     infoWrapper: {
       flexDirection: "row",
       alignItems: "center",

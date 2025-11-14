@@ -2,9 +2,14 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import players from "constants/players";
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
 import { useEffect, useState } from "react";
-import { Image, LayoutChangeEvent, Text, View } from "react-native";
+import {
+  Image,
+  LayoutChangeEvent,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
-
 
 type NBALastPlay = {
   id?: string;
@@ -23,7 +28,7 @@ type NBALastPlay = {
 
 type LastPlayProps = {
   lastPlay?: string | NBALastPlay;
-  isDark?: boolean;
+  isDark?: boolean; // optional override
   homeTeamId?: string;
   awayTeamId?: string;
 };
@@ -32,14 +37,18 @@ const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
 
 export default function LastPlay({
   lastPlay,
-  isDark = true,
+  isDark,
   homeTeamId,
   awayTeamId,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const styles = lastPlayStyles(isDark);
+  // ✅ Auto-detect color scheme, fallback to prop if provided
+  const systemScheme = useColorScheme(); // "light" | "dark"
+  const darkMode = isDark ?? systemScheme === "dark";
+
+  const styles = lastPlayStyles(darkMode);
 
   const onLayout = (e: LayoutChangeEvent) =>
     setContainerWidth(e.nativeEvent.layout.width);
@@ -74,7 +83,7 @@ export default function LastPlay({
 
   // ✅ Text color helper
   const getTextColor = (text?: string) => {
-    const defaultColor = isDark ? "#fff" : "#1d1d1d";
+    const defaultColor = darkMode ? "#fff" : "#1d1d1d";
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
     if (lower.includes("foul")) return "#ff6b6b";
@@ -88,9 +97,7 @@ export default function LastPlay({
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
-        <Text
-          style={[styles.simpleText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-        >
+        <Text style={[styles.simpleText, { color: darkMode ? "#fff" : "#1d1d1d" }]}>
           {currentPlay}
         </Text>
       </View>
@@ -110,9 +117,7 @@ export default function LastPlay({
                 <Image source={{ uri: avatarUrl }} style={styles.avatar} />
                 <View style={styles.athleteDetails}>
                   <Text style={styles.athleteName}>{athlete.name}</Text>
-                  <Text style={styles.athleteMeta}>
-                    {athlete.position || ""}
-                  </Text>
+                  <Text style={styles.athleteMeta}>{athlete.position || ""}</Text>
                   <Text style={styles.athleteMeta}>
                     {athlete.jersey ? `#${athlete.jersey}` : ""}
                   </Text>

@@ -1,48 +1,52 @@
-// hooks/useTeamRosterStats.ts
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const API_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY;
 
+const API_HEADERS = {
+  "x-rapidapi-key": API_KEY,
+  "x-rapidapi-host": "v2.nba.api-sports.io",
+};
+
 type Player = {
   id: number;
   firstname: string;
   lastname: string;
-  birth: { date: string };
-  height: string;
-  weight: string;
-  college: string;
-  nba: { start: number; pro: number };
-  leag: string;
+  birth?: { date?: string };
+  height?: string;
+  weight?: string;
+  college?: string;
+  nba?: { start?: number; pro?: number };
+  active?: boolean;
   headshot_url?: string;
-  active: boolean;
 };
 
 type PlayerStat = {
-  player: { id: number; firstname: string; lastname: string };
-  points: number;
-  min: string;
-  fgm: number;
-  fga: number;
-  fgp: string;
-  ftm: number;
-  fta: number;
-  ftp: string;
-  tpm: number;
-  tpa: number;
-  tpp: string;
-  offReb: number;
-  defReb: number;
-  totReb: number;
-  assists: number;
-  pFouls: number;
-  steals: number;
-  turnovers: number;
-  blocks: number;
-  plusMinus: string;
+  player: { id: number };
+  team: { id: number };
+  points?: number;
+  min?: string;
+  fgm?: number;
+  fga?: number;
+  fgp?: string;
+  ftm?: number;
+  fta?: number;
+  ftp?: string;
+  tpm?: number;
+  tpa?: number;
+  tpp?: string;
+  offReb?: number;
+  defReb?: number;
+  totReb?: number;
+  assists?: number;
+  pFouls?: number;
+  steals?: number;
+  turnovers?: number;
+  blocks?: number;
+  plusMinus?: string;
 };
 
-type AggregatedStats = {
+export type AggregatedStats = {
   playerId: number;
   name: string;
   headshot_url?: string;
@@ -69,11 +73,6 @@ type AggregatedStats = {
   plusMinus: number;
 };
 
-const API_HEADERS = {
-  "x-rapidapi-key": API_KEY,
-  "x-rapidapi-host": "v2.nba.api-sports.io",
-};
-
 export function useTeamRosterStats(teamId: number, season = "2025") {
   const [rosterStats, setRosterStats] = useState<AggregatedStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,31 +86,42 @@ export function useTeamRosterStats(teamId: number, season = "2025") {
       setError(null);
 
       try {
-        const playersRes = await axios.get("https://v2.nba.api-sports.io/players", {
+        // Step 1: Fetch team roster
+        const rosterRes = await axios.get("https://v2.nba.api-sports.io/players", {
           params: { team: teamId, season },
           headers: API_HEADERS,
         });
 
-        const players: Player[] = playersRes.data.response;
+        const players: Player[] = rosterRes.data.response || [];
 
-        const statPromises = players.map(async (player) => {
-          try {
-            const statsRes = await axios.get<{ response: PlayerStat[] }>(
-              "https://v2.nba.api-sports.io/players/statistics",
-              {
-                params: { id: player.id, season },
-                headers: API_HEADERS,
-              }
-            );
+        // Step 2: Fetch all player stats for this team
+        const statsRes = await axios.get<{ response: PlayerStat[] }>(
+          "https://v2.nba.api-sports.io/players/statistics",
+          {
+            params: { team: teamId, season },
+            headers: API_HEADERS,
+          }
+        );
 
-            const games = statsRes.data.response;
-            if (!games.length) return null;
+        const allStats = statsRes.data.response || [];
 
-            const totals: AggregatedStats = {
-              playerId: player.id,
-              name: `${player.firstname} ${player.lastname}`,
-              headshot_url: player.headshot_url,
-              gamesPlayed: games.length,
+        // Step 3: Group stats per player
+        const playerStatsMap: Record<number, AggregatedStats> = {};
+
+        for (const g of allStats) {
+          const pid = g.player?.id;
+          if (!pid) continue;
+
+          if (!playerStatsMap[pid]) {
+            const player = players.find((p) => p.id === pid);
+            playerStatsMap[pid] = {
+              playerId: pid,
+              name: player
+                ? `${player.firstname} ${player.lastname}`
+                : `Player ${pid}`,
+              headshot_url: player?.headshot_url,
+              gamesPlayed: 0,
+              minutesPlayed: 0,
               totalPoints: 0,
               totalRebounds: 0,
               totalAssists: 0,
@@ -122,55 +132,65 @@ export function useTeamRosterStats(teamId: number, season = "2025") {
               totalFGM: 0,
               totalFGA: 0,
               totalFGP: 0,
-              totalFTM: 0,
-              totalFTA: 0,
-              totalFTP: 0,
               total3PM: 0,
               total3PA: 0,
               total3PP: 0,
+              totalFTM: 0,
+              totalFTA: 0,
+              totalFTP: 0,
               totalOffReb: 0,
               totalDefReb: 0,
               plusMinus: 0,
-              minutesPlayed: 0,
             };
-
-            games.forEach((g) => {
-              totals.totalPoints += g.points ?? 0;
-              totals.totalRebounds += g.totReb ?? 0;
-              totals.totalAssists += g.assists ?? 0;
-              totals.totalSteals += g.steals ?? 0;
-              totals.totalBlocks += g.blocks ?? 0;
-              totals.totalTurnovers += g.turnovers ?? 0;
-              totals.totalFouls += g.pFouls ?? 0;
-              totals.totalFGM += g.fgm ?? 0;
-              totals.totalFGA += g.fga ?? 0;
-              totals.totalFTM += g.ftm ?? 0;
-              totals.totalFTA += g.fta ?? 0;
-              totals.total3PM += g.tpm ?? 0;
-              totals.total3PA += g.tpa ?? 0;
-              totals.totalOffReb += g.offReb ?? 0;
-              totals.totalDefReb += g.defReb ?? 0;
-
-              if (g.plusMinus) {
-                const parsed = parseInt(g.plusMinus, 10);
-                totals.plusMinus += isNaN(parsed) ? 0 : parsed;
-              }
-
-              if (g.min) {
-                const [min, sec] = g.min.split(":").map(Number);
-                totals.minutesPlayed += (min || 0) + (sec || 0) / 60;
-              }
-            });
-
-            return totals;
-          } catch {
-            return null;
           }
-        });
 
-        const results = await Promise.all(statPromises);
-        const filtered = results.filter(Boolean) as AggregatedStats[];
-        setRosterStats(filtered);
+          const totals = playerStatsMap[pid];
+          totals.gamesPlayed += 1;
+          totals.totalPoints += g.points ?? 0;
+          totals.totalRebounds += g.totReb ?? 0;
+          totals.totalAssists += g.assists ?? 0;
+          totals.totalSteals += g.steals ?? 0;
+          totals.totalBlocks += g.blocks ?? 0;
+          totals.totalTurnovers += g.turnovers ?? 0;
+          totals.totalFouls += g.pFouls ?? 0;
+          totals.totalFGM += g.fgm ?? 0;
+          totals.totalFGA += g.fga ?? 0;
+          totals.total3PM += g.tpm ?? 0;
+          totals.total3PA += g.tpa ?? 0;
+          totals.totalFTM += g.ftm ?? 0;
+          totals.totalFTA += g.fta ?? 0;
+          totals.totalOffReb += g.offReb ?? 0;
+          totals.totalDefReb += g.defReb ?? 0;
+
+          if (g.plusMinus) {
+            const parsed = parseInt(g.plusMinus, 10);
+            totals.plusMinus += isNaN(parsed) ? 0 : parsed;
+          }
+
+          if (g.min) {
+            const [min, sec] = g.min.split(":").map(Number);
+            totals.minutesPlayed += (min || 0) + (sec || 0) / 60;
+          }
+        }
+
+        // Step 4: Compute percentages
+        const finalResults = Object.values(playerStatsMap).map((p) => ({
+          ...p,
+          totalFGP:
+            p.totalFGA > 0
+              ? parseFloat(((p.totalFGM / p.totalFGA) * 100).toFixed(1))
+              : 0,
+          total3PP:
+            p.total3PA > 0
+              ? parseFloat(((p.total3PM / p.total3PA) * 100).toFixed(1))
+              : 0,
+          totalFTP:
+            p.totalFTA > 0
+              ? parseFloat(((p.totalFTM / p.totalFTA) * 100).toFixed(1))
+              : 0,
+        }));
+
+        setRosterStats(finalResults);
       } catch (err: any) {
         setError(err);
       } finally {

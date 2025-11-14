@@ -1,4 +1,4 @@
-// components/NFL/NFLOfficials.tsx
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import {
   ActivityIndicator,
@@ -8,7 +8,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import HeadingTwo from "../../Headings/HeadingTwo";
+import HeadingTwo from "../Headings/HeadingTwo";
 
 type Official = {
   displayName: string;
@@ -21,10 +21,15 @@ type Props = {
   officials: Official[];
   loading: boolean;
   error: any;
-  lighter?: boolean; // <-- add lighter
+  lighter?: boolean;
 };
 
-export default function NFLOfficials({ officials, loading, error, lighter = false }: Props) {
+export default function Officials({
+  officials,
+  loading,
+  error,
+  lighter = false,
+}: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark, lighter);
 
@@ -47,6 +52,7 @@ export default function NFLOfficials({ officials, loading, error, lighter = fals
 
   if (!officials || officials.length === 0) return null;
 
+  // ensure even number of cells
   const officialsData =
     officials.length % 2 === 0
       ? officials
@@ -59,7 +65,8 @@ export default function NFLOfficials({ officials, loading, error, lighter = fals
         data={officialsData}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => {
-          if (!item.displayName) return <View style={[styles.card, { backgroundColor: "transparent" }]} />;
+          if (!item.displayName)
+            return <View style={[styles.card, styles.emptyCard]} />;
 
           const initials = item.displayName
             .split(" ")
@@ -79,10 +86,9 @@ export default function NFLOfficials({ officials, loading, error, lighter = fals
             </View>
           );
         }}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         numColumns={2}
-        columnWrapperStyle={styles.row}
         scrollEnabled={false}
+        columnWrapperStyle={styles.row}
       />
     </View>
   );
@@ -92,54 +98,64 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     container: {
       marginTop: 20,
-      borderRadius: 8,
     },
     row: {
       justifyContent: "space-between",
-      marginBottom: 10,
+      marginBottom: 14,
     },
     card: {
-      flex: 0.48,
+      width: "48%",
       padding: 12,
-      borderRadius: 8,
-      backgroundColor: lighter ? "rgba(255,255,255,0.1)" : isDark ? "#2e2e2e" : "#eee",
+      borderRadius: 10,
+      backgroundColor: lighter
+        ? "rgba(255,255,255,0.1)"
+        : isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       elevation: 2,
       alignItems: "center",
+    },
+    emptyCard: {
+      backgroundColor: "transparent",
     },
     placeholder: {
       width: 50,
       height: 50,
       borderRadius: 25,
-      backgroundColor: lighter ? "rgba(255,255,255,0.3)" : isDark ? "#555" : "#aaa",
+      backgroundColor: lighter
+        ? Colors.midTone
+        : isDark
+        ? Colors.darkGray
+        : Colors.lightGray,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 8,
     },
     initials: {
-      color: "#fff",
+      color: Colors.white,
       fontSize: 18,
       fontFamily: Fonts.OSBOLD,
     },
     position: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: lighter ? "#ccc" : "#888",
+      color: lighter ? Colors.darkGray : Colors.midTone,
       marginBottom: 4,
       textAlign: "center",
     },
     name: {
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
-      color: lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d",
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
     loadingText: {
       marginTop: 8,
       fontSize: 14,
-      color: lighter ? "#fff" : "#333",
+      color: lighter ? Colors.white : Colors.black,
     },
     errorText: {
       fontSize: 14,
-      color: "red",
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

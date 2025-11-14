@@ -310,6 +310,5 @@ const styles = StyleSheet.create({
   },
   headerWrapper: {
     marginHorizontal: 12,
-    marginBottom: 4,
   },
 });

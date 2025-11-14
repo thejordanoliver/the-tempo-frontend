@@ -1,4 +1,5 @@
-import PlayerStatTableSkeleton from "components/player/PlayerStatsTableSkeleton"; // adjust path if needed
+import PlayerStatTableSkeleton from "components/Player/PlayerStatsTableSkeleton";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { usePlayerStatsBySeason } from "hooks/usePlayerStatsAllSeasons";
 import { useMemo } from "react";
@@ -24,23 +25,14 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
   const { data, loading, error } = usePlayerStatsBySeason(playerId, seasons);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const styles = statsTableStyles(isDark);
 
   const dynamicStyles = useMemo(
     () => ({
-      container: {
-        borderColor: isDark ? "#555" : "#ccc",
-        backgroundColor: isDark ? "#222" : "#fff",
-      },
-      headerRow: {
-        backgroundColor: isDark ? "#333" : "#eee",
-      },
-      rowEven: {
-        backgroundColor: isDark ? "#222" : "#fff",
-        borderBottomColor: isDark ? "#555" : "#ccc",
-      },
       rowOdd: {
-        backgroundColor: isDark ? "#2a2a2a" : "#f3f3f3",
-        borderBottomColor: isDark ? "#555" : "#ccc",
+        backgroundColor: isDark
+          ? Colors.dark.itemBackground
+          : Colors.light.itemBackground,
       },
       highlight: {
         backgroundColor: "#ffd700",
@@ -50,19 +42,13 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
       },
       careerRow: {
         backgroundColor: isDark ? "#004400" : "#ccffcc",
-
-        borderTopColor: isDark ? "#00ff00" : "#008800",
-      },
-      textDark: {
-        color: "#eee",
-      },
-      errorTextDark: {
-        color: "#ff6666",
+        borderBottomWidth: 0,
       },
     }),
     [isDark]
   );
 
+  // Find best season (highest PPG)
   const bestSeason = useMemo(() => {
     let maxPPG = -Infinity;
     let best: string | null = null;
@@ -81,30 +67,15 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
     return best;
   }, [data]);
 
-  if (loading) {
-    return <PlayerStatTableSkeleton />;
-  }
+  if (loading) return <PlayerStatTableSkeleton />;
   if (error)
     return (
-      <Text
-        style={[
-          styles.cell,
-          styles.errorText,
-          isDark && dynamicStyles.errorTextDark,
-        ]}
-      >
-        Error loading stats
-      </Text>
+      <Text style={[styles.cell, styles.errorText]}>Error loading stats</Text>
     );
-
   if (!data.length)
-    return (
-      <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
-        No stats available
-      </Text>
-    );
+    return <Text style={[styles.cell]}>No stats available</Text>;
 
-  // Aggregate career totals for all seasons combined
+  // Aggregate career totals
   const careerTotals = data.reduce(
     (acc, seasonData) => {
       seasonData.games.forEach((g) => {
@@ -187,81 +158,71 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
   return (
     <>
       <View
-        style={{ flexDirection: "row", borderRadius: 4, overflow: "hidden" }}
+        style={{
+          flexDirection: "row",
+          borderTopLeftRadius: 8,
+          borderBottomLeftRadius: 8,
+        }}
       >
         {/* Fixed Season Column */}
-        <View>
+        <View
+          style={{
+            borderTopLeftRadius: 8,
+            borderBottomLeftRadius: 8,
+            overflow: "hidden", // 👈 needed for visible radius
+          }}
+        >
           {/* Header */}
-          <View style={[styles.seasonCell, dynamicStyles.headerRow]}>
-            <Text
-              style={[
-                styles.cell,
-                styles.headerCell,
-                isDark && dynamicStyles.textDark,
-              ]}
-            >
+          <View style={[styles.row, styles.headerRow, styles.seasonCell]}>
+            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
               Season
             </Text>
           </View>
 
           {/* Season Rows */}
           {data.map((seasonData, index) => {
-            const rowStyle = [
-              index % 2 === 1 ? dynamicStyles.rowOdd : dynamicStyles.rowEven,
+            const highlightStyle =
               seasonData.season === bestSeason
                 ? isDark
                   ? dynamicStyles.highlightDark
                   : dynamicStyles.highlight
-                : {},
-              {},
-            ];
+                : null;
 
             return (
               <View
                 key={seasonData.season}
-                style={[styles.seasonCell, rowStyle]}
+                style={[
+                  styles.seasonCell,
+                  index % 2 === 1 && dynamicStyles.rowOdd,
+                  highlightStyle,
+                ]}
               >
-                <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
-                  {seasonData.season}
-                </Text>
+                <Text style={[styles.seasons]}>{seasonData.season}</Text>
               </View>
             );
           })}
 
           {/* Career Label Row */}
-          <View
-            style={[
-              styles.seasonCell,
-              dynamicStyles.careerRow,
-              { borderTopColor: isDark ? "#00ff00" : "#008800" },
-            ]}
-          >
-            <Text
-              style={[
-                styles.cell,
-                styles.headerCell,
-                isDark && dynamicStyles.textDark,
-              ]}
-            >
-              Career
-            </Text>
+          <View style={[styles.seasonCell, dynamicStyles.careerRow]}>
+            <Text style={[styles.careerCell, styles.headerCell]}>Career</Text>
           </View>
         </View>
 
         {/* Scrollable Stats Table */}
-        <ScrollView horizontal>
-          <View style={[styles.container, dynamicStyles.container]}>
+        <ScrollView
+          horizontal
+          style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}
+          contentContainerStyle={{
+            borderTopRightRadius: 8,
+            borderBottomRightRadius: 8,
+            overflow: "hidden",
+          }}
+        >
+          <View style={styles.container}>
             {/* Header Row */}
-            <View style={[styles.row, dynamicStyles.headerRow]}>
+            <View style={[styles.row, styles.headerRow]}>
               {statLabels.slice(1).map((label) => (
-                <Text
-                  key={label}
-                  style={[
-                    styles.cell,
-                    styles.headerCell,
-                    isDark && dynamicStyles.textDark,
-                  ]}
-                >
+                <Text key={label} style={[styles.cell, styles.headerCell]}>
                   {label}
                 </Text>
               ))}
@@ -274,7 +235,6 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                 (acc, g) => {
                   const parseNum = (val: string | number | undefined) =>
                     parseFloat(val as any) || 0;
-
                   acc.min += parseNum(g.min);
                   acc.fgm += g.fgm || 0;
                   acc.fga += g.fga || 0;
@@ -321,79 +281,81 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                 }
               );
 
-              const rowStyle = [
-                styles.row,
-                index % 2 === 1 ? dynamicStyles.rowOdd : dynamicStyles.rowEven,
+              const highlightStyle =
                 seasonData.season === bestSeason
                   ? isDark
                     ? dynamicStyles.highlightDark
                     : dynamicStyles.highlight
-                  : {},
-              ];
+                  : null;
 
               return (
-                <View key={seasonData.season} style={rowStyle}>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
-                    {totalGames}
-                  </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                <View
+                  key={seasonData.season}
+                  style={[
+                    styles.row,
+                    index % 2 === 1 && dynamicStyles.rowOdd,
+                    highlightStyle,
+                  ]}
+                >
+                  <Text style={[styles.cell]}>{totalGames}</Text>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.pts, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.min, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.fgm, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.fga, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {percentage(safeDivide(totals.fgp, totalGames))}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.tpm, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.tpa, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {percentage(safeDivide(totals.tpp, totalGames))}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.ftm, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.fta, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {percentage(safeDivide(totals.ftp, totalGames))}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.offReb, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.defReb, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.totReb, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.ast, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.stl, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.blk, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.to, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.pf, totalGames)}
                   </Text>
-                  <Text style={[styles.cell, isDark && dynamicStyles.textDark]}>
+                  <Text style={[styles.cell]}>
                     {safeDivide(totals.plusMinus, totalGames)}
                   </Text>
                 </View>
@@ -402,193 +364,67 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
 
             {/* Career Row */}
             <View style={[styles.row, dynamicStyles.careerRow]}>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.games}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.pts}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.min.toFixed(1)}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.fgm}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.fga}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {percentage((careerTotals.fgp / careerTotals.games).toFixed(1))}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.tpm}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.tpa}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {percentage((careerTotals.tpp / careerTotals.games).toFixed(1))}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.ftm}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.fta}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {percentage((careerTotals.ftp / careerTotals.games).toFixed(1))}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.offReb}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.defReb}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.totReb}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.ast}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.stl}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.blk}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.to}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.pf}
               </Text>
-              <Text
-                style={[
-                  styles.cell,
-                  styles.headerCell,
-                  isDark && dynamicStyles.textDark,
-                ]}
-              >
+              <Text style={[styles.cell, styles.headerCell]}>
                 {careerTotals.plusMinus.toFixed(1)}
               </Text>
             </View>
@@ -600,7 +436,6 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
       <View
         style={[styles.legendContainer, isDark && styles.legendContainerDark]}
       >
-        {/* Best Season */}
         <View
           style={[
             styles.legendColorBox,
@@ -611,10 +446,8 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
           Best Season (highlighted)
         </Text>
 
-        {/* Spacer */}
         <View style={{ width: 24 }} />
 
-        {/* Career Totals */}
         <View
           style={[
             styles.legendColorBox,
@@ -629,78 +462,106 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    overflow: "hidden",
-    flexDirection: "column",
-    borderTopRightRadius: 4,
-    borderBottomRightRadius: 4,
-  },
-
-  row: {
-    flexDirection: "row",
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-
-  cell: {
-    minWidth: 60,
-    flex: 1,
-    textAlign: "center",
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR, // ✅ Text style only
-    paddingHorizontal: 4,
-  },
-  headerCell: {
-    fontFamily: Fonts.OSBOLD, // ✅ OK because applied to Text
-  },
-  errorText: {
-    color: "red",
-  },
-  seasonCell: {
-    minWidth: 80,
-    justifyContent: "center",
-    paddingHorizontal: 4,
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  legendContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 8,
-
-    marginTop: 12,
-    borderTopColor: "#ccc",
-    borderTopWidth: 1,
-  },
-  legendContainerDark: {
-    borderTopColor: "#555",
-  },
-  legendColorBox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  legendColorBoxLight: {
-    backgroundColor: "#ffd700",
-  },
-  legendColorBoxDark: {
-    backgroundColor: "#5c4300",
-  },
-  legendText: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-  },
-  textDark: {
-    color: "#eee",
-  },
-
-  legendCareerBoxLight: {
-    backgroundColor: "#ccffcc",
-  },
-  legendCareerBoxDark: {
-    backgroundColor: "#004400",
-  },
-});
+const statsTableStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "column",
+    },
+    headerRow: {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    row: {
+      flexDirection: "row",
+      paddingVertical: 8,
+      alignItems: "center",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomWidth: 1,
+    },
+    careerCell: {
+      minWidth: 60,
+      flex: 1,
+      paddingHorizontal: 4,
+    },
+    cell: {
+      minWidth: 60,
+      flex: 1,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    seasonHeaderCell: {
+      minWidth: 60,
+      flex: 1,
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    headerCell: {
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    errorText: {
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    seasonCell: {
+      minWidth: 80,
+      justifyContent: "center",
+      paddingHorizontal: 4,
+      paddingVertical: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      color: isDark ? Colors.white : Colors.black,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomWidth: 1,
+    },
+    seasons: {
+      minWidth: 60,
+      flex: 1,
+      textAlign: "left",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    legendContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 8,
+      marginTop: 12,
+      borderTopColor: "#ccc",
+      borderTopWidth: 1,
+    },
+    legendContainerDark: {
+      borderTopColor: Colors.white,
+    },
+    legendColorBox: {
+      width: 20,
+      height: 20,
+      borderRadius: 4,
+      marginRight: 8,
+    },
+    legendColorBoxLight: {
+      backgroundColor: "#ffd700",
+    },
+    legendColorBoxDark: {
+      backgroundColor: "#5c4300",
+    },
+    legendText: {
+      fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
+    },
+    textDark: {
+      color: "#eee",
+    },
+    legendCareerBoxLight: {
+      backgroundColor: "#ccffcc",
+    },
+    legendCareerBoxDark: {
+      backgroundColor: "#004400",
+    },
+  });

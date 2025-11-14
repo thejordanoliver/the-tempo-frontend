@@ -65,7 +65,7 @@ export const getStyles = (isDark: boolean) =>
     },
     time: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 12,
     },
     finalText: {
@@ -82,12 +82,12 @@ export const getStyles = (isDark: boolean) =>
     },
     broadcast: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 10,
       textAlign: "center",
     },
     seriesStatus: {
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.OSEXTRALIGHT,
       fontSize: 10,
       textAlign: "center",
@@ -96,7 +96,7 @@ export const getStyles = (isDark: boolean) =>
     seriesDivider: {
       height: 10,
       width: 0.5,
-      backgroundColor: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     statusDivider: {
       height: 14,
@@ -111,13 +111,13 @@ export const getStyles = (isDark: boolean) =>
     downDistance: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 10,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 10,
-      color: isDark ? Colors.netural.lightGray : Colors.netural.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       position: "absolute",
       top: 4,

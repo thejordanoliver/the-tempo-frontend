@@ -1,7 +1,8 @@
-// login.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -25,7 +26,7 @@ import CropEditorModal from "../components/CropEditorModal";
 import SignInForm from "../components/SignInForm";
 import SignupSteps from "../components/SignUpSteps";
 import TabBar from "../components/TabBar";
-import { User } from "../types/types";
+import { LeagueType, User } from "../types/types";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -41,24 +42,29 @@ export default function LoginScreen() {
     null
   );
   const [isGridView, setIsGridView] = useState(true);
-
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const toggleLayout = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsGridView((prev) => !prev);
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-  };
+  const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [signupStep, setSignupStep] = useState(0);
+  const [signupData, setSignupData] = useState({
+    fullName: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    favorites: [] as string[],
+    profileImage: null as string | null,
+    bannerImage: null as string | null,
+  });
+
+  const styles = getSignupStepsStyles(isDark);
+
+  // ====================== IMAGE PICKER / CROP ======================
   const openImagePickerFor = async (target: "profile" | "banner") => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -83,11 +89,7 @@ export default function LoginScreen() {
     setCropTarget(null);
   };
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
-
+  // ====================== HELPER FUNCTIONS ======================
   const safeSetItem = async (key: string, value: string | null | undefined) => {
     if (value === null || value === undefined) {
       await AsyncStorage.removeItem(key);
@@ -96,6 +98,31 @@ export default function LoginScreen() {
     }
   };
 
+  const storeUserData = async (
+    user: User,
+    accessToken: string,
+    refreshToken: string
+  ) => {
+    await safeSetItem("accessToken", accessToken);
+    await safeSetItem("refreshToken", refreshToken);
+    await safeSetItem("userId", user.id?.toString() || null);
+    await safeSetItem("username", user.username);
+    await safeSetItem("fullName", user.full_name);
+    await safeSetItem("email", user.email);
+    await safeSetItem(
+      "profileImage",
+      user.profile_image ? `${BASE_URL}${user.profile_image}` : null
+    );
+    await safeSetItem(
+      "bannerImage",
+      user.banner_image ? `${BASE_URL}${user.banner_image}` : null
+    );
+    await safeSetItem("favorites", JSON.stringify(user.favorites || []));
+    await safeSetItem("bio", user.bio ?? "");
+    await AsyncStorage.setItem("loggedInUser", JSON.stringify(user));
+  };
+
+  // ====================== LOGIN ======================
   const handleLogin = async () => {
     const trimmedUsername = username?.trim().toLowerCase();
     if (!trimmedUsername || password.length < 4) {
@@ -114,77 +141,23 @@ export default function LoginScreen() {
 
       const { user, accessToken, refreshToken } = res.data;
 
-      await safeSetItem("accessToken", accessToken);
-      await safeSetItem("refreshToken", refreshToken);
-      await safeSetItem("userId", user.id?.toString() || null);
-      await safeSetItem("username", user.username);
-      await safeSetItem("fullName", user.full_name);
-      await safeSetItem("email", user.email);
-      await safeSetItem(
-        "profileImage",
-        user.profile_image ? `${BASE_URL}${user.profile_image}` : null
-      );
-      await safeSetItem(
-        "bannerImage",
-        user.banner_image ? `${BASE_URL}${user.banner_image}` : null
-      );
-      await safeSetItem("favorites", JSON.stringify(user.favorites || []));
-      await safeSetItem("bio", user.bio ?? "");
-
-      // **Save the whole user object here as well:**
-      await AsyncStorage.setItem("loggedInUser", JSON.stringify(user));
+      await storeUserData(user, accessToken, refreshToken);
+      console.log("✅ Login token stored:", await AsyncStorage.getItem("accessToken"));
 
       router.replace({
         pathname: "/(tabs)/profile",
-        params: { id: user.id },
+        params: { id: user.id, token: accessToken },
       });
     } catch (err: any) {
       Alert.alert("Login failed", err.response?.data?.error || err.message);
     }
   };
 
-  const [signupStep, setSignupStep] = useState(0);
-  const [signupData, setSignupData] = useState({
-    fullName: "",
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    favorites: [] as string[],
-    profileImage: null as string | null,
-    bannerImage: null as string | null,
-  });
-
-  const styles = getSignupStepsStyles(isDark);
-
-  useLayoutEffect(() => {
-    const showBackButton = !(
-      selectedTab === "sign in" ||
-      (selectedTab === "sign up" && signupStep === 0)
-    );
-    navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          title="The Logo"
-          tabName="Login"
-          onBack={() => {
-            if (selectedTab === "sign up" && signupStep > 0) {
-              setSignupStep((s) => Math.max(0, s - 1));
-            } else {
-              goBack();
-            }
-          }}
-          isGrid={isGridView}
-          onToggleLayout={signupStep === 1 ? toggleLayout : undefined}
-          showBackButton={showBackButton}
-        />
-      ),
-    });
-  }, [navigation, isDark, selectedTab, signupStep, isGridView]);
-
+  // ====================== SIGNUP ======================
   const handleSignupSubmit = async (): Promise<{
     user: User;
-    token: string;
+    accessToken: string;
+    refreshToken: string;
   } | null> => {
     const {
       fullName,
@@ -225,13 +198,13 @@ export default function LoginScreen() {
       appendImage(profileImage, "profileImage");
       appendImage(bannerImage, "bannerImage");
 
-      const res = await axios.post<{ user: User; token: string }>(
-        `${BASE_URL}/api/signup`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const res = await axios.post<{
+        user: User;
+        accessToken: string;
+        refreshToken: string;
+      }>(`${BASE_URL}/api/signup`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       return res.data;
     } catch (err: any) {
@@ -245,33 +218,35 @@ export default function LoginScreen() {
     const result = await handleSignupSubmit();
     if (!result) return;
 
-    const { user, token } = result;
-
+    const { user, accessToken, refreshToken } = result;
     try {
-      await safeSetItem("token", token);
-      await safeSetItem("userId", user.id?.toString() || null);
-      await safeSetItem("username", user.username);
-      await safeSetItem("fullName", user.full_name);
-      await safeSetItem("email", user.email);
-      await safeSetItem(
-        "profileImage",
-        user.profile_image ? `${BASE_URL}${user.profile_image}` : null
-      );
-      await safeSetItem(
-        "bannerImage",
-        user.banner_image ? `${BASE_URL}${user.banner_image}` : null
-      );
-      await safeSetItem("favorites", JSON.stringify(user.favorites || []));
-      await safeSetItem("bio", user.bio ?? "");
+      await storeUserData(user, accessToken, refreshToken);
+      console.log("✅ Signup access token:", await AsyncStorage.getItem("accessToken"));
 
-      // **Save the whole user object here:**
-      await AsyncStorage.setItem("loggedInUser", JSON.stringify(user));
-
-      router.replace("/signup/success");
+      router.replace({
+        pathname: "/(tabs)/profile",
+        params: { id: user.id, token: accessToken },
+      });
     } catch (err: any) {
       console.error("Auto-login after signup failed:", err);
       Alert.alert("Login failed", err.response?.data?.error || err.message);
     }
+  };
+
+  // ====================== UI / ANIMATION LOGIC ======================
+  const toggleLayout = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setIsGridView((prev) => !prev);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    });
   };
 
   const progress = useRef(new Animated.Value(0)).current;
@@ -290,7 +265,6 @@ export default function LoginScreen() {
   });
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
   const animateTransition = () => {
     fadeAnim.setValue(0);
     scaleAnim.setValue(0.9);
@@ -304,7 +278,6 @@ export default function LoginScreen() {
       Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }),
     ]).start();
   };
-
   useEffect(() => animateTransition(), [signupStep]);
 
   const panResponder = useMemo(
@@ -326,6 +299,45 @@ export default function LoginScreen() {
     [signupStep]
   );
 
+  useLayoutEffect(() => {
+    const showBackButton = !(
+      selectedTab === "sign in" ||
+      (selectedTab === "sign up" && signupStep === 0)
+    );
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          title="The Logo"
+          tabName="Login"
+          onBack={() => {
+            if (selectedTab === "sign up" && signupStep > 0) {
+              setSignupStep((s) => Math.max(0, s - 1));
+            } else {
+              goBack();
+            }
+          }}
+          isGrid={isGridView}
+          onToggleLayout={signupStep === 1 ? toggleLayout : undefined}
+          showBackButton={showBackButton}
+        />
+      ),
+    });
+  }, [navigation, isDark, selectedTab, signupStep, isGridView]);
+
+  const handleToggleFavorite = (league: LeagueType, id: string) => {
+    const key = `${league}:${id}`;
+    setSignupData((prev) => {
+      const isFavorite = prev.favorites.includes(key);
+      return {
+        ...prev,
+        favorites: isFavorite
+          ? prev.favorites.filter((f) => f !== key)
+          : [...prev.favorites, key],
+      };
+    });
+  };
+
+  // ====================== RENDER ======================
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -344,15 +356,13 @@ export default function LoginScreen() {
               renderLabel={(tab, isSelected) => (
                 <Text
                   style={{
-                    fontSize: 20, // your bigger font size here
+                    fontSize: 20,
                     color: isSelected
                       ? isDark
-                        ? "#fff"
-                        : "#1d1d1d"
-                      : isDark
-                      ? "#888"
-                      : "rgba(0, 0, 0, 0.5)",
-                    fontFamily: "Oswald_400Regular",
+                        ? Colors.white
+                        : Colors.black
+                      : Colors.midTone,
+                    fontFamily: Fonts.OSREGULAR,
                     textTransform: "uppercase",
                   }}
                 >
@@ -393,14 +403,7 @@ export default function LoginScreen() {
               }
               onNextStep={() => setSignupStep((s) => Math.min(s + 1, 3))}
               onPreviousStep={() => setSignupStep((s) => Math.max(s - 1, 0))}
-              onToggleFavorite={(id) =>
-                setSignupData((prev) => ({
-                  ...prev,
-                  favorites: prev.favorites.includes(id)
-                    ? prev.favorites.filter((f) => f !== id)
-                    : [...prev.favorites, id],
-                }))
-              }
+              onToggleFavorite={handleToggleFavorite}
               onOpenImagePickerFor={openImagePickerFor}
               isGridView={isGridView}
               toggleLayout={toggleLayout}

@@ -216,7 +216,7 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     styles.fillAway,
                     {
                       backgroundColor:
-                        awayTeam.color || Colors.netural.darkGray,
+                        awayTeam.color || Colors.darkGray,
                       opacity: animOpacityAway,
                       justifyContent: "center",
                       alignItems: "center",
@@ -270,7 +270,7 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     styles.fillHome,
                     {
                       backgroundColor:
-                        homeTeam.color || Colors.netural.lightGray,
+                        homeTeam.color || Colors.lightGray,
                       opacity: animOpacityHome,
                       justifyContent: "center",
                       alignItems: "center",
@@ -378,7 +378,7 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     },
     percentText: {
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.netural.white : Colors.netural.black,
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 16,
       textAlign: "center",
     },
@@ -390,7 +390,7 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     totalVotesText: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.netural.darkGray : Colors.netural.lightGray,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     teamName: {
       position: "absolute",
