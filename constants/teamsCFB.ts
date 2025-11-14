@@ -257,7 +257,7 @@ import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
 import SaintFrancisLogo from "../assets/College_Logos/SaintFrancis.png";
 import SamfordLogo from "../assets/College_Logos/Samford.png";
 import SanDiegoLogo from "../assets/College_Logos/SanDiego.png";
-import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
+import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
 import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
 import SMULogo from "../assets/College_Logos/SMU.png";
 import SouthCarolinaLogo from "../assets/College_Logos/SouthCarolina.png";

@@ -369,7 +369,7 @@ import SamfordLogo from "../assets/College_Logos/Samford.png";
 import SanDiegoLogo from "../assets/College_Logos/SanDiego.png";
 import SanFranciscoLogo from "../assets/College_Logos/SanFrancisco.png";
 import SanFranciscoLogoLight from "../assets/College_Logos/SanFranciscoLight.png";
-import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
+import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
 import SeattleLogo from "../assets/College_Logos/Seattle.png";
 import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
 import SetonHallLogo from "../assets/College_Logos/SetonHall.png";
