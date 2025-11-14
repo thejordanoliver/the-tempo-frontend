@@ -1,24 +1,26 @@
 // components/FavoriteTeamsList.tsx
-import type { Team } from "types/types"; // adjust the import path as needed
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Fonts } from "constants/fonts";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import type { Team } from "types/types"; // Team type should include `league: "NBA" | "NFL" | "CFB" | "CBB"`
+import { LeagueType } from "types/types";
 import TeamPreviewModal from "./../Team/TeamPreviewModal";
-import { Fonts } from "constants/fonts";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
+type TeamWithLeague = Team & { league: LeagueType };
 
 type Props = {
-  favoriteTeams: Team[];
+  favoriteTeams: TeamWithLeague[];
   isGridView: boolean;
   styles: any;
   itemWidth?: number;
   isCurrentUser: boolean;
-  username?: string; // add username prop
+  username?: string;
 };
 
 const FavoriteTeamsList = ({
@@ -26,64 +28,80 @@ const FavoriteTeamsList = ({
   isGridView,
   styles,
   isCurrentUser,
-  username, // <-- new prop
+  username,
 }: Props) => {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-  const [favorites, setFavorites] = useState<Team[]>(favoriteTeams);
-
-  const [previewTeam, setPreviewTeam] = useState<Team | null>(null);
+  const [favorites, setFavorites] = useState<TeamWithLeague[]>(favoriteTeams);
+  const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (team: Team) => {
+  const alwaysLightLogoTeams = [
+    "Alabama",
+    "Arkansas",
+    "Duke",
+    "Texas",
+    "Tennessee",
+    "UCLA",
+    "Kentucky",
+    "Clemson",
+    "Nebraska",
+    "Oregon",
+    "West Virginia",
+    "Tulsa",
+    "TCU",
+    "Sam Houston",
+    "Baylor",
+    "Air Force",
+    "California",
+    "BYU",
+    "Kansas State",
+    "Indiana",
+    "Eastern Michigan",
+    "Cincinnati",
+  ]; // add more teams as needed
+
+  const handleLongPress = (team: TeamWithLeague) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setPreviewTeam(team);
     setModalVisible(true);
   };
 
   const handleGoToTeam = () => {
-    if (previewTeam) {
-      router.push(`/team/${previewTeam.id}`);
-      setModalVisible(false);
-    }
+    if (!previewTeam) return;
+    const route =
+      previewTeam.league === "NFL"
+        ? "/team/nfl/[teamId]"
+        : previewTeam.league === "NBA"
+        ? "/team/[teamId]"
+        : previewTeam.league === "CFB"
+        ? "/team/cfb/[teamId]"
+        : "/team/cbb/[teamId]";
+    router.push({
+      pathname: route,
+      params: { teamId: previewTeam.id.toString() },
+    });
+    setModalVisible(false);
   };
-  const handleRemoveFavorite = async (teamId: string) => {
+
+  const handleRemoveFavorite = async (team: TeamWithLeague) => {
     try {
-      // Update local favorites list immediately
-      const updated = favorites.filter((team) => team.id !== teamId);
+      const key = `${team.league}:${team.id}`;
+      const updated = favorites.filter((t) => `${t.league}:${t.id}` !== key);
       setFavorites(updated);
       setModalVisible(false);
       setPreviewTeam(null);
 
-      // Save updated favorites IDs to AsyncStorage
-      const idsOnly = updated.map((team) => team.id);
-      await AsyncStorage.setItem("favorites", JSON.stringify(idsOnly));
+      const keysOnly = updated.map((t) => `${t.league}:${t.id}`);
+      await AsyncStorage.setItem("favorites", JSON.stringify(keysOnly));
 
-      // Update backend if username available
       if (username) {
-        try {
-          const response = await axios.patch(
-            `${API_URL}/api/users/${username}/favorites`,
-            {
-              favorites: idsOnly,
-            }
-          );
-          console.log("Backend favorites update response:", response.data);
-        } catch (error: unknown) {
-          if (axios.isAxiosError(error)) {
-            console.error(
-              "Failed to update favorites on backend:",
-              error.response?.data || error.message
-            );
-          } else if (error instanceof Error) {
-            console.error("Unexpected error:", error.message);
-          } else {
-            console.error("Unknown error:", error);
-          }
-        }
+        await axios.patch(`${API_URL}/api/users/${username}/favorites`, {
+          favorites: keysOnly,
+        });
       }
     } catch (error) {
-      console.error("Error in handleRemoveFavorite:", error);
+      console.error("Error removing favorite:", error);
     }
   };
 
@@ -99,106 +117,178 @@ const FavoriteTeamsList = ({
           team={previewTeam}
           onClose={() => setModalVisible(false)}
           onGo={handleGoToTeam}
-          onRemove={handleRemoveFavorite}
+          onRemove={() => handleRemoveFavorite(previewTeam)}
+          currentUser={isCurrentUser}
         />
       )}
 
       <View
         style={[
           isGridView ? styles.teamGrid : {},
-          { columnGap: isGridView ? 6 : 0 },
-          { rowGap: isGridView ? 8 : 0 },
-          { justifyContent: "flex-start" },
+          {
+            columnGap: isGridView ? 6 : 0,
+            rowGap: isGridView ? 8 : 0,
+            justifyContent: "flex-start",
+          },
         ]}
       >
         {favorites.map((team) => {
+          const useSecondaryInDark = [
+            "Grizzlies",
+            "Suns",
+            "Ravens",
+            "Texans",
+            "Cowboys",
+            "Broncos",
+            "Bears",
+            "Pelicans",
+            "Timberwolves",
+            "Jaguars",
+            "UCF",
+            "Cincinnati",
+          ].includes(team.name ?? team.fullName ?? "");
+
+          const teamBackgroundColor = isDark
+            ? useSecondaryInDark
+              ? (team as any).secondaryColor ??
+                (team as any).secondary_color ??
+                "#888"
+              : team.color ?? "#888"
+            : team.color ?? "#888";
+
           const split = team.fullName?.split(" ");
           const city = split?.slice(0, -1).join(" ");
           const nickname = split?.at(-1) || "";
 
+          const displayName =
+            team.league === "CFB" || team.league === "CBB"
+              ? team.name || team.fullName || "Unknown Team"
+              : city;
+
+          const displayNickname =
+            team.league === "CFB" || team.league === "CBB" ? null : nickname;
+
+          const logoSource =
+            (alwaysLightLogoTeams.includes(team.name ?? team.fullName ?? "") &&
+              team.logoLight) ||
+            (isDark && team.logoLight) ||
+            team.logo ||
+            team.logoLight ||
+            require("assets/Placeholders/teamPlaceholder.png"); // fallback
+
           return (
             <LongPressGestureHandler
-              key={team.id}
+              key={`${team.league}:${team.id}`}
               minDurationMs={300}
               onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) {
-                  handleLongPress(team);
-                }
+                if (nativeEvent.state === State.ACTIVE) handleLongPress(team);
               }}
             >
               <Pressable
-                onPress={() => router.push(`/team/${team.id}`)}
                 style={({ pressed }) => [
                   pressed && { opacity: 0.6 },
                   isGridView ? { width: "32%" } : { width: "100%" },
                 ]}
+                onPress={() => {
+                  const route =
+                    team.league === "NFL"
+                      ? "/team/nfl/[teamId]"
+                      : team.league === "NBA"
+                      ? "/team/[teamId]"
+                      : team.league === "CFB"
+                      ? "/team/cfb/[teamId]"
+                      : "/team/cbb/[teamId]";
+                  router.push({
+                    pathname: route,
+                    params: { teamId: team.id.toString() },
+                  });
+                }}
               >
-                <View style={{ width: "100%" }}>
-                  <View
+                <View
+                  style={[
+                    styles.teamItem,
+                    {
+                      backgroundColor: teamBackgroundColor,
+                      flexDirection: isGridView ? "column" : "row",
+                      justifyContent: isGridView ? "center" : "flex-start",
+                      alignItems: "center",
+                      height: isGridView ? 130 : "auto",
+                      marginBottom: isGridView ? 0 : 8,
+                      paddingHorizontal: 12,
+                      paddingVertical: isGridView ? 20 : 12,
+                      position: "relative", // ensure badge overlays correctly
+                      overflow: "hidden",
+                    },
+                  ]}
+                >
+                  {/* League Tag for CFB / CBB */}
+                  {(team.league === "CFB" || team.league === "CBB") && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        paddingLeft: 12,
+                        paddingRight: 6,
+                        paddingVertical: 4,
+                        borderTopLeftRadius: 6,
+                        borderBottomLeftRadius: 100,
+                        zIndex: 2,
+                        backgroundColor:
+                          team.league === "CFB" ? "#228B22" : "#1E90FF",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#fff",
+                          fontSize: 11,
+                          fontFamily: Fonts.OSBOLD,
+                        }}
+                      >
+                        {team.league}
+                      </Text>
+                    </View>
+                  )}
+
+                  <Image
+                    source={logoSource}
                     style={[
-                      styles.teamItem,
-                      {
-                        backgroundColor: team.color,
-                        flexDirection: isGridView ? "column" : "row",
-                        justifyContent: isGridView ? "center" : "flex-start",
-                        alignItems: "center",
-                        height: isGridView ? 130 : "auto",
-                        marginBottom: isGridView ? 0 : 8,
-                        paddingHorizontal: 12,
-                        paddingVertical: isGridView ? 20 : 12,
-                        
-                      },
+                      styles.teamLogo,
+                      isGridView ? { marginBottom: 8 } : { marginRight: 10 },
                     ]}
-                  >
-                    <Image
-                      source={
-                        isDark && team.logoLight
-                          ? team.logoLight
-                          : team.logoLight || team.logo
-                      }
-                      style={[
-                        styles.teamLogo,
-                        isGridView ? { marginBottom: 8 } : { marginRight: 10 },
-                      ]}
-                    />
-                    {isGridView ? (
-                      <View style={{ alignItems: "center" }}>
-                        <Text
-                          style={[
-                            styles.teamName,
-                            { fontSize: 12, textAlign: "center" },
-                          ]}
-                        >
-                          {city}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.teamName,
-                            {
-                              fontSize: 12,
-                              textAlign: "center",
-                              marginTop: 2,
-                            },
-                          ]}
-                        >
-                          {nickname}
-                        </Text>
-                      </View>
-                    ) : (
+                  />
+
+                  {isGridView ? (
+                    <View style={{ alignItems: "center" }}>
                       <Text
                         style={[
                           styles.teamName,
-                          {
-                            textAlign: "left",
-                            fontSize: 14,
-                            marginLeft: 10,
-                          },
+                          { fontSize: 12, textAlign: "center" },
                         ]}
                       >
-                        {team.fullName}
+                        {displayName}
                       </Text>
-                    )}
-                  </View>
+                      {displayNickname && (
+                        <Text
+                          style={[
+                            styles.teamName,
+                            { fontSize: 12, textAlign: "center", marginTop: 2 },
+                          ]}
+                        >
+                          {displayNickname}
+                        </Text>
+                      )}
+                    </View>
+                  ) : (
+                    <Text
+                      style={[
+                        styles.teamName,
+                        { textAlign: "left", fontSize: 14, marginLeft: 10 },
+                      ]}
+                    >
+                      {team.fullName || displayName}
+                    </Text>
+                  )}
                 </View>
               </Pressable>
             </LongPressGestureHandler>
@@ -224,7 +314,7 @@ const FavoriteTeamsList = ({
                 style={styles.editIcon}
                 name="create"
                 size={20}
-                color={isDark ? "#000" : "#fff"}
+                color={isDark ? "#1d1d1d" : "#fff"}
               />
             </View>
           </Pressable>

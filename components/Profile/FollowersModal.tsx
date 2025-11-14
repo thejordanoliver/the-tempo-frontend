@@ -1,25 +1,18 @@
-import { useFollowers } from "hooks/useFollowers";
-import { useFollowersModalStore } from "store/followersModalStore";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Colors } from "constants/Colors";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
+import { useFollowers } from "hooks/useFollowers";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from "react-native";
-import FollowingButton from "./ModalFollowingButton";
-import { Fonts } from "constants/fonts";
+import { Pressable, Text, TextInput, useColorScheme, View } from "react-native";
+import { useFollowersModalStore } from "store/followersModalStore";
+import { followersListModalStyles } from "styles/ModalsStyles/FollowersListModal.styles";
+import FollowersList from "./FollowersList";
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -37,12 +30,13 @@ export default function FollowersModal({
 }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
 
   // State
   const [search, setSearch] = useState("");
   const [loadingIds, setLoadingIds] = useState<string[]>([]);
-
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const styles = followersListModalStyles(isDark);
   // Custom hook for followers/following data & toggle
   const {
     users: usersFromHook,
@@ -103,12 +97,16 @@ export default function FollowersModal({
     }
   };
 
-  // Filter users by search term
   const filteredUsers = useMemo(() => {
     return users
-      ? users.filter((u) =>
-          u.username.toLowerCase().includes(search.toLowerCase())
-        )
+      ? users
+          .filter((u) =>
+            u.username.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((u) => ({
+            ...u,
+            id: u.id.toString(), // <-- normalize to string
+          }))
       : [];
   }, [users, search]);
 
@@ -129,21 +127,24 @@ export default function FollowersModal({
           pressBehavior="close"
         />
       )}
-      handleStyle={{
-        backgroundColor: "transparent",
-        paddingTop: 12,
-        paddingBottom: 4,
-        alignItems: "center",
-        position: "absolute",
-        left: 8,
-        right: 8,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: isDark ? "#888" : "#444",
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-      }}
+      handleComponent={() => (
+        <View style={styles.header}>
+          <View style={styles.handleIndicatorStyle}></View>
+          <Text
+            style={[styles.headerText, { color: isDark ? "#fff" : "#1d1d1d" }]}
+          >
+            {type === "followers" ? "Followers" : "Following"}
+          </Text>
+
+          <Pressable style={styles.closeButton} onPress={onClose}>
+            <Ionicons
+              name="close"
+              size={28}
+              color={isDark ? Colors.netural.white : Colors.netural.black}
+            />
+          </Pressable>
+        </View>
+      )}
       backgroundStyle={{ backgroundColor: "transparent" }}
     >
       <BlurView
@@ -152,159 +153,30 @@ export default function FollowersModal({
         style={styles.blurContainer}
       >
         <View style={styles.modalContainer}>
-          <Text style={[styles.title, { color: isDark ? "#fff" : "#1d1d1d" }]}>
-            {type === "followers" ? "Followers" : "Following"}
-          </Text>
-
           <TextInput
             placeholder="Search..."
             placeholderTextColor={isDark ? "#aaa" : "#1d1d1d"}
             value={search}
             onChangeText={setSearch}
-            style={[
-              styles.searchInput,
-              {
-                borderColor: isDark ? "#aaa" : "#1d1d1d",
-                color: isDark ? "#fff" : "#1d1d1d",
-              },
-            ]}
+            style={styles.searchInput}
           />
 
-          {error && (
-            <Text
-              style={{
-                color: "red",
-                textAlign: "center",
-                marginVertical: 8,
-                fontFamily: Fonts.OSREGULAR,
-              }}
-            >
-              {error}
-            </Text>
-          )}
+          {error && <Text style={styles.error}>{error}</Text>}
 
           <BottomSheetScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 80 }}
           >
-            {filteredUsers.length === 0 && !loading ? (
-              <Text
-                style={{
-                  textAlign: "center",
-                  marginTop: 20,
-                  fontFamily: Fonts.OSREGULAR,
-                  color: isDark ? "#fff" : "#1d1d1d",
-                }}
-              >
-                No users found.
-              </Text>
-            ) : (
-              filteredUsers.map((item) => {
-                const imageUri = item.profile_image.startsWith("http")
-                  ? item.profile_image
-                  : `${process.env.EXPO_PUBLIC_API_URL}${item.profile_image}`;
-
-                const isCurrentUser = item.id.toString() === currentUserId;
-
-                return (
-                  <Pressable
-                    key={item.id.toString()}
-                    onPress={() => handleUserPress(item.id.toString())}
-                  >
-                    <View
-                      style={[
-                        styles.userItem,
-                        {
-                          borderBottomColor: isDark
-                            ? "rgba(255,255,255,0.2)"
-                            : "rgba(120, 120, 120, 0.5)",
-                        },
-                      ]}
-                    >
-                      <Image source={{ uri: imageUri }} style={styles.avatar} />
-                      <Text
-                        style={[
-                          styles.username,
-                          { color: isDark ? "#fff" : "#1d1d1d" },
-                        ]}
-                      >
-                        {item.username}
-                      </Text>
-
-                      {!isCurrentUser && (
-                        <FollowingButton
-                          isFollowing={item.isFollowing}
-                          loading={loadingIds.includes(item.id.toString())}
-                          onToggle={() =>
-                            handleToggleFollow(item.id.toString())
-                          }
-                        />
-                      )}
-                    </View>
-                  </Pressable>
-                );
-              })
-            )}
-          </BottomSheetScrollView>
-
-          <Pressable style={styles.closeButton} onPress={onClose}>
-            <Ionicons
-              name="close"
-              size={28}
-              color={isDark ? "#fff" : "#1d1d1d"}
+            <FollowersList
+              users={filteredUsers}
+              loadingIds={loadingIds}
+              currentUserId={currentUserId}
+              onUserPress={handleUserPress}
+              onToggleFollow={handleToggleFollow}
             />
-          </Pressable>
+          </BottomSheetScrollView>
         </View>
       </BlurView>
     </BottomSheetModal>
   );
 }
-
-const styles = StyleSheet.create({
-  blurContainer: {
-    flex: 1,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    overflow: "hidden",
-  },
-  modalContainer: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  searchInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 16,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  userItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 100,
-    marginRight: 12,
-  },
-  username: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: Fonts.OSREGULAR,
-  },
-  closeButton: {
-    position: "absolute",
-    top: 15,
-    right: 20,
-  },
-});

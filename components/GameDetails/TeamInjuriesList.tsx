@@ -1,12 +1,11 @@
-import { Fonts } from "constants/fonts";
 import players from "constants/players"; // fallback headshot map
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
 import { TeamInjury } from "hooks/useGameDetails";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
-
+import { Image, Text, View, useColorScheme } from "react-native";
+import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 type Props = {
   injuries: TeamInjury[];
-  lighter: boolean
+  lighter: boolean;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
@@ -49,7 +48,6 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
   const isDark = useColorScheme() === "dark";
 
   if (!injuries?.length) {
-    console.log("No injuries to display.");
     return null;
   }
 
@@ -57,7 +55,6 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
   const teamIds = injuries.map((t) => {
     const feedId = t.team.id.toString();
     const dbId = TEAM_ID_MAP[feedId] || feedId; // fallback if no mapping
-    console.log(`Mapping feed team ID ${feedId} → DB team ID ${dbId}`);
     return dbId;
   });
 
@@ -65,36 +62,23 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
   const teamPlayersMap: Record<string, Player[]> = {};
   teamIds.forEach((teamId) => {
     const { players } = useDbPlayersByTeam(teamId);
-    console.log(
-      `📦 Fetched ${players.length} DB players for team ID ${teamId}:`,
-      players.map((p) => p.full_name)
-    );
+
     teamPlayersMap[teamId] = players;
   });
 
-  const getStyles = styles(isDark);
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#888";
-  const status = lighter ? "#ff4444" : isDark ? "#ff4444" : "#cc0000";
-  const headshotBackgroundColor = lighter ? "#444" : isDark ? "#444" : "#ddd";
+  const getStyles = styles(isDark, lighter);
+
   return (
     <View style={getStyles.container}>
       {injuries.map((team) => {
         const feedTeamId = team.team.id.toString();
         const dbTeamId = TEAM_ID_MAP[feedTeamId] || feedTeamId;
         const teamPlayers = teamPlayersMap[dbTeamId] || [];
-        console.log(
-          `🏀 Team ${team.team.displayName} (Feed ID: ${feedTeamId}, DB ID: ${dbTeamId}) has ${teamPlayers.length} DB players`
-        );
 
         return (
           <View key={team.team.id} style={getStyles.teamBlock}>
             {team.injuries.map((inj, idx) => {
               const fullName = inj.athlete.fullName;
-              console.log(
-                `🩺 Processing injury for player: ${fullName} (Team DB ID: ${dbTeamId})`
-              );
 
               // Match player by full_name from DB
               const dbPlayer = teamPlayers.find((p) => {
@@ -103,21 +87,13 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
                 const injName = fullName.toLowerCase().trim();
                 const matched =
                   dbName.includes(injName) || injName.includes(dbName);
-                if (matched)
-                  console.log(
-                    `✅ Name match found: DB "${p.full_name}" ↔ Injury "${fullName}"`
-                  );
+
                 return matched;
               });
-
-              if (!dbPlayer) {
-                console.log(`❌ No DB match found for ${fullName}`);
-              }
 
               // Fallback to headshot map using full name
               const avatarUrl =
                 dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
-              console.log(`🖼 Avatar URL for ${fullName}: ${avatarUrl}`);
 
               return (
                 <View
@@ -127,31 +103,39 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
                     {
                       borderBottomWidth:
                         idx === team.injuries.length - 1 ? 0 : 1,
-                        borderBottomColor: borderColor
                     },
                   ]}
                 >
-                  <Image
-                    source={{ uri: avatarUrl }}
-                    style={[getStyles.headshot,{backgroundColor: headshotBackgroundColor}]}
-                  />
-                  <View style={getStyles.injuryText}>
+                  <View style={getStyles.avatarWrapper}>
+                    <Image
+                      source={{ uri: avatarUrl }}
+                      style={getStyles.avatar}
+                    />
+                  </View>
+                  <View style={getStyles.infoSection}>
                     <View style={getStyles.playerHeader}>
-                      <Text style={[getStyles.player, {color: textColor}]}>{fullName}</Text>
-                      <Text style={[getStyles.jerseyNumber, {color: subTextColor}]}>
+                      <Text style={[getStyles.name]}>{fullName}</Text>
+                      <Text style={[getStyles.jersey]}>
+                        {dbPlayer?.position ?? "—"}{" "}
                         {dbPlayer?.jersey_number
                           ? `#${dbPlayer.jersey_number}`
                           : "N/A"}
                       </Text>
                     </View>
+                    <Text style={[getStyles.status]}>{inj.status}</Text>
                     {inj.details?.detail && (
-                      <Text style={[getStyles.details,  {color: status}]}>
+                      <Text style={getStyles.details}>
                         {inj.details.detail}
                       </Text>
                     )}
                   </View>
                   <View>
-                    <Text style={[getStyles.status, {color: subTextColor}]}>{inj.status}</Text>
+                    {inj.details?.returnDate && (
+                      <Text style={[getStyles.status]}>
+                        Return:{" "}
+                        {new Date(inj.details.returnDate).toLocaleDateString()}
+                      </Text>
+                    )}
                   </View>
                 </View>
               );
@@ -162,49 +146,3 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
     </View>
   );
 }
-
-const styles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {},
-    teamBlock: {},
-    injuryItem: {
-      flexDirection: "row",
-      padding: 8,
-      alignItems: "center",
-    
-    },
-    headshot: {
-      width: 50,
-      height: 50,
-      borderRadius: 100,
-      paddingTop: 4,
-      marginRight: 8,
-   
-    },
-    injuryText: { flex: 1 },
-    player: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    playerHeader: {
-      flexDirection: "row",
-      alignItems: "flex-end",
-    },
-    status: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? "#aaa" : "#888",
-    },
-    jerseyNumber: {
-      fontSize: 12,
-      marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#aaa" : "#888",
-    },
-    details: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? "#ff4444" : "#cc0000",
-    },
-  });

@@ -33,7 +33,7 @@ type UsePlayersReturn = {
   loading: boolean;
   error: string | null;
 };
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 const usePlayersByTeamAndSeason = (teamId: string, season: string): UsePlayersReturn => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -45,7 +45,7 @@ const usePlayersByTeamAndSeason = (teamId: string, season: string): UsePlayersRe
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get<ApiResponse>("https://api-nba-v1.p.rapidapi.com/players", {
+        const response = await axios.get<ApiResponse>(`https://${RAPIDAPI_HOST}/players`, {
           params: {
             team: teamId,
             season: season,

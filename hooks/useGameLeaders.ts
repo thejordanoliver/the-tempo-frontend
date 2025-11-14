@@ -36,7 +36,6 @@ export function useGameLeaders(
                 ? "away"
                 : undefined,
           }));
-
           setData(playersWithTeamType);
         }
       } catch (err: any) {

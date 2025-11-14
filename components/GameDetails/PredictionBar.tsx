@@ -63,50 +63,47 @@ export default function PredictionBar({
   const textColor = isDark ? "#fff" : "#1d1d1d";
 
   return (
-    <>
-      <View style={[styles.container]}>
-        <HeadingTwo style={{ marginBottom: 12 }}>Win Predictor</HeadingTwo>
-        <View style={[styles.wrapper]}>
-          <View
-            style={[
-              styles.bar,
-              { flex: awayPercent, backgroundColor: effectiveAwayColor },
-            ]}
-          ></View>
-          <View
-            style={[
-              styles.bar,
-              { flex: homePercent, backgroundColor: effectiveHomeColor },
-            ]}
-          ></View>
-        </View>
-        <View style={styles.numbers}>
-          {awayPercent > 5 && (
-            <Text style={[styles.text, { color: textColor }]}>
-              {awayPercent.toFixed(1)}%
-            </Text>
-          )}
-          {homePercent > 5 && (
-            <Text style={[styles.text, { color: textColor }]}>
-              {homePercent.toFixed(1)}%
-            </Text>
-          )}
-        </View>
+    <View>
+      <HeadingTwo>Win Predictor</HeadingTwo>
+      <View
+        style={[styles.wrapper, { backgroundColor: isDark ? "#333" : "#eee" }]}
+      >
+        <View
+          style={[
+            styles.bar,
+            { flex: awayPercent, backgroundColor: effectiveAwayColor },
+          ]}
+        ></View>
+        <View
+          style={[
+            styles.bar,
+            { flex: homePercent, backgroundColor: effectiveHomeColor },
+          ]}
+        ></View>
       </View>
-    </>
+      <View style={styles.numbers}>
+        {awayPercent > 5 && (
+          <Text style={[styles.text, { color: textColor }]}>
+            {awayPercent.toFixed(1)}%
+          </Text>
+        )}
+        {homePercent > 5 && (
+          <Text style={[styles.text, { color: textColor }]}>
+            {homePercent.toFixed(1)}%
+          </Text>
+        )}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    overflow: "hidden",
-  },
+  container: {},
   wrapper: {
     flexDirection: "row",
     height: 8,
     borderRadius: 100,
     overflow: "hidden",
-   
   },
   bar: {
     justifyContent: "center",
@@ -117,7 +114,7 @@ const styles = StyleSheet.create({
   },
   numbers: {
     flex: 1,
-     padding: 8,
+    padding: 8,
     flexDirection: "row",
     justifyContent: "space-between",
   },

@@ -1,13 +1,13 @@
-// components/FavoriteTeamsSelector.tsx
-import type { Team } from "types/types";
-import { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Animated, FlatList } from "react-native";
+import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "./FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
+
 type Props = {
-  teams: Team[];
+  teams: LeagueTeam[];
   favorites: string[];
-  toggleFavorite: (id: string) => void;
+  toggleFavorite: (league: LeagueType, id: string) => void;
   isGridView: boolean;
   fadeAnim: Animated.Value;
   search: string;
@@ -25,13 +25,38 @@ const FavoriteTeamsSelector = ({
   itemWidth,
   loading = false,
 }: Props) => {
-  const filteredTeams = useMemo(
-    () =>
-      teams.filter((team) =>
-        team.fullName?.toLowerCase().includes(search.toLowerCase())
-      ),
-    [teams, search]
-  );
+  const filteredTeams = useMemo(() => {
+    const query = search.toLowerCase();
+    return teams.filter((team) => {
+      const name = team.fullName || team.name || team.displayName || "";
+      return name.toLowerCase().includes(query);
+    });
+  }, [teams, search]);
+
+
+
+  const renderItem = useCallback(
+  ({ item }: { item: LeagueTeam }) => {
+    const displayItem = {
+      ...item,
+      fullName:
+        item.league === "NFL" || item.league === "NBA"
+          ? item.fullName
+          : item.fullName || item.name,
+    };
+
+    return (
+      <TeamCard
+        item={displayItem}
+        isSelected={favorites.includes(`${item.league}:${item.id.toString()}`)}
+        onPress={() => toggleFavorite(item.league, item.id.toString())}
+        isGridView={isGridView}
+        itemWidth={itemWidth}
+      />
+    );
+  },
+  [favorites, isGridView, itemWidth, toggleFavorite]
+);
 
   if (loading) {
     return (
@@ -47,27 +72,21 @@ const FavoriteTeamsSelector = ({
       <FlatList
         key={isGridView ? "grid" : "list"}
         data={filteredTeams}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => `${item.league}-${item.id}`}
         numColumns={isGridView ? 3 : 1}
         columnWrapperStyle={
           isGridView
             ? {
-                gap: 10, // spacing between cards
+                justifyContent: "flex-start",
+                gap: 12,
+                marginBottom: 12,
                 flexWrap: "wrap",
               }
             : undefined
         }
-        renderItem={({ item }) => (
-          <TeamCard
-            item={item}
-            isSelected={favorites.includes(item.id)}
-            onPress={() => toggleFavorite(item.id)}
-            isGridView={isGridView}
-            itemWidth={itemWidth}
-          />
-        )}
+       renderItem={renderItem}
+
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 16 }}
       />
     </Animated.View>
   );

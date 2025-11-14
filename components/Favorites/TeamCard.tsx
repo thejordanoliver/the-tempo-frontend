@@ -1,5 +1,9 @@
-import type { Team } from "types/types";
-import { useEffect, useRef } from "react";
+// ...
+import PlaceHolderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
+import { useEffect, useRef,  } from "react";
+
 import {
   Animated,
   Easing,
@@ -8,17 +12,21 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { Fonts } from "constants/fonts";
+import type { LeagueType, Team } from "types/types";
+import React from "react";
+
+type TeamWithLeague = Team & { league: LeagueType };
+
 type Props = {
-  item: Team;
+  item: TeamWithLeague;
   isSelected: boolean;
   isGridView: boolean;
   onPress: () => void;
   itemWidth: number;
-  onImageLoad?: () => void; // new prop
+  onImageLoad?: () => void;
 };
 
-export default function TeamCard({
+function TeamCard({
   item,
   isSelected,
   isGridView,
@@ -28,20 +36,11 @@ export default function TeamCard({
 }: Props) {
   const isDark = useColorScheme() === "dark";
 
+  // Split fullName into city + nickname
   const [city, nickname] = (() => {
     const parts = item.fullName?.split(" ");
     return [parts?.slice(0, -1).join(" "), parts?.slice(-1).join(" ")];
   })();
-
-  const shouldShowLight =
-    isDark && ["14", "27", "38", "40"].includes(item.id)
-      ? true
-      : !isDark && isSelected && item.logoLight;
-
-  const lightLogoOpacity = useRef(
-    new Animated.Value(shouldShowLight ? 1 : 0)
-  ).current;
-  const previousShouldShowLight = useRef(shouldShowLight);
 
   const selectionAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
   const previousSelected = useRef(isSelected);
@@ -52,38 +51,58 @@ export default function TeamCard({
         toValue: isSelected ? 1 : 0,
         duration: 300,
         easing: Easing.linear,
-        useNativeDriver: false, // needed for color interpolation
+        useNativeDriver: false,
       }).start();
       previousSelected.current = isSelected;
     }
   }, [isSelected]);
 
-  const selectedColor =
-    isDark && item.id === "28"
-      ? (item.secondary_color ?? "#E56020")
-      : (item.color ?? "#000");
+  const secondaryColor =
+    "secondary_color" in item
+      ? item.secondary_color
+      : "secondaryColor" in item
+      ? item.secondaryColor
+      : undefined;
 
-  const backgroundColor = selectionAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [isDark ? "#222" : "#eee", selectedColor],
-  });
+const selectedColor =
+  typeof item.color === "string" && item.color.startsWith("#")
+    ? item.color
+    : Colors.midTone;
+
+const backgroundColor = selectionAnim.interpolate({
+  inputRange: [0, 1],
+  outputRange: [
+    isDark
+      ? Colors.dark.itemBackground || "#121212"
+      : Colors.light.itemBackground || "#f5f5f5",
+    selectedColor || "#888",
+  ],
+});
+
 
   const textColor = selectionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? "#fff" : "#000", "#fff"],
+    outputRange: [
+      isDark ? Colors.dark.text : Colors.light.text,
+      Colors.dark.text,
+    ],
   });
 
-  useEffect(() => {
-    if (previousShouldShowLight.current !== shouldShowLight) {
-      Animated.timing(lightLogoOpacity, {
-        toValue: shouldShowLight ? 1 : 0,
-        duration: 300,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }).start();
-      previousShouldShowLight.current = shouldShowLight;
+  // ✅ Always use logoLight in dark mode if available, otherwise fallback
+  // ✅ Choose correct logo based on theme and selection
+  const logoSource = (() => {
+    if (isDark) {
+      return item.logoLight || item.logo || PlaceHolderLogo;
     }
-  }, [shouldShowLight]);
+    // In light mode: use logoLight when selected, if available
+    if (isSelected && item.logoLight) {
+      return item.logoLight;
+    }
+    return item.logo || PlaceHolderLogo;
+  })();
+
+
+  const logoSize = isGridView ? 50 : 40;
 
   return (
     <Pressable
@@ -92,7 +111,7 @@ export default function TeamCard({
         {
           opacity: pressed ? 0.6 : 1,
           width: isGridView ? itemWidth : "100%",
-          marginBottom: 10,
+          marginBottom: isGridView ? 0 : 12,
         },
       ]}
     >
@@ -100,55 +119,67 @@ export default function TeamCard({
         style={[
           styles.teamCard,
           {
+            width: isGridView ? itemWidth : "100%",
             backgroundColor,
             flexDirection: isGridView ? "column" : "row",
             justifyContent: isGridView ? "center" : "flex-start",
             alignItems: "center",
-            paddingHorizontal: isGridView ? 20 : 12,
+            paddingHorizontal: isGridView ? 0 : 12,
             paddingVertical: 12,
             height: isGridView ? 130 : "auto",
           },
         ]}
       >
-        <View style={styles.logoWrapper}>
-          <Animated.Image
-            source={item.logo}
+        {/* League Tag for CFB / CBB */}
+        {(item.league === "CFB" || item.league === "CBB") && (
+          <View
             style={[
-              styles.logo,
-              isGridView ? { marginBottom: 8 } : { marginRight: 12 },
+              styles.sportTag,
+              {
+                backgroundColor: item.league === "CFB" ? "#228B22" : "#1E90FF",
+              },
             ]}
-            onLoad={onImageLoad} // invoke callback on load
+          >
+            <Animated.Text style={styles.sportTagText}>
+              {item.league}
+            </Animated.Text>
+          </View>
+        )}
+
+        {/* Logo */}
+        <View
+          style={[
+            styles.logoWrapper,
+            !isGridView && {
+              marginRight: 12,
+              width: logoSize,
+              height: logoSize,
+            },
+          ]}
+        >
+          <Animated.Image
+            source={logoSource}
+            style={[styles.logo, { width: logoSize, height: logoSize }]}
+            onLoad={onImageLoad}
           />
-          {item.logoLight && (
-            <Animated.Image
-              source={item.logoLight}
-              style={[
-                styles.logo,
-                StyleSheet.absoluteFillObject,
-                isGridView ? { marginBottom: 8 } : { marginRight: 12 },
-                { opacity: lightLogoOpacity },
-              ]}
-            />
-          )}
         </View>
 
-        {isGridView ? (
-          <View style={{ alignItems: "center" }}>
-            <Animated.Text style={[styles.teamName, { color: textColor }]}>
-              {city}
-            </Animated.Text>
-
+        {/* Team Name */}
+        <View
+          style={{
+            alignItems: isGridView ? "center" : "flex-start",
+            flexDirection: isGridView ? "column" : "row",
+          }}
+        >
+          <Animated.Text style={[styles.teamName, { color: textColor }]}>
+            {item.league === "CFB" || item.league === "CBB" ? item.name : city}{" "}
+          </Animated.Text>
+          {item.league !== "CFB" && item.league !== "CBB" && (
             <Animated.Text style={[styles.teamName, { color: textColor }]}>
               {nickname}
             </Animated.Text>
-          </View>
-        ) : (
-          <Animated.Text
-            style={[styles.teamName, { color: textColor, marginLeft: 8 }]}
-          >
-            {item.fullName}
-          </Animated.Text>
-        )}
+          )}
+        </View>
       </Animated.View>
     </Pressable>
   );
@@ -157,6 +188,7 @@ export default function TeamCard({
 const styles = StyleSheet.create({
   teamCard: {
     borderRadius: 8,
+    overflow: "hidden",
   },
   teamName: {
     fontFamily: Fonts.OSREGULAR,
@@ -174,4 +206,21 @@ const styles = StyleSheet.create({
     height: 50,
     resizeMode: "contain",
   },
+  sportTag: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    paddingLeft: 12,
+    paddingRight: 6,
+    paddingVertical: 4,
+    borderTopLeftRadius: 6,
+    borderBottomLeftRadius: 100,
+    zIndex: 2,
+  },
+  sportTagText: {
+    color: Colors.white,
+    fontSize: 11,
+    fontFamily: Fonts.OSBOLD,
+  },
 });
+export default React.memo(TeamCard);

@@ -1,15 +1,24 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import GamesList from "components/Games/GamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import TabBar from "components/TabBar";
 import RosterStats from "components/Team/RosterStats";
+import TeamInfoBottomSheet from "components/Team/TeamInfoModal";
 import TeamPlayerList from "components/Team/TeamRoster";
 import { Fonts } from "constants/fonts";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import { useTeamRosterStats } from "hooks/useTeamRosterStats";
-import { User } from "types/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNewsStore } from "hooks/newsStore";
+import useDbPlayersByTeam from "hooks/useDbPlayersByTeam";
+import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useTeamGames } from "hooks/useTeamGames";
+import { useTeamHighlights } from "hooks/useTeamHighlights";
+import { useTeamNews } from "hooks/useTeamNews";
+import { useTeamRosterStats } from "hooks/useTeamRosterStats";
+import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -25,21 +34,15 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import PagerView from "react-native-pager-view";
 import { style } from "styles/TeamDetails.styles";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import TabBar from "components/TabBar";
-import { teams } from "constants/teams";
-import { useNewsStore } from "hooks/newsStore";
-import useDbPlayersByTeam from "hooks/useDbPlayersByTeam";
-import { useTeamGames } from "hooks/useTeamGames";
-import { useTeamNews } from "hooks/useTeamNews";
+import { User } from "types/types";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
   const teamIdNum = parseInt(teamId as string, 10);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [modalVisible, setModalVisible] = useState(false); // ✅ bottom sheet state
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
@@ -49,11 +52,11 @@ export default function TeamDetailScreen() {
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
   const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
+  const pagerRef = useRef<PagerView>(null);
 
   // map tabs to page index
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
-  const pagerRef = useRef<PagerView>(null);
 
   const team = useMemo(
     () => teams.find((t) => t.id === teamIdNum.toString()),
@@ -86,24 +89,18 @@ export default function TeamDetailScreen() {
     error: gamesError,
   } = useTeamGames(teamIdNum.toString());
 
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights(team?.fullName ?? "", 30);
+ const {
+  highlights: teamHighlights,
+  loading: highlightsLoading,
+  error: highlightsError,
+} = useTeamHighlights("nba", team?.fullName ?? "", 5);
+
   const {
     articles: newsArticles,
     loading: newsLoading,
     error: newsError,
     refreshNews,
   } = useTeamNews(team?.fullName ?? "");
-
-  const combinedNewsItems = useMemo(() => {
-    return newsArticles.map((article) => ({
-      ...article,
-      itemType: "news" as const,
-    }));
-  }, [newsArticles]);
 
   const combinedNewsAndHighlights = useMemo(() => {
     const taggedNews = newsArticles.map((item) => ({
@@ -153,43 +150,17 @@ export default function TeamDetailScreen() {
     loadUser();
   }, []);
 
-  useEffect(() => {
-    const checkFavorites = async () => {
-      const stored = await AsyncStorage.getItem("favorites");
-      if (stored) {
-        const favorites = JSON.parse(stored);
-        setIsFavorite(favorites.includes(teamIdNum.toString()));
-      }
-    };
-    checkFavorites();
-  }, [teamIdNum]);
-
   const {
     rosterStats,
     loading: rosterStatsLoading,
     error: rosterStatsError,
   } = useTeamRosterStats(teamIdNum);
 
-  const toggleFavorite = async () => {
-    try {
-      const stored = await AsyncStorage.getItem("favorites");
-      const favorites: string[] = stored ? JSON.parse(stored) : [];
-
-      let updatedFavorites: string[];
-      if (favorites.includes(teamIdNum.toString())) {
-        updatedFavorites = favorites.filter(
-          (id) => id !== teamIdNum.toString()
-        );
-      } else {
-        updatedFavorites = [...favorites, teamIdNum.toString()];
-      }
-
-      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-      setIsFavorite(updatedFavorites.includes(teamIdNum.toString()));
-    } catch (err) {
-      console.error("Failed to update favorites:", err);
-    }
-  };
+  const {
+    teamStats,
+    loading: teamStatsLoading,
+    error: teamStatsError,
+  } = useTeamStats(teamIdNum);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -215,29 +186,42 @@ export default function TeamDetailScreen() {
   });
 
   useEffect(() => {
-    if (!gamesLoading && teamGames.length > 0 && !selectedDate) {
+    if (
+      !gamesLoading &&
+      teamGames.length > 0 &&
+      !selectedDate &&
+      monthsToShow.length > 0
+    ) {
       const today = new Date();
 
-      // Find the closest month from monthsToShow
-      const closestMonth = monthsToShow.reduce((closest, m) => {
-        const monthDate = new Date(m.year, m.month, 1);
-        const diff = Math.abs(monthDate.getTime() - today.getTime());
-        const closestDiff = Math.abs(
-          new Date(closest.year, closest.month, 1).getTime() - today.getTime()
-        );
-        return diff < closestDiff ? m : closest;
-      }, monthsToShow[0]);
+      // Try to find a month that matches the current month/year
+      const currentMonthWithGames = monthsToShow.find(
+        ({ month, year }) =>
+          month === today.getMonth() && year === today.getFullYear()
+      );
 
-      setSelectedDate(new Date(closestMonth.year, closestMonth.month, 1));
+      const startingMonth = currentMonthWithGames ?? monthsToShow[0];
 
-      // Scroll to that month’s tab
+      setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
+
+      // Scroll to that month
       setTimeout(() => {
-        const index = monthsToShow.findIndex(
-          (m) => m.month === closestMonth.month && m.year === closestMonth.year
-        );
-        if (index >= 0 && scrollViewRef.current) {
+        if (scrollViewRef.current) {
+          const index = monthsToShow.findIndex(
+            (m) =>
+              m.month === startingMonth.month && m.year === startingMonth.year
+          );
+          const itemWidth = 70;
+          const spacing = 12;
+          const screenWidth = Dimensions.get("window").width;
+          const scrollToX =
+            index * itemWidth +
+            index * spacing -
+            screenWidth / 2 +
+            itemWidth / 2;
+
           scrollViewRef.current.scrollTo({
-            x: index * 70,
+            x: Math.max(0, scrollToX),
             animated: true,
           });
         }
@@ -301,6 +285,11 @@ export default function TeamDetailScreen() {
     };
   });
 
+  // ✅ Use the favorite teams hook
+  const { toggleFavorite, isFavorite } = useFavoriteTeams();
+  const league = "NBA";
+  const favorited = team ? isFavorite(league, team.id) : false;
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -311,12 +300,14 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen={true}
           teamCode={team?.code}
-          isFavorite={isFavorite}
-          onToggleFavorite={toggleFavorite}
+          isFavorite={favorited}
+          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onOpenInfo={() => setModalVisible(true)}
+          league={league}
         />
       ),
     });
-  }, [navigation, isDark, team, isFavorite]);
+  }, [navigation, isDark, team, favorited]);
 
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
@@ -362,15 +353,23 @@ export default function TeamDetailScreen() {
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <View style={styles.monthSelector}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={70}
-              decelerationRate="fast"
-              scrollEventThrottle={16}
-              contentContainerStyle={{ paddingHorizontal: 12 }}
-            >
+                  <ScrollView
+  ref={scrollViewRef}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  snapToInterval={82} // slightly wider for spacing
+  decelerationRate="fast"
+  scrollEventThrottle={16}
+  contentContainerStyle={{
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  }}
+>
+
               {monthsToShow.map(({ label, month, year }, index) => {
                 const isSelected =
                   selectedDate.getMonth() === month &&
@@ -417,17 +416,25 @@ export default function TeamDetailScreen() {
             onRefresh={handleRefresh}
             expectedCount={filteredGames.length}
           />
+
+          {/* <GamesList
+            games={mockGames}
+            loading={gamesLoading}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            expectedCount={filteredGames.length}
+          /> */}
         </View>
 
         {/* News Page */}
-        <View key="news" style={{ flex: 1 }}>
+        <ScrollView key="news" style={{ flex: 1 }}>
           <NewsHighlightsList
             items={combinedNewsAndHighlights}
             loading={newsLoading || highlightsLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
           />
-        </View>
+        </ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -501,6 +508,7 @@ export default function TeamDetailScreen() {
                   rosterStats={rosterStats}
                   playersDb={playersForRosterStats}
                   teamId={teamId as string}
+                  teamStats={teamStats} // ✅ must pass this
                 />
               )}
             </View>
@@ -509,9 +517,18 @@ export default function TeamDetailScreen() {
 
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
-          <TeamForum teamId={teamId as string} />
+          <TeamForum teamId={teamId as string} league="NBA" />
         </View>
       </PagerView>
+      {/* --- Bottom Sheet --- */}
+      {team && (
+        <TeamInfoBottomSheet
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          teamId={team.id}
+          coachName={team.coach ?? "N/A"}
+        />
+      )}
     </View>
   );
 }

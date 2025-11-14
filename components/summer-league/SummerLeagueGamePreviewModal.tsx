@@ -21,7 +21,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "../../styles/SLGameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import LineScore from "./LineScore";
 import TeamInfo from "./TeamInfo";
 

@@ -38,17 +38,18 @@ export default function useDbPlayersByTeam(teamId: string) {
   const API_URL = getApiBaseUrl();
 
   const refreshPlayers = useCallback(async () => {
-    if (!teamId) return;
-
-    // console.log(`Fetching players from: ${API_URL}/api/players/team/${teamId}`);
+    if (!teamId) {
+      setPlayers([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await axios.get<PlayersResponse>(
         `${API_URL}/api/players/team/${teamId}`
       );
-
-      // console.log("Raw DB players response:", res.data.players);
 
       const mappedPlayers: Player[] = (res.data.players || []).map((p) => ({
         id: p.id ?? 0,
@@ -62,19 +63,9 @@ export default function useDbPlayersByTeam(teamId: string) {
         active: p.active ?? true,
       }));
 
-      // console.log(
-      //   `📦 Mapped ${mappedPlayers.length} players for team ID ${teamId}:`,
-      //   mappedPlayers.map((p) => p.full_name)
-      // );
-
       setPlayers(mappedPlayers);
       setError(null);
     } catch (err: any) {
-      console.error(
-        "Failed to load team players:",
-        err.response?.status,
-        err.message || err.toString()
-      );
       setError("Could not load team roster.");
       setPlayers([]);
     } finally {
@@ -82,15 +73,10 @@ export default function useDbPlayersByTeam(teamId: string) {
     }
   }, [teamId, API_URL]);
 
+  // ✅ Always run effect, but skip fetching if teamId is empty
   useEffect(() => {
-    if (!teamId) return;
     refreshPlayers();
-  }, [refreshPlayers, teamId]);
+  }, [refreshPlayers]);
 
-  return {
-    players,
-    loading,
-    error,
-    refreshPlayers, // exposed for pull-to-refresh or manual reload
-  };
+  return { players, loading, error, refreshPlayers };
 }

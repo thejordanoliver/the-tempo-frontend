@@ -1,4 +1,5 @@
 // types.ts
+import { ImageSourcePropType } from "react-native";
 
 // types/types.ts (backend User)
 export type BackendUser = {
@@ -42,6 +43,7 @@ export type Follow = {
 export type PlayerStats = {
   playerId: number;
   name: string;
+  headshot_url?: string;
   gamesPlayed: number;
   minutesPlayed: number;
   totalPoints: number;
@@ -53,16 +55,33 @@ export type PlayerStats = {
   totalFouls: number;
   totalFGM: number;
   totalFGA: number;
-  totalFGP: number; // string percentage if you want, else calculate per game
+  totalFGP: number;
   total3PM: number;
   total3PA: number;
-  total3PP: number; // 3-point percentage if you want
+  total3PP: number;
   totalFTM: number;
   totalFTA: number;
-  totalFTP: number; // free throw percentage
+  totalFTP: number;
   totalOffReb: number;
   totalDefReb: number;
   plusMinus: number;
+};
+
+export type TeamStats = {
+  gamesPlayed: number;
+  pointsPerGame: number;
+  reboundsPerGame: number;
+  assistsPerGame: number;
+  stealsPerGame: number;
+  blocksPerGame: number;
+  turnoversPerGame: number;
+  foulsPerGame: number;
+  fgPercent: number;
+  ftPercent: number;
+  tpPercent: number;
+  totalPoints: number;
+  totalRebounds: number;
+  totalAssists: number;
 };
 
 export type PlayerInfo = {
@@ -81,14 +100,13 @@ export type Props = {
 };
 
 export type Team = {
-  id: string;
+  id: number | string;
+  espnID?: string | number;
   name: string;
   fullName?: string;
   logo?: any;
   logo_filename?: any;
   logoLight?: any;
-  constantBlack?: string;
-  constantLogoLight?: any;
   color?: string;
   first_season?: string;
   firstSeason?: string;
@@ -108,8 +126,10 @@ export type Team = {
   all_time_record?: string;
   primary_color?: string;
   championships?: number[];
-  conference_championships?: string[]; // or number[]
+  conference_championships?: number[]; // or number[]
   conference?: string;
+  displayName?: string;
+  banner?: any; // <-- add this
 };
 
 export type Arena = {
@@ -119,45 +139,149 @@ export type Arena = {
   country?: string | null;
 };
 
+export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB";
+
+export type LeagueTeam = Team & { league: LeagueType };
+
 export type Game = {
   id: number;
   date: string;
   time: string;
-  
-  status:
-    | "Scheduled"
-    | "Final"
-    | "In Progress"
-    | "Canceled"
-    | "Delayed"
-    | "Postponed";
   home: Team;
   away: Team;
-
-  code?: string;
+  scores?: { home: { points: number }; visitors: { points: number } };
   homeScore?: number;
   awayScore?: number;
   period?: string;
-  clock?: string;
+  status: {
+    clock?: string;
+    halftime: boolean;
+    short: number;
+    long: string;
+  };
   isPlayoff?: boolean;
   stage?: number;
   isHalftime?: boolean;
-  linescore?: {
-    home: string[];
-    away: string[];
-  };
-  periods?: {
-    current: number;
-    total: number;
-    endOfPeriod: boolean;
-  };
-  arena?: {
+  linescore?: { home: string[]; away: string[] };
+  periods?: { current: number; total: number; endOfPeriod: boolean };
+  venue?: {
     name: string;
     city: string;
     state?: string;
     country?: string;
     capacity?: number;
   };
+};
+
+export type CBBGame = {
+  id: number;
+  date: string; // "2025-12-16T21:00:00+00:00"
+  time: string; // "21:00"
+  timestamp: number; // 1765918800
+  timezone: string; // "UTC"
+
+  stage: string | null;
+  week: string | null;
+  venue: string | null;
+
+  status: {
+    long: string; // "Not Started"
+    short: string; // "NS"
+    timer: string | null;
+  };
+
+  league: {
+    id: number;
+    name: string;
+    type: string;
+    season: string;
+    logo: string;
+    country: {
+      id: number;
+      name: string;
+      code: string;
+      flag: string;
+    };
+  };
+
+  // ✅ Use shared CBBTeam type here
+  teams: {
+    home: CBBTeam;
+    away: CBBTeam;
+  };
+
+  scores: {
+    home: {
+      quarter_1: number | null;
+      quarter_2: number | null;
+      quarter_3: number | null;
+      quarter_4: number | null;
+      over_time: number | null;
+      total: number | null;
+    };
+    away: {
+      quarter_1: number | null;
+      quarter_2: number | null;
+      quarter_3: number | null;
+      quarter_4: number | null;
+      over_time: number | null;
+      total: number | null;
+    };
+  };
+};
+
+export type CBBTeam = {
+  id: number | string;
+  espnID?: string | number;
+  name: string;
+  shortName?: string;
+  fullName?: string;
+  code?: string;
+  abbreviation?: string;
+  city?: string;
+  location?: string;
+  address?: string;
+  coach?: string;
+  coachImage?: string;
+  venue?: string;
+  established?: number;
+  country?: {
+    name: string;
+    code: string;
+    flag: string;
+  };
+  latitude?: number;
+  longitude?: number;
+  venueImage?: any;
+  venueCapacity?: string;
+  logo: any;
+  logoLight?: any;
+  color?: string;
+  secondaryColor?: string;
+  championships?: number[];
+  conference_championships?: string[]; // or number[]
+  venueName?: string; // ✅ Add this
+  banner?: any; // <-- add this
+};
+
+export type Conference = {
+  name: string;
+  logo: ImageSourcePropType | null;
+  teams: string[];
+  color?: {
+    primary: string;
+    secondary: string;
+  };
+};
+
+export type Venue = {
+  name?: string;
+  address?: string;
+  city?: string;
+  latitude?: number;
+  longitude?: number;
+  venueCapacity?: string;
+  venueImage?: any;
 };
 
 export type GameStatus = {
@@ -334,6 +458,17 @@ export type PlayerResult = {
   type: "player";
 };
 
+export type NewsItem = {
+  id: string;
+  title: string;
+  source: string;
+  url: string;
+  thumbnail: string;
+  content: string;
+  publishedAt?: string;
+  date?: string;
+};
+
 export type TeamResult = {
   id: number;
   name: string;
@@ -343,12 +478,21 @@ export type TeamResult = {
   type: "team";
 };
 
+export type NBAOrNFLTeam = {
+  id: string | number;
+  name: string;
+  fullName: string;
+  location?: string;
+  logo: any;
+  logoLight?: any;
+  city?: string;
+};
+
 export type UserResult = {
   id: number;
   username: string;
   profileImageUrl: string;
   type: "user";
 };
-
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;

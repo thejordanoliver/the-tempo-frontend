@@ -1,21 +1,19 @@
-// components/GameDetails/GameInfo.tsx
-import { Fonts } from "constants/fonts";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
-import { matchBroadcastToGame } from "utils/matchBroadcast";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
 
 type GameInfoProps = {
-  status: "Scheduled" | "In Progress" | "Final" | "Canceled" | "Postponed"; // ← added "Canceled"
+  status: "Scheduled" | "In Play" | "Final" | "Canceled" | "Postponed";
   date: string;
   time: string;
   period?: string;
   clock?: string;
+  halftime?: boolean; // 👈 NEW
   colors: Record<string, string>;
   isDark: boolean;
   playoffInfo?: string | string[];
   homeTeam: string;
   awayTeam: string;
-  broadcastNetworks?: string
+  broadcastNetworks?: string;
 };
 
 export function GameInfo({
@@ -24,159 +22,88 @@ export function GameInfo({
   time,
   period,
   clock,
-  colors,
+  halftime, // 👈 added here
   isDark,
   playoffInfo,
   homeTeam,
   awayTeam,
-  broadcastNetworks
+  broadcastNetworks,
 }: GameInfoProps) {
-  const getStyles = styles(isDark); // 👈 call function here
+  const styles = getStyles(isDark);
 
   const renderPlayoffInfo = () => {
     if (!playoffInfo) return null;
-
     if (Array.isArray(playoffInfo)) {
       return playoffInfo.map((line, index) => (
-        <Text
-          key={index}
-          style={[getStyles.playoffText, { color: colors.text }]}
-        >
+        <Text key={index} style={[styles.playoffText]}>
           {line}
         </Text>
       ));
     }
-
-    return (
-      <Text style={[getStyles.playoffText, { color: colors.text }]}>
-        {playoffInfo}
-      </Text>
-    );
+    return <Text style={[styles.playoffText]}>{playoffInfo}</Text>;
   };
 
-
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    month: "numeric",
-    day: "numeric",
-  });
-
   return (
-    <View style={getStyles.container}>
+    <View style={styles.container}>
+    
+
+      {/* 🏀 Scheduled */}
       {status === "Scheduled" && (
-        <>
-          <Text style={[getStyles.date]}>{date}</Text>
-          <Text style={[getStyles.time, { color: colors.secondaryText }]}>
-            {time}
-          </Text>
-        </>
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{date}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time}</Text>
+        </View>
       )}
 
-      {status === "In Progress" && (
+      {/* 🕒 In Play */}
+      {status === "In Play" && (
         <>
-          <Text style={[getStyles.period, { color: isDark ? "#fff" : "#000" }]}>
-            {period}
-          </Text>
-          {clock && (
-            <Text
-              style={[
-                getStyles.clock,
-                {
-                  color: isDark ? "#ff6b00" : "#d35400",
-                },
-              ]}
-            >
-              {clock}
-            </Text>
+          {halftime ? (
+            // 🟢 Halftime display
+            <Text style={styles.date}>Halftime</Text>
+          ) : (
+            // 🕓 Normal in-play display, hide clock if no value
+            <View style={styles.infoWrapper}>
+              {period && <Text style={styles.date}>{period}</Text>}
+              {period && clock && <View style={styles.statusDivider} />}
+              {clock && <Text style={styles.clock}>{clock}</Text>}
+            </View>
           )}
         </>
       )}
 
+      {/* 🏁 Final */}
       {status === "Final" && (
-        <>
-          <Text style={[getStyles.final, { color: colors.finalText }]}>
-            Final
-          </Text>
-          <Text style={[getStyles.date, { color: colors.secondaryText }]}>
-            {formattedDate}
-          </Text>
-        </>
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Final</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{date}</Text>
+        </View>
       )}
+
+      {/* ❌ Canceled */}
       {status === "Canceled" && (
         <>
-          <Text style={[getStyles.final, { color: colors.finalText }]}>
-            Canceled
-          </Text>
-          <Text style={[getStyles.date]}>{date}</Text>
-        </>
-      )}
-      {status === "Postponed" && (
-        <>
-          <Text style={[getStyles.final, { color: colors.finalText }]}>
-            Postponed
-          </Text>
-          <Text style={[getStyles.date, { color: colors.secondaryText }]}>
-            {new Date(date).toLocaleDateString("en-US", {
-              month: "numeric",
-              day: "numeric",
-            })}
-          </Text>
+          <Text style={styles.finalText}>Canceled</Text>
+          <Text style={styles.date}>{date}</Text>
         </>
       )}
 
-        <Text
-          style={{
-            fontSize: 10,
-            fontFamily: Fonts.OSREGULAR,
-            color: colors.secondaryText,
-            textAlign: "center",
-            marginTop: 2,
-          }}
-        >
-     {broadcastNetworks}
-        </Text>
-   
+      {/* ⏸️ Postponed */}
+      {status === "Postponed" && (
+        <>
+          <Text style={styles.finalText}>Postponed</Text>
+          <Text style={styles.date}>{date}</Text>
+        </>
+      )}
+
+      {/* 📺 Broadcast */}
+      {broadcastNetworks && (
+        <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
+      )}
+
       {renderPlayoffInfo()}
     </View>
   );
 }
-
-const styles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      justifyContent: "center",
-      alignItems: "center",
-      marginHorizontal: 8,
-      marginBottom: 8,
-    },
-    date: {
-      fontFamily: Fonts.OSMEDIUM,
-      color: isDark ? "#fff" : "#1d1d1d",
-      fontSize: 14,
-    },
-    time: {
-      fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    period: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-
-      marginTop: 4,
-      textAlign: "center",
-    },
-    final: {
-      fontSize: 14,
-
-      fontFamily: Fonts.OSBOLD,
-    },
-    playoffText: {
-      marginTop: 6,
-      fontSize: 13,
-      fontFamily: Fonts.OSSEMIBOLD,
-      textAlign: "center",
-    },
-  });

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { teams } from "../constants/teams";
 import { TeamStanding } from "types/standingsTypes";
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
 export function useStandings(season = 2025) {

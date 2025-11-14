@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 import { style } from "../../styles/TeamDetails.styles";
-import PlayerCard from "./../player/PlayerCard";
+import PlayerCard from "../Player/PlayerCard";
 
 interface TeamPlayerListProps {
   players: Player[];

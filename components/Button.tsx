@@ -1,14 +1,19 @@
 import React from "react";
-import { Pressable, Text, StyleSheet, useColorScheme } from "react-native";
+import { Pressable, StyleSheet, Text, useColorScheme, ViewStyle, StyleProp } from "react-native";
 
 type SaveButtonProps = {
   onPress: () => void;
   disabled?: boolean;
-    title?: string;
-loading?: boolean;
+  title?: string;
+  style?: StyleProp<ViewStyle>; // <-- added
 };
 
-export default function Button({ onPress, disabled, title = "Save" }: SaveButtonProps) {
+export default function Button({
+  onPress,
+  disabled,
+  title = "Save",
+  style, // <-- added
+}: SaveButtonProps) {
   const isDark = useColorScheme() === "dark";
 
   return (
@@ -21,9 +26,12 @@ export default function Button({ onPress, disabled, title = "Save" }: SaveButton
           backgroundColor: isDark ? "#fff" : "#000",
           opacity: pressed || disabled ? 0.7 : 1,
         },
+        style, // <-- apply custom styles here
       ]}
     >
-       <Text style={[styles.saveButtonText, { color: isDark ? "#000" : "#fff" }]}>
+      <Text
+        style={[styles.saveButtonText, { color: isDark ? "#000" : "#fff" }]}
+      >
         {title}
       </Text>
     </Pressable>

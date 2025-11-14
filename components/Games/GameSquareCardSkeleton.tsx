@@ -8,45 +8,32 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-
+import { Colors } from "constants/Colors";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 type GameSquareCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;
 };
+
 export default function GameSquareCardSkeleton({
   style,
 }: GameSquareCardSkeletonProps) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
-  const shimmerTranslate = useRef(new Animated.Value(-100)).current;
-  const shimmerOpacity = useRef(new Animated.Value(0.5)).current;
+  // Pulse animation value
+  const pulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(shimmerTranslate, {
-          toValue: 100,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmerTranslate, {
-          toValue: -100,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmerOpacity, {
-          toValue: 1,
+        Animated.timing(pulse, {
+          toValue: 0.6,
           duration: 700,
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerOpacity, {
-          toValue: 0.5,
+        Animated.timing(pulse, {
+          toValue: 1,
           duration: 700,
           useNativeDriver: true,
         }),
@@ -54,29 +41,9 @@ export default function GameSquareCardSkeleton({
     ).start();
   }, []);
 
-  function SkeletonWithShimmer({
-    style,
-    shimmerWidth,
-  }: {
-    style: any;
-    shimmerWidth: number;
-  }) {
-    return (
-      <View style={[style, styles.shimmerClipper]}>
-        <View style={style} />
-        <Animated.View
-          style={[
-            styles.shimmer,
-            {
-              width: shimmerWidth,
-              opacity: shimmerOpacity,
-              transform: [{ translateX: shimmerTranslate }],
-            },
-          ]}
-        />
-      </View>
-    );
-  }
+  const Skeleton = ({ style }: { style: any }) => (
+    <Animated.View style={[style, { opacity: pulse }]} />
+  );
 
   return (
     <View style={[styles.card, style]}>
@@ -84,50 +51,38 @@ export default function GameSquareCardSkeleton({
         {/* Away team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <SkeletonWithShimmer
-              style={styles.logoSkeleton}
-              shimmerWidth={28}
-            />
-            <SkeletonWithShimmer
-              style={styles.nameSkeleton}
-              shimmerWidth={60}
-            />
+            <Skeleton style={styles.logoSkeleton} />
+            <Skeleton style={styles.nameSkeleton} />
           </View>
-          <SkeletonWithShimmer style={styles.scoreSkeleton} shimmerWidth={40} />
+          <Skeleton style={styles.scoreSkeleton} />
         </View>
 
         {/* Home team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <SkeletonWithShimmer
-              style={styles.logoSkeleton}
-              shimmerWidth={28}
-            />
-            <SkeletonWithShimmer
-              style={styles.nameSkeleton}
-              shimmerWidth={60}
-            />
+            <Skeleton style={styles.logoSkeleton} />
+            <Skeleton style={styles.nameSkeleton} />
           </View>
-          <SkeletonWithShimmer style={styles.scoreSkeleton} shimmerWidth={40} />
+          <Skeleton style={styles.scoreSkeleton} />
         </View>
       </View>
 
       {/* Game info section */}
       <View style={styles.info}>
-        <SkeletonWithShimmer style={styles.dateSkeleton} shimmerWidth={60} />
-        <SkeletonWithShimmer style={styles.timeSkeleton} shimmerWidth={40} />
+        <Skeleton style={styles.dateSkeleton} />
+        <Skeleton style={styles.timeSkeleton} />
       </View>
     </View>
   );
 }
 
-const getStyles = (dark: boolean) =>
+const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
       width: "100%",
       height: 120,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
+      backgroundColor: isDark ? "#2e2e2e" : "#eee",
       justifyContent: "space-between",
       borderRadius: 12,
       paddingHorizontal: 8,
@@ -136,7 +91,7 @@ const getStyles = (dark: boolean) =>
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: dark ? "#444" : "#888",
+      borderRightColor: isDark ? "#444" : "#888",
       borderRightWidth: 0.5,
       paddingRight: 12,
       gap: 8,
@@ -147,7 +102,6 @@ const getStyles = (dark: boolean) =>
       alignItems: "center",
       gap: 4,
     },
-
     teamWrapper: {
       flexDirection: "row",
       justifyContent: "flex-start",
@@ -159,19 +113,22 @@ const getStyles = (dark: boolean) =>
       width: 28,
       height: 28,
       borderRadius: 100,
-      backgroundColor: dark ? "#666" : "#bbb",
+            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      
     },
     nameSkeleton: {
       width: 28,
       height: 24,
       borderRadius: 6,
-      backgroundColor: dark ? "#666" : "#bbb",
+            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+
     },
     scoreSkeleton: {
       width: 24,
       height: 24,
       borderRadius: 6,
-      backgroundColor: dark ? "#666" : "#bbb",
+            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+
     },
     info: {
       justifyContent: "center",
@@ -182,25 +139,15 @@ const getStyles = (dark: boolean) =>
       width: 36,
       height: 16,
       borderRadius: 6,
-      backgroundColor: dark ? "#666" : "#bbb",
+            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+
       marginBottom: 6,
     },
     timeSkeleton: {
       width: 20,
       height: 14,
       borderRadius: 6,
-      backgroundColor: dark ? "#666" : "#bbb",
-    },
-    shimmerClipper: {
-      position: "relative",
-      overflow: "hidden",
-    },
-    shimmer: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      backgroundColor: dark
-        ? "rgba(255,255,255,0.15)"
-        : "rgba(255,255,255,0.4)",
+            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+
     },
   });

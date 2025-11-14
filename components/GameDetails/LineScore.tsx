@@ -7,15 +7,20 @@ import {
   ViewStyle,
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
+import LineScoreSkeleton from "./LineScoreSkeleton";
 
 type Props = {
-  linescore: {
-    home: (string | null | undefined)[];
-    away: (string | null | undefined)[];
-  };
-  homeCode: string;
-  awayCode: string;
+  linescore:
+    | {
+        home: (string | null | undefined)[];
+        away: (string | null | undefined)[];
+      }
+    | null
+    | undefined;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
   lighter?: boolean;
+  loading?: boolean; // ✅ new optional prop
 };
 
 export default function LineScore({
@@ -23,10 +28,15 @@ export default function LineScore({
   homeCode,
   awayCode,
   lighter,
+  loading,
 }: Props) {
-  if (!linescore || !linescore.home || !linescore.away) return null;
-
   const isDark = useColorScheme() === "dark";
+
+  // ✅ Show skeleton when loading or no data
+  if (loading || !linescore || !linescore.home || !linescore.away) {
+    return <LineScoreSkeleton />;
+  }
+
   const textColor = lighter ? "#fff" : isDark ? "#fff" : "#000";
   const borderColor = lighter ? "#aaa" : isDark ? "#333" : "#888";
   const dividerColor = lighter ? "#bbb" : isDark ? "#888" : "#888";
@@ -61,7 +71,8 @@ export default function LineScore({
     getQuarterLabel(i)
   );
 
-  const columnStyle: ViewStyle = { flex: 1, alignItems: "center" }; // ✅ cast as ViewStyle
+  const columnStyle: ViewStyle = { flex: 1, alignItems: "center" };
+
   return (
     <View style={[styles.container, { borderColor }]}>
       <HeadingTwo style={{ marginBottom: 12 }} lighter={lighter}>Score Summary</HeadingTwo>

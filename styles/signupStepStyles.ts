@@ -1,13 +1,14 @@
 // components/styles/SignupStepsStyles.ts
-import { StyleSheet } from "react-native";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
+import { StyleSheet } from "react-native";
 
 export const getSignupStepsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
-      backgroundColor: isDark ? "#1d1d1d" : "#fff",
+      padding: 12,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     signInContainer: {
       flex: 1,
@@ -23,7 +24,7 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       marginTop: 10,
       marginBottom: 20,
-      color: isDark ? "#fff" : "#000",
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
     titleRow: {
@@ -38,32 +39,36 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       right: 0,
       textAlign: "center",
       fontSize: 24,
-      color: isDark ? "#fff" : "#000",
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSBOLD,
     },
     input: {
-      color: isDark ? "#fff" : "#000",
-      backgroundColor: isDark ? "#222" : "#eee",
+      color: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       padding: 20,
       borderRadius: 8,
       fontSize: 16,
       marginVertical: 20,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.OSREGULAR,
     },
     searchBar: {
       borderWidth: 1,
-      borderColor: "#888",
+      borderColor: Colors.midTone,
       borderRadius: 8,
       paddingHorizontal: 12,
       paddingVertical: 8,
       fontSize: 16,
-      color: "#000",
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSLIGHT,
     },
     passwordRow: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: isDark ? "#222" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
       marginBottom: 12,
     },
@@ -72,18 +77,18 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       flex: 1,
       fontSize: 16,
       padding: 20,
-      color: isDark ? "#fff" : "#000",
+      color: isDark ? Colors.white : Colors.black,
     },
     iconButton: { padding: 20 },
     button: {
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       padding: 14,
       borderRadius: 8,
       alignItems: "center",
       marginTop: 10,
     },
     buttonText: {
-      color: isDark ? "#000" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
     },
@@ -105,7 +110,7 @@ export const getSignupStepsStyles = (isDark: boolean) =>
 
     imageUploadBox: {
       borderWidth: 1,
-      borderColor: "#888",
+      borderColor: Colors.midTone,
       borderRadius: 10,
       height: 100,
       justifyContent: "center",
@@ -113,7 +118,7 @@ export const getSignupStepsStyles = (isDark: boolean) =>
     },
     profileImageUploadBox: {
       borderWidth: 1,
-      borderColor: "#888",
+      borderColor: Colors.midTone,
       borderRadius: 100,
       height: 120,
       width: 120,
@@ -128,14 +133,16 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       marginTop: 8,
       paddingBottom: 4,
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "#444" : "#ccc",
-      color: isDark ? "#fff" : "#1d1d1d",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     reviewInput: {
       width: "100%",
       marginTop: 16,
-      backgroundColor: isDark ? "#222" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
       paddingVertical: 12,
       paddingHorizontal: 16,
@@ -158,20 +165,20 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       alignSelf: "center",
     },
     imagePlaceholder: {
-      color: isDark ? "#aaa" : "#666",
+      color: isDark ? Colors.darkGray : Colors.lightGray,
       textAlign: "center",
       fontFamily: Fonts.OSLIGHT,
       fontSize: 12,
     },
     reviewText: {
       marginVertical: 8,
-      color: isDark ? "#eee" : "#333",
+      color: isDark ? Colors.light.itemBackground : "#333",
       fontFamily: Fonts.OSREGULAR,
     },
     progressBarBackground: {
       height: 2,
       width: "100%",
-      backgroundColor: "#ccc",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 5,
       overflow: "hidden",
       marginVertical: 8,
@@ -181,7 +188,7 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       backgroundColor: "#007AFF",
     },
     skipText: {
-      color: isDark ? "#aaa" : "#555",
+      color: Colors.midTone,
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
     },
@@ -191,7 +198,9 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       alignItems: "center",
       marginTop: 12,
       padding: 12,
-      backgroundColor: isDark ? "#222" : "#f5f5f5",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
     },
     teamCardGrid: {
@@ -200,7 +209,9 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       alignItems: "center",
       marginTop: 12,
       padding: 12,
-      backgroundColor: isDark ? "#222" : "#f5f5f5",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
       width: "30%", // or fixed width to fit 3 columns nicely
       maxWidth: 120, // optional max width for consistency

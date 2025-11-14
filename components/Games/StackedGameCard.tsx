@@ -1,24 +1,57 @@
-import { Fonts } from "constants/fonts";
+import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
+
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
-import { useTeamInfo } from "hooks/useTeamInfo";
-import { useMemo } from "react";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameScores } from "hooks/useGameScores";
+import { useTeamRecord } from "hooks/useTeamRecords";
+import { useMemo, useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
-import { matchBroadcastToGame } from "utils/matchBroadcast";
-
-import { teams } from "../../constants/teams";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getTeamLogo, teams } from "../../constants/teams";
 import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
 import { Game, Team } from "../../types/types";
 
+// --- Helper function to normalize API status ---
+function mapStatus(apiStatus: {
+  short: number | string;
+  long?: string;
+}): string {
+  const long = apiStatus.long?.toLowerCase();
+
+  // ✅ prioritize 'long' from API
+  if (long === "in play") return "In Play";
+  if (long === "finished") return "Final";
+  if (long === "scheduled") return "Scheduled";
+  if (long === "canceled") return "Canceled";
+  if (long === "delayed") return "Delayed";
+  if (long === "postponed") return "Postponed";
+
+  // fallback using numeric 'short' codes
+  const short = Number(apiStatus.short);
+  switch (short) {
+    case 1:
+      return "Scheduled";
+    case 2:
+    case 3:
+      return "Final"; // only if 'long' was missing
+    case 4:
+      return "Postponed";
+    case 5:
+      return "Delayed";
+    case 6:
+      return "Canceled";
+    default:
+      return "Scheduled";
+  }
+}
 export default function StackedGameCard({
   game,
   isDark,
@@ -30,120 +63,128 @@ export default function StackedGameCard({
   const dark = isDark ?? colorScheme === "dark";
   const styles = getStyles(dark);
   const router = useRouter();
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
-  const homeTeam = (game.home ?? {
-    name: "Unknown",
+  const homeTeam =
+    game.home ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
+  const awayTeam =
+    game.away ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
 
-    logo: "",
-    record: "-",
-    fullName: "Unknown",
-  }) as Team;
-  const awayTeam = (game.away ?? {
-    name: "Unknown",
-    logo: "",
-    record: "-",
-    fullName: "Unknown",
-  }) as Team;
+  const getTeamById = (id?: number | string) =>
+    teams.find((t) => String(t.id) === String(id));
+  const getTeamName = (id?: number | string) =>
+    getTeamById(id)?.name ?? "Unknown";
 
-  const homeTeamData = useMemo(() => {
-    return teams.find(
-      (t) =>
-        homeTeam.name &&
-        (t.name === homeTeam.name ||
-          t.code === homeTeam.name ||
-          t.name.includes(homeTeam.name))
-    );
-  }, [homeTeam.name]);
+  // IDs
+  const homeId = Number(game.home?.id ?? (game as any).homeTeamId ?? 0);
+  const awayId = Number(game.away?.id ?? (game as any).awayTeamId ?? 0);
+  // ESPN IDs
+  const homeEspnId = getTeamById(homeId)?.espnID;
+  const awayEspnId = getTeamById(awayId)?.espnID;
 
-  const awayTeamData = useMemo(() => {
-    return teams.find(
-      (t) =>
-        awayTeam.name &&
-        (t.name === awayTeam.name ||
-          t.code === awayTeam.name ||
-          t.name.includes(awayTeam.name))
-    );
-  }, [awayTeam.name]);
+  // Team records
+  const { record: homeRecord } = useTeamRecord(homeEspnId);
+  const { record: awayRecord } = useTeamRecord(awayEspnId);
 
-  const { team: homeInfo } = useTeamInfo(homeTeamData?.id?.toString());
-  const { team: awayInfo } = useTeamInfo(awayTeamData?.id?.toString());
+  // Memoized team data
+  const homeTeamData = useMemo(
+    () => ({
+      id: String(homeId),
+      espnID: homeEspnId ?? "",
+      name: getTeamName(homeId),
+      logo: getTeamLogo(homeId, dark),
+      record: homeRecord?.overall ?? "0-0",
+    }),
+    [homeId, homeEspnId, homeRecord?.overall, dark]
+  );
 
-  const isFinal = game.status?.toLowerCase() === "final";
-  const inProgress = game.status === "In Progress";
-  const isCanceled = game.status === "Canceled";
+  const awayTeamData = useMemo(
+    () => ({
+      id: String(awayId),
+      espnID: awayEspnId ?? "",
+      name: getTeamName(awayId),
+      logo: getTeamLogo(awayId, dark),
+      record: awayRecord?.overall ?? "0-0",
+    }),
+    [awayId, awayEspnId, awayRecord?.overall, dark]
+  );
 
-  const homeWins = isFinal && (game.homeScore ?? 0) > (game.awayScore ?? 0);
-  const awayWins = isFinal && (game.awayScore ?? 0) > (game.homeScore ?? 0);
+  const homeRecordData = homeRecord?.overall;
+  const awayRecordData = awayRecord?.overall;
 
-  const isPlayoff =
-    game.isPlayoff || (game.stage !== undefined && game.stage >= 4);
+  // Status
+  const statusObj = game.status;
+  const statusText =
+    typeof game.status === "string" ? game.status : mapStatus(game.status);
+  const isFinal = statusText === "Final";
+  const inProgress = statusText === "In Play";
+  const isCanceled = statusText === "Canceled";
+  const isDelayed = statusText === "Delayed";
+  const isPostponed = statusText === "Postponed";
+  const isHalftime = statusObj?.halftime ?? false;
+  const isEndOfPeriod = game.periods?.endOfPeriod === true;
 
-  const winnerStyle = (teamWins: boolean): TextStyle | undefined =>
-    teamWins ? { color: dark ? "#fff" : "#000", fontWeight: "bold" } : {};
+  const winnerStyle = (teamWins: boolean): TextStyle => ({
+    color: dark ? "#fff" : "#1d1d1d",
+    opacity: inProgress ? 1 : teamWins ? 1 : 0.5,
+  });
 
-  const getLogoSource = (
-    teamData?: Team & { logoLight?: string; logoDark?: string },
-    teamFallback?: Team
-  ) => {
-    const fallbackLogo = require("../../assets/Logos/NBA.png");
-
-    // Dark/light mode specific logo overrides
-    if (dark && teamData?.logoLight) {
-      return typeof teamData.logoLight === "string"
-        ? { uri: teamData.logoLight }
-        : teamData.logoLight;
-    }
-    if (!dark && teamData?.logoDark) {
-      return typeof teamData.logoDark === "string"
-        ? { uri: teamData.logoDark }
-        : teamData.logoDark;
-    }
-
-    // Normal logo resolution
-    const logo = teamData?.logo ?? teamFallback?.logo;
-    if (!logo) return fallbackLogo;
-
-    if (typeof logo === "number") return logo; // require() asset
-    if (typeof logo === "string") {
-      const lowerLogo = logo.toLowerCase();
-      if (
-        lowerLogo.endsWith(".gif") ||
-        lowerLogo.includes("giphy.com") ||
-        lowerLogo.endsWith(".webp")
-      ) {
-        return fallbackLogo;
-      }
-      return { uri: logo };
-    }
-
-    return fallbackLogo;
+  const getLogo = (teamData?: Team, fallback?: Team) => {
+    if (!teamData)
+      return (
+        fallback?.logo ??
+        require("../../assets/Placeholders/teamPlaceholder.png")
+      );
+    return getTeamLogo(teamData.id, dark);
   };
 
-  const logoSrc = getLogoSource(awayTeamData, awayTeam);
-  if (!logoSrc) {
-    console.warn("away logo source is undefined", awayTeamData, awayTeam);
-  }
+  const safeDate = (date?: string | null) => {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
 
-  const { broadcasts } = useESPNBroadcasts();
+  const gameDate = safeDate(game.date);
+  const gameDateStr = gameDate.toISOString();
 
-  const matchedBroadcast = matchBroadcastToGame(game, broadcasts);
-  const broadcastNetworks = matchedBroadcast?.broadcasts
-    .map((b) => b.network)
-    .filter(Boolean)
-    .join(", ");
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
-  const homeId = Number(homeTeamData?.id);
-  const awayId = Number(awayTeamData?.id);
+  // ✅ Use full ESPN-style names
+  const getFullTeamName = (id?: number | string) => {
+    const team = teams.find((t) => String(t.id) === String(id));
+    return team?.fullName ?? team?.name ?? "";
+  };
+
+  const homeFullName = getFullTeamName(homeId);
+  const awayFullName = getFullTeamName(awayId);
+
+  const { score: liveScore } = useGameScores(
+    "nba",
+    homeFullName,
+    awayFullName,
+    gameDateStr
+  );
+
+  const currentPeriod =
+    liveScore?.period ?? Number(game.periods?.current ?? game.period);
+  const homeScore =
+    liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
+  const awayScore =
+    liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
 
   const playoffGames =
     homeId && awayId ? useFetchPlayoffGames(homeId, awayId, 2024).games : [];
-
   const currentPlayoffGame = playoffGames.find((g) => g.id === game.id);
-  const gameNumber = currentPlayoffGame?.gameNumber;
+  const gameNumberLabel = currentPlayoffGame?.gameNumber
+    ? `Game ${currentPlayoffGame.gameNumber}`
+    : null;
   const seriesSummary = currentPlayoffGame?.seriesSummary;
-  const isEndOfPeriod = game.periods?.endOfPeriod === true;
-  const currentPeriod = game.periods?.current ?? game.period;
-  const gameDate = new Date(game.date);
+
   const isNBAFinals =
     gameDate.getMonth() === 5 &&
     gameDate.getDate() >= 5 &&
@@ -157,25 +198,47 @@ export default function StackedGameCard({
     ? "New Year's Day"
     : null;
 
-  const finalsScoreStyle = (isWinner: boolean): TextStyle => ({
-    color: isWinner ? (dark ? "#000" : "#000") : "rgba(0, 0, 0, 0.4)",
-  });
+  const { broadcasts } = useGameBroadcasts(
+    homeTeam.name,
+    awayTeam.name,
+    gameDateStr
+  );
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
-  const gameNumberLabel = gameNumber ? `Game ${gameNumber}` : null;
-
-  function getTeamRecord(
-    team: Team,
-    teamData?: Team,
-    fallbackInfo?: Team | null
-  ) {
-    const record =
-      team.record && team.record.trim() !== "" && team.record !== "0-0"
-        ? team.record
-        : teamData?.current_season_record ||
-          fallbackInfo?.current_season_record;
-
-    return record ?? "-";
+  function getQuarterLabel(period?: number) {
+    if (!period) return "Live";
+    if (period <= 4) return ["1st", "2nd", "3rd", "4th"][period - 1] ?? "";
+    const ot = period - 4;
+    return ot === 1 ? "OT" : `OT${ot}`;
   }
+
+  function getFinalWithQuarterLabel(period?: number) {
+    if (!period) return "Final";
+    if (period <= 4) return `Final`;
+    const ot = period - 4;
+    return ot === 1 ? "Final/OT" : `Final/OT${ot}`;
+  }
+
+  const ScoreText = ({
+    score,
+    recordData,
+    teamWins,
+    showRecord,
+  }: {
+    score?: number;
+    recordData?: string;
+    teamWins: boolean;
+    showRecord?: boolean;
+  }) => {
+    const hasScore = typeof score === "number" && !isNaN(score);
+    const displayValue =
+      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+    const style =
+      showRecord || !hasScore
+        ? styles.teamRecord
+        : [styles.teamScore, winnerStyle(teamWins)];
+    return <Text style={style}>{displayValue}</Text>;
+  };
 
   if (!game) {
     console.warn("StackedGameCard received no game prop");
@@ -203,209 +266,114 @@ export default function StackedGameCard({
             <View style={styles.teamSection}>
               <View style={styles.teamWrapper}>
                 <Image
-                  key={awayTeamData?.id ?? awayTeam.name}
-                  source={getLogoSource(awayTeamData, awayTeam)}
-                  defaultSource={require("../../assets/Logos/NBA.png")}
-                  fadeDuration={0}
+                  source={getLogo(awayTeamData, awayTeam)}
                   style={styles.logo}
                   accessibilityLabel={`${awayTeam.name} logo`}
                 />
                 <Text
-                  style={[styles.teamName, { color: dark ? "#000" : "#000" }]}
+                  style={[
+                    styles.teamName,
+                    { color: dark ? "#1d1d1d" : "#1d1d1d" },
+                  ]}
                 >
                   {awayTeamData?.name ?? awayTeam.code ?? awayTeam.fullName}
                 </Text>
               </View>
-              {/* Away score or record */}
-              <Text
-                style={[
-                  game.status === "Scheduled" || isCanceled
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  finalsScoreStyle(awayWins), // was missing or you used finalsScoreStyle in Finals only
-                ]}
-              >
-                {isCanceled
-                  ? getTeamRecord(awayTeam, awayTeamData, awayInfo)
-                  : game.status === "Scheduled"
-                  ? getTeamRecord(awayTeam, awayTeamData, awayInfo)
-                  : game.awayScore ?? "-"}
-              </Text>
+              <ScoreText
+                score={awayScore}
+                recordData={awayRecordData ?? undefined}
+                teamWins={awayWins}
+                showRecord={statusText === "Scheduled"}
+              />
             </View>
 
             {/* Home team */}
             <View style={styles.teamSection}>
               <View style={styles.teamWrapper}>
                 <Image
-                  key={homeTeamData?.id ?? homeTeam.name}
-                  source={getLogoSource(homeTeamData, homeTeam)}
-                  fadeDuration={0}
+                  source={getLogo(homeTeamData, homeTeam)}
                   style={styles.logo}
                   accessibilityLabel={`${homeTeam.name} logo`}
                 />
                 <Text
-                  style={[styles.teamName, { color: dark ? "#000" : "#000" }]}
+                  style={[
+                    styles.teamName,
+                    { color: dark ? "#1d1d1d" : "#1d1d1d" },
+                  ]}
                 >
                   {homeTeamData?.name ?? homeTeam.code ?? homeTeam.fullName}
                 </Text>
               </View>
-              <Text
-                style={[
-                  game.status === "Scheduled" || isCanceled
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  finalsScoreStyle(homeWins),
-                ]}
-              >
-                {isCanceled
-                  ? getTeamRecord(homeTeam, homeTeamData, homeInfo)
-                  : game.status === "Scheduled"
-                  ? getTeamRecord(homeTeam, homeTeamData, homeInfo)
-                  : game.homeScore ?? "-"}
-              </Text>
+              <ScoreText
+                score={homeScore}
+                recordData={homeRecordData ?? undefined}
+                teamWins={homeWins}
+                showRecord={statusText === "Scheduled"}
+              />
             </View>
           </View>
 
-          {/* Game info */}
-          <View style={styles.info}>
+          {/* Game Info */}
+          <View
+            style={[
+              styles.info,
+              !broadcastText && {
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
+            {/* Status / Score */}
             {isCanceled ? (
-              <Text style={styles.finalText}>Canc.</Text>
+              <Text style={styles.finalText}>Canceled</Text>
+            ) : isDelayed ? (
+              <Text style={styles.finalText}>Delayed</Text>
+            ) : isPostponed ? (
+              <Text style={styles.finalText}>Postponed</Text>
             ) : isFinal ? (
               <>
-                <Text style={styles.finalText}>Final</Text>
-                <Text
-                  style={[styles.dateFinal, { color: "rgba(0, 0, 0, .5)" }]}
-                >
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
+                <Text style={styles.finalText}>
+                  {getFinalWithQuarterLabel(currentPeriod)}
                 </Text>
-              </>
-            ) : game.status === "Scheduled" ? (
-              <>
-                <Text style={[styles.date, { color: "#000" }]}>
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Text>
-                <Text style={[styles.time, { color: "#000" }]}>
-                  {game.time}
-                </Text>
+                <Text style={styles.dateFinal}>{formattedDate}</Text>
               </>
             ) : inProgress ? (
-              <>
-                <Text
-                  style={[
-                    styles.date,
-                    {
-                      fontFamily: Fonts.OSMEDIUM,
-                      color: isDark ? "#fff" : "#1d1d1d",
-                    },
-                  ]}
-                >
-                  {(() => {
-                    const periodNum = Number(currentPeriod) || 0;
-
-                    if (game.isHalftime) {
-                      return "Halftime";
-                    }
-
-                    if (isEndOfPeriod) {
-                      if (periodNum > 4) {
-                        return periodNum === 5
-                          ? "End of OT"
-                          : `End of ${periodNum - 4}OT`;
-                      }
-                      return `End of Q${periodNum}`;
-                    }
-
-                    if (periodNum > 4) {
-                      return periodNum === 5 ? "OT" : `${periodNum - 4}OT`;
-                    }
-
-                    return `Q${periodNum || "Live"}`;
-                  })()}
-                </Text>
-              </>
-            ) : null}
-            {broadcastNetworks && (
-              <Text
-                style={[
-                  styles.broadcast,
-                  {
-                    color: "rgba(0, 0, 0, .5)",
-                  },
-                ]}
-              >
-                {broadcastNetworks}
-              </Text>
-            )}
-          </View>
-          {(gameNumberLabel || seriesSummary || holidayLabel) && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                position: "absolute",
-                left: 8,
-                bottom: 8,
-              }}
-            >
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  flexWrap: "nowrap",
                   gap: 6,
                 }}
               >
-                {gameNumberLabel && (
-                  <Text
-                    style={{
-                      color: "#000",
-                      fontFamily: Fonts.OSLIGHT,
-                      fontSize: 10,
-                      maxWidth: 50,
-                      textAlign: "center",
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {gameNumberLabel}
+                {isHalftime && <Text style={styles.date}>Halftime</Text>}
+                {!isHalftime && isEndOfPeriod && (
+                  <Text style={styles.date}>
+                    End of {getQuarterLabel(currentPeriod)}
                   </Text>
                 )}
-                {gameNumberLabel && (seriesSummary || holidayLabel) && (
-                  <View
-                    style={{
-                      height: 10,
-                      width: 1,
-                      backgroundColor: "#000",
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-                {seriesSummary && (
-                  <Text
-                    style={{
-                      color: "#000",
-                      fontFamily: Fonts.OSLIGHT,
-                      fontSize: 10,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {seriesSummary}
-                  </Text>
+                {!isHalftime && !isEndOfPeriod && (
+                  <>
+                    <Text style={styles.date}>
+                      {getQuarterLabel(currentPeriod)}
+                    </Text>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>
+                      {liveScore?.displayClock ?? statusObj?.clock ?? ""}
+                    </Text>
+                  </>
                 )}
               </View>
-            </View>
-          )}
+            ) : (
+              <>
+                <Text style={styles.date}>{formattedDate}</Text>
+                <Text style={styles.time}>{game.time ?? "TBD"}</Text>
+              </>
+            )}
+            {!isFinal && broadcastText && (
+              <Text style={styles.broadcast}>{broadcastText}</Text>
+            )}
+          </View>
         </LinearGradient>
       ) : (
         <View style={styles.card}>
@@ -414,343 +382,106 @@ export default function StackedGameCard({
             <View style={styles.teamSection}>
               <View style={styles.teamWrapper}>
                 <Image
-                  key={awayTeamData?.id ?? awayTeam.name}
-                  source={getLogoSource(awayTeamData, awayTeam)}
-                  defaultSource={require("../../assets/Logos/NBA.png")}
-                  fadeDuration={0}
+                  source={getLogo(awayTeamData, awayTeam)}
                   style={styles.logo}
                   accessibilityLabel={`${awayTeam.name} logo`}
                 />
-                <Text
-                  style={[styles.teamName, { color: dark ? "#fff" : "#000" }]}
-                >
+                <Text style={styles.teamName}>
                   {awayTeamData?.name ?? awayTeam.code ?? awayTeam.fullName}
                 </Text>
               </View>
-              {/* Away score or record */}
-              <Text
-                style={[
-                  game.status === "Scheduled" || isCanceled
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  winnerStyle(awayWins), // was missing or you used finalsScoreStyle in Finals only
-                ]}
-              >
-                {isCanceled
-                  ? getTeamRecord(awayTeam, awayTeamData, awayInfo)
-                  : game.status === "Scheduled"
-                  ? getTeamRecord(awayTeam, awayTeamData, awayInfo)
-                  : game.awayScore ?? "-"}
-              </Text>
+              <ScoreText
+                score={awayScore}
+                recordData={awayRecordData ?? undefined}
+                teamWins={awayWins}
+                showRecord={statusText === "Scheduled"}
+              />
             </View>
 
             {/* Home team */}
             <View style={styles.teamSection}>
               <View style={styles.teamWrapper}>
                 <Image
-                  key={homeTeamData?.id ?? homeTeam.name}
-                  source={getLogoSource(homeTeamData, homeTeam)}
-                  fadeDuration={0}
+                  source={getLogo(homeTeamData, homeTeam)}
                   style={styles.logo}
                   accessibilityLabel={`${homeTeam.name} logo`}
                 />
-                <Text
-                  style={[styles.teamName, { color: dark ? "#fff" : "#000" }]}
-                >
+                <Text style={styles.teamName}>
                   {homeTeamData?.name ?? homeTeam.code ?? homeTeam.fullName}
                 </Text>
               </View>
-              <Text
-                style={[
-                  game.status === "Scheduled" || isCanceled
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  winnerStyle(homeWins),
-                ]}
-              >
-                {isCanceled
-                  ? getTeamRecord(homeTeam, homeTeamData, homeInfo)
-                  : game.status === "Scheduled"
-                  ? getTeamRecord(homeTeam, homeTeamData, homeInfo)
-                  : game.homeScore ?? "-"}
-              </Text>
+              <ScoreText
+                score={homeScore}
+                recordData={homeRecordData ?? undefined}
+                teamWins={homeWins}
+                showRecord={statusText === "Scheduled"}
+              />
             </View>
           </View>
 
-          {/* Game info */}
-          <View style={styles.info}>
+          {/* Game Info */}
+          <View
+            style={[
+              styles.info,
+              !broadcastText && {
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
+            {/* Status / Score */}
             {isCanceled ? (
-              <Text style={[styles.finalText]}>Canc.</Text>
+              <Text style={styles.finalText}>Canceled</Text>
+            ) : isDelayed ? (
+              <Text style={styles.finalText}>Delayed</Text>
+            ) : isPostponed ? (
+              <Text style={styles.finalText}>Postponed</Text>
             ) : isFinal ? (
               <>
-                <Text style={styles.finalText}>Final</Text>
-                <Text style={[styles.dateFinal]}>
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
+                <Text style={styles.finalText}>
+                  {getFinalWithQuarterLabel(currentPeriod)}
                 </Text>
-              </>
-            ) : game.status === "Scheduled" ? (
-              <>
-                <Text
-                  style={[
-                    styles.date,
-                    {
-                      fontFamily: Fonts.OSMEDIUM,
-                      color: isDark ? "#fff" : "#1d1d1d",
-                    },
-                  ]}
-                >
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Text>
-                <Text
-                  style={[
-                    styles.time,
-                    {
-                      fontFamily: Fonts.OSREGULAR,
-                      color: dark
-                        ? "rgba(255,255,255, .5)"
-                        : "rgba(0, 0, 0, .5)",
-                    },
-                  ]}
-                >
-                  {game.time}
-                </Text>
+                <Text style={styles.dateFinal}>{formattedDate}</Text>
               </>
             ) : inProgress ? (
-              <>
-                <Text
-                  style={[
-                    styles.date,
-                    {
-                      fontFamily: Fonts.OSMEDIUM,
-                      color: isDark ? "#fff" : "#1d1d1d",
-                    },
-                  ]}
-                >
-                  {(() => {
-                    const periodNum = Number(currentPeriod) || 0;
-
-                    if (game.isHalftime) {
-                      return "Halftime";
-                    }
-
-                    if (isEndOfPeriod) {
-                      if (periodNum > 4) {
-                        return periodNum === 5
-                          ? "End of OT"
-                          : `End of ${periodNum - 4}OT`;
-                      }
-                      return `End of Q${periodNum}`;
-                    }
-
-                    if (periodNum > 4) {
-                      return periodNum === 5 ? "OT" : `${periodNum - 4}OT`;
-                    }
-
-                    return `Q${periodNum || "Live"}`;
-                  })()}
-                </Text>
-
-                {!game.isHalftime && !isEndOfPeriod && game.clock ? (
-                  <Text style={[styles.clock]}>{game.clock}</Text>
-                ) : null}
-              </>
-            ) : null}
-            {broadcastNetworks && (
-              <Text style={styles.broadcast}>{broadcastNetworks}</Text>
-            )}
-          </View>
-
-          {(gameNumberLabel || seriesSummary || holidayLabel) && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                position: "absolute",
-                paddingLeft: 12,
-                bottom: 4,
-              }}
-            >
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "center",
-                  flexWrap: "nowrap",
                   gap: 6,
                 }}
               >
-                {gameNumberLabel && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#000",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      maxWidth: 50,
-                      textAlign: "center",
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {gameNumberLabel}
+                {isHalftime && <Text style={styles.date}>Halftime</Text>}
+                {!isHalftime && isEndOfPeriod && (
+                  <Text style={styles.date}>
+                    End of {getQuarterLabel(currentPeriod)}
                   </Text>
                 )}
-                {gameNumberLabel && (seriesSummary || holidayLabel) && (
-                  <View
-                    style={{
-                      height: 10,
-                      width: 1,
-                      backgroundColor: dark ? "#fff" : "#000",
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-                {seriesSummary && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#000",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {seriesSummary}
-                  </Text>
-                )}
-                {holidayLabel && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#000",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {holidayLabel}
-                  </Text>
+                {!isHalftime && !isEndOfPeriod && (
+                  <>
+                    <Text style={styles.date}>
+                      {getQuarterLabel(currentPeriod)}
+                    </Text>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>
+                      {liveScore?.displayClock ?? statusObj?.clock ?? ""}
+                    </Text>
+                  </>
                 )}
               </View>
-            </View>
-          )}
+            ) : (
+              <>
+                <Text style={styles.date}>{formattedDate}</Text>
+                <Text style={styles.time}>{game.time ?? "TBD"}</Text>
+              </>
+            )}
+            {!isFinal && broadcastText && (
+              <Text style={styles.broadcast}>{broadcastText}</Text>
+            )}
+          </View>
         </View>
       )}
     </TouchableOpacity>
   );
 }
-
-export const getStyles = (dark: boolean) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "row",
-      flex: 1,
-      height: 110,
-      backgroundColor: dark ? "#2e2e2e" : "#eee",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 12,
-    },
-    cardWrapper: {
-      flexDirection: "column",
-      justifyContent: "space-around",
-      borderRightColor: dark ? "#444" : "#888",
-      borderRightWidth: 0.5,
-      paddingRight: 12,
-      gap: 4,
-      flex: 1,
-    },
-    teamSection: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
-    },
-    teamWrapper: {
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 8,
-      width: 80,
-      flex: 1,
-    },
-    logo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
-    },
-    teamName: {
-      fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
-      flexShrink: 1,
-      color: dark ? "#fff" : "#1d1d1d",
-      textAlign: "left",
-    },
-    teamScore: {
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
-      width: 40,
-    },
-    teamRecord: {
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "right",
-      color: dark ? "#fff" : "#1d1d1d",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 30,
-      width: 100,
-    },
-    finalText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
-      color: dark ? "#ff4444" : "#cc0000",
-      fontWeight: "bold",
-      textAlign: "center",
-      width: 40,
-    },
-    date: {
-      fontSize: 12,
-      textAlign: "center",
-      color: dark ? "#fff" : "#1d1d1d",
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-      fontSize: 14,
-    },
-    time: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    clock: {
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      color: dark ? "#ff4444" : "#cc0000",
-    },
-    broadcast: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      color: dark ? "rgba(255,255,255, .5)" : "rgba(0, 0, 0, .5)",
-    },
-  });

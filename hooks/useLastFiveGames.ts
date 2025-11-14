@@ -36,12 +36,15 @@ type GameResult = {
   opponentLogoLight?: any; // added light logo here
 };
 
+
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
+const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 export const useLastFiveGames = (teamId: number) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fallbackLogo = require("../assets/Logos/NBA.png");
+  const fallbackLogo = require("../assets/Placeholders/teamPlaceholder.png");
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -72,12 +75,12 @@ export const useLastFiveGames = (teamId: number) => {
         setError(null);
 
         const response = await axios.get<ApiResponse>(
-          `https://api-nba-v1.p.rapidapi.com/games`,
+          `https://${RAPIDAPI_HOST}/games`,
           {
-            params: { team: teamId, season: 2024 },
+            params: { team: teamId, season: 2025 },
             headers: {
-              "X-RapidAPI-Key": process.env.EXPO_PUBLIC_RAPIDAPI_KEY!,
-              "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+              "X-RapidAPI-Key": RAPIDAPI_KEY,
+              "X-RapidAPI-Host": RAPIDAPI_HOST,
             },
           }
         );

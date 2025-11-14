@@ -83,7 +83,7 @@ function sanitizeContent(rawContent: string | null): string {
   return htmlToPlainText(clean);
 }
 
-export function useTeamNews(teamName: string) {
+export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "CBB" = "NBA") {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,20 +91,23 @@ export function useTeamNews(teamName: string) {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
   const refreshNews = async () => {
-    if (!teamName) {
-      setArticles([]);
-      setLoading(false);
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get<NewsApiResponse>(
-        `${API_URL}/api/news/${encodeURIComponent(teamName)}`
-      );
+      let endpoint = "";
+      if (league === "NBA") {
+        endpoint = `${API_URL}/api/news`;
+      } else if (league === "NFL" || league === "CFB" || league ==="CBB") {
+        if (!teamName) {
+          setArticles([]);
+          setLoading(false);
+          return;
+        }
+        endpoint = `${API_URL}/api/news/${league.toLowerCase()}/${encodeURIComponent(teamName)}`;
+      }
 
+      const response = await axios.get<NewsApiResponse>(endpoint);
       const backendArticles = response.data.articles || [];
 
       const mapped: NewsArticle[] = backendArticles.map((article, index) => {
@@ -135,7 +138,7 @@ export function useTeamNews(teamName: string) {
 
   useEffect(() => {
     refreshNews();
-  }, [teamName]);
+  }, [teamName, league]);
 
   return {
     articles,
@@ -144,3 +147,4 @@ export function useTeamNews(teamName: string) {
     refreshNews,
   };
 }
+

@@ -31,6 +31,7 @@ import {
   statusCodeToColor,
   statusCodeToLabel,
 } from "./StatusLegend";
+import { Dropdown } from "components/Dropdown";
 
 type SectionType = {
   title: string;
@@ -316,20 +317,7 @@ export function StandingsList() {
             {winStreak ? `W${streak}` : `L${streak}`}
           </Text>
         </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {division.name}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {division.rank}
-          </Text>
-        </View>
+
         <View style={styles.statCell}>
           <Text
             style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
@@ -477,8 +465,6 @@ export function StandingsList() {
         "W-L",
         "Conf GB",
         "Streak",
-        "Div Name",
-        "Div Rank",
         "Div W-L",
         "Div GB",
         "Home W",
@@ -535,13 +521,12 @@ export function StandingsList() {
             scrollEnabled={false}
             ListHeaderComponent={renderFixedHeader}
             stickyHeaderIndices={[0]}
-            style={{ flex: 1 }}
           />
           {/* Right side horizontal scroll with FlatList and sticky header */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ flex: 1 }}
+             style={{ width: 220 }} // increased
           >
             <FlatList
               data={data}
@@ -562,119 +547,21 @@ export function StandingsList() {
       style={{ backgroundColor: isDark ? "#1d1d1d" : "#fff" }}
       contentContainerStyle={{
         paddingBottom: 100,
-        paddingHorizontal: 16,
+        paddingHorizontal: 12,
         paddingTop: 10,
       }}
     >
-      <View
-        style={{
-          marginBottom: 10,
-          alignItems: "flex-end",
-          position: "absolute",
-          right: 10,
-          top: 14,
-          zIndex: 999,
-        }}
-      >
-        <TouchableOpacity
-          onPress={toggleDropdown}
-          style={{
-            paddingVertical: 8,
-            paddingHorizontal: 16,
-            borderRadius: 8,
-            borderWidth: 1,
-            borderColor: isDark ? "#888" : "#888",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-          activeOpacity={0.8}
-        >
-          <Text
-            style={{
-              color: isDark ? "#fff" : "#1d1d1d",
-              fontFamily: Fonts.OSMEDIUM,
-              marginRight: 8,
-            }}
-          >
-            {sortMode === "conference" ? "By Conference" : "By Division"}
-          </Text>
+  
 
-          <Animated.View
-            style={{
-              transform: [
-                {
-                  rotate: dropdownAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ["0deg", "180deg"],
-                  }),
-                },
-              ],
-            }}
-          >
-            <Ionicons
-              name="chevron-down"
-              size={20}
-              color={isDark ? "#fff" : "#1d1d1d"}
-            />
-          </Animated.View>
-        </TouchableOpacity>
-
-        {dropdownVisible && (
-          <Animated.View
-            style={{
-              position: "absolute",
-              top: 48,
-              width: 180,
-              borderRadius: 12,
-              overflow: "hidden",
-              zIndex: 9999,
-              opacity: dropdownAnim,
-              transform: [{ translateY: dropdownTranslateY }],
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.35,
-              shadowRadius: 10,
-              elevation: 10,
-            }}
-          >
-            <BlurView
-              intensity={100}
-              tint="systemUltraThinMaterial"
-              style={StyleSheet.absoluteFillObject}
-            />
-            {["conference", "division"].map((mode) => (
-              <TouchableOpacity
-                key={mode}
-                onPress={() =>
-                  onSelectSortMode(mode as "conference" | "division")
-                }
-                style={{
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderBottomWidth: mode === "division" ? 0 : 1,
-                  borderBottomColor: isDark ? "#555" : "#ccc",
-                }}
-              >
-                <Text
-                  style={{
-                    color:
-                      sortMode === mode
-                        ? isDark
-                          ? "#0af"
-                          : "#06f"
-                        : isDark
-                        ? "#fff"
-                        : "#000",
-                    fontFamily: Fonts.OSMEDIUM,
-                  }}
-                >
-                  {mode === "conference" ? "By Conference" : "By Division"}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </Animated.View>
-        )}
-      </View>
+      <Dropdown
+  options={[
+    { label: "Conference", value: "conference" },
+    { label: "Division", value: "division" },
+  ]}
+  selectedValue={sortMode}
+  onSelect={(value) => setSortMode(value as "conference" | "division")}
+  isDark={isDark}
+/>
 
       {sortMode === "conference" ? (
         <>

@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
+import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
 import PlayoffsLogo from "../../assets/Logos/NBAPlayoffs.png";
 import PlayoffsLogoLight from "../../assets/Logos/NBAPlayoffsLight.png";
 import FinalsLogo from "../../assets/Logos/TheNBAFinals.png";
@@ -23,33 +23,14 @@ type CenterInfoProps = {
   seriesSummary?: string;
   isPlayoffs?: boolean;
   totalPeriodsPlayed?: number;
+  lighter: boolean;
 };
-
-function getLivePeriodLabel(period?: number) {
-  if (!period) return "Live";
-
-  if (period <= 4) {
-    switch (period) {
-      case 1:
-        return "1st";
-      case 2:
-        return "2nd";
-      case 3:
-        return "3rd";
-      case 4:
-        return "4th";
-    }
-  }
-
-  const overtimeNumber = period - 4;
-  return overtimeNumber === 1 ? "OT" : `OT${overtimeNumber}`;
-}
 
 export default function CenterInfo({
   isNBAFinals,
   isFinal,
   isCanceled,
-  isHalftime,
+  isHalftime = false,
   broadcastNetworks,
   showLiveInfo,
   period,
@@ -62,19 +43,39 @@ export default function CenterInfo({
   seriesSummary,
   isPlayoffs,
   totalPeriodsPlayed,
+  lighter,
 }: CenterInfoProps) {
-  // Animated opacity for logos based on theme
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
+  const styles = getStyles(isDark, lighter);
 
-  // Determine finalPeriod label logic:
-  // Use totalPeriodsPlayed if game is final and available, else fall back to period number
-  const finalPeriod =
-    isFinal && totalPeriodsPlayed
-      ? totalPeriodsPlayed
-      : typeof period === "number"
-      ? period
-      : undefined;
+  const getQuarterLabel = (
+    currentPeriod: number | string,
+    totalPeriods: number = 4
+  ) => {
+    const periodNum =
+      typeof currentPeriod === "number"
+        ? currentPeriod
+        : parseInt(currentPeriod as string);
+    if (isNaN(periodNum)) return { label: "Live" };
+
+    switch (periodNum) {
+      case 1:
+        return { label: "1st" };
+      case 2:
+        return { label: "2nd" };
+      case 3:
+        return { label: "3rd" };
+      case 4:
+        return { label: "4th" };
+      default:
+        const otNumber = periodNum - totalPeriods;
+        return { label: `OT${otNumber}` };
+    }
+  };
+
+  const { label: periodLabelRaw } = getQuarterLabel(period, totalPeriodsPlayed);
+  const periodLabel = isFinal && !isCanceled ? "Final" : periodLabelRaw;
 
   useEffect(() => {
     if (isNBAFinals || isPlayoffs) {
@@ -93,221 +94,70 @@ export default function CenterInfo({
     }
   }, [isDark, isNBAFinals, isPlayoffs, lightOpacity, darkOpacity]);
 
-  // Ordinal suffix for quarter labels in live games
-  function getOrdinalQuarter(period?: number) {
-    switch (period) {
-      case 1:
-        return "1st";
-      case 2:
-        return "2nd";
-      case 3:
-        return "3rd";
-      case 4:
-        return "4th";
-      default:
-        return period ? `${period}th` : "Live";
-    }
-  }
-
   return (
-    <View style={{ alignItems: "center" }}>
-      {isNBAFinals ? (
-        <View style={{ width: 100, height: 60, position: "relative" }}>
+    <View style={styles.container}>
+      {(isNBAFinals || isPlayoffs) && (
+        <View style={styles.logoWrapper}>
           <Animated.Image
-            source={FinalsLogo}
-            style={{
-              width: 100,
-              height: 60,
-              resizeMode: "contain",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: lightOpacity,
-            }}
+            source={isNBAFinals ? FinalsLogo : PlayoffsLogo}
+            style={[styles.logo, { opacity: lightOpacity }]}
           />
           <Animated.Image
-            source={FinalsLogoLight}
-            style={{
-              width: 100,
-              height: 60,
-              resizeMode: "contain",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: darkOpacity,
-            }}
+            source={isNBAFinals ? FinalsLogoLight : PlayoffsLogoLight}
+            style={[styles.logo, { opacity: darkOpacity }]}
           />
         </View>
-      ) : isPlayoffs ? (
-        <View style={{ width: 100, height: 60, position: "relative" }}>
-          <Animated.Image
-            source={PlayoffsLogo}
-            style={{
-              width: 100,
-              height: 60,
-              resizeMode: "contain",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: lightOpacity,
-            }}
-          />
-          <Animated.Image
-            source={PlayoffsLogoLight}
-            style={{
-              width: 100,
-              height: 60,
-              resizeMode: "contain",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: darkOpacity,
-            }}
-          />
-        </View>
-      ) : null}
+      )}
 
       {(gameNumberLabel || seriesSummary) && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 6,
-          }}
-        >
+        <View style={styles.gameInfoRow}>
           {gameNumberLabel && (
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: Fonts.OSLIGHT,
-                color: "#ccc",
-              }}
-            >
-              {gameNumberLabel}
-            </Text>
+            <Text style={styles.gameNumberLabel}>{gameNumberLabel}</Text>
           )}
-
           {gameNumberLabel && seriesSummary && (
-            <View
-              style={{
-                height: 12,
-                width: 0.5,
-                backgroundColor: "#ccc",
-                marginHorizontal: 8,
-              }}
-            />
+            <View style={styles.statusDivider} />
           )}
-
           {seriesSummary && (
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: Fonts.OSLIGHT,
-                color: "#ccc",
-              }}
-            >
-              {seriesSummary}
-            </Text>
+            <Text style={styles.gameNumberLabel}>{seriesSummary}</Text>
           )}
         </View>
       )}
 
       {isCanceled ? (
-        <Text
-          style={{
-            fontSize: 20,
-            fontFamily: Fonts.OSBOLD,
-            color: "#ff5555",
-            marginTop: 6,
-          }}
-        >
-          Cancelled
-        </Text>
+        <Text style={styles.finalText}>Cancelled</Text>
       ) : isFinal ? (
-        <Text
-          style={{
-            fontSize: 20,
-            fontFamily: Fonts.OSBOLD,
-            color: "#ff5555",
-            marginTop: 6,
-          }}
-        >
-          Final
-        </Text>
-      ) : null}
-
-      {showLiveInfo && clock ? (
-        <>
-          <Text
-            style={{
-              fontSize: 18,
-              fontFamily: Fonts.OSMEDIUM,
-
-              marginTop: 4,
-            }}
-          >
+        // 🏁 FINAL GAME — show "Final" and date
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{periodLabel}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      ) : showLiveInfo || isHalftime ? (
+        // 🕒 LIVE or HALFTIME
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>
             {isHalftime
               ? "Halftime"
-              : endOfPeriod && typeof period === "number"
-              ? `End of ${getLivePeriodLabel(period)}`
-              : typeof period === "number"
-              ? getLivePeriodLabel(period)
-              : period}
+              : endOfPeriod
+              ? `End of ${periodLabelRaw}`
+              : periodLabelRaw}
           </Text>
-
-          {!endOfPeriod && (
-            <Text
-              style={{
-                fontSize: 20,
-                fontFamily: Fonts.OSMEDIUM,
-                color: "#ff4444",
-              }}
-            >
-              {clock}
-            </Text>
+          {!isHalftime && !endOfPeriod && <View style={styles.statusDivider} />}
+          {!endOfPeriod && !isHalftime && clock && (
+            <Text style={styles.clock}>{clock}</Text>
           )}
-        </>
+        </View>
       ) : (
-        !showLiveInfo && (
-          <>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: Fonts.OSREGULAR,
-                color: "#fff",
-              }}
-            >
-              {formattedDate}
-            </Text>
-
-            {!isFinal && !isCanceled && time && (
-              <Text
-                style={{
-                  fontFamily: Fonts.OSREGULAR,
-                  color: "#fff",
-                  fontSize: 16,
-                }}
-              >
-                {time}
-              </Text>
-            )}
-          </>
-        )
+        // ⏰ SCHEDULED GAME
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time}</Text>
+        </View>
       )}
 
       {broadcastNetworks && (
-        <Text
-          style={{
-            fontSize: 12,
-            fontFamily: Fonts.OSREGULAR,
-            color: "#fff",
-
-            textAlign: "center",
-          }}
-        >
-          {broadcastNetworks}
-        </Text>
+        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
       )}
     </View>
   );

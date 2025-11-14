@@ -1,117 +1,75 @@
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
-import GamesList from "components/Games/GamesList";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import SeasonLeadersList from "components/SeasonLeadersList";
-import { StandingsList } from "components/Standings/StandingsList";
-import SummerGamesList from "components/summer-league/SummerGamesList";
-import { useSeasonGames as useDBGames } from "hooks/useDBGames";
-import { useSeasonGames as useLiveSeasonGames } from "hooks/useSeasonGames";
-import { useSeasonLeaders } from "hooks/useSeasonLeaders";
-import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
-import { getScoresStyles } from "styles/leagueStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import PagerView from "react-native-pager-view";
+import CalendarModal from "components/CalendarModal";
+import CombinedGamesList, {
+  CombinedGamesSection,
+} from "components/CombinedGamesList";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import DateNavigator from "components/DateNavigator";
+import SportsListModal, {
+  SportsListModalRef,
+} from "components/League/SportsListModal";
+import { mapToInternalTeam } from "constants/teams";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
+import { useCFBSeasonGames } from "hooks/CFBHooks/useCFBSeasonGames";
+import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
+import { useSeasonGames } from "hooks/useSeasonGames";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { View, useColorScheme } from "react-native";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
-import { useHighlights } from "../../hooks/useHighlights";
-import { useNews } from "../../hooks/useNews";
+import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { getScoresStyles } from "styles/leagueStyles";
+import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 
-function StatsTabContent() {
-  const { leaders, loading, error } = useSeasonLeaders({
-    season: 2024,
-    limit: 5,
-    minGames: 10,
-  });
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-  return (
-    <SeasonLeadersList
-      leadersByStat={leaders}
-      loading={loading}
-      error={error}
-    />
-  );
-}
-
-type TeamLike = {
-  id: string;
-  name: string;
-  record?: string;
-  logo?: any;
-  fullName: string;
-};
-
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
-export default function ScoresScreen() {
+export default function LeagueScreen() {
   const currentYear = "2025";
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
 
-  const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
-  type TabType = (typeof tabs)[number];
-
-  const pagerRef = useRef<PagerView>(null);
-  const [selectedTab, setSelectedTab] = useState<TabType>("scores");
-  const [pageIndex, setPageIndex] = useState(0);
-
-  const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const {
-    games: liveGames,
-    loading: liveLoading,
-    refreshGames: refreshLiveGames,
-  } = useLiveSeasonGames(currentYear);
-
-  const {
-    games: dbGames,
-    loading: dbLoading,
-    refreshGames: refreshDBGames,
-  } = useDBGames(currentYear);
-
-  const {
-    games: summerGames,
-    loading: summerLoading,
-    refreshGames: refreshSummerGames,
-  } = useSummerLeagueGames();
-
-  const { news, loading: newsLoading, refreshNews } = useNews();
-  const { highlights, loading: highlightsLoading } = useHighlights(
-    "NBA highlights",
-    50
+  // --- State ---
+  const [selectedDate, setSelectedDate] = React.useState<Date>(
+    dayjs().startOf("day").toDate()
   );
+  const [favorites, setFavorites] = React.useState<string[]>([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [showCalendarModal, setShowCalendarModal] = React.useState(false);
+  const [leagueModalVisible, setLeagueModalVisible] = React.useState(false);
+  const sportsModalRef = React.useRef<SportsListModalRef>(null);
 
-  // --- Load favorites from AsyncStorage ---
+  // --- Game Data Hooks ---
+  const {
+    games: nbaGames,
+    loading: nbaLoading,
+    refreshGames: refreshNBAGames,
+  } = useSeasonGames(currentYear);
+
+  const {
+    games: cbbGames,
+    loading: cbbLoading,
+    refreshCBBGames,
+  } = useCBBSeasonGames();
+
+  const {
+    games: nflGames,
+    loading: nflLoading,
+    refetch: refreshNFLGames,
+  } = useNFLSeasonGames(currentYear, "1");
+
+  const {
+    games: cfbGames,
+    loading: cfbLoading,
+    refetch: refreshCFBGames,
+  } = useCFBSeasonGames(currentYear, "2");
+
+  // --- Load Favorites ---
   useFocusEffect(
-    useCallback(() => {
+    React.useCallback(() => {
       const loadFavorites = async () => {
         try {
           const stored = await AsyncStorage.getItem("favorites");
@@ -124,44 +82,199 @@ export default function ScoresScreen() {
     }, [])
   );
 
-  // --- Header ---
-  useLayoutEffect(() => {
+  // --- Header Setup ---
+  React.useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          title="League"
           tabName="League"
-          onCalendarPress={
-            selectedTab === "scores"
-              ? () => setShowCalendarModal(true)
-              : undefined
-          }
+          modalVisible={leagueModalVisible}
+          setModalVisible={setLeagueModalVisible}
+          onOpenLeagueModal={() => {
+            setLeagueModalVisible(true);
+            sportsModalRef.current?.present();
+          }}
         />
       ),
     });
-  }, [navigation, selectedTab]);
+  }, [navigation, leagueModalVisible]);
 
-  const handleTabPress = (tab: TabType) => {
-    const index = tabs.indexOf(tab);
-    setSelectedTab(tab);
-    setPageIndex(index);
-    pagerRef.current?.setPage(index);
-  };
+  // --- Normalize All Games to Local Time ---
+  const normalizeGames = (games: any[], leagueType: string) =>
+    games
+      .map((game: any) => {
+        let date: dayjs.Dayjs | null = null;
 
-  const handlePageSelected = (e: any) => {
-    const index = e.nativeEvent.position;
-    setPageIndex(index);
-    setSelectedTab(tabs[index]);
-  };
+        // Use timestamp if available (CFB/NFL), otherwise fallback for NBA/CBB
+        if (leagueType === "CFB" || leagueType === "NFL") {
+          const timestamp = game.game?.date?.timestamp;
+          if (!timestamp) return null; // skip invalid games
+          date = dayjs.unix(timestamp).local();
+        } else {
+          const rawDate =
+            game.date?.start ?? game.date?.date ?? game.date ?? game.game?.date;
+          if (!rawDate) return null;
+          date = dayjs.utc(rawDate).local();
+        }
 
+        // --- Normalize teams ---
+        let home, away;
+        if (leagueType === "NBA") {
+          const homeTeam = game.teams?.home ?? {};
+          const awayTeam = game.teams?.visitors ?? {};
+          home = mapToInternalTeam(homeTeam) || {
+            id: String(homeTeam.id),
+            code: homeTeam.code,
+            name: homeTeam.name,
+            nickname: homeTeam.nickname,
+            logo: homeTeam.logo,
+          };
+          away = mapToInternalTeam(awayTeam) || {
+            id: String(awayTeam.id),
+            code: awayTeam.code,
+            name: awayTeam.name,
+            nickname: awayTeam.nickname,
+            logo: awayTeam.logo,
+          };
+        } else if (leagueType === "NFL" || leagueType === "CFB") {
+          home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
+          away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+        } else if (leagueType === "CBB") {
+          home = normalizeTeam(game.teams?.home);
+          away = normalizeTeam(game.teams?.away);
+        }
+
+        return {
+          ...game,
+          date: date.toDate(),
+          dateString: date.format("YYYY-MM-DD"),
+          time: date.format("h:mm A"),
+          home,
+          away,
+        };
+      })
+      .filter(Boolean); // remove null games
+
+const normalizedNBAGames = React.useMemo(
+  () => normalizeGames(nbaGames, "NBA"),
+  [nbaGames]
+);
+
+const normalizedNFLGames = React.useMemo(
+  () => normalizeGames(nflGames, "NFL"),
+  [nflGames]
+);
+
+const normalizedCFBGames = React.useMemo(
+  () => normalizeGames(cfbGames, "CFB"),
+  [cfbGames]
+);
+
+const normalizedCBBGames = React.useMemo(
+  () => normalizeGames(cbbGames, "CBB"),
+  [cbbGames]
+);
+
+
+  // --- Filter by Selected Local Date ---
+const filteredNBA = React.useMemo(
+  () => filterByDate(normalizedNBAGames, selectedDate),
+  [normalizedNBAGames, selectedDate]
+);
+
+const filteredNFL = React.useMemo(
+  () => filterByDate(normalizedNFLGames, selectedDate),
+  [normalizedNFLGames, selectedDate]
+);
+
+const filteredCFB = React.useMemo(
+  () => filterByDate(normalizedCFBGames, selectedDate),
+  [normalizedCFBGames, selectedDate]
+);
+
+const filteredCBB = React.useMemo(
+  () => filterByDate(normalizedCBBGames, selectedDate),
+  [normalizedCBBGames, selectedDate]
+);
+
+
+  // --- Favorites Helper ---
+  const isFavoriteGame = (game: any, prefix: string) =>
+    favorites.includes(`${prefix}:${String(game.home.id)}`) ||
+    favorites.includes(`${prefix}:${String(game.away.id)}`);
+
+  // --- Sort Live Games First ---
+  const sortLiveFirst = (games: any[]) =>
+    [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+
+  // --- Limit Non-Favorites ---
+  const limitNonFavorites = (games: any[], prefix: string, max = 12) =>
+    sortLiveFirst(games.filter((g) => !isFavoriteGame(g, prefix))).slice(
+      0,
+      max
+    );
+
+  // --- Favorite Games ---
+const favoriteGames = React.useMemo(() => {
+  if (!favorites.length) return [];
+
+  const collectFavorites = (games: any[], prefix: string, name: string) =>
+    games
+      .filter((g) => isFavoriteGame(g, prefix))
+      .map((g) => ({ ...g, league: { name } }));
+
+  return [
+    ...collectFavorites(filteredNBA, "NBA", "NBA"),
+    ...collectFavorites(filteredNFL, "NFL", "NFL"),
+    ...collectFavorites(filteredCFB, "CFB", "College Football"),
+    ...collectFavorites(filteredCBB, "CBB", "College Basketball"),
+  ];
+}, [favorites, filteredNBA, filteredNFL, filteredCFB, filteredCBB]);
+
+  // --- Apply Live Sorting and Limiting ---
+const limitedNBA = React.useMemo(
+  () => limitNonFavorites(filteredNBA, "NBA"),
+  [filteredNBA, favorites]
+);
+
+const limitedNFL = React.useMemo(
+  () => limitNonFavorites(filteredNFL, "NFL"),
+  [filteredNFL, favorites]
+);
+
+const limitedCFB = React.useMemo(
+  () => limitNonFavorites(filteredCFB, "CFB"),
+  [filteredCFB, favorites]
+);
+
+const limitedCBB = React.useMemo(
+  () => limitNonFavorites(filteredCBB, "CBB"),
+  [filteredCBB, favorites]
+);
+
+
+  // --- Build Combined Sections ---
+const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
+  const sections: CombinedGamesSection[] = [
+    { category: "Favorites", data: sortLiveFirst(favoriteGames) },
+    { category: "NBA", data: sortLiveFirst(limitedNBA) },
+    { category: "NFL", data: sortLiveFirst(limitedNFL) },
+    { category: "College Football", data: sortLiveFirst(limitedCFB) },
+    { category: "Men's College Basketball", data: sortLiveFirst(limitedCBB) },
+  ];
+
+  return sections.filter((s) => s.data.length > 0);
+}, [favoriteGames, limitedNBA, limitedNFL, limitedCFB, limitedCBB]);
+
+  // --- Refresh Handler ---
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
       await Promise.all([
-        refreshLiveGames(),
-        refreshDBGames(),
-        refreshSummerGames(),
-        refreshNews(),
+        refreshNBAGames(),
+        refreshNFLGames(),
+        refreshCFBGames(),
+        refreshCBBGames(),
       ]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
@@ -170,203 +283,88 @@ export default function ScoresScreen() {
     }
   };
 
+  // --- Change Date (local time) ---
   const changeDateByDays = (days: number) => {
-    setSelectedDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    });
+    setSelectedDate((prev) =>
+      dayjs(prev).add(days, "day").startOf("day").toDate()
+    );
   };
 
-  const summerStart = new Date("2025-07-05");
-  const summerEnd = new Date("2025-07-23");
-  const isSummerLeague =
-    selectedDate >= summerStart && selectedDate <= summerEnd;
+  // --- Marked Dates (local time) ---
+const markedDates = React.useMemo(() => {
+  const allGames = [
+    ...normalizedNBAGames,
+    ...normalizedNFLGames,
+    ...normalizedCFBGames,
+    ...normalizedCBBGames,
+  ];
 
-  function hasIdAndName(team: any): team is TeamLike {
-    return (
-      team &&
-      typeof team === "object" &&
-      typeof team.id === "string" &&
-      typeof team.name === "string"
-    );
-  }
+  const dotColor = isDark ? "#fff" : "#1d1d1d";
 
-  function normalizeTeam(team: any): TeamLike {
-    if (hasIdAndName(team)) {
-      return {
-        id: team.id,
-        name: team.name,
-        record: team.record,
-        logo: team.logo,
-        fullName: team.fullName ?? team.name ?? "Unknown Team",
-      };
-    }
-    const fallbackName = team?.name ?? "Unknown Team";
-    return {
-      id: fallbackName,
-      name: fallbackName,
-      record: undefined,
-      logo: undefined,
-      fullName: fallbackName,
-    };
-  }
-
-  // --- Filter and normalize games ---
-  const inProgressGames = liveGames.filter((g) => g.status === "In Progress");
-  const dbOnlyGames = dbGames.filter(
-    (g) => g.status === "Scheduled" || g.status === "Final"
+  return Object.fromEntries(
+    allGames.map((g) => [
+      dayjs(g.date).format("YYYY-MM-DD"),
+      { marked: true, dotColor },
+    ])
   );
-  const combinedSeasonGames = [...inProgressGames, ...dbOnlyGames];
+}, [
+  normalizedNBAGames,
+  normalizedNFLGames,
+  normalizedCFBGames,
+  normalizedCBBGames,
+  isDark,
+]);
 
-  const filteredSeasonGames = combinedSeasonGames.filter((game) => {
-    const gameDate = new Date(game.date);
-    return (
-      gameDate.getFullYear() === selectedDate.getFullYear() &&
-      gameDate.getMonth() === selectedDate.getMonth() &&
-      gameDate.getDate() === selectedDate.getDate()
-    );
-  });
 
-  const filteredSummerGames = summerGames.filter((game) => {
-    const gameDate = new Date(game.date);
-    return (
-      gameDate.getFullYear() === selectedDate.getFullYear() &&
-      gameDate.getMonth() === selectedDate.getMonth() &&
-      gameDate.getDate() === selectedDate.getDate()
-    );
-  });
-
-  const normalizedSeasonGames = filteredSeasonGames.map((game) => ({
-    ...game,
-    period: game.period === undefined ? undefined : String(game.period),
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
-  }));
-
-  const normalizedSummerGames = filteredSummerGames.map((game) => ({
-    ...game,
-    period: game.period === undefined ? undefined : Number(game.period),
-    home: normalizeTeam(game.home),
-    away: normalizeTeam(game.away),
-  }));
-
-  // --- Combine news & highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = news.map((item) => ({
-      ...item,
-      itemType: "news",
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight",
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort((a, b) => {
-      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return bDate - aDate;
-    });
-    return combined;
-  }, [news, highlights]);
-
+  // --- Render ---
   return (
     <>
       <View style={styles.container}>
-        <TabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={handleTabPress}
-        />
+        <View style={styles.contentArea}>
+          <DateNavigator
+            selectedDate={selectedDate}
+            onChangeDate={changeDateByDays}
+            onOpenCalendar={() => setShowCalendarModal(true)}
+            isDark={isDark}
+          />
 
-        <PagerView
-          ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          onPageSelected={handlePageSelected}
-        >
-          {/* SCORES PAGE */}
-          <View key="scores" style={styles.contentArea}>
-            <DateNavigator
-              selectedDate={selectedDate}
-              onChangeDate={changeDateByDays}
-              onOpenCalendar={() => setShowCalendarModal(true)}
-              isDark={isDark}
-            />
-            {isSummerLeague ? (
-              <SummerGamesList
-                games={normalizedSummerGames}
-                loading={summerLoading}
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 100 }}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
-            ) : (
-              <GamesList
-                games={normalizedSeasonGames}
-                loading={liveLoading || dbLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            )}
-          </View>
-
-          {/* NEWS PAGE */}
-          <View key="news" style={styles.contentArea}>
-            <NewsHighlightsList
-              items={combinedNewsAndHighlights}
-              loading={newsLoading}
+            }
+          >
+            <CombinedGamesList
+              gamesByCategory={gamesByCategory}
+              loading={nbaLoading || nflLoading || cfbLoading || cbbLoading}
               refreshing={refreshing}
               onRefresh={handleRefresh}
             />
-          </View>
-
-          {/* STANDINGS PAGE */}
-          <View key="standings" style={styles.contentArea}>
-            <StandingsList />
-          </View>
-
-          {/* STATS PAGE */}
-          <View key="stats" style={styles.contentArea}>
-            <StatsTabContent />
-          </View>
-
-          {/* FORUM PAGE */}
-          <View key="forum" style={styles.contentArea}>
-            <LeagueForum />
-          </View>
-        </PagerView>
+          </ScrollView>
+        </View>
       </View>
 
-      {/* CALENDAR MODAL */}
       <CalendarModal
         visible={showCalendarModal}
         onClose={() => setShowCalendarModal(false)}
         onSelectDate={(dateString) => {
-          const [year, month, day] = dateString.split("-").map(Number);
-          setSelectedDate(new Date(year, month - 1, day));
+          const localSelected = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+          setSelectedDate(localSelected);
           setShowCalendarModal(false);
         }}
-        markedDates={{
-          ...[...combinedSeasonGames, ...summerGames].reduce(
-            (acc, game) => {
-              const localDate = new Date(game.date);
-              const localISODate = `${localDate.getFullYear()}-${String(
-                localDate.getMonth() + 1
-              ).padStart(2, "0")}-${String(localDate.getDate()).padStart(
-                2,
-                "0"
-              )}`;
-              acc[localISODate] = {
-                marked: true,
-                dotColor: isDark ? "#fff" : "#1d1d1d",
-              };
-              return acc;
-            },
-            {} as Record<string, { marked: boolean; dotColor: string }>
-          ),
-        }}
+        markedDates={markedDates}
+      />
+
+      <SportsListModal
+        ref={sportsModalRef}
+        onSelect={() => {}}
+        onClose={() => setLeagueModalVisible(false)}
       />
     </>
   );

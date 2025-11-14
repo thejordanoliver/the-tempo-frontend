@@ -1,6 +1,12 @@
 // components/SignupSteps.tsx
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
+import { teams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
+import { teams as nflteams } from "constants/teamsNFL";
+import type { LeagueType, Team } from "types/types";
 import { getSignupStepsStyles } from "styles/signupStepStyles";
+import { Colors } from "constants/Colors";
 import { useRef, useState } from "react";
 import {
   Image,
@@ -19,7 +25,7 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { teams } from "../constants/teams";
+
 
 type SignupData = {
   fullName: string;
@@ -38,12 +44,15 @@ export type SignupStepsProps = {
   onChangeSignupData: (data: Partial<SignupData>) => void;
   onNextStep: () => void;
   onPreviousStep: () => void;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (league: LeagueType, id: string) => void; // ✅ updated
   onOpenImagePickerFor: (target: "profile" | "banner") => void;
   toggleLayout: () => void;
   isGridView: boolean;
-  fadeAnim: any; // Animated.Value from RN
+  fadeAnim: any;
 };
+
+
+
 
 export default function SignupSteps({
   signupStep,
@@ -58,7 +67,7 @@ export default function SignupSteps({
   toggleLayout,
 }: SignupStepsProps) {
   const isDark = useColorScheme() === "dark";
-  const styles = getSignupStepsStyles(isDark);
+  const styles = getSignupStepsStyles(isDark,);
   const { width: screenWidth } = useWindowDimensions();
 
   const numColumns = 3;
@@ -92,6 +101,9 @@ export default function SignupSteps({
     transform: [{ translateX: translateX.value }],
   }));
 
+
+  
+
   switch (signupStep) {
     case 0:
       return (
@@ -109,7 +121,7 @@ export default function SignupSteps({
                   value={signupData.fullName}
                   onChangeText={(val) => onChangeSignupData({ fullName: val })}
                   style={styles.input}
-                  placeholderTextColor={isDark ? "#888" : "#aaa"}
+                  placeholderTextColor={Colors.midTone}
                 />
                 <TextInput
                   placeholder="Username"
@@ -118,7 +130,7 @@ export default function SignupSteps({
                     onChangeSignupData({ username: val.toLowerCase() })
                   }
                   style={styles.input}
-                  placeholderTextColor={isDark ? "#888" : "#aaa"}
+                  placeholderTextColor={Colors.midTone}
                   autoCapitalize="none"
                 />
                 <TextInput
@@ -127,7 +139,7 @@ export default function SignupSteps({
                   value={signupData.email}
                   onChangeText={(val) => onChangeSignupData({ email: val })}
                   style={styles.input}
-                  placeholderTextColor={isDark ? "#888" : "#aaa"}
+                  placeholderTextColor={Colors.midTone}
                   autoCapitalize="none"
                 />
                 <TextInput
@@ -136,7 +148,7 @@ export default function SignupSteps({
                   value={signupData.password}
                   onChangeText={(val) => onChangeSignupData({ password: val })}
                   style={styles.input}
-                  placeholderTextColor={isDark ? "#888" : "#aaa"}
+                  placeholderTextColor={Colors.midTone}
                 />
                 <TextInput
                   placeholder="Confirm Password"
@@ -146,7 +158,7 @@ export default function SignupSteps({
                     onChangeSignupData({ confirmPassword: val })
                   }
                   style={styles.input}
-                  placeholderTextColor={isDark ? "#888" : "#aaa"}
+                  placeholderTextColor={Colors.midTone}
                 />
               </View>
             </ScrollView>
@@ -169,17 +181,38 @@ export default function SignupSteps({
             value={search}
             onChangeText={setSearch}
             style={styles.searchBar}
-            placeholderTextColor={isDark ? "#888" : "#aaa"}
+            placeholderTextColor={Colors.midTone}
           />
-          <FavoriteTeamsSelector
-            teams={teams}
-            favorites={signupData.favorites}
-            toggleFavorite={onToggleFavorite}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
-            search={search}
-            itemWidth={itemWidth}
-          />
+<FavoriteTeamsSelector
+  teams={[
+    ...teams.map((t) => ({ ...t, league: "NBA", id: t.id.toString() } as Team & { league: "NBA" })),
+    ...nflteams.map((t) => ({ ...t, league: "NFL", id: t.id.toString() } as Team & { league: "NFL" })),
+
+    // ✅ Show all CFB teams, but prioritize matching names in FBS map if available
+    ...cfbteams
+ .filter((t) => {
+  const fbsTeamNames = Object.values(conferenceListMap).flat().map((n) => n.toLowerCase());
+  const name = (t.fullName || t.name || "").toLowerCase();
+  // Include team if its name partially matches any FBS team
+  return (
+    fbsTeamNames.length === 0 ||
+    fbsTeamNames.some((n) => n.includes(name) || name.includes(n))
+  );
+})
+
+      .map((t) => ({ ...t, league: "CFB", id: t.id.toString() } as Team & { league: "CFB" })),
+
+    // ✅ Show all CBB teams (don’t depend on FBS map)
+    ...cbbTeams.map((t) => ({ ...t, league: "CBB", id: t.id.toString() } as Team & { league: "CBB" })),
+  ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
+  favorites={signupData.favorites}
+  toggleFavorite={(league: LeagueType, id: string) => onToggleFavorite(league, id)}
+  isGridView={isGridView}
+  fadeAnim={fadeAnim}
+  search={search}
+  itemWidth={itemWidth}
+/>
+
         </View>
       );
 

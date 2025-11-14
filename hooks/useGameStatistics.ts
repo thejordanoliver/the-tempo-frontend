@@ -40,8 +40,8 @@ export type TeamStat = {
   };
 };
 
-const API_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
-
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
 export function useGameStatistics(gameId: number) {
   const [data, setData] = useState<TeamStat[] | null>(null);
@@ -66,11 +66,11 @@ export function useGameStatistics(gameId: number) {
           return;
         }
 
-        const res = await axios.get("https://api-nba-v1.p.rapidapi.com/games/statistics", {
+        const res = await axios.get(`https://${RAPIDAPI_HOST}/games/statistics`, {
           params: { id: gameId },
           headers: {
-            "x-rapidapi-key": API_KEY,
-            "x-rapidapi-host": "api-nba-v1.p.rapidapi.com",
+            "x-rapidapi-key": RAPIDAPI_KEY,
+            "x-rapidapi-host": RAPIDAPI_HOST,
           },
         });
 

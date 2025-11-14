@@ -44,20 +44,18 @@ export default function GameOddsSection({
     team1: awayCode,
     team2: homeCode,
     gameId,
-    skip: hasUpcomingOdds, // ✅ don’t fetch if upcoming exists
+    skip: hasUpcomingOdds, // ✅ don't fetch if upcoming exists
   });
 
+  const isLoading = upcomingLoading || oddsLoading;
+
   // ✅ If both odds arrays are empty (and not loading), return null
-  if (
-    !upcomingLoading &&
-    !oddsLoading &&
-    (!upcomingOdds?.length && !historicalOdds?.length)
-  ) {
+  if (!isLoading && (!upcomingOdds?.length && !historicalOdds?.length)) {
     return null;
   }
 
-  // ✅ Unified loading state (only one skeleton at a time)
-  if (upcomingLoading || (!hasUpcomingOdds && oddsLoading)) {
+  // ✅ Single skeleton
+  if (isLoading) {
     return <OddsSkeleton />;
   }
 

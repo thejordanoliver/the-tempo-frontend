@@ -1,82 +1,44 @@
-import { Game } from "types/types";
 import axios from "axios";
 import rateLimit from "axios-rate-limit";
 import { useEffect, useState } from "react";
-import {
-  RawNBAGame,
-  transformGameData,
-} from "../utils/transformGameData";
+import { Game } from "types/types";
+import { teams } from "../constants/teams";
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
-// Create rate-limited axios instance
+// Rate-limited axios
 const http = rateLimit(axios.create({}), {
   maxRequests: 2,
   perMilliseconds: 1000,
 });
 
-// Type for team response
-type TeamResponse = { id: number; nickname: string };
+// 🕒 Convert UTC date string to Eastern Time (America/New_York)
+function convertToEastern(dateString: string): Date {
+  const utcDate = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  };
+  const parts = new Intl.DateTimeFormat("en-US", options)
+    .formatToParts(utcDate)
+    .reduce((acc: any, part) => {
+      if (part.type !== "literal") acc[part.type] = part.value;
+      return acc;
+    }, {});
 
-// Fetch team nicknames
-const fetchTeamNicknames = async (): Promise<Record<number, string>> => {
-  const res = await http.get<{ response: TeamResponse[] }>(
-    `https://${RAPIDAPI_HOST}/teams`,
-    {
-      headers: {
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": RAPIDAPI_HOST,
-      },
-    }
+  // Construct new ET Date
+  return new Date(
+    `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`
   );
+}
 
-  const map: Record<number, string> = {};
-  res.data.response.forEach(({ id, nickname }: TeamResponse) => {
-    map[id] = nickname;
-  });
-
-  return map;
-};
-
-// Type for standings API response
-type StandingTeam = {
-  team: { id: number };
-  win?: { total: number };
-  loss?: { total: number };
-  games?: { wins: number; losses: number };
-};
-
-const fetchTeamStandings = async (): Promise<
-  Record<string, { wins: number; losses: number }>
-> => {
-  const today = new Date();
-  const seasonYear =
-    today.getMonth() < 7 ? today.getFullYear() - 1 : today.getFullYear();
-
-  const res = await http.get<{ response: StandingTeam[] }>(
-    `https://${RAPIDAPI_HOST}/standings`,
-    {
-      params: { season: seasonYear, league: "standard" },
-      headers: {
-        "X-RapidAPI-Key": RAPIDAPI_KEY,
-        "X-RapidAPI-Host": RAPIDAPI_HOST,
-      },
-    }
-  );
-
-  const standingsMap: Record<string, { wins: number; losses: number }> = {};
-  res.data.response.forEach((team: StandingTeam) => {
-    const teamId = team.team.id.toString();
-    const wins = team.win?.total ?? team.games?.wins ?? 0;
-    const losses = team.loss?.total ?? team.games?.losses ?? 0;
-    standingsMap[teamId] = { wins, losses };
-  });
-
-  return standingsMap;
-};
-
-// Hook to fetch weekly games
 export function useWeeklyGames() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,13 +49,8 @@ export function useWeeklyGames() {
       setLoading(true);
       setError(null);
 
-      const [teamNicknames, teamStandings] = await Promise.all([
-        fetchTeamNicknames(),
-        fetchTeamStandings(),
-      ]);
-
       const today = new Date();
-      const dateStrings: string[] = Array.from({ length: 7 }).map((_, i) => {
+      const dateStrings: string[] = Array.from({ length: 2 }).map((_, i) => {
         const date = new Date(today);
         date.setDate(today.getDate() + i);
         return date.toISOString().split("T")[0];
@@ -102,7 +59,7 @@ export function useWeeklyGames() {
       const allGames: Game[] = [];
 
       for (const date of dateStrings) {
-        const res = await http.get<{ response: RawNBAGame[] }>(
+        const res = await http.get<{ response: any[] }>(
           `https://${RAPIDAPI_HOST}/games`,
           {
             params: { date },
@@ -113,31 +70,71 @@ export function useWeeklyGames() {
           }
         );
 
-        const dayGames = res.data.response.map((game: RawNBAGame) => {
-          // Override team names with nicknames if available
-          game.teams.home.name =
-            teamNicknames[game.teams.home.id] || game.teams.home.name;
-          game.teams.visitors.name =
-            teamNicknames[game.teams.visitors.id] || game.teams.visitors.name;
+        const rawGames = res.data.response || [];
 
-          // Use playoff logic based on date
-          const gameDate = new Date(game.date.start);
-          const playoffStart = new Date("2025-04-20");
-          const playoffEnd = new Date("2025-06-30");
-          const isPlayoff = gameDate >= playoffStart && gameDate <= playoffEnd;
+      const normalizedGames: Game[] = rawGames.map((game) => {
+  const homeLocal = teams.find(
+    (t) => String(t.id) === String(game.teams.home.id)
+  );
+  const awayLocal = teams.find(
+    (t) => String(t.id) === String(game.teams.visitors.id)
+  );
 
-          (game as any).isPlayoff = isPlayoff;
+  const etDateObj = convertToEastern(game.date.start);
+  const etDateString = etDateObj.toISOString(); // ✅ Game.date must be string
 
-          return transformGameData(game, teamStandings);
-        });
+  return {
+    id: parseInt(game.id, 10),
+    date: etDateString, // now a string
+    time: etDateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    status: {
+      short: game.status?.short ?? "",
+      long: game.status?.long ?? "",
+      clock: game.status?.clock ?? "0.0",
+      halftime: game.status?.halftime,
+    },
+    statusText: game.status?.long ?? "",
+    periods: game.periods ?? [],
+    home: {
+      id: String(game.teams.home.id),
+      espnID: homeLocal?.espnID ?? "",
+      name: homeLocal?.name ?? game.teams.home.name ?? "",
+      logo: homeLocal?.logo ?? game.teams.home.logo ?? "",
+    },
+    away: {
+      id: String(game.teams.visitors.id),
+      espnID: awayLocal?.espnID ?? "",
+      name: awayLocal?.name ?? game.teams.visitors.name ?? "",
+      logo: awayLocal?.logo ?? game.teams.visitors.logo ?? "",
+    },
+    scores: {
+      home: {
+        points:
+          typeof game.scores?.home?.points === "number"
+            ? game.scores.home.points
+            : 0,
+      },
+      visitors: {
+        points:
+          typeof game.scores?.visitors?.points === "number"
+            ? game.scores.visitors.points
+            : 0,
+      },
+    },
+    year: etDateObj.getFullYear(),
+    month: etDateObj.getMonth(),
+  };
+});
 
-        allGames.push(...dayGames);
+
+        allGames.push(...normalizedGames);
       }
 
       setGames(allGames);
     } catch (err) {
       console.error("Error fetching weekly games:", err);
       setError("Failed to fetch games");
+      setGames([]);
     } finally {
       setLoading(false);
     }

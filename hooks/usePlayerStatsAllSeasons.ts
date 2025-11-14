@@ -31,7 +31,8 @@ type SeasonStat = {
 };
 
 const cache = new Map<string, SeasonStat[]>();
-
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
+const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 export function usePlayerStatsBySeason(playerId: number, seasons: string[]) {
   const [data, setData] = useState<SeasonStat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,12 +57,12 @@ export function usePlayerStatsBySeason(playerId: number, seasons: string[]) {
 
         for (const season of seasons) {
           const res = await axios.get<{ response: PlayerStat[] }>(
-            "https://api-nba-v1.p.rapidapi.com/players/statistics",
+            `https://${RAPIDAPI_HOST}/players/statistics`,
             {
               params: { id: playerId.toString(), season },
               headers: {
-                "X-RapidAPI-Key": process.env.EXPO_PUBLIC_RAPIDAPI_KEY!,
-                "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+                "X-RapidAPI-Key": RAPIDAPI_KEY,
+                "X-RapidAPI-Host": RAPIDAPI_HOST,
               },
             }
           );

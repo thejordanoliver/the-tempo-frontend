@@ -1,21 +1,16 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
-import FixedWidthTabBar from "components/GameDetails/GameLeadersTabBar"; // adjust path as needed
+import FixedWidthTabBar from "components/NFL/TabBars/GameLeadersTabBar"; // adjust path as needed
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
+import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 import HeadingTwo from "../Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const STAT_CATEGORIES = ["points", "rebounds", "assists"] as const;
+const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type Category = (typeof STAT_CATEGORIES)[number];
 
 type Props = {
@@ -41,6 +36,7 @@ export default function GameLeaders({
   const isDark = colorScheme === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
   const tabWidth = SCREEN_WIDTH / STAT_CATEGORIES.length;
+  const styles = getStyles(isDark);
 
   // Memoized top players
   const topPlayers = useMemo(() => {
@@ -72,9 +68,9 @@ export default function GameLeaders({
   // Add this check:
   if (!topPlayers.length) return null;
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#888";
+  const textColor = lighter ? Colors.lightGray  : isDark ? "#fff" : "#1d1d1d";
+  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : "#555";
+  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.midTone;
 
   if (isLoading) {
     return (
@@ -84,7 +80,6 @@ export default function GameLeaders({
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
@@ -125,7 +120,9 @@ export default function GameLeaders({
               { borderBottomWidth: 1, borderBottomColor: borderColor },
             ]}
           >
-            <Image source={{ uri: p?.headshot_url }} style={styles.avatar} />
+            <View style={styles.avatarWrapper}>
+              <Image source={{ uri: p?.headshot_url }} style={styles.avatar} />
+            </View>
             <View style={styles.infoSection}>
               <View style={styles.nameRow}>
                 <Text style={[styles.playerName, { color: textColor }]}>
@@ -223,6 +220,34 @@ export default function GameLeaders({
                     </View>
                   </>
                 )}
+                {selectedCategory === "steals" && (
+                  <>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        STLS
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.steals ?? "-"}
+                      </Text>
+                    </View>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        FOULS
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.pfouls ?? "-"}
+                      </Text>
+                    </View>
+                    <View style={styles.statBlock}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        MIN
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {player.min ?? "-"}
+                      </Text>
+                    </View>
+                  </>
+                )}
               </View>
             </View>
 
@@ -231,8 +256,8 @@ export default function GameLeaders({
                 lighter
                   ? team.logoLight || team.logo
                   : isDark
-                    ? team.logoLight || team.logo
-                    : team.logo
+                  ? team.logoLight || team.logo
+                  : team.logo
               }
               style={styles.teamLogo}
               resizeMode="contain"
@@ -243,74 +268,3 @@ export default function GameLeaders({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 12,
-    overflow: "hidden",
-  },
-  loading: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-  },
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#ccc",
-    paddingTop: 4,
-  },
-  infoSection: {
-    flex: 1,
-    marginLeft: 10,
-    justifyContent: "flex-end",
-  },
-  playerName: {
-    fontFamily: Fonts.OSBOLD,
-    fontSize: 14,
-    color: "#000",
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "flex-end", // Align text on the same baseline
-  },
-  jersey: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  statRow: {
-    flexDirection: "row",
-    marginTop: 4,
-    justifyContent: "space-between",
-    paddingRight: 12,
-  },
-  statText: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 14,
-    color: "#fff",
-  },
-  teamLogo: {
-    position: "absolute",
-    top: 6,
-    right: 6,
-    width: 28,
-    height: 28,
-  },
-  statBlock: {
-    alignItems: "flex-start",
-    flex: 1,
-  },
-  statLabel: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 10,
-  },
-});

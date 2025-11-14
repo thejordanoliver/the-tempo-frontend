@@ -1,5 +1,4 @@
 // Logos
-
 import EastLogo from "../assets/Conferences/East.png";
 import WestLogo from "../assets/Conferences/West.png";
 import SixersLogo from "../assets/Logos/76ers.png";
@@ -36,6 +35,8 @@ import TimberwolvesLogo from "../assets/Logos/Timberwolves.png";
 import TrailBlazersLogo from "../assets/Logos/TrailBlazers.png";
 import WarriorsLogo from "../assets/Logos/Warriors.png";
 import WizardsLogo from "../assets/Logos/Wizards.png";
+import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
+
 // Arenas
 import BucksArena from "../assets/Arenas/BucksArena.webp";
 import BullsArena from "../assets/Arenas/BullsArena.webp";
@@ -67,6 +68,7 @@ import TimberwolvesArena from "../assets/Arenas/TimberwolvesArena.webp";
 import TrailBlazersArena from "../assets/Arenas/TrailBlazersArena.webp";
 import WarriorsArena from "../assets/Arenas/WarriorsArena.webp";
 import WizardsArena from "../assets/Arenas/WizardsArena.webp";
+
 // Coach Images
 import BucksCoach from "../assets/Coaches/BucksCoach.png";
 import BullsCoach from "../assets/Coaches/BullsCoach.png";
@@ -140,18 +142,14 @@ import PelicansAway from "../assets/Uniforms/PelicansAway.png";
 import PelicansHome from "../assets/Uniforms/PelicansHome.png";
 import PistonsAway from "../assets/Uniforms/PistonsAway.png";
 import PistonsHome from "../assets/Uniforms/PistonsHome.png";
-import {
-  default as RaptorsAway,
-  default as SpursAway,
-} from "../assets/Uniforms/RaptorsAway.png";
-import {
-  default as RaptorsHome,
-  default as SpursHome,
-} from "../assets/Uniforms/RaptorsHome.png";
+import RaptorsAway from "../assets/Uniforms/RaptorsAway.png";
+import RaptorsHome from "../assets/Uniforms/RaptorsHome.png";
 import RocketsAway from "../assets/Uniforms/RocketsAway.png";
 import RocketsHome from "../assets/Uniforms/RocketsHome.png";
 import SixersAway from "../assets/Uniforms/SixersAway.png";
 import SixersHome from "../assets/Uniforms/SixersHome.png";
+import SpursAway from "../assets/Uniforms/SpursAway.png";
+import SpursHome from "../assets/Uniforms/SpursHome.png";
 import SunsAway from "../assets/Uniforms/SunsAway.png";
 import SunsHome from "../assets/Uniforms/SunsHome.png";
 import ThunderAway from "../assets/Uniforms/ThunderAway.png";
@@ -165,37 +163,12 @@ import WarriorsHome from "../assets/Uniforms/WarriorsHome.png";
 import WizardsAway from "../assets/Uniforms/WizardsAway.png";
 import WizardsHome from "../assets/Uniforms/WizardsHome.png";
 
-export type Team = {
-  id: string;
-  fullName: string;
-  name: string;
-  code: string;
-  logo: any;
-  logoLight?: any; // optional light variant
-  color: string;
-  transparentColor: string;
-  secondaryColor: string;
-  tertiaryColor?: string;
-  arenaImage?: any;
-  location?: string; // new field
-  arenaName?: string;
-  championships?: any;
-  conferenceChampionships?: any;
-  jersey?: any;
-  firstSeason?: string;
-  allTimeRecord?: string;
-  conferenceLogo?: any;
-  conference?: string;
-  latitude?: number;
-  longitude?: number;
-  address?: string;
-  arenaCapacity?: string;
-  fadedLogo?: string;
-};
+import { Team } from "types/types";
 
 export const teams = [
   {
     id: "1",
+    espnID: "1",
     name: "Hawks",
     fullName: "Atlanta Hawks",
     code: "ATL",
@@ -205,8 +178,8 @@ export const teams = [
     transparentColor: "rgba(224, 58, 61, .8)",
     secondaryColor: "rgba(193, 211, 47, 1)",
     tertiaryColor: "rgba(249, 160, 27, 1)",
-    arenaImage: HawksArena,
-    arenaName: "State Farm Arena",
+    venueImage: HawksArena,
+    venueName: "State Farm Arena",
     coach: "Quin Snyder",
     coachImage: HawksCoach,
     championships: [1958],
@@ -218,7 +191,7 @@ export const teams = [
     latitude: 33.7573,
     longitude: -84.3963,
     address: "1 State Farm Drive, Atlanta, GA 30303",
-    arenaCapacity: "16,888",
+    venueCapacity: "16,888",
     uniforms: {
       home: HawksHome,
       away: HawksAway,
@@ -226,6 +199,7 @@ export const teams = [
   },
   {
     id: "2",
+    espnID: "2",
     name: "Celtics",
     fullName: "Boston Celtics",
     code: "BOS",
@@ -235,8 +209,8 @@ export const teams = [
     color: "rgba(0, 122, 51, 1)",
     transparentColor: "rgba(0, 122, 51, .8)",
     secondaryColor: "rgba(255, 255, 255, 1)",
-    arenaImage: CelticsArena,
-    arenaName: "TD Garden",
+    venueImage: CelticsArena,
+    venueName: "TD Garden",
     coach: "Joe Mazzulla",
     championships: [
       1957, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 1966, 1968, 1969, 1974,
@@ -255,7 +229,7 @@ export const teams = [
     latitude: 42.3662,
     longitude: -71.0621,
     address: "100 Legends Way, Boston, MA 02114",
-    arenaCapacity: "18,624",
+    venueCapacity: "18,624",
     uniforms: {
       home: CelticsHome,
       away: CelticsAway,
@@ -263,6 +237,7 @@ export const teams = [
   },
   {
     id: "4",
+    espnID: "17",
     name: "Nets",
     fullName: "Brooklyn Nets",
     code: "BKN",
@@ -272,8 +247,8 @@ export const teams = [
     transparentColor: "rgba(0, 0, 0, .8)",
     secondaryColor: "rgba(255, 255, 255, 1)",
     tertiaryColor: "rgba(119,125,132, 1)",
-    arenaImage: NetsArena,
-    arenaName: "Barclays Center",
+    venueImage: NetsArena,
+    venueName: "Barclays Center",
     coach: "Jordi Fernandez	",
     coachImage: NetsCoach,
     championships: [],
@@ -285,7 +260,7 @@ export const teams = [
     latitude: 40.6826,
     longitude: -73.9754,
     address: "620 Atlantic Avenue, Brooklyn, NY 11217",
-    arenaCapacity: "17,732",
+    venueCapacity: "17,732",
     uniforms: {
       home: NetsHome,
       away: NetsAway,
@@ -293,6 +268,7 @@ export const teams = [
   },
   {
     id: "5",
+    espnID: "30",
     name: "Hornets",
     fullName: "Charlotte Hornets",
     code: "CHA",
@@ -302,8 +278,8 @@ export const teams = [
     color: "rgb(0, 120, 140)",
     transparentColor: "rgba(29, 17, 96, .8)",
     secondaryColor: "rgba(29, 17, 96, 1)",
-    arenaImage: HornetsArena,
-    arenaName: "Spectrum Center",
+    venueImage: HornetsArena,
+    venueName: "Spectrum Center",
     coach: "Charles Lee",
     coachImage: HornetsCoach,
     championships: [],
@@ -315,7 +291,7 @@ export const teams = [
     latitude: 35.2251,
     longitude: -80.8392,
     address: "333 East Trade Street, Charlotte, NC 28202",
-    arenaCapacity: "19,077",
+    venueCapacity: "19,077",
     uniforms: {
       home: HornetsHome,
       away: HornetsAway,
@@ -323,6 +299,7 @@ export const teams = [
   },
   {
     id: "6",
+    espnID: "4",
     name: "Bulls",
     fullName: "Chicago Bulls",
     code: "CHI",
@@ -332,8 +309,8 @@ export const teams = [
     transparentColor: "rgba(206, 17, 65, .8)",
     secondaryColor: "rgba(0, 0, 0, 1)",
     tertiaryColor: "rgba(255, 255, 255, 1)",
-    arenaImage: BullsArena,
-    arenaName: "United Center",
+    venueImage: BullsArena,
+    venueName: "United Center",
     coach: "Billy Donovan",
     coachImage: BullsCoach,
     championships: [1991, 1992, 1993, 1996, 1997, 1998],
@@ -345,7 +322,7 @@ export const teams = [
     latitude: 41.8807,
     longitude: -87.6742,
     address: "1901 West Madison Street, Chicago, IL 60612",
-    arenaCapacity: "20,917",
+    venueCapacity: "20,917",
     uniforms: {
       home: BullsHome,
       away: BullsAway,
@@ -353,6 +330,7 @@ export const teams = [
   },
   {
     id: "7",
+    espnID: "5",
     name: "Cavaliers",
     fullName: "Cleveland Cavaliers",
     code: "CLE",
@@ -362,8 +340,8 @@ export const teams = [
     transparentColor: "rgba(134, 0, 56, .8)",
     secondaryColor: "rgba(253, 187, 48, 1)",
     tertiaryColor: "rgba(4, 30, 66, 1)",
-    arenaImage: CavaliersArena,
-    arenaName: "Rocket Arena",
+    venueImage: CavaliersArena,
+    venueName: "Rocket Arena",
     coach: "Kenny Atkinson",
     coachImage: CavsCoach,
     championships: [2016],
@@ -375,7 +353,7 @@ export const teams = [
     latitude: 41.496,
     longitude: -81.6882,
     address: "1 Center Court, Cleveland, OH 44115",
-    arenaCapacity: "19,432",
+    venueCapacity: "19,432",
     uniforms: {
       home: CavsHome,
       away: CavsAway,
@@ -383,6 +361,7 @@ export const teams = [
   },
   {
     id: "8",
+    espnID: "6",
     name: "Mavericks",
     fullName: "Dallas Mavericks",
     code: "DAL",
@@ -392,8 +371,8 @@ export const teams = [
     transparentColor: "rgba(0, 83, 188, .8)",
     secondaryColor: "rgb(255, 255, 255)",
     tertiaryColor: "rgba(187, 196, 202, 1)",
-    arenaImage: MavericksArena,
-    arenaName: "American Airlines Center",
+    venueImage: MavericksArena,
+    venueName: "American Airlines Center",
     coach: "Jason Kidd",
     coachImage: MavsCoach,
     championships: [2011],
@@ -405,7 +384,7 @@ export const teams = [
     latitude: 32.7905,
     longitude: -96.8103,
     address: "2500 Victory Avenue, Dallas, TX 75219",
-    arenaCapacity: "19,200",
+    venueCapacity: "19,200",
     uniforms: {
       home: MavsHome,
       away: MavsAway,
@@ -413,6 +392,7 @@ export const teams = [
   },
   {
     id: "9",
+    espnID: "7",
     name: "Nuggets",
     fullName: "Denver Nuggets",
     code: "DEN",
@@ -422,8 +402,8 @@ export const teams = [
     transparentColor: "rgba(13, 34, 64, .8)",
     secondaryColor: "rgba(255, 198, 39, 1)",
     tertiaryColor: "rgba(139, 35, 50, 1)",
-    arenaImage: NuggetsArena,
-    arenaName: "Ball Arena",
+    venueImage: NuggetsArena,
+    venueName: "Ball Arena",
     coach: "David Adelman",
     coachImage: NuggetsCoach,
     championships: [2023],
@@ -435,7 +415,7 @@ export const teams = [
     latitude: 39.7487,
     longitude: -105.0077,
     address: "1000 Chopper Circle, Denver, CO 80204",
-    arenaCapacity: "19,320",
+    venueCapacity: "19,320",
     uniforms: {
       home: NuggetsHome,
       away: NuggetsAway,
@@ -443,6 +423,7 @@ export const teams = [
   },
   {
     id: "10",
+    espnID: "8",
     name: "Pistons",
     fullName: "Detroit Pistons",
     code: "DET",
@@ -452,8 +433,8 @@ export const teams = [
     transparentColor: "rgba(29, 66, 138, .8)",
     secondaryColor: "rgba(29, 66, 138, 1)",
     tertiaryColor: "rgba(181,179,179, 1)",
-    arenaImage: PistonsArena,
-    arenaName: "Little Caesars Arena",
+    venueImage: PistonsArena,
+    venueName: "Little Caesars Arena",
     coach: "J.B. Bickerstaff",
     coachImage: PistonsCoach,
     championships: [1989, 1990, 2004],
@@ -467,7 +448,7 @@ export const teams = [
     latitude: 42.3297,
     longitude: -83.0425,
     address: "2645 Woodward Avenue, Detroit, MI 48201",
-    arenaCapacity: "20,491",
+    venueCapacity: "20,491",
     uniforms: {
       home: PistonsHome,
       away: PistonsAway,
@@ -475,6 +456,7 @@ export const teams = [
   },
   {
     id: "11",
+    espnID: "9",
     name: "Warriors",
     fullName: "Golden State Warriors",
     code: "GSW",
@@ -484,8 +466,8 @@ export const teams = [
     transparentColor: "rgba(29, 66, 138, .8)",
     secondaryColor: "rgba(255, 199, 44, 1)",
     tertiaryColor: "rgba(255, 255, 255, 1)",
-    arenaImage: WarriorsArena,
-    arenaName: "Chase Center",
+    venueImage: WarriorsArena,
+    venueName: "Chase Center",
     coach: "Steve Kerr",
     coachImage: WarriorsCoach,
     championships: [1947, 1956, 1975, 2015, 2017, 2018, 2022],
@@ -501,7 +483,7 @@ export const teams = [
     latitude: 37.768,
     longitude: -122.3877,
     address: "1 Warriors Way, San Francisco, CA 94158",
-    arenaCapacity: "18,064",
+    venueCapacity: "18,064",
     uniforms: {
       home: WarriorsHome,
       away: WarriorsAway,
@@ -509,6 +491,7 @@ export const teams = [
   },
   {
     id: "14",
+    espnID: "10",
     name: "Rockets",
     fullName: "Houston Rockets",
     code: "HOU",
@@ -519,8 +502,8 @@ export const teams = [
     transparentColor: "rgba(206, 17, 65, .8)",
     secondaryColor: "rgb(0, 0, 0)",
     tertiaryColor: "rgba(196,206,211, 1)",
-    arenaImage: RocketsArena,
-    arenaName: "Toyota Center",
+    venueImage: RocketsArena,
+    venueName: "Toyota Center",
     coach: "Ime Udoka",
     coachImage: RocketsCoach,
     championships: [1994, 1995],
@@ -532,7 +515,7 @@ export const teams = [
     latitude: 29.7508,
     longitude: -95.3621,
     address: "1510 Polk Street, Houston, TX 77002",
-    arenaCapacity: "18,055",
+    venueCapacity: "18,055",
     uniforms: {
       home: RocketsHome,
       away: RocketsAway,
@@ -540,6 +523,7 @@ export const teams = [
   },
   {
     id: "15",
+    espnID: "11",
     name: "Pacers",
     fullName: "Indiana Pacers",
     code: "IND",
@@ -549,8 +533,8 @@ export const teams = [
     transparentColor: "rgba(0, 45, 98, .8)",
     secondaryColor: "rgba(255, 198, 39, 1)",
     tertiaryColor: "rgba(190, 192, 194, 1)",
-    arenaImage: PacersArena,
-    arenaName: "Gainbridge Fieldhouse",
+    venueImage: PacersArena,
+    venueName: "Gainbridge Fieldhouse",
     coach: "Rick Carlisle",
     coachImage: PacersCoach,
     championships: [],
@@ -562,7 +546,7 @@ export const teams = [
     latitude: 39.764,
     longitude: -86.1559,
     address: "125 South Pennsylvania Street, Indianapolis, IN 46204",
-    arenaCapacity: "17,923",
+    venueCapacity: "17,923",
     uniforms: {
       home: PacersHome,
       away: PacersAway,
@@ -570,6 +554,7 @@ export const teams = [
   },
   {
     id: "16",
+    espnID: "12",
     name: "Clippers",
     fullName: "Los Angeles Clippers",
     code: "LAC",
@@ -579,8 +564,8 @@ export const teams = [
     transparentColor: "rgba(200, 16, 46, .8)",
     secondaryColor: "rgba(29, 66, 148, 1)",
     tertiaryColor: "rgba(190,192,194, 1)",
-    arenaImage: ClippersArena,
-    arenaName: "Intuit Dome",
+    venueImage: ClippersArena,
+    venueName: "Intuit Dome",
     coach: "Tyronn Lue",
     coachImage: ClippersCoach,
     championships: [],
@@ -592,7 +577,7 @@ export const teams = [
     latitude: 34.043,
     longitude: -118.2673,
     address: "3930 W Century Blvd, Inglewood, CA 90303",
-    arenaCapacity: "19,068",
+    venueCapacity: "19,068",
     uniforms: {
       home: ClippersHome,
       away: ClippersAway,
@@ -600,6 +585,7 @@ export const teams = [
   },
   {
     id: "17",
+    espnID: "13",
     name: "Lakers",
     fullName: "Los Angeles Lakers",
     code: "LAL",
@@ -609,8 +595,8 @@ export const teams = [
     transparentColor: "rgba(85, 37, 130, .8)",
     secondaryColor: "rgba(253, 185, 39, 1)",
     tertiaryColor: "rgba(0, 0, 0, 1)",
-    arenaImage: LakersArena,
-    arenaName: "Crypto.com Arena",
+    venueImage: LakersArena,
+    venueName: "Crypto.com Arena",
     coach: "JJ Redick",
     coachImage: LakersCoach,
     championships: [
@@ -631,7 +617,7 @@ export const teams = [
     latitude: 34.043,
     longitude: -118.2673,
     address: "1111 South Figueroa Street, Los Angeles, CA 90015",
-    arenaCapacity: "19,068",
+    venueCapacity: "19,068",
     uniforms: {
       home: LakersHome,
       away: LakersAway,
@@ -639,19 +625,18 @@ export const teams = [
   },
   {
     id: "19",
+    espnID: "29",
     name: "Grizzlies",
     fullName: "Memphis Grizzlies",
     code: "MEM",
     location: "Memphis, TN",
     logo: GrizzliesLogo,
-
     color: "rgba(18, 23, 63, 1)",
     transparentColor: "rgba(93, 118, 169, .8)",
     secondaryColor: "#5d76a9",
     tertiaryColor: "rgba(255, 187, 34, 1)",
-
-    arenaImage: GrizzliesArena,
-    arenaName: "FedExForum",
+    venueImage: GrizzliesArena,
+    venueName: "FedExForum",
     coach: "Tuomas Iisalo",
     coachImage: GrizzliesCoach,
     championships: [],
@@ -663,7 +648,7 @@ export const teams = [
     latitude: 35.1389,
     longitude: -90.0509,
     address: "191 Beale Street, Memphis, TN 38103",
-    arenaCapacity: "18,119",
+    venueCapacity: "18,119",
     uniforms: {
       home: GrizzliesHome,
       away: GrizzliesAway,
@@ -671,6 +656,7 @@ export const teams = [
   },
   {
     id: "20",
+    espnID: "14",
     name: "Heat",
     fullName: "Miami Heat",
     code: "MIA",
@@ -680,8 +666,8 @@ export const teams = [
     transparentColor: "rgba(152, 0, 46, .8)",
     secondaryColor: "rgba(0, 0, 0, 1)",
     tertiaryColor: "rgba(249, 160, 27, 1)",
-    arenaImage: HeatArena,
-    arenaName: "Kaseya Center",
+    venueImage: HeatArena,
+    venueName: "Kaseya Center",
     coach: "Erik Spoelstra",
     coachImage: HeatCoach,
     championships: [2006, 2012, 2013],
@@ -695,7 +681,7 @@ export const teams = [
     latitude: 25.7814,
     longitude: -80.187,
     address: "601 Biscayne Boulevard, Miami, FL 33132",
-    arenaCapacity: "19,600",
+    venueCapacity: "19,600",
     uniforms: {
       home: HeatHome,
       away: HeatAway,
@@ -703,6 +689,7 @@ export const teams = [
   },
   {
     id: "21",
+    espnID: "15",
     name: "Bucks",
     fullName: "Milwaukee Bucks",
     code: "MIL",
@@ -712,8 +699,8 @@ export const teams = [
     transparentColor: "rgba(0, 71, 27, .8)",
     secondaryColor: "rgba(240, 235, 210, 1)",
     tertiaryColor: "rgba(0, 125, 197, 1)",
-    arenaImage: BucksArena,
-    arenaName: "Fiserv Forum",
+    venueImage: BucksArena,
+    venueName: "Fiserv Forum",
     coach: "Doc Rivers",
     coachImage: BucksCoach,
     championships: [1971, 2021],
@@ -725,7 +712,7 @@ export const teams = [
     latitude: 43.0451,
     longitude: -87.9172,
     address: "1111 Vel R. Phillips Avenue, Milwaukee, WI 53203",
-    arenaCapacity: "17,500",
+    venueCapacity: "17,500",
     uniforms: {
       home: BucksHome,
       away: BucksAway,
@@ -733,6 +720,7 @@ export const teams = [
   },
   {
     id: "22",
+    espnID: "16",
     name: "Timberwolves",
     fullName: "Minnesota Timberwolves",
     code: "MIN",
@@ -742,8 +730,8 @@ export const teams = [
     transparentColor: "rgba(12, 35, 64, .8)",
     secondaryColor: "rgba(120, 190, 32, 1)",
     tertiaryColor: "rgba(35, 97, 146, 1)",
-    arenaImage: TimberwolvesArena,
-    arenaName: "Target Center",
+    venueImage: TimberwolvesArena,
+    venueName: "Target Center",
     coach: "Chris Finch",
     coachImage: TimberwolvesCoach,
     championships: [],
@@ -755,7 +743,7 @@ export const teams = [
     latitude: 44.9796,
     longitude: -93.276,
     address: "600 N 1st Ave, Minneapolis, MN 55403",
-    arenaCapacity: "19,356",
+    venueCapacity: "19,356",
     uniforms: {
       home: TimberwolvesHome,
       away: TimberwolvesAway,
@@ -764,6 +752,7 @@ export const teams = [
 
   {
     id: "23",
+    espnID: "3",
     name: "Pelicans",
     fullName: "New Orleans Pelicans",
     code: "NOP",
@@ -773,8 +762,8 @@ export const teams = [
     transparentColor: "rgba(0, 22, 65, .8)",
     secondaryColor: "rgba(227, 24, 55, 1)",
     tertiaryColor: "rgba(180, 151, 90, 1)",
-    arenaImage: PelicansArena,
-    arenaName: "Smoothie King Center",
+    venueImage: PelicansArena,
+    venueName: "Smoothie King Center",
     coach: "Willie Green",
     coachImage: PelicansCoach,
     championships: [],
@@ -786,7 +775,7 @@ export const teams = [
     latitude: 29.949,
     longitude: -90.081,
     address: "1501 Dave Dixon Drive, New Orleans, LA 70113",
-    arenaCapacity: "16,867",
+    venueCapacity: "16,867",
     uniforms: {
       home: PelicansHome,
       away: PelicansAway,
@@ -794,6 +783,7 @@ export const teams = [
   },
   {
     id: "24",
+    espnID: "18",
     name: "Knicks",
     fullName: "New York Knicks",
     code: "NYK",
@@ -803,8 +793,8 @@ export const teams = [
     transparentColor: "rgba(0, 114, 206, 0.8)",
     secondaryColor: "rgba(245, 132, 38, 1)",
     tertiaryColor: "rgba(138, 141, 143, 1)",
-    arenaImage: KnicksArena,
-    arenaName: "Madison Square Garden",
+    venueImage: KnicksArena,
+    venueName: "Madison Square Garden",
     coach: "Mike Brown",
     coachImage: KnicksCoach,
     championships: [1970, 1973],
@@ -818,7 +808,7 @@ export const teams = [
     latitude: 40.7128,
     longitude: -74.006,
     address: "4 Pennsylvania Plaza, New York, NY 10001",
-    arenaCapacity: "19,812",
+    venueCapacity: "19,812",
     uniforms: {
       home: KnicksHome,
       away: KnicksAway,
@@ -826,6 +816,7 @@ export const teams = [
   },
   {
     id: "25",
+    espnID: "25",
     name: "Thunder",
     fullName: "Oklahoma City Thunder",
     code: "OKC",
@@ -835,8 +826,8 @@ export const teams = [
     transparentColor: "rgba(0, 125, 195, .8)",
     secondaryColor: "rgba(239, 59, 36, 1)",
     tertiaryColor: "rgba(0, 45, 98, 1)",
-    arenaImage: ThunderArena,
-    arenaName: "Paycom Center",
+    venueImage: ThunderArena,
+    venueName: "Paycom Center",
     coach: "Mark Daigneault",
     coachImage: ThunderCoach,
     championships: [1979, 2025],
@@ -848,7 +839,7 @@ export const teams = [
     latitude: 35.4633,
     longitude: -97.5151,
     address: "100 West Reno Avenue, Oklahoma City, OK 73102",
-    arenaCapacity: "18,203",
+    venueCapacity: "18,203",
     uniforms: {
       home: ThunderHome,
       away: ThunderAway,
@@ -857,6 +848,7 @@ export const teams = [
 
   {
     id: "26",
+    espnID: "19",
     name: "Magic",
     fullName: "Orlando Magic",
     code: "ORL",
@@ -866,8 +858,8 @@ export const teams = [
     transparentColor: "rgba(32, 79, 175, 0.8)",
     secondaryColor: "rgb(255, 255, 255)",
     tertiaryColor: "rgba(0, 0, 0, 1)",
-    arenaImage: MagicArena,
-    arenaName: "Kia Center",
+    venueImage: MagicArena,
+    venueName: "Kia Center",
     coach: "Jamahl Mosley",
     coachImage: MagicCoach,
     championships: [],
@@ -879,7 +871,7 @@ export const teams = [
     latitude: 28.5392,
     longitude: -81.3839,
     address: "400 West Church Street, Orlando, FL 32801",
-    arenaCapacity: "18,846",
+    venueCapacity: "18,846",
     uniforms: {
       home: MagicHome,
       away: MagicAway,
@@ -887,6 +879,7 @@ export const teams = [
   },
   {
     id: "27",
+    espnID: "20",
     name: "76ers",
     fullName: "Philadelphia 76ers",
     code: "PHI",
@@ -897,8 +890,8 @@ export const teams = [
     transparentColor: "rgba(0, 107, 182, .8)",
     secondaryColor: "rgb(255, 255, 255)",
     tertiaryColor: "rgba(0, 43, 92, 1)",
-    arenaImage: SixersArena,
-    arenaName: "Xfinity Mobile Arena",
+    venueImage: SixersArena,
+    venueName: "Wells Fargo Arena",
     coach: "Nick Nurse",
     coachImage: SixersCoach,
     championships: [1955, 1967, 1983],
@@ -909,10 +902,10 @@ export const teams = [
     conferenceChampionships: {
       Titles: [1950, 1954, 1955, 1965, 1967, 1977, 1980, 1982, 1983],
     },
-    latitude: 39.9526,
-    longitude: -75.1652,
+    latitude: 39.9012,
+    longitude: -75.172,
     address: "3601 South Broad Street, Philadelphia, PA 19148",
-    arenaCapacity: "20,478",
+    venueCapacity: "20,478",
     uniforms: {
       home: SixersHome,
       away: SixersAway,
@@ -921,6 +914,7 @@ export const teams = [
 
   {
     id: "28",
+    espnID: "21",
     name: "Suns",
     fullName: "Phoenix Suns",
     code: "PHX",
@@ -930,8 +924,8 @@ export const teams = [
     transparentColor: "rgba(29, 17, 96, 0.8)",
     secondaryColor: "rgba(229, 96, 32, 1)",
     tertiaryColor: "rgba(30, 0, 0, 1)",
-    arenaImage: SunsArena,
-    arenaName: "PHX Arena",
+    venueImage: SunsArena,
+    venueName: "PHX Arena",
     coach: "Jordan Ott",
     coachImage: SunsCoach,
     championships: [],
@@ -943,7 +937,7 @@ export const teams = [
     latitude: 33.4452,
     longitude: -112.0712,
     address: "201 East Jefferson Street, Phoenix, AZ 85004",
-    arenaCapacity: "18,422",
+    venueCapacity: "18,422",
     uniforms: {
       home: SunsHome,
       away: SunsAway,
@@ -951,6 +945,7 @@ export const teams = [
   },
   {
     id: "29",
+    espnID: "22",
     name: "Trail Blazers",
     fullName: "Portland Trail Blazers",
     code: "POR",
@@ -960,8 +955,8 @@ export const teams = [
     transparentColor: "rgba(224, 58, 62, .8)",
     secondaryColor: "rgba(0, 0, 0, 1)",
     tertiaryColor: "rgba(255, 255, 255, 1)",
-    arenaImage: TrailBlazersArena,
-    arenaName: "Moda Center",
+    venueImage: TrailBlazersArena,
+    venueName: "Moda Center",
     coach: "Chauncey Billups",
     coachImage: TrailBlazersCoach,
     championships: [1977],
@@ -973,7 +968,7 @@ export const teams = [
     latitude: 45.5316,
     longitude: -122.6668,
     address: "1 North Center Court Street, Portland, OR 97227",
-    arenaCapacity: "19,441",
+    venueCapacity: "19,441",
     uniforms: {
       home: TrailBlazersHome,
       away: TrailBlazersAway,
@@ -981,6 +976,7 @@ export const teams = [
   },
   {
     id: "30",
+    espnID: "23",
     name: "Kings",
     fullName: "Sacramento Kings",
     code: "SAC",
@@ -990,8 +986,8 @@ export const teams = [
     transparentColor: "rgba(99, 113, 122, .8)",
     secondaryColor: "rgba(99, 113, 122, 1)",
     tertiaryColor: "rgba(0, 0, 0, 1)",
-    arenaImage: KingsArena,
-    arenaName: "Golden 1 Center",
+    venueImage: KingsArena,
+    venueName: "Golden 1 Center",
     coach: "Doug Christie",
     coachImage: KingsCoach,
     championships: [1951],
@@ -1003,7 +999,7 @@ export const teams = [
     latitude: 38.5807,
     longitude: -121.4994,
     address: "500 David J Stern Walk, Sacramento, CA 95814",
-    arenaCapacity: "17,608",
+    venueCapacity: "17,608",
     uniforms: {
       home: KingsHome,
       away: KingsAway,
@@ -1011,6 +1007,7 @@ export const teams = [
   },
   {
     id: "31",
+    espnID: "24",
     name: "Spurs",
     fullName: "San Antonio Spurs",
     code: "SAS",
@@ -1020,8 +1017,8 @@ export const teams = [
     transparentColor: "rgba(0, 0, 0, 0.8)",
     secondaryColor: "rgba(196,206,211, 1)",
     tertiaryColor: "rgba(138, 141, 143, 1)",
-    arenaImage: SpursArena,
-    arenaName: "Frost Bank Center",
+    venueImage: SpursArena,
+    venueName: "Frost Bank Center",
     coach: "Mitch Johnson",
     coachImage: SpursCoach,
     championships: [1999, 2003, 2005, 2007, 2014],
@@ -1033,7 +1030,7 @@ export const teams = [
     latitude: 29.427,
     longitude: -98.4378,
     address: "1 AT&T Center Parkway, San Antonio, TX 78219",
-    arenaCapacity: "18,418",
+    venueCapacity: "18,418",
     uniforms: {
       home: SpursHome,
       away: SpursAway,
@@ -1041,6 +1038,7 @@ export const teams = [
   },
   {
     id: "38",
+    espnID: "28",
     name: "Raptors",
     fullName: "Toronto Raptors",
     code: "TOR",
@@ -1051,8 +1049,8 @@ export const teams = [
     transparentColor: "rgba(206, 17, 64, 0.8)",
     secondaryColor: "rgb(255, 255, 255)",
     tertiaryColor: "rgba(161, 161, 164, 1)",
-    arenaImage: RaptorsArena,
-    arenaName: "Scotiabank Arena",
+    venueImage: RaptorsArena,
+    venueName: "Scotiabank Arena",
     coach: "Darko Rajaković",
     coachImage: RaptorsCoach,
     championships: [2019],
@@ -1064,7 +1062,7 @@ export const teams = [
     latitude: 43.6435,
     longitude: -79.3791,
     address: "40 Bay Street, Toronto, ON M5J 2X2, Canada",
-    arenaCapacity: "19,800",
+    venueCapacity: "19,800",
     uniforms: {
       home: RaptorsHome,
       away: RaptorsAway,
@@ -1072,6 +1070,7 @@ export const teams = [
   },
   {
     id: "40",
+    espnID: "26",
     name: "Jazz",
     fullName: "Utah Jazz",
     code: "UTA",
@@ -1082,8 +1081,8 @@ export const teams = [
     transparentColor: "rgba(0, 0, 0, .8)",
     secondaryColor: "rgb(255, 255, 255)",
     tertiaryColor: "rgba(108, 174, 223, 1)",
-    arenaImage: JazzArena,
-    arenaName: "Delta Center",
+    venueImage: JazzArena,
+    venueName: "Delta Center",
     coach: "Will Hardy",
     coachImage: JazzCoach,
     championships: [],
@@ -1095,7 +1094,7 @@ export const teams = [
     latitude: 40.768,
     longitude: -111.9011,
     address: "301 South Temple, Salt Lake City, UT 84101",
-    arenaCapacity: "18,306",
+    venueCapacity: "18,306",
     uniforms: {
       home: JazzHome,
       away: JazzAway,
@@ -1103,6 +1102,7 @@ export const teams = [
   },
   {
     id: "41",
+    espnID: "27",
     name: "Wizards",
     fullName: "Washington Wizards",
     code: "WAS",
@@ -1112,8 +1112,8 @@ export const teams = [
     transparentColor: "rgba(0, 43, 92, .8)",
     secondaryColor: "rgba(227, 24, 55, 1)",
     tertiaryColor: "rgba(196,206,212, 1)",
-    arenaImage: WizardsArena,
-    arenaName: "Capital One Arena",
+    venueImage: WizardsArena,
+    venueName: "Capital One Arena",
     coach: "Brian Keefe",
     coachImage: WizardsCoach,
     championships: [1978],
@@ -1125,15 +1125,13 @@ export const teams = [
     latitude: 38.898,
     longitude: -77.0209,
     address: "601 F Street NW, Washington, DC 20004",
-    arenaCapacity: "20,356",
+    venueCapacity: "20,356",
     uniforms: {
       home: WizardsHome,
       away: WizardsAway,
     },
   },
 ];
-
-// ... all other imports
 
 export const coachImages: { [key: string]: any } = {
   BucksCoach,
@@ -1167,6 +1165,27 @@ export const coachImages: { [key: string]: any } = {
   WarriorsCoach,
   WizardsCoach,
 };
+
+export function getTeamLogo(
+  idOrNicknameOrCode: number | string | undefined,
+  isDark: boolean,
+  use500x500: boolean = false
+) {
+  if (!idOrNicknameOrCode) return PlaceholderLogo;
+
+  const searchStr = String(idOrNicknameOrCode).toLowerCase();
+
+  const team = teams.find((t) => {
+    const idMatch = String(t.id).toLowerCase() === searchStr;
+
+  
+    return idMatch  ;
+  });
+
+  if (!team) return PlaceholderLogo;
+
+  return isDark ? team.logoLight || team.logo : team.logo;
+}
 
 export const logoMap: Record<string, any> = {
   SixersLogo,
@@ -1205,16 +1224,13 @@ export const logoMap: Record<string, any> = {
   WizardsLogo,
 };
 
-export const teamsById: Record<string, Team> = teams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, Team>
-);
+export const teamsById: Record<string, Team> = teams.reduce((map, team) => {
+  map[team.id] = team;
+  return map;
+}, {} as Record<string, Team>);
 
-export const arenaImages: Record<string, any> = {
-  // Map team codes or arena names to images
+export const venueImages: Record<string, any> = {
+  // Map team codes or venue names to images
   MIL: BucksArena,
   CHI: BullsArena,
   CLE: CavaliersArena,
@@ -1246,109 +1262,113 @@ export const arenaImages: Record<string, any> = {
   GSW: WarriorsArena,
   WAS: WizardsArena,
 
-  // You can also map some arena names if you want:
+  // You can also map some venue names if you want:
   "Etihad Arena": require("../assets/Arenas/EtihadArena.webp"),
-  // Add more if you have non-NBA arenas...
+  // Add more if you have non-NBA venues...
 };
 
-export type Arena = {
+export type Venue = {
   name: string;
   address: string;
   latitude?: number;
   longitude?: number;
-  arenaCapacity?: string;
-  arenaImage: any;
+  venueCapacity?: string;
+  venueImage: any;
 };
 
-export const neutralArenas: Record<string, Arena> = {
+export const neutralVenues: Record<string, Venue> = {
   "Etihad Arena": {
     name: "Etihad Arena",
     address:
       "FJ63+4PQ - Yas St - Yas Island - YS2 - Abu Dhabi - United Arab Emirates",
     latitude: 24.4539,
     longitude: 54.3773,
-    arenaCapacity: "18,000",
-    arenaImage: require("../assets/Arenas/EtihadArena.webp"),
+    venueCapacity: "18,000",
+    venueImage: require("../assets/Arenas/EtihadArena.webp"),
   },
   "Stan Sheriff Center": {
     name: "Stan Sheriff Center",
     address: "1355 Lower Campus Rd, Honolulu, HI 96822",
     latitude: 21.3099,
     longitude: 157.8581,
-    arenaCapacity: "10,300",
-    arenaImage: require("../assets/Arenas/StanSheriffCenter.webp"),
+    venueCapacity: "10,300",
+    venueImage: require("../assets/Arenas/StanSheriffCenter.webp"),
   },
   "Accor Arena": {
-    name: "Accor Arena",
+    name: "Accor Arenar",
     address: "8 Bd de Bercy, 75012 Paris, France",
     latitude: 48.8575,
     longitude: 2.3514,
-    arenaCapacity: "20,300",
-    arenaImage: require("../assets/Arenas/AccorArena.webp"),
+    venueCapacity: "20,300",
+    venueImage: require("../assets/Arenas/AccorArena.webp"),
   },
   "Acrisure Arena": {
     name: "Acrisure Arena",
     address: " 75702 Varner Rd, Palm Desert, CA 92211",
     latitude: 33.7222,
     longitude: -116.3745,
-    arenaCapacity: "20,300",
-    arenaImage: require("../assets/Arenas/AcrisureArena.webp"),
+    venueCapacity: "20,300",
+    venueImage: require("../assets/Arenas/AcrisureArena.webp"),
   },
   "Coliseo de Puerto Rico": {
     name: "Coliseo de Puerto Rico",
     address: "500 Av. Arterial B, San Juan, 00918, Puerto Rico",
     latitude: 18.4655,
     longitude: -66.1057,
-    arenaCapacity: "18,000",
-    arenaImage: require("../assets/Arenas/ColiseodePuertoRico.webp"),
+    venueCapacity: "18,000",
+    venueImage: require("../assets/Arenas/ColiseodePuertoRico.webp"),
   },
   "Pechanga Arena": {
     name: "Pechanga Arena",
     address: "3500 Sports Arena Blvd, San Diego, CA 92110",
     latitude: 32.7468,
     longitude: -117.1882,
-    arenaCapacity: "16,100",
-    arenaImage: require("../assets/Arenas/PechangaArena.webp"),
+    venueCapacity: "16,100",
+    venueImage: require("../assets/Arenas/PechangaArena.webp"),
   },
   "North Charleston Coliseum": {
     name: "North Charleston Coliseum",
     address: "5001 Coliseum Dr, North Charleston, SC 29418",
     latitude: 32.8655,
     longitude: -80.0224,
-    arenaCapacity: "13,295",
-    arenaImage: require("../assets/Arenas/NorthCharlestonColiseum.webp"),
+    venueCapacity: "13,295",
+    venueImage: require("../assets/Arenas/NorthCharlestonColiseum.webp"),
   },
   "Legacy Arena at BJCC": {
     name: "Legacy Arena at BJCC",
     address: "1001 19th St N, Birmingham, AL 35234",
     latitude: 33.5207,
     longitude: -86.8025,
-    arenaCapacity: "17,654",
-    arenaImage: require("../assets/Arenas/LegacyArena.webp"),
+    venueCapacity: "17,654",
+    venueImage: require("../assets/Arenas/LegacyArena.webp"),
   },
   "Arena CDMX": {
     name: "Arena CDMX",
-    address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco, 02230 Ciudad de México, CDMX, Mexico",
-    latitude: 19.4326,
-    longitude: -99.1332,
-    arenaCapacity: "22,300",
-    arenaImage: require("../assets/Arenas/ArenaCDMX.webp"),
+    address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco",
+    latitude: 19.4977,
+    longitude: -99.1751,
+    venueCapacity: "22,300",
+    venueImage: require("../assets/Arenas/CDMXArena.webp"),
   },
-  "Uber Arena": {
-    name: "Uber Arena",
-    address: "Uber Platz 1, 10243 Berlin, Germany",
-    latitude: 52.5243,
-    longitude: 13.4105,
-    arenaCapacity: "17,000",
-    arenaImage: require("../assets/Arenas/UberArena.webp"),
-  },
-  "The O2": {
-    name: "The O2",
-    address: "Peninsula Square, London SE10 0DX, United Kingdom",
-    latitude: 51.5072,
-    longitude: -0.1276,
-    arenaCapacity: "20,000",
-    arenaImage: require("../assets/Arenas/TheO2Arena.webp"),
-  },
-  // add more neutral arenas if needed here
+  // add more neutral venues if needed here
 };
+
+
+export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
+export const teamMapByESPNID = Object.fromEntries(teams.map((t) => [t.espnID, t]));
+
+
+export function mapToInternalTeam(apiTeam: any) {
+  if (!apiTeam) return {};
+  const team = teamMapByID[apiTeam.id] || teamMapByESPNID[apiTeam.id];
+  if (!team) {
+    return {
+      id: String(apiTeam.id),
+      espnID: apiTeam.espnID || String(apiTeam.id), // ✅ add this
+      name: apiTeam.name || apiTeam.nickname,
+      fullName: apiTeam.fullName || apiTeam.name || apiTeam.nickname,
+      logo: apiTeam.logo,
+    };
+  }
+  return team;
+}

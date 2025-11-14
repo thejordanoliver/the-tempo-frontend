@@ -42,7 +42,10 @@ type AggregatedStats = {
   minutesPlayed: number;
 };
 
-export function usePlayerStats(playerId: number, season = "2024") {
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
+const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
+
+export function usePlayerStats(playerId: number, season = "2025") {
   const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -57,11 +60,11 @@ export function usePlayerStats(playerId: number, season = "2024") {
       try {
    const response = await axios.request<{ response: PlayerStat[] }>({
   method: "GET",
-  url: "https://api-nba-v1.p.rapidapi.com/players/statistics",
+  url: `https:/${RAPIDAPI_HOST}/players/statistics`,
   params: { id: playerId.toString(), season },
   headers: {
-    "x-rapidapi-key": "5ce63285f3msh422b3ebd5978062p13acf6jsn31927b93628c",
-    "x-rapidapi-host": "api-nba-v1.p.rapidapi.com",
+    "x-rapidapi-key": RAPIDAPI_KEY,
+    "x-rapidapi-host": RAPIDAPI_HOST,
   },
 });
 

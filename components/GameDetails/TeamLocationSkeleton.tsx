@@ -30,10 +30,10 @@ export default function TeamLocationSkeleton() {
     ).start();
   }, [shimmerTranslate]);
 
-  const bgColor = isDark ? "#333" : "#ddd";
+ 
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View style={styles.container}>
       {/* Title skeleton */}
       <View style={[styles.skeleton, styles.title]} />
       {/* Image skeleton */}
