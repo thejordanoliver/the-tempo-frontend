@@ -6,7 +6,6 @@ import {
   GameTeamStats,
   LastFiveGamesSwitcher,
   LineScore,
-  TeamInjuriesTab,
   TeamLocationSection,
   Weather,
 } from "components/GameDetails";
@@ -33,6 +32,7 @@ import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import TeamInjuries from "components/GameDetails/TeamInjuries";
 import {
   Animated,
   Easing,
@@ -267,8 +267,6 @@ export default function GameDetailsScreen() {
     awayTeamData.name
   );
 
-  console.log("Game Details Data:", data);
-
   // ESPN IDs
   const homeEspnId = homeTeamData?.espnID;
   const awayEspnId = awayTeamData?.espnID;
@@ -321,28 +319,36 @@ export default function GameDetailsScreen() {
   const displayPeriod = liveScore?.period ?? parsedGame.status?.period;
 
   // --- Quarter / period label + halftime flag ---
-  const getQuarterLabel = (
-    currentPeriod: number,
-    totalPeriods: number = 4,
-    statusText?: string
-  ) => {
-    if (statusText?.toLowerCase() === "halftime")
-      return { label: "Halftime", halftime: true };
+const getQuarterLabel = (
+  currentPeriod: number,
+  totalPeriods: number = 4,
+  statusText?: string
+) => {
+  if (statusText?.toLowerCase() === "halftime") {
+    return { label: "Halftime", halftime: true };
+  }
 
-    switch (currentPeriod) {
-      case 1:
-        return { label: "1st", halftime: false };
-      case 2:
-        return { label: "2nd", halftime: false };
-      case 3:
-        return { label: "3rd", halftime: false };
-      case 4:
-        return { label: "4th", halftime: false };
-      default:
-        const otNumber = currentPeriod - totalPeriods;
-        return { label: `OT${otNumber}`, halftime: false };
-    }
-  };
+  // Regulation
+  switch (currentPeriod) {
+    case 1:
+      return { label: "1st", halftime: false };
+    case 2:
+      return { label: "2nd", halftime: false };
+    case 3:
+      return { label: "3rd", halftime: false };
+    case 4:
+      return { label: "4th", halftime: false };
+  }
+
+  // Overtime
+  const otNumber = currentPeriod - totalPeriods;
+
+  if (otNumber === 1) {
+    return { label: "OT", halftime: false }; // ✅ First OT → "OT"
+  }
+
+  return { label: `${otNumber}OT`, halftime: false }; // ✅ e.g. "2OT", "3OT", etc.
+};
 
   const { label: quarterLabel, halftime } = getQuarterLabel(
     displayPeriod,
@@ -470,7 +476,7 @@ export default function GameDetailsScreen() {
             }}
             league="NBA"
           />
-          <TeamInjuriesTab injuries={data?.injuries ?? []} />
+          <TeamInjuries  injuries={data?.injuries ?? []} />
 
           {highlights.length > 0 && (
             <HighlightVideoList highlights={highlights} />

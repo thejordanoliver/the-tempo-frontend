@@ -17,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { getTeamLogo, teams } from "../../constants/teams";
+import { getTeamLogo, teams, } from "../../constants/teams";
 import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
 import { getStyles } from "../../styles/GamecardStyles/GameCard.styles";
 import { Game, Team } from "../../types/types";
@@ -300,7 +300,7 @@ export default function GameCard({
         ) : isPostponed ? (
           <Text style={styles.finalText}>Postponed</Text>
         ) : isHalftime ? (
-          <Text style={styles.date}>Halftime</Text>
+          <Text style={styles.finalText}>Halftime</Text>
         ) : isFinal ? (
           <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>

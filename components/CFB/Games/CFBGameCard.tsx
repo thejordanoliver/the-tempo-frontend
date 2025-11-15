@@ -6,7 +6,7 @@ import { getTeamLogo, teams } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
-import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { memo, useMemo, useState } from "react";
@@ -67,7 +67,7 @@ function CFBGameCard({ game, isDark }: Props) {
     // 🕓 Early season — fallback to AP Top 25
     return getTeamRankFromAPById(id, apTop25) ?? "";
   };
-  
+
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
@@ -128,7 +128,7 @@ function CFBGameCard({ game, isDark }: Props) {
   }, [game.game.status]);
 
   const possession = status.isLive
-    ? useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
+    ? useFootballGamePossession("cfb",Number(homeEspnId), Number(awayEspnId), gameDateStr)
     : {
         gameStatusDescription: undefined,
         possessionText: undefined,
@@ -141,6 +141,8 @@ function CFBGameCard({ game, isDark }: Props) {
         score: undefined, // ✅ ADD THIS
         refresh: () => {},
       };
+
+ 
 
   const { headlineText } = useGameInfo(
     Number(homeEspnId),
@@ -179,12 +181,10 @@ function CFBGameCard({ game, isDark }: Props) {
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
-  const displayStatusShortDetail =
-    gameStatusShortDetail ?? (status.isHalftime ? "Halftime" : undefined);
 
   const getGameStatusShort = () => {
     if (status.isLive) return gameStatusShortDetail ?? displayClock ?? "Live";
-    if (status.isHalftime) return "Halftime";
+    if (status.isHalftime) return "HT";
     if (status.isFinal) return "Final";
     return undefined;
   };
@@ -203,6 +203,7 @@ function CFBGameCard({ game, isDark }: Props) {
 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
+
 
   // --- Memoized team objects ---
   const awayTeam = useMemo(
@@ -226,6 +227,8 @@ function CFBGameCard({ game, isDark }: Props) {
     ]
   );
 
+  
+
   const homeTeam = useMemo(
     () => ({
       id: homeId,
@@ -246,6 +249,9 @@ function CFBGameCard({ game, isDark }: Props) {
       status.isLive,
     ]
   );
+
+
+
   // --- Broadcasts ---
   const { broadcasts } = useCFBGameBroadcasts(
     homeTeam.name,

@@ -63,7 +63,7 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     // 🕓 Early season — fallback to AP Top 25
     return getTeamRankFromAPById(id, apTop25) ?? "";
   };
-  
+
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
@@ -337,12 +337,12 @@ function CFBGameSquareCard({ game, isDark }: Props) {
                 <Image
                   source={dark ? FootballLight : Football}
                   style={{
-                    width: 28,
-                    height: 28,
+                    width: 20,
+                    height: 20,
                     resizeMode: "contain",
                     position: "absolute",
                     right: -18,
-                    top: 0,
+                    top: 5,
                   }}
                 />
               )}
@@ -375,12 +375,12 @@ function CFBGameSquareCard({ game, isDark }: Props) {
                 <Image
                   source={dark ? FootballLight : Football}
                   style={{
-                    width: 28,
-                    height: 28,
+                    width: 20,
+                    height: 20,
                     resizeMode: "contain",
                     position: "absolute",
                     right: -18,
-                    top: 0,
+                    top: 5,
                   }}
                 />
               )}
@@ -418,14 +418,14 @@ function CFBGameSquareCard({ game, isDark }: Props) {
           )}
           {status.isLive && (
             <>
-              <Text style={[styles.date, { fontSize: 14 }]}>
+              <Text style={styles.date}>
                 {formatQuarter(status.short, displayStatus)}
               </Text>
               <Text style={styles.clock}>{displayClock}</Text>
             </>
           )}
           {status.isHalftime && (
-            <Text style={[styles.date, { fontSize: 14 }]}>{displayStatus}</Text>
+            <Text style={styles.date}>{displayStatus}</Text>
           )}
           {status.isFinal && (
             <>
@@ -433,8 +433,8 @@ function CFBGameSquareCard({ game, isDark }: Props) {
               <Text style={styles.dateFinal}>{formattedDate}</Text>
             </>
           )}
-          {status.isCanceled && <Text style={styles.finalText}>Cancelled</Text>}
-          {status.isDelayed && <Text style={styles.finalText}>Delayed</Text>}
+          {status.isCanceled && <Text style={styles.finalText}>CANC</Text>}
+          {status.isDelayed && <Text style={styles.finalText}>DLY</Text>}
 
           {broadcastText && (
             <Text style={styles.broadcast}>{broadcastText}</Text>

@@ -1,6 +1,6 @@
 // constants/teams.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { CBBTeam, Conference, Venue } from "types/types";
+import { CBBTeam, Conference } from "types/types";
 
 //Conference Logos
 import MountainWestConference from "assets/College_Logos/MWC.png";
@@ -361,6 +361,11 @@ import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
 import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
 import SaintFrancisLogo from "../assets/College_Logos/SaintFrancis.png";
 import SaintJosephsLogo from "../assets/College_Logos/SaintJosephs.png";
+import WilliamAndMaryLogo from "../assets/College_Logos/WilliamMary.png";
+
+import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
+import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
+import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
 import SaintLouisLogo from "../assets/College_Logos/SaintLouis.png";
 import SaintMaryLogo from "../assets/College_Logos/SaintMary.png";
 import SaintMaryLogoLight from "../assets/College_Logos/SaintMaryLight.png";
@@ -396,7 +401,9 @@ import StJohnsLogoLight from "../assets/College_Logos/St.JohnsLight.png";
 import StanfordLogo from "../assets/College_Logos/Stanford.png";
 import StBonaventureLogo from "../assets/College_Logos/StBonaventure.png";
 import StBonaventureLogoLight from "../assets/College_Logos/StBonaventureLight.png";
+import StephenFAustinLogo from "../assets/College_Logos/StephenFAustin.png";
 import StetsonLogo from "../assets/College_Logos/Stetson.png";
+import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
 import SUNYDelhiLogo from "../assets/College_Logos/SUNYDelhi.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
@@ -451,6 +458,7 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
+import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
 
 export const teams: CBBTeam[] = [
   {
@@ -1296,7 +1304,7 @@ export const teams: CBBTeam[] = [
     code: "W&M",
     color: "#103217",
     secondaryColor: "#f6b220",
-    logo: "https://media.api-sports.io/american-football/teams/98.png",
+    logo: WilliamAndMaryLogo,
   },
   {
     id: 1983,
@@ -1482,7 +1490,6 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#eea60f",
     logo: SienaLogo,
   },
-
   {
     id: 233,
     espnID: 2261,
@@ -3154,10 +3161,15 @@ export const teams: CBBTeam[] = [
     logo: HowardLogo,
   },
   {
-    id: 231,
+    id: 2134,
+    espnID: 2617,
     name: "Stephen F. Austin",
-
-    logo: "https://media.api-sports.io/american-football/teams/231.png",
+    fullName: "Stephen F. Austin Lumberjacks",
+    shortName: "SF Austin",
+    code: "SFA",
+    color: "#393996",
+    secondaryColor: "#bec0c2",
+    logo: StephenFAustinLogo,
   },
   {
     id: 2121,
@@ -3408,7 +3420,7 @@ export const teams: CBBTeam[] = [
     code: "STBK",
     color: "#990000",
     secondaryColor: "null",
-    logo: "https://media.api-sports.io/american-football/teams/246.png",
+    logo: StonyBrookLogo,
   },
   {
     id: 2176,
@@ -3594,7 +3606,7 @@ export const teams: CBBTeam[] = [
     code: "ETSU",
     color: "#002d61",
     secondaryColor: "#ffc423",
-    logo: "https://media.api-sports.io/american-football/teams/262.png",
+    logo: EastTennesseeStateLogo,
   },
   {
     id: 2038,
@@ -3641,18 +3653,6 @@ export const teams: CBBTeam[] = [
     color: "#051844",
     secondaryColor: "null",
     logo: MonmouthLogo,
-  },
-  {
-    id: 268,
-    name: "Limestone",
-
-    logo: "https://media.api-sports.io/american-football/teams/268.png",
-  },
-  {
-    id: 269,
-    name: "Mars Hill",
-    code: "MH",
-    logo: "https://media.api-sports.io/american-football/teams/269.png",
   },
   {
     id: 271,
@@ -3706,12 +3706,6 @@ export const teams: CBBTeam[] = [
     code: "WORE",
     color: "000000",
     logo: WesternOregonLogo,
-  },
-  {
-    id: 275,
-    name: "Lehigh",
-    code: "LEH",
-    logo: "https://media.api-sports.io/american-football/teams/275.png",
   },
   {
     id: 1992,
@@ -3835,18 +3829,6 @@ export const teams: CBBTeam[] = [
     color: "#9e0b0e",
     secondaryColor: "#fdb41e",
     logo: WinthropLogo,
-  },
-  {
-    id: 285,
-    name: "Lincoln (PA)",
-
-    logo: "https://media.api-sports.io/american-football/teams/285.png",
-  },
-  {
-    id: 286,
-    name: "Bloomsburg",
-
-    logo: "https://media.api-sports.io/american-football/teams/286.png",
   },
   {
     id: 5866,
@@ -3991,44 +3973,6 @@ export const teams: CBBTeam[] = [
     logo: DenverLogo,
     logoLight: DenverLogoLight,
   },
-
-  {
-    id: 291,
-    name: "Concordia College (MI)",
-
-    logo: "https://media.api-sports.io/american-football/teams/291.png",
-  },
-  {
-    id: 292,
-    name: "Miles College",
-
-    logo: "https://media.api-sports.io/american-football/teams/292.png",
-  },
-  {
-    id: 293,
-    name: "Hampton",
-
-    logo: "https://media.api-sports.io/american-football/teams/293.png",
-  },
-  {
-    id: 294,
-    name: "Presbyterian",
-
-    logo: "https://media.api-sports.io/american-football/teams/294.png",
-  },
-
-  {
-    id: 296,
-    name: "Florida Memorial University",
-
-    logo: "https://media.api-sports.io/american-football/teams/296.png",
-  },
-  {
-    id: 297,
-    name: "Lane",
-
-    logo: "https://media.api-sports.io/american-football/teams/297.png",
-  },
   {
     id: 2184,
     espnID: 2674,
@@ -4140,16 +4084,6 @@ export const teams: CBBTeam[] = [
     logo: JacksonStateLogo,
   },
   {
-    id: 304,
-    name: "Assumption",
-    logo: "https://media.api-sports.io/american-football/teams/304.png",
-  },
-  {
-    id: 305,
-    name: "Thomas More College",
-    logo: "https://media.api-sports.io/american-football/teams/305.png",
-  },
-  {
     id: 3332,
     espnID: 3229,
     name: "Virginia Lynchburg",
@@ -4159,44 +4093,6 @@ export const teams: CBBTeam[] = [
     color: "#57A0D3",
     secondaryColor: "#ffffff",
     logo: VirginiaLynchburgLogo,
-  },
-  {
-    id: 307,
-    name: "Post University",
-    logo: "https://media.api-sports.io/american-football/teams/307.png",
-  },
-  {
-    id: 308,
-    name: "Missouri S&T",
-    logo: "https://media.api-sports.io/american-football/teams/308.png",
-  },
-  {
-    id: 6659,
-    name: "Michigan Tech",
-    logo: "https://media.api-sports.io/american-football/teams/309.png",
-  },
-  {
-    id: 6679,
-    name: "Taylor",
-    logo: "",
-  },
-  {
-    id: 312,
-    name: "Louisiana Christian University",
-
-    logo: "",
-  },
-  {
-    id: 313,
-    name: "Albany State",
-
-    logo: "",
-  },
-  {
-    id: 314,
-    name: "UVA Wise",
-
-    logo: "https://media.api-sports.io/american-football/teams/314.png",
   },
   {
     id: 1973,
@@ -4235,11 +4131,6 @@ export const teams: CBBTeam[] = [
     logo: "",
   },
   {
-    id: 2417,
-    name: "Chadron State",
-    logo: "",
-  },
-  {
     id: 187,
     espnID: 108,
     name: "Harvard",
@@ -4268,11 +4159,6 @@ export const teams: CBBTeam[] = [
     color: "#082A74",
     secondaryColor: "#a6163d",
     logo: PennLogo,
-  },
-  {
-    id: 5773,
-    name: "Kentucky State",
-    logo: "https://media.api-sports.io/american-football/teams/325.png",
   },
   {
     id: 227,
@@ -4405,17 +4291,27 @@ export const teams: CBBTeam[] = [
     code: "NORTH",
     color: "#000000",
     secondaryColor: "null",
-    logo: "https://media.api-sports.io/american-football/teams/376.png",
+    logo: NCWesleyanLogo,
   },
   {
-    id: 377,
+    id: 3224,
     espnID: 2079,
     name: "Bridgewater (VA)",
     fullName: "Bridgewater (VA) Eagles",
     code: "BRVA",
     color: "#990022",
     secondaryColor: "#8d724b",
-    logo: "https://media.api-sports.io/american-football/teams/377.png",
+    logo: BridgewaterVALogo,
+  },
+  {
+    id: 7635,
+    espnID: 18,
+    name: "Bridgewater State",
+    fullName: "Bridgewater State (MA) Bears",
+    code: "BRIS",
+    color: "#bf2f38",
+    secondaryColor: "#000000",
+    logo: BridgewaterStateLogo,
   },
   {
     id: 393,
@@ -5367,19 +5263,6 @@ export const logoMap: Record<string, any> = {
   UtahStateLogoLight: UtahStateLogoLight,
   WashingtonLogoLight: WashingtonLogoLight,
   WashingtonStateLogoLight: WashingtonStateLogoLight,
-};
-
-// Define known neutral-site matchups
-export const neutralSiteGames: Record<string, Venue> = {
-  "Florida-Georgia": {
-    name: "EverBank Stadium",
-    city: "Jacksonville, FL",
-    // venueImage: EverBankStadium,
-    address: "1 EverBank Stadium Dr, Jacksonville, FL 32202",
-    latitude: 30.323471,
-    longitude: -81.636528,
-    venueCapacity: "67,838",
-  },
 };
 
 export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));

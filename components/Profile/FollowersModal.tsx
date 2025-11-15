@@ -140,7 +140,7 @@ export default function FollowersModal({
             <Ionicons
               name="close"
               size={28}
-              color={isDark ? Colors.netural.white : Colors.netural.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </Pressable>
         </View>

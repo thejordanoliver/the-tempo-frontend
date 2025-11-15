@@ -1,8 +1,10 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameInfo } from "hooks/useGameInfo";
 import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useMemo, useState } from "react";
@@ -52,7 +54,7 @@ function mapStatus(apiStatus: {
   }
 }
 
-export default function GameSquareCard({
+export default function GameCard({
   game,
   isDark,
 }: {
@@ -74,11 +76,12 @@ export default function GameSquareCard({
     teams.find((t) => String(t.id) === String(id));
   const getTeamName = (id?: number | string) =>
     getTeamById(id)?.name ?? "Unknown";
+  const getTeamCode = (id?: number | string) =>
+    getTeamById(id)?.code ?? "Unknown";
 
   // IDs
   const homeId = Number(game.home?.id ?? (game as any).homeTeamId ?? 0);
   const awayId = Number(game.away?.id ?? (game as any).awayTeamId ?? 0);
-
   // ESPN IDs
   const homeEspnId = getTeamById(homeId)?.espnID;
   const awayEspnId = getTeamById(awayId)?.espnID;
@@ -87,33 +90,13 @@ export default function GameSquareCard({
   const { record: homeRecord } = useTeamRecord(homeEspnId);
   const { record: awayRecord } = useTeamRecord(awayEspnId);
 
-  const homeTeamInfo = useMemo(() => {
-    return teams.find(
-      (t) =>
-        homeTeam.name &&
-        (t.name === homeTeam.name ||
-          t.code === homeTeam.name ||
-          t.name.includes(homeTeam.name))
-    );
-  }, [homeTeam.name]);
-
-  const awayTeamInfo = useMemo(() => {
-    return teams.find(
-      (t) =>
-        awayTeam.name &&
-        (t.name === awayTeam.name ||
-          t.code === awayTeam.name ||
-          t.name.includes(awayTeam.name))
-    );
-  }, [awayTeam.name]);
-
   // Memoized team data
   const homeTeamData = useMemo(
     () => ({
       id: String(homeId),
       espnID: homeEspnId ?? "",
-      code: homeTeamInfo?.code,
       name: getTeamName(homeId),
+      code: getTeamCode(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
     }),
@@ -124,8 +107,8 @@ export default function GameSquareCard({
     () => ({
       id: String(awayId),
       espnID: awayEspnId ?? "",
-      code: awayTeamInfo?.code,
       name: getTeamName(awayId),
+      code: getTeamCode(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
     }),
@@ -134,32 +117,6 @@ export default function GameSquareCard({
 
   const homeRecordData = homeRecord?.overall;
   const awayRecordData = awayRecord?.overall;
-
-  // Status
-  const statusObj = game.status;
-  const statusText =
-    typeof game.status === "string" ? game.status : mapStatus(game.status);
-  const isFinal = statusText === "Final";
-  const inProgress = statusText === "In Play";
-  const isCanceled = statusText === "Canceled";
-  const isDelayed = statusText === "Delayed";
-  const isPostponed = statusText === "Postponed";
-  const isHalftime = statusObj?.halftime ?? false;
-  const isEndOfPeriod = game.periods?.endOfPeriod === true;
-
-  const winnerStyle = (teamWins: boolean): TextStyle => ({
-    color: dark ? "#fff" : "#1d1d1d",
-    opacity: inProgress ? 1 : teamWins ? 1 : 0.5,
-  });
-
-  const getLogo = (teamData?: Team, fallback?: Team) => {
-    if (!teamData)
-      return (
-        fallback?.logo ??
-        require("../../assets/Placeholders/teamPlaceholder.png")
-      );
-    return getTeamLogo(teamData.id, dark);
-  };
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -172,19 +129,66 @@ export default function GameSquareCard({
 
   const { score: liveScore } = useGameScores(
     "nba",
-    homeTeamData.name,
-    awayTeamData.name,
+    homeEspnId,
+    awayEspnId,
     gameDateStr
   );
 
   const currentPeriod =
     liveScore?.period ?? Number(game.periods?.current ?? game.period);
+  const endOfPeriod = Number(game.periods?.current ?? game.period);
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
     liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+
+  // Status
+  // 🧠 Smarter reactive status
+  const statusObj = game.status;
+  const baseStatus =
+    typeof game.status === "string" ? game.status : mapStatus(game.status);
+
+  // Prefer live status text when available
+  const liveStatusText = liveScore?.statusText?.toLowerCase() ?? "";
+
+  // Dynamically resolve final state from live data
+  const effectiveStatus = liveStatusText.includes("final")
+    ? "Final"
+    : liveStatusText.includes("halftime")
+    ? "Halftime"
+    : liveStatusText.includes("in progress") ||
+      liveStatusText.includes("in play") ||
+      liveStatusText.includes("qtr") ||
+      liveStatusText.includes("quarter")
+    ? "In Play"
+    : baseStatus;
+
+  // Now derive booleans reactively
+  const isFinal = effectiveStatus === "Final";
+  const inProgress = effectiveStatus === "In Play";
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = effectiveStatus === "Postponed";
+  const isHalftime = effectiveStatus === "Halftime";
+
+  const isEndOfPeriod = game.periods?.endOfPeriod === true;
+  // ✅ Smarter halftime detection
+
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
+  const winnerStyle = (teamWins: boolean): TextStyle => ({
+    color: dark ? Colors.white : Colors.black,
+    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+  });
+
+  const getLogo = (teamData?: Team, fallback?: Team) => {
+    if (!teamData)
+      return (
+        fallback?.logo ??
+        require("../../assets/Placeholders/teamPlaceholder.png")
+      );
+    return getTeamLogo(teamData.id, dark);
+  };
 
   const playoffGames =
     homeId && awayId ? useFetchPlayoffGames(homeId, awayId, 2024).games : [];
@@ -227,6 +231,16 @@ export default function GameSquareCard({
     const ot = period - 4;
     return ot === 1 ? "Final/OT" : `Final/OT${ot}`;
   }
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  const { headlineText } = useGameInfo(
+    Number(homeEspnId),
+    Number(awayEspnId),
+    gameDateStr
+  );
 
   const ScoreText = ({
     score,
@@ -279,12 +293,12 @@ export default function GameSquareCard({
                   {awayTeamData?.code ?? awayTeam.code ?? awayTeam.name}
                 </Text>
               </View>
-              {/* Away score or record */}
+              {/* Home Team */}
               <ScoreText
                 score={awayScore}
                 recordData={awayRecordData ?? undefined}
                 teamWins={awayWins}
-                showRecord={statusText === "Scheduled"}
+                showRecord={effectiveStatus === "Scheduled"}
               />
             </View>
 
@@ -305,7 +319,7 @@ export default function GameSquareCard({
                 score={homeScore}
                 recordData={homeRecordData ?? undefined}
                 teamWins={homeWins}
-                showRecord={statusText === "Scheduled"}
+                showRecord={effectiveStatus === "Scheduled"}
               />
             </View>
           </View>
@@ -378,69 +392,8 @@ export default function GameSquareCard({
             <Text style={styles.broadcast}>{broadcastText}</Text>
           ) : null}
 
-          {(gameNumberLabel || seriesSummary || holidayLabel) && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                position: "absolute",
-                left: 8,
-                bottom: 8,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexWrap: "nowrap",
-                  gap: 6,
-                }}
-              >
-                {gameNumberLabel && (
-                  <Text
-                    style={{
-                      color: "#1d1d1d",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 8,
-                      maxWidth: 50,
-                      textAlign: "center",
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {gameNumberLabel}
-                  </Text>
-                )}
-                {gameNumberLabel && (seriesSummary || holidayLabel) && (
-                  <View
-                    style={{
-                      height: 10,
-                      width: 1,
-                      backgroundColor: "#1d1d1d",
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-                {seriesSummary && (
-                  <Text
-                    style={{
-                      color: dark ? "#1d1d1d" : "#1d1d1d",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 8,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {seriesSummary}
-                  </Text>
-                )}
-              </View>
-            </View>
-          )}
+          {/* headlineText */}
+          <Text style={[styles.headlineText]}>{headlineText}</Text>
         </LinearGradient>
       ) : (
         <View style={styles.card}>
@@ -462,7 +415,7 @@ export default function GameSquareCard({
                 score={awayScore}
                 recordData={awayRecordData ?? undefined}
                 teamWins={awayWins}
-                showRecord={statusText === "Scheduled"}
+                showRecord={effectiveStatus === "Scheduled"}
               />
             </View>
 
@@ -478,154 +431,75 @@ export default function GameSquareCard({
                   {homeTeamData?.code ?? homeTeam.code ?? homeTeam.name}
                 </Text>
               </View>
-              {/* Home score or record */}
+              {/* Home Team */}
               <ScoreText
                 score={homeScore}
                 recordData={homeRecordData ?? undefined}
                 teamWins={homeWins}
-                showRecord={statusText === "Scheduled"}
+                showRecord={effectiveStatus === "Scheduled"}
               />
             </View>
           </View>
 
-          {/* Game info */}
-          <View style={styles.info}>
-            {isCanceled ? (
-              <Text style={[styles.finalText]}>Canc.</Text>
-            ) : isFinal ? (
-              <>
-                <Text style={styles.finalText}>Final</Text>
-                <Text style={[styles.dateFinal]}>
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
-              </>
-            ) : game.status.long === "Scheduled" ? (
-              <>
-                <Text style={styles.date}>
-                  {new Date(game.date).toLocaleDateString("en-US", {
-                    month: "numeric",
-                    day: "numeric",
-                  })}
-                </Text>
-                <Text style={styles.time}>{game.time}</Text>
-              </>
-            ) : inProgress ? (
-              <>
-                <Text style={styles.date}>
-                  {(() => {
-                    const periodNum = Number(currentPeriod) || 0;
-
-                    if (game.isHalftime) {
-                      return "Halftime";
-                    }
-
-                    if (isEndOfPeriod) {
-                      if (periodNum > 4) {
-                        return periodNum === 5
-                          ? "End of OT"
-                          : `End of ${periodNum - 4}OT`;
-                      }
-                      return `End of Q${periodNum}`;
-                    }
-
-                    if (periodNum > 4) {
-                      return periodNum === 5 ? "OT" : `${periodNum - 4}OT`;
-                    }
-
-                    return `Q${periodNum || "Live"}`;
-                  })()}
-                </Text>
-
-                {!game.isHalftime && !isEndOfPeriod && game.status.clock ? (
-                  <Text style={[styles.clock]}>{game.status.clock}</Text>
-                ) : null}
-              </>
-            ) : null}
-
-            <Text style={styles.broadcast}>{broadcastText}</Text>
-          </View>
-          {(gameNumberLabel || seriesSummary || holidayLabel) && (
-            <View
-              style={{
-                alignItems: "center",
+          {/* Center Info */}
+          <View
+            style={[
+              styles.info,
+              !broadcastText && {
                 justifyContent: "center",
-                position: "absolute",
-                left: 12,
-                bottom: 8,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexWrap: "nowrap",
-                  gap: 6,
-                }}
-              >
-                {gameNumberLabel && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#1d1d1d",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      maxWidth: 50,
-                      textAlign: "center",
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                  >
-                    {gameNumberLabel}
-                  </Text>
-                )}
-                {gameNumberLabel && (seriesSummary || holidayLabel) && (
-                  <View
-                    style={{
-                      height: 10,
-                      width: 1,
-                      backgroundColor: dark ? "#fff" : "#1d1d1d",
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-                {seriesSummary && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#1d1d1d",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {seriesSummary}
-                  </Text>
-                )}
-                {holidayLabel && (
-                  <Text
-                    style={{
-                      color: dark ? "#fff" : "#1d1d1d",
-                      fontFamily: Fonts.OSEXTRALIGHT,
-                      fontSize: 10,
-                      textAlign: "center",
-                      maxWidth: 180,
-                      opacity: 0.8,
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {holidayLabel}
-                  </Text>
+                alignItems: "center",
+              },
+            ]}
+          >
+            {/* Status / Score */}
+            {isCanceled ? (
+              <Text style={styles.finalText}>CANC</Text>
+            ) : isDelayed ? (
+              <Text style={styles.finalText}>DLY</Text>
+            ) : isPostponed ? (
+              <Text style={styles.finalText}>PPD</Text>
+            ) : isHalftime ? (
+              <Text style={styles.finalText}>HT</Text>
+            ) : isFinal ? (
+              <View>
+                <Text style={styles.finalText}>
+                  {getFinalWithQuarterLabel(currentPeriod)}
+                </Text>
+                <Text style={styles.finalText}>{formattedDate}</Text>
+              </View>
+            ) : inProgress ? (
+              <View>
+                {liveScore?.statusText?.toLowerCase().includes("end of") ||
+                liveScore?.statusText?.toLowerCase().includes("final") ? (
+                  <Text style={styles.clock}>{liveScore.statusText}</Text>
+                ) : (
+                  <>
+                    <Text style={styles.date}>
+                      {getQuarterLabel(currentPeriod)}
+                    </Text>
+                    {liveScore?.displayClock && (
+                      <>
+                        <Text style={styles.clock}>
+                          {liveScore.displayClock}
+                        </Text>
+                      </>
+                    )}
+                  </>
                 )}
               </View>
-            </View>
-          )}
+            ) : (
+              <View>
+                <Text style={styles.date}>{formattedDate}</Text>
+                <Text style={styles.date}>{game.time ?? "TBD"}</Text>
+              </View>
+            )}
+
+            {!isFinal && broadcastText && (
+              <Text style={styles.broadcast}>{broadcastText}</Text>
+            )}
+          </View>
+          {/* headlineText */}
+          <Text style={[styles.headlineText]}>{headlineText}</Text>
         </View>
       )}
     </TouchableOpacity>

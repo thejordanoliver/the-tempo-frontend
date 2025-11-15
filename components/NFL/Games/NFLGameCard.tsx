@@ -4,7 +4,7 @@ import FootballLight from "assets/icons8/FootballLight.png";
 import { useRouter } from "expo-router";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
-import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { memo, useMemo, useState } from "react";
 import {
@@ -41,6 +41,10 @@ function NFLGameCard({ game, isDark }: Props) {
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
 
+    const awayTeamEspnID = awayId;
+  const homeTeamEspnID = homeId;
+
+
   // --- Game Date ---
   const {
     date: gameDate,
@@ -62,9 +66,10 @@ function NFLGameCard({ game, isDark }: Props) {
   // --- Possession & live data (only if live) ---
   const possession =
     status.isLive && homeId && awayId
-      ? useNFLGamePossession(
-          game?.teams?.home?.name,
-          game?.teams?.away?.name,
+      ? useFootballGamePossession(
+          "nfl",
+         homeTeamEspnID,
+         awayTeamEspnID,
           gameDateStr
         )
       : {
@@ -103,6 +108,15 @@ function NFLGameCard({ game, isDark }: Props) {
 
   const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
 
+  const normalizeScoreSide = (side: any) => {
+  if (typeof side === "number") return { total: side };
+  if (typeof side?.total === "number") return { total: side.total };
+  return { total: 0 };
+};
+
+const normalizedAwayScore = normalizeScoreSide(safeScore.away);
+const normalizedHomeScore = normalizeScoreSide(safeScore.home);
+
   const showStatusDetail =
     gameStatusShortDetail &&
     (gameStatusShortDetail.toLowerCase().includes("halftime") ||
@@ -112,8 +126,6 @@ function NFLGameCard({ game, isDark }: Props) {
   const displayStatus = normalizeDisplayStatus(
     gameStatusDescription ?? status.long ?? status.short ?? ""
   );
-  const awayTeamEspnID = awayId;
-  const homeTeamEspnID = homeId;
 
   // --- Teams ---
   const awayTeam = useMemo(
@@ -201,7 +213,7 @@ function NFLGameCard({ game, isDark }: Props) {
             getTeamStyle(false),
           ]}
         >
-          {status.isScheduled ? awayTeam.record : safeScore.away.total}
+          {status.isScheduled ? awayTeam.record : normalizedAwayScore.total}
         </Text>
 
         {/* Game Info */}
@@ -257,7 +269,7 @@ function NFLGameCard({ game, isDark }: Props) {
             getTeamStyle(true),
           ]}
         >
-          {status.isScheduled ? homeTeam.record : safeScore.home.total}
+          {status.isScheduled ? homeTeam.record : normalizedHomeScore.total}
         </Text>
 
         {/* Home Team */}

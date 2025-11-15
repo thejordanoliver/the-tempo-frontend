@@ -1,6 +1,27 @@
 import axios from "axios";
-import { teams } from "constants/teamsCFB";
+import { teams as cfbTeams } from "constants/teamsCFB";
+import { teamIdMap as nflTeams } from "constants/teamsNFL";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+type League = "cfb" | "nfl";
+
+// --- Build ESPN → internal ID maps ---
+const buildEspnMap = (obj: any, league: League) => {
+  const map: Record<string, number> = {};
+
+  if (league === "cfb") {
+    cfbTeams.forEach((t) => {
+      if (t.espnID) map[String(t.espnID)] = Number(t.espnID);
+    });
+  } else {
+    // nflTeams: { internalId: espnID }
+    Object.entries(nflTeams).forEach(([internal, espn]) => {
+      map[String(espn)] = Number(internal);
+    });
+  }
+
+  return map;
+};
 
 export type Athlete = {
   id: string;
@@ -20,13 +41,16 @@ export type PlayObject = {
   drive?: {
     description?: string;
     start?: { yardLine?: number; text?: string };
+    end?: { yardLine?: number; text?: string };
     timeElapsed?: { displayValue?: string };
+    team?: { id: number };
   };
   statYardage?: number;
+  distance?: number;
   athletesInvolved?: Athlete[];
 };
 
-export type CFBScore = {
+export type FootballScore = {
   home: number;
   away: number;
   homeTeam: string;
@@ -34,17 +58,14 @@ export type CFBScore = {
   periodScores?: { period: number; home: number; away: number }[];
 };
 
-// --- ESPN → internal mapping ---
-const espnToInternal: Record<string, number> = {};
-teams.forEach((t) => {
-  if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.espnID);
-});
-
-export const useCFBGamePossession = (
+export const useFootballGamePossession = (
+  league: League,
   homeEspnId?: number,
   awayEspnId?: number,
   date?: string | { date?: string; utc?: string; timestamp?: number }
 ) => {
+  const espnToInternal = buildEspnMap(null, league);
+
   const [possessionTeamId, setPossessionTeamId] = useState<number>();
   const [shortDownDistanceText, setShortDownDistanceText] = useState<string>();
   const [downDistanceText, setDownDistanceText] = useState<string>();
@@ -54,7 +75,7 @@ export const useCFBGamePossession = (
   const [lastPlay, setLastPlay] = useState<string | PlayObject>();
   const [homeTimeouts, setHomeTimeouts] = useState<number>();
   const [awayTimeouts, setAwayTimeouts] = useState<number>();
-  const [score, setScore] = useState<CFBScore>();
+  const [score, setScore] = useState<FootballScore>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gameStatusDescription, setGameStatusDescription] = useState<string>();
@@ -69,11 +90,10 @@ export const useCFBGamePossession = (
     async (isPolling = false) => {
       if (skipFetch) return;
       if (!isPolling) setLoading(true);
-      setError(null);
 
       try {
-        // --- Parse date ---
         let targetDate: Date | null = null;
+
         if (typeof date === "string") targetDate = new Date(date);
         else if (typeof date === "object") {
           targetDate = date.timestamp
@@ -84,124 +104,128 @@ export const useCFBGamePossession = (
             ? new Date(date.date)
             : null;
         }
+
         if (!targetDate) return;
 
         const makeYMD = (d: Date) => {
-          const usDate = d.toLocaleDateString("en-US", { timeZone: "America/New_York" });
-          const [month, day, year] = usDate.split("/");
-          return `${year}${month.padStart(2, "0")}${day.padStart(2, "0")}`;
+          const us = d.toLocaleDateString("en-US", {
+            timeZone: "America/New_York",
+          });
+          const [m, day, y] = us.split("/");
+          return `${y}${m.padStart(2, "0")}${day.padStart(2, "0")}`;
         };
 
         const yyyymmdd = makeYMD(targetDate);
-        const url = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${yyyymmdd}`;
+
+        const url =
+          league === "cfb"
+            ? `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${yyyymmdd}`
+            : `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${yyyymmdd}`;
 
         const { data } = await axios.get(url);
         const games = data.events || [];
 
+        // MATCH GAME
         const game = games.find((g: any) => {
-          const competitors = g.competitions?.[0]?.competitors || [];
-          const ids = competitors.map((c: any) => Number(c.team.id));
+          const comps = g.competitions?.[0]?.competitors || [];
+          const ids = comps.map((c: any) => Number(c.team.id));
           return ids.includes(homeEspnId) && ids.includes(awayEspnId);
         });
 
-        if (!game) {
-          console.warn(`[CFB Possession] Game not found: ${homeEspnId} vs ${awayEspnId}`);
-          return;
-        }
+        if (!game) return;
 
-        const competition = game.competitions?.[0];
-        if (!competition) throw new Error("No competition data found");
+        const comp = game.competitions[0];
+        const status = comp.status || {};
+        const situation = comp.situation || {};
 
-        const status = competition.status || {};
-        const situation = competition.situation || {};
-        const gameStateStr = status.type?.state;
-        const isLive = gameStateStr === "in";
+        const state = status.type?.state;
+        const isLive = state === "in";
 
-        // --- Always update clock + period ---
         setDisplayClock(status.displayClock);
         setPeriod(status.period?.toString());
         setGameStatusDescription(status.type?.description);
         setGameStatusDetail(status.type?.detail);
         setGameStatusShortDetail(status.type?.shortDetail);
 
-        // --- Score ---
-        const competitors = competition.competitors || [];
-        const homeComp = competitors.find((c: any) => c.homeAway === "home");
-        const awayComp = competitors.find((c: any) => c.homeAway === "away");
+        // SCORE
+        const comps = comp.competitors;
+        const home = comps.find((c: any) => c.homeAway === "home");
+        const away = comps.find((c: any) => c.homeAway === "away");
 
-        if (homeComp && awayComp) {
-          const maxPeriods = Math.max(homeComp.linescores?.length ?? 0, awayComp.linescores?.length ?? 0);
-          const periodScores = Array.from({ length: maxPeriods }, (_, idx) => ({
+        if (home && away) {
+          const maxPer = Math.max(
+            home.linescores?.length ?? 0,
+            away.linescores?.length ?? 0
+          );
+
+          const perScores = Array.from({ length: maxPer }, (_, idx) => ({
             period: idx + 1,
-            home: homeComp.linescores?.[idx]?.value ?? 0,
-            away: awayComp.linescores?.[idx]?.value ?? 0,
+            home: home.linescores?.[idx]?.value ?? 0,
+            away: away.linescores?.[idx]?.value ?? 0,
           }));
 
           setScore({
-            home: Number(homeComp.score),
-            away: Number(awayComp.score),
-            homeTeam: homeComp.team.displayName,
-            awayTeam: awayComp.team.displayName,
-            periodScores,
+            home: Number(home.score),
+            away: Number(away.score),
+            homeTeam: home.team.displayName,
+            awayTeam: away.team.displayName,
+            periodScores: perScores,
           });
         }
 
+        // POSSESSION
         if (isLive) {
-          // --- Possession & field info ---
-          const espnPossessionId: string | undefined = situation.possession;
-          setPossessionTeamId(espnPossessionId ? espnToInternal[espnPossessionId] : undefined);
+          const espnPossId = situation.possession;
+          setPossessionTeamId(
+            espnPossId ? espnToInternal[String(espnPossId)] : undefined
+          );
 
-          const downInfo = situation.shortDownDistanceText ?? "";
-          const lineOfScrimmage = situation.yardLine ?? 0;
-          const yardsToGo = situation.distance ?? 0;
-          setFirstDownYardLine(lineOfScrimmage + yardsToGo);
-
-          const fieldPosition = situation.possessionText ?? "";
-          setShortDownDistanceText(downInfo);
+          setShortDownDistanceText(situation.shortDownDistanceText);
           setDownDistanceText(situation.downDistanceText);
-          setPossessionText(downInfo && fieldPosition ? `${downInfo}, ${fieldPosition}` : downInfo || fieldPosition);
+
+          const los = situation.yardLine || 0;
+          const dist = situation.distance || 0;
+
+          setFirstDownYardLine(los + dist);
+
+          const fieldPos = situation.possessionText;
+          setPossessionText(
+            situation.shortDownDistanceText && fieldPos
+              ? `${situation.shortDownDistanceText}, ${fieldPos}`
+              : situation.shortDownDistanceText || fieldPos
+          );
+
           setHomeTimeouts(situation.homeTimeouts);
           setAwayTimeouts(situation.awayTimeouts);
 
           if (situation.lastPlay) {
             const playObj = situation.lastPlay as PlayObject;
-            playObj.statYardage = situation.distance;
+            playObj.distance = situation.distance;
             setLastPlay(playObj);
-          } else if (status.lastPlay) {
-            setLastPlay(status.lastPlay as string);
           } else setLastPlay(undefined);
         } else {
           setPossessionTeamId(undefined);
-          setShortDownDistanceText(undefined);
-          setDownDistanceText(undefined);
-          setFirstDownYardLine(undefined);
-          setPossessionText(undefined);
-          setHomeTimeouts(undefined);
-          setAwayTimeouts(undefined);
-          setLastPlay(undefined);
         }
-      } catch (err: any) {
-        console.error("[CFB Possession] Error fetching:", err);
-        setError(err.message || "Failed to fetch possession");
+      } catch (e: any) {
+        setError(e.message);
       } finally {
         setLoading(false);
       }
     },
-    [homeEspnId, awayEspnId, date, skipFetch]
+    [league, homeEspnId, awayEspnId, date, skipFetch]
   );
 
-  // --- Poll every 30s ---
+  // POLL
   useEffect(() => {
     if (skipFetch) return;
 
     fetchData();
     intervalRef.current = setInterval(() => fetchData(true), 30000);
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [fetchData, skipFetch]);
-
-  const refresh = useCallback(() => fetchData(false), [fetchData]);
+  }, [fetchData]);
 
   return {
     possessionTeamId,
@@ -220,6 +244,6 @@ export const useCFBGamePossession = (
     gameStatusDetail,
     gameStatusShortDetail,
     possessionText,
-    refresh,
+    refresh: () => fetchData(false),
   };
 };
