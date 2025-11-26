@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../Headings/HeadingTwo";
-import FixedWidthTabBar from "../TabBars/FixedWidthTabBar";
+import FixedWidthTabBar from "../../TabBars/FixedWidthTabBar";
 
 type Injury = {
   status: string;

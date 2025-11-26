@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBGame } from "types/types";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -9,6 +9,8 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 // Cache keys & expiry
 const CACHE_KEY = "cbb_season_games_cache";
 const CACHE_DURATION = 1000 * 60 * 60 * 6; // 6 hours
+
+const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
 export function useCBBSeasonGames(
   season = "2025-2026",
@@ -91,7 +93,18 @@ export function useCBBSeasonGames(
     fetchSeasonGames();
   }, [fetchSeasonGames]);
 
-  return { games, loading, error, refreshCBBGames };
+  // --- Helper to detect live games ---
+  const isLiveGame = useCallback(
+    (game: CBBGame) => game.status?.short && LIVE_STATUSES.includes(game.status.short),
+    []
+  );
+
+  // --- Sorted games with live games first ---
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+  }, [games, isLiveGame]);
+
+  return { games: sortedGames, loading, error, refreshCBBGames };
 }
 
 function normalizeCBBGames(data: any[]): CBBGame[] {
@@ -101,7 +114,7 @@ function normalizeCBBGames(data: any[]): CBBGame[] {
 
       return {
         id: g.id,
-        date: date ?? "", // ✅ make sure it’s a string, not Date
+        date: date ?? "",
         time: g.time || "",
         timestamp: g.timestamp ?? null,
         timezone: g.timezone ?? "America/New_York",
@@ -140,4 +153,3 @@ function normalizeCBBGames(data: any[]): CBBGame[] {
     })
     .filter((g) => g.date); // only keep games with valid dates
 }
-

@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getNFLTeamsLogo, getTeamInfo } from "constants/teamsNFL";
 import { useEffect, useRef, useState } from "react";
@@ -60,28 +61,48 @@ export default function NFLGameTeamStats({
 
   const getTeamColor = (teamId?: number) => {
     const team = getTeamInfo(teamId ?? 0);
-    if (!team) return "#fff";
+    if (!team) return Colors.white;
 
-    const primary = team.color ?? "#fff";
+    const primary = team.color ?? Colors.white;
     const secondary = team.secondaryColor ?? primary;
 
     if (isDark) {
-      // ✅ Apply overrides only in dark mode
-      if (team.code === "BAL") return "#fff";
+      if (teamId === 19) return primary;
+
+      // Existing overrides
+      if (team.code === "BAL") return Colors.white;
       if (team.code === "ATL") return primary;
       if (team.code === "TB") return primary;
-      if (team.code === "PHI") return "#fff";
+      if (team.code === "PHI") return Colors.white;
 
-      // default in dark mode
+      // Default dark mode behavior
       return secondary;
     }
 
-    // ✅ Light mode → always primary
+    // Light mode → always primary
     return primary;
   };
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#000";
-  const dividerColor = lighter ? "#fff" : isDark ? "#888" : "#888";
+  const convertTimeToSeconds = (value: any) => {
+    if (typeof value !== "string") return value;
+
+    // Detect format MM:SS
+    if (!/^\d{1,2}:\d{2}$/.test(value)) return value;
+
+    const [min, sec] = value.split(":").map(Number);
+    return min * 60 + sec;
+  };
+
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
+  const dividerColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.midTone
+    : Colors.midTone;
 
   // Safe: optional chaining
   const teamNameA = getTeamInfo(teamA?.team?.id) ?? { code: "Home" };
@@ -134,8 +155,21 @@ export default function NFLGameTeamStats({
       <ScrollView style={[styles.container, { borderColor: dividerColor }]}>
         <Animated.View style={{ maxHeight: heightAnim, overflow: "hidden" }}>
           {STAT_KEYS.map(({ key, label }) => {
-            const valueA = getValue(teamA?.statistics, key) ?? 0;
-            const valueB = getValue(teamB?.statistics, key) ?? 0;
+            let valueA = getValue(teamA?.statistics, key) ?? 0;
+            let valueB = getValue(teamB?.statistics, key) ?? 0;
+
+            // Raw values for display
+            let displayA = valueA;
+            let displayB = valueB;
+
+            // Convert to seconds FOR CHART ONLY
+            if (key === "posession.total") {
+              displayA = valueA; // keep original MM:SS text
+              displayB = valueB;
+
+              valueA = convertTimeToSeconds(valueA); // seconds for width
+              valueB = convertTimeToSeconds(valueB);
+            }
 
             const max = Math.max(Math.abs(valueA), Math.abs(valueB), 1);
             const isTeamALower = valueA < valueB;
@@ -154,7 +188,7 @@ export default function NFLGameTeamStats({
                 </Text>
                 <View style={styles.row}>
                   <Text style={[styles.barText, { color: textColor }]}>
-                    {valueB}
+                    {displayB}
                   </Text>
                   <View style={styles.barContainerLeft}>
                     <View
@@ -181,7 +215,7 @@ export default function NFLGameTeamStats({
                     />
                   </View>
                   <Text style={[styles.barText, { color: textColor }]}>
-                    {valueA}
+                    {displayA}
                   </Text>
                 </View>
               </View>
@@ -232,7 +266,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
     alignItems: "center",
-    borderColor: "#888",
+    borderColor: Colors.midTone,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,

@@ -2,8 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogoESPN } from "constants/teamsCFB";
+import { getTeamLogoESPN, teams, getTeamIdByESPN } from "constants/teamsCFB";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
+import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -12,14 +13,15 @@ import {
   ScrollView,
   Text,
   View,
-  useColorScheme,
+  useColorScheme, TouchableOpacity
 } from "react-native";
+import { useRouter } from "expo-router";
 import { getStyles } from "styles/Standings.styles";
 export const CFBStandingsList = () => {
   const { rankings = [], loading, error } = useCFBRankings();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-
+const router = useRouter()
   // 🏈 Added "cfp" (Playoff Rankings)
   const [pollMode, setPollMode] = useState<"ap" | "coaches" | "cfp">("ap");
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -42,27 +44,17 @@ export const CFBStandingsList = () => {
     }
   };
 
-  const onSelectPollMode = (mode: "ap" | "coaches" | "cfp") => {
-    setPollMode(mode);
-    toggleDropdown();
-  };
+
 
   const dropdownTranslateY = dropdownAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [-10, 0],
   });
 
-  if (loading)
+ if (loading)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            color: isDark ? "#aaa" : "#666",
-            fontFamily: Fonts.OSLIGHT,
-          }}
-        >
-          Loading CFB Rankings...
-        </Text>
+      <View style={{ flex: 1 }}>
+        <StandingsSkeleton />
       </View>
     );
 
@@ -76,6 +68,17 @@ export const CFBStandingsList = () => {
   const selectedPoll = rankings.find((r) => r.type === pollMode);
   const filteredRankings = selectedPoll?.ranks ?? [];
   const droppedOutTeams = selectedPoll?.droppedOut ?? [];
+
+  const getConferenceAbbrev = (conf?: string) => {
+  if (!conf) return "N/A";
+  const name = conf.toLowerCase();
+
+  if (name.includes("sun belt")) return "Sun Belt";
+
+  if (name.includes("American")) return "AAC";
+  return conf;
+};
+
 
   // --- Render functions ---
   const renderLeftItem = ({ item }: { item: CFBTeamRank; index: number }) => {
@@ -94,10 +97,24 @@ export const CFBStandingsList = () => {
         </View>
 
         <View style={styles.teamInfo}>
+   <TouchableOpacity
+  style={styles.teamInfoWrapper}
+  onPress={() => {
+const internalId = getTeamIdByESPN(Number(item.team?.id));
+    if (!internalId) return;
+    router.push({
+      pathname: "/team/cfb/[teamId]",
+      params: { teamId: Number(internalId) }, // <-- force number
+    });
+  }}
+>
+
+
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
           <Text style={styles.collegeTeamName}>
             {item.team?.abbreviation || item.team?.nickname || "N/A"}
           </Text>
+          </TouchableOpacity>
 
           {trendNum !== 0 && !isNaN(trendNum) && (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -142,9 +159,10 @@ export const CFBStandingsList = () => {
         <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
       </View>
       <View style={styles.statCell}>
-        <Text style={styles.statText}>
-          {item.team?.groups?.shortName || "N/A"}
-        </Text>
+   <Text style={styles.statText}>
+  {getConferenceAbbrev(item.team?.groups?.shortName)}
+</Text>
+
       </View>
     </View>
   );

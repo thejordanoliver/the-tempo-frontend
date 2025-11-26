@@ -1,9 +1,9 @@
 // components/NFLStandingsList.tsx
-import { Ionicons } from "@expo/vector-icons";
+import { Dropdown } from "components/Dropdown";
 import { StatusLegend } from "components/NFL/Standings/StatusLegend";
+import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teamsNFL";
-import { BlurView } from "expo-blur";
 import {
   NFLTeamRankings,
   useNFLStandings,
@@ -15,15 +15,12 @@ import {
   Image,
   ImageSourcePropType,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
 import { getStyles } from "styles/Standings.styles";
 import { StatusBadge } from "./StatusBadge";
-import { Dropdown } from "components/Dropdown";
 type SectionType = {
   title: string;
   data: NFLTeamRankings[];
@@ -57,24 +54,10 @@ export const NFLStandingsList = () => {
     }
   };
 
-  const onSelectSortMode = (mode: "conference" | "division") => {
-    setSortMode(mode);
-    toggleDropdown();
-  };
-
-  const dropdownTranslateY = dropdownAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 0],
-  });
-
   if (loading)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{ color: isDark ? "#aaa" : "#666", fontFamily: Fonts.OSLIGHT }}
-        >
-          Loading NFL Standings...
-        </Text>
+      <View style={{ flex: 1 }}>
+        <StandingsSkeleton />
       </View>
     );
 
@@ -152,9 +135,7 @@ export const NFLStandingsList = () => {
     }
 
     return (
-      <View
-        style={[styles.row, { borderBottomColor: isDark ? "#333" : "#ccc" }]}
-      >
+      <View style={styles.row}>
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{index + 1}</Text>
         </View>
@@ -182,75 +163,40 @@ export const NFLStandingsList = () => {
     const streakColor = winStreak ? "limegreen" : "tomato";
 
     return (
-      <View
-        style={[
-          styles.row,
-          { borderBottomColor: isDark ? "#333" : "#ccc", flexDirection: "row" },
-        ]}
-      >
+      <View style={styles.row}>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
+          <Text style={styles.statText}>
             {item.wins}
             {ties > 0 ? `-${ties}` : ""}-{item.losses}
           </Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {winPct}
-          </Text>
+          <Text style={styles.statText}>{winPct}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.home}
-          </Text>
+          <Text style={styles.statText}>{item.home}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.road}
-          </Text>
+          <Text style={styles.statText}>{item.road}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.vsDiv}
-          </Text>
+          <Text style={styles.statText}>{item.vsDiv}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.vsConf}
-          </Text>
+          <Text style={styles.statText}>{item.vsConf}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.pointsFor}
-          </Text>
+          <Text style={styles.statText}>{item.pointsFor}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.pointsAgainst}
-          </Text>
+          <Text style={styles.statText}>{item.pointsAgainst}</Text>
         </View>
 
         <View style={styles.statCell}>
@@ -263,45 +209,20 @@ export const NFLStandingsList = () => {
   };
 
   const renderHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
-          alignItems: "center",
-        },
-      ]}
-    >
+    <View style={styles.row}>
       <View style={styles.rankContainer}>
         <Text style={[styles.rankText, { fontFamily: Fonts.OSSEMIBOLD }]}>
           #
         </Text>
       </View>
       <View>
-        <Text
-          style={[
-            styles.teamHeaderText,
-            { color: isDark ? "#fff" : "#1d1d1d" },
-          ]}
-        >
-          Team
-        </Text>
+        <Text style={styles.teamHeaderText}>Team</Text>
       </View>
     </View>
   );
 
   const renderStatsHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          flexDirection: "row",
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
-        },
-      ]}
-    >
+    <View style={styles.row}>
       {[
         "W-L",
         "Win %",
@@ -314,17 +235,7 @@ export const NFLStandingsList = () => {
         "Streak",
       ].map((label) => (
         <View key={label} style={styles.statCell}>
-          <Text
-            style={[
-              styles.statText,
-              {
-                fontFamily: Fonts.OSSEMIBOLD,
-                color: isDark ? "#fff" : "#1d1d1d",
-              },
-            ]}
-          >
-            {label}
-          </Text>
+          <Text style={styles.statText}>{label}</Text>
         </View>
       ))}
     </View>
@@ -333,17 +244,8 @@ export const NFLStandingsList = () => {
   function Section({ title, data }: SectionType) {
     return (
       <View style={{ marginTop: 12 }}>
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: isDark ? "#444" : "#ccc" },
-          ]}
-        >
-          <Text
-            style={[styles.heading, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {title}
-          </Text>
+        <View style={[styles.header]}>
+          <Text style={styles.heading}>{title}</Text>
         </View>
         <View style={{ flexDirection: "row" }}>
           <FlatList
@@ -375,23 +277,21 @@ export const NFLStandingsList = () => {
 
   return (
     <ScrollView
-      style={{ backgroundColor: isDark ? "#1d1d1d" : "#fff" }}
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingTop: 10,
         paddingBottom: 100,
       }}
     >
-<Dropdown
-  options={[
-    { label: "Conference", value: "conference" },
-    { label: "Division", value: "division" },
-  ]}
-  selectedValue={sortMode}
-  onSelect={(value) => setSortMode(value as "conference" | "division")}
-  isDark={isDark}
-/>
-
+      <Dropdown
+        options={[
+          { label: "Conference", value: "conference" },
+          { label: "Division", value: "division" },
+        ]}
+        selectedValue={sortMode}
+        onSelect={(value) => setSortMode(value as "conference" | "division")}
+        isDark={isDark}
+      />
 
       {sortMode === "conference" ? (
         <>

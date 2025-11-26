@@ -12,8 +12,7 @@ type LastPlayProps = {
 export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-
-  const textColor = isDark ? "#fff" : "#1d1d1d";
+  const textColor = isDark ? Colors.white: Colors.black;
 
   const onLayout = (e: LayoutChangeEvent) =>
     setContainerWidth(e.nativeEvent.layout.width);
@@ -24,7 +23,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
 
   const getTextColor = (text?: string) => {
     if (text === "Two-minute warning") return "red";
-    return isDark ? "#fff" : "#1d1d1d";
+    return isDark ? Colors.white : Colors.black ;
   };
 
   if (!currentPlay) return null;
@@ -68,7 +67,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
                     height: 40,
                     borderRadius: 100,
                     marginRight: 6,
-                    borderColor: isDark ? "#fff" : "#1d1d1d",
+                    borderColor: isDark ? Colors.white : Colors.black,
                     borderWidth: .5,
                     paddingTop: 4,
                   }}
@@ -85,7 +84,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
                   style={{
                     fontFamily: Fonts.OSREGULAR,
                     fontSize: 16,
-                    color: isDark ? "#fff" : "#1d1d1d",
+                    color: isDark ? Colors.white : Colors.black,
                   }}
                 >
                   {athlete.fullName}
@@ -94,7 +93,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
                   style={{
                     fontFamily: Fonts.OSREGULAR,
                     fontSize: 14,
-                    color: isDark ? "#aaa" : "#555",
+                    color: isDark ? Colors.lightGray : Colors.darkGray,
                     marginLeft: 4,
                   }}
                 >
@@ -104,7 +103,7 @@ export default function LastPlay({ lastPlay, isDark = true }: LastPlayProps) {
                   style={{
                     fontFamily: Fonts.OSREGULAR,
                     fontSize: 14,
-                    color: isDark ? "#aaa" : "#555",
+                    color: isDark ? Colors.lightGray : Colors.darkGray,
                     marginLeft: 2,
                   }}
                 >

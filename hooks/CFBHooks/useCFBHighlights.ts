@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { teams } from "constants/teamsCFB";
+import { useEffect, useState } from "react";
 
 export type CFBHighlight = {
   id: string;
@@ -8,6 +8,13 @@ export type CFBHighlight = {
   description: string;
   thumbnail: string;
   links: {
+    source: {
+      HLS: {
+        href: string;
+      };
+      href: string;
+    };
+    href: string;
     web: string;
     mobile: string;
     hls?: string;
@@ -34,7 +41,9 @@ export const useCFBHighlights = (
     | {
         date?: string;
         utc?: string;
-        timestamp?: number | { timestamp?: number; utc?: string; date?: string };
+        timestamp?:
+          | number
+          | { timestamp?: number; utc?: string; date?: string };
       }
 ) => {
   const [highlights, setHighlights] = useState<CFBHighlight[]>([]);
@@ -102,5 +111,10 @@ export const useCFBHighlights = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeEspnID, awayEspnID, JSON.stringify(date)]); // stabilize date changes
 
-  return { highlights, highlightsLoading, highlightsError, refresh: fetchHighlights };
+  return {
+    highlights,
+    highlightsLoading,
+    highlightsError,
+    refresh: fetchHighlights,
+  };
 };

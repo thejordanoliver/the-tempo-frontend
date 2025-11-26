@@ -1,23 +1,24 @@
-import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
+import GameLeaders from "components/CBB/GameDetails/GameLeaders";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
-import { LastFiveGamesSwitcher } from "components/GameDetails";
+import { LastFiveGamesSwitcher, LineScore } from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
+import GameSummary from "components/GameDetails/GameSummary";
+import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import LastPlay from "components/GameDetails/LastPlay";
 import Officials from "components/GameDetails/Officials";
+import ShotChart from "components/GameDetails/ShotChart";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
-import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useGameOfficials } from "hooks/useGameOfficials";
 import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -153,6 +154,7 @@ export default function GameDetailsScreen() {
   const lat = homeTeamData.latitude ?? null;
   const lon = homeTeamData.longitude ?? null;
   const { weather } = useWeatherForecast(lat, lon, date);
+  if (!homeTeamData || !awayTeamData) return null;
 
   const homeEspnId = homeTeamData.espnID;
   const awayEspnId = awayTeamData.espnID;
@@ -171,13 +173,7 @@ export default function GameDetailsScreen() {
     gameDateStr
   );
 
-  const livePossession = useCBBGamePossession(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateStr
-  );
-
-  const { score: liveScore, isLive } = useGameScores(
+  const { score: liveScore } = useGameScores(
     "mens-college-basketball",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
@@ -186,30 +182,64 @@ export default function GameDetailsScreen() {
 
   const {
     officials,
+    highlights,
+    plays,
+    leaders,
+    neutralSite,
     loading: officialsLoading,
     error: officialsError,
-  } = useGameOfficials("cbb", homeEspnId, awayEspnId, gameDate);
+  } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDate);
 
-  const { highlights } = useGameHighlights(
-    "cbb",
-    homeEspnId ? Number(homeEspnId) : undefined,
-    awayEspnId ? Number(awayEspnId) : undefined,
-    gameDate
-  );
+  const formatQuarter = (period?: number | string) => {
+    if (!period) return "Live";
+
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) {
+        const match = val.match(/(\d+)?ot/i);
+        if (!match) return "OT";
+        const num = match[1];
+        // Show "OT" for first overtime, number only for later
+        return !num || num === "1" ? "OT" : `${num}OT`;
+      }
+      if (val.includes("halftime")) return "Halftime";
+      return period;
+    }
+
+    const p = Number(period);
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+
+    const ot = p - 2;
+    return ot === 1 ? "OT" : `${ot}OT`; // first OT shows "OT", later "2OT", "3OT", etc.
+  };
 
   // --- Derived Data ---
   const displayHomeScore = liveScore?.home.total ?? 0;
   const displayAwayScore = liveScore?.away.total ?? 0;
   const displayClock = liveScore?.displayClock ?? "";
-  const statusDisplay = livePossession?.gameStatusDescription ?? "Scheduled";
-  const periodNum = Number(livePossession?.period ?? 0);
-  const quarterLabel =
-    periodNum > 2 ? `OT${periodNum - 2}` : periodNum === 2 ? "2nd" : "1st";
+  const statusDisplay = liveScore?.status ?? "Scheduled";
+  const isHalftime =
+    liveScore?.statusText?.toLowerCase().includes("halftime") ?? false;
+
+  const periodNum = Number(liveScore?.period ?? 0);
+
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
+
+  let quarterLabel = "";
+
+  if (periodNum === 1) quarterLabel = "1st";
+  else if (periodNum === 2) quarterLabel = "2nd";
+  else quarterLabel = `${periodNum - 2}OT`; // <-- number first
+
+  const displayQuarter = formatQuarter(quarterLabel);
 
   // --- Header Title ---
-  const isNeutralSite = false;
-  const headerTitle = `${awayTeamData.code} @ ${homeTeamData.code}`;
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -218,12 +248,12 @@ export default function GameDetailsScreen() {
           onBack={goBack}
           homeTeamCode={homeTeamData.code}
           awayTeamCode={awayTeamData.code}
-          isNeutralSite={isNeutralSite}
+          isNeutralSite={!!neutralSite}
           league="CBB"
         />
       ),
     });
-  }, [navigation, headerTitle]);
+  }, [navigation, neutralSite, homeTeamData.code, awayTeamData.code]);
 
   // --- Loading Delay for Animation ---
   useEffect(() => {
@@ -252,7 +282,10 @@ export default function GameDetailsScreen() {
           homeScore={displayHomeScore}
           awayScore={displayAwayScore}
           status={statusDisplay}
-          period={quarterLabel}
+          period={displayQuarter}
+          halftime={isHalftime}
+          awayTimeouts={9}
+          homeTimeouts={9}
           displayClock={displayClock}
           colors={colors}
           isDark={isDark}
@@ -273,9 +306,7 @@ export default function GameDetailsScreen() {
             awayCode={awayTeamData.code!}
             gameId={`${homeTeamId}-${awayTeamId}`}
           />
-
           <LastPlay lastPlay={liveScore?.lastPlay} />
-
           <WinPredictionVote
             gameId={`${homeTeamId}-${awayTeamId}`}
             awayTeam={{
@@ -296,6 +327,35 @@ export default function GameDetailsScreen() {
             }}
           />
 
+          {lineScore && (
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeTeamData.code}
+              awayCode={awayTeamData.code}
+              league="CBB"
+            />
+          )}
+
+          <GameLeaders
+            leaders={leaders}
+            awayTeamId={Number(awayEspnId)}
+            homeTeamId={Number(homeEspnId)}
+          />
+
+          <ShotChart
+            plays={plays}
+            homeTeamId={String(homeEspnId)}
+            awayTeamId={String(awayEspnId)}
+            neutralSite={neutralSite}
+            isCBB={true}
+          />
+
+          <GameSummary
+            plays={plays ?? []}
+            homeTeamId={String(homeEspnId)}
+            awayTeamId={String(awayEspnId)}
+            league="CBB"
+          />
           <LastFiveGamesSwitcher
             isDark={isDark}
             home={{
@@ -313,12 +373,10 @@ export default function GameDetailsScreen() {
             league="CBB"
           />
 
-          {highlights.length > 0 && (
+          {highlights?.length > 0 && (
             <HighlightVideoList highlights={highlights} />
           )}
-
           <Officials officials={officials ?? []} loading={false} error={null} />
-
           {/* <TeamLocationSection
             venueImage={}
             venueName={}
@@ -352,8 +410,8 @@ export default function GameDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 0,         // remove top padding
-    paddingBottom: 60,     // keep bottom padding
-    paddingHorizontal: 12, // horizontal padding stays
+    paddingVertical: 0,
+    paddingHorizontal: 12,
+    paddingBottom: 60,
   },
 });

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { LineScore, TeamLocationSection } from "components/GameDetails";
+import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
@@ -15,12 +15,12 @@ import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
 import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
+import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
 import { Colors } from "constants/Colors";
 import { getTeamInfo, neutralStadiums, venueImages } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
-import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGameDetails } from "hooks/NFLHooks/useNFLGameDetails";
@@ -49,6 +49,33 @@ export default function NFLGameDetailsScreen() {
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 👇 Put at top of component
+  const [collapsed, setCollapsed] = useState(false);
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Only update collapsed state when the change is real, not every pixel
+  const lastCollapsedRef = useRef(false);
+  const lastUpdateRef = useRef(0);
+
+  useEffect(() => {
+    const listener = scrollY.addListener(({ value }) => {
+      const now = Date.now();
+
+      // throttle to 50ms (20fps)
+      if (now - lastUpdateRef.current < 50) return;
+      lastUpdateRef.current = now;
+
+      const shouldCollapse = value > 60;
+
+      // prevent useless re-renders
+      if (shouldCollapse !== lastCollapsedRef.current) {
+        lastCollapsedRef.current = shouldCollapse;
+        setCollapsed(shouldCollapse);
+      }
+    });
+
+    return () => scrollY.removeListener(listener);
+  }, []);
 
   // NEW: Lazy load toggle
   const [showDetails, setShowDetails] = useState(false);
@@ -122,12 +149,10 @@ export default function NFLGameDetailsScreen() {
   const homeTeam = home ? getTeamInfo(home.id) ?? emptyTeam : emptyTeam;
   const awayTeam = away ? getTeamInfo(away.id) ?? emptyTeam : emptyTeam;
 
-
   const isNeutralSite =
     gameInfo?.venue?.name &&
     ![homeTeam?.venue, awayTeam?.venue].includes(gameInfo.venue.name);
 
-    
   useLayoutEffect(() => {
     const safeHomeCode =
       homeTeam?.code && homeTeam.code !== "UNK" ? homeTeam.code : "HOM";
@@ -164,14 +189,21 @@ export default function NFLGameDetailsScreen() {
     [isDark]
   );
 
-  const { officials, injuries, previousDrives, currentDrives, venue } =
-    useNFLGameDetails(
-      homeTeam.espnID,
-      awayTeam.espnID,
-      gameInfo?.date?.timestamp
-        ? new Date(gameInfo.date.timestamp * 1000).toISOString()
-        : ""
-    );
+  const {
+    officials,
+    injuries,
+    previousDrives,
+    currentDrives,
+    venue,
+    highlights,
+    scoringPlays,
+  } = useNFLGameDetails(
+    homeTeam.espnID,
+    awayTeam.espnID,
+    gameInfo?.date?.timestamp
+      ? new Date(gameInfo.date.timestamp * 1000).toISOString()
+      : ""
+  );
 
   type GameStatus =
     | "Scheduled"
@@ -285,12 +317,7 @@ export default function NFLGameDetailsScreen() {
     gameDateStr,
     stadiumData?.city ?? ""
   );
-  const { highlights } = useGameHighlights(
-    "nfl",
-    homeTeam?.espnID ? Number(homeTeam.espnID) : undefined,
-    awayTeam?.espnID ? Number(awayTeam.espnID) : undefined,
-    gameDateStr
-  );
+
   const displayWeather = weather
     ? { ...weather, cityName: stadiumData?.city ?? "Unknown" }
     : null;
@@ -362,8 +389,6 @@ export default function NFLGameDetailsScreen() {
     loading: possessionLoading,
   } = useNFLGamePossession(homeTeamName, awayTeamName, gameDateStr);
 
-  
-
   const { headlineText } = useGameInfo(
     Number(homeTeam?.espnID),
     Number(awayTeam?.espnID),
@@ -407,6 +432,7 @@ export default function NFLGameDetailsScreen() {
           formattedDate={formattedDate}
           formattedTime={formattedTime}
           playoffInfo={gameInfo?.week}
+          isCollapsed={collapsed}
         />
 
         {/* Lazy-loaded Section */}
@@ -435,7 +461,6 @@ export default function NFLGameDetailsScreen() {
                 possessionTeamId={possessionTeamId}
                 homeTeamId={Number(homeTeam.id)} // ensure number
                 awayTeamId={Number(awayTeam.id)} // ensure number
-  firstDownYardLine={firstDownYardLine} // 95
               />
             )}
 
@@ -472,6 +497,15 @@ export default function NFLGameDetailsScreen() {
                 secondaryColor: homeTeam.secondaryColor,
               }}
             />
+            
+{/* Game Leaders - only when game is live */}
+{(gameStatus === "In Progress" || gameStatus === "Halftime" || gameStatus === "Final") && (
+  <NFLGameLeaders
+    gameId={String(parsedGame.game.id)}
+    homeTeamId={String(homeTeam.id)}
+    awayTeamId={String(awayTeam.id)}
+  />
+)}
 
             <TeamDrives
               previousDrives={previousDrives ?? []}
@@ -480,14 +514,12 @@ export default function NFLGameDetailsScreen() {
               homeTeamAbbr={homeTeam?.code}
             />
 
-            {/* Game Leaders - only when game is live */}
-            {(gameStatus === "In Progress" || gameStatus === "Halftime") && (
-              <NFLGameLeaders
-                gameId={String(parsedGame.game.id)}
-                homeTeamId={String(homeTeam.id)}
-                awayTeamId={String(awayTeam.id)}
-              />
-            )}
+            <TeamScoringSummary
+              scoringPlays={scoringPlays ?? []}
+              awayTeamAbbr={awayTeam?.code}
+              homeTeamAbbr={homeTeam?.code}
+              league="NFL"
+            />
 
             {stats && <NFLGameTeamStats stats={stats} />}
 
@@ -508,7 +540,7 @@ export default function NFLGameDetailsScreen() {
               league="NFL"
             />
 
-            {highlights.length > 0 && (
+            {gameStatus === "Final" && (
               <HighlightVideoList highlights={highlights} />
             )}
 
@@ -519,8 +551,9 @@ export default function NFLGameDetailsScreen() {
               awayTeamAbbr={awayTeam.code}
               homeTeamAbbr={homeTeam.code}
             />
-            <Officials officials={officials} loading={false} error={null} />
-
+            {gameStatus !== "Final" && (
+              <Officials officials={officials} loading={false} error={null} />
+            )}
             {/* Location */}
             {(
               isNeutralSite
@@ -565,7 +598,7 @@ export default function NFLGameDetailsScreen() {
             ) : null}
 
             {/* Weather */}
-            {displayWeather ? (
+            {displayWeather && gameStatus !== "Final" ? (
               <Weather
                 weather={displayWeather}
                 address={stadiumData?.city ?? ""}
@@ -585,8 +618,7 @@ export default function NFLGameDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 0,
-    paddingVertical: 24,
+    paddingVertical: 0,
     paddingHorizontal: 12,
     paddingBottom: 60,
   },

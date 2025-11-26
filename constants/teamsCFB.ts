@@ -2,7 +2,6 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { CFBTeam, Conference, Venue } from "types/cfb";
 
-
 // Stadiums
 import MiamiStadium from "assets/Football/Arenas/DolphinsStadium.webp";
 import AlabamaStadium from "../assets/Football/Arenas/AlabamaStadium.webp";
@@ -257,6 +256,7 @@ import ECULogo from "../assets/College_Logos/EastCarolina.png";
 import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
 import EasternWashingtonLogo from "../assets/College_Logos/EasternWashington.png";
 import EasternWashingtonLogoLight from "../assets/College_Logos/EasternWashingtonLight.png";
+import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
 import ElonLogo from "../assets/College_Logos/Elon.png";
 import ETAMLogo from "../assets/College_Logos/ETA&M.png";
 import FordhamLogo from "../assets/College_Logos/Fordham.png";
@@ -353,9 +353,8 @@ import WashingtonStateLogoLight from "../assets/College_Logos/WashingtonStateLig
 import WCarolinaLogo from "../assets/College_Logos/WCarolina.png";
 import WeberStateLogo from "../assets/College_Logos/WeberState.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
-import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
+import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
 export const teams: CFBTeam[] = [
   {
@@ -1494,6 +1493,7 @@ export const teams: CFBTeam[] = [
     espnID: 2065,
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
+    shortName: "Bethune",
     code: "BCU",
     color: "#7b1831",
     secondaryColor: "#e9aa12",
@@ -3974,6 +3974,9 @@ export function getTeamLogoESPN(idOrAbbr: number | string, isDark: boolean) {
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
+export const getTeamById = (id?: number | string) =>
+  teams.find((t) => String(t.id) === String(id));
+
 export const getTeamName = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   return team?.name || fallback || "Unknown Team";
@@ -3988,6 +3991,14 @@ export const getTeamCodeESPN = (teamId: number | string, fallback?: string) => {
   const team = getTeamInfo(teamId);
   const teamESPN = teams.find((t) => String(t.espnID) === String(teamId));
   return teamESPN?.code || fallback || "UKNW";
+};
+
+// returns the internal numeric ID
+export const getTeamIdByESPN = (espnId?: number): number | undefined => {
+  if (!espnId) return undefined;
+  const team = teams.find((t) => t.espnID === espnId);
+  // convert to number in case it's a string
+  return team?.id ? Number(team.id) : undefined;
 };
 
 export function getCFBTeamAbbreviation(

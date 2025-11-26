@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
 import { getTeamLogo, teams } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
@@ -22,12 +22,41 @@ import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-type Props = {
-  game: CBBGame; // TODO: replace with proper CBB Game type
-  isDark?: boolean;
-};
+// --- Helper function to normalize API status ---
+function mapStatus(apiStatus: {
+  short: number | string;
+  long?: string;
+}): string {
+  const long = apiStatus.long?.toLowerCase();
 
-function CBBGameCard({ game, isDark }: Props) {
+  // ✅ prioritize 'long' from API
+  if (long === "in play") return "In Play";
+  if (long === "finished") return "Final";
+  if (long === "scheduled") return "Scheduled";
+  if (long === "canceled") return "Canceled";
+  if (long === "delayed") return "Delayed";
+  if (long === "postponed") return "Postponed";
+
+  // fallback using numeric 'short' codes
+  const short = Number(apiStatus.short);
+  switch (short) {
+    case 1:
+      return "Scheduled";
+    case 2:
+    case 3:
+      return "Final"; // only if 'long' was missing
+    case 4:
+      return "Postponed";
+    case 5:
+      return "Delayed";
+    case 6:
+      return "Canceled";
+    default:
+      return "Scheduled";
+  }
+}
+
+function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
   const styles = getStyles(dark);
@@ -75,94 +104,15 @@ function CBBGameCard({ game, isDark }: Props) {
   const getTeamShortName = (id?: number | string): string =>
     getTeamById(id)?.shortName ?? "";
 
+  // --- helper: shortName → fallback to full name
+  const getTeamPreferredName = (id?: number | string) => {
+    const short = getTeamShortName(id);
+    return short && short.trim() !== "" ? short : getTeamName(id);
+  };
+
   // 🏈 Use ESPN team IDs, not internal IDs
   const awayEspnId = getTeamById(awayId)?.espnID;
   const homeEspnId = getTeamById(homeId)?.espnID;
-
-  // --- Game status ---
-  const statusData = game?.status ?? game?.status ?? {};
-
-const status = useMemo(() => {
-  const long = statusData?.long ?? "";
-  const short = String(statusData?.short ?? "").toLowerCase();
-  const longLower = long.toLowerCase();
-
-  const livePhrases = [
-    "in play",
-    "playing",
-    "live",
-    "in progress",
-    "1st half",
-    "2nd half",
-    "quarter 1",
-    "quarter 2",
-    "quarter 3",
-    "quarter 4",
-    "q1",
-    "q2",
-    "q3",
-    "q4",
-  ];
-
-  const isHalftime =
-    longLower.includes("halftime") ||
-    statusData?.long?.toLowerCase?.() === "halftime" ||
-    statusData?.short?.toLowerCase?.() === "halftime";
-
-  let isFinal =
-    ["final", "game finished", "ended"].some((s) => longLower.includes(s)) ||
-    short.includes("ft");
-
-  // ✅ Treat "AOT" as final
-  if (longLower.includes("aot") || short.includes("aot")) {
-    isFinal = true;
-  }
-
-  const isScheduled = ["not started", "scheduled", "upcoming"].some((s) =>
-    longLower.includes(s)
-  );
-
-  // ✅ Live only if not final
-  const isLive =
-    !isFinal &&
-    !isHalftime &&
-    (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
-      (statusData?.timer && statusData.timer !== "")) &&
-    !longLower.includes("end of");
-
-  return {
-    isScheduled,
-    isFinal,
-    wentOT:
-      longLower.includes("ot") ||
-      longLower.includes("overtime") ||
-      short.includes("ot"),
-    isCanceled: longLower.includes("canceled"),
-    isDelayed: longLower.includes("delayed"),
-    isPostponed: longLower.includes("postponed"),
-    isHalftime,
-    isLive,
-    short: statusData?.short,
-    long,
-    timer: statusData?.timer,
-  };
-}, [statusData]);
-
-  const possession = status.isLive
-    ? useCBBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
-    : {
-        gameStatusDescription: undefined,
-        possessionText: undefined,
-        gameStatusShortDetail: undefined,
-        possessionTeamId: undefined,
-        displayClock: undefined,
-        period: undefined,
-        score: {
-          home: game?.scores?.home?.total ?? 0,
-          away: game?.scores?.away?.total ?? 0,
-        },
-        refresh: () => {},
-      };
 
   const { headlineText } = useCBBHeadline(
     Number(homeEspnId),
@@ -170,58 +120,152 @@ const status = useMemo(() => {
     gameDateStr
   );
 
-  const { score: liveScore, isLive } = useGameScores(
+  const { score: liveScore } = useGameScores(
     "mens-college-basketball",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
     gameDateStr
   );
+  // --- Game status ---
+  const statusData = game?.status ?? game?.status ?? {};
 
-  const {
-    possessionTeamId,
-    displayClock,
-    gameStatusDescription,
-    gameStatusShortDetail,
-    period,
-  } = possession;
+  const status = useMemo(() => {
+    const long = statusData?.long ?? "";
+    const short = String(statusData?.short ?? "").toLowerCase();
+    const longLower = long.toLowerCase();
 
-  // --- Helper for score or record ---
-  const getDisplayValue = (isHome: boolean) => {
-    if (status.isScheduled) {
-      return isHome ? homeTeam.record : awayTeam.record;
+    const livePhrases = [
+      "in play",
+      "playing",
+      "live",
+      "in progress",
+      "1st half",
+      "2nd half",
+      "q1",
+      "q2",
+      "q3",
+      "q4",
+      "over time",
+    ];
+
+    const isHalftime =
+      longLower.includes("halftime") ||
+      statusData?.long?.toLowerCase?.() === "halftime" ||
+      statusData?.short?.toLowerCase?.() === "halftime";
+
+    let isFinal =
+      ["final"].some((s) => longLower.includes(s)) || short.includes("ft");
+
+    // ✅ Treat "AOT" as final
+    if (longLower.includes("aot") || short.includes("aot")) {
+      isFinal = true;
     }
-    if (status.isFinal) {
-      // ✅ Final: use last known static score as fallback if hook score missing
-      return isHome
-        ? possession?.score?.home ?? game?.scores?.home?.total ?? 0
-        : possession?.score?.away ?? game?.scores?.away?.total ?? 0;
+
+    const isScheduled = ["scheduled"].some((s) => longLower.includes(s));
+
+    // ✅ Live only if not final
+    const isLive =
+      !isFinal &&
+      !isHalftime &&
+      (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
+        (statusData?.timer && statusData.timer !== "")) &&
+      !longLower.includes("end of");
+
+    return {
+      isScheduled,
+      isFinal,
+      wentOT:
+        longLower.includes("ot") ||
+        longLower.includes("overtime") ||
+        short.includes("ot"),
+      isCanceled: longLower.includes("canceled"),
+      isDelayed: longLower.includes("delayed"),
+      isPostponed: longLower.includes("postponed"),
+      isHalftime,
+      isLive,
+      short: statusData?.short,
+      long,
+      timer: statusData?.timer,
+    };
+  }, [statusData]);
+
+  const currentPeriod = liveScore?.period;
+
+  // --- Helpers ---
+  const formatQuarter = (period?: number | string, statusText?: string) => {
+    if (!period && !statusText) return "Live";
+
+    // handle strings from API
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) return val.toUpperCase(); // OT or OT2
+      if (val.includes("halftime")) return "Halftime";
+      return val;
     }
-    // ✅ Live: always prefer possession hook’s live score
-    return isHome ? homeScore : awayScore;
+
+    const p = Number(period);
+
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+
+    // OT handling
+    const ot = p - 2;
+    return ot === 1 ? "OT" : `${ot}OT`;
   };
 
+  // Final with OT label
+  function getFinalWithQuarterLabel(period?: number, statusText?: string) {
+    if (!period && !statusText) return "Final";
 
-  
+    // Use statusText if it contains OT info
+    if (statusText?.toLowerCase().includes("ot")) {
+      return `Final/${statusText.match(/OT\d*/i)?.[0]?.toUpperCase() ?? "OT"}`;
+    }
 
-  const displayStatus = (() => {
+    // Otherwise fallback to period number
+    if (!period || period <= 2) return "Final";
+    const ot = period - 2;
+    return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
+  }
+
+
+  // Normalize status
+  const effectiveStatus = useMemo(() => {
+    const statusText = liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
     const base =
-      gameStatusDescription ??
-      status.long ??
-      status.short ??
-      game.status.long ??
-      game.status.short ??
-      "Scheduled";
+      typeof game.status.long === "string"
+        ? game.status.long
+        : mapStatus(game.status.long);
 
-    const lower = base.toLowerCase();
-
-    if (status.isFinal && status.wentOT) return "Final/OT"; // ✅ NEW: Final + OT
-    if (lower === "game finished") return "Final";
-    if (lower.includes("postponed")) return "Postponed";
-    if (lower.includes("canceled")) return "Canceled";
-    if (lower.includes("overtime")) return "OT";
+    if (statusText.includes("final") || base.toLowerCase().includes("final"))
+      return "Final";
+    if (
+      statusText.includes("halftime") ||
+      base.toLowerCase().includes("halftime")
+    )
+      return "Halftime";
+    if (
+      statusText.includes("in progress") ||
+      statusText.includes("in_play") ||
+      statusText.includes("qtr") ||
+      statusText.includes("quarter") ||
+      statusText.includes("ot") // ✅ detect OT in progress
+    )
+      return "In Play";
 
     return base;
-  })();
+  }, [game.status, liveScore?.statusText]);
+
+  // Boolean flags
+  const inProgress = effectiveStatus === "In Play";
+
+  // Now derive booleans reactively
+  const isFinal = effectiveStatus === "Final";
+
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = game.status.long === "Game Postponed";
+  const isHalftime = liveScore?.statusText === "Halftime";
 
   const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
   const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
@@ -237,17 +281,8 @@ const status = useMemo(() => {
       shortName: getTeamShortName(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(awayEspnId), // ONLY if live
     }),
-    [
-      awayId,
-      awayEspnId,
-      awayRecord?.overall,
-      possessionTeamId,
-      dark,
-      status.isLive,
-    ]
+    [awayId, awayEspnId, awayRecord?.overall, dark, status.isLive]
   );
 
   const homeTeam = useMemo(
@@ -258,17 +293,8 @@ const status = useMemo(() => {
       shortName: getTeamShortName(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(homeEspnId), // ONLY if live
     }),
-    [
-      homeId,
-      homeEspnId,
-      homeRecord?.overall,
-      possessionTeamId,
-      dark,
-      status.isLive,
-    ]
+    [homeId, homeEspnId, homeRecord?.overall, dark, status.isLive]
   );
 
   // --- Broadcasts ---
@@ -281,27 +307,8 @@ const status = useMemo(() => {
 
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  // --- Helpers ---
-  const formatQuarter = (period?: number | string, statusText?: string) => {
-    if (!period) return "";
-
-    // Handle if the period is already a descriptive string
-    if (typeof period === "string") {
-      const val = period.toLowerCase();
-      if (val.includes("ot")) return "OT";
-      if (val.includes("1")) return "1st";
-      if (val.includes("2")) return "2nd";
-      if (val.includes("half")) return "Halftime";
-      return period;
-    }
-
-    // ✅ For NCAA: only 2 halves + possible OTs
-    const p = Number(period);
-    if (p === 1) return "1st";
-    if (p === 2) return "2nd";
-    const otNumber = p - 2;
-    return otNumber === 1 ? "OT" : `OT${otNumber}`;
-  };
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
 
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -321,25 +328,168 @@ const status = useMemo(() => {
     gameDate.getMonth() === 3 && // January = 0
     gameDate.getDate() === 7;
 
-  const getTeamStyle = useMemo(
-    () =>
-      (isHome: boolean): TextStyle => {
-        const homeScore = game?.scores?.home?.total ?? 0;
-        const awayScore = game?.scores?.away?.total ?? 0;
+  const winnerStyle = (teamWins: boolean): TextStyle => ({
+    color: dark ? Colors.white : Colors.black,
+    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+  });
 
-        let isWinner = true;
-        if (status.isFinal && homeScore !== awayScore) {
-          isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
-        }
-        return {
-          color: dark ? "#fff" : "#1d1d1d",
-          opacity: isWinner ? 1 : 0.5,
-        };
-      },
-    [dark, status, game?.scores]
+  const ScoreText = ({
+    score,
+    recordData,
+    teamWins,
+    showRecord,
+  }: {
+    score?: number;
+    recordData?: string;
+    teamWins: boolean;
+    showRecord?: boolean;
+  }) => {
+    const hasScore = typeof score === "number" && !isNaN(score);
+    const displayValue =
+      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+    const style =
+      showRecord || !hasScore
+        ? styles.teamRecord
+        : [styles.teamScore, winnerStyle(teamWins)];
+    return <Text style={style}>{displayValue}</Text>;
+  };
+
+  const renderCardContent = () => (
+    <>
+      {/* Away Team */}
+      <View style={styles.teamSection}>
+        <Image
+          source={awayTeam.logo}
+          style={[styles.logo]}
+          accessibilityLabel={`${awayTeam.name} logo`}
+        />
+        <Text style={styles.teamName}>
+          {" "}
+          {awayEspnId && getTeamRank(String(awayEspnId)) && (
+            <Text style={{ fontSize: 10, color: "#aaa" }}>
+              {getTeamRank(String(awayEspnId))}{" "}
+            </Text>
+          )}
+          {getTeamPreferredName(awayId)}
+        </Text>
+      </View>
+     <ScoreText
+  score={awayScore}
+  recordData={awayTeam.record ?? undefined}
+  teamWins={awayWins}
+  showRecord={
+    effectiveStatus === "Not Started" ||
+    isCanceled ||
+    isPostponed
+  }
+/>
+
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headlineText}</Text>
+
+      {/* Center Info */}
+      <View
+        style={[
+          styles.info,
+          !broadcastText && {
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        {/* Status / Score */}
+        {isCanceled ? (
+          <Text style={styles.finalText}>Canceled</Text>
+        ) : isDelayed ? (
+          <Text style={styles.finalText}>Delayed</Text>
+        ) : isPostponed ? (
+          <Text style={styles.finalText}>Postponed</Text>
+        ) : isHalftime ? (
+          <Text style={styles.finalText}>Halftime</Text>
+        ) : isFinal ? (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>
+              {getFinalWithQuarterLabel(currentPeriod)}
+            </Text>
+            <View style={styles.finalStatusDivider} />
+            <Text style={styles.finalText}>{formattedDate}</Text>
+          </View>
+        ) : inProgress ? (
+          <View style={styles.infoWrapper}>
+            {liveScore?.statusText?.toLowerCase().includes("end of") ||
+            liveScore?.statusText?.toLowerCase().includes("final") ? (
+              <Text style={styles.finalText}>{liveScore.statusText}</Text>
+            ) : (
+              <>
+                <Text style={styles.date}>{formatQuarter(currentPeriod)}</Text>
+                {liveScore?.displayClock && (
+                  <>
+                    <View style={styles.statusDivider} />
+                    <Text style={styles.clock}>{liveScore.displayClock}</Text>
+                  </>
+                )}
+              </>
+            )}
+          </View>
+        ) : (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.date}>{formattedDate}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.date}>{formattedTime ?? "TBD"}</Text>
+          </View>
+        )}
+
+        {!isFinal && broadcastText && (
+          <Text style={styles.broadcast}>{broadcastText}</Text>
+        )}
+      </View>
+
+      {/* Home Team */}
+    <ScoreText
+  score={homeScore}
+  recordData={homeTeam.record ?? undefined}
+  teamWins={homeWins}
+  showRecord={
+    effectiveStatus === "Not Started" ||
+    isCanceled ||
+    isPostponed
+  }
+/>
+
+      <View style={styles.teamSection}>
+        <Image
+          source={homeTeam.logo}
+          style={[styles.logo]}
+          accessibilityLabel={`${homeTeam.name} logo`}
+        />
+        <Text style={styles.teamName}>
+          {" "}
+          {homeEspnId && getTeamRank(String(homeEspnId)) && (
+            <Text style={{ fontSize: 10, color: "#aaa" }}>
+              {getTeamRank(String(homeEspnId))}{" "}
+            </Text>
+          )}
+          {getTeamPreferredName(homeId)}
+        </Text>
+      </View>
+
+      {/* Notification Bell */}
+      <Pressable
+        onPress={() => setNotifEnabled((prev) => !prev)}
+        style={({ pressed }) => [
+          styles.notificationBell,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Ionicons
+          name={notifEnabled ? "notifications" : "notifications-outline"}
+          size={20}
+        color={isDark ? Colors.white : Colors.black}
+        />
+      </Pressable>
+    </>
   );
 
-  // --- UI Render ---
   return (
     <TouchableOpacity
       activeOpacity={0.85}
@@ -354,266 +504,18 @@ const status = useMemo(() => {
     >
       {isChampionshipGame ? (
         <LinearGradient
-          colors={["#DFBD69", "#CDA765"]}
+         colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#DFBD69", "#CDA765"] as [string, string])
+          }
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.card}
+          end={{ x: 0, y: 1 }}
         >
-          {/* Away Team */}
-          <View style={styles.teamSection}>
-            <Image source={awayTeam.logo} style={styles.logo} />
-            <Text
-              style={[
-                styles.teamName,
-                { width: 100, flexDirection: "row", color: "#1d1d1d" },
-              ]}
-            >
-              {getTeamRank(String(awayTeam.espnID)) && (
-                <Text style={{ fontSize: 10, color: "#1d1d1d" }}>
-                  {getTeamRank(String(awayTeam.espnID))}
-                </Text>
-              )}{" "}
-              {awayTeam.shortName || awayTeam.name}
-            </Text>
-          </View>
-
-          {/* Away Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(false),
-              { color: "#1d1d1d" },
-            ]}
-          >
-            {getDisplayValue(false)}
-          </Text>
-
-          {/* Game Info */}
-          <View style={styles.info}>
-            {status.isScheduled ? (
-              <>
-                <Text style={[styles.date, { color: "#1d1d1d" }]}>
-                  {formattedDate}
-                </Text>
-                <Text style={[styles.time, { color: "#444" }]}>
-                  {formattedTime}
-                </Text>
-              </>
-            ) : status.isLive ? (
-              <>
-                {displayClock === "0:00" &&
-                gameStatusDescription?.toLowerCase().includes("end of") ? (
-                  //  ✅ Special case: end of quarter
-                  <Text style={[styles.date, { color: "#1d1d1d" }]}>
-                    {gameStatusShortDetail}
-                  </Text>
-                ) : (
-                  // ✅ Normal live display
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}
-                  >
-                    <Text style={[styles.date, { color: "#1d1d1d" }]}>
-                      {formatQuarter(status.short, displayStatus)}
-                    </Text>
-                    <View
-                      style={{
-                        height: 14,
-                        width: 1,
-                        backgroundColor: "#444",
-                      }}
-                    />
-                    <Text style={[styles.clock, { color: "#cc0000" }]}>
-                      {displayClock ?? "0:00"}
-                    </Text>
-                  </View>
-                )}
-              </>
-            ) : gameStatusShortDetail?.toLowerCase() === "halftime" ? (
-              <>
-                <Text style={[styles.date, { color: "#1d1d1d" }]}>
-                  {displayStatus}
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text style={[styles.finalText, { color: "#cc0000" }]}>
-                  {displayStatus}
-                </Text>
-                <Text style={[styles.finalText, { color: "#444" }]}>
-                  {formattedDate}
-                </Text>
-              </>
-            )}
-
-            {!status.isFinal && broadcastText && (
-              <Text style={[styles.broadcast, { color: "#444" }]}>
-                {broadcastText}
-              </Text>
-            )}
-          </View>
-
-          <Text style={[styles.headlineText, { color: "#444" }]}>
-            {headlineText}
-          </Text>
-
-          {/* Home Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(true),
-              { color: "#1d1d1d" },
-            ]}
-          >
-            {getDisplayValue(true)}
-          </Text>
-
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            <Image source={homeTeam.logo} style={[styles.logo]} />
-            <Text
-              style={[
-                styles.teamName,
-                { width: 100, flexDirection: "row", color: "#1d1d1d" },
-              ]}
-            >
-              {getTeamRank(String(homeTeam.espnID)) && (
-                <Text style={{ fontSize: 10, color: "#1d1d1d" }}>
-                  {getTeamRank(String(homeTeam.espnID))}
-                </Text>
-              )}{" "}
-              {homeTeam.shortName || homeTeam.name}
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => setNotifEnabled((prev) => !prev)}
-            style={({ pressed }) => [
-              styles.notificationBell,
-              pressed && { opacity: 0.6 },
-            ]}
-          >
-            <Ionicons
-              name={notifEnabled ? "notifications" : "notifications-outline"}
-              size={20}
-              color={"#1d1d1d"}
-            />
-          </Pressable>
-          {/* ... rest of the card unchanged */}
+          {renderCardContent()}
         </LinearGradient>
       ) : (
-        <View style={styles.card}>
-          {/* Away Team */}
-          <View style={styles.teamSection}>
-            <Image source={awayTeam.logo} style={styles.logo} />
-            <Text
-              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
-            >
-              {getTeamRank(String(awayTeam.espnID)) && (
-                <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(String(awayTeam.espnID))}
-                </Text>
-              )}{" "}
-              {awayTeam.shortName ? awayTeam.shortName : awayTeam.name}
-            </Text>
-          </View>
-
-          {/* Away Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(false),
-            ]}
-          >
-            {getDisplayValue(false)}
-          </Text>
-
-          {/* Game Info */}
-          <View style={styles.info}>
-            {status.isScheduled ? (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.date}>{formattedDate}</Text>
-                <View style={styles.statusDivider} />
-                <Text style={styles.date}>{formattedTime}</Text>
-              </View>
-            ) : status.isLive ? (
-              <View style={styles.infoWrapper}>
-                {displayClock === "0:00" &&
-                gameStatusDescription?.toLowerCase().includes("end of") ? (
-                  //  ✅ Special case: end of quarter
-                  <Text style={styles.date}>{gameStatusShortDetail}</Text>
-                ) : (
-                  // ✅ Normal live display
-                  <View style={styles.infoWrapper}>
-                    <Text style={styles.date}>
-                      {formatQuarter(period ?? status.short ?? status.long)}
-                    </Text>
-                    <View style={styles.statusDivider} />
-                    <Text style={styles.clock}>{displayClock}</Text>
-                  </View>
-                )}
-              </View>
-            ) : status.isHalftime ? (
-              <>
-                <Text style={styles.date}>{displayStatus}</Text>
-              </>
-            ) : (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.finalText}>{displayStatus} </Text>
-                <View style={styles.finalStatusDivider} />
-                <Text style={styles.finalText}>{formattedDate}</Text>
-              </View>
-            )}
-
-            {!status.isFinal && broadcastText && (
-              <Text style={styles.broadcast}>{broadcastText}</Text>
-            )}
-          </View>
-          <Text style={styles.headlineText}>{headlineText}</Text>
-
-          {/* Home Record / Score */}
-          <Text
-            style={[
-              status.isScheduled ? styles.teamRecord : styles.teamScore,
-              getTeamStyle(true),
-            ]}
-          >
-            {getDisplayValue(true)}
-          </Text>
-
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            <Image source={homeTeam.logo} style={styles.logo} />
-            <Text
-              style={[styles.teamName, { width: 100, flexDirection: "row" }]}
-            >
-              {getTeamRank(String(homeTeam.espnID)) && (
-                <Text style={{ fontSize: 10, color: "#aaa" }}>
-                  {getTeamRank(String(homeTeam.espnID))}
-                </Text>
-              )}{" "}
-              {homeTeam.shortName ? homeTeam.shortName : homeTeam.name}
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => setNotifEnabled((prev) => !prev)}
-            style={({ pressed }) => [
-              styles.notificationBell,
-              pressed && { opacity: 0.6 },
-            ]}
-          >
-            <Ionicons
-              name={notifEnabled ? "notifications" : "notifications-outline"}
-              size={20}
-              color={isDark ? "#fff" : "#1d1d1d"}
-            />
-          </Pressable>
-        </View>
+        <View style={styles.card}>{renderCardContent()}</View>
       )}
     </TouchableOpacity>
   );

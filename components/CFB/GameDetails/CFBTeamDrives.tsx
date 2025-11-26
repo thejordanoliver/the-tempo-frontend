@@ -1,10 +1,11 @@
-
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "components/TabBars/FixedWidthTabBar";
+import { getTeamLogo } from "constants/teamsCFB";
 import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import HeadingTwo from "../../Headings/HeadingTwo";
-import FixedWidthTabBar, { getLabelStyle } from "components/NFL/TabBars/FixedWidthTabBar";
 import CFBDrivesList, { Drive } from "./CFBDrivesList";
-import { getTeamLogo } from "constants/teamsCFB";
 type Props = {
   previousDrives?: Drive[] | null;
   currentDrives?: Drive[] | null;
@@ -66,7 +67,6 @@ export default function CFBTeamDrives({
 
   if (!loading && allDrives.length === 0) return <></>;
 
-  
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Drives</HeadingTwo>
@@ -78,31 +78,31 @@ export default function CFBTeamDrives({
         awayTeamAbbr={awayTeamAbbr}
         homeTeamAbbr={homeTeamAbbr}
         lighter={lighter} // <-- pass lighter
-    renderLabel={(code, isSelected) => {
-  // ✅ Prefer light logo if lighter, fallback to normal
-  const logo =
-    (lighter ? getTeamLogo(code, true) : null) || getTeamLogo(code, false);
+        renderLabel={(code, isSelected) => {
+          // ✅ Prefer light logo if lighter, fallback to normal
+          const logo =
+            (lighter ? getTeamLogo(code, true) : null) ||
+            getTeamLogo(code, false);
 
-  return (
-    <View style={styles.tabLabel}>
-      {logo && (
-        <Image
-          source={logo}
-          style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
-          resizeMode="contain"
-        />
-      )}
-      <Text
-        style={getLabelStyle(isDark, isSelected, lighter, {
-          opacity: isSelected ? 1 : 0.5, // keep text opacity logic
-        })}
-      >
-        {code}
-      </Text>
-    </View>
-  );
-}}
-
+          return (
+            <View style={styles.tabLabel}>
+              {logo && (
+                <Image
+                  source={logo}
+                  style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
+                  resizeMode="contain"
+                />
+              )}
+              <Text
+                style={getLabelStyle(isDark, isSelected, lighter, {
+                  opacity: isSelected ? 1 : 0.5, // keep text opacity logic
+                })}
+              >
+                {code}
+              </Text>
+            </View>
+          );
+        }}
       />
 
       <CFBDrivesList

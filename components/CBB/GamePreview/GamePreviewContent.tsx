@@ -1,20 +1,20 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { GameLeaders } from "components/GameDetails";
+import { LineScore } from "components/GameDetails";
 import BoxScore from "components/GameDetails/BoxScore";
-import GameOfficials from "components/GameDetails/GameOfficials";
 import GameTeamStats from "components/GameDetails/GameTeamStats";
-import GameUniforms from "components/GameDetails/GameUniforms";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
-import TeamInjuriesTab from "components/GameDetails/TeamInjuries";
+import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
 import React from "react";
 import { View } from "react-native";
-import LineScore from "../GameDetails/LineScore";
+import GameLeaders from "../GameDetails/GameLeaders";
 export default function GamePreviewContent({
   game,
   home,
   away,
+  officials,
   lineScore,
+  leaders,
   homeLastGames,
   awayLastGames,
   gameStats,
@@ -30,17 +30,26 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
-      {/* Line Score */}
       {lineScore && (
         <View style={{ marginBottom: 24 }}>
           <LineScore
             linescore={lineScore}
-            homeCode={home?.code}
-            awayCode={away?.code}
+            homeCode={home.code}
+            awayCode={away.code}
+            league="CBB"
             lighter
           />
         </View>
       )}
+
+      <View style={{ marginBottom: 24 }}>
+        <GameLeaders
+          leaders={leaders}
+          awayTeamId={Number(away.espnID)}
+          homeTeamId={Number(home.espnID)}
+          lighter
+        />
+      </View>
 
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
@@ -70,15 +79,6 @@ export default function GamePreviewContent({
       {game?.id && gameStats?.length > 0 && (
         <>
           <View style={{ marginBottom: 24 }}>
-            <GameLeaders
-              gameId={game.id.toString()}
-              awayTeamId={away?.id}
-              homeTeamId={home?.id}
-              lighter
-            />
-          </View>
-
-          <View style={{ marginBottom: 24 }}>
             <BoxScore
               gameId={game.id.toString()}
               homeTeamId={home?.id}
@@ -92,7 +92,12 @@ export default function GamePreviewContent({
         </>
       )}
 
-
+      <Officials
+        officials={officials ?? []}
+        loading={false}
+        error={null}
+        lighter
+      />
 
       {/* Weather */}
       {weather && (

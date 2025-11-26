@@ -61,7 +61,7 @@ export function GameInfo({
         <>
           {halftime ? (
             // 🟢 Halftime display
-            <Text style={styles.date}>Halftime</Text>
+            <Text style={styles.finalText}>Halftime</Text>
           ) : (
             // 🕓 Normal in-play display, hide clock if no value
             <View style={styles.infoWrapper}>

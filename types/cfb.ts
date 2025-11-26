@@ -201,8 +201,27 @@ export const emptyTeam: CFBTeam = {
     flag: "Unknown",
   },
   logo: DefaultLogo, // ✅ correct type
-  logo500x500: "",
   fullName: "Unknown",
   color: "#000000",
   secondaryColor: "#FFFFFF",
+};
+
+export const emptyAwayTeam: CFBTeam = {
+  id: 0,
+  espnID: -2,
+  name: "Away",
+  shortName: "Away",
+  code: "AWY",
+  fullName: "Away Team",
+  logo: DefaultLogo, // ✅ correct type
+};
+
+export const emptyHomeTeam: CFBTeam = {
+  id: 0,
+  espnID: -1,
+  name: "Home",
+  shortName: "Home",
+  code: "HME",
+  fullName: "Home Team",
+  logo: DefaultLogo, // ✅ correct type
 };

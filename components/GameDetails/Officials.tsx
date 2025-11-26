@@ -139,7 +139,11 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
     position: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: lighter ? Colors.darkGray : Colors.midTone,
+      color: lighter
+        ? Colors.midTone
+        : isDark
+        ? Colors.darkGray
+        : Colors.midTone,
       marginBottom: 4,
       textAlign: "center",
     },

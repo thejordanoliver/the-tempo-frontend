@@ -6,7 +6,9 @@ import {
   sizeStyles,
   styles,
 } from "styles/GameDetailStyles/TeamRow.styles";
-import { useTeamInfo } from "../../hooks/useTeamInfo";
+
+import { teams as nbaTeams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
 
 export const TeamRow = ({
   team,
@@ -19,33 +21,26 @@ export const TeamRow = ({
   size = "medium",
   status,
   timeouts,
-  league = "nba", // ✅ defaults to NBA
+  league = "nba",
 }: NBAProps & { status?: string; league?: "nba" | "cbb" }) => {
   const router = useRouter();
-  const { team: detailedTeam } = useTeamInfo(team.id?.toString());
 
-  const renderTimeouts = (remaining: number) => {
-    const totalTimeouts = 6;
-    return (
-      <View style={{ flexDirection: "row", marginTop: 4 }}>
-        {Array.from({ length: totalTimeouts }).map((_, i) => (
-          <View
-            key={i}
-            style={{
-              width: 4,
-              height: 2,
-              borderRadius: 4,
-              backgroundColor: isDark ? Colors.white : Colors.black,
-              opacity: i < remaining ? 1 : 0.5,
-              marginHorizontal: 2,
-            }}
-          />
-        ))}
-      </View>
-    );
-  };
+  // -----------------------------------------------------
+  // ✅ Get Team Info from constants instead of useTeamInfo
+  // -----------------------------------------------------
+  const teamLookup =
+    league === "cbb"
+      ? cbbTeams.find((t) => t.id?.toString() === team.id?.toString())
+      : nbaTeams.find((t) => t.id?.toString() === team.id?.toString());
 
-  // ✅ Normalize CBB statuses to shared terms
+  // Use light logo in dark mode if available
+  const resolvedLogo = isDark && teamLookup?.logoLight ? teamLookup.logoLight : teamLookup?.logo ?? team.logo;
+  const resolvedCode = teamLookup?.code ?? team.code;
+  const resolvedRecord = team.record;
+
+  // -----------------------------------------------------
+  // Status normalization
+  // -----------------------------------------------------
   const normalizedStatus =
     league === "cbb"
       ? (() => {
@@ -77,19 +72,17 @@ export const TeamRow = ({
 
   const isScheduled = normalizedStatus === "Scheduled";
   const isLive = normalizedStatus === "In Play";
-  const isInvalidRecord = team.record === "-";
 
-  const displayRecord = isInvalidRecord
-    ? detailedTeam?.current_season_record ?? ""
-    : team.record;
+  const isInvalidRecord = resolvedRecord === "-";
+  const displayRecord = isInvalidRecord ? "" : resolvedRecord;
 
+  // -----------------------------------------------------
+  // Routing
+  // -----------------------------------------------------
   const handleTeamPress = () => {
     if (!team.id) return;
-    if (league === "cbb") {
-      router.push(`/team/cbb/${team.id}`);
-    } else {
-      router.push(`/team/${team.id}`);
-    }
+    if (league === "cbb") router.push(`/team/cbb/${team.id}`);
+    else router.push(`/team/${team.id}`);
   };
 
   const showRecordInsteadOfScore = isScheduled || score == null;
@@ -104,6 +97,27 @@ export const TeamRow = ({
       : isWinner
       ? colors.winnerScore
       : colors.score,
+  };
+
+  const renderTimeouts = (remaining: number) => {
+    const totalTimeouts = 7;
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: totalTimeouts }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 4,
+              height: 2,
+              borderRadius: 4,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              opacity: i < remaining ? 1 : 0.5,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -128,35 +142,24 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={team.logo} style={sizeStyles[size].logo} />
+          <Image source={resolvedLogo} style={sizeStyles[size].logo} />
         </Pressable>
+
         <View style={styles.teamInfo}>
-          <Text
-            style={[
-              styles.teamName,
-              { color: colors.text },
-              sizeStyles[size].teamName,
-            ]}
-          >
+          <Text style={[styles.teamName, { color: colors.text }]}>
             <Text style={{ fontSize: 10, color: Colors.lightGray }}>
               {rank}
             </Text>{" "}
-            {team.code}
+            {resolvedCode}
           </Text>
 
           {!showRecordInsteadOfScore && !isLive && (
-            <Text
-              style={[
-                styles.record,
-                { color: colors.record },
-                sizeStyles[size].record,
-              ]}
-            >
+            <Text style={[styles.record, { color: colors.record }]}>
               {displayRecord}
             </Text>
           )}
 
-          {isLive && (
+          {isLive && timeouts !== undefined && (
             <View style={{ alignItems: "center" }}>
               {renderTimeouts(timeouts)}
             </View>

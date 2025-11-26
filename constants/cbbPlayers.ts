@@ -1,4 +1,4 @@
-import { CBBPlayer } from "types/cbb";
+import { CBBPlayer } from "types/types";
 
 export const players: CBBPlayer[] = [
   {

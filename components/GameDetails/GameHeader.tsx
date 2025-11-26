@@ -4,6 +4,7 @@ import { TeamRecord } from "hooks/useTeamRecords";
 import { StyleSheet, Text, View } from "react-native";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
+
 type StatusType =
   | string
   | {
@@ -72,23 +73,44 @@ export default function GameHeader({
 }: Props) {
   const styles = getStyles(isDark);
 
-  // Normalize status
   const normalizedStatus = (() => {
-    const s =
-      typeof status === "string"
-        ? status.toLowerCase()
-        : (status?.long ?? "").toLowerCase();
+    let raw = "";
 
-    if (["final", "finished", "completed"].some((k) => s.includes(k)))
-      return "Final";
-    if (["canceled", "cancelled"].some((k) => s.includes(k))) return "Canceled";
-    if (["postponed", "delayed"].some((k) => s.includes(k))) return "Postponed";
+    if (typeof status === "string") {
+      raw = status.toLowerCase();
+    } else if (typeof status === "object" && status !== null) {
+      raw = (status.long || String(status.short || "") || "").toLowerCase();
+    }
+
+    // FINAL
     if (
-      ["in play", "progress", "live", "halftime", "quarter"].some((k) =>
-        s.includes(k)
+      ["final", "finished", "status_final", "fulltime", "ft"].some((k) =>
+        raw.includes(k)
+      ) ||
+      raw === "f"
+    ) {
+      return "Final";
+    }
+
+    // CANCELED
+    if (["canceled", "cancelled"].some((k) => raw.includes(k))) {
+      return "Canceled";
+    }
+
+    // POSTPONED
+    if (["postponed", "delayed"].some((k) => raw.includes(k))) {
+      return "Postponed";
+    }
+
+    // IN PLAY
+    if (
+      ["in_play", "in progress", "live", "quarter", "halftime"].some((k) =>
+        raw.includes(k)
       )
-    )
+    ) {
       return "In Play";
+    }
+
     return "Scheduled";
   })();
 
@@ -99,7 +121,16 @@ export default function GameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
+         {headlineText ? (
+            <View style={styles.headlineContainer}>
+              <Text style={styles.headlineText} numberOfLines={2}>
+                {headlineText}
+              </Text>
+            </View>
+          ) : null}
+
       <View style={styles.teamsContainer}>
+
         {/* Away Team Row */}
         <TeamRow
           key={`away-${refreshTick}`}
@@ -124,18 +155,11 @@ export default function GameHeader({
           colors={colors}
           status={normalizedStatus}
           league={league}
-          timeouts={awayTimeouts}
+          timeouts={league === "nba" ? awayTimeouts : undefined}
         />
 
         <View>
-          {headlineText ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText} numberOfLines={2}>
-                {headlineText}
-              </Text>
-            </View>
-          ) : null}
-
+       
           {/* Game Info */}
           <GameInfo
             key={`gameinfo-${refreshTick}`}
@@ -182,8 +206,9 @@ export default function GameHeader({
           colors={colors}
           status={normalizedStatus}
           league={league}
-          timeouts={homeTimeouts}
+          timeouts={league === "nba" ? homeTimeouts : undefined}
         />
+        
       </View>
     </View>
   );
@@ -207,8 +232,8 @@ const getStyles = (isDark: boolean) =>
     },
     headlineText: {
       position: "absolute",
-      width: 200,
-     top: -20,
+      width: 220,
+      top: 0,
       fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,

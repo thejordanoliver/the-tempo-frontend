@@ -21,6 +21,7 @@
     "@react-navigation/native": "^7.1.8",
     "axios": "^1.12.2",
     "axios-rate-limit": "^1.4.0",
+    "d3-scale": "^4.0.2",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "expo": "54.0.20",
@@ -71,6 +72,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@types/d3-scale": "^4.0.9",
     "@types/date-fns": "^2.5.3",
     "@types/jwt-decode": "^2.2.1",
     "@types/luxon": "^3.7.1",

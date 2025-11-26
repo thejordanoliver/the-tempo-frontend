@@ -17,8 +17,7 @@ import {
   View,
 } from "react-native";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { getTeamLogo, teams, } from "../../constants/teams";
-import { useFetchPlayoffGames } from "../../hooks/usePlayoffSeries";
+import { getTeamLogo, teams } from "../../constants/teams";
 import { getStyles } from "../../styles/GamecardStyles/GameCard.styles";
 import { Game, Team } from "../../types/types";
 // --- Helper function to normalize API status ---
@@ -134,15 +133,12 @@ export default function GameCard({
 
   const currentPeriod =
     liveScore?.period ?? Number(game.periods?.current ?? game.period);
-  const endOfPeriod = Number(game.periods?.current ?? game.period);
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
     liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+
  
-  // Status
-  // 🧠 Smarter reactive status
-  const statusObj = game.status;
   const baseStatus =
     typeof game.status === "string" ? game.status : mapStatus(game.status);
 
@@ -169,8 +165,6 @@ export default function GameCard({
   const isPostponed = effectiveStatus === "Postponed";
   const isHalftime = effectiveStatus === "Halftime";
 
-  const isEndOfPeriod = game.periods?.endOfPeriod === true;
-  // ✅ Smarter halftime detection
 
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
@@ -188,13 +182,7 @@ export default function GameCard({
     return getTeamLogo(teamData.id, dark);
   };
 
-  const playoffGames =
-    homeId && awayId ? useFetchPlayoffGames(homeId, awayId, 2024).games : [];
-  const currentPlayoffGame = playoffGames.find((g) => g.id === game.id);
-  const gameNumberLabel = currentPlayoffGame?.gameNumber
-    ? `Game ${currentPlayoffGame.gameNumber}`
-    : null;
-  const seriesSummary = currentPlayoffGame?.seriesSummary;
+
 
   const isNBAFinals =
     gameDate.getMonth() === 5 &&
@@ -220,14 +208,14 @@ export default function GameCard({
     if (!period) return "Live";
     if (period <= 4) return ["1st", "2nd", "3rd", "4th"][period - 1] ?? "";
     const ot = period - 4;
-    return ot === 1 ? "OT" : `OT${ot}`;
+     return ot === 1 ? "OT" : `${ot}OT`;
   }
 
   function getFinalWithQuarterLabel(period?: number) {
     if (!period) return "Final";
     if (period <= 4) return `Final`;
     const ot = period - 4;
-    return ot === 1 ? "Final/OT" : `Final/OT${ot}`;
+   return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
   }
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -313,7 +301,7 @@ export default function GameCard({
           <View style={styles.infoWrapper}>
             {liveScore?.statusText?.toLowerCase().includes("end of") ||
             liveScore?.statusText?.toLowerCase().includes("final") ? (
-              <Text style={styles.clock}>{liveScore.statusText}</Text>
+              <Text style={styles.finalText}>{liveScore.statusText}</Text>
             ) : (
               <>
                 <Text style={styles.date}>
@@ -368,7 +356,7 @@ export default function GameCard({
         <Ionicons
           name={notifEnabled ? "notifications" : "notifications-outline"}
           size={20}
-          color={dark ? "#fff" : "#1d1d1d"}
+          color={isDark ? Colors.white : Colors.black}
         />
       </Pressable>
     </>
@@ -385,11 +373,14 @@ export default function GameCard({
       }
     >
       {isNBAFinals ? (
-        <LinearGradient
-          colors={["#DFBD69", "#CDA765"] as [string, string]}
+         <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#DFBD69", "#CDA765"] as [string, string])
+          }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
-          style={styles.card}
         >
           {renderCardContent()}
         </LinearGradient>

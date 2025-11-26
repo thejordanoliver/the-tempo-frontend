@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import {
   Alert,
@@ -42,7 +43,11 @@ const TeamLocationSection: React.FC<Props> = ({
   grass,
 }) => {
   const isDark = useColorScheme() === "dark";
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
 
   // Early return if values are missing or marked "Unknown"
   if (
@@ -100,9 +105,7 @@ const TeamLocationSection: React.FC<Props> = ({
         <View style={styles.container}>
           <Image
             source={
-              typeof venueImage === "string"
-                ? { uri: venueImage }
-                : venueImage
+              typeof venueImage === "string" ? { uri: venueImage } : venueImage
             }
             style={styles.venueImage}
             resizeMode="cover"
@@ -134,18 +137,27 @@ const TeamLocationSection: React.FC<Props> = ({
             </Text>
           </View>
 
-          <View style={styles.addressContainer}>
-            <Ionicons name="person" size={20} color={textColor} />
-            <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
-              Attendance: {venueAttendancee || "N/A"}
-            </Text>
-          </View>
+          {venueAttendancee !== null &&
+            venueAttendancee !== undefined &&
+            !isNaN(Number(venueAttendancee)) && (
+              <View style={styles.addressContainer}>
+                <Ionicons name="person" size={20} color={textColor} />
+                <Text
+                  style={[styles.subText, { color: textColor, marginLeft: 8 }]}
+                >
+                  Attendance:{" "}
+                  {Intl.NumberFormat("en-US").format(Number(venueAttendancee))}
+                </Text>
+              </View>
+            )}
 
           {/* Grass indicator */}
           {typeof grass === "boolean" && (
             <View style={styles.addressContainer}>
               <Ionicons name="leaf" size={20} color={textColor} />
-              <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
+              <Text
+                style={[styles.subText, { color: textColor, marginLeft: 8 }]}
+              >
                 {grass ? "Natural Grass" : "Artificial Turf"}
               </Text>
             </View>

@@ -1168,8 +1168,7 @@ export const coachImages: { [key: string]: any } = {
 
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean,
-  use500x500: boolean = false
+  isDark: boolean
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo;
 
@@ -1178,8 +1177,7 @@ export function getTeamLogo(
   const team = teams.find((t) => {
     const idMatch = String(t.id).toLowerCase() === searchStr;
 
-  
-    return idMatch  ;
+    return idMatch;
   });
 
   if (!team) return PlaceholderLogo;
@@ -1269,6 +1267,7 @@ export const venueImages: Record<string, any> = {
 
 export type Venue = {
   name: string;
+  city?: string;
   address: string;
   latitude?: number;
   longitude?: number;
@@ -1344,6 +1343,7 @@ export const neutralVenues: Record<string, Venue> = {
   },
   "Arena CDMX": {
     name: "Arena CDMX",
+    city: "Mexico City",
     address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco",
     latitude: 19.4977,
     longitude: -99.1751,
@@ -1353,10 +1353,10 @@ export const neutralVenues: Record<string, Venue> = {
   // add more neutral venues if needed here
 };
 
-
 export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
-export const teamMapByESPNID = Object.fromEntries(teams.map((t) => [t.espnID, t]));
-
+export const teamMapByESPNID = Object.fromEntries(
+  teams.map((t) => [t.espnID, t])
+);
 
 export function mapToInternalTeam(apiTeam: any) {
   if (!apiTeam) return {};
@@ -1372,3 +1372,48 @@ export function mapToInternalTeam(apiTeam: any) {
   }
   return team;
 }
+
+export const nbaDivisionsById = {
+  Atlantic: [
+    2, // Boston Celtics
+    17, // Brooklyn Nets
+    18, // New York Knicks
+    20, // Philadelphia 76ers
+    28, // Toronto Raptors
+  ],
+  Central: [
+    4, // Chicago Bulls
+    5, // Cleveland Cavaliers
+    8, // Detroit Pistons
+    11, // Indiana Pacers
+    15, // Milwaukee Bucks
+  ],
+  Southeast: [
+    1, // Atlanta Hawks
+    30, // Charlotte Hornets
+    14, // Miami Heat
+    19, // Orlando Magic
+    27, // Washington Wizards
+  ],
+  Northwest: [
+    7, // Denver Nuggets
+    16, // Minnesota Timberwolves
+    25, // Oklahoma City Thunder
+    22, // Portland Trail Blazers
+    26, // Utah Jazz
+  ],
+  Pacific: [
+    9, // Golden State Warriors
+    12, // LA Clippers
+    13, // Los Angeles Lakers
+    21, // Phoenix Suns
+    23, // Sacramento Kings
+  ],
+  Southwest: [
+    6, // Dallas Mavericks
+    10, // Houston Rockets
+    29, // Memphis Grizzlies
+    3, // New Orleans Pelicans
+    24, // San Antonio Spurs
+  ],
+};

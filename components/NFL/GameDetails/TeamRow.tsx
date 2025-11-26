@@ -2,14 +2,17 @@ import { Colors } from "constants/Colors";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
-  NFLProps,
+  FootballTeamRowProps,
   sizeStyles,
   styles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../assets/icons8/Football.png";
 import FootballLight from "../../../assets/icons8/FootballLight.png";
-export const NFLTeamRow = ({
+
+export const TeamRow = ({
+  league,
   team,
+  rank,
   isDark,
   isHome = false,
   score,
@@ -18,14 +21,16 @@ export const NFLTeamRow = ({
   colors,
   possessionTeamId,
   size = "medium",
-  timeouts,
+  timeouts = 3,
   opponentScore,
-}: NFLProps) => {
+}: FootballTeamRowProps) => {
   const router = useRouter();
 
+  // 🔥 Routing based on league
   const handleTeamPress = () => {
-    if (!team.id) return;
-    router.push(`/team/nfl/${team.id}`);
+    const id = team.id;
+    if (!id) return;
+    router.push(`/team/${league}/${id}`);
   };
 
   const isScheduled = status === "Scheduled";
@@ -36,7 +41,10 @@ export const NFLTeamRow = ({
     status !== undefined;
   const isFinal = status === "Final";
 
-  const hasPossession = isLive && String(possessionTeamId) === String(team.id);
+  // 🔥 CFB uses team.espnID, NFL uses team.id
+  const teamIdentifier = league === "cfb" ? team.espnID : team.id;
+  const hasPossession =
+    isLive && String(possessionTeamId) === String(teamIdentifier);
 
   const isTie =
     isFinal &&
@@ -61,7 +69,9 @@ export const NFLTeamRow = ({
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 3;
     return (
-      <View style={{ flexDirection: "row", marginTop: 4 }}>
+      <View
+        style={{ flexDirection: "row", marginTop: league === "cfb" ? 2 : 4 }}
+      >
         {Array.from({ length: totalTimeouts }).map((_, i) => (
           <View
             key={i}
@@ -123,13 +133,28 @@ export const NFLTeamRow = ({
 
         <View style={styles.teamInfo}>
           <View style={styles.nameRow}>
-            <Text style={[styles.teamName, { color: colors.text }]}>
-              {team.code}
-            </Text>
+            {/* 🔥 League-specific name formatting */}
+            {league === "cfb" ? (
+              <Text style={[styles.teamName, { color: colors.text }]}>
+                <Text style={{ fontSize: 10, color: Colors.lightGray }}>
+                  {rank}
+                </Text>{" "}
+                {team.shortName || team.name}
+              </Text>
+            ) : (
+              <Text style={[styles.teamName, { color: colors.text }]}>
+                {team.code}
+              </Text>
+            )}
           </View>
 
           {isLive && (
-            <View style={{ alignItems: "center" }}>
+            <View
+              style={{
+                alignItems: "center",
+                marginTop: league === "cfb" ? 2 : 4,
+              }}
+            >
               {renderTimeouts(timeouts)}
             </View>
           )}
@@ -138,6 +163,7 @@ export const NFLTeamRow = ({
             <Text
               style={[
                 styles.record,
+                sizeStyles[size].record,
                 {
                   color: isTie ? colors.text : colors.record,
                 },

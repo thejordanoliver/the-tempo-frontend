@@ -70,25 +70,14 @@ const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
   const styles = getStyles(isDark, lighter ?? false);
 
-  // Teams that use logoLight in dark mode (custom per league if needed)
-  const teamsUsingLogoLightInDark = new Set([
-    "PHI",
-    "TOR",
-    "HOU",
-    "UTA",
-    "NYJ",
-    "NYG",
-  ]);
+
 
   const renderRow = ({ item, index }: { item: any; index: number }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-    // --- Inside renderRow ---
-    const opponentCode =
-      item.opponentCode || getOpponentCodeFromName(item.opponent, league);
-
+   
     const useLightLogo = isDark || lighter;
     const opponentLogoSource =
       useLightLogo && item.opponentLogoLight

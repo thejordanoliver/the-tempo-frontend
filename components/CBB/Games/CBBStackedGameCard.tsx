@@ -1,12 +1,11 @@
-import Football from "assets/icons8/Football.png";
-import FootballLight from "assets/icons8/FootballLight.png";
+import { useGameScores } from "hooks/useGameScores";
 import { getTeamLogo, teams } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBGameBroadcasts } from "hooks/CBBHooks/useCBBGameBroadcasts";
-import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { memo, useMemo } from "react";
+import { Colors } from "constants/Colors";
 import {
   Image,
   Text,
@@ -23,6 +22,41 @@ type Props = {
   broadcasts?: string[];
   loadingBroadcasts?: boolean;
 };
+
+
+// --- Helper function to normalize API status ---
+function mapStatus(apiStatus: {
+  short: number | string;
+  long?: string;
+}): string {
+  const long = apiStatus.long?.toLowerCase();
+
+  // ✅ prioritize 'long' from API
+  if (long === "in play") return "In Play";
+  if (long === "finished") return "Final";
+  if (long === "scheduled") return "Scheduled";
+  if (long === "canceled") return "Canceled";
+  if (long === "delayed") return "Delayed";
+  if (long === "postponed") return "Postponed";
+
+  // fallback using numeric 'short' codes
+  const short = Number(apiStatus.short);
+  switch (short) {
+    case 1:
+      return "Scheduled";
+    case 2:
+    case 3:
+      return "Final"; // only if 'long' was missing
+    case 4:
+      return "Postponed";
+    case 5:
+      return "Delayed";
+    case 6:
+      return "Canceled";
+    default:
+      return "Scheduled";
+  }
+}
 
 function CBBStackedGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
@@ -83,25 +117,19 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       "in progress",
       "1st half",
       "2nd half",
-      "quarter 1",
-      "quarter 2",
-      "quarter 3",
-      "quarter 4",
       "q1",
       "q2",
       "q3",
       "q4",
-      "overtime",
-      "ot",
     ];
 
     const isHalftime =
       longLower.includes("halftime") ||
-      statusData?.long.toLowerCase?.() === "halftime" ||
-      statusData?.short.toLowerCase?.() === "halftime";
+      statusData?.long?.toLowerCase?.() === "halftime" ||
+      statusData?.short?.toLowerCase?.() === "halftime";
 
     let isFinal =
-      ["final", "ended"].some((s) => longLower.includes(s)) ||
+      ["final", "game finished", "ended"].some((s) => longLower.includes(s)) ||
       short.includes("ft");
 
     // ✅ Treat "AOT" as final
@@ -113,12 +141,13 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       longLower.includes(s)
     );
 
+    // ✅ Live only if not final
     const isLive =
+      !isFinal &&
       !isHalftime &&
       (livePhrases.some((p) => longLower.includes(p) || short.includes(p)) ||
         (statusData?.timer && statusData.timer !== "")) &&
-      !longLower.includes("end of") &&
-      !longLower.includes("final");
+      !longLower.includes("end of");
 
     return {
       isScheduled,
@@ -138,45 +167,69 @@ function CBBStackedGameCard({ game, isDark }: Props) {
     };
   }, [statusData]);
 
-  // --- Possession hook ---
-  const possession = status.isLive
-    ? useCBBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
-    : {
-        gameStatusDescription: undefined,
-        possessionTeamId: undefined,
-        displayClock: undefined,
-        shortDownDistanceText: undefined,
-        downDistanceText: undefined,
-        period: undefined,
-        score: undefined,
-        refresh: () => {},
-      };
 
-  const { possessionTeamId, displayClock, gameStatusDescription } = possession;
+      const { score: liveScore, isLive } = useGameScores(
+        "mens-college-basketball",
+        homeEspnId?.toString(),
+        awayEspnId?.toString(),
+        gameDateStr
+      );
+    const currentPeriod = liveScore?.period;
 
-  const displayStatus =
-    gameStatusDescription ??
-    status.long ??
-    status.short ??
-    game.game.status.long ??
-    game.game.status.short ??
-    "Scheduled";
+  // Dynamically resolve final state from live data
+const effectiveStatus = useMemo(() => {
+  const liveText = liveScore?.statusText?.toLowerCase() ?? "";
+  const base = mapStatus(game.status);
 
-  // --- Use possession score when live; fallback to static game scores ---
-  const displayAwayScore =
-    possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-  const displayHomeScore =
-    possession?.score?.home ?? game?.scores?.home?.total ?? 0;
+  if (liveText.includes("final")) return "Final";
+  if (liveText.includes("halftime")) return "Halftime";
+  if (
+    liveText.includes("in progress") ||
+    liveText.includes("in play") ||
+    liveText.includes("qtr") ||
+    liveText.includes("quarter")
+  )
+    return "In Play";
 
-  // --- Helper for score or record ---
-  const getDisplayValue = (isHome: boolean) => {
-    if (status.isScheduled) return isHome ? homeTeam.record : awayTeam.record;
-    if (status.isFinal)
-      return isHome
-        ? possession?.score?.home ?? game?.scores?.home?.total ?? 0
-        : possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-    return isHome ? displayHomeScore : displayAwayScore;
-  };
+  return base;
+}, [game.status, liveScore]);
+
+
+  // Now derive booleans reactively
+  const isFinal = effectiveStatus === "Final";
+  const inProgress = effectiveStatus === "In Play";
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = effectiveStatus === "Postponed";
+  const isHalftime = effectiveStatus === "Halftime";
+
+
+   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
+
+
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
+
+    const displayStatus = (() => {
+    const base =
+      liveScore?.statusText ??
+      status.long ??
+      status.short ??
+      game.status.long ??
+      game.status.short ??
+      "Scheduled";
+
+    const lower = base.toLowerCase();
+
+    if (lower === "game finished") return "Final";
+    if (lower.includes("after over")) return "Final/OT"; // ✅ Added
+    if (lower.includes("overtime")) return "OT"; // ✅ Optional, handles ESPN variant
+    if (lower.includes("postponed")) return "Postponed";
+    if (lower.includes("canceled")) return "Canceled";
+    return base;
+  })();
+
 
   const awayTeam = useMemo(
     () => ({
@@ -185,14 +238,13 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       name: getTeamName(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(awayEspnId),
+   
     }),
     [
       awayId,
       awayEspnId,
       awayRecord?.overall,
-      possessionTeamId,
+
       dark,
       status.isLive,
     ]
@@ -205,14 +257,12 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       name: getTeamName(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(homeEspnId),
+
     }),
     [
       homeId,
       homeEspnId,
       homeRecord?.overall,
-      possessionTeamId,
       dark,
       status.isLive,
     ]
@@ -263,25 +313,36 @@ function CBBStackedGameCard({ game, isDark }: Props) {
     return val;
   };
 
-  const getTeamStyle = useMemo(
-    () =>
-      (isHome: boolean): TextStyle => {
-        const homeScore = game.scores.home?.total ?? 0;
-        const awayScore = game.scores.away?.total ?? 0;
-        let isWinner = true;
+ 
 
-        if (status.isFinal) {
-          if (homeScore !== awayScore)
-            isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
-        }
 
-        return {
-          color: dark ? "#fff" : "#1d1d1d",
-          opacity: isWinner ? 1 : 0.5,
-        };
-      },
-    [dark, status, game.scores]
-  );
+    const winnerStyle = (teamWins: boolean): TextStyle => ({
+      color: dark ? Colors.white : Colors.black,
+      opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+    });
+
+
+    const ScoreText = ({
+    score,
+    recordData,
+    teamWins,
+    showRecord,
+  }: {
+    score?: number;
+    recordData?: string;
+    teamWins: boolean;
+    showRecord?: boolean;
+  }) => {
+    const hasScore = typeof score === "number" && !isNaN(score);
+    const displayValue =
+      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+    const style =
+      showRecord || !hasScore
+        ? styles.teamRecord
+        : [styles.teamScore, winnerStyle(teamWins)];
+    return <Text style={style}>{displayValue}</Text>;
+  };
+
 
   // --- UI Render ---
   return (
@@ -310,21 +371,16 @@ function CBBStackedGameCard({ game, isDark }: Props) {
                 {awayTeam.name}
               </Text>
 
-              {awayTeam.hasPossession && (
-                <Image
-                  source={dark ? FootballLight : Football}
-                  style={{ width: 28, height: 28, resizeMode: "contain" }}
-                />
-              )}
+     
             </View>
-            <Text
-              style={[
-                status.isScheduled ? styles.teamRecord : styles.teamScore,
-                getTeamStyle(false),
-              ]}
-            >
-              {getDisplayValue(false)}
-            </Text>
+          {/* Away Record / Score */}
+         <ScoreText
+        score={awayScore}
+        recordData={awayTeam.record ?? undefined}
+        teamWins={awayWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
+
           </View>
 
           {/* Home Team */}
@@ -340,21 +396,16 @@ function CBBStackedGameCard({ game, isDark }: Props) {
                 )}{" "}
                 {homeTeam.name}
               </Text>
-              {homeTeam.hasPossession && (
-                <Image
-                  source={dark ? FootballLight : Football}
-                  style={{ width: 28, height: 28, resizeMode: "contain" }}
-                />
-              )}
+       
             </View>
-            <Text
-              style={[
-                status.isScheduled ? styles.teamRecord : styles.teamScore,
-                getTeamStyle(true),
-              ]}
-            >
-              {getDisplayValue(true)}
-            </Text>
+         {/* Home Record / Score */}
+         <ScoreText
+        score={homeScore}
+        recordData={homeTeam.record ?? undefined}
+        teamWins={homeWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
+
           </View>
         </View>
 
@@ -388,17 +439,17 @@ function CBBStackedGameCard({ game, isDark }: Props) {
                     marginHorizontal: 4,
                   }}
                 />
-                <Text style={styles.clock}>{displayClock}</Text>
+                <Text style={styles.clock}>{liveScore?.displayClock}</Text>
               </View>
             </>
           )}
 
           {status.isHalftime && (
-            <Text style={[styles.date, { fontSize: 14 }]}>{displayStatus}</Text>
+            <Text style={[styles.date, { fontSize: 14 }]}>Halftime</Text>
           )}
           {status.isFinal && (
             <>
-              <Text style={styles.finalText}>{displayStatus}</Text>
+              <Text style={styles.finalText}>Final</Text>
               <Text style={styles.dateFinal}>{formattedDate}</Text>
             </>
           )}

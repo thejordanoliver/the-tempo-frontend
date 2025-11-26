@@ -32,6 +32,7 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
+      width: 80
     },
     teamScore: {
       fontSize: 28,

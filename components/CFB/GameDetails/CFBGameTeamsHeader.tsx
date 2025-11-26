@@ -2,9 +2,9 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamLogo, getTeamName } from "constants/teamsCFB";
 import { StyleSheet, Text, View } from "react-native";
-import { CFBTeamRow } from "./CFBTeamRow";
-import { CFBGameCenterInfo } from "./GameInfo";
 
+import { TeamRow } from "components/NFL/GameDetails/TeamRow";
+import { CFBGameCenterInfo } from "./GameInfo";
 type Props = {
   awayTeam: any;
   homeTeam: any;
@@ -54,8 +54,14 @@ export default function CFBGameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
+      {/* Headline (optional) */}
+      {headlineText ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText}>{headlineText}</Text>
+        </View>
+      ) : null}
       <View style={[styles.teamsContainer, { borderColor: colors.border }]}>
-        <CFBTeamRow
+        <TeamRow
           team={{
             id: String(awayTeam.id),
             espnID: String(awayTeam.espnID),
@@ -67,7 +73,7 @@ export default function CFBGameHeader({
             logo: getTeamLogo(awayTeam.id, isDark),
             record: awayRecord ?? "0-0",
           }}
-          rank={rankAway}
+          rank={rankAway ? Number(rankAway) : undefined}
           isDark={isDark}
           isHome={false}
           score={scores?.away?.total}
@@ -77,17 +83,10 @@ export default function CFBGameHeader({
           status={status}
           possessionTeamId={possessionTeamId}
           timeouts={awayTimeouts}
+          league="cfb"
         />
 
         <View>
-          {/* Headline (optional) */}
-          {headlineText ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText} numberOfLines={1}>
-                {headlineText}
-              </Text>
-            </View>
-          ) : null}
           <CFBGameCenterInfo
             status={status}
             date={formattedDate} // ✅ pass formatted date
@@ -103,7 +102,8 @@ export default function CFBGameHeader({
             broadcastNetworks={networkString}
           />
         </View>
-        <CFBTeamRow
+
+        <TeamRow
           team={{
             id: String(homeTeam.id),
             espnID: String(homeTeam.espnID),
@@ -115,7 +115,7 @@ export default function CFBGameHeader({
             logo: getTeamLogo(homeTeam.id, isDark),
             record: homeRecord ?? "0-0",
           }}
-          rank={rankHome}
+          rank={rankHome ? Number(rankHome) : undefined}
           isDark={isDark}
           isHome
           score={scores?.home?.total}
@@ -125,6 +125,7 @@ export default function CFBGameHeader({
           status={status}
           possessionTeamId={possessionTeamId}
           timeouts={homeTimeouts}
+          league="cfb"
         />
       </View>
     </View>
@@ -148,9 +149,8 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
     headlineText: {
-      position: "absolute",
-      width: 200,
-     top: -20,
+      width: 220,
+
       fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,

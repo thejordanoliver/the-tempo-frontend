@@ -2,8 +2,8 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useGameDetails } from "hooks/useGameDetails";
 import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
@@ -50,11 +50,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   // --- Team stats, weather, details ---
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
-  const { data, detailsLoading, detailsError } = useGameDetails(
-    new Date(game.date).toISOString().split("T")[0],
-    home?.name ?? "",
-    away?.name ?? ""
-  );
+
   const { record: homeRecord } = useTeamRecord(home?.espnID);
   const { record: awayRecord } = useTeamRecord(away?.espnID);
 
@@ -175,10 +171,17 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeLastGames = useLastFiveGames(homeId);
   const awayLastGames = useLastFiveGames(awayId);
 
-  const statusDisplay =
-    typeof game.status === "string"
-      ? game.status
-      : game.status?.long || game.status?.short || "Unknown";
+  const {
+    officials,
+    highlights,
+    loading: officialsLoading,
+    error: officialsError,
+  } = useGameDetails(
+    "nba",
+    home?.espnID,
+    away?.espnID,
+    new Date(game.date).toISOString().split("T")[0]
+  );
 
   // --- Clock display ---
   const displayClock = liveScore?.displayClock ?? game.status?.clock;
@@ -252,16 +255,16 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
         />
-            <LinearGradient
-            colors={
-              isDark
-                ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
-                : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
+        <LinearGradient
+          colors={
+            isDark
+              ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
+              : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
 
         <BlurView
           intensity={100}
@@ -324,9 +327,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
             homeLastGames={homeLastGames}
             awayLastGames={awayLastGames}
             gameStats={gameStats}
-            data={data}
-            detailsLoading={detailsLoading}
-            detailsError={detailsError}
+            officials={officials}
             resolvedVenueImage={resolvedVenueImage}
             resolvedVenueName={resolvedVenueName}
             resolvedVenueCity={resolvedVenueCity}

@@ -3,7 +3,7 @@ import { Fonts } from "constants/fonts";
 import { getNFLTeamsLogo, getTeamName } from "constants/teamsNFL";
 import { StyleSheet, Text, View } from "react-native";
 import { NFLGameCenterInfo } from "./GameInfo";
-import { NFLTeamRow } from "./NFLTeamRow";
+import { TeamRow } from "./TeamRow";
 type Props = {
   homeTeam: any;
   awayTeam: any;
@@ -24,6 +24,7 @@ type Props = {
   playoffInfo?: string;
   networkString?: string;
   headlineText?: string;
+  isCollapsed?: boolean; // 👈 add this
 };
 
 export default function NFLGameHeader({
@@ -46,14 +47,23 @@ export default function NFLGameHeader({
   formattedTime = "",
   playoffInfo = "",
   headlineText,
+  isCollapsed = false, // 👈 default
 }: Props) {
   const styles = getStyles(isDark);
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
+          {headlineText ? (
+            <View style={styles.headlineContainer}>
+              <Text style={styles.headlineText} numberOfLines={2}>
+                {headlineText}
+              </Text>
+            </View>
+          ) : null}
       <View style={styles.teamsContainer}>
+        
         {/* Away Team */}
-        <NFLTeamRow
+        <TeamRow
           team={{
             id: String(awayTeam.id),
             code: awayTeam.code,
@@ -73,16 +83,11 @@ export default function NFLGameHeader({
           status={status}
           possessionTeamId={possessionTeamId}
           timeouts={awayTimeouts}
+          league="nfl"
         />
 
         <View>
-          {headlineText ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText} numberOfLines={2}>
-                {headlineText}
-              </Text>
-            </View>
-          ) : null}
+      
 
           {/* Game Info */}
           <NFLGameCenterInfo
@@ -103,7 +108,7 @@ export default function NFLGameHeader({
         </View>
 
         {/* Home Team */}
-        <NFLTeamRow
+        <TeamRow
           team={{
             id: String(homeTeam.id),
             code: homeTeam.code,
@@ -123,12 +128,12 @@ export default function NFLGameHeader({
           status={status}
           possessionTeamId={possessionTeamId}
           timeouts={homeTimeouts}
+          league="nfl"
         />
       </View>
     </View>
   );
 }
-
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -148,8 +153,8 @@ const getStyles = (isDark: boolean) =>
     },
     headlineText: {
       position: "absolute",
-      width: 200,
-     top: -20,
+      width: 220,
+      top: 0,
       fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSEXTRALIGHT,

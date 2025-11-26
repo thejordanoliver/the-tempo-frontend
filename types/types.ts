@@ -93,6 +93,41 @@ export type PlayerInfo = {
   active?: boolean;
 };
 
+export interface CBBPlayer {
+  id: string;
+  uid?: string;
+  name?: string;
+  firstname?: string;
+  lastname?: string;
+  fullName?: string;
+  experience?: {
+     years: number,
+      displayValue: string,
+      abbreviation: string,
+  }
+  displayName?: string;
+  shortName?: string;
+  jersey?: string;
+  height?: string;
+  weight?: string;
+  displayHeight?: string;
+  displayWeight?: string;
+  team?: string;
+  teamId?: string;
+  position?: string;
+  imageUrl?:  string;
+
+  birthPlace?: {
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  links?: {
+    href: string;
+    rel: string[];
+  }[];
+}
+
 export type Props = {
   rosterStats: PlayerStats[];
   playersDb: PlayerInfo[];
@@ -278,6 +313,7 @@ export type Venue = {
   name?: string;
   address?: string;
   city?: string;
+  state: string;
   latitude?: number;
   longitude?: number;
   venueCapacity?: string;
@@ -469,6 +505,32 @@ export type NewsItem = {
   date?: string;
 };
 
+export type Highlight = {
+  id: string;
+  headline: string;
+  description: string;
+  thumbnail: string;
+  links: {
+    source: {
+      HLS: {
+        href: string;
+      };
+      href: string;
+    };
+    href: string;
+    web: string;
+    mobile: string;
+    hls?: string;
+    mp4?: string;
+  };
+};
+
+export type GameHighlights = {
+  gameId: string;
+  highlights: Highlight[];
+};
+
+
 export type TeamResult = {
   id: number;
   name: string;
@@ -494,5 +556,6 @@ export type UserResult = {
   profileImageUrl: string;
   type: "user";
 };
+
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;

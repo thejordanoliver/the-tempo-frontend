@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export type NFLPlayerStat = {
   name: string; // e.g. "comp att", "yards"
@@ -32,7 +32,7 @@ export function useNFLGameLeaders(gameId: string, teamId: string) {
 
       try {
         const response = await axios.get(
-          "https://v1.american-football.api-sports.io/games/statistics/players",
+          `https://${HOST}/games/statistics/players`,
           {
             params: { id: gameId, team: teamId },
             headers: {

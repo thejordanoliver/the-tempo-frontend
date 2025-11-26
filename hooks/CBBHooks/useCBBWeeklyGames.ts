@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -32,6 +32,8 @@ export type CBBGame = {
   };
 };
 
+const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
+
 export function useCBBWeeklyGames(timezone: string = "America/New_York") {
   const [cbbGames, setGames] = useState<CBBGame[]>([]);
   const [cbbLoading, setLoading] = useState<boolean>(false);
@@ -45,12 +47,10 @@ export function useCBBWeeklyGames(timezone: string = "America/New_York") {
     try {
       const res = await axios.get(
         `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000"}/api/gamesCBB/weekly`,
-        {
-          params: { timezone },
-        }
+        { params: { timezone } }
       );
 
-      const data = res.data?.response || [];
+      const data: CBBGame[] = res.data?.response || [];
       setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
@@ -65,8 +65,16 @@ export function useCBBWeeklyGames(timezone: string = "America/New_York") {
     refreshCBBGames();
   }, [refreshCBBGames]);
 
+  // Helper to check if a game is live
+  const isLiveGame = (game: CBBGame) => game.status?.short && LIVE_STATUSES.includes(game.status.short);
+
+  // Sorted games with live games first
+  const sortedGames = useMemo(() => {
+    return [...cbbGames].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+  }, [cbbGames]);
+
   return {
-    cbbGames,
+    cbbGames: sortedGames,
     cbbLoading,
     error,
     lastFetched,

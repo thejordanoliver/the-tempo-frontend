@@ -99,10 +99,10 @@ export function useFootballRosterStats(
         }
 
         // --- RapidAPI player stats ---
-        else {
-          const url = `${BASE_URL}/api/${teamId}/players/stats${
-            category ? `?category=${category}` : ""
-          }`;
+       else {
+  const url = `${BASE_URL}/api/${teamId}/players/stats${
+    category ? `?category=${category}` : ""
+  }`;
           console.log("🌐 Fetching player stats:", url);
           response = await axios.get(url);
 

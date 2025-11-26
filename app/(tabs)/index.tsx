@@ -37,6 +37,9 @@ export default function HomeScreen() {
     loading,
   } = useHomeData(selectedTab);
 
+
+  
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (

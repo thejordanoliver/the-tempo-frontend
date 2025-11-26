@@ -21,7 +21,6 @@ type CenterInfoProps = {
   isMarchMadness?: boolean;
   totalPeriodsPlayed?: number;
   lighter: boolean;
-  headline: string;
 };
 
 export default function CenterInfo({
@@ -42,52 +41,53 @@ export default function CenterInfo({
   round,
   isMarchMadness,
   totalPeriodsPlayed,
-  headline,
+
   lighter,
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
   const styles = getStyles(isDark, lighter);
 
-const getQuarterLabel = (
-  currentPeriod: number | string,
-  totalPeriods: number = 4
-) => {
-  if (typeof currentPeriod === "string") {
-    const lower = currentPeriod.toLowerCase();
+  const getQuarterLabel = (
+    currentPeriod: number | string,
+    totalPeriods: number = 4
+  ) => {
+    if (typeof currentPeriod === "string") {
+      const lower = currentPeriod.toLowerCase();
 
-    if (lower.startsWith("ot")) {
-      // Return exactly what was passed (OT, OT2, OT3, etc.)
-      return { label: currentPeriod.toUpperCase() };
+      if (lower.startsWith("ot")) {
+        // Return exactly what was passed (OT, OT2, OT3, etc.)
+        return { label: currentPeriod.toUpperCase() };
+      }
+
+      if (["halftime", "final"].includes(lower)) {
+        return {
+          label: currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1),
+        };
+      }
     }
 
-    if (["halftime", "final"].includes(lower)) {
-      return { label: currentPeriod.charAt(0).toUpperCase() + currentPeriod.slice(1) };
+    const periodNum =
+      typeof currentPeriod === "number"
+        ? currentPeriod
+        : parseInt(currentPeriod as string);
+
+    if (isNaN(periodNum)) return { label: "Live" };
+
+    switch (periodNum) {
+      case 1:
+        return { label: "1st" };
+      case 2:
+        return { label: "2nd" };
+      case 3:
+        return { label: "3rd" };
+      case 4:
+        return { label: "4th" };
+      default:
+        const otNumber = periodNum - totalPeriods;
+        return { label: `OT${otNumber}` };
     }
-  }
-
-  const periodNum =
-    typeof currentPeriod === "number"
-      ? currentPeriod
-      : parseInt(currentPeriod as string);
-
-  if (isNaN(periodNum)) return { label: "Live" };
-
-  switch (periodNum) {
-    case 1:
-      return { label: "1st" };
-    case 2:
-      return { label: "2nd" };
-    case 3:
-      return { label: "3rd" };
-    case 4:
-      return { label: "4th" };
-    default:
-      const otNumber = periodNum - totalPeriods;
-      return { label: `OT${otNumber}` };
-  }
-};
-
+  };
 
   const { label: periodLabelRaw } = getQuarterLabel(period, totalPeriodsPlayed);
   const periodLabel = isFinal && !isCanceled ? "Final" : periodLabelRaw;
@@ -111,12 +111,6 @@ const getQuarterLabel = (
 
   return (
     <View style={styles.container}>
-      {(headline) && (
-        <View style={styles.gameInfoRow}>
-          {headline && <Text style={styles.headline}>{headline}</Text>}
-        </View>
-      )}
-
       {isCanceled ? (
         <Text style={styles.finalText}>Cancelled</Text>
       ) : isFinal ? (

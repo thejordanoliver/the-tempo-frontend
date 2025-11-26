@@ -1,34 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { CBBPlayer } from "types/types";
 
-export interface CBBPlayer {
-  id: string;
-  uid: string;
-  fullName: string;
-  displayName: string;
-  shortName: string;
-  jersey?: string;
-  height?: string;
-  weight?: string;
-  displayHeight?: string;
-  displayWeight?: string;
-  position?: {
-    abbreviation: string;
-    displayName: string;
-  };
-  headshot?: {
-    href: string;
-  };
-  birthPlace?: {
-    city?: string;
-    state?: string;
-    country?: string;
-  };
-  links?: {
-    href: string;
-    rel: string[];
-  }[];
-}
 
 export interface CBBRosterResponse {
   team: {

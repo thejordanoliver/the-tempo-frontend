@@ -9,8 +9,8 @@ interface NormalizedVenue {
   image?: string | null;
   capacity?: number | string | null;
   attendance?: number | null;
-  grass?: boolean | null; // <-- add this
-  raw?: any; // original object for debugging if needed
+  grass?: boolean | null;
+  raw?: any;
 }
 
 interface CFBGameDetailsResult {
@@ -19,13 +19,15 @@ interface CFBGameDetailsResult {
   previousDrives: any[];
   currentDrives: any[];
   venue: NormalizedVenue | null;
-  scoringPlays: any[]; // <-- added
+  scoringPlays: any[];
   loading: boolean;
+  neutralSite: boolean;
+  highlights: any[];
   error: string | null;
   gameId?: string | null;
 }
 
-const SCOREBOARD_CACHE: Record<string, any[]> = {}; // in-memory cache for scoreboard data
+const SCOREBOARD_CACHE: Record<string, any[]> = {};
 
 export const useCFBGameDetails = (
   awayId: string | null | undefined,
@@ -33,11 +35,13 @@ export const useCFBGameDetails = (
   date?: string | { date?: string; utc?: string; timestamp?: number }
 ): CFBGameDetailsResult => {
   const [officials, setOfficials] = useState<any[]>([]);
+  const [neutralSite, setNeutralSite] = useState<boolean>(false);
   const [injuries, setInjuries] = useState<any[]>([]);
+  const [highlights, setHighlights] = useState<any[]>([]);
   const [previousDrives, setPreviousDrives] = useState<any[]>([]);
   const [currentDrives, setCurrentDrives] = useState<any[]>([]);
   const [venue, setVenue] = useState<NormalizedVenue | null>(null);
-  const [scoringPlays, setScoringPlays] = useState<any[]>([]); // <-- new state
+  const [scoringPlays, setScoringPlays] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -68,18 +72,18 @@ export const useCFBGameDetails = (
           return;
         }
 
-        const makeYMD = (d: Date) =>
-          d.toISOString().slice(0, 10).replace(/-/g, "");
+        const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, "");
 
         const datesToCheck = [
-          makeYMD(new Date(targetDate.getTime() - 24 * 60 * 60 * 1000)),
-          makeYMD(targetDate),
-          makeYMD(new Date(targetDate.getTime() + 24 * 60 * 60 * 1000)),
+          fmt(new Date(targetDate.getTime() - 86400000)),
+          fmt(targetDate),
+          fmt(new Date(targetDate.getTime() + 86400000)),
         ];
 
         let foundGame: any = null;
+        let scoreboardVenue: any = null;
 
-        // --- Try 3 consecutive days to locate the game ---
+        // --- Find game in scoreboard ---
         for (const yyyymmdd of datesToCheck) {
           let games: any[] = [];
 
@@ -92,74 +96,110 @@ export const useCFBGameDetails = (
             SCOREBOARD_CACHE[yyyymmdd] = games;
           }
 
-          const game = games.find((g: any) => {
-            const competition = g.competitions?.[0] || g.competition;
-            const ids =
-              competition?.competitors?.map((c: any) => String(c.team?.id)) ??
-              [];
-            return ids.includes(String(awayId)) && ids.includes(String(homeId));
-          });
+          for (const g of games) {
+            const comp = g.competitions?.[0] || g.competition;
 
-          if (game) {
-            foundGame = game;
-            break;
+            const competitorIds =
+              comp?.competitors?.map((c: any) =>
+                String(
+                  c.team?.id ?? c.id ?? (c.uid ? c.uid.split("~").pop() : "")
+                )
+              ) ?? [];
+
+            if (
+              competitorIds.includes(String(awayId)) &&
+              competitorIds.includes(String(homeId))
+            ) {
+              foundGame = g;
+
+              // Venue fallback: comp.venue → root.g.venue → null
+              scoreboardVenue = comp?.venue || g.venue || null;
+
+              break;
+            }
           }
+
+          if (foundGame) break;
         }
 
         if (!foundGame) {
           setError("Game not found on ESPN for any nearby date.");
+          setVenue(null);
           setOfficials([]);
           setInjuries([]);
-          setCurrentDrives([]);
           setPreviousDrives([]);
-          setVenue(null);
-          setScoringPlays([]); // <-- clear scoring plays
+          setCurrentDrives([]);
+          setScoringPlays([]);
+          setHighlights([]);
           setGameId(null);
           return;
         }
 
-        const gameId = foundGame.id;
-        setGameId(gameId);
+        const id = foundGame.id;
+        setGameId(id);
 
         // --- Fetch summary ---
-        const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${gameId}`;
+        const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
         const { data: summary } = await axios.get(summaryUrl);
 
-        const rawVenue = summary?.gameInfo?.venue ?? null;
-        const attendanceFromSummary = summary?.gameInfo?.attendance ?? null;
+        const summaryVenue = summary?.gameInfo?.venue ?? null;
+        const attendance = summary?.gameInfo?.attendance ?? null;
+        const neutral =
+          summary?.header?.competitions?.[0]?.neutralSite ?? false;
 
-   const normalizedVenue: NormalizedVenue | null = rawVenue
-  ? {
-      name: rawVenue.fullName ?? rawVenue.name ?? null,
-      city: rawVenue.address?.city ?? null,
-      state: rawVenue.address?.state ?? null,
-      address: rawVenue.address
-        ? [rawVenue.address?.city, rawVenue.address?.state, rawVenue.address?.zipCode]
-            .filter(Boolean)
-            .join(", ")
-        : null,
-      // ✅ Use second image if available, otherwise fallback
-      image:
-        rawVenue?.images?.[1]?.href ?? 
-        rawVenue?.images?.[0]?.href ??
-        rawVenue?.image ??
-        rawVenue?.venueImage ??
-        null,
-      capacity: rawVenue?.capacity ?? rawVenue?.venueCapacity ?? null,
-      grass: rawVenue?.grass ??  null,
-      attendance:
-        typeof attendanceFromSummary === "number" ? attendanceFromSummary : null,
-      raw: rawVenue,
-    }
-  : null;
+        // Avoid shadowing: call this summaryHighlights
+        const summaryHighlights = summary?.videos ?? [];
+
+        // --- Robust venue merge ---
+        const mergedVenueRaw = summaryVenue
+          ? { ...scoreboardVenue, ...summaryVenue } // summary overrides fields
+          : scoreboardVenue;
+
+        const normalizedVenue: NormalizedVenue | null = mergedVenueRaw
+          ? {
+              name: mergedVenueRaw.fullName ?? mergedVenueRaw.name ?? null,
+              city: mergedVenueRaw.address?.city ?? null,
+              state: mergedVenueRaw.address?.state ?? null,
+              address: mergedVenueRaw.address
+                ? [
+                    mergedVenueRaw.address?.city,
+                    mergedVenueRaw.address?.state,
+                    mergedVenueRaw.address?.zipCode,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")
+                : null,
+              image:
+                mergedVenueRaw.images?.[1]?.href ??
+                mergedVenueRaw.images?.[0]?.href ??
+                mergedVenueRaw.image ??
+                mergedVenueRaw.venueImage ??
+                null,
+              capacity:
+                mergedVenueRaw.capacity ?? mergedVenueRaw.venueCapacity ?? null,
+              grass: mergedVenueRaw.grass ?? mergedVenueRaw.isGrass ?? null,
+              attendance: typeof attendance === "number" ? attendance : null,
+              raw: mergedVenueRaw,
+            }
+          : null;
+
+        // --- Fix ESPN drive inconsistencies ---
+        const prev =
+          summary?.drives?.previous ??
+          summary?.drives?.all ??
+          summary?.drives?.complete ??
+          [];
+        const curr = summary?.drives?.current ? [summary.drives.current] : [];
 
         // --- Update states ---
-        setOfficials(summary?.gameInfo?.officials ?? []);
         setVenue(normalizedVenue);
+        setNeutralSite(neutral);
+        setOfficials(summary?.gameInfo?.officials ?? []);
         setInjuries(summary?.injuries?.items ?? []);
-        setPreviousDrives(summary?.drives?.previous ?? []);
-        setCurrentDrives(summary?.drives?.current ?? []);
-        setScoringPlays(summary?.scoringPlays ?? []); // <-- add scoring plays here
+        setScoringPlays(summary?.scoringPlays ?? []);
+        setPreviousDrives(prev);
+        setCurrentDrives(curr);
+        setHighlights(summaryHighlights);
       } catch (err: any) {
         console.error("⚠️ Error fetching CFB game details:", err);
         setError(err?.message || "Failed to fetch CFB game details");
@@ -176,8 +216,10 @@ export const useCFBGameDetails = (
     injuries,
     currentDrives,
     previousDrives,
+    neutralSite,
+    highlights,
     venue,
-    scoringPlays, // <-- return scoring plays
+    scoringPlays,
     loading,
     error,
     gameId,

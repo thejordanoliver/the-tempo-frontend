@@ -1,11 +1,11 @@
 // utils/CFBUtils/cfbGameUtils.ts
 
-import { neutralSiteGames, conferenceObjectListMap, modalToMapKey } from "constants/teamsCFB";
+import { neutralStadiums, conferenceObjectListMap, modalToMapKey } from "constants/teamsCFB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import type { Game } from "types/cfb";
+import type { Game, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { useMemo } from "react";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 
@@ -175,8 +175,8 @@ export function resolveVenue(homeTeam: any, awayTeam: any) {
   const homeName = homeTeam?.name ?? "";
   const awayName = awayTeam?.name ?? "";
   const neutralSite =
-    neutralSiteGames[`${homeName}-${awayName}`] ||
-    neutralSiteGames[`${awayName}-${homeName}`];
+    neutralStadiums[`${homeName}-${awayName}`] ||
+    neutralStadiums[`${awayName}-${homeName}`];
 
   const venue = {
     name: neutralSite?.name ?? homeTeam?.venue ?? "Unknown Stadium",
@@ -353,3 +353,5 @@ export const getTeamRankFromCFPById = (teamId: number | string, cfpTop25: any[])
   const entry = cfpTop25.find((t) => String(t.id) === String(teamId));
   return entry ? `${entry.rank}` : null;
 };
+
+

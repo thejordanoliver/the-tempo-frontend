@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Team } from "types/types";
 
-
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useTeams() {
   const [teams, setTeams] = useState<Team[]>([]);

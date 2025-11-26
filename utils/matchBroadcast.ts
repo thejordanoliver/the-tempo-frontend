@@ -76,11 +76,13 @@ const networkMap: [string, string][] = [
   ["acc network", "ACCN"],
   ["abc", "ABC"],
   ["tnt", "TNT"],
+  ["btn", "BTN"],
   ["tbs", "TBS"],
   ["fox sports", "FS1"],
   ["fs1", "FS1"],
   ["fox", "FOX"],
   ["cbs", "CBS"],
+  ["NBC/Peacock","NBC/Peacock"],
   ["nbcsn", "NBC"],
   ["nbc", "NBC"],
   ["nfl network", "NFLN"],
@@ -90,13 +92,14 @@ const networkMap: [string, string][] = [
   ["nba tv", "NBA TV"],
   ["hbo max", "MAX"],
   ["max", "MAX"],
-  // LAST — generic ESPN
   ["espn", "ESPN"],
 ];
 
 
   // special cases
   const hasABC = allNames.some((n) => n.includes("abc"));
+  const hasNBC = allNames.some((n) => n.includes("nbc"));
+  const hasPeacock = allNames.some((n) => n.includes("peacock"));
   const hasESPN = allNames.some((n) => n.includes("espn"));
   const hasTNT = allNames.some((n) => n.includes("tnt"));
   const hasHBOMax = allNames.some(
@@ -104,6 +107,7 @@ const networkMap: [string, string][] = [
   );
 
   if (hasABC && hasESPN) return "ABC/ESPN";
+  if (hasPeacock && hasNBC) return "NBC/Peacock";
   if (hasTNT && hasHBOMax) return "TNT/MAX";
 
   // find first main network match

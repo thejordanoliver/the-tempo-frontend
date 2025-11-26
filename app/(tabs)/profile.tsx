@@ -98,12 +98,7 @@ export default function ProfileScreen() {
     });
   };
 
-  const handleNavigateSettings = (
-    screen: "accountdetails" | "appearance" | "preferences"
-  ) => {
-    setShowSettingsModal(false);
-    router.push(`/settings/${screen}`);
-  };
+
 
   const loadFollowCounts = async (userId: string) => {
     try {

@@ -26,28 +26,66 @@ export interface Injury {
   }[];
 }
 
-interface UseGameOfficials {
+export interface LeaderGroup {
+  team: {
+    id: string;
+    displayName: string;
+    abbreviation: string;
+    logos?: { href: string }[];
+  };
+  leaders: {
+    name: string; // "points" | "rebounds" | etc (varies by sport)
+    displayName: string; // "Points", "Rebounds"
+    leaders: {
+      athlete: {
+        id: string;
+        fullName: string;
+        displayName: string;
+        shortName?: string;
+        headshot?: string;
+        position?: { abbreviation?: string };
+        team?: { id: string };
+      };
+      value: number; // e.g., 27 points
+    }[];
+  }[];
+}
+
+interface UseGameDetails {
   officials: Official[];
   injuries: Injury[];
+  highlights: any[];
+  plays: any[];
+  leaders: LeaderGroup[];
+  neutralSite: boolean;
+  timeouts: { home: number | null; away: number | null };
   loading: boolean;
   error: string | null;
 }
 
 /**
- * Fetches game officials & injuries from ESPN.
+ * Fetches game officials, injuries, highlights, plays, timeouts, AND leaders from ESPN.
  * Works for both NBA and College Basketball.
  */
-export const useGameOfficials = (
+export const useGameDetails = (
   league: "nba" | "cbb",
   awayTeamId?: string | number,
   homeTeamId?: string | number,
-  date?:
-    | string
-    | { date?: string; utc?: string; timestamp?: number }
-    | undefined
-): UseGameOfficials => {
+  date?: string | { date?: string; utc?: string; timestamp?: number }
+): UseGameDetails => {
   const [officials, setOfficials] = useState<Official[]>([]);
   const [injuries, setInjuries] = useState<Injury[]>([]);
+  const [highlights, setHighlights] = useState<any[]>([]);
+  const [neutralSite, setNeutralSite] = useState<boolean>(false);
+  const [plays, setPlays] = useState<any[]>([]);
+  const [leaders, setLeaders] = useState<LeaderGroup[]>([]);
+  const [timeouts, setTimeouts] = useState<{
+    home: number | null;
+    away: number | null;
+  }>({
+    home: null,
+    away: null,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,17 +97,17 @@ export const useGameOfficials = (
       setError(null);
 
       try {
-        // 🗓 Normalize the target date
+        // Normalize date object/string
         let targetDate: Date | null = null;
         if (typeof date === "string") targetDate = new Date(date);
         else if (typeof date === "object") {
           targetDate = date.timestamp
             ? new Date(date.timestamp * 1000)
             : date.utc
-              ? new Date(date.utc)
-              : date.date
-                ? new Date(date.date)
-                : null;
+            ? new Date(date.utc)
+            : date.date
+            ? new Date(date.date)
+            : null;
         }
         if (!targetDate) return;
 
@@ -77,22 +115,23 @@ export const useGameOfficials = (
           d.toISOString().slice(0, 10).replace(/-/g, "");
 
         const datesToCheck = [
-          makeYMD(new Date(targetDate.getTime() - 24 * 60 * 60 * 1000)),
+          makeYMD(new Date(targetDate.getTime() - 86400000)),
           makeYMD(targetDate),
-          makeYMD(new Date(targetDate.getTime() + 24 * 60 * 60 * 1000)),
+          makeYMD(new Date(targetDate.getTime() + 86400000)),
         ];
 
         let foundGame: any = null;
 
-        // 🎯 Set league-specific ESPN endpoints
         const sportPath =
           league === "nba"
             ? "basketball/nba"
             : "basketball/mens-college-basketball";
 
-        // 🔍 Try each nearby date
+        const params = league === "cbb" ? "groups=50&limit=500" : "";
+
+        // Find matching game
         for (const yyyymmdd of datesToCheck) {
-          const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/scoreboard?dates=${yyyymmdd}&limit=500`;
+          const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/scoreboard?dates=${yyyymmdd}&${params}`;
           const res = await axios.get(scoreboardUrl);
           const games = res.data.events || [];
 
@@ -115,6 +154,10 @@ export const useGameOfficials = (
           setError("Game not found on ESPN");
           setOfficials([]);
           setInjuries([]);
+          setHighlights([]);
+          setPlays([]);
+          setLeaders([]);
+          setTimeouts({ home: null, away: null });
           return;
         }
 
@@ -125,13 +168,37 @@ export const useGameOfficials = (
         const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/summary?event=${gameId}`;
         const { data: summary } = await axios.get(summaryUrl);
 
+        const neutral =
+          summary?.header?.competitions?.[0]?.neutralSite ?? false;
+
+        setHighlights(summary?.videos ?? []);
         setOfficials(summary?.gameInfo?.officials ?? []);
         setInjuries(summary?.injuries ?? []);
+        setPlays(summary?.plays ?? []);
+        setNeutralSite(neutral);
+
+        // ⭐️ NEW — set leaders
+        setLeaders(summary?.leaders ?? []);
+
+        // --- Extract timeouts ---
+        const competitors =
+          summary?.header?.competitions?.[0]?.competitors || [];
+        const home = competitors.find((c: any) => c.homeAway === "home");
+        const away = competitors.find((c: any) => c.homeAway === "away");
+
+        setTimeouts({
+          home: home?.timeoutsRemaining ?? null,
+          away: away?.timeoutsRemaining ?? null,
+        });
       } catch (err: any) {
-        console.error(`❌ Error fetching ${league} officials/injuries:`, err);
+        console.error(`❌ Error fetching ${league} game details:`, err);
         setError(err.message || "Failed to fetch data");
         setOfficials([]);
         setInjuries([]);
+        setHighlights([]);
+        setPlays([]);
+        setLeaders([]);
+        setTimeouts({ home: null, away: null });
       } finally {
         setLoading(false);
       }
@@ -140,5 +207,15 @@ export const useGameOfficials = (
     fetchData();
   }, [league, awayTeamId, homeTeamId, date]);
 
-  return { officials, injuries, loading, error };
+  return {
+    officials,
+    injuries,
+    highlights,
+    plays,
+    neutralSite,
+    leaders,
+    timeouts,
+    loading,
+    error,
+  };
 };

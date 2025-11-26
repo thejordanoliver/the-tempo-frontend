@@ -1,46 +1,26 @@
-import { getStyles } from "styles/Standings.styles";
-import { Text, View, useColorScheme } from "react-native";
+// StatusBadge.tsx
+import React from "react";
+import { View, Text } from "react-native";
 
-const statusCodeToColor: Record<StatusCode, string> = {
-  x: "#4caf50",
-  o: "#f44336",
-  e: "#2196f3",
-  w: "#2196f3",
-  nw: "#ff9800",
-  p: "#ff9800",
-  sw: "#ff9800",
-  a: "#9c27b0",
-  ps: "#4caf50",
-  c: "#9c27b0",
-  se: "#9c27b0",
-  pi: "#ffc107",
+type StatusBadgeProps = {
+  code?: string | null;
+  clinchedConference?: boolean; // <--- add this
 };
 
-type StatusCode =
-  | "x"
-  | "o"
-  | "e"
-  | "w"
-  | "nw"
-  | "p"
-  | "sw"
-  | "a"
-  | "ps"
-  | "c"
-  | "se"
-  | "pi";
-
-export const StatusBadge = ({ code }: { code?: string | null }) => {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
-
-  if (!code || !(code in statusCodeToColor)) return null;
-
-  const backgroundColor = statusCodeToColor[code as StatusCode];
-
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ code, clinchedConference }) => {
   return (
-    <View style={[styles.statusBadge, { backgroundColor }]}>
-      <Text style={styles.statusBadgeText}>{code.toUpperCase()}</Text>
+    <View
+      style={{
+        paddingHorizontal: 4,
+        paddingVertical: 2,
+        backgroundColor: clinchedConference ? "gold" : "gray",
+        borderRadius: 4,
+        marginLeft: 4,
+      }}
+    >
+      <Text style={{ fontSize: 10, fontWeight: "bold", color: "#000" }}>
+        {clinchedConference ? "C" : code}
+      </Text>
     </View>
   );
 };

@@ -1,6 +1,7 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
-export const getStyles = (isDark: boolean) =>
+export const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     container: { marginTop: 12, overflow: "hidden" },
     center: { alignItems: "center", justifyContent: "center", padding: 16 },
@@ -19,7 +20,11 @@ export const getStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
-      borderColor: isDark ? "#fff" : "#1d1d1d",
+      borderColor: lighter
+        ? Colors.white
+        : isDark
+        ? Colors.white
+        : Colors.black,
     },
     jersey: {
       fontFamily: Fonts.OSREGULAR,

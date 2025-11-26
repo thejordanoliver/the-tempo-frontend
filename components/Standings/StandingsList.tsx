@@ -1,511 +1,207 @@
-// StandingsList.tsx
-
-import { Fonts } from "constants/fonts";
-import { useTeams } from "hooks/useTeams";
-import { getStyles } from "styles/Standings.styles";
-import type { TeamStanding as TeamStandingType } from "types/standingsTypes";
+// components/NBAStandingsList.tsx
+import { useRouter } from "expo-router";
+import { Dropdown } from "components/Dropdown";
+import { nbaDivisionsById, teams } from "constants/teams"; // your NBA team logos & info
 import {
-  getImageSource,
-  getPlayoffStatusCode,
-  getTotalWins,
-  groupByDivision,
-} from "utils/standingsUtils";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
-import { useEffect, useRef, useState } from "react";
+  ConferenceStandings,
+  StandingsTeam,
+  useStandings,
+} from "hooks/useStandings";
+import React, { useState } from "react";
+import { StandingsSkeleton } from "./StandingsSkeleton";
 import {
-  Animated,
-  Easing,
   FlatList,
+  Image,
+  ImageSourcePropType,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
-import { useStandings } from "../../hooks/useStandings";
-import {
-  StatusLegend,
-  statusCodeToColor,
-  statusCodeToLabel,
-} from "./StatusLegend";
-import { Dropdown } from "components/Dropdown";
+import { getStyles } from "styles/Standings.styles";
 
 type SectionType = {
   title: string;
-  data: (TeamStandingType & { conferenceRank?: number })[];
+  data: StandingsTeam[];
 };
 
-// StatusBadge component for status codes
-function StatusBadge({ code }: { code?: string | null }) {
+export const StandingsList = () => {
+  const { data = [], loading, error } = useStandings();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-  if (!code || !statusCodeToLabel[code]) return null;
-
-  const backgroundColor = statusCodeToColor[code] || "#777";
-
-  return (
-    <View style={[styles.statusBadge, { backgroundColor }]}>
-      <Text style={styles.statusBadgeText}>{code.toUpperCase()}</Text>
-    </View>
-  );
-}
-
-export function StandingsList() {
-  const { standings, loading, error } = useStandings(2024);
-  const { teams } = useTeams();
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
-  const now = new Date();
-  const showBadges =
-    now.getMonth() > 3 || (now.getMonth() === 3 && now.getDate() >= 15);
+  const router = useRouter();
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference"
   );
 
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownAnim = useRef(new Animated.Value(0)).current;
-
-  // Sticky header current section title
-  const [currentSectionTitle, setCurrentSectionTitle] = useState(
-    sortMode === "conference" ? "Eastern Conference" : "Atlantic Division"
-  );
-
-  // Store measured section positions for scroll tracking
-  const sectionPositions = useRef<
-    { title: string; y: number; height: number }[]
-  >([]);
-
-  // When sortMode changes, reset currentSectionTitle accordingly
-  useEffect(() => {
-    setCurrentSectionTitle(
-      sortMode === "conference" ? "Eastern Conference" : "Atlantic Division"
-    );
-    sectionPositions.current = [];
-  }, [sortMode]);
-
-  const toggleDropdown = () => {
-    if (dropdownVisible) {
-      Animated.timing(dropdownAnim, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => setDropdownVisible(false));
-    } else {
-      setDropdownVisible(true);
-      Animated.timing(dropdownAnim, {
-        toValue: 1,
-        duration: 300,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const onSelectSortMode = (mode: "conference" | "division") => {
-    setSortMode(mode);
-    toggleDropdown();
-  };
-
-  const dropdownTranslateY = dropdownAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 0],
-  });
-
-  // Measure each section's position and save it
-  const onSectionLayout = (event: any, title: string) => {
-    const { y, height } = event.nativeEvent.layout;
-    const existingIndex = sectionPositions.current.findIndex(
-      (s) => s.title === title
-    );
-    if (existingIndex !== -1) {
-      sectionPositions.current[existingIndex] = { title, y, height };
-    } else {
-      sectionPositions.current.push({ title, y, height });
-      sectionPositions.current.sort((a, b) => a.y - b.y);
-    }
-  };
-
-  // On scroll, determine which section is currently at top and update title
-  const onScroll = (event: any) => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-    let currentTitle = currentSectionTitle;
-
-    // Add some offset for header height (~60px)
-    const offsetY = scrollY + 60;
-
-    // Find last section that has y less or equal to offsetY
-    for (let i = sectionPositions.current.length - 1; i >= 0; i--) {
-      const section = sectionPositions.current[i];
-      if (offsetY >= section.y) {
-        currentTitle = section.title;
-        break;
-      }
-    }
-
-    if (currentTitle !== currentSectionTitle) {
-      setCurrentSectionTitle(currentTitle);
-    }
-  };
-
-  if (loading)
+ if (loading)
     return (
-      <View style={[{ backgroundColor: isDark ? "#1d1d1d" : "#fff" }]}>
-        <Text
-          style={{
-            textAlign: "center",
-            color: isDark ? "#aaa" : "#666",
-            marginTop: 20,
-            fontSize: 20,
-            fontFamily: Fonts.OSLIGHT,
-          }}
-        >
-          Loading standings...
-        </Text>
+      <View style={{ flex: 1 }}>
+        <StandingsSkeleton />
       </View>
     );
+
 
   if (error)
     return (
-      <View
-        style={[
-          styles.center,
-          { backgroundColor: isDark ? "#1d1d1d" : "#fff" },
-        ]}
-      >
-        <Text style={{ color: "red" }}>{error}</Text>
+      <View style={styles.center}>
+        <Text style={[styles.text, { color: "red" }]}>{error}</Text>
       </View>
     );
 
-  const eastStandings = standings
-    .filter((team) => team.conference.name.toLowerCase() === "east")
-    .sort((a, b) => getTotalWins(b) - getTotalWins(a))
-    .map((team, index) => ({ ...team, conferenceRank: index + 1 }));
+  // --- Group by conference ---
+  const east = (
+    data?.find(
+      (c) => c.abbreviation === "East" || c.name === "Eastern Conference"
+    )?.standings || []
+  ).sort((a, b) => b.winPercent - a.winPercent);
 
-  const westStandings = standings
-    .filter((team) => team.conference.name.toLowerCase() === "west")
-    .sort((a, b) => getTotalWins(b) - getTotalWins(a))
-    .map((team, index) => ({ ...team, conferenceRank: index + 1 }));
+  const west = (
+    data?.find(
+      (c) => c.abbreviation === "West" || c.name === "Western Conference"
+    )?.standings || []
+  ).sort((a, b) => b.winPercent - a.winPercent);
 
-  const combinedStandings = [...eastStandings, ...westStandings];
+  // --- Group by division ---
+  const divisions: Record<string, StandingsTeam[]> = {};
+  data?.forEach((conf) => {
+    conf.standings.forEach((team) => {
+      if (!divisions[team.division]) divisions[team.division] = [];
+      divisions[team.division].push(team);
+    });
+  });
 
-  const divisionGroupsRaw = groupByDivision(combinedStandings);
-  const divisionGroups = Object.fromEntries(
-    Object.entries(divisionGroupsRaw).map(([divisionName, teams]) => {
-      const teamsWithRank = teams.map((team) => {
-        const found = combinedStandings.find((t) => t.team.id === team.team.id);
-        return { ...team, conferenceRank: found?.conferenceRank };
-      });
-      return [divisionName, teamsWithRank];
-    })
+  // --- Group by division using mapped list ---
+  const divisionStandings: SectionType[] = Object.entries(nbaDivisionsById).map(
+    ([divisionName, idList]) => {
+      const teamsInDivision =
+        data
+          ?.flatMap((conf: ConferenceStandings) => conf.standings)
+          .filter((team: StandingsTeam) => idList.includes(Number(team.teamId)))
+          .sort(
+            (a: StandingsTeam, b: StandingsTeam) => b.winPercent - a.winPercent
+          ) || [];
+
+      return {
+        title: `${divisionName} Division`,
+        data: teamsInDivision,
+      };
+    }
   );
 
-  const renderFixedItem = ({
+  const renderLeftItem = ({
     item,
     index,
   }: {
-    item: TeamStandingType & { conferenceRank?: number };
+    item: StandingsTeam;
     index: number;
   }) => {
-    const { team, conferenceRank } = item;
-
-    let statusCode = item.statusCode ?? getPlayoffStatusCode(conferenceRank);
-
-    if (conferenceRank === 1) {
-      if (item.conference.name.toLowerCase() === "east") {
-        statusCode = "e";
-      } else if (item.conference.name.toLowerCase() === "west") {
-        statusCode = "w";
-      }
-    }
+    const teamInfo = teams.find((t) => t.espnID === item.teamId);
+    const teamLogo: ImageSourcePropType = isDark
+      ? teamInfo?.logoLight ||
+        teamInfo?.logo ||
+        require("assets/Placeholders/teamPlaceholder.png")
+      : teamInfo?.logo || require("assets/Placeholders/teamPlaceholder.png");
 
     return (
-      <View
-        style={[styles.row, { borderBottomColor: isDark ? "#333" : "#ccc" }]}
-      >
-        <View style={[styles.rankContainer]}>
-          <Text
-            style={[styles.rankText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {index + 1}
-          </Text>
+      <View style={styles.row}>
+        <View style={styles.rankContainer}>
+          <Text style={styles.rankText}>{index + 1}</Text>
         </View>
-        <View style={[styles.teamInfo]}>
-          <Image
-            source={getImageSource(
-              isDark && team.logoLight ? team.logoLight : team.logo
-            )}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text
-            style={[styles.teamName, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {team.code}
-          </Text>
-          {showBadges && <StatusBadge code={statusCode} />}
-        </View>
+
+        <TouchableOpacity  style={styles.teamInfo}onPress={() =>
+  router.push({
+    pathname: "/team/[teamId]",
+    params: { teamId: String(teamInfo?.id) },
+  })
+}
+>
+          <Image source={teamLogo} style={styles.logo} />
+          <Text style={styles.teamName}>{teamInfo?.code}</Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
-  const renderStatsItem = ({ item }: { item: TeamStandingType }) => {
-    const {
-      conference,
-      win,
-      loss,
-      division,
-      gamesBehind,
-      streak,
-      winStreak,
-      tieBreakerPoints,
-      team,
-    } = item;
-
-    let totalWins = conference.win;
-    let totalLosses = conference.loss;
-    let winPct =
-      conference.win === 0 && conference.loss === 0
-        ? 0
-        : conference.win / (conference.win + conference.loss);
-
-    const matchedTeam = teams.find((t) => Number(t.id) === Number(team.id));
-
-    if (
-      conference.win === 0 &&
-      conference.loss === 0 &&
-      matchedTeam?.current_season_record
-    ) {
-      const [winsStr, lossesStr] = matchedTeam.current_season_record.split("-");
-      totalWins = parseInt(winsStr, 10) || 0;
-      totalLosses = parseInt(lossesStr, 10) || 0;
-    } else if (conference.win === 0 && conference.loss === 0) {
-      totalWins = win.home + win.away;
-      totalLosses = loss.home + loss.away;
-    }
-    const winPctDisplay = winPct > 0 ? (winPct * 100).toFixed(1) + "%" : "0%";
+  const renderRightItem = ({ item }: { item: StandingsTeam }) => {
+    const winStreak = item.streak?.startsWith("W");
+    const streakColor = winStreak ? "limegreen" : "tomato";
 
     return (
-      <View
-        style={[
-          styles.row,
-          { borderBottomColor: isDark ? "#333" : "#ccc", flexDirection: "row" },
-        ]}
-      >
+      <View style={styles.row}>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {totalWins} - {totalLosses}
+          <Text style={styles.statText}>
+            {item.wins}-{item.losses}
           </Text>
         </View>
         <View style={styles.statCell}>
-          <Text style={[styles.statText, { color: isDark ? "#aaa" : "#555" }]}>
-            GB: {gamesBehind || "0"}
+          <Text style={styles.statText}>
+            {(item.winPercent * 100).toFixed(1)}%
           </Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[
-              styles.statText,
-              { color: winStreak ? "limegreen" : "tomato" },
-            ]}
-          >
-            {winStreak ? `W${streak}` : `L${streak}`}
-          </Text>
-        </View>
-
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {division.win} - {division.loss}
-          </Text>
+          <Text style={styles.statText}>{item.homeRecord}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text style={[styles.statText, { color: isDark ? "#aaa" : "#555" }]}>
-            GB: {division.gamesBehind || "0"}
-          </Text>
+          <Text style={styles.statText}>{item.roadRecord}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {win.home}
-          </Text>
+          <Text style={styles.statText}>{item.conferenceRecord}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {win.away}
-          </Text>
+          <Text style={styles.statText}>{item.vsdiv}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {win.total}
-          </Text>
+          <Text style={styles.statText}>{item.pointsFor}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text style={[styles.statText, { color: isDark ? "#aaa" : "#555" }]}>
-            {winPctDisplay}
-          </Text>
+          <Text style={styles.statText}>{item.pointsAgainst}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {loss.home}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {loss.away}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {loss.total}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text style={[styles.statText, { color: isDark ? "#aaa" : "#555" }]}>
-            {totalLosses > 0
-              ? ((totalLosses / (totalWins + totalLosses)) * 100).toFixed(1) +
-                "%"
-              : "0%"}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {win.lastTen}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {loss.lastTen}
-          </Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {tieBreakerPoints ?? "-"}
+          <Text style={[styles.statText, { color: streakColor }]}>
+            {item.streak}
           </Text>
         </View>
       </View>
     );
   };
 
-  const renderFixedHeader = () => (
-    <View
-      style={[
-        styles.row,
-        { borderBottomWidth: 1, borderBottomColor: isDark ? "#444" : "#ccc" },
-      ]}
-    >
-      <View style={[styles.rankContainer]}>
-        <Text
-          style={[
-            styles.rankText,
-            {
-              fontSize: 12,
-              fontFamily: Fonts.OSSEMIBOLD,
-              color: isDark ? "#fff" : "#1d1d1d",
-            },
-          ]}
-        >
-          #
-        </Text>
+  const renderHeader = () => (
+    <View style={styles.row}>
+      <View style={styles.rankContainer}>
+        <Text style={styles.rankText}>#</Text>
       </View>
-      <View
-        style={[
-          styles.teamInfo,
-          { flexDirection: "row", alignItems: "center" },
-        ]}
-      >
-        <Text
-          style={[
-            styles.teamHeaderText,
-            { color: isDark ? "#fff" : "#1d1d1d" },
-          ]}
-        >
-          Team
-        </Text>
+      <View>
+        <Text style={styles.teamHeaderText}>Team</Text>
       </View>
     </View>
   );
 
   const renderStatsHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          flexDirection: "row",
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
-          paddingVertical: 12,
-        },
-      ]}
-    >
+    <View style={styles.row}>
       {[
         "W-L",
-        "Conf GB",
-        "Streak",
-        "Div W-L",
-        "Div GB",
-        "Home W",
-        "Away W",
-        "Total W",
         "Win %",
-        "Home L",
-        "Away L",
-        "Total L",
-        "Loss %",
-        "Last 10 W",
-        "Last 10 L",
-        "Tie Breaker",
+        "Home",
+        "Away",
+        "Conf",
+        "Div",
+        "Pts For",
+        "Pts Against",
+        "Streak",
       ].map((label) => (
         <View key={label} style={styles.statCell}>
-          <Text
-            style={[
-              styles.statText,
-              {
-                fontSize: 12,
-                fontFamily: Fonts.OSSEMIBOLD,
-                color: isDark ? "#fff" : "#1d1d1d",
-              },
-            ]}
-          >
-            {label}
-          </Text>
+          <Text style={styles.statText}>{label}</Text>
         </View>
       ))}
     </View>
   );
 
-  function ConferenceStandings({ title, data }: SectionType) {
+  function Section({ title, data }: SectionType) {
     return (
       <View style={{ marginTop: 12 }}>
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: isDark ? "#444" : "#ccc" },
-          ]}
-        >
+        <View style={styles.header}>
           <Text
             style={[styles.heading, { color: isDark ? "#fff" : "#1d1d1d" }]}
           >
@@ -513,25 +209,23 @@ export function StandingsList() {
           </Text>
         </View>
         <View style={{ flexDirection: "row" }}>
-          {/* Left side FlatList with sticky header */}
           <FlatList
             data={data}
-            keyExtractor={(item) => item.team.id.toString()}
-            renderItem={renderFixedItem}
+            keyExtractor={(item) => item.teamId}
+            renderItem={renderLeftItem}
             scrollEnabled={false}
-            ListHeaderComponent={renderFixedHeader}
+            ListHeaderComponent={renderHeader}
             stickyHeaderIndices={[0]}
           />
-          {/* Right side horizontal scroll with FlatList and sticky header */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-             style={{ width: 220 }} // increased
+            style={{ width: 220 }}
           >
             <FlatList
               data={data}
-              keyExtractor={(item) => item.team.id.toString()}
-              renderItem={renderStatsItem}
+              keyExtractor={(item) => item.id}
+              renderItem={renderRightItem}
               scrollEnabled={false}
               ListHeaderComponent={renderStatsHeader}
               stickyHeaderIndices={[0]}
@@ -544,51 +238,35 @@ export function StandingsList() {
 
   return (
     <ScrollView
-      style={{ backgroundColor: isDark ? "#1d1d1d" : "#fff" }}
       contentContainerStyle={{
-        paddingBottom: 100,
-        paddingHorizontal: 12,
+        paddingHorizontal: 16,
         paddingTop: 10,
+        paddingBottom: 100,
       }}
     >
-  
-
       <Dropdown
-  options={[
-    { label: "Conference", value: "conference" },
-    { label: "Division", value: "division" },
-  ]}
-  selectedValue={sortMode}
-  onSelect={(value) => setSortMode(value as "conference" | "division")}
-  isDark={isDark}
-/>
-
+        options={[
+          { label: "Conference", value: "conference" },
+          { label: "Division", value: "division" },
+        ]}
+        selectedValue={sortMode}
+        onSelect={(value) => setSortMode(value as "conference" | "division")}
+        isDark={isDark}
+      />
       {sortMode === "conference" ? (
         <>
-          <ConferenceStandings
-            title="Eastern Conference"
-            data={eastStandings}
-          />
-          <ConferenceStandings
-            title="Western Conference"
-            data={westStandings}
-          />
+          <Section title="Eastern Conference" data={east} />
+          <Section title="Western Conference" data={west} />
         </>
       ) : (
-        Object.entries(divisionGroups).map(([divisionName, teams]) => {
-          const formattedDivision =
-            divisionName.charAt(0).toUpperCase() + divisionName.slice(1);
-          return (
-            <ConferenceStandings
-              key={divisionName}
-              title={`${formattedDivision} Division`}
-              data={teams}
-            />
-          );
-        })
+        divisionStandings.map((section) => (
+          <Section
+            key={section.title}
+            title={section.title}
+            data={section.data}
+          />
+        ))
       )}
-
-      <StatusLegend />
     </ScrollView>
   );
-}
+};

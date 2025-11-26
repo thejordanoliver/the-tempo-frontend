@@ -1,11 +1,11 @@
 // components/CFB/CFBGameLeaders.tsx
 import Placeholder from "assets/images/placeholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import ScrollableTabBar from "components/NFL/TabBars/ScrollableTabBar";
+import ScrollableTabBar from "components/TabBars/ScrollableTabBar";
+import { players } from "constants/cfbPlayers";
 import { Fonts } from "constants/fonts";
 import { getCFBTeamAbbreviation, getTeamLogo } from "constants/teamsCFB";
 import { CFBPlayer, useCFBGameLeaders } from "hooks/CFBHooks/useCFBGameLeaders";
-import { players } from "constants/cfbPlayers";
 import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 
 import { useMemo, useState } from "react";
@@ -81,7 +81,6 @@ const normalizePlayers = (
     };
   });
 
-
 const getAbbreviation = (category: Category, name: string) => {
   const lower = name.toLowerCase();
   if (category === "Passing") {
@@ -128,33 +127,33 @@ export default function CFBGameLeaders({
   gameId,
   homeTeamId,
   awayTeamId,
-  lighter,
+  lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, lighter);
 
   const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
   const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
   const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#ccc";
 
-const teamLogos = useMemo(() => {
-  if (!homeTeamId || !awayTeamId) return {};
+  const teamLogos = useMemo(() => {
+    if (!homeTeamId || !awayTeamId) return {};
 
-  const logos: Record<string, any> = {};
-  [homeTeamId, awayTeamId].forEach((id) => {
-    const teamAbbr = getCFBTeamAbbreviation(id) || "UNK";
+    const logos: Record<string, any> = {};
+    [homeTeamId, awayTeamId].forEach((id) => {
+      const teamAbbr = getCFBTeamAbbreviation(id) || "UNK";
 
-    // Use light logo only in dark mode or lighter mode
-    if (isDark || lighter) {
-      logos[id] = getTeamLogo(teamAbbr, true) ?? getTeamLogo(teamAbbr, false);
-    } else {
-      logos[id] = getTeamLogo(teamAbbr, false) ?? getTeamLogo(teamAbbr, true);
-    }
-  });
+      // Use light logo only in dark mode or lighter mode
+      if (isDark || lighter) {
+        logos[id] = getTeamLogo(teamAbbr, true) ?? getTeamLogo(teamAbbr, false);
+      } else {
+        logos[id] = getTeamLogo(teamAbbr, false) ?? getTeamLogo(teamAbbr, true);
+      }
+    });
 
-  return logos;
-}, [homeTeamId, awayTeamId, isDark, lighter]);
+    return logos;
+  }, [homeTeamId, awayTeamId, isDark, lighter]);
 
   // Early return
   if (!homeTeamId || !awayTeamId) return null;
@@ -256,9 +255,7 @@ const teamLogos = useMemo(() => {
               { borderBottomWidth: 1, borderBottomColor: borderColor },
             ]}
           >
-            <View
-              style={[styles.avatarWrapper]}
-            >
+            <View style={[styles.avatarWrapper]}>
               <Image
                 source={p.image ? { uri: p.image } : Placeholder}
                 style={styles.avatar}
@@ -284,12 +281,11 @@ const teamLogos = useMemo(() => {
               </View>
             </View>
 
-          <Image
-  source={teamLogos[teamId]}
-  style={styles.teamLogo}
-  resizeMode="contain"
-/>
-
+            <Image
+              source={teamLogos[teamId]}
+              style={styles.teamLogo}
+              resizeMode="contain"
+            />
           </View>
         );
       })}

@@ -1,6 +1,6 @@
 import axios from "axios";
 import rateLimit from "axios-rate-limit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Game } from "types/types";
 import { teams } from "../constants/teams";
 
@@ -13,7 +13,7 @@ const http = rateLimit(axios.create({}), {
   perMilliseconds: 1000,
 });
 
-// 🕒 Convert UTC date string to Eastern Time (America/New_York)
+// 🕒 Convert UTC date string to Eastern Time
 function convertToEastern(dateString: string): Date {
   const utcDate = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
@@ -33,7 +33,6 @@ function convertToEastern(dateString: string): Date {
       return acc;
     }, {});
 
-  // Construct new ET Date
   return new Date(
     `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`
   );
@@ -72,60 +71,59 @@ export function useWeeklyGames() {
 
         const rawGames = res.data.response || [];
 
-      const normalizedGames: Game[] = rawGames.map((game) => {
-  const homeLocal = teams.find(
-    (t) => String(t.id) === String(game.teams.home.id)
-  );
-  const awayLocal = teams.find(
-    (t) => String(t.id) === String(game.teams.visitors.id)
-  );
+        const normalizedGames: Game[] = rawGames.map((game) => {
+          const homeLocal = teams.find(
+            (t) => String(t.id) === String(game.teams.home.id)
+          );
+          const awayLocal = teams.find(
+            (t) => String(t.id) === String(game.teams.visitors.id)
+          );
 
-  const etDateObj = convertToEastern(game.date.start);
-  const etDateString = etDateObj.toISOString(); // ✅ Game.date must be string
+          const etDateObj = convertToEastern(game.date.start);
+          const etDateString = etDateObj.toISOString();
 
-  return {
-    id: parseInt(game.id, 10),
-    date: etDateString, // now a string
-    time: etDateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    status: {
-      short: game.status?.short ?? "",
-      long: game.status?.long ?? "",
-      clock: game.status?.clock ?? "0.0",
-      halftime: game.status?.halftime,
-    },
-    statusText: game.status?.long ?? "",
-    periods: game.periods ?? [],
-    home: {
-      id: String(game.teams.home.id),
-      espnID: homeLocal?.espnID ?? "",
-      name: homeLocal?.name ?? game.teams.home.name ?? "",
-      logo: homeLocal?.logo ?? game.teams.home.logo ?? "",
-    },
-    away: {
-      id: String(game.teams.visitors.id),
-      espnID: awayLocal?.espnID ?? "",
-      name: awayLocal?.name ?? game.teams.visitors.name ?? "",
-      logo: awayLocal?.logo ?? game.teams.visitors.logo ?? "",
-    },
-    scores: {
-      home: {
-        points:
-          typeof game.scores?.home?.points === "number"
-            ? game.scores.home.points
-            : 0,
-      },
-      visitors: {
-        points:
-          typeof game.scores?.visitors?.points === "number"
-            ? game.scores.visitors.points
-            : 0,
-      },
-    },
-    year: etDateObj.getFullYear(),
-    month: etDateObj.getMonth(),
-  };
-});
-
+          return {
+            id: parseInt(game.id, 10),
+            date: etDateString,
+            time: etDateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            status: {
+              short: game.status?.short ?? "",
+              long: game.status?.long ?? "",
+              clock: game.status?.clock ?? "0.0",
+              halftime: game.status?.halftime,
+            },
+            statusText: game.status?.long ?? "",
+            periods: game.periods ?? [],
+            home: {
+              id: String(game.teams.home.id),
+              espnID: homeLocal?.espnID ?? "",
+              name: homeLocal?.name ?? game.teams.home.name ?? "",
+              logo: homeLocal?.logo ?? game.teams.home.logo ?? "",
+            },
+            away: {
+              id: String(game.teams.visitors.id),
+              espnID: awayLocal?.espnID ?? "",
+              name: awayLocal?.name ?? game.teams.visitors.name ?? "",
+              logo: awayLocal?.logo ?? game.teams.visitors.logo ?? "",
+            },
+            scores: {
+              home: {
+                points:
+                  typeof game.scores?.home?.points === "number"
+                    ? game.scores.home.points
+                    : 0,
+              },
+              visitors: {
+                points:
+                  typeof game.scores?.visitors?.points === "number"
+                    ? game.scores.visitors.points
+                    : 0,
+              },
+            },
+            year: etDateObj.getFullYear(),
+            month: etDateObj.getMonth(),
+          };
+        });
 
         allGames.push(...normalizedGames);
       }
@@ -144,5 +142,12 @@ export function useWeeklyGames() {
     refreshGames();
   }, []);
 
-  return { games, loading, error, refreshGames };
+  // ✅ Live games first
+  const isLiveGame = (game: Game) => game.status.long === "Live";
+
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+  }, [games]);
+
+  return { games: sortedGames, loading, error, refreshGames };
 }

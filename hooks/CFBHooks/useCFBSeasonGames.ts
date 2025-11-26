@@ -1,9 +1,12 @@
 // hooks/CFBHooks/useCFBSeasonGames.ts
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Game } from "types/cfb";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
+// Live statuses for CFB
+const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
 export function useCFBSeasonGames(season = "2025", league = "2") {
   const [games, setGames] = useState<Game[]>([]);
@@ -62,5 +65,15 @@ export function useCFBSeasonGames(season = "2025", league = "2") {
     fetchSeasonGames();
   }, [fetchSeasonGames]);
 
-  return { games, loading, error, refetch: fetchSeasonGames };
+  // --- Helper to detect live games ---
+  const isLiveGame = useCallback((game: Game) => {
+    return game.game.status?.short && LIVE_STATUSES.includes(game.game.status.short);
+  }, []);
+
+  // --- Sorted games with live games first ---
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+  }, [games, isLiveGame]);
+
+  return { games: sortedGames, loading, error, refetch: fetchSeasonGames };
 }

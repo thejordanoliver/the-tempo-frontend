@@ -22,7 +22,6 @@ import { LeagueType } from "types/types";
 type PlayByPlayFieldProps = {
   lastPlay?: string | PlayObject;
   possessionTeamId?: number;
-  firstDownYardLine?: number;
   homeTeamId: number;
   awayTeamId: number;
   league?: LeagueType;
@@ -35,10 +34,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   homeTeamId,
   awayTeamId,
   league = "NFL",
-  firstDownYardLine,
 }) => {
   const playAnim = useRef(new Animated.Value(50)).current;
-  const firstDownAnim = useRef(new Animated.Value(50)).current;
   const scoreAnim = useRef(new Animated.Value(0)).current;
   const scoreReveal = useRef(new Animated.Value(0)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -114,10 +111,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     return yardLine != null ? Math.min(100, Math.max(0, Number(yardLine))) : 50;
   };
 
-  const computeFirstDownPercent = (yard?: number) => {
-    return yard != null ? Math.min(100, Math.max(0, Number(yard))) : 50;
-  };
-
+ 
   // Animate ball marker + detect scores
   useEffect(() => {
     if (typeof lastPlay !== "object") return;
@@ -217,22 +211,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   }, [lastPlay]);
 
   // Animate first down line
-  useEffect(() => {
-    if (firstDownYardLine == null) return;
-
-    const target = computeFirstDownPercent(firstDownYardLine);
-
-    // Determine offense team for correct direction
-    const firstDownIsHome =
-      possessionTeamId != null ? possessionTeamId === homeTeamId : true;
-
-    Animated.spring(firstDownAnim, {
-      toValue: target,
-      useNativeDriver: false,
-      stiffness: 120,
-      damping: 14,
-    }).start();
-  }, [firstDownYardLine, possessionTeamId]);
 
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
@@ -343,21 +321,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
               },
             ]}
           />
-
-          {/* First Down Line */}
-          {firstDownYardLine != null && (
-            <Animated.View
-              style={[
-                styles.firstDownLine,
-                {
-                  left: firstDownAnim.interpolate({
-                    inputRange: [0, 100],
-                    outputRange: [fieldWidth, 0], // flip if away offense
-                  }),
-                },
-              ]}
-            />
-          )}
 
           {/* Score Overlay */}
           {scoreAnimation && (
@@ -499,15 +462,7 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 2,
       zIndex: 1,
     },
-    firstDownLine: {
-      position: "absolute",
-      top: 0,
-      height: "100%",
-      width: 3,
-      backgroundColor: "yellow",
-      zIndex: 2,
-      opacity: 0.7,
-    },
+   
     yardLine: {
       position: "absolute",
       top: 0,

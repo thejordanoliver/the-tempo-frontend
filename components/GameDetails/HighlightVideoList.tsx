@@ -1,24 +1,48 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { View, Text, Image, FlatList, Pressable, StyleSheet, Dimensions } from 'react-native';
-import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
-import { LinearGradient } from 'expo-linear-gradient';
-import { CFBHighlight } from 'hooks/CFBHooks/useCFBHighlights';
-import { Fonts } from 'constants/fonts';
-import HeadingTwo from 'components/Headings/HeadingTwo';
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { Fonts } from "constants/fonts";
+import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
+import { LinearGradient } from "expo-linear-gradient";
+import { Highlight } from "types/types";
+import React, { useCallback, useRef, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 type HighlightVideoProps = {
-  highlights: CFBHighlight[];
+  highlights: Highlight[];
 };
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 
-export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }) => {
-  // --- Hooks always at the top ---
+// ---> FIX: SAFE ESPN VIDEO URL EXTRACTOR
+const getPlayableUrl = (item: Highlight) => {
+  return (
+    item?.links?.source?.HLS?.href ||
+    item?.links?.hls ||
+    item?.links?.source?.href ||
+    item?.links?.mp4 ||
+    item?.links?.mobile ||
+    null
+  );
+};
+
+export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
+  highlights,
+}) => {
+  const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
   const videoRefs = useRef<Record<string, Video>>(Object.create(null));
-  const [headlineVisible, setHeadlineVisible] = useState<Record<string, boolean>>({});
+  const [headlineVisible, setHeadlineVisible] = useState<
+    Record<string, boolean>
+  >({});
   const [hasPlayed, setHasPlayed] = useState<Record<string, boolean>>({});
 
   const handlePlay = useCallback(
@@ -26,13 +50,11 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
       if (playingId && playingId !== id) {
         videoRefs.current[playingId]?.pauseAsync();
       }
+
       setPlayingId(id);
       setPaused((prev) => ({ ...prev, [id]: false }));
       setHasPlayed((prev) => ({ ...prev, [id]: true }));
-
-      setTimeout(() => {
-        videoRefs.current[id]?.presentFullscreenPlayer();
-      }, 150);
+      setIsLoaded((prev) => ({ ...prev, [id]: false }));
     },
     [playingId]
   );
@@ -40,6 +62,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
   const handlePlaybackStatusUpdate = useCallback(
     (id: string, status: AVPlaybackStatus) => {
       if (!status.isLoaded) return;
+
       const isPaused = !status.isPlaying;
       setPaused((prev) => ({ ...prev, [id]: isPaused }));
 
@@ -54,6 +77,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
         const video = videoRefs.current[id];
         video?.pauseAsync();
         video?.setPositionAsync(0);
+
         setPaused((prev) => ({ ...prev, [id]: true }));
         setPlayingId(null);
         setHeadlineVisible((prev) => ({ ...prev, [id]: false }));
@@ -63,8 +87,19 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: CFBHighlight }) => {
-      const videoSource = item.links.hls || item.links.mp4 || item.links.mobile;
+    ({ item }: { item: Highlight }) => {
+      const videoSource = getPlayableUrl(item);
+
+      if (!videoSource) {
+        return (
+          <View style={[styles.cardWrapper, { justifyContent: "center" }]}>
+            <Text style={{ color: "#fff", padding: 10 }}>
+              Video unavailable
+            </Text>
+          </View>
+        );
+      }
+
       const isPlaying = playingId === item.id;
       const isPaused = paused[item.id];
 
@@ -77,9 +112,24 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
               }}
               source={{ uri: videoSource }}
               style={styles.video}
-              useNativeControls={true} // always show controls
+              useNativeControls={true}
               resizeMode={ResizeMode.CONTAIN}
               shouldPlay={!isPaused}
+              onLoad={() => {
+                setIsLoaded((prev) => ({ ...prev, [item.id]: true }));
+
+                // ---> FIX: Only present fullscreen AFTER loaded
+                requestAnimationFrame(() => {
+                  const vid = videoRefs.current[item.id];
+                  if (vid) {
+                    try {
+                      vid.presentFullscreenPlayer();
+                    } catch (e) {
+                      console.log("Fullscreen failed:", e);
+                    }
+                  }
+                });
+              }}
               onPlaybackStatusUpdate={(status) =>
                 handlePlaybackStatusUpdate(item.id, status)
               }
@@ -89,14 +139,18 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
               style={styles.thumbnailWrapper}
               onPress={() => handlePlay(item.id)}
             >
-              <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+              <Image
+                source={{ uri: item.thumbnail }}
+                style={styles.thumbnail}
+              />
               <View style={styles.playButtonOverlay}>
                 <Text style={styles.playButtonText}>▶</Text>
               </View>
             </Pressable>
           )}
 
-          {(!hasPlayed[item.id] || (!isPlaying && headlineVisible[item.id])) && (
+          {(!hasPlayed[item.id] ||
+            (!isPlaying && headlineVisible[item.id])) && (
             <LinearGradient
               colors={["transparent", "rgba(0,0,0,0.7)"]}
               style={styles.headlineContainer}
@@ -109,13 +163,21 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
         </View>
       );
     },
-    [playingId, paused, handlePlay, handlePlaybackStatusUpdate, headlineVisible, hasPlayed]
+    [
+      playingId,
+      paused,
+      handlePlay,
+      handlePlaybackStatusUpdate,
+      headlineVisible,
+      hasPlayed,
+    ]
   );
 
   return (
     <View style={{ marginTop: 20 }}>
       <HeadingTwo>Highlights</HeadingTwo>
-      {(!highlights || highlights.length === 0) ? (
+
+      {!highlights || highlights.length === 0 ? (
         <Text style={styles.noHighlights}>No highlights available.</Text>
       ) : (
         <FlatList
@@ -124,6 +186,8 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
           renderItem={renderItem}
           horizontal
           showsHorizontalScrollIndicator={false}
+          snapToInterval={width * 0.8 + 15}
+          decelerationRate="fast"
           contentContainerStyle={styles.listContainer}
           extraData={[playingId, paused]}
         />
@@ -131,7 +195,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({ highlights }
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -143,50 +206,50 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     marginRight: 15,
     borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#000',
-    justifyContent: 'flex-end',
+    overflow: "hidden",
+    backgroundColor: "#000",
+    justifyContent: "flex-end",
   },
   video: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   headlineContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     padding: 8,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   headline: {
-    color: '#fff',
+    color: "#fff",
     fontFamily: Fonts.OSBOLD,
     fontSize: 16,
   },
   noHighlights: {
-    color: '#999',
-    textAlign: 'center',
+    color: "#999",
+    textAlign: "center",
     marginTop: 20,
   },
   playButtonOverlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   playButtonText: {
     fontSize: 50,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   thumbnailWrapper: {
-    width: '100%',
-    height: '100%',
-    position: 'relative',
+    width: "100%",
+    height: "100%",
+    position: "relative",
   },
   thumbnail: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });

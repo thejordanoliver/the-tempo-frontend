@@ -1,11 +1,13 @@
-import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { getTeamLogo } from "constants/teamsCFB";
+import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import HeadingTwo from "../../Headings/HeadingTwo";
-import FixedWidthTabBar, { getLabelStyle } from "../TabBars/FixedWidthTabBar";
-import DrivesList, { Drive } from "./DrivesList";
 import { LeagueType } from "types/types";
+import HeadingTwo from "../../Headings/HeadingTwo";
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "../../TabBars/FixedWidthTabBar";
+import DrivesList, { Drive } from "./DrivesList";
 type Props = {
   previousDrives?: Drive[] | null;
   currentDrives?: Drive[] | null;

@@ -1,11 +1,11 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLeaders } from "components/GameDetails";
 import BoxScore from "components/GameDetails/BoxScore";
-import GameOfficials from "components/GameDetails/GameOfficials";
 import GameTeamStats from "components/GameDetails/GameTeamStats";
 import GameUniforms from "components/GameDetails/GameUniforms";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import LineScore from "components/GameDetails/LineScore";
+import Officials from "components/GameDetails/Officials";
 import TeamInjuriesTab from "components/GameDetails/TeamInjuries";
 import TeamLocationSection from "components/GameDetails/TeamLocationSection";
 import Weather from "components/GameDetails/Weather";
@@ -20,7 +20,8 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   gameStats,
-  data,
+  officials,
+  injuries,
   detailsLoading,
   detailsError,
   resolvedVenueImage,
@@ -73,6 +74,16 @@ export default function GamePreviewContent({
         </View>
       )}
 
+      {/* Game Leaders */}
+      <View style={{ marginBottom: 24 }}>
+        <GameLeaders
+          gameId={game.id.toString()}
+          awayTeamId={away?.id}
+          homeTeamId={home?.id}
+          lighter
+        />
+      </View>
+
       {/* Game Stats */}
       {game?.id && gameStats?.length > 0 && (
         <>
@@ -100,18 +111,20 @@ export default function GamePreviewContent({
       )}
 
       {/* Officials */}
-      {data?.officials?.length > 0 && (
-        <View style={{ marginBottom: 24 }}>
-          <GameOfficials officials={data.officials} lighter />
-        </View>
-      )}
+      <View style={{ marginBottom: 24 }}>
+        <Officials
+          officials={officials ?? []}
+          loading={false}
+          error={null}
+          lighter
+        />
+      </View>
 
       {/* Injuries */}
-      {data?.injuries?.length > 0 && (
-        <View style={{ marginBottom: 24 }}>
-          <TeamInjuriesTab injuries={data.injuries} lighter />
-        </View>
-      )}
+
+      <View style={{ marginBottom: 24 }}>
+        <TeamInjuriesTab injuries={injuries} lighter />
+      </View>
 
       {/* Uniforms */}
       {home?.id && away?.id && (

@@ -1,11 +1,5 @@
-import axios from "axios";
-import dayjs from "dayjs";
-import tz from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-dayjs.extend(utc);
-dayjs.extend(tz);
+import axios from "axios";
 
 export type NBAScore = {
   home: { total: number };
@@ -26,197 +20,62 @@ export type NBAScore = {
   };
 };
 
+type DateParam = string | { date?: string; utc?: string; timestamp?: number };
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 export const useGameScores = (
   league: string,
   homeIdOrName?: string | null,
   awayIdOrName?: string | null,
-  date?: string | { date?: string; utc?: string; timestamp?: number }
+  date?: DateParam
 ) => {
-  const [score, setScore] = useState<NBAScore | undefined>();
+  const [score, setScore] = useState<NBAScore | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const warnedOnceRef = useRef(false);
+
+  // 🟡 Replace "error" with "warning"
+  const [warning, setWarning] = useState<string | null>(null);
+
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const skipFetch =
     !league || !homeIdOrName || !awayIdOrName || homeIdOrName === awayIdOrName;
 
-  const normalize = (s?: string) =>
-    s?.toLowerCase().replace(/[^a-z0-9]/g, "") ?? "";
-
   const fetchScore = useCallback(
     async (isPolling = false) => {
       if (skipFetch) return;
+
       try {
         if (!isPolling) setLoading(true);
-        setError(null);
+        setWarning(null);
 
-        // --- Determine base date safely ---
-        let baseDate: dayjs.Dayjs;
-        if (typeof date === "string" && date.trim() !== "") {
-          baseDate = dayjs(date);
-        } else if (typeof date === "object") {
-          if (date.timestamp) baseDate = dayjs(date.timestamp * 1000);
-          else if (date.utc) baseDate = dayjs(date.utc);
-          else if (date.date) baseDate = dayjs(date.date);
-          else baseDate = dayjs();
-        } else {
-          baseDate = dayjs();
-        }
+        const params: Record<string, any> = {
+          league,
+          home: homeIdOrName,
+          away: awayIdOrName,
+        };
 
-        const baseUtc = baseDate.utc();
-        const datesToTry = [-1, 0, 1].map((offset) =>
-          baseUtc.add(offset, "day").format("YYYYMMDD")
-        );
-
-        const homeNorm = normalize(String(homeIdOrName));
-        const awayNorm = normalize(String(awayIdOrName));
-        let foundGame: any = null;
-
-        for (const yyyymmdd of datesToTry) {
-          const isCollege = league === "mens-college-basketball";
-          const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/${league}/scoreboard?dates=${yyyymmdd}${
-            isCollege ? "&groups=50&limit=500" : ""
-          }`;
-
-          const { data } = await axios.get(url);
-          const games = Array.isArray(data?.events) ? data.events : [];
-
-          const findMatch = (list: any[]) => {
-            for (const g of list) {
-              const comps = g.competitions?.[0]?.competitors || [];
-              if (comps.length !== 2) continue;
-
-              const [teamA, teamB] = comps.map((c: any) => ({
-                id: String(c.team?.id),
-                abbrev: normalize(c.team?.abbreviation),
-                display: normalize(c.team?.displayName),
-                short: normalize(c.team?.shortDisplayName),
-                location: normalize(c.team?.location),
-                full: normalize(
-                  `${c.team?.location}${c.team?.shortDisplayName}`
-                ),
-                homeAway: c.homeAway,
-              }));
-
-              // Match by ID
-              if (
-                (teamA.id === homeIdOrName && teamB.id === awayIdOrName) ||
-                (teamA.id === awayIdOrName && teamB.id === homeIdOrName)
-              )
-                return g;
-
-              // Match by name patterns
-              const namesA = [
-                teamA.abbrev,
-                teamA.display,
-                teamA.short,
-                teamA.location,
-                teamA.full,
-              ];
-              const namesB = [
-                teamB.abbrev,
-                teamB.display,
-                teamB.short,
-                teamB.location,
-                teamB.full,
-              ];
-
-              if (
-                (namesA.includes(homeNorm) && namesB.includes(awayNorm)) ||
-                (namesA.includes(awayNorm) && namesB.includes(homeNorm))
-              )
-                return g;
-            }
-            return null;
-          };
-
-          foundGame = findMatch(games);
-          if (foundGame) break;
-        }
-
-        if (!foundGame) {
-          if (!warnedOnceRef.current) {
-            console.warn(
-              `[${league.toUpperCase()} Score] ❌ No match for ${homeIdOrName} vs ${awayIdOrName} (${baseUtc.format(
-                "YYYY-MM-DD HH:mm"
-              )})`
-            );
-            warnedOnceRef.current = true;
+        if (date) {
+          if (typeof date === "string") params.date = date;
+          else if (typeof date === "object") {
+            if (date.timestamp) params.date = date.timestamp;
+            else if (date.utc) params.date = date.utc;
+            else if (date.date) params.date = date.date;
           }
-          setScore(undefined);
-          return;
         }
 
-        // --- Parse score safely ---
-        const competition = foundGame.competitions?.[0];
-        const competitors = competition?.competitors || [];
-        const statusObj = competition?.status || {};
-        const state = statusObj?.type?.state ?? "pre";
-        const mappedStatus =
-          state === "in" ? "in_play" : state === "post" ? "final" : "scheduled";
-        const statusText =
-          statusObj?.type?.shortDetail ||
-          statusObj?.type?.description ||
-          "Scheduled";
-
-        const displayClock = statusObj?.displayClock ?? "";
-        const period = statusObj?.period ?? 0;
-        const homeComp = competitors.find((c: any) => c.homeAway === "home");
-        const awayComp = competitors.find((c: any) => c.homeAway === "away");
-
-        if (!homeComp || !awayComp) {
-          console.warn(`[${league}] Incomplete team data.`);
-          return;
-        }
-
-        const maxPeriods = Math.max(
-          homeComp.linescores?.length ?? 0,
-          awayComp.linescores?.length ?? 0
+        const { data } = await axios.get<NBAScore>(
+          `${BASE_URL}/api/scores`,
+          { params }
         );
 
-        const periodScores = Array.from({ length: maxPeriods }, (_, i) => ({
-          period: i + 1,
-          home: homeComp.linescores?.[i]?.value ?? 0,
-          away: awayComp.linescores?.[i]?.value ?? 0,
-        }));
-
-        const situation = competition?.situation;
-        const lastPlay = situation?.lastPlay
-          ? {
-              text: situation.lastPlay.text,
-              teamId: situation.lastPlay.team?.id,
-              homeWinPercentage:
-                situation.lastPlay.probability?.homeWinPercentage ?? null,
-              athletes:
-                situation.lastPlay.athletesInvolved?.map((a: any) => ({
-                  id: a.id,
-                  name: a.displayName,
-                  headshot: a.headshot,
-                  teamId: a.team?.id,
-                  position: a.position,
-                  jersey: a.jersey,
-                })) ?? [],
-            }
-          : undefined;
-
-        setScore({
-          home: { total: Number(homeComp.score) || 0 },
-          away: { total: Number(awayComp.score) || 0 },
-          periodScores,
-          homeTeam: homeComp.team?.displayName || "Home",
-          awayTeam: awayComp.team?.displayName || "Away",
-          status: mappedStatus,
-          statusText,
-          displayClock,
-          period,
-          lastUpdated: Date.now(),
-          lastPlay,
-        });
+        setScore(data);
+        setLastRefresh(new Date());
       } catch (err: any) {
-        console.error(`[${league.toUpperCase()} Score] Error:`, err);
-        setError(err?.message ?? "Failed to fetch score");
-        setScore(undefined);
+        console.warn(`[${league.toUpperCase()} Score] Warning:`, err);
+
+        // 🟡 Don’t clear the score — keep last known good data
+        setWarning(err?.message ?? "Unable to refresh score");
       } finally {
         if (!isPolling) setLoading(false);
       }
@@ -224,20 +83,28 @@ export const useGameScores = (
     [league, homeIdOrName, awayIdOrName, date, skipFetch]
   );
 
-  // --- Polling ---
+  const getInterval = (status: NBAScore["status"] | undefined) => {
+    if (status === "in_play") return 30000; // 30s for live games
+    return 60000; // 60s for scheduled/final
+  };
+
   useEffect(() => {
     if (skipFetch) return;
-    fetchScore(false);
 
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => fetchScore(true), 30000);
+    const poll = () => {
+      fetchScore(true);
+      const interval = getInterval(score?.status);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(poll, interval);
+    };
+
+    poll();
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [fetchScore, skipFetch]);
+  }, [fetchScore, skipFetch, score?.status]);
 
-  // --- Stop polling when game final ---
   useEffect(() => {
     if (score?.status === "final" && intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -251,5 +118,12 @@ export const useGameScores = (
 
   const isLive = score?.status === "in_play";
 
-  return { score, loading, error, refresh, isLive };
+  return {
+    score,
+    loading,
+    warning,      // 🟡 replace error with warning
+    refresh,
+    isLive,
+    lastRefresh,
+  };
 };

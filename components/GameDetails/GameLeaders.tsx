@@ -1,5 +1,6 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
-import FixedWidthTabBar from "components/NFL/TabBars/GameLeadersTabBar"; // adjust path as needed
+import FixedWidthTabBar from "components/TabBars/GameLeadersTabBar";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
@@ -7,7 +8,6 @@ import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
 import HeadingTwo from "../Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
@@ -24,7 +24,7 @@ export default function GameLeaders({
   gameId,
   awayTeamId,
   homeTeamId,
-  lighter,
+  lighter = false,
 }: Props) {
   const { data, isLoading, isError } = useGameLeaders(
     gameId,
@@ -36,7 +36,7 @@ export default function GameLeaders({
   const isDark = colorScheme === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
   const tabWidth = SCREEN_WIDTH / STAT_CATEGORIES.length;
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, lighter);
 
   // Memoized top players
   const topPlayers = useMemo(() => {
@@ -68,9 +68,21 @@ export default function GameLeaders({
   // Add this check:
   if (!topPlayers.length) return null;
 
-  const textColor = lighter ? Colors.lightGray  : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : "#555";
-  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.midTone;
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
+  const subTextColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.midTone;
+  const borderColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.midTone;
 
   if (isLoading) {
     return (

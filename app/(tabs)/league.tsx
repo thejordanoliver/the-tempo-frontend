@@ -155,48 +155,46 @@ export default function LeagueScreen() {
       })
       .filter(Boolean); // remove null games
 
-const normalizedNBAGames = React.useMemo(
-  () => normalizeGames(nbaGames, "NBA"),
-  [nbaGames]
-);
+  const normalizedNBAGames = React.useMemo(
+    () => normalizeGames(nbaGames, "NBA"),
+    [nbaGames]
+  );
 
-const normalizedNFLGames = React.useMemo(
-  () => normalizeGames(nflGames, "NFL"),
-  [nflGames]
-);
+  const normalizedNFLGames = React.useMemo(
+    () => normalizeGames(nflGames, "NFL"),
+    [nflGames]
+  );
 
-const normalizedCFBGames = React.useMemo(
-  () => normalizeGames(cfbGames, "CFB"),
-  [cfbGames]
-);
+  const normalizedCFBGames = React.useMemo(
+    () => normalizeGames(cfbGames, "CFB"),
+    [cfbGames]
+  );
 
-const normalizedCBBGames = React.useMemo(
-  () => normalizeGames(cbbGames, "CBB"),
-  [cbbGames]
-);
-
+  const normalizedCBBGames = React.useMemo(
+    () => normalizeGames(cbbGames, "CBB"),
+    [cbbGames]
+  );
 
   // --- Filter by Selected Local Date ---
-const filteredNBA = React.useMemo(
-  () => filterByDate(normalizedNBAGames, selectedDate),
-  [normalizedNBAGames, selectedDate]
-);
+  const filteredNBA = React.useMemo(
+    () => filterByDate(normalizedNBAGames, selectedDate),
+    [normalizedNBAGames, selectedDate]
+  );
 
-const filteredNFL = React.useMemo(
-  () => filterByDate(normalizedNFLGames, selectedDate),
-  [normalizedNFLGames, selectedDate]
-);
+  const filteredNFL = React.useMemo(
+    () => filterByDate(normalizedNFLGames, selectedDate),
+    [normalizedNFLGames, selectedDate]
+  );
 
-const filteredCFB = React.useMemo(
-  () => filterByDate(normalizedCFBGames, selectedDate),
-  [normalizedCFBGames, selectedDate]
-);
+  const filteredCFB = React.useMemo(
+    () => filterByDate(normalizedCFBGames, selectedDate),
+    [normalizedCFBGames, selectedDate]
+  );
 
-const filteredCBB = React.useMemo(
-  () => filterByDate(normalizedCBBGames, selectedDate),
-  [normalizedCBBGames, selectedDate]
-);
-
+  const filteredCBB = React.useMemo(
+    () => filterByDate(normalizedCBBGames, selectedDate),
+    [normalizedCBBGames, selectedDate]
+  );
 
   // --- Favorites Helper ---
   const isFavoriteGame = (game: any, prefix: string) =>
@@ -215,56 +213,55 @@ const filteredCBB = React.useMemo(
     );
 
   // --- Favorite Games ---
-const favoriteGames = React.useMemo(() => {
-  if (!favorites.length) return [];
+  const favoriteGames = React.useMemo(() => {
+    if (!favorites.length) return [];
 
-  const collectFavorites = (games: any[], prefix: string, name: string) =>
-    games
-      .filter((g) => isFavoriteGame(g, prefix))
-      .map((g) => ({ ...g, league: { name } }));
+    const collectFavorites = (games: any[], prefix: string, name: string) =>
+      games
+        .filter((g) => isFavoriteGame(g, prefix))
+        .map((g) => ({ ...g, league: { name } }));
 
-  return [
-    ...collectFavorites(filteredNBA, "NBA", "NBA"),
-    ...collectFavorites(filteredNFL, "NFL", "NFL"),
-    ...collectFavorites(filteredCFB, "CFB", "College Football"),
-    ...collectFavorites(filteredCBB, "CBB", "College Basketball"),
-  ];
-}, [favorites, filteredNBA, filteredNFL, filteredCFB, filteredCBB]);
+    return [
+      ...collectFavorites(filteredNBA, "NBA", "NBA"),
+      ...collectFavorites(filteredNFL, "NFL", "NFL"),
+      ...collectFavorites(filteredCFB, "CFB", "College Football"),
+      ...collectFavorites(filteredCBB, "CBB", "College Basketball"),
+    ];
+  }, [favorites, filteredNBA, filteredNFL, filteredCFB, filteredCBB]);
 
   // --- Apply Live Sorting and Limiting ---
-const limitedNBA = React.useMemo(
-  () => limitNonFavorites(filteredNBA, "NBA"),
-  [filteredNBA, favorites]
-);
+  const limitedNBA = React.useMemo(
+    () => limitNonFavorites(filteredNBA, "NBA"),
+    [filteredNBA, favorites]
+  );
 
-const limitedNFL = React.useMemo(
-  () => limitNonFavorites(filteredNFL, "NFL"),
-  [filteredNFL, favorites]
-);
+  const limitedNFL = React.useMemo(
+    () => limitNonFavorites(filteredNFL, "NFL"),
+    [filteredNFL, favorites]
+  );
 
-const limitedCFB = React.useMemo(
-  () => limitNonFavorites(filteredCFB, "CFB"),
-  [filteredCFB, favorites]
-);
+  const limitedCFB = React.useMemo(
+    () => limitNonFavorites(filteredCFB, "CFB"),
+    [filteredCFB, favorites]
+  );
 
-const limitedCBB = React.useMemo(
-  () => limitNonFavorites(filteredCBB, "CBB"),
-  [filteredCBB, favorites]
-);
-
+  const limitedCBB = React.useMemo(
+    () => limitNonFavorites(filteredCBB, "CBB"),
+    [filteredCBB, favorites]
+  );
 
   // --- Build Combined Sections ---
-const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
-  const sections: CombinedGamesSection[] = [
-    { category: "Favorites", data: sortLiveFirst(favoriteGames) },
-    { category: "NBA", data: sortLiveFirst(limitedNBA) },
-    { category: "NFL", data: sortLiveFirst(limitedNFL) },
-    { category: "College Football", data: sortLiveFirst(limitedCFB) },
-    { category: "Men's College Basketball", data: sortLiveFirst(limitedCBB) },
-  ];
+  const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
+    const sections: CombinedGamesSection[] = [
+      { category: "Favorites", data: sortLiveFirst(favoriteGames) },
+      { category: "NBA", data: sortLiveFirst(limitedNBA) },
+      { category: "NFL", data: sortLiveFirst(limitedNFL) },
+      { category: "College Football", data: sortLiveFirst(limitedCFB) },
+      { category: "Men's College Basketball", data: sortLiveFirst(limitedCBB) },
+    ];
 
-  return sections.filter((s) => s.data.length > 0);
-}, [favoriteGames, limitedNBA, limitedNFL, limitedCFB, limitedCBB]);
+    return sections.filter((s) => s.data.length > 0);
+  }, [favoriteGames, limitedNBA, limitedNFL, limitedCFB, limitedCBB]);
 
   // --- Refresh Handler ---
   const handleRefresh = async () => {
@@ -291,30 +288,29 @@ const gamesByCategory: CombinedGamesSection[] = React.useMemo(() => {
   };
 
   // --- Marked Dates (local time) ---
-const markedDates = React.useMemo(() => {
-  const allGames = [
-    ...normalizedNBAGames,
-    ...normalizedNFLGames,
-    ...normalizedCFBGames,
-    ...normalizedCBBGames,
-  ];
+  const markedDates = React.useMemo(() => {
+    const allGames = [
+      ...normalizedNBAGames,
+      ...normalizedNFLGames,
+      ...normalizedCFBGames,
+      ...normalizedCBBGames,
+    ];
 
-  const dotColor = isDark ? "#fff" : "#1d1d1d";
+    const dotColor = isDark ? "#fff" : "#1d1d1d";
 
-  return Object.fromEntries(
-    allGames.map((g) => [
-      dayjs(g.date).format("YYYY-MM-DD"),
-      { marked: true, dotColor },
-    ])
-  );
-}, [
-  normalizedNBAGames,
-  normalizedNFLGames,
-  normalizedCFBGames,
-  normalizedCBBGames,
-  isDark,
-]);
-
+    return Object.fromEntries(
+      allGames.map((g) => [
+        dayjs(g.date).format("YYYY-MM-DD"),
+        { marked: true, dotColor },
+      ])
+    );
+  }, [
+    normalizedNBAGames,
+    normalizedNFLGames,
+    normalizedCFBGames,
+    normalizedCBBGames,
+    isDark,
+  ]);
 
   // --- Render ---
   return (

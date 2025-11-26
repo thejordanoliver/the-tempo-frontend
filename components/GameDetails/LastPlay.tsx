@@ -43,6 +43,17 @@ export default function LastPlay({
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
+const normalizeText = (text: string) => {
+  if (!text) return text;
+
+  // Normalize "missed shot" variations → "Missed Shot"
+  return text
+    .replace(/missed\s*shot/gi, "Missed Shot")
+    .replace(/made\s*shot/gi, "Made Shot")
+    .replace(/blocked\s*shot/gi, "Blocked Shot")
+    .replace(/made\s*dunk/gi, "Made Dunk")
+    .replace(/Official\s*TV\s*Timeout/gi, "Official Timeout");
+};
 
   // ✅ Auto-detect color scheme, fallback to prop if provided
   const systemScheme = useColorScheme(); // "light" | "dark"
@@ -128,15 +139,16 @@ export default function LastPlay({
         </View>
       ) : null}
 
-      <Text
-        style={[
-          styles.playText,
-          { color: getTextColor(currentPlay.text) },
-          currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
-        ]}
-      >
-        {currentPlay.text}
-      </Text>
+  <Text
+  style={[
+    styles.playText,
+    { color: getTextColor(currentPlay.text) },
+    currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
+  ]}
+>
+  {normalizeText(currentPlay.text)}
+</Text>
+
     </View>
   );
 }

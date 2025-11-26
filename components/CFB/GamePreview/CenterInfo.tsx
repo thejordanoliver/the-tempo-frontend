@@ -92,12 +92,7 @@ export function CFBCenterInfo({
 
   return (
     <View style={styles.container}>
-      {headlineText && (
-        <View style={styles.gameInfoRow}>
-          {headlineText && <Text style={styles.headline}>{headlineText}</Text>}
-        </View>
-      )}
-
+   
       {/* Scheduled */}
       {status === "Scheduled" && (
         <View style={styles.infoWrapper}>

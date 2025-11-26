@@ -1,12 +1,15 @@
+import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { useRouter } from "expo-router";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
-import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
-import React, { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import {
   Image,
+  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -16,6 +19,7 @@ import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import {
   formatQuarter,
+  getGameDate,
   getNFLGameStatus,
   getNFLTeamData,
   getTeamTextStyle,
@@ -23,7 +27,7 @@ import {
   normalizeDisplayStatus,
 } from "utils/nflGameCardUtils";
 type Props = {
-  game: any;
+  game: any; // TODO: replace with proper Game type
   isDark?: boolean;
 };
 
@@ -32,23 +36,22 @@ function NFLGameSquareCard({ game, isDark }: Props) {
   const dark = isDark ?? colorScheme === "dark";
   const styles = getStyles(dark);
   const router = useRouter();
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
-  const homeId = String(game?.teams?.home?.id);
-  const awayId = String(game?.teams?.away?.id);
+  const homeId = game?.teams?.home?.id;
+  const awayId = game?.teams?.away?.id;
 
-  // --- Game date ---
-  const gameDate = useMemo(
-    () =>
-      game?.game?.date?.timestamp
-        ? new Date(game.game.date.timestamp * 1000)
-        : null,
-    [game?.game?.date?.timestamp]
-  );
-  const gameDateStr = gameDate?.toISOString();
+    const awayTeamEspnID = awayId;
+  const homeTeamEspnID = homeId;
 
-  // --- Records ---
-  const { record: awayRecord } = useNFLTeamRecord(awayId);
-  const { record: homeRecord } = useNFLTeamRecord(homeId);
+
+  // --- Game Date ---
+  const {
+    date: gameDate,
+    iso: gameDateStr,
+    formattedDate,
+    formattedTime,
+  } = getGameDate(game?.game?.date?.timestamp);
 
   // --- Status ---
   const status = getNFLGameStatus(game);
@@ -56,12 +59,17 @@ function NFLGameSquareCard({ game, isDark }: Props) {
   // --- Super Bowl ---
   const isSuperBowl = isSuperBowlGame(game, gameDate);
 
+  // --- Team Records ---
+  const { record: awayRecord } = useNFLTeamRecord(awayId);
+  const { record: homeRecord } = useNFLTeamRecord(homeId);
+
   // --- Possession & live data (only if live) ---
   const possession =
     status.isLive && homeId && awayId
-      ? useNFLGamePossession(
-          game?.teams?.home?.name,
-          game?.teams?.away?.name,
+      ? useFootballGamePossession(
+          "nfl",
+         homeTeamEspnID,
+         awayTeamEspnID,
           gameDateStr
         )
       : {
@@ -85,10 +93,12 @@ function NFLGameSquareCard({ game, isDark }: Props) {
           gameStatusShortDetail: undefined,
           refresh: () => {},
         };
+
   const {
     possessionTeamId,
     displayClock,
     shortDownDistanceText,
+    gameStatusShortDetail,
     downDistanceText,
     period,
     possessionText,
@@ -98,30 +108,58 @@ function NFLGameSquareCard({ game, isDark }: Props) {
 
   const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
 
+  const normalizeScoreSide = (side: any) => {
+  if (typeof side === "number") return { total: side };
+  if (typeof side?.total === "number") return { total: side.total };
+  return { total: 0 };
+};
+
+const normalizedAwayScore = normalizeScoreSide(safeScore.away);
+const normalizedHomeScore = normalizeScoreSide(safeScore.home);
+
+  const showStatusDetail =
+    gameStatusShortDetail &&
+    (gameStatusShortDetail.toLowerCase().includes("halftime") ||
+      gameStatusShortDetail.toLowerCase().includes("end of"));
+
+  // --- Display Status ---
+  const displayStatus = normalizeDisplayStatus(
+    gameStatusDescription ?? status.long ?? status.short ?? ""
+  );
+
   // --- Teams ---
   const awayTeam = useMemo(
     () =>
       getNFLTeamData(
-        String(awayId ?? ""),
+        awayId,
+        awayTeamEspnID, // ✅ replace with the actual ESPN ID variable
         dark,
         awayRecord?.overall ?? "0-0",
         possessionTeamId
       ),
-    [awayId, awayRecord?.overall, dark, possessionTeamId]
+    [awayId, awayTeamEspnID, awayRecord?.overall, possessionTeamId, dark]
   );
 
   const homeTeam = useMemo(
     () =>
       getNFLTeamData(
-        String(homeId ?? ""),
+        homeId,
+        homeTeamEspnID, // ✅ replace with the actual ESPN ID variable
         dark,
         homeRecord?.overall ?? "0-0",
         possessionTeamId
       ),
-    [homeId, homeRecord?.overall, dark, possessionTeamId]
+    [homeId, homeTeamEspnID, homeRecord?.overall, possessionTeamId, dark]
   );
 
-  // --- Broadcast ---
+  const { headlineText } = useGameInfo(
+    Number(homeTeam?.espnID),
+    Number(awayTeam?.espnID),
+    gameDateStr,
+    "nfl"
+  );
+
+  // --- Broadcasts ---
   const { broadcasts } = useNFLGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
@@ -136,24 +174,6 @@ function NFLGameSquareCard({ game, isDark }: Props) {
       getTeamTextStyle(isHome, dark, status, safeScore, isSuperBowl),
     [dark, status, safeScore, isSuperBowl]
   );
-
-  // --- Display Status ---
-  const displayStatus = normalizeDisplayStatus(
-    gameStatusDescription ?? status.long ?? status.short ?? ""
-  );
-
-  // --- Date formatting ---
-  const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : "";
-
-  const formattedTime = gameDate
-    ? gameDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-    : "";
 
   // --- UI ---
   return (
@@ -186,7 +206,7 @@ function NFLGameSquareCard({ game, isDark }: Props) {
                 getTeamStyle(false),
               ]}
             >
-              {status.isScheduled ? awayTeam.record : safeScore.away.total ?? 0}
+              {status.isScheduled ? awayTeam.record : normalizedAwayScore.total ?? 0}
             </Text>
           </View>
 
@@ -208,7 +228,7 @@ function NFLGameSquareCard({ game, isDark }: Props) {
                 getTeamStyle(true),
               ]}
             >
-              {status.isScheduled ? homeTeam.record : safeScore.home.total ?? 0}
+              {status.isScheduled ? homeTeam.record : normalizedHomeScore.total ?? 0}
             </Text>
           </View>
         </View>

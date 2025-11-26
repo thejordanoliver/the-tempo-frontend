@@ -2,14 +2,10 @@ import GameCardSkeleton from "components/Games/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
-import CFBGameCard from "./CFBGameCard";
-import CFBGameSquareCard from "./CFBGameSquareCard";
-import CFBStackedGameCard from "./CFBStackedGameCard";
 import { Fonts } from "constants/fonts";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useMemo, useState, lazy, Suspense } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   SectionList,
@@ -21,8 +17,10 @@ import {
   ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-
-
+import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
+import CFBGameCard from "./CFBGameCard";
+import CFBGameSquareCard from "./CFBGameSquareCard";
+import CFBStackedGameCard from "./CFBStackedGameCard";
 
 type Props = {
   games: any[];
@@ -75,7 +73,9 @@ export default function CFBGamesList({
 
   const renderGameCard = (game: any, index?: number) => {
     if ((game as any)?._isPlaceholder) {
-      return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
+      return (
+        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
+      );
     }
 
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
@@ -87,7 +87,6 @@ export default function CFBGamesList({
           marginRight: indexInRow % 2 === 0 ? 6 : 12,
         };
       }
-
 
       return (
         <LongPressGestureHandler
@@ -135,7 +134,9 @@ export default function CFBGamesList({
       }));
 
       const dataWithPlaceholder =
-        count % 2 === 1 ? [...skeletons, { _id: `grid-skel-placeholder` }] : skeletons;
+        count % 2 === 1
+          ? [...skeletons, { _id: `grid-skel-placeholder` }]
+          : skeletons;
 
       return (
         <FlatList
@@ -144,7 +145,11 @@ export default function CFBGamesList({
           numColumns={2}
           renderItem={({ item, index }) => {
             if (item._id.includes("placeholder")) {
-              return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
+              return (
+                <View
+                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
+                />
+              );
             }
 
             const isLastOdd = count % 2 === 1 && index === count - 1;
@@ -173,11 +178,15 @@ export default function CFBGamesList({
   };
 
   if (loading) {
-    const totalSkeletonCount = games.length > 0 ? games.length : expectedCount ?? 4;
+    const totalSkeletonCount =
+      games.length > 0 ? games.length : expectedCount ?? 4;
     return (
       <View>
         {sections.map((section) => (
-          <View key={`skel-section-${section.title}`} style={{ marginBottom: 16 }}>
+          <View
+            key={`skel-section-${section.title}`}
+            style={{ marginBottom: 16 }}
+          >
             {showHeaders && (
               <View style={styles.headerWrapper}>
                 <HeadingTwo>{section.title}</HeadingTwo>
@@ -190,83 +199,87 @@ export default function CFBGamesList({
     );
   }
 
-if (error) return <Text style={styles.emptyText}>Error: {error}</Text>;
+  if (error) return <Text style={styles.emptyText}>Error: {error}</Text>;
 
-return (
-  <>
-  {viewMode === "grid" && showHeaders && sections.length > 0 && (
-  <View style={styles.headerWrapper}>
-    <HeadingTwo>{sections[0].title}</HeadingTwo>
-  </View>
-)}
+  return (
+    <>
+      {viewMode === "grid" && showHeaders && sections.length > 0 && (
+        <View style={styles.headerWrapper}>
+          <HeadingTwo>{sections[0].title}</HeadingTwo>
+        </View>
+      )}
 
-    {viewMode === "grid" ? (
-      <FlatList
-        data={
-          games.length % 2 === 1
-            ? [...games, { _isPlaceholder: true } as any]
-            : games
-        }
-        keyExtractor={(item, index) =>
-          (item as any)?._isPlaceholder
-            ? `placeholder-${index}`
-            : `game-${item?.game?.id ?? index}`
-        }
-        numColumns={2}
-        renderItem={({ item, index }) => renderGameCard(item, index)}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        scrollEnabled={scrollEnabled ?? true}
-        contentContainerStyle={styles.gridListContainer}
-        ListEmptyComponent={
-          <View style={{ marginTop: 10 }}>
-            <Text style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}>
-              {day === "todayTomorrow"
-                ? "No CFB games found for today or tomorrow."
-                : "No CFB games found."}
-            </Text>
-          </View>
-        }
-      />
-    ) : (
-      <SectionList
-        sections={sections as SectionListData<any, CFBGameSection>[]}
-        keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
-        renderItem={({ item, index }) => renderGameCard(item, index)}
-        renderSectionHeader={({ section }) =>
-          showHeaders && section.data.length > 0 ? (
-            <View style={styles.headerWrapper}>
-              <HeadingTwo>{section.title}</HeadingTwo>
+      {viewMode === "grid" ? (
+        <FlatList
+          data={
+            games.length % 2 === 1
+              ? [...games, { _isPlaceholder: true } as any]
+              : games
+          }
+          keyExtractor={(item, index) =>
+            (item as any)?._isPlaceholder
+              ? `placeholder-${index}`
+              : `game-${item?.game?.id ?? index}`
+          }
+          numColumns={2}
+          renderItem={({ item, index }) => renderGameCard(item, index)}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          scrollEnabled={scrollEnabled ?? true}
+          contentContainerStyle={styles.gridListContainer}
+          ListEmptyComponent={
+            <View style={{ marginTop: 10 }}>
+              <Text
+                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
+              >
+                {day === "todayTomorrow"
+                  ? "No CFB games found for today or tomorrow."
+                  : "No CFB games found."}
+              </Text>
             </View>
-          ) : null
-        }
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        contentContainerStyle={styles.contentContainer}
-        stickySectionHeadersEnabled={false}
- ItemSeparatorComponent={() => <View style={{ height: 12 }} />}        scrollEnabled={scrollEnabled ?? true}
-        ListEmptyComponent={
-          <View style={{ marginTop: 10 }}>
-            <Text style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}>
-              {day === "todayTomorrow"
-                ? "No CFB games found for today or tomorrow."
-                : "No CFB games found."}
-            </Text>
-          </View>
-        }
-      />
-    )}
+          }
+        />
+      ) : (
+        <SectionList
+          sections={sections as SectionListData<any, CFBGameSection>[]}
+          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+          renderItem={({ item, index }) => renderGameCard(item, index)}
+          renderSectionHeader={({ section }) =>
+            showHeaders && section.data.length > 0 ? (
+              <View style={styles.headerWrapper}>
+                <HeadingTwo>{section.title}</HeadingTwo>
+              </View>
+            ) : null
+          }
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          contentContainerStyle={styles.contentContainer}
+          stickySectionHeadersEnabled={false}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          scrollEnabled={scrollEnabled ?? true}
+          ListEmptyComponent={
+            <View style={{ marginTop: 10 }}>
+              <Text
+                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
+              >
+                {day === "todayTomorrow"
+                  ? "No CFB games found for today or tomorrow."
+                  : "No CFB games found."}
+              </Text>
+            </View>
+          }
+        />
+      )}
 
-    {modalVisible && previewGame && (
-      <CFBGamePreviewModal
-        game={previewGame}
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
-    )}
-  </>
-);
-
+      {modalVisible && previewGame && (
+        <CFBGamePreviewModal
+          game={previewGame}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -279,13 +292,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   gridListContainer: {
-   
     paddingBottom: 20,
     gap: 12,
   },
-  contentContainer: {
-  
-  },
+  contentContainer: {},
   gridItem: {
     flex: 1,
     marginHorizontal: 12,

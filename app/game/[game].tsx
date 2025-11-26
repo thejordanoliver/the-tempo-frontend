@@ -1,4 +1,3 @@
-import { HighlightVideoList } from "components/CFB/GameDetails/HighlightVideoList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import {
   BoxScore,
@@ -11,28 +10,30 @@ import {
 } from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
 import GameOddsSection from "components/GameDetails/GameOddsSection";
+import GameSummary from "components/GameDetails/GameSummary";
 import GameUniforms from "components/GameDetails/GameUniforms";
+import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import LastPlay from "components/GameDetails/LastPlay";
 import Officials from "components/GameDetails/Officials";
+import ShotChart from "components/GameDetails/ShotChart";
+import TeamInjuries from "components/GameDetails/TeamInjuries";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import { Colors } from "constants/Colors";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useGameHighlights } from "hooks/NFLHooks/useGameHighlights";
+import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useGameDetails } from "hooks/useGameDetails";
+
 import { useGameInfo } from "hooks/useGameInfo";
-import { useGameOfficials } from "hooks/useGameOfficials";
 import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
-import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
+
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import TeamInjuries from "components/GameDetails/TeamInjuries";
 import {
   Animated,
   Easing,
@@ -89,20 +90,7 @@ export default function GameDetailsScreen() {
     return null;
   }
   if (!parsedGame?.id) return null;
-  const {
-    home,
-    away,
-    date,
-    time,
-    status,
-    homeScore,
-    awayScore,
-    period,
-    clock,
-    arena,
-    linescore,
-    id: gameId,
-  } = parsedGame;
+  const { home, away, date, time, status, arena, id: gameId } = parsedGame;
 
   const gameDateObj = useMemo(() => {
     if (!date) return new Date(); // fallback to now
@@ -187,15 +175,9 @@ export default function GameDetailsScreen() {
     [isDark]
   );
 
-  const season = 2025;
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
   const { data: gameStats, loading: statsLoading } = useGameStatistics(gameId);
-  const { games: playoffGames } = useFetchPlayoffGames(
-    homeTeamIdNum,
-    awayTeamIdNum,
-    season
-  );
 
   const { weather, weatherLoading, weatherError } = useWeatherForecast(
     lat,
@@ -205,12 +187,6 @@ export default function GameDetailsScreen() {
 
   const { record: awayRecord } = useTeamRecord(away?.espnID);
   const { record: homeRecord } = useTeamRecord(home?.espnID);
-
-  const currentPlayoffGame = playoffGames.find((g) => g.id === gameId);
-  const awayIsWinner =
-    status === "Final" && (awayScore ?? 0) > (homeScore ?? 0);
-  const homeIsWinner =
-    status === "Final" && (homeScore ?? 0) > (awayScore ?? 0);
 
   const cleanedArenaNameLower = cleanedArenaName.toLowerCase();
   const homeArenaNameLower = homeTeamData.venueName.toLowerCase();
@@ -247,12 +223,6 @@ export default function GameDetailsScreen() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const seriesSummary = currentPlayoffGame?.seriesSummary;
-  const getGameNumberLabel = () =>
-    currentPlayoffGame?.gameNumber
-      ? `Game ${currentPlayoffGame.gameNumber}`
-      : null;
-
   const { broadcasts } = useGameBroadcasts(
     homeTeamData.name,
     awayTeamData.name,
@@ -261,17 +231,11 @@ export default function GameDetailsScreen() {
 
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  const { data, detailsLoading, detailsError } = useGameDetails(
-    gameDate,
-    homeTeamData.name,
-    awayTeamData.name
-  );
-
   // ESPN IDs
   const homeEspnId = homeTeamData?.espnID;
   const awayEspnId = awayTeamData?.espnID;
 
-  const { score: liveScore, isLive } = useGameScores(
+  const { score: liveScore } = useGameScores(
     "nba",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
@@ -280,20 +244,17 @@ export default function GameDetailsScreen() {
 
   const {
     officials,
+    highlights,
+    timeouts,
+    injuries,
+    plays,
     loading: officialsLoading,
     error: officialsError,
-  } = useGameOfficials("nba", homeEspnId, awayEspnId, gameDate);
+  } = useGameDetails("nba", homeEspnId, awayEspnId, gameDate);
 
   const { headlineText } = useGameInfo(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
-  );
-
-  const { highlights } = useGameHighlights(
-    "nba",
-    homeEspnId ? Number(homeEspnId) : undefined,
-    awayEspnId ? Number(awayEspnId) : undefined,
     gameDateStr
   );
 
@@ -319,36 +280,36 @@ export default function GameDetailsScreen() {
   const displayPeriod = liveScore?.period ?? parsedGame.status?.period;
 
   // --- Quarter / period label + halftime flag ---
-const getQuarterLabel = (
-  currentPeriod: number,
-  totalPeriods: number = 4,
-  statusText?: string
-) => {
-  if (statusText?.toLowerCase() === "halftime") {
-    return { label: "Halftime", halftime: true };
-  }
+  const getQuarterLabel = (
+    currentPeriod: number,
+    totalPeriods: number = 4,
+    statusText?: string
+  ) => {
+    if (statusText?.toLowerCase() === "halftime") {
+      return { label: "Halftime", halftime: true };
+    }
 
-  // Regulation
-  switch (currentPeriod) {
-    case 1:
-      return { label: "1st", halftime: false };
-    case 2:
-      return { label: "2nd", halftime: false };
-    case 3:
-      return { label: "3rd", halftime: false };
-    case 4:
-      return { label: "4th", halftime: false };
-  }
+    // Regulation
+    switch (currentPeriod) {
+      case 1:
+        return { label: "1st", halftime: false };
+      case 2:
+        return { label: "2nd", halftime: false };
+      case 3:
+        return { label: "3rd", halftime: false };
+      case 4:
+        return { label: "4th", halftime: false };
+    }
 
-  // Overtime
-  const otNumber = currentPeriod - totalPeriods;
+    // Overtime
+    const otNumber = currentPeriod - totalPeriods;
 
-  if (otNumber === 1) {
-    return { label: "OT", halftime: false }; // ✅ First OT → "OT"
-  }
+    if (otNumber === 1) {
+      return { label: "OT", halftime: false }; // ✅ First OT → "OT"
+    }
 
-  return { label: `${otNumber}OT`, halftime: false }; // ✅ e.g. "2OT", "3OT", etc.
-};
+    return { label: `${otNumber}OT`, halftime: false }; // ✅ e.g. "2OT", "3OT", etc.
+  };
 
   const { label: quarterLabel, halftime } = getQuarterLabel(
     displayPeriod,
@@ -368,14 +329,6 @@ const getQuarterLabel = (
 
     return () => clearInterval(interval);
   }, [status]);
-  const normalizedStatus = (() => {
-    if (typeof status === "string") return status;
-    if (status?.long) return status.long;
-    if (status?.short) return status.short;
-    return "Unknown";
-  })();
-  const showBoxScore =
-    normalizedStatus === "Finished" || normalizedStatus === "In ProgrPlayess";
 
   return (
     <>
@@ -396,9 +349,9 @@ const getQuarterLabel = (
           halftime={halftime}
           homeScore={homeScoreValue}
           awayScore={awayScoreValue}
-          awayTimeouts={data?.timeouts?.away?.remaining}
-          homeTimeouts={data?.timeouts?.home?.remaining}
-          status={statusDisplay}
+          awayTimeouts={timeouts.away ?? 0}
+          homeTimeouts={timeouts.home ?? 0}
+          status={liveScore?.status ?? ""}
           period={quarterLabel}
           displayClock={displayClock}
           colors={colors}
@@ -406,8 +359,6 @@ const getQuarterLabel = (
           formattedDate={formattedDate}
           time={time}
           networkString={broadcastText}
-          seriesSummary={seriesSummary}
-          getGameNumberLabel={getGameNumberLabel}
           refreshTick={refreshTick}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
@@ -448,16 +399,31 @@ const getQuarterLabel = (
               awayCode={awayTeamData.code}
             />
           )}
+
           <GameLeaders
             gameId={gameId.toString()}
             awayTeamId={awayTeamIdNum}
             homeTeamId={homeTeamIdNum}
           />
+
+          <ShotChart
+            plays={plays}
+            homeTeamId={String(homeEspnId)}
+            awayTeamId={String(awayEspnId)}
+            isCBB={false}
+          />
+
+          <GameSummary
+            plays={plays ?? []}
+            awayTeamId={awayEspnId}
+            homeTeamId={homeEspnId}
+            league="NBA"
+          />
+
           <BoxScore
             gameId={gameId.toString()}
             homeTeamId={homeTeamIdNum}
             awayTeamId={awayTeamIdNum}
-            gameStatus={parsedGame.status.long}
           />
           {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
           <LastFiveGamesSwitcher
@@ -476,19 +442,15 @@ const getQuarterLabel = (
             }}
             league="NBA"
           />
-          <TeamInjuries  injuries={data?.injuries ?? []} />
-
+          <TeamInjuries injuries={injuries} />
           {highlights.length > 0 && (
             <HighlightVideoList highlights={highlights} />
           )}
-
           <GameUniforms
             homeTeamId={homeTeamData.id}
             awayTeamId={awayTeamData.id}
           />
-
           <Officials officials={officials ?? []} loading={false} error={null} />
-
           <TeamLocationSection
             venueImage={resolvedArenaImage}
             venueName={resolvedArenaName}
@@ -512,8 +474,7 @@ const getQuarterLabel = (
 }
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 0,
-    paddingVertical: 24,
+    paddingVertical: 0,
     paddingHorizontal: 12,
     paddingBottom: 60,
   },

@@ -37,6 +37,7 @@ export type TeamStanding = {
   season: number;
   team: {
     id: number;
+    espnID: string;
     name: string;
     nickname: string;
     code: string;

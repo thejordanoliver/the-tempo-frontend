@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 const ROW_HEIGHT = 60; // or whatever fits your design
 const RANK_WIDTH = 40;
-const TEAM_COL_WIDTH = 100; // Increased to fit badge
+const TEAM_COL_WIDTH = 60; // Increased to fit badge
 const STAT_COL_WIDTH = 70;
 
 export const getStyles = (isDark: boolean) =>
@@ -20,9 +20,7 @@ export const getStyles = (isDark: boolean) =>
       alignItems: "center",
       paddingBottom: 6,
       borderBottomWidth: 1,
-      borderBottomColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     heading: {
       fontSize: 22,
@@ -32,13 +30,12 @@ export const getStyles = (isDark: boolean) =>
     row: {
       flexDirection: "row",
       borderBottomWidth: 1,
-      borderBottomColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       paddingVertical: 10,
       height: ROW_HEIGHT,
       minHeight: ROW_HEIGHT,
       maxHeight: ROW_HEIGHT,
+      alignItems: "center",
     },
     rankContainer: {
       width: RANK_WIDTH,
@@ -50,11 +47,24 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
+    text: {
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 16,
+      marginVertical: 4,
+    },
+    subText: {
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 12,
+    },
     teamInfo: {
       width: TEAM_COL_WIDTH,
       flexDirection: "row",
       alignItems: "center",
-      paddingLeft: 10,
+    },
+    teamInfoWrapper: {
+    
+      flexDirection: "row",
+      alignItems: "center",
     },
     logo: {
       width: 28,
@@ -94,6 +104,7 @@ export const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center"
     },
     statTextSecondary: {
       fontFamily: Fonts.OSREGULAR,

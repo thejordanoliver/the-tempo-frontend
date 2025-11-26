@@ -1,6 +1,6 @@
 import { Game } from "types/cfb";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -19,7 +19,6 @@ export function usetodayYesterday(season = "2025", league = "2") {
       });
 
       const games = res.data.response || [];
-
       setGames(games);
     } catch (err: any) {
       console.error("Error fetching weekly games:", err.message);
@@ -33,5 +32,16 @@ export function usetodayYesterday(season = "2025", league = "2") {
     fetchWeeklyGames();
   }, [fetchWeeklyGames]);
 
-  return { games, loading, error, refetch: fetchWeeklyGames };
+  // ✅ Detect live games
+  const isLiveGame = (game: Game) => {
+    const status = game.game?.status?.short ?? "";
+    return ["Q1", "Q2", "Q3", "Q4", "OT", "HT"].includes(status);
+  };
+
+  // Sorted with live games first
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+  }, [games]);
+
+  return { games: sortedGames, loading, error, refetch: fetchWeeklyGames };
 }

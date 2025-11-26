@@ -3,11 +3,11 @@ import { Fonts } from "constants/fonts";
 import { getTeamCode, getTeamLogo, teams } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useCBBGamePossession } from "hooks/CBBHooks/useCBBGamePossession";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useTeamRecord } from "hooks/useTeamRecords";
+import { useGameScores } from "hooks/useGameScores";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
@@ -23,6 +23,41 @@ type Props = {
   game: any;
   isDark?: boolean;
 };
+
+
+// --- Helper function to normalize API status ---
+function mapStatus(apiStatus: {
+  short: number | string;
+  long?: string;
+}): string {
+  const long = apiStatus.long?.toLowerCase();
+
+  // ✅ prioritize 'long' from API
+  if (long === "in play") return "In Play";
+  if (long === "finished") return "Final";
+  if (long === "scheduled") return "Scheduled";
+  if (long === "canceled") return "Canceled";
+  if (long === "delayed") return "Delayed";
+  if (long === "postponed") return "Postponed";
+
+  // fallback using numeric 'short' codes
+  const short = Number(apiStatus.short);
+  switch (short) {
+    case 1:
+      return "Scheduled";
+    case 2:
+    case 3:
+      return "Final"; // only if 'long' was missing
+    case 4:
+      return "Postponed";
+    case 5:
+      return "Delayed";
+    case 6:
+      return "Canceled";
+    default:
+      return "Scheduled";
+  }
+}
 
 function CBBGameSquareCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
@@ -122,20 +157,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
     };
   }, [statusData]);
 
-  const possession = status.isLive
-    ? useCBBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
-    : {
-        gameStatusDescription: undefined,
-        possessionText: undefined,
-        gameStatusShortDetail: undefined,
-        possessionTeamId: undefined,
-        displayClock: undefined,
-        shortDownDistanceText: undefined,
-        downDistanceText: undefined,
-        period: undefined,
-        score: undefined, // ✅ ADD THIS
-        refresh: () => {},
-      };
+
 
   const { headlineText } = useCBBHeadline(
     Number(homeEspnId),
@@ -143,39 +165,53 @@ function CBBGameSquareCard({ game, isDark }: Props) {
     gameDateStr
   );
 
-  const {
-    possessionTeamId,
-    displayClock,
-    possessionText,
-    gameStatusDescription,
-    gameStatusShortDetail,
-    period,
-  } = possession;
 
-  // --- Use possession score when live; fallback to static game scores ---
-  const displayAwayScore =
-    possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-  const displayHomeScore =
-    possession?.score?.home ?? game?.scores?.home?.total ?? 0;
+      const { score: liveScore, isLive } = useGameScores(
+        "mens-college-basketball",
+        homeEspnId?.toString(),
+        awayEspnId?.toString(),
+        gameDateStr
+      );
+    const currentPeriod = liveScore?.period;
 
-  // --- Helper for score or record ---
-  const getDisplayValue = (isHome: boolean) => {
-    if (status.isScheduled) {
-      return isHome ? homeTeam.record : awayTeam.record;
-    }
-    if (status.isFinal) {
-      // ✅ Final: use last known static score as fallback if hook score missing
-      return isHome
-        ? possession?.score?.home ?? game?.scores?.home?.total ?? 0
-        : possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-    }
-    // ✅ Live: always prefer possession hook’s live score
-    return isHome ? displayHomeScore : displayAwayScore;
-  };
+  // Dynamically resolve final state from live data
+const effectiveStatus = useMemo(() => {
+  const liveText = liveScore?.statusText?.toLowerCase() ?? "";
+  const base = mapStatus(game.status);
+
+  if (liveText.includes("final")) return "Final";
+  if (liveText.includes("halftime")) return "Halftime";
+  if (
+    liveText.includes("in progress") ||
+    liveText.includes("in play") ||
+    liveText.includes("qtr") ||
+    liveText.includes("quarter")
+  )
+    return "In Play";
+
+  return base;
+}, [game.status, liveScore]);
+
+
+  // Now derive booleans reactively
+  const isFinal = effectiveStatus === "Final";
+  const inProgress = effectiveStatus === "In Play";
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = effectiveStatus === "Postponed";
+  const isHalftime = effectiveStatus === "Halftime";
+
+
+   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
+
+
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
 
   const displayStatus = (() => {
     const base =
-      gameStatusDescription ??
+      liveScore?.statusText ??
       status.long ??
       status.short ??
       game.status.long ??
@@ -210,7 +246,6 @@ function CBBGameSquareCard({ game, isDark }: Props) {
       awayId,
       awayEspnId,
       awayRecord?.overall,
-      possessionTeamId,
       dark,
       status.isLive,
     ]
@@ -230,7 +265,6 @@ function CBBGameSquareCard({ game, isDark }: Props) {
       homeId,
       homeEspnId,
       homeRecord?.overall,
-      possessionTeamId,
       dark,
       status.isLive,
     ]
@@ -244,6 +278,35 @@ function CBBGameSquareCard({ game, isDark }: Props) {
   );
 
   const broadcastText = getBroadcastDisplay(broadcasts);
+
+    const winnerStyle = (teamWins: boolean): TextStyle => ({
+      color: dark ? Colors.white : Colors.black,
+      opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+    });
+
+
+
+      const ScoreText = ({
+    score,
+    recordData,
+    teamWins,
+    showRecord,
+  }: {
+    score?: number;
+    recordData?: string;
+    teamWins: boolean;
+    showRecord?: boolean;
+  }) => {
+    const hasScore = typeof score === "number" && !isNaN(score);
+    const displayValue =
+      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+    const style =
+      showRecord || !hasScore
+        ? styles.teamRecord
+        : [styles.teamScore, winnerStyle(teamWins)];
+    return <Text style={style}>{displayValue}</Text>;
+  };
+
 
   // --- Helpers ---
   const formatQuarter = (period?: number | string, statusText?: string) => {
@@ -342,17 +405,13 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                   {awayTeam.code}
                 </Text>
               </View>
-              <Text
-                style={[
-                  status.isScheduled || status.isCanceled || status.isPostponed
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  getTeamStyle(false),
-                  { color: Colors.light.black },
-                ]}
-              >
-                {getDisplayValue(false)}
-              </Text>
+            {/* Away Record / Score */}
+         <ScoreText
+        score={awayScore}
+        recordData={awayTeam.record ?? undefined}
+        teamWins={awayWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
             </View>
 
             {/* Home Team */}
@@ -370,17 +429,13 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                   {homeTeam.code}
                 </Text>
               </View>
-              <Text
-                style={[
-                  status.isScheduled || status.isCanceled || status.isPostponed
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  getTeamStyle(true),
-                  { color: Colors.light.black },
-                ]}
-              >
-                {getDisplayValue(true)}
-              </Text>
+               {/* Away Record / Score */}
+         <ScoreText
+        score={homeScore}
+        recordData={homeTeam.record ?? undefined}
+        teamWins={homeWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
             </View>
           </View>
 
@@ -400,7 +455,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                   {formatQuarter(status.short, displayStatus)}
                 </Text>
                 <Text style={[styles.clock, { color: Colors.light.red }]}>
-                  {displayClock}
+                  {liveScore?.displayClock}
                 </Text>
               </>
             )}
@@ -445,16 +500,13 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                   {awayTeam.code}
                 </Text>
               </View>
-              <Text
-                style={[
-                  status.isScheduled || status.isCanceled || status.isPostponed
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  getTeamStyle(false),
-                ]}
-              >
-                {getDisplayValue(false)}
-              </Text>
+              {/* Away Record / Score */}
+         <ScoreText
+        score={awayScore}
+        recordData={awayTeam.record ?? undefined}
+        teamWins={awayWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
             </View>
 
             {/* Home Team */}
@@ -470,16 +522,13 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                   {homeTeam.code}
                 </Text>
               </View>
-              <Text
-                style={[
-                  status.isScheduled || status.isCanceled || status.isPostponed
-                    ? styles.teamRecord
-                    : styles.teamScore,
-                  getTeamStyle(true),
-                ]}
-              >
-                {getDisplayValue(true)}
-              </Text>
+             {/* Away Record / Score */}
+         <ScoreText
+        score={homeScore}
+        recordData={homeTeam.record ?? undefined}
+        teamWins={homeWins}
+        showRecord={effectiveStatus === "Scheduled"}
+      />
             </View>
           </View>
 
@@ -506,7 +555,7 @@ function CBBGameSquareCard({ game, isDark }: Props) {
                 <Text style={[styles.date, { fontSize: 14 }]}>
                   {formatQuarter(status.short, displayStatus)}
                 </Text>
-                <Text style={styles.clock}>{displayClock}</Text>
+                <Text style={styles.clock}>{liveScore?.displayClock}</Text>
               </>
             )}
             {status.isHalftime && (

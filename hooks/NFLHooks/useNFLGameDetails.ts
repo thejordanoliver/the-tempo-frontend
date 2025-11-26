@@ -20,6 +20,7 @@ interface NFLGameDetailsResult {
   currentDrives: any[];
   venue: NormalizedVenue | null;
   scoringPlays: any[]; // <-- added
+  highlights: any[];
   loading: boolean;
   error: string | null;
   gameId?: string | null;
@@ -36,6 +37,8 @@ export const useNFLGameDetails = (
   const [injuries, setInjuries] = useState<any[]>([]);
   const [previousDrives, setPreviousDrives] = useState<any[]>([]);
   const [currentDrives, setCurrentDrives] = useState<any[]>([]);
+  const [highlights, setHighlights] = useState<any[]>([]);
+
   const [venue, setVenue] = useState<NormalizedVenue | null>(null);
   const [scoringPlays, setScoringPlays] = useState<any[]>([]); // <-- new state
   const [loading, setLoading] = useState(false);
@@ -113,6 +116,7 @@ export const useNFLGameDetails = (
           setCurrentDrives([]);
           setPreviousDrives([]);
           setVenue(null);
+
           setScoringPlays([]); // <-- clear scoring plays
           setGameId(null);
           return;
@@ -127,33 +131,41 @@ export const useNFLGameDetails = (
 
         const rawVenue = summary?.gameInfo?.venue ?? null;
         const attendanceFromSummary = summary?.gameInfo?.attendance ?? null;
+        const highlights = summary?.videos;
 
-   const normalizedVenue: NormalizedVenue | null = rawVenue
-  ? {
-      name: rawVenue.fullName ?? rawVenue.name ?? null,
-      city: rawVenue.address?.city ?? null,
-      state: rawVenue.address?.state ?? null,
-      address: rawVenue.address
-        ? [rawVenue.address?.city, rawVenue.address?.state, rawVenue.address?.zipCode]
-            .filter(Boolean)
-            .join(", ")
-        : null,
-      // ✅ Use second image if available, otherwise fallback
-      image:
-        rawVenue?.images?.[1]?.href ?? 
-        rawVenue?.images?.[0]?.href ??
-        rawVenue?.image ??
-        rawVenue?.venueImage ??
-        null,
-      capacity: rawVenue?.capacity ?? rawVenue?.venueCapacity ?? null,
-      grass: rawVenue?.grass ??  null,
-      attendance:
-        typeof attendanceFromSummary === "number" ? attendanceFromSummary : null,
-      raw: rawVenue,
-    }
-  : null;
+        const normalizedVenue: NormalizedVenue | null = rawVenue
+          ? {
+              name: rawVenue.fullName ?? rawVenue.name ?? null,
+              city: rawVenue.address?.city ?? null,
+              state: rawVenue.address?.state ?? null,
+              address: rawVenue.address
+                ? [
+                    rawVenue.address?.city,
+                    rawVenue.address?.state,
+                    rawVenue.address?.zipCode,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")
+                : null,
+              // ✅ Use second image if available, otherwise fallback
+              image:
+                rawVenue?.images?.[1]?.href ??
+                rawVenue?.images?.[0]?.href ??
+                rawVenue?.image ??
+                rawVenue?.venueImage ??
+                null,
+              capacity: rawVenue?.capacity ?? rawVenue?.venueCapacity ?? null,
+              grass: rawVenue?.grass ?? null,
+              attendance:
+                typeof attendanceFromSummary === "number"
+                  ? attendanceFromSummary
+                  : null,
+              raw: rawVenue,
+            }
+          : null;
 
         // --- Update states ---
+        setHighlights(highlights);
         setOfficials(summary?.gameInfo?.officials ?? []);
         setVenue(normalizedVenue);
         setInjuries(summary?.injuries?.items ?? []);
@@ -178,6 +190,7 @@ export const useNFLGameDetails = (
     previousDrives,
     venue,
     scoringPlays, // <-- return scoring plays
+    highlights,
     loading,
     error,
     gameId,

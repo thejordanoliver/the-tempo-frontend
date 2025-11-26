@@ -4,6 +4,7 @@ import { Fonts } from "constants/fonts";
 import { getTeamLogoESPN } from "constants/teamsCBB";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useRef, useState } from "react";
+import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import {
   Animated,
   FlatList,
@@ -53,19 +54,13 @@ export const CBBStandingsList = () => {
     outputRange: [-10, 0],
   });
 
-  if (loading)
+ if (loading)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            color: isDark ? "#aaa" : "#666",
-            fontFamily: Fonts.OSLIGHT,
-          }}
-        >
-          Loading CBB Rankings...
-        </Text>
+      <View style={{ flex: 1 }}>
+        <StandingsSkeleton />
       </View>
     );
+
 
   if (error)
     return (

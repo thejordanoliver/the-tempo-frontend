@@ -4,56 +4,35 @@ import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";
 
-export type CFBProps = {
-  team: {
-    id: string;
-    espnID: string;
-    name: string;
-    shortName: string;
-    logo: any;
-    record?: string;
-  };
-  rank?: string;
-  isDark: boolean;
-  isHome?: boolean;
-  score?: number | null;
-  isWinner?: boolean;
-  status?: string; // "Scheduled", "In Progress", "Final", etc.
-  colors: {
-    text: string;
-    record: string;
-    score: string;
-    winnerScore: string;
-  };
-  possessionTeamId?: string;
-  size?: SizeType; // sizes for font scaling
-  timeouts: number;
-  opponentScore?: number | null; // 👈 needed to detect ties
+export type TeamRowTeam = {
+  id?: string | number; // NFL
+  espnID?: string | number; // CFB
+  logo: any;
+  code?: string; // NFL
+  shortName?: string; // CFB
+  name?: string; // CFB
+  record?: string;
 };
 
-export type NFLProps = {
-  team: {
-    id: string;
-    name: string;
-    code: string;
-    logo: any;
-    record?: string;
-  };
+export type FootballTeamRowProps = {
+  league: "nfl" | "cfb";
+  team: TeamRowTeam;
+  rank?: number;
   isDark: boolean;
   isHome?: boolean;
   score?: number | null;
   isWinner?: boolean;
-  status?: string; // "Scheduled", "In Progress", "Final", etc.
+  status?: string;
   colors: {
     text: string;
     record: string;
     score: string;
     winnerScore: string;
   };
-  possessionTeamId?: string;
   size?: SizeType; // sizes for font scaling
-  timeouts: number;
-  opponentScore?: number | null; // 👈 NEW: needed to detect ties
+  possessionTeamId?: string | number;
+  timeouts?: number;
+  opponentScore?: number | null;
 };
 
 export type NBAProps = {
@@ -64,13 +43,14 @@ export type NBAProps = {
     code?: string;
     id?: number;
   };
-  timeouts: number;
+  timeouts?: number;
   size?: SizeType;
   rank?: string;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
   isWinner?: boolean;
+  hideRecord?: boolean;
   colors: {
     text: string;
     record: string;
@@ -147,11 +127,11 @@ export const styles = StyleSheet.create<{
 // Size-based dynamic styles
 export const sizeStyles = {
   small: {
-    score: { fontSize: 16, width: 50 },
-    preGameRecord: { fontSize: 12, width: 50 },
+ score: { fontSize: 36, width: 60 },
+    preGameRecord: { fontSize: 24, width: 60 },
     logo: { width: 40, height: 40 },
     teamName: { fontSize: 12 },
-    record: { fontSize: 10 },
+     record: { fontSize: 12 },
   },
   medium: {
     score: { fontSize: 36, width: 60 },

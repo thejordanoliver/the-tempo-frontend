@@ -293,6 +293,7 @@ const {
             <FootballRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
+              league="cfb"
             />
           )}
         </ScrollView>

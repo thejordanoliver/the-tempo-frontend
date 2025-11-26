@@ -11,12 +11,12 @@ import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Image,
-  StyleSheet,
   Text,
   useColorScheme,
   View,
 } from "react-native";
-import ScrollableTabBar from "../TabBars/ScrollableTabBar";
+import ScrollableTabBar from "../../TabBars/ScrollableTabBar";
+import { Colors } from "constants/Colors";
 const CATEGORIES = [
   "Passing",
   "Rushing",
@@ -63,6 +63,8 @@ const findLocalPlayer = (id: number, name: string) => {
     ) || null
   );
 };
+
+
 
 // ✅ Normalize raw NFLPlayer to DisplayPlayer
 const normalizePlayers = (
@@ -141,7 +143,7 @@ export default function NFLGameLeaders({
   gameId,
   homeTeamId,
   awayTeamId,
-  lighter,
+  lighter = false
 }: Props) {
   // ✅ Bail early if no teams provided
   if (!homeTeamId || !awayTeamId) {
@@ -150,11 +152,11 @@ export default function NFLGameLeaders({
 
   const isDark = useColorScheme() === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, lighter);
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#ccc";
+  const textColor = lighter ? Colors.white : isDark ? Colors.white : Colors.black;
+  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.midTone;
+  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.darkGray : Colors.lightGray;
 
   const {
     leaders: homePlayers,
@@ -176,6 +178,8 @@ export default function NFLGameLeaders({
     () => normalizePlayers(awayPlayers, awayTeamId),
     [awayPlayers, awayTeamId]
   );
+
+
 
   const topLeaders = useMemo(() => {
     return CATEGORIES.reduce((acc, category) => {
@@ -255,7 +259,7 @@ export default function NFLGameLeaders({
           >
             {/* Avatar */}
             <View
-              style={[styles.avatarWrapper, { backgroundColor: borderColor }]}
+              style={styles.avatarWrapper}
             >
               <Image
                 source={p.image ? p.image : Placeholder}
@@ -292,4 +296,3 @@ export default function NFLGameLeaders({
     </View>
   );
 }
-
