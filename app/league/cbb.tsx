@@ -1,12 +1,14 @@
 // app/league/cbb.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import CalendarModal from "components/CalendarModal";
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/CBB/Standings/CBBStandingsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/CFB/ConferenceListModal";
+import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
@@ -16,21 +18,19 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
+import { useLeagueNews } from "hooks/useLeagueNews";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
-import { filterCBBGames } from "utils/CBBUtils/cbbGameUtils";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-
+import { Colors } from "constants/Colors";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -103,15 +103,12 @@ export default function CBBLeagueScreen() {
   const { news: cbbNews, loading: cfbLoading } = useLeagueNews("CBB");
   const { highlights } = useHighlights("College Basketball Highlights", "10");
 
+  // --- AP Top 25 from rankings ---
+  const apTop25 = useAPTop25();
+
   const top25Teams = React.useMemo(() => {
-    if (!rankings) return [];
-    const apPoll = rankings.find((poll) => poll.shortName === "AP Poll");
-    if (!apPoll) return [];
-    return apPoll.ranks
-      .slice(0, 25)
-      .map((team) => team.team?.nickname)
-      .filter((n): n is string => !!n);
-  }, [rankings]);
+    return apTop25.map((t) => t.name);
+  }, [apTop25]);
 
   // --- Load favorites ---
   useFocusEffect(
@@ -165,27 +162,41 @@ export default function CBBLeagueScreen() {
   };
 
   // --- Calendar marked dates ---
-const markDates = (gamesArray: any[]) =>
-  gamesArray.reduce((acc, game) => {
-    const d = dayjs.utc(game).local();
-    const iso = d.format("YYYY-MM-DD");
-    acc[iso] = { marked: true, dotColor: isDark ? "#fff" : "#1d1d1d" };
-    return acc;
-  }, {});
+  const markDates = (gamesArray: any[]) =>
+    gamesArray.reduce((acc, game) => {
+      const d = dayjs.utc(game).local();
+      const iso = d.format("YYYY-MM-DD");
+      acc[iso] = { marked: true, dotColor: isDark ? Colors.white : Colors.black };
+      return acc;
+    }, {});
 
-  // ✅ Use centralized utility for filtering
   const filteredGames = React.useMemo(() => {
-const gamesForDate = seasonGames.filter((game) =>
-  dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
-);
+    const gamesForDate = seasonGames.filter((game) =>
+      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
+    );
 
+    // Filter based on selected conference or Top 25
+    let result = gamesForDate;
+    if (selectedConference === "Top 25") {
+      result = gamesForDate.filter(
+        (game) =>
+          top25Teams.includes(game.teams.home.name) ||
+          top25Teams.includes(game.teams.away.name)
+      );
+    } else if (selectedConference) {
+      result = filterCBBGames({
+        games: gamesForDate,
+        selectedConference,
+        top25Teams,
+      });
+    }
 
-    return filterCBBGames({
-      games: gamesForDate,
-      selectedConference,
-      top25Teams,
-    });
+    return result;
   }, [seasonGames, selectedDate, selectedConference, top25Teams]);
+
+  const gamesForDate = seasonGames.filter((game) =>
+    dayjs(game.date).isSame(dayjs(selectedDate), "day")
+  );
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
@@ -228,7 +239,6 @@ const gamesForDate = seasonGames.filter((game) =>
               />
               <ScrollView
                 showsVerticalScrollIndicator={false}
-                
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -302,8 +312,7 @@ const gamesForDate = seasonGames.filter((game) =>
         onSelect={(conf) => setSelectedConference(conf ?? "")}
         onOpen={() => setIsDropdownOpen(true)}
         onClose={() => setIsDropdownOpen(false)}
-          league="cbb"
-
+        league="cbb"
       />
     </>
   );

@@ -221,6 +221,17 @@ export default function GameDetailsScreen() {
   const statusDisplay = liveScore?.status ?? "Scheduled";
   const isHalftime =
     liveScore?.statusText?.toLowerCase().includes("halftime") ?? false;
+  const hasLeaderData =
+    Array.isArray(leaders) &&
+    leaders.some((group) =>
+      group?.leaders?.some(
+        (category) =>
+          Array.isArray(category.leaders) && category.leaders.length > 0
+      )
+    );
+
+  const shouldShowLeaders = statusDisplay !== "scheduled" && hasLeaderData;
+  const shouldShowShotChart = statusDisplay !== "scheduled";
 
   const periodNum = Number(liveScore?.period ?? 0);
 
@@ -336,20 +347,23 @@ export default function GameDetailsScreen() {
             />
           )}
 
-          <GameLeaders
-            leaders={leaders}
-            awayTeamId={Number(awayEspnId)}
-            homeTeamId={Number(homeEspnId)}
-          />
+          {shouldShowLeaders && (
+            <GameLeaders
+              leaders={leaders}
+              awayTeamId={Number(awayTeamData.espnID)}
+              homeTeamId={Number(homeTeamData.espnID)}
+            />
+          )}
 
-          <ShotChart
-            plays={plays}
-            homeTeamId={String(homeEspnId)}
-            awayTeamId={String(awayEspnId)}
-            neutralSite={neutralSite}
-            isCBB={true}
-          />
-
+          {shouldShowShotChart && (
+            <ShotChart
+              plays={plays}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              neutralSite={neutralSite}
+              isCBB={true}
+            />
+          )}
           <GameSummary
             plays={plays ?? []}
             homeTeamId={String(homeEspnId)}
@@ -377,15 +391,7 @@ export default function GameDetailsScreen() {
             <HighlightVideoList highlights={highlights} />
           )}
           <Officials officials={officials ?? []} loading={false} error={null} />
-          {/* <TeamLocationSection
-            venueImage={}
-            venueName={}
-            location={}
-            address={resolvedArenaAddress}
-            venueCapacity={resolvedArenaCapacity}
-            loading={weatherLoading}
-            error={weatherError}
-          /> */}
+     
         </View>
       </ScrollView>
 

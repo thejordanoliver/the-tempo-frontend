@@ -100,9 +100,20 @@ export function useCBBSeasonGames(
   );
 
   // --- Sorted games with live games first ---
-  const sortedGames = useMemo(() => {
-    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
-  }, [games, isLiveGame]);
+const sortedGames = useMemo(() => {
+  return [...games].sort((a, b) => {
+    const aLive = Number(isLiveGame(a));
+    const bLive = Number(isLiveGame(b));
+
+    if (aLive !== bLive) return bLive - aLive; // live games first
+
+    // For non-live games, sort by timestamp descending (upcoming/latest first)
+    const aTime = a.timestamp ? Number(a.timestamp) : 0;
+    const bTime = b.timestamp ? Number(b.timestamp) : 0;
+    return aTime - bTime; // earliest first
+  });
+}, [games, isLiveGame]);
+
 
   return { games: sortedGames, loading, error, refreshCBBGames };
 }

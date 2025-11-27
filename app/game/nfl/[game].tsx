@@ -205,6 +205,8 @@ export default function NFLGameDetailsScreen() {
       : ""
   );
 
+  console.log(injuries)
+
   type GameStatus =
     | "Scheduled"
     | "In Progress"

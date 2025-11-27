@@ -1,8 +1,10 @@
 import players from "constants/players"; // fallback headshot map
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
-import { TeamInjury } from "hooks/useGameDetails";
+
 import { Image, Text, View, useColorScheme } from "react-native";
 import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
+import { TeamInjury } from "./TeamInjuries"; // import your type
+
 type Props = {
   injuries: TeamInjury[];
   lighter: boolean;
@@ -10,7 +12,6 @@ type Props = {
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
 
-// Map feed team IDs to your database team IDs
 const TEAM_ID_MAP: Record<string, string> = {
   "1": "1",
   "2": "2",
@@ -47,22 +48,17 @@ const TEAM_ID_MAP: Record<string, string> = {
 export default function TeamInjuriesList({ injuries, lighter }: Props) {
   const isDark = useColorScheme() === "dark";
 
-  if (!injuries?.length) {
-    return null;
-  }
+  if (!injuries?.length) return null;
 
-  // Extract unique DB team IDs
   const teamIds = injuries.map((t) => {
     const feedId = t.team.id.toString();
-    const dbId = TEAM_ID_MAP[feedId] || feedId; // fallback if no mapping
+    const dbId = TEAM_ID_MAP[feedId] || feedId;
     return dbId;
   });
 
-  // Fetch players for each team using the hook at top level
   const teamPlayersMap: Record<string, Player[]> = {};
   teamIds.forEach((teamId) => {
     const { players } = useDbPlayersByTeam(teamId);
-
     teamPlayersMap[teamId] = players;
   });
 
@@ -70,70 +66,50 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
 
   return (
     <View style={getStyles.container}>
-      {injuries.map((team) => {
+      {injuries.map((team: TeamInjury) => {
         const feedTeamId = team.team.id.toString();
         const dbTeamId = TEAM_ID_MAP[feedTeamId] || feedTeamId;
         const teamPlayers = teamPlayersMap[dbTeamId] || [];
 
         return (
           <View key={team.team.id} style={getStyles.teamBlock}>
-            {team.injuries.map((inj, idx) => {
+            {team.injuries.map((inj: TeamInjury["injuries"][number], idx: number) => {
               const fullName = inj.athlete.fullName;
-
-              // Match player by full_name from DB
               const dbPlayer = teamPlayers.find((p) => {
                 if (!p.full_name) return false;
                 const dbName = p.full_name.toLowerCase().trim();
                 const injName = fullName.toLowerCase().trim();
-                const matched =
-                  dbName.includes(injName) || injName.includes(dbName);
-
-                return matched;
+                return dbName.includes(injName) || injName.includes(dbName);
               });
 
-              // Fallback to headshot map using full name
-              const avatarUrl =
-                dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
+              const avatarUrl = dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
 
               return (
                 <View
                   key={idx}
                   style={[
                     getStyles.injuryItem,
-                    {
-                      borderBottomWidth:
-                        idx === team.injuries.length - 1 ? 0 : 1,
-                    },
+                    { borderBottomWidth: idx === team.injuries.length - 1 ? 0 : 1 },
                   ]}
                 >
                   <View style={getStyles.avatarWrapper}>
-                    <Image
-                      source={{ uri: avatarUrl }}
-                      style={getStyles.avatar}
-                    />
+                    <Image source={{ uri: avatarUrl }} style={getStyles.avatar} />
                   </View>
                   <View style={getStyles.infoSection}>
                     <View style={getStyles.playerHeader}>
-                      <Text style={[getStyles.name]}>{fullName}</Text>
-                      <Text style={[getStyles.jersey]}>
+                      <Text style={getStyles.name}>{fullName}</Text>
+                      <Text style={getStyles.jersey}>
                         {dbPlayer?.position ?? "—"}{" "}
-                        {dbPlayer?.jersey_number
-                          ? `#${dbPlayer.jersey_number}`
-                          : "N/A"}
+                        {dbPlayer?.jersey_number ? `#${dbPlayer.jersey_number}` : "N/A"}
                       </Text>
                     </View>
-                    <Text style={[getStyles.status]}>{inj.status}</Text>
-                    {inj.details?.detail && (
-                      <Text style={getStyles.details}>
-                        {inj.details.detail}
-                      </Text>
-                    )}
+                    <Text style={getStyles.status}>{inj.status}</Text>
+                    {inj.details?.detail && <Text style={getStyles.details}>{inj.details.detail}</Text>}
                   </View>
                   <View>
                     {inj.details?.returnDate && (
-                      <Text style={[getStyles.status]}>
-                        Return:{" "}
-                        {new Date(inj.details.returnDate).toLocaleDateString()}
+                      <Text style={getStyles.status}>
+                        Return: {new Date(inj.details.returnDate).toLocaleDateString()}
                       </Text>
                     )}
                   </View>

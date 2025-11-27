@@ -265,6 +265,14 @@ export default function GameDetailsScreen() {
       }
     : undefined;
 
+  const formattedTeamInjuries = (injuries ?? []).map((inj) => ({
+    team: {
+      displayName: inj.team?.displayName ?? "",
+      abbreviation: inj.team?.abbreviation ?? "",
+    },
+    injuries: inj.athletes ?? [], // 👈 This matches the TeamInjury type
+  }));
+
   const homeScoreValue =
     liveScore?.home.total ?? parsedGame.scores?.home?.points ?? 0;
   const awayScoreValue =
@@ -406,12 +414,14 @@ export default function GameDetailsScreen() {
             homeTeamId={homeTeamIdNum}
           />
 
-          <ShotChart
-            plays={plays}
-            homeTeamId={String(homeEspnId)}
-            awayTeamId={String(awayEspnId)}
-            isCBB={false}
-          />
+          {liveScore?.status !== "scheduled" && (
+            <ShotChart
+              plays={plays}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              isCBB={false}
+            />
+          )}
 
           <GameSummary
             plays={plays ?? []}
@@ -420,11 +430,14 @@ export default function GameDetailsScreen() {
             league="NBA"
           />
 
-          <BoxScore
-            gameId={gameId.toString()}
-            homeTeamId={homeTeamIdNum}
-            awayTeamId={awayTeamIdNum}
-          />
+          {liveScore?.status !== "scheduled" && (
+            <BoxScore
+              gameId={gameId.toString()}
+              homeTeamId={homeTeamIdNum}
+              awayTeamId={awayTeamIdNum}
+            />
+          )}
+
           {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
           <LastFiveGamesSwitcher
             isDark={isDark}

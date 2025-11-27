@@ -3,14 +3,9 @@ import FixedWidthTabBar from "components/FixedWidthTabBar";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
-
 import { getStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
-// League constants
-import { teams as nbaTeams } from "constants/teams";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as nflTeams } from "constants/teamsNFL";
-import {teams as cbbTeams} from "constants/teamsCBB";
 import { LeagueType } from "types/types";
+import { Colors } from "constants/Colors";
 
 type Props = {
   isDark: boolean;
@@ -30,41 +25,13 @@ type Props = {
   league: LeagueType;
 };
 
-// Helper: pick correct team list for the league
-function getLeagueTeams(league: LeagueType) {
-  switch (league) {
-    case "NFL":
-      return nflTeams;
-    case "CFB":
-      return cfbTeams;
-    case "CBB":
-      return cbbTeams;
-    default:
-      return nbaTeams;
-  }
-}
 
-// Helper: resolve opponent code dynamically
-function getOpponentCodeFromName(
-  opponentName: string,
-  league: LeagueType
-): string | undefined {
-  const teams = getLeagueTeams(league);
-  const team = teams.find(
-    (t) =>
-      t.name === opponentName ||
-      t.code === opponentName ||
-      t.fullName === opponentName
-  );
-  return team?.code;
-}
 
 export default function LastFiveGamesSwitcher({
   isDark,
   lighter,
   home,
   away,
-  league,
 }: Props) {
 const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
@@ -89,7 +56,7 @@ const [selected, setSelected] = useState<"home" | "away">("away");
         style={[
           styles.row,
           {
-            borderBottomColor: lighter ? "#ccc" : isDark ? "#444" : "#ccc",
+
             borderBottomWidth: index === team.games.length - 1 ? 0 : 1,
           },
         ]}

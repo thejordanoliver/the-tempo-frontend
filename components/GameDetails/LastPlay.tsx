@@ -1,4 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 import players from "constants/players";
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
 import { useEffect, useState } from "react";
@@ -97,9 +98,9 @@ const normalizeText = (text: string) => {
     const defaultColor = darkMode ? "#fff" : "#1d1d1d";
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
-    if (lower.includes("foul")) return "#ff6b6b";
-    if (lower.includes("made")) return "#4ade80";
-    if (lower.includes("missed")) return "#facc15";
+    if (lower.includes("foul")) return isDark ? Colors.dark.lightRed : Colors.light.red;
+    if (lower.includes("made")) return isDark ? Colors.dark.limeGreen : Colors.light.green;
+    if (lower.includes("missed")) return isDark ? Colors.dark.yellow : Colors.light.yellow;
     return defaultColor;
   };
 

@@ -501,8 +501,8 @@ export const teams: CBBTeam[] = [
     name: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
-    color: "#d1d5d8",
-    secondaryColor: "#003d7d",
+    color: "#003d7d",
+    secondaryColor: "#d1d5d8",
     logo: RiceLogo,
     logoLight: RiceLogoLight,
   },
@@ -3693,7 +3693,7 @@ export const teams: CBBTeam[] = [
     logo: BelmontLogo,
   },
   {
-    id: 250,
+    id: 1493,
     espnID: 55,
     name: "Jax State",
     fullName: "Jacksonville State Gamecocks",
@@ -4505,7 +4505,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1971,
-    espnID: 161,
+    espnID: 2329,
     name: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
     shortName: "Lehigh",

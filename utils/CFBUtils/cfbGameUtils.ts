@@ -143,53 +143,9 @@ export function formatPeriod(raw: string | number | null | undefined) {
   return String(raw);
 }
 
-export function buildLineScore(scores: any) {
-  if (!scores) return { home: [], away: [] };
 
-  const extractPeriods = (teamScores: any) => {
-    if (!teamScores) return [];
 
-    const base = [
-      teamScores.quarter_1,
-      teamScores.quarter_2,
-      teamScores.quarter_3,
-      teamScores.quarter_4,
-    ];
 
-    // Collect all overtime fields that might exist (overtime, overtime_1, overtime_2, etc.)
-    const otFields = Object.keys(teamScores)
-      .filter((key) => key.toLowerCase().startsWith("overtime"))
-      .map((key) => teamScores[key])
-      .filter((v) => v != null);
-
-    return [...base, ...otFields].map((v) => (v != null ? String(v) : "-"));
-  };
-
-  const home = extractPeriods(scores.home);
-  const away = extractPeriods(scores.away);
-
-  return { home, away };
-}
-
-export function resolveVenue(homeTeam: any, awayTeam: any) {
-  const homeName = homeTeam?.name ?? "";
-  const awayName = awayTeam?.name ?? "";
-  const neutralSite =
-    neutralStadiums[`${homeName}-${awayName}`] ||
-    neutralStadiums[`${awayName}-${homeName}`];
-
-  const venue = {
-    name: neutralSite?.name ?? homeTeam?.venue ?? "Unknown Stadium",
-    city: neutralSite?.city ?? homeTeam?.city ?? "Unknown City",
-    address: neutralSite?.address ?? homeTeam?.address ?? "",
-    capacity: neutralSite?.venueCapacity ?? homeTeam?.venueCapacity ?? "",
-    image: neutralSite?.venueImage ?? homeTeam?.venueImage ?? "",
-    lat: neutralSite?.latitude ?? homeTeam?.latitude ?? null,
-    lon: neutralSite?.longitude ?? homeTeam?.longitude ?? null,
-  };
-
-  return { ...venue, isNeutral: !!neutralSite };
-}
 
 // --- MAIN FILTER FUNCTION ---
 export function filterCFBGames({

@@ -193,18 +193,6 @@ export default function CFBeagueScreen() {
   const filteredGames = React.useMemo(() => {
     const weekLabel = selectedWeek.label.toLowerCase();
 
-    // 🧠 Debug: Log all games when viewing Bowls week
-    // if (weekLabel.includes("week 1")) {
-    //   console.log(
-    //     "📅 All games during Bowls week:",
-    //     cfbgames.map((g) => ({
-    //       id: g.game.id,
-    //       home: g.teams.home?.name,
-    //       away: g.teams.away?.name,
-    //       date: g.game.date ?? g.game.week,
-    //     }))
-    //   );
-    // }
 
     if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
       if (selectedWeek.label.toLowerCase().includes("championship")) {

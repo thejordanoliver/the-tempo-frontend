@@ -1,13 +1,25 @@
-import { StyleSheet } from "react-native";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-
+import { StyleSheet } from "react-native";
 export const getStyles = (isDark: boolean, lighter: boolean) => {
-  const baseTextColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
+  const baseTextColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
 
   return {
     colors: {
-      win: lighter ? "#71ff76ff" : "#4caf50",
-      loss: lighter ? "#ff6363ff" : "#f44336",
+      win: lighter
+        ? Colors.dark.limeGreen
+        : isDark
+        ? Colors.dark.limeGreen
+        : Colors.light.green,
+      loss: lighter
+        ? Colors.dark.lightRed
+        : isDark
+        ? Colors.dark.lightRed
+        : Colors.light.red,
       text: baseTextColor,
     },
     ...StyleSheet.create({
@@ -36,22 +48,27 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
       },
       tabTextUnselected: {
         color: lighter
-          ? "#ccc"
+          ? Colors.midTone
           : isDark
-          ? "#888"
-          : "rgba(0,0,0,0.5)",
+          ? Colors.midTone
+          : Colors.midTone,
       },
       row: {
         flexDirection: "row",
         justifyContent: "space-between",
         paddingVertical: 6,
+        borderBottomColor: lighter
+          ? Colors.lightGray
+          : isDark
+          ? Colors.darkGray
+          : Colors.lightGray,
       },
       headerRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         paddingBottom: 4,
         borderBottomWidth: 1,
-        borderColor: "#aaa",
+        borderColor: Colors.midTone,
         marginBottom: 6,
       },
       cell: {
@@ -62,10 +79,10 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
         color: baseTextColor,
       },
       team: {
-  flex: 1.5,
-  flexDirection: "row",
-  alignItems: "center",
-},
+        flex: 1.5,
+        flexDirection: "row",
+        alignItems: "center",
+      },
       date: {
         flex: 1.2,
       },
@@ -86,12 +103,11 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
         width: 18,
         height: 18,
         resizeMode: "contain",
-        marginRight: 6,
-        marginTop: 1,
+        marginLeft: 4,
       },
       empty: {
         textAlign: "center",
-        color: "#999",
+        color: Colors.midTone,
         marginTop: 12,
         fontFamily: Fonts.OSREGULAR,
       },

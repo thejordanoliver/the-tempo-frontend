@@ -1,6 +1,10 @@
+import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
+
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
 import { teams as cbbteams } from "constants/teamsCBB";
 import React, { useState } from "react";
@@ -8,28 +12,34 @@ import {
   Image,
   LayoutChangeEvent,
   StyleSheet,
+  Text,
   View,
   useColorScheme,
 } from "react-native";
-import Svg, { Circle, Line } from "react-native-svg";
+import Svg, { Circle } from "react-native-svg";
 
 interface Play {
   id: string;
   shootingPlay: boolean;
+  scoringPlay?: boolean;
   coordinate: { x: number; y: number };
   pointsAttempted?: number;
   scoreValue?: number;
   team?: { id: string };
   text?: string;
   period?: { number: number; displayValue: string };
+  type: {
+    id: number;
+    text: string;
+  };
 }
 
 interface ShotChartProps {
   plays?: Play[];
   homeTeamId?: string;
-  awayTeamId?: string; // Added away team
+  awayTeamId?: string;
   isCBB?: boolean;
-  neutralSite?: boolean; // ← NEW
+  neutralSite?: boolean;
 }
 
 export default function ShotChart({
@@ -42,12 +52,12 @@ export default function ShotChart({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
-  const COURT_LENGTH = 94;
+  const COURT_LENGTH = isCBB ? 82 : 84;
   const COURT_WIDTH = 50;
 
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [selectedQuarter, setSelectedQuarter] = useState<
-    "All" | "1st" | "2nd" | "3rd" | "4th"
+    "All" | "1st" | "2nd" | "3rd" | "4th" | "1st Half" | "2nd Half"
   >("All");
 
   const teamArray = isCBB ? cbbteams : teams;
@@ -59,38 +69,55 @@ export default function ShotChart({
   );
 
   const homeLogo = homeTeam?.logo;
+  const courtImage = isCBB ? CBBCourtImage : CourtImage;
 
-  // Determine tabs
+  // Tabs
   const TABS = isCBB
     ? ["All", "1st Half", "2nd Half"]
     : ["All", "1st", "2nd", "3rd", "4th"];
 
-  // Map tabs to ESPN period numbers
   const PERIOD_MAP: Record<string, number> = isCBB
     ? { "1st Half": 1, "2nd Half": 2 }
     : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
 
-  // Filter plays by selected period
+  if (plays.length) {
+    const xs = plays.map((p) => p.coordinate?.x ?? 0);
+    const ys = plays.map((p) => p.coordinate?.y ?? 0);
+    console.log("coord x range", Math.min(...xs), Math.max(...xs));
+    console.log("coord y range", Math.min(...ys), Math.max(...ys));
+  }
+
   const filteredPlays = plays.filter((p) => {
-    if (!p.shootingPlay || !p.coordinate) return false;
-
-    if (selectedQuarter === "All") return true;
-
-    return p.period?.number === PERIOD_MAP[selectedQuarter];
+    if (!p.coordinate || !p.shootingPlay) return false;
+    if (selectedQuarter !== "All") {
+      return p.period?.number === PERIOD_MAP[selectedQuarter];
+    }
+    return true;
   });
 
   const renderShots = filteredPlays.map((p) => {
-    // Convert ESPN coordinates to SVG coordinates
-    const svgX = (p.coordinate.x / 50) * COURT_LENGTH;
-    const svgY = COURT_WIDTH - (p.coordinate.y / 47) * COURT_WIDTH;
+    const rawX = p.coordinate.x; // 0–50 (half court width)
+    const rawY = p.coordinate.y; // 0–94 (full court length)
 
-    const made = (p.scoreValue ?? 0) > 0;
+    let svgX = COURT_LENGTH - (rawY / 94) * COURT_LENGTH; // horizontal
+    let svgY = (rawX / 50) * COURT_WIDTH; // vertical
 
-    // Determine color by team
-    let color = "gray"; // fallback
-    if (p.team?.id === homeTeamId) color = homeTeam?.color ?? "";
-    else if (p.team?.id === awayTeamId) color = awayTeam?.color ?? "";
+    if (p.team?.id === awayTeamId) {
+      svgX = COURT_LENGTH - svgX;
+    }
+    if (p.team?.id === awayTeamId) {
+      svgY = COURT_WIDTH - svgY;
+    }
 
+    const made = p.scoringPlay === true;
+
+    let color = "gray";
+    if (p.team?.id === homeTeamId) color = homeTeam?.color ?? "#007AFF";
+    else if (p.team?.id === awayTeamId) color = awayTeam?.color ?? "#FF3B30";
+
+    const size = 1.2;
+
+    // MADE SHOT = solid circle
     if (made) {
       return (
         <Circle
@@ -104,26 +131,20 @@ export default function ShotChart({
       );
     }
 
-    // Missed shot = X with team color
-    const size = 2.5;
+    // MISSED SHOT = donut + X
     return (
       <React.Fragment key={p.id}>
-        <Line
-          x1={svgX - size}
-          y1={svgY - size}
-          x2={svgX + size}
-          y2={svgY + size}
+        {/* Donut white background */}
+        <Circle cx={svgX} cy={svgY} r={size} fill="white" opacity={0.95} />
+
+        {/* Colored ring outline */}
+        <Circle
+          cx={svgX}
+          cy={svgY}
+          r={size}
           stroke={color}
           strokeWidth={0.9}
-          opacity={0.9}
-        />
-        <Line
-          x1={svgX + size}
-          y1={svgY - size}
-          x2={svgX - size}
-          y2={svgY + size}
-          stroke={color}
-          strokeWidth={0.9}
+          fill="none"
           opacity={0.9}
         />
       </React.Fragment>
@@ -148,21 +169,20 @@ export default function ShotChart({
 
       <View style={styles.chartWrapper} onLayout={onLayout}>
         <Image
-          source={CourtImage}
+          source={courtImage}
           style={styles.courtImage}
           resizeMode="stretch"
         />
 
-      {!neutralSite && homeLogo && layout.width > 0 && layout.height > 0 && (
-
+        {!neutralSite && homeLogo && layout.width > 0 && layout.height > 0 && (
           <Image
             source={homeLogo}
             style={{
               position: "absolute",
-              width: 40,
-              height: 40,
-              left: layout.width / 2 - 22,
-              top: layout.height / 2 - 22,
+              width: 36,
+              height: 36,
+              left: layout.width / 2 - 18,
+              top: layout.height / 2 - 18,
               opacity: 0.75,
             }}
           />
@@ -171,11 +191,44 @@ export default function ShotChart({
         <Svg
           width="100%"
           height="100%"
-          viewBox={`0 0 ${COURT_LENGTH} ${COURT_WIDTH}`}
+          viewBox={`0 0 ${COURT_LENGTH} ${COURT_WIDTH}`} // 94 (wide) × 50 (tall)
           style={StyleSheet.absoluteFill}
         >
           {renderShots}
         </Svg>
+      </View>
+
+      {/* Legend */}
+      <View style={styles.legendContainer}>
+        {awayTeam && (
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.colorDot,
+                {
+                  backgroundColor: awayTeam.color ?? Colors.midTone,
+                  marginRight: 4,
+                },
+              ]}
+            />
+            <Text style={styles.legendText}>{awayTeam.name}</Text>
+          </View>
+        )}
+
+        {homeTeam && (
+          <View style={styles.legendItem}>
+            <Text style={styles.legendText}>{homeTeam.name}</Text>
+            <View
+              style={[
+                styles.colorDot,
+                {
+                  backgroundColor: homeTeam.color ?? Colors.midTone,
+                  marginLeft: 4,
+                },
+              ]}
+            />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -196,5 +249,28 @@ const getStyles = (isDark: boolean) =>
       position: "absolute",
       top: 0,
       left: 0,
+    },
+    legendContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: 10,
+      gap: 18,
+    },
+    legendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    colorDot: {
+      width: 20,
+      height: 20,
+      borderRadius: 100,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.white : Colors.black,
+    },
+    legendText: {
+      fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSBOLD,
     },
   });

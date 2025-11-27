@@ -173,6 +173,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   const {
     officials,
+    injuries,
     highlights,
     loading: officialsLoading,
     error: officialsError,
@@ -326,6 +327,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
             lineScore={lineScore}
             homeLastGames={homeLastGames}
             awayLastGames={awayLastGames}
+            injuries={injuries}
             gameStats={gameStats}
             officials={officials}
             resolvedVenueImage={resolvedVenueImage}

@@ -6,7 +6,7 @@ import GameUniforms from "components/GameDetails/GameUniforms";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import LineScore from "components/GameDetails/LineScore";
 import Officials from "components/GameDetails/Officials";
-import TeamInjuriesTab from "components/GameDetails/TeamInjuries";
+import TeamInjuries from "components/GameDetails/TeamInjuries";
 import TeamLocationSection from "components/GameDetails/TeamLocationSection";
 import Weather from "components/GameDetails/Weather";
 import React from "react";
@@ -74,16 +74,7 @@ export default function GamePreviewContent({
         </View>
       )}
 
-      {/* Game Leaders */}
-      <View style={{ marginBottom: 24 }}>
-        <GameLeaders
-          gameId={game.id.toString()}
-          awayTeamId={away?.id}
-          homeTeamId={home?.id}
-          lighter
-        />
-      </View>
-
+    
       {/* Game Stats */}
       {game?.id && gameStats?.length > 0 && (
         <>
@@ -110,20 +101,12 @@ export default function GamePreviewContent({
         </>
       )}
 
-      {/* Officials */}
-      <View style={{ marginBottom: 24 }}>
-        <Officials
-          officials={officials ?? []}
-          loading={false}
-          error={null}
-          lighter
-        />
-      </View>
+  
 
       {/* Injuries */}
 
       <View style={{ marginBottom: 24 }}>
-        <TeamInjuriesTab injuries={injuries} lighter />
+      <TeamInjuries injuries={injuries} lighter />
       </View>
 
       {/* Uniforms */}

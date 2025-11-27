@@ -42,14 +42,19 @@ export default function GamePreviewContent({
         </View>
       )}
 
-      <View style={{ marginBottom: 24 }}>
-        <GameLeaders
-          leaders={leaders}
-          awayTeamId={Number(away.espnID)}
-          homeTeamId={Number(home.espnID)}
-          lighter
-        />
-      </View>
+      {leaders &&
+        (leaders?.home?.length > 0 ||
+          leaders?.away?.length > 0 ||
+          leaders?.length > 0) && ( // fallback if array form
+          <View style={{ marginBottom: 24 }}>
+            <GameLeaders
+              leaders={leaders}
+              awayTeamId={Number(away.espnID)}
+              homeTeamId={Number(home.espnID)}
+              lighter
+            />
+          </View>
+        )}
 
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||

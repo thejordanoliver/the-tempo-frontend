@@ -182,7 +182,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
 
-   const {
+  const {
     officials,
     injuries,
     previousDrives,
@@ -465,47 +465,48 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     />
                   )}
                   {/* Location */}
-            {(
-              isNeutralSite
-                ? gameInfo?.venue?.name || gameInfo?.venue?.city
-                : homeTeamData?.venue || homeTeamData?.location
-            ) ? (
-              <TeamLocationSection
-                venueImage={
-                  isNeutralSite
-                    ? venueImages[gameInfo?.venue?.name ?? ""] ||
-                      venueImages[gameInfo?.venue?.city ?? ""]
-                    : homeTeamData?.venueImage
-                }
-                venueName={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.name ?? ""
-                    : homeTeamData?.venue ?? ""
-                }
-                location={
-                  isNeutralSite
-                    ? gameInfo?.venue?.city ?? ""
-                    : homeTeamData?.location ?? ""
-                }
-                address={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.address ??
-                      ""
-                    : homeTeamData?.address ?? ""
-                }
-                venueCapacity={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                        ?.venueCapacity ?? ""
-                    : homeTeamData?.venueCapacity ?? ""
-                }
-                surface="football"
-                grass={venue?.grass ?? undefined}
-                loading={false}
-                error={null}
-                lighter={false}
-              />
-            ) : null}
+                  {(
+                    isNeutralSite
+                      ? gameInfo?.venue?.name || gameInfo?.venue?.city
+                      : homeTeamData?.venue || homeTeamData?.location
+                  ) ? (
+                    <TeamLocationSection
+                      venueImage={
+                        isNeutralSite
+                          ? venueImages[gameInfo?.venue?.name ?? ""] ||
+                            venueImages[gameInfo?.venue?.city ?? ""]
+                          : homeTeamData?.venueImage
+                      }
+                      venueName={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.name ?? ""
+                          : homeTeamData?.venue ?? ""
+                      }
+                      location={
+                        isNeutralSite
+                          ? gameInfo?.venue?.city ?? ""
+                          : homeTeamData?.location ?? ""
+                      }
+                      address={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.address ?? ""
+                          : homeTeamData?.address ?? ""
+                      }
+                      venueCapacity={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.venueCapacity ?? ""
+                          : homeTeamData?.venueCapacity ?? ""
+                      }
+                      surface="football"
+                      grass={venue?.grass ?? undefined}
+                      loading={false}
+                      error={null}
+                      lighter={false}
+                    />
+                  ) : null}
                   {gameStatus !== "Scheduled" && (
                     <Weather
                       weather={displayWeather}
@@ -631,12 +632,14 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                 style={{ flex: 1 }}
               >
                 <View style={{ gap: 24 }}>
-                  <LineScore
-                    linescore={linescore}
-                    homeCode={homeTeamData.code ?? "HOM"}
-                    awayCode={awayTeamData.code ?? "AWY"}
-                    lighter
-                  />
+                  {gameStatus !== "Scheduled" && (
+                    <LineScore
+                      linescore={linescore}
+                      homeCode={homeTeamData.code ?? "HOM"}
+                      awayCode={awayTeamData.code ?? "AWY"}
+                      lighter
+                    />
+                  )}
 
                   {homeTeamData &&
                     awayTeamData &&
@@ -683,6 +686,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     homeTeamAbbr={homeTeamData.code}
                     lighter
                   />
+
                   {gameStatus !== "Scheduled" && (
                     <NFLOfficials
                       officials={officials}
@@ -693,55 +697,47 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   )}
 
                   {(
-              isNeutralSite
-                ? gameInfo?.venue?.name || gameInfo?.venue?.city
-                : homeTeamData?.venue || homeTeamData?.location
-            ) ? (
-              <TeamLocationSection
-                venueImage={
-                  isNeutralSite
-                    ? venueImages[gameInfo?.venue?.name ?? ""] ||
-                      venueImages[gameInfo?.venue?.city ?? ""]
-                    : homeTeamData?.venueImage
-                }
-                venueName={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.name ?? ""
-                    : homeTeamData?.venue ?? ""
-                }
-                location={
-                  isNeutralSite
-                    ? gameInfo?.venue?.city ?? ""
-                    : homeTeamData?.location ?? ""
-                }
-                address={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.address ??
-                      ""
-                    : homeTeamData?.address ?? ""
-                }
-                venueCapacity={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                        ?.venueCapacity ?? ""
-                    : homeTeamData?.venueCapacity ?? ""
-                }
-                surface="football"
-                grass={venue?.grass ?? undefined}
-                loading={false}
-                error={null}
-                lighter={false}
-              />
-            ) : null}
-                  {gameStatus !== "Scheduled" && (
-                    <Weather
-                      weather={displayWeather}
-                      address={stadiumData?.city ?? ""}
+                    isNeutralSite
+                      ? gameInfo?.venue?.name || gameInfo?.venue?.city
+                      : homeTeamData?.venue || homeTeamData?.location
+                  ) ? (
+                    <TeamLocationSection
+                      venueImage={
+                        isNeutralSite
+                          ? venueImages[gameInfo?.venue?.name ?? ""] ||
+                            venueImages[gameInfo?.venue?.city ?? ""]
+                          : homeTeamData?.venueImage
+                      }
+                      venueName={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.name ?? ""
+                          : homeTeamData?.venue ?? ""
+                      }
+                      location={
+                        isNeutralSite
+                          ? gameInfo?.venue?.city ?? ""
+                          : homeTeamData?.location ?? ""
+                      }
+                      address={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.address ?? ""
+                          : homeTeamData?.address ?? ""
+                      }
+                      venueCapacity={
+                        isNeutralSite
+                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
+                              ?.venueCapacity ?? ""
+                          : homeTeamData?.venueCapacity ?? ""
+                      }
+                      surface="football"
+                      grass={venue?.grass ?? undefined}
                       loading={false}
                       error={null}
-                      lighter
+                      lighter={true}
                     />
-                  )}
+                  ) : null}
 
                   <Weather
                     weather={displayWeather}

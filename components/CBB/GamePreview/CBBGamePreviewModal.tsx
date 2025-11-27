@@ -3,10 +3,10 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { neutralVenues, venueImages } from "constants/teams";
 import { teams } from "constants/teamsCBB";
-import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
@@ -38,8 +38,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
   const away = teams.find((t) => String(t.id) === String(game.teams.away?.id));
 
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
-
-
 
   const { record: homeRecord } = useTeamRecord(home?.espnID, "cbb");
   const { record: awayRecord } = useTeamRecord(away?.espnID, "cbb");
@@ -154,7 +152,12 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       isFinal = true;
     }
 
-    const isScheduled = ["not started"].some((s) => longLower.includes(s));
+const isScheduled =
+  longLower.includes("not started") ||
+  longLower.includes("scheduled") ||
+  longLower.includes("pre-game") ||
+  longLower.includes("preview") ||
+  longLower.trim() === "";
 
     // ✅ Live only if not final
     const isLive =
@@ -219,7 +222,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     return periods.map((v) => v.toString());
   };
 
-  
   const { score: liveScore } = useGameScores(
     "mens-college-basketball",
     homeEspnId?.toString(),
@@ -227,19 +229,18 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     gameDateStr
   );
   const lineScore = liveScore?.periodScores?.length
-   ? {
-       home: liveScore.periodScores.map((p) => p.home.toString()),
-       away: liveScore.periodScores.map((p) => p.away.toString()),
-     }
-   : undefined;
-  
-   const {
-      officials,
-      leaders,
-      loading: officialsLoading,
-      error: officialsError,
-    } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDateStr);
-  
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
+
+  const {
+    officials,
+    leaders,
+    loading: officialsLoading,
+    error: officialsError,
+  } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDateStr);
 
   const displayClock = liveScore?.displayClock;
 
@@ -307,6 +308,8 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       : week === "NCAA - Quarter-finals"
       ? "Elite Eight"
       : week ?? "";
+
+
 
   return (
     <BottomSheetModal
@@ -442,7 +445,7 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
             away={away}
             lineScore={lineScore}
             gameStats={gameStats}
-           leaders={leaders}
+            leaders={!status.isScheduled ? leaders : null}
             homeLastGames={homeLastGames}
             awayLastGames={awayLastGames}
             officials={officials}

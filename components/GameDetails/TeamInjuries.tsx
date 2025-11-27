@@ -1,14 +1,37 @@
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
-import { TeamInjury } from "hooks/useGameDetails";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import FixedWidthTabBar from "../FixedWidthTabBar";
 import HeadingTwo from "../Headings/HeadingTwo";
 import TeamInjuriesList from "./TeamInjuriesList";
 
+
+// ✅ Define type for injuries
+export type TeamInjury = {
+  team: {
+    id: string | number;
+    displayName: string;
+    abbreviation: string;
+  };
+  injuries: {
+    athlete: {
+      id: string | number;
+      fullName: string;
+      headshot?: string;
+      position?: string;
+      jersey?: string;
+    };
+    status: string;
+    details?: {
+      detail?: string;
+      returnDate?: string;
+    };
+  }[];
+};
+
 type Props = {
-  injuries: TeamInjury[];
+  injuries: any[];
   lighter?: boolean;
   loading?: boolean; // ✅ add this here too
 };
