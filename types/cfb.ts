@@ -190,7 +190,6 @@ export const emptyTeam: CFBTeam = {
   coachImage: "Unknown",
   venue: "Unknown",
   established: 0,
-
   latitude: 0,
   longitude: 0,
   venueImage: "Unknown",

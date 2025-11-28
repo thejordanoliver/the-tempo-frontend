@@ -6,7 +6,7 @@ import { teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, useColorScheme } from "react-native";
-import { CBBPlayer } from "types/cbb";
+import { CBBPlayer } from "types/types";
 
 
 export default function PlayerDetailScreen() {
@@ -59,6 +59,7 @@ export default function PlayerDetailScreen() {
           isTeamScreen={!!teamObj}
           teamCode={teamObj?.code}
           isPlayerScreen={true}
+          league="CBB"
         />
       ),
     });

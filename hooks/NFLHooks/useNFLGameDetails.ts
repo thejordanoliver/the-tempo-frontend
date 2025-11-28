@@ -168,7 +168,7 @@ export const useNFLGameDetails = (
         setHighlights(highlights);
         setOfficials(summary?.gameInfo?.officials ?? []);
         setVenue(normalizedVenue);
-        setInjuries(summary?.injuries?.items ?? []);
+        setInjuries(summary?.injuries ?? []);
         setPreviousDrives(summary?.drives?.previous ?? []);
         setCurrentDrives(summary?.drives?.current ?? []);
         setScoringPlays(summary?.scoringPlays ?? []); // <-- add scoring plays here

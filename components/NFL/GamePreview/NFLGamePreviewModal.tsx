@@ -11,22 +11,26 @@ import {
 import LineScore from "components/GameDetails/LineScore";
 import Weather from "components/GameDetails/Weather";
 import { NFLCenterInfo } from "components/NFL/GamePreview/CenterInfo";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { neutralStadiums, teams, venueImages } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGameDetails } from "hooks/NFLHooks/useNFLGameDetails";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { Game } from "types/nfl";
 import NFLOfficials from "../../GameDetails/Officials";
 import NFLGameLeaders from "../GameDetails/NFLGameLeaders";
 import NFLInjuries from "../GameDetails/NFLInjuries";
 import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamInfo from "./TeamInfo";
+
 type Props = {
   game: Game; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -37,8 +41,10 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
-
   const gameInfo = game.game;
+  const isChampionship = gameInfo.week?.includes("Super Bowl"); // ✅ adjust based on your API
+  const styles = getStyles(isDark, isChampionship);
+
   const home = game.teams.home;
   const away = game.teams.away;
   const scores = game.scores;
@@ -60,7 +66,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
       minute: "numeric",
     }
   );
-  const isSuperBowl = gameInfo.week?.includes("Super Bowl"); // ✅ adjust based on your API
   const playoffKeywords = [
     "Super Bowl",
     "Wild Card",
@@ -197,6 +202,14 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
       ? new Date(gameInfo.date.timestamp * 1000).toISOString()
       : ""
   );
+
+  const { headlineText } = useGameInfo(
+    Number(homeTeamData.espnID),
+    Number(awayTeamData.espnID),
+    apiDateStr,
+    "nfl"
+  );
+
   // --- Format quarter / period ---
   const formatQuarter = (
     short?: string | null,
@@ -270,61 +283,47 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
           disappearsOnIndex={-1}
         />
       )}
-      handleStyle={{
-        backgroundColor: "transparent",
-        height: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        left: 8,
-        right: 8,
-        top: 0,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: "#888",
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-      }}
+      handleStyle={styles.handle}
+      handleIndicatorStyle={styles.handleIndicator}
       backgroundStyle={{ backgroundColor: "transparent" }}
     >
-      <View
-        style={{
-          flex: 1,
-          overflow: "hidden",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-        }}
-      >
-        {isSuperBowl ? (
-          <>
-            <LinearGradient
-              colors={["#DFBD69", "#CDA765"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <LinearGradient
-              colors={
-                isDark
-                  ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
-                  : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <BlurView
-              intensity={100}
-              tint={"systemUltraThinMaterialDark"}
-              style={{
-                flex: 1,
-                padding: 12,
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                paddingTop: 40,
-              }}
-            >
+      <View style={styles.container}>
+        <>
+          <LinearGradient
+            colors={
+              isChampionship
+                ? ["#DFBD69", "#CDA765"]
+                : [awayTeamData.color, homeTeamData.color]
+            }
+            locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 0 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <LinearGradient
+            colors={
+              isDark
+                ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
+                : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <BlurView
+            intensity={100}
+            tint={"systemUltraThinMaterialDark"}
+            style={styles.blur}
+          >
+            <>
+              {headlineText && (
+                <>
+                  {headlineText && (
+                    <Text style={styles.headline}>{headlineText}</Text>
+                  )}
+                </>
+              )}
+
               {/* Teams + Center Info */}
               <View
                 style={{
@@ -518,240 +517,55 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   )}
                 </View>
               </BottomSheetScrollView>
-            </BlurView>
-          </>
-        ) : (
-          <>
-            <LinearGradient
-              colors={[
-                awayTeamData.color ?? "#888",
-                homeTeamData.color ?? "#888",
-              ]}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 0 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <LinearGradient
-              colors={
-                isDark
-                  ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
-                  : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-            <BlurView
-              intensity={100}
-              tint={"systemUltraThinMaterialDark"}
-              style={{
-                flex: 1,
-                padding: 12,
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                paddingTop: 40,
-              }}
-            >
-              {/* Teams + Center Info */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 20,
-                }}
-              >
-                <TeamInfo
-                  team={awayTeamData}
-                  teamName={awayTeamData.code ?? "Away"}
-                  score={scores?.away?.total ?? 0}
-                  opponentScore={scores?.home?.total ?? 0} // 👈 add this
-                  record={awayRecord?.overall ?? "0-0"}
-                  isDark={isDark}
-                  isGameOver={
-                    gameStatus === "Final" ||
-                    gameStatus === "Canceled" ||
-                    gameStatus === "Postponed"
-                  }
-                  hasStarted={gameStatus !== "Scheduled"}
-                  possessionTeamId={
-                    possessionTeamId !== undefined
-                      ? String(possessionTeamId)
-                      : undefined
-                  }
-                  side="away"
-                  timeouts={awayTimeouts ?? 0} // ✅ fallback to 0
-                  lighter
-                />
-
-                <NFLCenterInfo
-                  isPlayoff={isPlayoff}
-                  week={gameInfo.week}
-                  status={gameStatus}
-                  date={displayDateStr}
-                  time={displayTimeStr}
-                  period={formatQuarter(period ?? gameInfo.status.short ?? "")}
-                  clock={displayClock ?? gameInfo?.status?.timer ?? ""}
-                  isDark={isDark}
-                  homeTeam={homeTeamData}
-                  awayTeam={awayTeamData}
-                  colors={colorsRecord}
-                  lighter
-                  apiDate={apiDateStr}
-                  downAndDistance={downDistanceText ?? ""}
-                />
-
-                <TeamInfo
-                  team={homeTeamData}
-                  teamName={homeTeamData.code ?? "Home"}
-                  score={scores?.home?.total ?? 0}
-                  opponentScore={scores?.away?.total ?? 0} // 👈 add this
-                  record={homeRecord?.overall ?? "0-0"}
-                  isDark={isDark}
-                  isGameOver={
-                    gameStatus === "Final" ||
-                    gameStatus === "Canceled" ||
-                    gameStatus === "Postponed"
-                  }
-                  hasStarted={gameStatus !== "Scheduled"}
-                  possessionTeamId={
-                    possessionTeamId !== undefined
-                      ? String(possessionTeamId)
-                      : undefined
-                  }
-                  side="home"
-                  timeouts={homeTimeouts ?? 0}
-                  lighter
-                />
-              </View>
-
-              {/* Scrollable Details */}
-              <BottomSheetScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                style={{ flex: 1 }}
-              >
-                <View style={{ gap: 24 }}>
-                  {gameStatus !== "Scheduled" && (
-                    <LineScore
-                      linescore={linescore}
-                      homeCode={homeTeamData.code ?? "HOM"}
-                      awayCode={awayTeamData.code ?? "AWY"}
-                      lighter
-                    />
-                  )}
-
-                  {homeTeamData &&
-                    awayTeamData &&
-                    gameStatus !== "Scheduled" && (
-                      <NFLGameLeaders
-                        gameId={String(gameInfo.id)}
-                        homeTeamId={String(homeTeamData.id)}
-                        awayTeamId={String(awayTeamData.id)}
-                        lighter
-                      />
-                    )}
-
-                  <NFLTeamDrives
-                    previousDrives={previousDrives ?? []}
-                    currentDrives={currentDrives ?? []}
-                    awayTeamAbbr={awayTeamData?.code} // 👈 use getTeamInfo result
-                    homeTeamAbbr={homeTeamData?.code} // 👈 use getTeamInfo result
-                    lighter
-                  />
-
-                  <LastFiveGamesSwitcher
-                    isDark={isDark}
-                    home={{
-                      teamCode: homeTeamData.code,
-                      teamLogo: homeTeamData.logo,
-                      teamLogoLight: homeTeamData.logoLight,
-                      games: homeLastGames.games,
-                    }}
-                    away={{
-                      teamCode: awayTeamData.code,
-                      teamLogo: awayTeamData.logo,
-                      teamLogoLight: awayTeamData.logoLight,
-                      games: awayLastGames.games,
-                    }}
-                    league="NFL"
-                    lighter
-                  />
-
-                  <NFLInjuries
-                    injuries={injuries}
-                    loading={false}
-                    error={null}
-                    awayTeamAbbr={awayTeamData.code}
-                    homeTeamAbbr={homeTeamData.code}
-                    lighter
-                  />
-
-                  {gameStatus !== "Scheduled" && (
-                    <NFLOfficials
-                      officials={officials}
-                      loading={false}
-                      error={null}
-                      lighter
-                    />
-                  )}
-
-                  {(
-                    isNeutralSite
-                      ? gameInfo?.venue?.name || gameInfo?.venue?.city
-                      : homeTeamData?.venue || homeTeamData?.location
-                  ) ? (
-                    <TeamLocationSection
-                      venueImage={
-                        isNeutralSite
-                          ? venueImages[gameInfo?.venue?.name ?? ""] ||
-                            venueImages[gameInfo?.venue?.city ?? ""]
-                          : homeTeamData?.venueImage
-                      }
-                      venueName={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.name ?? ""
-                          : homeTeamData?.venue ?? ""
-                      }
-                      location={
-                        isNeutralSite
-                          ? gameInfo?.venue?.city ?? ""
-                          : homeTeamData?.location ?? ""
-                      }
-                      address={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.address ?? ""
-                          : homeTeamData?.address ?? ""
-                      }
-                      venueCapacity={
-                        isNeutralSite
-                          ? neutralStadiums[gameInfo?.venue?.name ?? ""]
-                              ?.venueCapacity ?? ""
-                          : homeTeamData?.venueCapacity ?? ""
-                      }
-                      surface="football"
-                      grass={venue?.grass ?? undefined}
-                      loading={false}
-                      error={null}
-                      lighter={true}
-                    />
-                  ) : null}
-
-                  <Weather
-                    weather={displayWeather}
-                    address={stadiumData?.city ?? ""}
-                    loading={false}
-                    error={null}
-                    lighter
-                  />
-                </View>
-              </BottomSheetScrollView>
-            </BlurView>
-          </>
-        )}
+            </>
+          </BlurView>
+        </>
       </View>
     </BottomSheetModal>
   );
 }
+
+const getStyles = (isDark: boolean, isChampionship: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      overflow: "hidden",
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
+    blur: {
+      flex: 1,
+      paddingHorizontal: 12,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingTop: 40,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 20,
+    },
+    handle: {
+      backgroundColor: "transparent",
+      height: 40,
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      left: 8,
+      right: 8,
+      top: 0,
+    },
+    handleIndicator: {
+      backgroundColor: isChampionship ? Colors.lightGray : Colors.midTone,
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+    },
+    headline: {
+      fontSize: 12,
+      fontFamily: Fonts.OSLIGHT,
+      color: Colors.dark.white,
+      textAlign: "center",
+    },
+  });

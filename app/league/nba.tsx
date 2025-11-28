@@ -23,6 +23,7 @@ import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { getCurrentNBASeason, getNBASeason } from "utils/dateUtils";
 import {
   Animated,
   RefreshControl,
@@ -39,11 +40,13 @@ import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+
+
 function StatsTabContent() {
   const { leaders, loading, error } = useSeasonLeaders({
-    season: 2024,
+    season: 2025,
     limit: 5,
-    minGames: 10,
+    minGames: 2,
   });
 
   return (
@@ -56,7 +59,7 @@ function StatsTabContent() {
 }
 
 export default function NBALeagueScreen() {
-  const currentYear = "2025";
+  const currentYear = getNBASeason();
   const {
     games,
     loading: liveLoading,

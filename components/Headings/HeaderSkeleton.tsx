@@ -12,7 +12,7 @@ import {
 export default function HeaderSkeleton() {
   const isDark = useColorScheme() === "dark";
   const pulseAnim = useRef(new Animated.Value(0.3)).current; // start at low opacity
-
+  const styles = skeletonStyles(isDark);
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
@@ -40,9 +40,7 @@ export default function HeaderSkeleton() {
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
 
-  const overlayColor = isDark
-    ? "rgba(136, 136, 136, 0.5)"
-    : "rgba(136, 136, 136, 0.5)";
+  const overlayColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   return (
     <View style={styles.container}>
@@ -61,19 +59,21 @@ export default function HeaderSkeleton() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 8,
-    marginHorizontal: 12,
-  },
-  skeletonBase: {
-    height: 28,
-    width: 160,
-    borderRadius: 6,
-    overflow: "hidden",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 6,
-  },
-});
+const skeletonStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      marginVertical: 8,
+      marginHorizontal: 12,
+    },
+    skeletonBase: {
+      height: 28,
+      width: 160,
+      borderRadius: 6,
+      overflow: "hidden",
+      color: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      borderRadius: 6,
+    },
+  });

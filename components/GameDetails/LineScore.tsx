@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import {
   StyleSheet,
@@ -8,7 +9,6 @@ import {
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
 import LineScoreSkeleton from "./LineScoreSkeleton";
-
 type Props = {
   linescore:
     | {
@@ -20,7 +20,7 @@ type Props = {
   homeCode: string | undefined;
   awayCode: string | undefined;
   lighter?: boolean;
-  loading?: boolean; 
+  loading?: boolean;
   league?: "NBA" | "CBB"; // ✅ NEW
 };
 
@@ -38,9 +38,21 @@ export default function LineScore({
     return <LineScoreSkeleton />;
   }
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#000";
-  const borderColor = lighter ? "#aaa" : isDark ? "#333" : "#888";
-  const dividerColor = lighter ? "#bbb" : isDark ? "#888" : "#888";
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
+  const subTextColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.darkGray;
+  const borderColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.lightGray;
 
   const total = (scores: (string | null | undefined)[]) => {
     const numericValues = scores
@@ -128,7 +140,7 @@ export default function LineScore({
         </View>
       </View>
 
-      <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+      <View style={[styles.divider, { backgroundColor: borderColor }]} />
 
       {/* Home */}
       <View style={styles.row}>

@@ -1,5 +1,5 @@
 // components/TeamPlayerList.tsx
-import { CBBPlayer } from "types/cbb";
+import { CBBPlayer } from "types/types";
 import {
   ActivityIndicator,
   RefreshControl,

@@ -1,8 +1,9 @@
-import { getNFLTeamsLogo } from "constants/teamsNFL";
+import { Colors } from "constants/Colors";
 import { getTeamLogo } from "constants/teamsCFB";
-import { getStyles } from "styles/GameDetailStyles/DrivesList.styles";
+import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { FlatList, Image, Text, useColorScheme, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { getStyles } from "styles/GameDetailStyles/DrivesList.styles";
 import { LeagueType } from "types/types";
 
 export type Drive = {
@@ -49,9 +50,21 @@ export default function DrivesList({
   if (drives.length === 0)
     return <Text style={styles.emptyText}>No drives available</Text>;
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
-  const subTextColor = lighter ? "#ccc" : isDark ? "#888" : "#555";
-  const borderColor = lighter ? "#aaa" : isDark ? "#888" : "#ccc";
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
+  const subTextColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.darkGray;
+  const borderColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.lightGray;
 
   return (
     <View>
@@ -70,7 +83,12 @@ export default function DrivesList({
                 : getNFLTeamsLogo(item.team.abbreviation, useLightLogo);
 
             const resultUpper = (item.result ?? "").toUpperCase();
-            let resultColor = lighter ? "#aaa" : isDark ? "#aaa" : "#444";
+
+            let resultColor = lighter
+              ? Colors.lightGray
+              : isDark
+              ? Colors.lightGray
+              : Colors.darkGray;
 
             if (
               resultUpper.includes("INT") ||
@@ -80,25 +98,25 @@ export default function DrivesList({
               resultUpper.includes("DOWNS")
             ) {
               resultColor = lighter
-                ? "#ff4444"
+                ? Colors.dark.lightRed
                 : isDark
-                ? "#ff4444"
-                : "#cc0000";
+                ? Colors.dark.lightRed
+                : Colors.light.red;
             } else if (
               resultUpper.includes("TD") ||
               resultUpper.includes("FG")
             ) {
               resultColor = lighter
-                ? "#00ff00"
+                ? Colors.dark.limeGreen
                 : isDark
-                ? "#00ff00"
-                : "#008800";
+                ? Colors.dark.limeGreen
+                : Colors.light.green;
             } else if (resultUpper.includes("PUNT")) {
               resultColor = lighter
-                ? "#ff9100ff"
+                ? Colors.dark.yellow
                 : isDark
-                ? "#ff9100ff"
-                : "#de7e00ff";
+                ? Colors.dark.yellow
+                : Colors.light.yellow;
             }
 
             return (

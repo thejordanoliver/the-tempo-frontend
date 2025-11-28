@@ -250,17 +250,20 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
 
           <View style={styles.table}>
             {displayAverages.map((item, idx) => (
-              <View
-                key={item.label}
-                style={[
-                  styles.teamTableRow,
-                  idx % 2 === 1 && {
-                    backgroundColor: isDark
-                      ? Colors.dark.itemBackground
-                      : Colors.light.itemBackground,
-                  },
-                ]}
-              >
+  <View
+  key={item.label}
+  style={[
+    styles.teamTableRow,
+    idx % 2 === 1 && {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    idx === displayAverages.length - 1 && { borderBottomWidth: 0 }, // ← remove border on LAST row
+  ]}
+>
+
+
                 <Text style={[styles.tableCell, styles.headerText]}>
                   {item.label}
                 </Text>
@@ -278,17 +281,19 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
 
           <View style={styles.table}>
             {displayTotals.map((item, idx) => (
-              <View
-                key={item.label}
-                style={[
-                  styles.teamTableRow,
-                  idx % 2 === 1 && {
-                    backgroundColor: isDark
-                      ? Colors.dark.itemBackground
-                      : Colors.light.itemBackground,
-                  },
-                ]}
-              >
+   <View
+  key={item.label}
+  style={[
+    styles.teamTableRow,
+    idx % 2 === 1 && {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    idx === displayTotals.length - 1 && { borderBottomWidth: 0 }, // ← same here
+  ]}
+>
+
                 <Text style={[styles.tableCell, styles.headerText]}>
                   {item.label}
                 </Text>
@@ -625,12 +630,11 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     categoryTitle: {
-      fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginBottom: 8,
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 20,
+      marginBottom: 4,
+      color: isDark ? Colors.white : Colors.black,
       marginLeft: 4,
-      textTransform: "uppercase",
     },
   });
 

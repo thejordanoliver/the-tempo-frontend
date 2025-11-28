@@ -63,7 +63,7 @@ export default function GameCard({
 }) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
@@ -123,7 +123,19 @@ export default function GameCard({
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-
+  const isChampionship =
+    gameDate.getMonth() === 5 &&
+    gameDate.getDate() >= 5 &&
+    gameDate.getDate() <= 22;
+  const isChristmasDay =
+    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
+  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
+  const holidayLabel = isChristmasDay
+    ? "Christmas Day"
+    : isNewYearsDay
+    ? "New Year's Day"
+    : null;
+  const styles = getStyles(dark, isChampionship);
   const { score: liveScore } = useGameScores(
     "nba",
     homeEspnId,
@@ -138,7 +150,6 @@ export default function GameCard({
   const awayScore =
     liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
 
- 
   const baseStatus =
     typeof game.status === "string" ? game.status : mapStatus(game.status);
 
@@ -165,7 +176,6 @@ export default function GameCard({
   const isPostponed = effectiveStatus === "Postponed";
   const isHalftime = effectiveStatus === "Halftime";
 
-
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
   const winnerStyle = (teamWins: boolean): TextStyle => ({
@@ -182,21 +192,6 @@ export default function GameCard({
     return getTeamLogo(teamData.id, dark);
   };
 
-
-
-  const isNBAFinals =
-    gameDate.getMonth() === 5 &&
-    gameDate.getDate() >= 5 &&
-    gameDate.getDate() <= 22;
-  const isChristmasDay =
-    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
-  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-    ? "New Year's Day"
-    : null;
-
   const { broadcasts } = useGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
@@ -208,14 +203,14 @@ export default function GameCard({
     if (!period) return "Live";
     if (period <= 4) return ["1st", "2nd", "3rd", "4th"][period - 1] ?? "";
     const ot = period - 4;
-     return ot === 1 ? "OT" : `${ot}OT`;
+    return ot === 1 ? "OT" : `${ot}OT`;
   }
 
   function getFinalWithQuarterLabel(period?: number) {
     if (!period) return "Final";
     if (period <= 4) return `Final`;
     const ot = period - 4;
-   return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
+    return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
   }
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -372,8 +367,8 @@ export default function GameCard({
         })
       }
     >
-      {isNBAFinals ? (
-         <LinearGradient
+      {isChampionship ? (
+        <LinearGradient
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
@@ -381,6 +376,7 @@ export default function GameCard({
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
+          style={styles.card}
         >
           {renderCardContent()}
         </LinearGradient>

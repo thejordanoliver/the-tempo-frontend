@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
   handleIndicator: {
-    backgroundColor: "#888",
+    backgroundColor: Colors.midTone,
     width: 36,
     height: 4,
     borderRadius: 2,

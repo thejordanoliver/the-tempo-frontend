@@ -1,14 +1,14 @@
 // components/NBAStandingsList.tsx
-import { useRouter } from "expo-router";
 import { Dropdown } from "components/Dropdown";
+import { Colors } from "constants/Colors";
 import { nbaDivisionsById, teams } from "constants/teams"; // your NBA team logos & info
+import { useRouter } from "expo-router";
 import {
   ConferenceStandings,
   StandingsTeam,
   useStandings,
 } from "hooks/useStandings";
 import React, { useState } from "react";
-import { StandingsSkeleton } from "./StandingsSkeleton";
 import {
   FlatList,
   Image,
@@ -20,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/Standings.styles";
+import { StandingsSkeleton } from "./StandingsSkeleton";
 
 type SectionType = {
   title: string;
@@ -35,13 +36,12 @@ export const StandingsList = () => {
     "conference"
   );
 
- if (loading)
+  if (loading)
     return (
       <View style={{ flex: 1 }}>
         <StandingsSkeleton />
       </View>
     );
-
 
   if (error)
     return (
@@ -110,13 +110,15 @@ export const StandingsList = () => {
           <Text style={styles.rankText}>{index + 1}</Text>
         </View>
 
-        <TouchableOpacity  style={styles.teamInfo}onPress={() =>
-  router.push({
-    pathname: "/team/[teamId]",
-    params: { teamId: String(teamInfo?.id) },
-  })
-}
->
+        <TouchableOpacity
+          style={styles.teamInfo}
+          onPress={() =>
+            router.push({
+              pathname: "/team/[teamId]",
+              params: { teamId: String(teamInfo?.id) },
+            })
+          }
+        >
           <Image source={teamLogo} style={styles.logo} />
           <Text style={styles.teamName}>{teamInfo?.code}</Text>
         </TouchableOpacity>
@@ -125,8 +127,11 @@ export const StandingsList = () => {
   };
 
   const renderRightItem = ({ item }: { item: StandingsTeam }) => {
-    const winStreak = item.streak?.startsWith("W");
-    const streakColor = winStreak ? "limegreen" : "tomato";
+  const winStreak = item.streak?.startsWith("W");
+
+const streakColor = winStreak
+  ? (isDark ? Colors.dark.limeGreen : Colors.light.green)
+  : (isDark ? Colors.dark.lightRed : Colors.light.red);
 
     return (
       <View style={styles.row}>
@@ -136,9 +141,17 @@ export const StandingsList = () => {
           </Text>
         </View>
         <View style={styles.statCell}>
+          <Text style={[styles.statText, { color: streakColor }]}>
+            {item.streak}
+          </Text>
+        </View>
+        <View style={styles.statCell}>
           <Text style={styles.statText}>
             {(item.winPercent * 100).toFixed(1)}%
           </Text>
+        </View>
+        <View style={styles.statCell}>
+          <Text style={styles.statText}>{item.gamesBehind}</Text>
         </View>
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.homeRecord}</Text>
@@ -157,11 +170,6 @@ export const StandingsList = () => {
         </View>
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.pointsAgainst}</Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text style={[styles.statText, { color: streakColor }]}>
-            {item.streak}
-          </Text>
         </View>
       </View>
     );
@@ -182,14 +190,15 @@ export const StandingsList = () => {
     <View style={styles.row}>
       {[
         "W-L",
+        "Streak",
         "Win %",
+        "GB",
         "Home",
         "Away",
         "Conf",
         "Div",
         "Pts For",
         "Pts Against",
-        "Streak",
       ].map((label) => (
         <View key={label} style={styles.statCell}>
           <Text style={styles.statText}>{label}</Text>
@@ -224,7 +233,7 @@ export const StandingsList = () => {
           >
             <FlatList
               data={data}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => String(item.teamId)}
               renderItem={renderRightItem}
               scrollEnabled={false}
               ListHeaderComponent={renderStatsHeader}

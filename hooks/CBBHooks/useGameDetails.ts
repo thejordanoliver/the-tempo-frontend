@@ -1,24 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-// --- Types ---
+// ------------------ Types ------------------
 export interface Official {
   fullName: string;
   displayName: string;
-  position: {
-    name: string;
-    displayName: string;
-    id: string;
-  };
+  position: { name: string; displayName: string; id: string };
   order: number;
 }
 
 export interface Injury {
-  team?: {
-    id?: string;
-    displayName?: string;
-    abbreviation?: string;
-  };
+  team?: { id?: string; displayName?: string; abbreviation?: string };
   athletes?: {
     fullName: string;
     shortName?: string;
@@ -35,8 +27,8 @@ export interface LeaderGroup {
     logos?: { href: string }[];
   };
   leaders: {
-    name: string; // "points", "rebounds", etc.
-    displayName: string; // "Points", "Rebounds"
+    name: string;
+    displayName: string;
     leaders: {
       athlete: {
         id: string;
@@ -47,16 +39,19 @@ export interface LeaderGroup {
         position?: { abbreviation?: string };
         team?: { id: string };
       };
-      value: number; // e.g., 27 points
+      value: number;
     }[];
   }[];
 }
 
-interface UseGameDetails {
+export interface UseGameDetails {
   officials: Official[];
   injuries: Injury[];
   highlights: any[];
   plays: any[];
+  boxScore: any | null;
+  teamStats: any[];
+  playerStats: any[];
   leaders: LeaderGroup[];
   neutralSite: boolean;
   timeouts: { home: number | null; away: number | null };
@@ -64,125 +59,174 @@ interface UseGameDetails {
   error: string | null;
 }
 
-// --- Hook ---
+// ------------------ Hook ------------------
 export const useGameDetails = (
   league: "nba" | "cbb",
   awayTeamId?: string | number,
   homeTeamId?: string | number,
   date?: string | { date?: string; utc?: string; timestamp?: number }
 ): UseGameDetails => {
-  // --- State ---
   const [officials, setOfficials] = useState<Official[]>([]);
   const [injuries, setInjuries] = useState<Injury[]>([]);
   const [highlights, setHighlights] = useState<any[]>([]);
   const [plays, setPlays] = useState<any[]>([]);
+  const [boxScore, setBoxScore] = useState<any | null>(null);
+  const [teamStats, setTeamStats] = useState<any[]>([]);
+  const [playerStats, setPlayerStats] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<LeaderGroup[]>([]);
   const [neutralSite, setNeutralSite] = useState<boolean>(false);
-  const [timeouts, setTimeouts] = useState<{ home: number | null; away: number | null }>({ home: null, away: null });
+  const [timeouts, setTimeouts] = useState({ home: null, away: null });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Effect: Fetch game details ---
   useEffect(() => {
-    if (!league || !awayTeamId || !homeTeamId || !date) return;
+    if (!league || !homeTeamId || !awayTeamId || !date) return;
 
     const fetchData = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // --- Normalize date ---
-        let targetDate: Date | null = null;
-        if (typeof date === "string") targetDate = new Date(date);
-        else if (typeof date === "object") {
-          targetDate = date.timestamp
-            ? new Date(date.timestamp * 1000)
-            : date.utc
-            ? new Date(date.utc)
-            : date.date
-            ? new Date(date.date)
-            : null;
-        }
-        if (!targetDate) return;
+        // ---------------- FORMAT DATE ----------------
+        let d: Date | null = null;
 
-        const makeYMD = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, "");
+        if (typeof date === "string") d = new Date(date);
+        else if ("timestamp" in date && date.timestamp)
+          d = new Date(date.timestamp * 1000);
+        else if ("utc" in date && date.utc) d = new Date(date.utc);
+        else if ("date" in date && date.date) d = new Date(date.date);
+
+        if (!d) return;
+
+        const ymd = (x: Date) => x.toISOString().slice(0, 10).replace(/-/g, "");
+
         const datesToCheck = [
-          makeYMD(new Date(targetDate.getTime() - 86400000)),
-          makeYMD(targetDate),
-          makeYMD(new Date(targetDate.getTime() + 86400000)),
+          ymd(new Date(d.getTime() - 86400000)),
+          ymd(d),
+          ymd(new Date(d.getTime() + 86400000)),
         ];
 
-        // --- Determine ESPN path & params ---
-        const sportPath = league === "nba"
-          ? "basketball/nba"
-          : "basketball/mens-college-basketball";
-        const params = league === "cbb" ? "groups=50&limit=500" : "";
+        // ---------------- ESPN PATH ----------------
+        const sportPath =
+          league === "nba"
+            ? "basketball/nba"
+            : "basketball/mens-college-basketball";
 
-        // --- Find game on ESPN scoreboard ---
-        let foundGame: any = null;
-        for (const yyyymmdd of datesToCheck) {
-          const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/scoreboard?dates=${yyyymmdd}&${params}`;
-          const res = await axios.get(scoreboardUrl);
-          const games = res.data.events || [];
+        const params = league === "cbb" ? "&groups=50&limit=500" : "";
 
-          const game = games.find((g: any) => {
-            const competitors = g.competitions?.[0]?.competitors || [];
-            const ids = competitors.map((c: any) => String(c?.team?.id));
-            return ids.includes(String(homeTeamId)) && ids.includes(String(awayTeamId));
+        // ---------------- FIND GAME ----------------
+        let found = null;
+
+        for (const dateStr of datesToCheck) {
+          const url = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/scoreboard?dates=${dateStr}${params}`;
+          const res = await axios.get(url);
+          const events = res.data.events || [];
+
+          const match = events.find((g: any) => {
+            const comps = g?.competitions?.[0]?.competitors ?? [];
+            const ids = comps.map((c: any) => String(c.team.id));
+            return (
+              ids.includes(String(homeTeamId)) &&
+              ids.includes(String(awayTeamId))
+            );
           });
 
-          if (game) {
-            foundGame = game;
+          if (match) {
+            found = match;
             break;
           }
         }
 
-        if (!foundGame) {
-          setError("Game not found on ESPN");
-          setOfficials([]);
-          setInjuries([]);
-          setHighlights([]);
-          setPlays([]);
-          setLeaders([]);
-          setTimeouts({ home: null, away: null });
+        if (!found) {
+          setError("Game not found");
           return;
         }
 
-        // --- Fetch game summary ---
-        const gameId = foundGame?.competitions?.[0]?.id ?? foundGame?.id ?? null;
-        if (!gameId) throw new Error("Could not determine valid game ID.");
-        const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/summary?event=${gameId}`;
-        const { data: summary } = await axios.get(summaryUrl);
+        // ---------------- SUMMARY ----------------
+        const gameId = found?.competitions?.[0]?.id ?? found?.id ?? null;
 
-        // --- Extract details ---
-        setNeutralSite(summary?.header?.competitions?.[0]?.neutralSite ?? false);
+        if (!gameId) throw new Error("Missing game ID");
+
+        const sumURL = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/summary?event=${gameId}`;
+        const { data: summary } = await axios.get(sumURL);
+
+        setNeutralSite(
+          summary?.header?.competitions?.[0]?.neutralSite ?? false
+        );
         setHighlights(summary?.videos ?? []);
         setOfficials(summary?.gameInfo?.officials ?? []);
         setInjuries(summary?.injuries ?? []);
         setPlays(summary?.plays ?? []);
         setLeaders(summary?.leaders ?? []);
+        setBoxScore(summary?.boxscore ?? null);
 
-        // --- Extract timeouts ---
-        const competitors = summary?.header?.competitions?.[0]?.competitors || [];
-        const home = competitors.find((c: any) => c.homeAway === "home");
-        const away = competitors.find((c: any) => c.homeAway === "away");
-        setTimeouts({ home: home?.timeoutsRemaining ?? null, away: away?.timeoutsRemaining ?? null });
+        // ---------------- TEAM STATS ----------------
+        const teams = summary?.boxscore?.teams ?? [];
+        const parsedTeams = teams.map((t: any) => ({
+          team: t.team,
+          stats: t.statistics ?? [],
+        }));
+        setTeamStats(parsedTeams);
+
+        // ---------------- PLAYER STATS ----------------
+        const players = summary?.boxscore?.players ?? [];
+
+        const parsedPlayers = players.map((p: any) => {
+          // ESPN nests player stats in the block where statistics[].athletes exists
+          const block = p?.statistics?.find((s: any) =>
+            Array.isArray(s?.athletes)
+          );
+
+          return {
+            team: p.team,
+
+            // table header
+            names: block?.names ?? [],
+            keys: block?.keys ?? [],
+            labels: block?.labels ?? [],
+
+            // players
+            athletes: (block?.athletes ?? []).map((ath: any) => ({
+              ...ath, // includes athlete info
+              statValues: ath.stats ?? [], // <= stats per player
+            })),
+          };
+        });
+
+        setPlayerStats(parsedPlayers);
+
+        // ---------------- TIMEOUTS ----------------
+        const comp = summary?.header?.competitions?.[0]?.competitors ?? [];
+        const home = comp.find((c: any) => c.homeAway === "home");
+        const away = comp.find((c: any) => c.homeAway === "away");
+
+        setTimeouts({
+          home: home?.timeoutsRemaining ?? null,
+          away: away?.timeoutsRemaining ?? null,
+        });
       } catch (err: any) {
-        console.error(`❌ Error fetching ${league} game details:`, err);
-        setError(err.message || "Failed to fetch data");
-        setOfficials([]);
-        setInjuries([]);
-        setHighlights([]);
-        setPlays([]);
-        setLeaders([]);
-        setTimeouts({ home: null, away: null });
+        console.error("❌ useGameDetails error:", err);
+        setError(err.message || "Failed to fetch");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [league, awayTeamId, homeTeamId, date]);
+  }, [league, homeTeamId, awayTeamId, date]);
 
-  return { officials, injuries, highlights, plays, leaders, neutralSite, timeouts, loading, error };
+  return {
+    officials,
+    injuries,
+    highlights,
+    plays,
+    boxScore,
+    teamStats,
+    playerStats,
+    leaders,
+    neutralSite,
+    timeouts,
+    loading,
+    error,
+  };
 };

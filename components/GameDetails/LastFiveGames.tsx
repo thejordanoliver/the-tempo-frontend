@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
-import { Colors } from "constants/Colors";
 
 type Props = {
   isDark: boolean;

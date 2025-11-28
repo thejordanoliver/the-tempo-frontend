@@ -422,7 +422,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
               ([catName, { headers, rows }]) => (
                 <View key={catName} style={{ marginBottom: 24 }}>
                   <Text style={styles.categoryTitle}>
-                    {catName.toUpperCase()}
+                    {catName}
                   </Text>
 
                   <View style={{ flexDirection: "row" }}>

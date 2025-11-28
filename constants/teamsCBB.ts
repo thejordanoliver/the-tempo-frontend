@@ -383,6 +383,7 @@ import Mercylogo from "../assets/College_Logos/Mercy.png";
 import MisericordiaLogo from "../assets/College_Logos/Misericordia.png";
 import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
 import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
+import NewOrleansLogo from "../assets/College_Logos/NewOrleans.png";
 import NJITLogo from "../assets/College_Logos/NJIT.png";
 import NobelLogo from "../assets/College_Logos/Nobel.png";
 import NortheasternLogo from "../assets/College_Logos/Northeastern.png";
@@ -478,6 +479,8 @@ import WCarolinaLogo from "../assets/College_Logos/WCarolina.png";
 import WeberStateLogo from "../assets/College_Logos/WeberState.png";
 import WesternOregonLogo from "../assets/College_Logos/WesternOregon.png";
 import WestGeorgiaLogo from "../assets/College_Logos/WestGeorgia.png";
+import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
+import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
 import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
 import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
@@ -490,9 +493,7 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
-import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
-import NewOrleansLogo from "../assets/College_Logos/NewOrleans.png";
+import UCIrvineLogo from "../assets/College_Logos/UCIrvine.png";
 
 export const teams: CBBTeam[] = [
   {
@@ -2057,6 +2058,7 @@ export const teams: CBBTeam[] = [
     espnID: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
+    shortName: "C Connecticut",
     code: "CCSU",
     color: "#1B49A2",
     secondaryColor: "#d1d5d8",
@@ -2746,6 +2748,17 @@ export const teams: CBBTeam[] = [
     color: "#00539C",
     secondaryColor: "#ebebeb",
     logo: SaintLouisLogo,
+  },
+  {
+    id: 2162,
+    espnID: 300,
+    name: "UC Irvine",
+    fullName: "UC Irvine Anteaters",
+    shortName: "UC Irvine",
+    code: "UCI",
+    color: "#002B5C",
+    secondaryColor: "#fec52e",
+    logo: UCIrvineLogo,
   },
   {
     id: 1968,
@@ -3822,7 +3835,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 239,
-     espnID: 2443,
+    espnID: 2443,
     name: "New Orleans",
     fullName: "New Orleans Privateers",
     shortName: "New Orleans",
@@ -5418,7 +5431,7 @@ export function getCBBTeamAbbreviation(
   return team?.code || fallback || "UKNW";
 }
 
-export const teamsCFBById: Record<string, CBBTeam> = teams.reduce(
+export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
   (map, team) => {
     map[team.id] = team;
     return map;

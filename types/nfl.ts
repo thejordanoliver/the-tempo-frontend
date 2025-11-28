@@ -1,5 +1,7 @@
 // types/nfl.ts
 
+import { Colors } from "constants/Colors";
+
 export interface NFLPlayer {
   id: number;
   name: string;
@@ -186,10 +188,25 @@ export const emptyTeam: NFLTeam = {
     flag: "",
   },
   fullName: "Unknown",
-  color: "#000000",
-  secondaryColor: "#FFFFFF",
+  color: Colors.white,
+  secondaryColor: Colors.black,
   latitude: 0,
   longitude: 0,
   venueImage: null,
   venueCapacity: "",
+};
+
+
+
+// fallback for cards
+export const emptyNFLAwayTeam = {
+  ...emptyTeam,
+  name: "Away",
+  code: "AWY",
+};
+
+export const emptyNFLHomeTeam = {
+  ...emptyTeam,
+  name: "Home",
+  code: "HME",
 };

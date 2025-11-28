@@ -48,7 +48,6 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       <View
         style={{
           paddingHorizontal: 16,
-          paddingBottom: 100,
         }}
       >
         <NewsCardSkeleton />
@@ -68,7 +67,6 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       onRefresh={onRefresh}
       scrollEnabled={false} // ✅ Disable scrolling
       contentContainerStyle={{
-        paddingBottom: 100,
         paddingHorizontal: 12,
         gap: 12,
       }}

@@ -40,17 +40,17 @@ export type TeamStat = {
   };
 };
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
+const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
 export function useGameStatistics(gameId: number) {
-  const [data, setData] = useState<TeamStat[] | null>(null);
+  const [data, setData] = useState<TeamStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!gameId) {
-      setData(null);
+      setData([]);
       setLoading(false);
       return;
     }
@@ -60,11 +60,11 @@ export function useGameStatistics(gameId: number) {
         setLoading(true);
 
         const cached = await loadGameStats(gameId);
-        if (cached) {
-          setData(cached);
-          setLoading(false);
-          return;
-        }
+     if (cached && cached.length > 0) {
+  setData(cached);
+  setLoading(false);
+  return;
+}
 
         const res = await axios.get(`https://${RAPIDAPI_HOST}/games/statistics`, {
           params: { id: gameId },
@@ -73,9 +73,12 @@ export function useGameStatistics(gameId: number) {
             "x-rapidapi-host": RAPIDAPI_HOST,
           },
         });
+console.log("Game Stats:", res.data.response);
 
-        setData(res.data.response);
-        saveGameStats(gameId, res.data.response);
+        const stats = res.data.response ?? [];
+        setData(stats);
+        saveGameStats(gameId, stats);
+
       } catch (err) {
         console.error(err);
         setError("Failed to fetch game statistics");
@@ -89,3 +92,4 @@ export function useGameStatistics(gameId: number) {
 
   return { data, loading, error };
 }
+

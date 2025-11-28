@@ -307,6 +307,7 @@ import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
 import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
 import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
 import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
+import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
 import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
 import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
 import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
@@ -336,6 +337,9 @@ import ToledoLogo from "../assets/College_Logos/Toledo.png";
 import ToledoLogoLight from "../assets/College_Logos/ToledoLight.png";
 import UABLogo from "../assets/College_Logos/UAB.png";
 import UAlbanyLogo from "../assets/College_Logos/UAlbany.png";
+import UCDavisLogo from "../assets/College_Logos/UCDavis.png";
+import UCDavisLogoLight from "../assets/College_Logos/UCDavisLight.png";
+import UCIrvineLogo from "../assets/College_Logos/UCIrvine.png";
 import UCLALogo from "../assets/College_Logos/UCLA.png";
 import UCLALogoLight from "../assets/College_Logos/UCLALight.png";
 import ULMLogo from "../assets/College_Logos/ULM.png";
@@ -355,7 +359,6 @@ import WeberStateLogo from "../assets/College_Logos/WeberState.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-
 export const teams: CFBTeam[] = [
   {
     id: 36,
@@ -1669,10 +1672,22 @@ export const teams: CFBTeam[] = [
     espnID: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
+    shortName: "C Connecticut",
     code: "CCSU",
     color: "#1B49A2",
     secondaryColor: "#d1d5d8",
     logo: CentralConnecticutLogo,
+  },
+  {
+    id: 2074,
+    espnID: 2492,
+    name: "Pepperdine",
+    fullName: "Pepperdine Waves",
+    shortName: "Pepperdine",
+    code: "PEPP",
+    color: "#003A72",
+    secondaryColor: "#dc762f",
+    logo: PepperdineLogo,
   },
   {
     id: 138,
@@ -1965,7 +1980,19 @@ export const teams: CFBTeam[] = [
     code: "UCD",
     color: "#002855",
     secondaryColor: "#c3c4c6",
-    logo: "https://media.api-sports.io/american-football/teams/162.png",
+    logo: UCDavisLogo,
+    logoLight: UCDavisLogoLight,
+  },
+  {
+    id: 2162,
+    espnID: 300,
+    name: "UC Irvine",
+    fullName: "UC Irvine Anteaters",
+    shortName: "UC Irvine",
+    code: "UCI",
+    color: "#002B5C",
+    secondaryColor: "#fec52e",
+    logo: UCIrvineLogo,
   },
   {
     id: 163,

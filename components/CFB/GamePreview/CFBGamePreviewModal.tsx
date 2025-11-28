@@ -23,8 +23,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import CFBGameLeaders from "../GameDetails/CFBGameLeaders";
-import CFBTeamDrives from "../GameDetails/CFBTeamDrives";
 import { CFBCenterInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
 type Props = {
@@ -518,7 +518,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                   />
                 )}
 
-                <CFBTeamDrives
+                <TeamDrives
                   previousDrives={previousDrives ?? []}
                   currentDrives={currentDrives ?? []}
                   awayTeamAbbr={awayTeamData?.code} // 👈 use getTeamInfo result

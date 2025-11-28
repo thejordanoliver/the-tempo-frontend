@@ -177,7 +177,9 @@ export default function GameDetailsScreen() {
 
   const homeLastGames = useLastFiveGames(homeTeamIdNum);
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
-  const { data: gameStats, loading: statsLoading } = useGameStatistics(gameId);
+  const { data: gameStats, loading: statsLoading } = useGameStatistics(
+    Number(gameId)
+  );
 
   const { weather, weatherLoading, weatherError } = useWeatherForecast(
     lat,
@@ -439,6 +441,7 @@ export default function GameDetailsScreen() {
           )}
 
           {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
+
           <LastFiveGamesSwitcher
             isDark={isDark}
             home={{

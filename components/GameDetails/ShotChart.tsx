@@ -68,7 +68,14 @@ export default function ShotChart({
     (t) => t.espnID?.toString() === awayTeamId?.toString()
   );
 
-  const homeLogo = homeTeam?.logo;
+  const homeLogo = isDark
+    ? homeTeam?.logoLight || homeTeam?.logo
+    : homeTeam?.logo;
+  const awayLogo = isDark
+    ? awayTeam?.logoLight || awayTeam?.logo
+    : awayTeam?.logo;
+
+  const courtLogo = homeTeam?.logo;
   const courtImage = isCBB ? CBBCourtImage : CourtImage;
 
   // Tabs
@@ -79,13 +86,6 @@ export default function ShotChart({
   const PERIOD_MAP: Record<string, number> = isCBB
     ? { "1st Half": 1, "2nd Half": 2 }
     : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
-
-  if (plays.length) {
-    const xs = plays.map((p) => p.coordinate?.x ?? 0);
-    const ys = plays.map((p) => p.coordinate?.y ?? 0);
-    console.log("coord x range", Math.min(...xs), Math.max(...xs));
-    console.log("coord y range", Math.min(...ys), Math.max(...ys));
-  }
 
   const filteredPlays = plays.filter((p) => {
     if (!p.coordinate || !p.shootingPlay) return false;
@@ -150,6 +150,31 @@ export default function ShotChart({
       </React.Fragment>
     );
   });
+  const MadeView = ({ color }: { color: string }) => (
+    <View
+      style={{
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: color,
+        opacity: 0.9,
+      }}
+    />
+  );
+
+  const MissView = ({ color }: { color: string }) => (
+    <View
+      style={{
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: "white",
+        opacity: 0.95,
+        borderWidth: 3.8,
+        borderColor: color,
+      }}
+    />
+  );
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
@@ -174,16 +199,15 @@ export default function ShotChart({
           resizeMode="stretch"
         />
 
-        {!neutralSite && homeLogo && layout.width > 0 && layout.height > 0 && (
+        {!neutralSite && courtLogo && layout.width > 0 && layout.height > 0 && (
           <Image
-            source={homeLogo}
+            source={courtLogo}
             style={{
               position: "absolute",
-              width: 36,
-              height: 36,
-              left: layout.width / 2 - 18,
-              top: layout.height / 2 - 18,
-              opacity: 0.75,
+              width: 150,
+              height: 150,
+              left: layout.width / 2 - 75,
+              top: layout.height / 2 - 75,
             }}
           />
         )}
@@ -198,35 +222,26 @@ export default function ShotChart({
         </Svg>
       </View>
 
-      {/* Legend */}
       <View style={styles.legendContainer}>
         {awayTeam && (
           <View style={styles.legendItem}>
-            <View
-              style={[
-                styles.colorDot,
-                {
-                  backgroundColor: awayTeam.color ?? Colors.midTone,
-                  marginRight: 4,
-                },
-              ]}
-            />
-            <Text style={styles.legendText}>{awayTeam.name}</Text>
+            <Image source={awayLogo} style={styles.legendLogo} />
+            <View style={styles.divider} />
+            <Text style={styles.legendText}>Make</Text>
+            <MadeView color={awayTeam.color ?? Colors.midTone} />
+            <Text style={styles.legendText}>Miss</Text>
+            <MissView color={awayTeam.color ?? Colors.midTone} />
           </View>
         )}
 
         {homeTeam && (
           <View style={styles.legendItem}>
-            <Text style={styles.legendText}>{homeTeam.name}</Text>
-            <View
-              style={[
-                styles.colorDot,
-                {
-                  backgroundColor: homeTeam.color ?? Colors.midTone,
-                  marginLeft: 4,
-                },
-              ]}
-            />
+            <Text style={styles.legendText}>Make</Text>
+            <MadeView color={homeTeam.color ?? Colors.midTone} />
+            <Text style={styles.legendText}>Miss</Text>
+            <MissView color={homeTeam.color ?? Colors.midTone} />
+            <View style={styles.divider} />
+            <Image source={homeLogo} style={styles.legendLogo} />
           </View>
         )}
       </View>
@@ -255,12 +270,14 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       marginTop: 10,
-      gap: 18,
     },
+
     legendItem: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "center", // <-- centers icons & text vertically
+      gap: 6,
     },
+
     colorDot: {
       width: 20,
       height: 20,
@@ -272,5 +289,14 @@ const getStyles = (isDark: boolean) =>
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSBOLD,
+    },
+    legendLogo: {
+      width: 20,
+      height: 20,
+    },
+    divider: {
+      height: 14,
+      width: 1,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
   });

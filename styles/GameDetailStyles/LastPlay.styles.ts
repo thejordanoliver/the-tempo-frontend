@@ -14,6 +14,7 @@ export const lastPlayStyles = (isDark: boolean) =>
     simpleText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
+      color: isDark ? Colors.white : Colors.black
     },
     athleteContainer: {
       flexDirection: "row",

@@ -56,22 +56,41 @@ function mapStatus(apiStatus: {
   }
 }
 
-function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
+function CBBGameCard({
+  game,
+  isDark,
+  lighter = false,
+}: {
+  game: CBBGame;
+  isDark?: boolean;
+  lighter: boolean;
+}) {
   const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+const dark = Boolean(isDark ?? (colorScheme === "dark"));
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
-
+  
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
-
+  
   // --- Date ---
   const gameDate = game?.timestamp
-    ? new Date(game.timestamp * 1000)
-    : game?.date
-    ? new Date(game.date)
-    : null;
+  ? new Date(game.timestamp * 1000)
+  : game?.date
+  ? new Date(game.date)
+  : null;
+  
+  
+ 
+ const isChampionship = Boolean(
+  gameDate &&
+    gameDate.getFullYear() === 2025 &&
+    gameDate.getMonth() === 3 &&
+    gameDate.getDate() === 7
+);
+
+  const styles = getStyles(dark, isChampionship);
+
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
@@ -228,10 +247,10 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
     return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
   }
 
-
   // Normalize status
   const effectiveStatus = useMemo(() => {
-    const statusText = liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
+    const statusText =
+      liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
     const base =
       typeof game.status.long === "string"
         ? game.status.long
@@ -279,7 +298,7 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
       espnID: awayEspnId,
       name: getTeamName(awayId),
       shortName: getTeamShortName(awayId),
-      logo: getTeamLogo(awayId, dark),
+      logo: getTeamLogo(awayId, dark, lighter),
       record: awayRecord?.overall ?? "0-0",
     }),
     [awayId, awayEspnId, awayRecord?.overall, dark, status.isLive]
@@ -291,7 +310,7 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
       espnID: homeEspnId,
       name: getTeamName(homeId),
       shortName: getTeamShortName(homeId),
-      logo: getTeamLogo(homeId, dark),
+      logo: getTeamLogo(homeId, dark, lighter),
       record: homeRecord?.overall ?? "0-0",
     }),
     [homeId, homeEspnId, homeRecord?.overall, dark, status.isLive]
@@ -321,12 +340,6 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
       })
     : "";
 
-  // Championship Game Detection (Jan 19, 2026)
-  const isChampionshipGame =
-    gameDate &&
-    gameDate.getFullYear() === 2025 &&
-    gameDate.getMonth() === 3 && // January = 0
-    gameDate.getDate() === 7;
 
   const winnerStyle = (teamWins: boolean): TextStyle => ({
     color: dark ? Colors.white : Colors.black,
@@ -366,23 +379,26 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
         <Text style={styles.teamName}>
           {" "}
           {awayEspnId && getTeamRank(String(awayEspnId)) && (
-            <Text style={{ fontSize: 10, color: "#aaa" }}>
+            <Text
+              style={{
+                fontSize: 10,
+                color: isDark ? Colors.lightGray : Colors.darkGray,
+              }}
+            >
               {getTeamRank(String(awayEspnId))}{" "}
             </Text>
           )}
           {getTeamPreferredName(awayId)}
         </Text>
       </View>
-     <ScoreText
-  score={awayScore}
-  recordData={awayTeam.record ?? undefined}
-  teamWins={awayWins}
-  showRecord={
-    effectiveStatus === "Not Started" ||
-    isCanceled ||
-    isPostponed
-  }
-/>
+      <ScoreText
+        score={awayScore}
+        recordData={awayTeam.record ?? undefined}
+        teamWins={awayWins}
+        showRecord={
+          effectiveStatus === "Not Started" || isCanceled || isPostponed
+        }
+      />
 
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headlineText}</Text>
@@ -445,16 +461,14 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
       </View>
 
       {/* Home Team */}
-    <ScoreText
-  score={homeScore}
-  recordData={homeTeam.record ?? undefined}
-  teamWins={homeWins}
-  showRecord={
-    effectiveStatus === "Not Started" ||
-    isCanceled ||
-    isPostponed
-  }
-/>
+      <ScoreText
+        score={homeScore}
+        recordData={homeTeam.record ?? undefined}
+        teamWins={homeWins}
+        showRecord={
+          effectiveStatus === "Not Started" || isCanceled || isPostponed
+        }
+      />
 
       <View style={styles.teamSection}>
         <Image
@@ -465,7 +479,12 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
         <Text style={styles.teamName}>
           {" "}
           {homeEspnId && getTeamRank(String(homeEspnId)) && (
-            <Text style={{ fontSize: 10, color: "#aaa" }}>
+            <Text
+              style={{
+                fontSize: 10,
+                color: isDark ? Colors.lightGray : Colors.darkGray,
+              }}
+            >
               {getTeamRank(String(homeEspnId))}{" "}
             </Text>
           )}
@@ -484,7 +503,7 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
         <Ionicons
           name={notifEnabled ? "notifications" : "notifications-outline"}
           size={20}
-        color={isDark ? Colors.white : Colors.black}
+          color={isDark ? Colors.white : Colors.black}
         />
       </Pressable>
     </>
@@ -502,15 +521,16 @@ function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
         })
       }
     >
-      {isChampionshipGame ? (
+      {isChampionship ? (
         <LinearGradient
-         colors={
+          colors={
             isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
+                   ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
+          style={styles.card}
         >
           {renderCardContent()}
         </LinearGradient>

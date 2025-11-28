@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +13,6 @@ import {
   View,
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
-
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -49,17 +49,35 @@ export default function GameTeamStats({
   lighter?: boolean;
 }) {
   const isDark = useColorScheme() === "dark";
-  if (!stats || stats.length < 2) return null;
 
-  const [expanded, setExpanded] = useState(false);
-  const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
-  ).current;
+  // 🔥 Early returns BEFORE any useState / useRef / useEffect
+  if (!stats || stats.length < 2) return null;
 
   const teamA = stats[0];
   const teamB = stats[1];
   const statA = teamA.statistics?.[0];
   const statB = teamB.statistics?.[0];
+
+  if (!statA || !statB) return null;
+
+  // ✅ SAFE: All hooks after this point
+  const [expanded, setExpanded] = useState(false);
+  const heightAnim = useRef(
+    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
+  ).current;
+
+  useEffect(() => {
+    const toValue = expanded
+      ? STAT_KEYS.length * ROW_HEIGHT
+      : COLLAPSED_ROWS * ROW_HEIGHT;
+
+    Animated.timing(heightAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [expanded]);
+
   if (!statA || !statB) return null;
 
   const teamDataA = teamsById[teamA.team.id];
@@ -93,17 +111,6 @@ export default function GameTeamStats({
     }
     return team?.color;
   };
-
-  useEffect(() => {
-    const toValue = expanded
-      ? STAT_KEYS.length * ROW_HEIGHT
-      : COLLAPSED_ROWS * ROW_HEIGHT;
-    Animated.timing(heightAnim, {
-      toValue,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [expanded]);
 
   return (
     <View>
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 1,
     elevation: 3,
-    borderColor: "#888",
+    borderColor: Colors.midTone,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,

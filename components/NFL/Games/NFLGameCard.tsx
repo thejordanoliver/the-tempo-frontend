@@ -13,9 +13,9 @@ import {
 
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-
 import { Colors } from "constants/Colors";
 import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { emptyNFLAwayTeam, emptyNFLHomeTeam, emptyTeam } from "types/nfl";
 
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
@@ -42,7 +42,7 @@ type NFLStatus = {
 };
 
 // -------------------------------
-// Status Mapper 
+// Status Mapper
 // -------------------------------
 function mapNFLStatus(status: NFLStatus | undefined) {
   const long = status?.long?.toLowerCase() ?? "";
@@ -60,7 +60,6 @@ function mapNFLStatus(status: NFLStatus | undefined) {
   return short || "Scheduled";
 }
 
-
 // -------------------------------
 // Props
 // -------------------------------
@@ -71,14 +70,14 @@ interface NFLGameCardProps {
 function NFLGameCard({ game, isDark }: NFLGameCardProps) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+
   const router = useRouter();
 
   const [notifEnabled, setNotifEnabled] = useState(false);
 
   // IDs
-  const homeId = game?.teams?.home?.id;
-  const awayId = game?.teams?.away?.id;
+  const homeId = game?.teams?.home?.id ?? emptyNFLHomeTeam.id;
+  const awayId = game?.teams?.away?.id ?? emptyNFLAwayTeam.id;
 
   const {
     date: gameDate,
@@ -99,7 +98,8 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
   const isHalftime = mappedStatus === "Halftime";
   const isScheduled = mappedStatus === "Scheduled";
 
-  const isSuperBowl = isSuperBowlGame(game, gameDate);
+  const isChampionship = isSuperBowlGame(game, gameDate);
+  const styles = getStyles(dark, isChampionship);
 
   // -----------------------
   // Team Records
@@ -110,32 +110,6 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
   const awayEspnID = awayId;
   const homeEspnID = homeId;
 
-  // -----------------------
-  // Memo Team Objects
-  // -----------------------
-  const awayTeam = useMemo(
-    () =>
-      getNFLTeamData(
-        awayId,
-        awayEspnID,
-        dark,
-        awayRecord?.overall ?? "0-0",
-        undefined
-      ),
-    [awayId, awayEspnID, awayRecord?.overall, dark]
-  );
-
-  const homeTeam = useMemo(
-    () =>
-      getNFLTeamData(
-        homeId,
-        homeEspnID,
-        dark,
-        homeRecord?.overall ?? "0-0",
-        undefined
-      ),
-    [homeId, homeEspnID, homeRecord?.overall, dark]
-  );
 
   // -----------------------
   // Possession + Live Data (same placement)
@@ -147,6 +121,55 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
         gameDateStr
       )
     : null;
+
+  // -----------------------
+  // Memo Team Objects
+  // -----------------------
+  const awayTeam = useMemo(() => {
+    const found =
+      getNFLTeamData(
+        awayId,
+        awayEspnID,
+        dark,
+        awayRecord?.overall ?? "0-0",
+        undefined
+      ) || emptyTeam;
+
+    return {
+      ...emptyNFLAwayTeam,
+      ...found,
+      id: found.id ?? emptyNFLAwayTeam.id,
+      espnID: found.espnID ?? emptyNFLAwayTeam.espnID,
+      name: found.name ?? emptyNFLAwayTeam.name,
+      logo: found.logo || emptyNFLAwayTeam.logo,
+      record: awayRecord?.overall ?? "0-0",
+      hasPossession: possession?.possessionTeamId === awayEspnID,
+    };
+  }, [awayId, awayEspnID, awayRecord?.overall, dark]);
+
+  const homeTeam = useMemo(() => {
+    const found =
+      getNFLTeamData(
+        homeId,
+        homeEspnID,
+        dark,
+        homeRecord?.overall ?? "0-0",
+        undefined
+      ) || emptyTeam;
+
+    return {
+      ...emptyNFLHomeTeam,
+      ...found,
+      id: found.id ?? emptyNFLHomeTeam.id,
+      espnID: found.espnID ?? emptyNFLHomeTeam.espnID,
+      name: found.name ?? emptyNFLHomeTeam.name,
+      logo: found.logo || emptyNFLHomeTeam.logo,
+      record: homeRecord?.overall ?? "0-0",
+      hasPossession: possession?.possessionTeamId === homeEspnID,
+    };
+  }, [homeId, homeEspnID, homeRecord?.overall, dark]);
+
+  
 
   const safeScore = possession?.score ?? {
     home: { total: game?.scores?.home?.total ?? 0 },
@@ -160,7 +183,6 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     possession?.gameStatusDescription ?? statusObj.long ?? statusObj.short ?? ""
   );
 
-
   const { headlineText } = useGameInfo(
     Number(homeEspnID),
     Number(awayEspnID),
@@ -168,14 +190,12 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     "nfl"
   );
 
- 
   const { broadcasts } = useNFLGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
     gameDateStr
   );
   const broadcastText = getBroadcastDisplay(broadcasts);
-
 
   const homeWins = safeScore.home.total > safeScore.away.total;
   const awayWins = safeScore.away.total > safeScore.home.total;
@@ -215,7 +235,7 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     <>
       {/* Away Team */}
       <View style={styles.teamSection}>
-        {possession?.possessionTeamId === awayId && (
+        {awayTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
             style={{
@@ -284,7 +304,7 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
 
       {/* Home Team */}
       <View style={styles.teamSection}>
-        {possession?.possessionTeamId === homeId && (
+        {homeTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
             style={{
@@ -328,15 +348,16 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
         })
       }
     >
-      {isSuperBowl ? (
+      {isChampionship ? (
         <LinearGradient
           colors={
             isDark
-              ? ["#876e42ff", "#54442aff"]
+              ? ["#846f4a", "#50412a"]
               : (["#DFBD69", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
+          style={styles.card}
         >
           {renderCardContent()}
         </LinearGradient>

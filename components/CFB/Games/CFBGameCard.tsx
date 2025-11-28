@@ -28,7 +28,7 @@ import {
   useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-
+import { emptyTeam } from "types/cfb";
 type Props = {
   game: Game; // TODO: replace with proper CFB Game type
   isDark?: boolean;
@@ -37,18 +37,28 @@ type Props = {
 function CFBGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
-
+  
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
-
+  
   // --- Date ---
   const gameDate = game?.game?.date?.timestamp
-    ? new Date(game.game.date.timestamp * 1000)
-    : null;
+  ? new Date(game.game.date.timestamp * 1000)
+  : null;
   const gameDateStr = gameDate?.toISOString();
+  
+  
+  // Championship Game Detection (Jan 19, 2026)
+   const isChampionship = Boolean(
+  gameDate &&
+    gameDate.getFullYear() === 2026 &&
+    gameDate.getMonth() === 0 &&
+    gameDate.getDate() === 19
+);
+
+  const styles = getStyles(dark, isChampionship);
 
   // ✅ Load both CFP and AP rankings
   const cfpTop25 = useCFPTop25();
@@ -73,7 +83,7 @@ function CFBGameCard({ game, isDark }: Props) {
     teams.find((t) => String(t.id) === String(id));
 
   const getTeamName = (id?: number | string): string =>
-    getTeamById(id)?.name ?? "Unknown";
+    getTeamById(id)?.name ?? emptyTeam.name;
 
   const getTeamShortName = (id?: number | string): string =>
     getTeamById(id)?.shortName ?? "";
@@ -208,51 +218,53 @@ function CFBGameCard({ game, isDark }: Props) {
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
   // --- Memoized team objects ---
-  const awayTeam = useMemo(() => {
-    const base = {
-      ...emptyAwayTeam,
-      id: awayId ?? emptyAwayTeam.id,
-      espnID: awayEspnId ?? emptyAwayTeam.espnID,
-      name: getTeamName(awayId) ?? emptyAwayTeam.name,
-      shortName: getTeamShortName(awayId) ?? emptyAwayTeam.shortName,
-      logo: getTeamLogo(awayId, dark) || emptyAwayTeam.logo,
-      record: awayRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(awayEspnId),
-    };
+ const awayTeam = useMemo(() => {
+  const found = getTeamById(awayId) || emptyTeam;
 
-    return base;
-  }, [
-    awayId,
-    awayEspnId,
-    awayRecord?.overall,
-    possessionTeamId,
-    dark,
-    status.isLive,
-  ]);
+  return {
+    ...emptyAwayTeam,            // base fallback
+    id: found.id ?? emptyAwayTeam.id,
+    espnID: found.espnID ?? emptyAwayTeam.espnID,
+    name: found.name ?? emptyAwayTeam.name,
+    shortName: found.shortName ?? emptyAwayTeam.shortName,
+    logo: getTeamLogo(found.id, dark) || emptyAwayTeam.logo,
+    record: awayRecord?.overall ?? "0-0",
+    hasPossession:
+      status.isLive && String(possessionTeamId) === String(found.espnID),
+  };
+}, [
+  awayId,
+  awayEspnId,
+  awayRecord?.overall,
+  possessionTeamId,
+  status.isLive,
+  dark,
+]);
 
-  const homeTeam = useMemo(() => {
-    const base = {
-      ...emptyHomeTeam,
-      id: homeId ?? emptyHomeTeam.id,
-      espnID: homeEspnId ?? emptyHomeTeam.espnID,
-      name: getTeamName(homeId) ?? emptyHomeTeam.name,
-      shortName: getTeamShortName(homeId) ?? emptyHomeTeam.shortName,
-      logo: getTeamLogo(homeId, dark) ?? emptyHomeTeam.logo,
-      record: homeRecord?.overall ?? "0-0",
-      hasPossession:
-        status.isLive && String(possessionTeamId) === String(homeEspnId),
-    };
 
-    return base;
-  }, [
-    homeId,
-    homeEspnId,
-    homeRecord?.overall,
-    possessionTeamId,
-    dark,
-    status.isLive,
-  ]);
+const homeTeam = useMemo(() => {
+  const found = getTeamById(homeId) || emptyTeam;
+
+  return {
+    ...emptyHomeTeam,
+    id: found.id ?? emptyHomeTeam.id,
+    espnID: found.espnID ?? emptyHomeTeam.espnID,
+    name: found.name ?? emptyHomeTeam.name,
+    shortName: found.shortName ?? emptyHomeTeam.shortName,
+    logo: getTeamLogo(found.id, dark) || emptyHomeTeam.logo,
+    record: homeRecord?.overall ?? "0-0",
+    hasPossession:
+      status.isLive && String(possessionTeamId) === String(found.espnID),
+  };
+}, [
+  homeId,
+  homeEspnId,
+  homeRecord?.overall,
+  possessionTeamId,
+  status.isLive,
+  dark,
+]);
+
 
   // --- Broadcasts ---
   const { broadcasts } = useCFBGameBroadcasts(
@@ -297,13 +309,7 @@ function CFBGameCard({ game, isDark }: Props) {
       })
     : "";
 
-  // Championship Game Detection (Jan 19, 2026)
-  const isChampionshipGame =
-    gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 && // January = 0
-    gameDate.getDate() === 19;
-
+ 
   const getTeamStyle = useMemo(
     () =>
       (isHome: boolean): TextStyle => {
@@ -469,11 +475,11 @@ function CFBGameCard({ game, isDark }: Props) {
         })
       }
     >
-      {isChampionshipGame ? (
+      {isChampionship ? (
         <LinearGradient
           colors={
             isDark
-              ? ["#846f4a", "#50412a"]
+           ? ["#846f4a", "#50412a"]
               : (["#DFBD69", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}

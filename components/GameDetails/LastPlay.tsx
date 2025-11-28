@@ -38,7 +38,6 @@ const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
 
 export default function LastPlay({
   lastPlay,
-  isDark,
   homeTeamId,
   awayTeamId,
 }: LastPlayProps) {
@@ -56,11 +55,9 @@ const normalizeText = (text: string) => {
     .replace(/Official\s*TV\s*Timeout/gi, "Official Timeout");
 };
 
-  // ✅ Auto-detect color scheme, fallback to prop if provided
-  const systemScheme = useColorScheme(); // "light" | "dark"
-  const darkMode = isDark ?? systemScheme === "dark";
+const isDark = useColorScheme() === "dark";
 
-  const styles = lastPlayStyles(darkMode);
+  const styles = lastPlayStyles(isDark);
 
   const onLayout = (e: LayoutChangeEvent) =>
     setContainerWidth(e.nativeEvent.layout.width);
@@ -95,12 +92,12 @@ const normalizeText = (text: string) => {
 
   // ✅ Text color helper
   const getTextColor = (text?: string) => {
-    const defaultColor = darkMode ? "#fff" : "#1d1d1d";
+    const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
     if (lower.includes("foul")) return isDark ? Colors.dark.lightRed : Colors.light.red;
     if (lower.includes("made")) return isDark ? Colors.dark.limeGreen : Colors.light.green;
-    if (lower.includes("missed")) return isDark ? Colors.dark.yellow : Colors.light.yellow;
+    if (lower.includes("missed")) return isDark ? Colors.dark.lightRed : Colors.light.red;
     return defaultColor;
   };
 
@@ -109,7 +106,7 @@ const normalizeText = (text: string) => {
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
-        <Text style={[styles.simpleText, { color: darkMode ? "#fff" : "#1d1d1d" }]}>
+        <Text style={styles.simpleText}>
           {currentPlay}
         </Text>
       </View>

@@ -1,9 +1,12 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameInfo } from "hooks/useGameInfo";
 import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
@@ -11,12 +14,13 @@ import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+
 
 type Props = {
   visible: boolean;
@@ -53,6 +57,12 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   const { record: homeRecord } = useTeamRecord(home?.espnID);
   const { record: awayRecord } = useTeamRecord(away?.espnID);
+
+  const { headlineText } = useGameInfo(
+    Number(home?.espnID),
+    Number(away?.espnID),
+    new Date(game.date).toISOString()
+  );
 
   // --- Weather + Broadcasts ---
   const neutralVenueData = neutralVenues[game?.venue?.name ?? ""];
@@ -94,7 +104,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     day: "numeric",
   });
 
-  const isNBAFinals =
+  const isChampionship =
     dateObj.getMonth() === 5 &&
     dateObj.getDate() >= 5 &&
     dateObj.getDate() <= 22;
@@ -247,11 +257,11 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         {/* Background gradients */}
         <LinearGradient
           colors={
-            isNBAFinals
+            isChampionship
               ? ["#DFBD69", "#CDA765"]
               : [awayColor, awayColor, homeColor, homeColor]
           }
-          locations={isNBAFinals ? undefined : [0, 0.4, 0.6, 1]}
+          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -272,74 +282,84 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blur}
         >
-          {/* --- Header Section --- */}
-          <View style={styles.header}>
-            <TeamInfo
-              team={away}
-              teamName={away?.code ?? ""}
-              score={awayScore}
-              opponentScore={homeScore}
-              record={awayRecord?.overall ?? "-"}
-              isDark={isDark}
-              isGameOver={isFinal}
-              isScheduled={game.status.long === "Scheduled"}
-              side="away"
-            />
+          <>
+            {headlineText && (
+              <>
+                {headlineText && (
+                  <Text style={styles.headline}>{headlineText}</Text>
+                )}
+              </>
+            )}
 
-            <CenterInfo
-              isNBAFinals={isNBAFinals}
-              isFinal={isFinal}
-              isCanceled={isCanceled}
-              isHalftime={halftime} // ✅ default to false
-              broadcastNetworks={broadcastText}
-              showLiveInfo={showLiveInfo}
-              period={quarterLabel}
-              endOfPeriod={game.periods?.endOfPeriod ?? false}
-              totalPeriodsPlayed={totalPeriodsPlayed}
-              time={game.time}
-              clock={liveScore?.displayClock}
-              formattedDate={formattedDate}
-              isDark={isDark}
-              gameNumberLabel={gameNumberLabel}
-              seriesSummary={seriesSummary}
-              isPlayoffs={!!seriesSummary}
-              lighter
-            />
+            {/* --- Header Section --- */}
+            <View style={styles.header}>
+              <TeamInfo
+                team={away}
+                teamName={away?.code ?? ""}
+                score={awayScore}
+                opponentScore={homeScore}
+                record={awayRecord?.overall ?? "-"}
+                isDark={isDark}
+                isGameOver={isFinal}
+                isScheduled={game.status.long === "Scheduled"}
+                side="away"
+              />
 
-            <TeamInfo
-              team={home}
-              teamName={home?.code ?? ""}
-              score={homeScore}
-              opponentScore={awayScore}
-              record={homeRecord?.overall ?? "-"}
-              isDark={isDark}
-              isGameOver={isFinal}
-              isScheduled={game.status.long === "Scheduled"}
-              side="home"
-            />
-          </View>
+              <CenterInfo
+                isChampionship={isChampionship}
+                isFinal={isFinal}
+                isCanceled={isCanceled}
+                isHalftime={halftime} // ✅ default to false
+                broadcastNetworks={broadcastText}
+                showLiveInfo={showLiveInfo}
+                period={quarterLabel}
+                endOfPeriod={game.periods?.endOfPeriod ?? false}
+                totalPeriodsPlayed={totalPeriodsPlayed}
+                time={game.time}
+                clock={liveScore?.displayClock}
+                formattedDate={formattedDate}
+                isDark={isDark}
+                gameNumberLabel={gameNumberLabel}
+                seriesSummary={seriesSummary}
+                isPlayoffs={!!seriesSummary}
+                lighter
+              />
 
-          {/* --- Scrollable Content --- */}
-          <GamePreviewContent
-            game={game}
-            home={home}
-            away={away}
-            lineScore={lineScore}
-            homeLastGames={homeLastGames}
-            awayLastGames={awayLastGames}
-            injuries={injuries}
-            gameStats={gameStats}
-            officials={officials}
-            resolvedVenueImage={resolvedVenueImage}
-            resolvedVenueName={resolvedVenueName}
-            resolvedVenueCity={resolvedVenueCity}
-            resolvedVenueAddress={resolvedVenueAddress}
-            resolvedVenueCapacity={resolvedVenueCapacity}
-            weather={weather}
-            weatherLoading={weatherLoading}
-            weatherError={weatherError}
-            isDark={isDark}
-          />
+              <TeamInfo
+                team={home}
+                teamName={home?.code ?? ""}
+                score={homeScore}
+                opponentScore={awayScore}
+                record={homeRecord?.overall ?? "-"}
+                isDark={isDark}
+                isGameOver={isFinal}
+                isScheduled={game.status.long === "Scheduled"}
+                side="home"
+              />
+            </View>
+
+            {/* --- Scrollable Content --- */}
+            <GamePreviewContent
+              game={game}
+              home={home}
+              away={away}
+              lineScore={lineScore}
+              homeLastGames={homeLastGames}
+              awayLastGames={awayLastGames}
+              injuries={injuries}
+              gameStats={gameStats}
+              officials={officials}
+              resolvedVenueImage={resolvedVenueImage}
+              resolvedVenueName={resolvedVenueName}
+              resolvedVenueCity={resolvedVenueCity}
+              resolvedVenueAddress={resolvedVenueAddress}
+              resolvedVenueCapacity={resolvedVenueCapacity}
+              weather={weather}
+              weatherLoading={weatherLoading}
+              weatherError={weatherError}
+              isDark={isDark}
+            />
+          </>
         </BlurView>
       </View>
     </BottomSheetModal>
@@ -377,9 +397,15 @@ const styles = StyleSheet.create({
     top: 0,
   },
   handleIndicator: {
-    backgroundColor: "#888",
+    backgroundColor: Colors.midTone,
     width: 36,
     height: 4,
     borderRadius: 2,
+  },
+  headline: {
+    fontSize: 12,
+    fontFamily: Fonts.OSLIGHT,
+    color: Colors.dark.white,
+    textAlign: "center",
   },
 });

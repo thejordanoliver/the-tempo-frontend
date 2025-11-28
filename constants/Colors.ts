@@ -13,7 +13,7 @@ export const Colors = {
     itemBackground: "#eee",
     red: "#cc0000",
     green: "#177901ff",
-      yellow: "#facc15",
+      yellow: "#dcb000ff",
     black: "#1d1d1d",
     background: "#fff",
     tint: tintColorLight,

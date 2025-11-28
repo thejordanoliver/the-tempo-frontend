@@ -22,9 +22,9 @@ interface UseSeasonLeadersOptions {
 }
 
 export function useSeasonLeaders({
-  season = 2024,
+  season = 2025,
   limit = 5,
-  minGames = 10,
+  minGames = 2,
   baseUrl = API_URL,
 }: UseSeasonLeadersOptions = {}) {
   const [leaders, setLeaders] = useState<LeadersByStat>({});
@@ -39,22 +39,16 @@ export function useSeasonLeaders({
       setError(null);
 
       try {
-        const responses = await Promise.all(
-          STAT_CATEGORIES.map(async (stat) => {
-            const { data } = await axios.get<ApiResponse>(`${baseUrl}/api/season-leaders`, {
-              params: { stat, limit, minGames, season },
-            });
-            return { stat, leaders: data.leaders };
-          })
-        );
+        // 🚀 Only ONE request needed when all=true
+        const { data } = await axios.get(`${baseUrl}/api/season-leaders`, {
+          params: { all: true, season, limit, minGames },
+        });
 
         if (!isCancelled) {
-          const result: LeadersByStat = {};
-          for (const { stat, leaders } of responses) {
-            result[stat] = leaders;
-          }
-          setLeaders(result);
+          // backend returns: { leaders: { points: [...], assists: [...], ... } }
+          setLeaders(data.leaders);
         }
+
       } catch (err) {
         if (!isCancelled) {
           if (axios.isAxiosError(err)) {
@@ -78,3 +72,4 @@ export function useSeasonLeaders({
 
   return { leaders, loading, error };
 }
+

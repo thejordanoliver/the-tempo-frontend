@@ -10,16 +10,14 @@ export type StandingsTeam = {
   abbreviation: string;
   conference: string; // "Eastern" | "Western"
   division: string;
-
   wins: number;
   losses: number;
   winPercent: number;
-
+  gamesBehind: number;
   homeRecord: string;
   roadRecord: string;
   conferenceRecord: string;
   vsdiv: string;
-
   streak: string;
   pointsFor: number;
   pointsAgainst: number;
@@ -44,8 +42,6 @@ export function useStandings() {
 
       const res = await axios.get(`${BASE_URL}/api/standings/nba/standings`);
 
-    
-
       setData(res.data.conferences);
     } catch (err: any) {
       setError(err.message || "Failed to fetch standings");
@@ -58,7 +54,6 @@ export function useStandings() {
     fetchStandings();
   }, [fetchStandings]);
 
-
   return {
     data,
     loading,
@@ -66,4 +61,3 @@ export function useStandings() {
     refetch: fetchStandings,
   };
 }
-

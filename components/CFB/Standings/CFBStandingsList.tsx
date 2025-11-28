@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { getTeamLogoESPN, teams, getTeamIdByESPN } from "constants/teamsCFB";
-import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
+import { Colors } from "constants/Colors";
+import { getTeamIdByESPN, getTeamLogoESPN } from "constants/teamsCFB";
+import { useRouter } from "expo-router";
+import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -12,16 +12,16 @@ import {
   Image,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
-  useColorScheme, TouchableOpacity
+  useColorScheme,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { getStyles } from "styles/Standings.styles";
 export const CFBStandingsList = () => {
   const { rankings = [], loading, error } = useCFBRankings();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-const router = useRouter()
+  const router = useRouter();
   // 🏈 Added "cfp" (Playoff Rankings)
   const [pollMode, setPollMode] = useState<"ap" | "coaches" | "cfp">("ap");
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -44,14 +44,12 @@ const router = useRouter()
     }
   };
 
-
-
   const dropdownTranslateY = dropdownAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [-10, 0],
   });
 
- if (loading)
+  if (loading)
     return (
       <View style={{ flex: 1 }}>
         <StandingsSkeleton />
@@ -70,15 +68,14 @@ const router = useRouter()
   const droppedOutTeams = selectedPoll?.droppedOut ?? [];
 
   const getConferenceAbbrev = (conf?: string) => {
-  if (!conf) return "N/A";
-  const name = conf.toLowerCase();
+    if (!conf) return "N/A";
+    const name = conf.toLowerCase();
 
-  if (name.includes("sun belt")) return "Sun Belt";
+    if (name.includes("sun belt")) return "Sun Belt";
 
-  if (name.includes("American")) return "AAC";
-  return conf;
-};
-
+    if (name.includes("American")) return "AAC";
+    return conf;
+  };
 
   // --- Render functions ---
   const renderLeftItem = ({ item }: { item: CFBTeamRank; index: number }) => {
@@ -97,23 +94,21 @@ const router = useRouter()
         </View>
 
         <View style={styles.teamInfo}>
-   <TouchableOpacity
-  style={styles.teamInfoWrapper}
-  onPress={() => {
-const internalId = getTeamIdByESPN(Number(item.team?.id));
-    if (!internalId) return;
-    router.push({
-      pathname: "/team/cfb/[teamId]",
-      params: { teamId: Number(internalId) }, // <-- force number
-    });
-  }}
->
-
-
-          {teamLogo && <Image source={teamLogo} style={styles.logo} />}
-          <Text style={styles.collegeTeamName}>
-            {item.team?.abbreviation || item.team?.nickname || "N/A"}
-          </Text>
+          <TouchableOpacity
+            style={styles.teamInfoWrapper}
+            onPress={() => {
+              const internalId = getTeamIdByESPN(Number(item.team?.id));
+              if (!internalId) return;
+              router.push({
+                pathname: "/team/cfb/[teamId]",
+                params: { teamId: Number(internalId) }, // <-- force number
+              });
+            }}
+          >
+            {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+            <Text style={styles.collegeTeamName}>
+              {item.team?.abbreviation || item.team?.nickname || "N/A"}
+            </Text>
           </TouchableOpacity>
 
           {trendNum !== 0 && !isNaN(trendNum) && (
@@ -121,7 +116,15 @@ const internalId = getTeamIdByESPN(Number(item.team?.id));
               <Ionicons
                 name={isUp ? "arrow-up" : "arrow-down"}
                 size={10}
-                color={isUp ? Colors.dark.limeGreen : Colors.dark.lightRed}
+                color={
+                  isUp
+                    ? isDark
+                      ? Colors.dark.limeGreen
+                      : Colors.light.green // correct branch
+                    : isDark
+                    ? Colors.dark.lightRed
+                    : Colors.light.red
+                }
                 style={{ marginRight: 2 }}
               />
               <Text
@@ -129,12 +132,12 @@ const internalId = getTeamIdByESPN(Number(item.team?.id));
                   styles.collegeTeamTrend,
                   {
                     color: isUp
-                      ? Colors.dark.limeGreen
-                      : isDown
-                      ? Colors.dark.lightRed
+                      ? isDark
+                        ? Colors.dark.limeGreen
+                        : Colors.light.green // correct branch
                       : isDark
-                      ? Colors.white
-                      : Colors.black,
+                      ? Colors.dark.lightRed
+                      : Colors.light.red,
                   },
                 ]}
               >
@@ -159,10 +162,9 @@ const internalId = getTeamIdByESPN(Number(item.team?.id));
         <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
       </View>
       <View style={styles.statCell}>
-   <Text style={styles.statText}>
-  {getConferenceAbbrev(item.team?.groups?.shortName)}
-</Text>
-
+        <Text style={styles.statText}>
+          {getConferenceAbbrev(item.team?.groups?.shortName)}
+        </Text>
       </View>
     </View>
   );

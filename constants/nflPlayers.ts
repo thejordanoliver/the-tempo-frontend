@@ -14866,7 +14866,7 @@ export const players: NFLPlayer[] = [
     number: 91,
     salary: "-",
     experience: 3,
-    image: "https://media.api-sports.io/american-football/players/411.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4569497.png",
     teamId: 14,
   },
   {
@@ -15316,7 +15316,7 @@ export const players: NFLPlayer[] = [
     number: 94,
     salary: "-",
     experience: 6,
-    image: "https://media.api-sports.io/american-football/players/1379.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4259594.png",
     teamId: 14,
   },
   {
@@ -15331,7 +15331,7 @@ export const players: NFLPlayer[] = [
     number: 18,
     salary: "-",
     experience: 8,
-    image: "https://media.api-sports.io/american-football/players/1411.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4034949.png",
     teamId: 14,
   },
   {
@@ -15481,7 +15481,7 @@ export const players: NFLPlayer[] = [
     number: 57,
     salary: "-",
     experience: 7,
-    image: "https://media.api-sports.io/american-football/players/2128.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/3116097.png",
     teamId: 14,
   },
   {
@@ -15511,7 +15511,7 @@ export const players: NFLPlayer[] = [
     number: 48,
     salary: "-",
     experience: 2,
-    image: "https://media.api-sports.io/american-football/players/7591.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4426698.png",
     teamId: 14,
   },
   {
@@ -20611,7 +20611,7 @@ export const players: NFLPlayer[] = [
     number: 7,
     salary: null,
     experience: 5,
-    image: "https://media.api-sports.io/american-football/players/61.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4362487.png",
     teamId: 19,
   },
   {
@@ -20941,7 +20941,7 @@ export const players: NFLPlayer[] = [
     number: 56,
     salary: "-",
     experience: 5,
-    image: "https://media.api-sports.io/american-football/players/2286.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/3909013.png",
     teamId: 19,
   },
   {
@@ -21151,7 +21151,7 @@ export const players: NFLPlayer[] = [
     number: 31,
     salary: "-",
     experience: null,
-    image: "https://media.api-sports.io/american-football/players/10197.png",
+    image: "https://a.espncdn.com/i/headshots/nfl/players/full/4431426.png",
     teamId: 19,
   },
   {

@@ -11,6 +11,7 @@ type TeamInfoProps = {
   opponentScore?: number;
   record?: string;
   isDark: boolean;
+  lighter: boolean;
   isGameOver: boolean;
   isScheduled?: boolean; // scheduled games
   side?: "home" | "away";
@@ -24,6 +25,7 @@ export default function TeamInfo({
   opponentScore,
   record,
   isDark,
+  lighter,
   isGameOver,
   isScheduled,
   side,
@@ -42,7 +44,7 @@ export default function TeamInfo({
     : "-";
 
   // ✅ Safe logo handling (falls back to placeholder if team is undefined)
-  const logo = getTeamLogo(team?.id ?? teamName, true);
+  const logo = getTeamLogo(team?.id ?? teamName, true, lighter);
 
   return (
     <View style={{ alignItems: "center", position: "relative" }}>
@@ -60,9 +62,7 @@ export default function TeamInfo({
         }}
       >
         {rank && (
-          <Text style={{ fontSize: 10, color: Colors.lightGray }}>
-            {rank}
-          </Text>
+          <Text style={{ fontSize: 10, color: Colors.lightGray }}>{rank}</Text>
         )}{" "}
         {teamName}
       </Text>

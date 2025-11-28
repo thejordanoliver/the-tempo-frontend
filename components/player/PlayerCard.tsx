@@ -1,15 +1,8 @@
-import { Fonts } from "constants/fonts";
+import { Colors } from "constants/Colors";
 import { teams } from "constants/teams"; // your teams list
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCard.styles";
 export interface PlayerCardProps {
   id: number;
@@ -19,8 +12,8 @@ export interface PlayerCardProps {
   team: string;
   avatarUrl?: string | null;
   jerseyNumber?: string | number | null;
+  statNumber?: string | number | null;
 }
-
 
 const PlayerCard: React.FC<PlayerCardProps> = ({
   name,
@@ -29,6 +22,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   team,
   avatarUrl,
   jerseyNumber,
+  statNumber,   // ✅ NEW
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -40,6 +34,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const initial =
     typeof name === "string" && name.length > 0 ? name[0].toUpperCase() : "?";
+
+  const displayNumber =
+    statNumber != null && statNumber !== ""
+      ? statNumber        // → Use stat number if provided
+      : typeof jerseyNumber === "string" && /^\d+$/.test(jerseyNumber)
+      ? `#${jerseyNumber}` // → Else use jersey
+      : null;              // → Else display nothing
 
   return (
     <Pressable
@@ -62,45 +63,36 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         <Image
           source={{ uri: avatarUrl }}
           style={styles.avatar}
-          accessibilityLabel={`Avatar for ${name}`}
         />
       ) : (
-        <View
-          style={styles.avatarPlaceholder}
-          accessibilityLabel={`Initial placeholder for ${name}`}
-        >
+        <View style={styles.avatarPlaceholder}>
           <Text style={styles.initial}>{initial}</Text>
         </View>
       )}
+
       <View style={styles.info}>
-        <View style={styles.nameContainer}>
-          <Text
-            style={[
-              styles.name,
-              {
-                color: isDark ? "#fff" : teamObj?.color,
-              },
-            ]}
-          >
-            {name}
-          </Text>
-        </View>
-        {typeof jerseyNumber === "string" && /^\d+$/.test(jerseyNumber) && (
+        <Text
+          style={[
+            styles.name,
+            { color: isDark ? Colors.white : teamObj?.color },
+          ]}
+        >
+          {name}
+        </Text>
+
+        {displayNumber && (
           <Text
             style={[
               styles.jerseyNumber,
-              {
-                color: isDark ? "#fff" : teamObj?.color,
-              },
+              { color: isDark ? "#fff" : teamObj?.color },
             ]}
           >
-            #{jerseyNumber}
+            {displayNumber}
           </Text>
         )}
       </View>
     </Pressable>
   );
 };
-
 
 export default PlayerCard;

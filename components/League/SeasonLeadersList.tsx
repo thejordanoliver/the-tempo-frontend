@@ -1,3 +1,6 @@
+import PlayerCard from "components/Player/PlayerCard";
+import PlayerCardSkeletonList from "components/Player/PlayerCardListSkeleton";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams"; // import your teams list
 import { useRouter } from "expo-router";
@@ -9,10 +12,9 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { PlayerLeader } from "types/stats";
 import HeadingTwo from "../Headings/HeadingTwo";
-import PlayerStatRow from "./SeasonLeaderCard";
-
 interface SeasonLeadersListProps {
   leadersByStat: Partial<{
     points: PlayerLeader[];
@@ -48,78 +50,79 @@ export default function SeasonLeadersList({
 
   if (loading) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.infoText}>Loading leaders...</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.skeletonList}>
+        <PlayerCardSkeletonList />
+        <PlayerCardSkeletonList />
+        <PlayerCardSkeletonList />
+        <PlayerCardSkeletonList />
+        <PlayerCardSkeletonList />
+      </ScrollView>
     );
   }
 
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={[styles.infoText, { color: "red" }]}>
-          Failed to load stats: {error}
-        </Text>
+        <Text style={styles.infoText}>Failed to load stats: {error}</Text>
       </View>
     );
   }
 
   return (
     <FlatList
-      data={Object.entries(leadersByStat)}
+      data={Object.entries(leadersByStat).filter(
+        ([_, players]) => Array.isArray(players) && players.length > 0
+      )}
       contentContainerStyle={{ paddingBottom: 100 }}
       keyExtractor={([stat]) => stat}
       renderItem={({ item: [stat, players] }) => (
-        <>
-          <View style={styles.categoryContainer}>
-            <HeadingTwo style={{marginBottom: 12}}>{STAT_DISPLAY_NAMES[stat] || stat} Leaders</HeadingTwo>
-            <View style={styles.playersList}>
-              {players?.map((player) => {
-                const statKey = `avg_${stat}` as keyof PlayerLeader;
-                const statValue = player[statKey] ?? "0";
+        <View style={styles.categoryContainer}>
+          <HeadingTwo style={{ marginBottom: 12 }}>
+            {STAT_DISPLAY_NAMES[stat] || stat} Leaders
+          </HeadingTwo>
 
-                const fullName =
-                  player.full_name ??
-                  `${player.first_name} ${player.last_name}`;
-                const headshotUrl =
-                  player.headshot_url || "https://via.placeholder.com/40";
+          <View style={styles.playersList}>
+            {players!.map((player) => {
+              const statKey = `avg_${stat}` as keyof PlayerLeader;
+              const statValue = player[statKey] ?? "0";
 
-                // Use teamId to find team
-                const teamObj = teams.find(
-                  (t) => t.id.toString() === player.team_id?.toString()
-                );
-                const cleanTeam = teamObj?.fullName?.replace(/"/g, "") || "";
-                return (
-                  <TouchableOpacity
-                    key={player.player_id}
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      if (!teamObj) {
-                        console.warn(
-                          `No team found for teamId "${player.team_id}"`
-                        );
-                        return;
-                      }
-                      router.push({
-                        pathname: "/player/[id]",
-                        params: {
-                          id: player.player_id.toString(),
-                          teamId: teamObj.id.toString(),
-                        },
-                      });
-                    }}
-                  >
-                    <PlayerStatRow
-                      headshotUrl={headshotUrl}
-                      fullName={fullName}
-                      statNumber={statValue}
-                    />
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+              const fullName =
+                player.full_name ?? `${player.first_name} ${player.last_name}`;
+              const headshotUrl =
+                player.headshot_url || "https://via.placeholder.com/40";
+
+              const teamObj = teams.find(
+                (t) => t.id.toString() === player.team_id?.toString()
+              );
+              const cleanTeam = teamObj?.fullName?.replace(/"/g, "") || "";
+
+              return (
+                <TouchableOpacity
+                  key={player.player_id}
+                  onPress={() => {
+                    if (!teamObj) return;
+                    router.push({
+                      pathname: "/player/[id]",
+                      params: {
+                        id: player.player_id.toString(),
+                        teamId: teamObj.id.toString(),
+                      },
+                    });
+                  }}
+                >
+                  <PlayerCard
+                    playerId={player.player_id}
+                    id={player.player_id}
+                    name={fullName}
+                    team={cleanTeam}
+                    avatarUrl={headshotUrl}
+                    statNumber={statValue} // ✅ NEW — shows as stat number
+                  />
+                </TouchableOpacity>
+              );
+            })}
           </View>
-        </>
+        </View>
       )}
     />
   );
@@ -140,12 +143,18 @@ const getStyles = (isDark: boolean) =>
     centered: {
       alignItems: "center",
       justifyContent: "center",
+      flex: 1,
+    },
+    skeletonList: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingBottom: 100,
     },
     infoText: {
       fontFamily: Fonts.OSLIGHT,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
-      color: isDark ? "#aaa" : "#888",
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

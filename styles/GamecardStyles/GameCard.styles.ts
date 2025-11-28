@@ -3,7 +3,7 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean) =>
+export const getStyles = (isDark: boolean, isChampionship: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
@@ -32,14 +32,13 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      width: 80
+      width: 80,
     },
     teamScore: {
       fontSize: 28,
       fontFamily: Fonts.OSBOLD,
       width: 48,
       textAlign: "center",
-      // backgroundColor: "red"
     },
     teamRecord: {
       fontSize: 20,
@@ -118,12 +117,19 @@ export const getStyles = (isDark: boolean) =>
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: isDark
+        ? isChampionship
+          ? Colors.white
+          : Colors.lightGray
+        : isChampionship
+        ? Colors.black
+        : Colors.darkGray,
       textAlign: "center",
       position: "absolute",
       top: 4,
       width: "100%",
     },
+
     notificationBell: {
       position: "absolute",
       top: 8,

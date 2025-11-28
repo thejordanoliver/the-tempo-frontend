@@ -1,3 +1,4 @@
+import BoxScore from "components/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/CBB/GameDetails/GameLeaders";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
@@ -184,6 +185,7 @@ export default function GameDetailsScreen() {
     officials,
     highlights,
     plays,
+    playerStats,
     leaders,
     neutralSite,
     loading: officialsLoading,
@@ -370,6 +372,14 @@ export default function GameDetailsScreen() {
             awayTeamId={String(awayEspnId)}
             league="CBB"
           />
+
+          {/* 🔥 ADD BOX SCORE HERE */}
+          <BoxScore
+            playerStats={playerStats}
+            homeTeamId={Number(homeEspnId)}
+            awayTeamId={Number(awayEspnId)}
+          />
+
           <LastFiveGamesSwitcher
             isDark={isDark}
             home={{
@@ -391,7 +401,6 @@ export default function GameDetailsScreen() {
             <HighlightVideoList highlights={highlights} />
           )}
           <Officials officials={officials ?? []} loading={false} error={null} />
-     
         </View>
       </ScrollView>
 

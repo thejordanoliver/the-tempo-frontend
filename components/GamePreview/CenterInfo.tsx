@@ -7,7 +7,7 @@ import FinalsLogo from "../../assets/Logos/TheNBAFinals.png";
 import FinalsLogoLight from "../../assets/Logos/TheNBAFinalsLight.png";
 
 type CenterInfoProps = {
-  isNBAFinals: boolean;
+  isChampionship: boolean;
   isFinal: boolean;
   isCanceled?: boolean;
   isHalftime?: boolean;
@@ -27,7 +27,7 @@ type CenterInfoProps = {
 };
 
 export default function CenterInfo({
-  isNBAFinals,
+  isChampionship,
   isFinal,
   isCanceled,
   isHalftime = false,
@@ -78,7 +78,7 @@ export default function CenterInfo({
   const periodLabel = isFinal && !isCanceled ? "Final" : periodLabelRaw;
 
   useEffect(() => {
-    if (isNBAFinals || isPlayoffs) {
+    if (isChampionship || isPlayoffs) {
       Animated.parallel([
         Animated.timing(lightOpacity, {
           toValue: isDark ? 0 : 1,
@@ -92,34 +92,20 @@ export default function CenterInfo({
         }),
       ]).start();
     }
-  }, [isDark, isNBAFinals, isPlayoffs, lightOpacity, darkOpacity]);
+  }, [isDark, isChampionship, isPlayoffs, lightOpacity, darkOpacity]);
 
   return (
     <View style={styles.container}>
-      {(isNBAFinals || isPlayoffs) && (
+      {(isChampionship || isPlayoffs) && (
         <View style={styles.logoWrapper}>
           <Animated.Image
-            source={isNBAFinals ? FinalsLogo : PlayoffsLogo}
+            source={isChampionship ? FinalsLogo : PlayoffsLogo}
             style={[styles.logo, { opacity: lightOpacity }]}
           />
           <Animated.Image
-            source={isNBAFinals ? FinalsLogoLight : PlayoffsLogoLight}
+            source={isChampionship ? FinalsLogoLight : PlayoffsLogoLight}
             style={[styles.logo, { opacity: darkOpacity }]}
           />
-        </View>
-      )}
-
-      {(gameNumberLabel || seriesSummary) && (
-        <View style={styles.gameInfoRow}>
-          {gameNumberLabel && (
-            <Text style={styles.gameNumberLabel}>{gameNumberLabel}</Text>
-          )}
-          {gameNumberLabel && seriesSummary && (
-            <View style={styles.statusDivider} />
-          )}
-          {seriesSummary && (
-            <Text style={styles.gameNumberLabel}>{seriesSummary}</Text>
-          )}
         </View>
       )}
 
