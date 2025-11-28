@@ -44,7 +44,7 @@ export default function TeamInfo({
     : "-";
 
   // ✅ Safe logo handling (falls back to placeholder if team is undefined)
-  const logo = getTeamLogo(team?.id ?? teamName, true, lighter);
+  const logo = getTeamLogo(team?.id ?? teamName, true);
 
   return (
     <View style={{ alignItems: "center", position: "relative" }}>

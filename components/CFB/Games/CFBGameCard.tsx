@@ -195,14 +195,7 @@ function CFBGameCard({ game, isDark }: Props) {
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
-  const getGameStatusShort = () => {
-    if (status.isLive) return gameStatusShortDetail ?? displayClock ?? "Live";
-    if (status.isHalftime) return "HT";
-    if (status.isFinal) return "Final";
-    return undefined;
-  };
 
-  const displayShortStatus = getGameStatusShort();
 
   // Unified game status from possession hook
   const displayStatus =
@@ -218,53 +211,51 @@ function CFBGameCard({ game, isDark }: Props) {
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
   // --- Memoized team objects ---
- const awayTeam = useMemo(() => {
-  const found = getTeamById(awayId) || emptyTeam;
+  const awayTeam = useMemo(() => {
+    const base = {
+      ...emptyAwayTeam,
+      id: awayId ?? emptyAwayTeam.id,
+      espnID: awayEspnId ?? emptyAwayTeam.espnID,
+      name: getTeamName(awayId) ?? emptyAwayTeam.name,
+      shortName: getTeamShortName(awayId) ?? emptyAwayTeam.shortName,
+      logo: getTeamLogo(awayId, dark) || emptyAwayTeam.logo,
+      record: awayRecord?.overall ?? "0-0",
+      hasPossession:
+        status.isLive && String(possessionTeamId) === String(awayEspnId),
+    };
 
-  return {
-    ...emptyAwayTeam,            // base fallback
-    id: found.id ?? emptyAwayTeam.id,
-    espnID: found.espnID ?? emptyAwayTeam.espnID,
-    name: found.name ?? emptyAwayTeam.name,
-    shortName: found.shortName ?? emptyAwayTeam.shortName,
-    logo: getTeamLogo(found.id, dark) || emptyAwayTeam.logo,
-    record: awayRecord?.overall ?? "0-0",
-    hasPossession:
-      status.isLive && String(possessionTeamId) === String(found.espnID),
-  };
-}, [
-  awayId,
-  awayEspnId,
-  awayRecord?.overall,
-  possessionTeamId,
-  status.isLive,
-  dark,
-]);
+    return base;
+  }, [
+    awayId,
+    awayEspnId,
+    awayRecord?.overall,
+    possessionTeamId,
+    dark,
+    status.isLive,
+  ]);
 
+  const homeTeam = useMemo(() => {
+    const base = {
+      ...emptyHomeTeam,
+      id: homeId ?? emptyHomeTeam.id,
+      espnID: homeEspnId ?? emptyHomeTeam.espnID,
+      name: getTeamName(homeId) ?? emptyHomeTeam.name,
+      shortName: getTeamShortName(homeId) ?? emptyHomeTeam.shortName,
+      logo: getTeamLogo(homeId, dark) ?? emptyHomeTeam.logo,
+      record: homeRecord?.overall ?? "0-0",
+      hasPossession:
+        status.isLive && String(possessionTeamId) === String(homeEspnId),
+    };
 
-const homeTeam = useMemo(() => {
-  const found = getTeamById(homeId) || emptyTeam;
-
-  return {
-    ...emptyHomeTeam,
-    id: found.id ?? emptyHomeTeam.id,
-    espnID: found.espnID ?? emptyHomeTeam.espnID,
-    name: found.name ?? emptyHomeTeam.name,
-    shortName: found.shortName ?? emptyHomeTeam.shortName,
-    logo: getTeamLogo(found.id, dark) || emptyHomeTeam.logo,
-    record: homeRecord?.overall ?? "0-0",
-    hasPossession:
-      status.isLive && String(possessionTeamId) === String(found.espnID),
-  };
-}, [
-  homeId,
-  homeEspnId,
-  homeRecord?.overall,
-  possessionTeamId,
-  status.isLive,
-  dark,
-]);
-
+    return base;
+  }, [
+    homeId,
+    homeEspnId,
+    homeRecord?.overall,
+    possessionTeamId,
+    dark,
+    status.isLive,
+  ]);
 
   // --- Broadcasts ---
   const { broadcasts } = useCFBGameBroadcasts(

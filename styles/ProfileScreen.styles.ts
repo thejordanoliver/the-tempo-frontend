@@ -1,4 +1,5 @@
 // ProfileScreen.styles.ts
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 const BANNER_HEIGHT = 120;
@@ -6,17 +7,17 @@ const PROFILE_PIC_SIZE = 120;
 
 const theme = (isDark: boolean) => ({
   colors: {
-    background: isDark ? "#1d1d1d" : "#fff",
-    inverse: isDark ? "#fff" : "#1d1d1d",
-    bannerBackground: isDark ? "#333" : "#ccc",
-    profileBorder: isDark ? "#222" : "#fff",
-    profileBackground: isDark ? "#444" : "#eee",
-    textPrimary: isDark ? "#fff" : "#1d1d1d",
-    textSecondary: isDark ? "#ccc" : "#333",
-    textTertiary: isDark ? "#888" : "#666",
-    accent: isDark ? "#1d1d1d" : "#fff",
-    border: isDark ? "#444" : "#ccc",
-    followCount: isDark ? "#fff" : "#1d1d1d",
+    background: isDark ? Colors.black : Colors.white,
+    inverse: isDark ? Colors.white : Colors.black,
+    bannerBackground: isDark ? Colors.darkGray : Colors.lightGray,
+    profileBorder: isDark ? "#222" : Colors.white,
+    profileBackground: isDark ? Colors.darkGray : Colors.lightGray,
+    textPrimary: isDark ? Colors.white : Colors.black,
+    textSecondary: isDark ? Colors.lightGray : Colors.darkGray,
+    textTertiary: isDark ? Colors.midTone : Colors.midTone,
+    accent: isDark ? Colors.black : Colors.white,
+    border: isDark ? Colors.darkGray : Colors.lightGray,
+    followCount: isDark ? Colors.white : Colors.black,
   },
 });
 
@@ -123,7 +124,7 @@ export const getStyles = (isDark: boolean) => {
       gap: 8,
     },
     editProfileText: {
-      color: isDark ? "#1d1d1d" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
     },
@@ -149,7 +150,7 @@ export const getStyles = (isDark: boolean) => {
     heading: {
       fontSize: 24,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "white" : "#1d1d1d",
+      color: isDark ? "white" : Colors.black,
     },
     noFavoritesText: {
       fontStyle: "italic",
@@ -167,7 +168,9 @@ export const getStyles = (isDark: boolean) => {
       flex: 1,
       alignItems: "center",
       margin: 2,
-      backgroundColor: isDark ? "#222" : "#f5f5f5",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
     },
 
@@ -178,32 +181,31 @@ export const getStyles = (isDark: boolean) => {
     },
     teamName: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#fff" : "#fff",
+      color: isDark ? Colors.white : Colors.white,
       width: "auto",
     },
 
     editButton: {
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       marginVertical: 8,
       paddingHorizontal: 0,
       paddingVertical: 16,
       borderRadius: 8,
     },
     editText: {
-      color: isDark ? "#1d1d1d" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
       fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
     },
     editIcon: {
       marginLeft: 4,
-      color: isDark ? "#1d1d1d" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
     },
-
     sectionTitle: {
       fontSize: 18,
       fontFamily: Fonts.OSSEMIBOLD,
       marginBottom: 8,
-      color: isDark ? "#eee" : "#111",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     teamCard: {
       alignItems: "center",

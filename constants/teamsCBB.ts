@@ -5377,6 +5377,23 @@ export const getTeamInfo = (teamId: number | string) => {
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean,
+  
+) {
+  if (!idOrNicknameOrCode) return PlaceholderLogo;
+
+  const searchStr = String(idOrNicknameOrCode); // convert to string
+
+  const team = teams.find((t) => String(t.id) === searchStr);
+
+  if (!team) return PlaceholderLogo;
+
+  return  isDark
+    ? team.logoLight || team.logo
+    : team.logo;
+}
+export function getTeamLogoPreviewModal(
+  idOrNicknameOrCode: number | string | undefined,
+  isDark: boolean,
   lighter: boolean
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo;

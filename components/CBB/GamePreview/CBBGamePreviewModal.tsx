@@ -381,6 +381,7 @@ const isScheduled =
                 isScheduled={isScheduled}
                 side="away"
                 rank={getTeamRank(away?.name ?? "")}
+                lighter
               />
 
               <CenterInfo
@@ -435,6 +436,7 @@ const isScheduled =
                 isScheduled={isScheduled}
                 side="home"
                 rank={getTeamRank(home?.name ?? "")}
+                lighter
               />
             </View>
           </>

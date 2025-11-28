@@ -104,7 +104,7 @@ export default function CBBGamesList({
     if (viewMode === "list")
       return wrapper(
         <View>
-          <CBBGameCard game={game} isDark={isDark} />
+          <CBBGameCard game={game} isDark={isDark} lighter />
         </View>
       );
     if (viewMode === "grid")

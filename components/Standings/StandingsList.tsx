@@ -46,7 +46,7 @@ export const StandingsList = () => {
   if (error)
     return (
       <View style={styles.center}>
-        <Text style={[styles.text, { color: "red" }]}>{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
 

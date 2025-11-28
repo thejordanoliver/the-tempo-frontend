@@ -298,7 +298,7 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
       espnID: awayEspnId,
       name: getTeamName(awayId),
       shortName: getTeamShortName(awayId),
-      logo: getTeamLogo(awayId, dark, lighter),
+      logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
     }),
     [awayId, awayEspnId, awayRecord?.overall, dark, status.isLive]
@@ -310,7 +310,7 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
       espnID: homeEspnId,
       name: getTeamName(homeId),
       shortName: getTeamShortName(homeId),
-      logo: getTeamLogo(homeId, dark, lighter),
+      logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
     }),
     [homeId, homeEspnId, homeRecord?.overall, dark, status.isLive]

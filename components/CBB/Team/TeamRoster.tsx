@@ -1,11 +1,11 @@
 // components/TeamPlayerList.tsx
-import { CBBPlayer } from "types/types";
 import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
   Text,
 } from "react-native";
+import { CBBPlayer } from "types/types";
 import { style } from "../../../styles/TeamDetails.styles";
 import PlayerCard from "../Player/PlayerCard";
 
@@ -50,13 +50,9 @@ export default function TeamPlayerList({
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />
       ) : error ? (
-        <Text style={[styles.text, { textAlign: "center", marginTop: 20 }]}>
-          {error}
-        </Text>
+        <Text style={styles.errorText}>{error}</Text>
       ) : players.length === 0 ? (
-        <Text style={[styles.text, { textAlign: "center", marginTop: 20 }]}>
-          No players found.
-        </Text>
+        <Text style={styles.errorText}>No players found.</Text>
       ) : (
         [...players]
           .sort((a, b) => {
@@ -68,7 +64,7 @@ export default function TeamPlayerList({
             <PlayerCard
               key={player.id}
               id={Number(player.id)}
-              name={player.name}
+              name={player.name ?? ""}
               position={player.position}
               team={teamFullName}
               avatarUrl={player.imageUrl}

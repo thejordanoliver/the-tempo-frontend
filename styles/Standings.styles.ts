@@ -62,7 +62,6 @@ export const getStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     teamInfoWrapper: {
-    
       flexDirection: "row",
       alignItems: "center",
     },
@@ -104,7 +103,7 @@ export const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
-      textAlign: "center"
+      textAlign: "center",
     },
     statTextSecondary: {
       fontFamily: Fonts.OSREGULAR,
@@ -159,5 +158,12 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 16,
       marginVertical: 2,
       marginRight: 8,
+    },
+    errorText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

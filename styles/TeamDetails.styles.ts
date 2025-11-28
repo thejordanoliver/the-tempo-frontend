@@ -29,4 +29,11 @@ export const style = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
+   errorText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
   });
