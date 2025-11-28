@@ -208,7 +208,7 @@ export default function BoxScore({
     if (!team) return "";
     return isDark ? team.logoLight ?? team.logo : team.logo;
   };
-  console.log(homeTeamId);
+  
   const renderTeamBox = (
     players: MappedPlayer[],
     teamName: string,

@@ -510,14 +510,12 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
   );
 
   return (
-    <TouchableOpacity
+   <TouchableOpacity
       activeOpacity={0.85}
       onPress={() =>
         router.push({
           pathname: "/game/cbb/[game]",
-          params: {
-            game: `${homeId}-${awayId}-${gameDateStr}`,
-          },
+          params: { game: JSON.stringify(game) },
         })
       }
     >

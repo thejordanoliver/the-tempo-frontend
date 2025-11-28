@@ -22,7 +22,6 @@ import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
-import { useWeatherForecast } from "hooks/useWeather";
 import React, {
   useEffect,
   useLayoutEffect,
@@ -39,28 +38,81 @@ import {
   View,
 } from "react-native";
 import { useChatStore } from "store/chatStore";
+import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
-  const parts = String(game).split("-");
-  const homeId = parts[0];
-  const awayId = parts[1];
-  const date = parts.slice(2).join("-"); // ✅ preserves full date (e.g. "2025-11-04")
 
+  /** -----------------------------
+   *  Parse Full Game Object
+   *  ----------------------------- */
+  const gameObj: CBBGame | null = useMemo(() => {
+    try {
+      return typeof game === "string" ? JSON.parse(game) : null;
+    } catch (e) {
+      console.warn("Failed to parse game param", e);
+      return null;
+    }
+  }, [game]);
+
+  if (!gameObj) {
+    console.warn("❌ No valid game object passed to GameDetailsScreen");
+    return null;
+  }
+
+  /** -----------------------------
+   *  Extract Team IDs
+   *  ----------------------------- */
+  const homeTeamId = Number(gameObj?.teams?.home?.id);
+  const awayTeamId = Number(gameObj?.teams?.away?.id);
+
+  const homeTeamData = teams.find((t) => Number(t.id) === homeTeamId);
+  const awayTeamData = teams.find((t) => Number(t.id) === awayTeamId);
+
+  if (!homeTeamData || !awayTeamData) {
+    console.warn("Missing team data for IDs:", { homeTeamId, awayTeamId });
+    return null;
+  }
+
+  /** -----------------------------
+   *  Date Handling
+   *  ----------------------------- */
+  const gameDateObj = useMemo(() => {
+    if (gameObj.timestamp) return new Date(gameObj.timestamp * 1000);
+
+    if (gameObj.date) return new Date(gameObj.date);
+
+    return new Date();
+  }, [gameObj]);
+
+  const formattedDate = gameDateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  const formattedTime = gameDateObj.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const gameDate = gameDateObj.toISOString().split("T")[0];
+  const gameDateStr = gameDateObj.toISOString();
+
+  /** -----------------------------
+   *  Navigation + UI Controls
+   *  ----------------------------- */
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(true);
   const { openChat, isOpen: isChatOpen } = useChatStore();
+  const [isLoading, setIsLoading] = useState(true);
+
   const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const isScrollingRef = useRef(false);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // --- Scroll animation for Floating Button ---
   const handleScrollStart = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    isScrollingRef.current = true;
-
     Animated.timing(opacityAnim, {
       toValue: 0,
       duration: 200,
@@ -72,7 +124,6 @@ export default function GameDetailsScreen() {
   const handleScrollEnd = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     scrollTimeout.current = setTimeout(() => {
-      isScrollingRef.current = false;
       Animated.timing(opacityAnim, {
         toValue: isChatOpen ? 0 : 1,
         duration: 200,
@@ -82,57 +133,35 @@ export default function GameDetailsScreen() {
     }, 1000);
   };
 
-  // --- Team Data ---
-  const homeTeamId = Number(homeId);
-  const awayTeamId = Number(awayId);
+  /** -----------------------------
+   *  ESPN IDs
+   *  ----------------------------- */
+  const homeEspnId = homeTeamData.espnID;
+  const awayEspnId = awayTeamData.espnID;
 
-  const homeTeamData = teams.find((t) => Number(t.id) === homeTeamId);
-  const awayTeamData = teams.find((t) => Number(t.id) === awayTeamId);
-
-  if (!homeTeamData || !awayTeamData) {
-    console.warn("Missing team data for IDs:", { homeTeamId, awayTeamId });
-    return null;
-  }
-
-  // --- Date Handling ---
-  const gameDateObj = useMemo(() => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  }, [date]);
-
-  const gameDate = gameDateObj.toISOString().split("T")[0];
-  const formattedDate = gameDateObj.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime = gameDateObj.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-  const gameDateStr = gameDateObj.toISOString();
-
+  /** -----------------------------
+   *  Rankings
+   *  ----------------------------- */
   const { rankings } = useCBBRankings();
 
-  // --- Extract AP Top 25 ---
   const apTop25 = useMemo(() => {
     if (!rankings) return [];
-    const apPoll = rankings.find((p) => p.shortName === "AP Poll");
-    if (!apPoll) return [];
-    return apPoll.ranks.slice(0, 25).map((r) => ({
-      id: r.team?.id, // <-- use team id
+    const poll = rankings.find((p) => p.shortName === "AP Poll");
+    if (!poll) return [];
+    return poll.ranks.slice(0, 25).map((r) => ({
+      id: r.team?.id,
       rank: r.current,
     }));
   }, [rankings]);
 
-  const getTeamRank = (teamId: string | number) => {
-    const idStr = String(teamId);
-    const found = apTop25.find((t) => t.id === idStr);
-    return found ? found.rank : undefined;
+  const getTeamRank = (teamId: number | string) => {
+    const match = apTop25.find((t) => t.id === String(teamId));
+    return match?.rank;
   };
 
-  // --- Colors ---
+  /** -----------------------------
+   *  Colors
+   *  ----------------------------- */
   const colors = useMemo(
     () => ({
       background: isDark ? Colors.black : Colors.white,
@@ -147,18 +176,14 @@ export default function GameDetailsScreen() {
     [isDark]
   );
 
+  /** -----------------------------
+   *  Hooks (Scores, Records, Weather, Headlines, Broadcasts)
+   *  ----------------------------- */
+  const { record: homeRecord } = useTeamRecord(homeEspnId, "cbb");
+  const { record: awayRecord } = useTeamRecord(awayEspnId, "cbb");
+
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
-  const { record: homeRecord } = useTeamRecord(homeTeamData.espnID, "cbb");
-  const { record: awayRecord } = useTeamRecord(awayTeamData.espnID, "cbb");
-
-  const lat = homeTeamData.latitude ?? null;
-  const lon = homeTeamData.longitude ?? null;
-  const { weather } = useWeatherForecast(lat, lon, date);
-  if (!homeTeamData || !awayTeamData) return null;
-
-  const homeEspnId = homeTeamData.espnID;
-  const awayEspnId = awayTeamData.espnID;
 
   const { broadcasts } = useGameBroadcasts(
     homeTeamData.name,
@@ -176,22 +201,17 @@ export default function GameDetailsScreen() {
 
   const { score: liveScore } = useGameScores(
     "mens-college-basketball",
-    homeEspnId?.toString(),
-    awayEspnId?.toString(),
+    String(homeEspnId),
+    String(awayEspnId),
     gameDate
   );
 
-  const {
-    officials,
-    highlights,
-    plays,
-    playerStats,
-    leaders,
-    neutralSite,
-    loading: officialsLoading,
-    error: officialsError,
-  } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDate);
+  const { officials, highlights, plays, playerStats, leaders, neutralSite } =
+    useGameDetails("cbb", homeEspnId, awayEspnId, gameDate);
 
+  /** -----------------------------
+   *  Status + Quarter Formatting
+   *  ----------------------------- */
   const formatQuarter = (period?: number | string) => {
     if (!period) return "Live";
 
@@ -199,9 +219,7 @@ export default function GameDetailsScreen() {
       const val = period.toLowerCase();
       if (val.includes("ot")) {
         const match = val.match(/(\d+)?ot/i);
-        if (!match) return "OT";
-        const num = match[1];
-        // Show "OT" for first overtime, number only for later
+        const num = match?.[1];
         return !num || num === "1" ? "OT" : `${num}OT`;
       }
       if (val.includes("halftime")) return "Halftime";
@@ -213,29 +231,16 @@ export default function GameDetailsScreen() {
     if (p === 2) return "2nd";
 
     const ot = p - 2;
-    return ot === 1 ? "OT" : `${ot}OT`; // first OT shows "OT", later "2OT", "3OT", etc.
+    return ot === 1 ? "OT" : `${ot}OT`;
   };
 
-  // --- Derived Data ---
-  const displayHomeScore = liveScore?.home.total ?? 0;
-  const displayAwayScore = liveScore?.away.total ?? 0;
+  const displayHomeScore = liveScore?.home?.total ?? 0;
+  const displayAwayScore = liveScore?.away?.total ?? 0;
   const displayClock = liveScore?.displayClock ?? "";
   const statusDisplay = liveScore?.status ?? "Scheduled";
+
   const isHalftime =
     liveScore?.statusText?.toLowerCase().includes("halftime") ?? false;
-  const hasLeaderData =
-    Array.isArray(leaders) &&
-    leaders.some((group) =>
-      group?.leaders?.some(
-        (category) =>
-          Array.isArray(category.leaders) && category.leaders.length > 0
-      )
-    );
-
-  const shouldShowLeaders = statusDisplay !== "scheduled" && hasLeaderData;
-  const shouldShowShotChart = statusDisplay !== "scheduled";
-
-  const periodNum = Number(liveScore?.period ?? 0);
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -244,15 +249,25 @@ export default function GameDetailsScreen() {
       }
     : undefined;
 
+  const periodNum = Number(liveScore?.period ?? 0);
   let quarterLabel = "";
-
   if (periodNum === 1) quarterLabel = "1st";
   else if (periodNum === 2) quarterLabel = "2nd";
-  else quarterLabel = `${periodNum - 2}OT`; // <-- number first
+  else if (periodNum > 2) quarterLabel = `${periodNum - 2}OT`;
 
   const displayQuarter = formatQuarter(quarterLabel);
 
-  // --- Header Title ---
+  const shouldShowLeaders =
+    gameObj.status.long !== "Not Started" &&
+    leaders?.some((g) =>
+      g.leaders.some((c) => Array.isArray(c.leaders) && c.leaders.length > 0)
+    );
+
+  const shouldShowGameDetails = gameObj.status.long !== "Not Started";
+
+  /** -----------------------------
+   *  Header
+   *  ----------------------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -268,12 +283,17 @@ export default function GameDetailsScreen() {
     });
   }, [navigation, neutralSite, homeTeamData.code, awayTeamData.code]);
 
-  // --- Loading Delay for Animation ---
+  /** -----------------------------
+   *  Loading Delay for UI Smoothness
+   *  ----------------------------- */
   useEffect(() => {
     const timeout = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timeout);
   }, []);
 
+  /** -----------------------------
+   *  RENDER
+   *  ----------------------------- */
   return (
     <>
       <ScrollView
@@ -311,15 +331,14 @@ export default function GameDetailsScreen() {
           league="cbb"
         />
 
-        <View style={{ gap: 20, marginTop: 20 }}>
+        <View style={{ gap: 24, marginTop: 20 }}>
           <GameOddsSection
-            date={date}
+            date={gameDate}
             gameDate={gameDate}
             homeCode={homeTeamData.code!}
             awayCode={awayTeamData.code!}
             gameId={`${homeTeamId}-${awayTeamId}`}
           />
-          <LastPlay lastPlay={liveScore?.lastPlay} />
           <WinPredictionVote
             gameId={`${homeTeamId}-${awayTeamId}`}
             awayTeam={{
@@ -339,8 +358,9 @@ export default function GameDetailsScreen() {
               color: homeTeamData.color,
             }}
           />
+          {shouldShowGameDetails && <LastPlay lastPlay={liveScore?.lastPlay} />}
 
-          {lineScore && (
+          {shouldShowGameDetails && (
             <LineScore
               linescore={lineScore}
               homeCode={homeTeamData.code}
@@ -349,7 +369,7 @@ export default function GameDetailsScreen() {
             />
           )}
 
-          {shouldShowLeaders && (
+          {shouldShowGameDetails && (
             <GameLeaders
               leaders={leaders}
               awayTeamId={Number(awayTeamData.espnID)}
@@ -357,7 +377,7 @@ export default function GameDetailsScreen() {
             />
           )}
 
-          {shouldShowShotChart && (
+          {shouldShowGameDetails && (
             <ShotChart
               plays={plays}
               homeTeamId={String(homeEspnId)}
@@ -366,20 +386,21 @@ export default function GameDetailsScreen() {
               isCBB={true}
             />
           )}
-          <GameSummary
-            plays={plays ?? []}
-            homeTeamId={String(homeEspnId)}
-            awayTeamId={String(awayEspnId)}
-            league="CBB"
-          />
-
-          {/* 🔥 ADD BOX SCORE HERE */}
-          <BoxScore
-            playerStats={playerStats}
-            homeTeamId={Number(homeEspnId)}
-            awayTeamId={Number(awayEspnId)}
-          />
-
+          {shouldShowGameDetails && (
+            <GameSummary
+              plays={plays ?? []}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              league="CBB"
+            />
+          )}
+          {shouldShowGameDetails && (
+            <BoxScore
+              playerStats={playerStats}
+              homeTeamId={Number(homeEspnId)}
+              awayTeamId={Number(awayEspnId)}
+            />
+          )}
           <LastFiveGamesSwitcher
             isDark={isDark}
             home={{
@@ -400,6 +421,7 @@ export default function GameDetailsScreen() {
           {highlights?.length > 0 && (
             <HighlightVideoList highlights={highlights} />
           )}
+
           <Officials officials={officials ?? []} loading={false} error={null} />
         </View>
       </ScrollView>
