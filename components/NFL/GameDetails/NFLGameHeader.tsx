@@ -140,7 +140,7 @@ const getStyles = (isDark: boolean) =>
     container: {
       borderBottomWidth: 1,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      paddingVertical: 8,
+      paddingVertical: 4,
     },
     teamsContainer: {
       flexDirection: "row",
@@ -153,7 +153,7 @@ const getStyles = (isDark: boolean) =>
     },
     headlineText: {
       position: "absolute",
-      width: 220,
+      width: "100%",
       top: 0,
       fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,

@@ -208,7 +208,7 @@ export default function BoxScore({
     if (!team) return "";
     return isDark ? team.logoLight ?? team.logo : team.logo;
   };
-  
+
   const renderTeamBox = (
     players: MappedPlayer[],
     teamName: string,
@@ -274,6 +274,7 @@ export default function BoxScore({
             >
               {players.map((p, index) => (
                 <View
+                  key={`${teamCode}-row-${p.localPlayer.player_id}-${index}`}
                   style={[
                     styles.tableRow,
                     {
@@ -339,7 +340,7 @@ export default function BoxScore({
               >
                 {players.map((p, index) => (
                   <View
-                    key={`${teamCode}-stats-${index}`}
+                    key={`${teamCode}-row-${p.localPlayer.player_id}-${index}`}
                     style={[
                       styles.tableRow,
                       {

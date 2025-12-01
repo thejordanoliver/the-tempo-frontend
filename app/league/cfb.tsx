@@ -25,7 +25,11 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
 import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
-import { CFBWeek, generateCFBWeeks, getCurrentWeekIndex } from "utils/cfbWeeks";
+import {
+  CFBWeek,
+  generateCFBWeeks,
+  getCurrentWeekIndex,
+} from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
@@ -192,7 +196,6 @@ export default function CFBeagueScreen() {
   // --- Filter games by selected conference ---
   const filteredGames = React.useMemo(() => {
     const weekLabel = selectedWeek.label.toLowerCase();
-
 
     if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
       if (selectedWeek.label.toLowerCase().includes("championship")) {

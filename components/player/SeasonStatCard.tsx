@@ -1,10 +1,12 @@
 import { Colors } from "constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { usePlayerStats } from "hooks/usePlayerStats";
-import { ActivityIndicator, Text, useColorScheme, View } from "react-native";
+import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
 import { teams } from "../../constants/teams";
 import CenteredHeader from "../Headings/CenteredHeader";
+import SeasonStatCardSkeleton from "./SeasonStatCardSkeleton";
+
 type Props = {
   playerId: number;
   teamColor?: string;
@@ -17,7 +19,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
 
-  if (loading) return <ActivityIndicator style={{ marginVertical: 20 }} />;
+  if (loading) return <SeasonStatCardSkeleton />;
   if (error || !aggregatedStats)
     return <Text style={styles.error}>Failed to load stats</Text>;
 

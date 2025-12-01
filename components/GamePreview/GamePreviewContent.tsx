@@ -22,6 +22,7 @@ export default function GamePreviewContent({
   gameStats,
   officials,
   injuries,
+  boxScore,
   detailsLoading,
   detailsError,
   resolvedVenueImage,
@@ -74,7 +75,6 @@ export default function GamePreviewContent({
         </View>
       )}
 
-    
       {/* Game Stats */}
       {game?.id && gameStats?.length > 0 && (
         <>
@@ -90,8 +90,9 @@ export default function GamePreviewContent({
           <View style={{ marginBottom: 24 }}>
             <BoxScore
               gameId={game.id.toString()}
-              homeTeamId={home?.id}
               awayTeamId={away?.id}
+              homeTeamId={home?.id}
+              lighter
             />
           </View>
 
@@ -101,12 +102,10 @@ export default function GamePreviewContent({
         </>
       )}
 
-  
-
       {/* Injuries */}
 
       <View style={{ marginBottom: 24 }}>
-      <TeamInjuries injuries={injuries} lighter />
+        <TeamInjuries injuries={injuries} lighter />
       </View>
 
       {/* Uniforms */}
@@ -119,6 +118,13 @@ export default function GamePreviewContent({
           />
         </View>
       )}
+
+      <Officials
+        officials={officials ?? []}
+        loading={false}
+        error={null}
+        lighter
+      />
 
       {/* Venue Info */}
       {(resolvedVenueImage || resolvedVenueName) && (

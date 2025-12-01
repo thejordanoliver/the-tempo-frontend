@@ -248,32 +248,32 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
   }
 
   // Normalize status
-  const effectiveStatus = useMemo(() => {
-    const statusText =
-      liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
-    const base =
-      typeof game.status.long === "string"
-        ? game.status.long
-        : mapStatus(game.status.long);
+ const effectiveStatus = useMemo(() => {
+  const statusText =
+    liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
+  const base =
+    typeof game.status.long === "string"
+      ? game.status.long
+      : mapStatus(game.status.long);
 
-    if (statusText.includes("final") || base.toLowerCase().includes("final"))
-      return "Final";
-    if (
-      statusText.includes("halftime") ||
-      base.toLowerCase().includes("halftime")
-    )
-      return "Halftime";
-    if (
-      statusText.includes("in progress") ||
-      statusText.includes("in_play") ||
-      statusText.includes("qtr") ||
-      statusText.includes("quarter") ||
-      statusText.includes("ot") // ✅ detect OT in progress
-    )
-      return "In Play";
+  if (statusText.includes("final") || base.toLowerCase().includes("final"))
+    return "Final";
+  if (
+    statusText.includes("halftime") ||
+    base.toLowerCase().includes("halftime")
+  )
+    return "Halftime";
+  if (
+    statusText.includes("in progress") ||
+    statusText.includes("in_play") ||
+    statusText.includes("qtr") ||
+    statusText.includes("quarter") ||
+    statusText.includes("ot")
+  )
+    return "In Play";
 
-    return base;
-  }, [game.status, liveScore?.statusText]);
+  return base;
+}, [game.status, liveScore?.statusText]);
 
   // Boolean flags
   const inProgress = effectiveStatus === "In Play";

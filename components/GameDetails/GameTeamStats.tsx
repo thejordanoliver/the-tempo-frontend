@@ -43,13 +43,13 @@ const STAT_KEYS = [
 
 export default function GameTeamStats({
   stats,
-  lighter,
+  lighter = false,
 }: {
   stats: any[];
   lighter?: boolean;
 }) {
   const isDark = useColorScheme() === "dark";
-
+  const styles = gameTeamStatsStyles(isDark, lighter);
   // 🔥 Early returns BEFORE any useState / useRef / useEffect
   if (!stats || stats.length < 2) return null;
 
@@ -82,8 +82,16 @@ export default function GameTeamStats({
 
   const teamDataA = teamsById[teamA.team.id];
   const teamDataB = teamsById[teamB.team.id];
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#000";
-  const dividerColor = lighter ? "#fff" : isDark ? "#888" : "#888";
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
+  const dividerColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
   const getTeamBarColor = (team: any) => {
     const darkTeams = [
       "MEM",
@@ -214,13 +222,7 @@ export default function GameTeamStats({
             borderColor: dividerColor,
           }}
         >
-          <Text
-            style={{
-              color: textColor,
-              fontFamily: Fonts.OSMEDIUM,
-              fontSize: 14,
-            }}
-          >
+          <Text style={styles.showMoreLess}>
             {expanded ? "Show Less" : "Show More"}
           </Text>
         </Pressable>
@@ -229,80 +231,86 @@ export default function GameTeamStats({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderBottomRightRadius: 12,
-    borderBottomLeftRadius: 12,
-  },
-  logosRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderTopRightRadius: 12,
-    borderTopLeftRadius: 12,
-    alignItems: "center",
-    zIndex: 1,
-    elevation: 3,
-    borderColor: Colors.midTone,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-  },
-  teamContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logo: {
-    width: 32,
-    height: 32,
-    resizeMode: "contain",
-  },
-  teamLabel: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 16,
-  },
-  statSection: {
-    marginBottom: 16,
-    height: ROW_HEIGHT,
-  },
-  dividerLine: {
-    height: 1,
-    width: "100%",
-  },
-  statLabel: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 12,
-    textAlign: "center",
-    marginTop: 8,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-  },
-  barContainerLeft: {
-    flex: 1,
-    alignItems: "flex-start",
-    marginLeft: 12,
-  },
-  barContainerRight: {
-    flex: 1,
-    alignItems: "flex-end",
-    marginRight: 12,
-  },
-  bar: {
-    height: 8,
-    justifyContent: "center",
-    borderRadius: 100,
-  },
-  barText: {
-    fontFamily: Fonts.OSSEMIBOLD,
-    fontSize: 14,
-    textAlign: "center",
-  },
-});
+const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
+  StyleSheet.create({
+    container: {
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+      borderBottomWidth: 1,
+      borderBottomRightRadius: 12,
+      borderBottomLeftRadius: 12,
+    },
+    logosRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderTopRightRadius: 12,
+      borderTopLeftRadius: 12,
+      alignItems: "center",
+      zIndex: 1,
+      elevation: 3,
+      borderColor: Colors.midTone,
+      borderTopWidth: 1,
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+    },
+    teamContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    logo: {
+      width: 32,
+      height: 32,
+      resizeMode: "contain",
+    },
+    teamLabel: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 16,
+    },
+    statSection: {
+      marginBottom: 16,
+      height: ROW_HEIGHT,
+    },
+    dividerLine: {
+      height: 1,
+      width: "100%",
+    },
+    statLabel: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      textAlign: "center",
+      marginTop: 8,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+    },
+    barContainerLeft: {
+      flex: 1,
+      alignItems: "flex-start",
+      marginLeft: 12,
+    },
+    barContainerRight: {
+      flex: 1,
+      alignItems: "flex-end",
+      marginRight: 12,
+    },
+    bar: {
+      height: 8,
+      justifyContent: "center",
+      borderRadius: 100,
+    },
+    barText: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 14,
+      textAlign: "center",
+    },
+    showMoreLess: {
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+    },
+  });

@@ -1,4 +1,3 @@
-// components/Games/Headings/HeaderSkeleton.tsx
 import { Colors } from "constants/Colors";
 import React, { useEffect, useRef } from "react";
 import {
@@ -7,34 +6,40 @@ import {
   StyleSheet,
   useColorScheme,
   View,
+  ViewStyle,
+  StyleProp,
 } from "react-native";
 
-export default function HeaderSkeleton() {
+type HeaderSkeletonProps = {
+  style?: StyleProp<ViewStyle>; // 👉 optional custom styling
+};
+
+export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
   const isDark = useColorScheme() === "dark";
-  const pulseAnim = useRef(new Animated.Value(0.3)).current; // start at low opacity
+  const pulseAnim = useRef(new Animated.Value(0.3)).current;
   const styles = skeletonStyles(isDark);
+
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 1.1,
           duration: 1200,
-          easing: Easing.inOut(Easing.ease), // ✅ use Easing directly
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 0.3,
           duration: 1200,
-          easing: Easing.inOut(Easing.ease), // ✅ use Easing directly
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
-      { resetBeforeIteration: false } // keeps it perfectly continuous
+      ])
     );
 
     pulse.start();
     return () => pulse.stop();
-  }, [pulseAnim]);
+  }, []);
 
   const baseColor = isDark
     ? Colors.dark.itemBackground
@@ -42,21 +47,22 @@ export default function HeaderSkeleton() {
 
   const overlayColor = isDark ? Colors.darkGray : Colors.lightGray;
 
-  return (
-    <View style={styles.container}>
-      <View style={[styles.skeletonBase, { backgroundColor: baseColor }]}>
-        <Animated.View
-          style={[
-            styles.overlay,
-            {
-              backgroundColor: overlayColor,
-              opacity: pulseAnim,
-            },
-          ]}
-        />
-      </View>
+return (
+  <View style={StyleSheet.flatten([styles.container, style])}>
+    <View style={[styles.skeletonBase, { backgroundColor: baseColor }]}>
+      <Animated.View
+        style={[
+          styles.overlay,
+          {
+            backgroundColor: overlayColor,
+            opacity: pulseAnim,
+          },
+        ]}
+      />
     </View>
-  );
+  </View>
+);
+
 }
 
 const skeletonStyles = (isDark: boolean) =>
@@ -70,7 +76,6 @@ const skeletonStyles = (isDark: boolean) =>
       width: 160,
       borderRadius: 6,
       overflow: "hidden",
-      color: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
     },
     overlay: {
       ...StyleSheet.absoluteFillObject,

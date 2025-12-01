@@ -121,16 +121,15 @@ export default function GameHeader({
 
   return (
     <View style={[styles.container, { borderColor: colors.border }]}>
-         {headlineText ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText} numberOfLines={2}>
-                {headlineText}
-              </Text>
-            </View>
-          ) : null}
+      {headlineText ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText} numberOfLines={2}>
+            {headlineText}
+          </Text>
+        </View>
+      ) : null}
 
       <View style={styles.teamsContainer}>
-
         {/* Away Team Row */}
         <TeamRow
           key={`away-${refreshTick}`}
@@ -159,7 +158,6 @@ export default function GameHeader({
         />
 
         <View>
-       
           {/* Game Info */}
           <GameInfo
             key={`gameinfo-${refreshTick}`}
@@ -208,7 +206,6 @@ export default function GameHeader({
           league={league}
           timeouts={league === "nba" ? homeTimeouts : undefined}
         />
-        
       </View>
     </View>
   );
@@ -219,7 +216,7 @@ const getStyles = (isDark: boolean) =>
     container: {
       borderBottomWidth: 1,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      paddingVertical: 8,
+      paddingVertical: 4,
     },
     teamsContainer: {
       flexDirection: "row",
@@ -232,7 +229,7 @@ const getStyles = (isDark: boolean) =>
     },
     headlineText: {
       position: "absolute",
-      width: 220,
+      width: "100%",
       top: 0,
       fontSize: 10,
       color: isDark ? Colors.dark.text : Colors.light.text,

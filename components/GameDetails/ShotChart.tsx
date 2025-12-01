@@ -157,7 +157,7 @@ export default function ShotChart({
         height: 14,
         borderRadius: 7,
         backgroundColor: color,
-        opacity: 0.9,
+        opacity: 1,
       }}
     />
   );
@@ -168,9 +168,9 @@ export default function ShotChart({
         width: 14,
         height: 14,
         borderRadius: 7,
-        backgroundColor: "white",
-        opacity: 0.95,
-        borderWidth: 3.8,
+        backgroundColor: Colors.white,
+        opacity:1,
+        borderWidth: 4,
         borderColor: color,
       }}
     />

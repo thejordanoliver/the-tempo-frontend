@@ -1,13 +1,25 @@
+import CBBGameCard from "components/CBB/Games/CBBGameCard";
 import PlayerHeader from "components/CBB/Player/PlayerHeader";
+import PlayerStatTable from "components/CBB/Player/PlayerStatTable";
+import SeasonStatCard from "components/CBB/Player/SeasonStatCard";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { players } from "constants/cbbPlayers"; // ✅ your player data
 import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLastTeamGame } from "hooks/CBBHooks/useLastTeamGame";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, useColorScheme } from "react-native";
-import { CBBPlayer } from "types/types";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
+import { CBBGame, CBBPlayer } from "types/types";
 
+type TeamWithRecord = (typeof teams)[number] & { record?: string };
 
 export default function PlayerDetailScreen() {
   const params = useLocalSearchParams();
@@ -15,6 +27,7 @@ export default function PlayerDetailScreen() {
   const teamIdParam = Array.isArray(params.teamId)
     ? params.teamId[0]
     : params.teamId;
+  const season = "2025";
 
   const parsedPlayerId = String(playerIdParam ?? "").trim();
   const sanitizedTeamId = String(teamIdParam ?? "")
@@ -30,6 +43,32 @@ export default function PlayerDetailScreen() {
   const goBack = () => navigation.goBack();
 
   const avatarUrl = player?.imageUrl;
+  const teamNumericId = parseInt(sanitizedTeamId, 10);
+  console.log(teamNumericId);
+  // Use the updated hook - it returns a `Game | null`
+  const { lastGame: teamLastGame, loading: teamGameLoading } =
+    useLastTeamGame(teamNumericId);
+
+  // Find away team with extended type
+  const awayTeamObj = teams.find(
+    (t) => t.id === teamLastGame?.teams.away.id
+  ) as TeamWithRecord | undefined;
+
+  const enrichedLastGame: CBBGame | null = teamLastGame
+    ? {
+        ...teamLastGame,
+        teams: {
+          home: {
+            ...teamLastGame.teams.home,
+            logo: teamObj?.logo || "",
+          },
+          away: {
+            ...teamLastGame.teams.away,
+            logo: awayTeamObj?.logo || "",
+          },
+        },
+      }
+    : null;
 
   // ✅ Find player from constants
   useEffect(() => {
@@ -68,9 +107,6 @@ export default function PlayerDetailScreen() {
   const dynamicStyles = useMemo(
     () =>
       StyleSheet.create({
-        scrollView: {
-          backgroundColor: isDark ? Colors.black : Colors.white,
-        },
         errorText: {
           color: "red",
           textAlign: "center",
@@ -80,9 +116,11 @@ export default function PlayerDetailScreen() {
     [isDark]
   );
 
+  console.log(teamLastGame);
+
   if (error) {
     return (
-      <ScrollView style={dynamicStyles.scrollView}>
+      <ScrollView>
         <Text style={dynamicStyles.errorText}>{error}</Text>
       </ScrollView>
     );
@@ -90,7 +128,7 @@ export default function PlayerDetailScreen() {
 
   if (!player) {
     return (
-      <ScrollView style={dynamicStyles.scrollView}>
+      <ScrollView>
         <Text
           style={{
             color: isDark ? Colors.white : Colors.black,
@@ -105,10 +143,7 @@ export default function PlayerDetailScreen() {
   }
 
   return (
-    <ScrollView
-      style={dynamicStyles.scrollView}
-      contentContainerStyle={{ paddingBottom: 100 }}
-    >
+    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
       <PlayerHeader
         player={player}
         avatarUrl={avatarUrl}
@@ -117,6 +152,25 @@ export default function PlayerDetailScreen() {
         teamSecondaryColor={teamObj?.secondaryColor}
         team_name={teamObj?.name}
       />
+
+      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
+        <SeasonStatCard playerId={Number(player.id)} season={season} />
+      </View>
+
+      {enrichedLastGame && (
+        <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
+          <HeadingTwo>Last Game</HeadingTwo>
+          <CBBGameCard
+            game={enrichedLastGame}
+            isDark={isDark}
+            lighter={false}
+          />
+        </View>
+      )}
+
+      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
+        <PlayerStatTable playerId={Number(player.id)} />
+      </View>
     </ScrollView>
   );
 }

@@ -45,6 +45,6 @@ export const getStyles = (isDark: boolean, lighter: boolean) =>
     },
     statBlock: { alignItems: "flex-start", flex: 1 },
     statLabel: { fontFamily: Fonts.OSMEDIUM, fontSize: 10 },
-    statText: { fontFamily: Fonts.OSREGULAR, fontSize: 14 },
+    statText: { fontFamily: Fonts.OSREGULAR,  fontSize: 14, color: isDark ? Colors.white: Colors.black },
     teamLogo: { position: "absolute", top: 6, right: 6, width: 28, height: 28 },
   });

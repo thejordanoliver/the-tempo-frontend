@@ -88,22 +88,23 @@ export const useGameScores = (
     return 60000; // 60s for scheduled/final
   };
 
-  useEffect(() => {
-    if (skipFetch) return;
+// 1️⃣ Base polling effect — starts once when inputs change
+useEffect(() => {
+  if (skipFetch) return;
 
-    const poll = () => {
-      fetchScore(true);
-      const interval = getInterval(score?.status);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(poll, interval);
-    };
+  // Immediate fetch
+  fetchScore(true);
 
-    poll();
+  const interval = getInterval(score?.status);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [fetchScore, skipFetch, score?.status]);
+  intervalRef.current = setInterval(() => {
+    fetchScore(true);
+  }, interval);
+
+  return () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
+}, [league, homeIdOrName, awayIdOrName, date]);
 
   useEffect(() => {
     if (score?.status === "final" && intervalRef.current) {
@@ -115,7 +116,7 @@ export const useGameScores = (
   const refresh = useCallback(() => {
     if (!skipFetch) fetchScore(false);
   }, [fetchScore, skipFetch]);
-
+// console.log(score?.status)
   const isLive = score?.status === "in_play";
 
   return {

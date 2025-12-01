@@ -14,6 +14,7 @@ import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
+import CBBRosterStats from "components/CBB/Team/RosterStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -428,14 +429,16 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Stats Page */}
-        <View
-          key="stats"
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ color: isDark ? "#fff" : "#000" }}>Stats (TODO)</Text>
-        </View>
-
+           {/* Stats Page */}
+        <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
+          {team?.espnID && team?.id && (
+            <CBBRosterStats
+              espnID={Number(team.espnID)}
+              teamID={Number(team.id)}
+          
+            />
+          )}
+        </ScrollView>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
           <TeamForum teamId={teamId as string} league="CBB" />

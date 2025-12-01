@@ -46,7 +46,7 @@ export function useCBBWeeklyGames(timezone: string = "America/New_York") {
 
     try {
       const res = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000"}/api/gamesCBB/weekly`,
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/gamesCBB/weekly`,
         { params: { timezone } }
       );
 

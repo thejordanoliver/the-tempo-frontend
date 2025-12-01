@@ -2,10 +2,12 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { teamsById } from "constants/teams";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
+import { useCBBRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
+import { useCBBTeamStats } from "hooks/CBBHooks/useCBBTeamStats";
 import React, { useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -14,72 +16,136 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { PlayerInfo, PlayerStats, Props, TeamStats } from "types/types";
 
-const COLUMN_WIDTH = 50;
-const NAME_COLUMN_WIDTH = 180;
+// ✅ rename to avoid conflict
+import { players as cbbPlayers } from "constants/cbbPlayers";
 
-const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
-  rosterStats,
-  playersDb,
-  teamId,
-  teamStats,
-}) => {
+interface Props {
+  espnID: number;
+  teamID: number;
+}
+
+const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
+  const [viewMode, setViewMode] = useState<"players" | "team">("players");
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-  const team = teamsById[teamId];
-  const teamPrimaryColor = team?.color ?? team.secondaryColor;
-  const teamSecondaryColor = team?.secondaryColor ?? team.color;
+  const router = useRouter();
 
-  const [viewMode, setViewMode] = useState<"Player Stats" | "Team Stats">(
-    "Player Stats"
-  );
+  /** ==========================
+   *   FETCH DATA
+   *  ========================== */
+  const {
+    data: teamStats,
+    loading: loadingTeam,
+    error: errorTeam,
+  } = useCBBTeamStats(String(espnID), String(teamID));
 
-  if (!rosterStats?.length && !teamStats) return null;
+  const {
+    data: rosterStats,
+    loading: loadingRoster,
+    error: errorRoster,
+  } = useCBBRosterStats(String(espnID));
 
-  const getPG = (val: number, gp: number) =>
-    gp ? (val / gp).toFixed(1) : "0.0";
+  const loading = viewMode === "team" ? loadingTeam : loadingRoster;
+  const error = viewMode === "team" ? errorTeam : errorRoster;
 
-  const playersMap = useMemo(() => {
-    const map = new Map<number, PlayerInfo>();
-    playersDb.forEach((p) => {
-      if (typeof p.player_id === "number") map.set(p.player_id, p);
-    });
-    return map;
-  }, [playersDb]);
+  /** ==========================
+   *   MERGE LOCAL + ESPN PLAYERS
+   * ========================== */
+  const mergedPlayers = useMemo(() => {
+    if (!rosterStats?.players) return [];
 
-  const mergedRoster = useMemo(() => {
-    return rosterStats
-      ?.map((stat) => {
-        const key = Number(stat.playerId);
-        let player = playersMap.get(key);
-
-        if (!player) {
-          player = playersDb.find(
-            (p) =>
-              p.first_name.toLowerCase() ===
-                stat.name.split(" ")[0].toLowerCase() &&
-              p.last_name.toLowerCase() ===
-                stat.name.split(" ").slice(1).join(" ").toLowerCase()
-          );
-        }
-
-        if (!player || stat.gamesPlayed === 0) return null;
+    return rosterStats.players
+      .filter((p: any) => p.espnId && p.firstName !== "Total")
+      .map((scraped: any) => {
+        const meta = cbbPlayers.find(
+          (x: any) => String(x.id) === String(scraped.espnId)
+        );
 
         return {
-          ...stat,
-          first_name: player.first_name,
-          last_name: player.last_name,
-          jersey_number: player.jersey_number,
-          headshot_url: player.headshot_url,
+          id: scraped.espnId,
+          // names
+          firstName: meta?.firstname ?? scraped.firstName,
+          lastName: meta?.lastname ?? scraped.lastName,
+          shortName:
+            meta?.shortName ?? `${scraped.firstName[0]}. ${scraped.lastName}`,
+          // details
+          jersey: meta?.jersey ?? scraped.jersey,
+          position: meta?.position ?? scraped.position,
+          height: meta?.height ?? null,
+          weight: meta?.weight ?? null,
+          experience: meta?.experience ?? null,
+
+          // stats (ESPN only)
+          stats: scraped.stats,
+          gamesPlayed: scraped.stats["GP"] ?? 0,
+
+          // avatar priority local > ESPN
+          avatar:
+            meta?.imageUrl ??
+            `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${scraped.espnId}.png`,
         };
-      })
-      .filter(Boolean) as (PlayerStats & PlayerInfo)[];
-  }, [rosterStats, playersDb, playersMap]);
+      });
+  }, [rosterStats]);
 
-  if (!mergedRoster?.length && !teamStats) return null;
+  if (loading) return <ActivityIndicator size="large" style={{ margin: 20 }} />;
 
-  const formatDisplayName = (first: string, last: string, jersey: string) => {
+  if (error)
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+
+  /** ==========================
+   *   LEADER CARDS
+   * ========================== */
+  const getStatValue = (stat: any) =>
+    stat != null && !isNaN(Number(stat)) ? Number(stat).toFixed(1) : "0.0";
+
+  const leaders = [
+    {
+      label: "Points",
+      key: "PTS",
+      player: [...mergedPlayers].sort(
+        (a, b) => Number(b.stats.PTS ?? 0) - Number(a.stats.PTS ?? 0)
+      )[0],
+    },
+    {
+      label: "Rebounds",
+      key: "REB",
+      player: [...mergedPlayers].sort(
+        (a, b) => Number(b.stats.REB ?? 0) - Number(a.stats.REB ?? 0)
+      )[0],
+    },
+    {
+      label: "Assists",
+      key: "AST",
+      player: [...mergedPlayers].sort(
+        (a, b) => Number(b.stats.AST ?? 0) - Number(a.stats.AST ?? 0)
+      )[0],
+    },
+    {
+      label: "Steals",
+      key: "STL",
+      player: [...mergedPlayers].sort(
+        (a, b) => Number(b.stats.STL ?? 0) - Number(a.stats.STL ?? 0)
+      )[0],
+    },
+    {
+      label: "Blocks",
+      key: "BLK",
+      player: [...mergedPlayers].sort(
+        (a, b) => Number(b.stats.BLK ?? 0) - Number(a.stats.BLK ?? 0)
+      )[0],
+    },
+  ].filter((l) => l.player);
+
+  const formatDisplayName = (
+    first: string,
+    last: string,
+    jersey: string | number
+  ) => {
     const firstInitial = first ? first[0].toUpperCase() : "";
     const lastName = last || "";
 
@@ -89,308 +155,229 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
       </Text>
     );
   };
-  const formatCardName = (first: string, last: string, jersey: string) => {
+
+  const formatCardName = (
+    first: string,
+    last: string,
+    jersey: string | number
+  ) => {
     const firstInitial = first ? first[0].toUpperCase() : "";
     const lastName = last || "";
+    const jerseyNum = jersey ? `#${jersey}` : "";
 
     return (
       <Text style={styles.cardName}>
-        {firstInitial}. {lastName} <Text style={styles.number}>#{jersey}</Text>
+        {firstInitial}. {lastName}{" "}
+        <Text style={styles.number}>{jerseyNum}</Text>
       </Text>
     );
   };
 
-  // Leader Cards
-  const statLeaders = [
-    {
-      label: "Points",
-      stat: "totalPoints",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalPoints / b.gamesPlayed - a.totalPoints / a.gamesPlayed
-      )[0],
-    },
-    {
-      label: "Rebounds",
-      stat: "totalRebounds",
-      player: [...mergedRoster].sort(
-        (a, b) =>
-          b.totalRebounds / b.gamesPlayed - a.totalRebounds / a.gamesPlayed
-      )[0],
-    },
-    {
-      label: "Assists",
-      stat: "totalAssists",
-      player: [...mergedRoster].sort(
-        (a, b) =>
-          b.totalAssists / b.gamesPlayed - a.totalAssists / a.gamesPlayed
-      )[0],
-    },
-    {
-      label: "Blocks",
-      stat: "totalBlocks",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalBlocks / b.gamesPlayed - a.totalBlocks / a.gamesPlayed
-      )[0],
-    },
-    {
-      label: "Steals",
-      stat: "totalSteals",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalSteals / b.gamesPlayed - a.totalSteals / a.gamesPlayed
-      )[0],
-    },
-  ];
-  const LeaderCard = ({
-    player,
-    statName,
-    label, // <-- add this,
-    index,
-    total,
-  }: {
-    player: PlayerStats & PlayerInfo;
-    statName: keyof PlayerStats;
-    label: string; // <-- add
+  const LeaderCard = ({ item, index, total }: any) => (
+    <View style={styles.cardWrapper}>
+      <View style={styles.cardContainer}>
+        <Text style={styles.cardLabel}>{item.label}</Text>
 
-    index: number;
-    total: number;
-  }) => {
-    const stat = player[statName] as number;
+        <TouchableOpacity
+          onPress={() =>
+            router.push(`/player/cbb/${item.player.id}?teamId=${teamID}`)
+          }
+        >
+          <View style={styles.statCard}>
+            <Image source={{ uri: item.player.avatar }} style={styles.avatar} />
 
-    return (
-      <View style={styles.cardWrapper}>
-        <View style={styles.cardContainer}>
-          <Text style={styles.cardLabel}>{label}</Text>
+            <View style={styles.nameValue}>
+              {formatCardName(
+                item.player.firstName,
+                item.player.lastName,
+                item.player.jersey
+              )}
 
-          <TouchableOpacity
-            onPress={() =>
-              router.push(`/player/${player.playerId}?teamId=${teamId}`)
-            }
-          >
-            <View style={styles.statCard}>
-              <Image
-                source={{
-                  uri: player.headshot_url ?? "https://via.placeholder.com/60",
-                }}
-                style={styles.avatar}
-              />
-              <View style={styles.nameValue}>
-                <Text style={styles.cardName}>
-                  {formatCardName(
-                    player.first_name,
-                    player.last_name,
-                    player.jersey_number
-                  )}
-                </Text>
-                <Text style={styles.cardValue}>
-                  {getPG(player[statName] as number, player.gamesPlayed)}
-                </Text>
-              </View>
+              <Text style={styles.cardValue}>
+                {getStatValue(item.player.stats[item.key])}
+              </Text>
             </View>
-          </TouchableOpacity>
-        </View>
-
-        {index < total - 1 && <View style={styles.divider} />}
-      </View>
-    );
-  };
-
-  // Render Team Stats in a CFB-like table
-  const renderTeamStats = () => {
-    if (!teamStats) return null;
-
-    const displayStats = [
-      { label: "Points Per Game", value: teamStats.pointsPerGame },
-      { label: "Rebounds Per Game", value: teamStats.reboundsPerGame },
-      { label: "Assists Per Game", value: teamStats.assistsPerGame },
-      { label: "Steals Per Game", value: teamStats.stealsPerGame },
-      { label: "Blocks Per Game", value: teamStats.blocksPerGame },
-      { label: "Field Goal %", value: teamStats.fgPercent + "%" },
-      { label: "3 Point %", value: teamStats.tpPercent + "%" },
-      { label: "Free Throw %", value: teamStats.ftPercent + "%" },
-      { label: "Turnovers", value: teamStats.turnoversPerGame },
-      { label: "Personal Fouls", value: teamStats.foulsPerGame },
-    ];
-
-    return (
-      <View style={styles.table}>
-        {displayStats.map((item, idx) => (
-          <View
-            key={item.label}
-            style={[
-              styles.teamTableRow,
-              idx % 2 === 1 && {
-                backgroundColor: isDark
-                  ? Colors.dark.itemBackground
-                  : Colors.light.itemBackground,
-              },
-            ]}
-          >
-            <Text style={[styles.tableCell, styles.headerText]}>
-              {item.label}
-            </Text>
-            <Text style={[styles.tableCell, styles.statValue]}>
-              {item.value}
-            </Text>
           </View>
-        ))}
+        </TouchableOpacity>
       </View>
-    );
+
+      {index < total - 1 && <View style={styles.divider} />}
+    </View>
+  );
+
+  /** ==========================
+   *   TEAM STATS
+   * ========================== */
+  const renderTeamStats = () => {
+    if (!teamStats?.stats) return null;
+
+    return Object.values(teamStats.stats).map((cat: any) => (
+      <View key={cat.name} style={{ marginBottom: 20 }}>
+        <Text style={styles.categoryTitle}>{cat.name}</Text>
+
+        <View style={styles.table}>
+          {cat.stats.map((s: any, idx: number) => (
+            <View
+              key={idx}
+              style={[
+                styles.teamTableRow,
+                idx % 2 === 1 && {
+                  backgroundColor: isDark
+                    ? Colors.dark.itemBackground
+                    : Colors.light.itemBackground,
+                },
+                idx === cat.stats.length - 1 && { borderBottomWidth: 0 },
+              ]}
+            >
+              <Text style={[styles.tableCell, styles.headerText]}>
+                {s.displayName}
+              </Text>
+              <Text style={[styles.tableCell, styles.statValue]}>
+                {s.displayValue ?? s.value ?? "-"}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    ));
   };
+
+  /** ==========================
+   *   PLAYER TABLE
+   * ========================== */
+  const STAT_HEADERS = [
+    "GP",
+    "PTS",
+    "REB",
+    "AST",
+    "STL",
+    "BLK",
+    "FG%",
+    "3P%",
+    "FT%",
+    "TO",
+  ];
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>{viewMode}</HeadingTwo>
+      <HeadingTwo>
+        {viewMode === "team" ? "Team Stats" : "Player Stats"}
+      </HeadingTwo>
 
       <Dropdown
         options={[
-          { label: "Player Stats", value: "Player Stats" },
-          { label: "Team Stats", value: "Team Stats" },
+          { label: "Player Stats", value: "players" },
+          { label: "Team Stats", value: "team" },
         ]}
         selectedValue={viewMode}
-        onSelect={(val: string) =>
-          setViewMode(val as "Player Stats" | "Team Stats")
-        }
+        onSelect={(v) => setViewMode(v as "team" | "players")}
         isDark={isDark}
         style={{ paddingBottom: 12 }}
       />
 
       <ScrollView style={styles.scrollContainer}>
-        {viewMode === "Player Stats" ? (
+        {viewMode === "players" ? (
           <>
+            {/* Leader Cards */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               style={{ marginBottom: 16 }}
-              snapToInterval={276} // width of card (260) + margin (16)
+              snapToInterval={276}
               decelerationRate="fast"
-              snapToAlignment="start"
             >
-              {statLeaders
-                .filter((item) => item.player) // <-- ignore undefined
-                .map((item, idx) => (
-                  <LeaderCard
-                    key={item.stat}
-                    player={item.player!} // non-null assertion
-                    label={item.label}
-                    statName={item.stat as keyof PlayerStats}
-                    index={idx}
-                    total={statLeaders.length}
-                  />
-                ))}
+              {leaders.map((item, i) => (
+                <LeaderCard
+                  key={item.key}
+                  item={item}
+                  index={i}
+                  total={leaders.length}
+                />
+              ))}
             </ScrollView>
 
             {/* Player Table */}
             <View style={{ flexDirection: "row" }}>
-              {/* Fixed name column */}
+              {/* Fixed Name Column */}
               <View style={styles.fixedColumnContainer}>
-                {/* Header for name column */}
-            <View
-  style={[
-    styles.tableRow,
-    {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-  ]}
->
-  <Text
-    style={[
-      styles.tableCell,
-      styles.nameHeaderText,
-      { width: 120 },
-    ]}
-  >
-    Player
-  </Text>
-</View>
+                <View
+                  style={[
+                    styles.tableRow,
+                    {
+                      backgroundColor: isDark
+                        ? Colors.dark.itemBackground
+                        : Colors.light.itemBackground,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      styles.nameHeaderText,
+                      { width: 140 },
+                    ]}
+                  >
+                    Player
+                  </Text>
+                </View>
 
-
-                {/* Player names */}
-             {mergedRoster.map((p, idx) => (
-  <View
-    key={p.playerId} // ✅ move key here
-    style={[
-      styles.tableRow,
-      idx % 2 === 1 && {
-        backgroundColor: isDark
-          ? Colors.dark.itemBackground
-          : Colors.light.itemBackground,
-      },
-    ]}
-  >
-    <TouchableOpacity
-      onPress={() =>
-        router.push(`/player/${p.playerId}?teamId=${teamId}`)
-      }
-    >
-      <Text style={[styles.tableCell, { width: 140 }]}>
-        {formatDisplayName(
-          p.first_name,
-          p.last_name,
-          p.jersey_number
-        )}
-      </Text>
-    </TouchableOpacity>
-  </View>
-))}
-
+                {mergedPlayers.map((p: any, idx: number) => (
+                  <View
+                    key={p.id}
+                    style={[
+                      styles.tableRow,
+                      idx % 2 === 1 && {
+                        backgroundColor: isDark
+                          ? Colors.dark.itemBackground
+                          : Colors.light.itemBackground,
+                      },
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={() =>
+                        router.push(`/player/cbb/${p.id}?teamId=${teamID}`)
+                      }
+                    >
+                      <Text style={[styles.tableCell, { width: 140 }]}>
+                        {formatDisplayName(p.firstName, p.lastName, p.jersey)}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
 
-              {/* Scrollable stats */}
+              {/* Scrollable Stat Columns */}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View>
-                  {/* Header for stats columns */}
-               <View
-  style={[
-    styles.tableRow,
-    {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-  ]}
->
-                    {[
-                      "GP",
-                      "MIN",
-                      "PTS",
-                      "FGM",
-                      "FGA",
-                      "FG%",
-                      "3PM",
-                      "3PA",
-                      "3P%",
-                      "FTM",
-                      "FTA",
-                      "FT%",
-                      "OREB",
-                      "DREB",
-                      "REB",
-                      "AST",
-                      "STL",
-                      "BLK",
-                      "TO",
-                      "PF",
-                      "+/-",
-                    ].map((header, i) => (
+                  {/* Header Row */}
+                  <View
+                    style={[
+                      styles.tableRow,
+                      {
+                        backgroundColor: isDark
+                          ? Colors.dark.itemBackground
+                          : Colors.light.itemBackground,
+                      },
+                    ]}
+                  >
+                    {STAT_HEADERS.map((h) => (
                       <Text
-                        key={i}
+                        key={h}
                         style={[
                           styles.tableCell,
                           styles.headerText,
                           { width: 80 },
                         ]}
                       >
-                        {header}
+                        {h}
                       </Text>
                     ))}
                   </View>
 
-                  {/* Stats rows */}
-                  {mergedRoster.map((p, idx) => (
+                  {/* Stat Rows */}
+                  {mergedPlayers.map((p: any, idx: number) => (
                     <View
-                      key={p.playerId}
+                      key={p.id}
                       style={[
                         styles.tableRow,
                         idx % 2 === 1 && {
@@ -400,48 +387,25 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
                         },
                       ]}
                     >
-                      {[
-                        p.gamesPlayed,
-                        (p.minutesPlayed / p.gamesPlayed).toFixed(1),
-                        getPG(p.totalPoints, p.gamesPlayed),
-                        getPG(p.totalFGM, p.gamesPlayed),
-                        getPG(p.totalFGA, p.gamesPlayed),
-                        p.totalFGA
-                          ? ((p.totalFGM / p.totalFGA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.total3PM, p.gamesPlayed),
-                        getPG(p.total3PA, p.gamesPlayed),
-                        p.total3PA
-                          ? ((p.total3PM / p.total3PA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.totalFTM, p.gamesPlayed),
-                        getPG(p.totalFTA, p.gamesPlayed),
-                        p.totalFTA
-                          ? ((p.totalFTM / p.totalFTA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.totalOffReb, p.gamesPlayed),
-                        getPG(p.totalDefReb, p.gamesPlayed),
-                        getPG(p.totalRebounds, p.gamesPlayed),
-                        getPG(p.totalAssists, p.gamesPlayed),
-                        getPG(p.totalSteals, p.gamesPlayed),
-                        getPG(p.totalBlocks, p.gamesPlayed),
-                        getPG(p.totalTurnovers, p.gamesPlayed),
-                        getPG(p.totalFouls, p.gamesPlayed),
-                        p.plusMinus
-                          ? (p.plusMinus / p.gamesPlayed).toFixed(1)
-                          : "0.0",
-                      ].map((val, i) => (
-                        <Text
-                          key={i}
-                          style={[
-                            styles.tableCell,
-                            styles.statValue,
-                            { width: 80 },
-                          ]}
-                        >
-                          {val}
-                        </Text>
-                      ))}
+                      {STAT_HEADERS.map((h) => {
+                        let val = p.stats[h] ?? "-";
+
+                        if (["FG%", "3P%", "FT%"].includes(h) && val !== "-")
+                          val = `${val}%`;
+
+                        return (
+                          <Text
+                            key={h}
+                            style={[
+                              styles.tableCell,
+                              styles.statValue,
+                              { width: 80 },
+                            ]}
+                          >
+                            {val}
+                          </Text>
+                        );
+                      })}
                     </View>
                   ))}
                 </View>
@@ -455,6 +419,10 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
     </View>
   );
 };
+
+/* -------------------------------------------- */
+/*                   STYLES                     */
+/* -------------------------------------------- */
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -475,7 +443,6 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "flex-start",
       alignItems: "center",
       minHeight: 40,
-
     },
     teamTableRow: {
       flexDirection: "row",
@@ -561,6 +528,19 @@ const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },
+    categoryTitle: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 20,
+      marginBottom: 4,
+      color: isDark ? Colors.white : Colors.black,
+      marginLeft: 4,
+    },
+    center: { marginTop: 20, alignItems: "center" },
+    errorText: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 16,
+      color: "red",
+    },
   });
 
-export default RosterStats;
+export default CBBRosterStats;

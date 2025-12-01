@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import {
   getTeamInfo as getCFBTeamInfo,
@@ -60,16 +61,16 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
 
   const homeTeam = getTeamInfo(homeTeamId) ?? {
     code: "HOM",
-    color: "#888",
-    secondaryColor: "#777",
+    color: Colors.lightGray,
+    secondaryColor: Colors.light.itemBackground,
     name: "Home",
     id: 0,
     espnID: 0,
   };
   const awayTeam = getTeamInfo(awayTeamId) ?? {
     code: "AWY",
-    color: "#444",
-    secondaryColor: "#555",
+    color: Colors.darkGray,
+    secondaryColor: Colors.dark.itemBackground,
     name: "Away",
     id: 0,
     espnID: 0,
@@ -111,7 +112,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     return yardLine != null ? Math.min(100, Math.max(0, Number(yardLine))) : 50;
   };
 
- 
   // Animate ball marker + detect scores
   useEffect(() => {
     if (typeof lastPlay !== "object") return;
@@ -221,7 +221,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
         <View
           style={[
             styles.endzone,
-            { backgroundColor: awayColor, borderRightColor: "#fff" },
+            { backgroundColor: awayColor, borderRightColor: Colors.white },
             highlightEndzone === "away" && styles.endzoneHighlight,
           ]}
         >
@@ -242,7 +242,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
             />
           )}
           <Image
-            source={getLogo(awayTeam.name, true)}
+            source={getLogo(awayTeam.name, isDark)}
             style={[styles.endzoneLogo, { transform: [{ rotate: "-90deg" }] }]}
           />
         </View>
@@ -262,11 +262,11 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
                   backgroundColor:
                     i % 2 === 0
                       ? isDark
-                        ? "#2a2a2a"
-                        : "#e6e6e6"
+                        ? Colors.dark.itemBackground
+                        : Colors.light.itemBackground
                       : isDark
-                      ? "#1d1d1d"
-                      : "#fff",
+                      ? Colors.black
+                      : Colors.white,
                 },
               ]}
             />
@@ -313,7 +313,9 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
             style={[
               styles.marker,
               {
-                backgroundColor: "#ff0000",
+                backgroundColor: isDark
+                  ? Colors.dark.lightRed
+                  : Colors.light.red,
                 left: playAnim.interpolate({
                   inputRange: [0, 100],
                   outputRange: [fieldWidth, 0],
@@ -352,14 +354,14 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
                       scoreAnimation.team === "home"
                         ? homeTeam.name
                         : awayTeam.name,
-                      true
+                      isDark
                     )}
                     style={styles.scoreLogo}
                   />
                   <Text
                     style={[
                       styles.scoreText,
-                      { color: isDark ? "#fff" : "#1d1d1d" },
+                      { color: isDark ? Colors.white : "#1d1d1d" },
                     ]}
                   >
                     {scoreAnimation.text}
@@ -374,7 +376,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
         <View
           style={[
             styles.endzone,
-            { backgroundColor: homeColor, borderLeftColor: "#fff" },
+            { backgroundColor: homeColor, borderLeftColor: Colors.white },
             highlightEndzone === "home" && styles.endzoneHighlight,
           ]}
         >
@@ -414,7 +416,7 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       width: "100%",
       borderWidth: 2,
-      borderColor: isDark ? "#fff" : "#444",
+      borderColor: isDark ? Colors.white : "#444",
       borderRadius: 4,
     },
     endzone: {
@@ -451,7 +453,7 @@ const getStyles = (isDark: boolean) =>
     field: {
       flex: 1,
       height: 200,
-      backgroundColor: isDark ? "#1d1d1d" : "#fff",
+      backgroundColor: isDark ? "#1d1d1d" : Colors.white,
       position: "relative",
     },
     marker: {
@@ -462,12 +464,12 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 2,
       zIndex: 1,
     },
-   
+
     yardLine: {
       position: "absolute",
       top: 0,
       height: "100%",
-      backgroundColor: isDark ? "#fff" : "#888",
+      backgroundColor: isDark ? Colors.white : "#888",
       borderRadius: 1,
       zIndex: 1,
     },
@@ -476,7 +478,7 @@ const getStyles = (isDark: boolean) =>
       top: -22,
       fontSize: 12,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.white : "#1d1d1d",
       textAlign: "center",
       zIndex: 3,
       width: 20,

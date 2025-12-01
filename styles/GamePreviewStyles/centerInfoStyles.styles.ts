@@ -2,7 +2,7 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean, lighter: boolean) =>
+export const getStyles = 
   StyleSheet.create({
     container: {
       justifyContent: "center",

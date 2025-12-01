@@ -116,7 +116,7 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
     },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 10,
+      fontSize: 8,
       color: isDark
         ? isChampionship
           ? Colors.white

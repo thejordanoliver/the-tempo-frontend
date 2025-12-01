@@ -85,10 +85,7 @@ export function NFLCenterInfo({
     (period && period.toUpperCase().includes("OT")) ||
     (status && ["AOT"].includes(status as string));
 
-  const styles = getStyles(isDark, lighter);
-
-  const timeColor = lighter ? "#fff" : isDark ? "#333" : "#888";
-  const broadcastColor = lighter ? "#fff" : isDark ? "#333" : "#888";
+  const styles = getStyles;
 
   return (
     <View style={styles.container}>
@@ -138,11 +135,7 @@ export function NFLCenterInfo({
         status === "Postponed" ||
         status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
 
-      {broadcastText && (
-        <Text style={[styles.broadcasts, { color: broadcastColor }]}>
-          {broadcastText}
-        </Text>
-      )}
+      {broadcastText && <Text style={styles.broadcast}>{broadcastText}</Text>}
     </View>
   );
 }

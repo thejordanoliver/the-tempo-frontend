@@ -339,6 +339,8 @@ export default function GameDetailsScreen() {
             awayCode={awayTeamData.code!}
             gameId={`${homeTeamId}-${awayTeamId}`}
           />
+
+
           <WinPredictionVote
             gameId={`${homeTeamId}-${awayTeamId}`}
             awayTeam={{
@@ -358,6 +360,8 @@ export default function GameDetailsScreen() {
               color: homeTeamData.color,
             }}
           />
+
+          
           {shouldShowGameDetails && <LastPlay lastPlay={liveScore?.lastPlay} />}
 
           {shouldShowGameDetails && (

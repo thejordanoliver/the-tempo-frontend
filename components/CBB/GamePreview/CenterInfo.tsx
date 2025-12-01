@@ -46,7 +46,7 @@ export default function CenterInfo({
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
-  const styles = getStyles(isDark, lighter);
+  const styles = getStyles;
 
   const getQuarterLabel = (
     currentPeriod: number | string,

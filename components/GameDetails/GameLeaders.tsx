@@ -39,31 +39,46 @@ export default function GameLeaders({
   const styles = getStyles(isDark, lighter);
 
   // Memoized top players
-  const topPlayers = useMemo(() => {
-    if (!data) return [];
+const CATEGORY_FIELD_MAP = {
+  points: "points",
+  rebounds: "totReb",
+  assists: "assists",
+  steals: "steals",
+} as const;
 
-    const getTopPlayerPerTeam = (category: Category) => {
-      const validPlayers = data.filter((p) => p.player && p[category] !== null);
-      const teams = [...new Set(validPlayers.map((p) => p.team.id))];
-      return teams.map((teamId) => {
-        const playersFromTeam = validPlayers.filter(
-          (p) => p.team.id === teamId
-        );
-        return playersFromTeam.sort((a, b) => b[category]! - a[category]!)[0];
-      });
-    };
+const topPlayers = useMemo(() => {
+  if (!data) return [];
 
-    const players = getTopPlayerPerTeam(selectedCategory);
+  const getTopPlayerPerTeam = (category: Category) => {
+    const field = CATEGORY_FIELD_MAP[category];
 
-    // Sort so away team players first, then home team players
-    return players.sort((a, b) => {
-      if (a.team.id === awayTeamId) return -1;
-      if (b.team.id === awayTeamId) return 1;
-      if (a.team.id === homeTeamId) return -1;
-      if (b.team.id === homeTeamId) return 1;
-      return 0;
+    const validPlayers = data.filter(
+      (p) => p.player && typeof p[field] === "number"
+    );
+
+    const teams = [...new Set(validPlayers.map((p) => p.team.id))];
+
+    return teams.map((teamId) => {
+      const playersFromTeam = validPlayers.filter(
+        (p) => p.team.id === teamId
+      );
+
+      return playersFromTeam.sort(
+        (a, b) => (b[field] ?? 0) - (a[field] ?? 0)
+      )[0];
     });
-  }, [data, selectedCategory, awayTeamId, homeTeamId]);
+  };
+
+  const players = getTopPlayerPerTeam(selectedCategory);
+
+  return players.sort((a, b) => {
+    if (a.team.id === awayTeamId) return -1;
+    if (b.team.id === awayTeamId) return 1;
+    if (a.team.id === homeTeamId) return -1;
+    if (b.team.id === homeTeamId) return 1;
+    return 0;
+  });
+}, [data, selectedCategory, awayTeamId, homeTeamId]);
 
   // Add this check:
   if (!topPlayers.length) return null;

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
+import CFBGameHeader from "components/CFB/GameDetails/CFBGameHeader";
 import CFBGameLeaders from "components/CFB/GameDetails/CFBGameLeaders";
-import CFBGameHeader from "components/CFB/GameDetails/CFBGameTeamsHeader";
 import CFBGameTeamStats from "components/CFB/GameDetails/FootballGameTeamStats";
 import LastPlay from "components/CFB/GameDetails/LastPlay";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -19,7 +19,12 @@ import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
 import { Colors } from "constants/Colors";
-import { getTeamInfo, neutralStadiums, teams } from "constants/teamsCFB";
+import {
+  getRivalryHeadline,
+  getTeamInfo,
+  neutralStadiums,
+  teams,
+} from "constants/teamsCFB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
@@ -278,6 +283,17 @@ export default function CFBGameDetailsScreen() {
     "cfb"
   );
 
+  // Determine fallback rivalry name
+  const rivalryHeadline = useMemo(() => {
+    return getRivalryHeadline(Number(homeEspnId), Number(awayEspnId));
+  }, [homeEspnId, awayEspnId]);
+
+  // Choose headline → rivalry → empty string
+  const headLine =
+    headlineText && headlineText.trim().length > 0
+      ? headlineText
+      : rivalryHeadline ?? "";
+
   const formatPeriod = (raw: string | number | undefined | null) => {
     if (!raw) return "";
 
@@ -401,7 +417,7 @@ export default function CFBGameDetailsScreen() {
         stickyHeaderIndices={[0]}
       >
         <CFBGameHeader
-          headlineText={headlineText}
+          headlineText={headLine}
           awayTeam={awayTeam}
           homeTeam={homeTeam}
           // ✅ Use live score if available, fallback to parsed score
@@ -511,10 +527,11 @@ export default function CFBGameDetailsScreen() {
             <TeamDrives
               previousDrives={previousDrives ?? []}
               currentDrives={currentDrives ?? []}
-              awayTeamAbbr={awayTeam?.code}
-              homeTeamAbbr={homeTeam?.code}
+              homeTeamId={Number(homeEspnId)}
+              awayTeamId={Number(awayEspnId)}
               league="CFB"
             />
+
             <TeamScoringSummary
               scoringPlays={scoringPlays ?? []}
               awayTeamAbbr={awayTeam?.code}

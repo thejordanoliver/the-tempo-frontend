@@ -1,7 +1,7 @@
 import PlayerStatTableSkeleton from "components/Player/PlayerStatsTableSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { usePlayerStatsBySeason } from "hooks/usePlayerStatsAllSeasons";
+import { useCBBPlayerStats } from "hooks/CBBHooks/useCBBPlayerStats";
 import { useMemo } from "react";
 import {
   ScrollView,
@@ -13,18 +13,14 @@ import {
 
 interface Props {
   playerId: number;
-  seasons: string[];
 }
 
-const safeDivide = (num: number, denom: number) =>
-  denom === 0 ? "0.0" : (num / denom).toFixed(1);
+const safe = (v: number | null) =>
+  v == null || isNaN(v) ? "0.0" : Number(v).toFixed(1);
 
-const percentage = (str: string | number) => `${str}%`;
-
-export default function PlayerStatTable({ playerId, seasons }: Props) {
-  const { data, loading, error } = usePlayerStatsBySeason(playerId, seasons);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+export default function PlayerStatTable({ playerId }: Props) {
+  const { data, loading, error } = useCBBPlayerStats(playerId);
+  const isDark = useColorScheme() === "dark";
   const styles = statsTableStyles(isDark);
 
   const dynamicStyles = useMemo(
@@ -48,85 +44,62 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
     [isDark]
   );
 
-  // Find best season (highest PPG)
-  const bestSeason = useMemo(() => {
-    let maxPPG = -Infinity;
-    let best: string | null = null;
-    data.forEach((season) => {
-      const games = season.games.length;
-      const totalPoints = season.games.reduce(
-        (sum, g) => sum + (g.points || 0),
-        0
-      );
-      const ppg = games === 0 ? 0 : totalPoints / games;
-      if (ppg > maxPPG) {
-        maxPPG = ppg;
-        best = season.season;
-      }
-    });
-    return best;
-  }, [data]);
-
+  // ------------------------------
+  //    LOADING / ERROR STATES
+  // ------------------------------
   if (loading) return <PlayerStatTableSkeleton />;
   if (error)
     return (
       <Text style={[styles.cell, styles.errorText]}>Error loading stats</Text>
     );
-  if (!data.length)
+  if (!data || !data.seasons?.length)
     return <Text style={[styles.cell]}>No stats available</Text>;
 
-  // Aggregate career totals
-  const careerTotals = data.reduce(
-    (acc, seasonData) => {
-      seasonData.games.forEach((g) => {
-        const parseNum = (val: string | number | undefined) =>
-          parseFloat(val as any) || 0;
-        acc.games += 1;
-        acc.min += parseNum(g.min);
-        acc.fgm += g.fgm || 0;
-        acc.fga += g.fga || 0;
-        acc.fgp += parseNum(g.fgp);
-        acc.tpm += g.tpm || 0;
-        acc.tpa += g.tpa || 0;
-        acc.tpp += parseNum(g.tpp);
-        acc.ftm += g.ftm || 0;
-        acc.fta += g.fta || 0;
-        acc.ftp += parseNum(g.ftp);
-        acc.offReb += g.offReb || 0;
-        acc.defReb += g.defReb || 0;
-        acc.totReb += g.totReb || 0;
-        acc.ast += g.assists || 0;
-        acc.stl += g.steals || 0;
-        acc.blk += g.blocks || 0;
-        acc.to += g.turnovers || 0;
-        acc.pf += g.pFouls || 0;
-        acc.plusMinus += parseNum(g.plusMinus);
-        acc.pts += g.points || 0;
-      });
+  const seasons = data.seasons;
+
+  // ------------------------------
+  //     BEST SEASON BY PPG
+  // ------------------------------
+  const bestSeason = useMemo(() => {
+    let maxPPG = -Infinity;
+    let best: string | null = null;
+
+    for (const s of seasons) {
+      const ppg = s.pts ?? 0;
+      if (ppg > maxPPG) {
+        maxPPG = ppg;
+        best = s.season;
+      }
+    }
+    return best;
+  }, [seasons]);
+
+  // ------------------------------
+  //     CAREER TOTALS
+  // ------------------------------
+  const career = seasons.reduce(
+    (acc, s) => {
+      acc.games += s.gp ?? 0;
+      acc.min += s.min ?? 0;
+      acc.pts += s.pts ?? 0;
+      acc.reb += s.reb ?? 0;
+      acc.ast += s.ast ?? 0;
+      acc.blk += s.blk ?? 0;
+      acc.stl += s.stl ?? 0;
+      acc.pf += s.pf ?? 0;
+      acc.to += s.to ?? 0;
       return acc;
     },
     {
       games: 0,
       min: 0,
-      fgm: 0,
-      fga: 0,
-      fgp: 0,
-      tpm: 0,
-      tpa: 0,
-      tpp: 0,
-      ftm: 0,
-      fta: 0,
-      ftp: 0,
-      offReb: 0,
-      defReb: 0,
-      totReb: 0,
-      ast: 0,
-      stl: 0,
-      blk: 0,
-      to: 0,
-      pf: 0,
-      plusMinus: 0,
       pts: 0,
+      reb: 0,
+      ast: 0,
+      blk: 0,
+      stl: 0,
+      pf: 0,
+      to: 0,
     }
   );
 
@@ -135,26 +108,20 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
     "GP",
     "PTS",
     "MIN",
-    "FGM",
-    "FGA",
-    "FG%",
-    "3PM",
-    "3PA",
-    "3P%",
-    "FTM",
-    "FTA",
-    "FT%",
-    "OREB",
-    "DREB",
     "REB",
     "AST",
     "STL",
     "BLK",
+    "FG%",
+    "3P%",
+    "FT%",
     "TO",
     "PF",
-    "+/-",
   ];
 
+  // ------------------------------
+  //         UI RENDER
+  // ------------------------------
   return (
     <>
       <View
@@ -164,25 +131,23 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
           borderBottomLeftRadius: 8,
         }}
       >
-        {/* Fixed Season Column */}
+        {/* LEFT FIXED COLUMN */}
         <View
           style={{
             borderTopLeftRadius: 8,
             borderBottomLeftRadius: 8,
-            overflow: "hidden", // 👈 needed for visible radius
+            overflow: "hidden",
           }}
         >
-          {/* Header */}
           <View style={[styles.row, styles.headerRow, styles.seasonCell]}>
             <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
               Season
             </Text>
           </View>
 
-          {/* Season Rows */}
-          {data.map((seasonData, index) => {
+          {seasons.map((s, i) => {
             const highlightStyle =
-              seasonData.season === bestSeason
+              s.season === bestSeason
                 ? isDark
                   ? dynamicStyles.highlightDark
                   : dynamicStyles.highlight
@@ -190,25 +155,25 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
 
             return (
               <View
-                key={seasonData.season}
+                key={s.season}
                 style={[
                   styles.seasonCell,
-                  index % 2 === 1 && dynamicStyles.rowOdd,
+                  i % 2 === 1 && dynamicStyles.rowOdd,
                   highlightStyle,
                 ]}
               >
-                <Text style={[styles.seasons]}>{seasonData.season}</Text>
+                <Text style={[styles.seasons]}>{s.season}</Text>
               </View>
             );
           })}
 
-          {/* Career Label Row */}
+          {/* Career Label */}
           <View style={[styles.seasonCell, dynamicStyles.careerRow]}>
             <Text style={[styles.cell, styles.headerCell]}>Career</Text>
           </View>
         </View>
 
-        {/* Scrollable Stats Table */}
+        {/* STATS SCROLLABLE SECTION */}
         <ScrollView
           horizontal
           style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}
@@ -219,7 +184,7 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
           }}
         >
           <View style={styles.container}>
-            {/* Header Row */}
+            {/* Header */}
             <View style={[styles.row, styles.headerRow]}>
               {statLabels.slice(1).map((label) => (
                 <Text key={label} style={[styles.cell, styles.headerCell]}>
@@ -228,61 +193,10 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
               ))}
             </View>
 
-            {/* Season Rows */}
-            {data.map((seasonData, index) => {
-              const totalGames = seasonData.games.length;
-              const totals = seasonData.games.reduce(
-                (acc, g) => {
-                  const parseNum = (val: string | number | undefined) =>
-                    parseFloat(val as any) || 0;
-                  acc.min += parseNum(g.min);
-                  acc.fgm += g.fgm || 0;
-                  acc.fga += g.fga || 0;
-                  acc.fgp += parseNum(g.fgp);
-                  acc.tpm += g.tpm || 0;
-                  acc.tpa += g.tpa || 0;
-                  acc.tpp += parseNum(g.tpp);
-                  acc.ftm += g.ftm || 0;
-                  acc.fta += g.fta || 0;
-                  acc.ftp += parseNum(g.ftp);
-                  acc.offReb += g.offReb || 0;
-                  acc.defReb += g.defReb || 0;
-                  acc.totReb += g.totReb || 0;
-                  acc.ast += g.assists || 0;
-                  acc.stl += g.steals || 0;
-                  acc.blk += g.blocks || 0;
-                  acc.to += g.turnovers || 0;
-                  acc.pf += g.pFouls || 0;
-                  acc.plusMinus += parseNum(g.plusMinus);
-                  acc.pts += g.points || 0;
-                  return acc;
-                },
-                {
-                  min: 0,
-                  fgm: 0,
-                  fga: 0,
-                  fgp: 0,
-                  tpm: 0,
-                  tpa: 0,
-                  tpp: 0,
-                  ftm: 0,
-                  fta: 0,
-                  ftp: 0,
-                  offReb: 0,
-                  defReb: 0,
-                  totReb: 0,
-                  ast: 0,
-                  stl: 0,
-                  blk: 0,
-                  to: 0,
-                  pf: 0,
-                  plusMinus: 0,
-                  pts: 0,
-                }
-              );
-
+            {/* SEASON ROWS */}
+            {seasons.map((s, i) => {
               const highlightStyle =
-                seasonData.season === bestSeason
+                s.season === bestSeason
                   ? isDark
                     ? dynamicStyles.highlightDark
                     : dynamicStyles.highlight
@@ -290,149 +204,67 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
 
               return (
                 <View
-                  key={seasonData.season}
+                  key={s.season}
                   style={[
                     styles.row,
-                    index % 2 === 1 && dynamicStyles.rowOdd,
+                    i % 2 === 1 && dynamicStyles.rowOdd,
                     highlightStyle,
                   ]}
                 >
-                  <Text style={[styles.cell]}>{totalGames}</Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.pts, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.min, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fgm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fga, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.fgp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.tpm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.tpa, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.tpp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.ftm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fta, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.ftp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.offReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.defReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.totReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.ast, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.stl, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.blk, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.to, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.pf, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.plusMinus, totalGames)}
-                  </Text>
+                  <Text style={styles.cell}>{s.gp ?? 0}</Text>
+                  <Text style={styles.cell}>{safe(s.pts)}</Text>
+                  <Text style={styles.cell}>{safe(s.min)}</Text>
+                  <Text style={styles.cell}>{safe(s.reb)}</Text>
+                  <Text style={styles.cell}>{safe(s.ast)}</Text>
+                  <Text style={styles.cell}>{safe(s.stl)}</Text>
+                  <Text style={styles.cell}>{safe(s.blk)}</Text>
+                  <Text style={styles.cell}>{safe(s.fgPct)}</Text>
+                  <Text style={styles.cell}>{safe(s.threePct)}</Text>
+                  <Text style={styles.cell}>{safe(s.ftPct)}</Text>
+                  <Text style={styles.cell}>{safe(s.to)}</Text>
+                  <Text style={styles.cell}>{safe(s.pf)}</Text>
                 </View>
               );
             })}
 
-            {/* Career Row */}
+            {/* CAREER ROW */}
             <View style={[styles.row, dynamicStyles.careerRow]}>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.games}
+                {career.games}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.pts}
+                {career.pts.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.min.toFixed(1)}
+                {career.min.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fgm}
+                {career.reb.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fga}
+                {career.ast.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.fgp / careerTotals.games).toFixed(1))}
+                {career.stl.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.tpm}
+                {career.blk.toFixed(1)}
+              </Text>
+              <Text style={[styles.cell, styles.headerCell]}>—</Text>
+              <Text style={[styles.cell, styles.headerCell]}>—</Text>
+              <Text style={[styles.cell, styles.headerCell]}>—</Text>
+              <Text style={[styles.cell, styles.headerCell]}>
+                {career.to.toFixed(1)}
               </Text>
               <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.tpa}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.tpp / careerTotals.games).toFixed(1))}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.ftm}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fta}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.ftp / careerTotals.games).toFixed(1))}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.offReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.defReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.totReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.ast}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.stl}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.blk}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.to}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.pf}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.plusMinus.toFixed(1)}
+                {career.pf.toFixed(1)}
               </Text>
             </View>
           </View>
         </ScrollView>
       </View>
 
-      {/* Legend */}
+      {/* LEGEND */}
       <View
         style={[styles.legendContainer, isDark && styles.legendContainerDark]}
       >
@@ -478,6 +310,11 @@ const statsTableStyles = (isDark: boolean) =>
       alignItems: "center",
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderBottomWidth: 1,
+    },
+    careerCell: {
+      minWidth: 60,
+      flex: 1,
+      paddingHorizontal: 4,
     },
     cell: {
       minWidth: 60,

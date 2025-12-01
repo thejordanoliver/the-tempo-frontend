@@ -32,6 +32,17 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
+
+  // --- Date ---
+  const gameDate = game?.timestamp
+    ? new Date(game.timestamp * 1000)
+    : game?.date
+    ? new Date(game.date)
+    : null; // Championship: April 7
+  const isChampionship =
+    gameDate?.getMonth() === 3 && gameDate?.getDate() === 7;
+
+  const styles = gamePreviewModalStyles(isChampionship);
   if (!game) return null;
 
   const home = teams.find((t) => String(t.id) === String(game.teams.home?.id));
@@ -70,13 +81,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
   const isFinal = game?.status?.long === "Game Finished";
   const isCanceled = game?.status?.long === "Canceled";
 
-  // --- Date ---
-  const gameDate = game?.timestamp
-    ? new Date(game.timestamp * 1000)
-    : game?.date
-    ? new Date(game.date)
-    : null;
-
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : "";
@@ -105,10 +109,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     gameDate?.getMonth() === 3 &&
     gameDate?.getDate() >= 5 &&
     gameDate?.getDate() <= 7;
-
-  // Championship: April 7
-  const isChampionship =
-    gameDate?.getMonth() === 3 && gameDate?.getDate() === 7;
 
   // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
@@ -152,12 +152,12 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       isFinal = true;
     }
 
-const isScheduled =
-  longLower.includes("not started") ||
-  longLower.includes("scheduled") ||
-  longLower.includes("pre-game") ||
-  longLower.includes("preview") ||
-  longLower.trim() === "";
+    const isScheduled =
+      longLower.includes("not started") ||
+      longLower.includes("scheduled") ||
+      longLower.includes("pre-game") ||
+      longLower.includes("preview") ||
+      longLower.trim() === "";
 
     // ✅ Live only if not final
     const isLive =
@@ -309,8 +309,6 @@ const isScheduled =
       ? "Elite Eight"
       : week ?? "";
 
-
-
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -345,11 +343,7 @@ const isScheduled =
         />
 
         <LinearGradient
-          colors={
-            isDark
-              ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
-              : ["rgba(0,0,0,0.4)", "rgba(0,0,0,0.1)"]
-          }
+          colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -464,46 +458,47 @@ const isScheduled =
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    overflow: "hidden",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  blur: {
-    flex: 1,
-    paddingHorizontal: 12,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 40,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  handle: {
-    backgroundColor: "transparent",
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    left: 8,
-    right: 8,
-    top: 0,
-  },
-  handleIndicator: {
-    backgroundColor: Colors.midTone,
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-  },
-  headline: {
-    fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
-    color: Colors.dark.white,
-    textAlign: "center",
-  },
-});
+const gamePreviewModalStyles = (isChampionship: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      overflow: "hidden",
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
+    blur: {
+      flex: 1,
+      paddingHorizontal: 12,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingTop: 40,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 20,
+    },
+    handle: {
+      backgroundColor: "transparent",
+      height: 40,
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      left: 8,
+      right: 8,
+      top: 0,
+    },
+    handleIndicator: {
+      backgroundColor: isChampionship ? Colors.lightGray : Colors.midTone,
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+    },
+    headline: {
+      fontSize: 12,
+      fontFamily: Fonts.OSLIGHT,
+      color: Colors.dark.white,
+      textAlign: "center",
+    },
+  });

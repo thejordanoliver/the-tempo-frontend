@@ -17,6 +17,8 @@ import SoutheasternConference from "../assets/College_Logos/SEC.png";
 import SunBeltConference from "../assets/College_Logos/SunBelt.png";
 
 //Logos
+import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
+
 import AirForceLogo from "assets/College_Logos/AirForce.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
 import AkronLogo from "assets/College_Logos/Akron.png";
@@ -217,18 +219,26 @@ import AlleghenyLogoLight from "../assets/College_Logos/AlleghenyLight.png";
 import ArkansasStateLogo from "../assets/College_Logos/ArkansasState.png";
 import ArlingtonBaptistLogo from "../assets/College_Logos/ArlingtonBaptist.png";
 import ArmyLogo from "../assets/College_Logos/Army.png";
+import BellarmineLogo from "../assets/College_Logos/Bellarmine.png";
 import BelmontLogo from "../assets/College_Logos/Belmont.png";
 import BethanyWVLogo from "../assets/College_Logos/Bethany(WV).png";
 import BethesdaLogo from "../assets/College_Logos/Bethesda.png";
 import BinghamtonLogo from "../assets/College_Logos/Binghamton.png";
+import BostonUniversityLogo from "../assets/College_Logos/BostonUniversity.png";
 import BradleyLogo from "../assets/College_Logos/Bradley.png";
+import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
+import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
+import BrownLogo from "../assets/College_Logos/Brown.png";
 import BryanTNLogo from "../assets/College_Logos/BryanTN.png";
+import CaliforniaBaptistLogo from "../assets/College_Logos/CaliforniaBaptist.png";
 import CalPolyLogo from "../assets/College_Logos/CalPoly.png";
 import CalStateNorthridgeLogo from "../assets/College_Logos/CalStateNorthridge.png";
 import CanisiusLogo from "../assets/College_Logos/Canisius.png";
 import CarolinaUniversityLogo from "../assets/College_Logos/CarolinaUniversity.png";
 import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
+import CharlestonLogo from "../assets/College_Logos/Charleston.png";
 import ChicagoStateLogo from "../assets/College_Logos/ChicagoState.png";
+import ClevelandStateLogo from "../assets/College_Logos/ClevelandState.png";
 import CoastalGeorgiaLogo from "../assets/College_Logos/CoastalGeorgia.png";
 import CollegeOfBiblicalStudiesLogo from "../assets/College_Logos/CollegeOfBiblicalStudies.png";
 import ColumbiaLogo from "../assets/College_Logos/Columbia.png";
@@ -244,20 +254,26 @@ import DaytonLogo from "../assets/College_Logos/Dayton.png";
 import DaytonLogoLight from "../assets/College_Logos/DaytonLight.png";
 import DenverLogo from "../assets/College_Logos/Denver.png";
 import DenverLogoLight from "../assets/College_Logos/DenverLight.png";
+import DepaulLogo from "../assets/College_Logos/Depaul.png";
+import DetroitLogo from "../assets/College_Logos/Detroit.png";
 import DrakeLogo from "../assets/College_Logos/Drake.png";
 import ECULogo from "../assets/College_Logos/EastCarolina.png";
 import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
 import EasternWashingtonLogo from "../assets/College_Logos/EasternWashington.png";
 import EasternWashingtonLogoLight from "../assets/College_Logos/EasternWashingtonLight.png";
+import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
 import EastWestUniversityLogo from "../assets/College_Logos/EastWestUniversity.png";
 import EastWestUniversityLogoLight from "../assets/College_Logos/EastWestUniversityLight.png";
 import EcclesiaLogo from "../assets/College_Logos/Ecclesia.png";
 import ElonLogo from "../assets/College_Logos/Elon.png";
+import EmersonLogo from "../assets/College_Logos/Emerson.png";
 import ETAMLogo from "../assets/College_Logos/ETA&M.png";
 import EvansvilleLogo from "../assets/College_Logos/Evansville.png";
 import FairfieldLogo from "../assets/College_Logos/Fairfield.png";
 import FairleighDickinsonLogo from "../assets/College_Logos/FairleighDickinson.png";
+import FGCULogo from "../assets/College_Logos/FGCU.png";
 import FordhamLogo from "../assets/College_Logos/Fordham.png";
+import FranciscanLogo from "../assets/College_Logos/Franciscan.png";
 import FresnoStLogo from "../assets/College_Logos/FresnoState.png";
 import Furman from "../assets/College_Logos/Furman.png";
 import GardnerWebbLogo from "../assets/College_Logos/Gardner-Webb.png";
@@ -272,10 +288,12 @@ import GrandCanyonLogo from "../assets/College_Logos/GrandCanyon.png";
 import GrandCanyonLogoLight from "../assets/College_Logos/GrandCanyonLight.png";
 import HamptonLogo from "../assets/College_Logos/Hampton.png";
 import HarvardLogo from "../assets/College_Logos/Harvard.png";
+import HaskellLogo from "../assets/College_Logos/Haskell.png";
 import HofstraLogo from "../assets/College_Logos/Hofstra.png";
 import HofstraLogoLight from "../assets/College_Logos/HofstraLight.png";
 import HoustonChristianLogo from "../assets/College_Logos/HoustonChristian.png";
 import HowardLogo from "../assets/College_Logos/Howard.png";
+import HowardPayneLogo from "../assets/College_Logos/HowardPayne.png";
 import IdahoLogo from "../assets/College_Logos/Idaho.png";
 import IncarnateWordLogo from "../assets/College_Logos/IncarnateWord.png";
 import IndianaStateLogo from "../assets/College_Logos/IndianaState.png";
@@ -300,6 +318,8 @@ import LehighLogo from "../assets/College_Logos/Lehigh.png";
 import LeMoyneLogo from "../assets/College_Logos/LeMoyne.png";
 import LibertyLogo from "../assets/College_Logos/Liberty.png";
 import LipscombLogo from "../assets/College_Logos/Lipscomb.png";
+import LongBeachStateLogo from "../assets/College_Logos/LongBeachState.png";
+import LongBeachStateLogoLight from "../assets/College_Logos/LongBeachStateLight.png";
 import LongwoodLogo from "../assets/College_Logos/Longwood.png";
 import LouisianaLogo from "../assets/College_Logos/Louisiana.png";
 import LouisvilleLogo from "../assets/College_Logos/Louisville.png";
@@ -308,16 +328,21 @@ import LoyolaMarylandLogo from "../assets/College_Logos/LoyolaMaryland.png";
 import LoyolaMarymountLogo from "../assets/College_Logos/LoyolaMarymount.png";
 import LynchburgLogo from "../assets/College_Logos/Lynchburg.png";
 import MaineLogo from "../assets/College_Logos/Maine.png";
+import ManhattanLogo from "../assets/College_Logos/Manhattan.png";
+import ManhattanLogoLight from "../assets/College_Logos/ManhattanLight.png";
 import MaristLogo from "../assets/College_Logos/Marist.png";
 import MarquetteLogo from "../assets/College_Logos/Marquette.png";
 import MarylandEasternShoreLogo from "../assets/College_Logos/MarylandEasternShore.png";
 import McNeeseLogo from "../assets/College_Logos/McNeese.png";
 import MemphisLogo from "../assets/College_Logos/Memphis.png";
 import MercerLogo from "../assets/College_Logos/Mercer.png";
+import Mercylogo from "../assets/College_Logos/Mercy.png";
 import MerrimackLogo from "../assets/College_Logos/Merrimack.png";
 import MilliganLogo from "../assets/College_Logos/Milligan.png";
+import MisericordiaLogo from "../assets/College_Logos/Misericordia.png";
 import MississippiValleyStateLogo from "../assets/College_Logos/MississippiValleyState.png";
 import MissouriStateLogo from "../assets/College_Logos/MissouriState.png";
+import MitchellLogo from "../assets/College_Logos/Mitchell.png";
 import MolloyLogo from "../assets/College_Logos/Molloy.png";
 import MonmouthLogo from "../assets/College_Logos/Monmouth.png";
 import MontanaLogo from "../assets/College_Logos/Montana.png";
@@ -329,26 +354,38 @@ import MorehouseCollegeLogoLight from "../assets/College_Logos/MorehouseCollegeL
 import MorganStateLogo from "../assets/College_Logos/MorganState.png";
 import MountSaintMarys from "../assets/College_Logos/MountSt.Mary's.png";
 import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
+import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
+import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
 import NewHavenLogo from "../assets/College_Logos/NewHaven.png";
 import NewMexicoLogo from "../assets/College_Logos/NewMexico.png";
 import NewMexicoStateLogo from "../assets/College_Logos/NewMexicoState.png";
+import NewOrleansLogo from "../assets/College_Logos/NewOrleans.png";
 import NiagaraLogo from "../assets/College_Logos/Niagara.png";
 import NicholsLogo from "../assets/College_Logos/Nichols.png";
+import NJITLogo from "../assets/College_Logos/NJIT.png";
+import NobelLogo from "../assets/College_Logos/Nobel.png";
 import NorthFloridaLogo from "../assets/College_Logos/NorhFlorida.png";
 import NorthAlabamaLogo from "../assets/College_Logos/NorthAlabama.png";
 import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
 import NorthCarolinaCentralLogo from "../assets/College_Logos/NorthCarolinaCentral.png";
 import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
 import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
+import NortheasternLogo from "../assets/College_Logos/Northeastern.png";
 import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
 import NorthernIowaLogo from "../assets/College_Logos/NorthernIowa.png";
+import NorthernKentuckyLogo from "../assets/College_Logos/NorthernKentucky.png";
+import NorthGreenvilleLogo from "../assets/College_Logos/NorthGreenville.png";
 import NorthwesternStateLogo from "../assets/College_Logos/NorthwesternState.png";
 import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
 import OaklandLogo from "../assets/College_Logos/Oakland.png";
+import OhioWesleyanLogo from "../assets/College_Logos/OhioWesleyan.png";
 import OmahaLogo from "../assets/College_Logos/Omaha.png";
+import PacificLogo from "../assets/College_Logos/Pacific.png";
 import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
+import PortlandLogo from "../assets/College_Logos/Portland.png";
 import PortlandStateLogo from "../assets/College_Logos/PortlandState.png";
 import PrairieViewAMLogo from "../assets/College_Logos/PrairieViewA&M.png";
+import PresbyterianLogo from "../assets/College_Logos/Presbyterian.png";
 import ProvidenceLogo from "../assets/College_Logos/Providence.png";
 import QueensLogo from "../assets/College_Logos/Queens.png";
 import QuinnipiacLogo from "../assets/College_Logos/Quinnipiac.png";
@@ -358,40 +395,10 @@ import RiderLogo from "../assets/College_Logos/Rider.png";
 import RiponLogo from "../assets/College_Logos/Ripon.png";
 import RITLogo from "../assets/College_Logos/RIT.png";
 import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
+import SacramentoStateLogo from "../assets/College_Logos/SacramentoState.png";
 import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
 import SaintFrancisLogo from "../assets/College_Logos/SaintFrancis.png";
 import SaintJosephsLogo from "../assets/College_Logos/SaintJosephs.png";
-import WilliamAndMaryLogo from "../assets/College_Logos/WilliamMary.png";
-
-import BellarmineLogo from "../assets/College_Logos/Bellarmine.png";
-import BostonUniversityLogo from "../assets/College_Logos/BostonUniversity.png";
-import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
-import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
-import BrownLogo from "../assets/College_Logos/Brown.png";
-import CharlestonLogo from "../assets/College_Logos/Charleston.png";
-import ClevelandStateLogo from "../assets/College_Logos/ClevelandState.png";
-import DepaulLogo from "../assets/College_Logos/Depaul.png";
-import DetroitLogo from "../assets/College_Logos/Detroit.png";
-import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
-import FGCULogo from "../assets/College_Logos/FGCU.png";
-import HowardPayneLogo from "../assets/College_Logos/HowardPayne.png";
-import LongBeachStateLogo from "../assets/College_Logos/LongBeachState.png";
-import LongBeachStateLogoLight from "../assets/College_Logos/LongBeachStateLight.png";
-import ManhattanLogo from "../assets/College_Logos/Manhattan.png";
-import ManhattanLogoLight from "../assets/College_Logos/ManhattanLight.png";
-import Mercylogo from "../assets/College_Logos/Mercy.png";
-import MisericordiaLogo from "../assets/College_Logos/Misericordia.png";
-import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
-import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
-import NewOrleansLogo from "../assets/College_Logos/NewOrleans.png";
-import NJITLogo from "../assets/College_Logos/NJIT.png";
-import NobelLogo from "../assets/College_Logos/Nobel.png";
-import NortheasternLogo from "../assets/College_Logos/Northeastern.png";
-import NorthernKentuckyLogo from "../assets/College_Logos/NorthernKentucky.png";
-import OhioWesleyanLogo from "../assets/College_Logos/OhioWesleyan.png";
-import PacificLogo from "../assets/College_Logos/Pacific.png";
-import PortlandLogo from "../assets/College_Logos/Portland.png";
-import PresbyterianLogo from "../assets/College_Logos/Presbyterian.png";
 import SaintLouisLogo from "../assets/College_Logos/SaintLouis.png";
 import SaintMaryLogo from "../assets/College_Logos/SaintMary.png";
 import SaintMaryLogoLight from "../assets/College_Logos/SaintMaryLight.png";
@@ -401,6 +408,7 @@ import SanDiegoLogo from "../assets/College_Logos/SanDiego.png";
 import SanFranciscoLogo from "../assets/College_Logos/SanFrancisco.png";
 import SanFranciscoLogoLight from "../assets/College_Logos/SanFranciscoLight.png";
 import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
+import SantaClaraLogo from "../assets/College_Logos/SantaClara.png";
 import SeattleLogo from "../assets/College_Logos/Seattle.png";
 import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
 import SetonHallLogo from "../assets/College_Logos/SetonHall.png";
@@ -432,6 +440,7 @@ import StetsonLogo from "../assets/College_Logos/Stetson.png";
 import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
 import StThomasMinnesotaLogo from "../assets/College_Logos/StThomasMinnesota.png";
 import SUNYDelhiLogo from "../assets/College_Logos/SUNYDelhi.png";
+import SUNYOneontaLogo from "../assets/College_Logos/SUNYOneonta.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import TennesseeSouthernLogo from "../assets/College_Logos/TennesseeSouthern.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
@@ -448,6 +457,7 @@ import UABLogo from "../assets/College_Logos/UAB.png";
 import UAlbanyLogo from "../assets/College_Logos/UAlbany.png";
 import UCDavisLogo from "../assets/College_Logos/UCDavis.png";
 import UCDavisLogoLight from "../assets/College_Logos/UCDavisLight.png";
+import UCIrvineLogo from "../assets/College_Logos/UCIrvine.png";
 import UCLALogo from "../assets/College_Logos/UCLA.png";
 import UCLALogoLight from "../assets/College_Logos/UCLALight.png";
 import UCRiversideLogo from "../assets/College_Logos/UCRiverside.png";
@@ -482,7 +492,10 @@ import WestGeorgiaLogo from "../assets/College_Logos/WestGeorgia.png";
 import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
 import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
 import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
-import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
+import {
+  default as WilliamAndMaryLogo,
+  default as WilliamMaryLogo,
+} from "../assets/College_Logos/WilliamMary.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
 import WinthropLogo from "../assets/College_Logos/Winthrop.png";
 import WisconsinGreenBayLogo from "../assets/College_Logos/WisconsinGreenBay.png";
@@ -493,7 +506,6 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import UCIrvineLogo from "../assets/College_Logos/UCIrvine.png";
 
 export const teams: CBBTeam[] = [
   {
@@ -615,6 +627,21 @@ export const teams: CBBTeam[] = [
     color: "#ef8c00",
     secondaryColor: "#e9a126",
     logo: IdahoStateLogo,
+  },
+  {
+    id: 2074,
+    espnID: 2492,
+    name: "Pepperdine",
+    fullName: "Pepperdine Waves",
+    shortName: "Pepperdine",
+    code: "PEPP",
+    color: "#003A72",
+    secondaryColor: "#dc762f",
+    logo: PepperdineLogo,
+    location: "Malibu, CA",
+    city: "Malibu",
+    latitude: 34.0406,
+    longitude: -118.7079,
   },
   {
     id: 2180,
@@ -979,10 +1006,25 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 201,
-    espnID: "2598",
-    name: "St. Francis (PA)",
+    espnID: 2598,
+    name: "Saint Francis",
+    fullName: "Saint Francis Red Flash",
+    shortName: "Saint Francis",
     code: "SFPA",
+    color: "#a20012",
+    secondaryColor: "#000000",
     logo: SaintFrancisLogo,
+  },
+  {
+    id: 1917,
+    espnID: 111170,
+    name: "Franciscan University",
+    fullName: "Franciscan University Barons",
+    shortName: "Franciscan",
+    code: "FRN",
+    color: "#a20012",
+    secondaryColor: "#000000",
+    logo: FranciscanLogo,
   },
   {
     id: 2141,
@@ -2410,6 +2452,17 @@ export const teams: CBBTeam[] = [
     logo: UCSantaBarbaraLogo,
   },
   {
+    id: 2111,
+    espnID: 2541,
+    name: "Santa Clara",
+    fullName: "Santa Clara Broncos",
+    shortName: "Santa Clara",
+    code: "SCU",
+    color: "#690b0b",
+    secondaryColor: "#101010",
+    logo: SantaClaraLogo,
+  },
+  {
     id: 2363,
     espnID: 28,
     name: "UC San Diego",
@@ -2717,6 +2770,17 @@ export const teams: CBBTeam[] = [
     logo: UMassLowellLogo,
   },
   {
+    id: 3245,
+    espnID: 108842,
+    name: "Emerson",
+    fullName: "Emerson Lions",
+    shortName: "Emerson",
+    code: "EMER",
+    color: "#FBCE33",
+    secondaryColor: "#222021",
+    logo: EmersonLogo,
+  },
+  {
     id: 6490,
     espnID: 2603,
     name: "Saint Joseph's",
@@ -2726,6 +2790,17 @@ export const teams: CBBTeam[] = [
     color: "#9e1b32",
     secondaryColor: "#6c6f70",
     logo: SaintJosephsLogo,
+  },
+  {
+    id: 1932,
+    espnID: 535,
+    name: "Haskell",
+    fullName: "Haskell Jayhawks",
+    shortName: "Haskell",
+    code: "HSKL",
+    color: "#470A68",
+    secondaryColor: "#FFB81C",
+    logo: HaskellLogo,
   },
   {
     id: 2131,
@@ -3798,14 +3873,14 @@ export const teams: CBBTeam[] = [
     logo: FordhamLogo,
   },
   {
-    id: 258,
+    id: 2101,
     espnID: 16,
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
     code: "SAC",
     color: "#00573C",
     secondaryColor: "#cdb97d",
-    logo: "https://media.api-sports.io/american-football/teams/258.png",
+    logo: SacramentoStateLogo,
   },
   {
     id: 259,
@@ -3919,18 +3994,23 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 266,
+    espnID: 2822,
     name: "North Greenville",
+    fullName: "North Greenville Crusaders",
+    shortName: "N Greenvll",
     code: "NG",
-    logo: "https://media.api-sports.io/american-football/teams/266.png",
+    color: "#d91e39",
+    secondaryColor: "#000000",
+    logo: NorthGreenvilleLogo,
   },
   {
-    id: 267,
+    id: 2011,
     espnID: 2405,
     name: "Monmouth",
     fullName: "Monmouth Hawks",
     code: "MONM",
     color: "#051844",
-    secondaryColor: "null",
+    secondaryColor: "#53565A",
     logo: MonmouthLogo,
   },
   {
@@ -4065,7 +4145,7 @@ export const teams: CBBTeam[] = [
     logo: GeorgetownLogo,
   },
   {
-    id: 280,
+    id: 2102,
     espnID: 2529,
     name: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
@@ -4083,12 +4163,6 @@ export const teams: CBBTeam[] = [
     color: "#0d1361",
     secondaryColor: "#00a3e0",
     logo: ButlerLogo,
-  },
-  {
-    id: 282,
-    name: "St. Thomas University (Fl)",
-
-    logo: "https://media.api-sports.io/american-football/teams/282.png",
   },
   {
     id: 183,
@@ -4363,7 +4437,7 @@ export const teams: CBBTeam[] = [
     logo: NorthCarolinaCentralLogo,
   },
   {
-    id: 5772,
+    id: 1955,
     espnID: 353,
     name: "Johnson & Wales (RI)",
     fullName: "Johnson & Wales (RI) Griffins",
@@ -4372,6 +4446,39 @@ export const teams: CBBTeam[] = [
     color: "#880023",
     secondaryColor: "#c2c3c0",
     logo: JohnsonWalesRILogo,
+  },
+  {
+    id: 6661,
+    espnID: 108838,
+    name: "Mitchell College",
+    fullName: "Mitchell College Mariners",
+    shortName: "Mitchell",
+    code: "MITC",
+    color: "#FFFFFE",
+    secondaryColor: "#1A1919",
+    logo: MitchellLogo,
+  },
+  {
+    id: 6678,
+    espnID: 355,
+    name: "SUNY-Oneonta",
+    fullName: "SUNY-Oneonta Red Dragons",
+    shortName: "SUNY-Oneonta",
+    code: "SUNO",
+    color: "#FFFFFF",
+    secondaryColor: "#E71939",
+    logo: SUNYOneontaLogo,
+  },
+  {
+    id: 210,
+    espnID: 2856,
+    name: "California Baptist",
+    fullName: "California Baptist Lancers",
+    shortName: "CA Baptist",
+    code: "CBU",
+    color: "#002554",
+    secondaryColor: "#A37400",
+    logo: CaliforniaBaptistLogo,
   },
   {
     id: 1497,
@@ -5376,8 +5483,7 @@ export const getTeamInfo = (teamId: number | string) => {
 
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean,
-  
+  isDark: boolean
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo;
 
@@ -5387,9 +5493,7 @@ export function getTeamLogo(
 
   if (!team) return PlaceholderLogo;
 
-  return  isDark
-    ? team.logoLight || team.logo
-    : team.logo;
+  return isDark ? team.logoLight || team.logo : team.logo;
 }
 export function getTeamLogoPreviewModal(
   idOrNicknameOrCode: number | string | undefined,

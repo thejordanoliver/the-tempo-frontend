@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
 import type { Game } from "types/cfb";
-import type { CFBWeek } from "utils/cfbWeeks";
+import type { CFBWeek } from "utils/CFBUtils/cfbWeeks";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -17,14 +17,12 @@ export const useCFBGamesByWeek = ({
   const [error, setError] = useState<string | null>(null);
 
   const fetchGames = useCallback(async () => {
- 
-
     setLoading(true);
     setError(null);
 
     try {
       // Normalize week label for API
-      let weekLabel = week.label.toLowerCase().replace(/\s+/g, ""); 
+      let weekLabel = week.label.toLowerCase().replace(/\s+/g, "");
 
       const response = await axios.get(`${BASE_URL}/api/gamesCFB/week`, {
         params: {
@@ -33,7 +31,6 @@ export const useCFBGamesByWeek = ({
           weeks: JSON.stringify(weeks),
         },
       });
-
 
       const data: Game[] = response.data?.response || [];
 

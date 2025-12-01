@@ -7,6 +7,7 @@ import TabBar from "components/TabBar";
 import RosterStats from "components/Team/RosterStats";
 import TeamInfoBottomSheet from "components/Team/TeamInfoModal";
 import TeamPlayerList from "components/Team/TeamRoster";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -89,11 +90,11 @@ export default function TeamDetailScreen() {
     error: gamesError,
   } = useTeamGames(teamIdNum.toString());
 
- const {
-  highlights: teamHighlights,
-  loading: highlightsLoading,
-  error: highlightsError,
-} = useTeamHighlights("nba", team?.fullName ?? "", 5);
+  const {
+    highlights: teamHighlights,
+    loading: highlightsLoading,
+    error: highlightsError,
+  } = useTeamHighlights("nba", team?.fullName ?? "", 5);
 
   const {
     articles: newsArticles,
@@ -353,23 +354,22 @@ export default function TeamDetailScreen() {
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <View style={styles.monthSelector}>
-                  <ScrollView
-  ref={scrollViewRef}
-  horizontal
-  showsHorizontalScrollIndicator={false}
-  snapToInterval={82} // slightly wider for spacing
-  decelerationRate="fast"
-  scrollEventThrottle={16}
-  contentContainerStyle={{
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  }}
->
-
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={82} // slightly wider for spacing
+              decelerationRate="fast"
+              scrollEventThrottle={16}
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 12,
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+              }}
+            >
               {monthsToShow.map(({ label, month, year }, index) => {
                 const isSelected =
                   selectedDate.getMonth() === month &&
@@ -445,7 +445,7 @@ export default function TeamDetailScreen() {
                 fontSize: 16,
                 textAlign: "center",
                 marginTop: 20,
-                color: isDark ? "#aaa" : "#888",
+                color: Colors.midTone,
               }}
             >
               {playersError}
@@ -486,7 +486,7 @@ export default function TeamDetailScreen() {
                     fontSize: 16,
                     textAlign: "center",
                     marginTop: 20,
-                    color: isDark ? "#aaa" : "#888",
+                    color: Colors.midTone,
                   }}
                 >
                   {rosterStatsError.message}
@@ -498,7 +498,7 @@ export default function TeamDetailScreen() {
                     fontSize: 16,
                     textAlign: "center",
                     marginTop: 20,
-                    color: isDark ? "#aaa" : "#888",
+                    color: Colors.midTone,
                   }}
                 >
                   No player stats available.

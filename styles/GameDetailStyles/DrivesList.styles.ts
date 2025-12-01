@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
@@ -10,7 +11,7 @@ export const getStyles = (isDark: boolean) =>
     driveCard: {
       paddingHorizontal: 12,
       paddingVertical: 8,
-      borderBottomColor: isDark ? "#444" : "#ccc",
+      borderBottomColor: isDark ? Colors.darkGray : "#ccc",
       borderBottomWidth: 1,
     },
     headerRow: {
@@ -26,24 +27,24 @@ export const getStyles = (isDark: boolean) =>
     driveDescription: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ?Colors.white : Colors.black,
     },
     driveDetail: {
       fontSize: 12,
-      color: isDark ? "#aaa" : "#444",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,
       fontFamily: Fonts.OSREGULAR,
     },
     driveTeam: {
       fontSize: 15,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ?Colors.white : Colors.black,
     },
     emptyText: {
       fontSize: 16,
-      color: "#888",
+      color: Colors.midTone,
       textAlign: "center",
       marginTop: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.OSREGULAR,
     },
   });

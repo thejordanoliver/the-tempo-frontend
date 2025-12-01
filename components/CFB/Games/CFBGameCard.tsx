@@ -9,6 +9,7 @@ import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
+import { getRivalryHeadline } from "constants/teamsCFB";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
@@ -84,7 +85,7 @@ function CFBGameCard({ game, isDark }: Props) {
 
   const getTeamName = (id?: number | string): string =>
     getTeamById(id)?.name ?? emptyTeam.name;
-
+     
   const getTeamShortName = (id?: number | string): string =>
     getTeamById(id)?.shortName ?? "";
 
@@ -163,6 +164,19 @@ function CFBGameCard({ game, isDark }: Props) {
     gameDateStr,
     "cfb"
   );
+
+
+  // Determine fallback rivalry name
+const rivalryHeadline = useMemo(() => {
+  return getRivalryHeadline(Number(homeEspnId), Number(awayEspnId));
+}, [homeEspnId, awayEspnId]);
+
+// Choose headline → rivalry → empty string
+const headLine =
+  headlineText && headlineText.trim().length > 0
+    ? headlineText
+    : rivalryHeadline ?? "";
+
 
   const {
     possessionTeamId,
@@ -358,7 +372,7 @@ function CFBGameCard({ game, isDark }: Props) {
       </Text>
 
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
+      <Text style={[styles.headlineText]}>{headLine}</Text>
 
       {/* Game Info */}
       <View style={styles.info}>

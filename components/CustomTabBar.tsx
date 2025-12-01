@@ -20,7 +20,7 @@ const TABS = [
     icon: require("../assets/icons8/Home.png"),
   },
   {
-    name: "League",
+    name: "Leagues",
     route: "/league",
     icon: require("../assets/icons8/Scoreboard.png"),
   },

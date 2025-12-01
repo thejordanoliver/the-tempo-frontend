@@ -205,8 +205,6 @@ export default function NFLGameDetailsScreen() {
       : ""
   );
 
-
-
   type GameStatus =
     | "Scheduled"
     | "In Progress"
@@ -499,21 +497,23 @@ export default function NFLGameDetailsScreen() {
                 secondaryColor: homeTeam.secondaryColor,
               }}
             />
-            
-{/* Game Leaders - only when game is live */}
-{(gameStatus === "In Progress" || gameStatus === "Halftime" || gameStatus === "Final") && (
-  <NFLGameLeaders
-    gameId={String(parsedGame.game.id)}
-    homeTeamId={String(homeTeam.id)}
-    awayTeamId={String(awayTeam.id)}
-  />
-)}
+
+            {/* Game Leaders - only when game is live */}
+            {(gameStatus === "In Progress" ||
+              gameStatus === "Halftime" ||
+              gameStatus === "Final") && (
+              <NFLGameLeaders
+                gameId={String(parsedGame.game.id)}
+                homeTeamId={String(homeTeam.id)}
+                awayTeamId={String(awayTeam.id)}
+              />
+            )}
 
             <TeamDrives
               previousDrives={previousDrives ?? []}
               currentDrives={currentDrives ?? []}
-              awayTeamAbbr={awayTeam?.code}
-              homeTeamAbbr={homeTeam?.code}
+              homeTeamId={Number(homeTeam?.espnID)}
+              awayTeamId={Number(awayTeam?.espnID)}
             />
 
             <TeamScoringSummary

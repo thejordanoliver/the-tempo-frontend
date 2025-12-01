@@ -424,8 +424,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   <NFLTeamDrives
                     previousDrives={previousDrives ?? []}
                     currentDrives={currentDrives ?? []}
-                    awayTeamAbbr={awayTeamData?.code} // 👈 use getTeamInfo result
-                    homeTeamAbbr={homeTeamData?.code} // 👈 use getTeamInfo result
+                       homeTeamId={Number(homeTeamData.espnID)}
+                        awayTeamId={Number(awayTeamData.espnID)}
                     lighter
                   />
 
@@ -503,7 +503,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                       grass={venue?.grass ?? undefined}
                       loading={false}
                       error={null}
-                      lighter={false}
+                      lighter={true}
                     />
                   ) : null}
                   {gameStatus !== "Scheduled" && (

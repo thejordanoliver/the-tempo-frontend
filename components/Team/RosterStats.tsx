@@ -16,8 +16,7 @@ import {
 } from "react-native";
 import { PlayerInfo, PlayerStats, Props, TeamStats } from "types/types";
 
-const COLUMN_WIDTH = 50;
-const NAME_COLUMN_WIDTH = 180;
+
 
 const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
   rosterStats,

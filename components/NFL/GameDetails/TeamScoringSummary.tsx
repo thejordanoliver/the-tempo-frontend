@@ -1,20 +1,19 @@
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogo } from "constants/teamsCFB";
-import { getNFLTeamsLogo } from "constants/teamsNFL";
+import { getTeamLogo, teams as CFBTeams } from "constants/teamsCFB";
+import { getNFLTeamsLogo, teams as NFLTeams } from "constants/teamsNFL";
 import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { LeagueType } from "types/types";
 import HeadingTwo from "../../Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "../../TabBars/FixedWidthTabBar";
+import FixedWidthTabBar, { getLabelStyle } from "../../TabBars/FixedWidthTabBar";
+
 type ScoringPlay = {
   type?: { text?: string };
-  team?: { abbreviation?: string };
+  team?: { abbreviation?: string; id?: number };
   period?: { number?: number };
   clock?: { displayValue?: string };
-  text?: string; // ESPN detailed description
+  text?: string;
   awayScore: number;
   homeScore: number;
 };
@@ -39,6 +38,63 @@ export default function TeamScoringSummary({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
+  // Pick correct constants list
+  const TEAM_LIST = league === "CFB" ? CFBTeams : NFLTeams;
+
+  // Convert ESPN ID → internal code
+  const getCode = (espnID?: number | string | null): string | null => {
+    if (!espnID) return null;
+    return (
+      TEAM_LIST.find((t) => Number(t.espnID) === Number(espnID))?.code ?? null
+    );
+  };
+
+  const awayCode = getCode(awayTeamAbbr);
+  const homeCode = getCode(homeTeamAbbr);
+
+  // 🧠 Build tabs from ESPN IDs, not ESPN abbreviations
+  const teams = useMemo(() => {
+    const tabs: string[] = ["ALL"];
+
+    if (awayCode) tabs.push(awayCode);
+    if (homeCode && homeCode !== awayCode) tabs.push(homeCode);
+
+    const uniqueCodes = Array.from(
+      new Set(
+        scoringPlays
+          ?.map((sp) => getCode(sp.team?.id))
+          .filter((c): c is string => !!c)
+      )
+    );
+
+    uniqueCodes.forEach((code) => {
+      if (!tabs.includes(code)) {
+        tabs.push(code);
+      }
+    });
+
+    return tabs;
+  }, [scoringPlays, awayCode, homeCode]);
+
+  const [selectedTeam, setSelectedTeam] = useState<string>(teams[0] ?? "");
+
+  useEffect(() => {
+    if (!teams.includes(selectedTeam)) {
+      setSelectedTeam(teams[0] ?? "");
+    }
+  }, [teams, selectedTeam]);
+
+  // 🧠 Filter by ESPN ID → internal code
+  const teamPlays = useMemo(() => {
+    if (selectedTeam === "ALL") return scoringPlays;
+
+    return scoringPlays?.filter(
+      (sp) => getCode(sp.team?.id) === selectedTeam
+    );
+  }, [scoringPlays, selectedTeam]);
+
+  if (!loading && scoringPlays?.length === 0) return null;
+
   const periodMap: Record<string, string> = {
     1: "1st",
     2: "2nd",
@@ -48,49 +104,6 @@ export default function TeamScoringSummary({
     OVERTIME: "OT",
   };
 
-  // 🧠 Unique list of scoring-play teams only
-  const teams = useMemo(() => {
-    const unique = Array.from(
-      new Set(scoringPlays?.map((sp) => sp?.team?.abbreviation).filter(Boolean))
-    );
-
-    const tabs: string[] = [];
-
-    const away = awayTeamAbbr?.toUpperCase();
-    const home = homeTeamAbbr?.toUpperCase();
-
-    // ✅ Always include away team first
-    if (away) tabs.push(away);
-
-    // ✅ Always include home team second (if different)
-    if (home && home !== away) tabs.push(home);
-
-    // ✅ Now add any scoring-play teams not already included
-    unique
-      .filter((t): t is string => typeof t === "string")
-      .forEach((t) => {
-        if (!tabs.includes(t)) tabs.push(t);
-      });
-
-    return tabs;
-  }, [scoringPlays, awayTeamAbbr, homeTeamAbbr]);
-
-  const [selectedTeam, setSelectedTeam] = useState<string>(teams[0] ?? "");
-
-  useEffect(() => {
-    if (!selectedTeam || !teams.includes(selectedTeam)) {
-      setSelectedTeam(teams[0] ?? "");
-    }
-  }, [teams]);
-
-  // 🧠 All scoring plays for selected team
-  const teamPlays = useMemo(
-    () => scoringPlays?.filter((sp) => sp?.team?.abbreviation === selectedTeam),
-    [scoringPlays, selectedTeam]
-  );
-
-  if (!loading && scoringPlays?.length === 0) return null;
-
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Scoring Summary</HeadingTwo>
@@ -99,17 +112,16 @@ export default function TeamScoringSummary({
         tabs={teams}
         selected={selectedTeam}
         onTabPress={setSelectedTeam}
-        awayTeamAbbr={awayTeamAbbr}
-        homeTeamAbbr={homeTeamAbbr}
         lighter={lighter}
-        renderLabel={(abbr, isSelected) => {
+        renderLabel={(code, isSelected) => {
           const useLightLogo = lighter || isDark;
-          const safeAbbr = abbr ?? "";
 
           const logo =
-            league === "CFB"
-              ? getTeamLogo(safeAbbr, useLightLogo)
-              : getNFLTeamsLogo(safeAbbr, useLightLogo);
+            code === "ALL"
+              ? null
+              : league === "CFB"
+              ? getTeamLogo(code, useLightLogo)
+              : getNFLTeamsLogo(code, useLightLogo);
 
           return (
             <View style={styles.tabLabel}>
@@ -117,7 +129,7 @@ export default function TeamScoringSummary({
                 <Image
                   source={logo}
                   style={[styles.logo, { opacity: isSelected ? 1 : 0.6 }]}
-                  resizeMode="contain"
+                  resizeMode={"contain"}
                 />
               )}
               <Text
@@ -125,22 +137,20 @@ export default function TeamScoringSummary({
                   opacity: isSelected ? 1 : 0.6,
                 })}
               >
-                {safeAbbr} {/* 👈 FIXED LINE */}
+                {code === "ALL" ? "ALL" : code}
               </Text>
             </View>
           );
         }}
       />
 
-      {/* 🏈 Scoring Summary List */}
       <View style={styles.listContainer}>
         {teamPlays?.map((play, index) => (
           <View key={index} style={styles.playRow}>
             <Text style={styles.periodText}>
               {periodMap[String(play.period?.number)] ?? "-"}
               <Text style={styles.clockText}>
-                {" "}
-                {play.clock?.displayValue ?? ""}
+                {" "}{play.clock?.displayValue ?? ""}
               </Text>
             </Text>
 
@@ -149,7 +159,7 @@ export default function TeamScoringSummary({
             </View>
 
             <Text style={styles.clockText}>
-              {play.awayScore ?? ""}-{play.homeScore}
+              {play.awayScore}-{play.homeScore}
             </Text>
           </View>
         ))}

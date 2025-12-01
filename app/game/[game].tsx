@@ -417,6 +417,14 @@ export default function GameDetailsScreen() {
           />
 
           {liveScore?.status !== "scheduled" && (
+            <BoxScore
+              gameId={gameId.toString()}
+              homeTeamId={homeTeamIdNum}
+              awayTeamId={awayTeamIdNum}
+            />
+          )}
+
+          {liveScore?.status !== "scheduled" && (
             <ShotChart
               plays={plays}
               homeTeamId={String(homeEspnId)}
@@ -431,14 +439,6 @@ export default function GameDetailsScreen() {
             homeTeamId={homeEspnId}
             league="NBA"
           />
-
-          {liveScore?.status !== "scheduled" && (
-            <BoxScore
-              gameId={gameId.toString()}
-              homeTeamId={homeTeamIdNum}
-              awayTeamId={awayTeamIdNum}
-            />
-          )}
 
           {!statsLoading && gameStats && <GameTeamStats stats={gameStats} />}
 

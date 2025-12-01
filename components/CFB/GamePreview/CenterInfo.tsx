@@ -1,4 +1,5 @@
 // ./NFL/GamePreview/NFLGameCenterInfo.tsx
+import { Colors } from "constants/Colors";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
@@ -28,7 +29,6 @@ type CFBGameCenterInfoProps = {
   lighter: boolean;
   apiDate?: string;
   downAndDistance: string;
-  headlineText: string;
 };
 
 export function CFBCenterInfo({
@@ -45,7 +45,6 @@ export function CFBCenterInfo({
   lighter,
   apiDate,
   downAndDistance,
-  headlineText,
 }: CFBGameCenterInfoProps) {
   const { broadcasts, loading } = useCFBGameBroadcasts(
     homeTeam.code ?? "N/A",
@@ -86,13 +85,32 @@ export function CFBCenterInfo({
     (period && period.toUpperCase().includes("OT")) ||
     (status && ["AOT"].includes(status as string));
 
-  const styles = getStyles(isDark, lighter);
 
-  const broadcastColor = lighter ? "#fff" : isDark ? "#333" : "#888";
+    // ⭐ Detect "End of Quarter" from gameStatusDetail or gameStatusShortDetail
+const endOfQuarterText = (() => {
+  if (!downAndDistance) return null;
+
+  // possession API usually puts shortDownDistanceText like:
+  // "End of 1st quarter."
+  const lower = downAndDistance.toLowerCase();
+
+  if (lower.includes("end of") && lower.includes("quarter")) {
+    // Normalize capitalization
+    return downAndDistance
+      .replace("quarter.", "Quarter")
+      .replace("quarter", "Quarter");
+  }
+
+  return null;
+})();
+
+
+  const styles = getStyles;
+
+
 
   return (
     <View style={styles.container}>
-   
       {/* Scheduled */}
       {status === "Scheduled" && (
         <View style={styles.infoWrapper}>
@@ -102,21 +120,25 @@ export function CFBCenterInfo({
         </View>
       )}
 
-      {/* In Progress */}
-      {status === "In Progress" && (
-        <>
-          <View style={styles.infoWrapper}>
-            <Text style={styles.date}>
-              {period ? formatQuarter(period) : ""}
-            </Text>
-            <View style={styles.statusDivider} />
-            {clock && <Text style={styles.date}>{clock}</Text>}
-          </View>
-          {downAndDistance && (
-            <Text style={styles.downAndDistance}>{downAndDistance}</Text>
-          )}
-        </>
+      
+
+     {/* In Progress */}
+{status === "In Progress" &&
+  (!endOfQuarterText || !endOfQuarterText.toLowerCase().includes("end of")) && (
+    <>
+      <View style={styles.infoWrapper}>
+        <Text style={styles.date}>
+          {period ? formatQuarter(period) : ""}
+        </Text>
+        <View style={styles.statusDivider} />
+        {clock && <Text style={styles.date}>{clock}</Text>}
+      </View>
+      {downAndDistance && (
+        <Text style={styles.downAndDistance}>{downAndDistance}</Text>
       )}
+    </>
+  )}
+
 
       {/* Halftime */}
       {status === "Halftime" && (
@@ -139,11 +161,7 @@ export function CFBCenterInfo({
         status === "Postponed" ||
         status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
 
-      {broadcastText && (
-        <Text style={[styles.broadcasts, { color: broadcastColor }]}>
-          {broadcastText}
-        </Text>
-      )}
+      {broadcastText && <Text style={styles.broadcast}>{broadcastText}</Text>}
     </View>
   );
 }

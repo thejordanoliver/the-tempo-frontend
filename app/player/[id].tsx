@@ -129,11 +129,7 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, fullName, teamObj, isDark]);
 
-  const initial = player ? player.first_name[0]?.toUpperCase() : "?";
 
-  // teamLastGame already matches the Game type
-  // so you can pass it directly to GameCard, no need to transform deeply
-  // but you can enhance missing logo or record fields here if you want
 
   // Find away team with extended type
   const awayTeamObj = teams.find((t) => t.id === teamLastGame?.away.id) as

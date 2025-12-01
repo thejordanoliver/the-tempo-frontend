@@ -1,4 +1,6 @@
 import { Colors } from "constants/Colors";
+import { teams as CFBTeams } from "constants/teamsCFB";
+import { teams as NFLTeams } from "constants/teamsNFL";
 import { getTeamLogo } from "constants/teamsCFB";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { FlatList, Image, Text, useColorScheme, View } from "react-native";
@@ -14,6 +16,7 @@ export type Drive = {
   offensivePlays: number;
   yards: number;
   team: {
+    id?: number;  // ESPN team ID
     displayName: string;
     shortDisplayName: string;
     abbreviation: string;
@@ -26,7 +29,7 @@ type Props = {
   loading?: boolean;
   error?: string | null;
   lighter?: boolean;
-  league?: LeagueType; // 🏈 added league prop
+  league?: LeagueType;
 };
 
 export default function DrivesList({
@@ -35,60 +38,60 @@ export default function DrivesList({
   loading,
   error,
   lighter = false,
-  league = "NFL", // default to NFL
+  league = "NFL",
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
   const safePrevious = Array.isArray(previousDrives) ? previousDrives : [];
   const safeCurrent = Array.isArray(currentDrives) ? currentDrives : [];
-  const drives = [...safeCurrent, ...safePrevious]; // current first
+  const drives = [...safeCurrent, ...safePrevious];
 
   if (loading) return <Text style={styles.emptyText}>Loading drives...</Text>;
   if (error) return <Text style={styles.emptyText}>{error}</Text>;
   if (drives.length === 0)
     return <Text style={styles.emptyText}>No drives available</Text>;
 
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.darkGray;
-  const borderColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.lightGray;
+  const textColor = lighter ? Colors.white : isDark ? Colors.white : Colors.black;
+  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.darkGray;
+  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.lightGray;
+
+  // ⭐ ID-based team matching only
+  const getTeamCodeById = (espnId?: number): string | null => {
+    if (!espnId) return null;
+
+    const list = league === "CFB" ? CFBTeams : NFLTeams;
+    const match = list.find((t) => Number(t.espnID) === Number(espnId));
+    return match?.code ?? null;
+  };
+
+  const getTeamLogoByCode = (teamCode: string, light: boolean) => {
+    return league === "CFB"
+      ? getTeamLogo(teamCode, light)
+      : getNFLTeamsLogo(teamCode, light);
+  };
 
   return (
     <View>
       <ScrollView style={{ maxHeight: 400 }}>
         <FlatList
           data={drives}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item }) => {
             const useLightLogo = lighter || isDark;
-            // 🧠 Select correct logo helper based on league
-            const logo =
-              league === "CFB"
-                ? getTeamLogo(item.team.abbreviation, useLightLogo)
-                : getNFLTeamsLogo(item.team.abbreviation, useLightLogo);
+
+            // 🎯 ESPN ID → internal team code
+            const teamCode = getTeamCodeById(item.team.id);
+
+            // 🎯 internal code → correct logo
+            const logo = teamCode
+              ? getTeamLogoByCode(teamCode, useLightLogo)
+              : null;
 
             const resultUpper = (item.result ?? "").toUpperCase();
-
-            let resultColor = lighter
-              ? Colors.lightGray
-              : isDark
-              ? Colors.lightGray
-              : Colors.darkGray;
+            let resultColor = subTextColor;
 
             if (
               resultUpper.includes("INT") ||
@@ -102,10 +105,7 @@ export default function DrivesList({
                 : isDark
                 ? Colors.dark.lightRed
                 : Colors.light.red;
-            } else if (
-              resultUpper.includes("TD") ||
-              resultUpper.includes("FG")
-            ) {
+            } else if (resultUpper.includes("TD") || resultUpper.includes("FG")) {
               resultColor = lighter
                 ? Colors.dark.limeGreen
                 : isDark
@@ -136,9 +136,7 @@ export default function DrivesList({
                   </Text>
                 </View>
 
-                <Text
-                  style={[styles.driveDescription, { color: subTextColor }]}
-                >
+                <Text style={[styles.driveDescription, { color: subTextColor }]}>
                   {item.description}
                 </Text>
 
