@@ -2,15 +2,17 @@ import { Fonts } from "constants/fonts";
 import { players } from "constants/nflPlayers";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { useMemo, useState } from "react";
+import { Colors } from "constants/Colors";
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  StyleSheet,
   Text,
   View,
   useColorScheme,
 } from "react-native";
-import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
+import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import FixedWidthTabBar from "../../TabBars/FixedWidthTabBar";
 
@@ -61,7 +63,7 @@ export default function NFLInjuries({
   lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const getStyles = styles(isDark, lighter);
+  const styles = teamInjuryStyles(isDark, lighter);
 
   const awayAbbr = awayTeamAbbr?.toUpperCase();
   const homeAbbr = homeTeamAbbr?.toUpperCase();
@@ -90,17 +92,17 @@ export default function NFLInjuries({
 
   if (loading) {
     return (
-      <View style={getStyles.container}>
+      <View style={styles.container}>
         <ActivityIndicator size="small" />
-        <Text style={getStyles.loadingText}>Loading injuries...</Text>
+        <Text style={styles.loadingText}>Loading injuries...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={getStyles.container}>
-        <Text style={getStyles.errorText}>Failed to load injuries</Text>
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Failed to load injuries</Text>
       </View>
     );
   }
@@ -126,35 +128,35 @@ export default function NFLInjuries({
     return (
       <View
         style={[
-          getStyles.injuryItem,
+          styles.injuryItem,
           {
             borderBottomWidth:
-              index === (teamData?.injuries.length ?? 0) - 1 ? 0 : 1,
+              index === (teamData?.injuries.length ?? 0) - 1 ? 0 : StyleSheet.hairlineWidth,
           },
         ]}
       >
-        <View style={getStyles.avatarWrapper}>
+        <View style={styles.avatarWrapper}>
           <Image
             source={{ uri: avatarUrl }}
-            style={getStyles.avatar}
+            style={styles.avatar}
             resizeMode="cover"
           />
         </View>
         <View style={{ flex: 1 }}>
-          <View style={getStyles.infoSection}>
-            <View style={getStyles.playerHeader}>
-              <Text style={getStyles.name}>
+          <View style={styles.infoSection}>
+            <View style={styles.playerHeader}>
+              <Text style={styles.name}>
                 {player?.displayName ?? "Unknown Player"}
               </Text>
-              <Text style={getStyles.jersey}>
+              <Text style={styles.jersey}>
                 {player?.position?.abbreviation ?? "—"}{" "}
                 {player?.jersey ? `#${player.jersey}` : ""}
               </Text>
             </View>
             {item.details?.type && (
               <>
-                <Text style={getStyles.status}>{item.status}</Text>
-                <Text style={getStyles.details}>
+                <Text style={styles.status}>{item.status}</Text>
+                <Text style={styles.details}>
                   {item.details.type} — {item.details.location ?? "N/A"}
                 </Text>
               </>
@@ -162,8 +164,8 @@ export default function NFLInjuries({
           </View>
         </View>
         {item.details?.returnDate && (
-          <View style={getStyles.bottom}>
-            <Text style={getStyles.status}>
+          <View style={styles.bottom}>
+            <Text style={styles.status}>
               Return: {new Date(item.details.returnDate).toLocaleDateString()}
             </Text>
           </View>
@@ -173,7 +175,7 @@ export default function NFLInjuries({
   };
 
   return (
-    <View style={getStyles.container}>
+    <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Injury Report</HeadingTwo>
 
       <FixedWidthTabBar
@@ -188,15 +190,15 @@ export default function NFLInjuries({
 
           const useLightLogo = lighter || isDark;
           const logo = getNFLTeamsLogo(team?.team.abbreviation, useLightLogo);
-          const textColor = lighter
-            ? "#fff"
-            : isSelected
-            ? isDark
-              ? "#fff"
-              : "#1d1d1d"
-            : isDark
-            ? "#888"
-            : "rgba(0,0,0,0.5)";
+         const textColor = lighter
+                    ? Colors.white
+                    : isSelected
+                    ? isDark
+                      ? Colors.white
+                      : Colors.black
+                    : isDark
+                    ? Colors.midTone
+                    : Colors.midTone;
 
           return (
             <View
@@ -234,11 +236,11 @@ export default function NFLInjuries({
           renderItem={renderInjury}
           keyExtractor={(inj) => inj.athlete.id}
           scrollEnabled={false}
-          ItemSeparatorComponent={() => <View style={getStyles.separator} />}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
           contentContainerStyle={{ paddingVertical: 8 }}
         />
       ) : (
-        <Text style={getStyles.errorText}>
+        <Text style={styles.errorText}>
           No injuries reported for this team.
         </Text>
       )}

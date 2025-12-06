@@ -44,6 +44,8 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+
+
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
@@ -167,7 +169,7 @@ export default function GameDetailsScreen() {
       text: isDark ? Colors.dark.white : Colors.light.black,
       secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
       record: isDark ? Colors.dark.white : Colors.light.black,
-      score: isDark ? Colors.lightGray : Colors.darkGray,
+      score: Colors.midTone,
       winnerScore: isDark ? Colors.dark.white : Colors.light.black,
       border: isDark ? Colors.darkGray : Colors.lightGray,
       finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
@@ -267,23 +269,10 @@ export default function GameDetailsScreen() {
       }
     : undefined;
 
-  const formattedTeamInjuries = (injuries ?? []).map((inj) => ({
-    team: {
-      displayName: inj.team?.displayName ?? "",
-      abbreviation: inj.team?.abbreviation ?? "",
-    },
-    injuries: inj.athletes ?? [], // 👈 This matches the TeamInjury type
-  }));
-
   const homeScoreValue =
     liveScore?.home.total ?? parsedGame.scores?.home?.points ?? 0;
   const awayScoreValue =
     liveScore?.away.total ?? parsedGame.scores?.visitors?.points ?? 0;
-
-  const statusDisplay =
-    typeof status === "string"
-      ? status
-      : status?.long || status?.short || "Unknown";
 
   // --- Clock display ---
   const displayClock = liveScore?.displayClock ?? parsedGame.status?.clock;
@@ -344,7 +333,6 @@ export default function GameDetailsScreen() {
     <>
       <ScrollView
         contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
-        style={{ backgroundColor: colors.background }}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
@@ -476,12 +464,14 @@ export default function GameDetailsScreen() {
             loading={weatherLoading}
             error={weatherError}
           />
-          <Weather
-            address={resolvedArenaAddress}
-            weather={weather}
-            loading={weatherLoading}
-            error={weatherError}
-          />
+          {liveScore?.status !== "final" && (
+            <Weather
+              address={resolvedArenaAddress}
+              weather={weather}
+              loading={weatherLoading}
+              error={weatherError}
+            />
+          )}
         </View>
       </ScrollView>
       <MemoizedFloatingChatButton gameId={gameId} />

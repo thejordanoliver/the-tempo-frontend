@@ -83,7 +83,7 @@ function sanitizeContent(rawContent: string | null): string {
   return htmlToPlainText(clean);
 }
 
-export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "CBB" = "NBA") {
+export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" = "NBA") {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

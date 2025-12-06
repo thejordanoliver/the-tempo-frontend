@@ -94739,7 +94739,7 @@ export const players: CFBPlayer[] = [
     number: 3,
     salary: null,
     experience: null,
-    image: "https://media.api-sports.io/american-football/players/19288.png",
+    image: "https://a.espncdn.com/i/headshots/college-football/players/full/4801299.png",
     teamId: 151,
   },
   {
@@ -113369,7 +113369,7 @@ export const players: CFBPlayer[] = [
     number: 2,
     salary: null,
     experience: null,
-    image: "https://media.api-sports.io/american-football/players/40773.png",
+    image: "https://a.espncdn.com/i/headshots/college-football/players/full/4870857.png",
     teamId: 174,
   },
   {

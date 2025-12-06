@@ -94,7 +94,10 @@ export const CBBStandingsList = () => {
 
     return (
       <View
-        style={[styles.row, { borderBottomColor: isDark ? "#333" : "#ccc" }]}
+        style={[
+          styles.row,
+          { borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray },
+        ]}
       >
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.current}</Text>
@@ -152,29 +155,18 @@ export const CBBStandingsList = () => {
   };
 
   const renderRightItem = ({ item }: { item: CBBTeamRank }) => (
-    <View
-      style={[
-        styles.row,
-        { borderBottomColor: isDark ? "#333" : "#ccc", flexDirection: "row" },
-      ]}
-    >
+    <View style={styles.row}>
       <View style={styles.statCell}>
-        <Text style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}>
-          {item.recordSummary || "N/A"}
-        </Text>
+        <Text style={styles.statText}>{item.recordSummary || "N/A"}</Text>
       </View>
       <View style={styles.statCell}>
-        <Text style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}>
-          {item.points ?? 0}
-        </Text>
+        <Text style={styles.statText}>{item.points ?? 0}</Text>
       </View>
       <View style={styles.statCell}>
-        <Text style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}>
-          {item.firstPlaceVotes ?? 0}
-        </Text>
+        <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
       </View>
       <View style={styles.statCell}>
-        <Text style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}>
+        <Text style={styles.statText}>
           {item.team?.groups?.shortName || "N/A"}
         </Text>
       </View>
@@ -187,7 +179,7 @@ export const CBBStandingsList = () => {
         styles.row,
         {
           borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
+          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
           alignItems: "center",
         },
       ]}
@@ -197,11 +189,7 @@ export const CBBStandingsList = () => {
           #
         </Text>
       </View>
-      <Text
-        style={[styles.teamHeaderText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-      >
-        Team
-      </Text>
+      <Text style={[styles.teamHeaderText]}>Team</Text>
     </View>
   );
 
@@ -212,7 +200,7 @@ export const CBBStandingsList = () => {
         {
           flexDirection: "row",
           borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
+          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
         },
       ]}
     >
@@ -223,7 +211,7 @@ export const CBBStandingsList = () => {
               styles.statText,
               {
                 fontFamily: Fonts.OSSEMIBOLD,
-                color: isDark ? "#fff" : "#1d1d1d",
+                color: isDark ? Colors.white : Colors.black,
               },
             ]}
           >
@@ -242,14 +230,14 @@ export const CBBStandingsList = () => {
         <View
           style={[
             styles.header,
-            { borderBottomColor: isDark ? "#444" : "#ccc" },
+            { borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray },
           ]}
         >
           <Text
             style={[
               styles.heading,
               {
-                color: isDark ? "#fff" : "#1d1d1d",
+                color: isDark ? Colors.white : Colors.black,
                 fontSize: 20,
                 fontFamily: Fonts.OSSEMIBOLD,
               },
@@ -263,7 +251,7 @@ export const CBBStandingsList = () => {
             <Text
               key={item.team?.id || `dropped-${item.previous}-${item.date}`}
               style={{
-                color: isDark ? "#aaa" : "#1d1d1d",
+                color: isDark ? Colors.white : Colors.black,
                 fontFamily: Fonts.OSLIGHT,
                 fontSize: 16,
                 marginVertical: 2,
@@ -284,14 +272,14 @@ export const CBBStandingsList = () => {
         <View
           style={[
             styles.header,
-            { borderBottomColor: isDark ? "#444" : "#ccc" },
+            { borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray },
           ]}
         >
           <Text
             style={[
               styles.heading,
               {
-                color: isDark ? "#fff" : "#1d1d1d",
+                color: isDark ? Colors.white : Colors.black,
                 fontSize: 20,
                 fontFamily: Fonts.OSSEMIBOLD,
               },
@@ -347,6 +335,7 @@ export const CBBStandingsList = () => {
         selectedValue={pollMode}
         onSelect={(value) => setPollMode(value as "ap" | "coaches")}
         isDark={isDark}
+        absolute
       />
 
       {/* --- Rankings Section --- */}

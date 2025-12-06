@@ -1,10 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
-import { Fonts } from "constants/fonts";
 import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { teams as nbaTeams } from "constants/teams";
-import { teams as cfbTeams, } from "constants/teamsCFB";
-import { teams as cbbTeams, conferenceObjectListMap  } from "constants/teamsCBB";
+import { teams as cbbTeams, conferenceObjectListMap } from "constants/teamsCBB";
+import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflTeams } from "constants/teamsNFL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useRef } from "react";
@@ -25,6 +26,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
+
 
 type CustomHeaderTitleProps = {
   title?: string;
@@ -53,7 +55,7 @@ type CustomHeaderTitleProps = {
   selectedConferenceName?: string;
   isPlayerScreen?: boolean;
   showBackButton?: boolean;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "Leagues";
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
   isNotified?: boolean;
@@ -65,6 +67,21 @@ type CustomHeaderTitleProps = {
 // ---------- UTIL ----------
 function hasLogoLight(team: any): team is { logoLight?: ImageSourcePropType } {
   return team?.logoLight !== undefined;
+}
+
+function resolveImage(source: any): ImageSourcePropType {
+  if (!source) return undefined as any;
+
+  // Already a require() image (number)
+  if (typeof source === "number") return source;
+
+  // Already { uri: string }
+  if (typeof source === "object" && source.uri) return source;
+
+  // Convert string → URI
+  if (typeof source === "string") return { uri: source };
+
+  return undefined as any;
 }
 
 // ---------- SUBCOMPONENTS ----------
@@ -119,11 +136,9 @@ const TeamBackground = ({
       />
       {(selectedTeam?.logo || logo) && (
         <Image
-          source={
-            selectedTeam?.logoLight
-              ? selectedTeam.logoLight
-              : selectedTeam?.logo ?? logo
-          }
+          source={resolveImage(
+            selectedTeam?.logoLight ?? selectedTeam?.logo ?? logo
+          )}
           style={styles.bgImage}
         />
       )}
@@ -191,6 +206,22 @@ const ConferenceBackground = ({
   );
 };
 
+const getLogoSource = (team: any, preferLight: boolean = false) => {
+  const source = preferLight && team.logoLight ? team.logoLight : team.logo;
+
+  if (!source) {
+    return require("assets/Placeholders/teamPlaceholder.png");
+  }
+
+  // URL string
+  if (typeof source === "string") {
+    return { uri: source };
+  }
+
+  // Module require / number
+  return source;
+};
+
 const GameHeader = ({
   tabName,
   homeTeam,
@@ -205,7 +236,7 @@ const GameHeader = ({
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
 
   const homeColor = homeTeam?.color || "#aaa";
-  const awayColor = awayTeam?.color || "#777";
+  const awayColor = awayTeam?.color || Colors.midTone;
   const dividerText = isNeutralSite ? "vs" : "@";
 
   // --- Main animations ---
@@ -217,74 +248,74 @@ const GameHeader = ({
   // --- Letter-level animations ---
   const awayLetters: string[] = awayTeam.code.split("");
   const homeLetters: string[] = homeTeam.code.split("");
-const awayLetterAnims: Animated.Value[] = useMemo(
-  () => awayTeam.code.split("").map(() => new Animated.Value(0)),
-  [awayTeam.code]
-);
+  const awayLetterAnims: Animated.Value[] = useMemo(
+    () => awayTeam.code.split("").map(() => new Animated.Value(0)),
+    [awayTeam.code]
+  );
 
-const homeLetterAnims: Animated.Value[] = useMemo(
-  () => homeTeam.code.split("").map(() => new Animated.Value(0)),
-  [homeTeam.code]
-);
+  const homeLetterAnims: Animated.Value[] = useMemo(
+    () => homeTeam.code.split("").map(() => new Animated.Value(0)),
+    [homeTeam.code]
+  );
 
-useEffect(() => {
-  Animated.sequence([
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 800,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(dividerScale, {
-        toValue: 1,
-        duration: 800,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }),
-    ]),
-    Animated.parallel([
+  useEffect(() => {
+    Animated.sequence([
       Animated.parallel([
-        Animated.timing(scaleAway, {
+        Animated.timing(opacity, {
           toValue: 1,
-          duration: 1000,
-          easing: Easing.out(Easing.exp),
+          duration: 800,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-        Animated.timing(scaleHome, {
+        Animated.timing(dividerScale, {
           toValue: 1,
-          duration: 1000,
-          easing: Easing.out(Easing.exp),
+          duration: 800,
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
       ]),
       Animated.parallel([
-        Animated.stagger(
-          100,
-          awayLetterAnims.map(a =>
-            Animated.timing(a, {
-              toValue: 1,
-              duration: 600,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true,
-            })
-          )
-        ),
-        Animated.stagger(
-          100,
-          homeLetterAnims.map(a =>
-            Animated.timing(a, {
-              toValue: 1,
-              duration: 600,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true,
-            })
-          )
-        ),
+        Animated.parallel([
+          Animated.timing(scaleAway, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleHome, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.parallel([
+          Animated.stagger(
+            100,
+            awayLetterAnims.map((a) =>
+              Animated.timing(a, {
+                toValue: 1,
+                duration: 600,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+              })
+            )
+          ),
+          Animated.stagger(
+            100,
+            homeLetterAnims.map((a) =>
+              Animated.timing(a, {
+                toValue: 1,
+                duration: 600,
+                easing: Easing.out(Easing.cubic),
+                useNativeDriver: true,
+              })
+            )
+          ),
+        ]),
       ]),
-    ]),
-  ]).start();
-}, [awayTeam.code, homeTeam.code]);
+    ]).start();
+  }, [awayTeam.code, homeTeam.code]);
 
   return (
     <Animated.View
@@ -310,11 +341,12 @@ useEffect(() => {
             { transform: [{ scale: scaleAway }] },
           ]}
         >
-          <Image
-            source={hasLogoLight(awayTeam) ? awayTeam.logoLight : awayTeam.logo}
+            <Image
+            source={getLogoSource(awayTeam, true)}
             style={styles.bgLogo}
             resizeMode="contain"
           />
+
           <View style={{ flexDirection: "row" }}>
             {awayLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -365,11 +397,12 @@ useEffect(() => {
             { transform: [{ scale: scaleHome }] },
           ]}
         >
-          <Image
-            source={hasLogoLight(homeTeam) ? homeTeam.logoLight : homeTeam.logo}
+            <Image
+            source={getLogoSource(homeTeam, true)}
             style={styles.bgLogo}
             resizeMode="contain"
           />
+
           <View style={{ flexDirection: "row" }}>
             {homeLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -404,8 +437,6 @@ useEffect(() => {
     </Animated.View>
   );
 };
-
-
 
 // ---------- MAIN COMPONENT ----------
 export function CustomHeaderTitle({
@@ -455,7 +486,7 @@ export function CustomHeaderTitle({
     "Sun Belt": "Sun Belt",
     CUSA: "CUSA",
     MAC: "MAC",
-   "Atlantic 10": "Atlantic 10",
+    "Atlantic 10": "Atlantic 10",
     "FBS Independents": "FBS Independents",
   };
 
@@ -474,7 +505,8 @@ export function CustomHeaderTitle({
 
   const conferenceLogo = selectedConference?.logo ?? null;
   const primaryColor =
-    selectedConference?.color?.primary || (isDark ? Colors.black : Colors.white);
+    selectedConference?.color?.primary ||
+    (isDark ? Colors.black : Colors.white);
   const secondaryColor = selectedConference?.color?.secondary || primaryColor;
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -494,16 +526,25 @@ export function CustomHeaderTitle({
     if (league === "NFL") return nflTeams.find((t) => t.code === teamCode);
     if (league === "CFB") return cfbTeams.find((t) => t.code === teamCode);
     if (league === "CBB") return cbbTeams.find((t) => t.code === teamCode);
+    if (league === "MLB") return mlbTeams.find((t) => t.code === teamCode);
     return nbaTeams.find((t) => t.code === teamCode);
   }, [teamCode, league]);
 
   const homeTeam = useMemo(() => {
     const teams =
-      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : league === "CBB" ? cbbTeams : nbaTeams;
+      league === "NFL"
+        ? nflTeams
+        : league === "CFB"
+        ? cfbTeams
+        : league === "CBB"
+        ? cbbTeams
+        : league === "MLB"
+        ? mlbTeams
+        : nbaTeams;
     return (
       teams.find((t) => t.code === homeTeamCode) ?? {
         code: homeTeamCode ?? "HOM",
-        color: "#aaa",
+        color: Colors.lightGray,
         logo: null,
       }
     );
@@ -511,11 +552,19 @@ export function CustomHeaderTitle({
 
   const awayTeam = useMemo(() => {
     const teams =
-      league === "NFL" ? nflTeams : league === "CFB" ? cfbTeams : league === "CBB" ? cbbTeams : nbaTeams;
+      league === "NFL"
+        ? nflTeams
+        : league === "CFB"
+        ? cfbTeams
+        : league === "CBB"
+        ? cbbTeams
+        : league === "MLB"
+        ? mlbTeams
+        : nbaTeams;
     return (
       teams.find((t) => t.code === awayTeamCode) ?? {
         code: awayTeamCode ?? "AWY",
-        color: "#777",
+        color: Colors.midTone,
         logo: null,
       }
     );
@@ -629,7 +678,11 @@ export function CustomHeaderTitle({
                   name="chevron-down"
                   size={20}
                   color={
-                    selectedConference ? Colors.white : isDark ? Colors.white : Colors.black
+                    selectedConference
+                      ? Colors.white
+                      : isDark
+                      ? Colors.white
+                      : Colors.black
                   }
                 />
               </Animated.View>
@@ -640,7 +693,7 @@ export function CustomHeaderTitle({
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <HeaderTitle style={textStyle}>
-              {title  || tabName || ""}
+              {title || tabName || ""}
             </HeaderTitle>
           </View>
         )}

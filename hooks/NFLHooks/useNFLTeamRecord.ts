@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTeamAbbreviation } from "constants/teamsNFL";
+import { getTeamCode } from "constants/teamsNFL";
 
 type TeamRecord = {
   overall: string | null;
@@ -12,7 +12,7 @@ export function useNFLTeamRecord(teamId?: string) {
   useEffect(() => {
     if (!teamId) return;
 
-    const teamAbbr = getTeamAbbreviation(teamId);
+    const teamAbbr = getTeamCode(teamId);
     if (!teamAbbr) {
       // No record if unknown team
       setRecord({ overall: null });

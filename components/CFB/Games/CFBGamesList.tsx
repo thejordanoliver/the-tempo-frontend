@@ -53,17 +53,37 @@ export default function CFBGamesList({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { viewMode } = usePreferences();
+  const PAGE_SIZE = 20;
+const [page, setPage] = useState(1);
+
 
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   // --- Group all games as "Regular Season" only ---
-  const sections: CFBGameSection[] = useMemo(() => {
-    if (!showHeaders) {
-      return [{ title: "All", data: games }];
-    }
-    return [{ title: "Regular Season", data: games }];
-  }, [games, showHeaders]);
+ // Paginate base games first
+const paginatedGames = useMemo(() => {
+  return games.slice(0, page * PAGE_SIZE);
+}, [games, page]);
+
+// Build sections AFTER pagination
+const sections: CFBGameSection[] = useMemo(() => {
+  if (!showHeaders) {
+    return [{ title: "All", data: paginatedGames }];
+  }
+  return [{ title: "Regular Season", data: paginatedGames }];
+}, [paginatedGames, showHeaders]);
+
+const loadMore = () => {
+  if (paginatedGames.length >= games.length) return;
+  setPage((prev) => prev + 1);
+};
+
+React.useEffect(() => {
+  setPage(1);
+}, [games]);
+
+
 
   const handleLongPress = (game: any) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -210,65 +230,81 @@ export default function CFBGamesList({
       )}
 
       {viewMode === "grid" ? (
-        <FlatList
-          data={
-            games.length % 2 === 1
-              ? [...games, { _isPlaceholder: true } as any]
-              : games
-          }
-          keyExtractor={(item, index) =>
-            (item as any)?._isPlaceholder
-              ? `placeholder-${index}`
-              : `game-${item?.game?.id ?? index}`
-          }
-          numColumns={2}
-          renderItem={({ item, index }) => renderGameCard(item, index)}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          scrollEnabled={scrollEnabled ?? true}
-          contentContainerStyle={styles.gridListContainer}
-          ListEmptyComponent={
-            <View style={{ marginTop: 10 }}>
-              <Text
-                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
-              >
-                {day === "todayTomorrow"
-                  ? "No CFB games found for today or tomorrow."
-                  : "No CFB games found."}
-              </Text>
-            </View>
-          }
-        />
+       <FlatList
+  data={
+    paginatedGames.length % 2 === 1
+      ? [...paginatedGames, { _isPlaceholder: true } as any]
+      : paginatedGames
+  }
+  keyExtractor={(item, index) =>
+    (item as any)?._isPlaceholder
+      ? `placeholder-${index}`
+      : `game-${item?.game?.id ?? index}`
+  }
+  numColumns={2}
+  renderItem={({ item, index }) => renderGameCard(item, index)}
+  refreshing={refreshing}
+  onRefresh={onRefresh}
+  scrollEnabled={scrollEnabled ?? true}
+  onEndReached={loadMore}
+  onEndReachedThreshold={0.3}
+  ListFooterComponent={
+    paginatedGames.length < games.length ? (
+      <View style={{ paddingVertical: 20 }}>
+        <GameSquareCardSkeleton />
+      </View>
+    ) : null
+  }
+  contentContainerStyle={styles.gridListContainer}
+  ListEmptyComponent={
+    <View style={{ marginTop: 10 }}>
+      <Text style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}>
+        {day === "todayTomorrow"
+          ? "No CFB games found for today or tomorrow."
+          : "No CFB games found."}
+      </Text>
+    </View>
+  }
+/>
+
       ) : (
-        <SectionList
-          sections={sections as SectionListData<any, CFBGameSection>[]}
-          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
-          renderItem={({ item, index }) => renderGameCard(item, index)}
-          renderSectionHeader={({ section }) =>
-            showHeaders && section.data.length > 0 ? (
-              <View style={styles.headerWrapper}>
-                <HeadingTwo>{section.title}</HeadingTwo>
-              </View>
-            ) : null
-          }
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          contentContainerStyle={styles.contentContainer}
-          stickySectionHeadersEnabled={false}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          scrollEnabled={scrollEnabled ?? true}
-          ListEmptyComponent={
-            <View style={{ marginTop: 10 }}>
-              <Text
-                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
-              >
-                {day === "todayTomorrow"
-                  ? "No CFB games found for today or tomorrow."
-                  : "No CFB games found."}
-              </Text>
-            </View>
-          }
-        />
+       <SectionList
+  sections={sections as SectionListData<any, CFBGameSection>[]}
+  keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+  renderItem={({ item, index }) => renderGameCard(item, index)}
+  renderSectionHeader={({ section }) =>
+    showHeaders && section.data.length > 0 ? (
+      <View style={styles.headerWrapper}>
+        <HeadingTwo>{section.title}</HeadingTwo>
+      </View>
+    ) : null
+  }
+  refreshing={refreshing}
+  onRefresh={onRefresh}
+  contentContainerStyle={styles.contentContainer}
+  stickySectionHeadersEnabled={false}
+  ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+  scrollEnabled={scrollEnabled ?? true}
+  onEndReached={loadMore}
+  onEndReachedThreshold={0.3}
+  ListFooterComponent={
+    paginatedGames.length < games.length ? (
+      <View style={{ paddingVertical: 20 }}>
+        <GameCardSkeleton />
+      </View>
+    ) : null
+  }
+  ListEmptyComponent={
+    <View style={{ marginTop: 10 }}>
+      <Text style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}>
+        {day === "todayTomorrow"
+          ? "No CFB games found for today or tomorrow."
+          : "No CFB games found."}
+      </Text>
+    </View>
+  }
+/>
+
       )}
 
       {modalVisible && previewGame && (

@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
 
 function parseDateString(d: string) {
   const isoMatch = /^\d{4}-\d{1,2}-\d{1,2}/.test(d);
@@ -20,13 +20,16 @@ function parseDateString(d: string) {
   return null;
 }
 
-type LeagueType = "nba" | "mens-college-basketball";
+type LeagueType = "nba" | "mens-college-basketball" | "mlb"; // 👈 MLB now included
 
 export const useGameBroadcasts = (
   home: string,
   away: string,
-  date: string | { date?: string; utc?: string; timestamp?: number } | undefined,
-  league: LeagueType = "nba" // 👈 default to NBA
+  date:
+    | string
+    | { date?: string; utc?: string; timestamp?: number }
+    | undefined,
+  league: LeagueType = "nba"
 ) => {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -51,7 +54,11 @@ export const useGameBroadcasts = (
       setError(null);
 
       try {
+        // ---------------------------
+        // Normalize incoming date
+        // ---------------------------
         let targetDate: Date | null = null;
+
         if (typeof date === "string") {
           targetDate = parseDateString(date);
         } else if (typeof date === "object") {
@@ -63,48 +70,67 @@ export const useGameBroadcasts = (
             ? new Date(date.date)
             : null;
         }
+
         if (!targetDate) return;
 
         const makeYMD = (d: Date) =>
           d.toISOString().slice(0, 10).replace(/-/g, "");
+
         const datesToCheck = [
-          makeYMD(new Date(targetDate.getTime() - 24 * 60 * 60 * 1000)),
+          makeYMD(new Date(targetDate.getTime() - 86400000)),
           makeYMD(targetDate),
-          makeYMD(new Date(targetDate.getTime() + 24 * 60 * 60 * 1000)),
+          makeYMD(new Date(targetDate.getTime() + 86400000)),
         ];
 
-        let foundGame: any = null;
-
-        // 👇 Choose ESPN path and parameters per league
+        // ------------------------------------------------
+        // ESPN path per sport
+        // ------------------------------------------------
         const leaguePath =
           league === "mens-college-basketball"
             ? "basketball/mens-college-basketball"
+            : league === "mlb"
+            ? "baseball/mlb" // 👈 MLB path
             : "basketball/nba";
 
-        // ESPN group codes and limits vary by league
+        // ------------------------------------------------
+        // Params per league
+        // ------------------------------------------------
         const params =
           league === "mens-college-basketball"
-            ? "&groups=50&limit=500" // 50 = NCAA Division I Men
-            : "&limit=300"; // NBA doesn’t need groups
+            ? "&groups=50&limit=500"
+            : league === "mlb"
+            ? "&limit=200" // MLB scoreboard limit
+            : "&limit=300";
 
+        let foundGame: any = null;
+
+        // ------------------------------------------------
+        // Try yesterday / today / tomorrow
+        // ------------------------------------------------
         for (const yyyymmdd of datesToCheck) {
           const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${leaguePath}/scoreboard?dates=${yyyymmdd}${params}`;
           const scoreboardRes = await axios.get(scoreboardUrl);
           const games = scoreboardRes.data.events || [];
 
+          // Try to match by name OR abbreviation
           const game = games.find((g: any) => {
             const competitors = g.competitions?.[0]?.competitors || [];
+            const normalize = (v: string) => v?.toLowerCase();
+
             const teamNames = competitors.flatMap((c: any) => [
-              c.team.abbreviation?.toLowerCase(),
-              c.team.displayName?.toLowerCase(),
-              c.team.shortDisplayName?.toLowerCase(),
-              c.team.name?.toLowerCase(),
+              c.team?.abbreviation?.toLowerCase(),
+              c.team?.displayName?.toLowerCase(),
+              c.team?.shortDisplayName?.toLowerCase(),
+              c.team?.name?.toLowerCase(),
             ]);
-            const normalize = (s: string) => s.toLowerCase();
 
             return (
-              teamNames.some((n: string) => n && n.includes(normalize(home))) &&
-              teamNames.some((n: string) => n && n.includes(normalize(away)))
+              teamNames.some((n: string | undefined) =>
+                n?.includes(normalize(home))
+              ) &&
+              teamNames.some((n: string | undefined) =>
+                n?.includes(normalize(away))
+              )
             );
           });
 
@@ -122,6 +148,9 @@ export const useGameBroadcasts = (
           return;
         }
 
+        // ------------------------------------------------
+        // Extract actual broadcast info
+        // ------------------------------------------------
         const eventBroadcasts = foundGame.competitions?.[0]?.broadcasts || [];
         if (!cancelled) setBroadcasts(eventBroadcasts);
       } catch (err: any) {

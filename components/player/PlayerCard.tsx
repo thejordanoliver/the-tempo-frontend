@@ -1,4 +1,3 @@
-import { Colors } from "constants/Colors";
 import { teams } from "constants/teams"; // your teams list
 import { useRouter } from "expo-router";
 import React from "react";
@@ -22,7 +21,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   team,
   avatarUrl,
   jerseyNumber,
-  statNumber,   // ✅ NEW
+  statNumber, // ✅ NEW
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -37,10 +36,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const displayNumber =
     statNumber != null && statNumber !== ""
-      ? statNumber        // → Use stat number if provided
+      ? statNumber // → Use stat number if provided
       : typeof jerseyNumber === "string" && /^\d+$/.test(jerseyNumber)
       ? `#${jerseyNumber}` // → Else use jersey
-      : null;              // → Else display nothing
+      : null; // → Else display nothing
 
   return (
     <Pressable
@@ -60,10 +59,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       }}
     >
       {avatarUrl ? (
-        <Image
-          source={{ uri: avatarUrl }}
-          style={styles.avatar}
-        />
+        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
       ) : (
         <View style={styles.avatarPlaceholder}>
           <Text style={styles.initial}>{initial}</Text>
@@ -71,24 +67,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       )}
 
       <View style={styles.info}>
-        <Text
-          style={[
-            styles.name,
-            { color: isDark ? Colors.white : teamObj?.color },
-          ]}
-        >
-          {name}
-        </Text>
+        <Text style={styles.name}>{name}</Text>
 
         {displayNumber && (
-          <Text
-            style={[
-              styles.jerseyNumber,
-              { color: isDark ? "#fff" : teamObj?.color },
-            ]}
-          >
-            {displayNumber}
-          </Text>
+          <Text style={styles.jerseyNumber}>{displayNumber}</Text>
         )}
       </View>
     </Pressable>

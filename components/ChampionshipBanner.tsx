@@ -1,26 +1,17 @@
-import {
-  Image,
-  ImageBackground,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
-import { logoMap as nbaLogoMap, teams as nbaTeams } from "../constants/teams";
-import {
-  logoMap as cbbLogoMap,
-  teams as cbbTeams,
-} from "../constants/teamsCBB";
-import {
-  logoMap as cfbLogoMap,
-  teams as cfbTeams,
-} from "../constants/teamsCFB";
-import {
-  logoMap as nflLogoMap,
-  teams as nflTeams,
-} from "../constants/teamsNFL";
+import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+
+import Fill from "assets/banners/Fill.png";
+import Outline from "assets/banners/Outline.png";
+import OutlineLight from "assets/banners/OutlineLight.png";
+import { teams as nbaTeams } from "../constants/teams";
+import { teams as cbbTeams } from "../constants/teamsCBB";
+import { teams as cfbTeams } from "../constants/teamsCFB";
+import { teams as mlbTeams } from "../constants/teamsMLB";
+import { teams as nflTeams } from "../constants/teamsNFL";
 
 import { Fonts } from "constants/fonts";
 import { LeagueType } from "types/types";
+import { Colors } from "constants/Colors";
 
 type Props = {
   years: number[];
@@ -32,276 +23,169 @@ type Props = {
 
 export default function ChampionshipBanner({
   years,
-  logo,
   teamId,
   teamName,
   league = "NBA",
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const cleanName = teamName?.replace(/"/g, "") || "";
 
-  const teams =
+  // pick team array
+  const teamList =
     league === "NFL"
       ? nflTeams
       : league === "CFB"
       ? cfbTeams
       : league === "CBB"
       ? cbbTeams
+      : league === "MLB"
+      ? mlbTeams
       : nbaTeams;
-  const logoMap =
-    league === "NFL"
-      ? nflLogoMap
-      : league === "CFB"
-      ? cfbLogoMap
-      : league === "CBB"
-      ? cbbLogoMap
-      : nbaLogoMap;
 
-  const team =
-    teams.find((t) => String(t.id) === String(teamId)) ||
-    teams.find((t) => t.name === cleanName);
+  // find team by id FIRST
+  let team =
+    teamList.find((t) => String(t.id) === String(teamId)) ||
+    teamList.find((t) => t.name === teamName);
 
   if (!team) {
     console.warn(
-      `ChampionshipBanner: No team found for ID "${teamId}" or name "${teamName}" (${league})`
+      `ChampionshipBanner: No team found for id=${teamId}, name=${teamName}, league=${league}`
     );
   }
 
+  // format years
   const isNone = years.length === 0;
-  const isManyYears = years.length > 10;
-  const banners = isNone ? [null] : isManyYears ? [years.length] : years;
-  const textColor = "#fff";
+  const isMany = years.length > 10;
+  const bannerList = isNone ? [null] : isMany ? [years.length] : years;
+
+function resolveTeamLogo(team: any, isDark: boolean, league: LeagueType) {
+  if (!team) return undefined;
+
+  // 1) If logo is a require() object → return directly
+  if (typeof team.logo !== "string") {
+    return isDark && team.logoLight ? team.logoLight : team.logo;
+  }
+
+  // 2) If logo is a URI string → wrap it
+  return {
+    uri: isDark && typeof team.logoLight === "string"
+      ? team.logoLight
+      : team.logo,
+  };
+}
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 12,
-        justifyContent: "center",
-        marginVertical: 16,
-      }}
-    >
-      {banners.map((yearVal, index) => {
+    <View style={styles.wrapper}>
+      {bannerList.map((yearVal, index) => {
         const yearShort = isNone
           ? "NONE"
-          : isManyYears
-          ? league === "CFB"
-            ? `x${yearVal}` // Show "xN" even for CFB
-            : `x${yearVal}`
-          : `'${yearVal?.toString().slice(-2)}`;
+          : isMany
+          ? `x${yearVal}`
+          : `'${String(yearVal).slice(-2)}`;
 
-        const bannerSource = getBannerImage(team?.id, league, isDark);
-        let championshipLabel = `${league} CHAMPIONS`;
+        let label = `${league} CHAMPIONS`;
 
-        // For CFB, handle year vs. many championships
-        if (league === "CFB") {
-          if (isManyYears) {
-            championshipLabel = "CFB CHAMPIONS"; // show generic label for >10 championships
-          } else if (typeof yearVal === "number") {
-            championshipLabel =
-              yearVal <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
-          }
+        if (league === "CFB" && typeof yearVal === "number") {
+          label = yearVal <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
         }
+        if (league === "MLB" && typeof yearVal === "number") {
+          label = "WORLD SERIES CHAMPIONS";
+        }
+
         return (
-          <ImageBackground
-            key={index}
-            source={bannerSource}
-            style={{
-              width: 120,
-              height: 165,
-              alignItems: "center",
-              justifyContent: "flex-start",
-              paddingTop: 16,
-            }}
-            resizeMode="contain"
-          >
-            <Text
-              style={{
-                color: textColor,
-                fontSize: 22,
-                fontFamily: Fonts.OSBOLD,
-              }}
-            >
-              {yearShort}
-            </Text>
+          <View key={index} style={styles.bannerWrapper}>
+            {/* fill (tinted) */}
+            <Image
+              source={Fill}
+              style={[
+                styles.bannerFill,
+                {
+                  tintColor: team?.color ?? Colors.midTone,
+                },
+              ]}
+              resizeMode="contain"
+            />
 
-            {team && (
-              <Image
-                source={
-                  getTeamLogoFromMap(team.name, logoMap, isDark, league) ||
-                  team.logo ||
-                  logo
-                }
-                style={{
-                  width: 40,
-                  height: 60,
-                  marginTop: 4,
-                  resizeMode: "contain",
-                }}
-              />
-            )}
+            {/* outline */}
+            <Image
+              source={isDark ? OutlineLight : Outline}
+              style={styles.bannerOutline}
+              resizeMode="contain"
+            />
 
-            <Text
-              style={{
-                color: textColor,
-                fontSize: 12,
-                fontFamily: Fonts.OSBOLD,
-                marginTop: 0,
-              }}
-            >
-              {championshipLabel}
-            </Text>
-          </ImageBackground>
+            {/* content */}
+            <View style={styles.contentOverlay}>
+              <Text style={styles.leagueLabel}>{label}</Text>
+              <Text style={styles.yearText}>{yearShort}</Text>
+
+              {team && (
+                <Image
+                  source={resolveTeamLogo(team, isDark, league)}
+                  style={styles.teamLogo}
+                />
+              )}
+            </View>
+          </View>
         );
       })}
     </View>
   );
 }
 
-function getTeamLogoFromMap(
-  name?: string,
-  logoMap?: Record<string, any>,
-  isDark?: boolean,
-  league?: LeagueType
-) {
-  if (!name || !logoMap) return null;
+/* ---------------------------------------------------------
+   STYLES
+--------------------------------------------------------- */
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "center",
+    marginVertical: 16,
+  },
 
-  const cleanName = name.replace(/\s+/g, "");
+  bannerWrapper: {
+    width: 120,
+    height: 165,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-  // For CFB, always use logoLight if available
-  if (league === "CFB" && logoMap[`${cleanName}LogoLight`]) {
-    return logoMap[`${cleanName}LogoLight`];
-  }
+  bannerFill: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
 
-  const logoKey = `${cleanName}Logo`;
-  const logoLightKey = `${cleanName}LogoLight`;
+  bannerOutline: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
 
-  // Teams that should always use light logo in NBA
-  const alwaysLightTeams = ["Jazz", "Rockets", "Sixers"];
-  const isAlwaysLight = alwaysLightTeams.includes(cleanName);
+  contentOverlay: {
+    position: "absolute",
+    top: 16,
+    width: "100%",
+    alignItems: "center",
+  },
 
-  if ((isAlwaysLight || isDark) && logoMap[logoLightKey]) {
-    return logoMap[logoLightKey];
-  }
+  yearText: {
+    color: Colors.white,
+    fontSize: 22,
+    fontFamily: Fonts.OSBOLD,
+    marginTop: 4,
+  },
 
-  return logoMap[logoKey] ?? null;
-}
-
-// --- BANNER MAPS ---
-
-const nbaBannerMap: Record<string, any> = {
-  "1": require("../assets/banners/HAWKS.png"),
-  "2": require("../assets/banners/CELTICS.png"),
-  "4": require("../assets/banners/NETS.png"),
-  "5": require("../assets/banners/HORNETS.png"),
-  "6": require("../assets/banners/BULLS.png"),
-  "7": require("../assets/banners/CAVS.png"),
-  "8": require("../assets/banners/MAVS.png"),
-  "9": require("../assets/banners/NUGGETS.png"),
-  "10": require("../assets/banners/PISTONS.png"),
-  "11": require("../assets/banners/WARRIORS.png"),
-  "14": require("../assets/banners/ROCKETS.png"),
-  "15": require("../assets/banners/PACERS.png"),
-  "16": require("../assets/banners/CLIPPERS.png"),
-  "17": require("../assets/banners/LAKERS.png"),
-  "19": require("../assets/banners/GRIZZLIES.png"),
-  "20": require("../assets/banners/HEAT.png"),
-  "21": require("../assets/banners/BUCKS.png"),
-  "22": require("../assets/banners/TIMBERWOLVES.png"),
-  "23": require("../assets/banners/PELICANS.png"),
-  "24": require("../assets/banners/KNICKS.png"),
-  "25": require("../assets/banners/THUNDER.png"),
-  "26": require("../assets/banners/MAGIC.png"),
-  "27": require("../assets/banners/76ERS.png"),
-  "28": require("../assets/banners/SUNS.png"),
-  "29": require("../assets/banners/TRAILBLAZERS.png"),
-  "30": require("../assets/banners/KINGS.png"),
-  "31": require("../assets/banners/SPURS.png"),
-  "38": require("../assets/banners/RAPTORS.png"),
-  "40": require("../assets/banners/JAZZ.png"),
-  "41": require("../assets/banners/WIZARDS.png"),
-};
-
-const nflBannerMap: Record<string, any> = {
-  "1": require("../assets/bannersNFL/RAIDERS.png"),
-  "2": require("../assets/bannersNFL/JAGUARS.png"),
-  "3": require("../assets/bannersNFL/PATRIOTS.png"),
-  "4": require("../assets/bannersNFL/GIANTS.png"),
-  "5": require("../assets/bannersNFL/RAVENS.png"),
-  "6": require("../assets/bannersNFL/TITANS.png"),
-  "7": require("../assets/bannersNFL/LIONS.png"),
-  "8": require("../assets/bannersNFL/FALCONS.png"),
-  "9": require("../assets/bannersNFL/BROWNS.png"),
-  "10": require("../assets/bannersNFL/BENGALS.png"),
-  "11": require("../assets/bannersNFL/CARDINALS.png"),
-  "12": require("../assets/bannersNFL/EAGLES.png"),
-  "13": require("../assets/bannersNFL/JETS.png"),
-  "14": require("../assets/bannersNFL/NINERS.png"),
-  "15": require("../assets/bannersNFL/PACKERS.png"),
-  "16": require("../assets/bannersNFL/BEARS.png"),
-  "17": require("../assets/bannersNFL/CHIEFS.png"),
-  "18": require("../assets/bannersNFL/COMMANDERS.png"),
-  "19": require("../assets/bannersNFL/PANTHERS.png"),
-  "20": require("../assets/bannersNFL/BILLS.png"),
-  "21": require("../assets/bannersNFL/COLTS.png"),
-  "22": require("../assets/bannersNFL/STEELERS.png"),
-  "23": require("../assets/bannersNFL/SEAHAWKS.png"),
-  "24": require("../assets/bannersNFL/BUCCANEERS.png"),
-  "25": require("../assets/bannersNFL/DOLPHINS.png"),
-  "26": require("../assets/bannersNFL/TEXANS.png"),
-  "27": require("../assets/bannersNFL/SAINTS.png"),
-  "28": require("../assets/bannersNFL/BRONCOS.png"),
-  "29": require("../assets/bannersNFL/COWBOYS.png"),
-  "30": require("../assets/bannersNFL/CHARGERS.png"),
-  "31": require("../assets/bannersNFL/RAMS.png"),
-  "32": require("../assets/bannersNFL/VIKINGS.png"),
-};
-
-const cfbBannerMap: Record<string, any> = {
-  "113": require("../assets/bannersCFB/FLORIDA.png"),
-  "107": require("../assets/bannersCFB/OHIOSTATE.png"),
-  "195": require("../assets/bannersCFB/TEXAS.png"),
-  "71": require("../assets/bannersCFB/UCF.png"),
-  "106": require("../assets/bannersCFB/ALABAMA.png"),
-};
-const cbbBannerMap: Record<string, any> = {
-  "1909": require("../assets/bannersCFB/FLORIDA.png"),
-  "2058": require("../assets/bannersCFB/OHIOSTATE.png"),
-  "203": require("../assets/bannersCFB/TEXAS.png"),
-  "2165": require("../assets/bannersCFB/UCF.png"),
-  "176": require("../assets/bannersCFB/ALABAMA.png"),
-};
-
-function getBannerImage(
-  teamId?: string | number,
-  league: LeagueType = "NBA",
-  isDark?: boolean
-) {
-  const fallback =
-    league === "NFL"
-      ? require("../assets/bannersNFL/DEFAULT.png")
-      : league === "NBA"
-      ? require("../assets/banners/DEFAULT.png")
-      : require("../assets/bannersCFB/DEFAULT.png");
-
-  if (!teamId) return fallback;
-
-  const id = String(teamId);
-
-  const maps =
-    league === "NFL"
-      ? nflBannerMap
-      : league === "NBA"
-      ? nbaBannerMap
-      : league === "CBB"
-      ? cbbBannerMap
-      : cfbBannerMap;
-
-  if (maps[id]) {
-    return maps[id];
-  }
-
-  console.warn(`Banner not found for ${league} team ID:`, id);
-  return fallback;
-}
+  teamLogo: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+  },
+  leagueLabel: {
+    color: Colors.white,
+    fontSize: 12,
+    width: 60,
+    textAlign: "center",
+    fontFamily: Fonts.OSBOLD,
+  },
+});

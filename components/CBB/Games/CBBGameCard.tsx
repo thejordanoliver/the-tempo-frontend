@@ -22,39 +22,44 @@ import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-// --- Helper function to normalize API status ---
-function mapStatus(apiStatus: {
-  short: number | string;
-  long?: string;
-}): string {
-  const long = apiStatus.long?.toLowerCase();
 
-  // ✅ prioritize 'long' from API
-  if (long === "in play") return "In Play";
-  if (long === "finished") return "Final";
-  if (long === "scheduled") return "Scheduled";
-  if (long === "canceled") return "Canceled";
-  if (long === "delayed") return "Delayed";
-  if (long === "postponed") return "Postponed";
 
-  // fallback using numeric 'short' codes
-  const short = Number(apiStatus.short);
-  switch (short) {
-    case 1:
-      return "Scheduled";
-    case 2:
-    case 3:
-      return "Final"; // only if 'long' was missing
-    case 4:
-      return "Postponed";
-    case 5:
-      return "Delayed";
-    case 6:
-      return "Canceled";
-    default:
-      return "Scheduled";
-  }
+function normalizeGameStatus(gameStatus: any, liveScore: any) {
+  const long = (gameStatus?.long ?? "").toLowerCase();
+  const short = (gameStatus?.short ?? "").toString().toLowerCase();
+  const statusText = (liveScore?.statusText ?? "").toLowerCase();
+  const detail = (liveScore?.detail ?? "").toLowerCase();
+  const raw = statusText || detail || long;
+
+  // Explicit outcomes
+  if (raw.includes("canceled") || raw.includes("cancelled")) return "Canceled";
+  if (raw.includes("postponed")) return "Postponed";
+  if (raw.includes("delayed")) return "Delayed";
+
+  // Halftime
+  if (raw.includes("halftime")) return "Halftime";
+
+  // Final (including Final/OT or AOT)
+  if (raw.includes("final") || raw.includes("aot") || short === "ft")
+    return "Final";
+
+  // Live indicators
+  const livePhrases = [
+    "in progress",
+    "in play",
+    "playing",
+    "live",
+    "1st",
+    "2nd",
+    "ot",
+    "quarter",
+  ];
+  if (livePhrases.some((p) => raw.includes(p))) return "In Play";
+
+  // Default
+  return "Scheduled";
 }
+
 
 function CBBGameCard({
   game,
@@ -247,44 +252,17 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
     return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
   }
 
-  // Normalize status
- const effectiveStatus = useMemo(() => {
-  const statusText =
-    liveScore?.status?.toLowerCase() ?? game.status.long ?? "";
-  const base =
-    typeof game.status.long === "string"
-      ? game.status.long
-      : mapStatus(game.status.long);
+const effectiveStatus = useMemo(() => {
+  return normalizeGameStatus(game.status, liveScore);
+}, [game.status, liveScore]);
 
-  if (statusText.includes("final") || base.toLowerCase().includes("final"))
-    return "Final";
-  if (
-    statusText.includes("halftime") ||
-    base.toLowerCase().includes("halftime")
-  )
-    return "Halftime";
-  if (
-    statusText.includes("in progress") ||
-    statusText.includes("in_play") ||
-    statusText.includes("qtr") ||
-    statusText.includes("quarter") ||
-    statusText.includes("ot")
-  )
-    return "In Play";
+const isFinal = effectiveStatus === "Final";
+const isCanceled = effectiveStatus === "Canceled";
+const isDelayed = effectiveStatus === "Delayed";
+const isPostponed = effectiveStatus === "Postponed";
+const isHalftime = effectiveStatus === "Halftime";
+const inProgress = effectiveStatus === "In Play";
 
-  return base;
-}, [game.status, liveScore?.statusText]);
-
-  // Boolean flags
-  const inProgress = effectiveStatus === "In Play";
-
-  // Now derive booleans reactively
-  const isFinal = effectiveStatus === "Final";
-
-  const isCanceled = effectiveStatus === "Canceled";
-  const isDelayed = effectiveStatus === "Delayed";
-  const isPostponed = game.status.long === "Game Postponed";
-  const isHalftime = liveScore?.statusText === "Halftime";
 
   const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
   const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
@@ -396,7 +374,7 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
         recordData={awayTeam.record ?? undefined}
         teamWins={awayWins}
         showRecord={
-          effectiveStatus === "Not Started" || isCanceled || isPostponed
+          effectiveStatus === "Scheduled" || isCanceled || isPostponed
         }
       />
 
@@ -466,7 +444,7 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
         recordData={homeTeam.record ?? undefined}
         teamWins={homeWins}
         showRecord={
-          effectiveStatus === "Not Started" || isCanceled || isPostponed
+            effectiveStatus === "Scheduled" || isCanceled || isPostponed
         }
       />
 

@@ -21,9 +21,9 @@ type Props = {
   location?: string;
   loading: boolean;
   error: string | null;
-  address: string;
+  address?: string;
   venueCapacity: string;
-  venueAttendancee?: number | string;
+  venueAttendance?: number | string;
   lighter?: boolean;
   surface?: "football" | "default";
   grass?: boolean; // <-- new prop
@@ -35,7 +35,7 @@ const TeamLocationSection: React.FC<Props> = ({
   location,
   address,
   venueCapacity,
-  venueAttendancee,
+  venueAttendance,
   loading,
   error,
   lighter = false,
@@ -137,16 +137,16 @@ const TeamLocationSection: React.FC<Props> = ({
             </Text>
           </View>
 
-          {venueAttendancee !== null &&
-            venueAttendancee !== undefined &&
-            !isNaN(Number(venueAttendancee)) && (
+          {venueAttendance !== null &&
+            venueAttendance !== undefined &&
+            !isNaN(Number(venueAttendance)) && (
               <View style={styles.addressContainer}>
                 <Ionicons name="person" size={20} color={textColor} />
                 <Text
                   style={[styles.subText, { color: textColor, marginLeft: 8 }]}
                 >
                   Attendance:{" "}
-                  {Intl.NumberFormat("en-US").format(Number(venueAttendancee))}
+                  {Intl.NumberFormat("en-US").format(Number(venueAttendance))}
                 </Text>
               </View>
             )}

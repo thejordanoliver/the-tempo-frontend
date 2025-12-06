@@ -94,7 +94,7 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
       maxWidth: 180,
     },
     seriesDivider: {
-      height: 10,
+      height: 8,
       width: 0.5,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -117,17 +117,39 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 8,
-      color: isDark
-        ? isChampionship
+      color: isChampionship
+        ? isDark
           ? Colors.white
-          : Colors.lightGray
-        : isChampionship
-        ? Colors.black
+          : Colors.black
+        : isDark
+        ? Colors.lightGray
         : Colors.darkGray,
       textAlign: "center",
       position: "absolute",
       top: 4,
       width: "100%",
+    },
+    mlbHeadlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
+      textAlign: "center",
+    },
+
+    headlineContainer: {
+      flexDirection: "row",
+      alignItems: "center", // ← ensures vertical centering
+      justifyContent: "center", // ← centers entire group horizontally
+      position: "absolute",
+      top: 4,
+      width: "100%",
+      gap: 4,
     },
 
     notificationBell: {

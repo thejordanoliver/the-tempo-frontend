@@ -26,7 +26,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { Game } from "types/nfl";
 import NFLOfficials from "../../GameDetails/Officials";
-import NFLGameLeaders from "../GameDetails/NFLGameLeaders";
+import GameLeaders from "../GameDetails/GameLeaders";
 import NFLInjuries from "../GameDetails/NFLInjuries";
 import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamInfo from "./TeamInfo";
@@ -413,19 +413,20 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   {homeTeamData &&
                     awayTeamData &&
                     gameStatus !== "Scheduled" && (
-                      <NFLGameLeaders
+                      <GameLeaders
                         gameId={String(gameInfo.id)}
                         homeTeamId={String(homeTeamData.id)}
                         awayTeamId={String(awayTeamData.id)}
                         lighter
+                        league="NFL"
                       />
                     )}
 
                   <NFLTeamDrives
                     previousDrives={previousDrives ?? []}
                     currentDrives={currentDrives ?? []}
-                       homeTeamId={Number(homeTeamData.espnID)}
-                        awayTeamId={Number(awayTeamData.espnID)}
+                    homeTeamId={Number(homeTeamData.espnID)}
+                    awayTeamId={Number(awayTeamData.espnID)}
                     lighter
                   />
 

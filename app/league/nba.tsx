@@ -23,7 +23,6 @@ import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { getCurrentNBASeason, getNBASeason } from "utils/dateUtils";
 import {
   Animated,
   RefreshControl,
@@ -32,6 +31,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
+import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
@@ -39,8 +39,6 @@ import { useHighlights } from "../../hooks/useHighlights";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-
 
 function StatsTabContent() {
   const { leaders, loading, error } = useSeasonLeaders({
@@ -72,8 +70,9 @@ export default function NBALeagueScreen() {
   } = useSummerLeagueGames();
   const { news, loading: newsLoading, refreshNews } = useLeagueNews("NBA");
   const { highlights, loading: highlightsLoading } = useHighlights(
-    "NBA highlights",
-    "10"
+    "nba",
+    "",
+    10
   );
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
@@ -158,24 +157,24 @@ export default function NBALeagueScreen() {
     }
   };
 
-// --- Normalize regular season games ---
-const normalizedSeasonGames = games.map((game: any) => {
-  const home = mapToInternalTeam(game.teams?.home ?? {});
-  const away = mapToInternalTeam(game.teams?.visitors ?? {});
-  const rawDate = game.date?.start ?? game.date;
+  // --- Normalize regular season games ---
+  const normalizedSeasonGames = games.map((game: any) => {
+    const home = mapToInternalTeam(game.teams?.home ?? {});
+    const away = mapToInternalTeam(game.teams?.visitors ?? {});
+    const rawDate = game.date?.start ?? game.date;
 
-  // ✅ Use local time directly (no timezone conversion)
-  const date = dayjs(rawDate);
+    // ✅ Use local time directly (no timezone conversion)
+    const date = dayjs(rawDate);
 
-  return {
-    ...game,
-    date: date.toDate(),
-    dateString: date.format("YYYY-MM-DD"),
-    time: date.format("h:mm A"),
-    home,
-    away,
-  };
-});
+    return {
+      ...game,
+      date: date.toDate(),
+      dateString: date.format("YYYY-MM-DD"),
+      time: date.format("h:mm A"),
+      home,
+      away,
+    };
+  });
 
   // Normalize Summer League games
   const normalizedSummerGames = summerGames.map((game) => ({
@@ -221,12 +220,12 @@ const normalizedSeasonGames = games.map((game: any) => {
     }
   };
 
-// --- Change Date (now local) ---
-const changeDateByDays = (days: number) => {
-  setSelectedDate((prev) =>
-    dayjs(prev).add(days, "day").startOf("day").toDate()
-  );
-};
+  // --- Change Date (now local) ---
+  const changeDateByDays = (days: number) => {
+    setSelectedDate((prev) =>
+      dayjs(prev).add(days, "day").startOf("day").toDate()
+    );
+  };
 
   // Combine news + highlights
   const combinedNewsAndHighlights = React.useMemo(() => {
@@ -334,21 +333,20 @@ const changeDateByDays = (days: number) => {
         </View>
       </View>
 
-   
-<CalendarModal
-  visible={showCalendarModal}
-  onClose={() => setShowCalendarModal(false)}
-  onSelectDate={(dateString) => {
-    const localSelected = dayjs(dateString, "YYYY-MM-DD")
-      .startOf("day")
-      .toDate();
-    setSelectedDate(localSelected);
-    setShowCalendarModal(false);
-  }}
-  markedDates={{
-    ...markDates([...normalizedSeasonGames, ...normalizedSummerGames]),
-  }}
-/>
+      <CalendarModal
+        visible={showCalendarModal}
+        onClose={() => setShowCalendarModal(false)}
+        onSelectDate={(dateString) => {
+          const localSelected = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+          setSelectedDate(localSelected);
+          setShowCalendarModal(false);
+        }}
+        markedDates={{
+          ...markDates([...normalizedSeasonGames, ...normalizedSummerGames]),
+        }}
+      />
 
       <SportsListModal
         ref={sportsModalRef}

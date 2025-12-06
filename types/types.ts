@@ -101,10 +101,10 @@ export interface CBBPlayer {
   lastname?: string;
   fullName?: string;
   experience?: {
-     years: number,
-      displayValue: string,
-      abbreviation: string,
-  }
+    years: number;
+    displayValue: string;
+    abbreviation: string;
+  };
   displayName?: string;
   shortName?: string;
   jersey?: string;
@@ -115,7 +115,7 @@ export interface CBBPlayer {
   team?: string;
   teamId?: string;
   position?: string;
-  imageUrl?:  string;
+  imageUrl?: string;
 
   birthPlace?: {
     city?: string;
@@ -167,6 +167,48 @@ export type Team = {
   banner?: any; // <-- add this
 };
 
+export type NBATeam = {
+  id: string;
+  espnID: string;
+  name: string;
+  fullName: string;
+  tertiaryColor: string;
+  logo?: any;
+  logoLight?: any;
+  color: string;
+  firstSeason?: string;
+  secondaryColor?: string;
+  transparentColor: string;
+  conferenceLogo: any;
+  uniforms: {
+    home: any;
+    away: any
+  }
+  record?: string;
+  wins?: number;
+  losses?: number;
+  code: string;
+  coach?: string;
+  coachImage?: string;
+  location: string;
+  address: string;
+  city?: string;
+  state?: string;
+  latitude: number;
+  longitude: number;
+  venueName: string;
+  venueImage: any;
+  venueCapacity: string;
+  allTimeRecord?: string;
+  championships?: number[];
+  conferenceChampionships?: {
+    Titles?: number[]; // or number[]
+  };
+  conference?: string;
+  displayName?: string;
+  banner?: any; // <-- add this
+};
+
 export type Arena = {
   name: string;
   city?: string | null;
@@ -174,7 +216,7 @@ export type Arena = {
   country?: string | null;
 };
 
-export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB";
+export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB" | "MLB";
 
 export type LeagueTeam = Team & { league: LeagueType };
 
@@ -530,7 +572,6 @@ export type GameHighlights = {
   highlights: Highlight[];
 };
 
-
 export type TeamResult = {
   id: number;
   name: string;
@@ -556,6 +597,5 @@ export type UserResult = {
   profileImageUrl: string;
   type: "user";
 };
-
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;

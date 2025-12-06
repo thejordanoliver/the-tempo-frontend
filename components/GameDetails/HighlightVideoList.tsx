@@ -1,8 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import { Highlight } from "types/types";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Dimensions,
@@ -12,7 +12,9 @@ import {
   StyleSheet,
   Text,
   View,
+  useColorScheme,
 } from "react-native";
+import { Highlight } from "types/types";
 
 type HighlightVideoProps = {
   highlights: Highlight[];
@@ -44,7 +46,8 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
     Record<string, boolean>
   >({});
   const [hasPlayed, setHasPlayed] = useState<Record<string, boolean>>({});
-
+  const isDark = useColorScheme() === "dark";
+  const styles = highlightStyles(isDark);
   const handlePlay = useCallback(
     (id: string) => {
       if (playingId && playingId !== id) {
@@ -93,7 +96,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       if (!videoSource) {
         return (
           <View style={[styles.cardWrapper, { justifyContent: "center" }]}>
-            <Text style={{ color: "#fff", padding: 10 }}>
+            <Text style={{ color: Colors.white, padding: 10 }}>
               Video unavailable
             </Text>
           </View>
@@ -178,7 +181,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       <HeadingTwo>Highlights</HeadingTwo>
 
       {!highlights || highlights.length === 0 ? (
-        <Text style={styles.noHighlights}>No highlights available.</Text>
+        <Text style={styles.empty}>No highlights available.</Text>
       ) : (
         <FlatList
           data={highlights}
@@ -196,60 +199,62 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  listContainer: {
-    paddingVertical: 10,
-    paddingLeft: 12,
-  },
-  cardWrapper: {
-    width: width * 0.8,
-    height: CARD_HEIGHT,
-    marginRight: 15,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#000",
-    justifyContent: "flex-end",
-  },
-  video: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#000",
-  },
-  headlineContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 8,
-    justifyContent: "flex-end",
-  },
-  headline: {
-    color: "#fff",
-    fontFamily: Fonts.OSBOLD,
-    fontSize: 16,
-  },
-  noHighlights: {
-    color: "#999",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  playButtonOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.3)",
-  },
-  playButtonText: {
-    fontSize: 50,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  thumbnailWrapper: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
-  },
-  thumbnail: {
-    width: "100%",
-    height: "100%",
-  },
-});
+const highlightStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    listContainer: {
+      paddingVertical: 10,
+      paddingLeft: 12,
+    },
+    cardWrapper: {
+      width: width * 0.8,
+      height: CARD_HEIGHT,
+      marginRight: 15,
+      borderRadius: 10,
+      overflow: "hidden",
+      backgroundColor: Colors.black,
+      justifyContent: "flex-end",
+    },
+    video: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: Colors.black,
+    },
+    headlineContainer: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      padding: 8,
+      justifyContent: "flex-end",
+    },
+    headline: {
+      color: Colors.white,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 16,
+    },
+    empty: {
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    playButtonOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.3)",
+    },
+    playButtonText: {
+      fontSize: 50,
+      color: Colors.white,
+      fontWeight: "bold",
+    },
+    thumbnailWrapper: {
+      width: "100%",
+      height: "100%",
+      position: "relative",
+    },
+    thumbnail: {
+      width: "100%",
+      height: "100%",
+    },
+  });

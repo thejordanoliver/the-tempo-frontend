@@ -1,10 +1,10 @@
 import BoxScore from "components/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/CBB/GameDetails/GameLeaders";
+import GameOddsSection from "components/CBB/GameDetails/GameOddsSection";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
 import { LastFiveGamesSwitcher, LineScore } from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
-import GameOddsSection from "components/GameDetails/GameOddsSection";
 import GameSummary from "components/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import LastPlay from "components/GameDetails/LastPlay";
@@ -168,7 +168,7 @@ export default function GameDetailsScreen() {
       text: isDark ? Colors.dark.white : Colors.light.black,
       secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
       record: isDark ? Colors.dark.white : Colors.light.black,
-      score: isDark ? Colors.lightGray : Colors.darkGray,
+      score: Colors.midTone,
       winnerScore: isDark ? Colors.dark.white : Colors.light.black,
       border: isDark ? Colors.darkGray : Colors.lightGray,
       finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
@@ -236,11 +236,48 @@ export default function GameDetailsScreen() {
 
   const displayHomeScore = liveScore?.home?.total ?? 0;
   const displayAwayScore = liveScore?.away?.total ?? 0;
-  const displayClock = liveScore?.displayClock ?? "";
-  const statusDisplay = liveScore?.status ?? "Scheduled";
+  // --- Clock (always a string)
+  const displayClock = String(liveScore?.displayClock ?? "");
 
-  const isHalftime =
-    liveScore?.statusText?.toLowerCase().includes("halftime") ?? false;
+  // --- Always convert period to string
+  const rawPeriod = String(liveScore?.period ?? liveScore?.statusText ?? "");
+
+  // --- Normalize CBB period labels ---
+  const getCbbPeriodLabel = (periodString: string) => {
+    if (!periodString) return "";
+
+    const p = periodString.toString().toLowerCase();
+
+    if (p.includes("halftime")) return "Halftime";
+    if (p.includes("1st")) return "1st";
+    if (p.includes("2nd")) return "2nd";
+
+    // OT formats: "OT", "2OT", "3OT"
+    if (p.includes("ot")) {
+      const match = p.match(/(\d+)?ot/);
+      const num = match?.[1];
+      return num ? `${num}OT` : "OT";
+    }
+
+    return periodString;
+  };
+
+  const displayPeriod = getCbbPeriodLabel(rawPeriod);
+
+  // --- Halftime flag ---
+  const isHalftime = rawPeriod.toLowerCase().includes("halftime");
+
+  // --- Status ---
+  let statusDisplay = "Scheduled";
+
+  if (rawPeriod && displayClock) statusDisplay = "In Progress";
+  if (isHalftime) statusDisplay = "Halftime";
+  if (
+    liveScore?.statusText?.toLowerCase().includes("final") ||
+    liveScore?.status?.toLowerCase().includes("final")
+  ) {
+    statusDisplay = "Final";
+  }
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -298,7 +335,6 @@ export default function GameDetailsScreen() {
     <>
       <ScrollView
         contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
-        style={{ backgroundColor: colors.background }}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
@@ -332,14 +368,24 @@ export default function GameDetailsScreen() {
         />
 
         <View style={{ gap: 24, marginTop: 20 }}>
+          {shouldShowGameDetails && <LastPlay lastPlay={liveScore?.lastPlay} />}
+
+          {shouldShowGameDetails && (
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeTeamData.code}
+              awayCode={awayTeamData.code}
+              league="CBB"
+            />
+          )}
+
           <GameOddsSection
             date={gameDate}
             gameDate={gameDate}
-            homeCode={homeTeamData.code!}
-            awayCode={awayTeamData.code!}
+            awayCode={awayTeamData.code ?? ""}
+            homeCode={homeTeamData.code ?? ""}
             gameId={`${homeTeamId}-${awayTeamId}`}
           />
-
 
           <WinPredictionVote
             gameId={`${homeTeamId}-${awayTeamId}`}
@@ -360,18 +406,6 @@ export default function GameDetailsScreen() {
               color: homeTeamData.color,
             }}
           />
-
-          
-          {shouldShowGameDetails && <LastPlay lastPlay={liveScore?.lastPlay} />}
-
-          {shouldShowGameDetails && (
-            <LineScore
-              linescore={lineScore}
-              homeCode={homeTeamData.code}
-              awayCode={awayTeamData.code}
-              league="CBB"
-            />
-          )}
 
           {shouldShowGameDetails && (
             <GameLeaders

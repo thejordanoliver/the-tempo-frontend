@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
 import axios, { CancelTokenSource } from "axios";
+import { useEffect, useRef, useState } from "react";
 
 export interface Bookmaker {
   key: string;
@@ -33,7 +33,11 @@ interface UseUpcomingOddsOptions {
 
 const cache: Record<string, UpcomingGameOdds[]> = {};
 
-export const useUpcomingOdds = ({ timestamp, team1, team2 }: UseUpcomingOddsOptions) => {
+export const useUpcomingOdds = ({
+  timestamp,
+  team1,
+  team2,
+}: UseUpcomingOddsOptions) => {
   const [data, setData] = useState<UpcomingGameOdds[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

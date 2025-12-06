@@ -22,6 +22,7 @@ export interface CFBPlayer {
 export type CFBTeam = {
   id: number | string;
   espnID?: string | number;
+  oddsID?: string;
   name: string;
   shortName?: string;
   fullName?: string;

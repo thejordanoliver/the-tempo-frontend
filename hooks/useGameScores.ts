@@ -7,7 +7,7 @@ export type NBAScore = {
   periodScores?: { period: number; home: number; away: number }[];
   homeTeam: string;
   awayTeam: string;
-  status: "scheduled" | "in_play" | "final";
+  status: "canceled" | "scheduled" | "in_play" | "final" ;
   statusText?: string;
   displayClock?: string;
   period?: number;

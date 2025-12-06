@@ -183,7 +183,7 @@ const getStyles = (isDark: boolean) =>
       alignItems: "flex-start",
       gap: 10,
       paddingBottom: 12,
-      borderBottomWidth: 1,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },
     periodText: {

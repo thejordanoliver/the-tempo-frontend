@@ -2,6 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -22,6 +23,22 @@ type Props = {
   isCurrentUser: boolean;
   username?: string;
 };
+
+// Accepts: require(), string URLs, { uri }, or null
+function resolveLogo(source: any) {
+  if (!source) return null;
+
+  // Already a require() number
+  if (typeof source === "number") return source;
+
+  // Already { uri: string }
+  if (typeof source === "object" && source.uri) return source;
+
+  // String URL
+  if (typeof source === "string") return { uri: source };
+
+  return null;
+}
 
 const FavoriteTeamsList = ({
   favoriteTeams,
@@ -168,13 +185,17 @@ const FavoriteTeamsList = ({
           const displayNickname =
             team.league === "CFB" || team.league === "CBB" ? null : nickname;
 
-          const logoSource =
+          const rawLogo =
             (alwaysLightLogoTeams.includes(team.name ?? team.fullName ?? "") &&
               team.logoLight) ||
             (isDark && team.logoLight) ||
             team.logo ||
             team.logoLight ||
-            require("assets/Placeholders/teamPlaceholder.png"); // fallback
+            null;
+
+          const logoSource =
+            resolveLogo(rawLogo) ??
+            require("assets/Placeholders/teamPlaceholder.png");
 
           return (
             <LongPressGestureHandler
@@ -197,7 +218,9 @@ const FavoriteTeamsList = ({
                       ? "/team/[teamId]"
                       : team.league === "CFB"
                       ? "/team/cfb/[teamId]"
-                      : "/team/cbb/[teamId]";
+                      : team.league === "CBB"
+                      ? "/team/cbb/[teamId]"
+                      : "/team/mlb/[teamId]";
                   router.push({
                     pathname: route,
                     params: { teamId: team.id.toString() },
@@ -240,7 +263,7 @@ const FavoriteTeamsList = ({
                     >
                       <Text
                         style={{
-                          color: "#fff",
+                          color: Colors.white,
                           fontSize: 11,
                           fontFamily: Fonts.OSBOLD,
                         }}
@@ -314,7 +337,7 @@ const FavoriteTeamsList = ({
                 style={styles.editIcon}
                 name="create"
                 size={20}
-                color={isDark ? "#1d1d1d" : "#fff"}
+                color={isDark ? Colors.black : Colors.white}
               />
             </View>
           </Pressable>

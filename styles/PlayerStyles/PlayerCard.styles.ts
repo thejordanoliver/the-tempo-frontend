@@ -51,6 +51,7 @@ export const playerCardStyles = (isDark: boolean) =>
     name: {
       fontSize: 16,
       fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     jerseyNumber: {
       fontSize: 16,

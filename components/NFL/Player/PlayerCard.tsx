@@ -1,62 +1,57 @@
-// components/NFLPlayerCard.tsx
+import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflTeams } from "constants/teamsNFL";
+
 import { useRouter } from "expo-router";
-import React from "react";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCard.styles";
 
-export interface NFLPlayerCardProps {
+export interface PlayerCardProps {
   id: number;
   name: string;
   position?: string | null;
   team: string;
   avatarUrl?: string | null;
   number?: string | number | null;
-  league?: "NFL" | "CFB";
+  league?: "NFL" | "CFB" | "MLB" | "CBB";
+  statNumber?: string | number | null;
 }
 
-export const PlayerCard: React.FC<NFLPlayerCardProps> = ({
+export const PlayerCard: React.FC<PlayerCardProps> = ({
   id,
   name,
   position,
   team,
   avatarUrl,
   number,
+  statNumber,
   league = "NFL",
 }) => {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = playerCardStyles(isDark);
 
-  // Pick team set based on league
-  const teamList = league === "CFB" ? cfbTeams : nflTeams;
-  const teamObj = teamList.find((t) => t.name === team);
-
-  const initial = name?.[0]?.toUpperCase() ?? "?";
-
-  const handlePress = () => {
-    const routeBase =
-      league === "CFB" ? "/player/cfb/[id]" : "/player/nfl/[id]";
-    router.push({
-      pathname: routeBase,
-      params: {
-        id: id.toString(),
-        teamId: teamObj?.id?.toString() ?? "0",
-      },
-    });
+  const leagueTeamsMap = {
+    NFL: nflTeams,
+    CFB: cfbTeams,
+    MLB: mlbTeams,
+    CBB: cbbTeams,
   };
 
+  const teamList = leagueTeamsMap[league];
+  const teamObj = teamList.find((t) => t.name === team);
+
+  const initial = name[0]?.toUpperCase() ?? "?";
+
+  const formattedStat =
+    statNumber != null ? Number(statNumber).toLocaleString() : null;
+
   return (
-    <Pressable style={styles.card} onPress={handlePress}>
+    <Pressable style={styles.card}>
       <View style={styles.nameContainer}>
         {avatarUrl ? (
-          <Image
-            source={{ uri: avatarUrl }}
-            style={styles.avatar}
-            accessibilityLabel={`Avatar for ${name}`}
-          />
+          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         ) : (
           <View style={styles.avatarPlaceholder}>
             <Text style={styles.initial}>{initial}</Text>
@@ -64,23 +59,10 @@ export const PlayerCard: React.FC<NFLPlayerCardProps> = ({
         )}
 
         <View style={styles.info}>
-          <View style={styles.nameContainer}>
-            <Text
-              style={[styles.name, { color: isDark ? "#fff" : teamObj?.color }]}
-            >
-              {name}
-            </Text>
-          </View>
+          <Text style={styles.name}>{name}</Text>
 
-          {number != null && (
-            <Text
-              style={[
-                styles.jerseyNumber,
-                { color: isDark ? "#fff" : teamObj?.color },
-              ]}
-            >
-              #{number}
-            </Text>
+          {formattedStat && (
+            <Text style={styles.jerseyNumber}>{formattedStat}</Text>
           )}
         </View>
       </View>

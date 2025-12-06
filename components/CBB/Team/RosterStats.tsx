@@ -273,6 +273,7 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
         onSelect={(v) => setViewMode(v as "team" | "players")}
         isDark={isDark}
         style={{ paddingBottom: 12 }}
+        absolute
       />
 
       <ScrollView style={styles.scrollContainer}>

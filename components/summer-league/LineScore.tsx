@@ -1,6 +1,7 @@
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
-import { Fonts } from "constants/fonts";
 
 type ScoreType = {
   q1?: number;
@@ -26,9 +27,8 @@ export default function LineScore({
   awayCode,
   isDark,
 }: LineScoreProps) {
-  const textColor = isDark ? "#fff" : "#000";
-  const borderColor = isDark ? "#333" : "#888";
-  const dividerColor = isDark ? "#888" : "#888";
+  const textColor = isDark ? Colors.white : Colors.black;
+  const dividerColor = Colors.midTone;
 
   const getScores = (scores: ScoreType) => {
     const result = [scores.q1, scores.q2, scores.q3, scores.q4];

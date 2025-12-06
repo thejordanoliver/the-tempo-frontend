@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
 import FootballRosterStats from "components/CFB/Team/RosterStats";
-import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
+import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import Roster from "components/NFL/Team/Roster";
@@ -306,7 +306,7 @@ const {
 
       {/* --- Bottom Sheet --- */}
       {team && (
-        <TeamInfoBottomSheet
+        <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}

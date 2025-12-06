@@ -1,3 +1,4 @@
+
 // Logos
 import EastLogo from "../assets/Conferences/East.png";
 import WestLogo from "../assets/Conferences/West.png";
@@ -163,9 +164,9 @@ import WarriorsHome from "../assets/Uniforms/WarriorsHome.png";
 import WizardsAway from "../assets/Uniforms/WizardsAway.png";
 import WizardsHome from "../assets/Uniforms/WizardsHome.png";
 
-import { Team } from "types/types";
+import { NBATeam } from "types/types";
 
-export const teams = [
+export const teams: NBATeam[] = [
   {
     id: "1",
     espnID: "1",
@@ -283,7 +284,7 @@ export const teams = [
     coach: "Charles Lee",
     coachImage: HornetsCoach,
     championships: [],
-    conferenceChampionships: [],
+    conferenceChampionships: {Titles: []},
     firstSeason: "1988",
     allTimeRecord: "1193-1602",
     conference: "Eastern",
@@ -739,7 +740,7 @@ export const teams = [
     allTimeRecord: "1196-1680",
     conference: "Western",
     conferenceLogo: WestLogo,
-    conferenceChampionships: [],
+    conferenceChampionships: {Titles: []},
     latitude: 44.9796,
     longitude: -93.276,
     address: "600 N 1st Ave, Minneapolis, MN 55403",
@@ -1166,6 +1167,12 @@ export const coachImages: { [key: string]: any } = {
   WizardsCoach,
 };
 
+
+export const getNBATeam = (id: number | string) =>
+  teams.find((t) => String(t.id) === String(id)) || null;
+
+
+
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean
@@ -1185,47 +1192,12 @@ export function getTeamLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export const logoMap: Record<string, any> = {
-  SixersLogo,
-  SixersLogoLight,
-  BucksLogo,
-  BullsLogo,
-  CavaliersLogo,
-  CelticsLogo,
-  ClippersLogo,
-  GrizzliesLogo,
-  HawksLogo,
-  HeatLogo,
-  HornetsLogo,
-  JazzLogo,
-  JazzLogoLight,
-  KingsLogo,
-  KnicksLogo,
-  LakersLogo,
-  MagicLogo,
-  MavericksLogo,
-  NetsLogo,
-  NuggetsLogo,
-  PacersLogo,
-  PelicansLogo,
-  PistonsLogo,
-  RaptorsLogo,
-  RaptorsLogoLight,
-  RocketsLogo,
-  RocketsLogoLight,
-  SpursLogo,
-  SunsLogo,
-  ThunderLogo,
-  TimberwolvesLogo,
-  TrailBlazersLogo,
-  WarriorsLogo,
-  WizardsLogo,
-};
 
-export const teamsById: Record<string, Team> = teams.reduce((map, team) => {
+
+export const teamsById: Record<string, NBATeam> = teams.reduce((map, team) => {
   map[team.id] = team;
   return map;
-}, {} as Record<string, Team>);
+}, {} as Record<string, NBATeam>);
 
 export const venueImages: Record<string, any> = {
   // Map team codes or venue names to images

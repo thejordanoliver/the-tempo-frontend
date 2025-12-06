@@ -160,7 +160,7 @@ export const getStyles = (isDark: boolean) =>
       marginRight: 8,
     },
     errorText: {
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,

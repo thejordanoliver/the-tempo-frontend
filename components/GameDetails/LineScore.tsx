@@ -9,11 +9,15 @@ import {
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
 import LineScoreSkeleton from "./LineScoreSkeleton";
+
+// Allow MLB numbers + NBA/CBB strings
+type ScoreValue = string | number | null | undefined;
+
 type Props = {
   linescore:
     | {
-        home: (string | null | undefined)[];
-        away: (string | null | undefined)[];
+        home: ScoreValue[];
+        away: ScoreValue[];
       }
     | null
     | undefined;
@@ -21,7 +25,7 @@ type Props = {
   awayCode: string | undefined;
   lighter?: boolean;
   loading?: boolean;
-  league?: "NBA" | "CBB"; // ✅ NEW
+  league?: "NBA" | "CBB" | "MLB"; // <<< MLB ADDED
 };
 
 export default function LineScore({
@@ -30,12 +34,12 @@ export default function LineScore({
   awayCode,
   lighter,
   loading,
-  league = "NBA", // defaults to NBA for backward compatibility
+  league = "NBA",
 }: Props) {
   const isDark = useColorScheme() === "dark";
 
   if (loading || !linescore || !linescore.home || !linescore.away) {
-    return <LineScoreSkeleton />;
+    return <LineScoreSkeleton league={league} />;
   }
 
   const textColor = lighter
@@ -43,20 +47,20 @@ export default function LineScore({
     : isDark
     ? Colors.white
     : Colors.black;
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.darkGray;
+
   const borderColor = lighter
     ? Colors.lightGray
     : isDark
     ? Colors.midTone
     : Colors.lightGray;
 
-  const total = (scores: (string | null | undefined)[]) => {
+  // Convert strings | numbers to totals
+  const total = (scores: ScoreValue[]) => {
     const numericValues = scores
-      .map((v) => (v != null ? parseInt(v, 10) : NaN))
+      .map((v) => {
+        if (v === null || v === undefined) return NaN;
+        return typeof v === "number" ? v : parseInt(v, 10);
+      })
       .filter((n) => !isNaN(n));
 
     if (numericValues.length === 0) return "-";
@@ -66,20 +70,26 @@ export default function LineScore({
   const homeTotal = total(linescore.home);
   const awayTotal = total(linescore.away);
 
-  const renderScore = (score: string | null | undefined) =>
-    score != null ? score : "-";
+  const renderScore = (score: ScoreValue) =>
+    score != null ? String(score) : "-";
 
   // ------------------------------------------------------------
-  // 🧠 QUARTERS / PERIOD LABEL LOGIC
+  // PERIOD LABELS
   // ------------------------------------------------------------
 
   const numColumns = Math.max(
-    league === "CBB" ? 2 : 4, // CBB always minimum 2 (1H, 2H)
+    league === "CBB" ? 2 : 4,
     linescore.home.length,
     linescore.away.length
   );
 
-  const getPeriodLabel = (index: number) => {
+  const getPeriodLabel = (index: number): string => {
+    // ---------------- MLB ----------------
+    if (league === "MLB") {
+      return String(index + 1); // 1,2,3,4...
+    }
+
+    // ---------------- CBB ----------------
     if (league === "CBB") {
       if (index === 0) return "1H";
       if (index === 1) return "2H";
@@ -87,7 +97,7 @@ export default function LineScore({
       return `OT${index - 1}`;
     }
 
-    // NBA default
+    // ---------------- NBA ----------------
     if (index < 4) return `Q${index + 1}`;
     if (index === 4) return "OT";
     return `OT${index - 3}`;
@@ -101,12 +111,12 @@ export default function LineScore({
 
   return (
     <View style={[styles.container, { borderColor }]}>
-      <HeadingTwo style={{ marginBottom: 12 }} lighter={lighter}>
+      <HeadingTwo style={{ marginBottom: 8 }} lighter={lighter}>
         Score Summary
       </HeadingTwo>
 
       {/* Header */}
-      <View style={styles.row}>
+      <View style={styles.headerRow}>
         <Text style={[styles.teamCode, { color: "transparent" }]}>-</Text>
 
         <View style={styles.scoresWrapper}>
@@ -122,7 +132,15 @@ export default function LineScore({
       </View>
 
       {/* Away */}
-      <View style={styles.row}>
+      <View
+        style={[
+          styles.row,
+          {
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: borderColor,
+          },
+        ]}
+      >
         <Text style={[styles.teamCode, { color: textColor }]}>{awayCode}</Text>
         <View style={styles.scoresWrapper}>
           {columns.map((_, idx) => (
@@ -139,8 +157,6 @@ export default function LineScore({
           </View>
         </View>
       </View>
-
-      <View style={[styles.divider, { backgroundColor: borderColor }]} />
 
       {/* Home */}
       <View style={styles.row}>
@@ -168,10 +184,14 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
   },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
+    paddingVertical: 4,
   },
   teamCode: {
     width: 48,
@@ -198,10 +218,5 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.OSMEDIUM,
     fontSize: 14,
     textAlign: "center",
-  },
-  divider: {
-    height: 1,
-    width: "100%",
-    marginVertical: 4,
   },
 });

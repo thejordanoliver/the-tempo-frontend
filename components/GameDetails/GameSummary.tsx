@@ -129,7 +129,7 @@ const QUARTER_MAP: Record<string, number[] | number> =
           if (teamObj?.id) {
             teamLogo =
               league === "CBB"
-                ? getCBBTeamLogo(teamObj.id, isDark, lighter)
+                ? getCBBTeamLogo(teamObj.id, isDark)
                 : getTeamLogo(teamObj.id, isDark);
           }
 
@@ -174,7 +174,7 @@ const getStyles = (isDark: boolean) =>
       alignItems: "flex-start",
       gap: 10,
       paddingVertical: 12,
-      borderBottomWidth: 1,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },
     periodText: {

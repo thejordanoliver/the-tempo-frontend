@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -104,6 +105,25 @@ export default function TeamPreviewModal({
     : team?.color || "#444";
   const est = team.firstSeason ?? (team as any).established ?? "—";
 
+  function resolveLogo(source: any) {
+    if (!source) return null;
+
+    // require() → number
+    if (typeof source === "number") return source;
+
+    // { uri: string }
+    if (typeof source === "object" && source.uri) return source;
+
+    // string URL
+    if (typeof source === "string") return { uri: source };
+
+    return null;
+  }
+const darkPreferredLogo =
+  useLogoLight && team.logoLight ? team.logoLight : team.logoLight || team.logo;
+
+const resolvedLogo = resolveLogo(isDark ? darkPreferredLogo : team.logo);
+
   return (
     <Modal animationType="fade" transparent visible={visible}>
       <Pressable onPress={onClose} style={{ flex: 1 }}>
@@ -147,16 +167,19 @@ export default function TeamPreviewModal({
                   backgroundColor: "rgba(255,255,255,0.05)",
                 }}
               >
-                <Image
-                  source={isDark ? light : team.logo}
-                  style={{ width: 60, height: 60, marginBottom: 10 }}
-                  resizeMode="contain"
-                />
+              <Image
+  source={
+    resolvedLogo ??
+    require("assets/Placeholders/teamPlaceholder.png")
+  }
+  style={{ width: 60, height: 60, marginBottom: 10 }}
+  resizeMode="contain"
+/>
                 <Text
                   style={{
                     fontSize: 20,
                     fontFamily: Fonts.OSSEMIBOLD,
-                    color: isDark ? "#fff" : "#1d1d1d",
+                    color: isDark ? Colors.white : Colors.black,
                   }}
                 >
                   {team.fullName}
@@ -165,7 +188,7 @@ export default function TeamPreviewModal({
                   style={{
                     marginBottom: 12,
                     fontFamily: Fonts.OSREGULAR,
-                    color: isDark ? "#fff" : "#1d1d1d",
+                    color: isDark ? Colors.white : Colors.black,
                   }}
                 >
                   EST. {est}
@@ -174,7 +197,7 @@ export default function TeamPreviewModal({
                   style={{
                     marginVertical: 12,
                     fontFamily: Fonts.OSEXTRALIGHT,
-                    color: isDark ? "#fff" : "#1d1d1d",
+                    color: isDark ? Colors.white : Colors.black,
                   }}
                 >
                   Tap below to view team page
@@ -183,7 +206,7 @@ export default function TeamPreviewModal({
                 <Pressable
                   onPress={onGo}
                   style={{
-                    backgroundColor: isDark ? "#fff" : "#1d1d1d",
+                    backgroundColor: isDark ? Colors.white : Colors.black,
                     padding: 16,
                     borderRadius: 10,
                     alignItems: "center",
@@ -192,7 +215,7 @@ export default function TeamPreviewModal({
                 >
                   <Text
                     style={{
-                      color: isDark ? "#1d1d1d" : "#fff",
+                      color: isDark ? Colors.black : Colors.white,
                       fontFamily: Fonts.OSSEMIBOLD,
                     }}
                   >
@@ -216,7 +239,10 @@ export default function TeamPreviewModal({
                     }}
                   >
                     <Text
-                      style={{ color: "#fff", fontFamily: Fonts.OSSEMIBOLD }}
+                      style={{
+                        color: Colors.white,
+                        fontFamily: Fonts.OSSEMIBOLD,
+                      }}
                     >
                       Remove from Favorites
                     </Text>

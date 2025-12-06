@@ -1,78 +1,222 @@
-import { getTeamInfo } from "constants/teamsCFB";
+import InfoCard from "components/CFB/Team/InfoCard";
+import { coachImages } from "constants/teams";
 import { View, useColorScheme } from "react-native";
-import InfoCard from "../../InfoCard";
+
+// team lists
+import { teams as nbaTeams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as mlbTeams } from "constants/teamsMLB";
+import { teams as nflTeams } from "constants/teamsNFL";
+import { CFBTeam } from "types/cfb";
+import { MLBTeam } from "types/mlb";
+import { NFLTeam } from "types/nfl";
+import { CBBTeam, LeagueType, NBATeam } from "types/types";
 
 type Props = {
-  teamId?: number | string;
+  teamId?: string | number;
+  league: LeagueType;
 };
 
-function calculateWinPercentage(record?: string): string {
-  if (!record) return "N/A";
-  const [winsStr, lossesStr] = record.split("-");
-  const wins = parseInt(winsStr, 10);
-  const losses = parseInt(lossesStr, 10);
+export default function TeamInfoCard({ teamId, league }: Props) {
+  const isDark = useColorScheme() === "dark";
 
-  if (isNaN(wins) || isNaN(losses) || wins + losses === 0) return "N/A";
+  // pick list
+  let teamList: NBATeam[] | CFBTeam[] | CBBTeam[] | NFLTeam[] | MLBTeam[] = [];
 
-  const winPct = (wins / (wins + losses)) * 100;
-  return `${winPct.toFixed(1)}%`;
-}
-
-export default function TeamInfoCard({ teamId }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  // ✅ Just get the team directly
-  const team = teamId !== undefined ? getTeamInfo(teamId) : undefined;
-
-  if (!team) {
-    console.warn(`TeamInfoCard: No team found for id=${teamId}`);
-    return null;
+  switch (league) {
+    case "NBA":
+      teamList = nbaTeams;
+      break;
+    case "CFB":
+      teamList = cfbTeams;
+      break;
+    case "CBB":
+      teamList = cbbTeams;
+      break;
+    case "NFL":
+      teamList = nflTeams;
+      break;
+    case "MLB":
+      teamList = mlbTeams;
+      break;
   }
 
-  const primaryColor = team.color ?? (isDark ? "#1d1d1d" : "#fff");
-console.log(team.conference_championships)
-  return (
-    <View style={{ width: "100%" }}>
-    
-      <InfoCard
-        label="Head Coach"
-        value={team.coach ?? "N/A"}
-        image={team.coachImage} // Make sure coachImages is imported
-        isDark={isDark}
-        team={team}
-        backgroundColor={primaryColor}
-      />
+  const team = teamList.find((t) => String(t.id) === String(teamId));
+  if (!team) return null;
 
-      <InfoCard
-        label="Location"
-        value={`${team.location}`}
-        isDark={isDark}
-        team={team}
-        backgroundColor={primaryColor}
-      />
-      <InfoCard
-        label="Stadium"
-        value={team.venue ?? "N/A"}
-        isDark={isDark}
-        team={team}
-        backgroundColor={primaryColor}
-      />
+  const primaryColor = (team as any).color ?? (isDark ? "#111" : "#eee");
 
-      <InfoCard
-        label="Conference Championships"
-        value={team.conference_championships ?? "N/A"}
-        isDark={isDark}
-        team={team}
-        backgroundColor={primaryColor}
-      />
-      <InfoCard
-        label="First Season"
-        value={team.established ?? "N/A"}
-        isDark={isDark}
-        team={team}
-        backgroundColor={primaryColor}
-      />
-    </View>
-  );
+  /* ---------------------------------------------------------
+    LEAGUE-SPECIFIC RENDERING
+  --------------------------------------------------------- */
+
+  switch (league) {
+    case "NBA": {
+      const t = team as NBATeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Head Coach"
+            value={t.coach}
+            image={t.coachImage}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Arena"
+            value={t.venueName}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Conference Championships"
+            value={t.conferenceChampionships?.Titles}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Location"
+            value={t.location}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="First Season"
+            value={t.firstSeason}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+
+    case "CFB": {
+      const t = team as CFBTeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Head Coach"
+            value={t.coach}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Location"
+            value={t.location}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Stadium"
+            value={t.venue}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Conference Championships"
+            value={t.conference_championships}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+
+    case "CBB": {
+      const t = team as CBBTeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Location"
+            value={t.location}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Arena"
+            value={t.venueName}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Conference Championships"
+            value={t.conference_championships}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+
+    case "NFL": {
+      const t = team as NFLTeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Head Coach"
+            value={t.coach}
+            image={t.coachImage ? coachImages[t.coachImage] : undefined}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Location"
+            value={`${t.location}`}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Stadium"
+            value={t.venue}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+
+    case "MLB": {
+      const t = team as MLBTeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Stadium"
+            value={t.venue}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Location"
+            value={t.city}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+  }
 }

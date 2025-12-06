@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     position: "relative",
     width: "100%",
+    paddingHorizontal: 12
   },
   scrollContent: {
     flexDirection: "row",

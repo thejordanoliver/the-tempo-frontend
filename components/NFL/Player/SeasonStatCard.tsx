@@ -54,7 +54,7 @@ export default function SeasonStatCard({
   const player = players.find((p) => p.id === playerId);
   const position = player?.position || "";
 
-  const statColor = teamColor || (isDark ? Colors.white : teamObj?.color);
+  const statColor = isDark ? Colors.white : teamObj?.color;
 
   const formatValue = (val: number | string) => {
     const num = Number(val);

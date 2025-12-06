@@ -88,18 +88,36 @@ const backgroundColor = selectionAnim.interpolate({
     ],
   });
 
+
+  const resolveLogo = (source: any) => {
+  if (!source) return PlaceHolderLogo;
+
+  // If already require() or an object, return directly
+  if (typeof source === "number" || typeof source === "object") return source;
+
+  // If a string, convert to URI
+  if (typeof source === "string") return { uri: source };
+
+  return PlaceHolderLogo;
+};
+
+
   // ✅ Always use logoLight in dark mode if available, otherwise fallback
   // ✅ Choose correct logo based on theme and selection
-  const logoSource = (() => {
-    if (isDark) {
-      return item.logoLight || item.logo || PlaceHolderLogo;
-    }
-    // In light mode: use logoLight when selected, if available
-    if (isSelected && item.logoLight) {
-      return item.logoLight;
-    }
-    return item.logo || PlaceHolderLogo;
-  })();
+const logoSource = (() => {
+  let selected = item.logo;
+
+  if (isDark) {
+    selected = item.logoLight || item.logo;
+  } else {
+    if (isSelected && item.logoLight) selected = item.logoLight;
+  }
+
+  return resolveLogo(selected);
+})();
+
+
+  
 
 
   const logoSize = isGridView ? 50 : 40;

@@ -21,7 +21,8 @@ interface CFBGameDetailsResult {
   venue: NormalizedVenue | null;
   scoringPlays: any[];
   loading: boolean;
-  neutralSite: boolean;
+  neutralSite: boolean;         // final resolved neutral site (summary > scoreboard)
+  scoreboardNeutral: boolean;   // raw scoreboard neutral site
   highlights: any[];
   error: string | null;
   gameId?: string | null;
@@ -34,14 +35,18 @@ export const useCFBGameDetails = (
   homeId: string | null | undefined,
   date?: string | { date?: string; utc?: string; timestamp?: number }
 ): CFBGameDetailsResult => {
+
   const [officials, setOfficials] = useState<any[]>([]);
-  const [neutralSite, setNeutralSite] = useState<boolean>(false);
+  const [neutralSite, setNeutralSite] = useState<boolean>(false);    // final neutral
+  const [scoreboardNeutral, setScoreboardNeutral] = useState<boolean>(false); // raw scoreboard neutral
+
   const [injuries, setInjuries] = useState<any[]>([]);
   const [highlights, setHighlights] = useState<any[]>([]);
   const [previousDrives, setPreviousDrives] = useState<any[]>([]);
   const [currentDrives, setCurrentDrives] = useState<any[]>([]);
   const [venue, setVenue] = useState<NormalizedVenue | null>(null);
   const [scoringPlays, setScoringPlays] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -54,25 +59,24 @@ export const useCFBGameDetails = (
       setError(null);
 
       try {
-        // --- Normalize date ---
+        // ---------- Normalize incoming date ----------
         let targetDate: Date | null = null;
+
         if (typeof date === "string") targetDate = new Date(date);
         else if (typeof date === "object") {
-          targetDate = date.timestamp
-            ? new Date(date.timestamp * 1000)
-            : date.utc
-            ? new Date(date.utc)
-            : date.date
-            ? new Date(date.date)
-            : null;
+          if (date.timestamp) targetDate = new Date(date.timestamp * 1000);
+          else if (date.utc) targetDate = new Date(date.utc);
+          else if (date.date) targetDate = new Date(date.date);
         }
+
         if (!targetDate || isNaN(targetDate.getTime())) {
           setError("Invalid date provided");
           setLoading(false);
           return;
         }
 
-        const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, "");
+        const fmt = (d: Date) =>
+          d.toISOString().slice(0, 10).replace(/-/g, "");
 
         const datesToCheck = [
           fmt(new Date(targetDate.getTime() - 86400000)),
@@ -80,30 +84,28 @@ export const useCFBGameDetails = (
           fmt(new Date(targetDate.getTime() + 86400000)),
         ];
 
+        // ---------- Scoreboard search ----------
         let foundGame: any = null;
         let scoreboardVenue: any = null;
+        let scoreboardNeutralValue = false;
 
-        // --- Find game in scoreboard ---
         for (const yyyymmdd of datesToCheck) {
-          let games: any[] = [];
+          let games =
+            SCOREBOARD_CACHE[yyyymmdd] ??
+            (await axios
+              .get(
+                `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${yyyymmdd}`
+              )
+              .then((res) => res.data.events || []));
 
-          if (SCOREBOARD_CACHE[yyyymmdd]) {
-            games = SCOREBOARD_CACHE[yyyymmdd];
-          } else {
-            const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?dates=${yyyymmdd}`;
-            const scoreboardRes = await axios.get(scoreboardUrl);
-            games = scoreboardRes.data.events || [];
-            SCOREBOARD_CACHE[yyyymmdd] = games;
-          }
+          SCOREBOARD_CACHE[yyyymmdd] = games;
 
           for (const g of games) {
             const comp = g.competitions?.[0] || g.competition;
 
             const competitorIds =
               comp?.competitors?.map((c: any) =>
-                String(
-                  c.team?.id ?? c.id ?? (c.uid ? c.uid.split("~").pop() : "")
-                )
+                String(c.team?.id ?? c.id ?? c.uid?.split("~").pop())
               ) ?? [];
 
             if (
@@ -112,8 +114,18 @@ export const useCFBGameDetails = (
             ) {
               foundGame = g;
 
-              // Venue fallback: comp.venue → root.g.venue → null
               scoreboardVenue = comp?.venue || g.venue || null;
+
+              scoreboardNeutralValue =
+                comp?.neutralSite ??
+                comp?.competitions?.[0]?.neutralSite ??
+                false;
+
+              // store raw scoreboard neutral
+              setScoreboardNeutral(scoreboardNeutralValue);
+
+              // provisional final neutral value
+              setNeutralSite(scoreboardNeutralValue);
 
               break;
             }
@@ -124,35 +136,30 @@ export const useCFBGameDetails = (
 
         if (!foundGame) {
           setError("Game not found on ESPN for any nearby date.");
-          setVenue(null);
-          setOfficials([]);
-          setInjuries([]);
-          setPreviousDrives([]);
-          setCurrentDrives([]);
-          setScoringPlays([]);
-          setHighlights([]);
-          setGameId(null);
           return;
         }
 
         const id = foundGame.id;
         setGameId(id);
 
-        // --- Fetch summary ---
+        // ---------- Summary fetch ----------
         const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?event=${id}`;
         const { data: summary } = await axios.get(summaryUrl);
 
+        // summary neutral override
+        const summaryNeutral =
+          summary?.header?.competitions?.[0]?.neutralSite ?? null;
+
+        if (summaryNeutral !== null) {
+          setNeutralSite(summaryNeutral);
+        }
+
+        // ---------- Venue merging ----------
         const summaryVenue = summary?.gameInfo?.venue ?? null;
         const attendance = summary?.gameInfo?.attendance ?? null;
-        const neutral =
-          summary?.header?.competitions?.[0]?.neutralSite ?? false;
 
-        // Avoid shadowing: call this summaryHighlights
-        const summaryHighlights = summary?.videos ?? [];
-
-        // --- Robust venue merge ---
         const mergedVenueRaw = summaryVenue
-          ? { ...scoreboardVenue, ...summaryVenue } // summary overrides fields
+          ? { ...scoreboardVenue, ...summaryVenue }
           : scoreboardVenue;
 
         const normalizedVenue: NormalizedVenue | null = mergedVenueRaw
@@ -162,9 +169,9 @@ export const useCFBGameDetails = (
               state: mergedVenueRaw.address?.state ?? null,
               address: mergedVenueRaw.address
                 ? [
-                    mergedVenueRaw.address?.city,
-                    mergedVenueRaw.address?.state,
-                    mergedVenueRaw.address?.zipCode,
+                    mergedVenueRaw.address.city,
+                    mergedVenueRaw.address.state,
+                    mergedVenueRaw.address.zipCode,
                   ]
                     .filter(Boolean)
                     .join(", ")
@@ -178,30 +185,33 @@ export const useCFBGameDetails = (
               capacity:
                 mergedVenueRaw.capacity ?? mergedVenueRaw.venueCapacity ?? null,
               grass: mergedVenueRaw.grass ?? mergedVenueRaw.isGrass ?? null,
-              attendance: typeof attendance === "number" ? attendance : null,
+              attendance:
+                typeof attendance === "number" ? attendance : null,
               raw: mergedVenueRaw,
             }
           : null;
 
-        // --- Fix ESPN drive inconsistencies ---
+        // ---------- Drives ----------
         const prev =
           summary?.drives?.previous ??
           summary?.drives?.all ??
           summary?.drives?.complete ??
           [];
-        const curr = summary?.drives?.current ? [summary.drives.current] : [];
 
-        // --- Update states ---
+        const curr = summary?.drives?.current
+          ? [summary.drives.current]
+          : [];
+
+        // ---------- Update state ----------
         setVenue(normalizedVenue);
-        setNeutralSite(neutral);
         setOfficials(summary?.gameInfo?.officials ?? []);
         setInjuries(summary?.injuries?.items ?? []);
         setScoringPlays(summary?.scoringPlays ?? []);
         setPreviousDrives(prev);
         setCurrentDrives(curr);
-        setHighlights(summaryHighlights);
+        setHighlights(summary?.videos ?? []);
       } catch (err: any) {
-        console.error("⚠️ Error fetching CFB game details:", err);
+        console.error("⚠️ CFB details error:", err);
         setError(err?.message || "Failed to fetch CFB game details");
       } finally {
         setLoading(false);
@@ -214,14 +224,15 @@ export const useCFBGameDetails = (
   return {
     officials,
     injuries,
-    currentDrives,
     previousDrives,
-    neutralSite,
-    highlights,
+    currentDrives,
     venue,
     scoringPlays,
+    highlights,
     loading,
     error,
+    neutralSite,       // final resolved value (summary > scoreboard)
+    scoreboardNeutral, // raw scoreboard value
     gameId,
   };
 };

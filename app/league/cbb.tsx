@@ -10,7 +10,6 @@ import ConferenceListModal, {
 } from "components/CFB/ConferenceListModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import SeasonLeadersList from "components/League/SeasonLeadersList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -21,7 +20,8 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useLeagueNews } from "hooks/useLeagueNews";
-import { useSeasonLeaders } from "hooks/useSeasonLeaders";
+import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
+import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
@@ -35,23 +35,18 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-// --- Stats tab ---
 function StatsTabContent() {
-  const { leaders, loading, error } = useSeasonLeaders({
-    season: 2024,
-    limit: 5,
-    minGames: 10,
-  });
+  const { categories, loading, error } = useSeasonLeaders(2025, "CBB");
 
   return (
     <SeasonLeadersList
-      leadersByStat={leaders}
       loading={loading}
       error={error}
+      categories={categories}
+      league={"CBB"}
     />
   );
 }
-
 type NewsItem = {
   id: string;
   title: string;
@@ -101,7 +96,7 @@ export default function CBBLeagueScreen() {
 
   // --- News & Highlights ---
   const { news: cbbNews, loading: cfbLoading } = useLeagueNews("CBB");
-  const { highlights } = useHighlights("College Basketball Highlights", "10");
+  const { highlights } = useHighlights("cbb", "", 10);
 
   // --- AP Top 25 from rankings ---
   const apTop25 = useAPTop25();

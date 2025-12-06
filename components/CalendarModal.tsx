@@ -1,31 +1,57 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
+import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {
   Appearance,
   StyleSheet,
+  Text,
   TouchableOpacity,
   useColorScheme,
   View,
-  Text,
 } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Modal from "react-native-modal";
 import { Fonts } from "../constants/fonts";
-import dayjs from "dayjs";
 
 LocaleConfig.locales["custom"] = {
   monthNames: [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ],
   monthNamesShort: [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ],
   dayNames: [
-    "Sunday", "Monday", "Tuesday", "Wednesday",
-    "Thursday", "Friday", "Saturday"
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ],
   dayNamesShort: ["S", "M", "T", "W", "T", "F", "S"],
   today: "Today",
@@ -56,9 +82,9 @@ export default function CalendarModal({
 }: Props) {
   const systemColorScheme = useColorScheme();
   const [isDark, setIsDark] = useState(systemColorScheme === "dark");
-const [selectedDate, setSelectedDate] = useState(
-  dayjs().tz("America/New_York").format("YYYY-MM-DD")
-);
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs().tz("America/New_York").format("YYYY-MM-DD")
+  );
   const [calendarKey, setCalendarKey] = useState(0); // force re-render to update `initialDate`
 
   useEffect(() => {
@@ -70,14 +96,14 @@ const [selectedDate, setSelectedDate] = useState(
 
   useEffect(() => {
     if (visible) {
-      setCalendarKey(prev => prev + 1); // re-render calendar on modal open
+      setCalendarKey((prev) => prev + 1); // re-render calendar on modal open
     }
   }, [visible]);
 
   const goToToday = () => {
     const today = dayjs().format("YYYY-MM-DD");
     setSelectedDate(today);
-    setCalendarKey(prev => prev + 1); // force re-render with today
+    setCalendarKey((prev) => prev + 1); // force re-render with today
   };
 
   return (
@@ -99,7 +125,7 @@ const [selectedDate, setSelectedDate] = useState(
             <Ionicons
               name="close"
               size={28}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
 
@@ -108,61 +134,66 @@ const [selectedDate, setSelectedDate] = useState(
             <Ionicons
               name="calendar"
               size={18}
-              color={isDark ? "#fff" : "#1d1d1d"}
+              color={isDark ? Colors.white : Colors.black}
               style={{ marginRight: 6 }}
             />
-            <Text style={{ color: isDark ? "#fff" : "#1d1d1d", fontFamily: Fonts.OSBOLD }}>
+            <Text
+              style={{
+                color: isDark ? Colors.white : Colors.black,
+                fontFamily: Fonts.OSBOLD,
+              }}
+            >
               Today
             </Text>
           </TouchableOpacity>
 
           {/* Calendar */}
-         <Calendar
-  key={calendarKey}
-  current={dayjs(selectedDate).tz("America/New_York").format("YYYY-MM-DD")}
-
-  markedDates={{
-    ...markedDates,
-    [selectedDate]: {
-      customStyles: {
-        container: {
-          backgroundColor: "transparent",
-        },
-        text: {
-          color: "green",
-          fontFamily: Fonts.OSBOLD,
-        },
-      },
-    },
-  }}
-  markingType="custom"
-  onDayPress={(day: CalendarDay) => {
-    setSelectedDate(day.dateString);
-    onSelectDate(day.dateString);
-    onClose();
-  }}
-  enableSwipeMonths={true}
-  disableMonthChange={false}
-  theme={{
-    backgroundColor: "transparent",
-    calendarBackground: "transparent",
-    textSectionTitleColor: isDark ? "white" : "#444",
-    todayTextColor: isDark ? "#ff7675" : "red",
-    dayTextColor: isDark ? "#fff" : "#1d1d1d",
-    textDisabledColor: isDark ? "#555" : "#ccc",
-    dotColor: isDark ? "#fff" : "#1d1d1d",
-    selectedDotColor: isDark ? "#1d1d1d" : "#fff",
-    monthTextColor: isDark ? "#fff" : "#1d1d1d",
-    arrowColor: isDark ? "#fff" : "#1d1d1d",
-    textDayFontFamily: Fonts.OSBOLD,
-    textMonthFontFamily: Fonts.OSBOLD,
-    textDayHeaderFontFamily: Fonts.OSBOLD,
-    textMonthFontSize: 24,
-    textDayFontSize: 20,
-    textDayHeaderFontSize: 18,
-  }}
-/>
-
+          <Calendar
+            key={calendarKey}
+            current={dayjs(selectedDate)
+              .tz("America/New_York")
+              .format("YYYY-MM-DD")}
+            markedDates={{
+              ...markedDates,
+              [selectedDate]: {
+                customStyles: {
+                  container: {
+                    backgroundColor: "transparent",
+                  },
+                  text: {
+                    color: "green",
+                    fontFamily: Fonts.OSBOLD,
+                  },
+                },
+              },
+            }}
+            markingType="custom"
+            onDayPress={(day: CalendarDay) => {
+              setSelectedDate(day.dateString);
+              onSelectDate(day.dateString);
+              onClose();
+            }}
+            enableSwipeMonths={true}
+            disableMonthChange={false}
+            theme={{
+              backgroundColor: "transparent",
+              calendarBackground: "transparent",
+              textSectionTitleColor: isDark ? Colors.white : Colors.black,
+              todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+              dayTextColor: isDark ? Colors.white : Colors.black,
+              textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
+              dotColor: isDark ? Colors.white : Colors.black,
+              selectedDotColor: isDark ? Colors.black : Colors.white,
+              monthTextColor: isDark ? Colors.white : Colors.black,
+              arrowColor: isDark ? Colors.white : Colors.black,
+              textDayFontFamily: Fonts.OSBOLD,
+              textMonthFontFamily: Fonts.OSBOLD,
+              textDayHeaderFontFamily: Fonts.OSBOLD,
+              textMonthFontSize: 24,
+              textDayFontSize: 20,
+              textDayHeaderFontSize: 18,
+            }}
+          />
         </View>
       </BlurView>
     </Modal>

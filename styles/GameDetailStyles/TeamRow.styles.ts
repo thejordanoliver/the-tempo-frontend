@@ -59,6 +59,29 @@ export type NBAProps = {
   };
 };
 
+export type MLBProps = {
+  team: {
+    name: string;
+    record?: string;
+    logo: any;
+    code?: string;
+    id?: number;
+  };
+  size?: SizeType;
+  rank?: string;
+  isDark: boolean;
+  isHome?: boolean;
+  score?: number;
+  isWinner?: boolean;
+  hideRecord?: boolean;
+  colors: {
+    text: string;
+    record: string;
+    score: string;
+    winnerScore: string;
+  };
+};
+
 // Main static styles
 export const styles = StyleSheet.create<{
   row: ViewStyle;

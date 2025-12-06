@@ -7,9 +7,9 @@ import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
+import GameLeaders from "components/NFL/GameDetails/GameLeaders";
 import LastPlay from "components/NFL/GameDetails/LastPlay";
 import NFLGameHeader from "components/NFL/GameDetails/NFLGameHeader";
-import NFLGameLeaders from "components/NFL/GameDetails/NFLGameLeaders";
 import NFLGameOddsSection from "components/NFL/GameDetails/NFLGameOddsSection";
 import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
 import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
@@ -181,7 +181,7 @@ export default function NFLGameDetailsScreen() {
       text: isDark ? Colors.dark.white : Colors.light.black,
       secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
       record: isDark ? Colors.dark.white : Colors.light.black,
-      score: isDark ? Colors.lightGray : Colors.darkGray,
+      score: Colors.midTone,
       winnerScore: isDark ? Colors.dark.white : Colors.light.black,
       border: isDark ? Colors.darkGray : Colors.lightGray,
       finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
@@ -438,19 +438,33 @@ export default function NFLGameDetailsScreen() {
         {/* Lazy-loaded Section */}
         {showDetails && (
           <View style={{ gap: 20, marginTop: 20 }}>
-            <LineScore
-              linescore={linescore}
-              homeCode={
-                homeTeam?.code && homeTeam.code !== "UNK"
-                  ? homeTeam.code
-                  : "HOM"
-              }
-              awayCode={
-                awayTeam?.code && awayTeam.code !== "UNK"
-                  ? awayTeam.code
-                  : "AWY"
-              }
-            />
+            {/* Odds */}
+            {homeTeam?.code && awayTeam?.code && gameDateStr ? (
+              <NFLGameOddsSection
+                date={gameDateStr}
+                gameDate={gameDateStr}
+                homeCode={homeTeam.code}
+                awayCode={awayTeam.code}
+              />
+            ) : null}
+
+            {(gameStatus === "In Progress" ||
+              gameStatus === "Halftime" ||
+              gameStatus === "Final") && (
+              <LineScore
+                linescore={linescore}
+                homeCode={
+                  homeTeam?.code && homeTeam.code !== "UNK"
+                    ? homeTeam.code
+                    : "HOM"
+                }
+                awayCode={
+                  awayTeam?.code && awayTeam.code !== "UNK"
+                    ? awayTeam.code
+                    : "AWY"
+                }
+              />
+            )}
 
             {/* Last Play Section */}
             <LastPlay lastPlay={lastPlay} isDark={isDark} />
@@ -464,48 +478,38 @@ export default function NFLGameDetailsScreen() {
               />
             )}
 
-            {/* <LastPlayField lastPlay={fgPlay} homeTeamId={22} awayTeamId={14} /> */}
-
-            {/* Odds */}
-            {homeTeam?.code && awayTeam?.code && gameDateStr ? (
-              <NFLGameOddsSection
-                date={gameDateStr}
-                gameDate={gameDateStr}
-                homeCode={homeTeam.code}
-                awayCode={awayTeam.code}
+            {gameStatus !== "Final" && (
+              <WinPredictionVote
+                gameId={gameInfo.id}
+                awayTeam={{
+                  id: awayTeam.id,
+                  name: awayTeam.name || awayTeam.code,
+                  code: awayTeam.code ?? awayTeam.code,
+                  logo: awayTeam.logo,
+                  logoLight: awayTeam.logoLight,
+                  color: awayTeam.color,
+                  secondaryColor: awayTeam.secondaryColor,
+                }}
+                homeTeam={{
+                  id: homeTeam.id,
+                  name: homeTeam.name || homeTeam.code,
+                  code: homeTeam.code ?? homeTeam.code,
+                  logo: homeTeam.logo,
+                  logoLight: homeTeam.logoLight,
+                  color: homeTeam.color,
+                  secondaryColor: homeTeam.secondaryColor,
+                }}
               />
-            ) : null}
-
-            <WinPredictionVote
-              gameId={gameInfo.id}
-              awayTeam={{
-                id: awayTeam.id,
-                name: awayTeam.name || awayTeam.code,
-                code: awayTeam.code ?? awayTeam.code,
-                logo: awayTeam.logo,
-                logoLight: awayTeam.logoLight,
-                color: awayTeam.color,
-                secondaryColor: awayTeam.secondaryColor,
-              }}
-              homeTeam={{
-                id: homeTeam.id,
-                name: homeTeam.name || homeTeam.code,
-                code: homeTeam.code ?? homeTeam.code,
-                logo: homeTeam.logo,
-                logoLight: homeTeam.logoLight,
-                color: homeTeam.color,
-                secondaryColor: homeTeam.secondaryColor,
-              }}
-            />
-
+            )}
             {/* Game Leaders - only when game is live */}
             {(gameStatus === "In Progress" ||
               gameStatus === "Halftime" ||
               gameStatus === "Final") && (
-              <NFLGameLeaders
+              <GameLeaders
                 gameId={String(parsedGame.game.id)}
                 homeTeamId={String(homeTeam.id)}
                 awayTeamId={String(awayTeam.id)}
+                league="NFL"
               />
             )}
 
@@ -546,13 +550,16 @@ export default function NFLGameDetailsScreen() {
               <HighlightVideoList highlights={highlights} />
             )}
 
-            <NFLInjuries
-              injuries={injuries}
-              loading={false}
-              error={null}
-              awayTeamAbbr={awayTeam.code}
-              homeTeamAbbr={homeTeam.code}
-            />
+            {gameStatus !== "Final" && (
+              <NFLInjuries
+                injuries={injuries}
+                loading={false}
+                error={null}
+                awayTeamAbbr={awayTeam.code}
+                homeTeamAbbr={homeTeam.code}
+              />
+            )}
+
             {gameStatus !== "Final" && (
               <Officials officials={officials} loading={false} error={null} />
             )}

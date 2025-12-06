@@ -13,6 +13,7 @@ import { teams } from "constants/teams";
 import { teams as nflteams } from "constants/teamsNFL";
 import { teams as cfbteams } from "constants/teamsCFB";
 import { teams as cbbteams } from "constants/teamsCBB";
+import { teams as mlbteams } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -238,8 +239,9 @@ export default function ProfileScreen() {
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id); // convert number to string
       if (!team) return null;
-      return { ...team, league: league as "NBA" | "NFL" | "CFB" | "CBB" };
+      return { ...team, league: league as "NBA" | "NFL" | "CFB" | "CBB" | "MLB" };
     })
     .filter(Boolean);
 

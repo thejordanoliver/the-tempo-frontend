@@ -17,8 +17,6 @@ import SoutheasternConference from "../assets/College_Logos/SEC.png";
 import SunBeltConference from "../assets/College_Logos/SunBelt.png";
 
 //Logos
-import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
-
 import AirForceLogo from "assets/College_Logos/AirForce.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
 import AkronLogo from "assets/College_Logos/Akron.png";
@@ -49,7 +47,6 @@ import BowlingGreenLogo from "assets/College_Logos/BowlingGreen.png";
 import BryantLogo from "assets/College_Logos/Bryant.png";
 import BucknellLogo from "assets/College_Logos/Bucknell.png";
 import BuffaloLogo from "assets/College_Logos/Buffalo.png";
-import BuffaloStateLogo from "assets/College_Logos/BuffaloState.png";
 import ButlerLogo from "assets/College_Logos/Butler.png";
 import BYULogo from "assets/College_Logos/BYU.png";
 import BYULogoLight from "assets/College_Logos/BYULight.png";
@@ -114,6 +111,7 @@ import LindenwoodLogo from "assets/College_Logos/Lindenwood.png";
 import LIULogo from "assets/College_Logos/LIU.png";
 import LSULogo from "assets/College_Logos/LSU.png";
 import LSULogoLight from "assets/College_Logos/LSULight.png";
+import ManorCollegeLogo from "assets/College_Logos/ManorCollege.png";
 import MarshallLogo from "assets/College_Logos/Marshall.png";
 import MarylandLogo from "assets/College_Logos/Maryland.png";
 import MiamiOHLogo from "assets/College_Logos/Miami(OH).png";
@@ -196,6 +194,7 @@ import USCLogo from "assets/College_Logos/USC.png";
 import USFLogo from "assets/College_Logos/USF.png";
 import UtahLogo from "assets/College_Logos/Utah.png";
 import UtahStateLogo from "assets/College_Logos/UtahState.png";
+import UtahValleyLogo from "assets/College_Logos/UtahValley.png";
 import UTEPLogo from "assets/College_Logos/UTEP.png";
 import UTEPLogoLight from "assets/College_Logos/UTEPLight.png";
 import UTSALogo from "assets/College_Logos/UTSA.png";
@@ -225,6 +224,7 @@ import BethanyWVLogo from "../assets/College_Logos/Bethany(WV).png";
 import BethesdaLogo from "../assets/College_Logos/Bethesda.png";
 import BinghamtonLogo from "../assets/College_Logos/Binghamton.png";
 import BostonUniversityLogo from "../assets/College_Logos/BostonUniversity.png";
+import BowieStateLogo from "../assets/College_Logos/BowieState.png";
 import BradleyLogo from "../assets/College_Logos/Bradley.png";
 import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
 import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
@@ -247,6 +247,7 @@ import CoppinStateLogo from "../assets/College_Logos/CoppinState.png";
 import CornellLogo from "../assets/College_Logos/Cornell.png";
 import CreightonLogo from "../assets/College_Logos/Creighton.png";
 import CSFullertonLogo from "../assets/College_Logos/CSFullerton.png";
+import CSUBakersfieldLogo from "../assets/College_Logos/CSUBakersfield.png";
 import DallasUniversityLogo from "../assets/College_Logos/DallasUniversity.png";
 import DartmouthLogo from "../assets/College_Logos/Dartmouth.png";
 import DavidsonLogo from "../assets/College_Logos/Davidson.png";
@@ -322,6 +323,7 @@ import LongBeachStateLogo from "../assets/College_Logos/LongBeachState.png";
 import LongBeachStateLogoLight from "../assets/College_Logos/LongBeachStateLight.png";
 import LongwoodLogo from "../assets/College_Logos/Longwood.png";
 import LouisianaLogo from "../assets/College_Logos/Louisiana.png";
+import LouisianaChristianLogo from "../assets/College_Logos/LouisianaChristian.png";
 import LouisvilleLogo from "../assets/College_Logos/Louisville.png";
 import LoyolaChicagoLogo from "../assets/College_Logos/LoyolaChicago.png";
 import LoyolaMarylandLogo from "../assets/College_Logos/LoyolaMaryland.png";
@@ -382,11 +384,14 @@ import OhioWesleyanLogo from "../assets/College_Logos/OhioWesleyan.png";
 import OmahaLogo from "../assets/College_Logos/Omaha.png";
 import PacificLogo from "../assets/College_Logos/Pacific.png";
 import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
+import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
+import PiedmontLogo from "../assets/College_Logos/Piedmont.png";
 import PortlandLogo from "../assets/College_Logos/Portland.png";
 import PortlandStateLogo from "../assets/College_Logos/PortlandState.png";
 import PrairieViewAMLogo from "../assets/College_Logos/PrairieViewA&M.png";
 import PresbyterianLogo from "../assets/College_Logos/Presbyterian.png";
 import ProvidenceLogo from "../assets/College_Logos/Providence.png";
+import PurdueFortWayneLogo from "../assets/College_Logos/PurdueFortWayne.png";
 import QueensLogo from "../assets/College_Logos/Queens.png";
 import QuinnipiacLogo from "../assets/College_Logos/Quinnipiac.png";
 import RadfordLogo from "../assets/College_Logos/Radford.png";
@@ -440,6 +445,7 @@ import StetsonLogo from "../assets/College_Logos/Stetson.png";
 import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
 import StThomasMinnesotaLogo from "../assets/College_Logos/StThomasMinnesota.png";
 import SUNYDelhiLogo from "../assets/College_Logos/SUNYDelhi.png";
+import SUNYMaritimeLogo from "../assets/College_Logos/SUNYMaritime.png";
 import SUNYOneontaLogo from "../assets/College_Logos/SUNYOneonta.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import TennesseeSouthernLogo from "../assets/College_Logos/TennesseeSouthern.png";
@@ -450,6 +456,7 @@ import TexasSouthernLogo from "../assets/College_Logos/TexasSouthern.png";
 import TexasStLogo from "../assets/College_Logos/TexasSt.png";
 import TexasTechLogo from "../assets/College_Logos/TexasTech.png";
 import TheCitadelLogo from "../assets/College_Logos/TheCitadel.png";
+import TheCitadelLogoLight from "../assets/College_Logos/TheCitadelLight.png";
 import ToledoLogo from "../assets/College_Logos/Toledo.png";
 import ToledoLogoLight from "../assets/College_Logos/ToledoLight.png";
 import TowsonLogo from "../assets/College_Logos/Towson.png";
@@ -474,13 +481,16 @@ import UtahLogoLight from "../assets/College_Logos/UtahLight.png";
 import UtahStateLogoLight from "../assets/College_Logos/UtahStateLight.png";
 import UtahTechLogo from "../assets/College_Logos/UtahTech.png";
 import UTMartinLogo from "../assets/College_Logos/UTMartin.png";
+import UTRioGrandeValleyLogo from "../assets/College_Logos/UTRioGrandeValley.png";
 import ValparaisoLogo from "../assets/College_Logos/Valparaiso.png";
 import VCULogo from "../assets/College_Logos/VCU.png";
 import VermontLogo from "../assets/College_Logos/Vermont.png";
+import VermontStateJohnsonLogo from "../assets/College_Logos/VermontStateJohnson.png";
 import VillanovaLogo from "../assets/College_Logos/Villanova.png";
 import VirginiaLynchburgLogo from "../assets/College_Logos/VirginiaLynchburg.png";
 import VMILogo from "../assets/College_Logos/VMI.png";
 import WagnerLogo from "../assets/College_Logos/Wagner.png";
+import WarrenWilsonLogo from "../assets/College_Logos/WarrenWilson.png";
 import WashingtonLogo from "../assets/College_Logos/Washington.png";
 import WashingtonLogoLight from "../assets/College_Logos/WashingtonLight.png";
 import WashingtonStateLogo from "../assets/College_Logos/WashingtonState.png";
@@ -492,10 +502,7 @@ import WestGeorgiaLogo from "../assets/College_Logos/WestGeorgia.png";
 import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
 import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
 import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
-import {
-  default as WilliamAndMaryLogo,
-  default as WilliamMaryLogo,
-} from "../assets/College_Logos/WilliamMary.png";
+import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
 import WinthropLogo from "../assets/College_Logos/Winthrop.png";
 import WisconsinGreenBayLogo from "../assets/College_Logos/WisconsinGreenBay.png";
@@ -506,6 +513,7 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
+import MercyhurstLogo from "../assets/College_Logos/Mercyhurst.png";
 
 export const teams: CBBTeam[] = [
   {
@@ -1073,6 +1081,17 @@ export const teams: CBBTeam[] = [
     logo: SouthCarolinaStateLogo,
   },
   {
+    id: 5782,
+    espnID: 2347,
+    name: "Louisiana Christian",
+    fullName: "Louisiana Christian Wildcats",
+    code: "LCHR",
+    shortName: "LA Christian",
+    color: "#001489",
+    secondaryColor: "#f29f05",
+    logo: LouisianaChristianLogo,
+  },
+  {
     id: 2117,
     espnID: 2569,
     name: "North Carolina A&T",
@@ -1111,10 +1130,21 @@ export const teams: CBBTeam[] = [
     name: "Vermont State - Lyndon",
     fullName: "Vermont State - Lyndon Hornets",
     shortName: "VT-Lyndon",
-    code: "NVERLYND",
+    code: "VTSL",
     color: "#FEF172",
     secondaryColor: "#123D10",
     logo: PlaceholderLogo,
+  },
+  {
+    id: 6684,
+    espnID: 126751,
+    name: "Vermont State - Johnson",
+    fullName: "Vermont State - Johnson Badgers",
+    shortName: "VT-Johnson",
+    code: "VTSJ",
+    color: "#FFFFFF",
+    secondaryColor: "#22437C",
+    logo: VermontStateJohnsonLogo,
   },
   {
     id: 2069,
@@ -1441,16 +1471,6 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#cf4520",
     logo: VirginiaTechLogo,
     logoLight: VirginiaTechLogoLight,
-  },
-  {
-    id: 2209,
-    espnID: 2729,
-    name: "William & Mary",
-    fullName: "William & Mary Tribe",
-    code: "W&M",
-    color: "#103217",
-    secondaryColor: "#f6b220",
-    logo: WilliamAndMaryLogo,
   },
   {
     id: 1983,
@@ -2432,7 +2452,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2163,
-    espnID: 302,
+    espnID: 27,
     name: "UC Riverside",
     fullName: "UC Riverside Highlanders",
     shortName: "UC Riverside",
@@ -2475,7 +2495,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2161,
-    espnID: 27,
+    espnID: 302,
     name: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
@@ -3224,6 +3244,7 @@ export const teams: CBBTeam[] = [
     espnID: 2127,
     name: "Charleston Southern",
     fullName: "Charleston Southern Buccaneers",
+    shortName: "Charleston So",
     code: "CHSO",
     color: "#2e3192",
     secondaryColor: "#ded090",
@@ -3437,7 +3458,7 @@ export const teams: CBBTeam[] = [
     logo: TexasAMSALogo,
   },
   {
-    id: 230,
+    id: 215,
     espnID: 47,
     name: "Howard",
     fullName: "Howard Bison",
@@ -3466,6 +3487,27 @@ export const teams: CBBTeam[] = [
     color: "#004B97",
     secondaryColor: "#ffc82d",
     logo: SouthernLogo,
+  },
+  {
+    id: 2373,
+    espnID: 2582,
+    name: "Bowie State",
+    fullName: "Bowie State Bulldogs",
+    code: "BOWE",
+    color: "#FECF0A",
+    secondaryColor: "#000000",
+    logo: BowieStateLogo,
+  },
+  {
+    id: 222,
+    espnID: 3084,
+    name: "Utah Valley",
+    fullName: "Utah Valley Wolverines",
+    shortName: "Utah Valley",
+    code: "UVU",
+    color: "#004812",
+    secondaryColor: "#e1c736",
+    logo: UtahValleyLogo,
   },
   {
     id: 1898,
@@ -3741,6 +3783,17 @@ export const teams: CBBTeam[] = [
     logo: UTMartinLogo,
   },
   {
+    id: 248,
+    espnID: 292,
+    name: "UT Rio Grande Valley",
+    fullName: "UT Rio Grande Valley Vaqueros",
+    shortName: "UT Rio Grande",
+    code: "UTRGV",
+    color: "#dc6000",
+    secondaryColor: "#e1732d",
+    logo: UTRioGrandeValleyLogo,
+  },
+  {
     id: 1965,
     espnID: 3077,
     name: "Kentucky Christian",
@@ -3843,7 +3896,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 224,
-    espnID: 236,
+    espnID: 2239,
     name: "Cal State Fullerton",
     fullName: "Cal State Fullerton Titans",
     shortName: "Fullerton",
@@ -3851,6 +3904,17 @@ export const teams: CBBTeam[] = [
     color: "#003767",
     secondaryColor: "#ff8300",
     logo: CSFullertonLogo,
+  },
+  {
+    id: 225,
+    espnID: 2934,
+    name: "Cal State Bakersfield",
+    fullName: "Cal State Bakersfield Roadrunners",
+    shortName: "Bakersfield",
+    code: "CSUB",
+    color: "#003594",
+    secondaryColor: "#FFC72C",
+    logo: CSUBakersfieldLogo,
   },
   {
     id: 2091,
@@ -3863,7 +3927,18 @@ export const teams: CBBTeam[] = [
     logo: RhodeIslandLogo,
   },
   {
-    id: 257,
+    id: 2076,
+    espnID: 2496,
+    name: "Piedmont",
+    fullName: "Piedmont Lions",
+    shortName: "Piedmont",
+    code: "PIEDM",
+    color: "#091f3f",
+    secondaryColor: "#5ab3e8",
+    logo: PiedmontLogo,
+  },
+  {
+    id: 1916,
     espnID: 2230,
     name: "Fordham",
     fullName: "Fordham Rams",
@@ -3871,6 +3946,17 @@ export const teams: CBBTeam[] = [
     color: "#830032",
     secondaryColor: "#909090",
     logo: FordhamLogo,
+  },
+  {
+    id: 257,
+    espnID: 2870,
+    name: "Purdue Fort Wayne",
+    fullName: "Purdue Fort Wayne Mastodons",
+    shortName: "Purdue FW",
+    code: "PFW",
+    color: "#cfb991",
+    secondaryColor: "#000000",
+    logo: PurdueFortWayneLogo,
   },
   {
     id: 2101,
@@ -3884,12 +3970,16 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 259,
+    espnID: 2277,
     name: "Houston Christian",
+    fullName: "Houston Christian Huskies",
+    shortName: "Hou Christian",
     code: "HCU",
+    color: "#00539c",
     logo: HoustonChristianLogo,
   },
   {
-    id: 260,
+    id: 1866,
     espnID: 2643,
     name: "The Citadel",
     fullName: "The Citadel Bulldogs",
@@ -3897,6 +3987,7 @@ export const teams: CBBTeam[] = [
     color: "#7badd3",
     secondaryColor: "#002856",
     logo: TheCitadelLogo,
+    logoLight: TheCitadelLogoLight,
   },
   {
     id: 6663,
@@ -4381,6 +4472,7 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#000000",
     logo: PrairieViewAMLogo,
   },
+
   {
     id: 3380,
     espnID: 2504,
@@ -4468,6 +4560,17 @@ export const teams: CBBTeam[] = [
     color: "#FFFFFF",
     secondaryColor: "#E71939",
     logo: SUNYOneontaLogo,
+  },
+  {
+    id: 5867,
+    espnID: 2951,
+    name: "SUNY-Maritime",
+    fullName: "SUNY-Maritime Privateers",
+    shortName: "SUNY-Maritime",
+    code: "SM",
+    color: "#FFFFFF",
+    secondaryColor: "#E71939",
+    logo: SUNYMaritimeLogo,
   },
   {
     id: 210,
@@ -4983,13 +5086,57 @@ export const teams: CBBTeam[] = [
   {
     id: 1940,
     espnID: 2758,
-    name: "Howard Payne",
+    name: "Manor College",
     fullName: "Howard Payne Yellow Jackets",
-    shortName: "Howard Payne",
+    shortName: "Manor College",
     code: "HWPU",
     color: "#02215b",
     secondaryColor: "#02215b",
     logo: HowardPayneLogo,
+  },
+  {
+    id: 6655,
+    espnID: 130196,
+    name: "Manor College",
+    fullName: "Manor College Blue Jays",
+    shortName: "Manor College",
+    code: "MANR",
+    color: "#1A439B",
+    secondaryColor: "#ffffff",
+    logo: ManorCollegeLogo,
+  },
+  {
+    id: 3336,
+    espnID: 2684,
+    name: "Warren Wilson",
+    fullName: "Warren Wilson Owls",
+    shortName: "Warren Wilson",
+    code: "WNWL",
+    color: "#1c4872",
+    secondaryColor: "#2d6950",
+    logo: WarrenWilsonLogo,
+  },
+  {
+    id: 7565,
+    espnID: 489,
+    name: "Barber Scotia",
+    fullName: "Barber Scotia Saber-Tooth Tigers",
+    shortName: "Barber Scotia",
+    code: "BASC",
+    color: "#254488",
+    secondaryColor: "#ffffff",
+    logo: PlaceholderLogo,
+  },
+  {
+  id: 2472,
+     espnID: 2385,
+    name: "Mercyhurst",
+    fullName: "Mercyhurst Lakers",
+    shortName: "Mercyhurst",
+    code: "MERC",
+    color: "#07594D",
+    secondaryColor: "#182752",
+    logo: MercyhurstLogo,
   },
 ];
 
@@ -5481,6 +5628,10 @@ export const getTeamInfo = (teamId: number | string) => {
   return teams.find((t) => String(t.id) === String(teamId));
 };
 
+// constants/teamsCBB.ts
+export const getCBBTeam = (id: string | number) =>
+  teams.find((t) => String(t.id) === String(id)) || null;
+
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean
@@ -5559,224 +5710,6 @@ export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
   },
   {} as Record<string, CBBTeam>
 );
-
-export const logoMap: Record<string, any> = {
-  AirForceLogo: AirForceLogo,
-  AkronLogo: AkronLogo,
-  AlabamaLogo: AlabamaLogo,
-  AlabamaAMLogo: AlabamaAMLogo,
-  AlabamaStLogo: AlabamaStLogo,
-  AppalachianStateLogo: AppalachianStateLogo,
-  ArizonaLogo: ArizonaLogo,
-  ArizonaStateLogo: ArizonaStateLogo,
-  ArkansasPineBluffLogo: ArkansasPineBluffLogo,
-  ArkansasLogo: ArkansasLogo,
-  ArkansasStateLogo: ArkansasStateLogo,
-  AuburnLogo: AuburnLogo,
-  AustinPeayLogo: AustinPeayLogo,
-  BallStateLogo: BallStateLogo,
-  BaylorLogo: BaylorLogo,
-  BoiseStateLogo: BoiseStateLogo,
-  BostonCollegeLogo: BostonCollegeLogo,
-  BowlingGreenLogo: BowlingGreenLogo,
-  BryantLogo: BryantLogo,
-  BucknellLogo: BucknellLogo,
-  BuffaloStateLogo: BuffaloStateLogo,
-  ButlerLogo: ButlerLogo,
-  BYULogo: BYULogo,
-  CaliforniaLogo: CaliforniaLogo,
-  CampbellLogo: CampbellLogo,
-  CentralArkansasLogo: CentralArkansasLogo,
-  CentralConnecticutLogo: CentralConnecticutLogo,
-  CentralMichiganLogo: CentralMichiganLogo,
-  CentralWashingtonLogo: CentralWashingtonLogo,
-  CharlestonSouthernLogo: CharlestonSouthernLogo,
-  CharlotteLogo: CharlotteLogo,
-  ChattanoogaLogo: ChattanoogaLogo,
-  CincinnatiLogo: CincinnatiLogo,
-  ClemsonLogo: ClemsonLogo,
-  CoastalCarolinaLogo: CoastalCarolinaLogo,
-  ColgateLogo: ColgateLogo,
-  ColoradoLogo: ColoradoLogo,
-  ColoradoStateLogo: ColoradoStateLogo,
-  DelawareLogo: DelawareLogo,
-  DelawareStateLogo: DelawareStateLogo,
-  DukeLogo: DukeLogo,
-  DuquesneLogo: DuquesneLogo,
-  EasternKentuckyLogo: EasternKentuckyLogo,
-  EasternMichiganLogo: EasternMichiganLogo,
-  FAMULogo: FAMULogo,
-  FAULogo: FAULogo,
-  FIULogo: FIULogo,
-  FloridaLogo: FloridaLogo,
-  FloridaStateLogo: FloridaStateLogo,
-  GeorgetownLogo: GeorgetownLogo,
-  GeorgiaLogo: GeorgiaLogo,
-  GeorgiaSouthernLogo: GeorgiaSouthernLogo,
-  GeorgiaStateLogo: GeorgiaStateLogo,
-  GeorgiaTechLogo: GeorgiaTechLogo,
-  HawaiiLogo: HawaiiLogo,
-  HolyCrossLogo: HolyCrossLogo,
-  HoustonLogo: HoustonLogo,
-  IdahoLogo: IdahoLogo,
-  IdahoStateLogo: IdahoStateLogo,
-  IllinoisLogo: IllinoisLogo,
-  IllinoisStateLogo: IllinoisStateLogo,
-  IndianaLogo: IndianaLogo,
-  IndianaStateLogo: IndianaStateLogo,
-  IowaLogo: IowaLogo,
-  IowaStateLogo: IowaStateLogo,
-  JamesMadisonLogo: JamesMadisonLogo,
-  JaxStateLogo: JaxStateLogo,
-  KansasLogo: KansasLogo,
-  KansasStLogo: KansasStLogo,
-  KentStateLogo: KentStateLogo,
-  KentuckyLogo: KentuckyLogo,
-  LibertyLogo: LibertyLogo,
-  LouisianaLogo: LouisianaLogo,
-  LouisvilleLogo: LouisvilleLogo,
-  LSULogo: LSULogo,
-  MarshallLogo: MarshallLogo,
-  MarylandLogo: MarylandLogo,
-  MiamiLogo: MiamiLogo,
-  MiamiOHLogo: MiamiOHLogo,
-  MichiganLogo: MichiganLogo,
-  MichiganStateLogo: MichiganStateLogo,
-  MinnesotaLogo: MinnesotaLogo,
-  MissouriLogo: MissouriLogo,
-  MissStLogo: MissStLogo,
-  MissouriStateLogo: MissouriStateLogo,
-  NavyLogo: NavyLogo,
-  NCStateLogo: NCStateLogo,
-  NebraskaLogo: NebraskaLogo,
-  NevadaLogo: NevadaLogo,
-  NewMexicoLogo: NewMexicoLogo,
-  NewMexicoStateLogo: NewMexicoStateLogo,
-  NorfolkStLogo: NorfolkStLogo,
-  NorthernArizonaLogo: NorthernArizonaLogo,
-  NorthernIllinoisLogo: NorthernIllinoisLogo,
-  NorthTexasLogo: NorthTexasLogo,
-  NorthwesternLogo: NorthwesternLogo,
-  NotreDameLogo: NotreDameLogo,
-  OhioLogo: OhioLogo,
-  OhioStLogo: OhioStLogo,
-  OklahomaLogo: OklahomaLogo,
-  OKStateLogo: OKStateLogo,
-  ODULogo: ODULogo,
-  OleMissLogo: OleMissLogo,
-  OregonLogo: OregonLogo,
-  OregonStateLogo: OregonStateLogo,
-  PennLogo: PennLogo,
-  PennStateLogo: PennStateLogo,
-  PittsburghLogo: PittsburghLogo,
-  PrincetonLogo: PrincetonLogo,
-  PurdueLogo: PurdueLogo,
-  RiceLogo: RiceLogo,
-  RutgersLogo: RutgersLogo,
-  SamHoustonLogo: SamHoustonLogo,
-  SanDiegoStLogo: SanDiegoStLogo,
-  SanJoseStateLogo: SanJoseStateLogo,
-  SouthAlabamaLogo: SouthAlabamaLogo,
-  SouthCarolinaLogo: SouthCarolinaLogo,
-  SouthDakotaLogo: SouthDakotaLogo,
-  SouthDakotaStateLogo: SouthDakotaStateLogo,
-  SouthernMissLogo: SouthernMissLogo,
-  StanfordLogo: StanfordLogo,
-  SyracuseLogo: SyracuseLogo,
-  TCULogo: TCULogo,
-  TempleLogo: TempleLogo,
-  TennesseeLogo: TennesseeLogo,
-  TexasLogo: TexasLogo,
-  TexasAMLogo: TexasAMLogo,
-  TexasStLogo: TexasStLogo,
-  TexasTechLogo: TexasTechLogo,
-  ToledoLogo: ToledoLogo,
-  TroyLogo: TroyLogo,
-  TulaneLogo: TulaneLogo,
-  TulsaLogo: TulsaLogo,
-  UABLogo: UABLogo,
-  UAlbanyLogo: UAlbanyLogo,
-  UCFLogo: UCFLogo,
-  UCLALogo: UCLALogo,
-  UConnLogo: UConnLogo,
-  ULMLogo: ULMLogo,
-  UmassLogo: UmassLogo,
-  UNCLogo: UNCLogo,
-  UNLVLogo: UNLVLogo,
-  USCLogo: USCLogo,
-  USFLogo: USFLogo,
-  UtahLogo: UtahLogo,
-  UtahStateLogo: UtahStateLogo,
-  UTEPLogo: UTEPLogo,
-  UTMartinLogo: UTMartinLogo,
-  UTSALogo: UTSALogo,
-  VanderbiltLogo: VanderbiltLogo,
-  VirginiaLogo: VirginiaLogo,
-  VirginiaTechLogo: VirginiaTechLogo,
-  WakeForestLogo: WakeForestLogo,
-  WashingtonLogo: WashingtonLogo,
-  WashingtonStateLogo: WashingtonStateLogo,
-  WestVirginiaLogo: WestVirginiaLogo,
-  WesternKentuckyLogo: WesternKentuckyLogo,
-  WesternMichiganLogo: WesternMichiganLogo,
-  WisconsinLogo: WisconsinLogo,
-  WyomingLogo: WyomingLogo,
-  YaleLogo: YaleLogo,
-
-  // Light versions
-  AirForceLogoLight: AirForceLogoLight,
-  AlabamaAMLogoLight: AlabamaAMLogoLight,
-  AlabamaLogoLight: AlabamaLogoLight,
-  ArkansasLogoLight: ArkansasLogoLight,
-  AuburnLogoLight: AuburnLogoLight,
-  BaylorLogoLight: BaylorLogoLight,
-  BYULogoLight: BYULogoLight,
-  CaliforniaLogoLight: CaliforniaLogoLight,
-  CentralMichiganLogoLight: CentralMichiganLogoLight,
-  CincinnatiLogoLight: CincinnatiLogoLight,
-  ClemsonLogoLight: ClemsonLogoLight,
-  ColgateLogoLight: ColgateLogoLight,
-  DukeLogoLight: DukeLogoLight,
-  DuquesneLogoLight: DuquesneLogoLight,
-  EasternKentuckyLogoLight: EasternKentuckyLogoLight,
-  EasternMichiganLogoLight: EasternMichiganLogoLight,
-  IndianaLogoLight: IndianaLogoLight,
-  IowaLogoLight: IowaLogoLight,
-  KansasStLogoLight: KansasStLogoLight,
-  KentuckyLogoLight: KentuckyLogoLight,
-  LSULogoLight: LSULogoLight,
-  MichiganStateLogoLight: MichiganStateLogoLight,
-  MinnesotaLogoLight: MinnesotaLogoLight,
-  NebraskaLogoLight: NebraskaLogoLight,
-  NevadaLogoLight: NevadaLogoLight,
-  NorthernArizonaLogoLight: NorthernArizonaLogoLight,
-  OklahomaLogoLight: OklahomaLogoLight,
-  OhioStLogoLight: OhioStLogoLight,
-  OleMissLogoLight: OleMissLogoLight,
-  OregonLogoLight: OregonLogoLight,
-  PittsburghLogoLight: PittsburghLogoLight,
-  RiceLogoLight: RiceLogoLight,
-  SamHoustonLogoLight: SamHoustonLogoLight,
-  TCULogoLight: TCULogoLight,
-  TempleLogoLight: TempleLogoLight,
-  TennesseeLogoLight: TennesseeLogoLight,
-  TexasLogoLight: TexasLogoLight,
-  TexasAMLogoLight: TexasAMLogoLight,
-  TulsaLogoLight: TulsaLogoLight,
-  UNLVLogoLight: UNLVLogoLight,
-  UTEPLogoLight: UTEPLogoLight,
-  VirginiaLogoLight: VirginiaLogoLight,
-  VirginiaTechLogoLight: VirginiaTechLogoLight,
-  WakeForestLogoLight: WakeForestLogoLight,
-  WestVirginiaLogoLight: WestVirginiaLogoLight,
-  WyomingLogoLight: WyomingLogoLight,
-  SouthCarolinaLogoLight: SouthCarolinaLogoLight,
-  ToledoLogoLight: ToledoLogoLight,
-  UtahLogoLight: UtahLogoLight,
-  UtahStateLogoLight: UtahStateLogoLight,
-  WashingtonLogoLight: WashingtonLogoLight,
-  WashingtonStateLogoLight: WashingtonStateLogoLight,
-};
 
 export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
 export const teamMapByESPNID = Object.fromEntries(

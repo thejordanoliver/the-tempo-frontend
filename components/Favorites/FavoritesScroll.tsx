@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors } from "constants/Colors";
+import { teams as mlbTeams } from "constants/teamsMLB";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -15,6 +16,7 @@ import { teams } from "../../constants/teams";
 import { teams as cbbteams } from "../../constants/teamsCBB";
 import { teams as cfbteams } from "../../constants/teamsCFB";
 import { teams as nflteams } from "../../constants/teamsNFL";
+
 type TeamWithLeague = {
   id: string | number;
   name: string;
@@ -68,6 +70,9 @@ export default function FavoritesScroll({
         case "CBB":
           baseTeam = cbbteams.find((t) => String(t.id) === id);
           break;
+        case "MLB":
+          baseTeam = mlbTeams.find((t) => String(t.id) === id);
+          break;
       }
 
       if (!baseTeam) return null;
@@ -117,8 +122,9 @@ export default function FavoritesScroll({
             ? "/team/[teamId]"
             : item.league === "CFB"
             ? "/team/cfb/[teamId]"
-            : "/team/cbb/[teamId]";
-
+            : item.league === "CBB"
+            ? "/team/cbb/[teamId]"
+            : "/team/mlb/[teamId]";
         router.push({
           pathname: route,
           params: { teamId: item.id.toString() },

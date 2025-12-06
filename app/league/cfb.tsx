@@ -4,11 +4,12 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/CFB/ConferenceListModal";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
+import RecruitsList from "components/CFB/RecruitsList";
 import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/CFB/Standings/CFBStandingsList";
 import WeekSelector from "components/CFB/WeekSelector";
 import LeagueForum from "components/Forum/LeagueForum";
-import SeasonLeadersList from "components/League/SeasonLeadersList";
+import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -19,7 +20,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useLeagueNews } from "hooks/useLeagueNews";
-import { useSeasonLeaders } from "hooks/useSeasonLeaders";
+import TransferList from "components/CFB/TransferList";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
@@ -31,25 +32,22 @@ import {
   getCurrentWeekIndex,
 } from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-// --- Stats tab ---
 function StatsTabContent() {
-  const { leaders, loading, error } = useSeasonLeaders({
-    season: 2024,
-    limit: 5,
-    minGames: 10,
-  });
+  const { categories, loading, error } = useSeasonLeaders(2025, "CFB");
 
   return (
     <SeasonLeadersList
-      leadersByStat={leaders}
       loading={loading}
       error={error}
+      categories={categories}
+      league={"CFB"}
     />
   );
 }
@@ -74,6 +72,8 @@ type CombinedItem =
   | (NewsItem & { itemType: "news" })
   | (HighlightItem & { itemType: "highlight" });
 
+
+
 export default function CFBeagueScreen() {
   const navigation = useNavigation();
   const router = useRouter();
@@ -86,18 +86,32 @@ export default function CFBeagueScreen() {
   const [selectedConference, setSelectedConference] =
     useState<string>("Top 25");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [recruitView, setRecruitView] = useState<"players" | "teams">(
+    "players"
+  );
+  const [recruitYear, setRecruitYear] = useState(dayjs().year().toString());
+  const [recruitTeam, setRecruitTeam] = useState("all");
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "recruting" | "transfer portal" | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "recruting",
+    "transfer portal" ,
+    "forum",
+  ] as const;
 
   // --- News & Highlights ---
   const { news: cfbNews, loading: cfbLoading } = useLeagueNews("CFB");
-  const { highlights } = useHighlights("College Football Highlights", "10");
+  const { highlights } = useHighlights("cfb", "", 10);
+
 
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
@@ -230,11 +244,12 @@ export default function CFBeagueScreen() {
   return (
     <>
       <View style={styles.container}>
-        <TabBar
+        <MainScrollTabBar
           tabs={tabs}
           selected={selectedTab}
           onTabPress={setSelectedTab}
         />
+
 
         <View style={styles.contentArea}>
           {selectedTab === "scores" && (
@@ -300,6 +315,26 @@ export default function CFBeagueScreen() {
           )}
 
           {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "transfer portal" && (
+            <TransferList
+              year={recruitYear}
+              team={recruitTeam}
+              view={recruitView}
+              onYearChange={setRecruitYear}
+              onTeamChange={setRecruitTeam}
+              onViewChange={setRecruitView}
+            />
+          )}
+          {selectedTab === "recruting" && (
+            <RecruitsList
+              year={recruitYear}
+              team={recruitTeam}
+              view={recruitView}
+              onYearChange={setRecruitYear}
+              onTeamChange={setRecruitTeam}
+              onViewChange={setRecruitView}
+            />
+          )}
           {selectedTab === "forum" && <LeagueForum league="CFB" />}
         </View>
       </View>

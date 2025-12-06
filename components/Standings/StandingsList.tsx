@@ -261,6 +261,7 @@ const streakColor = winStreak
         selectedValue={sortMode}
         onSelect={(value) => setSortMode(value as "conference" | "division")}
         isDark={isDark}
+        absolute
       />
       {sortMode === "conference" ? (
         <>

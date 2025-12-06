@@ -3,11 +3,11 @@ import React, { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
+  StyleProp,
   StyleSheet,
   useColorScheme,
   View,
   ViewStyle,
-  StyleProp,
 } from "react-native";
 
 type HeaderSkeletonProps = {
@@ -47,22 +47,21 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
 
   const overlayColor = isDark ? Colors.darkGray : Colors.lightGray;
 
-return (
-  <View style={StyleSheet.flatten([styles.container, style])}>
-    <View style={[styles.skeletonBase, { backgroundColor: baseColor }]}>
-      <Animated.View
-        style={[
-          styles.overlay,
-          {
-            backgroundColor: overlayColor,
-            opacity: pulseAnim,
-          },
-        ]}
-      />
+  return (
+    <View style={StyleSheet.flatten([styles.container, style])}>
+      <View style={[styles.skeletonBase, { backgroundColor: baseColor }]}>
+        <Animated.View
+          style={[
+            styles.overlay,
+            {
+              backgroundColor: overlayColor,
+              opacity: pulseAnim,
+            },
+          ]}
+        />
+      </View>
     </View>
-  </View>
-);
-
+  );
 }
 
 const skeletonStyles = (isDark: boolean) =>

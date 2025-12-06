@@ -1,6 +1,6 @@
 import { getTeamInfo } from "constants/teamsNFL";
 import { View, useColorScheme } from "react-native";
-import InfoCard from "../../InfoCard";
+import InfoCard from "../../CFB/Team/InfoCard";
 
 type Props = {
   teamId?: number | string;

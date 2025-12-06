@@ -4,11 +4,13 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CFBSeriesHistory from "components/CFB/GameDetails/CFBSeriesHistory";
 import {
   LastFiveGamesSwitcher,
   TeamLocationSection,
 } from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
+import GameLeaders from "components/NFL/GameDetails/GameLeaders";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -17,6 +19,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
+import { useCFBMatchup } from "hooks/CFBHooks/useCFBMatchup";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
@@ -24,7 +27,6 @@ import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
-import CFBGameLeaders from "../GameDetails/CFBGameLeaders";
 import { CFBCenterInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
 type Props = {
@@ -267,8 +269,8 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
         displayClock: undefined,
         shortDownDistanceText: undefined,
         downDistanceText: undefined,
-         gameStatusDetail: undefined,
-    gameStatusShortDetail : undefined,
+        gameStatusDetail: undefined,
+        gameStatusShortDetail: undefined,
         period: undefined,
         homeTimeouts: undefined,
         awayTimeouts: undefined,
@@ -289,14 +291,14 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     score,
   } = possession;
 
+  const matchup = useCFBMatchup(
+    awayTeamData?.name ?? awayTeamData.code,
+    homeTeamData?.name ?? homeTeamData.code
+  );
 
-// Add at the top inside the component:
-const endOfQuarterText =
-  possession?.gameStatusDetail ??
-  possession?.gameStatusShortDetail ??
-  null;
-
-
+  // Add at the top inside the component:
+  const endOfQuarterText =
+    possession?.gameStatusDetail ?? possession?.gameStatusShortDetail ?? null;
 
   const { headlineText } = useGameInfo(
     Number(homeEspnId),
@@ -521,11 +523,12 @@ const endOfQuarterText =
               />
 
               {homeTeamData && awayTeamData && gameStatus !== "Scheduled" && (
-                <CFBGameLeaders
+                <GameLeaders
                   gameId={String(gameInfo.id)}
                   homeTeamId={String(homeTeamData.id)}
                   awayTeamId={String(awayTeamData.id)}
                   lighter
+                  league="CFB"
                 />
               )}
 
@@ -556,6 +559,27 @@ const endOfQuarterText =
                 league="CFB"
               />
 
+              {matchup.data && (
+                <CFBSeriesHistory
+                  team1Name={awayTeamData.name}
+                  team2Name={homeTeamData.name}
+                  team1Wins={matchup.data.team1Wins}
+                  team2Wins={matchup.data.team2Wins}
+                  team1Logo={
+                    isDark
+                      ? awayTeamData.logoLight || awayTeamData.logo
+                      : awayTeamData.logo
+                  }
+                  team2Logo={
+                    isDark
+                      ? homeTeamData.logoLight || homeTeamData.logo
+                      : homeTeamData.logo
+                  }
+                  ties={matchup.data.ties}
+                  games={matchup.data.games}
+                />
+              )}
+
               {/* ✅ Team Location / Venue Section */}
               <TeamLocationSection
                 venueImage={resolvedVenueImage}
@@ -563,7 +587,7 @@ const endOfQuarterText =
                 location={resolvedVenueCity}
                 address={resolvedVenueAddress}
                 venueCapacity={resolvedVenueCapacity}
-                venueAttendancee={
+                venueAttendance={
                   venue?.attendance
                     ? String(venue.attendance)
                     : venue?.capacity

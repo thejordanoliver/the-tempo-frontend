@@ -1,5 +1,5 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
-import FixedWidthTabBar from "components/TabBars/GameLeadersTabBar";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teamsById } from "constants/teams";
@@ -39,46 +39,46 @@ export default function GameLeaders({
   const styles = getStyles(isDark, lighter);
 
   // Memoized top players
-const CATEGORY_FIELD_MAP = {
-  points: "points",
-  rebounds: "totReb",
-  assists: "assists",
-  steals: "steals",
-} as const;
+  const CATEGORY_FIELD_MAP = {
+    points: "points",
+    rebounds: "totReb",
+    assists: "assists",
+    steals: "steals",
+  } as const;
 
-const topPlayers = useMemo(() => {
-  if (!data) return [];
+  const topPlayers = useMemo(() => {
+    if (!data) return [];
 
-  const getTopPlayerPerTeam = (category: Category) => {
-    const field = CATEGORY_FIELD_MAP[category];
+    const getTopPlayerPerTeam = (category: Category) => {
+      const field = CATEGORY_FIELD_MAP[category];
 
-    const validPlayers = data.filter(
-      (p) => p.player && typeof p[field] === "number"
-    );
-
-    const teams = [...new Set(validPlayers.map((p) => p.team.id))];
-
-    return teams.map((teamId) => {
-      const playersFromTeam = validPlayers.filter(
-        (p) => p.team.id === teamId
+      const validPlayers = data.filter(
+        (p) => p.player && typeof p[field] === "number"
       );
 
-      return playersFromTeam.sort(
-        (a, b) => (b[field] ?? 0) - (a[field] ?? 0)
-      )[0];
+      const teams = [...new Set(validPlayers.map((p) => p.team.id))];
+
+      return teams.map((teamId) => {
+        const playersFromTeam = validPlayers.filter(
+          (p) => p.team.id === teamId
+        );
+
+        return playersFromTeam.sort(
+          (a, b) => (b[field] ?? 0) - (a[field] ?? 0)
+        )[0];
+      });
+    };
+
+    const players = getTopPlayerPerTeam(selectedCategory);
+
+    return players.sort((a, b) => {
+      if (a.team.id === awayTeamId) return -1;
+      if (b.team.id === awayTeamId) return 1;
+      if (a.team.id === homeTeamId) return -1;
+      if (b.team.id === homeTeamId) return 1;
+      return 0;
     });
-  };
-
-  const players = getTopPlayerPerTeam(selectedCategory);
-
-  return players.sort((a, b) => {
-    if (a.team.id === awayTeamId) return -1;
-    if (b.team.id === awayTeamId) return 1;
-    if (a.team.id === homeTeamId) return -1;
-    if (b.team.id === homeTeamId) return 1;
-    return 0;
-  });
-}, [data, selectedCategory, awayTeamId, homeTeamId]);
+  }, [data, selectedCategory, awayTeamId, homeTeamId]);
 
   // Add this check:
   if (!topPlayers.length) return null;
@@ -111,29 +111,23 @@ const topPlayers = useMemo(() => {
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
 
-      <View style={{ paddingHorizontal: 12 }}>
-        <FixedWidthTabBar
-          tabs={STAT_CATEGORIES}
-          selected={selectedCategory}
-          onTabPress={setSelectedCategory}
-          lighter={lighter} // <-- forward the prop here
-          containerStyle={{
-            width: tabWidth * STAT_CATEGORIES.length,
-            alignSelf: "center",
-          }}
-          renderLabel={(tab, isSelected) => (
-            <Text
-              style={{
-                fontFamily: Fonts.OSMEDIUM,
-                fontSize: 14,
-                color: isSelected ? textColor : subTextColor,
-              }}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </Text>
-          )}
-        />
-      </View>
+      <MainScrollTabBar
+        tabs={STAT_CATEGORIES}
+        selected={selectedCategory}
+        onTabPress={setSelectedCategory}
+        lighter={lighter} // <-- forward the prop here
+        renderLabel={(tab, isSelected) => (
+          <Text
+            style={{
+              fontFamily: Fonts.OSMEDIUM,
+              fontSize: 14,
+              color: isSelected ? textColor : subTextColor,
+            }}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </Text>
+        )}
+      />
 
       {topPlayers.map((player, idx) => {
         const p = player.localPlayer;
@@ -142,10 +136,7 @@ const topPlayers = useMemo(() => {
         return (
           <View
             key={idx}
-            style={[
-              styles.card,
-              { borderBottomWidth: 1, borderBottomColor: borderColor },
-            ]}
+            style={[styles.card, { borderBottomColor: borderColor }]}
           >
             <View style={styles.avatarWrapper}>
               <Image source={{ uri: p?.headshot_url }} style={styles.avatar} />

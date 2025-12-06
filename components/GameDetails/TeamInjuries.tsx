@@ -6,7 +6,6 @@ import FixedWidthTabBar from "../FixedWidthTabBar";
 import HeadingTwo from "../Headings/HeadingTwo";
 import TeamInjuriesList from "./TeamInjuriesList";
 
-
 // ✅ Define type for injuries
 export type TeamInjury = {
   team: {
@@ -80,7 +79,7 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
         Injury Report
       </HeadingTwo>
 
-      <View style={{ alignSelf: "center", marginBottom: 12 }}>
+      <View style={{ alignSelf: "center" }}>
         <FixedWidthTabBar
           tabs={tabs.map((t) => t.displayName)}
           selected={selectedTeam}

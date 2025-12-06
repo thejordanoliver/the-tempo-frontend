@@ -4,6 +4,7 @@ import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
 import { teams as nflteams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
@@ -21,6 +22,7 @@ import {
 } from "react-native";
 import type { LeagueType, Team } from "types/types";
 import Button from "components/Button";
+import { Colors } from "constants/Colors";
 
 
 // Create a lookup map at the top of your component
@@ -36,6 +38,9 @@ export const leagueMap: Record<string, LeagueType> = {};
 });
 [...cbbTeams].forEach((t) => {
   leagueMap[t.id.toString()] = "CBB";
+});
+[...mlbTeams].forEach((t) => {
+  leagueMap[t.id.toString()] = "MLB";
 });
 
 export default function EditFavoritesScreen() {
@@ -89,7 +94,7 @@ export default function EditFavoritesScreen() {
       <TextInput
         style={styles.input}
         placeholder="Search teams..."
-        placeholderTextColor={isDark ? "#888" : "#999"}
+        placeholderTextColor={isDark ? Colors.darkGray : Colors.lightGray}
         value={search}
         onChangeText={setSearch}
         autoCapitalize="none"
@@ -101,6 +106,7 @@ export default function EditFavoritesScreen() {
   teams={[
     ...teams.map((t) => ({ ...t, league: "NBA", id: t.id.toString() } as Team & { league: "NBA" })),
     ...nflteams.map((t) => ({ ...t, league: "NFL", id: t.id.toString() } as Team & { league: "NFL" })),
+    ...mlbTeams.map((t) => ({ ...t, league: "MLB", id: t.id.toString() } as Team & { league: "MLB" })),
 
     // ✅ Show all CFB teams, but prioritize matching names in FBS map if available
     ...cfbteams
@@ -145,17 +151,17 @@ const getStyles = (isDark: boolean, isGridView: boolean) =>
     },
     input: {
       borderWidth: 1,
-      borderColor: "#888",
+      borderColor: Colors.midTone,
       borderRadius: 8,
       paddingHorizontal: 12,
       paddingVertical: 8,
       fontSize: 16,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSLIGHT,
       width: '100%'
     },
     saveButton: {
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       padding: 16,
       borderRadius: 8,
       alignItems: "center",
@@ -164,7 +170,7 @@ const getStyles = (isDark: boolean, isGridView: boolean) =>
       width: '96%'
     },
     saveText: {
-      color: isDark ? "#000" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
     },

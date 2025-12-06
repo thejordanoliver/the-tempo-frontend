@@ -291,6 +291,7 @@ export const NFLStandingsList = () => {
         selectedValue={sortMode}
         onSelect={(value) => setSortMode(value as "conference" | "division")}
         isDark={isDark}
+        absolute
       />
 
       {sortMode === "conference" ? (

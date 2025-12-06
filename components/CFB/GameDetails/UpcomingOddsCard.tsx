@@ -1,15 +1,14 @@
 import { Fonts } from "constants/fonts";
-import { getTeamLogo, teams } from "constants/teamsCFB";
-import { Market, UpcomingCFBGameOdds } from "hooks/CFBHooks/useUpcomingCFBOdds";
+import { teams } from "constants/teamsCFB";
+import { UpcomingGameOdds } from "hooks/CFBHooks/useCFBUpcomingOdds";
 import React from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, Text, useColorScheme, View } from "react-native";
 import { styles } from "styles/GameDetailStyles/Odds.styles";
-// ✅ Props
+
 interface Props {
-  game: UpcomingCFBGameOdds;
+  game: UpcomingGameOdds;
 }
 
-// ✅ Resolve team from API identifiers (code, name, or full name)
 const getTeamFromApi = (teamIdentifier: string) => {
   if (!teamIdentifier) return undefined;
 
@@ -30,43 +29,76 @@ const getTeamFromApi = (teamIdentifier: string) => {
   );
 };
 
-const UpcomingCFBOddsCard: React.FC<Props> = ({ game }) => {
+const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
   const bookmaker = game.bookmakers?.[0];
+
+  // -----------------------------
+  // TEAM LOOKUP
+  // -----------------------------
   const homeTeam = getTeamFromApi(game.home_team);
   const awayTeam = getTeamFromApi(game.away_team);
 
-  // ✅ Get market, prioritizing moneyline (ML) from game.moneyline
-  const getMarket = (key: string): Market | undefined => {
-    if (key === "h2h") {
-      if (game.moneyline && game.moneyline.outcomes.length > 0) {
-        return {
-          key: game.moneyline.key,
-          outcomes: game.moneyline.outcomes,
-        };
-      }
-      return undefined; // no moneyline available yet
-    }
-    return bookmaker?.markets?.find((m) => m.key === key);
-  };
+  const getMarket = (key: string) =>
+    bookmaker?.markets?.find((m) => m.key === key);
 
   const h2h = getMarket("h2h");
   const spreads = getMarket("spreads");
   const totals = getMarket("totals");
 
+  // -----------------------------
+  // NORMALIZATION FIX (🔥 IMPORTANT)
+  // If outcomes are reversed, swap to: 0 = away, 1 = home
+  // -----------------------------
+  function normalizeTeamMarket(
+    market: any,
+    homeName: string,
+    awayName: string
+  ) {
+    if (!market?.outcomes || market.outcomes.length < 2) return market;
+
+    const [o0, o1] = market.outcomes;
+
+    // API sometimes puts index 0 = HOME
+    const isFlipped =
+      o0?.name?.trim().toLowerCase() === homeName.trim().toLowerCase() &&
+      o1?.name?.trim().toLowerCase() === awayName.trim().toLowerCase();
+
+    if (isFlipped) {
+      return {
+        ...market,
+        outcomes: [o1, o0], // swap → index 0 = away, index 1 = home
+      };
+    }
+
+    return market;
+  }
+
+  const h2hNorm = normalizeTeamMarket(h2h, game.home_team, game.away_team);
+  const spreadsNorm = normalizeTeamMarket(
+    spreads,
+    game.home_team,
+    game.away_team
+  );
+  const totalsNorm = totals; // Totals do NOT depend on team order
+
   const oddsMap = [
-    { label: "ML", market: h2h },
-    { label: "Spread", market: spreads },
-    { label: "Total", market: totals },
+    { label: "ML", market: h2hNorm },
+    { label: "Spread", market: spreadsNorm },
+    { label: "Total", market: totalsNorm },
   ];
 
+  // -----------------------------
+  // IMAGE RESOLUTION
+  // -----------------------------
   const getLogo = (team: typeof homeTeam | undefined) => {
-    if (!team) return require("../../../assets/Football/CFB_Logos/CFB.png");
+    if (!team) return require("../../../assets/Football/NFL_Logos/NFL.png");
 
     const logo = isDark ? team.logoLight || team.logo : team.logo;
-    if (!logo) return require("../../../assets/Football/CFB_Logos/CFB.png");
+
+    if (!logo) return require("../../../assets/Football/NFL_Logos/NFL.png");
 
     if (typeof logo === "string") return { uri: logo };
     return logo;
@@ -74,15 +106,12 @@ const UpcomingCFBOddsCard: React.FC<Props> = ({ game }) => {
 
   const colors = {
     textPrimary: isDark ? "#fff" : "#1d1d1d",
+    textSecondary: isDark ? "#888" : "#333",
     textHeader: isDark ? "#ccc" : "#666",
     divider: isDark ? "#444" : "#ccc",
   };
 
-  const formatOutcome = (
-    market: Market | undefined,
-    index: number,
-    label: string
-  ) => {
+  const formatOutcome = (market: any, index: number, label: string) => {
     const outcome = market?.outcomes?.[index];
     if (!outcome) return "-";
 
@@ -96,110 +125,126 @@ const UpcomingCFBOddsCard: React.FC<Props> = ({ game }) => {
   };
 
   return (
-    <View>
-      {/* Header Row */}
-      <View style={styles.headerRow}>
-        <Text
-          style={[
-            styles.headerTeamText,
-            { color: colors.textHeader, flex: 2, fontFamily: Fonts.OSBOLD },
-          ]}
-        >
-          Team
-        </Text>
-        {oddsMap.map(({ label }, i) => (
+    <>
+      <View>
+        {/* HEADER */}
+        <View style={styles.headerRow}>
           <Text
-            key={label}
             style={[
-              styles.headerText,
-              {
-                color: colors.textHeader,
-                flex: 1,
-                marginLeft: i === 0 ? 12 : 8,
-                fontFamily: Fonts.OSBOLD,
-              },
+              styles.headerTeamText,
+              { color: colors.textHeader, flex: 2, fontFamily: Fonts.OSBOLD },
             ]}
           >
-            {label}
+            Team
           </Text>
-        ))}
-      </View>
 
-      {/* Away Team */}
-      <View style={styles.teamRow}>
-        <View style={styles.teamInfo}>
-          {awayTeam && (
+          {oddsMap.map(({ label }, i) => (
+            <Text
+              key={label}
+              style={[
+                styles.headerText,
+                {
+                  color: colors.textHeader,
+                  flex: 1,
+                  marginLeft: i === 0 ? 12 : 8,
+                  fontFamily: Fonts.OSBOLD,
+                },
+              ]}
+            >
+              {label}
+            </Text>
+          ))}
+        </View>
+
+        {/* AWAY TEAM ROW */}
+        <View style={styles.teamRow}>
+          <View style={styles.teamInfo}>
             <Image
-              source={getTeamLogo(awayTeam.code ?? "", isDark)}
+              source={getLogo(awayTeam)}
               style={styles.teamLogo}
               resizeMode="contain"
             />
-          )}
-          <Text
-            style={[
-              styles.teamName,
-              { color: colors.textPrimary, fontFamily: Fonts.OSMEDIUM },
-            ]}
-          >
-            {awayTeam?.code || game.away_team || "Unknown"}
-          </Text>
+            <Text
+              style={[
+                styles.teamName,
+                { color: colors.textPrimary, fontFamily: Fonts.OSMEDIUM },
+              ]}
+            >
+              {awayTeam?.code || game.away_team || "Unknown"}
+            </Text>
+          </View>
+
+          {oddsMap.map(({ market, label }, i) => (
+            <Text
+              key={`${label}-away`}
+              style={[
+                styles.oddsText,
+                {
+                  color: colors.textPrimary,
+                  marginLeft: i === 0 ? 12 : 8,
+                },
+              ]}
+            >
+              {formatOutcome(market, 0, label)}
+            </Text>
+          ))}
         </View>
-        {oddsMap.map(({ market, label }, i) => (
-          <Text
-            key={`${label}-away`}
-            style={[
-              styles.oddsText,
-              { color: colors.textPrimary, marginLeft: i === 0 ? 12 : 8 },
-            ]}
-          >
-            {formatOutcome(market, 0, label)}
-          </Text>
-        ))}
-      </View>
 
-      <View style={[styles.divider, { borderBottomColor: colors.divider }]} />
+        <View style={[styles.divider, { borderBottomColor: colors.divider }]} />
 
-      {/* Home Team */}
-      <View style={styles.teamRow}>
-        <View style={styles.teamInfo}>
-          {homeTeam && (
+        {/* HOME TEAM ROW */}
+        <View style={styles.teamRow}>
+          <View style={styles.teamInfo}>
             <Image
-              source={getTeamLogo(homeTeam.code ?? "", isDark)}
+              source={getLogo(homeTeam)}
               style={styles.teamLogo}
               resizeMode="contain"
             />
-          )}
-          <Text
-            style={[
-              styles.teamName,
-              { color: colors.textPrimary, fontFamily: Fonts.OSMEDIUM },
-            ]}
-          >
-            {homeTeam?.code || game.home_team || "Unknown"}
+            <Text
+              style={[
+                styles.teamName,
+                { color: colors.textPrimary, fontFamily: Fonts.OSMEDIUM },
+              ]}
+            >
+              {homeTeam?.code || game.home_team || "Unknown"}
+            </Text>
+          </View>
+
+          {oddsMap.map(({ market, label }, i) => (
+            <Text
+              key={`${label}-home`}
+              style={[
+                styles.oddsText,
+                {
+                  color: colors.textPrimary,
+                  marginLeft: i === 0 ? 12 : 8,
+                },
+              ]}
+            >
+              {formatOutcome(market, 1, label)}
+            </Text>
+          ))}
+        </View>
+
+        {/* Bookmaker Info */}
+        <View style={styles.bookmaker}>
+          <Text style={styles.subtext}>
+            Powered By: {bookmaker?.title || "Unknown"}
+          </Text>
+          <Text style={styles.subtext}>
+            {new Date(game.commence_time).toLocaleString("en-US", {
+              month: "numeric",
+              day: "numeric",
+              year: "2-digit",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })}
           </Text>
         </View>
-        {oddsMap.map(({ market, label }, i) => (
-          <Text
-            key={`${label}-home`}
-            style={[
-              styles.oddsText,
-              { color: colors.textPrimary, marginLeft: i === 0 ? 12 : 8 },
-            ]}
-          >
-            {formatOutcome(market, 1, label)}
-          </Text>
-        ))}
       </View>
-
-      {/* Bookmaker Info */}
-      <View style={styles.bookmaker}>
-        <Text style={styles.subtext}>
-          Powered By: {bookmaker?.title || "Unknown"}
-        </Text>
-      </View>
-    </View>
+    </>
   );
 };
 
-
-export default UpcomingCFBOddsCard;
+export default UpcomingOddsCard;

@@ -112,7 +112,7 @@ export default function ShotChart({
     const made = p.scoringPlay === true;
 
     let color = "gray";
-    if (p.team?.id === homeTeamId) color = homeTeam?.color ?? "#007AFF";
+    if (p.team?.id === homeTeamId) color =  homeTeam?.color ?? "#007AFF";
     else if (p.team?.id === awayTeamId) color = awayTeam?.color ?? "#FF3B30";
 
     const size = 1.2;

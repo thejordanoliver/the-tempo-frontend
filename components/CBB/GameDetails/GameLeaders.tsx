@@ -1,13 +1,12 @@
 import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar from "components/TabBars/GameLeadersTabBar";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamLogo, teams } from "constants/teamsCBB";
 import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
-
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const STAT_CATEGORIES = ["points", "rebounds", "assists"] as const;
@@ -254,15 +253,11 @@ export default function GameLeaders({
         <>
           {/* Tabs */}
           <View style={{ paddingHorizontal: 12 }}>
-            <FixedWidthTabBar
+            <MainScrollTabBar
               tabs={STAT_CATEGORIES}
               selected={selectedCategory}
               onTabPress={setSelectedCategory}
               lighter={lighter}
-              containerStyle={{
-                width: tabWidth * STAT_CATEGORIES.length,
-                alignSelf: "center",
-              }}
               renderLabel={(tab) => {
                 const isSelected = tab === selectedCategory;
                 return (
@@ -303,7 +298,7 @@ export default function GameLeaders({
                 style={[
                   styles.card,
                   dimStyle,
-                  { borderBottomWidth: 1, borderBottomColor: borderColor },
+                  { borderBottomColor: borderColor },
                 ]}
               >
                 {/* Avatar */}

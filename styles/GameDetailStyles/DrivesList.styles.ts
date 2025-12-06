@@ -11,8 +11,8 @@ export const getStyles = (isDark: boolean) =>
     driveCard: {
       paddingHorizontal: 12,
       paddingVertical: 8,
-      borderBottomColor: isDark ? Colors.darkGray : "#ccc",
-      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     },
     headerRow: {
       flexDirection: "row",

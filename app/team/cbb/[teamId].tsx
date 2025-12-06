@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
 import TeamPlayerList from "components/CBB/Team/TeamRoster";
-import TeamInfoBottomSheet from "components/CFB/Team/TeamInfoModal";
+import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { players } from "constants/cbbPlayers";
@@ -30,6 +30,7 @@ import { CBBGame, User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
+import { Colors } from "constants/Colors";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -424,7 +425,7 @@ export default function TeamDetailScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             teamFullName={team?.fullName ?? "Unknown Team"}
-            teamColor={team?.color ?? "#888"}
+            teamColor={team?.color ?? Colors.midTone}
             isDark={isDark}
           />
         </View>
@@ -447,7 +448,7 @@ export default function TeamDetailScreen() {
 
       {/* --- Bottom Sheet --- */}
       {team && (
-        <TeamInfoBottomSheet
+        <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}

@@ -104,7 +104,7 @@ export default function WinPredictionVote({
     if (submitting || userVote) return;
     setSubmitting(true);
     try {
-await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await castVoteApi(String(gameId), String(teamId));
       setUserVote(teamId);
       if (onVoteCast) onVoteCast(teamId);
@@ -190,6 +190,18 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
+  const resolveLogo = (logo: any) => {
+    if (!logo) return undefined;
+
+    // String URI
+    if (typeof logo === "string") {
+      return { uri: logo };
+    }
+
+    // RN require() asset
+    return logo;
+  };
+
   return (
     <View style={styles.container}>
       <HeadingTwo>Fan Prediction Vote</HeadingTwo>
@@ -215,8 +227,7 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   style={[
                     styles.fillAway,
                     {
-                      backgroundColor:
-                        awayTeam.color || Colors.darkGray,
+                      backgroundColor: awayTeam.color || Colors.darkGray,
                       opacity: animOpacityAway,
                       justifyContent: "center",
                       alignItems: "center",
@@ -231,11 +242,11 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     pointerEvents={userVote ? "none" : "auto"}
                   >
                     <Animated.Image
-                      source={
+                      source={resolveLogo(
                         colorScheme === "dark"
                           ? awayTeam.logoLight || awayTeam.logo
                           : awayTeam.logoLight || awayTeam.logo
-                      }
+                      )}
                       style={[
                         styles.teamLogo,
                         {
@@ -269,8 +280,7 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   style={[
                     styles.fillHome,
                     {
-                      backgroundColor:
-                        homeTeam.color || Colors.lightGray,
+                      backgroundColor: homeTeam.color || Colors.lightGray,
                       opacity: animOpacityHome,
                       justifyContent: "center",
                       alignItems: "center",
@@ -285,11 +295,11 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     pointerEvents={userVote ? "none" : "auto"}
                   >
                     <Animated.Image
-                      source={
+                      source={resolveLogo(
                         colorScheme === "dark"
                           ? homeTeam.logoLight || homeTeam.logo
                           : homeTeam.logoLight || homeTeam.logo
-                      }
+                      )}
                       style={[
                         styles.teamLogo,
                         {

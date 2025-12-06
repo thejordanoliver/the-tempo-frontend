@@ -1,18 +1,19 @@
-import React, { useRef, useEffect } from "react";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
+import React, { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
   LayoutChangeEvent,
   Pressable,
+  StyleProp,
   StyleSheet,
   Text,
-  View,
-  useColorScheme,
   TextStyle,
+  View,
   ViewStyle,
-  StyleProp,
+  useColorScheme,
 } from "react-native";
-import { Fonts } from "constants/fonts";
 
 export interface TabBarProps<T extends string> {
   tabs: readonly T[];
@@ -99,13 +100,7 @@ export default function TabBar<T extends string>({
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
-    color: isSelected
-      ? isDark
-        ? "#fff"
-        : "#1d1d1d"
-      : isDark
-        ? "#888"
-        : "rgba(0, 0, 0, 0.5)",
+    color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.midTone,
     fontFamily: Fonts.OSREGULAR,
   });
 
@@ -114,7 +109,7 @@ export default function TabBar<T extends string>({
     transform: [{ translateX: underlineX }],
     height: 2,
     borderRadius: 100,
-    backgroundColor: isDark ? "#fff" : "#1d1d1d",
+    backgroundColor: isDark ? Colors.white : Colors.black,
     position: "absolute",
     bottom: 0,
     left: 0,

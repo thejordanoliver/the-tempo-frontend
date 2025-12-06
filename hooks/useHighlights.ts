@@ -76,7 +76,7 @@ function toSentenceCasePreserveAcronyms(str: string): string {
 export function useHighlights(
   sport: string = "nba",
   query: string = "",
-  maxResults: number = 50
+  maxResults: number = 10
 ) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [loading, setLoading] = useState(false);

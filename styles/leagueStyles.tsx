@@ -1,4 +1,5 @@
 // scoresStyles.ts
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
@@ -6,7 +7,6 @@ export const getScoresStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? "#1d1d1d" : "#fff",
       paddingTop: 16,
     },
     contentArea: {
@@ -21,29 +21,29 @@ export const getScoresStyles = (isDark: boolean) =>
     monthText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
-      color: isDark ? "#aaa" : "#777",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     monthTextSelected: {
       fontSize: 16,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#000",
+      color: isDark ? Colors.white : Colors.black,
     },
     dateNavButton: {
       paddingHorizontal: 16,
       paddingVertical: 8,
       marginHorizontal: 12,
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: 6,
     },
     dateNavText: {
-      color: isDark ? "#1d1d1d" : "#fff",
+      color: isDark ? Colors.black : Colors.white,
       fontWeight: "normal",
       fontSize: 18,
       fontFamily: Fonts.OSMEDIUM,
     },
     emptyText: {
       textAlign: "center",
-      color: isDark ? "#aaa" : "#999",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 20,
       fontSize: 20,
       fontFamily: Fonts.OSLIGHT,

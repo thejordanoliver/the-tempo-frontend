@@ -1,9 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { BlurView } from "expo-blur";
 import React, { useRef, useState } from "react";
 import {
   Animated,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,7 +24,8 @@ type DropdownProps = {
   onSelect: (value: string) => void;
   isDark: boolean;
   width?: number;
-  style?: ViewStyle; // ✅ make it a proper type
+  style?: ViewStyle;
+  absolute?: boolean;   // ✅ NEW
 };
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -31,7 +34,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   onSelect,
   isDark,
   width = 180,
-  style, // ✅ accept style prop
+  style,
+  absolute = false,  // default off
 }) => {
   const [visible, setVisible] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
@@ -69,17 +73,19 @@ export const Dropdown: React.FC<DropdownProps> = ({
   return (
     <View
       style={[
-        {
-          alignItems: "flex-end",
-          marginBottom: 10,
-          position: "absolute",
-          right: 16,
-          top: 14,
-          zIndex: 999,
-        },
-        style, // ✅ merge custom styles (user overrides last)
+        absolute
+          ? {
+              position: "absolute",
+              right: 16,
+              top: 14,
+              zIndex: 999,
+              alignItems: "flex-end",
+            }
+          : { alignItems: "flex-end" },   // 🔥 Normal flow
+        style,
       ]}
     >
+      {/* TRIGGER BUTTON */}
       <TouchableOpacity
         onPress={toggleDropdown}
         style={{
@@ -87,20 +93,21 @@ export const Dropdown: React.FC<DropdownProps> = ({
           paddingHorizontal: 16,
           borderRadius: 8,
           borderWidth: 1,
-          borderColor: isDark ? "#888" : "#888",
+          borderColor: "#888",
           flexDirection: "row",
           alignItems: "center",
         }}
       >
         <Text
           style={{
-            color: isDark ? "#fff" : "#1d1d1d",
+            color: isDark ? Colors.white :  Colors.black,
             fontFamily: Fonts.OSMEDIUM,
             marginRight: 8,
           }}
         >
           {selectedLabel}
         </Text>
+
         <Animated.View
           style={{
             transform: [
@@ -116,11 +123,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
           <Ionicons
             name="chevron-down"
             size={20}
-            color={isDark ? "#fff" : "#1d1d1d"}
+            color={isDark ? Colors.white : Colors.black}
           />
         </Animated.View>
       </TouchableOpacity>
 
+      {/* Dropdown panel */}
       {visible && (
         <Animated.View
           style={{
@@ -132,11 +140,6 @@ export const Dropdown: React.FC<DropdownProps> = ({
             zIndex: 9999,
             opacity: anim,
             transform: [{ translateY }],
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.35,
-            shadowRadius: 10,
-            elevation: 10,
           }}
         >
           <BlurView
@@ -144,29 +147,36 @@ export const Dropdown: React.FC<DropdownProps> = ({
             tint="systemUltraThinMaterial"
             style={StyleSheet.absoluteFillObject}
           />
-          {options.map((opt) => (
-            <TouchableOpacity
-              key={opt.value}
-              onPress={() => handleSelect(opt.value)}
-              style={{ paddingVertical: 12, paddingHorizontal: 16 }}
-            >
-              <Text
-                style={{
-                  color:
-                    selectedValue === opt.value
-                      ? isDark
-                        ? "#0af"
-                        : "#06f"
-                      : isDark
-                      ? "#fff"
-                      : "#000",
-                  fontFamily: Fonts.OSMEDIUM,
-                }}
+
+          {/* ⭐ SCROLLABLE LIST */}
+          <ScrollView
+            style={{ maxHeight: 260 }}
+            showsVerticalScrollIndicator={false}
+          >
+            {options.map((opt) => (
+              <TouchableOpacity
+                key={opt.value}
+                onPress={() => handleSelect(opt.value)}
+                style={{ paddingVertical: 12, paddingHorizontal: 16 }}
               >
-                {opt.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={{
+                    fontFamily: Fonts.OSMEDIUM,
+                    color:
+                      selectedValue === opt.value
+                        ? isDark
+                          ? "#0af"
+                          : "#06f"
+                        : isDark
+                        ? Colors.white
+                        : Colors.black,
+                  }}
+                >
+                  {opt.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </Animated.View>
       )}
     </View>

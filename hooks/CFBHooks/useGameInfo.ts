@@ -20,7 +20,7 @@ type League = "cfb" | "nfl";
 
 /**
  * Fetches ESPN game headline from competition.notes[0].headline.
- * Handles both regular matchups and bowl/championship games with TBD teams.
+ * Strictly matches games by home + away ESPN team IDs.
  */
 export const useGameInfo = (
   homeEspnId?: number,
@@ -32,7 +32,7 @@ export const useGameInfo = (
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const skipFetch = !date;
+  const skipFetch = !date || !homeEspnId || !awayEspnId;
 
   const fetchData = useCallback(async () => {
     if (skipFetch) return;
@@ -71,7 +71,7 @@ export const useGameInfo = (
       // ⏱ Generate date range (±2 days)
       const dateOffsets = [-1, 0, 1, 2];
       const urls = dateOffsets.map((offset) => {
-        const d = new Date(targetDate);
+        const d = new Date(targetDate!);
         d.setUTCDate(d.getUTCDate() + offset);
         return `https://site.api.espn.com/apis/site/v2/sports/football/${
           league === "cfb" ? "college-football" : "nfl"
@@ -81,64 +81,60 @@ export const useGameInfo = (
       // 🔄 Fetch all days in parallel
       const results = await Promise.allSettled(urls.map((u) => axios.get(u)));
       const allEvents = results
-        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+        .filter(
+          (r): r is PromiseFulfilledResult<any> => r.status === "fulfilled"
+        )
         .flatMap((r) => r.value.data?.events || []);
 
       if (!allEvents.length) {
-        console.warn(`[${league.toUpperCase()} Headline] No events found in ESPN response.`);
+        console.warn(
+          `[${league.toUpperCase()} Headline] No events found in ESPN response.`
+        );
         setHeadlineText(undefined);
         return;
       }
 
-      // 🎯 Try to match exact team IDs first
-      let game = null;
-      if (homeEspnId && awayEspnId) {
-        game = allEvents.find((g: any) => {
-          const competitors = g?.competitions?.[0]?.competitors ?? [];
-          const ids = competitors.map((c: any) => Number(c.team?.id));
-          return ids.includes(Number(homeEspnId)) && ids.includes(Number(awayEspnId));
-        });
+      const homeIdNum = Number(homeEspnId);
+      const awayIdNum = Number(awayEspnId);
+
+      // 🎯 Strict match by BOTH team IDs
+      const candidates = allEvents.filter((g: any) => {
+        const competitors = g?.competitions?.[0]?.competitors ?? [];
+        const ids = competitors.map((c: any) => Number(c.team?.id));
+        return ids.includes(homeIdNum) && ids.includes(awayIdNum);
+      });
+
+      if (!candidates.length) {
+        console.warn(
+          `[${league.toUpperCase()} Headline] No game matched home=${homeIdNum} & away=${awayIdNum}`
+        );
+        setHeadlineText(undefined);
+        return;
       }
 
-      // 🏆 Fallback — detect championship/bowl by name or headline
-      if (!game) {
-        const targetTs = targetDate.getTime();
-        let bestMatch: any = null;
-        let bestDiff = Infinity;
+      // If multiple matches, pick the one closest in time to targetDate
+      const targetTs = targetDate.getTime();
+      let bestGame: any = candidates[0];
+      let bestDiff = Infinity;
 
-        for (const g of allEvents) {
-          const comp = g?.competitions?.[0];
-          const note = comp?.notes?.[0]?.headline?.toLowerCase() ?? "";
-          const name = g?.name?.toLowerCase() ?? "";
-          const eventTs = new Date(g.date).getTime();
-          const diff = Math.abs(eventTs - targetTs);
-
-          if (
-            (league === "cfb" &&
-              (note.includes("bowl") || note.includes("championship") || name.includes("bowl") || name.includes("championship"))) ||
-            (league === "nfl" && diff < bestDiff)
-          ) {
-            if (diff < bestDiff) {
-              bestDiff = diff;
-              bestMatch = g;
-            }
-          }
+      for (const g of candidates) {
+        const eventTs = new Date(g.date).getTime();
+        const diff = Math.abs(eventTs - targetTs);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestGame = g;
         }
-
-        game = bestMatch;
       }
 
-      if (!game) {
-        setHeadlineText(undefined);
-        return;
-      }
-
-      const competition = game.competitions?.[0];
+      const competition = bestGame?.competitions?.[0];
       const noteHeadline = competition?.notes?.[0]?.headline;
 
       setHeadlineText(noteHeadline);
     } catch (err: any) {
-      console.error(`[${league.toUpperCase()} Headline] Error fetching headline:`, err.message);
+      console.error(
+        `[${league.toUpperCase()} Headline] Error fetching headline:`,
+        err.message
+      );
       setError(err?.message || "Failed to fetch headline");
     } finally {
       setLoading(false);

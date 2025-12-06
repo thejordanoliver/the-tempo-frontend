@@ -1,99 +1,105 @@
-import React, { useRef, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Animated,
-  useColorScheme,
-  Dimensions,
-} from "react-native";
+import { Colors } from "constants/Colors";
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 
+type Props = {
+  league: "MLB" | "NBA" | "CBB" | "CFB" | "NFL";
+};
 
-const { width } = Dimensions.get("window");
-
-export default function LineScoreSkeleton() {
+export default function LineScoreSkeleton({ league }: Props) {
   const isDark = useColorScheme() === "dark";
-  const baseColor = isDark ? "#333" : "#e0e0e0";
-  const highlightColor = isDark ? "#555" : "#f5f5f5";
+  const baseColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
 
-  // Shimmer animation
-  const shimmer = useRef(new Animated.Value(0)).current;
+  // Pulse animation
+  const pulse = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
     Animated.loop(
-      Animated.timing(shimmer, {
-        toValue: 1,
-        duration: 1200,
-        useNativeDriver: true,
-      })
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0.4,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+      ])
     ).start();
-  }, [shimmer]);
+  }, [pulse]);
 
-  const translateX = shimmer.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-width, width],
-  });
+  // MLB = 10 innings + total
+  // Others = 5 periods + total
+  const isMLB = league === "MLB";
+  const periods = isMLB ? 10 : 5;
+  const columnsArray = Array.from({ length: periods + 1 }); // includes total
 
-  const QuarterPlaceholder = () => (
-    <View style={styles.quarter}>
-      <View style={[styles.bar, { backgroundColor: baseColor }]}>
-        <Animated.View
-          style={[
-            styles.highlight,
-            { backgroundColor: highlightColor, transform: [{ translateX }] },
-          ]}
-        />
+  const Placeholder = () => (
+    <Animated.View
+      style={[styles.bar, { backgroundColor: baseColor, opacity: pulse }]}
+    />
+  );
+
+  // ---------------------------------------------
+  // 🟦 Header Row (Periods/Innings)
+  // ---------------------------------------------
+  const HeaderRow = () => (
+    <View style={styles.headerRow}>
+      <View style={[styles.teamCode, { opacity: 0 }]} />
+      <View style={styles.scoresWrapper}>
+        {columnsArray.map((_, i) => (
+          <Placeholder key={`header-${i}`} />
+        ))}
+      </View>
+    </View>
+  );
+
+  const TeamRow = ({ keyPrefix }: { keyPrefix: string }) => (
+    <View style={styles.row}>
+      <Animated.View
+        style={[
+          styles.teamCode,
+          { backgroundColor: baseColor, opacity: pulse },
+        ]}
+      />
+      <View style={styles.scoresWrapper}>
+        {columnsArray.map((_, i) => (
+          <Placeholder key={`${keyPrefix}-${i}`} />
+        ))}
       </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      {/* Heading placeholder */}
-      <View style={styles.headingBar}>
-        <Animated.View
-          style={[
-            styles.highlight,
-            { backgroundColor: highlightColor, transform: [{ translateX }] },
-          ]}
-        />
-      </View>
+      {/* Header separator */}
+      <Animated.View
+        style={[styles.heading, { backgroundColor: baseColor, opacity: pulse }]}
+      />
+      <Animated.View
+        style={[
+          styles.headingBar,
+          { backgroundColor: baseColor, opacity: pulse },
+        ]}
+      />
 
-      {/* Away row */}
-      <View style={styles.row}>
-        <View style={[styles.teamCode, { backgroundColor: baseColor }]}>
-          <Animated.View
-            style={[
-              styles.highlight,
-              { backgroundColor: highlightColor, transform: [{ translateX }] },
-            ]}
-          />
-        </View>
-        <View style={styles.scoresWrapper}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <QuarterPlaceholder key={`away-q-${i}`} />
-          ))}
-        </View>
-      </View>
+      {/* Header periods/innings */}
+      <HeaderRow />
+
+      {/* Away */}
+      <TeamRow keyPrefix="away" />
 
       {/* Divider */}
-      <View style={[styles.divider, { backgroundColor: baseColor }]} />
+      <Animated.View
+        style={[styles.divider, { backgroundColor: baseColor, opacity: pulse }]}
+      />
 
-      {/* Home row */}
-      <View style={styles.row}>
-        <View style={[styles.teamCode, { backgroundColor: baseColor }]}>
-          <Animated.View
-            style={[
-              styles.highlight,
-              { backgroundColor: highlightColor, transform: [{ translateX }] },
-            ]}
-          />
-        </View>
-        <View style={styles.scoresWrapper}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <QuarterPlaceholder key={`home-q-${i}`} />
-          ))}
-        </View>
-      </View>
+      {/* Home */}
+      <TeamRow keyPrefix="home" />
     </View>
   );
 }
@@ -101,49 +107,57 @@ export default function LineScoreSkeleton() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginTop: 10,
+    marginTop: 6,
+  },
+
+  heading: {
+    height: 25,
+    width: 150,
+    borderRadius: 3,
+    marginBottom: 6,
   },
   headingBar: {
-    height: 14,
-    borderRadius: 4,
-    marginBottom: 12,
-    backgroundColor: "#e0e0e0",
-    overflow: "hidden",
+    height: 2,
+    borderRadius: 3,
+    marginBottom: 4,
   },
+
+  // HEADER ROW
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 4,
+  },
+
+  // TEAM ROW
   row: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    padding: 4,
   },
+
   teamCode: {
-    width: 40,
-    height: 16,
-    borderRadius: 4,
-    marginRight: 8,
-    overflow: "hidden",
+    width: 28,
+    height: 12,
+    borderRadius: 3,
+    marginRight: 30,
   },
+
   scoresWrapper: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
-  quarter: {
-    flex: 1,
-    alignItems: "center",
-  },
+
   bar: {
-    width: 24,
-    height: 16,
-    borderRadius: 4,
-    backgroundColor: "#e0e0e0",
-    overflow: "hidden",
+    width: 16,
+    height: 12,
+    borderRadius: 3,
   },
+
   divider: {
     height: 1,
     width: "100%",
-    marginVertical: 6,
-  },
-  highlight: {
-    ...StyleSheet.absoluteFillObject,
+    marginVertical: 4,
   },
 });

@@ -1,7 +1,7 @@
+import { coachImages } from "constants/teams";
 import { useTeamInfo } from "hooks/useTeamInfo";
 import { View, useColorScheme } from "react-native";
-import InfoCard from "../InfoCard";
-import { coachImages } from "constants/teams";
+import InfoCard from "../CFB/Team/InfoCard";
 
 type Props = {
   teamId?: number | string;

@@ -2,10 +2,9 @@
 import FixedWidthTabBar from "components/FixedWidthTabBar";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
-
 type Props = {
   isDark: boolean;
   lighter?: boolean;
@@ -24,26 +23,21 @@ type Props = {
   league: LeagueType;
 };
 
-
-
 export default function LastFiveGamesSwitcher({
   isDark,
   lighter,
   home,
   away,
 }: Props) {
-const [selected, setSelected] = useState<"home" | "away">("away");
+  const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
   const styles = getStyles(isDark, lighter ?? false);
-
-
 
   const renderRow = ({ item, index }: { item: any; index: number }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-   
     const useLightLogo = isDark || lighter;
     const opponentLogoSource =
       useLightLogo && item.opponentLogoLight
@@ -55,8 +49,8 @@ const [selected, setSelected] = useState<"home" | "away">("away");
         style={[
           styles.row,
           {
-
-            borderBottomWidth: index === team.games.length - 1 ? 0 : 1,
+            borderBottomWidth:
+              index === team.games.length - 1 ? 0 : StyleSheet.hairlineWidth,
           },
         ]}
       >

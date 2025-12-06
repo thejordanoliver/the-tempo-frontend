@@ -1,14 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
-import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import DraftList from "components/NFL/DraftList";
 import NFLGamesList from "components/NFL/Games/NFLGamesList";
+import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import { NFLStandingsList } from "components/NFL/Standings/NFLStandingsList";
 import WeekSelector from "components/NFL/WeekSelector";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -16,32 +18,29 @@ import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNFLGamesByWeek } from "hooks/NFLHooks/useNFLGamesByWeek";
-import { useSeasonLeaders } from "hooks/useSeasonLeaders";
+import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
+import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
 import { generateNFLWeeks, getCurrentWeekIndex, NFLWeek } from "utils/nflWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { useLeagueNews } from "hooks/useLeagueNews";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 function StatsTabContent() {
-  const { leaders, loading, error } = useSeasonLeaders({
-    season: 2024,
-    limit: 5,
-    minGames: 10,
-  });
+  const { categories, loading, error } = useSeasonLeaders(2025);
 
   return (
     <SeasonLeadersList
-      leadersByStat={leaders}
       loading={loading}
       error={error}
+      categories={categories}
+      league={"NFL"}
     />
   );
 }
@@ -77,24 +76,31 @@ export default function NFLLeagueScreen() {
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "draft" | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [draftTeam, setDraftTeam] = useState("all");
+  const [draftRound, setDraftRound] = useState("all");
 
-  const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "draft",
+    "forum",
+  ] as const;
 
   // --- Fetch News & Highlights ---
-const { news: nflNews, loading: newsLoading } = useLeagueNews("nfl");
-  const { highlights } = useHighlights("NFL Highlights", 50);
-
+  const { news: nflNews, loading: newsLoading } = useLeagueNews("NFL");
+  const { highlights } = useHighlights("nfl", "", 10);
   // --- Week handling ---
   const weeks: NFLWeek[] = React.useMemo(() => generateNFLWeeks(), []);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(
     getCurrentWeekIndex(weeks)
   );
-
-  
 
   const selectedWeek = weeks[selectedWeekIndex];
   // --- Fetch games using the updated hook ---
@@ -144,7 +150,7 @@ const { news: nflNews, loading: newsLoading } = useLeagueNews("nfl");
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([ refreshNFLGames()]);
+      await Promise.all([refreshNFLGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -152,35 +158,40 @@ const { news: nflNews, loading: newsLoading } = useLeagueNews("nfl");
     }
   };
 
-
   // --- Sort games: live games first ---
-const sortedGames = React.useMemo(() => {
-  if (!nflGames) return [];
+  const sortedGames = React.useMemo(() => {
+    if (!nflGames) return [];
 
-  // Prioritize live games (based on status.long or status.short)
-  return [...nflGames].sort((a, b) => {
-    const aStatus = a?.game?.status?.long?.toLowerCase?.() || "";
-    const bStatus = b?.game?.status?.long?.toLowerCase?.() || "";
+    // Prioritize live games (based on status.long or status.short)
+    return [...nflGames].sort((a, b) => {
+      const aStatus = a?.game?.status?.long?.toLowerCase?.() || "";
+      const bStatus = b?.game?.status?.long?.toLowerCase?.() || "";
 
-    const aIsLive =
-      !["not started", "final", "finished", "postponed", "canceled"].includes(
-        aStatus
-      );
-    const bIsLive =
-      !["not started", "final", "finished", "postponed", "canceled"].includes(
-        bStatus
-      );
+      const aIsLive = ![
+        "not started",
+        "final",
+        "finished",
+        "postponed",
+        "canceled",
+      ].includes(aStatus);
+      const bIsLive = ![
+        "not started",
+        "final",
+        "finished",
+        "postponed",
+        "canceled",
+      ].includes(bStatus);
 
-    // Live games come first
-    if (aIsLive && !bIsLive) return -1;
-    if (!aIsLive && bIsLive) return 1;
+      // Live games come first
+      if (aIsLive && !bIsLive) return -1;
+      if (!aIsLive && bIsLive) return 1;
 
-    // Otherwise sort by start time ascending
-    const aTime = a?.game?.date.timestamp ?? 0;
-    const bTime = b?.game?.date.timestamp ?? 0;
-    return aTime - bTime;
-  });
-}, [nflGames]);
+      // Otherwise sort by start time ascending
+      const aTime = a?.game?.date.timestamp ?? 0;
+      const bTime = b?.game?.date.timestamp ?? 0;
+      return aTime - bTime;
+    });
+  }, [nflGames]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
@@ -207,7 +218,7 @@ const sortedGames = React.useMemo(() => {
   return (
     <>
       <View style={styles.container}>
-        <TabBar
+        <MainScrollTabBar
           tabs={tabs}
           selected={selectedTab}
           onTabPress={setSelectedTab}
@@ -234,14 +245,13 @@ const sortedGames = React.useMemo(() => {
                   />
                 }
               >
-             <NFLGamesList
-  games={sortedGames}
-  loading={nflLoading}
-  refreshing={refreshing}
-  onRefresh={handleRefresh}
-  scrollEnabled={false}
-/>
-
+                <NFLGamesList
+                  games={sortedGames}
+                  loading={nflLoading}
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  scrollEnabled={false}
+                />
               </ScrollView>
             </>
           )}
@@ -268,6 +278,18 @@ const sortedGames = React.useMemo(() => {
 
           {selectedTab === "standings" && <NFLStandingsList />}
           {selectedTab === "stats" && <StatsTabContent />}
+
+          {selectedTab === "draft" && (
+            <DraftList
+              year={draftYear}
+              team={draftTeam}
+              round={draftRound}
+              onYearChange={setDraftYear}
+              onTeamChange={setDraftTeam}
+              onRoundChange={setDraftRound}
+            />
+          )}
+
           {selectedTab === "forum" && <LeagueForum league="NFL" />}
         </View>
       </View>

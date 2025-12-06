@@ -1,8 +1,7 @@
 import players from "constants/players"; // fallback headshot map
 import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
-
-import { Image, Text, View, useColorScheme } from "react-native";
-import { styles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
+import { Image, Text, View, useColorScheme, StyleSheet } from "react-native";
+import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import { TeamInjury } from "./TeamInjuries"; // import your type
 
 type Props = {
@@ -62,60 +61,78 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
     teamPlayersMap[teamId] = players;
   });
 
-  const getStyles = styles(isDark, lighter);
+  const styles = teamInjuryStyles(isDark, lighter);
 
   return (
-    <View style={getStyles.container}>
+    <View style={styles.container}>
       {injuries.map((team: TeamInjury) => {
         const feedTeamId = team.team.id.toString();
         const dbTeamId = TEAM_ID_MAP[feedTeamId] || feedTeamId;
         const teamPlayers = teamPlayersMap[dbTeamId] || [];
 
         return (
-          <View key={team.team.id} style={getStyles.teamBlock}>
-            {team.injuries.map((inj: TeamInjury["injuries"][number], idx: number) => {
-              const fullName = inj.athlete.fullName;
-              const dbPlayer = teamPlayers.find((p) => {
-                if (!p.full_name) return false;
-                const dbName = p.full_name.toLowerCase().trim();
-                const injName = fullName.toLowerCase().trim();
-                return dbName.includes(injName) || injName.includes(dbName);
-              });
+          <View key={team.team.id}>
+            {team.injuries.map(
+              (inj: TeamInjury["injuries"][number], idx: number) => {
+                const fullName = inj.athlete.fullName;
+                const dbPlayer = teamPlayers.find((p) => {
+                  if (!p.full_name) return false;
+                  const dbName = p.full_name.toLowerCase().trim();
+                  const injName = fullName.toLowerCase().trim();
+                  return dbName.includes(injName) || injName.includes(dbName);
+                });
 
-              const avatarUrl = dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
+                const avatarUrl =
+                  dbPlayer?.avatarUrl || players[fullName] || DEFAULT_HEADSHOT;
 
-              return (
-                <View
-                  key={idx}
-                  style={[
-                    getStyles.injuryItem,
-                    { borderBottomWidth: idx === team.injuries.length - 1 ? 0 : 1 },
-                  ]}
-                >
-                  <View style={getStyles.avatarWrapper}>
-                    <Image source={{ uri: avatarUrl }} style={getStyles.avatar} />
-                  </View>
-                  <View style={getStyles.infoSection}>
-                    <View style={getStyles.playerHeader}>
-                      <Text style={getStyles.name}>{fullName}</Text>
-                      <Text style={getStyles.jersey}>
-                        {dbPlayer?.position ?? "—"}{" "}
-                        {dbPlayer?.jersey_number ? `#${dbPlayer.jersey_number}` : "N/A"}
-                      </Text>
+                return (
+                  <View
+                    key={idx}
+                    style={[
+                      styles.injuryItem,
+                      {
+                        borderBottomWidth:
+                          idx === team.injuries.length - 1 ? 0 : StyleSheet.hairlineWidth,
+                      },
+                    ]}
+                  >
+                    <View style={styles.avatarWrapper}>
+                      <Image
+                        source={{ uri: avatarUrl }}
+                        style={styles.avatar}
+                      />
                     </View>
-                    <Text style={getStyles.status}>{inj.status}</Text>
-                    {inj.details?.detail && <Text style={getStyles.details}>{inj.details.detail}</Text>}
+                    <View style={styles.infoSection}>
+                      <View style={styles.playerHeader}>
+                        <Text style={styles.name}>{fullName}</Text>
+                        <Text style={styles.jersey}>
+                          {dbPlayer?.position ?? "—"}{" "}
+                          {dbPlayer?.jersey_number
+                            ? `#${dbPlayer.jersey_number}`
+                            : "N/A"}
+                        </Text>
+                      </View>
+                      <Text style={styles.status}>{inj.status}</Text>
+                      {inj.details?.detail && (
+                        <Text style={styles.details}>
+                          {inj.details.detail}
+                        </Text>
+                      )}
+                    </View>
+                    <View>
+                      {inj.details?.returnDate && (
+                        <Text style={styles.status}>
+                          Return:{" "}
+                          {new Date(
+                            inj.details.returnDate
+                          ).toLocaleDateString()}
+                        </Text>
+                      )}
+                    </View>
                   </View>
-                  <View>
-                    {inj.details?.returnDate && (
-                      <Text style={getStyles.status}>
-                        Return: {new Date(inj.details.returnDate).toLocaleDateString()}
-                      </Text>
-                    )}
-                  </View>
-                </View>
-              );
-            })}
+                );
+              }
+            )}
           </View>
         );
       })}

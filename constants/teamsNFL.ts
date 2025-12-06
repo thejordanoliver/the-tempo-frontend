@@ -1125,6 +1125,9 @@ export const neutralStadiums: Record<string, Venue> = {
   },
 };
 
+export const getNFLTeam = (id: number | string) =>
+  teams.find((t) => String(t.id) === String(id)) || null;
+
 export const getTeamInfo = (teamId: number | string) => {
   if (teamId == null) return undefined;
   return teams.find((t) => String(t.id) === String(teamId));
@@ -1156,6 +1159,21 @@ export function getNFLTeamsLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
+export function getNFLESPNTeamsLogo(
+  idOrNicknameOrCode: number | string | undefined,
+  isDark: boolean
+) {
+  if (!idOrNicknameOrCode) return PlaceholderLogo; // fallback
+
+  const team = teams.find((t) => {
+    return Number(t.espnID) === Number(idOrNicknameOrCode);
+  });
+
+  if (!team) return PlaceholderLogo;
+
+  return isDark ? team.logoLight || team.logo : team.logo;
+}
+
 export const getTeamName = (
   teamId: number | string,
   fallback?: string // e.g., "Home" or "Away"
@@ -1164,47 +1182,13 @@ export const getTeamName = (
   return team?.name || fallback || "Unknown Team";
 };
 
-export function getTeamAbbreviation(
+export function getTeamCode(
   teamId: string,
   fallback?: string
 ): string | null {
   const team = getTeamInfo(teamId);
   return team?.code || fallback || "UKNW";
 }
-
-export const logoMap: Record<string, any> = {
-  RaidersLogo: RaidersLogo,
-  JaguarsLogo: JaguarsLogo,
-  PatriotsLogo: PatriotsLogo,
-  GiantsLogo: GiantsLogo,
-  GiantsLogoLight: GiantsLogoLight,
-  RavensLogo: RavensLogo,
-  TitansLogo: TitansLogo,
-  LionsLogo: LionsLogo,
-  FalconsLogo: FalconsLogo,
-  BrownsLogo: BrownsLogo,
-  BengalsLogo: BengalsLogo,
-  CardinalsLogo: CardinalsLogo,
-  EaglesLogo: EaglesLogo,
-  JetsLogo: JetsLogo,
-  JetsLogoLight: JetsLogoLight,
-  NinersLogo: NinersLogo,
-  PackersLogo: PackersLogo,
-  BearsLogo: BearsLogo,
-  ChiefsLogo: ChiefsLogo,
-  CommandersLogo: CommandersLogo,
-  PanthersLogo: PanthersLogo,
-  BillsLogo: BillsLogo,
-  ColtsLogo: ColtsLogo,
-  SteelersLogo: SteelersLogo,
-  SeahawksLogo: SeahawksLogo,
-  BuccaneersLogo: BuccaneersLogo,
-  DolphinsLogo: DolphinsLogo,
-  TexansLogo: TexansLogo,
-  RamsLogo: RamsLogo,
-  ChargersLogo: ChargersLogo,
-  VikingsLogo: VikingsLogo,
-};
 
 export const teamsNFLById: Record<string, NFLTeam> = teams.reduce(
   (map, team) => {

@@ -318,7 +318,7 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
         selectedValue={selectedGroup}
         onSelect={setSelectedGroup}
         isDark={isDark}
-        style={{ position: "absolute", alignSelf: "flex-end", top: -5 }}
+        style={{ position: "absolute", alignSelf: "flex-end", top: -5, right: 12 }}
       />
       <View
         style={{ flexDirection: "column", borderRadius: 4, overflow: "hidden" }}

@@ -5,10 +5,12 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CFBLogo from "assets/College_Logos/CFB.png";
+import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBBLogo from "assets/College_Logos/CBB.png";
+import CFBLogo from "assets/College_Logos/CFB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NBALogo from "assets/Logos/NBA.png";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -33,7 +35,7 @@ type SportsListModalProps = {
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB"];
+const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "MLB"];
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
@@ -52,7 +54,12 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
     }));
 
     const styles = getStyles(isDark);
-    type LeagueRoute = "/league/nba" | "/league/nfl" | "/league/cfb" | "/league/cbb";
+    type LeagueRoute =
+      | "/league/nba"
+      | "/league/nfl"
+      | "/league/cfb"
+      | "/league/cbb"
+      | "/league/mlb";
 
     const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
@@ -65,8 +72,9 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
           ? "/league/nfl"
           : league === "CFB"
           ? "/league/cfb"
-          : "/league/cbb";
-
+          : league === "CBB"
+          ? "/league/cbb"
+          : "/league/mlb";
       router.push(route);
       onSelect(league);
     };
@@ -129,7 +137,9 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                         ? NFLLogo
                         : league === "CFB"
                         ? CFBLogo
-                        : CBBLogo
+                        : league === "CBB"
+                        ? CBBLogo
+                        : MLBLogo
                     }
                   />
                   <Text style={styles.leagueText}>{league}</Text>
@@ -137,7 +147,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color={isDark ? "#fff" : "#1d1d1d"}
+                  color={isDark ? Colors.white : Colors.black}
                 />
               </TouchableOpacity>
             ))}
@@ -161,7 +171,7 @@ const getStyles = (isDark: boolean) =>
       top: 0,
     },
     handleIndicatorStyle: {
-      backgroundColor: "#888",
+      backgroundColor: Colors.midTone,
       width: 36,
       height: 4,
       borderRadius: 2,
@@ -186,7 +196,7 @@ const getStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: isDark ? "#444" : "#aaa",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       paddingVertical: 12,
     },
     headerText: {
@@ -195,14 +205,14 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
     },
     leagueButton: {
       paddingVertical: 12,
       backgroundColor: "transparent",
       borderBottomWidth: 1,
-      borderBottomColor: isDark ? "#444" : "#777",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -214,7 +224,7 @@ const getStyles = (isDark: boolean) =>
       marginRight: 8,
     },
     leagueText: {
-     color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
       fontFamily: Fonts.OSREGULAR,
     },

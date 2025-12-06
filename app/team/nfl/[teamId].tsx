@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import FootballRosterStats from "components/CFB/Team/RosterStats";
+import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import NFLGamesList from "components/NFL/Games/NFLGamesList";
 import NFLRoster from "components/NFL/Team/Roster";
-import TeamInfoBottomSheetNFL from "components/NFL/Team/TeamInfoModal";
 import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -62,11 +62,11 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-const {
-  highlights: teamHighlights,
-  loading: highlightsLoading,
-  error: highlightsError,
-} = useTeamHighlights("nfl", team?.fullName ?? "", 5);
+  const {
+    highlights: teamHighlights,
+    loading: highlightsLoading,
+    error: highlightsError,
+  } = useTeamHighlights("nfl", team?.fullName ?? "", 5);
 
   const {
     articles: newsArticles,
@@ -220,10 +220,11 @@ const {
 
       {/* --- Bottom Sheet --- */}
       {team && (
-        <TeamInfoBottomSheetNFL
+        <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
+          league="NFL"
         />
       )}
     </View>

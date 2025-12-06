@@ -1,12 +1,22 @@
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
+
+
+
 export const getStyles = (isDark: boolean, lighter: boolean) =>
+  
   StyleSheet.create({
-    container: { marginTop: 12, overflow: "hidden" },
+    container: {overflow: "hidden" },
     center: { alignItems: "center", justifyContent: "center", padding: 16 },
-    error: { fontFamily: Fonts.OSREGULAR },
-    card: { flexDirection: "row", alignItems: "center", padding: 12 },
+    error: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    card: { flexDirection: "row", alignItems: "center", padding: 12,  borderBottomWidth: StyleSheet.hairlineWidth, },
     avatar: {
       width: 52,
       height: 52,

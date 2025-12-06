@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import HistoricalOddsCard from "./HistoricalOddsCard";
 import UpcomingOddsCard from "./UpcomingOddsCard";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useUpcomingCFBOdds } from "hooks/CFBHooks/useUpcomingCFBOdds";
+import { useCFBUpcomingOdds } from "hooks/CFBHooks/useCFBUpcomingOdds";
 import { useHistoricalCFBOdds } from "hooks/CFBHooks/useCFBHistoricalOdds";
 type GameOddsSectionProps = {
   date: string; // ISO date-time string of the game (for upcoming odds)
@@ -31,7 +31,7 @@ export default function CFBGameOddsSection({
     data: upcomingOdds,
     loading: upcomingLoading,
     error: upcomingError,
-  } = useUpcomingCFBOdds(upcomingOptions);
+  } = useCFBUpcomingOdds(upcomingOptions);
 
   const historicalOptions = {
     date: gameDate.split("T")[0], // "YYYY-MM-DD"

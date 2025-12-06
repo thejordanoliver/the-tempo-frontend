@@ -1,5 +1,5 @@
 // utils/nflGameCardUtils.ts
-import { getTeamName, getNFLTeamsLogo, getTeamAbbreviation } from "constants/teamsNFL";
+import { getTeamName, getNFLTeamsLogo, getTeamCode } from "constants/teamsNFL";
 
 /**
  * Format date from timestamp (seconds → readable date)
@@ -149,7 +149,7 @@ export const getNFLTeamData = (
 } => ({
   logo: getNFLTeamsLogo(String(id ?? ""), dark),
   name: getTeamName(String(id ?? ""), "Team"),
-  code: getTeamAbbreviation(String(id ?? "")),
+  code: getTeamCode(String(id ?? "")),
   record,
   id,
   espnID,

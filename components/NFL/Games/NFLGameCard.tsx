@@ -16,7 +16,7 @@ import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Colors";
 import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, emptyTeam } from "types/nfl";
-
+import { getNFLTeam } from "constants/teamsNFL";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
@@ -79,6 +79,10 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
   const homeId = game?.teams?.home?.id ?? emptyNFLHomeTeam.id;
   const awayId = game?.teams?.away?.id ?? emptyNFLAwayTeam.id;
 
+    // Find matching internal teams using ESPN ID
+    const homeTeamObj = getNFLTeam(homeId);
+    const awayTeamObj = getNFLTeam(awayId);
+
   const {
     date: gameDate,
     iso: gameDateStr,
@@ -107,8 +111,8 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
   const { record: awayRecord } = useNFLTeamRecord(awayId);
   const { record: homeRecord } = useNFLTeamRecord(homeId);
 
-  const awayEspnID = awayId;
-  const homeEspnID = homeId;
+  const awayEspnID = awayTeamObj?.espnID;
+  const homeEspnID = homeTeamObj?.espnID;
 
 
   // -----------------------

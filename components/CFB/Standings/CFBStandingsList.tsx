@@ -24,30 +24,7 @@ export const CFBStandingsList = () => {
   const router = useRouter();
   // 🏈 Added "cfp" (Playoff Rankings)
   const [pollMode, setPollMode] = useState<"ap" | "coaches" | "cfp">("ap");
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownAnim = useRef(new Animated.Value(0)).current;
 
-  const toggleDropdown = () => {
-    if (dropdownVisible) {
-      Animated.timing(dropdownAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => setDropdownVisible(false));
-    } else {
-      setDropdownVisible(true);
-      Animated.timing(dropdownAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const dropdownTranslateY = dropdownAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 0],
-  });
 
   if (loading)
     return (
@@ -257,7 +234,7 @@ export const CFBStandingsList = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 140 }}
+      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
     >
       {/* --- Dropdown Header --- */}
       <Dropdown
@@ -269,6 +246,7 @@ export const CFBStandingsList = () => {
         selectedValue={pollMode}
         onSelect={(value) => setPollMode(value as "ap" | "coaches" | "cfp")}
         isDark={isDark}
+        absolute
       />
 
       {/* --- Rankings Section --- */}

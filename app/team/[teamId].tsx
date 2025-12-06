@@ -5,7 +5,7 @@ import GamesList from "components/Games/GamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
 import RosterStats from "components/Team/RosterStats";
-import TeamInfoBottomSheet from "components/Team/TeamInfoModal";
+import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamPlayerList from "components/Team/TeamRoster";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -353,6 +353,8 @@ export default function TeamDetailScreen() {
       >
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
+
+
           <View style={styles.monthSelector}>
             <ScrollView
               ref={scrollViewRef}
@@ -522,11 +524,12 @@ export default function TeamDetailScreen() {
       </PagerView>
       {/* --- Bottom Sheet --- */}
       {team && (
-        <TeamInfoBottomSheet
+        <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
           coachName={team.coach ?? "N/A"}
+          league="NBA"
         />
       )}
     </View>
