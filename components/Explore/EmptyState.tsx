@@ -1,15 +1,12 @@
-import { View, Text, useColorScheme } from "react-native";
-import { Image } from "expo-image";
-import { styles } from "styles/Explore.styles";
+import { Text, useColorScheme, View } from "react-native";
+import { exploreStyles } from "styles/Explore.styles";
 
 export default function EmptyState() {
   const isDark = useColorScheme() === "dark";
-
+  const styles = exploreStyles(isDark);
   return (
     <View style={styles.centerPrompt}>
-      <Text style={[styles.promptText, isDark && styles.textDark]}>
-        Search for players and teams
-      </Text>
+      <Text style={styles.promptText}>Search for players and teams</Text>
     </View>
   );
 }

@@ -1,10 +1,20 @@
-import { View, Text, Pressable, useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { teamsById } from "constants/teams";
+import { Colors } from "constants/Colors";
 import players from "constants/players";
-import { styles } from "styles/Explore.styles";
-import type { ResultItem, PlayerResult, TeamResult, UserResult } from "types/types";
+import { teamsById } from "constants/teams";
+import { teamsCBBById } from "constants/teamsCBB";
+import { teamsCFBById } from "constants/teamsCFB";
+import { teamsMLBById } from "constants/teamsMLB";
+import { teamsNFLById } from "constants/teamsNFL";
+import { Image } from "expo-image";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { exploreStyles } from "styles/Explore.styles";
+import type {
+  PlayerResult,
+  ResultItem,
+  TeamResult,
+  UserResult,
+} from "types/types";
 
 type Props = {
   item: ResultItem;
@@ -24,97 +34,151 @@ export default function ResultItemRow({
   query = "",
 }: Props) {
   const isDark = useColorScheme() === "dark";
-
+  const styles = exploreStyles(isDark);
+  // -------------------------
+  // TEAM
+  // -------------------------
   const renderTeam = (team: TeamResult) => {
-    const localTeam = teamsById[team.id.toString()];
-    const logoSource = isDark ? localTeam?.logoLight || localTeam?.logo : localTeam?.logo;
+    const localTeam = team.isNFL
+      ? teamsNFLById[team.id.toString()]
+      : team.isMLB
+      ? teamsMLBById[team.id.toString()]
+      : team.isCFB
+      ? teamsCFBById[team.id.toString()]
+      : team.isCBB
+      ? teamsCBBById[team.id.toString()]
+      : teamsById[team.id.toString()];
+
+    const logoSource = isDark
+      ? localTeam?.logoLight || localTeam?.logo
+      : localTeam?.logo;
 
     return (
       <View style={styles.itemRow}>
-        <Pressable
+        <TouchableOpacity
           onPress={() => onSelect(team)}
-          style={[styles.itemContainer, isDark && styles.itemContainerDark]}
+          style={styles.itemContainer}
         >
-          <View style={styles.teamRow}>
-            {logoSource && <Image source={logoSource} style={styles.teamLogo} resizeMode="contain" />}
-            <Text style={[styles.teamName, isDark && styles.textDark]}>{localTeam?.fullName}</Text>
+          <View style={styles.userRow}>
+            {logoSource && (
+              <Image
+                source={logoSource}
+                style={styles.teamLogo}
+                resizeMode="contain"
+              />
+            )}
+            <View>
+              <Text style={styles.name}>
+                {localTeam?.fullName || team.name}
+              </Text>
+              {team.isCBB && <Text style={styles.tag}>CBB</Text>}
+              {team.isCFB && <Text style={styles.tag}>CFB</Text>}
+            </View>
           </View>
-        </Pressable>
+        </TouchableOpacity>
         {query.length === 0 && onDelete && (
-          <Pressable onPress={() => onDelete(team)}>
-            <Ionicons name="close" size={20} color={isDark ? "#ccc" : "#333"} />
-          </Pressable>
+          <TouchableOpacity onPress={() => onDelete(team)}>
+            <Ionicons
+              name="close"
+              size={20}
+              color={isDark ? Colors.lightGray : Colors.darkGray}
+            />
+          </TouchableOpacity>
         )}
       </View>
     );
   };
 
+  // -------------------------
+  // PLAYER
+  // -------------------------
   const renderPlayer = (player: PlayerResult) => {
-    const avatarUrl = player.avatarUrl?.trim() ? player.avatarUrl : players[player.name];
+    const avatarUrl = player.avatarUrl?.trim()
+      ? player.avatarUrl
+      : players[player.name];
+
     const localTeam = teamsById[player.team_id?.toString()];
 
     return (
       <View style={styles.itemRow}>
-        <Pressable
+        <TouchableOpacity
           onPress={() => onSelect(player)}
-          style={[styles.itemContainer, isDark && styles.itemContainerDark]}
+          style={styles.itemContainer}
         >
           <View style={styles.playerRow}>
-            <Image source={{ uri: avatarUrl }} style={styles.avatar} resizeMode="cover" />
-            <View style={styles.playerInfo}>
-              <Text style={[styles.playerName, isDark && styles.textDark]}>{player.name}</Text>
-              <Text style={[styles.playerTeam, isDark && styles.textDark]}>
+            <View style={styles.playerAvatarContainer}>
+              <Image source={{ uri: avatarUrl }} style={styles.playerAvatar} />
+            </View>
+            <View>
+              <Text style={styles.name}>{player.name}</Text>
+              <Text style={styles.playerTeam}>
                 {localTeam?.fullName || "Free Agent"}
               </Text>
             </View>
           </View>
-        </Pressable>
+        </TouchableOpacity>
+
         {query.length === 0 && onDelete && (
-          <Pressable onPress={() => onDelete(player)}>
-            <Ionicons name="close" size={20} color={isDark ? "#ccc" : "#333"} />
-          </Pressable>
+          <TouchableOpacity onPress={() => onDelete(player)}>
+            <Ionicons
+              name="close"
+              size={20}
+              color={isDark ? Colors.lightGray : Colors.black}
+            />
+          </TouchableOpacity>
         )}
       </View>
     );
   };
 
-const renderUser = (user: UserResult) => {
-let profileImageUrl = user.profileImageUrl?.trim();
+  // -------------------------
+  // USER
+  // -------------------------
+  const renderUser = (user: UserResult) => {
+    let profileImageUrl = user.profileImageUrl?.trim();
 
-  if (!profileImageUrl) {
-    // fallback avatar if none exists
-    profileImageUrl = "https://via.placeholder.com/150";
-  } else if (!profileImageUrl.startsWith("http")) {
-    // prepend your backend base URL
-    profileImageUrl = `${BASE_URL}${profileImageUrl}`;
-  }
-//   console.log("User Image URL:", profileImageUrl);
+    if (!profileImageUrl) {
+      profileImageUrl = "https://via.placeholder.com/150";
+    } else if (!profileImageUrl.startsWith("http")) {
+      profileImageUrl = `${BASE_URL}${profileImageUrl}`;
+    }
 
-
-  return (
-    <View style={styles.itemRow}>
-      <Pressable
-        onPress={() => onSelect(user)}
-        style={[styles.itemContainer, isDark && styles.itemContainerDark]}
-      >
-        <View style={styles.userRow}>
-          <Image source={{ uri: profileImageUrl }} style={styles.avatar} resizeMode="cover" />
-          <View style={styles.userInfo}>
-            <Text style={[styles.userName, isDark && styles.textDark]}>{user.username}</Text>
+    return (
+      <View style={styles.itemRow}>
+        <TouchableOpacity
+          onPress={() => onSelect(user)}
+          style={styles.itemContainer}
+        >
+          <View style={styles.userRow}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: profileImageUrl }}
+                style={styles.avatar}
+                resizeMode="cover"
+              />
+            </View>
+            <View>
+              <Text style={styles.name}>{user.username}</Text>
+              <Text style={styles.subtext}>{user.full_name}</Text>
+            </View>
           </View>
-        </View>
-      </Pressable>
-      {query.length === 0 && onDelete && (
-        <Pressable onPress={() => onDelete(user)}>
-          <Ionicons name="close" size={20} color={isDark ? "#ccc" : "#333"} />
-        </Pressable>
-      )}
-    </View>
-  );
-};
+        </TouchableOpacity>
+        {query.length === 0 && onDelete && (
+          <TouchableOpacity onPress={() => onDelete(user)}>
+            <Ionicons
+              name="close"
+              size={20}
+              color={isDark ? Colors.lightGray : Colors.black}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
-
-  // Narrow the type before rendering
+  // -------------------------
+  // SWITCH
+  // -------------------------
   switch (item.type) {
     case "team":
       return renderTeam(item as TeamResult);

@@ -7536,6 +7536,11 @@ export const getTeamInfo = (teamId: number | string) => {
 export const getCBBTeam = (id: string | number) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
+export const teamsCBBById: Record<string, CBBTeam> = teams.reduce((map, team) => {
+  map[team.id] = team;
+  return map;
+}, {} as Record<string, CBBTeam>);
+
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean

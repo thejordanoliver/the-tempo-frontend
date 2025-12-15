@@ -593,6 +593,14 @@ export const getTeamLogo = (id: number | string, isDark: boolean) => {
 export const getMLBTeamByEspn = (id: number | string) =>
   teams.find((t) => String(t.espnID) === String(id)) || null;
 
+export const teamsMLBById: Record<string, MLBTeam> = teams.reduce(
+  (map, team) => {
+    map[team.id] = team;
+    return map;
+  },
+  {} as Record<string, MLBTeam>
+);
+
 export const mlbDivisionsById = {
   "American League East": [
     5, // Boston Red Sox
@@ -638,5 +646,3 @@ export const mlbDivisionsById = {
     31, // San Francisco Giants
   ],
 };
-
-

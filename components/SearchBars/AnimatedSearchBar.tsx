@@ -62,6 +62,8 @@ export default function SearchBar({
         onChangeText={onChangeText}
         autoCapitalize="none"
         editable={visible} // disable typing
+        showSoftInputOnFocus={visible} // ✅ blocks keyboard entirely
+  caretHidden={!visible}   
       />
     </Animated.View>
   );

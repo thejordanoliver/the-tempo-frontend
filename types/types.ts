@@ -516,16 +516,6 @@ export type TeamRecord = {
   record: string;
 };
 
-export type PlayerResult = {
-  id: number;
-  player_id: number;
-  name: string;
-  avatarUrl: string;
-  position: string;
-  team_id: number;
-  type: "player";
-};
-
 export type NewsItem = {
   id: string;
   title: string;
@@ -560,15 +550,6 @@ export type Highlight = {
 export type GameHighlights = {
   gameId: string;
   highlights: Highlight[];
-};
-
-export type TeamResult = {
-  id: number;
-  name: string;
-  nickname: string;
-  city: string;
-  logo_filename: string;
-  type: "team";
 };
 
 export type NBAOrNFLTeam = {
@@ -617,8 +598,32 @@ export type NBAMVPSeason = {
   current_team: NBATeam | null;
 };
 
+export type PlayerResult = {
+  id: number;
+  player_id: number;
+  name: string;
+  avatarUrl: string;
+  position: string;
+  team_id: number;
+  type: "player";
+};
+
+export type TeamResult = {
+  id: number;
+  name: string;
+  nickname: string;
+  city: string;
+  logo_filename: string;
+  isNFL?: boolean;
+  isMLB?: boolean;
+  isCFB?: boolean;
+  isCBB?: boolean;
+  type: "team";
+};
+
 export type UserResult = {
   id: number;
+  full_name: string;
   username: string;
   profileImageUrl: string;
   type: "user";

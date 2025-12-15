@@ -138,7 +138,7 @@ export const NFLStandingsList = () => {
 
     const showConfBadge =
       sortMode === "conference" &&
-      !clinch && // don't show conference badge if ESPN already has clincher
+      !clinch &&
       hasClinchedConference(item, confList);
 
     return (
@@ -308,7 +308,7 @@ export const NFLStandingsList = () => {
     <ScrollView
       contentContainerStyle={{
         paddingHorizontal: 16,
-        paddingTop: 10,
+        paddingTop: 14,
         paddingBottom: 100,
       }}
     >
@@ -320,7 +320,7 @@ export const NFLStandingsList = () => {
         selectedValue={sortMode}
         onSelect={(value) => setSortMode(value as any)}
         isDark={isDark}
-        absolute
+    absolute
       />
 
       {sortMode === "conference" ? (

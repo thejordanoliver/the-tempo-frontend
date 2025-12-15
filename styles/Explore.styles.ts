@@ -1,108 +1,113 @@
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 12,
-  },
+export const exploreStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 12,
+    },
 
-  itemContainer: {
-    paddingVertical: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  itemContainerDark: {
-    borderBottomColor: Colors.darkGray,
-  },
-  teamName: {
-    fontSize: 16,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  playerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 24,
-    marginRight: 12,
-    backgroundColor: Colors.midTone,
-  },
-  playerInfo: {},
-  playerName: {
-    fontSize: 16,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  playerTeam: {
-    fontSize: 16,
-    fontFamily: Fonts.OSLIGHT,
-    color: Colors.darkGray,
-    opacity: 0.5,
-  },
-  textDark: {
-    color: Colors.white,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 16,
-    color: Colors.midTone,
-  },
-  errorText: {
-    color: Colors.light.red,
-    textAlign: "center",
-  },
-  errorTextDark: {
-    color: Colors.dark.lightRed,
-  },
-  centerPrompt: {
-    flex: 1,
-    marginTop: 80,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  nbaLogo: {
-    width: 100,
-    height: 100,
-    marginBottom: 12,
-  },
-  promptText: {
-    fontSize: 24,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.darkGray,
-  },
+    itemContainer: {
+      paddingVertical: 8,
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
 
-  teamRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  teamLogo: {
-    width: 36,
-    height: 36,
-    marginRight: 12,
-  },
+    name: {
+      fontSize: 16,
+      fontFamily: Fonts.OSLIGHT,
+      color: isDark ? Colors.white : Colors.black,
+    },
 
-  userRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  userInfo: {},
-  userName: {
-    fontSize: 16,
-    fontFamily: Fonts.OSLIGHT,
-  },
+    tag: {
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    subtext: {
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
 
-  itemRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-    marginBottom: 6,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.midTone,
-  },
-});
+    playerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    playerAvatarContainer: {
+      width: 44,
+      height: 44,
+      borderRadius: 24,
+      marginRight: 12,
+      paddingTop: 4,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      overflow: "hidden",
+    },
+    playerAvatar: {
+      width: 44,
+      height: 44,
+    },
+    avatarContainer: {
+      width: 44,
+      height: 44,
+      borderRadius: 24,
+      marginRight: 12,
+      overflow: "hidden",
+    },
+    avatar: {
+      width: 44,
+      height: 44,
+    },
+
+    playerTeam: {
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    emptyText: {
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: 16,
+      color: Colors.midTone,
+    },
+    errorText: {
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
+    },
+
+    centerPrompt: {
+      flex: 1,
+      marginTop: 80,
+      justifyContent: "flex-start",
+      alignItems: "center",
+    },
+
+    promptText: {
+      fontSize: 24,
+      fontFamily: Fonts.OSREGULAR,
+      color: Colors.darkGray,
+    },
+    teamLogo: {
+      width: 44,
+      height: 44,
+      marginRight: 12,
+    },
+
+    userRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+
+    itemRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 6,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: Colors.midTone,
+    },
+  });

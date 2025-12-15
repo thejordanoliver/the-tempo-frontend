@@ -1,26 +1,12 @@
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
-import players from "constants/players";
-import { teamsById } from "constants/teams";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { teams as nflteams } from "constants/teamsNFL";
-import { teams } from "constants/teams";
-import { teams as mlbteams } from "constants/teamsMLB";
-import {
-  Animated,
-  Easing,
-  Pressable,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
-import { styles } from "styles/Explore.styles";
+import { Animated, Easing, useColorScheme, View } from "react-native";
+import { exploreStyles } from "styles/Explore.styles";
 import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
@@ -39,11 +25,10 @@ export default function ExplorePage() {
   const [selectedTab, setSelectedTab] = useState<(typeof tabs)[number]>("All");
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
-
-
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
+  const styles = exploreStyles(isDark);
   const inputAnim = useRef(new Animated.Value(0)).current;
   const deleteRecentSearch = async (itemToDelete: ResultItem) => {
     try {
@@ -102,7 +87,7 @@ export default function ExplorePage() {
           players: PlayerResult[];
           teams: TeamResult[];
           users: UserResult[];
-        }>(`${API_URL}/api/search`, { params: { query } });
+        }>(`${API_URL}/api/explore/search`, { params: { query } });
 
         const combined: ResultItem[] = [
           ...res.data.teams.map((t) => ({ ...t, type: "team" as const })),
@@ -129,11 +114,26 @@ export default function ExplorePage() {
         <CustomHeaderTitle
           tabName="Explore"
           title="Explore"
-          onSearchToggle={() => setSearchVisible((prev) => !prev)}
+          onSearchToggle={() => {
+            setSearchVisible((prev) => {
+              if (prev) {
+                // 🔒 Closing search
+                setQuery(""); // clear text
+                setSelectedTab("All"); // reset tabs
+                setIsFocused(false); // sync focus state
+              }
+              return !prev;
+            });
+          }}
         />
       ),
     });
   }, [navigation]);
+
+  const handleChangeText = (text: string) => {
+    if (!searchVisible) return;
+    setQuery(text);
+  };
 
   const loadRecentSearches = async () => {
     try {
@@ -182,16 +182,6 @@ export default function ExplorePage() {
     }
   };
 
-  function isResultItem(obj: any): obj is ResultItem {
-    return (
-      typeof obj === "object" &&
-      obj !== null &&
-      typeof obj.id === "number" &&
-      typeof obj.type === "string" &&
-      ["player", "team", "user"].includes(obj.type)
-    );
-  }
-
   const tabToTypeMap = {
     Teams: "team",
     Players: "player",
@@ -205,21 +195,23 @@ export default function ExplorePage() {
     }
   );
 
-  const getItemKey = (item: ResultItem) => {
-    const id = (item as any)?.id;
-    if (!id) {
-      console.warn("Missing ID for item:", item);
-      return `${item.type}-unknown-${Math.random()}`;
-    }
-    return `${item.type}-${id}`;
-  };
-
   const handleSelectItem = (item: ResultItem) => {
     saveToRecentSearches(item);
     switch (item.type) {
       case "team":
-        router.push(`/team/${item.id}`);
+        if (item.isNFL) {
+          router.push(`/team/nfl/${item.id}`);
+        } else if (item.isMLB) {
+          router.push(`/team/mlb/${item.id}`);
+        } else if (item.isCFB) {
+          router.push(`/team/cfb/${item.id}`);
+        }  else if (item.isCBB) {
+          router.push(`/team/cbb/${item.id}`);
+        } else {
+          router.push(`/team/${item.id}`);
+        }
         break;
+
       case "player":
         router.push({
           pathname: "/player/[id]",
@@ -235,132 +227,12 @@ export default function ExplorePage() {
     }
   };
 
-  const renderItem = ({ item }: { item: ResultItem }) => {
-    if (item.type === "team") {
-      const localTeam = teamsById[item.id.toString()];
-      const logoSource = isDark
-        ? localTeam?.logoLight || localTeam?.logo
-        : localTeam?.logo;
-
-      return (
-        <View style={styles.itemRow}>
-          <Pressable
-            onPress={() => handleSelectItem(item)}
-            style={[styles.itemContainer, isDark && styles.itemContainerDark]}
-          >
-            <View style={styles.teamRow}>
-              {logoSource && (
-                <Image
-                  source={logoSource}
-                  style={styles.teamLogo}
-                  resizeMode="contain"
-                />
-              )}
-              <Text style={[styles.teamName, isDark && styles.textDark]}>
-                {localTeam?.fullName}
-              </Text>
-            </View>
-          </Pressable>
-          {query.length === 0 && (
-            <Pressable onPress={() => deleteRecentSearch(item)}>
-              <Ionicons
-                name="close"
-                size={20}
-                color={isDark ? "#ccc" : "#333"}
-              />
-            </Pressable>
-          )}
-        </View>
-      );
-    }
-
-    if (item.type === "player") {
-      const avatarUrl = item.avatarUrl?.trim()
-        ? item.avatarUrl
-        : players[item.name];
-      const localTeam = teamsById[item.team_id?.toString()];
-
-      return (
-        <View style={styles.itemRow}>
-          <Pressable
-            onPress={() => handleSelectItem(item)}
-            style={[styles.itemContainer, isDark && styles.itemContainerDark]}
-          >
-            <View style={styles.playerRow}>
-              <Image
-                source={{ uri: avatarUrl }}
-                style={styles.avatar}
-                resizeMode="cover"
-              />
-              <View style={styles.playerInfo}>
-                <Text style={[styles.playerName, isDark && styles.textDark]}>
-                  {item.name}
-                </Text>
-                <Text style={[styles.playerTeam, isDark && styles.textDark]}>
-                  {localTeam?.fullName || "Free Agent"}
-                </Text>
-              </View>
-            </View>
-          </Pressable>
-          {query.length === 0 && (
-            <Pressable onPress={() => deleteRecentSearch(item)}>
-              <Ionicons
-                name="close"
-                size={20}
-                color={isDark ? "#ccc" : "#333"}
-              />
-            </Pressable>
-          )}
-        </View>
-      );
-    }
-
-    if (item.type === "user") {
-      const profileImageUrl = item.profileImageUrl.startsWith("http")
-        ? item.profileImageUrl
-        : `${API_URL}${item.profileImageUrl}`;
-
-      return (
-        <View style={styles.itemRow}>
-          <Pressable
-            onPress={() => handleSelectItem(item)}
-            style={[styles.itemContainer, isDark && styles.itemContainerDark]}
-          >
-            <View style={styles.userRow}>
-              <Image
-                source={{ uri: profileImageUrl }}
-                style={styles.avatar}
-                resizeMode="cover"
-              />
-              <View style={styles.userInfo}>
-                <Text style={[styles.userName, isDark && styles.textDark]}>
-                  {item.username}
-                </Text>
-              </View>
-            </View>
-          </Pressable>
-          {query.length === 0 && (
-            <Pressable onPress={() => deleteRecentSearch(item)}>
-              <Ionicons
-                name="close"
-                size={20}
-                color={isDark ? "#ccc" : "#333"}
-              />
-            </Pressable>
-          )}
-        </View>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <View style={[styles.container]}>
       <SearchBar
         value={query}
         placeholder="Explore Teams, Players and Accounts..."
-        onChangeText={setQuery}
+        onChangeText={handleChangeText}
         visible={searchVisible}
         onFocus={() => setIsFocused(true)}
         onBlur={() => {
@@ -373,14 +245,16 @@ export default function ExplorePage() {
 
       {!searchVisible && <EmptyState />}
 
-      <SearchResultsList
-        data={filteredResults.length ? filteredResults : recentSearches}
-        loading={loading}
-        error={error}
-        onSelect={handleSelectItem}
-        onDelete={deleteRecentSearch}
-        query={query}
-      />
+      {searchVisible && (
+        <SearchResultsList
+          data={filteredResults.length ? filteredResults : recentSearches}
+          loading={loading}
+          error={error}
+          onSelect={handleSelectItem}
+          onDelete={deleteRecentSearch}
+          query={query}
+        />
+      )}
     </View>
   );
 }
