@@ -2,9 +2,9 @@
 import { useNavigation } from "@react-navigation/native";
 import CombinedGamesList from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import FavoritesScrollSkeleton from "components/Favorites/FavoritesScrollSkeleton";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
 import { Colors } from "constants/Colors";
 import { useHomeData } from "hooks/useHomeData";
@@ -37,9 +37,6 @@ export default function HomeScreen() {
     loading,
   } = useHomeData(selectedTab);
 
-
-  
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -68,7 +65,6 @@ export default function HomeScreen() {
               colors={[isDark ? Colors.white : Colors.black]}
             />
           }
-          contentContainerStyle={{ paddingBottom: 100 }}
         >
           {selectedTab === "scores" ? (
             <>

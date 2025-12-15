@@ -2,14 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Colors";
-import { getTeamLogo, teams } from "constants/teamsCFB";
+import { getRivalryHeadline, getTeamLogo, teams } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
-import { getRivalryHeadline } from "constants/teamsCFB";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
@@ -21,7 +20,7 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/GamecardStyles/GameCard.styles";
-import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
+import { emptyAwayTeam, emptyHomeTeam, emptyTeam, Game } from "types/cfb";
 import {
   getTeamRankFromAPById,
   getTeamRankFromCFPById,
@@ -29,7 +28,6 @@ import {
   useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { emptyTeam } from "types/cfb";
 type Props = {
   game: Game; // TODO: replace with proper CFB Game type
   isDark?: boolean;
@@ -38,26 +36,26 @@ type Props = {
 function CFBGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
+  
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
-  
+
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
-  
+
   // --- Date ---
   const gameDate = game?.game?.date?.timestamp
-  ? new Date(game.game.date.timestamp * 1000)
-  : null;
+    ? new Date(game.game.date.timestamp * 1000)
+    : null;
   const gameDateStr = gameDate?.toISOString();
-  
-  
+
   // Championship Game Detection (Jan 19, 2026)
-   const isChampionship = Boolean(
-  gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 &&
-    gameDate.getDate() === 19
-);
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2026 &&
+      gameDate.getMonth() === 0 &&
+      gameDate.getDate() === 19
+  );
 
   const styles = getStyles(dark, isChampionship);
 
@@ -80,12 +78,12 @@ function CFBGameCard({ game, isDark }: Props) {
   };
 
   // --- Get Team Info from constants ---
-  const getTeamById = (id?: number | string) =>
+ const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
 
   const getTeamName = (id?: number | string): string =>
     getTeamById(id)?.name ?? emptyTeam.name;
-     
+
   const getTeamShortName = (id?: number | string): string =>
     getTeamById(id)?.shortName ?? "";
 
@@ -122,6 +120,8 @@ function CFBGameCard({ game, isDark }: Props) {
       "postponed",
       "halftime",
     ].includes(longLower);
+
+ 
 
     return {
       isScheduled: longLower === "not started",
@@ -167,16 +167,15 @@ function CFBGameCard({ game, isDark }: Props) {
 
 
   // Determine fallback rivalry name
-const rivalryHeadline = useMemo(() => {
-  return getRivalryHeadline(Number(homeEspnId), Number(awayEspnId));
-}, [homeEspnId, awayEspnId]);
+  const rivalryHeadline = useMemo(() => {
+    return getRivalryHeadline(Number(homeEspnId), Number(awayEspnId));
+  }, [homeEspnId, awayEspnId]);
 
-// Choose headline → rivalry → empty string
-const headLine =
-  headlineText && headlineText.trim().length > 0
-    ? headlineText
-    : rivalryHeadline ?? "";
-
+  // Choose headline → rivalry → empty string
+  const headLine =
+    headlineText && headlineText.trim().length > 0
+      ? headlineText
+      : rivalryHeadline ?? "";
 
   const {
     possessionTeamId,
@@ -209,8 +208,6 @@ const headLine =
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
-
-
   // Unified game status from possession hook
   const displayStatus =
     possession?.gameStatusDescription ??
@@ -220,7 +217,7 @@ const headLine =
       : status.isLive
       ? "Live"
       : status.long ?? "Scheduled");
-
+ 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
@@ -314,7 +311,6 @@ const headLine =
       })
     : "";
 
- 
   const getTeamStyle = useMemo(
     () =>
       (isHome: boolean): TextStyle => {
@@ -326,7 +322,7 @@ const headLine =
           isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
         }
         return {
-          color: dark ? "#fff" : Colors.black,
+          color: dark ? Colors.white : Colors.black,
           opacity: isWinner ? 1 : 0.5,
         };
       },
@@ -340,25 +336,22 @@ const headLine =
         {awayTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
-            style={{
-              width: 24,
-              height: 24,
-              resizeMode: "contain",
-              position: "absolute",
-              right: -70,
-              top: 24,
-            }}
+            style={styles.awayPossession}
           />
         )}
         <Image source={awayTeam.logo} style={styles.logo} />
-        <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
-          {awayEspnId && getTeamRank(String(awayEspnId)) && (
-            <Text style={{ fontSize: 10, color: "#aaa" }}>
-              {getTeamRank(String(awayEspnId))}
-            </Text>
-          )}{" "}
-          {awayTeam.shortName || awayTeam.name}
-        </Text>
+       <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
+  {(() => {
+    const rank = awayEspnId ? getTeamRank(String(awayEspnId)) : "";
+    return (
+      <>
+        {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+        {awayTeam.shortName || awayTeam.name}
+      </>
+    );
+  })()}
+</Text>
+
       </View>
 
       {/* Away Record / Score */}
@@ -432,25 +425,22 @@ const headLine =
         {homeTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
-            style={{
-              width: 24,
-              height: 24,
-              resizeMode: "contain",
-              position: "absolute",
-              left: -70,
-              top: 24,
-            }}
+            style={styles.homePossession}
           />
         )}
         <Image source={homeTeam.logo} style={styles.logo} />
-        <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
-          {homeEspnId && getTeamRank(String(homeEspnId)) && (
-            <Text style={{ fontSize: 10, color: "#aaa" }}>
-              {getTeamRank(String(homeEspnId))}
-            </Text>
-          )}{" "}
-          {homeTeam.shortName ? homeTeam.shortName : homeTeam.name}
-        </Text>
+     <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
+  {(() => {
+    const rank = homeEspnId ? getTeamRank(String(homeEspnId)) : "";
+    return (
+      <>
+        {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+        {homeTeam.shortName || homeTeam.name}
+      </>
+    );
+  })()}
+</Text>
+
       </View>
 
       <Pressable
@@ -484,7 +474,7 @@ const headLine =
         <LinearGradient
           colors={
             isDark
-           ? ["#846f4a", "#50412a"]
+              ? ["#846f4a", "#50412a"]
               : (["#DFBD69", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}

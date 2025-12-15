@@ -11,6 +11,7 @@ type GameOddsSectionProps = {
   homeCode: string;
   awayCode: string;
   gameId: string;
+  lighter?: boolean
 };
 
 export default function GameOddsSection({
@@ -19,6 +20,7 @@ export default function GameOddsSection({
   homeCode,
   awayCode,
   gameId,
+  lighter,
 }: GameOddsSectionProps) {
   // --- Upcoming odds ---
   const {
@@ -69,7 +71,7 @@ export default function GameOddsSection({
       ) : hasUpcomingOdds ? (
         <View>
           {upcomingOdds.map((game) => (
-            <UpcomingOddsCard key={game.id} game={game} />
+            <UpcomingOddsCard key={game.id} game={game} lighter={lighter} />
           ))}
         </View>
       ) : null}

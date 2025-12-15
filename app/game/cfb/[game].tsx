@@ -412,6 +412,7 @@ export default function CFBGameDetailsScreen() {
     period,
     score,
     homeTimeouts,
+    gameStatusDescription,
     gameStatusShortDetail,
     awayTimeouts,
     loading: possessionLoading,
@@ -420,6 +421,8 @@ export default function CFBGameDetailsScreen() {
     awayTeam ? Number(awayTeam.espnID) : undefined,
     gameDateStr
   );
+
+
 
   if (!parsedGame || !homeTeam || !awayTeam) return <View />;
 

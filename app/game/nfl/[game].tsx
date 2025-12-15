@@ -13,6 +13,7 @@ import NFLGameHeader from "components/NFL/GameDetails/NFLGameHeader";
 import NFLGameOddsSection from "components/NFL/GameDetails/NFLGameOddsSection";
 import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
 import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
+import NFLSeriesHistory from "components/NFL/GameDetails/NFLSeriesHistory";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
@@ -25,6 +26,7 @@ import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGameDetails } from "hooks/NFLHooks/useNFLGameDetails";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
+import { useNFLMatchup } from "hooks/NFLHooks/useNFLMatchup";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useNFLTeamStats } from "hooks/NFLHooks/useNFLTeamStats";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -40,6 +42,8 @@ import {
 import { useChatStore } from "store/chatStore";
 import { emptyTeam } from "types/nfl";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
+
 export default function NFLGameDetailsScreen() {
   const params = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
@@ -233,31 +237,65 @@ export default function NFLGameDetailsScreen() {
   const formatPeriod = (raw: string | number | undefined | null) => {
     if (!raw) return "";
 
-    const map: Record<string, string> = {
-      1: "1st",
-      2: "2nd",
-      3: "3rd",
-      4: "4th",
-      OT: "OT",
-      OVERTIME: "OT",
-      HT: "Halftime",
-      FT: "Final",
-    };
-
-    if (typeof raw === "string") {
-      const normalized = raw.toUpperCase();
-      if (map[normalized]) return map[normalized];
+    // 🔥 FIX: if raw is "5" or "6", convert to number
+    if (typeof raw === "string" && /^\d+$/.test(raw)) {
+      raw = Number(raw);
     }
 
-    if (typeof raw === "number") {
-      if (raw <= 4) {
-        const suffix =
-          raw === 1 ? "st" : raw === 2 ? "nd" : raw === 3 ? "rd" : "th";
-        return `${raw}${suffix}`;
+    // ----- STRING CASES -----
+    if (typeof raw === "string") {
+      const upper = raw.toUpperCase();
+
+      if (upper === "OT" || upper === "OVERTIME") return "OT";
+      if (upper === "HT") return "Halftime";
+      if (upper === "FT") return "Final";
+
+      if (upper.includes("END")) {
+        const quarterNum = upper.match(/(\d)/)?.[1];
+        if (quarterNum) {
+          return `End ${
+            quarterNum === "1"
+              ? "1st"
+              : quarterNum === "2"
+              ? "2nd"
+              : quarterNum === "3"
+              ? "3rd"
+              : "4th"
+          }`;
+        }
+        return "End";
       }
-      // Handle OT numbers (5 = OT, 6 = 2OT, 7 = 3OT, etc.)
-      const overtimeNumber = raw - 4;
-      return overtimeNumber === 1 ? "OT" : `${overtimeNumber}OT`;
+
+      if (upper.startsWith("Q")) {
+        const num = parseInt(upper.replace("Q", ""));
+        return num === 1
+          ? "1st"
+          : num === 2
+          ? "2nd"
+          : num === 3
+          ? "3rd"
+          : num === 4
+          ? "4th"
+          : `${num}OT`;
+      }
+
+      return raw;
+    }
+
+    // ----- NUMBER CASES -----
+    if (typeof raw === "number") {
+      if (raw >= 1 && raw <= 4) {
+        return raw === 1
+          ? "1st"
+          : raw === 2
+          ? "2nd"
+          : raw === 3
+          ? "3rd"
+          : "4th";
+      }
+
+      const ot = raw - 4;
+      return ot === 1 ? "OT" : `${ot}OT`;
     }
 
     return String(raw);
@@ -338,8 +376,8 @@ export default function NFLGameDetailsScreen() {
     : "";
 
   const { broadcasts, loading } = useNFLGameBroadcasts(
-    homeTeam.code ?? "",
-    awayTeam.code ?? "",
+    homeTeam.espnID ?? "",
+    awayTeam.espnID ?? "",
     gameDateStr ?? ""
   );
 
@@ -389,6 +427,14 @@ export default function NFLGameDetailsScreen() {
     loading: possessionLoading,
   } = useNFLGamePossession(homeTeamName, awayTeamName, gameDateStr);
 
+  // --- Matchup Route (Series History) ---
+  const { data: matchup } = useNFLMatchup(homeTeam.code, awayTeam.code);
+
+  const seriesGames = useMemo(() => {
+    if (!matchup || !matchup.games) return [];
+    return transformNFLSeriesGames(matchup.games);
+  }, [matchup]);
+
   const { headlineText } = useGameInfo(
     Number(homeTeam?.espnID),
     Number(awayTeam?.espnID),
@@ -422,7 +468,7 @@ export default function NFLGameDetailsScreen() {
           awayTimeouts={awayTimeouts}
           colors={colors}
           status={gameStatusDescription ?? gameStatus}
-          period={formatPeriod(period ?? gameInfo?.status?.short ?? "")}
+          period={formatPeriod(period)}
           displayClock={displayClock ?? gameInfo?.status?.timer ?? ""}
           possessionText={possessionText ?? ""}
           isDark={isDark}
@@ -544,6 +590,21 @@ export default function NFLGameDetailsScreen() {
                 games: awayLastGames.games,
               }}
               league="NFL"
+            />
+
+            <NFLSeriesHistory
+              team1Code={getTeamInfo(matchup?.teams.team1.id)?.code ?? "UNK"}
+              team2Code={getTeamInfo(matchup?.teams.team2.id)?.code ?? "UNK"}
+              team1Full={matchup?.teams.team1.fullName ?? ""}
+              team2Full={matchup?.teams.team2.fullName ?? ""}
+              team1Wins={matchup?.series.winsA ?? 0}
+              team2Wins={matchup?.series.winsB ?? 0}
+              ties={matchup?.series.ties ?? 0}
+              games={seriesGames ?? []}
+              team1Logo={getTeamInfo(matchup?.teams.team1.id)?.logo}
+              team2Logo={getTeamInfo(matchup?.teams.team2.id)?.logo}
+              team1LogoLight={getTeamInfo(matchup?.teams.team1.id)?.logoLight}
+              team2LogoLight={getTeamInfo(matchup?.teams.team2.id)?.logoLight}
             />
 
             {gameStatus === "Final" && (

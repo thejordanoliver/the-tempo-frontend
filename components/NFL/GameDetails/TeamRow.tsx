@@ -136,10 +136,15 @@ export const TeamRow = ({
             {/* 🔥 League-specific name formatting */}
             {league === "cfb" ? (
               <Text style={[styles.teamName, { color: colors.text }]}>
-                <Text style={{ fontSize: 10, color: Colors.lightGray }}>
-                  {rank}
-                </Text>{" "}
-                {team.shortName || team.name}
+                <>
+                  {rank != null ? (
+                    <Text style={[ styles.rank ,{fontSize: 10, color: Colors.lightGray }]}>
+                      {rank}{" "}
+                    </Text>
+                  ) : null}
+
+                  {team.shortName || team.name}
+                </>
               </Text>
             ) : (
               <Text style={[styles.teamName, { color: colors.text }]}>

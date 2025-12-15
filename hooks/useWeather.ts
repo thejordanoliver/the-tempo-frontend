@@ -89,6 +89,8 @@ export function useWeatherForecast(
           throw new Error("Failed to fetch weather forecast");
         }
 
+        
+
         const data = await response.json();
         if (!data.list || data.list.length === 0) {
           throw new Error("No forecast data returned for this location");

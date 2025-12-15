@@ -1,3 +1,4 @@
+import { Colors } from "constants/Colors";
 import { coachImages } from "constants/teams";
 import { useTeamInfo } from "hooks/useTeamInfo";
 import { View, useColorScheme } from "react-native";
@@ -46,8 +47,8 @@ export default function TeamInfoCard({ teamId }: Props) {
 
   const winPct = calculateWinPercentage(team.all_time_record);
 
-  const primaryColor = team.primary_color ?? (isDark ? "#111" : "#eee");
-  const secondaryColor = team.secondary_color ?? (isDark ? "#444" : "#ccc");
+  const primaryColor =
+    team.primary_color ?? (isDark ? Colors.black : Colors.white);
 
   return (
     <View style={{ width: "100%" }}>

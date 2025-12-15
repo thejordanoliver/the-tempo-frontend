@@ -78,7 +78,7 @@ export const useNFLGamePossession = (
   >();
 
   const [displayClock, setDisplayClock] = useState<string | undefined>();
-  const [period, setPeriod] = useState<string | undefined>();
+  const [period, setPeriod] = useState<number | undefined>();
   const [lastPlay, setLastPlay] = useState<string | PlayObject | undefined>();
   const [homeTimeouts, setHomeTimeouts] = useState<number | undefined>();
   const [awayTimeouts, setAwayTimeouts] = useState<number | undefined>();

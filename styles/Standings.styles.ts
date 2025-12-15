@@ -17,12 +17,12 @@ export const getStyles = (isDark: boolean) =>
     header: {
       flexDirection: "row",
       justifyContent: "flex-start",
+      marginBottom: 0,
       alignItems: "center",
-      paddingBottom: 6,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    heading: {
+  heading: {
       fontSize: 22,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
@@ -122,33 +122,39 @@ export const getStyles = (isDark: boolean) =>
     },
     statusBadge: {
       marginLeft: 6,
-      paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 4,
-      minWidth: 22,
+      minWidth: 28,
       justifyContent: "center",
       alignItems: "center",
     },
     statusBadgeText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 10,
-      color: isDark ? Colors.white : Colors.black,
+      color: Colors.white,
     },
     legendContainer: {
-      marginTop: 20,
+      marginTop: 10,
       paddingTop: 10,
     },
+
     legendItemsContainer: {
+      flexDirection: "row",
       flexWrap: "wrap",
+      justifyContent: "space-between",
+      paddingRight: 10,
     },
+
     legendItem: {
+      width: "40%", // 2-column grid
       flexDirection: "row",
       alignItems: "center",
-      marginRight: 12,
-      marginTop: 8,
+      marginBottom: 12,
     },
+
     legendLabel: {
       fontFamily: Fonts.OSREGULAR,
+      marginLeft: 6,
       color: isDark ? Colors.white : Colors.black,
     },
 

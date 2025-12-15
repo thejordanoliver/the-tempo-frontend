@@ -219,7 +219,7 @@ export default function BoxScore({
     isExpanded: boolean,
     heightAnim: Animated.Value
   ) => {
-    const borderColor = isDark ? secondaryColor ?? teamColor : teamColor;
+    const borderColor = isDark ? Colors.white : Colors.black;
 
     return (
       <View style={[styles.teamBox, { borderColor }]}>
@@ -447,16 +447,18 @@ export default function BoxScore({
 
       {!isLoading && !isError && (
         <>
-          {renderTeamBox(
-            awayPlayers,
-            awayTeam?.fullName ?? "Away Team",
-            getTeamLogo(awayTeam),
-            awayTeam?.color ?? Colors.black,
-            awayTeam?.secondaryColor ?? "",
-            awayCode,
-            expandedTeams[awayCode] ?? false,
-            heightAnimMap.current[awayCode]
-          )}
+          <View style={{ marginBottom: 24 }}>
+            {renderTeamBox(
+              awayPlayers,
+              awayTeam?.fullName ?? "Away Team",
+              getTeamLogo(awayTeam),
+              awayTeam?.color ?? Colors.black,
+              awayTeam?.secondaryColor ?? "",
+              awayCode,
+              expandedTeams[awayCode] ?? false,
+              heightAnimMap.current[awayCode]
+            )}
+          </View>
 
           {renderTeamBox(
             homePlayers,
@@ -491,7 +493,6 @@ const styles = StyleSheet.create({
   teamBox: {
     borderWidth: 1,
     borderRadius: 10,
-    marginBottom: 24,
     overflow: "hidden",
   },
   teamLabel: {

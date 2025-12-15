@@ -69,7 +69,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
         paddingBottom: 4,
         borderBottomWidth: 1,
         borderColor: Colors.midTone,
-        marginBottom: 6,
+        marginVertical: 6,
       },
       cell: {
         fontSize: 14,

@@ -22,28 +22,29 @@ import { getStyles } from "styles/GamecardStyles/GameCard.styles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
+function normalizeGameStatus(
+  gameStatus: any,
+  liveScore: any,
+  teamsResolved: boolean
+) {
+  if (!teamsResolved) return "Scheduled";
 
+  const long = (gameStatus?.long ?? "").toLowerCase().trim();
+  const short = (gameStatus?.short ?? "").toString().toLowerCase().trim();
+  const statusText = (liveScore?.statusText ?? "").toLowerCase().trim();
+  const detail = (liveScore?.detail ?? "").toLowerCase().trim();
 
-function normalizeGameStatus(gameStatus: any, liveScore: any) {
-  const long = (gameStatus?.long ?? "").toLowerCase();
-  const short = (gameStatus?.short ?? "").toString().toLowerCase();
-  const statusText = (liveScore?.statusText ?? "").toLowerCase();
-  const detail = (liveScore?.detail ?? "").toLowerCase();
   const raw = statusText || detail || long;
 
-  // Explicit outcomes
+  if (!raw) return "Scheduled";
+
   if (raw.includes("canceled") || raw.includes("cancelled")) return "Canceled";
   if (raw.includes("postponed")) return "Postponed";
   if (raw.includes("delayed")) return "Delayed";
-
-  // Halftime
   if (raw.includes("halftime")) return "Halftime";
-
-  // Final (including Final/OT or AOT)
   if (raw.includes("final") || raw.includes("aot") || short === "ft")
     return "Final";
 
-  // Live indicators
   const livePhrases = [
     "in progress",
     "in play",
@@ -56,46 +57,33 @@ function normalizeGameStatus(gameStatus: any, liveScore: any) {
   ];
   if (livePhrases.some((p) => raw.includes(p))) return "In Play";
 
-  // Default
   return "Scheduled";
 }
 
-
-function CBBGameCard({
-  game,
-  isDark,
-  lighter = false,
-}: {
-  game: CBBGame;
-  isDark?: boolean;
-  lighter: boolean;
-}) {
+function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
   const colorScheme = useColorScheme();
-const dark = Boolean(isDark ?? (colorScheme === "dark"));
+  const dark = Boolean(isDark ?? colorScheme === "dark");
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
-  
+
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
-  
+
   // --- Date ---
   const gameDate = game?.timestamp
-  ? new Date(game.timestamp * 1000)
-  : game?.date
-  ? new Date(game.date)
-  : null;
-  
-  
- 
- const isChampionship = Boolean(
-  gameDate &&
-    gameDate.getFullYear() === 2025 &&
-    gameDate.getMonth() === 3 &&
-    gameDate.getDate() === 7
-);
+    ? new Date(game.timestamp * 1000)
+    : game?.date
+    ? new Date(game.date)
+    : null;
+
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2025 &&
+      gameDate.getMonth() === 3 &&
+      gameDate.getDate() === 7
+  );
 
   const styles = getStyles(dark, isChampionship);
-
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
@@ -134,9 +122,12 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
     return short && short.trim() !== "" ? short : getTeamName(id);
   };
 
-  // 🏈 Use ESPN team IDs, not internal IDs
+  // Use ESPN team IDs, not internal IDs
   const awayEspnId = getTeamById(awayId)?.espnID;
   const homeEspnId = getTeamById(homeId)?.espnID;
+
+  // ✅ ADD THIS
+  const teamsResolved = Boolean(homeEspnId && awayEspnId);
 
   const { headlineText } = useCBBHeadline(
     Number(homeEspnId),
@@ -217,22 +208,19 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
 
   // --- Helpers ---
   const formatQuarter = (period?: number | string, statusText?: string) => {
-    if (!period && !statusText) return "Live";
+    if (!period && !statusText) return ""; // ← FIX
 
-    // handle strings from API
     if (typeof period === "string") {
       const val = period.toLowerCase();
-      if (val.includes("ot")) return val.toUpperCase(); // OT or OT2
+      if (val.includes("ot")) return val.toUpperCase();
       if (val.includes("halftime")) return "Halftime";
       return val;
     }
 
     const p = Number(period);
-
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
 
-    // OT handling
     const ot = p - 2;
     return ot === 1 ? "OT" : `${ot}OT`;
   };
@@ -252,17 +240,16 @@ const dark = Boolean(isDark ?? (colorScheme === "dark"));
     return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
   }
 
-const effectiveStatus = useMemo(() => {
-  return normalizeGameStatus(game.status, liveScore);
-}, [game.status, liveScore]);
+  const effectiveStatus = useMemo(() => {
+    return normalizeGameStatus(game.status, liveScore, teamsResolved);
+  }, [game.status, liveScore, teamsResolved]);
 
-const isFinal = effectiveStatus === "Final";
-const isCanceled = effectiveStatus === "Canceled";
-const isDelayed = effectiveStatus === "Delayed";
-const isPostponed = effectiveStatus === "Postponed";
-const isHalftime = effectiveStatus === "Halftime";
-const inProgress = effectiveStatus === "In Play";
-
+  const isFinal = effectiveStatus === "Final";
+  const isCanceled = effectiveStatus === "Canceled";
+  const isDelayed = effectiveStatus === "Delayed";
+  const isPostponed = effectiveStatus === "Postponed";
+  const isHalftime = effectiveStatus === "Halftime";
+  const inProgress = effectiveStatus === "In Play";
 
   const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
   const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
@@ -318,7 +305,6 @@ const inProgress = effectiveStatus === "In Play";
       })
     : "";
 
-
   const winnerStyle = (teamWins: boolean): TextStyle => ({
     color: dark ? Colors.white : Colors.black,
     opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
@@ -355,17 +341,13 @@ const inProgress = effectiveStatus === "In Play";
           accessibilityLabel={`${awayTeam.name} logo`}
         />
         <Text style={styles.teamName}>
-          {" "}
-          {awayEspnId && getTeamRank(String(awayEspnId)) && (
-            <Text
-              style={{
-                fontSize: 10,
-                color: isDark ? Colors.lightGray : Colors.darkGray,
-              }}
-            >
-              {getTeamRank(String(awayEspnId))}{" "}
-            </Text>
-          )}
+          {(() => {
+            const rank = getTeamRank(awayEspnId ?? "");
+            return rank != null ? (
+              <Text style={styles.rank}>{rank} </Text>
+            ) : null;
+          })()}
+
           {getTeamPreferredName(awayId)}
         </Text>
       </View>
@@ -444,7 +426,7 @@ const inProgress = effectiveStatus === "In Play";
         recordData={homeTeam.record ?? undefined}
         teamWins={homeWins}
         showRecord={
-            effectiveStatus === "Scheduled" || isCanceled || isPostponed
+          effectiveStatus === "Scheduled" || isCanceled || isPostponed
         }
       />
 
@@ -455,17 +437,12 @@ const inProgress = effectiveStatus === "In Play";
           accessibilityLabel={`${homeTeam.name} logo`}
         />
         <Text style={styles.teamName}>
-          {" "}
-          {homeEspnId && getTeamRank(String(homeEspnId)) && (
-            <Text
-              style={{
-                fontSize: 10,
-                color: isDark ? Colors.lightGray : Colors.darkGray,
-              }}
-            >
-              {getTeamRank(String(homeEspnId))}{" "}
-            </Text>
-          )}
+          {(() => {
+            const rank = getTeamRank(homeEspnId ?? "");
+            return rank != null ? (
+              <Text style={styles.rank}>{rank} </Text>
+            ) : null;
+          })()}
           {getTeamPreferredName(homeId)}
         </Text>
       </View>
@@ -488,7 +465,7 @@ const inProgress = effectiveStatus === "In Play";
   );
 
   return (
-   <TouchableOpacity
+    <TouchableOpacity
       activeOpacity={0.85}
       onPress={() =>
         router.push({
@@ -501,7 +478,7 @@ const inProgress = effectiveStatus === "In Play";
         <LinearGradient
           colors={
             isDark
-                   ? ["#846f4a", "#50412a"]
+              ? ["#846f4a", "#50412a"]
               : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}

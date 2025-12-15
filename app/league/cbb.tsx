@@ -11,6 +11,8 @@ import ConferenceListModal, {
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import SeasonLeadersList from "components/NFL/SeasonLeaderList";
+import { Colors } from "constants/Colors";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -19,9 +21,8 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
-import { useLeagueNews } from "hooks/useLeagueNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
+import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
@@ -30,7 +31,6 @@ import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { Colors } from "constants/Colors";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -161,7 +161,10 @@ export default function CBBLeagueScreen() {
     gamesArray.reduce((acc, game) => {
       const d = dayjs.utc(game).local();
       const iso = d.format("YYYY-MM-DD");
-      acc[iso] = { marked: true, dotColor: isDark ? Colors.white : Colors.black };
+      acc[iso] = {
+        marked: true,
+        dotColor: isDark ? Colors.white : Colors.black,
+      };
       return acc;
     }, {});
 
@@ -254,7 +257,6 @@ export default function CBBLeagueScreen() {
 
           {selectedTab === "news" && (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
               showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl

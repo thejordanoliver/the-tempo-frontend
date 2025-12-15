@@ -261,8 +261,8 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       alignItems: "center",
     },
     logo: {
-      width: 32,
-      height: 32,
+      width: 28,
+      height: 28,
       resizeMode: "contain",
     },
     teamLabel: {

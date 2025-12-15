@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export type NFLPlayerStat = {
+export type PlayerStat = {
   name: string; // e.g. "comp att", "yards"
   value: string | number | null;
 };
@@ -10,7 +10,7 @@ export interface NFLPlayer {
   id: string;
   name: string;
   group: string; // Passing, Rushing, Receiving, etc.
-  stats: NFLPlayerStat[];
+  stats: PlayerStat[];
   team?: { id: number; name: string };
   image?: string;
 }
@@ -79,7 +79,7 @@ export function useNFLGameLeaders(gameId: string, teamId: string) {
 
         setLeaders(formatted);
       } catch (err) {
-        console.error("Error fetching NFL game leaders", err);
+        console.error("Error fetching game leaders", err);
         setIsError(true);
       } finally {
         if (isMounted) setIsLoading(false);

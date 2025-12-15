@@ -78,34 +78,42 @@ export default function SeasonLeadersList({
       data={categories}
       contentContainerStyle={{ paddingBottom: 100 }}
       keyExtractor={(item) => item.categoryName}
-      renderItem={({ item }) => (
-        <View style={styles.categoryContainer}>
-          <HeadingTwo style={{ marginBottom: 12 }}>
-            {item.categoryName} Leaders
-          </HeadingTwo>
+     renderItem={({ item }) => {
+  // 🚫 Skip categories with no leaders
+  if (!item.leaders || item.leaders.length === 0) {
+    return null;
+  }
 
-          <View style={styles.playersList}>
-            {item.leaders.slice(0, 5).map((player) => {
-              const teamObj = teamList.find(
-                (t) => Number(t.espnID) === Number(player.teamId)
-              );
+  return (
+    <View style={styles.categoryContainer}>
+      <HeadingTwo style={{ marginBottom: 12 }}>
+        {item.categoryName} Leaders
+      </HeadingTwo>
 
-              return (
-                <PlayerCard
-                  key={player.athleteId}
-                  id={Number(player.athleteId)}
-                  name={player.name}
-                  position={player.position}
-                  team={teamObj?.name ?? "Unknown Team"}
-                  avatarUrl={player.headshot}
-                  statNumber={player.value}
-                  league={league}
-                />
-              );
-            })}
-          </View>
-        </View>
-      )}
+      <View style={styles.playersList}>
+        {item.leaders.slice(0, 5).map((player) => {
+          const teamObj = teamList.find(
+            (t) => Number(t.espnID) === Number(player.teamId)
+          );
+
+          return (
+            <PlayerCard
+              key={player.athleteId}
+              id={Number(player.athleteId)}
+              name={player.name}
+              position={player.position}
+              team={teamObj?.name ?? "Unknown Team"}
+              avatarUrl={player.headshot}
+              statNumber={player.value}
+              league={league}
+            />
+          );
+        })}
+      </View>
+    </View>
+  );
+}}
+
     />
   );
 }

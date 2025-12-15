@@ -40,7 +40,7 @@ export function useStandings() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/standings/nba/standings`);
+      const res = await axios.get(`${BASE_URL}/api/standings/nba`);
 
       setData(res.data.conferences);
     } catch (err: any) {

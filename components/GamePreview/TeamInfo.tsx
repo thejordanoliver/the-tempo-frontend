@@ -1,6 +1,7 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamLogo } from "constants/teams";
-import { Image, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { Team } from "../../types/types";
 
 type TeamInfoProps = {
@@ -11,8 +12,8 @@ type TeamInfoProps = {
   record?: string;
   isDark: boolean;
   isGameOver: boolean;
-  isScheduled?: boolean; // scheduled games
-  side?: "home" | "away";
+  isScheduled?: boolean;
+  side: "home" | "away";
 };
 
 export default function TeamInfo({
@@ -23,66 +24,141 @@ export default function TeamInfo({
   record,
   isDark,
   isGameOver,
-  isScheduled,
+  isScheduled = false,
   side,
 }: TeamInfoProps) {
+  const styles = teamInfoStyle;
+
+  // --- Winner / opacity logic ---
   const isWinner = isGameOver && (score ?? 0) > (opponentScore ?? 0);
+  const isTie = isGameOver && score === opponentScore;
 
-  // Opacity logic: scheduled or in-progress → full, game over loser → 0.5
-  const displayOpacity = isScheduled || !isGameOver ? 1 : isWinner ? 1 : 0.5;
+  const scoreOpacity =
+    !isGameOver || isScheduled ? 1 : isTie ? 1 : isWinner ? 1 : 0.4;
 
-  // Display record if scheduled, otherwise score
-  const displayValue =
-    isScheduled ? record ?? "-" : score !== undefined ? score : "-";
+  // --- Detect record vs score → dynamic font size ---
+  const isRecord = isScheduled;
+  const valueFontSize = isRecord ? 28 : 36;
 
-  // Always prefer the light logo if available
+  // --- Value shown ---
+  const displayValue = isRecord
+    ? record ?? "-"
+    : score !== undefined
+    ? score
+    : "-";
+
+  // Logos (prefer light variants at night)
   const logo = team ? getTeamLogo(team.id, true) : undefined;
 
   return (
-    <View style={{ alignItems: "center", position: "relative" }}>
-      <Image
-        source={logo}
-        style={{ width: 80, height: 80, resizeMode: "contain" }}
-      />
+    <View
+      style={[
+        styles.container,
+        {
+          justifyContent: side === "home" ? "flex-end" : "flex-start",
+        },
+      ]}
+    >
+      {/* ─────────── HOME SCORE (RIGHT) ─────────── */}
+      {side === "home" && (
+        <View style={styles.scoreWrapper}>
+          <Text
+            style={[
+              styles.teamValue,
+              {
+                opacity: scoreOpacity,
+                fontSize: valueFontSize, // 🔥 dynamic
+              },
+            ]}
+          >
+            {displayValue}
+          </Text>
+        </View>
+      )}
 
-      <Text
-        style={{
-          fontSize: 14,
-          fontFamily: Fonts.OSREGULAR,
-          color: "#fff",
-          marginTop: 6,
-        }}
-      >
-        {teamName}
-      </Text>
+      {/* ─────────── TEAM LOGO + NAME ─────────── */}
+      <View style={styles.teamContainer}>
+        <Image source={logo} style={styles.teamLogo} />
 
-      {/* Show score (in-progress/final) or record (scheduled) */}
-      <Text
-        style={{
-          fontSize: 30,
-          fontFamily: Fonts.OSBOLD,
-          color: "#fff",
-          opacity: displayOpacity,
-          marginTop: isScheduled && record ? 4 : 0,
-        }}
-      >
-        {displayValue}
-      </Text>
+        <Text style={styles.teamName}>{teamName}</Text>
 
-      {/* Show record under team name if not scheduled */}
-      {!isScheduled && record && (
-        <Text
-          style={{
-            fontSize: 12,
-            fontFamily: Fonts.OSREGULAR,
-            color: "#fff",
-            opacity: 0.7,
-            marginTop: 2,
-          }}
-        >
-          {record}
-        </Text>
+        {/* Final only → show record */}
+        {!isScheduled && isGameOver && record && (
+          <Text style={styles.teamRecord}>{record}</Text>
+        )}
+      </View>
+
+      {/* ─────────── AWAY SCORE (LEFT) ─────────── */}
+      {side === "away" && (
+        <View style={styles.scoreWrapper}>
+          <Text
+            style={[
+              styles.teamValue,
+              {
+                opacity: scoreOpacity,
+                fontSize: valueFontSize, // 🔥 dynamic
+              },
+            ]}
+          >
+            {displayValue}
+          </Text>
+        </View>
       )}
     </View>
   );
 }
+
+export const teamInfoStyle = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  teamContainer: {
+    alignItems: "center",
+    gap: 4,
+  },
+
+  teamName: {
+    fontSize: 14,
+    fontFamily: Fonts.OSREGULAR,
+    color: Colors.white,
+  },
+
+
+  teamLogo: {
+    width: 65,
+    height: 65,
+    resizeMode: "contain",
+  },
+
+  // Score stays centered. Icon is absolute (does NOT push score upward)
+  scoreWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    minWidth: 50,
+  },
+
+  possessionIcon: {
+    position: "absolute",
+    bottom: -20, // hangs below, does NOT shift score
+    width: 26,
+    height: 26,
+    resizeMode: "contain",
+  },
+
+  teamRecord: {
+    fontSize: 12,
+    fontFamily: Fonts.OSREGULAR,
+    color: Colors.white,
+    opacity: 0.7,
+  },
+
+  teamValue: {
+    fontSize: 32, // dynamically overridden
+    fontFamily: Fonts.OSBOLD,
+    color: Colors.white,
+  },
+});

@@ -1,5 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/Colors";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
 import { Fonts } from "constants/fonts";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { BlurView } from "expo-blur";
@@ -32,6 +33,20 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
+  const dateObj = new Date(game.date);
+  const formattedDate = dateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+
+
+  const isChampionship =
+    dateObj.getMonth() === 5 &&
+    dateObj.getDate() >= 5 &&
+    dateObj.getDate() <= 22;
+
+      const styles = gamePreviewModalStyle(isChampionship);
 
   // --- Safeguard ---
   if (!game) return null;
@@ -98,16 +113,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const isCanceled = game?.status?.long === "Canceled";
   const showLiveInfo =
     game?.status?.long !== "Scheduled" && game?.status?.long !== "Finished";
-  const dateObj = new Date(game.date);
-  const formattedDate = dateObj.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const isChampionship =
-    dateObj.getMonth() === 5 &&
-    dateObj.getDate() >= 5 &&
-    dateObj.getDate() <= 22;
 
   // --- Live scores + LineScore logic ---
   const { score: liveScore } = useGameScores(
@@ -249,9 +254,9 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           disappearsOnIndex={-1}
         />
       )}
-      handleStyle={styles.handle}
-      handleIndicatorStyle={styles.handleIndicator}
-      backgroundStyle={{ backgroundColor: "transparent" }}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
         {/* Background gradients */}
@@ -280,19 +285,19 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         <BlurView
           intensity={100}
           tint={"systemUltraThinMaterialDark"}
-          style={styles.blur}
+          style={styles.blurViewContainer}
         >
           <>
             {headlineText && (
               <>
                 {headlineText && (
-                  <Text style={styles.headline}>{headlineText}</Text>
+                  <Text style={styles.headlineText}>{headlineText}</Text>
                 )}
               </>
             )}
 
             {/* --- Header Section --- */}
-            <View style={styles.header}>
+            <View style={styles.gameHeaderContainer}>
               <TeamInfo
                 team={away}
                 teamName={away?.code ?? ""}
@@ -366,46 +371,3 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    overflow: "hidden",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  blur: {
-    flex: 1,
-    paddingHorizontal: 12,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 40,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  handle: {
-    backgroundColor: "transparent",
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    left: 8,
-    right: 8,
-    top: 0,
-  },
-  handleIndicator: {
-    backgroundColor: Colors.midTone,
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-  },
-  headline: {
-    fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
-    color: Colors.dark.white,
-    textAlign: "center",
-  },
-});

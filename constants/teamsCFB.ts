@@ -349,6 +349,7 @@ import StetsonLogo from "../assets/College_Logos/Stetson.png";
 import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
 import SusquehannaLogo from "../assets/College_Logos/Susquehanna.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
+import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
 import TexasSouthernLogo from "../assets/College_Logos/TexasSouthern.png";
 import TexasStLogo from "../assets/College_Logos/TexasSt.png";
@@ -3119,8 +3120,8 @@ export const teams: CFBTeam[] = [
     fullName: "Army Black Knights",
     oddsID: "par_01hqmkr2caerht3fgbb07m0mke",
     code: "ARMY",
-    color: "#ce9c00",
-    secondaryColor: "#231f20",
+    color: "#D4BF91",
+    secondaryColor: "#B2B4B3",
     logo: ArmyLogo,
   },
   {
@@ -3499,6 +3500,7 @@ export const teams: CFBTeam[] = [
     color: "#ff6500",
     secondaryColor: "#000e54",
     logo: SyracuseLogo,
+    logoLight: SyracuseLogoLight,
     location: "Syracuse, NY",
     city: "Syracuse",
     venue: "JMA Wireless Dome",
@@ -3552,14 +3554,15 @@ export const teams: CFBTeam[] = [
     fullName: "Maine Black Bears",
     oddsID: "par_01hqmkr2f9ej7br1c42kv6v781",
     code: "ME",
-    color: "#127dbe",
-    secondaryColor: "null",
+    color: "#003263",
+    secondaryColor: "#B0D7FF",
     logo: MaineLogo,
     location: "Orono, ME",
     city: "Orono",
     venue: "Harold Alfond Sports Stadium",
     address: "20 Belgrade Rd, Orono, ME 04469",
     venueCapacity: "10,000",
+    established: 1865,
     latitude: 44.9055,
     longitude: -68.6744,
   },
@@ -3688,7 +3691,7 @@ export const teams: CFBTeam[] = [
     logo: LSULogo,
     logoLight: LSULogoLight,
     venueImage: LSUStadium,
-    coach: "Brian Kelly",
+    coach: "Vacant",
     location: "Baton Rouge, LA",
     city: "Baton Rouge",
     venue: "Tiger Stadium",
@@ -4415,6 +4418,7 @@ export const teams: CFBTeam[] = [
     espnID: 2448,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
+    shortName: "NC A&T",
     oddsID: "par_01hqmkr2gaeqjbqdwbf4vs7bzn",
     code: "NCAT",
     color: "#0505aa",
@@ -5628,9 +5632,9 @@ export const CFB_RIVALRIES = [
   // -------------------------------
   { rivalryName: "Battle for the Fremont Cannon", teams: [2439, 2440] }, // UNLV vs Nevada
   { rivalryName: "Battle of I-25", teams: [167, 166] }, // New Mexico vs New Mexico State
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 363] }, // Army vs Navy
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 8] }, // Army vs Air Force
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [8, 363] }, // Air Force vs Navy
+  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 2426] }, // Army vs Navy
+  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 2005] }, // Army vs Air Force
+  { rivalryName: "Commander-in-Chief's Trophy", teams: [2005, 2426] }, // Air Force vs Navy
   { rivalryName: "Battle for the Golden Pineapple", teams: [62, 2439] }, // Hawaii vs UNLV
   { rivalryName: "Hawaii Bowl Rivalry", teams: [62, 278] }, // Hawaii vs Fresno State
 
@@ -6072,7 +6076,7 @@ export const getTeamInfo = (teamId: number | string) => {
 export const getCFBTeam = (id: string | number) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
-export function getTeamLogo(idOrAbbr: number | string, isDark: boolean) {
+export function getTeamLogo(idOrAbbr: number | string, isDark: boolean, lighter: boolean = false) {
   const key = String(idOrAbbr).toLowerCase();
 
   const team = teams.find(
@@ -6086,8 +6090,27 @@ export function getTeamLogo(idOrAbbr: number | string, isDark: boolean) {
 
   if (!team) return PlaceholderLogo;
 
-  return isDark ? team.logoLight || team.logo : team.logo;
+  return lighter? team.logoLight || team.logo  :  isDark ? team.logoLight || team.logo : team.logo;
 }
+
+export function getTeamLightoiLogo(idOrAbbr: number | string) {
+  const key = String(idOrAbbr).toLowerCase();
+
+  const team = teams.find(
+    (t) =>
+      String(t.id) === String(idOrAbbr) ||
+      t.code?.toLowerCase() === key ||
+      t.abbreviation?.toLowerCase() === key ||
+      t.name?.toLowerCase() === key ||
+      t.fullName?.toLowerCase() === key
+  );
+
+  if (!team) return PlaceholderLogo;
+
+  // ✅ ALWAYS prefer logoLight, fallback to logo
+  return team.logoLight || team.logo;
+}
+
 
 export function getTeamLogoESPN(idOrAbbr: number | string, isDark: boolean) {
   const idOrAbbrLower = String(idOrAbbr).toLowerCase();
@@ -6157,6 +6180,15 @@ export const neutralStadiums: Record<string, Venue> = {
     longitude: -46.4742,
     venueCapacity: "49,205",
     venueImage: require("assets/Football/Arenas/CorinthiansArena.webp"),
+  },
+  "Lucas Oil Stadium": {
+    name: "Lucas Oil Stadium",
+    city: "Indianapolis",
+    address: "500 S Capitol Ave, Indianapolis, IN 46225",
+    latitude: 39.7601,
+    longitude: -86.1639,
+    venueCapacity: "67,000",
+    venueImage: require("assets/Football/Arenas/ColtsStadium.webp"),
   },
   "Croke Park": {
     name: "Croke Park",
@@ -6230,18 +6262,73 @@ export const neutralStadiums: Record<string, Venue> = {
     longitude: -84.4008,
     venueCapacity: "71,000",
   },
-};
-
-export const venueImages: Record<string, any> = {
-  "Corinthians Arena": require("assets/Football/Arenas/CorinthiansArena.webp"),
-  "Croke Park": require("assets/Football/Arenas/CrokePark.webp"),
-  "Tottenham Hotspur Stadium": require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
-  "Olympic Stadium Berlin": require("assets/Football/Arenas/OlympicStadium.webp"),
-  "Wembley Stadium": require("assets/Football/Arenas/WembleyStadium.webp"),
-  "Levi's® Stadium": require("assets/Football/Arenas/NinersStadium.webp"),
-  "Everbank Stadium": require("assets/Football/Arenas/FloridaGeorgiaStadium.webp"),
-  "Cotton Bowl": require("assets/Football/Arenas/CottonBowl.webp"),
-  "Mercedes-Benz Stadium": require("assets/Football/Arenas/FalconsStadium.webp"),
+  "AT&T Stadium": {
+    name: "AT&T Stadium",
+    city: "Arlington",
+    venueImage: require("assets/Football/Arenas/CowboysStadium.webp"),
+    address: "1 AT&T Way, Arlington, TX 76011",
+    latitude: 32.7473,
+    longitude: -97.0945,
+    venueCapacity: "80,000",
+  },
+  "Hard Rock Stadium": {
+    name: "Hard Rock Stadium",
+    city: "Miami",
+    venueImage: require("assets/Football/Arenas/DolphinsStadium.webp"),
+    address: "347 Don Shula Dr, Miami Gardens, FL 33056",
+    latitude: 25.9579,
+    longitude: -80.239,
+    venueCapacity: "65,326",
+  },
+  "Caesars Superdome": {
+    name: "Caesars Superdome",
+    city: "New Orleans",
+    venueImage: require("assets/Football/Arenas/SaintsStadium.webp"),
+    address: "1500 Sugar Bowl Dr, New Orleans, LA 70112",
+    latitude: 29.9507,
+    longitude: -90.0811,
+    venueCapacity: "73,208",
+  },
+  "Rose Bowl": {
+    name: "Rose Bowl",
+    city: "Pasadena",
+    venueImage: {
+      uri: "https://rosebowlgame.com/images/2025/2/10/rating-story.jpg",
+    },
+    address: "1001 Rose Bowl Dr, Pasadena, CA 91103",
+    latitude: 34.1613,
+    longitude: -118.1676,
+    venueCapacity: "88,565",
+  },
+  "Camping World Stadium": {
+    name: "Camping World Stadium",
+    city: "Orlando",
+    venueImage: {
+      uri: "https://www.collegegridirons.com/bowlstadiums/images/capitolone13950.jpg",
+    },
+    address: "1 Citrus Bowl Pl, Orlando, FL 32805",
+    latitude: 28.5392,
+    longitude: -81.4028,
+    venueCapacity: "60,219",
+  },
+  "Raymond James Stadium": {
+    name: "Raymond James Stadium",
+    city: "Tampa",
+    venueImage: require("assets/Football/Arenas/BuccaneersStadium.webp"),
+    address: "4201 N Dale Mabry Hwy, Tampa, FL 33607",
+    latitude: 27.9759,
+    longitude: -82.5033,
+    venueCapacity: "69,218",
+  },
+  "SoFi Stadium": {
+    name: "SoFi Stadium",
+    city: "Inglewood",
+    venueImage: require("assets/Football/Arenas/SoFiStadium.webp"),
+    address: "1001 Stadium Dr, Inglewood, CA 90301",
+    latitude: 33.9618,
+    longitude: -118.3534,
+    venueCapacity: "70,240",
+  },
 };
 
 export const getTeamByESPNId = (espnId: number | string) => {

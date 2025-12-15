@@ -1,6 +1,5 @@
-import { StyleSheet } from "react-native";
 import { Fonts } from "constants/fonts";
-
+import { StyleSheet } from "react-native";
 
 export const combinedGameStyles = StyleSheet.create({
   skeletonWrapper: { gap: 12, marginHorizontal: 12, paddingBottom: 12 },
@@ -10,7 +9,7 @@ export const combinedGameStyles = StyleSheet.create({
   gridItem: { flex: 1 },
   listItem: { marginHorizontal: 12 },
   gridListContainer: { paddingBottom: 100 },
-  contentContainer: { paddingTop: 10 },
+  contentContainer: { paddingTop: 10 , paddingBottom: 100},
   emptyText: {
     textAlign: "center",
     marginTop: 20,

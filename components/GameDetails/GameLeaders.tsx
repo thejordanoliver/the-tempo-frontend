@@ -120,7 +120,7 @@ export default function GameLeaders({
           <Text
             style={{
               fontFamily: Fonts.OSMEDIUM,
-              fontSize: 14,
+              fontSize: 16,
               color: isSelected ? textColor : subTextColor,
             }}
           >

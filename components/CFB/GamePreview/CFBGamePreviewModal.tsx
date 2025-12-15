@@ -12,8 +12,6 @@ import {
 import LineScore from "components/GameDetails/LineScore";
 import GameLeaders from "components/NFL/GameDetails/GameLeaders";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
 import { getRivalryHeadline, neutralStadiums, teams } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,8 +23,14 @@ import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
-import { getTeamRankFromAPById, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import {
+  getTeamRankFromAPById,
+  getTeamRankFromCFPById,
+  useAPTop25,
+  useCFPTop25,
+} from "utils/CFBUtils/cfbGameUtils";
 import { CFBCenterInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
 type Props = {
@@ -39,7 +43,24 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
+  // --- Compute game date ---
+  const gameDate = useMemo(() => {
+    return game?.game?.date?.timestamp
+      ? new Date(game.game.date.timestamp * 1000)
+      : null;
+  }, [game?.game?.date?.timestamp]);
+  const gameDateStr = gameDate?.toISOString();
 
+  const isChampionship: boolean = useMemo(() => {
+    if (!gameDate) return false;
+    return (
+      gameDate.getFullYear() === 2026 &&
+      gameDate.getMonth() === 0 &&
+      gameDate.getDate() === 19
+    );
+  }, [gameDate]);
+
+  const styles = gamePreviewModalStyle(isChampionship);
   const gameInfo = game.game;
   const home = game.teams.home;
   const away = game.teams.away;
@@ -93,14 +114,6 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   ).toUpperCase();
   const gameStatus: GameStatus = statusMap[rawStatus] ?? "Scheduled";
 
-  // --- Compute game date ---
-  const gameDate = useMemo(() => {
-    return game?.game?.date?.timestamp
-      ? new Date(game.game.date.timestamp * 1000)
-      : null;
-  }, [game?.game?.date?.timestamp]);
-  const gameDateStr = gameDate?.toISOString();
-
   // Linescore
   const linescore = useMemo(() => {
     const homePeriods = [
@@ -153,7 +166,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const awayLastGames = useLastFiveGames(Number(awayTeamData?.id || 0));
 
   // Snap points
-  const snapPoints = useMemo(() => ["80%", "94%"], []);
+  const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
 
   // Modal open/close
   useEffect(() => {
@@ -187,9 +200,23 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     homeEspnId ? Number(homeEspnId) : undefined
   );
 
+  // ✅ Load both CFP and AP rankings
+  const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-  const getTeamRank = (id: number | string) =>
-    getTeamRankFromAPById(id, apTop25);
+
+  // ✅ Get ranking, falling back to AP poll if CFP is missing
+  // Check if CFP rankings are active (after they’ve been released)
+  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
+
+  // Main helper to get rank with conditional fallback
+  const getTeamRank = (id: number | string) => {
+    if (isCFPActive) {
+      // ✅ Use CFP ranking if rankings are active
+      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
+    }
+    // 🕓 Early season — fallback to AP Top 25
+    return getTeamRankFromAPById(id, apTop25) ?? "";
+  };
 
   // --- Officials & Injuries
   const { previousDrives, currentDrives, venue } = useCFBGameDetails(
@@ -322,13 +349,6 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const displayHomeScore =
     possession?.score?.home ?? game?.scores?.home?.total ?? 0;
 
-  // Championship Game Detection (Jan 19, 2026)
-  const isChampionship =
-    gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 && // January = 0
-    gameDate.getDate() === 19;
-
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -343,32 +363,11 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
           disappearsOnIndex={-1}
         />
       )}
-      handleStyle={{
-        backgroundColor: "transparent",
-        height: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        left: 8,
-        right: 8,
-        top: 0,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: Colors.lightGray,
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-      }}
-      backgroundStyle={{ backgroundColor: "transparent" }}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
     >
-      <View
-        style={{
-          flex: 1,
-          overflow: "hidden",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-        }}
-      >
+      <View style={styles.container}>
         <LinearGradient
           colors={
             isChampionship
@@ -390,41 +389,19 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
         <BlurView
           intensity={100}
           tint={"systemUltraThinMaterialDark"}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            paddingTop: 40,
-          }}
+          style={styles.blurViewContainer}
         >
           <>
             {headLine && (
               <>
                 {headLine && (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontFamily: Fonts.OSLIGHT,
-                      color: Colors.dark.white,
-                      textAlign: "center",
-                    }}
-                  >
-                    {headLine}
-                  </Text>
+                  <Text style={styles.headlineText}>{headLine}</Text>
                 )}
               </>
             )}
 
             {/* Teams + Center Info */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 20,
-              }}
-            >
+            <View style={styles.gameHeaderContainer}>
               <TeamInfo
                 team={awayTeamData}
                 teamName={
@@ -511,10 +488,10 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
           {/* Scrollable Details */}
           <BottomSheetScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            style={{ flex: 1 }}
+            contentContainerStyle={styles.contentContainerStyle}
+            style={styles.bottomSheetScrollViewContainer}
           >
-            <View style={{ gap: 20 }}>
+            <View style={styles.bottomSheetScrollViewWrapper}>
               <LineScore
                 linescore={linescore}
                 homeCode={homeTeamData.code ?? "HOM"}
@@ -542,18 +519,18 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
               />
 
               <LastFiveGamesSwitcher
-                isDark={isDark}
+                isDark={true}
                 lighter
                 home={{
                   teamCode: homeTeamData?.code ?? "",
                   teamLogo: homeTeamData?.logo,
-                  teamLogoLight: homeTeamData?.logoLight,
+                  teamLogoLight: homeTeamData?.logoLight, // 👈 leave undefined if missing
                   games: homeLastGames.games,
                 }}
                 away={{
                   teamCode: awayTeamData?.code ?? "",
                   teamLogo: awayTeamData?.logo,
-                  teamLogoLight: awayTeamData?.logoLight,
+                  teamLogoLight: awayTeamData?.logoLight, // 👈 leave undefined
                   games: awayLastGames.games,
                 }}
                 league="CFB"

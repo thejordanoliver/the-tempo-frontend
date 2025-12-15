@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import GamesList from "components/Games/GamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
 import RosterStats from "components/Team/RosterStats";
-import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamPlayerList from "components/Team/TeamRoster";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -331,7 +331,7 @@ export default function TeamDetailScreen() {
     }
   };
 
-  if (!team || selectedDate === null) {
+  if (!team) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" style={{ marginTop: 40 }} />
@@ -353,8 +353,6 @@ export default function TeamDetailScreen() {
       >
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
-
-
           <View style={styles.monthSelector}>
             <ScrollView
               ref={scrollViewRef}
@@ -374,7 +372,7 @@ export default function TeamDetailScreen() {
             >
               {monthsToShow.map(({ label, month, year }, index) => {
                 const isSelected =
-                  selectedDate.getMonth() === month &&
+                  selectedDate?.getMonth() === month &&
                   selectedDate.getFullYear() === year;
 
                 return (
@@ -404,7 +402,7 @@ export default function TeamDetailScreen() {
           <DateTimePickerModal
             isVisible={showDatePicker}
             mode="date"
-            date={selectedDate}
+            date={selectedDate ?? undefined} // ✅ FIXED
             onConfirm={handleConfirmDate}
             onCancel={handleCancelDate}
             maximumDate={new Date(2100, 11, 31)}

@@ -1,13 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { Colors } from "constants/Colors";
 import { getTeamIdByESPN, getTeamLogoESPN } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
-  Animated,
   FlatList,
   Image,
   ScrollView,
@@ -24,7 +24,6 @@ export const CFBStandingsList = () => {
   const router = useRouter();
   // 🏈 Added "cfp" (Playoff Rankings)
   const [pollMode, setPollMode] = useState<"ap" | "coaches" | "cfp">("ap");
-
 
   if (loading)
     return (
@@ -190,10 +189,7 @@ export const CFBStandingsList = () => {
   function Section({ title, data }: { title: string; data: CFBTeamRank[] }) {
     return (
       <View style={{ marginTop: 24 }}>
-        <View style={styles.header}>
-          <Text style={styles.heading}>{title}</Text>
-        </View>
-
+        <HeadingTwo>{title}</HeadingTwo>
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}

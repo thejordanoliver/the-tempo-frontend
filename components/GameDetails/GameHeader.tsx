@@ -73,46 +73,51 @@ export default function GameHeader({
 }: Props) {
   const styles = getStyles(isDark);
 
-  const normalizedStatus = (() => {
-    let raw = "";
+const normalizedStatus = (() => {
+  let raw = "";
 
-    if (typeof status === "string") {
-      raw = status.toLowerCase();
-    } else if (typeof status === "object" && status !== null) {
-      raw = (status.long || String(status.short || "") || "").toLowerCase();
-    }
+  if (typeof status === "string") {
+    raw = status.toLowerCase();
+  } else if (typeof status === "object" && status !== null) {
+    raw = (status.long || String(status.short || "") || "").toLowerCase();
+  }
 
-    // FINAL
-    if (
-      ["final", "finished", "status_final", "fulltime", "ft"].some((k) =>
-        raw.includes(k)
-      ) ||
-      raw === "f"
-    ) {
-      return "Final";
-    }
+  // 🟡 HALFTIME (must come first)
+  if (raw.includes("halftime")) {
+    return "Halftime";
+  }
 
-    // CANCELED
-    if (["canceled", "cancelled"].some((k) => raw.includes(k))) {
-      return "Canceled";
-    }
+  // 🏁 FINAL
+  if (
+    ["final", "finished", "status_final", "fulltime", "ft"].some((k) =>
+      raw.includes(k)
+    ) ||
+    raw === "f"
+  ) {
+    return "Final";
+  }
 
-    // POSTPONED
-    if (["postponed", "delayed"].some((k) => raw.includes(k))) {
-      return "Postponed";
-    }
+  // ❌ CANCELED
+  if (["canceled", "cancelled"].some((k) => raw.includes(k))) {
+    return "Canceled";
+  }
 
-    // IN PLAY
-    if (
-      ["in_play", "in progress", "live", "quarter", "halftime"].some((k) =>
-        raw.includes(k)
-      )
-    ) {
-      return "In Play";
-    }
+  // ⏸ POSTPONED
+  if (["postponed", "delayed"].some((k) => raw.includes(k))) {
+    return "Postponed";
+  }
 
-    return "Scheduled";
-  })();
+  // 🕒 IN PLAY
+  if (
+    ["in_play", "in progress", "live", "quarter"].some((k) =>
+      raw.includes(k)
+    )
+  ) {
+    return "In Play";
+  }
+
+  return "Scheduled";
+})();
 
   const awayIsWinner =
     normalizedStatus === "Final" && (awayScore ?? 0) > (homeScore ?? 0);

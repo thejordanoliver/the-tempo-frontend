@@ -31,39 +31,40 @@ interface NewsApiResponse {
   articles: BackendArticle[];
 }
 
-// Convert sanitized HTML to plain text
+/* ---------------------------------------------------------
+   1. Preserve inner text inside <a> tags
+--------------------------------------------------------- */
+function preserveAnchorText(html: string): string {
+  return html.replace(/<a [^>]*>(.*?)<\/a>/gi, "$1");
+}
+
+/* ---------------------------------------------------------
+   2. Convert sanitized HTML → readable plain text
+--------------------------------------------------------- */
 function htmlToPlainText(html: string): string {
   return html
-    .replace(/<\/p>/gi, "\n\n")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/?[^>]+(>|$)/g, "")
+    .replace(/<hl2>/gi, "\n\n")      // Convert custom headers
+    .replace(/<\/hl2>/gi, "\n\n")
+    .replace(/<\/p>/gi, "\n\n")      // Paragraph spacing
+    .replace(/<br\s*\/?>/gi, "\n")   // Line breaks
+    .replace(/<\/?[^>]+(>|$)/g, "")  // Strip all remaining tags
+    .replace(/\n{3,}/g, "\n\n")      // Collapse large newline blocks
     .trim();
 }
 
-// Sanitize and clean HTML content with sanitize-html
+/* ---------------------------------------------------------
+   3. Sanitize + clean article content
+--------------------------------------------------------- */
 function sanitizeContent(rawContent: string | null): string {
   if (!rawContent) return "No content available.";
 
-  const clean = sanitizeHtml(rawContent, {
-    allowedTags: [
-      "p",
-      "br",
-      "b",
-      "i",
-      "em",
-      "strong",
-      "ul",
-      "ol",
-      "li",
-      "a",
-      "blockquote",
-    ],
-    allowedAttributes: {
-      a: ["href", "name", "target"],
-    },
-    allowedSchemes: ["http", "https", "mailto"],
+  // Keep anchor inner text before sanitation strips tags
+  const noAnchors = preserveAnchorText(rawContent);
+
+  const clean = sanitizeHtml(noAnchors, {
+    allowedTags: ["p", "br", "b", "i", "em", "strong", "ul", "ol", "li", "blockquote"],
+    allowedAttributes: {},
     textFilter: (text) => {
-      // Remove boilerplate phrases and unwanted text
       return text
         .replace(/\[\+\d+\schars\]/g, "")
         .replace(/subscribe\s+now[^\.]*\.?/gi, "")
@@ -83,7 +84,13 @@ function sanitizeContent(rawContent: string | null): string {
   return htmlToPlainText(clean);
 }
 
-export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" = "NBA") {
+/* ---------------------------------------------------------
+   4. Hook: Fetch team news from backend API
+--------------------------------------------------------- */
+export function useTeamNews(
+  teamName?: string,
+  league: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" = "NBA"
+) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,9 +103,11 @@ export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "
       setError(null);
 
       let endpoint = "";
+
       if (league === "NBA") {
         endpoint = `${API_URL}/api/news`;
-      } else if (league === "NFL" || league === "CFB" || league ==="CBB") {
+      } 
+      else if (league === "NFL" || league === "CFB" || league === "CBB") {
         if (!teamName) {
           setArticles([]);
           setLoading(false);
@@ -147,4 +156,3 @@ export function useTeamNews(teamName?: string, league: "NBA" | "NFL" | "CFB" | "
     refreshNews,
   };
 }
-

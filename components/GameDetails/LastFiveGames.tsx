@@ -1,10 +1,11 @@
 // ---- LastFiveGamesSwitcher.tsx ----
-import FixedWidthTabBar from "components/FixedWidthTabBar";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
+import FixedWidthTabBar, { getLabelStyle } from "../TabBars/FixedWidthTabBar";
+
 type Props = {
   isDark: boolean;
   lighter?: boolean;
@@ -22,6 +23,16 @@ type Props = {
   };
   league: LeagueType;
 };
+function pickTeamLogo(
+  preferLight: boolean,
+  logo?: any,
+  logoLight?: any
+) {
+  if (preferLight && logoLight && logoLight !== logo) {
+    return logoLight;
+  }
+  return logo;
+}
 
 export default function LastFiveGamesSwitcher({
   isDark,
@@ -38,11 +49,14 @@ export default function LastFiveGamesSwitcher({
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-    const useLightLogo = isDark || lighter;
-    const opponentLogoSource =
-      useLightLogo && item.opponentLogoLight
-        ? item.opponentLogoLight
-        : item.opponentLogo;
+const useLightLogo = isDark || (lighter ?? false);
+
+const opponentLogoSource = pickTeamLogo(
+  useLightLogo,
+  item.opponentLogo,
+  item.opponentLogoLight
+);
+
 
     return (
       <View
@@ -85,15 +99,17 @@ export default function LastFiveGamesSwitcher({
           tabs={tabs}
           lighter={lighter}
           selected={selected}
-          onTabPress={setSelected}
+          onTabPress={(tab) => setSelected(tab as "home" | "away")}
           renderLabel={(tab, isSelected) => {
             const teamData = tab === "home" ? home : away;
+    const useLightLogo = isDark || (lighter ?? false);
 
-            const useLightLogo = isDark || lighter;
-            const logoSource =
-              useLightLogo && teamData.teamLogoLight
-                ? teamData.teamLogoLight
-                : teamData.teamLogo;
+const logoSource = pickTeamLogo(
+  useLightLogo,
+  teamData.teamLogo,
+  teamData.teamLogoLight
+);
+
 
             return (
               <View style={styles.tabLabel}>
@@ -102,12 +118,9 @@ export default function LastFiveGamesSwitcher({
                   style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                 />
                 <Text
-                  style={[
-                    styles.tabText,
-                    isSelected
-                      ? styles.tabTextSelected
-                      : styles.tabTextUnselected,
-                  ]}
+                  style={getLabelStyle(isDark, isSelected, lighter, {
+                    opacity: isSelected ? 1 : 0.5,
+                  })}
                 >
                   {teamData.teamCode}
                 </Text>

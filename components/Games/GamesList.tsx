@@ -5,6 +5,7 @@ import GameSquareCard from "components/Games/GameSquareCard";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCard from "components/Games/StackedGameCard";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
@@ -151,8 +152,8 @@ export default function GamesList({
 
   if (!loading && games.length === 0) {
     return (
-      <View style={{ marginTop: 10 }}>
-        <Text style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}>
+      <View>
+        <Text style={styles.emptyText}>
           {day === "todayTomorrow"
             ? "No games found for today or tomorrow."
             : "No games found on this date."}
@@ -244,10 +245,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 20,
     fontFamily: Fonts.OSLIGHT,
+    fontSize: 16,
+    textAlign: "center",
+    color: Colors.midTone,
   },
   gridItem: {
     flex: 1,

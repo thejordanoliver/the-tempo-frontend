@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { Bracket } from "components/CFB/Bracket/Bracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/CFB/ConferenceListModal";
@@ -7,10 +8,12 @@ import CFBGamesList from "components/CFB/Games/CFBGamesList";
 import RecruitsList from "components/CFB/RecruitsList";
 import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/CFB/Standings/CFBStandingsList";
+import TransferList from "components/CFB/TransferList";
 import WeekSelector from "components/CFB/WeekSelector";
 import LeagueForum from "components/Forum/LeagueForum";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import SeasonLeadersList from "components/NFL/SeasonLeaderList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -19,8 +22,9 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
+import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
+import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueNews } from "hooks/useLeagueNews";
-import TransferList from "components/CFB/TransferList";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
@@ -33,8 +37,6 @@ import {
 } from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -72,8 +74,6 @@ type CombinedItem =
   | (NewsItem & { itemType: "news" })
   | (HighlightItem & { itemType: "highlight" });
 
-
-
 export default function CFBeagueScreen() {
   const navigation = useNavigation();
   const router = useRouter();
@@ -93,7 +93,14 @@ export default function CFBeagueScreen() {
   const [recruitTeam, setRecruitTeam] = useState("all");
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "recruting" | "transfer portal" | "forum"
+    | "scores"
+    | "news"
+    | "standings"
+    | "stats"
+    | "recruting"
+    | "bracket"
+    | "transfer portal"
+    | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,15 +110,16 @@ export default function CFBeagueScreen() {
     "news",
     "standings",
     "stats",
+    "bracket",
     "recruting",
-    "transfer portal" ,
+    "transfer portal",
     "forum",
   ] as const;
 
   // --- News & Highlights ---
   const { news: cfbNews, loading: cfbLoading } = useLeagueNews("CFB");
   const { highlights } = useHighlights("cfb", "", 10);
-
+  const { data, loading, error, refresh } = useCFPBracket();
 
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
@@ -250,7 +258,6 @@ export default function CFBeagueScreen() {
           onTabPress={setSelectedTab}
         />
 
-
         <View style={styles.contentArea}>
           {selectedTab === "scores" && (
             <>
@@ -285,7 +292,6 @@ export default function CFBeagueScreen() {
 
           {selectedTab === "news" && (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
               showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
@@ -315,6 +321,8 @@ export default function CFBeagueScreen() {
           )}
 
           {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "bracket" && data && <Bracket data={data} />}
+
           {selectedTab === "transfer portal" && (
             <TransferList
               year={recruitYear}

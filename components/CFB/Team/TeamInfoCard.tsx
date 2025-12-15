@@ -140,6 +140,13 @@ export default function TeamInfoCard({ teamId, league }: Props) {
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
+            label="Head Coach"
+            value={t.coach ?? "N/A"}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
             label="Location"
             value={t.location}
             isDark={isDark}
@@ -149,13 +156,6 @@ export default function TeamInfoCard({ teamId, league }: Props) {
           <InfoCard
             label="Arena"
             value={t.venueName}
-            isDark={isDark}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Conference Championships"
-            value={t.conference_championships}
             isDark={isDark}
             team={t}
             backgroundColor={primaryColor}
@@ -185,6 +185,13 @@ export default function TeamInfoCard({ teamId, league }: Props) {
             backgroundColor={primaryColor}
           />
 
+          <InfoCard
+            label="Conference Championships"
+            value={t.conferenceChampionships?.Titles}
+            isDark={isDark}
+            team={t}
+            backgroundColor={primaryColor}
+          />
           <InfoCard
             label="Stadium"
             value={t.venue}

@@ -76,6 +76,8 @@ const FavoriteTeamsList = ({
     "Indiana",
     "Eastern Michigan",
     "Cincinnati",
+    "Dodgers",
+    "Rangers",
   ]; // add more teams as needed
 
   const handleLongPress = (team: TeamWithLeague) => {
@@ -169,9 +171,9 @@ const FavoriteTeamsList = ({
             ? useSecondaryInDark
               ? (team as any).secondaryColor ??
                 (team as any).secondary_color ??
-                "#888"
-              : team.color ?? "#888"
-            : team.color ?? "#888";
+                Colors.midTone
+              : team.color ?? Colors.midTone
+            : team.color ?? Colors.midTone;
 
           const split = team.fullName?.split(" ");
           const city = split?.slice(0, -1).join(" ");

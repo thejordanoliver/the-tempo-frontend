@@ -7,23 +7,16 @@ export const getStyles =
     container: {
       justifyContent: "center",
       alignItems: "center",
-      marginHorizontal: 8,
-      marginBottom: 8,
     },
     date: {
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
     },
     time: {
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
-      fontSize: 20,
-    },
-    broadcasts: {
-      fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
-      color: Colors.dark.white,
+      fontSize: 16,
     },
     period: {
       fontFamily: Fonts.OSMEDIUM,
@@ -38,7 +31,7 @@ export const getStyles =
     },
     downAndDistance: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
+      fontSize: 10,
       color: Colors.dark.white,
       marginTop: 2,
       textAlign: "center",
@@ -122,7 +115,7 @@ export const getStyles =
     },
 
     broadcast: {
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
       textAlign: "center",
@@ -134,8 +127,9 @@ export const getStyles =
       gap: 4,
     },
     statusDivider: {
-      height: 20,
+      height: 16,
       width: 1,
+      alignSelf: "center",
       backgroundColor: Colors.dark.white,
     },
     finalStatusDivider: {

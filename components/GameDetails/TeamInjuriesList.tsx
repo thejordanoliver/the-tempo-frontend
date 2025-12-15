@@ -3,13 +3,13 @@ import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
 import { Image, Text, View, useColorScheme, StyleSheet } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import { TeamInjury } from "./TeamInjuries"; // import your type
-
+import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png"
 type Props = {
   injuries: TeamInjury[];
   lighter: boolean;
 };
 
-const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
+const DEFAULT_HEADSHOT = playerPlaceholder;
 
 const TEAM_ID_MAP: Record<string, string> = {
   "1": "1",

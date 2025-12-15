@@ -1,59 +1,39 @@
-// components/NFLStandingsList.tsx
 import { Dropdown } from "components/Dropdown";
 import { StatusLegend } from "components/NFL/Standings/StatusLegend";
 import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { Fonts } from "constants/fonts";
-import { teams } from "constants/teamsNFL";
+import { getTeamByESPNId, nflDivisionsById, teams } from "constants/teamsNFL";
+import { useRouter } from "expo-router";
 import {
-  NFLTeamRankings,
+  NFLDivisionTeam,
   useNFLStandings,
 } from "hooks/NFLHooks/useNFLStandings";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
-  Animated,
   FlatList,
   Image,
   ImageSourcePropType,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
 import { getStyles } from "styles/Standings.styles";
 import { StatusBadge } from "./StatusBadge";
-type SectionType = {
-  title: string;
-  data: NFLTeamRankings[];
-};
+type DivisionMap = Record<string, NFLDivisionTeam[]>;
 
 export const NFLStandingsList = () => {
-  const { standings = [], loading, error } = useNFLStandings(); // default empty array
+  const { standings: conferences, loading, error } = useNFLStandings();
+  const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference"
   );
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownAnim = useRef(new Animated.Value(0)).current;
 
-  const toggleDropdown = () => {
-    if (dropdownVisible) {
-      Animated.timing(dropdownAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => setDropdownVisible(false));
-    } else {
-      setDropdownVisible(true);
-      Animated.timing(dropdownAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
+  // ========= 1. Loading / Error =========
   if (loading)
     return (
       <View style={{ flex: 1 }}>
@@ -61,134 +41,178 @@ export const NFLStandingsList = () => {
       </View>
     );
 
-  if (error)
+  if (error || !conferences)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "red" }}>{error}</Text>
+        <Text style={{ color: "red" }}>
+          {error || "Failed to load standings"}
+        </Text>
       </View>
     );
 
-  // --- Grouping logic safely ---
-  const east: NFLTeamRankings[] = standings
-    .filter((t) => t.conference === "American Football Conference")
-    .sort((a, b) => parseInt(b.wins) - parseInt(a.wins));
+  // ========= 2. Extract AFC / NFC =========
+  const afc = conferences.find(
+    (c) => c.name === "AFC" || c.name.includes("American")
+  );
+  const nfc = conferences.find(
+    (c) => c.name === "NFC" || c.name.includes("National")
+  );
 
-  const west: NFLTeamRankings[] = standings
-    .filter((t) => t.conference === "National Football Conference")
-    .sort((a, b) => parseInt(b.wins) - parseInt(a.wins));
+  const afcData: NFLDivisionTeam[] = afc?.standings ?? [];
+  const nfcData: NFLDivisionTeam[] = nfc?.standings ?? [];
 
-  const divisions: Record<string, NFLTeamRankings[]> = {};
-  standings.forEach((team) => {
-    if (!divisions[team.division]) divisions[team.division] = [];
-    divisions[team.division].push(team);
+  // ========= 3. Apply local division map =========
+  const divisions: DivisionMap = {};
+
+  Object.entries(nflDivisionsById).forEach(([divisionName, idList]) => {
+    divisions[divisionName] = conferences
+      .flatMap((conf) => conf.standings)
+      .filter((team) => idList.includes(team.teamId));
   });
 
-  const hasClinchedConference = (
-    team: NFLTeamRankings,
-    confTeams: NFLTeamRankings[]
-  ) => {
-    const totalGames = 18; // NFL regular season
+  const getClinchStatus = (team: NFLDivisionTeam) => {
+    const text = team.clincher?.toLowerCase() ?? "";
 
-    const teamWins = parseInt(team.wins);
-    const teamLosses = parseInt(team.losses);
-    const teamTies = parseInt(team.ties || "0");
-    const teamRemaining = totalGames - (teamWins + teamLosses + teamTies);
-
-    // Maximum wins other teams could achieve
-    for (const other of confTeams) {
-      if (other.id === team.id) continue;
-
-      const otherWins = parseInt(other.wins);
-      const otherLosses = parseInt(other.losses);
-      const otherTies = parseInt(other.ties || "0");
-      const otherRemaining = totalGames - (otherWins + otherLosses + otherTies);
-
-      const otherMaxWins = otherWins + otherRemaining;
-
-      // If any other team could surpass current team, it hasn't clinched yet
-      if (otherMaxWins > teamWins) return false;
+    if (text.includes("eliminated")) {
+      return { type: "eliminated", label: "E" };
     }
 
-    return true; // No other team can surpass this team
+    if (text.includes("clinched division")) {
+      return { type: "division", label: "X" }; // standard division clinch label
+    }
+
+    if (text.includes("clinched playoff")) {
+      return { type: "playoffs", label: "P" };
+    }
+
+    return null;
   };
 
-  // --- Render functions ---
+  // ========= 4. Clinched Logic =========
+  const hasClinchedConference = (
+    team: NFLDivisionTeam,
+    confTeams: NFLDivisionTeam[]
+  ) => {
+    const totalGames = 18;
+
+    const w = team.wins ?? 0;
+    const l = team.losses ?? 0;
+    const t = team.ties ?? 0;
+
+    for (const other of confTeams) {
+      if (other.teamId === team.teamId) continue;
+
+      const ow = other.wins ?? 0;
+      const ol = other.losses ?? 0;
+      const ot = other.ties ?? 0;
+
+      const teamRemaining = totalGames - (w + l + t);
+      const otherRemaining = totalGames - (ow + ol + ot);
+
+      if (ow + otherRemaining > w) return false;
+    }
+
+    return true;
+  };
+
+  // ========= 5. Render Functions =========
+
   const renderLeftItem = ({
     item,
     index,
   }: {
-    item: NFLTeamRankings;
+    item: NFLDivisionTeam;
     index: number;
   }) => {
-    const team = teams.find((t) => t.espnID === item.id);
-    const teamLogo: ImageSourcePropType = isDark
-      ? team?.logoLight ||
-        team?.logo ||
-        require("assets/Football/NFL_Logos/NFL.png")
-      : team?.logo || require("assets/Football/NFL_Logos/NFL.png");
+    const teamMeta = teams.find((t) => t.espnID === item.teamId);
 
-    let showBadge = false;
-    if (sortMode === "conference") {
-      const confTeams =
-        item.conference === "American Football Conference" ? east : west;
-      showBadge = hasClinchedConference(item, confTeams);
-    }
+    const logo: ImageSourcePropType = isDark
+      ? teamMeta?.logoLight ||
+        teamMeta?.logo ||
+        require("assets/Football/NFL_Logos/NFL.png")
+      : teamMeta?.logo || require("assets/Football/NFL_Logos/NFL.png");
+
+    const confList = item.conference.includes("American") ? afcData : nfcData;
+
+    const clinch = getClinchStatus(item);
+
+    const showConfBadge =
+      sortMode === "conference" &&
+      !clinch && // don't show conference badge if ESPN already has clincher
+      hasClinchedConference(item, confList);
 
     return (
       <View style={styles.row}>
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{index + 1}</Text>
         </View>
+
         <View style={styles.teamInfo}>
-          <Image source={teamLogo} style={styles.logo} />
-          <Text style={styles.teamName}>{item.abbreviation}</Text>
-          {showBadge && (
-            <StatusBadge code={item.seed} clinchedConference={true} />
-          )}
+          <TouchableOpacity
+            style={styles.teamInfoWrapper}
+            onPress={() => {
+              const team = getTeamByESPNId(item.teamId);
+              if (!team) return;
+              router.push({
+                pathname: "/team/nfl/[teamId]",
+                params: { teamId: String(team.id) },
+              });
+            }}
+          >
+            <Image source={logo} style={styles.logo} />
+            <Text style={styles.teamName}>{item.abbreviation}</Text>
+            {clinch ? (
+              <StatusBadge
+                clincher={item.clincher} // let badge parse it
+              />
+            ) : showConfBadge ? (
+              <StatusBadge
+                code={String(item.playoffSeed ?? "")}
+                clinchedConference
+              />
+            ) : null}
+          </TouchableOpacity>
         </View>
       </View>
     );
   };
 
-  const renderRightItem = ({ item }: { item: NFLTeamRankings }) => {
-    const totalGames = parseInt(item.wins) + parseInt(item.losses);
-    const winPct =
-      totalGames > 0
-        ? ((parseInt(item.wins) / totalGames) * 100).toFixed(1) + "%"
-        : "0%";
-    const ties = parseInt(item.ties || "0");
+  const renderRightItem = ({ item }: { item: NFLDivisionTeam }) => {
+    const w = item.wins ?? 0;
+    const l = item.losses ?? 0;
+    const t = item.ties ?? 0;
 
-    // Determine streak color
-    const winStreak = item.streak?.startsWith("W");
-    const streakColor = winStreak ? "limegreen" : "tomato";
+    const total = w + l + t;
+    const pct = total > 0 ? ((w / total) * 100).toFixed(1) + "%" : "0%";
+
+    const streakColor = item.streak?.startsWith("W") ? "limegreen" : "tomato";
 
     return (
       <View style={styles.row}>
         <View style={styles.statCell}>
-          <Text style={styles.statText}>
-            {item.wins}
-            {ties > 0 ? `-${ties}` : ""}-{item.losses}
-          </Text>
+          <Text style={styles.statText}>{`${w}${
+            t > 0 ? `-${t}` : ""
+          }-${l}`}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{winPct}</Text>
+          <Text style={styles.statText}>{pct}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.home}</Text>
+          <Text style={styles.statText}>{item.homeRecord}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.road}</Text>
+          <Text style={styles.statText}>{item.roadRecord}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.vsDiv}</Text>
+          <Text style={styles.statText}>{item.vsdiv}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.vsConf}</Text>
+          <Text style={styles.statText}>{item.conferenceRecord}</Text>
         </View>
 
         <View style={styles.statCell}>
@@ -215,9 +239,7 @@ export const NFLStandingsList = () => {
           #
         </Text>
       </View>
-      <View>
-        <Text style={styles.teamHeaderText}>Team</Text>
-      </View>
+      <Text style={styles.teamHeaderText}>Team</Text>
     </View>
   );
 
@@ -241,40 +263,47 @@ export const NFLStandingsList = () => {
     </View>
   );
 
-  function Section({ title, data }: SectionType) {
-    return (
-      <View style={{ marginTop: 12 }}>
-        <View style={[styles.header]}>
-          <Text style={styles.heading}>{title}</Text>
-        </View>
-        <View style={{ flexDirection: "row" }}>
+  const Section = ({
+    title,
+    data,
+  }: {
+    title: string;
+    data: NFLDivisionTeam[];
+  }) => (
+    <View style={{ marginTop: 12 }}>
+      <View style={styles.header}>
+        <Text style={styles.heading}>{title}</Text>
+      </View>
+
+      <View style={{ flexDirection: "row" }}>
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.teamId.toString()}
+          renderItem={renderLeftItem}
+          scrollEnabled={false}
+          ListHeaderComponent={renderHeader}
+          stickyHeaderIndices={[0]}
+        />
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ width: 220 }}
+        >
           <FlatList
             data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={renderLeftItem}
+            keyExtractor={(item) => item.teamId.toString()}
+            renderItem={renderRightItem}
             scrollEnabled={false}
-            ListHeaderComponent={renderHeader}
+            ListHeaderComponent={renderStatsHeader}
             stickyHeaderIndices={[0]}
           />
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ width: 220 }} // increased
-          >
-            <FlatList
-              data={data}
-              keyExtractor={(item) => item.id}
-              renderItem={renderRightItem}
-              scrollEnabled={false}
-              ListHeaderComponent={renderStatsHeader}
-              stickyHeaderIndices={[0]}
-            />
-          </ScrollView>
-        </View>
+        </ScrollView>
       </View>
-    );
-  }
+    </View>
+  );
 
+  // ========= FINAL RENDER =============
   return (
     <ScrollView
       contentContainerStyle={{
@@ -289,25 +318,22 @@ export const NFLStandingsList = () => {
           { label: "Division", value: "division" },
         ]}
         selectedValue={sortMode}
-        onSelect={(value) => setSortMode(value as "conference" | "division")}
+        onSelect={(value) => setSortMode(value as any)}
         isDark={isDark}
         absolute
       />
 
       {sortMode === "conference" ? (
         <>
-          <Section title="AFC" data={east} />
-          <Section title="NFC" data={west} />
+          <Section title="AFC" data={afcData} />
+          <Section title="NFC" data={nfcData} />
         </>
       ) : (
-        Object.entries(divisions).map(([divisionName, teams]) => (
-          <Section
-            key={divisionName}
-            title={`${divisionName} Division`}
-            data={teams}
-          />
+        Object.entries(divisions).map(([name, list]) => (
+          <Section key={name} title={`${name} Division`} data={list} />
         ))
       )}
+
       <StatusLegend />
     </ScrollView>
   );

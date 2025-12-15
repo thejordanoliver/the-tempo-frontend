@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
+import DraftList from "components/League/DraftList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import DraftList from "components/NFL/DraftList";
 import NFLGamesList from "components/NFL/Games/NFLGamesList";
 import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import { NFLStandingsList } from "components/NFL/Standings/NFLStandingsList";
@@ -258,7 +258,6 @@ export default function NFLLeagueScreen() {
 
           {selectedTab === "news" && (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
               showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
@@ -287,6 +286,7 @@ export default function NFLLeagueScreen() {
               onYearChange={setDraftYear}
               onTeamChange={setDraftTeam}
               onRoundChange={setDraftRound}
+              league="nfl"
             />
           )}
 

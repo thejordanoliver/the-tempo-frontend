@@ -9,8 +9,9 @@ import Officials from "components/GameDetails/Officials";
 import TeamInjuries from "components/GameDetails/TeamInjuries";
 import TeamLocationSection from "components/GameDetails/TeamLocationSection";
 import Weather from "components/GameDetails/Weather";
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
 
 export default function GamePreviewContent({
   game,
@@ -34,7 +35,15 @@ export default function GamePreviewContent({
   weatherLoading,
   weatherError,
   isDark,
+    isChampionship = false,
 }: any) {
+
+  // Use shared GamePreview styling
+  const styles = useMemo(
+    () => gamePreviewModalStyle(isChampionship),
+    [isChampionship]
+  );
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
@@ -42,7 +51,7 @@ export default function GamePreviewContent({
     >
       {/* Line Score */}
       {lineScore && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <LineScore
             linescore={lineScore}
             homeCode={home?.code}
@@ -51,10 +60,11 @@ export default function GamePreviewContent({
           />
         </View>
       )}
+      
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <LastFiveGamesSwitcher
             isDark={isDark}
             lighter
@@ -78,7 +88,7 @@ export default function GamePreviewContent({
       {/* Game Stats */}
       {game?.id && gameStats?.length > 0 && (
         <>
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 20 }}>
             <GameLeaders
               gameId={game.id.toString()}
               awayTeamId={away?.id}
@@ -87,7 +97,7 @@ export default function GamePreviewContent({
             />
           </View>
 
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 20 }}>
             <BoxScore
               gameId={game.id.toString()}
               awayTeamId={away?.id}
@@ -96,7 +106,7 @@ export default function GamePreviewContent({
             />
           </View>
 
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 20 }}>
             <GameTeamStats stats={gameStats} lighter />
           </View>
         </>
@@ -104,13 +114,13 @@ export default function GamePreviewContent({
 
       {/* Injuries */}
 
-      <View style={{ marginBottom: 24 }}>
+      <View style={{ marginBottom: 20 }}>
         <TeamInjuries injuries={injuries} lighter />
       </View>
 
       {/* Uniforms */}
       {home?.id && away?.id && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <GameUniforms
             homeTeamId={home.id.toString()}
             awayTeamId={away.id.toString()}
@@ -128,7 +138,7 @@ export default function GamePreviewContent({
 
       {/* Venue Info */}
       {(resolvedVenueImage || resolvedVenueName) && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <TeamLocationSection
             venueImage={resolvedVenueImage}
             venueName={resolvedVenueName}
@@ -144,7 +154,7 @@ export default function GamePreviewContent({
 
       {/* Weather */}
       {weather && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <Weather
             address={resolvedVenueAddress}
             weather={weather}

@@ -72,8 +72,8 @@ const getStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      paddingVertical: 14,
-      paddingHorizontal: 10,
+     paddingVertical: 18,
+      paddingHorizontal: 20,
       alignItems: "center",
       justifyContent: "space-evenly",
     },

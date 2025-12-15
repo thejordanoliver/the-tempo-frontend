@@ -4,34 +4,58 @@ import BoxScore from "components/GameDetails/BoxScore";
 import GameTeamStats from "components/GameDetails/GameTeamStats";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import Officials from "components/GameDetails/Officials";
-import Weather from "components/GameDetails/Weather";
 import React from "react";
 import { View } from "react-native";
 import GameLeaders from "../GameDetails/GameLeaders";
+import GameOddsSection from "../GameDetails/GameOddsSection";
+type GamePreviewContentProps = {
+  game: any;
+  home: any;
+  away: any;
+  officials: any;
+  lineScore: any;
+  gameDateISO: string;  // 👈 full ISO timestamp
+  gameDateStr: string;  // 👈 YYYY-MM-DD
+  leaders: any;
+  homeLastGames: any;
+  awayLastGames: any;
+  gameStats: any;
+  data?: any;
+  resolvedVenueAddress?: string;
+  isDark?: boolean;
+};
+
 export default function GamePreviewContent({
   game,
   home,
   away,
   officials,
   lineScore,
+  gameDateISO,
+  gameDateStr,
   leaders,
   homeLastGames,
   awayLastGames,
   gameStats,
   data,
   resolvedVenueAddress,
-  weather,
-  weatherLoading,
-  weatherError,
   isDark,
-}: any) {
+}: GamePreviewContentProps) {
+  console.log("CBB odds props:", {
+    gameId: game?.id,
+    homeCode: home?.code,
+    awayCode: away?.code,
+    gameDateISO,
+    gameDateStr,
+  });
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
       {lineScore && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <LineScore
             linescore={lineScore}
             homeCode={home.code}
@@ -42,11 +66,23 @@ export default function GamePreviewContent({
         </View>
       )}
 
+      {/* Odds */}
+      <View style={{ marginBottom: 20 }}>
+        <GameOddsSection
+          date={gameDateISO}            // 👈 ISO datetime for upcoming odds
+          gameDate={gameDateStr}        // 👈 YYYY-MM-DD for historical odds
+          awayCode={away.code ?? ""}
+          homeCode={home.code ?? ""}
+          gameId={String(game?.id ?? "")}
+          lighter
+        />
+      </View>
+
       {leaders &&
         (leaders?.home?.length > 0 ||
           leaders?.away?.length > 0 ||
-          leaders?.length > 0) && ( // fallback if array form
-          <View style={{ marginBottom: 24 }}>
+          leaders?.length > 0) && (
+          <View style={{ marginBottom: 20 }}>
             <GameLeaders
               leaders={leaders}
               awayTeamId={Number(away.espnID)}
@@ -56,12 +92,12 @@ export default function GamePreviewContent({
           </View>
         )}
 
-      {/* Last Five Games */}
+   {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <LastFiveGamesSwitcher
-            isDark={isDark}
+            isDark={false}
             lighter
             home={{
               teamCode: home?.code,
@@ -79,11 +115,9 @@ export default function GamePreviewContent({
           />
         </View>
       )}
-
-      {/* Game Stats */}
       {game?.id && gameStats?.length > 0 && (
         <>
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 20 }}>
             <BoxScore
               gameId={game.id.toString()}
               homeTeamId={home?.id}
@@ -91,7 +125,7 @@ export default function GamePreviewContent({
             />
           </View>
 
-          <View style={{ marginBottom: 24 }}>
+          <View style={{ marginBottom: 20 }}>
             <GameTeamStats stats={gameStats} lighter />
           </View>
         </>
@@ -103,19 +137,6 @@ export default function GamePreviewContent({
         error={null}
         lighter
       />
-
-      {/* Weather */}
-      {weather && (
-        <View style={{ marginBottom: 24 }}>
-          <Weather
-            address={resolvedVenueAddress}
-            weather={weather}
-            lighter
-            loading={weatherLoading}
-            error={weatherError ?? null}
-          />
-        </View>
-      )}
     </BottomSheetScrollView>
   );
 }

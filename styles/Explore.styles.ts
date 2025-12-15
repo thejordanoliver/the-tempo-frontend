@@ -1,29 +1,12 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
-import { Colors } from "constants/Colors";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 12,
   },
 
-  searchBarWrapper: {
-    overflow: "hidden",
-  },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: "#888",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 16,
-    color: "#000",
-    fontFamily: Fonts.OSLIGHT,
-  },
-  searchInputDark: {
-    borderColor: "#555",
-    color: "#fff",
-  },
   itemContainer: {
     paddingVertical: 8,
     flexDirection: "row",
@@ -31,11 +14,11 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   itemContainerDark: {
-    borderBottomColor: "#333",
+    borderBottomColor: Colors.darkGray,
   },
   teamName: {
- fontSize: 16,
-  fontFamily: Fonts.OSLIGHT,
+    fontSize: 16,
+    fontFamily: Fonts.OSLIGHT,
   },
   playerRow: {
     flexDirection: "row",
@@ -46,34 +29,34 @@ export const styles = StyleSheet.create({
     height: 36,
     borderRadius: 24,
     marginRight: 12,
-    backgroundColor: "#888",
+    backgroundColor: Colors.midTone,
   },
   playerInfo: {},
   playerName: {
-   fontSize: 16,
-  fontFamily: Fonts.OSLIGHT,
+    fontSize: 16,
+    fontFamily: Fonts.OSLIGHT,
   },
   playerTeam: {
     fontSize: 16,
-  fontFamily: Fonts.OSLIGHT,
-    color: "#555",
+    fontFamily: Fonts.OSLIGHT,
+    color: Colors.darkGray,
     opacity: 0.5,
   },
   textDark: {
-    color: "#eee",
+    color: Colors.white,
   },
   emptyText: {
     textAlign: "center",
     marginTop: 20,
     fontSize: 16,
-    color: "#888",
+    color: Colors.midTone,
   },
   errorText: {
-    color: "red",
+    color: Colors.light.red,
     textAlign: "center",
   },
   errorTextDark: {
-    color: "#ff6666",
+    color: Colors.dark.lightRed,
   },
   centerPrompt: {
     flex: 1,
@@ -89,7 +72,7 @@ export const styles = StyleSheet.create({
   promptText: {
     fontSize: 24,
     fontFamily: Fonts.OSREGULAR,
-    color: "#555",
+    color: Colors.darkGray,
   },
 
   teamRow: {
@@ -120,6 +103,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 6,
     borderBottomWidth: 1,
-    borderBottomColor: "#888",
+    borderBottomColor: Colors.midTone,
   },
 });

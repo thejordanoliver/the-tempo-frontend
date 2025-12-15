@@ -1,8 +1,8 @@
 // components/Forum/PostItem.tsx
-import { Fonts } from "constants/fonts";
-import { useLikesStore } from "store/useLikesStore";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
@@ -19,9 +19,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PostImages from "./PostImages";
+import { useLikesStore } from "store/useLikesStore";
 import { getAccessToken } from "utils/authStorage";
-
+import PostImages from "./PostImages";
 export interface Post {
   id: string;
   username: string;
@@ -567,6 +567,13 @@ export function getStyles(isDark: boolean) {
       height: 250,
       borderRadius: 8,
       marginBottom: 10,
+    },
+    emptyText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: Colors.midTone,
     },
   });
 }

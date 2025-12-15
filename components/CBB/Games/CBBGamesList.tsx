@@ -2,6 +2,7 @@ import GameCardSkeleton from "components/Games/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
@@ -228,10 +229,8 @@ export default function CBBGamesList({
           scrollEnabled={scrollEnabled ?? true}
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <View style={{ marginTop: 10 }}>
-              <Text
-                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
-              >
+            <View>
+              <Text style={styles.emptyText}>
                 {day === "todayTomorrow"
                   ? "No CBB games found for today or tomorrow."
                   : "No CBB games found."}
@@ -303,10 +302,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 20,
     fontFamily: Fonts.OSLIGHT,
+    fontSize: 16,
+    textAlign: "center",
+    color: Colors.midTone,
   },
   headerWrapper: {
     marginHorizontal: 12,

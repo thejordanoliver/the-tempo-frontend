@@ -142,7 +142,10 @@ export default function LoginScreen() {
       const { user, accessToken, refreshToken } = res.data;
 
       await storeUserData(user, accessToken, refreshToken);
-      console.log("✅ Login token stored:", await AsyncStorage.getItem("accessToken"));
+      console.log(
+        "✅ Login token stored:",
+        await AsyncStorage.getItem("accessToken")
+      );
 
       router.replace({
         pathname: "/(tabs)/profile",
@@ -221,7 +224,10 @@ export default function LoginScreen() {
     const { user, accessToken, refreshToken } = result;
     try {
       await storeUserData(user, accessToken, refreshToken);
-      console.log("✅ Signup access token:", await AsyncStorage.getItem("accessToken"));
+      console.log(
+        "✅ Signup access token:",
+        await AsyncStorage.getItem("accessToken")
+      );
 
       router.replace({
         pathname: "/(tabs)/profile",
@@ -298,20 +304,38 @@ export default function LoginScreen() {
       }),
     [signupStep]
   );
+  // ======================================================
+  // HEADER TITLE MAP
+  // ======================================================
+  const headerTitles: Record<number, string> = {
+    0: "Create Account",
+    1: "Select Favorite Teams",
+    2: "Upload Images",
+    3: "Review Details",
+  };
 
+  // ======================================================
+  // USELAYOUTEFFECT FOR HEADER
+  // ======================================================
   useLayoutEffect(() => {
     const showBackButton = !(
       selectedTab === "sign in" ||
       (selectedTab === "sign up" && signupStep === 0)
     );
+
+    const headerTitle =
+      selectedTab === "sign in"
+        ? "Sign In"
+        : headerTitles[signupStep] || "Sign Up";
+
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          title="The Logo"
+          title={headerTitle}
           tabName="Login"
           onBack={() => {
             if (selectedTab === "sign up" && signupStep > 0) {
-              setSignupStep((s) => Math.max(0, s - 1));
+              setSignupStep((prev) => prev - 1);
             } else {
               goBack();
             }
@@ -322,7 +346,7 @@ export default function LoginScreen() {
         />
       ),
     });
-  }, [navigation, isDark, selectedTab, signupStep, isGridView]);
+  }, [navigation, selectedTab, signupStep, isGridView]);
 
   const handleToggleFavorite = (league: LeagueType, id: string) => {
     const key = `${league}:${id}`;
@@ -392,9 +416,7 @@ export default function LoginScreen() {
               transform: [{ scale: scaleAnim }],
             }}
           >
-            {signupStep === 0 && (
-              <Text style={styles.title}>Create Account</Text>
-            )}
+        
             <SignupSteps
               signupData={signupData}
               signupStep={signupStep}

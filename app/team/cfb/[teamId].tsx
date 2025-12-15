@@ -72,11 +72,11 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useCFBTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-const {
-  highlights: teamHighlights,
-  loading: highlightsLoading,
-  error: highlightsError,
-} = useTeamHighlights("cfb", team?.fullName ?? "", 5);
+  const {
+    highlights: teamHighlights,
+    loading: highlightsLoading,
+    error: highlightsError,
+  } = useTeamHighlights("cfb", team?.fullName ?? "", 5);
 
   const {
     articles: newsArticles,

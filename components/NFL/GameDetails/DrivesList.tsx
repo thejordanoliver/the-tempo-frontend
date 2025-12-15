@@ -13,10 +13,11 @@ export type Drive = {
   description: string;
   result: string;
   shortDisplayResult: string;
+  displayResult: string;
   offensivePlays: number;
   yards: number;
   team: {
-    id?: number;  // ESPN team ID
+    id?: number;
     displayName: string;
     shortDisplayName: string;
     abbreviation: string;
@@ -43,9 +44,21 @@ export default function DrivesList({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
+  // Normalize
   const safePrevious = Array.isArray(previousDrives) ? previousDrives : [];
   const safeCurrent = Array.isArray(currentDrives) ? currentDrives : [];
-  const drives = [...safeCurrent, ...safePrevious];
+
+  // ⭐ COMBINE BUT ENSURE UNIQUE IDS
+  const combined = [...safeCurrent, ...safePrevious];
+
+  // ⭐ DE-DUPLICATE BY DRIVE ID
+  const seen = new Set<string>();
+  const drives = combined.filter((d) => {
+    if (!d || !d.id) return false;
+    if (seen.has(d.id)) return false; // skip duplicates
+    seen.add(d.id);
+    return true;
+  });
 
   if (loading) return <Text style={styles.emptyText}>Loading drives...</Text>;
   if (error) return <Text style={styles.emptyText}>{error}</Text>;
@@ -53,13 +66,20 @@ export default function DrivesList({
     return <Text style={styles.emptyText}>No drives available</Text>;
 
   const textColor = lighter ? Colors.white : isDark ? Colors.white : Colors.black;
-  const subTextColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.darkGray;
-  const borderColor = lighter ? Colors.lightGray : isDark ? Colors.midTone : Colors.lightGray;
+  const subTextColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.darkGray;
 
-  // ⭐ ID-based team matching only
+  const borderColor = lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.lightGray;
+
   const getTeamCodeById = (espnId?: number): string | null => {
     if (!espnId) return null;
-
     const list = league === "CFB" ? CFBTeams : NFLTeams;
     const match = list.find((t) => Number(t.espnID) === Number(espnId));
     return match?.code ?? null;
@@ -76,16 +96,12 @@ export default function DrivesList({
       <ScrollView style={{ maxHeight: 400 }}>
         <FlatList
           data={drives}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyExtractor={(item) => item.id} // 👈 now ID is unique
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item }) => {
             const useLightLogo = lighter || isDark;
-
-            // 🎯 ESPN ID → internal team code
             const teamCode = getTeamCodeById(item.team.id);
-
-            // 🎯 internal code → correct logo
             const logo = teamCode
               ? getTeamLogoByCode(teamCode, useLightLogo)
               : null;
@@ -141,7 +157,7 @@ export default function DrivesList({
                 </Text>
 
                 <Text style={[styles.driveDetail, { color: resultColor }]}>
-                  Result: {item.result ?? "N/A"}
+                  Result: {item.displayResult ?? "N/A"}
                 </Text>
               </View>
             );

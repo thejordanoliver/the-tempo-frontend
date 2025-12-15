@@ -223,6 +223,8 @@ export default function GameCard({
     gameDateStr
   );
 
+  const headline = headlineText || holidayLabel
+
   const ScoreText = ({
     score,
     recordData,
@@ -263,7 +265,7 @@ export default function GameCard({
       />
 
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
+      <Text style={[styles.headlineText]}>{headline}</Text>
 
       {/* Center Info */}
       <View

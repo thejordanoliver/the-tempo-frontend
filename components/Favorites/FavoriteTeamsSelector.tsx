@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Animated, FlatList } from "react-native";
 import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "./FavoriteTeamsSelectorSkeleton";
@@ -33,30 +33,30 @@ const FavoriteTeamsSelector = ({
     });
   }, [teams, search]);
 
-
-
   const renderItem = useCallback(
-  ({ item }: { item: LeagueTeam }) => {
-    const displayItem = {
-      ...item,
-      fullName:
-        item.league === "NFL" || item.league === "NBA"
-          ? item.fullName
-          : item.fullName || item.name,
-    };
+    ({ item }: { item: LeagueTeam }) => {
+      const displayItem = {
+        ...item,
+        fullName:
+          item.league === "NFL" || item.league === "NBA"
+            ? item.fullName
+            : item.fullName || item.name,
+      };
 
-    return (
-      <TeamCard
-        item={displayItem}
-        isSelected={favorites.includes(`${item.league}:${item.id.toString()}`)}
-        onPress={() => toggleFavorite(item.league, item.id.toString())}
-        isGridView={isGridView}
-        itemWidth={itemWidth}
-      />
-    );
-  },
-  [favorites, isGridView, itemWidth, toggleFavorite]
-);
+      return (
+        <TeamCard
+          item={displayItem}
+          isSelected={favorites.includes(
+            `${item.league}:${item.id.toString()}`
+          )}
+          onPress={() => toggleFavorite(item.league, item.id.toString())}
+          isGridView={isGridView}
+          itemWidth={itemWidth}
+        />
+      );
+    },
+    [favorites, isGridView, itemWidth, toggleFavorite]
+  );
 
   if (loading) {
     return (
@@ -74,18 +74,22 @@ const FavoriteTeamsSelector = ({
         data={filteredTeams}
         keyExtractor={(item) => `${item.league}-${item.id}`}
         numColumns={isGridView ? 3 : 1}
+        contentContainerStyle={{
+          flexGrow: 1,
+          alignItems: isGridView ? "center" : "stretch", // ⭐ Fix for list mode
+          paddingBottom: 20,
+        }}
         columnWrapperStyle={
           isGridView
             ? {
+                width: itemWidth * 3 + 24,
                 justifyContent: "flex-start",
                 gap: 12,
                 marginBottom: 12,
-                flexWrap: "wrap",
               }
             : undefined
         }
-       renderItem={renderItem}
-
+        renderItem={renderItem}
         showsVerticalScrollIndicator={false}
       />
     </Animated.View>

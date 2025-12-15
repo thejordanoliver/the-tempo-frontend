@@ -1,8 +1,6 @@
-import { Fonts } from "constants/fonts";
 import { players } from "constants/nflPlayers";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { useMemo, useState } from "react";
-import { Colors } from "constants/Colors";
 import {
   ActivityIndicator,
   FlatList,
@@ -14,7 +12,9 @@ import {
 } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../Headings/HeadingTwo";
-import FixedWidthTabBar from "../../TabBars/FixedWidthTabBar";
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "../../TabBars/FixedWidthTabBar";
 
 type Injury = {
   status: string;
@@ -69,18 +69,17 @@ export default function NFLInjuries({
   const homeAbbr = homeTeamAbbr?.toUpperCase();
 
   const orderedTabs = useMemo(() => {
-    if (!injuries || injuries.length === 0) return [];
-    const allAbbrs = injuries.map((t) => t.team.abbreviation.toUpperCase());
-    const tabs: string[] = [];
+    // ALWAYS create 2 tabs
+    const away =
+      awayAbbr || injuries[0]?.team.abbreviation?.toUpperCase() || "AWY";
 
-    if (awayAbbr && allAbbrs.includes(awayAbbr)) tabs.push(awayAbbr);
-    if (homeAbbr && allAbbrs.includes(homeAbbr) && homeAbbr !== awayAbbr)
-      tabs.push(homeAbbr);
-    allAbbrs.forEach((abbr) => {
-      if (!tabs.includes(abbr)) tabs.push(abbr);
-    });
-    return tabs;
-  }, [injuries, awayAbbr, homeAbbr]);
+    const home =
+      homeAbbr ||
+      injuries[1]?.team.abbreviation?.toUpperCase() ||
+      (away !== "HOM" ? "HOM" : "HOME");
+
+    return [away, home];
+  }, [awayAbbr, homeAbbr, injuries]);
 
   const [selectedTeam, setSelectedTeam] = useState<string>(() => {
     if (awayAbbr && orderedTabs.includes(awayAbbr)) return awayAbbr;
@@ -131,7 +130,9 @@ export default function NFLInjuries({
           styles.injuryItem,
           {
             borderBottomWidth:
-              index === (teamData?.injuries.length ?? 0) - 1 ? 0 : StyleSheet.hairlineWidth,
+              index === (teamData?.injuries.length ?? 0) - 1
+                ? 0
+                : StyleSheet.hairlineWidth,
           },
         ]}
       >
@@ -184,21 +185,10 @@ export default function NFLInjuries({
         lighter={lighter}
         onTabPress={setSelectedTeam}
         renderLabel={(tab, isSelected) => {
-          const team = injuries.find(
-            (t) => t.team.abbreviation.toUpperCase() === tab
-          );
-
           const useLightLogo = lighter || isDark;
-          const logo = getNFLTeamsLogo(team?.team.abbreviation, useLightLogo);
-         const textColor = lighter
-                    ? Colors.white
-                    : isSelected
-                    ? isDark
-                      ? Colors.white
-                      : Colors.black
-                    : isDark
-                    ? Colors.midTone
-                    : Colors.midTone;
+
+          // ALWAYS USE TAB (ABBR), not the injuries array
+          const logo = getNFLTeamsLogo(tab, useLightLogo);
 
           return (
             <View
@@ -209,21 +199,14 @@ export default function NFLInjuries({
                 gap: 4,
               }}
             >
-              <Image
-                source={logo}
-                style={[
-                  { width: 28, height: 28, opacity: isSelected ? 1 : 0.5 },
-                ]}
-                resizeMode="contain"
-              />
+              <Image source={logo} style={styles.tabLogo} />
+
               <Text
-                style={{
-                  color: textColor,
-                  fontFamily: Fonts.OSMEDIUM,
+                style={getLabelStyle(isDark, isSelected, lighter, {
                   opacity: isSelected ? 1 : 0.5,
-                }}
+                })}
               >
-                {team?.team.abbreviation ?? tab}
+                {tab}
               </Text>
             </View>
           );

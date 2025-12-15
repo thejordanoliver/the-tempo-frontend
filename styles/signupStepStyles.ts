@@ -9,15 +9,16 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       flex: 1,
       padding: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      marginBottom: 30
     },
     signInContainer: {
       flex: 1,
+      
       justifyContent: "center",
     },
     inputContainer: {
       flex: 1,
-      justifyContent: "space-around",
-      paddingVertical: 20,
+      justifyContent: "space-evenly",
     },
     title: {
       fontSize: 24,
@@ -50,18 +51,7 @@ export const getSignupStepsStyles = (isDark: boolean) =>
       padding: 20,
       borderRadius: 8,
       fontSize: 16,
-      marginVertical: 20,
       fontFamily: Fonts.OSREGULAR,
-    },
-    searchBar: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSLIGHT,
     },
     passwordRow: {
       flexDirection: "row",

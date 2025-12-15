@@ -101,7 +101,11 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: Colors.lightGray,
     },
     playerInfo: { flexDirection: "row", alignItems: "flex-end" },
-
+    tabLogo: {
+      width: 28,
+      height: 28,
+      resizeMode: "contain",
+    },
     position: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
@@ -110,7 +114,6 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
         : isDark
         ? Colors.lightGray
         : Colors.darkGray,
-
     },
     detail: {
       fontSize: 13,
@@ -126,12 +129,14 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
     separator: { height: 10 },
     loadingText: { marginTop: 8, fontSize: 14, color: Colors.darkGray },
     errorText: {
-      fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
       color: lighter
-        ? Colors.dark.lightRed
+        ? Colors.dark.white
         : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
+        ? Colors.dark.white
+        : Colors.light.black,
+      textAlign: "center",
+      marginVertical: 8,
     },
     bottom: { flexDirection: "row", alignItems: "center" },
     divder: {

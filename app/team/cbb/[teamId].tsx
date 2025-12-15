@@ -1,11 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
+import CBBRosterStats from "components/CBB/Team/RosterStats";
 import TeamPlayerList from "components/CBB/Team/TeamRoster";
 import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { players } from "constants/cbbPlayers";
+import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
@@ -14,7 +16,6 @@ import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
-import CBBRosterStats from "components/CBB/Team/RosterStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -30,7 +31,6 @@ import { CBBGame, User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetails.styles";
-import { Colors } from "constants/Colors";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -407,7 +407,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}>
+        <ScrollView key="news" style={{ flex: 1, paddingBottom: 100 }}>
           <NewsHighlightsList
             items={combinedNewsAndHighlights}
             loading={newsLoading || highlightsLoading}
@@ -430,13 +430,12 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-           {/* Stats Page */}
+        {/* Stats Page */}
         <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
           {team?.espnID && team?.id && (
             <CBBRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
-          
             />
           )}
         </ScrollView>

@@ -1,5 +1,4 @@
 // components/Forum/TeamForum.tsx
-import { Fonts } from "constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -13,9 +12,9 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import { getAccessToken } from "utils/authStorage"; // ✅ centralized token getter
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
-import { getAccessToken } from "utils/authStorage"; // ✅ centralized token getter
 
 interface TeamForumProps {
   teamId: string;
@@ -57,55 +56,55 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     })();
   }, []);
 
- // ✅ Fixed: fetchPosts route path updated to match backend
+  // ✅ Fixed: fetchPosts route path updated to match backend
 
-const fetchPosts = useCallback(
-  async (pageNumber = 1) => {
-    if (!teamId || !league) return;
+  const fetchPosts = useCallback(
+    async (pageNumber = 1) => {
+      if (!teamId || !league) return;
 
-    pageNumber === 1 ? setLoading(true) : setRefreshing(true);
-    setError(null);
+      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
+      setError(null);
 
-    try {
-      // ✅ Corrected URL order
-      const res = await axios.get(
-        `${BASE_URL}/api/forum/team/${league}/${teamId}`,
-        {
-          params: { page: pageNumber, limit: 10 },
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      try {
+        // ✅ Corrected URL order
+        const res = await axios.get(
+          `${BASE_URL}/api/forum/team/${league}/${teamId}`,
+          {
+            params: { page: pageNumber, limit: 10 },
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          }
+        );
+
+        const data = res.data;
+
+        if (pageNumber === 1) {
+          setPosts(data.posts);
+        } else {
+          setPosts((prev) => [...prev, ...data.posts]);
         }
-      );
 
-      const data = res.data;
+        setPage(data.pagination.page);
+        setTotalPages(data.pagination.totalPages);
 
-      if (pageNumber === 1) {
-        setPosts(data.posts);
-      } else {
-        setPosts((prev) => [...prev, ...data.posts]);
+        const likedSet = new Set<string>(
+          data.posts
+            .filter((post: Post) => post.liked_by_current_user)
+            .map((post: Post) => String(post.id))
+        );
+
+        setLikedPosts(likedSet);
+      } catch (err: any) {
+        console.error("Fetch posts error:", err);
+        setError(
+          err.response?.data?.error || err.message || "Error loading posts"
+        );
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-
-      setPage(data.pagination.page);
-      setTotalPages(data.pagination.totalPages);
-
-      const likedSet = new Set<string>(
-        data.posts
-          .filter((post: Post) => post.liked_by_current_user)
-          .map((post: Post) => String(post.id))
-      );
-
-      setLikedPosts(likedSet);
-    } catch (err: any) {
-      console.error("Fetch posts error:", err);
-      setError(
-        err.response?.data?.error || err.message || "Error loading posts"
-      );
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  },
-  [teamId, league, token]
-);
+    },
+    [teamId, league, token]
+  );
 
   // ✅ Initial + focus refetch
   useEffect(() => {
@@ -203,19 +202,7 @@ const fetchPosts = useCallback(
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListEmptyComponent={() =>
-          !loading ? (
-            <Text
-              style={{
-                color: isDark ? "#aaa" : "#999",
-                marginTop: 20,
-                fontSize: 20,
-                fontFamily: Fonts.OSLIGHT,
-                textAlign: "center",
-              }}
-            >
-              No posts yet.
-            </Text>
-          ) : null
+          !loading ? <Text style={styles.emptyText}>No posts yet.</Text> : null
         }
       />
 

@@ -1,6 +1,6 @@
 import { Colors } from "constants/Colors";
 import { useLocalSearchParams } from "expo-router";
-import { usePlayerStats } from "hooks/usePlayerStats";
+import { usePlayerSingleSeasonStats } from "hooks/usePlayerSingleSeasonStats";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
 import { teams } from "../../constants/teams";
@@ -9,68 +9,66 @@ import SeasonStatCardSkeleton from "./SeasonStatCardSkeleton";
 
 type Props = {
   playerId: number;
-  teamColor?: string;
+   teamColor?: string;
   teamColorDark?: string;
-  season?: string; // 👈 add this
+  season?: string; // optional season
 };
 
 export default function SeasonStatCard({ playerId, season }: Props) {
-  const { aggregatedStats, loading, error } = usePlayerStats(playerId, "2025");
+  const displaySeason =
+    season ??
+    (() => {
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      return month >= 10 ? `${year}-${String(year + 1).slice(-2)}` : `${year - 1}-${String(year).slice(-2)}`;
+    })();
+
+  const { season: seasonData, loading, error } =
+    usePlayerSingleSeasonStats(playerId, displaySeason);
+
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
 
   if (loading) return <SeasonStatCardSkeleton />;
-  if (error || !aggregatedStats)
+  if (error || !seasonData)
     return <Text style={styles.error}>Failed to load stats</Text>;
 
-  const displayYear = season || new Date().getFullYear().toString();
-
   const {
-    gamesPlayed,
-    totalPoints,
-    totalAssists,
-    totalRebounds,
-    totalFGM,
-    totalFGA,
-  } = aggregatedStats;
+    g,
+    pts,
+    ast,
+    trb,
+    fg,
+    fga,
+  } = seasonData;
 
-  const safeFixed = (val: number) =>
-    isNaN(val) || val == null ? "0.0" : val.toFixed(1);
+  const safeFixed = (val?: number | null) =>
+    val == null || isNaN(val) ? "0.0" : val.toFixed(1);
 
-  const ppg = safeFixed(totalPoints / gamesPlayed);
-  const apg = safeFixed(totalAssists / gamesPlayed);
-  const rpg = safeFixed(totalRebounds / gamesPlayed);
-  const fgPercent =
-    totalFGA > 0 ? safeFixed((totalFGM / totalFGA) * 100) : "0.0";
+  const ppg = g ? safeFixed(pts! / g) : "0.0";
+  const apg = g ? safeFixed(ast! / g) : "0.0";
+  const rpg = g ? safeFixed(trb! / g) : "0.0";
+  const fgPercent = fga ? safeFixed((fg! / fga) * 100) : "0.0";
 
-  const { teamId } = useLocalSearchParams<{ teamId: string }>();
-  const sanitizedTeamId = String(teamId).replace(/"/g, "").trim();
+  // Optional: team-based coloring
+  const { teamId } = useLocalSearchParams<{ teamId?: string }>();
+  const teamObj = teams.find((t) => String(t.id) === teamId);
 
-  const teamObj = teams.find((t) => String(t.id) === sanitizedTeamId);
-  const forceWhiteTextTeams = [
-    "Heat",
-    "Clippers",
-    "Rockets",
-    "Pistons",
-    "Bulls",
-    "Hornets",
-    "Trail Blazers",
-    "Kings",
-  ];
-
-  // 👇 Move StatItem inside component so it can use styles
   function StatItem({
     label,
     value,
-    color,
   }: {
     label: string;
-    value: string | number;
-    color?: string;
+    value: string;
   }) {
     return (
       <View style={styles.statItem}>
-        <Text style={[styles.statValue, { color: color || "#000" }]}>
+        <Text
+          style={[
+            styles.statValue,
+            { color: isDark ? Colors.white : Colors.black },
+          ]}
+        >
           {value}
         </Text>
         <Text style={styles.statLabel}>{label}</Text>
@@ -80,29 +78,14 @@ export default function SeasonStatCard({ playerId, season }: Props) {
 
   return (
     <>
-      <CenteredHeader>{displayYear} Season</CenteredHeader>
+      <CenteredHeader>{displaySeason} Season</CenteredHeader>
+
       <View style={styles.card}>
         <View style={styles.statsRow}>
-          <StatItem
-            label="PTS"
-            value={ppg}
-            color={isDark ? Colors.white : Colors.black}
-          />
-          <StatItem
-            label="AST"
-            value={apg}
-            color={isDark ? Colors.white : Colors.black}
-          />
-          <StatItem
-            label="REB"
-            value={rpg}
-            color={isDark ? Colors.white : Colors.black}
-          />
-          <StatItem
-            label="FG%"
-            value={fgPercent}
-            color={isDark ? Colors.white : Colors.black}
-          />
+          <StatItem label="PTS" value={ppg} />
+          <StatItem label="AST" value={apg} />
+          <StatItem label="REB" value={rpg} />
+          <StatItem label="FG%" value={fgPercent} />
         </View>
       </View>
     </>

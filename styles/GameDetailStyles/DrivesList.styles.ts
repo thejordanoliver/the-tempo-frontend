@@ -17,7 +17,6 @@ export const getStyles = (isDark: boolean) =>
     headerRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 6,
     },
     teamLogo: {
       width: 28,

@@ -1,11 +1,12 @@
 // utils/nflGameCardUtils.ts
-import { getTeamName, getNFLTeamsLogo, getTeamCode } from "constants/teamsNFL";
+import { getNFLTeamsLogo, getTeamCode, getTeamName } from "constants/teamsNFL";
 
 /**
  * Format date from timestamp (seconds → readable date)
  */
 export const getGameDate = (timestamp?: number | null) => {
-  if (!timestamp) return { date: null, iso: "", formattedDate: "", formattedTime: "" };
+  if (!timestamp)
+    return { date: null, iso: "", formattedDate: "", formattedTime: "" };
 
   const date = new Date(timestamp * 1000);
   const iso = date.toISOString();
@@ -13,7 +14,10 @@ export const getGameDate = (timestamp?: number | null) => {
   return {
     date,
     iso,
-    formattedDate: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    formattedDate: date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    }),
     formattedTime: date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
@@ -90,9 +94,7 @@ export const getNFLGameStatus = (game: any) => {
 /**
  * Normalize display status for consistency
  */
-export const normalizeDisplayStatus = (
-  base?: string | null
-): string => {
+export const normalizeDisplayStatus = (base?: string | null): string => {
   if (!base) return "Scheduled";
   const val = base.toLowerCase();
   if (val === "finished") return "Final";
@@ -140,7 +142,7 @@ export const getNFLTeamData = (
   possessionTeamId?: string | number
 ): {
   logo: any;
-  name: string;
+  name: string | null;
   code: string | null;
   record: string;
   id: string | number | undefined;
@@ -148,14 +150,13 @@ export const getNFLTeamData = (
   hasPossession: boolean;
 } => ({
   logo: getNFLTeamsLogo(String(id ?? ""), dark),
-  name: getTeamName(String(id ?? ""), "Team"),
+  name: getTeamName(String(id ?? "")) ?? null,
   code: getTeamCode(String(id ?? "")),
   record,
   id,
   espnID,
   hasPossession: String(possessionTeamId ?? "") === String(id ?? ""),
 });
-
 
 /**
  * Determine winner/loser text color

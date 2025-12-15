@@ -211,6 +211,7 @@ export default function GameLeaders({
 
       <MainScrollTabBar
         tabs={CATEGORIES}
+        lighter={lighter}
         selected={selectedCategory}
         onTabPress={(tab) => setSelectedCategory(tab as Category)}
         renderLabel={(tab, isSelected) => (

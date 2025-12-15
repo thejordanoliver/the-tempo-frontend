@@ -1,5 +1,6 @@
 // components/NBAStandingsList.tsx
 import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { nbaDivisionsById, teams } from "constants/teams"; // your NBA team logos & info
 import { useRouter } from "expo-router";
@@ -127,11 +128,15 @@ export const StandingsList = () => {
   };
 
   const renderRightItem = ({ item }: { item: StandingsTeam }) => {
-  const winStreak = item.streak?.startsWith("W");
+    const winStreak = item.streak?.startsWith("W");
 
-const streakColor = winStreak
-  ? (isDark ? Colors.dark.limeGreen : Colors.light.green)
-  : (isDark ? Colors.dark.lightRed : Colors.light.red);
+    const streakColor = winStreak
+      ? isDark
+        ? Colors.dark.limeGreen
+        : Colors.light.green
+      : isDark
+      ? Colors.dark.lightRed
+      : Colors.light.red;
 
     return (
       <View style={styles.row}>
@@ -210,13 +215,8 @@ const streakColor = winStreak
   function Section({ title, data }: SectionType) {
     return (
       <View style={{ marginTop: 12 }}>
-        <View style={styles.header}>
-          <Text
-            style={[styles.heading, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {title}
-          </Text>
-        </View>
+        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
+
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}

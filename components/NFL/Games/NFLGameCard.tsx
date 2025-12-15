@@ -1,4 +1,10 @@
+// ----------------------------------------------
+// 🚀 NEW NFL GAMECARD — MATCHED TO NBA LOGIC
+// ----------------------------------------------
+
 import { Ionicons } from "@expo/vector-icons";
+import Football from "assets/icons8/Football.png";
+import FootballLight from "assets/icons8/FootballLight.png";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -11,77 +17,80 @@ import {
   useColorScheme,
 } from "react-native";
 
-import Football from "assets/icons8/Football.png";
-import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Colors";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
-import { emptyNFLAwayTeam, emptyNFLHomeTeam, emptyTeam } from "types/nfl";
 import { getNFLTeam } from "constants/teamsNFL";
+import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/nfl";
+
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 import {
-  formatQuarter,
   getGameDate,
   getNFLGameStatus,
-  getNFLTeamData,
-  isSuperBowlGame,
   normalizeDisplayStatus,
 } from "utils/nflGameCardUtils";
 
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+// -----------------------------------------------------
+// 🧠 Detect “End of X Quarter”
+// -----------------------------------------------------
+function detectEndOfPeriod(statusText?: string) {
+  const text = (statusText ?? "").toLowerCase();
+  return (
+    text.includes("end of") &&
+    (text.includes("quarter") || text.includes("qtr"))
+  );
+}
 
-// -------------------------------
-// Types
-// -------------------------------
-type NFLStatus = {
-  long?: string;
-  short?: string;
-};
+// -----------------------------------------------------
+// 🧠 Map ESPN status → readable state
+// -----------------------------------------------------
+function mapNFLStatus(statusObj: any): string {
+  const long = statusObj?.long?.toLowerCase?.() ?? "";
+  const short = String(statusObj?.short ?? "").toUpperCase();
 
-// -------------------------------
-// Status Mapper
-// -------------------------------
-function mapNFLStatus(status: NFLStatus | undefined) {
-  const long = status?.long?.toLowerCase() ?? "";
-  const short = status?.short ?? "";
+  if (
+    long.includes("final") ||
+    short === "F" ||
+    short === "FT" ||
+    short === "FINAL"
+  )
+    return "Final";
 
+  if (long.includes("halftime") || short === "HT") return "Halftime";
   if (long.includes("in") && long.includes("play")) return "In Play";
-  if (long.includes("final")) return "Final";
-  if (short === "FT" || short === "FINAL" || short === "F") return "Final";
-  if (long.includes("halftime")) return "Halftime";
-  if (long.includes("not started")) return "Scheduled";
+  if (long.includes("scheduled")) return "Scheduled";
   if (long.includes("canceled")) return "Canceled";
   if (long.includes("delayed")) return "Delayed";
   if (long.includes("postponed")) return "Postponed";
 
-  return short || "Scheduled";
+  if (["Q1", "Q2", "Q3", "Q4", "OT"].includes(short)) return "In Play";
+
+  return "Scheduled";
 }
 
-// -------------------------------
-// Props
-// -------------------------------
-interface NFLGameCardProps {
+type NFLGameCardProps = {
   game: any;
   isDark?: boolean;
-}
+};
+
 function NFLGameCard({ game, isDark }: NFLGameCardProps) {
-  const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === "dark";
-
+  const scheme = useColorScheme();
+  const dark = isDark ?? scheme === "dark";
   const router = useRouter();
-
   const [notifEnabled, setNotifEnabled] = useState(false);
 
-  // IDs
+  // -----------------------------------------------------
+  // TEAM + DATE
+  // -----------------------------------------------------
   const homeId = game?.teams?.home?.id ?? emptyNFLHomeTeam.id;
   const awayId = game?.teams?.away?.id ?? emptyNFLAwayTeam.id;
 
-    // Find matching internal teams using ESPN ID
-    const homeTeamObj = getNFLTeam(homeId);
-    const awayTeamObj = getNFLTeam(awayId);
+  const homeTeamObj = getNFLTeam(homeId);
+  const awayTeamObj = getNFLTeam(awayId);
 
   const {
     date: gameDate,
@@ -90,35 +99,23 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     formattedTime,
   } = getGameDate(game?.game?.date?.timestamp);
 
+  // -----------------------------------------------------
+  // BASE STATUS (from ESPN)
+  // -----------------------------------------------------
   const statusObj = getNFLGameStatus(game);
   const mappedStatus = mapNFLStatus(statusObj);
 
-  const isLive =
+  const status = statusObj.short;
+
+  const prelimLive =
     mappedStatus === "In Play" ||
     statusObj?.isLive ||
     statusObj?.short === "LIVE";
 
-  const isFinal = mappedStatus === "Final";
-  const isHalftime = mappedStatus === "Halftime";
-  const isScheduled = mappedStatus === "Scheduled";
-
-  const isChampionship = isSuperBowlGame(game, gameDate);
-  const styles = getStyles(dark, isChampionship);
-
-  // -----------------------
-  // Team Records
-  // -----------------------
-  const { record: awayRecord } = useNFLTeamRecord(awayId);
-  const { record: homeRecord } = useNFLTeamRecord(homeId);
-
-  const awayEspnID = awayTeamObj?.espnID;
-  const homeEspnID = homeTeamObj?.espnID;
-
-
-  // -----------------------
-  // Possession + Live Data (same placement)
-  // -----------------------
-  const possession = isLive
+  // -----------------------------------------------------
+  // POSSESSION (live fetch)
+  // -----------------------------------------------------
+  const possession = prelimLive
     ? useNFLGamePossession(
         game?.teams?.home?.name,
         game?.teams?.away?.name,
@@ -126,83 +123,104 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
       )
     : null;
 
-  // -----------------------
-  // Memo Team Objects
-  // -----------------------
-  const awayTeam = useMemo(() => {
-    const found =
-      getNFLTeamData(
-        awayId,
-        awayEspnID,
-        dark,
-        awayRecord?.overall ?? "0-0",
-        undefined
-      ) || emptyTeam;
+  const liveText = (possession?.gameStatusDescription ?? "").toLowerCase();
+  const endOfPeriod = detectEndOfPeriod(liveText);
 
+  // -----------------------------------------------------
+  // EFFECTIVE STATUS (NBA identical logic)
+  // -----------------------------------------------------
+  const effectiveStatus = endOfPeriod
+    ? "EndOfPeriod"
+    : liveText.includes("final")
+    ? "Final"
+    : liveText.includes("halftime")
+    ? "Halftime"
+    : liveText.includes("in progress") ||
+      liveText.includes("qtr") ||
+      liveText.includes("quarter")
+    ? "In Play"
+    : mappedStatus;
+
+  const isFinal = effectiveStatus === "Final";
+  const isLive = effectiveStatus === "In Play";
+  const isHalftime = effectiveStatus === "Halftime";
+  const isScheduled = effectiveStatus === "Scheduled";
+
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2026 &&
+      gameDate.getMonth() === 1 &&
+      gameDate.getDate() === 7
+  );
+
+  const styles = getStyles(dark, isChampionship);
+
+  // -----------------------------------------------------
+  // TEAM RECORDS
+  // -----------------------------------------------------
+  const { record: awayRecord } = useNFLTeamRecord(awayId);
+  const { record: homeRecord } = useNFLTeamRecord(homeId);
+
+  // -----------------------------------------------------
+  // TEAM DATA
+  // -----------------------------------------------------
+  const awayTeam = useMemo(() => {
+    const team = getNFLTeam(awayId) ?? emptyNFLAwayTeam;
     return {
-      ...emptyNFLAwayTeam,
-      ...found,
-      id: found.id ?? emptyNFLAwayTeam.id,
-      espnID: found.espnID ?? emptyNFLAwayTeam.espnID,
-      name: found.name ?? emptyNFLAwayTeam.name,
-      logo: found.logo || emptyNFLAwayTeam.logo,
+      ...team,
       record: awayRecord?.overall ?? "0-0",
-      hasPossession: possession?.possessionTeamId === awayEspnID,
+      hasPossession: isLive && possession?.possessionTeamId === awayId,
     };
-  }, [awayId, awayEspnID, awayRecord?.overall, dark]);
+  }, [awayId, awayRecord?.overall, isLive, possession]);
 
   const homeTeam = useMemo(() => {
-    const found =
-      getNFLTeamData(
-        homeId,
-        homeEspnID,
-        dark,
-        homeRecord?.overall ?? "0-0",
-        undefined
-      ) || emptyTeam;
-
+    const team = getNFLTeam(homeId) ?? emptyNFLHomeTeam;
     return {
-      ...emptyNFLHomeTeam,
-      ...found,
-      id: found.id ?? emptyNFLHomeTeam.id,
-      espnID: found.espnID ?? emptyNFLHomeTeam.espnID,
-      name: found.name ?? emptyNFLHomeTeam.name,
-      logo: found.logo || emptyNFLHomeTeam.logo,
+      ...team,
       record: homeRecord?.overall ?? "0-0",
-      hasPossession: possession?.possessionTeamId === homeEspnID,
+      hasPossession: isLive && possession?.possessionTeamId === homeId,
     };
-  }, [homeId, homeEspnID, homeRecord?.overall, dark]);
+  }, [homeId, homeRecord?.overall, isLive, possession]);
 
-  
-
-  const safeScore = possession?.score ?? {
+  // -----------------------------------------------------
+  // SCORE
+  // -----------------------------------------------------
+  const score = possession?.score ?? {
     home: { total: game?.scores?.home?.total ?? 0 },
     away: { total: game?.scores?.away?.total ?? 0 },
   };
 
-  const period = possession?.period ?? null;
-
-  // Normalize display status
-  const displayStatus = normalizeDisplayStatus(
+  const period = possession?.period;
+  const statusDisplay = normalizeDisplayStatus(
     possession?.gameStatusDescription ?? statusObj.long ?? statusObj.short ?? ""
   );
 
+  // -----------------------------------------------------
+  // HEADLINE
+  // -----------------------------------------------------
   const { headlineText } = useGameInfo(
-    Number(homeEspnID),
-    Number(awayEspnID),
+    Number(homeTeam.espnID),
+    Number(awayTeam.espnID),
     gameDateStr,
     "nfl"
   );
 
+  // -----------------------------------------------------
+  // BROADCAST
+  // -----------------------------------------------------
   const { broadcasts } = useNFLGameBroadcasts(
-    homeTeam.name,
-    awayTeam.name,
+    homeTeam.espnID,
+    awayTeam.espnID,
     gameDateStr
   );
+
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  const homeWins = safeScore.home.total > safeScore.away.total;
-  const awayWins = safeScore.away.total > safeScore.home.total;
+  // -----------------------------------------------------
+  // SCORE TEXT COMPONENT
+  // -----------------------------------------------------
+  const homeWins = score.home.total > score.away.total;
+  const awayWins = score.away.total > score.home.total;
 
   const winnerStyle = (teamWins: boolean) => ({
     color: dark ? Colors.white : Colors.black,
@@ -219,7 +237,6 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     teamWins: boolean;
   }) => {
     const showRecord = isScheduled;
-
     return (
       <Text
         style={
@@ -233,13 +250,62 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
     );
   };
 
-  // UI
-  // -----------------------
+  function formatNFLPeriod(period?: number) {
+    if (!period) return "Live";
+
+    if (period <= 4) {
+      const map = ["1st", "2nd", "3rd", "4th"];
+      return map[period - 1] ?? `${period}`;
+    }
+
+    // OT logic
+    const ot = period - 4;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  }
+
+  // -----------------------------------------------------
+  // STATUS UI
+  // -----------------------------------------------------
+  const renderStatus = () => {
+    if (endOfPeriod) return <Text style={styles.date}>{statusDisplay}</Text>;
+
+    if (isLive)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formatNFLPeriod(Number(period))}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{possession?.displayClock ?? ""}</Text>
+        </View>
+      );
+
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+
+    if (isFinal)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{statusDisplay}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      );
+
+    return (
+      <View style={styles.infoWrapper}>
+        <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.date}>{formattedTime}</Text>
+      </View>
+    );
+  };
+
+  // -----------------------------------------------------
+  // FINAL COMPONENT
+  // -----------------------------------------------------
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
+      {/* AWAY */}
       <View style={styles.teamSection}>
-        {awayTeam.hasPossession && (
+        {isLive && awayTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
             style={{
@@ -251,48 +317,27 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
             }}
           />
         )}
-        <Image source={awayTeam.logo} style={styles.logo} />
+        <Image
+          source={isDark ? awayTeam.logoLight : awayTeam.logo}
+          style={styles.logo}
+        />
         <Text style={styles.teamName}>{awayTeam.name}</Text>
       </View>
 
       <ScoreText
-        score={safeScore.away.total}
+        score={score.away.total}
         record={awayTeam.record}
         teamWins={awayWins}
       />
 
-      {/* Headline (center) */}
       <Text style={styles.headlineText}>{headlineText}</Text>
 
-      {/* Center Info */}
       <View style={styles.info}>
-        {isScheduled ? (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{formattedDate}</Text>
-            <View style={styles.statusDivider} />
-            <Text style={styles.date}>{formattedTime}</Text>
-          </View>
-        ) : isLive ? (
-          <>
-            <View style={styles.infoWrapper}>
-              <Text style={styles.date}>{formatQuarter(period)}</Text>
-              <View style={styles.statusDivider} />
-              <Text style={styles.clock}>{possession?.displayClock ?? ""}</Text>
-            </View>
-            {possession?.possessionText && (
-              <Text style={styles.downDistance}>
-                {possession.possessionText}
-              </Text>
-            )}
-          </>
-        ) : isHalftime ? (
-          <Text style={styles.date}>Halftime</Text>
-        ) : (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>{displayStatus}</Text>
-            <View style={styles.finalStatusDivider} />
-            <Text style={styles.finalText}>{formattedDate}</Text>
-          </View>
+        {renderStatus()}
+        {possession?.downDistanceText && (
+          <Text style={styles.downDistance}>
+            {possession?.downDistanceText ?? null}
+          </Text>
         )}
 
         {!isFinal && broadcastText && (
@@ -300,15 +345,15 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
         )}
       </View>
 
+      {/* HOME */}
       <ScoreText
-        score={safeScore.home.total}
+        score={score.home.total}
         record={homeTeam.record}
         teamWins={homeWins}
       />
 
-      {/* Home Team */}
       <View style={styles.teamSection}>
-        {homeTeam.hasPossession && (
+        {isLive && homeTeam.hasPossession && (
           <Image
             source={dark ? FootballLight : Football}
             style={{
@@ -320,28 +365,26 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
             }}
           />
         )}
-        <Image source={homeTeam.logo} style={styles.logo} />
+        <Image
+          source={isDark ? homeTeam.logoLight : homeTeam.logo}
+          style={styles.logo}
+        />
         <Text style={styles.teamName}>{homeTeam.name}</Text>
       </View>
 
-      {/* Bell */}
       <Pressable
         onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
+        style={styles.notificationBell}
       >
         <Ionicons
           name={notifEnabled ? "notifications" : "notifications-outline"}
           size={20}
-          color={isDark ? Colors.white : Colors.black}
+          color={dark ? Colors.white : Colors.black}
         />
       </Pressable>
     </>
   );
 
-  // --- UI Render ---
   return (
     <TouchableOpacity
       activeOpacity={0.85}
@@ -357,7 +400,7 @@ function NFLGameCard({ game, isDark }: NFLGameCardProps) {
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
+              : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

@@ -3,7 +3,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import ChampionshipBanner from "components/ChampionshipBanner";
+import ChampionshipBanner from "components/Team/ChampionshipBanner";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getNBATeam } from "constants/teams";
@@ -15,7 +15,6 @@ import { BlurView } from "expo-blur";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { LeagueType } from "types/types";
 import TeamInfoCard from "./TeamInfoCard";
 

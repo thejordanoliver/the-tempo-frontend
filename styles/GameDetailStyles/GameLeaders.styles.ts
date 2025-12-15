@@ -14,7 +14,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) =>
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: lighter ? Colors.dark.lightRed : isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     card: { flexDirection: "row", alignItems: "center", padding: 12,  borderBottomWidth: StyleSheet.hairlineWidth, },
     avatar: {
@@ -55,6 +55,6 @@ export const getStyles = (isDark: boolean, lighter: boolean) =>
     },
     statBlock: { alignItems: "flex-start", flex: 1 },
     statLabel: { fontFamily: Fonts.OSMEDIUM, fontSize: 10 },
-    statText: { fontFamily: Fonts.OSREGULAR,  fontSize: 14, color: isDark ? Colors.white: Colors.black },
+    statText: { fontFamily: Fonts.OSREGULAR,  fontSize: 14, color: lighter ? Colors.white : isDark ? Colors.white: Colors.black },
     teamLogo: { position: "absolute", top: 6, right: 6, width: 28, height: 28 },
   });

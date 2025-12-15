@@ -2,7 +2,13 @@ import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
 
 type GameInfoProps = {
-  status: "Scheduled" | "In Play" | "Final" | "Canceled" | "Postponed";
+  status:
+    | "Scheduled"
+    | "In Play"
+    | "Final"
+    | "Canceled"
+    | "Postponed"
+    | "Halftime";
   date: string;
   time: string;
   period?: string;
@@ -22,7 +28,7 @@ export function GameInfo({
   time,
   period,
   clock,
-  halftime, // 👈 added here
+  halftime, //  added here
   isDark,
   playoffInfo,
   homeTeam,
@@ -45,9 +51,7 @@ export function GameInfo({
 
   return (
     <View style={styles.container}>
-    
-
-      {/* 🏀 Scheduled */}
+      {/* Scheduled */}
       {status === "Scheduled" && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date}</Text>
@@ -56,24 +60,17 @@ export function GameInfo({
         </View>
       )}
 
-      {/* 🕒 In Play */}
+      {/* In Play */}
       {status === "In Play" && (
         <>
-          {halftime ? (
-            // 🟢 Halftime display
-            <Text style={styles.finalText}>Halftime</Text>
-          ) : (
-            // 🕓 Normal in-play display, hide clock if no value
-            <View style={styles.infoWrapper}>
-              {period && <Text style={styles.date}>{period}</Text>}
-              {period && clock && <View style={styles.statusDivider} />}
-              {clock && <Text style={styles.clock}>{clock}</Text>}
-            </View>
-          )}
+          <View style={styles.infoWrapper}>
+            {period && <Text style={styles.date}>{period}</Text>}
+            {period && clock && <View style={styles.statusDivider} />}
+            {clock && <Text style={styles.clock}>{clock}</Text>}
+          </View>
         </>
       )}
-
-      {/* 🏁 Final */}
+      {/*  Final */}
       {status === "Final" && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>Final</Text>
@@ -81,8 +78,14 @@ export function GameInfo({
           <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
+      {/*  Halftime */}
+      {status === "Halftime" && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Halftime</Text>
+        </View>
+      )}
 
-      {/* ❌ Canceled */}
+      {/* Canceled */}
       {status === "Canceled" && (
         <>
           <Text style={styles.finalText}>Canceled</Text>
@@ -90,7 +93,7 @@ export function GameInfo({
         </>
       )}
 
-      {/* ⏸️ Postponed */}
+      {/*  Postponed */}
       {status === "Postponed" && (
         <>
           <Text style={styles.finalText}>Postponed</Text>
@@ -98,7 +101,7 @@ export function GameInfo({
         </>
       )}
 
-      {/* 📺 Broadcast */}
+      {/* Broadcast */}
       {broadcastNetworks && (
         <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}

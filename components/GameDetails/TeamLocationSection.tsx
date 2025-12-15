@@ -96,7 +96,7 @@ const TeamLocationSection: React.FC<Props> = ({
   };
 
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <HeadingTwo lighter={lighter}>Location</HeadingTwo>
 
       {loading && !error ? (

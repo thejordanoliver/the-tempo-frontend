@@ -37,8 +37,6 @@ import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-//Logos 500x500
-
 //Stadiums
 import BearsStadium from "assets/Football/Arenas/BearsStadium.webp";
 import BengalsStadium from "assets/Football/Arenas/BengalsStadium.webp";
@@ -121,6 +119,7 @@ export const teams: NFLTeam[] = [
     venue: "Allegiant Stadium",
     established: 1960,
     logo: RaidersLogo,
+    logoLight: RaidersLogo,
     country: {
       name: "USA",
       code: "US",
@@ -133,6 +132,8 @@ export const teams: NFLTeam[] = [
     longitude: -115.183952,
     venueImage: RaidersStadium,
     venueCapacity: "65,000",
+    championships: [1976, 1980, 1983],
+    conferenceChampionships: { Titles: [1976, 1980, 1983, 2002] },
   },
   {
     id: 2,
@@ -149,6 +150,7 @@ export const teams: NFLTeam[] = [
     venue: "EverBank Stadium",
     established: 1995,
     logo: JaguarsLogo,
+    logoLight: JaguarsLogo,
 
     country: {
       name: "USA",
@@ -162,6 +164,8 @@ export const teams: NFLTeam[] = [
     longitude: -81.636528,
     venueImage: JaguarsStadium,
     venueCapacity: "67,838",
+    championships: [],
+    conferenceChampionships: { Titles: [] },
   },
   {
     id: 3,
@@ -177,7 +181,7 @@ export const teams: NFLTeam[] = [
     venue: "Gillette Stadium",
     established: 1960,
     logo: PatriotsLogo,
-
+    logoLight: PatriotsLogo,
     coachImage: PatriotsCoach,
     country: {
       name: "USA",
@@ -191,6 +195,8 @@ export const teams: NFLTeam[] = [
     longitude: -71.2643,
     venueImage: PatriotsStadium,
     venueCapacity: "66,829",
+    championships: [2001, 2003, 2004, 2014, 2016, 2018],
+    conferenceChampionships: { Titles: [1985, 1996, 2001, 2003, 2004, 2007, 2011, 2014, 2016, 2017, 2018] },
   },
   {
     id: 4,
@@ -220,6 +226,8 @@ export const teams: NFLTeam[] = [
     longitude: -74.07431,
     venueImage: MetLifeStadium,
     venueCapacity: "82,500",
+    championships: [1927, 1934, 1938, 1956, 1986, 1990, 2007, 2011],
+    conferenceChampionships: { Titles: [1986, 1990, 2000, 2007, 2011] },
   },
   {
     id: 5,
@@ -236,7 +244,7 @@ export const teams: NFLTeam[] = [
     venue: "M&T Bank Stadium",
     established: 1996,
     logo: RavensLogo,
-
+    logoLight: RavensLogo,
     country: {
       name: "USA",
       code: "US",
@@ -249,6 +257,8 @@ export const teams: NFLTeam[] = [
     longitude: -76.623322,
     venueImage: RavensStadium,
     venueCapacity: "71,008",
+    championships: [2000, 2012],
+    conferenceChampionships: { Titles: [2000, 2012] },
   },
   {
     id: 6,
@@ -265,7 +275,7 @@ export const teams: NFLTeam[] = [
     venue: "Nissan Stadium",
     established: 1960,
     logo: TitansLogo,
-
+    logoLight: TitansLogo,
     country: {
       name: "USA",
       code: "US",
@@ -278,6 +288,8 @@ export const teams: NFLTeam[] = [
     longitude: -86.7713,
     venueImage: TitansStadium,
     venueCapacity: "69,143",
+    championships: [1960, 1961],
+    conferenceChampionships: { Titles: [1999] },
   },
   {
     id: 7,
@@ -294,6 +306,7 @@ export const teams: NFLTeam[] = [
     venue: "Ford Field",
     established: 1930,
     logo: LionsLogo,
+    logoLight: LionsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -306,6 +319,39 @@ export const teams: NFLTeam[] = [
     longitude: -83.0456,
     venueImage: LionsStadium,
     venueCapacity: "65,000",
+    championships: [1935, 1952, 1953, 1957],
+    conferenceChampionships: { Titles: [] },
+  },
+  {
+    id: 7,
+    espnID: "8",
+    oddsID: "par_01hqmkr1y3fex9sq94dgg1107y",
+    fullName: "Detroit Lions",
+    code: "DET",
+    city: "Detroit",
+    location: "Detroit, MI",
+    address: "2000 Brush Street, Detroit, MI 48226",
+    coach: "Dan Campbell",
+    coachImage: LionsCoach,
+    owner: "Sheila Ford Hamp",
+    venue: "Ford Field",
+    established: 1930,
+    logo: LionsLogo,
+    logoLight: LionsLogo,
+    country: {
+      name: "USA",
+      code: "US",
+      flag: "https://media.api-sports.io/flags/us.svg",
+    },
+    name: "Lions",
+    color: "#0076b6",
+    secondaryColor: "#bbbbbb",
+    latitude: 42.34,
+    longitude: -83.0456,
+    venueImage: LionsStadium,
+    venueCapacity: "65,000",
+    championships: [1935, 1952, 1953, 1957],
+    conferenceChampionships: { Titles: [] },
   },
   {
     id: 8,
@@ -322,7 +368,7 @@ export const teams: NFLTeam[] = [
     venue: "Mercedes-Benz Stadium",
     established: 1966,
     logo: FalconsLogo,
-
+    logoLight: FalconsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -335,6 +381,8 @@ export const teams: NFLTeam[] = [
     longitude: -84.4009,
     venueImage: FalconsStadium,
     venueCapacity: "71,000",
+    championships: [],
+    conferenceChampionships: { Titles: [1998, 2016] },
   },
   {
     id: 9,
@@ -351,7 +399,7 @@ export const teams: NFLTeam[] = [
     venue: "Huntington Bank Field",
     established: 1946,
     logo: BrownsLogo,
-
+    logoLight: BrownsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -364,6 +412,8 @@ export const teams: NFLTeam[] = [
     longitude: -81.6995,
     venueImage: BrownsStadium,
     venueCapacity: "67,431",
+    championships: [1950, 1954, 1955, 1964],
+    conferenceChampionships: { Titles: [] },
   },
   {
     id: 10,
@@ -380,7 +430,7 @@ export const teams: NFLTeam[] = [
     venue: "Paycor Stadium",
     established: 1968,
     logo: BengalsLogo,
-
+    logoLight: BengalsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -393,6 +443,8 @@ export const teams: NFLTeam[] = [
     longitude: -84.516,
     venueImage: BengalsStadium,
     venueCapacity: "65,515",
+    championships: [],
+    conferenceChampionships: { Titles: [1981, 1988, 2021] },
   },
   {
     id: 11,
@@ -409,7 +461,7 @@ export const teams: NFLTeam[] = [
     venue: "State Farm Stadium",
     established: 1920,
     logo: CardinalsLogo,
-
+    logoLight: CardinalsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -422,6 +474,8 @@ export const teams: NFLTeam[] = [
     longitude: -112.2626,
     venueImage: CardinalsStadium,
     venueCapacity: "63,400",
+    championships: [1925, 1947],
+    conferenceChampionships: { Titles: [2008] },
   },
   {
     id: 12,
@@ -438,6 +492,7 @@ export const teams: NFLTeam[] = [
     venue: "Lincoln Financial Field",
     established: 1933,
     logo: EaglesLogo,
+    logoLight: EaglesLogo,
 
     country: {
       name: "USA",
@@ -451,6 +506,8 @@ export const teams: NFLTeam[] = [
     longitude: -75.1665,
     venueImage: EaglesStadium,
     venueCapacity: "69,596",
+    championships: [1948, 1949, 1960, 2017],
+    conferenceChampionships: { Titles: [1980, 2004, 2017, 2022] },
   },
   {
     id: 13,
@@ -480,6 +537,8 @@ export const teams: NFLTeam[] = [
     longitude: -74.07431,
     venueImage: MetLifeStadium,
     venueCapacity: "82,500",
+    championships: [1968],
+    conferenceChampionships: { Titles: [1968] },
   },
   {
     id: 14,
@@ -496,6 +555,7 @@ export const teams: NFLTeam[] = [
     venue: "Levi's Stadium",
     established: 1946,
     logo: NinersLogo,
+    logoLight: NinersLogo,
     country: {
       name: "USA",
       code: "US",
@@ -508,6 +568,8 @@ export const teams: NFLTeam[] = [
     longitude: -121.9694,
     venueImage: NinersStadium,
     venueCapacity: "68,500",
+    championships: [1981, 1984, 1988, 1989, 1994],
+    conferenceChampionships: { Titles: [1981, 1984, 1988, 1989, 1994, 2012, 2019, 2023] },
   },
   {
     id: 15,
@@ -525,6 +587,7 @@ export const teams: NFLTeam[] = [
     venue: "Lambeau Field",
     established: 1921,
     logo: PackersLogo,
+    logoLight: PackersLogo,
 
     country: {
       name: "USA",
@@ -538,6 +601,8 @@ export const teams: NFLTeam[] = [
     longitude: -88.0955556,
     venueImage: PackersStadium,
     venueCapacity: "81,441",
+    championships: [1929, 1930, 1931, 1936, 1939, 1944, 1961, 1962, 1965, 1966, 1967, 1996, 2010],
+    conferenceChampionships: { Titles: [1966, 1967, 1996, 1997, 2010] },
   },
   {
     id: 16,
@@ -554,6 +619,7 @@ export const teams: NFLTeam[] = [
     venue: "Soldier Field",
     established: 1920,
     logo: BearsLogo,
+    logoLight: BearsLogo,
 
     country: {
       name: "USA",
@@ -567,6 +633,8 @@ export const teams: NFLTeam[] = [
     longitude: -87.6166,
     venueImage: BearsStadium,
     venueCapacity: "61,500",
+    championships: [1921, 1932, 1933, 1940, 1941, 1943, 1946, 1963, 1985],
+    conferenceChampionships: { Titles: [1985, 2006] },
   },
   {
     id: 17,
@@ -583,6 +651,7 @@ export const teams: NFLTeam[] = [
     venue: "GEHA Field at Arrowhead Stadium",
     established: 1960,
     logo: ChiefsLogo,
+    logoLight: ChiefsLogo,
 
     country: {
       name: "USA",
@@ -596,6 +665,8 @@ export const teams: NFLTeam[] = [
     longitude: -94.5786,
     venueImage: ChiefsStadium,
     venueCapacity: "76,416",
+    championships: [1969, 2019, 2022, 2023],
+    conferenceChampionships: { Titles: [1966, 1969, 2019, 2020, 2022, 2023] },
   },
   {
     id: 18,
@@ -612,6 +683,7 @@ export const teams: NFLTeam[] = [
     venue: "Northwest Stadium",
     established: 1932,
     logo: CommandersLogo,
+    logoLight: CommandersLogo,
     country: {
       name: "USA",
       code: "US",
@@ -624,6 +696,8 @@ export const teams: NFLTeam[] = [
     longitude: -76.864,
     venueImage: CommanderStadium,
     venueCapacity: "64,000",
+    championships: [1937, 1942, 1982, 1987, 1991],
+    conferenceChampionships: { Titles: [1972, 1982, 1983, 1987, 1991] },
   },
   {
     id: 19,
@@ -640,6 +714,7 @@ export const teams: NFLTeam[] = [
     venue: "Bank of America Stadium",
     established: 1995,
     logo: PanthersLogo,
+    logoLight: PanthersLogo,
 
     country: {
       name: "USA",
@@ -653,6 +728,8 @@ export const teams: NFLTeam[] = [
     longitude: -80.8528,
     venueImage: PanthersStadium,
     venueCapacity: "75,523",
+    championships: [],
+    conferenceChampionships: { Titles: [2003, 2015] },
   },
   {
     id: 20,
@@ -669,6 +746,7 @@ export const teams: NFLTeam[] = [
     venue: "Highmark Stadium",
     established: 1960,
     logo: BillsLogo,
+    logoLight: BillsLogo,
 
     country: {
       name: "USA",
@@ -682,6 +760,8 @@ export const teams: NFLTeam[] = [
     longitude: -78.787,
     venueImage: BillsStadium,
     venueCapacity: "71,608",
+    championships: [1964, 1965],
+    conferenceChampionships: { Titles: [1990, 1991, 1992, 1993] },
   },
   {
     id: 21,
@@ -698,6 +778,7 @@ export const teams: NFLTeam[] = [
     venue: "Lucas Oil Stadium",
     established: 1944,
     logo: ColtsLogo,
+    logoLight: ColtsLogo,
 
     country: {
       name: "USA",
@@ -711,6 +792,8 @@ export const teams: NFLTeam[] = [
     longitude: -86.158,
     venueImage: ColtsStadium,
     venueCapacity: "71,608",
+    championships: [1958, 1959, 1970, 2006],
+    conferenceChampionships: { Titles: [1968, 1970, 2006, 2009] },
   },
   {
     id: 22,
@@ -727,6 +810,7 @@ export const teams: NFLTeam[] = [
     venue: "Acrisure Stadium",
     established: 1933,
     logo: SteelersLogo,
+    logoLight: SteelersLogo,
 
     country: {
       name: "USA",
@@ -740,6 +824,8 @@ export const teams: NFLTeam[] = [
     longitude: -80.0157,
     venueImage: SteelersStadium,
     venueCapacity: "68,400",
+    championships: [1974, 1975, 1978, 1979, 2005, 2008],
+    conferenceChampionships: { Titles: [1974, 1975, 1978, 1979, 1995, 2005, 2008, 2010] },
   },
   {
     id: 23,
@@ -756,6 +842,7 @@ export const teams: NFLTeam[] = [
     venue: "Lumen Field",
     established: 1976,
     logo: SeahawksLogo,
+    logoLight: SeahawksLogo,
     country: {
       name: "USA",
       code: "US",
@@ -768,6 +855,8 @@ export const teams: NFLTeam[] = [
     longitude: -122.3316,
     venueImage: SeahawksStadium,
     venueCapacity: "69,000",
+    championships: [2013],
+    conferenceChampionships: { Titles: [2005, 2013, 2014] },
   },
   {
     id: 24,
@@ -784,6 +873,7 @@ export const teams: NFLTeam[] = [
     venue: "Raymond James Stadium",
     established: 1976,
     logo: BuccaneersLogo,
+    logoLight: BuccaneersLogo,
     country: {
       name: "USA",
       code: "US",
@@ -796,6 +886,8 @@ export const teams: NFLTeam[] = [
     longitude: -82.5033,
     venueImage: BuccaneersStadium,
     venueCapacity: "69,218",
+    championships: [2002, 2020],
+    conferenceChampionships: { Titles: [2002, 2020] },
   },
   {
     id: 25,
@@ -812,6 +904,7 @@ export const teams: NFLTeam[] = [
     venue: "Hard Rock Stadium",
     established: 1966,
     logo: DolphinsLogo,
+    logoLight: DolphinsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -824,6 +917,8 @@ export const teams: NFLTeam[] = [
     longitude: -80.239,
     venueImage: DolphinsStadium,
     venueCapacity: "65,326",
+    championships: [1972, 1973],
+    conferenceChampionships: { Titles: [1971, 1972, 1973, 1982, 1984] },
   },
   {
     id: 26,
@@ -840,6 +935,7 @@ export const teams: NFLTeam[] = [
     venue: "NRG Stadium",
     established: 2002,
     logo: TexansLogo,
+    logoLight: TexansLogo,
     country: {
       name: "USA",
       code: "US",
@@ -852,6 +948,8 @@ export const teams: NFLTeam[] = [
     longitude: -95.4107,
     venueImage: TexansStadium,
     venueCapacity: "72,220",
+    championships: [],
+    conferenceChampionships: { Titles: [] },
   },
   {
     id: 27,
@@ -868,6 +966,7 @@ export const teams: NFLTeam[] = [
     venue: "Caesars Superdome",
     established: 1967,
     logo: SaintsLogo,
+    logoLight: SaintsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -880,6 +979,8 @@ export const teams: NFLTeam[] = [
     longitude: -90.0811,
     venueImage: SaintsStadium,
     venueCapacity: "73,208",
+    championships: [2009],
+    conferenceChampionships: { Titles: [2009] },
   },
   {
     id: 28,
@@ -896,6 +997,7 @@ export const teams: NFLTeam[] = [
     venue: "Empower Field at Mile High",
     established: 1960,
     logo: BroncosLogo,
+    logoLight: BroncosLogo,
     country: {
       name: "USA",
       code: "US",
@@ -908,6 +1010,8 @@ export const teams: NFLTeam[] = [
     longitude: -105.0201,
     venueImage: BroncosStadium,
     venueCapacity: "76,125",
+    championships: [1997, 1998, 2015],
+    conferenceChampionships: { Titles: [1977, 1986, 1987, 1989, 1997, 1998, 2013, 2015] },
   },
   {
     id: 29,
@@ -924,6 +1028,7 @@ export const teams: NFLTeam[] = [
     venue: "AT&T Stadium",
     established: 1960,
     logo: CowboysLogo,
+    logoLight: CowboysLogo,
     country: {
       name: "USA",
       code: "US",
@@ -936,6 +1041,8 @@ export const teams: NFLTeam[] = [
     longitude: -97.0934,
     venueImage: CowboysStadium,
     venueCapacity: "80,000",
+    championships: [1971, 1977, 1992, 1993, 1995],
+    conferenceChampionships: { Titles: [1970, 1971, 1975, 1977, 1978, 1992, 1993, 1995] },
   },
   {
     id: 30,
@@ -952,6 +1059,7 @@ export const teams: NFLTeam[] = [
     venue: "SoFi Stadium",
     established: 1960,
     logo: ChargersLogo,
+    logoLight: ChargersLogo,
     country: {
       name: "USA",
       code: "US",
@@ -964,6 +1072,8 @@ export const teams: NFLTeam[] = [
     longitude: -118.3534,
     venueImage: SoFiStadium,
     venueCapacity: "70,240",
+    championships: [1963],
+    conferenceChampionships: { Titles: [1994] },
   },
   {
     id: 31,
@@ -980,6 +1090,7 @@ export const teams: NFLTeam[] = [
     venue: "SoFi Stadium",
     established: 1937,
     logo: RamsLogo,
+    logoLight: RamsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -992,6 +1103,8 @@ export const teams: NFLTeam[] = [
     longitude: -118.3534,
     venueImage: SoFiStadium,
     venueCapacity: "70,240",
+    championships: [1945, 1951, 1999, 2021],
+    conferenceChampionships: { Titles: [1979, 1999, 2001, 2018, 2021] },
   },
   {
     id: 32,
@@ -1008,6 +1121,7 @@ export const teams: NFLTeam[] = [
     venue: "U.S. Bank Stadium",
     established: 1961,
     logo: VikingsLogo,
+    logoLight: VikingsLogo,
     country: {
       name: "USA",
       code: "US",
@@ -1020,6 +1134,8 @@ export const teams: NFLTeam[] = [
     longitude: -93.2575,
     venueImage: VikingsStadium,
     venueCapacity: "66,655",
+    championships: [],
+    conferenceChampionships: { Titles: [1969, 1973, 1974, 1976] },
   },
 ] as const;
 
@@ -1123,6 +1239,35 @@ export const neutralStadiums: Record<string, Venue> = {
     venueCapacity: "68,500",
     venueImage: require("assets/Football/Arenas/WembleyStadium.webp"),
   },
+  "Camping World Stadium": {
+    name: "Camping World Stadium",
+    city: "Orlando",
+    address: "1 Citrus Bowl Pl, Orlando, FL 32805",
+    latitude: 28.5392,
+    longitude: -81.4028,
+    venueCapacity: "60,219",
+    venueImage: {
+      uri: "https://upload.wikimedia.org/wikipedia/commons/1/12/Camping_World_Stadium_Orlando.jpg",
+    },
+  },
+  "Raymond James Stadium": {
+    name: "Raymond James Stadium",
+    city: "Tampa",
+    address: "4201 N Dale Mabry Hwy, Tampa, FL 33607",
+    latitude: 27.9759,
+    longitude: -82.5033,
+    venueCapacity: "69,218",
+    venueImage: require("assets/Football/Arenas/BuccaneersStadium.webp"),
+  },
+  "SoFi Stadium": {
+    name: "SoFi Stadium",
+    city: "Inglewood",
+    address: "1001 Stadium Dr, Inglewood, CA 90301",
+    latitude: 33.9618,
+    longitude: -118.3534,
+    venueCapacity: "70,240",
+    venueImage: require("assets/Football/Arenas/SoFiStadium.webp"),
+  },
 };
 
 export const getNFLTeam = (id: number | string) =>
@@ -1135,8 +1280,7 @@ export const getTeamInfo = (teamId: number | string) => {
 
 export function getNFLTeamsLogo(
   idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean,
-  use500x500: boolean = false
+  isDark: boolean
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo; // fallback
 
@@ -1152,14 +1296,14 @@ export function getNFLTeamsLogo(
 
   if (!team) return PlaceholderLogo;
 
-  if (use500x500) {
-    return isDark ? team.logoLight || team.logo : team.logo;
-  }
-
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export function getNFLESPNTeamsLogo(
+export const getTeamByESPNId = (espnId: number | string) => {
+  return teams.find((t) => t.espnID?.toString() === espnId?.toString());
+};
+
+export function getTeamLogoESPN(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean
 ) {
@@ -1174,18 +1318,12 @@ export function getNFLESPNTeamsLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export const getTeamName = (
-  teamId: number | string,
-  fallback?: string // e.g., "Home" or "Away"
-) => {
+export const getTeamName = (teamId: string | number): string | null => {
   const team = getTeamInfo(teamId);
-  return team?.name || fallback || "Unknown Team";
+  return team?.name || null;
 };
 
-export function getTeamCode(
-  teamId: string,
-  fallback?: string
-): string | null {
+export function getTeamCode(teamId: string, fallback?: string): string | null {
   const team = getTeamInfo(teamId);
   return team?.code || fallback || "UKNW";
 }
@@ -1232,4 +1370,62 @@ export const teamIdMap: Record<number, string> = {
   30: "24",
   31: "14",
   32: "16",
+};
+
+export const nflDivisionsById = {
+ " AFC East": [
+    "2",  // Bills
+    "15", // Dolphins
+    "17", // Patriots
+    "20", // Jets
+  ],
+
+  "AFC North": [
+    "33", // Ravens
+    "4",  // Bengals
+    "5",  // Browns
+    "23", // Steelers
+  ],
+
+  "AFC South": [
+    "34", // Texans
+    "11", // Colts
+    "30", // Jaguars
+    "10", // Titans
+  ],
+
+  "AFC West": [
+    "7",  // Broncos
+    "12", // Chiefs
+    "13", // Raiders
+    "24", // Chargers
+  ],
+
+  "NFC East": [
+    "6",  // Cowboys
+    "19", // Giants
+    "21", // Eagles
+    "28", // Commanders
+  ],
+
+  "NFC North": [
+    "3",  // Bears
+    "8",  // Lions
+    "9",  // Packers
+    "16", // Vikings
+  ],
+
+  "NFC South": [
+    "1",  // Falcons
+    "29", // Panthers
+    "18", // Saints
+    "27", // Buccaneers
+  ],
+
+  "NFC West": [
+    "22", // Cardinals
+    "14", // Rams
+    "25", // 49ers
+    "26", // Seahawks
+  ],
 };

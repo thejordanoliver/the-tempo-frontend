@@ -1,5 +1,6 @@
 // types/cfb.ts
-const DefaultLogo = require("assets/Placeholders/teamPlaceholder.png");
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { Colors } from "constants/Colors";
 import { ImageSourcePropType } from "react-native";
 
 export interface CFBPlayer {
@@ -30,7 +31,7 @@ export type CFBTeam = {
   abbreviation?: string;
   city?: string;
   location?: string;
-  address?: string;
+  address?: string; // ✅ Add this
   coach?: string;
   coachImage?: string;
   venue?: string;
@@ -46,13 +47,11 @@ export type CFBTeam = {
   venueCapacity?: string;
   logo: string;
   logoLight?: string;
-  logo500x500?: string;
-  logoLight500x500?: string;
   color?: string;
   secondaryColor?: string;
   championships?: number[];
-  conference_championships?: string[]; // or number[]
-  banner?: any; // <-- add this
+  conference_championships?: string[];
+  banner?: any;
 };
 
 export type CFBGame = {
@@ -183,7 +182,8 @@ export interface RawCFBGame {
 export const emptyTeam: CFBTeam = {
   id: 0,
   espnID: "0",
-  name: "Unknown",
+  name: "TBD",
+  shortName: "TBD",
   code: "UNK",
   city: "Unknown",
   location: "Unknown",
@@ -200,28 +200,122 @@ export const emptyTeam: CFBTeam = {
     code: "Unknown",
     flag: "Unknown",
   },
-  logo: DefaultLogo, // ✅ correct type
+  logo: PlaceholderLogo,
+  logoLight: PlaceholderLogo,
   fullName: "Unknown",
-  color: "#000000",
-  secondaryColor: "#FFFFFF",
+  color: Colors.white,
+  secondaryColor: Colors.black,
 };
 
 export const emptyAwayTeam: CFBTeam = {
   id: 0,
-  espnID: -2,
-  name: "Away",
-  shortName: "Away",
-  code: "AWY",
-  fullName: "Away Team",
-  logo: DefaultLogo, // ✅ correct type
+  espnID: "-2",
+  oddsID: "0",
+  logo: PlaceholderLogo,
+  name: "TBD",
+  shortName: "TBD",
+  fullName: "TBD",
+  code: "TBD",
+  city: "Unknown",
+  location: "Unknown",
+  address: "",
+  coach: "Unknown",
+  venue: "Unknown",
+  established: 0,
+  color: Colors.darkGray,
+  secondaryColor: Colors.black,
+  country: {
+    name: "Unknown",
+    code: "UNK",
+    flag: "",
+  },
+  latitude: 0,
+  longitude: 0,
+  venueImage: null,
+  venueCapacity: "",
 };
 
 export const emptyHomeTeam: CFBTeam = {
   id: 0,
-  espnID: -1,
-  name: "Home",
-  shortName: "Home",
-  code: "HME",
-  fullName: "Home Team",
-  logo: DefaultLogo, // ✅ correct type
+  espnID: "-1",
+  oddsID: "0",
+  logo: PlaceholderLogo,
+  name: "TBD",
+  shortName: "TBD",
+  fullName: "TBD",
+  code: "TBD",
+  city: "Unknown",
+  location: "Unknown",
+  address: "",
+  coach: "Unknown",
+  venue: "Unknown",
+  established: 0,
+  color: Colors.lightGray,
+  secondaryColor: Colors.black,
+  country: {
+    name: "Unknown",
+    code: "UNK",
+    flag: "",
+  },
+  latitude: 0,
+  longitude: 0,
+  venueImage: null,
+  venueCapacity: "",
 };
+
+
+export interface BracketTeam {
+  id: number | string;
+  espnID?: string | number;
+  oddsID?: string;
+  name: string;
+  shortName?: string;
+  fullName?: string;
+  code: string;
+  logo: ImageSourcePropType;
+  logoLight?: ImageSourcePropType;
+  abbreviation?: string;
+  city?: string;
+  location?: string;
+  address?: string;
+  coach?: string;
+  coachImage?: string;
+  venue?: string;
+  established?: number;
+  seed?: number | null;
+  score?: number;
+  record?: string | null; // "12-1"
+}
+
+export interface BracketBroadcast {
+  name: string;
+  type: string;
+}
+
+export interface BracketGame {
+  id: string;
+
+  top: BracketTeam | null;
+  bottom: BracketTeam | null;
+
+  // NEW FIELDS REQUIRED BY useCFPBracket
+  status: "scheduled" | "live" | "final";
+  startTime?: string;
+
+  topScore?: number | null;
+  bottomScore?: number | null;
+  broadcasts?: BracketBroadcast[];
+}
+
+export interface BracketRound {
+  title: string;
+  games: BracketGame[];
+}
+
+export interface BracketData {
+  first: BracketRound;
+  quarterfinal: BracketRound;
+  semifinal: BracketRound;
+  championship: BracketRound;
+  isDark: boolean
+}

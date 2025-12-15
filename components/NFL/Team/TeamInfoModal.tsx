@@ -1,17 +1,17 @@
 // components/NFL/TeamInfoBottomSheetNFL.tsx
-import ChampionshipBanner from "components/ChampionshipBanner";
-import { getTeamInfo } from "constants/teamsNFL";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import ChampionshipBanner from "components/Team/ChampionshipBanner";
+import { Fonts } from "constants/fonts";
+import { getTeamInfo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TeamInfoCard from "./TeamInfoCard";
-import { Fonts } from "constants/fonts";
 
 type Props = {
   visible: boolean;
@@ -19,12 +19,16 @@ type Props = {
   teamId?: string | number;
 };
 
-export default function TeamInfoBottomSheetNFL({ visible, onClose, teamId }: Props) {
+export default function TeamInfoBottomSheetNFL({
+  visible,
+  onClose,
+  teamId,
+}: Props) {
   const isDark = useColorScheme() === "dark";
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
 
-const team = teamId ? getTeamInfo(teamId) : undefined;
+  const team = teamId ? getTeamInfo(teamId) : undefined;
 
   useEffect(() => {
     if (visible) sheetRef.current?.present();
@@ -111,7 +115,7 @@ const team = teamId ? getTeamInfo(teamId) : undefined;
                 color: isDark ? "#fff" : "#1d1d1d",
               }}
             >
-             Super Bowls
+              Super Bowls
             </Text>
 
             <ChampionshipBanner
@@ -119,7 +123,7 @@ const team = teamId ? getTeamInfo(teamId) : undefined;
               logo={team?.logo}
               teamName={team?.name}
               teamId={team?.id}
-                league="NFL" // 👈 add this
+              league="NFL" // 👈 add this
             />
 
             <TeamInfoCard teamId={teamId} />

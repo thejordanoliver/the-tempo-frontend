@@ -3,7 +3,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import ChampionshipBanner from "components/ChampionshipBanner";
+import ChampionshipBanner from "components/Team/ChampionshipBanner";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getMLBTeam } from "constants/teamsMLB";

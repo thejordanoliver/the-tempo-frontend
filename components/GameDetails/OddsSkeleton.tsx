@@ -1,65 +1,73 @@
-import React from "react";
-import { View, Text, StyleSheet, useColorScheme, Dimensions } from "react-native";
-import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
-import { LinearGradient } from "expo-linear-gradient";
+import HeaderSkeleton from "components/Headings/HeaderSkeleton";
+import { Colors } from "constants/Colors";
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+// Reusable pulsing component
+const Pulse = ({ style, color }: { style?: any; color: string }) => {
+  const opacity = useRef(new Animated.Value(0.4)).current;
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 1300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.4,
+          duration: 1300,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  return <Animated.View style={[style, { backgroundColor: color, opacity }]} />;
+};
 
 export const OddsSkeleton = () => {
   const isDark = useColorScheme() === "dark";
-  const shimmerColor = isDark ? "#444" : "#e0e0e0";
-  const backgroundColor = isDark ? "#1e1e1e" : "#fff";
+
+  const skeletonColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container]}>
       {/* Header Row Skeleton */}
+      <HeaderSkeleton style={{ marginLeft: 0 }} />
+
+    
       <View style={styles.headerRow}>
-        <ShimmerPlaceHolder
-          shimmerColors={[shimmerColor, "#999", shimmerColor]}
-          LinearGradient={LinearGradient}
-          style={[styles.headerCell, { flex: 1,  }]}
-        />
-     
-      </View>
-      <View style={styles.headerRow}>
-        <ShimmerPlaceHolder
-          shimmerColors={[shimmerColor, "#999", shimmerColor]}
-          LinearGradient={LinearGradient}
+        <Pulse
           style={[styles.headerCell, { flex: 1, marginRight: 12 }]}
+          color={skeletonColor}
         />
         {[...Array(3)].map((_, i) => (
-          <ShimmerPlaceHolder
+          <Pulse
             key={`header-${i}`}
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={[styles.headerCell, { flex: .2, marginLeft: i === 0 ? 12 : 8 }]}
+            style={[
+              styles.headerCell,
+              { flex: 0.2, marginLeft: i === 0 ? 12 : 8 },
+            ]}
+            color={skeletonColor}
           />
         ))}
       </View>
-
       {/* Away Team Row Skeleton */}
       <View style={styles.teamRow}>
-        {/* Team Info: Logo and Name */}
         <View style={[styles.teamInfo, { flex: 2 }]}>
-          <ShimmerPlaceHolder
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={styles.logoSkeleton}
-          />
-          <ShimmerPlaceHolder
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={styles.teamNameSkeleton}
-          />
+          <Pulse style={styles.logoSkeleton} color={skeletonColor} />
+          <Pulse style={styles.teamNameSkeleton} color={skeletonColor} />
         </View>
 
-        {/* Odds */}
         {[...Array(3)].map((_, i) => (
-          <ShimmerPlaceHolder
+          <Pulse
             key={`away-odd-${i}`}
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={[styles.oddsCell, { flex: .5, marginLeft: i === 0 ? 12 : 8 }]}
+            style={[
+              styles.oddsCell,
+              { flex: 0.5, marginLeft: i === 0 ? 12 : 8 },
+            ]}
+            color={skeletonColor}
           />
         ))}
       </View>
@@ -67,7 +75,7 @@ export const OddsSkeleton = () => {
       {/* Divider */}
       <View
         style={{
-          borderBottomColor: isDark ? "#444" : "#ccc",
+          borderBottomColor: Colors.midTone,
           borderBottomWidth: 1,
           marginVertical: 8,
         }}
@@ -75,27 +83,19 @@ export const OddsSkeleton = () => {
 
       {/* Home Team Row Skeleton */}
       <View style={styles.teamRow}>
-        {/* Team Info: Logo and Name */}
         <View style={[styles.teamInfo, { flex: 2 }]}>
-          <ShimmerPlaceHolder
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={styles.logoSkeleton}
-          />
-          <ShimmerPlaceHolder
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={styles.teamNameSkeleton}
-          />
+          <Pulse style={styles.logoSkeleton} color={skeletonColor} />
+          <Pulse style={styles.teamNameSkeleton} color={skeletonColor} />
         </View>
 
-        {/* Odds */}
         {[...Array(3)].map((_, i) => (
-          <ShimmerPlaceHolder
+          <Pulse
             key={`home-odd-${i}`}
-            shimmerColors={[shimmerColor, "#999", shimmerColor]}
-            LinearGradient={LinearGradient}
-            style={[styles.oddsCell, { flex: .5, marginLeft: i === 0 ? 12 : 8 }]}
+            style={[
+              styles.oddsCell,
+              { flex: 0.5, marginLeft: i === 0 ? 12 : 8 },
+            ]}
+            color={skeletonColor}
           />
         ))}
       </View>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   headerCell: {
-    height: 16,
+    height: 8,
     borderRadius: 6,
   },
   teamRow: {

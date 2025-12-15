@@ -129,8 +129,6 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, fullName, teamObj, isDark]);
 
-
-
   // Find away team with extended type
   const awayTeamObj = teams.find((t) => t.id === teamLastGame?.away.id) as
     | TeamWithRecord
@@ -189,13 +187,11 @@ export default function PlayerDetailScreen() {
             <HeadingTwo>Last Game</HeadingTwo>
             <GameCard game={enrichedLastGame} isDark={isDark} />
           </View>
-
-          <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-            <HeadingTwo>Career Stats</HeadingTwo>
-            <PlayerStatTable playerId={parsedPlayerId} seasons={seasons} />
-          </View>
         </>
       )}
+      <View style={{ marginTop: 24 }}>
+        <PlayerStatTable playerId={parsedPlayerId} />
+      </View>
     </ScrollView>
   );
 }

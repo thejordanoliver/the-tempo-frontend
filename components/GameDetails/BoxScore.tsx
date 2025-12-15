@@ -4,11 +4,11 @@ import { teamsById } from "constants/teams";
 import { router } from "expo-router";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useEffect, useRef, useState } from "react";
+import BoxScoreSkeleton from "./BoxScoreSkeleton";
 import {
   Animated,
   Image,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -66,44 +66,43 @@ export default function BoxScore({
   const awayCode = awayTeam?.code ?? "away";
 
   /** Generate placeholder players if no stats exist */
-const getPlayersForTeam = (teamType: "home" | "away") => {
-  const targetTeamId = teamType === "home" ? homeTeamId : awayTeamId;
+  const getPlayersForTeam = (teamType: "home" | "away") => {
+    const targetTeamId = teamType === "home" ? homeTeamId : awayTeamId;
 
-  const teamPlayers = data?.filter(
-    (p) => Number(p.team?.id) === Number(targetTeamId)
-  );
+    const teamPlayers = data?.filter(
+      (p) => Number(p.team?.id) === Number(targetTeamId)
+    );
 
-  if (teamPlayers && teamPlayers.length > 0) return teamPlayers;
+    if (teamPlayers && teamPlayers.length > 0) return teamPlayers;
 
-  // fallback placeholders
-  return Array.from({ length: 12 }).map((_, i) => ({
-    localPlayer: {
-      first_name: "Player",
-      last_name: `${i + 1}`,
-      player_id: i + 1,
-    },
-    teamType,
-    min: 0,
-    points: 0,
-    fgm: 0,
-    fga: 0,
-    tpm: 0,
-    tpa: 0,
-    ftm: 0,
-    fta: 0,
-    offReb: 0,
-    defReb: 0,
-    totReb: 0,
-    assists: 0,
-    steals: 0,
-    blocks: 0,
-    turnovers: 0,
-    pFouls: 0,
-    plusMinus: 0,
-    team: { id: targetTeamId },
-  }));
-};
-
+    // fallback placeholders
+    return Array.from({ length: 12 }).map((_, i) => ({
+      localPlayer: {
+        first_name: "Player",
+        last_name: `${i + 1}`,
+        player_id: i + 1,
+      },
+      teamType,
+      min: 0,
+      points: 0,
+      fgm: 0,
+      fga: 0,
+      tpm: 0,
+      tpa: 0,
+      ftm: 0,
+      fta: 0,
+      offReb: 0,
+      defReb: 0,
+      totReb: 0,
+      assists: 0,
+      steals: 0,
+      blocks: 0,
+      turnovers: 0,
+      pFouls: 0,
+      plusMinus: 0,
+      team: { id: targetTeamId },
+    }));
+  };
 
   const homePlayers = getPlayersForTeam("home");
   const awayPlayers = getPlayersForTeam("away");
@@ -183,39 +182,13 @@ const getPlayersForTeam = (teamType: "home" | "away") => {
     players: any[],
     teamName: string,
     teamLogo: any,
-    teamColor: string,
-    secondaryColor: string,
+
     teamCode: string,
     isExpanded: boolean,
     heightAnim: Animated.Value
   ) => {
-     const borderColor = lighter
-      ? Colors.white
-      : isDark &&
-        [
-          "BKN",
-          "MIN",
-          "IND",
-          "DEN",
-          "SAS",
-          "PHX",
-          "LAL",
-          "UTA",
-          "ATL",
-          "NYK",
-          "LAC",
-          "NOP",
-          "MEM",
-          "MIL",
-          "SAC",
-          "WAS",
-          "CLE",
-        ].includes(teamCode)
-      ? secondaryColor ?? teamColor
-      : teamColor;
-
     return (
-      <View style={[styles.teamBox, { borderColor }]}>
+      <View style={styles.teamBox}>
         {/* Team Header */}
         <View
           style={{
@@ -232,7 +205,7 @@ const getPlayersForTeam = (teamType: "home" | "away") => {
                   ? Colors.white
                   : isDark
                   ? Colors.white
-                  : teamColor,
+                  : Colors.black,
               },
             ]}
           >
@@ -266,19 +239,20 @@ const getPlayersForTeam = (teamType: "home" | "away") => {
                   `idx-${index}`;
 
                 return (
-                  <Pressable
-                    key={`${teamCode}-${id}`}
-                    onPress={() =>
-                      router.push(
-                        `/player/${p.localPlayer?.player_id}?teamId=${p.team?.id}`
-                      )
-                    }
-                    style={styles.tableRow}
-                  >
-                    <Text style={styles.cellName}>
-                      {p.localPlayer?.first_name} {p.localPlayer?.last_name}
-                    </Text>
-                  </Pressable>
+                  <View key={`${teamCode}-${id}`} style={styles.tableRow}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() =>
+                        router.push(
+                          `/player/${p.localPlayer?.player_id}?teamId=${p.team?.id}`
+                        )
+                      }
+                    >
+                      <Text style={styles.cellName}>
+                        {p.localPlayer?.first_name} {p.localPlayer?.last_name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 );
               })}
             </Animated.View>
@@ -369,29 +343,27 @@ const getPlayersForTeam = (teamType: "home" | "away") => {
     <ScrollView style={styles.container}>
       <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
 
-      {isLoading && <Text style={styles.loading}>Loading box score...</Text>}
+{isLoading && <BoxScoreSkeleton  lighter={lighter} />}
 
       {isError && <Text style={styles.error}>Failed to load box score.</Text>}
 
       {!isLoading && !isError && (
         <>
-          {renderTeamBox(
-            awayPlayers,
-            awayTeam?.fullName ?? "Away Team",
-            getTeamLogo(awayTeam),
-            awayTeam?.color ?? Colors.black,
-            awayTeam?.secondaryColor ?? "",
-            awayCode,
-            expandedTeams[awayCode] ?? false,
-            heightAnimMap.current[awayCode]
-          )}
+          <View style={{ marginBottom: 24 }}>
+            {renderTeamBox(
+              awayPlayers,
+              awayTeam?.fullName ?? "Away Team",
+              getTeamLogo(awayTeam),
+              awayCode,
+              expandedTeams[awayCode] ?? false,
+              heightAnimMap.current[awayCode]
+            )}
+          </View>
 
           {renderTeamBox(
             homePlayers,
             homeTeam?.fullName ?? "Home Team",
             getTeamLogo(homeTeam),
-            homeTeam?.color ?? Colors.black,
-            homeTeam?.secondaryColor ?? "",
             homeCode,
             expandedTeams[homeCode] ?? false,
             heightAnimMap.current[homeCode]
@@ -426,8 +398,12 @@ const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
     teamBox: {
       borderWidth: 1,
       borderRadius: 10,
-      marginBottom: 24,
       overflow: "hidden",
+      borderColor: lighter
+        ? Colors.white
+        : isDark
+        ? Colors.white
+        : Colors.black,
     },
     teamLabel: {
       fontSize: 20,
@@ -448,14 +424,14 @@ const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
     },
     tableRow: {
       flexDirection: "row",
-      borderBottomWidth: 1,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       paddingVertical: 6,
       height: PLAYER_ROW_HEIGHT,
       borderColor: lighter
-        ? Colors.darkGray
+        ? Colors.lightGray
         : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     cellName: {
       width: NAME_COLUMN_WIDTH,
@@ -483,11 +459,7 @@ const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
     cellContainer: { justifyContent: "center", alignItems: "center" },
     teamLogo: { width: 28, height: 28, resizeMode: "contain" },
     showMoreLess: {
-      color: lighter
-        ? Colors.white
-        : isDark
-        ? Colors.white
-        : Colors.black,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 14,
     },

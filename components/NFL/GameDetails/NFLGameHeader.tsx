@@ -68,7 +68,7 @@ export default function NFLGameHeader({
             id: String(awayTeam.id),
             code: awayTeam.code,
             name:
-              getTeamName(awayTeam.id, awayTeam.nickname) ||
+              getTeamName(awayTeam.id) ||
               awayTeam.nickname ||
               "Away",
             logo: getNFLTeamsLogo(awayTeam.id, isDark),
@@ -113,7 +113,7 @@ export default function NFLGameHeader({
             id: String(homeTeam.id),
             code: homeTeam.code,
             name:
-              getTeamName(homeTeam.id, homeTeam.nickname) ||
+              getTeamName(homeTeam.id) ||
               homeTeam.nickname ||
               "Home",
             logo: getNFLTeamsLogo(homeTeam.id, isDark),

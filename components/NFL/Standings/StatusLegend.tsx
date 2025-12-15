@@ -1,19 +1,11 @@
-import { getStyles } from "styles/Standings.styles";
 import { Text, View, useColorScheme } from "react-native";
+import { getStyles } from "styles/Standings.styles";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import { StatusBadge } from "./StatusBadge";
 
-/**
- * Updated status codes based on NFL-managed leagues and playoff logic:
- * - 'x' : Clinched Playoff Berth
- * - 'o' : Eliminated from Playoffs contention
- * - 'c' : Clinched Conference
- * - 'd' : Clinched Division
- * - 'pi': Clinched Play-In
- */
 export const statusCodeToLabel: Record<string, string> = {
   x: "Clinched Playoff Berth",
-  o: "Eliminated from Playoffs contention",
+  o: "Eliminated from Playoffs",
   c: "Clinched Conference",
   d: "Clinched Division",
   pi: "Clinched Wild Card",
@@ -25,7 +17,7 @@ export const statusCodeToColor: Record<string, string> = {
   o: "#f44336", // Red
   c: "#2196f3", // Blue
   d: "#ff9800", // Orange
-  pi: "#ffc107", // Amber
+  pi: "#B163FF", // Amber
 };
 
 export const StatusLegend = () => {

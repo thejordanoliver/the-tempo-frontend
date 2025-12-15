@@ -210,7 +210,6 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
     index: number;
     total: number;
   }) => {
-
     const handlePress = () => {
       if (!player) return;
       const leaguePath = league === "nfl" ? "nfl" : "cfb";
@@ -257,7 +256,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
         selectedValue={viewMode}
         onSelect={(val: string) => setViewMode(val as "team" | "players")}
         isDark={isDark}
-        style={{ paddingBottom: 12 }}
+        absolute
       />
 
       <ScrollView style={styles.scrollContainer}>
@@ -421,9 +420,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
             {Object.entries(playerCategoryTables).map(
               ([catName, { headers, rows }]) => (
                 <View key={catName} style={{ marginBottom: 24 }}>
-                  <Text style={styles.categoryTitle}>
-                    {catName}
-                  </Text>
+                  <Text style={styles.categoryTitle}>{catName}</Text>
 
                   <View style={{ flexDirection: "row" }}>
                     {/* Fixed Player Column */}

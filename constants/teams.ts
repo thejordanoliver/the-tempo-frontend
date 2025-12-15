@@ -1192,6 +1192,17 @@ export function getTeamLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
+export function getTeamLogoESPN(id: number | string, isDark: boolean) {
+
+  const team = teams.find(
+    (t) =>
+      String(t.espnID) === String(id) 
+  );
+
+  if (!team) return PlaceholderLogo; // fallback
+
+  return isDark ? team.logoLight || team.logo : team.logo;
+}
 
 
 export const teamsById: Record<string, NBATeam> = teams.reduce((map, team) => {

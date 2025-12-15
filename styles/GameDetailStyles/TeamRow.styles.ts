@@ -90,6 +90,7 @@ export const styles = StyleSheet.create<{
   nameRow: ViewStyle;
   teamName: TextStyle;
   record: TextStyle;
+  rank: TextStyle;
   score: TextStyle;
   preGameRecord: TextStyle;
   scoreWrapper: ViewStyle;
@@ -118,6 +119,11 @@ export const styles = StyleSheet.create<{
     fontFamily: Fonts.OSREGULAR,
     textAlign: "center",
   },
+  rank: {
+    fontSize: 10,
+    fontFamily: Fonts.OSREGULAR,
+  },
+
   record: {
     fontFamily: Fonts.OSREGULAR,
     textAlign: "center",
@@ -150,11 +156,11 @@ export const styles = StyleSheet.create<{
 // Size-based dynamic styles
 export const sizeStyles = {
   small: {
- score: { fontSize: 36, width: 60 },
+    score: { fontSize: 36, width: 60 },
     preGameRecord: { fontSize: 24, width: 60 },
     logo: { width: 40, height: 40 },
     teamName: { fontSize: 12 },
-     record: { fontSize: 12 },
+    record: { fontSize: 12 },
   },
   medium: {
     score: { fontSize: 36, width: 60 },

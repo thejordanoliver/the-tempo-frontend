@@ -79,7 +79,7 @@ function Stat({ label, value, color, sub, lighter = false }: StatProps) {
       >
         {label}
       </Text>
-      <Text style={styles.statText}>{value}</Text>
+      <Text style={[styles.statText, { color }]}>{value}</Text>
     </View>
   );
 }
@@ -283,7 +283,7 @@ export default function GameLeaders({
               teams.find((t) => t.espnID === homeTeamId) ??
               teams.find((t) => t.espnID === awayTeamId);
 
-            const teamLogo = teamObj ? getTeamLogo(teamObj.id, isDark) : null;
+            const teamLogo = teamObj ? lighter ? teamObj.logoLight || teamObj.logo : isDark? teamObj.logoLight || teamObj.logo : teamObj.logo : null;
 
             const hasNoStats =
               player.points === "–" &&

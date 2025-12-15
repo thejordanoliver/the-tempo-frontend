@@ -178,12 +178,12 @@ export type NBATeam = {
   color: string;
   firstSeason?: string;
   secondaryColor?: string;
-  transparentColor: string;
+  transparentColor?: string;
   conferenceLogo: any;
   uniforms: {
     home: any;
-    away: any
-  }
+    away: any;
+  };
   record?: string;
   wins?: number;
   losses?: number;
@@ -320,7 +320,6 @@ export type CBBTeam = {
   address?: string;
   coach?: string;
   coachImage?: string;
-  venue?: string;
   established?: number;
   country?: {
     name: string;
@@ -355,7 +354,7 @@ export type Venue = {
   name?: string;
   address?: string;
   city?: string;
-  state: string;
+  state?: string;
   latitude?: number;
   longitude?: number;
   venueCapacity?: string;
@@ -366,15 +365,6 @@ export type GameStatus = {
   long: string;
   short: string;
   timer: string | null;
-};
-
-type QuarterScores = {
-  q1: number;
-  q2: number;
-  q3: number;
-  q4: number;
-  total: number;
-  over_time?: number | null;
 };
 
 export interface summerGame {
@@ -589,6 +579,42 @@ export type NBAOrNFLTeam = {
   logo: any;
   logoLight?: any;
   city?: string;
+};
+
+export type NBAMVPSeason = {
+  id: number;
+  season: string; // "2024-25"
+  league: "NBA";
+  player_name: string;
+
+  voting: string | null; // "(V)"
+  age: number;
+  team_abbr: string;
+  games: number;
+
+  minutes_per_game: string;
+  points: string;
+  rebounds: string;
+  assists: string;
+  steals: string;
+  blocks: string;
+
+  fg_pct: string;
+  three_pct: string;
+  ft_pct: string;
+
+  win_shares: string;
+  ws_per_48: string;
+
+  player_id: string;
+
+  coach: string;
+  wins: number;
+  losses: number;
+  win_loss_pct: string;
+  team: NBATeam | null;
+  team_id: number;
+  current_team: NBATeam | null;
 };
 
 export type UserResult = {

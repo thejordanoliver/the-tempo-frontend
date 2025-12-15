@@ -73,7 +73,7 @@ export function useGameStatistics(gameId: number) {
             "x-rapidapi-host": RAPIDAPI_HOST,
           },
         });
-console.log("Game Stats:", res.data.response);
+
 
         const stats = res.data.response ?? [];
         setData(stats);

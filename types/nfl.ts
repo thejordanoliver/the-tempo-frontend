@@ -1,7 +1,7 @@
 // types/nfl.ts
 
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/Colors";
-
 export interface NFLPlayer {
   id: number;
   name: string;
@@ -17,11 +17,7 @@ export interface NFLPlayer {
   experience?: number | null;
   image?: string;
   teamId: number;
-  
 }
-
-
-
 
 export type NFLTeam = {
   id: number | string;
@@ -35,7 +31,7 @@ export type NFLTeam = {
   address?: string;
   coach: string;
   coachImage?: string;
-  owner?: string;
+  owner: string;
   venue: string;
   established: number;
   logo: string;
@@ -51,8 +47,10 @@ export type NFLTeam = {
   longitude: number;
   venueImage: any;
   venueCapacity: string;
-    banner?: any; // <-- add this
-
+  championships?: number[];
+  conferenceChampionships?: {
+    Titles?: number[]; // or number[]
+  };
 };
 
 export type NFLGame = {
@@ -174,20 +172,23 @@ export const emptyTeam: NFLTeam = {
   espnID: "0",
   oddsID: "0",
   name: "Unknown",
+  fullName: "Unknown",
   code: "UNK",
   city: "Unknown",
   location: "Unknown",
   coach: "Unknown",
+  coachImage: "",
   owner: "Unknown",
   venue: "Unknown",
+  address: "Unknown",
   established: 0,
-  logo: "",
+  logo: PlaceholderLogo,
+  logoLight: PlaceholderLogo,
   country: {
     name: "Unknown",
     code: "UNK",
     flag: "",
   },
-  fullName: "Unknown",
   color: Colors.white,
   secondaryColor: Colors.black,
   latitude: 0,
@@ -196,17 +197,59 @@ export const emptyTeam: NFLTeam = {
   venueCapacity: "",
 };
 
-
-
 // fallback for cards
-export const emptyNFLAwayTeam = {
-  ...emptyTeam,
-  name: "Away",
-  code: "AWY",
+export const emptyNFLAwayTeam: NFLTeam = {
+  id: 0,
+  espnID: "-2",
+  oddsID: "0",
+  logo: PlaceholderLogo,
+  logoLight: PlaceholderLogo,
+  name: "TBD",
+  fullName: "TBD",
+  code: "TBD",
+  city: "Unknown",
+  location: "Unknown",
+  coach: "Unknown",
+  owner: "Unknown",
+  venue: "Unknown",
+  established: 0,
+  color: Colors.darkGray,
+  secondaryColor: Colors.black,
+  country: {
+    name: "Unknown",
+    code: "UNK",
+    flag: "",
+  },
+  latitude: 0,
+  longitude: 0,
+  venueImage: null,
+  venueCapacity: "",
 };
 
-export const emptyNFLHomeTeam = {
-  ...emptyTeam,
-  name: "Home",
-  code: "HME",
+export const emptyNFLHomeTeam: NFLTeam = {
+  id: 0,
+  espnID: "-1",
+  oddsID: "0",
+  logo: PlaceholderLogo,
+  logoLight: PlaceholderLogo,
+  name: "TBD",
+  fullName: "TBD",
+  code: "TBD",
+  city: "Unknown",
+  location: "Unknown",
+  coach: "Unknown",
+  owner: "Unknown",
+  venue: "Unknown",
+  established: 0,
+  color: Colors.lightGray,
+  secondaryColor: Colors.black,
+  country: {
+    name: "Unknown",
+    code: "UNK",
+    flag: "",
+  },
+  latitude: 0,
+  longitude: 0,
+  venueImage: null,
+  venueCapacity: "",
 };

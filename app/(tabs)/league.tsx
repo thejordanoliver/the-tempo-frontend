@@ -325,7 +325,6 @@ export default function LeagueScreen() {
           />
 
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl

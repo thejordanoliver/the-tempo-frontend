@@ -1,9 +1,8 @@
-import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import FixedWidthTabBar from "../FixedWidthTabBar";
 import HeadingTwo from "../Headings/HeadingTwo";
+import FixedWidthTabBar, { getLabelStyle } from "../TabBars/FixedWidthTabBar";
 import TeamInjuriesList from "./TeamInjuriesList";
 
 // ✅ Define type for injuries
@@ -89,16 +88,6 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
             const tab = tabs.find((t) => t.displayName === tabName);
             if (!tab) return null;
 
-            const textColor = lighter
-              ? "#fff"
-              : isSelected
-              ? isDark
-                ? "#fff"
-                : "#1d1d1d"
-              : isDark
-              ? "#888"
-              : "rgba(0,0,0,0.5)";
-
             return (
               <View style={styles.tabLabel}>
                 {tab.logo && (
@@ -109,12 +98,9 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
                   />
                 )}
                 <Text
-                  style={{
-                    color: textColor,
-                    fontSize: 16,
-                    marginLeft: tab.logo ? 4 : 0,
-                    fontFamily: Fonts.OSMEDIUM,
-                  }}
+                  style={getLabelStyle(isDark, isSelected, lighter, {
+                    opacity: isSelected ? 1 : 0.5,
+                  })}
                 >
                   {tab.code}
                 </Text>

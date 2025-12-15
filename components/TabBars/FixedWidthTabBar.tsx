@@ -1,4 +1,5 @@
 // components/NFL/FixedWidthTabBar.tsx
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -11,7 +12,6 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-
 export interface FixedWidthTabBarProps {
   tabs: readonly string[];
   selected: string;
@@ -33,15 +33,15 @@ export const getLabelStyle = (
   fontSize: 16,
   color: isSelected
     ? lighter
-      ? "#fff"
+      ? Colors.white
       : isDark
-        ? "#fff"
-        : "#1d1d1d"
+      ? Colors.white
+      : Colors.black
     : lighter
-      ? "#ccc"
-      : isDark
-        ? "#888"
-        : "rgba(0,0,0,0.5)",
+    ? Colors.lightGray
+    : isDark
+    ? Colors.midTone
+    : Colors.midTone,
   fontFamily: Fonts.OSMEDIUM,
   ...extra,
 });
@@ -122,7 +122,11 @@ export default function FixedWidthTabBar({
             styles.underline,
             {
               width: tabWidth,
-              backgroundColor: lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d",
+              backgroundColor: lighter
+                ? Colors.white
+                : isDark
+                ? Colors.white
+                : Colors.black,
               transform: [{ translateX: underlineX }],
             },
           ]}
@@ -143,6 +147,7 @@ const styles = StyleSheet.create({
   tabPressable: {
     alignItems: "center",
     paddingBottom: 10,
+    
   },
   underline: {
     position: "absolute",

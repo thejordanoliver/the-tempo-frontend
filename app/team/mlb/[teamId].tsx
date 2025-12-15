@@ -1,9 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import TeamForum from "components/Forum/TeamForum";
 import MLBGamesList from "components/MLB/Games/MLBGamesList";
+import TeamInfoBottomSheet from "components/MLB/Team/TeamInfoModal";
 import TeamPlayerList from "components/MLB/Team/TeamRoster";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import TeamInfoBottomSheet from "components/MLB/Team/TeamInfoModal";
 import { Colors } from "constants/Colors";
 import { players } from "constants/mlbPlayers";
 import { teams } from "constants/teamsMLB";

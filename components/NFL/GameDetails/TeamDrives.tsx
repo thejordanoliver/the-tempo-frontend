@@ -110,7 +110,6 @@ const teams = useMemo(() => {
         renderLabel={(id, isSelected) => {
           const tabTeam = teams.find((t) => t.id === id);
           const code = tabTeam?.code ?? "ALL";
-
           const useLightLogo = lighter || isDark;
           const logo =
             code === "ALL"

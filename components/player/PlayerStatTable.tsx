@@ -1,8 +1,11 @@
 import PlayerStatTableSkeleton from "components/Player/PlayerStatsTableSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { usePlayerStatsBySeason } from "hooks/usePlayerStatsAllSeasons";
-import { useMemo } from "react";
+import { usePlayerSeasons } from "hooks/usePlayerSeasons";
+import { Dropdown } from "components/Dropdown";
+import { useMemo, useState } from "react";
+import HeadingTwo from "components/Headings/HeadingTwo";
+
 import {
   ScrollView,
   StyleSheet,
@@ -13,460 +16,318 @@ import {
 
 interface Props {
   playerId: number;
-  seasons: string[];
 }
+type StatView = "totals" | "per36";
 
-const safeDivide = (num: number, denom: number) =>
-  denom === 0 ? "0.0" : (num / denom).toFixed(1);
+const STAT_OPTIONS = [
+  { label: "Totals", value: "totals" },
+  { label: "Per 36 Minutes", value: "per36" },
+];
 
-const percentage = (str: string | number) => `${str}%`;
+const safeDivide = (num: number | null = 0, denom: number | null = 0) =>
+  !denom ? "0.0" : (num! / denom!).toFixed(1);
 
-export default function PlayerStatTable({ playerId, seasons }: Props) {
-  const { data, loading, error } = usePlayerStatsBySeason(playerId, seasons);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+const pct = (val?: number | string | null) =>
+  val == null || isNaN(Number(val))
+    ? "—"
+    : `${(Number(val) * 100).toFixed(1)}%`;
+
+export default function PlayerStatTable({ playerId }: Props) {
+  const [statView, setStatView] = useState<StatView>("totals");
+
+  const { seasons, loading, error } = usePlayerSeasons(playerId);
+const per36 = (stat?: number | null, mp?: number | null) => {
+  if (!stat || !mp) return "0.0";
+  return ((stat / mp) * 36).toFixed(1);
+};
+
+  const isDark = useColorScheme() === "dark";
   const styles = statsTableStyles(isDark);
+const displayedSeasons = statView === "per36" ? per36 : seasons;
 
-  const dynamicStyles = useMemo(
-    () => ({
-      rowOdd: {
-        backgroundColor: isDark
-          ? Colors.dark.itemBackground
-          : Colors.light.itemBackground,
-      },
-      highlight: {
-        backgroundColor: "#ffd700",
-      },
-      highlightDark: {
-        backgroundColor: "#5c4300",
-      },
-      careerRow: {
-        backgroundColor: isDark ? "#004400" : "#ccffcc",
-        borderBottomWidth: 0,
-      },
-    }),
-    [isDark]
-  );
-
-  // Find best season (highest PPG)
+  // 🔥 Best season by PPG
   const bestSeason = useMemo(() => {
-    let maxPPG = -Infinity;
     let best: string | null = null;
-    data.forEach((season) => {
-      const games = season.games.length;
-      const totalPoints = season.games.reduce(
-        (sum, g) => sum + (g.points || 0),
-        0
-      );
-      const ppg = games === 0 ? 0 : totalPoints / games;
-      if (ppg > maxPPG) {
-        maxPPG = ppg;
-        best = season.season;
+    let max = -1;
+
+    seasons.forEach((s) => {
+      const g = s.g ?? 0;
+      const pts = s.pts ?? 0;
+      const ppg = g > 0 ? pts / g : 0;
+
+      if (ppg > max) {
+        max = ppg;
+        best = s.season;
       }
     });
+
     return best;
-  }, [data]);
+  }, [seasons]);
 
   if (loading) return <PlayerStatTableSkeleton />;
-  if (error)
-    return (
-      <Text style={[styles.cell, styles.errorText]}>Error loading stats</Text>
-    );
-  if (!data.length)
-    return <Text style={[styles.cell]}>No stats available</Text>;
+  if (error) return <Text style={styles.errorText}>Failed to load stats</Text>;
+  if (!seasons.length) return <Text>No stats available</Text>;
 
-  // Aggregate career totals
-  const careerTotals = data.reduce(
-    (acc, seasonData) => {
-      seasonData.games.forEach((g) => {
-        const parseNum = (val: string | number | undefined) =>
-          parseFloat(val as any) || 0;
-        acc.games += 1;
-        acc.min += parseNum(g.min);
-        acc.fgm += g.fgm || 0;
-        acc.fga += g.fga || 0;
-        acc.fgp += parseNum(g.fgp);
-        acc.tpm += g.tpm || 0;
-        acc.tpa += g.tpa || 0;
-        acc.tpp += parseNum(g.tpp);
-        acc.ftm += g.ftm || 0;
-        acc.fta += g.fta || 0;
-        acc.ftp += parseNum(g.ftp);
-        acc.offReb += g.offReb || 0;
-        acc.defReb += g.defReb || 0;
-        acc.totReb += g.totReb || 0;
-        acc.ast += g.assists || 0;
-        acc.stl += g.steals || 0;
-        acc.blk += g.blocks || 0;
-        acc.to += g.turnovers || 0;
-        acc.pf += g.pFouls || 0;
-        acc.plusMinus += parseNum(g.plusMinus);
-        acc.pts += g.points || 0;
-      });
+  // 🧮 Career totals (season-level)
+  const career = seasons.reduce(
+    (acc, s) => {
+      acc.g += s.g || 0;
+      acc.pts += s.pts || 0;
+      acc.mp += s.mp || 0;
+      acc.fg += s.fg || 0;
+      acc.fga += s.fga || 0;
+      acc.three_p += s.three_p || 0;
+      acc.three_pa += s.three_pa || 0;
+      acc.ft += s.ft || 0;
+      acc.fta += s.fta || 0;
+      acc.trb += s.trb || 0;
+      acc.ast += s.ast || 0;
+      acc.stl += s.stl || 0;
+      acc.blk += s.blk || 0;
+      acc.tov += s.tov || 0;
+      acc.pf += s.pf || 0;
       return acc;
     },
     {
-      games: 0,
-      min: 0,
-      fgm: 0,
+      g: 0,
+      pts: 0,
+      mp: 0,
+      fg: 0,
       fga: 0,
-      fgp: 0,
-      tpm: 0,
-      tpa: 0,
-      tpp: 0,
-      ftm: 0,
+      three_p: 0,
+      three_pa: 0,
+      ft: 0,
       fta: 0,
-      ftp: 0,
-      offReb: 0,
-      defReb: 0,
-      totReb: 0,
+      trb: 0,
       ast: 0,
       stl: 0,
       blk: 0,
-      to: 0,
+      tov: 0,
       pf: 0,
-      plusMinus: 0,
-      pts: 0,
     }
   );
 
-  const statLabels = [
-    "Season",
-    "GP",
-    "PTS",
-    "MIN",
-    "FGM",
-    "FGA",
-    "FG%",
-    "3PM",
-    "3PA",
-    "3P%",
-    "FTM",
-    "FTA",
-    "FT%",
-    "OREB",
-    "DREB",
-    "REB",
-    "AST",
-    "STL",
-    "BLK",
-    "TO",
-    "PF",
-    "+/-",
-  ];
+return (
+  <View style={styles.container}>
+          <HeadingTwo>Career Stats</HeadingTwo>
+<Dropdown
+  isDark={isDark}
+  options={STAT_OPTIONS}
+  selectedValue={statView}
+  onSelect={(value) => setStatView(value as StatView)}
+  absolute
+/>
 
-  return (
-    <>
-      <View
-        style={{
-          flexDirection: "row",
-          borderTopLeftRadius: 8,
-          borderBottomLeftRadius: 8,
-        }}
-      >
-        {/* Fixed Season Column */}
-        <View
-          style={{
-            borderTopLeftRadius: 8,
-            borderBottomLeftRadius: 8,
-            overflow: "hidden", // 👈 needed for visible radius
-          }}
-        >
-          {/* Header */}
-          <View style={[styles.row, styles.headerRow, styles.seasonCell]}>
-            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
-              Season
-            </Text>
-          </View>
+  <View style={styles.tableWrapper}>
 
-          {/* Season Rows */}
-          {data.map((seasonData, index) => {
-            const highlightStyle =
-              seasonData.season === bestSeason
-                ? isDark
-                  ? dynamicStyles.highlightDark
-                  : dynamicStyles.highlight
-                : null;
-
-            return (
-              <View
-                key={seasonData.season}
-                style={[
-                  styles.seasonCell,
-                  index % 2 === 1 && dynamicStyles.rowOdd,
-                  highlightStyle,
-                ]}
-              >
-                <Text style={[styles.seasons]}>{seasonData.season}</Text>
-              </View>
-            );
-          })}
-
-          {/* Career Label Row */}
-          <View style={[styles.seasonCell, dynamicStyles.careerRow]}>
-            <Text style={[styles.careerCell, styles.headerCell]}>Career</Text>
-          </View>
+      {/* Season column */}
+      <View>
+        <View style={[styles.row, styles.headerRow]}>
+          <Text style={[styles.cell, styles.headerCell]}>Season</Text>
         </View>
 
-        {/* Scrollable Stats Table */}
-        <ScrollView
-          horizontal
-          style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}
-          contentContainerStyle={{
-            borderTopRightRadius: 8,
-            borderBottomRightRadius: 8,
-            overflow: "hidden",
-          }}
-        >
-          <View style={styles.container}>
-            {/* Header Row */}
-            <View style={[styles.row, styles.headerRow]}>
-              {statLabels.slice(1).map((label) => (
-                <Text key={label} style={[styles.cell, styles.headerCell]}>
-                  {label}
-                </Text>
-              ))}
+        {seasons.map((s, i) => {
+          const isAlt = i % 2 === 1;
+
+          const zebra = isAlt
+            ? isDark
+              ? styles.rowAltDark
+              : styles.rowAltLight
+            : null;
+
+          const highlight =
+            s.season === bestSeason
+              ? isDark
+                ? styles.bestDark
+                : styles.bestLight
+              : null;
+
+          return (
+            <View key={s.season} style={[styles.row, zebra, highlight]}>
+              <Text style={styles.seasonText}>{s.season}</Text>
             </View>
+          );
+        })}
 
-            {/* Season Rows */}
-            {data.map((seasonData, index) => {
-              const totalGames = seasonData.games.length;
-              const totals = seasonData.games.reduce(
-                (acc, g) => {
-                  const parseNum = (val: string | number | undefined) =>
-                    parseFloat(val as any) || 0;
-                  acc.min += parseNum(g.min);
-                  acc.fgm += g.fgm || 0;
-                  acc.fga += g.fga || 0;
-                  acc.fgp += parseNum(g.fgp);
-                  acc.tpm += g.tpm || 0;
-                  acc.tpa += g.tpa || 0;
-                  acc.tpp += parseNum(g.tpp);
-                  acc.ftm += g.ftm || 0;
-                  acc.fta += g.fta || 0;
-                  acc.ftp += parseNum(g.ftp);
-                  acc.offReb += g.offReb || 0;
-                  acc.defReb += g.defReb || 0;
-                  acc.totReb += g.totReb || 0;
-                  acc.ast += g.assists || 0;
-                  acc.stl += g.steals || 0;
-                  acc.blk += g.blocks || 0;
-                  acc.to += g.turnovers || 0;
-                  acc.pf += g.pFouls || 0;
-                  acc.plusMinus += parseNum(g.plusMinus);
-                  acc.pts += g.points || 0;
-                  return acc;
-                },
-                {
-                  min: 0,
-                  fgm: 0,
-                  fga: 0,
-                  fgp: 0,
-                  tpm: 0,
-                  tpa: 0,
-                  tpp: 0,
-                  ftm: 0,
-                  fta: 0,
-                  ftp: 0,
-                  offReb: 0,
-                  defReb: 0,
-                  totReb: 0,
-                  ast: 0,
-                  stl: 0,
-                  blk: 0,
-                  to: 0,
-                  pf: 0,
-                  plusMinus: 0,
-                  pts: 0,
-                }
-              );
+        <View style={[styles.row, styles.careerRow]}>
+          <Text style={styles.careerHeaderCell}>Career</Text>
+        </View>
+      </View>
 
-              const highlightStyle =
-                seasonData.season === bestSeason
-                  ? isDark
-                    ? dynamicStyles.highlightDark
-                    : dynamicStyles.highlight
-                  : null;
-
-              return (
-                <View
-                  key={seasonData.season}
-                  style={[
-                    styles.row,
-                    index % 2 === 1 && dynamicStyles.rowOdd,
-                    highlightStyle,
-                  ]}
-                >
-                  <Text style={[styles.cell]}>{totalGames}</Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.pts, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.min, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fgm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fga, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.fgp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.tpm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.tpa, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.tpp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.ftm, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.fta, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {percentage(safeDivide(totals.ftp, totalGames))}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.offReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.defReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.totReb, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.ast, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.stl, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.blk, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.to, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.pf, totalGames)}
-                  </Text>
-                  <Text style={[styles.cell]}>
-                    {safeDivide(totals.plusMinus, totalGames)}
-                  </Text>
-                </View>
-              );
-            })}
-
-            {/* Career Row */}
-            <View style={[styles.row, dynamicStyles.careerRow]}>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.games}
+      {/* Stats */}
+      <ScrollView horizontal>
+        <View>
+          <View style={[styles.row, styles.headerRow]}>
+            {[
+              "TEAM",
+              "GP",
+              "PTS",
+              "MIN",
+              "FG",
+              "FGA",
+              "FG%",
+              "3P",
+              "3PA",
+              "3P%",
+              "FT",
+              "FTA",
+              "FT%",
+              "REB",
+              "AST",
+              "STL",
+              "BLK",
+              "TO",
+              "PF",
+            ].map((h) => (
+              <Text key={h} style={[styles.cell, styles.headerCell]}>
+                {h}
               </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.pts}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.min.toFixed(1)}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fgm}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fga}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.fgp / careerTotals.games).toFixed(1))}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.tpm}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.tpa}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.tpp / careerTotals.games).toFixed(1))}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.ftm}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.fta}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {percentage((careerTotals.ftp / careerTotals.games).toFixed(1))}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.offReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.defReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.totReb}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.ast}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.stl}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.blk}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.to}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.pf}
-              </Text>
-              <Text style={[styles.cell, styles.headerCell]}>
-                {careerTotals.plusMinus.toFixed(1)}
-              </Text>
-            </View>
+            ))}
           </View>
-        </ScrollView>
-      </View>
 
-      {/* Legend */}
-      <View
-        style={[styles.legendContainer, isDark && styles.legendContainerDark]}
-      >
-        <View
-          style={[
-            styles.legendColorBox,
-            isDark ? styles.legendColorBoxDark : styles.legendColorBoxLight,
-          ]}
-        />
-        <Text style={[styles.legendText, isDark && styles.textDark]}>
-          Best Season (highlighted)
-        </Text>
+          {seasons.map((s, i) => {
+            const isAlt = i % 2 === 1;
 
-        <View style={{ width: 24 }} />
+            const zebra = isAlt
+              ? isDark
+                ? styles.rowAltDark
+                : styles.rowAltLight
+              : null;
 
-        <View
-          style={[
-            styles.legendColorBox,
-            isDark ? styles.legendCareerBoxDark : styles.legendCareerBoxLight,
-          ]}
-        />
-        <Text style={[styles.legendText, isDark && styles.textDark]}>
-          Career Totals
-        </Text>
-      </View>
-    </>
+            const highlight =
+              s.season === bestSeason
+                ? isDark
+                  ? styles.bestDark
+                  : styles.bestLight
+                : null;
+
+          return (
+  <View key={s.season} style={[styles.row, zebra, highlight]}>
+    <Text style={styles.cell}>{s.team}</Text>
+
+    {/* GP stays GP */}
+    <Text style={styles.cell}>{s.g}</Text>
+
+    {/* PTS */}
+    <Text style={styles.cell}>
+      {statView === "per36"
+        ? per36(s.pts, s.mp)
+        : safeDivide(s.pts, s.g)}
+    </Text>
+
+    {/* MIN */}
+    <Text style={styles.cell}>
+      {statView === "per36"
+        ? "36.0"
+        : safeDivide(s.mp, s.g)}
+    </Text>
+
+    {/* FG / FGA */}
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.fg, s.mp) : s.fg}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.fga, s.mp) : s.fga}
+    </Text>
+
+    {/* FG% unchanged */}
+    <Text style={styles.cell}>{pct(s.fg_pct)}</Text>
+
+    {/* 3P / 3PA */}
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.three_p, s.mp) : s.three_p}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.three_pa, s.mp) : s.three_pa}
+    </Text>
+
+    {/* 3P% unchanged */}
+    <Text style={styles.cell}>{pct(s.three_pct)}</Text>
+
+    {/* FT / FTA */}
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.ft, s.mp) : s.ft}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.fta, s.mp) : s.fta}
+    </Text>
+
+    {/* FT% unchanged */}
+    <Text style={styles.cell}>{pct(s.ft_pct)}</Text>
+
+    {/* REB / AST / STL / BLK / TO */}
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.trb, s.mp) : s.trb}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.ast, s.mp) : s.ast}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.stl, s.mp) : s.stl}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.blk, s.mp) : s.blk}
+    </Text>
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.tov, s.mp) : s.tov}
+    </Text>
+
+    {/* PF */}
+    <Text style={styles.cell}>
+      {statView === "per36" ? per36(s.pf, s.mp) : s.pf}
+    </Text>
+  </View>
+);
+
+          })}
+
+          {/* Career totals */}
+          <View style={[styles.row, styles.careerRow]}>
+            <Text style={styles.careerCell}>{""}</Text>
+            <Text style={styles.careerCell}>{career.g}</Text>
+            <Text style={styles.careerCell}>{career.pts}</Text>
+            <Text style={styles.careerCell}>{career.mp}</Text>
+            <Text style={styles.careerCell}>{career.fg}</Text>
+            <Text style={styles.careerCell}>{career.fga}</Text>
+            <Text style={styles.careerCell}>{pct(career.fg / career.fga)}</Text>
+            <Text style={styles.careerCell}>{career.three_p}</Text>
+            <Text style={styles.careerCell}>{career.three_pa}</Text>
+            <Text style={styles.careerCell}>
+              {pct(career.three_p / career.three_pa)}
+            </Text>
+            <Text style={styles.careerCell}>{career.ft}</Text>
+            <Text style={styles.careerCell}>{career.fta}</Text>
+            <Text style={styles.careerCell}>{pct(career.ft / career.fta)}</Text>
+            <Text style={styles.careerCell}>{career.trb}</Text>
+            <Text style={styles.careerCell}>{career.ast}</Text>
+            <Text style={styles.careerCell}>{career.stl}</Text>
+            <Text style={styles.careerCell}>{career.blk}</Text>
+            <Text style={styles.careerCell}>{career.tov}</Text>
+            <Text style={styles.careerCell}>{career.pf}</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
+    </View>
   );
 }
 
 const statsTableStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {
-      flexDirection: "column",
-    },
+
+container :{
+  paddingTop: 24,
+  paddingHorizontal: 12,
+},
+
+    tableWrapper: {
+  flexDirection: "row",
+  borderRadius: 8,
+  overflow: "hidden", // 🔑 REQUIRED for clipping rows
+  borderWidth: 1,
+  borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+},
+
     headerRow: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
@@ -480,9 +341,13 @@ const statsTableStyles = (isDark: boolean) =>
       borderBottomWidth: 1,
     },
     careerCell: {
-      minWidth: 60,
+     minWidth: 60,
       flex: 1,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
+      color: isDark ? Colors.black : Colors.white,
     },
     cell: {
       minWidth: 60,
@@ -501,9 +366,15 @@ const statsTableStyles = (isDark: boolean) =>
       paddingHorizontal: 4,
       color: isDark ? Colors.white : Colors.black,
     },
+    careerHeaderCell: {
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.black : Colors.white,
+      paddingHorizontal: 8,
+    },
     headerCell: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
+      paddingHorizontal: 8,
     },
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
@@ -563,5 +434,32 @@ const statsTableStyles = (isDark: boolean) =>
     },
     legendCareerBoxDark: {
       backgroundColor: "#004400",
+    },
+    bestLight: {
+      backgroundColor: "#ffd700",
+    },
+
+    bestDark: {
+      backgroundColor: "#5c4300",
+    },
+
+    careerRow: {
+      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green ,
+    },
+
+    seasonText: {
+      minWidth: 70,
+      paddingHorizontal: 8,
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    rowAltLight: {
+      backgroundColor: Colors.light.itemBackground,
+    },
+
+    rowAltDark: {
+      backgroundColor: Colors.dark.itemBackground,
     },
   });

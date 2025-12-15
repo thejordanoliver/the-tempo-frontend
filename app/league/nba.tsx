@@ -4,6 +4,7 @@ import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import GamesList from "components/Games/GamesList";
+import DraftList from "components/League/DraftList";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
@@ -11,11 +12,11 @@ import SportsListModal, {
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import { StandingsList } from "components/Standings/StandingsList";
 import SummerGamesList from "components/summer-league/SummerGamesList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { mapToInternalTeam } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeagueNews } from "hooks/useLeagueNews";
 import { useSeasonGames } from "hooks/useSeasonGames";
@@ -23,20 +24,13 @@ import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import {
-  Animated,
-  RefreshControl,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/leagueStyles";
 import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-
+import NBAAwardSeasons from "components/League/NBAAwardSeasons";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -82,6 +76,9 @@ export default function NBALeagueScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
+  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [draftTeam, setDraftTeam] = useState("all");
+  const [draftRound, setDraftRound] = useState("all");
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
 
@@ -91,13 +88,8 @@ export default function NBALeagueScreen() {
   );
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
   >("scores");
-
-  const underlineX = useRef(new Animated.Value(0)).current;
-  const underlineWidth = useRef(new Animated.Value(0)).current;
-  const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
-  const router = useRouter();
 
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -136,27 +128,15 @@ export default function NBALeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  const handleTabPress = (tab: typeof selectedTab) => {
-    setSelectedTab(tab);
-    const index = ["scores", "news", "standings", "stats", "forum"].indexOf(
-      tab
-    );
-    if (tabMeasurements.current[index]) {
-      Animated.parallel([
-        Animated.timing(underlineX, {
-          toValue: tabMeasurements.current[index].x,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-        Animated.timing(underlineWidth, {
-          toValue: tabMeasurements.current[index].width,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    }
-  };
-
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ] as const;
   // --- Normalize regular season games ---
   const normalizedSeasonGames = games.map((game: any) => {
     const home = mapToInternalTeam(game.teams?.home ?? {});
@@ -264,12 +244,11 @@ export default function NBALeagueScreen() {
   return (
     <>
       <View style={styles.container}>
-        <TabBar
-          tabs={["scores", "news", "standings", "stats", "forum"]}
+        <MainScrollTabBar
+          tabs={tabs}
           selected={selectedTab}
-          onTabPress={handleTabPress}
+          onTabPress={setSelectedTab}
         />
-
         <View style={styles.contentArea}>
           {selectedTab === "scores" && (
             <>
@@ -329,6 +308,18 @@ export default function NBALeagueScreen() {
 
           {selectedTab === "standings" && <StandingsList />}
           {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "draft" && (
+            <DraftList
+              year={draftYear}
+              team={draftTeam}
+              round={draftRound}
+              onYearChange={setDraftYear}
+              onTeamChange={setDraftTeam}
+              onRoundChange={setDraftRound}
+              league="nba"
+            />
+          )}
+          {selectedTab === "awards" && <NBAAwardSeasons />}
           {selectedTab === "forum" && <LeagueForum league="NBA" />}
         </View>
       </View>

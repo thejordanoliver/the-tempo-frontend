@@ -53,7 +53,7 @@ export function useCBBTeamStats(espnID: string, category?: string) {
         if (cached) {
           const { timestamp, data: cachedData } = JSON.parse(cached);
           if (Date.now() - timestamp < CACHE_TTL) {
-            console.log("📦 Loaded cached CBB stats:", cacheKey);
+            // console.log("📦 Loaded cached CBB stats:", cacheKey);
             setData(cachedData);
             setLoading(false);
             return;
@@ -64,7 +64,7 @@ export function useCBBTeamStats(espnID: string, category?: string) {
 
         // 🔹 2. Fetch from your Express backend
         const url = `${BASE_URL}/api/cbb/teams/${espnID}/stats`;
-        console.log("🌐 Fetching CBB stats:", url);
+        // console.log("🌐 Fetching CBB stats:", url);
 
         const response = await axios.get<CBBStatsResponse>(url);
 
@@ -86,7 +86,7 @@ export function useCBBTeamStats(espnID: string, category?: string) {
           JSON.stringify({ timestamp: Date.now(), data: responseData })
         );
 
-        console.log("✅ Cached CBB stats:", cacheKey);
+     
         setData(responseData);
       } catch (err: any) {
         console.error("❌ Error fetching CBB stats:", err.message || err);

@@ -1,15 +1,17 @@
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
 import players from "constants/players";
 import { teamsById } from "constants/teams";
-import { styles } from "styles/Explore.styles";
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import axios from "axios"; 
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { teams as nflteams } from "constants/teamsNFL";
+import { teams } from "constants/teams";
+import { teams as mlbteams } from "constants/teamsMLB";
 import {
   Animated,
   Easing,
@@ -18,12 +20,12 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { styles } from "styles/Explore.styles";
+import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
-import { ResultItem, PlayerResult, TeamResult, UserResult } from "types/types";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 const RECENT_SEARCHES_KEY = "recentSearches";
-
 
 const tabs = ["All", "Teams", "Players", "Accounts"] as const;
 
@@ -37,6 +39,7 @@ export default function ExplorePage() {
   const [selectedTab, setSelectedTab] = useState<(typeof tabs)[number]>("All");
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
+
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -356,6 +359,7 @@ export default function ExplorePage() {
     <View style={[styles.container]}>
       <SearchBar
         value={query}
+        placeholder="Explore Teams, Players and Accounts..."
         onChangeText={setQuery}
         visible={searchVisible}
         onFocus={() => setIsFocused(true)}

@@ -71,7 +71,9 @@ export const TeamRow = ({
       : status;
 
   const isScheduled = normalizedStatus === "Scheduled";
-  const isLive = normalizedStatus === "In Play";
+const isFinal = normalizedStatus === "Final";
+const isLive =
+  normalizedStatus === "In Play" || normalizedStatus === "Halftime";
 
   const isInvalidRecord = resolvedRecord === "-";
   const displayRecord = isInvalidRecord ? "" : resolvedRecord;

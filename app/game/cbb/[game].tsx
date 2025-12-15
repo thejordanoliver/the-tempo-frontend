@@ -3,7 +3,11 @@ import GameLeaders from "components/CBB/GameDetails/GameLeaders";
 import GameOddsSection from "components/CBB/GameDetails/GameOddsSection";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
-import { LastFiveGamesSwitcher, LineScore } from "components/GameDetails";
+import {
+  LastFiveGamesSwitcher,
+  LineScore,
+  TeamLocationSection,
+} from "components/GameDetails";
 import GameHeader from "components/GameDetails/GameHeader";
 import GameSummary from "components/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
@@ -12,7 +16,7 @@ import Officials from "components/GameDetails/Officials";
 import ShotChart from "components/GameDetails/ShotChart";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import { Colors } from "constants/Colors";
-import { teams } from "constants/teamsCBB";
+import { neutralVenues, teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
@@ -41,12 +45,35 @@ import { useChatStore } from "store/chatStore";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
+function parseGameDateForOdds(raw: any): { iso: string; ymd: string } {
+  if (!raw) {
+    const now = new Date();
+    return {
+      iso: now.toISOString(),
+      ymd: now.toISOString().split("T")[0],
+    };
+  }
+
+  let d: Date;
+
+  if (typeof raw === "number") {
+    d = new Date(raw * 1000);
+  } else {
+    d = new Date(raw);
+  }
+
+  return {
+    iso: d.toISOString(), // full timestamp for upcoming odds
+    ymd: d.toISOString().split("T")[0], // YYYY-MM-DD for historical odds
+  };
+}
+
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
 
-  /** -----------------------------
-   *  Parse Full Game Object
-   *  ----------------------------- */
+  // -----------------------------
+  // Parse Full Game Object
+  // -----------------------------
   const gameObj: CBBGame | null = useMemo(() => {
     try {
       return typeof game === "string" ? JSON.parse(game) : null;
@@ -61,9 +88,9 @@ export default function GameDetailsScreen() {
     return null;
   }
 
-  /** -----------------------------
-   *  Extract Team IDs
-   *  ----------------------------- */
+  // -----------------------------
+  // Extract Team IDs + Team Data
+  // -----------------------------
   const homeTeamId = Number(gameObj?.teams?.home?.id);
   const awayTeamId = Number(gameObj?.teams?.away?.id);
 
@@ -75,14 +102,12 @@ export default function GameDetailsScreen() {
     return null;
   }
 
-  /** -----------------------------
-   *  Date Handling
-   *  ----------------------------- */
+  // -----------------------------
+  // Date Handling
+  // -----------------------------
   const gameDateObj = useMemo(() => {
     if (gameObj.timestamp) return new Date(gameObj.timestamp * 1000);
-
     if (gameObj.date) return new Date(gameObj.date);
-
     return new Date();
   }, [gameObj]);
 
@@ -100,9 +125,9 @@ export default function GameDetailsScreen() {
   const gameDate = gameDateObj.toISOString().split("T")[0];
   const gameDateStr = gameDateObj.toISOString();
 
-  /** -----------------------------
-   *  Navigation + UI Controls
-   *  ----------------------------- */
+  // -----------------------------
+  // Navigation + UI Controls
+  // -----------------------------
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
   const { openChat, isOpen: isChatOpen } = useChatStore();
@@ -133,15 +158,15 @@ export default function GameDetailsScreen() {
     }, 1000);
   };
 
-  /** -----------------------------
-   *  ESPN IDs
-   *  ----------------------------- */
+  // -----------------------------
+  // ESPN IDs
+  // -----------------------------
   const homeEspnId = homeTeamData.espnID;
   const awayEspnId = awayTeamData.espnID;
 
-  /** -----------------------------
-   *  Rankings
-   *  ----------------------------- */
+  // -----------------------------
+  // Rankings (AP Top 25)
+  // -----------------------------
   const { rankings } = useCBBRankings();
 
   const apTop25 = useMemo(() => {
@@ -159,9 +184,9 @@ export default function GameDetailsScreen() {
     return match?.rank;
   };
 
-  /** -----------------------------
-   *  Colors
-   *  ----------------------------- */
+  // -----------------------------
+  // Colors
+  // -----------------------------
   const colors = useMemo(
     () => ({
       background: isDark ? Colors.black : Colors.white,
@@ -176,9 +201,9 @@ export default function GameDetailsScreen() {
     [isDark]
   );
 
-  /** -----------------------------
-   *  Hooks (Scores, Records, Weather, Headlines, Broadcasts)
-   *  ----------------------------- */
+  // -----------------------------
+  // Hooks: Records, L5, Broadcasts, Headline, Live Score, Details
+  // -----------------------------
   const { record: homeRecord } = useTeamRecord(homeEspnId, "cbb");
   const { record: awayRecord } = useTeamRecord(awayEspnId, "cbb");
 
@@ -206,12 +231,58 @@ export default function GameDetailsScreen() {
     gameDate
   );
 
-  const { officials, highlights, plays, playerStats, leaders, neutralSite } =
-    useGameDetails("cbb", homeEspnId, awayEspnId, gameDate);
+  const {
+    officials,
+    highlights,
+    plays,
+    playerStats,
+    leaders,
+    neutralSite,
+    venue,
+  } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDate);
 
-  /** -----------------------------
-   *  Status + Quarter Formatting
-   *  ----------------------------- */
+  // ------------------------------------
+  // Neutral Site Detection
+  // ------------------------------------
+  const venueNameRaw = (venue?.name ?? homeTeamData.venueName ?? "")
+    .trim()
+    .toLowerCase();
+
+  // try to find a neutral venue match by key
+  const neutralMatch = Object.entries(neutralVenues).find(
+    ([key]) => key.trim().toLowerCase() === venueNameRaw
+  );
+
+  let resolvedVenue = {
+    image: venue?.image ?? homeTeamData.venueImage ?? "",
+    name: venue?.name ?? homeTeamData.venueName ?? "",
+    city: venue?.city ?? homeTeamData.location ?? homeTeamData.city ?? "",
+    address: venue?.address ?? homeTeamData.address ?? "",
+    capacity: venue?.capacity ?? homeTeamData.venueCapacity ?? "",
+    latitude: venue?.latitude ?? null,
+    longitude: venue?.longitude ?? null,
+  };
+
+  // ------------------------------------
+  // If neutral site match exists → override values
+  // ------------------------------------
+  if (neutralMatch) {
+    const [venueKey, arena] = neutralMatch;
+
+    resolvedVenue = {
+      image: arena.venueImage ?? resolvedVenue.image,
+      name: arena.name ?? venueKey,
+      city: arena.city ?? resolvedVenue.city ?? "",
+      address: arena.address ?? resolvedVenue.address ?? "",
+      capacity: arena.venueCapacity ?? resolvedVenue.capacity ?? "",
+      latitude: arena.latitude ?? resolvedVenue.latitude,
+      longitude: arena.longitude ?? resolvedVenue.longitude,
+    };
+  }
+
+  // -----------------------------
+  // Status + Period / Score Logic
+  // -----------------------------
   const formatQuarter = (period?: number | string) => {
     if (!period) return "Live";
 
@@ -234,77 +305,84 @@ export default function GameDetailsScreen() {
     return ot === 1 ? "OT" : `${ot}OT`;
   };
 
-  const displayHomeScore = liveScore?.home?.total ?? 0;
-  const displayAwayScore = liveScore?.away?.total ?? 0;
-  // --- Clock (always a string)
-  const displayClock = String(liveScore?.displayClock ?? "");
-
-  // --- Always convert period to string
-  const rawPeriod = String(liveScore?.period ?? liveScore?.statusText ?? "");
-
-  // --- Normalize CBB period labels ---
-  const getCbbPeriodLabel = (periodString: string) => {
-    if (!periodString) return "";
-
-    const p = periodString.toString().toLowerCase();
-
-    if (p.includes("halftime")) return "Halftime";
-    if (p.includes("1st")) return "1st";
-    if (p.includes("2nd")) return "2nd";
-
-    // OT formats: "OT", "2OT", "3OT"
-    if (p.includes("ot")) {
-      const match = p.match(/(\d+)?ot/);
-      const num = match?.[1];
-      return num ? `${num}OT` : "OT";
-    }
-
-    return periodString;
-  };
-
-  const displayPeriod = getCbbPeriodLabel(rawPeriod);
-
-  // --- Halftime flag ---
-  const isHalftime = rawPeriod.toLowerCase().includes("halftime");
-
-  // --- Status ---
-  let statusDisplay = "Scheduled";
-
-  if (rawPeriod && displayClock) statusDisplay = "In Progress";
-  if (isHalftime) statusDisplay = "Halftime";
-  if (
-    liveScore?.statusText?.toLowerCase().includes("final") ||
-    liveScore?.status?.toLowerCase().includes("final")
-  ) {
-    statusDisplay = "Final";
-  }
-
-  const lineScore = liveScore?.periodScores?.length
-    ? {
-        home: liveScore.periodScores.map((p) => p.home.toString()),
-        away: liveScore.periodScores.map((p) => p.away.toString()),
-      }
-    : undefined;
+  const displayClockRaw = liveScore?.displayClock ?? "";
+  const displayClock =
+    typeof displayClockRaw === "string" ? displayClockRaw : "";
 
   const periodNum = Number(liveScore?.period ?? 0);
+  const rawStatusText = (
+    liveScore?.statusText ??
+    gameObj.status.long ??
+    ""
+  ).toLowerCase();
+
+  const hasActiveClock =
+    displayClock !== "" && displayClock !== "0:00" && displayClock !== "0:00.0";
+
+  // ------------------------------
+  // Robust Status Resolution
+  // ------------------------------
+  let statusDisplay: "Scheduled" | "In Progress" | "Halftime" | "Final" =
+    "Scheduled";
+
+  if (rawStatusText.includes("final")) {
+    statusDisplay = "Final";
+  } else if (rawStatusText.includes("halftime")) {
+    statusDisplay = "Halftime";
+  } else if (
+    rawStatusText.includes("in progress") ||
+    rawStatusText.includes("in play") ||
+    rawStatusText.includes("1st half") ||
+    rawStatusText.includes("2nd half") ||
+    rawStatusText.includes("overtime") ||
+    (hasActiveClock && periodNum > 0)
+  ) {
+    statusDisplay = "In Progress";
+  } else {
+    statusDisplay = "Scheduled";
+  }
+
+  const isScheduled = statusDisplay === "Scheduled";
+  const isFinal = statusDisplay === "Final";
+  const isHalftime = statusDisplay === "Halftime";
+
+  // Scores: hide anything meaningful when game is scheduled
+  const displayHomeScore = isScheduled
+    ? 0
+    : liveScore?.home?.total ?? gameObj.scores?.home?.total ?? 0;
+
+  const displayAwayScore = isScheduled
+    ? 0
+    : liveScore?.away?.total ?? gameObj.scores?.away?.total ?? 0;
+
+  // Quarter label (only for live / halftime)
   let quarterLabel = "";
-  if (periodNum === 1) quarterLabel = "1st";
-  else if (periodNum === 2) quarterLabel = "2nd";
-  else if (periodNum > 2) quarterLabel = `${periodNum - 2}OT`;
+  if (!isScheduled && !isFinal) {
+    if (periodNum === 1) quarterLabel = "1st";
+    else if (periodNum === 2) quarterLabel = "2nd";
+    else if (periodNum > 2) quarterLabel = `${periodNum - 2}OT`;
+  }
 
-  const displayQuarter = formatQuarter(quarterLabel);
+  const displayQuarter =
+    statusDisplay === "In Progress" || statusDisplay === "Halftime"
+      ? formatQuarter(quarterLabel)
+      : "";
 
-  const shouldShowLeaders =
-    gameObj.status.long !== "Not Started" &&
-    leaders?.some((g) =>
-      g.leaders.some((c) => Array.isArray(c.leaders) && c.leaders.length > 0)
-    );
+  // Line score (only useful when not scheduled)
+  const lineScore =
+    !isScheduled && liveScore?.periodScores?.length
+      ? {
+          home: liveScore.periodScores.map((p) => p.home.toString()),
+          away: liveScore.periodScores.map((p) => p.away.toString()),
+        }
+      : undefined;
 
-  const shouldShowGameDetails = gameObj.status.long !== "Not Started";
+  // Only show deep game details once the game has started or finished
+  const shouldShowGameDetails = !isScheduled;
 
-  /** -----------------------------
-   *  Header
-   *  ----------------------------- */
+  // -----------------------------
+  // Header Setup
+  // -----------------------------
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -320,17 +398,17 @@ export default function GameDetailsScreen() {
     });
   }, [navigation, neutralSite, homeTeamData.code, awayTeamData.code]);
 
-  /** -----------------------------
-   *  Loading Delay for UI Smoothness
-   *  ----------------------------- */
+  // -----------------------------
+  // Loading Delay for UI Smoothness
+  // -----------------------------
   useEffect(() => {
     const timeout = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timeout);
   }, []);
 
-  /** -----------------------------
-   *  RENDER
-   *  ----------------------------- */
+  // -----------------------------
+  // Render
+  // -----------------------------
   return (
     <>
       <ScrollView
@@ -355,7 +433,12 @@ export default function GameDetailsScreen() {
           halftime={isHalftime}
           awayTimeouts={9}
           homeTimeouts={9}
-          displayClock={displayClock}
+          // Hide clock when scheduled or final, show only for live/halftime
+          displayClock={
+            statusDisplay === "In Progress" || statusDisplay === "Halftime"
+              ? displayClock
+              : undefined
+          }
           colors={colors}
           isDark={isDark}
           formattedDate={formattedDate}
@@ -368,9 +451,10 @@ export default function GameDetailsScreen() {
         />
 
         <View style={{ gap: 24, marginTop: 20 }}>
+          {/* Live-only details */}
           {shouldShowGameDetails && <LastPlay lastPlay={liveScore?.lastPlay} />}
 
-          {shouldShowGameDetails && (
+          {shouldShowGameDetails && lineScore && (
             <LineScore
               linescore={lineScore}
               homeCode={homeTeamData.code}
@@ -379,9 +463,10 @@ export default function GameDetailsScreen() {
             />
           )}
 
+          {/* Odds + Fan Vote (always shown) */}
           <GameOddsSection
-            date={gameDate}
-            gameDate={gameDate}
+            date={gameDateStr}
+            gameDate={gameDateStr}
             awayCode={awayTeamData.code ?? ""}
             homeCode={homeTeamData.code ?? ""}
             gameId={`${homeTeamId}-${awayTeamId}`}
@@ -407,6 +492,7 @@ export default function GameDetailsScreen() {
             }}
           />
 
+          {/* Leaders / Box / Shot Chart / Summary – only when game started/finished */}
           {shouldShowGameDetails && (
             <GameLeaders
               leaders={leaders}
@@ -424,6 +510,7 @@ export default function GameDetailsScreen() {
               isCBB={true}
             />
           )}
+
           {shouldShowGameDetails && (
             <GameSummary
               plays={plays ?? []}
@@ -432,6 +519,7 @@ export default function GameDetailsScreen() {
               league="CBB"
             />
           )}
+
           {shouldShowGameDetails && (
             <BoxScore
               playerStats={playerStats}
@@ -439,6 +527,8 @@ export default function GameDetailsScreen() {
               awayTeamId={Number(awayEspnId)}
             />
           )}
+
+          {/* Last 5 games – always useful */}
           <LastFiveGamesSwitcher
             isDark={isDark}
             home={{
@@ -456,14 +546,28 @@ export default function GameDetailsScreen() {
             league="CBB"
           />
 
+          {/* Highlights (if any) */}
           {highlights?.length > 0 && (
             <HighlightVideoList highlights={highlights} />
           )}
 
+          {/* Officials */}
           <Officials officials={officials ?? []} loading={false} error={null} />
+
+          {/* Venue Location */}
+          <TeamLocationSection
+            venueImage={resolvedVenue.image}
+            venueName={resolvedVenue.name}
+            location={resolvedVenue.city}
+            address={resolvedVenue.address}
+            venueCapacity={String(resolvedVenue.capacity ?? "")}
+            loading={false}
+            error={null}
+          />
         </View>
       </ScrollView>
 
+      {/* Floating Chat Button */}
       <Animated.View
         style={{
           opacity: opacityAnim,

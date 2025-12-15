@@ -44,6 +44,21 @@ export interface LeaderGroup {
   }[];
 }
 
+export interface VenueInfo {
+  name?: string | null;
+  city?: string | null;
+  state?: string | null;
+  address?: string | null;
+  capacity?: number | null;
+  grass?: boolean | null;
+  indoor?: boolean | null;
+  image?: string | null;
+  raw?: any; // Original ESPNN venue object
+  latitude?: number | null;
+longitude?: number | null;
+
+}
+
 export interface UseGameDetails {
   officials: Official[];
   injuries: Injury[];
@@ -55,6 +70,7 @@ export interface UseGameDetails {
   leaders: LeaderGroup[];
   neutralSite: boolean;
   timeouts: { home: number | null; away: number | null };
+  venue: VenueInfo | null;
   loading: boolean;
   error: string | null;
 }
@@ -76,6 +92,7 @@ export const useGameDetails = (
   const [leaders, setLeaders] = useState<LeaderGroup[]>([]);
   const [neutralSite, setNeutralSite] = useState<boolean>(false);
   const [timeouts, setTimeouts] = useState({ home: null, away: null });
+  const [venue, setVenue] = useState<VenueInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -115,7 +132,7 @@ export const useGameDetails = (
         const params = league === "cbb" ? "&groups=50&limit=500" : "";
 
         // ---------------- FIND GAME ----------------
-        let found = null;
+        let found: any = null;
 
         for (const dateStr of datesToCheck) {
           const url = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/scoreboard?dates=${dateStr}${params}`;
@@ -147,8 +164,8 @@ export const useGameDetails = (
 
         if (!gameId) throw new Error("Missing game ID");
 
-        const sumURL = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/summary?event=${gameId}`;
-        const { data: summary } = await axios.get(sumURL);
+        const summaryURL = `https://site.api.espn.com/apis/site/v2/sports/${sportPath}/summary?event=${gameId}`;
+        const { data: summary } = await axios.get(summaryURL);
 
         setNeutralSite(
           summary?.header?.competitions?.[0]?.neutralSite ?? false
@@ -159,6 +176,26 @@ export const useGameDetails = (
         setPlays(summary?.plays ?? []);
         setLeaders(summary?.leaders ?? []);
         setBoxScore(summary?.boxscore ?? null);
+
+        // ---------------- VENUE ----------------
+        const venueRaw = summary?.gameInfo?.venue ?? null;
+
+        if (venueRaw) {
+          setVenue({
+            name: venueRaw.fullName ?? venueRaw.name ?? null,
+            city: venueRaw.address?.city ?? null,
+            state: venueRaw.address?.state ?? null,
+            address: venueRaw.address?.fullAddress ?? null,
+            capacity: venueRaw.capacity ?? null,
+            grass:
+              venueRaw.surface?.toLowerCase?.().includes("grass") ?? null,
+            indoor: venueRaw.indoor ?? null,
+            image: venueRaw.images?.[0]?.href ?? null,
+            raw: venueRaw,
+          });
+        } else {
+          setVenue(null);
+        }
 
         // ---------------- TEAM STATS ----------------
         const teams = summary?.boxscore?.teams ?? [];
@@ -172,23 +209,18 @@ export const useGameDetails = (
         const players = summary?.boxscore?.players ?? [];
 
         const parsedPlayers = players.map((p: any) => {
-          // ESPN nests player stats in the block where statistics[].athletes exists
           const block = p?.statistics?.find((s: any) =>
             Array.isArray(s?.athletes)
           );
 
           return {
             team: p.team,
-
-            // table header
             names: block?.names ?? [],
             keys: block?.keys ?? [],
             labels: block?.labels ?? [],
-
-            // players
             athletes: (block?.athletes ?? []).map((ath: any) => ({
-              ...ath, // includes athlete info
-              statValues: ath.stats ?? [], // <= stats per player
+              ...ath,
+              statValues: ath.stats ?? [],
             })),
           };
         });
@@ -226,6 +258,7 @@ export const useGameDetails = (
     leaders,
     neutralSite,
     timeouts,
+    venue,
     loading,
     error,
   };

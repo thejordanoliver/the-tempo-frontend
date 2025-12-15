@@ -16,6 +16,25 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
       alignItems: "center",
       justifyContent: "space-evenly",
     },
+    awayPossession: {
+      width: 24,
+      height: 24,
+      resizeMode: "contain",
+      position: "absolute",
+      right: -70,
+      top: 24,
+    },
+    homePossession: {
+      width: 24,
+      height: 24,
+      resizeMode: "contain",
+      position: "absolute",
+      left: -70,
+      top: 24,
+    },
+    rank:{
+      fontSize: 10, color: Colors.lightGray 
+    },
     teamSection: {
       alignItems: "center",
       width: 60,

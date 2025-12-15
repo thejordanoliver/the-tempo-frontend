@@ -33,70 +33,88 @@ export default function TabBar<T extends string>({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  // Animated values
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
 
+  // Measurements
   const textMeasurements = useRef<{ width: number }[]>([]);
   const pressableMeasurements = useRef<{ x: number; width: number }[]>([]);
-  const isInitialized = useRef(false);
+  const initialized = useRef(false);
 
-  const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
-    const { width } = event.nativeEvent.layout;
-    textMeasurements.current[index] = { width };
-    maybeInitializeUnderline();
+  // Smooth spring animation preset
+  const springConfig = {
+    stiffness: 220,
+    damping: 24,
+    mass: 0.6,
+    useNativeDriver: false,
   };
 
-  const onPressableLayout = (index: number) => (event: LayoutChangeEvent) => {
-    const { x, width } = event.nativeEvent.layout;
-    pressableMeasurements.current[index] = { x, width };
-    maybeInitializeUnderline();
+  const animateUnderline = (index: number) => {
+    const textWidth = textMeasurements.current[index]?.width;
+    const pressable = pressableMeasurements.current[index];
+
+    if (!textWidth || !pressable) return;
+
+    const x = pressable.x + (pressable.width - textWidth) / 2;
+
+    Animated.parallel([
+      Animated.spring(underlineX, {
+        ...springConfig,
+        toValue: x,
+      }),
+      Animated.spring(underlineWidth, {
+        ...springConfig,
+        toValue: textWidth,
+      }),
+    ]).start();
   };
 
-  const maybeInitializeUnderline = () => {
+  const onTextLayout =
+    (index: number) => (event: LayoutChangeEvent) => {
+      textMeasurements.current[index] = {
+        width: event.nativeEvent.layout.width,
+      };
+      checkInitialization();
+    };
+
+  const onPressableLayout =
+    (index: number) => (event: LayoutChangeEvent) => {
+      pressableMeasurements.current[index] = {
+        x: event.nativeEvent.layout.x,
+        width: event.nativeEvent.layout.width,
+      };
+      checkInitialization();
+    };
+
+  const checkInitialization = () => {
+    if (initialized.current) return;
+
     if (
       textMeasurements.current.length === tabs.length &&
       pressableMeasurements.current.length === tabs.length &&
-      textMeasurements.current.every((m) => m !== undefined) &&
-      pressableMeasurements.current.every((m) => m !== undefined) &&
-      !isInitialized.current
+      textMeasurements.current.every(Boolean) &&
+      pressableMeasurements.current.every(Boolean)
     ) {
-      const index = tabs.indexOf(selected);
-      const initialX = calculateUnderlineX(index);
-      underlineX.setValue(initialX);
-      underlineWidth.setValue(textMeasurements.current[index].width);
-      isInitialized.current = true;
+      initialized.current = true;
+      const initialIndex = tabs.indexOf(selected);
+
+      // Set values instantly to prevent flicker
+      const textWidth = textMeasurements.current[initialIndex].width;
+      const pressable = pressableMeasurements.current[initialIndex];
+      const x = pressable.x + (pressable.width - textWidth) / 2;
+
+      underlineX.setValue(x);
+      underlineWidth.setValue(textWidth);
     }
   };
 
-  const calculateUnderlineX = (index: number) => {
-    const textWidth = textMeasurements.current[index].width;
-    const pressable = pressableMeasurements.current[index];
-    return pressable.x + (pressable.width - textWidth) / 2;
-  };
-
+  // Re-run animation on selected tab change
   useEffect(() => {
+    if (!initialized.current) return;
     const index = tabs.indexOf(selected);
-    const textMeasurement = textMeasurements.current[index];
-    const pressableMeasurement = pressableMeasurements.current[index];
-
-    if (textMeasurement && pressableMeasurement) {
-      const x = calculateUnderlineX(index);
-      Animated.parallel([
-        Animated.timing(underlineX, {
-          toValue: x,
-          duration: 250,
-          easing: Easing.bezier(0.25, 1, 0.5, 1), // smooth ease-out curve
-          useNativeDriver: false,
-        }),
-        Animated.timing(underlineWidth, {
-          toValue: textMeasurement.width,
-          duration: 250,
-          easing: Easing.bezier(0.25, 1, 0.5, 1),
-          useNativeDriver: false,
-        }),
-      ]).start();
-    }
-  }, [selected, tabs]);
+    animateUnderline(index);
+  }, [selected]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
@@ -104,35 +122,22 @@ export default function TabBar<T extends string>({
     fontFamily: Fonts.OSREGULAR,
   });
 
-  const underlineStyle: ViewStyle = {
-    width: underlineWidth,
-    transform: [{ translateX: underlineX }],
-    height: 2,
-    borderRadius: 100,
-    backgroundColor: isDark ? Colors.white : Colors.black,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-  };
-
   return (
     <View style={[styles.tabs, style]}>
-      {tabs.map((tab, i) => {
+      {tabs.map((tab, index) => {
         const isSelected = selected === tab;
         return (
           <Pressable
             key={tab}
             onPress={() => onTabPress(tab)}
-            onLayout={onPressableLayout(i)}
+            onLayout={onPressableLayout(index)}
             style={styles.tabPressable}
             accessibilityRole="tab"
             accessibilityState={{ selected: isSelected }}
             accessibilityLabel={`Switch to ${tab} tab`}
           >
-            <View onLayout={onTextLayout(i)}>
-              {renderLabel ? (
-                renderLabel(tab, isSelected)
-              ) : (
+            <View onLayout={onTextLayout(index)}>
+              {renderLabel ? renderLabel(tab, isSelected) : (
                 <Text style={defaultLabelStyle(tab, isSelected)}>
                   {tab.toUpperCase()}
                 </Text>
@@ -141,7 +146,18 @@ export default function TabBar<T extends string>({
           </Pressable>
         );
       })}
-      <Animated.View style={underlineStyle} />
+
+      {/* Underline */}
+      <Animated.View
+        style={[
+          styles.underline,
+          {
+            transform: [{ translateX: underlineX }],
+            width: underlineWidth,
+            backgroundColor: isDark ? Colors.white : Colors.black,
+          },
+        ]}
+      />
     </View>
   );
 }
@@ -158,5 +174,12 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     paddingHorizontal: 16,
     alignItems: "center",
+  },
+  underline: {
+    position: "absolute",
+    bottom: 0,
+    height: 2,
+    borderRadius: 100,
+    left: 0,
   },
 });

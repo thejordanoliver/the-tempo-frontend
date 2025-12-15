@@ -7,7 +7,7 @@ export type NBAScore = {
   periodScores?: { period: number; home: number; away: number }[];
   homeTeam: string;
   awayTeam: string;
-  status: "canceled" | "scheduled" | "in_play" | "final" ;
+  status: "canceled" | "scheduled" | "in_play" | "final";
   statusText?: string;
   displayClock?: string;
   period?: number;
@@ -29,24 +29,28 @@ export const useGameScores = (
   awayIdOrName?: string | null,
   date?: DateParam
 ) => {
-  const [score, setScore] = useState<NBAScore | undefined>(undefined);
+  const [score, setScore] = useState<NBAScore>();
   const [loading, setLoading] = useState(false);
-
-  // 🟡 Replace "error" with "warning"
   const [warning, setWarning] = useState<string | null>(null);
-
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const skipFetch =
-    !league || !homeIdOrName || !awayIdOrName || homeIdOrName === awayIdOrName;
+    !league ||
+    !homeIdOrName ||
+    !awayIdOrName ||
+    homeIdOrName === awayIdOrName;
 
+  // ---------------------------
+  // Fetch score
+  // ---------------------------
   const fetchScore = useCallback(
-    async (isPolling = false) => {
+    async (silent = false) => {
       if (skipFetch) return;
 
       try {
-        if (!isPolling) setLoading(true);
+        if (!silent) setLoading(true);
         setWarning(null);
 
         const params: Record<string, any> = {
@@ -57,11 +61,9 @@ export const useGameScores = (
 
         if (date) {
           if (typeof date === "string") params.date = date;
-          else if (typeof date === "object") {
-            if (date.timestamp) params.date = date.timestamp;
-            else if (date.utc) params.date = date.utc;
-            else if (date.date) params.date = date.date;
-          }
+          else if (date.timestamp) params.date = date.timestamp;
+          else if (date.utc) params.date = date.utc;
+          else if (date.date) params.date = date.date;
         }
 
         const { data } = await axios.get<NBAScore>(
@@ -72,59 +74,71 @@ export const useGameScores = (
         setScore(data);
         setLastRefresh(new Date());
       } catch (err: any) {
-        console.warn(`[${league.toUpperCase()} Score] Warning:`, err);
-
-        // 🟡 Don’t clear the score — keep last known good data
+        console.warn(`[${league}] score warning`, err);
         setWarning(err?.message ?? "Unable to refresh score");
       } finally {
-        if (!isPolling) setLoading(false);
+        if (!silent) setLoading(false);
       }
     },
     [league, homeIdOrName, awayIdOrName, date, skipFetch]
   );
 
-  const getInterval = (status: NBAScore["status"] | undefined) => {
-    if (status === "in_play") return 30000; // 30s for live games
-    return 60000; // 60s for scheduled/final
-  };
-
-// 1️⃣ Base polling effect — starts once when inputs change
-useEffect(() => {
-  if (skipFetch) return;
-
-  // Immediate fetch
-  fetchScore(true);
-
-  const interval = getInterval(score?.status);
-
-  intervalRef.current = setInterval(() => {
-    fetchScore(true);
-  }, interval);
-
-  return () => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-  };
-}, [league, homeIdOrName, awayIdOrName, date]);
-
+  // ---------------------------
+  // Polling controller
+  // ---------------------------
   useEffect(() => {
-    if (score?.status === "final" && intervalRef.current) {
+    if (skipFetch) return;
+
+    // Always clear previous interval
+    if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  }, [score?.status]);
+
+    // Initial fetch
+    fetchScore(true);
+
+    // Decide polling strategy
+    if (!score) return;
+
+    // ❌ Never poll canceled or final
+    if (score.status === "final" || score.status === "canceled") {
+      return;
+    }
+
+    // ⏱ Poll intervals
+    let intervalMs = 60000; // default
+
+    if (score.status === "in_play") {
+      intervalMs = 15000; // 🔥 live game
+    }
+
+    intervalRef.current = setInterval(() => {
+      fetchScore(true);
+    }, intervalMs);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [
+    skipFetch,
+    fetchScore,
+    score?.status, // 👈 CRITICAL
+  ]);
 
   const refresh = useCallback(() => {
     if (!skipFetch) fetchScore(false);
   }, [fetchScore, skipFetch]);
-// console.log(score?.status)
-  const isLive = score?.status === "in_play";
 
   return {
     score,
     loading,
-    warning,      // 🟡 replace error with warning
+    warning,
     refresh,
-    isLive,
+    isLive: score?.status === "in_play",
     lastRefresh,
   };
 };

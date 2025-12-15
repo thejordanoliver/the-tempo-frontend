@@ -286,7 +286,6 @@ export default function NBALeagueScreen() {
 
           {selectedTab === "news" && (
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}

@@ -1,5 +1,4 @@
-// ./NFL/GamePreview/NFLGameCenterInfo.tsx
-import { Colors } from "constants/Colors";
+// ./CFB/GamePreview/CenterInfo.tsx
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
@@ -85,29 +84,25 @@ export function CFBCenterInfo({
     (period && period.toUpperCase().includes("OT")) ||
     (status && ["AOT"].includes(status as string));
 
+  // ⭐ Detect "End of Quarter" from gameStatusDetail or gameStatusShortDetail
+  const endOfQuarterText = (() => {
+    if (!downAndDistance) return null;
 
-    // ⭐ Detect "End of Quarter" from gameStatusDetail or gameStatusShortDetail
-const endOfQuarterText = (() => {
-  if (!downAndDistance) return null;
+    // possession API usually puts shortDownDistanceText like:
+    // "End of 1st quarter."
+    const lower = downAndDistance.toLowerCase();
 
-  // possession API usually puts shortDownDistanceText like:
-  // "End of 1st quarter."
-  const lower = downAndDistance.toLowerCase();
+    if (lower.includes("end of") && lower.includes("quarter")) {
+      // Normalize capitalization
+      return downAndDistance
+        .replace("quarter.", "Quarter")
+        .replace("quarter", "Quarter");
+    }
 
-  if (lower.includes("end of") && lower.includes("quarter")) {
-    // Normalize capitalization
-    return downAndDistance
-      .replace("quarter.", "Quarter")
-      .replace("quarter", "Quarter");
-  }
-
-  return null;
-})();
-
+    return null;
+  })();
 
   const styles = getStyles;
-
-
 
   return (
     <View style={styles.container}>
@@ -120,25 +115,23 @@ const endOfQuarterText = (() => {
         </View>
       )}
 
-      
-
-     {/* In Progress */}
-{status === "In Progress" &&
-  (!endOfQuarterText || !endOfQuarterText.toLowerCase().includes("end of")) && (
-    <>
-      <View style={styles.infoWrapper}>
-        <Text style={styles.date}>
-          {period ? formatQuarter(period) : ""}
-        </Text>
-        <View style={styles.statusDivider} />
-        {clock && <Text style={styles.date}>{clock}</Text>}
-      </View>
-      {downAndDistance && (
-        <Text style={styles.downAndDistance}>{downAndDistance}</Text>
-      )}
-    </>
-  )}
-
+      {/* In Progress */}
+      {status === "In Progress" &&
+        (!endOfQuarterText ||
+          !endOfQuarterText.toLowerCase().includes("end of")) && (
+          <>
+            <View style={styles.infoWrapper}>
+              <Text style={styles.period}>
+                {period ? formatQuarter(period) : ""}
+              </Text>
+              <View style={styles.statusDivider} />
+              {clock && <Text style={styles.clock}>{clock}</Text>}
+            </View>
+            {downAndDistance && (
+              <Text style={styles.downAndDistance}>{downAndDistance}</Text>
+            )}
+          </>
+        )}
 
       {/* Halftime */}
       {status === "Halftime" && (

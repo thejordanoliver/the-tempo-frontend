@@ -8,9 +8,10 @@ import HeadingTwo from "../../Headings/HeadingTwo";
 
 interface Props {
   game: UpcomingGameOdds;
+  lighter?: boolean;
 }
 
-const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
+const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -32,14 +33,17 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   // ------------------------------------------------------
   // NORMALIZATION (Fixes flipped outcomes)
   // ------------------------------------------------------
-  function normalizeTeamMarket(market: any, homeName: string, awayName: string) {
+  function normalizeTeamMarket(
+    market: any,
+    homeName: string,
+    awayName: string
+  ) {
     if (!market?.outcomes || market.outcomes.length < 2) return market;
 
     const [o0, o1] = market.outcomes;
 
     // API gave reversed: index 0 = home, index 1 = away
-    const isFlipped =
-      o0?.name === homeName && o1?.name === awayName;
+    const isFlipped = o0?.name === homeName && o1?.name === awayName;
 
     if (isFlipped) {
       return {
@@ -52,7 +56,11 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   }
 
   const h2hNorm = normalizeTeamMarket(h2h, game.home_team, game.away_team);
-  const spreadsNorm = normalizeTeamMarket(spreads, game.home_team, game.away_team);
+  const spreadsNorm = normalizeTeamMarket(
+    spreads,
+    game.home_team,
+    game.away_team
+  );
   const totalsNorm = totals; // totals are always Over/Under → not team based
 
   const oddsMap = [
@@ -67,18 +75,25 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   };
 
   const colors = {
-    textPrimary: isDark ? Colors.white : Colors.black,
-    textSecondary: isDark ? Colors.lightGray : Colors.darkGray,
-    textHeader: isDark ? Colors.lightGray : Colors.darkGray,
-    divider: isDark ? Colors.darkGray : Colors.lightGray,
-    background: isDark ? Colors.black : Colors.white,
+    textPrimary: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    textSecondary: lighter
+      ? Colors.lightGray
+      : isDark
+      ? Colors.lightGray
+      : Colors.darkGray,
+    textHeader: lighter
+      ? Colors.lightGray
+      : isDark
+      ? Colors.lightGray
+      : Colors.darkGray,
+    divider: lighter
+      ? Colors.lightGray
+      : isDark
+      ? Colors.darkGray
+      : Colors.lightGray,
   };
 
-  const formatOutcome = (
-    market: any,
-    index: number,
-    label: string
-  ) => {
+  const formatOutcome = (market: any, index: number, label: string) => {
     const outcome = market?.outcomes?.[index];
     if (!outcome) return "-";
 
@@ -93,8 +108,8 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
 
   return (
     <>
-      <HeadingTwo>Betting Odds</HeadingTwo>
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <HeadingTwo lighter={lighter}>Betting Odds</HeadingTwo>
+      <View style={styles.container}>
         {/* Header Row */}
         <View style={styles.headerRow}>
           <Text
@@ -211,10 +226,7 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 12,
-    marginBottom: 10,
-  },
+  container: {},
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -254,7 +266,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.OSREGULAR,
   },
   divider: {
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     marginVertical: 8,
   },
   bookmaker: {

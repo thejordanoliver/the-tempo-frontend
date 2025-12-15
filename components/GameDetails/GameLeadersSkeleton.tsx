@@ -132,11 +132,11 @@ export default function GameLeadersSkeleton() {
           marginBottom: 16,
         }}
       >
-        {[...Array(3)].map((_, idx) => (
+        {[...Array(4)].map((_, idx) => (
           <PulseBlock
             key={idx}
             style={{
-              width: 100,
+              width: 80,
               height: 26,
               borderRadius: 8,
             }}
