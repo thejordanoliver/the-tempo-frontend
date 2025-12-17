@@ -1,21 +1,19 @@
-import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { useRouter } from "expo-router";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
-import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossession";
+import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameSquareCardStyles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import {
   formatQuarter,
@@ -41,9 +39,8 @@ function NFLGameSquareCard({ game, isDark }: Props) {
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
 
-    const awayTeamEspnID = awayId;
+  const awayTeamEspnID = awayId;
   const homeTeamEspnID = homeId;
-
 
   // --- Game Date ---
   const {
@@ -68,8 +65,8 @@ function NFLGameSquareCard({ game, isDark }: Props) {
     status.isLive && homeId && awayId
       ? useFootballGamePossession(
           "nfl",
-         homeTeamEspnID,
-         awayTeamEspnID,
+          homeTeamEspnID,
+          awayTeamEspnID,
           gameDateStr
         )
       : {
@@ -109,13 +106,13 @@ function NFLGameSquareCard({ game, isDark }: Props) {
   const safeScore = score ?? { home: { total: 0 }, away: { total: 0 } };
 
   const normalizeScoreSide = (side: any) => {
-  if (typeof side === "number") return { total: side };
-  if (typeof side?.total === "number") return { total: side.total };
-  return { total: 0 };
-};
+    if (typeof side === "number") return { total: side };
+    if (typeof side?.total === "number") return { total: side.total };
+    return { total: 0 };
+  };
 
-const normalizedAwayScore = normalizeScoreSide(safeScore.away);
-const normalizedHomeScore = normalizeScoreSide(safeScore.home);
+  const normalizedAwayScore = normalizeScoreSide(safeScore.away);
+  const normalizedHomeScore = normalizeScoreSide(safeScore.home);
 
   const showStatusDetail =
     gameStatusShortDetail &&
@@ -161,8 +158,8 @@ const normalizedHomeScore = normalizeScoreSide(safeScore.home);
 
   // --- Broadcasts ---
   const { broadcasts } = useNFLGameBroadcasts(
-    homeTeam.name,
-    awayTeam.name,
+    homeTeamEspnID,
+    awayTeamEspnID,
     gameDateStr
   );
 
@@ -206,7 +203,9 @@ const normalizedHomeScore = normalizeScoreSide(safeScore.home);
                 getTeamStyle(false),
               ]}
             >
-              {status.isScheduled ? awayTeam.record : normalizedAwayScore.total ?? 0}
+              {status.isScheduled
+                ? awayTeam.record
+                : normalizedAwayScore.total ?? 0}
             </Text>
           </View>
 
@@ -228,7 +227,9 @@ const normalizedHomeScore = normalizeScoreSide(safeScore.home);
                 getTeamStyle(true),
               ]}
             >
-              {status.isScheduled ? homeTeam.record : normalizedHomeScore.total ?? 0}
+              {status.isScheduled
+                ? homeTeam.record
+                : normalizedHomeScore.total ?? 0}
             </Text>
           </View>
         </View>

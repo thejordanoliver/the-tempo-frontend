@@ -1,7 +1,4 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/Colors";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
-import { Fonts } from "constants/fonts";
 import { neutralVenues, teams, venueImages } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -16,12 +13,12 @@ import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
 import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-
 
 type Props = {
   visible: boolean;
@@ -39,14 +36,12 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     day: "numeric",
   });
 
-
-
   const isChampionship =
     dateObj.getMonth() === 5 &&
     dateObj.getDate() >= 5 &&
     dateObj.getDate() <= 22;
 
-      const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle(isChampionship);
 
   // --- Safeguard ---
   if (!game) return null;
@@ -370,4 +365,3 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     </BottomSheetModal>
   );
 }
-

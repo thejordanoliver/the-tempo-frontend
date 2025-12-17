@@ -27,8 +27,8 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { getSignupStepsStyles } from "styles/signupStepStyles";
-import type { LeagueType, Team, LeagueTeam } from "types/types";
+import { getSignupStepsStyles } from "styles/SignupStepStyles";
+import type { LeagueTeam, LeagueType } from "types/types";
 import SearchBar from "./SearchBars/SearchBar";
 type SignupData = {
   fullName: string;
@@ -103,60 +103,51 @@ export default function SignupSteps({
   }));
 
   function normalizeTeam(raw: any, league: LeagueType) {
-  return {
-    league,
-    id: raw.id?.toString() ?? "",
-    name: raw.name ?? raw.fullName ?? "",
-    fullName: raw.fullName ?? raw.name ?? "",
-    logo: raw.logo ?? null,
-    logoLight: raw.logoLight ?? raw.logo ?? null,
-    color: raw.color ?? "#999",
-    secondaryColor: raw.secondaryColor ?? raw.color ?? "#777",
-    firstSeason: raw.firstSeason?.toString() ?? "",
-    displayName: raw.displayName ?? raw.fullName ?? raw.name ?? "",
-    // anything else your LeagueTeam requires
-  } satisfies LeagueTeam;
-}
+    return {
+      league,
+      id: raw.id?.toString() ?? "",
+      name: raw.name ?? raw.fullName ?? "",
+      fullName: raw.fullName ?? raw.name ?? "",
+      logo: raw.logo ?? null,
+      logoLight: raw.logoLight ?? raw.logo ?? null,
+      color: raw.color ?? "#999",
+      secondaryColor: raw.secondaryColor ?? raw.color ?? "#777",
+      firstSeason: raw.firstSeason?.toString() ?? "",
+      displayName: raw.displayName ?? raw.fullName ?? raw.name ?? "",
+      // anything else your LeagueTeam requires
+    } satisfies LeagueTeam;
+  }
 
+  const allTeamsRaw = [
+    ...teams.map((t) => normalizeTeam(t, "NBA")),
+    ...nflteams.map((t) => normalizeTeam(t, "NFL")),
+    ...mlbteams.map((t) => normalizeTeam(t, "MLB")),
 
-const allTeamsRaw = [
-  ...teams.map((t) => normalizeTeam(t, "NBA")),
-  ...nflteams.map((t) => normalizeTeam(t, "NFL")),
-  ...mlbteams.map((t) => normalizeTeam(t, "MLB")),
+    ...cfbteams
+      .filter((t) => {
+        const fbsTeamNames = Object.values(conferenceListMap)
+          .flat()
+          .map((n) => n.toLowerCase());
+        const name = (t.fullName || t.name || "").toLowerCase();
+        return fbsTeamNames.some((n) => n.includes(name) || name.includes(n));
+      })
+      .map((t) => normalizeTeam(t, "CFB")),
 
-  ...cfbteams
-    .filter((t) => {
-      const fbsTeamNames = Object.values(conferenceListMap)
-        .flat()
-        .map((n) => n.toLowerCase());
-      const name = (t.fullName || t.name || "").toLowerCase();
-      return fbsTeamNames.some(
-        (n) => n.includes(name) || name.includes(n)
-      );
-    })
-    .map((t) => normalizeTeam(t, "CFB")),
+    ...cbbTeams
+      .filter((t) => {
+        const cbbTeamNames = Object.values(cbbConferenceListMap)
+          .flat()
+          .map((n) => n.toLowerCase());
+        const name = (t.fullName || t.name || "").toLowerCase();
+        return cbbTeamNames.some((n) => n.includes(name) || name.includes(n));
+      })
+      .map((t) => normalizeTeam(t, "CBB")),
+  ];
 
-  ...cbbTeams
-    .filter((t) => {
-      const cbbTeamNames = Object.values(cbbConferenceListMap)
-        .flat()
-        .map((n) => n.toLowerCase());
-      const name = (t.fullName || t.name || "").toLowerCase();
-      return cbbTeamNames.some(
-        (n) => n.includes(name) || name.includes(n)
-      );
-    })
-    .map((t) => normalizeTeam(t, "CBB")),
-];
-
-
-// REMOVE DUPLICATES
-const uniqueTeams = Array.from(
-  new Map(
-    allTeamsRaw.map((t) => [`${t.league}-${t.id}`, t])
-  ).values()
-);
-
+  // REMOVE DUPLICATES
+  const uniqueTeams = Array.from(
+    new Map(allTeamsRaw.map((t) => [`${t.league}-${t.id}`, t])).values()
+  );
 
   switch (signupStep) {
     case 0:
@@ -235,8 +226,9 @@ const uniqueTeams = Array.from(
             onChangeText={setSearch}
           />
           <FavoriteTeamsSelector
-      teams={uniqueTeams.sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
-
+            teams={uniqueTeams.sort((a, b) =>
+              a.name.localeCompare(b.fullName ?? "")
+            )}
             favorites={signupData.favorites}
             toggleFavorite={(league: LeagueType, id: string) =>
               onToggleFavorite(league, id)

@@ -18,13 +18,13 @@ import {
   ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import { CFBGame } from "types/cfb";
 import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
 import CFBGameCard from "./CFBGameCard";
 import CFBGameSquareCard from "./CFBGameSquareCard";
 import CFBStackedGameCard from "./CFBStackedGameCard";
-
 type Props = {
-  games: any[];
+  games: CFBGame[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -37,7 +37,7 @@ type Props = {
 
 type CFBGameSection = {
   title: string;
-  data: any[];
+  data: CFBGame[];
 };
 
 export default function CFBGamesList({
@@ -71,7 +71,32 @@ export default function CFBGamesList({
     if (!showHeaders) {
       return [{ title: "All", data: paginatedGames }];
     }
-    return [{ title: "Regular Season", data: paginatedGames }];
+
+    const postseasonGames = paginatedGames.filter(
+      (game) => game?.game.week === "Bowls"
+    );
+
+    const regularSeasonGames = paginatedGames.filter(
+      (game) => game?.game.week !== "Bowls"
+    );
+
+    const builtSections: CFBGameSection[] = [];
+
+    if (regularSeasonGames.length > 0) {
+      builtSections.push({
+        title: "Regular Season",
+        data: regularSeasonGames,
+      });
+    }
+
+    if (postseasonGames.length > 0) {
+      builtSections.push({
+        title: "Postseason",
+        data: postseasonGames,
+      });
+    }
+
+    return builtSections;
   }, [paginatedGames, showHeaders]);
 
   const loadMore = () => {
@@ -256,9 +281,7 @@ export default function CFBGamesList({
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
             <View style={{ marginTop: 10 }}>
-              <Text
-                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
-              >
+              <Text style={styles.emptyText}>
                 {day === "todayTomorrow"
                   ? "No CFB games found for today or tomorrow."
                   : "No CFB games found."}
@@ -273,7 +296,12 @@ export default function CFBGamesList({
           renderItem={({ item, index }) => renderGameCard(item, index)}
           renderSectionHeader={({ section }) =>
             showHeaders && section.data.length > 0 ? (
-              <View style={styles.headerWrapper}>
+              <View
+                style={[
+                  styles.headerWrapper,
+                  section.title === "Postseason" && { marginTop: 12 },
+                ]}
+              >
                 <HeadingTwo>{section.title}</HeadingTwo>
               </View>
             ) : null
@@ -342,6 +370,6 @@ export const footballGamesListStyle = StyleSheet.create({
   },
   headerWrapper: {
     marginHorizontal: 12,
-    marginBottom: 4,
+    marginTop: 12,
   },
 });

@@ -1,5 +1,5 @@
 import { Image, Text, View } from "react-native";
-import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeader.styles";
+import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import { CBBPlayer } from "types/cbb";
 
 type PlayerHeaderProps = {

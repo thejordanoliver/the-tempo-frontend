@@ -11,7 +11,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
+import { getStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MLBGame } from "types/mlb";
 
 type Props = {

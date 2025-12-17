@@ -23,6 +23,8 @@ type Props = {
   rankAway?: string;
   homeScore: number;
   awayScore: number;
+  homeFoulsToGive?: number;
+  awayFoulsToGive?: number;
   homeTimeouts?: number;
   awayTimeouts?: number;
   status: StatusType;
@@ -52,6 +54,8 @@ export default function GameHeader({
   rankHome,
   rankAway,
   homeScore,
+  homeFoulsToGive,
+  awayFoulsToGive,
   awayScore,
   homeTimeouts = 0,
   awayTimeouts = 0,
@@ -73,51 +77,49 @@ export default function GameHeader({
 }: Props) {
   const styles = getStyles(isDark);
 
-const normalizedStatus = (() => {
-  let raw = "";
+  const normalizedStatus = (() => {
+    let raw = "";
 
-  if (typeof status === "string") {
-    raw = status.toLowerCase();
-  } else if (typeof status === "object" && status !== null) {
-    raw = (status.long || String(status.short || "") || "").toLowerCase();
-  }
+    if (typeof status === "string") {
+      raw = status.toLowerCase();
+    } else if (typeof status === "object" && status !== null) {
+      raw = (status.long || String(status.short || "") || "").toLowerCase();
+    }
 
-  // 🟡 HALFTIME (must come first)
-  if (raw.includes("halftime")) {
-    return "Halftime";
-  }
+    // 🟡 HALFTIME (must come first)
+    if (raw.includes("halftime")) {
+      return "Halftime";
+    }
 
-  // 🏁 FINAL
-  if (
-    ["final", "finished", "status_final", "fulltime", "ft"].some((k) =>
-      raw.includes(k)
-    ) ||
-    raw === "f"
-  ) {
-    return "Final";
-  }
+    // 🏁 FINAL
+    if (
+      ["final", "finished", "status_final", "fulltime", "ft"].some((k) =>
+        raw.includes(k)
+      ) ||
+      raw === "f"
+    ) {
+      return "Final";
+    }
 
-  // ❌ CANCELED
-  if (["canceled", "cancelled"].some((k) => raw.includes(k))) {
-    return "Canceled";
-  }
+    // ❌ CANCELED
+    if (["canceled", "cancelled"].some((k) => raw.includes(k))) {
+      return "Canceled";
+    }
 
-  // ⏸ POSTPONED
-  if (["postponed", "delayed"].some((k) => raw.includes(k))) {
-    return "Postponed";
-  }
+    // ⏸ POSTPONED
+    if (["postponed", "delayed"].some((k) => raw.includes(k))) {
+      return "Postponed";
+    }
 
-  // 🕒 IN PLAY
-  if (
-    ["in_play", "in progress", "live", "quarter"].some((k) =>
-      raw.includes(k)
-    )
-  ) {
-    return "In Play";
-  }
+    // 🕒 IN PLAY
+    if (
+      ["in_play", "in progress", "live", "quarter"].some((k) => raw.includes(k))
+    ) {
+      return "In Play";
+    }
 
-  return "Scheduled";
-})();
+    return "Scheduled";
+  })();
 
   const awayIsWinner =
     normalizedStatus === "Final" && (awayScore ?? 0) > (homeScore ?? 0);
@@ -141,6 +143,7 @@ const normalizedStatus = (() => {
           team={{
             id: awayTeamData.id,
             code: awayTeamData.code,
+
             name: away.name,
             record:
               typeof awayRecord === "object"
@@ -153,6 +156,7 @@ const normalizedStatus = (() => {
                   require("../../assets/Placeholders/teamPlaceholder.png"),
           }}
           isDark={isDark}
+          foulsToGive={awayFoulsToGive}
           rank={rankAway}
           score={awayScore}
           isWinner={awayIsWinner}
@@ -205,6 +209,7 @@ const normalizedStatus = (() => {
           rank={rankHome}
           isHome
           score={homeScore}
+            foulsToGive={homeFoulsToGive}
           isWinner={homeIsWinner}
           colors={colors}
           status={normalizedStatus}

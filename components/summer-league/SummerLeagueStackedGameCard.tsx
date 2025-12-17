@@ -1,19 +1,18 @@
 import { Fonts } from "constants/fonts";
-import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import { useRouter } from "expo-router";
+import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
-  StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
+import { getStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { teams } from "../../constants/teams";
 import type { summerGame, Team } from "../../types/types";
-import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
 function AnimatedLogo({
   lightSource,
   darkSource,
@@ -311,4 +310,3 @@ export default function SummerLeagueStackedGameCard({
     </TouchableOpacity>
   );
 }
-

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
+import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
 import PlayoffsLogo from "../../assets/Logos/NBAPlayoffs.png";
 import PlayoffsLogoLight from "../../assets/Logos/NBAPlayoffsLight.png";
 import FinalsLogo from "../../assets/Logos/TheNBAFinals.png";

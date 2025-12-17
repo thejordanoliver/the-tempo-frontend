@@ -1,7 +1,7 @@
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
+import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 import { CFBTeam } from "types/cfb";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

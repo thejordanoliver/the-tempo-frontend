@@ -11,7 +11,7 @@ import { useFollowers } from "hooks/useFollowers";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, Text, TextInput, useColorScheme, View } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
-import { followersListModalStyles } from "styles/ModalsStyles/FollowersListModal.styles";
+import { followersListModalStyles } from "styles/ModalsStyles/FollowersListModalStyles";
 import FollowersList from "./FollowersList";
 type Props = {
   visible: boolean;

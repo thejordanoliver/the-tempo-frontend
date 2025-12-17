@@ -13,7 +13,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
 import { MLBGame } from "types/mlb";
 
 type Props = {
@@ -59,7 +59,6 @@ function MLBGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
   const router = useRouter();
-
 
   /* ===============================
      DATE / TIME
@@ -119,9 +118,8 @@ function MLBGameCard({ game, isDark }: Props) {
     attendance,
     neutralSite,
   } = useGameDetails("mlb", awayEspnId, homeEspnId, normalizedDate);
-    const isChampionship = playoffRound === "World Series";
-    const styles = getStyles(dark, isChampionship);
-
+  const isChampionship = playoffRound === "World Series";
+  const styles = getStyles(dark, isChampionship);
 
   const homeScore = game?.scores?.home?.total ?? 0;
   const awayScore = game?.scores?.away?.total ?? 0;
@@ -138,8 +136,6 @@ function MLBGameCard({ game, isDark }: Props) {
     longStatus === "not started" || longStatus.includes("scheduled");
 
   const isCancelled = longStatus === "cancelled";
-
-
 
   /* ===============================
      WIN/LOSS STYLE

@@ -22,7 +22,7 @@ import {
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamDetails.styles";
+import { style } from "../../../styles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: {

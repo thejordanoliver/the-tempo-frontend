@@ -37,17 +37,8 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   gameStats,
-  data,
-  resolvedVenueAddress,
-  isDark,
 }: GamePreviewContentProps) {
-  console.log("CBB odds props:", {
-    gameId: game?.id,
-    homeCode: home?.code,
-    awayCode: away?.code,
-    gameDateISO,
-    gameDateStr,
-  });
+
 
   return (
     <BottomSheetScrollView

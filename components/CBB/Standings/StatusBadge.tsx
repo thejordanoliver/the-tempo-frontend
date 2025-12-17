@@ -1,5 +1,5 @@
-import { getStyles } from "styles/Standings.styles";
 import { Text, View, useColorScheme } from "react-native";
+import { getStyles } from "styles/StandingsStyles";
 
 // Simplified NFL-managed league status codes
 type StatusCode = "x" | "o" | "c" | "d" | "pi";
@@ -25,7 +25,6 @@ const statusCodeToLabel: Record<StatusCode, string> = {
 interface StatusBadgeProps {
   code?: string | null; // could be a numeric seed or a special code
   clinchedConference?: boolean; // explicitly mark if the team clinched conference
-  
 }
 
 export const StatusBadge = ({
@@ -36,8 +35,6 @@ export const StatusBadge = ({
   const styles = getStyles(isDark);
 
   if (!code && !clinchedConference) return null;
-
-  
 
   // Use "c" for clinched conference if applicable
   const displayCode: StatusCode | string = clinchedConference
@@ -55,7 +52,9 @@ export const StatusBadge = ({
 
   // Determine label text
   const label =
-    displayCode in statusCodeToLabel ? statusCodeToLabel[displayCode as StatusCode] : displayCode;
+    displayCode in statusCodeToLabel
+      ? statusCodeToLabel[displayCode as StatusCode]
+      : displayCode;
 
   return (
     <View

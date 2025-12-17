@@ -16,7 +16,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/Standings.styles";
+import { getStyles } from "styles/StandingsStyles";
 export const CFBStandingsList = () => {
   const { rankings = [], loading, error } = useCFBRankings();
   const isDark = useColorScheme() === "dark";

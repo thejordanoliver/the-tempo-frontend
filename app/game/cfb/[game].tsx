@@ -15,7 +15,7 @@ import Officials from "components/GameDetails/Officials";
 import Weather from "components/GameDetails/Weather";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import GameLeaders from "components/NFL/GameDetails/GameLeaders";
+import GameLeaders from "components/CFB/GameDetails/GameLeaders";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";

@@ -20,7 +20,9 @@ type League = "cfb" | "nfl";
 
 /**
  * Fetches ESPN game headline from competition.notes[0].headline.
- * Strictly matches games by home + away ESPN team IDs.
+ * STRICT:
+ * - Both team ESPN IDs must match
+ * - Event date must be day-of, day-before, or day-after target date
  */
 export const useGameInfo = (
   homeEspnId?: number,
@@ -32,16 +34,19 @@ export const useGameInfo = (
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const skipFetch = !date || !homeEspnId || !awayEspnId;
+  const skipFetch =
+    !date || homeEspnId === undefined || awayEspnId === undefined;
 
   const fetchData = useCallback(async () => {
     if (skipFetch) return;
+
     setLoading(true);
     setError(null);
 
     try {
-      // 🕓 Parse date
+      /* ---------------- Parse target date ---------------- */
       let targetDate: Date | null = null;
+
       if (typeof date === "string") {
         targetDate = new Date(date);
       } else if (typeof date === "object") {
@@ -56,30 +61,32 @@ export const useGameInfo = (
 
       if (!targetDate || isNaN(targetDate.getTime())) {
         setError("Invalid or missing date");
-        setLoading(false);
         return;
       }
 
-      // 📅 Format YYYYMMDD (UTC)
+      /* ---------------- Build YYYYMMDD ---------------- */
       const makeYMD = (d: Date): string => {
-        const year = d.getUTCFullYear();
-        const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+        const y = d.getUTCFullYear();
+        const m = String(d.getUTCMonth() + 1).padStart(2, "0");
         const day = String(d.getUTCDate()).padStart(2, "0");
-        return `${year}${month}${day}`;
+        return `${y}${m}${day}`;
       };
 
-      // ⏱ Generate date range (±2 days)
-      const dateOffsets = [-1, 0, 1, 2];
-      const urls = dateOffsets.map((offset) => {
+      /* ---------------- Allowed date window ---------------- */
+      const dayOffsets = [-1, 0, 1];
+
+      const urls = dayOffsets.map((offset) => {
         const d = new Date(targetDate!);
         d.setUTCDate(d.getUTCDate() + offset);
+
         return `https://site.api.espn.com/apis/site/v2/sports/football/${
           league === "cfb" ? "college-football" : "nfl"
         }/scoreboard?dates=${makeYMD(d)}`;
       });
 
-      // 🔄 Fetch all days in parallel
+      /* ---------------- Fetch ESPN ---------------- */
       const results = await Promise.allSettled(urls.map((u) => axios.get(u)));
+
       const allEvents = results
         .filter(
           (r): r is PromiseFulfilledResult<any> => r.status === "fulfilled"
@@ -87,55 +94,59 @@ export const useGameInfo = (
         .flatMap((r) => r.value.data?.events || []);
 
       if (!allEvents.length) {
-        console.warn(
-          `[${league.toUpperCase()} Headline] No events found in ESPN response.`
-        );
         setHeadlineText(undefined);
         return;
       }
 
-      const homeIdNum = Number(homeEspnId);
-      const awayIdNum = Number(awayEspnId);
+      const homeId = Number(homeEspnId);
+      const awayId = Number(awayEspnId);
 
-      // 🎯 Strict match by BOTH team IDs
-      const candidates = allEvents.filter((g: any) => {
-        const competitors = g?.competitions?.[0]?.competitors ?? [];
-        const ids = competitors.map((c: any) => Number(c.team?.id));
-        return ids.includes(homeIdNum) && ids.includes(awayIdNum);
+      const targetMidnight = new Date(targetDate);
+      targetMidnight.setUTCHours(0, 0, 0, 0);
+
+      const minTs = targetMidnight.getTime() - 86400000; // -1 day
+      const maxTs = targetMidnight.getTime() + 2 * 86400000; // +1 day inclusive
+
+      /* ---------------- STRICT FILTER ---------------- */
+      const candidates = allEvents.filter((event: any) => {
+        const competition = event?.competitions?.[0];
+        if (!competition) return false;
+
+        const competitors = competition.competitors ?? [];
+        if (competitors.length < 2) return false;
+
+        const teamIds = competitors.map((c: any) => Number(c?.team?.id));
+
+        // ✅ BOTH teams must match
+        const teamsMatch =
+          (teamIds.includes(homeId) || teamIds.includes(-1)) &&
+          (teamIds.includes(awayId) || teamIds.includes(-2));
+
+        if (!teamsMatch) return false;
+
+        // ✅ Date must be within allowed window
+        const eventTs = new Date(event.date).getTime();
+        return eventTs >= minTs && eventTs <= maxTs;
       });
 
-      if (!candidates.length) {
-        console.warn(
-          `[${league.toUpperCase()} Headline] No game matched home=${homeIdNum} & away=${awayIdNum}`
-        );
-        setHeadlineText(undefined);
-        return;
-      }
-
-      // If multiple matches, pick the one closest in time to targetDate
+      /* ---------------- Pick closest in time ---------------- */
       const targetTs = targetDate.getTime();
-      let bestGame: any = candidates[0];
+      let best = candidates[0];
       let bestDiff = Infinity;
 
-      for (const g of candidates) {
-        const eventTs = new Date(g.date).getTime();
-        const diff = Math.abs(eventTs - targetTs);
+      for (const e of candidates) {
+        const diff = Math.abs(new Date(e.date).getTime() - targetTs);
         if (diff < bestDiff) {
           bestDiff = diff;
-          bestGame = g;
+          best = e;
         }
       }
 
-      const competition = bestGame?.competitions?.[0];
-      const noteHeadline = competition?.notes?.[0]?.headline;
+      const headline = best?.competitions?.[0]?.notes?.[0]?.headline;
 
-      setHeadlineText(noteHeadline);
+      setHeadlineText(headline);
     } catch (err: any) {
-      console.error(
-        `[${league.toUpperCase()} Headline] Error fetching headline:`,
-        err.message
-      );
-      setError(err?.message || "Failed to fetch headline");
+      setError(err?.message ?? "Failed to fetch headline");
     } finally {
       setLoading(false);
     }

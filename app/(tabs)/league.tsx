@@ -19,7 +19,7 @@ import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
 import { useSeasonGames } from "hooks/useSeasonGames";
 import * as React from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
-import { getScoresStyles } from "styles/leagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 
 dayjs.extend(utc);

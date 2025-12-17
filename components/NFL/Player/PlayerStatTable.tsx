@@ -1,4 +1,5 @@
 import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { usePlayerStatsBySeason } from "hooks/NFLHooks/useNFLPlayerCareerStats";
@@ -80,13 +81,6 @@ const statGroupMap: Record<string, string[]> = {
   punts_returned: ["Returning"],
   yards_returned_on_punts: ["Returning"],
   punt_return_touchdowns: ["Returning"],
-};
-
-const getStatGroup = (statName: string, contextGroup?: string) => {
-  const groups = statGroupMap[statName.toLowerCase()];
-  if (!groups) return undefined;
-  if (contextGroup && groups.includes(contextGroup)) return contextGroup;
-  return groups[0];
 };
 
 const formatNFLStat = (
@@ -312,18 +306,18 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
   }, [selectedGroup]);
 
   return (
-    <>
+    <View style={styles.container}>
+      <HeadingTwo>Career Stats</HeadingTwo>
       <Dropdown
         options={statGroups.map((g) => ({ label: g, value: g }))}
         selectedValue={selectedGroup}
         onSelect={setSelectedGroup}
         isDark={isDark}
-        style={{ position: "absolute", alignSelf: "flex-end", top: -5, right: 12 }}
+        absolute
       />
-      <View
-        style={{ flexDirection: "column", borderRadius: 4, overflow: "hidden" }}
-      >
-        <View style={{ flexDirection: "row", marginTop: 8 }}>
+         <View style={styles.tableWrapper}>
+
+   
           <View
             style={{
               borderTopLeftRadius: 8,
@@ -334,10 +328,8 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                 : Colors.light.background,
             }}
           >
-            <View style={[styles.row, styles.headerRow, styles.seasonCell]}>
-              <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
-                Season
-              </Text>
+            <View style={[styles.row, styles.headerRow]}>
+              <Text style={[styles.seasonHeaderCell, styles.headerCell]}>Season</Text>
             </View>
             {(loading ? Array(3).fill(null) : data).map(
               (seasonData: SeasonData | null, idx: number) => {
@@ -350,14 +342,14 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                 );
               }
             )}
-            <View style={[styles.seasonCell, dynamicStyles.careerRow]}>
-              <Text style={[styles.cell, styles.careerHeaderCell]}>Career</Text>
+            <View style={[styles.row, styles.careerRow]}>
+              <Text style={styles.careerHeaderCell}>Career</Text>
             </View>
           </View>
 
           <ScrollView horizontal>
-            <View style={styles.container}>
-              <View style={[styles.row, styles.headerRow, styles.seasonCell]}>
+            <View>
+              <View style={[styles.row, styles.headerRow]}>
                 {statKeys.map((key, i) => (
                   <Text key={i} style={[styles.cell, styles.headerCell]}>
                     {formatNFLStat(selectedGroup, key, undefined, true)}
@@ -437,7 +429,7 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                 }
               )}
 
-              <View style={[styles.row, dynamicStyles.careerRow]}>
+              <View style={[styles.row, styles.careerRow]}>
                 {statKeys.map((key, i) => {
                   let value = safeDivide(
                     careerTotals[key] ?? 0,
@@ -445,7 +437,7 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
                   );
                   if (value === "NaN" || value === "Infinity") value = "0.0";
                   return (
-                    <Text key={i} style={[styles.cell, styles.headerCell]}>
+                    <Text key={i} style={styles.careerCell}>
                       {value}
                     </Text>
                   );
@@ -455,18 +447,24 @@ export default function PlayerStatTable({ playerId, seasons }: Props) {
           </ScrollView>
         </View>
       </View>
-    </>
   );
 }
 
 const statsTableStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      overflow: "hidden",
-      flexDirection: "column",
-      borderTopRightRadius: 8,
-      borderBottomRightRadius: 8,
+      paddingTop: 24,
+      paddingHorizontal: 12,
     },
+
+    tableWrapper: {
+      flexDirection: "row",
+      borderRadius: 8,
+      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+
     headerRow: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
@@ -479,8 +477,17 @@ const statsTableStyles = (isDark: boolean) =>
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderBottomWidth: 1,
     },
-    cell: {
+    careerCell: {
       minWidth: 60,
+      flex: 1,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: isDark ? Colors.black : Colors.white,
+    },
+    cell: {
+      minWidth: 80,
       flex: 1,
       textAlign: "center",
       fontSize: 14,
@@ -498,12 +505,19 @@ const statsTableStyles = (isDark: boolean) =>
     },
     careerHeaderCell: {
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "left",
+      color: isDark ? Colors.black : Colors.white,
+      paddingHorizontal: 8,
     },
     headerCell: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
+      paddingHorizontal: 8,
+    },
+    error: {
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
+      marginVertical: 20,
+      fontFamily: Fonts.OSREGULAR,
     },
     seasonCell: {
       minWidth: 80,
@@ -524,5 +538,68 @@ const statsTableStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: isDark ? Colors.white : Colors.black,
+    },
+    legendContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 8,
+      marginTop: 12,
+      borderTopColor: "#ccc",
+      borderTopWidth: 1,
+    },
+    legendContainerDark: {
+      borderTopColor: Colors.white,
+    },
+    legendColorBox: {
+      width: 20,
+      height: 20,
+      borderRadius: 4,
+      marginRight: 8,
+    },
+    legendColorBoxLight: {
+      backgroundColor: "#ffd700",
+    },
+    legendColorBoxDark: {
+      backgroundColor: "#5c4300",
+    },
+    legendText: {
+      fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
+    },
+    textDark: {
+      color: "#eee",
+    },
+    legendCareerBoxLight: {
+      backgroundColor: "#ccffcc",
+    },
+    legendCareerBoxDark: {
+      backgroundColor: "#004400",
+    },
+    bestLight: {
+      backgroundColor: "#ffd700",
+    },
+
+    bestDark: {
+      backgroundColor: "#5c4300",
+    },
+
+    careerRow: {
+      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+    },
+
+    seasonText: {
+      minWidth: 70,
+      paddingHorizontal: 8,
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    rowAltLight: {
+      backgroundColor: Colors.light.itemBackground,
+    },
+
+    rowAltDark: {
+      backgroundColor: Colors.dark.itemBackground,
     },
   });

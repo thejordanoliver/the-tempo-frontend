@@ -1,15 +1,15 @@
+import { Colors } from "constants/Colors";
 import { useEffect, useRef } from "react";
 import {
   Animated,
+  Dimensions,
+  Easing,
   ScrollView,
+  StyleSheet,
   View,
   ViewProps,
-  Dimensions,
-  StyleSheet,
-  Easing,
 } from "react-native";
-import { getStyles } from "styles/ProfileScreen.styles";
-import { Colors } from "constants/Colors";
+import { getStyles } from "styles/ProfileScreenStyles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -43,7 +43,9 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
   }, [pulseAnim]);
 
   // Base + overlay colors
-  const baseColor = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
+  const baseColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const overlayColor = isDark
     ? "rgba(136,136,136,0.5)"
     : "rgba(136,136,136,0.25)";
@@ -83,7 +85,10 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
       <View style={styles.bannerContainer}>
         <ShimmerBlock style={styles.banner} testID="skeleton-banner" />
         <View style={styles.profilePicWrapper}>
-          <ShimmerBlock style={styles.profilePic} testID="skeleton-profile-pic" />
+          <ShimmerBlock
+            style={styles.profilePic}
+            testID="skeleton-profile-pic"
+          />
         </View>
       </View>
 
@@ -121,7 +126,10 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
             testID="skeleton-edit-profile-btn"
           />
         </View>
-        <ShimmerBlock style={{ height: 40, width: "100%" }} testID="skeleton-bio" />
+        <ShimmerBlock
+          style={{ height: 40, width: "100%" }}
+          testID="skeleton-bio"
+        />
       </View>
 
       {/* Favorites */}

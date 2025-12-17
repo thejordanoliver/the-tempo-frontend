@@ -1048,7 +1048,7 @@ export const teams: CFBTeam[] = [
   {
     id: 72,
     espnID: 2569,
-    name: "South Carolina State",
+    name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
     oddsID: "par_01hqmkr2hqffgvyyk1ecjqxgyp",
     code: "SCST",
@@ -5673,10 +5673,10 @@ export const conferenceListMap: Record<string, string[]> = {
     "Florida State Seminoles",
     "Georgia Tech Yellow Jackets",
     "Louisville Cardinals",
-    "Miami (FL) Hurricanes",
+    "Miami Hurricanes",
     "NC State Wolfpack",
     "North Carolina Tar Heels",
-    "Pitt Panthers",
+    "Pittsburgh Panthers",
     "SMU Mustangs",
     "Stanford Cardinal",
     "Syracuse Orange",
@@ -5726,7 +5726,7 @@ export const conferenceListMap: Record<string, string[]> = {
   ],
 
   CUSA: [
-    "Delaware Fightin' Blue Hens",
+    "Delaware Blue Hens",
     "FIU Panthers",
     "Jacksonville State Gamecocks",
     "Kennesaw State Owls",
@@ -5748,7 +5748,7 @@ export const conferenceListMap: Record<string, string[]> = {
     "Central Michigan Chippewas",
     "Eastern Michigan Eagles",
     "Kent State Golden Flashes",
-    "UMass Minutemen",
+    "Massachusetts Minutemen",
     "Miami (OH) RedHawks",
     "Northern Illinois Huskies",
     "Ohio Bobcats",
@@ -5765,7 +5765,7 @@ export const conferenceListMap: Record<string, string[]> = {
     "Nevada Wolf Pack",
     "New Mexico Lobos",
     "San Diego State Aztecs",
-    "San Jose State Spartans",
+    "San José State Spartans",
     "UNLV Rebels",
     "Utah State Aggies",
     "Wyoming Cowboys",
@@ -5798,7 +5798,7 @@ export const conferenceListMap: Record<string, string[]> = {
     "Georgia State Panthers",
     "James Madison Dukes",
     "Louisiana Ragin' Cajuns",
-    "Louisiana-Monroe Warhawks",
+    "UL Monroe Warhawks",
     "Marshall Thundering Herd",
     "Old Dominion Monarchs",
     "South Alabama Jaguars",
@@ -6076,7 +6076,11 @@ export const getTeamInfo = (teamId: number | string) => {
 export const getCFBTeam = (id: string | number) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
-export function getTeamLogo(idOrAbbr: number | string, isDark: boolean, lighter: boolean = false) {
+export function getTeamLogo(
+  idOrAbbr: number | string,
+  isDark: boolean,
+  lighter: boolean = false
+) {
   const key = String(idOrAbbr).toLowerCase();
 
   const team = teams.find(
@@ -6090,7 +6094,11 @@ export function getTeamLogo(idOrAbbr: number | string, isDark: boolean, lighter:
 
   if (!team) return PlaceholderLogo;
 
-  return lighter? team.logoLight || team.logo  :  isDark ? team.logoLight || team.logo : team.logo;
+  return lighter
+    ? team.logoLight || team.logo
+    : isDark
+    ? team.logoLight || team.logo
+    : team.logo;
 }
 
 export function getTeamLightoiLogo(idOrAbbr: number | string) {
@@ -6110,7 +6118,6 @@ export function getTeamLightoiLogo(idOrAbbr: number | string) {
   // ✅ ALWAYS prefer logoLight, fallback to logo
   return team.logoLight || team.logo;
 }
-
 
 export function getTeamLogoESPN(idOrAbbr: number | string, isDark: boolean) {
   const idOrAbbrLower = String(idOrAbbr).toLowerCase();
@@ -6320,14 +6327,14 @@ export const neutralStadiums: Record<string, Venue> = {
     longitude: -82.5033,
     venueCapacity: "69,218",
   },
-  "SoFi Stadium": {
-    name: "SoFi Stadium",
-    city: "Inglewood",
-    venueImage: require("assets/Football/Arenas/SoFiStadium.webp"),
-    address: "1001 Stadium Dr, Inglewood, CA 90301",
-    latitude: 33.9618,
-    longitude: -118.3534,
-    venueCapacity: "70,240",
+  "Cramton Bowl": {
+    name: "Cramton Bowl",
+    city: "Montgomery",
+    venueImage: require("assets/Football/Arenas/CramtonBowl.webp"),
+    address: "Madison Ave, Montgomery, AL 36104",
+    latitude: 32.3795,
+    longitude: -86.2930,
+    venueCapacity: "25,000",
   },
 };
 

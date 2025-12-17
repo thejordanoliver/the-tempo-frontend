@@ -5,6 +5,7 @@ import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import GamesList from "components/Games/GamesList";
 import DraftList from "components/League/DraftList";
+import AwardSeasons from "components/League/AwardSeasons";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
@@ -25,12 +26,11 @@ import { useSummerLeagueGames } from "hooks/useSummerLeagueGames";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
-import { getScoresStyles } from "styles/leagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles";
 import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
-import NBAAwardSeasons from "components/League/NBAAwardSeasons";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -319,7 +319,7 @@ export default function NBALeagueScreen() {
               league="nba"
             />
           )}
-          {selectedTab === "awards" && <NBAAwardSeasons />}
+          {selectedTab === "awards" && <AwardSeasons league="NBA" />}
           {selectedTab === "forum" && <LeagueForum league="NBA" />}
         </View>
       </View>

@@ -14,7 +14,7 @@ import { useGameStatistics } from "hooks/useGameStatistics";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import CenterInfo from "./CenterInfo";
@@ -122,8 +122,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     gameDateStr
   );
 
-  // // Debug: live status
-  // console.log("CBB liveScore.status:", liveScore?.status);
 
   // --- Period scores / line score ---
   const lineScore = liveScore?.periodScores?.length
@@ -223,8 +221,6 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
       timer: statusData?.timer,
     };
   }, [liveScore?.status, statusData]);
-
-  
 
   const displayClock = liveScore?.displayClock;
 
@@ -442,8 +438,8 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
             awayLastGames={awayLastGames}
             officials={officials}
             isDark={isDark}
-           gameDateISO={gameDateISO}   // 👈 NEW
-  gameDateStr={gameDateStr}   // 👈 stays
+            gameDateISO={gameDateISO} // 👈 NEW
+            gameDateStr={gameDateStr} // 👈 stays
           />
         </BlurView>
       </View>

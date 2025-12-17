@@ -2,7 +2,7 @@
 import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
+import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
 import { CFBTeam } from "types/cfb";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

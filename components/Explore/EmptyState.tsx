@@ -1,5 +1,5 @@
 import { Text, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/Explore.styles";
+import { exploreStyles } from "styles/ExploreStyles";
 
 export default function EmptyState() {
   const isDark = useColorScheme() === "dark";

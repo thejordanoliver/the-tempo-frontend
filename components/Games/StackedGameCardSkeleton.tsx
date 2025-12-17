@@ -1,6 +1,12 @@
 import { Colors } from "constants/Colors";
 import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, useColorScheme, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 
 export default function StackedGameCardSkeleton() {
   const isDark = useColorScheme() === "dark";
@@ -81,81 +87,75 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
+      flex: 1,
+        height: 94,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 12,
-      padding: 12,
       justifyContent: "space-between",
-      height: 110,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
     },
     cardWrapper: {
       flexDirection: "column",
-      borderRightColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
       justifyContent: "center",
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
-      marginRight: 12,
-      gap: 4,
       flex: 1,
     },
     teamSection: {
       flexDirection: "row",
+      justifyContent: "flex-start",
       alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: 6,
+      gap: 4,
     },
+
     teamWrapper: {
       flexDirection: "row",
+      justifyContent: "flex-start",
       alignItems: "center",
+      gap: 8,
+      width: 100,
+      flex: 1,
     },
     logoSkeleton: {
       width: 24,
       height: 24,
       borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     nameSkeleton: {
       width: 120,
-      height: 18,
+      height: 14,
       borderRadius: 4,
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       marginHorizontal: 8,
     },
     scoreSkeleton: {
       width: 40,
       height: 18,
       borderRadius: 6,
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     info: {
-      flexDirection: "column",
+      alignItems: "center",
       justifyContent: "center",
-      marginTop: 6,
+      minHeight: 30,
       gap: 6,
+      width: 100,
     },
     dateSkeleton: {
       width: 40,
       height: 12,
       borderRadius: 4,
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     timeSkeleton: {
       width: 40,
       height: 12,
       borderRadius: 4,
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

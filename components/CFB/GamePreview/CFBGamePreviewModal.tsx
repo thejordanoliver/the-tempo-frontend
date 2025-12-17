@@ -5,12 +5,12 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import CFBSeriesHistory from "components/CFB/GameDetails/CFBSeriesHistory";
+import GameLeaders from "components/CFB/GameDetails/GameLeaders";
 import {
   LastFiveGamesSwitcher,
   TeamLocationSection,
 } from "components/GameDetails";
 import LineScore from "components/GameDetails/LineScore";
-import GameLeaders from "components/NFL/GameDetails/GameLeaders";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import { getRivalryHeadline, neutralStadiums, teams } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
@@ -23,7 +23,7 @@ import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import {
   getTeamRankFromAPById,

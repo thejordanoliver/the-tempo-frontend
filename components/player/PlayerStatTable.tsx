@@ -43,7 +43,6 @@ export default function PlayerStatTable({ playerId }: Props) {
 
   const isDark = useColorScheme() === "dark";
   const styles = statsTableStyles(isDark);
-  const displayedSeasons = statView === "per36" ? per36 : seasons;
 
   // 🔥 Best season by PPG
   const bestSeason = useMemo(() => {
@@ -122,7 +121,7 @@ export default function PlayerStatTable({ playerId }: Props) {
         {/* Season column */}
         <View>
           <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.cell, styles.headerCell]}>Season</Text>
+            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>Season</Text>
           </View>
 
           {seasons.map((s, i) => {

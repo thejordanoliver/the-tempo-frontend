@@ -26,7 +26,7 @@ import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import { getScoresStyles } from "styles/leagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";

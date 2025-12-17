@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
 import CBBRosterStats from "components/CBB/Team/RosterStats";
-import TeamPlayerList from "components/CBB/Team/TeamRoster";
+import TeamPlayerList from "components/CBB/Team/Roster";
 import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
@@ -30,7 +30,7 @@ import PagerView from "react-native-pager-view";
 import { CBBGame, User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamDetails.styles";
+import { style } from "../../../styles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: {

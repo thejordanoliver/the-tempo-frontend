@@ -77,6 +77,7 @@ export default function SearchBar({
           autoCapitalize="none"
           onFocus={onFocus}
           onBlur={onBlur}
+         autoCorrect={false}
         />
       </Animated.View>
 

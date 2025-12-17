@@ -1,16 +1,13 @@
 // components/Roster.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { players as cfbPlayers } from "constants/cfbPlayers";
-import { players as nflPlayers } from "constants/nflPlayers";
+import { useTeamRoster } from "hooks/NFLHooks/useTeamRoster";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
-import PlayerCard from "../Player/PlayerCard";
+import PlayerCard from "components/Player/PlayerCard";
 interface RosterProps {
   teamId: string;
   teamName: string;
   refreshing?: boolean;
-  /** New: determines if we’re showing NFL or CFB roster */
-  league?: "NFL" | "CFB";
 }
 
 // Custom position order
@@ -36,15 +33,9 @@ const POSITION_ORDER = [
 ];
 
 const NFLRoster = forwardRef(
-  ({ teamId, teamName, league = "NFL" }: RosterProps, ref) => {
+  ({ teamId, teamName,  }: RosterProps, ref) => {
     // Pick correct player dataset
-    const allPlayers = league === "CFB" ? cfbPlayers : nflPlayers;
-
-    // Filter players by team
-    const teamPlayers = useMemo(
-      () => allPlayers.filter((p) => p.teamId === Number(teamId)),
-      [teamId, allPlayers]
-    );
+    const { players: teamPlayers, loading } = useTeamRoster(teamId);
 
     // expose dummy refresh (no API here)
     useImperativeHandle(ref, () => ({
@@ -94,10 +85,10 @@ const NFLRoster = forwardRef(
             id={item.id}
             name={item.name}
             position={item.position ?? ""}
-            avatarUrl={item.image}
-            number={item.number}
+            avatarUrl={item.avatarUrl}
+            number={item.jersey_number}
             team={teamName}
-            league={league} // 👈 Pass the league prop
+            league={"NFL"}
           />
         )}
         renderSectionHeader={({ section: { title } }) => (

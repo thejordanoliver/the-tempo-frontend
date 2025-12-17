@@ -1,13 +1,13 @@
+import CenteredHeader from "components/Headings/CenteredHeader";
+import { players as cfbPlayers } from "constants/cfbPlayers";
 import { Colors } from "constants/Colors";
 import { players as nflPlayers } from "constants/nflPlayers";
-import { players as cfbPlayers } from "constants/cfbPlayers";
-import { teams as nflTeams } from "constants/teamsNFL";
 import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as nflTeams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { useFootballPlayerStats } from "hooks/NFLHooks/useFootballPlayerStats";
 import { ActivityIndicator, Text, useColorScheme, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
-import CenteredHeader from "components/Headings/CenteredHeader";
+import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 
 type Props = {
   playerId: number;
@@ -31,7 +31,7 @@ export default function SeasonStatCard({
   // ✅ Fetch stats with league support
   const { aggregatedStats, loading, error } = useFootballPlayerStats(
     playerId,
-    season || "2025",
+    season || "2025"
   );
 
   if (loading) return <ActivityIndicator style={{ marginVertical: 20 }} />;
@@ -42,7 +42,9 @@ export default function SeasonStatCard({
 
   // ✅ Handle teams by league
   const { teamId } = useLocalSearchParams<{ teamId: string }>();
-  const sanitizedTeamId = String(teamId ?? "").replace(/"/g, "").trim();
+  const sanitizedTeamId = String(teamId ?? "")
+    .replace(/"/g, "")
+    .trim();
 
   const teamObj =
     league === "NFL"
@@ -108,16 +110,18 @@ export default function SeasonStatCard({
 
   return (
     <>
-      <CenteredHeader>
-        {displayYear} Season 
-      </CenteredHeader>
+      <CenteredHeader>{displayYear} Season</CenteredHeader>
 
       <View style={styles.card}>
         <View style={styles.statsRow}>
           {showPassing && (
             <>
               <StatItem label="CMP/ATT" value={cmpAtt} color={statColor} />
-              <StatItem label="PASS YDS" value={passingYards} color={statColor} />
+              <StatItem
+                label="PASS YDS"
+                value={passingYards}
+                color={statColor}
+              />
               <StatItem label="PASS TD" value={passingTDs} color={statColor} />
               <StatItem label="INT" value={interceptions} color={statColor} />
             </>
@@ -125,7 +129,11 @@ export default function SeasonStatCard({
 
           {showRushing && (
             <>
-              <StatItem label="RUSH YDS" value={rushingYards} color={statColor} />
+              <StatItem
+                label="RUSH YDS"
+                value={rushingYards}
+                color={statColor}
+              />
               <StatItem
                 label="RUSH YDS/G"
                 value={rushingYardsPerGame}
@@ -138,7 +146,11 @@ export default function SeasonStatCard({
 
           {showReceiving && (
             <>
-              <StatItem label="REC YDS" value={receivingYards} color={statColor} />
+              <StatItem
+                label="REC YDS"
+                value={receivingYards}
+                color={statColor}
+              />
               <StatItem label="REC TD" value={receivingTDs} color={statColor} />
             </>
           )}

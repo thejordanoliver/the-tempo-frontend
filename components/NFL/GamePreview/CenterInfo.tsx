@@ -1,7 +1,7 @@
 // ./NFL/GamePreview/NFLGameCenterInfo.tsx
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
+import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
 import { NFLTeam } from "types/nfl";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

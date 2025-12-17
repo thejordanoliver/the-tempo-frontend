@@ -21,7 +21,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getSignupStepsStyles } from "styles/signupStepStyles";
+import { getSignupStepsStyles } from "styles/SignupStepStyles";
 import CropEditorModal from "../components/CropEditorModal";
 import SignInForm from "../components/SignInForm";
 import SignupSteps from "../components/SignUpSteps";
@@ -416,7 +416,6 @@ export default function LoginScreen() {
               transform: [{ scale: scaleAnim }],
             }}
           >
-        
             <SignupSteps
               signupData={signupData}
               signupStep={signupStep}

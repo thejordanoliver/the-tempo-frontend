@@ -607,7 +607,7 @@ export default function NFLGameDetailsScreen() {
               team2LogoLight={getTeamInfo(matchup?.teams.team2.id)?.logoLight}
             />
 
-            {gameStatus === "Final" && (
+            {highlights.length > 0 && (
               <HighlightVideoList highlights={highlights} />
             )}
 

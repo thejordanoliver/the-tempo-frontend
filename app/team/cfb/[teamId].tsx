@@ -1,12 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CFBGamesList from "components/CFB/Games/CFBGamesList";
+import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
+import Roster from "components/CFB/Team/Roster";
 import FootballRosterStats from "components/CFB/Team/RosterStats";
 import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import Roster from "components/NFL/Team/Roster";
-import { teams } from "constants/teamsCFB";
+import { conferenceListMap, teams } from "constants/teamsCFB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -26,12 +27,24 @@ import { Game } from "types/cfb";
 import { User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamDetails.styles";
+import { style } from "../../../styles/TeamDetailsStyles";
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
   };
 };
+
+function getTeamConference(teamName?: string): string | null {
+  if (!teamName) return null;
+
+  for (const [conference, teams] of Object.entries(conferenceListMap)) {
+    if (teams.includes(teamName)) {
+      return conference;
+    }
+  }
+
+  return null;
+}
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -46,7 +59,14 @@ export default function TeamDetailScreen() {
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
 
-  const tabs = ["schedule", "news", "roster", "stats", "forum"] as const;
+  const tabs = [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "forum",
+  ] as const;
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("schedule");
   const rosterRef = useRef<{ refresh: () => void }>(null);
@@ -298,6 +318,13 @@ export default function TeamDetailScreen() {
           )}
         </ScrollView>
 
+        {/* Forum Page */}
+        <View key="standings" style={{ flex: 1 }}>
+          <CFBConferenceStandingsList
+            onlyTeamConference={true}
+            teamName={team.fullName}
+          />{" "}
+        </View>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
           <TeamForum teamId={teamId as string} league="CFB" />

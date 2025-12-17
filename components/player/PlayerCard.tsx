@@ -1,79 +1,115 @@
-import { teams } from "constants/teams"; // your teams list
+import { teams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as mlbteams } from "constants/teamsMLB";
+import { teams as nflTeams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Image, Pressable, Text, useColorScheme, View } from "react-native";
-import { playerCardStyles } from "styles/PlayerStyles/PlayerCard.styles";
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
+
 export interface PlayerCardProps {
   id: number;
-  playerId: number;
   name: string;
   position?: string | null;
   team: string;
   avatarUrl?: string | null;
-  jerseyNumber?: string | number | null;
+  number?: string | number | null;
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "MLB";
   statNumber?: string | number | null;
 }
 
-const PlayerCard: React.FC<PlayerCardProps> = ({
+const LEAGUE_TEAMS = {
+  NBA: teams,
+  NFL: nflTeams,
+  CFB: cfbTeams,
+  CBB: cbbTeams,
+  MLB: mlbteams,
+};
+
+const LEAGUE_ROUTES = {
+  NBA: "/player/[id]",
+  NFL: "/player/nfl/[id]",
+  CFB: "/player/cfb/[id]",
+  CBB: "/player/cbb/[id]",
+  MLB: "/player/cbb/[id]",
+} as const;
+
+export const PlayerCard: React.FC<PlayerCardProps> = ({
+  id,
   name,
-  playerId,
   position,
   team,
   avatarUrl,
-  jerseyNumber,
-  statNumber, // ✅ NEW
+  number,
+  statNumber,
+  league = "NBA",
 }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const styles = playerCardStyles(isDark);
   const router = useRouter();
+  const isDark = useColorScheme() === "dark";
+  const styles = playerCardStyles(isDark);
 
-  const cleanTeam = team.replace(/"/g, "");
-  const teamObj = teams.find((t) => t.fullName === cleanTeam);
+  const teamList = LEAGUE_TEAMS[league];
 
-  const initial =
-    typeof name === "string" && name.length > 0 ? name[0].toUpperCase() : "?";
+  // Robust team lookup (name OR fullName)
+  const teamObj =
+    teamList.find(
+      (t) => t.name === team || t.fullName === team || t.code === team
+    ) ?? null;
 
-  const displayNumber =
+  const initial = name?.[0]?.toUpperCase() ?? "?";
+
+  const displayValue =
     statNumber != null && statNumber !== ""
-      ? statNumber // → Use stat number if provided
-      : typeof jerseyNumber === "string" && /^\d+$/.test(jerseyNumber)
-      ? `#${jerseyNumber}` // → Else use jersey
-      : null; // → Else display nothing
+      ? Number(statNumber).toLocaleString()
+      : number != null && number !== ""
+      ? `#${number}`
+      : null;
+
+  const route = LEAGUE_ROUTES[league];
 
   return (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.6}
       style={styles.card}
       onPress={() => {
         if (!teamObj) {
-          console.warn(`No team found for "${team}"`);
+          console.warn(`[PlayerCard] No team found for "${team}" in ${league}`);
           return;
         }
+
         router.push({
-          pathname: "/player/[id]",
+          pathname: route,
           params: {
-            id: playerId.toString(),
+            id: id.toString(),
             teamId: teamObj.id.toString(),
           },
         });
       }}
     >
-      {avatarUrl ? (
-        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-      ) : (
-        <View style={styles.avatarPlaceholder}>
-          <Text style={styles.initial}>{initial}</Text>
-        </View>
-      )}
-
-      <View style={styles.info}>
-        <Text style={styles.name}>{name}</Text>
-
-        {displayNumber && (
-          <Text style={styles.jerseyNumber}>{displayNumber}</Text>
+      <View style={styles.nameContainer}>
+        {avatarUrl ? (
+          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+        ) : (
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.initial}>{initial}</Text>
+          </View>
         )}
+
+        <View style={styles.info}>
+          <Text style={styles.name}>{name}</Text>
+
+          {displayValue && (
+            <Text style={styles.jerseyNumber}>{displayValue}</Text>
+          )}
+        </View>
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

@@ -10,10 +10,10 @@ import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/SkeletonProfileScreen";
 import { teams } from "constants/teams";
-import { teams as nflteams } from "constants/teamsNFL";
-import { teams as cfbteams } from "constants/teamsCFB";
 import { teams as cbbteams } from "constants/teamsCBB";
+import { teams as cfbteams } from "constants/teamsCFB";
 import { teams as mlbteams } from "constants/teamsMLB";
+import { teams as nflteams } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -26,8 +26,7 @@ import {
 } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
-import { getStyles } from "styles/ProfileScreen.styles";
-
+import { getStyles } from "styles/ProfileScreenStyles";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
@@ -98,8 +97,6 @@ export default function ProfileScreen() {
       }).start();
     });
   };
-
-
 
   const loadFollowCounts = async (userId: string) => {
     try {
@@ -228,7 +225,6 @@ export default function ProfileScreen() {
     });
   }, [navigation, username, isDark]);
 
-
   const styles = getStyles(isDark);
 
   const favoriteTeamsWithLeague = favorites
@@ -241,7 +237,10 @@ export default function ProfileScreen() {
       if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id); // convert number to string
       if (!team) return null;
-      return { ...team, league: league as "NBA" | "NFL" | "CFB" | "CBB" | "MLB" };
+      return {
+        ...team,
+        league: league as "NBA" | "NFL" | "CFB" | "CBB" | "MLB",
+      };
     })
     .filter(Boolean);
 

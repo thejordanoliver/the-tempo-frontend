@@ -1,11 +1,11 @@
+import SeasonStatCardSkeleton from "components/Player/SeasonStatCardSkeleton";
 import { Colors } from "constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { useCBBPlayerStats } from "hooks/CBBHooks/useCBBPlayerStats";
 import { Text, useColorScheme, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
+import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { teams } from "../../../constants/teamsCBB";
 import CenteredHeader from "../../Headings/CenteredHeader";
-import SeasonStatCardSkeleton from "components/Player/SeasonStatCardSkeleton";
 type Props = {
   playerId: number;
   season?: string;

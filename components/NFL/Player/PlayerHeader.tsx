@@ -1,6 +1,6 @@
-import { Image, Text, View } from "react-native";
 import { Colors } from "constants/Colors";
-import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeader.styles";
+import { Image, Text, View } from "react-native";
+import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 type Props = {
   player: {
     first_name: string;
@@ -82,7 +82,7 @@ export default function PlayerHeader({
 
         <Text style={[styles.playerInfo]}>
           <Text style={styles.playerInfoLabel}>Weight: </Text>
-          {player.weight ?? "?"} lbs
+          {player.weight ?? "?"}
         </Text>
 
         <Text style={[styles.playerInfo]}>

@@ -20,7 +20,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/Standings.styles";
+import { getStyles } from "styles/StandingsStyles";
 import { StandingsSkeleton } from "./StandingsSkeleton";
 
 type SectionType = {

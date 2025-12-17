@@ -2,12 +2,12 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean) =>
+export const stackedGameCardStyles = (isDark: boolean, isChampionship: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
       flex: 1,
-      height: 90,
+      height: 94,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -47,6 +47,9 @@ export const getStyles = (isDark: boolean) =>
       flexShrink: 1,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "left",
+    },
+      rank:{
+      fontSize: 10, color: Colors.lightGray 
     },
     teamScore: {
       fontSize: 14,
@@ -102,6 +105,22 @@ export const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+     headlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
+      textAlign: "center",
+      position: "absolute",
+      top:  4,
+      left: 12,
+ 
     },
     downDistance: {
       fontSize: 14,

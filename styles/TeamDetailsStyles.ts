@@ -36,4 +36,11 @@ export const style = (isDark: boolean) =>
       marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
+     emptyText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
   });

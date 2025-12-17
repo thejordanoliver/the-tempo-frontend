@@ -10,7 +10,7 @@ import { Pressable, Text, View, useColorScheme } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { favoritesScrollStyles } from "styles/FavoritesScroll.styles";
+import { favoritesScrollStyles } from "styles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
 import { teams } from "../../constants/teams";
 import { teams as cbbteams } from "../../constants/teamsCBB";

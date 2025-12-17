@@ -11,7 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { combinedGameStyles } from "styles/GamecardStyles/CombinedGamesList.styles";
+import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
 import type { Game as CFBGameType } from "types/cfb";
 import type { Game as NFLGameType } from "types/nfl";
 import type {
@@ -120,7 +120,6 @@ const getCategoryForFavorites = (
   return "NBA";
 };
 
-
 const liveStatuses = [
   "In Progress",
   "LIVE",
@@ -213,7 +212,7 @@ export default function CombinedGamesList({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { viewMode } = usePreferences();
-
+  const styles = combinedGameListStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
   const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(
     null
@@ -296,9 +295,7 @@ export default function CombinedGamesList({
   ) => {
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
       let itemStyle: ViewStyle =
-        viewMode === "grid"
-          ? combinedGameStyles.gridItem
-          : combinedGameStyles.listItem;
+        viewMode === "grid" ? styles.gridItem : styles.listItem;
 
       if (viewMode === "grid" && typeof indexInRow === "number") {
         const isLastOdd =
@@ -397,7 +394,7 @@ export default function CombinedGamesList({
   const renderSkeletons = (count: number) => {
     if (viewMode === "list")
       return (
-        <View style={combinedGameStyles.skeletonWrapper}>
+        <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, idx) => (
             <GameCardSkeleton key={idx} />
           ))}
@@ -415,7 +412,7 @@ export default function CombinedGamesList({
           data={dataWithPlaceholder}
           keyExtractor={(_, idx) => `skeleton-${idx}`}
           numColumns={2}
-          columnWrapperStyle={combinedGameStyles.skeletonGridRow}
+          columnWrapperStyle={styles.skeletonGridRow}
           renderItem={({ item, index }) => {
             const isPlaceholder = (item as any)?._isPlaceholder;
             const marginLeft = index % 2 === 0 ? 12 : 6;
@@ -425,7 +422,7 @@ export default function CombinedGamesList({
               <View
                 key={index}
                 style={[
-                  combinedGameStyles.gridItem,
+                  styles.gridItem,
                   {
                     marginLeft,
                     marginRight,
@@ -438,13 +435,13 @@ export default function CombinedGamesList({
             );
           }}
           scrollEnabled={false}
-          contentContainerStyle={combinedGameStyles.skeletonGridWrapper}
+          contentContainerStyle={styles.skeletonGridWrapper}
         />
       );
     }
 
     return (
-      <View style={combinedGameStyles.skeletonWrapper}>
+      <View style={styles.skeletonWrapper}>
         {Array.from({ length: count }).map((_, idx) => (
           <StackedGameCardSkeleton key={idx} />
         ))}
@@ -471,135 +468,133 @@ export default function CombinedGamesList({
     data: sortByLiveFirst(section.data as CombinedGame[]),
   }));
 
-// Inside CombinedGamesList, before renderItem/renderSectionFooter
-const getCategoryAndValidatedGame = (
-  item: CombinedGame,
-  sectionCategory: SportsCategory
-): { category: SportsCategory; game: CombinedGame } | null => {
-  const category =
-    sectionCategory === "Favorites"
-      ? getCategoryForFavorites(item)
-      : sectionCategory;
+  // Inside CombinedGamesList, before renderItem/renderSectionFooter
+  const getCategoryAndValidatedGame = (
+    item: CombinedGame,
+    sectionCategory: SportsCategory
+  ): { category: SportsCategory; game: CombinedGame } | null => {
+    const category =
+      sectionCategory === "Favorites"
+        ? getCategoryForFavorites(item)
+        : sectionCategory;
 
-  // Only allow valid combinations for renderGameCard
-  switch (category) {
-    case "NBA":
-    case "NBA Summer League":
-    case "College Football":
-    case "NFL":
-    case "Men's College Basketball":
-      return { category, game: item };
-    default:
-      return null;
-  }
-};
-
-  
+    // Only allow valid combinations for renderGameCard
+    switch (category) {
+      case "NBA":
+      case "NBA Summer League":
+      case "College Football":
+      case "NFL":
+      case "Men's College Basketball":
+        return { category, game: item };
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
-   <SectionList
-  sections={
+      <SectionList
+        sections={
+          sortedSections.filter(
+            (section) => section.data.length > 0
+          ) as SectionListData<CombinedGame, CombinedGamesSection>[]
+        }
+        keyExtractor={(item) => getItemId(item)}
+        renderItem={({ item, section, index }) => {
+          if (viewMode === "grid") return null;
 
-    
-    sortedSections.filter(
-      (section) => section.data.length > 0
-    ) as SectionListData<CombinedGame, CombinedGamesSection>[]
-  }
+          // Narrow the type safely
+          const getCategoryAndValidatedGame = (
+            item: CombinedGame,
+            sectionCategory: SportsCategory
+          ) => {
+            const category =
+              sectionCategory === "Favorites"
+                ? getCategoryForFavorites(item)
+                : sectionCategory;
 
+            // Only allow valid combinations for renderGameCard
+            switch (category) {
+              case "NBA":
+              case "NBA Summer League":
+              case "College Football":
+              case "NFL":
+              case "Men's College Basketball":
+                return { category, game: item };
+              default:
+                return null;
+            }
+          };
 
-  
-  keyExtractor={(item) => getItemId(item)}
-  
-  renderItem={({ item, section, index }) => {
-    if (viewMode === "grid") return null;
+          const validated = getCategoryAndValidatedGame(item, section.category);
+          if (!validated) return null;
 
-    // Narrow the type safely
-    const getCategoryAndValidatedGame = (
-      item: CombinedGame,
-      sectionCategory: SportsCategory
-    ) => {
-      const category =
-        sectionCategory === "Favorites"
-          ? getCategoryForFavorites(item)
-          : sectionCategory;
-
-      // Only allow valid combinations for renderGameCard
-      switch (category) {
-        case "NBA":
-        case "NBA Summer League":
-        case "College Football":
-        case "NFL":
-        case "Men's College Basketball":
-          return { category, game: item };
-        default:
-          return null;
-      }
-    };
-
-    const validated = getCategoryAndValidatedGame(item, section.category);
-    if (!validated) return null;
-
-    return renderGameCard(
-      validated.game,
-      validated.category,
-      index,
-      section.data.length
-    );
-  }}
-  renderSectionHeader={({ section }) => {
-    if (!showHeaders) return null;
-
-    const multipleSections =
-      sortedSections.filter((s) => s.data.length > 0).length > 1;
-    const isFirstSection =
-      sortedSections.findIndex((s) => s.category === section.category) === 0;
-
-    return (
-      <View
-        style={{
-          marginHorizontal: 12,
-          marginTop: multipleSections && !isFirstSection ? 8 : 0,
+          return renderGameCard(
+            validated.game,
+            validated.category,
+            index,
+            section.data.length
+          );
         }}
-      >
-        <HeadingTwo>{section.category}</HeadingTwo>
-      </View>
-    );
-  }}
-  contentContainerStyle={combinedGameStyles.contentContainer}
-  stickySectionHeadersEnabled={false}
-  scrollEnabled={false}
-  ItemSeparatorComponent={() =>
-    viewMode !== "grid" ? <View style={{ height: 12 }} /> : null
-  }
-  renderSectionFooter={({ section }) => {
-    if (viewMode === "grid") {
-      return (
-        <View style={{ marginBottom: 16 }}>
-          <FlatList
-            data={section.data as CombinedGame[]}
-            keyExtractor={(item, index) => getItemId(item) ?? `idx-${index}`}
-            numColumns={2}
-            columnWrapperStyle={combinedGameStyles.gridRow}
-            renderItem={({ item, index }) => {
-              const validated = getCategoryAndValidatedGame(item, section.category);
-              if (!validated) return null;
-              return renderGameCard(
-                validated.game,
-                validated.category,
-                index,
-                section.data.length
-              );
-            }}
-            scrollEnabled={false}
-            contentContainerStyle={combinedGameStyles.gridListContainer}
-          />
-        </View>
-      );
-    }
-    return <View style={{ height: 16 }} />;
-  }}
-/>
+        renderSectionHeader={({ section }) => {
+          if (!showHeaders) return null;
+
+          const multipleSections =
+            sortedSections.filter((s) => s.data.length > 0).length > 1;
+          const isFirstSection =
+            sortedSections.findIndex((s) => s.category === section.category) ===
+            0;
+
+          return (
+            <View
+              style={{
+                marginHorizontal: 12,
+                marginTop: multipleSections && !isFirstSection ? 8 : 0,
+              }}
+            >
+              <HeadingTwo>{section.category}</HeadingTwo>
+            </View>
+          );
+        }}
+        contentContainerStyle={styles.contentContainer}
+        stickySectionHeadersEnabled={false}
+        scrollEnabled={false}
+        ItemSeparatorComponent={() =>
+          viewMode !== "grid" ? <View style={{ height: 12 }} /> : null
+        }
+        renderSectionFooter={({ section }) => {
+          if (viewMode === "grid") {
+            return (
+              <View style={{ marginBottom: 16 }}>
+                <FlatList
+                  data={section.data as CombinedGame[]}
+                  keyExtractor={(item, index) =>
+                    getItemId(item) ?? `idx-${index}`
+                  }
+                  numColumns={2}
+                  columnWrapperStyle={styles.gridRow}
+                  renderItem={({ item, index }) => {
+                    const validated = getCategoryAndValidatedGame(
+                      item,
+                      section.category
+                    );
+                    if (!validated) return null;
+                    return renderGameCard(
+                      validated.game,
+                      validated.category,
+                      index,
+                      section.data.length
+                    );
+                  }}
+                  scrollEnabled={false}
+                  contentContainerStyle={styles.gridListContainer}
+                />
+              </View>
+            );
+          }
+          return <View style={{ height: 16 }} />;
+        }}
+      />
 
       {modalVisible && previewGame && previewCategory === "NFL" && (
         <NFLGamePreviewModal

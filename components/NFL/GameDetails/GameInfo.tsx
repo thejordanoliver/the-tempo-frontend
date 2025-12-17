@@ -1,7 +1,7 @@
 import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
+import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 import { NFLTeam } from "types/nfl";
 
 type NFLGameCenterInfoProps = {
@@ -16,7 +16,7 @@ type NFLGameCenterInfoProps = {
   playoffInfo?: string | string[];
   homeTeam: NFLTeam;
   awayTeam: NFLTeam;
-  broadcastNetworks?: string,
+  broadcastNetworks?: string;
   headlineText?: string;
 };
 
@@ -32,7 +32,7 @@ export function NFLGameCenterInfo({
   homeTeam,
   awayTeam,
   broadcastNetworks,
-  headlineText
+  headlineText,
 }: NFLGameCenterInfoProps) {
   const { broadcasts, loading } = useNFLGameBroadcasts(
     homeTeam.code ?? "",
@@ -40,8 +40,6 @@ export function NFLGameCenterInfo({
     date ?? ""
   );
   const [tick, setTick] = useState(0);
-
-
 
   useEffect(() => {
     if (
@@ -86,9 +84,7 @@ export function NFLGameCenterInfo({
     normalizedStatus.includes("postponed") ||
     normalizedStatus.includes("delayed");
 
-
   const styles = getStyles(isDark);
-
 
   // ---- Playoff Stage ----
   const renderPlayoffInfo = () => {
@@ -132,8 +128,6 @@ export function NFLGameCenterInfo({
   // ---- Render ----
   return (
     <View style={styles.container}>
- 
-
       {/* Scheduled */}
       {isScheduled && (
         <View style={styles.infoWrapper}>
@@ -170,7 +164,7 @@ export function NFLGameCenterInfo({
               ? "Final/OT"
               : "Final"}
           </Text>
-                    <View style={styles.finalStatusDivider} />
+          <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date || ""}</Text>
         </View>
       )}
@@ -178,8 +172,7 @@ export function NFLGameCenterInfo({
       {/* Canceled / Delayed / Postponed */}
       {isCanceled && <Text style={styles.finalText}>{status}</Text>}
 
-   
-       {/* 📺 Broadcast */}
+      {/* 📺 Broadcast */}
       {broadcastNetworks && (
         <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}

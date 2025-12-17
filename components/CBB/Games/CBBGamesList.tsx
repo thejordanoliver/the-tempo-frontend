@@ -51,20 +51,20 @@ export default function CBBGamesList({
   showHeaders,
   scrollEnabled,
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const { viewMode } = usePreferences();
 
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // --- Group all games as "Regular Season" only ---
+  /* ----------------------------- Sections ----------------------------- */
+
   const sections: CBBGameSection[] = useMemo(() => {
-    if (!showHeaders) {
-      return [{ title: "All", data: games }];
-    }
+    if (!showHeaders) return [{ title: "All", data: games }];
     return [{ title: "Regular Season", data: games }];
   }, [games, showHeaders]);
+
+  /* --------------------------- Interactions ---------------------------- */
 
   const handleLongPress = (game: any) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -72,15 +72,16 @@ export default function CBBGamesList({
     setModalVisible(true);
   };
 
+  /* -------------------------- Game Renderer ---------------------------- */
+
   const renderGameCard = (game: any, index?: number) => {
     if ((game as any)?._isPlaceholder) {
-      return (
-        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
-      );
+      return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
     }
 
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
       let gridStyle: ViewStyle = styles.gridItem;
+
       if (viewMode === "grid" && indexInRow !== undefined) {
         gridStyle = {
           ...styles.gridItem,
@@ -102,55 +103,50 @@ export default function CBBGamesList({
       );
     };
 
-    if (viewMode === "list")
-      return wrapper(
-        <View>
-          <CBBGameCard game={game} isDark={isDark} lighter />
-        </View>
-      );
-    if (viewMode === "grid")
-      return wrapper(<CBBGameSquareCard game={game} isDark={isDark} />, index);
-
-    return wrapper(
-      <View>
-        <CBBStackedGameCard game={game} isDark={isDark} />
-      </View>
-    );
-  };
-
-  const renderSkeletons = (count: number) => {
     if (viewMode === "list") {
-      return (
-        <View style={styles.skeletonWrapper}>
-          {Array.from({ length: count }).map((_, i) => (
-            <GameCardSkeleton key={`list-skel-${i}`} />
-          ))}
-        </View>
-      );
+      return wrapper(<CBBGameCard game={game} isDark={isDark} />);
     }
 
     if (viewMode === "grid") {
-      const skeletons = Array.from({ length: count }).map((_, i) => ({
-        _id: `grid-skel-${i}`,
-      }));
+      return wrapper(<CBBGameSquareCard game={game} isDark={isDark} />, index);
+    }
 
-      const dataWithPlaceholder =
+    return wrapper(<CBBStackedGameCard game={game} isDark={isDark} />);
+  };
+
+  /* --------------------------- Skeletons ------------------------------- */
+
+  const renderSkeletons = (count: number) => {
+    /* LIST */
+    if (viewMode === "list") {
+      return (
+        <FlatList
+          data={Array.from({ length: count })}
+          keyExtractor={(_, i) => `list-skel-${i}`}
+          renderItem={() => <GameCardSkeleton />}
+          scrollEnabled={false}
+          contentContainerStyle={styles.skeletonWrapper}
+        />
+      );
+    }
+
+    /* GRID */
+    if (viewMode === "grid") {
+      const data =
         count % 2 === 1
-          ? [...skeletons, { _id: `grid-skel-placeholder` }]
-          : skeletons;
+          ? [...Array.from({ length: count }), "_placeholder"]
+          : Array.from({ length: count });
 
       return (
         <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(item) => item._id}
+          data={data}
+          keyExtractor={(_, i) => `grid-skel-${i}`}
           numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={styles.skeletonGridWrapper}
           renderItem={({ item, index }) => {
-            if (item._id.includes("placeholder")) {
-              return (
-                <View
-                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
-                />
-              );
+            if (item === "_placeholder") {
+              return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
             }
 
             const isLastOdd = count % 2 === 1 && index === count - 1;
@@ -161,55 +157,55 @@ export default function CBBGamesList({
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <GameSquareCardSkeleton style={itemStyle} />;
           }}
-          scrollEnabled={false}
-          contentContainerStyle={styles.skeletonGridWrapper}
         />
       );
     }
 
+    /* STACKED */
     return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, i) => (
-          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
-        ))}
-      </View>
+      <FlatList
+        data={Array.from({ length: count })}
+        keyExtractor={(_, i) => `stack-skel-${i}`}
+        renderItem={() => <StackedGameCardSkeleton />}
+        scrollEnabled={false}
+        contentContainerStyle={styles.skeletonWrapper}
+      />
     );
   };
 
-  if (loading) {
-    const totalSkeletonCount =
-      games.length > 0 ? games.length : expectedCount ?? 4;
+  /* --------------------------- LOADING ------------------------------- */
+
+  if (loading && games.length === 0) {
+    const totalSkeletons = expectedCount ?? 4;
+
     return (
       <View>
         {sections.map((section) => (
-          <View
-            key={`skel-section-${section.title}`}
-            style={{ marginBottom: 16 }}
-          >
+          <View key={`skel-${section.title}`} style={{ marginBottom: 16 }}>
             {showHeaders && (
               <View style={styles.headerWrapper}>
                 <HeadingTwo>{section.title}</HeadingTwo>
               </View>
             )}
-            {renderSkeletons(section.data.length || totalSkeletonCount)}
+            {renderSkeletons(totalSkeletons)}
           </View>
         ))}
       </View>
     );
   }
 
-  if (error) return <Text style={styles.emptyText}>Error: {error}</Text>;
+  /* ----------------------------- ERROR -------------------------------- */
+
+  if (error) {
+    return <Text style={styles.emptyText}>Error: {error}</Text>;
+  }
+
+  /* ----------------------------- CONTENT ------------------------------ */
 
   return (
     <>
-      {viewMode === "grid" && showHeaders && sections.length > 0 && (
-        <View style={styles.headerWrapper}>
-          <HeadingTwo>{sections[0].title}</HeadingTwo>
-        </View>
-      )}
-
       {viewMode === "grid" ? (
         <FlatList
           data={
@@ -229,13 +225,11 @@ export default function CBBGamesList({
           scrollEnabled={scrollEnabled ?? true}
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <View>
-              <Text style={styles.emptyText}>
-                {day === "todayTomorrow"
-                  ? "No CBB games found for today or tomorrow."
-                  : "No CBB games found."}
-              </Text>
-            </View>
+            <Text style={styles.emptyText}>
+              {day === "todayTomorrow"
+                ? "No CBB games found for today or tomorrow."
+                : "No CBB games found."}
+            </Text>
           }
         />
       ) : (
@@ -252,21 +246,9 @@ export default function CBBGamesList({
           }
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.contentContainer}
           stickySectionHeadersEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          scrollEnabled={scrollEnabled ?? true}
-          ListEmptyComponent={
-            <View style={{ marginTop: 10 }}>
-              <Text
-                style={[styles.emptyText, { color: isDark ? "#aaa" : "#888" }]}
-              >
-                {day === "todayTomorrow"
-                  ? "No CBB games found for today or tomorrow."
-                  : "No CBB games found."}
-              </Text>
-            </View>
-          }
+          contentContainerStyle={styles.contentContainer}
         />
       )}
 
@@ -280,6 +262,8 @@ export default function CBBGamesList({
     </>
   );
 }
+
+/* -------------------------------- Styles ------------------------------- */
 
 const styles = StyleSheet.create({
   skeletonWrapper: {
@@ -296,7 +280,10 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     gap: 12,
   },
-  contentContainer: { paddingTop: 10, paddingBottom: 100 },
+  contentContainer: {
+    paddingTop: 10,
+    paddingBottom: 100,
+  },
   gridItem: {
     flex: 1,
     marginHorizontal: 12,
@@ -306,8 +293,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     color: Colors.midTone,
+    marginTop: 20,
   },
   headerWrapper: {
     marginHorizontal: 12,
+    marginBottom: 6,
   },
 });

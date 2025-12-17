@@ -16,7 +16,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameSquareCardStyles";
 import {
   getTeamRankFromAPById,
   getTeamRankFromCFPById,

@@ -5,6 +5,7 @@ import { FlatList, Text, useColorScheme, View } from "react-native";
 import HighlightCard from "./HighlightCard";
 import NewsCard from "./NewsCard";
 import NewsCardSkeleton from "./NewsCardSkeleton";
+import { Colors } from "constants/Colors";
 type NewsItem = {
   id: string;
   title: string;
@@ -94,11 +95,11 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       ListEmptyComponent={
         <Text
           style={{
-            fontFamily: Fonts.OSLIGHT,
-            fontSize: 16,
-            textAlign: "center",
-            marginTop: 20,
-            color: isDark ? "#aaa" : "#888",
+          fontFamily: Fonts.OSLIGHT,
+               fontSize: 16,
+               textAlign: "center",
+               marginTop: 20,
+               color: isDark ? Colors.lightGray : Colors.darkGray,
           }}
         >
           No news or highlights found.

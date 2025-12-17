@@ -32,7 +32,7 @@ export function usePlayerStatsBySeason(playerId: number, seasons: string[]) {
 
   const filteredSeasons = seasons.filter((s) => {
     const year = parseInt(s, 10);
-    return year >= 2021 && year <= 2024;
+    return year >= 2021 && year <= 2025;
   });
 
   const cacheKey = `${playerId}-${filteredSeasons.join(",")}`;

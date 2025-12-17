@@ -4,15 +4,12 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-
-import { players as cfbPlayers } from "constants/cfbPlayers";
-import { players as nflPlayers } from "constants/nflPlayers";
-
 import {
   getTeamCode as getCFBCode,
   getTeamLogo as getCFBLogo,
 } from "constants/teamsCFB";
 import { getTeamCode as getNFLCode, getNFLTeamsLogo } from "constants/teamsNFL";
+import { useTeamRoster } from "hooks/NFLHooks/useTeamRoster";
 
 import { useNFLGameLeaders } from "hooks/NFLHooks/useNFLGameLeaders";
 
@@ -25,7 +22,7 @@ import {
   View,
 } from "react-native";
 
-import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
+import { getStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const CATEGORIES = [
   "Passing",
@@ -55,15 +52,15 @@ type DisplayPlayer = {
   group: Category;
   statistics: PlayerStat[];
 };
+const findRosterPlayer = (roster: any[], id: number, name: string) => {
+  if (!roster || roster.length === 0) return null;
 
-// -------- Find player in correct DB --------
-const findLocalPlayer = (league: "NFL" | "CFB", id: number, name: string) => {
-  const db = league === "NFL" ? nflPlayers : cfbPlayers;
   return (
-    db.find(
+    roster.find(
       (p) =>
-        p.id === id || p.name.trim().toLowerCase() === name.trim().toLowerCase()
-    ) || null
+        p.player_id === id ||
+        p.name.trim().toLowerCase() === name.trim().toLowerCase()
+    ) ?? null
   );
 };
 
@@ -71,20 +68,19 @@ const findLocalPlayer = (league: "NFL" | "CFB", id: number, name: string) => {
 const normalizePlayers = (
   raw: any[],
   teamId: string,
+  roster: any[],
   league: "NFL" | "CFB"
 ): DisplayPlayer[] => {
   const rawCode = league === "NFL" ? getNFLCode(teamId) : getCFBCode(teamId);
 
-  const teamCode: string = rawCode ?? "UNK";
+  const teamCode = rawCode ?? "UNK";
 
   return raw.map((p) => {
     const id = Number(p.id);
-    const local = findLocalPlayer(league, id, p.name);
+    const local = findRosterPlayer(roster, id, p.name);
 
-    const image = local?.image
-      ? typeof local.image === "string"
-        ? { uri: local.image }
-        : local.image
+    const image = local?.avatarUrl
+      ? { uri: local.avatarUrl }
       : p.image || Placeholder;
 
     return {
@@ -142,8 +138,6 @@ export default function GameLeaders({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark, lighter);
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
-
-  // ---- ALWAYS use NFL hook (API structure is same)
   const {
     leaders: rawHome,
     isLoading: loadingHome,
@@ -156,15 +150,17 @@ export default function GameLeaders({
     isError: errorAway,
   } = useNFLGameLeaders(gameId, awayTeamId);
 
-  // ---- Normalize depending on League
+  const { players: homeRoster } = useTeamRoster(homeTeamId, league);
+  const { players: awayRoster } = useTeamRoster(awayTeamId, league);
+
   const home = useMemo(
-    () => normalizePlayers(rawHome ?? [], homeTeamId, league),
-    [rawHome, league]
+    () => normalizePlayers(rawHome ?? [], homeTeamId, homeRoster, league),
+    [rawHome, homeRoster, league]
   );
 
   const away = useMemo(
-    () => normalizePlayers(rawAway ?? [], awayTeamId, league),
-    [rawAway, league]
+    () => normalizePlayers(rawAway ?? [], awayTeamId, awayRoster, league),
+    [rawAway, awayRoster, league]
   );
 
   const topLeaders = useMemo(() => {

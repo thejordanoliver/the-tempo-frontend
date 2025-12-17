@@ -1,4 +1,7 @@
 import { Colors } from "constants/Colors";
+import { Fonts } from "constants/fonts";
+import { teams as nbaTeams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -6,9 +9,6 @@ import {
   sizeStyles,
   styles,
 } from "styles/GameDetailStyles/TeamRow.styles";
-
-import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
 
 export const TeamRow = ({
   team,
@@ -21,6 +21,7 @@ export const TeamRow = ({
   size = "medium",
   status,
   timeouts,
+  foulsToGive,
   league = "nba",
 }: NBAProps & { status?: string; league?: "nba" | "cbb" }) => {
   const router = useRouter();
@@ -34,7 +35,10 @@ export const TeamRow = ({
       : nbaTeams.find((t) => t.id?.toString() === team.id?.toString());
 
   // Use light logo in dark mode if available
-  const resolvedLogo = isDark && teamLookup?.logoLight ? teamLookup.logoLight : teamLookup?.logo ?? team.logo;
+  const resolvedLogo =
+    isDark && teamLookup?.logoLight
+      ? teamLookup.logoLight
+      : teamLookup?.logo ?? team.logo;
   const resolvedCode = teamLookup?.code ?? team.code;
   const resolvedRecord = team.record;
 
@@ -71,9 +75,35 @@ export const TeamRow = ({
       : status;
 
   const isScheduled = normalizedStatus === "Scheduled";
-const isFinal = normalizedStatus === "Final";
-const isLive =
-  normalizedStatus === "In Play" || normalizedStatus === "Halftime";
+  const isFinal = normalizedStatus === "Final";
+  const isLive =
+    normalizedStatus === "In Play" || normalizedStatus === "Halftime";
+  const isBonus =
+    isLive &&
+    foulsToGive !== null &&
+    foulsToGive !== undefined &&
+    foulsToGive === 0;
+
+  const renderBonus = () => {
+    if (!isBonus) return null;
+
+    return (
+      <Text
+        style={{
+          marginTop: 2,
+          position: "absolute",
+          bottom: -10,
+          fontSize: 8,
+          fontFamily: Fonts.OSMEDIUM,
+          letterSpacing: 0.5,
+          color: isDark ? Colors.white : Colors.black,
+          textAlign: "center",
+        }}
+      >
+        BONUS
+      </Text>
+    );
+  };
 
   const isInvalidRecord = resolvedRecord === "-";
   const displayRecord = isInvalidRecord ? "" : resolvedRecord;
@@ -126,19 +156,23 @@ const isLive =
     <View style={styles.row}>
       {/* Home Score */}
       {isHome && (
-        <Text
-          style={
-            showRecordInsteadOfScore
-              ? [
-                  styles.preGameRecord,
-                  sizeStyles[size].preGameRecord,
-                  { color: colors.record },
-                ]
-              : [styles.score, sizeStyles[size].score, getScoreStyle]
-          }
-        >
-          {showRecordInsteadOfScore ? displayRecord : score ?? ""}
-        </Text>
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={
+              showRecordInsteadOfScore
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
+                : [styles.score, sizeStyles[size].score, getScoreStyle]
+            }
+          >
+            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+          </Text>
+
+          {renderBonus()}
+        </View>
       )}
 
       {/* Team Info */}
@@ -158,6 +192,9 @@ const isLive =
           {!showRecordInsteadOfScore && !isLive && (
             <Text style={[styles.record, { color: colors.record }]}>
               {displayRecord}
+              {isLive && (
+                <View style={{ alignItems: "center", marginTop: 4 }}></View>
+              )}
             </Text>
           )}
 
@@ -171,19 +208,23 @@ const isLive =
 
       {/* Away Score */}
       {!isHome && (
-        <Text
-          style={
-            showRecordInsteadOfScore
-              ? [
-                  styles.preGameRecord,
-                  sizeStyles[size].preGameRecord,
-                  { color: colors.record },
-                ]
-              : [styles.score, sizeStyles[size].score, getScoreStyle]
-          }
-        >
-          {showRecordInsteadOfScore ? displayRecord : score ?? ""}
-        </Text>
+        <View style={{ alignItems: "center" }}>
+          <Text
+            style={
+              showRecordInsteadOfScore
+                ? [
+                    styles.preGameRecord,
+                    sizeStyles[size].preGameRecord,
+                    { color: colors.record },
+                  ]
+                : [styles.score, sizeStyles[size].score, getScoreStyle]
+            }
+          >
+            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+          </Text>
+
+          {renderBonus()}
+        </View>
       )}
     </View>
   );

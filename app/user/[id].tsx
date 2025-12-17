@@ -1,11 +1,13 @@
-import BioSection from "components/Profile/BioSection";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
-import FollowersModal from "components/Profile/FollowersModal";
+import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
+import { teams as cfbteams } from "constants/teamsCFB";
+import { teams as nflteams } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import {
   useCallback,
@@ -22,13 +24,10 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
-import { teams as nflteams } from "constants/teamsNFL";
-import { teams as cfbteams } from "constants/teamsCFB";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { useFollowersModalStore } from "store/followersModalStore";
 
 import { teams } from "constants/teams";
-import { getStyles } from "styles/ProfileScreen.styles";
+import { getStyles } from "styles/ProfileScreenStyles";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
@@ -129,33 +128,32 @@ export default function UserProfileScreen() {
     }
   }, [userId, currentUserId]);
 
- // Restore modal + reload on screen focus
-useFocusEffect(
-  useCallback(() => {
-    if (shouldRestore && targetUserId) {
-      clearRestore(); // clear before opening
-      openModal(
-        type,
-        targetUserId,
-        currentUserId ? String(currentUserId) : undefined
-      );
-    }
+  // Restore modal + reload on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldRestore && targetUserId) {
+        clearRestore(); // clear before opening
+        openModal(
+          type,
+          targetUserId,
+          currentUserId ? String(currentUserId) : undefined
+        );
+      }
 
-    // ✅ Only fetch on screen focus, not when modal closes
-    if (currentUserId !== null) {
-      fetchUserData();
-    }
-  }, [
-    shouldRestore,
-    targetUserId,
-    type,
-    currentUserId, // ✅ removed isVisible
-    openModal,
-    clearRestore,
-    fetchUserData,
-  ])
-);
-
+      // ✅ Only fetch on screen focus, not when modal closes
+      if (currentUserId !== null) {
+        fetchUserData();
+      }
+    }, [
+      shouldRestore,
+      targetUserId,
+      type,
+      currentUserId, // ✅ removed isVisible
+      openModal,
+      clearRestore,
+      fetchUserData,
+    ])
+  );
 
   // Navigation header
   useLayoutEffect(() => {
@@ -209,9 +207,7 @@ useFocusEffect(
       const data = await res.json();
       setIsFollowing(data.isFollowing);
       setFollowersCount((count) =>
-        data.isFollowing
-          ? Math.max(count, newCount)
-          : Math.min(count, newCount)
+        data.isFollowing ? Math.max(count, newCount) : Math.min(count, newCount)
       );
     } catch (err) {
       console.error("Failed to toggle follow:", err);
@@ -222,17 +218,17 @@ useFocusEffect(
     }
   };
 
-    const favoriteTeamsWithLeague = favorites
-      .map((fav: string) => {
-        const [league, id] = fav.split(":");
-        let team;
-        if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
-        if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
-        if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
-        if (!team) return null;
-        return { ...team, league: league as "NBA" | "NFL" | "CFB" };
-      })
-      .filter(Boolean);
+  const favoriteTeamsWithLeague = favorites
+    .map((fav: string) => {
+      const [league, id] = fav.split(":");
+      let team;
+      if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
+      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
+      if (!team) return null;
+      return { ...team, league: league as "NBA" | "NFL" | "CFB" };
+    })
+    .filter(Boolean);
 
   const favoriteTeams = teams.filter((team) => favorites.includes(team.id));
   const styles = getStyles(isDark);
@@ -314,8 +310,6 @@ useFocusEffect(
           />
         </View>
       </ScrollView>
-
-      
     </>
   );
 }

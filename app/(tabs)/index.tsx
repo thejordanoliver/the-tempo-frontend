@@ -16,11 +16,13 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/indexStyles";
+import { homeStyles } from "styles/homeStyles";
+
+
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = homeStyles(isDark);
   const navigation = useNavigation();
 
   const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
@@ -84,7 +86,7 @@ export default function HomeScreen() {
               />
             </>
           ) : newsError ? (
-            <Text style={styles.emptyText}>{newsError}</Text>
+            <Text style={styles.errorText}>{newsError}</Text>
           ) : (
             <NewsHighlightsList
               items={combinedNewsAndHighlights}

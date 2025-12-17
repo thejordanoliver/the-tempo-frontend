@@ -1,7 +1,7 @@
+import { Text, TouchableOpacity, View } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
 import { Follow } from "types/types";
-import { Text, TouchableOpacity, View } from "react-native";
-import { getStyles } from "../../styles/ProfileScreen.styles";
+import { getStyles } from "../../styles/ProfileScreenStyles";
 
 export default function FollowStats({
   followersCount,

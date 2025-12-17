@@ -44,6 +44,7 @@ export type NBAProps = {
     id?: number;
   };
   timeouts?: number;
+  foulsToGive?: number
   size?: SizeType;
   rank?: string;
   isDark: boolean;

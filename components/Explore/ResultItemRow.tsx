@@ -8,7 +8,7 @@ import { teamsMLBById } from "constants/teamsMLB";
 import { teamsNFLById } from "constants/teamsNFL";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/Explore.styles";
+import { exploreStyles } from "styles/ExploreStyles";
 import type {
   PlayerResult,
   ResultItem,
@@ -81,7 +81,7 @@ export default function ResultItemRow({
             <Ionicons
               name="close"
               size={20}
-              color={isDark ? Colors.lightGray : Colors.darkGray}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         )}
@@ -97,7 +97,15 @@ export default function ResultItemRow({
       ? player.avatarUrl
       : players[player.name];
 
-    const localTeam = teamsById[player.team_id?.toString()];
+    const localTeam = player.isNFL
+      ? teamsNFLById[player.team_id.toString()]
+      : player.isMLB
+      ? teamsMLBById[player.team_id.toString()]
+      : player.isCFB
+      ? teamsCFBById[player.team_id.toString()]
+      : player.isCBB
+      ? teamsCBBById[player.team_id.toString()]
+      : teamsById[player.team_id.toString()];
 
     return (
       <View style={styles.itemRow}>
@@ -123,7 +131,7 @@ export default function ResultItemRow({
             <Ionicons
               name="close"
               size={20}
-              color={isDark ? Colors.lightGray : Colors.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         )}
@@ -168,7 +176,7 @@ export default function ResultItemRow({
             <Ionicons
               name="close"
               size={20}
-              color={isDark ? Colors.lightGray : Colors.black}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         )}

@@ -1,6 +1,6 @@
 import { Colors } from "constants/Colors";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/centerInfoStyles.styles";
+import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
 import { MLBTeam } from "types/mlb";
 
 export type MLBGameStatus =

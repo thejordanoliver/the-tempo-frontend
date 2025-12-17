@@ -20,7 +20,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import type { Game } from "types/types";
-
+import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 type GamesListProps = {
   games: Game[];
   loading: boolean;
@@ -43,7 +43,7 @@ export default function GamesList({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { viewMode } = usePreferences();
-
+  const styles = gameListStyles;
   const [previewGame, setPreviewGame] = useState<Game | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -220,41 +220,3 @@ export default function GamesList({
   );
 }
 
-const styles = StyleSheet.create({
-  skeletonWrapper: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingHorizontal: 12,
-    gap: 12,
-  },
-  skeletonGridWrapper: {
-    paddingBottom: 20,
-    paddingHorizontal: 12,
-  },
-  gridListContainer: {
-    paddingBottom: 100,
-    gap: 12,
-  },
-  contentContainer: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingHorizontal: 12,
-  },
-  gridRow: {
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  emptyText: {
-    fontFamily: Fonts.OSLIGHT,
-    fontSize: 16,
-    textAlign: "center",
-    color: Colors.midTone,
-  },
-  gridItem: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  stackedItem: {
-    marginHorizontal: 12,
-  },
-});

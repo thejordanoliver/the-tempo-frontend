@@ -3,7 +3,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { useRouter } from "expo-router";
-import { AwardCategory, useNBAAwardSeasons } from "hooks/useNBAAwardSeasons";
+import { AwardCategory, League, useAwardSeasons } from "hooks/useAwardSeasons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   LayoutAnimation,
@@ -44,20 +44,46 @@ if (Platform.OS === "android") {
 }
 
 type Props = {
+  league: League; // 👈 ADD THIS
   category: AwardCategory;
   title: string;
   lighter?: boolean;
+    refreshSignal?: number; // 👈 NEW
+
 };
 
-export function AwardSeasonsTable({ category, title, lighter = false }: Props) {
+export function AwardSeasonsTable({
+  league,
+  category,
+  title,
+  refreshSignal,
+  lighter = false,
+}: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = useMemo(() => tableStyles(isDark, lighter), [isDark, lighter]);
   const router = useRouter();
 
-  const { data, loading, error } = useNBAAwardSeasons({ category });
+  const { data, loading, error, refetch } = useAwardSeasons({
+    league,
+    category,
+  });
+
+  useEffect(() => {
+  if (refreshSignal !== undefined) {
+    refetch();
+  }
+}, [refreshSignal]);
+  const isSummaryAward = league === "CFB";
 
   const isCOY = category === "coy";
-  const columnWidth = isCOY ? 90 : COLUMN_WIDTH;
+
+  const headers = useMemo(() => {
+    if (isSummaryAward) return ["Summary"];
+    if (isCOY) return COY_HEADERS;
+    return STAT_HEADERS;
+  }, [isSummaryAward, isCOY]);
+
+  const columnWidth = isSummaryAward ? 320 : isCOY ? 90 : COLUMN_WIDTH;
 
   const [expanded, setExpanded] = useState(false);
 
@@ -154,13 +180,12 @@ export function AwardSeasonsTable({ category, title, lighter = false }: Props) {
                     <Text style={styles.playerName}>{row.player_name}</Text>
                   </TouchableOpacity>
                 ) : (
-                  <Text style={styles.playerName}>
-                    {isCOY ? row.coach : row.player_name}
-                  </Text>
+                  <Text style={styles.playerName}>{row.player_name}</Text>
                 )}
 
                 <Text style={styles.seasonText}>
-                  {row.season} · {row.team?.code ?? row.team_abbr}
+                  {row.season} ·{" "}
+                  {row.award_team?.code ?? row.team_abbr ?? row.school}
                 </Text>
               </View>
             ))}
@@ -170,7 +195,7 @@ export function AwardSeasonsTable({ category, title, lighter = false }: Props) {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View>
               <View style={styles.headerRow}>
-                {(isCOY ? COY_HEADERS : STAT_HEADERS).map((label) => (
+                {headers.map((label) => (
                   <Text
                     key={label}
                     style={[styles.headerCell, { width: columnWidth }]}
@@ -181,20 +206,27 @@ export function AwardSeasonsTable({ category, title, lighter = false }: Props) {
               </View>
 
               {visibleRows.map((row, index) => {
-                const stats = isCOY
-                  ? [row.games, row.wins, row.losses, row.win_loss_pct]
+                const stats = isSummaryAward
+                  ? [row.summary]
+                  : isCOY
+                  ? [
+                      row.stats?.games,
+                      row.stats?.wins,
+                      row.stats?.losses,
+                      row.stats?.win_loss_pct,
+                    ]
                   : [
-                      row.games,
-                      row.points,
-                      row.rebounds,
-                      row.assists,
-                      row.steals,
-                      row.blocks,
-                      row.fg_pct,
-                      row.three_pct,
-                      row.ft_pct,
-                      row.win_shares,
-                      row.ws_per_48,
+                      row.stats?.games,
+                      row.stats?.points,
+                      row.stats?.rebounds,
+                      row.stats?.assists,
+                      row.stats?.steals,
+                      row.stats?.blocks,
+                      row.stats?.fg_pct,
+                      row.stats?.three_pct,
+                      row.stats?.ft_pct,
+                      row.stats?.win_shares,
+                      row.stats?.ws_per_48,
                     ];
 
                 return (
@@ -214,7 +246,18 @@ export function AwardSeasonsTable({ category, title, lighter = false }: Props) {
                           key={`${row.id}-${key}`}
                           style={[styles.cell, { width: columnWidth }]}
                         >
-                          <Text style={styles.cellText}>{val}</Text>
+                          <Text
+                            style={[
+                              styles.cellText,
+                              isSummaryAward && {
+                                textAlign: "left",
+                                paddingHorizontal: 10,
+                              },
+                            ]}
+                            numberOfLines={expanded ? 0 : 2}
+                          >
+                            {val}
+                          </Text>
                         </View>
                       );
                     })}
@@ -337,6 +380,7 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 13,
       color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     showMoreLess: {

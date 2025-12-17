@@ -11,6 +11,7 @@ import { CFBStandingsList } from "components/CFB/Standings/CFBStandingsList";
 import TransferList from "components/CFB/TransferList";
 import WeekSelector from "components/CFB/WeekSelector";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -28,7 +29,7 @@ import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import { getScoresStyles } from "styles/leagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles";
 import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import {
   CFBWeek,
@@ -97,6 +98,7 @@ export default function CFBeagueScreen() {
     | "news"
     | "standings"
     | "stats"
+    | "awards"
     | "recruting"
     | "bracket"
     | "transfer portal"
@@ -110,6 +112,7 @@ export default function CFBeagueScreen() {
     "news",
     "standings",
     "stats",
+    "awards",
     "bracket",
     "recruting",
     "transfer portal",
@@ -321,6 +324,8 @@ export default function CFBeagueScreen() {
           )}
 
           {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "awards" && <AwardSeasons league="CFB" />}
+
           {selectedTab === "bracket" && data && <Bracket data={data} />}
 
           {selectedTab === "transfer portal" && (

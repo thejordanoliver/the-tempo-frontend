@@ -19,7 +19,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam, emptyTeam, Game } from "types/cfb";
 import {
   getTeamRankFromAPById,
@@ -36,7 +36,7 @@ type Props = {
 function CFBGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  
+
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
@@ -78,7 +78,7 @@ function CFBGameCard({ game, isDark }: Props) {
   };
 
   // --- Get Team Info from constants ---
- const getTeamById = (id?: number | string) =>
+  const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
 
   const getTeamName = (id?: number | string): string =>
@@ -121,8 +121,6 @@ function CFBGameCard({ game, isDark }: Props) {
       "halftime",
     ].includes(longLower);
 
- 
-
     return {
       isScheduled: longLower === "not started",
       isFinal,
@@ -164,7 +162,6 @@ function CFBGameCard({ game, isDark }: Props) {
     gameDateStr,
     "cfb"
   );
-
 
   // Determine fallback rivalry name
   const rivalryHeadline = useMemo(() => {
@@ -217,7 +214,7 @@ function CFBGameCard({ game, isDark }: Props) {
       : status.isLive
       ? "Live"
       : status.long ?? "Scheduled");
- 
+
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
@@ -340,18 +337,17 @@ function CFBGameCard({ game, isDark }: Props) {
           />
         )}
         <Image source={awayTeam.logo} style={styles.logo} />
-       <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
-  {(() => {
-    const rank = awayEspnId ? getTeamRank(String(awayEspnId)) : "";
-    return (
-      <>
-        {rank ? <Text style={styles.rank}>{rank} </Text> : null}
-        {awayTeam.shortName || awayTeam.name}
-      </>
-    );
-  })()}
-</Text>
-
+        <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
+          {(() => {
+            const rank = awayEspnId ? getTeamRank(String(awayEspnId)) : "";
+            return (
+              <>
+                {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                {awayTeam.shortName || awayTeam.name}
+              </>
+            );
+          })()}
+        </Text>
       </View>
 
       {/* Away Record / Score */}
@@ -429,18 +425,17 @@ function CFBGameCard({ game, isDark }: Props) {
           />
         )}
         <Image source={homeTeam.logo} style={styles.logo} />
-     <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
-  {(() => {
-    const rank = homeEspnId ? getTeamRank(String(homeEspnId)) : "";
-    return (
-      <>
-        {rank ? <Text style={styles.rank}>{rank} </Text> : null}
-        {homeTeam.shortName || homeTeam.name}
-      </>
-    );
-  })()}
-</Text>
-
+        <Text style={[styles.teamName, { width: 100, flexDirection: "row" }]}>
+          {(() => {
+            const rank = homeEspnId ? getTeamRank(String(homeEspnId)) : "";
+            return (
+              <>
+                {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                {homeTeam.shortName || homeTeam.name}
+              </>
+            );
+          })()}
+        </Text>
       </View>
 
       <Pressable

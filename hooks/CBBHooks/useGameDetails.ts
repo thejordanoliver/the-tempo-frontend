@@ -19,6 +19,13 @@ export interface Injury {
   }[];
 }
 
+export interface Fouls {
+  teamFouls: number;
+  teamFoulsCurrent: number;
+  foulsToGive: number;
+  bonusState: "NONE";
+}
+
 export interface LeaderGroup {
   team: {
     id: string;
@@ -55,8 +62,7 @@ export interface VenueInfo {
   image?: string | null;
   raw?: any; // Original ESPNN venue object
   latitude?: number | null;
-longitude?: number | null;
-
+  longitude?: number | null;
 }
 
 export interface UseGameDetails {
@@ -70,6 +76,7 @@ export interface UseGameDetails {
   leaders: LeaderGroup[];
   neutralSite: boolean;
   timeouts: { home: number | null; away: number | null };
+  fouls: { home: Fouls | null; away: Fouls | null }; // 👈 ADD
   venue: VenueInfo | null;
   loading: boolean;
   error: string | null;
@@ -95,6 +102,10 @@ export const useGameDetails = (
   const [venue, setVenue] = useState<VenueInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fouls, setFouls] = useState<{
+    home: Fouls | null;
+    away: Fouls | null;
+  }>({ home: null, away: null });
 
   useEffect(() => {
     if (!league || !homeTeamId || !awayTeamId || !date) return;
@@ -187,8 +198,7 @@ export const useGameDetails = (
             state: venueRaw.address?.state ?? null,
             address: venueRaw.address?.fullAddress ?? null,
             capacity: venueRaw.capacity ?? null,
-            grass:
-              venueRaw.surface?.toLowerCase?.().includes("grass") ?? null,
+            grass: venueRaw.surface?.toLowerCase?.().includes("grass") ?? null,
             indoor: venueRaw.indoor ?? null,
             image: venueRaw.images?.[0]?.href ?? null,
             raw: venueRaw,
@@ -236,6 +246,18 @@ export const useGameDetails = (
           home: home?.timeoutsRemaining ?? null,
           away: away?.timeoutsRemaining ?? null,
         });
+
+        // ---------------- FOULS ----------------
+        const competitors =
+          summary?.header?.competitions?.[0]?.competitors ?? [];
+
+        const homeComp = competitors.find((c: any) => c.homeAway === "home");
+        const awayComp = competitors.find((c: any) => c.homeAway === "away");
+
+        setFouls({
+          home: homeComp?.fouls ?? null,
+          away: awayComp?.fouls ?? null,
+        });
       } catch (err: any) {
         console.error("❌ useGameDetails error:", err);
         setError(err.message || "Failed to fetch");
@@ -258,6 +280,7 @@ export const useGameDetails = (
     leaders,
     neutralSite,
     timeouts,
+    fouls, // 👈 ADD THIS
     venue,
     loading,
     error,

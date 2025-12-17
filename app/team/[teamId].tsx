@@ -6,7 +6,7 @@ import GamesList from "components/Games/GamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
 import RosterStats from "components/Team/RosterStats";
-import TeamPlayerList from "components/Team/TeamRoster";
+import TeamPlayerList from "components/Team/Roster";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
@@ -34,7 +34,7 @@ import {
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import PagerView from "react-native-pager-view";
-import { style } from "styles/TeamDetails.styles";
+import { style } from "styles/TeamDetailsStyles";
 import { User } from "types/types";
 
 export default function TeamDetailScreen() {

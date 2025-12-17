@@ -1,7 +1,7 @@
-import FollowButton from "components/Profile/FollowButton";
 import { Ionicons } from "@expo/vector-icons";
+import FollowButton from "components/Profile/FollowButton";
 import { Pressable, Text, View } from "react-native";
-import { getStyles } from "../../styles/ProfileScreen.styles";
+import { getStyles } from "../../styles/ProfileScreenStyles";
 
 type Props = {
   fullName?: string | null;

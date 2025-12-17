@@ -1,6 +1,6 @@
 import { Fonts } from "constants/fonts";
-import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import { useRouter } from "expo-router";
+import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
 import { teams } from "../../constants/teams";
 import type { summerGame } from "../../types/types";
 

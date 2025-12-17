@@ -11,7 +11,7 @@ import TeamLocationSection from "components/GameDetails/TeamLocationSection";
 import Weather from "components/GameDetails/Weather";
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
 
 export default function GamePreviewContent({
   game,
@@ -35,9 +35,8 @@ export default function GamePreviewContent({
   weatherLoading,
   weatherError,
   isDark,
-    isChampionship = false,
+  isChampionship = false,
 }: any) {
-
   // Use shared GamePreview styling
   const styles = useMemo(
     () => gamePreviewModalStyle(isChampionship),
@@ -60,7 +59,7 @@ export default function GamePreviewContent({
           />
         </View>
       )}
-      
+
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (

@@ -14,7 +14,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
+import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import {
   getTeamRankFromAPById,
   getTeamRankFromCFPById,
@@ -32,21 +32,21 @@ type Props = {
 function CFBStackedGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+  
   const router = useRouter();
-
+  
   const homeId = String(game?.teams?.home?.id);
   const awayId = String(game?.teams?.away?.id);
   const gameId = game?.game?.id;
-
+  
   // ✅ Load both CFP and AP rankings
   const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-
+  
   // ✅ Get ranking, falling back to AP poll if CFP is missing
   // Check if CFP rankings are active (after they’ve been released)
   const isCFPActive = cfpTop25 && cfpTop25.length > 0;
-
+  
   // Main helper to get rank with conditional fallback
   const getTeamRank = (id: number | string) => {
     if (isCFPActive) {
@@ -56,14 +56,23 @@ function CFBStackedGameCard({ game, isDark }: Props) {
     // 🕓 Early season — fallback to AP Top 25
     return getTeamRankFromAPById(id, apTop25) ?? "";
   };
-
+  
   const gameDate = useMemo(() => {
     return game?.game?.date?.timestamp
-      ? new Date(game.game.date.timestamp * 1000)
-      : null;
+    ? new Date(game.game.date.timestamp * 1000)
+    : null;
   }, [game?.game?.date?.timestamp]);
   const gameDateStr = gameDate?.toISOString();
 
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2026 &&
+      gameDate.getMonth() === 0 &&
+      gameDate.getDate() === 19
+  );
+
+  const styles = stackedGameCardStyles(dark, isChampionship);
+  
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
   const getTeamName = (id?: number | string): string =>

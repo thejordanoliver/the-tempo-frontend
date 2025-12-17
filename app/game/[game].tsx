@@ -248,6 +248,7 @@ export default function GameDetailsScreen() {
 
   const {
     officials,
+    fouls,
     highlights,
     timeouts,
     injuries,
@@ -342,6 +343,8 @@ export default function GameDetailsScreen() {
           headlineText={headlineText}
           homeTeamData={homeTeamData}
           awayTeamData={awayTeamData}
+          awayFoulsToGive={fouls.away?.foulsToGive}
+          homeFoulsToGive={fouls.home?.foulsToGive}
           home={home}
           away={away}
           halftime={halftime}

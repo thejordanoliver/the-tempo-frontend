@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getStyles } from "../../styles/ProfileScreen.styles";
+import { getStyles } from "../../styles/ProfileScreenStyles";
 
 type Props = {
   bannerImage?: string | null;

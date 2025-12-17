@@ -7,20 +7,17 @@ export const exploreStyles = (isDark: boolean) =>
       flex: 1,
       padding: 12,
     },
-
     itemContainer: {
-      paddingVertical: 8,
+      paddingVertical: 12,
       alignItems: "center",
       justifyContent: "space-between",
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-
     name: {
       fontSize: 16,
       fontFamily: Fonts.OSLIGHT,
       color: isDark ? Colors.white : Colors.black,
     },
-
     tag: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
@@ -31,7 +28,6 @@ export const exploreStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-
     playerRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -39,15 +35,18 @@ export const exploreStyles = (isDark: boolean) =>
     playerAvatarContainer: {
       width: 44,
       height: 44,
-      borderRadius: 24,
+      borderRadius: 100,
       marginRight: 12,
-      paddingTop: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      paddingTop: 8,
       overflow: "hidden",
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 0.5,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     playerAvatar: {
-      width: 44,
-      height: 44,
+      width: 40,
+      height: 40,
     },
     avatarContainer: {
       width: 44,
@@ -60,53 +59,47 @@ export const exploreStyles = (isDark: boolean) =>
       width: 44,
       height: 44,
     },
-
     playerTeam: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-
     emptyText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
       textAlign: "center",
       marginTop: 20,
-      fontSize: 16,
-      color: Colors.midTone,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
-
     centerPrompt: {
       flex: 1,
       marginTop: 80,
       justifyContent: "flex-start",
       alignItems: "center",
     },
-
     promptText: {
       fontSize: 24,
       fontFamily: Fonts.OSREGULAR,
-      color: Colors.darkGray,
+      color: isDark ? Colors.white : Colors.white,
     },
     teamLogo: {
-      width: 44,
-      height: 44,
+      width: 40,
+      height: 40,
       marginRight: 12,
     },
-
     userRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
     },
-
     itemRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: 6,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },

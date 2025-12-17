@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getTeamLogo, teams } from "../../constants/teams";
-import { getStyles } from "../../styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "../../styles/GamecardStyles/GameCardStyles";
 import { Game, Team } from "../../types/types";
 // --- Helper function to normalize API status ---
 function mapStatus(apiStatus: {
@@ -223,7 +223,7 @@ export default function GameCard({
     gameDateStr
   );
 
-  const headline = headlineText || holidayLabel
+  const headline = headlineText || holidayLabel;
 
   const ScoreText = ({
     score,

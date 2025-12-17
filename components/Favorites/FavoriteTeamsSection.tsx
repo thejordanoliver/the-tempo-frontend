@@ -1,5 +1,5 @@
 import { Animated } from "react-native";
-import { getStyles } from "../../styles/ProfileScreen.styles";
+import { getStyles } from "../../styles/ProfileScreenStyles";
 import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
 import SectionHeaderWithToggle from "../SectionHeaderWithToggle";
 
@@ -24,8 +24,6 @@ export default function FavoriteTeamsSection({
   isCurrentUser,
   username,
 }: Props) {
-
-
   return (
     <>
       {/* Header with toggle button (grid/list) */}

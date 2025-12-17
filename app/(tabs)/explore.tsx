@@ -6,7 +6,7 @@ import SearchResultsList from "components/Explore/SearchResultsList";
 import { useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, Easing, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/Explore.styles";
+import { exploreStyles } from "styles/ExploreStyles";
 import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
@@ -205,7 +205,7 @@ export default function ExplorePage() {
           router.push(`/team/mlb/${item.id}`);
         } else if (item.isCFB) {
           router.push(`/team/cfb/${item.id}`);
-        }  else if (item.isCBB) {
+        } else if (item.isCBB) {
           router.push(`/team/cbb/${item.id}`);
         } else {
           router.push(`/team/${item.id}`);
@@ -213,13 +213,39 @@ export default function ExplorePage() {
         break;
 
       case "player":
-        router.push({
-          pathname: "/player/[id]",
-          params: {
-            id: item.player_id.toString(),
-            teamId: item.team_id?.toString() || "",
-          },
-        });
+        if (item.isNFL) {
+          router.push({
+            pathname: "/player/nfl/[id]",
+            params: {
+              id: item.player_id.toString(),
+              teamId: item.team_id?.toString() || "",
+            },
+          });
+        } else if (item.isCFB) {
+          router.push({
+            pathname: "/player/cfb/[id]",
+            params: {
+              id: item.player_id.toString(),
+              teamId: item.team_id?.toString() || "",
+            },
+          });
+        } else if (item.isCBB) {
+          router.push({
+            pathname: "/player/cbb/[id]",
+            params: {
+              id: item.player_id.toString(),
+              teamId: item.team_id?.toString() || "",
+            },
+          });
+        } else {
+          router.push({
+            pathname: "/player/[id]",
+            params: {
+              id: item.player_id.toString(),
+              teamId: item.team_id?.toString() || "",
+            },
+          });
+        }
         break;
       case "user":
         router.push(`/user/${item.id}`);

@@ -6,8 +6,8 @@ import {
   Text,
 } from "react-native";
 import { CBBPlayer } from "types/types";
-import { style } from "../../../styles/TeamDetails.styles";
-import PlayerCard from "../Player/PlayerCard";
+import { style } from "../../../styles/TeamDetailsStyles";
+import PlayerCard from "components/Player/PlayerCard";
 
 interface TeamPlayerListProps {
   players: CBBPlayer[];
@@ -68,7 +68,7 @@ export default function TeamPlayerList({
               position={player.position}
               team={teamFullName}
               avatarUrl={player.imageUrl}
-              jerseyNumber={player.jersey}
+              number={player.jersey}
             />
           ))
       )}

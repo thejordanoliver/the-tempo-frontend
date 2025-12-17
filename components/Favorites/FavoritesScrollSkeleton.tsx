@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View, useColorScheme } from "react-native";
-import { favoritesScrollSkeletonStyles } from "styles/FavoritesScrollSkeleton.styles";
+import { favoritesScrollSkeletonStyles } from "styles/FavoritesScrollSkeletonStyles";
 import { Colors } from "constants/Colors";
 
 export default function FavoritesScrollSkeleton() {

@@ -3,10 +3,10 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogo, teams } from "constants/teamsCBB";
+import { teams } from "constants/teamsCBB";
 import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
+import { getStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const STAT_CATEGORIES = ["points", "rebounds", "assists"] as const;
@@ -283,7 +283,13 @@ export default function GameLeaders({
               teams.find((t) => t.espnID === homeTeamId) ??
               teams.find((t) => t.espnID === awayTeamId);
 
-            const teamLogo = teamObj ? lighter ? teamObj.logoLight || teamObj.logo : isDark? teamObj.logoLight || teamObj.logo : teamObj.logo : null;
+            const teamLogo = teamObj
+              ? lighter
+                ? teamObj.logoLight || teamObj.logo
+                : isDark
+                ? teamObj.logoLight || teamObj.logo
+                : teamObj.logo
+              : null;
 
             const hasNoStats =
               player.points === "–" &&

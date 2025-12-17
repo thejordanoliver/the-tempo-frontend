@@ -161,13 +161,12 @@ export default function CFBPlayerDetailScreen() {
           </View>
         )}
         {lastGame && !lastGameLoading && (
-<CFBGameCard game={lastGame} isDark={isDark} />
+          <CFBGameCard game={lastGame} isDark={isDark} />
         )}
       </View>
 
       {/* Career Stats */}
-      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-        <HeadingTwo>Career Stats</HeadingTwo>
+      <View style={{ marginTop: 24 }}>
         <PlayerStatTable playerId={parsedPlayerId} seasons={seasons} />
       </View>
     </ScrollView>

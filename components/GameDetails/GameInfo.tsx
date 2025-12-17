@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
+import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 
 type GameInfoProps = {
   status:

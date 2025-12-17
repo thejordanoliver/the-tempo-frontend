@@ -1,5 +1,5 @@
 // components/TeamPlayerList.tsx
-import PlayerCard from "components/CBB/Player/PlayerCard";
+import PlayerCard from "components/Player/PlayerCard";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import {
   ActivityIndicator,
@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { MLBPlayer } from "types/mlb";
-import { style } from "../../../styles/TeamDetails.styles";
+import { style } from "../../../styles/TeamDetailsStyles";
 
 interface TeamPlayerListProps {
   players: MLBPlayer[];
@@ -109,7 +109,7 @@ export default function TeamPlayerList({
                     position={player.position}
                     team={teamFullName}
                     avatarUrl={player.imageUrl}
-                    jerseyNumber={player.jersey}
+                    number={player.jersey}
                   />
                 </View>
               ))}

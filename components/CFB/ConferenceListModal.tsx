@@ -19,7 +19,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModal.styles";
+import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
 
 export type ConferenceListModalRef = {
   present: () => void;

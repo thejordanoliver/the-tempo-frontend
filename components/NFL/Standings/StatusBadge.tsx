@@ -1,6 +1,6 @@
 import { Colors } from "constants/Colors";
 import { Text, View, useColorScheme } from "react-native";
-import { getStyles } from "styles/Standings.styles";
+import { getStyles } from "styles/StandingsStyles";
 
 type StatusCode = "x" | "o" | "c" | "d" | "pi";
 

@@ -19,7 +19,7 @@ import {
 
 import { Colors } from "constants/Colors";
 import { getNFLTeam } from "constants/teamsNFL";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/nfl";
 
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";

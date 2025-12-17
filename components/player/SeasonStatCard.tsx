@@ -2,14 +2,14 @@ import { Colors } from "constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { usePlayerSingleSeasonStats } from "hooks/usePlayerSingleSeasonStats";
 import { Text, useColorScheme, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCard.styles";
+import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { teams } from "../../constants/teams";
 import CenteredHeader from "../Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "./SeasonStatCardSkeleton";
 
 type Props = {
   playerId: number;
-   teamColor?: string;
+  teamColor?: string;
   teamColorDark?: string;
   season?: string; // optional season
 };
@@ -20,11 +20,16 @@ export default function SeasonStatCard({ playerId, season }: Props) {
     (() => {
       const year = new Date().getFullYear();
       const month = new Date().getMonth() + 1;
-      return month >= 10 ? `${year}-${String(year + 1).slice(-2)}` : `${year - 1}-${String(year).slice(-2)}`;
+      return month >= 10
+        ? `${year}-${String(year + 1).slice(-2)}`
+        : `${year - 1}-${String(year).slice(-2)}`;
     })();
 
-  const { season: seasonData, loading, error } =
-    usePlayerSingleSeasonStats(playerId, displaySeason);
+  const {
+    season: seasonData,
+    loading,
+    error,
+  } = usePlayerSingleSeasonStats(playerId, displaySeason);
 
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
@@ -33,14 +38,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   if (error || !seasonData)
     return <Text style={styles.error}>Failed to load stats</Text>;
 
-  const {
-    g,
-    pts,
-    ast,
-    trb,
-    fg,
-    fga,
-  } = seasonData;
+  const { g, pts, ast, trb, fg, fga } = seasonData;
 
   const safeFixed = (val?: number | null) =>
     val == null || isNaN(val) ? "0.0" : val.toFixed(1);
@@ -54,13 +52,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   const { teamId } = useLocalSearchParams<{ teamId?: string }>();
   const teamObj = teams.find((t) => String(t.id) === teamId);
 
-  function StatItem({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string;
-  }) {
+  function StatItem({ label, value }: { label: string; value: string }) {
     return (
       <View style={styles.statItem}>
         <Text

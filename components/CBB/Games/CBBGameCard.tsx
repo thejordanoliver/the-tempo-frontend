@@ -18,7 +18,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

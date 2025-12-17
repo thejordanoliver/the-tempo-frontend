@@ -22,7 +22,7 @@ export const getStyles = (isDark: boolean) =>
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-  heading: {
+    heading: {
       fontSize: 22,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
@@ -87,6 +87,13 @@ export const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSSEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 40,
+    },
+    collegeDivisionHeader: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 16,
+      marginTop: 4,
+      marginLeft: 4,
     },
     teamHeaderText: {
       fontFamily: Fonts.OSSEMIBOLD,
@@ -171,5 +178,12 @@ export const getStyles = (isDark: boolean) =>
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    emptyText: {
+      fontFamily: Fonts.OSLIGHT,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

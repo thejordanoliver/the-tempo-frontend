@@ -30,7 +30,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getScoresStyles } from "styles/leagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles";
 import { MLBGame } from "types/mlb";
 import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";

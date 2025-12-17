@@ -19,7 +19,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/Standings.styles";
+import { getStyles } from "styles/StandingsStyles";
 import { StatusBadge } from "./StatusBadge";
 type DivisionMap = Record<string, NFLDivisionTeam[]>;
 
@@ -320,7 +320,7 @@ export const NFLStandingsList = () => {
         selectedValue={sortMode}
         onSelect={(value) => setSortMode(value as any)}
         isDark={isDark}
-    absolute
+        absolute
       />
 
       {sortMode === "conference" ? (

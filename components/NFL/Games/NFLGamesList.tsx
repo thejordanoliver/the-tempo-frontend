@@ -333,7 +333,6 @@ renderSectionHeader={({ section }) =>
 
 const styles = StyleSheet.create({
   skeletonWrapper: {
-    
     paddingHorizontal: 12,
     gap: 12,
   },

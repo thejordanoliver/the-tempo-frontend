@@ -4,7 +4,7 @@ import NewsArticleSkeleton from "components/News/NewsArticleSkeleton";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Image, ScrollView, Text, useColorScheme } from "react-native";
-import { getStyles } from "styles/NewsArticle.style";
+import { getStyles } from "styles/NewsArticleStyle";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 

@@ -6,7 +6,7 @@ import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/GameLeaders.styles";
+import { getStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 import HeadingTwo from "../Headings/HeadingTwo";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 

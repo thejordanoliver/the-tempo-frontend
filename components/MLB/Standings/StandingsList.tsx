@@ -12,14 +12,13 @@ import React, { useState } from "react";
 import {
   FlatList,
   Image,
-  ImageSourcePropType,
   ScrollView,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/Standings.styles";
+import { getStyles } from "styles/StandingsStyles";
 import { StandingsSkeleton } from "./StandingsSkeleton";
 
 type SectionType = {
@@ -52,15 +51,13 @@ export const StandingsList = () => {
 
   // --- Group by conference ---
   const american = (
-    data?.find(
-      (c) => c.abbreviation === "AL" || c.name === "American League"
-    )?.standings || []
+    data?.find((c) => c.abbreviation === "AL" || c.name === "American League")
+      ?.standings || []
   ).sort((a, b) => b.winPercent - a.winPercent);
 
   const national = (
-    data?.find(
-      (c) => c.abbreviation === "NL" || c.name === "National League"
-    )?.standings || []
+    data?.find((c) => c.abbreviation === "NL" || c.name === "National League")
+      ?.standings || []
   ).sort((a, b) => b.winPercent - a.winPercent);
 
   // --- Group by division ---
@@ -101,8 +98,8 @@ export const StandingsList = () => {
     item: StandingsTeam;
     index: number;
   }) => {
-const teamInfo = teams.find((t) => t.espnID === +item.teamId);
-const teamLogo = isDark ? teamInfo?.logoLight : teamInfo?.logo
+    const teamInfo = teams.find((t) => t.espnID === +item.teamId);
+    const teamLogo = isDark ? teamInfo?.logoLight : teamInfo?.logo;
 
     return (
       <View style={styles.row}>
@@ -119,7 +116,7 @@ const teamLogo = isDark ? teamInfo?.logoLight : teamInfo?.logo
             })
           }
         >
-          <Image source={{uri: teamLogo}} style={styles.logo} />
+          <Image source={{ uri: teamLogo }} style={styles.logo} />
           <Text style={styles.teamName}>{teamInfo?.code}</Text>
         </TouchableOpacity>
       </View>
@@ -216,7 +213,10 @@ const teamLogo = isDark ? teamInfo?.logoLight : teamInfo?.logo
       <View style={{ marginTop: 12 }}>
         <View style={styles.header}>
           <Text
-            style={[styles.heading, { color: isDark ? Colors.white : Colors.black }]}
+            style={[
+              styles.heading,
+              { color: isDark ? Colors.white : Colors.black },
+            ]}
           >
             {title}
           </Text>
@@ -275,7 +275,6 @@ const teamLogo = isDark ? teamInfo?.logoLight : teamInfo?.logo
       ) : (
         divisionStandings.map((section) => (
           <Section
-
             key={section.title}
             title={section.title}
             data={section.data}

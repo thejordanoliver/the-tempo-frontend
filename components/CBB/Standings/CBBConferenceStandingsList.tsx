@@ -1,24 +1,21 @@
-import { useRoute } from "@react-navigation/native";
 import { Fonts } from "constants/fonts";
-import { getTeamCodeESPN, getTeamLogoESPN } from "constants/teamsCBB";
+import { getTeamCodeESPN, getTeamLogoESPN, teams } from "constants/teamsCBB";
+import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
 import {
   FlatList,
   Image,
   ScrollView,
   Text,
+  TouchableOpacity,
   useColorScheme,
-  View, TouchableOpacity
+  View,
 } from "react-native";
-import { getStyles } from "styles/Standings.styles";
-import { useRouter } from "expo-router";
-import { teams } from "constants/teamsCBB"; // your internal teams array
+import { getStyles } from "styles/StandingsStyles";
 
 type Props = {
   selectedConference: string;
 };
-
-
 
 const CONFERENCE_ALIASES: Record<string, string> = {
   SEC: "Southeastern Conference",
@@ -38,8 +35,7 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
   const { standings, loading, error } = useCBBConferenceStandings();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-const router = useRouter(); // ✅ this gives you .push()
-
+  const router = useRouter(); // ✅ this gives you .push()
 
   if (loading)
     return (
@@ -76,50 +72,46 @@ const router = useRouter(); // ✅ this gives you .push()
       ? Object.keys(grouped).sort()
       : Object.keys(grouped).filter((c) => c === normalizedConference);
 
-
-  
-
   // --- Render Functions ---
   const renderLeftItem = ({ item }: { item: any }) => {
     const teamLogo = getTeamLogoESPN(item.teamId, isDark);
     const teamCode = getTeamCodeESPN(item.teamId);
 
-// --- ESPN → internal mapping ---
-const espnToInternal: Record<string, number> = {};
-teams.forEach((t) => {
-  if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
-});
+    // --- ESPN → internal mapping ---
+    const espnToInternal: Record<string, number> = {};
+    teams.forEach((t) => {
+      if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
+    });
 
+    const handleTeamPress = () => {
+      if (!item.teamId) return;
 
-const handleTeamPress = () => {
-  if (!item.teamId) return;
+      // Map ESPN ID to internal ID
+      const internalId = espnToInternal[item.teamId];
+      if (!internalId) return;
 
-  // Map ESPN ID to internal ID
-  const internalId = espnToInternal[item.teamId];
-  if (!internalId) return;
+      // Navigate using your internal ID
+      router.push(`/team/cbb/${internalId}`);
+    };
 
-  // Navigate using your internal ID
-  router.push(`/team/cbb/${internalId}`);
-};
-
-  return (
-    <TouchableOpacity
-      onPress={handleTeamPress}
-      style={[
-        styles.row,
-        { borderBottomColor: isDark ? "#333" : "#ccc", alignItems: "center" },
-      ]}
-    >
-      <View style={styles.rankContainer}>
-        <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
-      </View>
-      <View style={styles.teamInfo}>
-        {teamLogo && <Image source={teamLogo} style={styles.logo} />}
-        <Text style={styles.collegeTeamName}>{teamCode}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+    return (
+      <TouchableOpacity
+        onPress={handleTeamPress}
+        style={[
+          styles.row,
+          { borderBottomColor: isDark ? "#333" : "#ccc", alignItems: "center" },
+        ]}
+      >
+        <View style={styles.rankContainer}>
+          <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
+        </View>
+        <View style={styles.teamInfo}>
+          {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+          <Text style={styles.collegeTeamName}>{teamCode}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
   const renderRightItem = ({
     item,
     showDivision,

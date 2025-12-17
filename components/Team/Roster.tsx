@@ -6,7 +6,7 @@ import {
   ScrollView,
   Text,
 } from "react-native";
-import { style } from "../../styles/TeamDetails.styles";
+import { style } from "../../styles/TeamDetailsStyles";
 import PlayerCard from "../Player/PlayerCard";
 
 interface TeamPlayerListProps {
@@ -50,13 +50,9 @@ export default function TeamPlayerList({
       {loading ? (
         <ActivityIndicator size="large" style={{ marginTop: 20 }} />
       ) : error ? (
-        <Text style={[styles.text, { textAlign: "center", marginTop: 20 }]}>
-          {error}
-        </Text>
+        <Text style={styles.errorText}>{error}</Text>
       ) : players.length === 0 ? (
-        <Text style={[styles.text, { textAlign: "center", marginTop: 20 }]}>
-          No players found.
-        </Text>
+        <Text style={styles.emptyText}>No players found.</Text>
       ) : (
         [...players]
           .filter((player) => player.active !== false) // Only show active players
@@ -68,13 +64,12 @@ export default function TeamPlayerList({
           .map((player) => (
             <PlayerCard
               key={player.id}
-              id={player.id}
-              playerId={player.player_id}
+              id={player.player_id}
               name={player.name}
               position={player.position}
               team={teamFullName}
               avatarUrl={player.avatarUrl}
-              jerseyNumber={player.jersey_number}
+              number={player.jersey_number}
             />
           ))
       )}

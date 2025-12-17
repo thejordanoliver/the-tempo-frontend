@@ -1,16 +1,15 @@
-import { Fonts } from "constants/fonts";
-import { teams } from "constants/teams";
-import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
-import { useGameStatistics } from "hooks/useGameStatistics";
-import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
-import { summerGame } from "types/types";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Fonts } from "constants/fonts";
+import { teams } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useESPNBroadcasts } from "hooks/useESPNBroadcasts";
+import { useGameStatistics } from "hooks/useGameStatistics";
+import { useSummerLeagueStandings } from "hooks/useSummerLeagueStandings";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
@@ -21,7 +20,8 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameCardStyles";
+import { summerGame } from "types/types";
 import LineScore from "./LineScore";
 import TeamInfo from "./TeamInfo";
 

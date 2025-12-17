@@ -1,11 +1,9 @@
 import { Colors } from "constants/Colors";
-import { teams as CFBTeams } from "constants/teamsCFB";
-import { teams as NFLTeams } from "constants/teamsNFL";
-import { getTeamLogo } from "constants/teamsCFB";
-import { getNFLTeamsLogo } from "constants/teamsNFL";
+import { teams as CFBTeams, getTeamLogo } from "constants/teamsCFB";
+import { getNFLTeamsLogo, teams as NFLTeams } from "constants/teamsNFL";
 import { FlatList, Image, Text, useColorScheme, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { getStyles } from "styles/GameDetailStyles/DrivesList.styles";
+import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
 import { LeagueType } from "types/types";
 
 export type Drive = {
@@ -65,7 +63,11 @@ export default function DrivesList({
   if (drives.length === 0)
     return <Text style={styles.emptyText}>No drives available</Text>;
 
-  const textColor = lighter ? Colors.white : isDark ? Colors.white : Colors.black;
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+    ? Colors.white
+    : Colors.black;
   const subTextColor = lighter
     ? Colors.lightGray
     : isDark
@@ -101,7 +103,10 @@ export default function DrivesList({
           scrollEnabled={false}
           renderItem={({ item }) => {
             const useLightLogo = lighter || isDark;
-            const teamCode = getTeamCodeById(item.team.id);
+
+            const teamId = item.team?.id;
+            const teamCode = teamId ? getTeamCodeById(teamId) : null;
+
             const logo = teamCode
               ? getTeamLogoByCode(teamCode, useLightLogo)
               : null;
@@ -121,7 +126,10 @@ export default function DrivesList({
                 : isDark
                 ? Colors.dark.lightRed
                 : Colors.light.red;
-            } else if (resultUpper.includes("TD") || resultUpper.includes("FG")) {
+            } else if (
+              resultUpper.includes("TD") ||
+              resultUpper.includes("FG")
+            ) {
               resultColor = lighter
                 ? Colors.dark.limeGreen
                 : isDark
@@ -147,12 +155,15 @@ export default function DrivesList({
                       resizeMode="contain"
                     />
                   )}
+
                   <Text style={[styles.driveTeam, { color: textColor }]}>
-                    {item.team.shortDisplayName}
+                    {item.team?.shortDisplayName ?? "Unknown"}
                   </Text>
                 </View>
 
-                <Text style={[styles.driveDescription, { color: subTextColor }]}>
+                <Text
+                  style={[styles.driveDescription, { color: subTextColor }]}
+                >
                   {item.description}
                 </Text>
 

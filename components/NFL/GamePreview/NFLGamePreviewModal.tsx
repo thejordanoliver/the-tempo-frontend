@@ -18,12 +18,6 @@ import Weather from "components/GameDetails/Weather";
 
 import Officials from "components/GameDetails/Officials";
 import { NFLCenterInfo } from "components/NFL/GamePreview/CenterInfo";
-import GameLeaders from "../GameDetails/GameLeaders";
-import NFLInjuries from "../GameDetails/NFLInjuries";
-import NFLSeriesHistory from "../GameDetails/NFLSeriesHistory";
-import NFLTeamDrives from "../GameDetails/TeamDrives";
-import TeamInfo from "./TeamInfo";
-import { NFLTeam } from "types/nfl";
 import {
   getNFLTeamsLogo,
   getTeamInfo,
@@ -31,6 +25,12 @@ import {
   teams,
   venueImages,
 } from "constants/teamsNFL";
+import { NFLTeam } from "types/nfl";
+import GameLeaders from "../GameDetails/GameLeaders";
+import NFLInjuries from "../GameDetails/NFLInjuries";
+import NFLSeriesHistory from "../GameDetails/NFLSeriesHistory";
+import NFLTeamDrives from "../GameDetails/TeamDrives";
+import TeamInfo from "./TeamInfo";
 
 import { useNFLMatchup } from "hooks/NFLHooks/useNFLMatchup";
 import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
@@ -44,7 +44,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 
 import { getGameDate, getNFLGameStatus } from "utils/nflGameCardUtils";
 
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal.styles";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, Game } from "types/nfl";
 
 // --------------------------------------------------------------
@@ -70,7 +70,12 @@ function mapNFLStatus(statusObj: any): string {
   const long = statusObj?.long?.toLowerCase?.() ?? "";
   const short = String(statusObj?.short ?? "").toUpperCase();
 
-  if (long.includes("final") || short === "F" || short === "FT" || short === "FINAL")
+  if (
+    long.includes("final") ||
+    short === "F" ||
+    short === "FT" ||
+    short === "FINAL"
+  )
     return "Final";
 
   if (long.includes("halftime") || short === "HT") return "Halftime";
@@ -138,22 +143,21 @@ export default function NFLGamePreviewModal({
   const foundHome = teams.find((t) => t.id === homeId);
   const foundAway = teams.find((t) => t.id === awayId);
 
-const homeTeamData: NFLTeam = {
-  ...emptyNFLHomeTeam,
-  ...(foundHome || {}),
-  espnID: foundHome?.espnID ?? emptyNFLHomeTeam.espnID,
-  logo: getNFLTeamsLogo(foundHome?.code, false),
-  logoLight: getNFLTeamsLogo(foundHome?.code, true),
-};
+  const homeTeamData: NFLTeam = {
+    ...emptyNFLHomeTeam,
+    ...(foundHome || {}),
+    espnID: foundHome?.espnID ?? emptyNFLHomeTeam.espnID,
+    logo: getNFLTeamsLogo(foundHome?.code, false),
+    logoLight: getNFLTeamsLogo(foundHome?.code, true),
+  };
 
-const awayTeamData: NFLTeam = {
-  ...emptyNFLAwayTeam,
-  ...(foundAway || {}),
-  espnID: foundAway?.espnID ?? emptyNFLAwayTeam.espnID,
-  logo: getNFLTeamsLogo(foundAway?.code, false),
-  logoLight: getNFLTeamsLogo(foundAway?.code, true),
-};
-
+  const awayTeamData: NFLTeam = {
+    ...emptyNFLAwayTeam,
+    ...(foundAway || {}),
+    espnID: foundAway?.espnID ?? emptyNFLAwayTeam.espnID,
+    logo: getNFLTeamsLogo(foundAway?.code, false),
+    logoLight: getNFLTeamsLogo(foundAway?.code, true),
+  };
 
   // --------------------------------------------------------------
   // 🧠 STATUS MAPPING (SAME AS GAME CARD)
@@ -376,7 +380,7 @@ const awayTeamData: NFLTeam = {
               isDark={isDark}
               isGameOver={isFinal}
               hasStarted={!isScheduled}
-possessionTeamId={possession?.possessionTeamId}
+              possessionTeamId={possession?.possessionTeamId}
               side="away"
               timeouts={possession?.awayTimeouts ?? 0}
             />
@@ -409,7 +413,7 @@ possessionTeamId={possession?.possessionTeamId}
               isDark={isDark}
               isGameOver={isFinal}
               hasStarted={!isScheduled}
-possessionTeamId={possession?.possessionTeamId}
+              possessionTeamId={possession?.possessionTeamId}
               side="home"
               timeouts={possession?.homeTimeouts ?? 0}
             />

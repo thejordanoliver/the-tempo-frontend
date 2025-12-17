@@ -562,42 +562,60 @@ export type NBAOrNFLTeam = {
   city?: string;
 };
 
-export type NBAMVPSeason = {
-  id: number;
-  season: string; // "2024-25"
-  league: "NBA";
-  player_name: string;
+export type AwardStats = {
+  games?: number;
+  minutes_per_game?: number;
+  points?: number;
+  rebounds?: number;
+  assists?: number;
+  steals?: number;
+  blocks?: number;
+  fg_pct?: number;
+  three_pct?: number;
+  ft_pct?: number;
+  win_shares?: number;
+  ws_per_48?: number;
 
-  voting: string | null; // "(V)"
-  age: number;
-  team_abbr: string;
-  games: number;
+  // COY / coach-style stats
+  wins?: number;
+  losses?: number;
+  win_pct?: number;
 
-  minutes_per_game: string;
-  points: string;
-  rebounds: string;
-  assists: string;
-  steals: string;
-  blocks: string;
-
-  fg_pct: string;
-  three_pct: string;
-  ft_pct: string;
-
-  win_shares: string;
-  ws_per_48: string;
-
-  player_id: string;
-
-  coach: string;
-  wins: number;
-  losses: number;
-  win_loss_pct: string;
-  team: NBATeam | null;
-  team_id: number;
-  current_team: NBATeam | null;
+  // Allow future expansion
+  [key: string]: number | string | undefined;
 };
 
+export type AwardSeason = {
+  id: number;
+
+  season: string;
+  league: "NBA" | "CFB";
+
+  award_type:
+    | "mvp"
+    | "roy"
+    | "dpoy"
+    | "sixthman"
+    | "coy"
+    | "mip"
+    | "fmvp"
+    | "heisman";
+
+  player_id?: number | null;
+  player_name: string;
+  bbref_id?: string | null;
+  team_abbr?: string | null;
+  voting?: string | null;
+  age?: number | null;
+  summary: string;
+  coach?: string;
+  stats: AwardStats | null;
+  school: string;
+  award_team?: NBATeam | null;
+  current_team?: NBATeam | null;
+  current_team_id?: number | null;
+  created_at: string;
+};
 export type PlayerResult = {
   id: number;
   player_id: number;
@@ -605,6 +623,10 @@ export type PlayerResult = {
   avatarUrl: string;
   position: string;
   team_id: number;
+  isNFL?: boolean;
+  isMLB?: boolean;
+  isCFB?: boolean;
+  isCBB?: boolean;
   type: "player";
 };
 

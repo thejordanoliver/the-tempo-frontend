@@ -1,6 +1,6 @@
 // hooks/usePlayerCareerStats.ts
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export type PlayerStat = {
   player_id: number;
@@ -26,6 +26,8 @@ export type PlayerStat = {
   pts: number;
 };
 
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 export function usePlayerCareerStats(playerId: number) {
   const [stats, setStats] = useState<PlayerStat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export function usePlayerCareerStats(playerId: number) {
     setError(null); // reset error on new fetch
 
     axios
-      .get(`https://2bbbf4b02e0f.ngrok-free.app/api/player-stats/player/${playerId}`)
+      .get(`${BASE_URL}/api/player-stats/player/${playerId}`)
       .then((res) => {
         setStats(Array.isArray(res.data) ? res.data : []); // ensure array
         setLoading(false);
@@ -50,7 +52,7 @@ export function usePlayerCareerStats(playerId: number) {
         setLoading(false);
       });
   }, [playerId]);
-console.log(Object.keys(stats[0]));
+  console.log(Object.keys(stats[0]));
 
   return { stats, loading, error };
 }

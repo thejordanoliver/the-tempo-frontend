@@ -1,5 +1,5 @@
 import { Image, Text, View } from "react-native";
-import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeader.styles";
+import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 type Props = {
   player: {
     first_name: string;

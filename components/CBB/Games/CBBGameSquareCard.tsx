@@ -6,8 +6,8 @@ import { useRouter } from "expo-router";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useTeamRecord } from "hooks/useTeamRecords";
 import { useGameScores } from "hooks/useGameScores";
+import { useTeamRecord } from "hooks/useTeamRecords";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
@@ -17,13 +17,12 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameSquareCard.styles";
+import { getStyles } from "styles/GamecardStyles/GameSquareCardStyles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 type Props = {
   game: any;
   isDark?: boolean;
 };
-
 
 // --- Helper function to normalize API status ---
 function mapStatus(apiStatus: {
@@ -157,41 +156,37 @@ function CBBGameSquareCard({ game, isDark }: Props) {
     };
   }, [statusData]);
 
-
-
   const { headlineText } = useCBBHeadline(
     Number(homeEspnId),
     Number(awayEspnId),
     gameDateStr
   );
 
-
-      const { score: liveScore, isLive } = useGameScores(
-        "mens-college-basketball",
-        homeEspnId?.toString(),
-        awayEspnId?.toString(),
-        gameDateStr
-      );
-    const currentPeriod = liveScore?.period;
+  const { score: liveScore, isLive } = useGameScores(
+    "mens-college-basketball",
+    homeEspnId?.toString(),
+    awayEspnId?.toString(),
+    gameDateStr
+  );
+  const currentPeriod = liveScore?.period;
 
   // Dynamically resolve final state from live data
-const effectiveStatus = useMemo(() => {
-  const liveText = liveScore?.statusText?.toLowerCase() ?? "";
-  const base = mapStatus(game.status);
+  const effectiveStatus = useMemo(() => {
+    const liveText = liveScore?.statusText?.toLowerCase() ?? "";
+    const base = mapStatus(game.status);
 
-  if (liveText.includes("final")) return "Final";
-  if (liveText.includes("halftime")) return "Halftime";
-  if (
-    liveText.includes("in progress") ||
-    liveText.includes("in play") ||
-    liveText.includes("qtr") ||
-    liveText.includes("quarter")
-  )
-    return "In Play";
+    if (liveText.includes("final")) return "Final";
+    if (liveText.includes("halftime")) return "Halftime";
+    if (
+      liveText.includes("in progress") ||
+      liveText.includes("in play") ||
+      liveText.includes("qtr") ||
+      liveText.includes("quarter")
+    )
+      return "In Play";
 
-  return base;
-}, [game.status, liveScore]);
-
+    return base;
+  }, [game.status, liveScore]);
 
   // Now derive booleans reactively
   const isFinal = effectiveStatus === "Final";
@@ -201,10 +196,8 @@ const effectiveStatus = useMemo(() => {
   const isPostponed = effectiveStatus === "Postponed";
   const isHalftime = effectiveStatus === "Halftime";
 
-
-   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
+  const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
-
 
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
@@ -242,13 +235,7 @@ const effectiveStatus = useMemo(() => {
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
     }),
-    [
-      awayId,
-      awayEspnId,
-      awayRecord?.overall,
-      dark,
-      status.isLive,
-    ]
+    [awayId, awayEspnId, awayRecord?.overall, dark, status.isLive]
   );
 
   const homeTeam = useMemo(
@@ -261,13 +248,7 @@ const effectiveStatus = useMemo(() => {
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
     }),
-    [
-      homeId,
-      homeEspnId,
-      homeRecord?.overall,
-      dark,
-      status.isLive,
-    ]
+    [homeId, homeEspnId, homeRecord?.overall, dark, status.isLive]
   );
   // --- Broadcasts ---
   const { broadcasts } = useGameBroadcasts(
@@ -279,14 +260,12 @@ const effectiveStatus = useMemo(() => {
 
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-    const winnerStyle = (teamWins: boolean): TextStyle => ({
-      color: dark ? Colors.white : Colors.black,
-      opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
-    });
+  const winnerStyle = (teamWins: boolean): TextStyle => ({
+    color: dark ? Colors.white : Colors.black,
+    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+  });
 
-
-
-      const ScoreText = ({
+  const ScoreText = ({
     score,
     recordData,
     teamWins,
@@ -306,7 +285,6 @@ const effectiveStatus = useMemo(() => {
         : [styles.teamScore, winnerStyle(teamWins)];
     return <Text style={style}>{displayValue}</Text>;
   };
-
 
   // --- Helpers ---
   const formatQuarter = (period?: number | string, statusText?: string) => {
@@ -385,10 +363,7 @@ const effectiveStatus = useMemo(() => {
           style={styles.card}
         >
           <View
-            style={[
-              styles.cardWrapper,
-              { borderRightColor: Colors.darkGray },
-            ]}
+            style={[styles.cardWrapper, { borderRightColor: Colors.darkGray }]}
           >
             {/* Away Team */}
             <View style={styles.teamSection}>
@@ -396,22 +371,20 @@ const effectiveStatus = useMemo(() => {
                 <Image source={awayTeam.logo} style={styles.logo} />
                 <Text style={[styles.teamName, { color: Colors.light.text }]}>
                   {getTeamRank(awayTeam.name) && (
-                    <Text
-                      style={{ fontSize: 10, color: Colors.darkGray }}
-                    >
+                    <Text style={{ fontSize: 10, color: Colors.darkGray }}>
                       {getTeamRank(awayTeam.name)}
                     </Text>
                   )}{" "}
                   {awayTeam.code}
                 </Text>
               </View>
-            {/* Away Record / Score */}
-         <ScoreText
-        score={awayScore}
-        recordData={awayTeam.record ?? undefined}
-        teamWins={awayWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
+              {/* Away Record / Score */}
+              <ScoreText
+                score={awayScore}
+                recordData={awayTeam.record ?? undefined}
+                teamWins={awayWins}
+                showRecord={effectiveStatus === "Scheduled"}
+              />
             </View>
 
             {/* Home Team */}
@@ -420,22 +393,20 @@ const effectiveStatus = useMemo(() => {
                 <Image source={homeTeam.logo} style={styles.logo} />
                 <Text style={[styles.teamName, { color: Colors.light.text }]}>
                   {getTeamRank(homeTeam.name) && (
-                    <Text
-                      style={{ fontSize: 10, color: Colors.darkGray }}
-                    >
+                    <Text style={{ fontSize: 10, color: Colors.darkGray }}>
                       {getTeamRank(homeTeam.name)}
                     </Text>
                   )}{" "}
                   {homeTeam.code}
                 </Text>
               </View>
-               {/* Away Record / Score */}
-         <ScoreText
-        score={homeScore}
-        recordData={homeTeam.record ?? undefined}
-        teamWins={homeWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
+              {/* Away Record / Score */}
+              <ScoreText
+                score={homeScore}
+                recordData={homeTeam.record ?? undefined}
+                teamWins={homeWins}
+                showRecord={effectiveStatus === "Scheduled"}
+              />
             </View>
           </View>
 
@@ -501,12 +472,12 @@ const effectiveStatus = useMemo(() => {
                 </Text>
               </View>
               {/* Away Record / Score */}
-         <ScoreText
-        score={awayScore}
-        recordData={awayTeam.record ?? undefined}
-        teamWins={awayWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
+              <ScoreText
+                score={awayScore}
+                recordData={awayTeam.record ?? undefined}
+                teamWins={awayWins}
+                showRecord={effectiveStatus === "Scheduled"}
+              />
             </View>
 
             {/* Home Team */}
@@ -522,13 +493,13 @@ const effectiveStatus = useMemo(() => {
                   {homeTeam.code}
                 </Text>
               </View>
-             {/* Away Record / Score */}
-         <ScoreText
-        score={homeScore}
-        recordData={homeTeam.record ?? undefined}
-        teamWins={homeWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
+              {/* Away Record / Score */}
+              <ScoreText
+                score={homeScore}
+                recordData={homeTeam.record ?? undefined}
+                teamWins={homeWins}
+                showRecord={effectiveStatus === "Scheduled"}
+              />
             </View>
           </View>
 

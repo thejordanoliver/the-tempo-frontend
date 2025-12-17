@@ -1,5 +1,5 @@
-import { getStyles } from "styles/Standings.styles";
 import { Text, View, useColorScheme } from "react-native";
+import { getStyles } from "styles/StandingsStyles";
 import HeadingTwo from "../../Headings/HeadingTwo";
 import { StatusBadge } from "./StatusBadge";
 

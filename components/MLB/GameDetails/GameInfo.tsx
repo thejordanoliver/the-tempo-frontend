@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfo.styles";
+import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 
 type GameInfoProps = {
   status: "Scheduled" | "In Play" | "Final" | "Canceled" | "Postponed";
@@ -22,12 +22,8 @@ export function GameInfo({
 }: GameInfoProps) {
   const styles = getStyles(isDark);
 
-
-
   return (
     <View style={styles.container}>
-    
-
       {/* 🏀 Scheduled */}
       {status === "Scheduled" && (
         <View style={styles.infoWrapper}>
@@ -40,11 +36,9 @@ export function GameInfo({
       {/* 🕒 In Play */}
       {status === "In Play" && (
         <>
-       
-            <View style={styles.infoWrapper}>
-              {inning && <Text style={styles.date}>{inning}</Text>}
-            </View>
-       
+          <View style={styles.infoWrapper}>
+            {inning && <Text style={styles.date}>{inning}</Text>}
+          </View>
         </>
       )}
 
@@ -77,7 +71,6 @@ export function GameInfo({
       {broadcastNetworks && (
         <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}
-
     </View>
   );
 }

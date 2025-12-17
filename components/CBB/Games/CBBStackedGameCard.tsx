@@ -1,11 +1,13 @@
-import { useGameScores } from "hooks/useGameScores";
-import { getTeamLogo, teams } from "constants/teamsCBB";
-import { useRouter } from "expo-router";
-import { useCBBGameBroadcasts } from "hooks/CBBHooks/useCBBGameBroadcasts";
-import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
-import { useTeamRecord } from "hooks/useTeamRecords";
-import { memo, useMemo } from "react";
 import { Colors } from "constants/Colors";
+import { getTeamLogo, teams } from "constants/teamsCBB";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
+import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameScores } from "hooks/useGameScores";
+import { useTeamRecord } from "hooks/useTeamRecords";
+import { memo, useMemo, useState } from "react";
 import {
   Image,
   Text,
@@ -14,94 +16,129 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/StackedGameCard.styles";
+import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-type Props = {
-  game: any;
-  isDark?: boolean;
-  broadcasts?: string[];
-  loadingBroadcasts?: boolean;
-};
 
+function normalizeGameStatus(
+  gameStatus: any,
+  liveScore: any,
+  teamsResolved: boolean
+) {
+  if (!teamsResolved) return "Scheduled";
 
-// --- Helper function to normalize API status ---
-function mapStatus(apiStatus: {
-  short: number | string;
-  long?: string;
-}): string {
-  const long = apiStatus.long?.toLowerCase();
+  const long = (gameStatus?.long ?? "").toLowerCase().trim();
+  const short = (gameStatus?.short ?? "").toString().toLowerCase().trim();
+  const statusText = (liveScore?.statusText ?? "").toLowerCase().trim();
+  const detail = (liveScore?.detail ?? "").toLowerCase().trim();
 
-  // ✅ prioritize 'long' from API
-  if (long === "in play") return "In Play";
-  if (long === "finished") return "Final";
-  if (long === "scheduled") return "Scheduled";
-  if (long === "canceled") return "Canceled";
-  if (long === "delayed") return "Delayed";
-  if (long === "postponed") return "Postponed";
+  const raw = statusText || detail || long;
 
-  // fallback using numeric 'short' codes
-  const short = Number(apiStatus.short);
-  switch (short) {
-    case 1:
-      return "Scheduled";
-    case 2:
-    case 3:
-      return "Final"; // only if 'long' was missing
-    case 4:
-      return "Postponed";
-    case 5:
-      return "Delayed";
-    case 6:
-      return "Canceled";
-    default:
-      return "Scheduled";
-  }
+  if (!raw) return "Scheduled";
+
+  if (raw.includes("canceled") || raw.includes("cancelled")) return "Canceled";
+  if (raw.includes("postponed")) return "Postponed";
+  if (raw.includes("delayed")) return "Delayed";
+  if (raw.includes("halftime")) return "Halftime";
+  if (raw.includes("final") || raw.includes("aot") || short === "ft")
+    return "Final";
+
+  const livePhrases = [
+    "in progress",
+    "in play",
+    "playing",
+    "live",
+    "1st",
+    "2nd",
+    "ot",
+    "quarter",
+  ];
+  if (livePhrases.some((p) => raw.includes(p))) return "In Play";
+
+  return "Scheduled";
 }
 
-function CBBStackedGameCard({ game, isDark }: Props) {
+function CBBGameCard({ game, isDark }: { game: CBBGame; isDark?: boolean }) {
   const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+  const dark = Boolean(isDark ?? colorScheme === "dark");
   const router = useRouter();
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
-  const homeId = String(game?.teams?.home?.id);
-  const awayId = String(game?.teams?.away?.id);
-  const gameId = game?.game?.id;
+  const homeId = game?.teams?.home?.id;
+  const awayId = game?.teams?.away?.id;
+
+  // --- Date ---
+  const gameDate = game?.timestamp
+    ? new Date(game.timestamp * 1000)
+    : game?.date
+    ? new Date(game.date)
+    : null;
+
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2025 &&
+      gameDate.getMonth() === 3 &&
+      gameDate.getDate() === 7
+  );
+
+  const styles = stackedGameCardStyles(dark, isChampionship);
+
+  const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
   const { rankings } = useCBBRankings();
+
+  // --- Extract AP Top 25 ---
   const apTop25 = useMemo(() => {
     if (!rankings) return [];
     const apPoll = rankings.find((p) => p.shortName === "AP Poll");
     if (!apPoll) return [];
     return apPoll.ranks.slice(0, 25).map((r) => ({
-      name: r.team?.nickname,
+      id: r.team?.id, // <-- use team id
       rank: r.current,
     }));
   }, [rankings]);
 
-  const getTeamRank = (teamName: string) => {
-    const found = apTop25.find((t) => t.name === teamName);
+  const getTeamRank = (teamId: string | number) => {
+    const idStr = String(teamId);
+    const found = apTop25.find((t) => t.id === idStr);
     return found ? found.rank : undefined;
   };
 
-  const gameDate = useMemo(() => {
-    return game?.game?.date?.timestamp
-      ? new Date(game.game.date.timestamp * 1000)
-      : null;
-  }, [game?.game?.date?.timestamp]);
-  const gameDateStr = gameDate?.toISOString();
-
+  // --- Get Team Info from constants ---
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
+
   const getTeamName = (id?: number | string): string =>
     getTeamById(id)?.name ?? "Unknown";
 
+  const getTeamShortName = (id?: number | string): string =>
+    getTeamById(id)?.shortName ?? "";
+
+  // --- helper: shortName → fallback to full name
+  const getTeamPreferredName = (id?: number | string) => {
+    const short = getTeamShortName(id);
+    return short && short.trim() !== "" ? short : getTeamName(id);
+  };
+
+  // Use ESPN team IDs, not internal IDs
   const awayEspnId = getTeamById(awayId)?.espnID;
   const homeEspnId = getTeamById(homeId)?.espnID;
 
-  const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
-  const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
+  // ✅ ADD THIS
+  const teamsResolved = Boolean(homeEspnId && awayEspnId);
 
+  const { headlineText } = useCBBHeadline(
+    Number(homeEspnId),
+    Number(awayEspnId),
+    gameDateStr
+  );
+
+  const { score: liveScore } = useGameScores(
+    "mens-college-basketball",
+    homeEspnId?.toString(),
+    awayEspnId?.toString(),
+    gameDateStr
+  );
   // --- Game status ---
   const statusData = game?.status ?? game?.status ?? {};
 
@@ -121,6 +158,7 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       "q2",
       "q3",
       "q4",
+      "over time",
     ];
 
     const isHalftime =
@@ -129,17 +167,14 @@ function CBBStackedGameCard({ game, isDark }: Props) {
       statusData?.short?.toLowerCase?.() === "halftime";
 
     let isFinal =
-      ["final", "game finished", "ended"].some((s) => longLower.includes(s)) ||
-      short.includes("ft");
+      ["final"].some((s) => longLower.includes(s)) || short.includes("ft");
 
     // ✅ Treat "AOT" as final
     if (longLower.includes("aot") || short.includes("aot")) {
       isFinal = true;
     }
 
-    const isScheduled = ["not started", "scheduled", "upcoming"].some((s) =>
-      longLower.includes(s)
-    );
+    const isScheduled = ["scheduled"].some((s) => longLower.includes(s));
 
     // ✅ Live only if not final
     const isLive =
@@ -167,87 +202,69 @@ function CBBStackedGameCard({ game, isDark }: Props) {
     };
   }, [statusData]);
 
+  const currentPeriod = liveScore?.period;
 
-      const { score: liveScore, isLive } = useGameScores(
-        "mens-college-basketball",
-        homeEspnId?.toString(),
-        awayEspnId?.toString(),
-        gameDateStr
-      );
-    const currentPeriod = liveScore?.period;
+  // --- Helpers ---
+  const formatQuarter = (period?: number | string, statusText?: string) => {
+    if (!period && !statusText) return ""; // ← FIX
 
-  // Dynamically resolve final state from live data
-const effectiveStatus = useMemo(() => {
-  const liveText = liveScore?.statusText?.toLowerCase() ?? "";
-  const base = mapStatus(game.status);
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) return val.toUpperCase();
+      if (val.includes("halftime")) return "Halftime";
+      return val;
+    }
 
-  if (liveText.includes("final")) return "Final";
-  if (liveText.includes("halftime")) return "Halftime";
-  if (
-    liveText.includes("in progress") ||
-    liveText.includes("in play") ||
-    liveText.includes("qtr") ||
-    liveText.includes("quarter")
-  )
-    return "In Play";
+    const p = Number(period);
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
 
-  return base;
-}, [game.status, liveScore]);
+    const ot = p - 2;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  };
 
+  // Final with OT label
+  function getFinalWithQuarterLabel(period?: number, statusText?: string) {
+    if (!period && !statusText) return "Final";
 
-  // Now derive booleans reactively
+    // Use statusText if it contains OT info
+    if (statusText?.toLowerCase().includes("ot")) {
+      return `Final/${statusText.match(/OT\d*/i)?.[0]?.toUpperCase() ?? "OT"}`;
+    }
+
+    // Otherwise fallback to period number
+    if (!period || period <= 2) return "Final";
+    const ot = period - 2;
+    return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
+  }
+
+  const effectiveStatus = useMemo(() => {
+    return normalizeGameStatus(game.status, liveScore, teamsResolved);
+  }, [game.status, liveScore, teamsResolved]);
+
   const isFinal = effectiveStatus === "Final";
-  const inProgress = effectiveStatus === "In Play";
   const isCanceled = effectiveStatus === "Canceled";
   const isDelayed = effectiveStatus === "Delayed";
   const isPostponed = effectiveStatus === "Postponed";
   const isHalftime = effectiveStatus === "Halftime";
+  const inProgress = effectiveStatus === "In Play";
 
-
-   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
+  const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "cbb");
+  const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "cbb");
+  const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
 
-
-  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
-
-    const displayStatus = (() => {
-    const base =
-      liveScore?.statusText ??
-      status.long ??
-      status.short ??
-      game.status.long ??
-      game.status.short ??
-      "Scheduled";
-
-    const lower = base.toLowerCase();
-
-    if (lower === "game finished") return "Final";
-    if (lower.includes("after over")) return "Final/OT"; // ✅ Added
-    if (lower.includes("overtime")) return "OT"; // ✅ Optional, handles ESPN variant
-    if (lower.includes("postponed")) return "Postponed";
-    if (lower.includes("canceled")) return "Canceled";
-    return base;
-  })();
-
-
+  // --- Memoized team objects ---
   const awayTeam = useMemo(
     () => ({
       id: awayId,
       espnID: awayEspnId,
       name: getTeamName(awayId),
+      shortName: getTeamShortName(awayId),
       logo: getTeamLogo(awayId, dark),
       record: awayRecord?.overall ?? "0-0",
-   
     }),
-    [
-      awayId,
-      awayEspnId,
-      awayRecord?.overall,
-
-      dark,
-      status.isLive,
-    ]
+    [awayId, awayEspnId, awayRecord?.overall, dark, status.isLive]
   );
 
   const homeTeam = useMemo(
@@ -255,31 +272,29 @@ const effectiveStatus = useMemo(() => {
       id: homeId,
       espnID: homeEspnId,
       name: getTeamName(homeId),
+      shortName: getTeamShortName(homeId),
       logo: getTeamLogo(homeId, dark),
       record: homeRecord?.overall ?? "0-0",
-
     }),
-    [
-      homeId,
-      homeEspnId,
-      homeRecord?.overall,
-      dark,
-      status.isLive,
-    ]
+    [homeId, homeEspnId, homeRecord?.overall, dark, status.isLive]
   );
 
   // --- Broadcasts ---
-  const { broadcasts } = useCBBGameBroadcasts(
+  const { broadcasts } = useGameBroadcasts(
     homeTeam.name,
     awayTeam.name,
-    gameDateStr
+    gameDateStr,
+    "mens-college-basketball"
   );
+
   const broadcastText = getBroadcastDisplay(broadcasts);
 
-  const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })
-    : "";
+  const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
 
+  const formattedDate = gameDate
+    ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : "";
   const formattedTime = gameDate
     ? gameDate.toLocaleTimeString("en-US", {
         hour: "numeric",
@@ -288,41 +303,12 @@ const effectiveStatus = useMemo(() => {
       })
     : "";
 
-  const formatQuarter = (
-    short?: string | null,
-    long?: string | null
-  ): string => {
-    const val = short && short.trim() !== "" ? short : long ?? "";
-    if (!val) return "";
-    const q = val.toLowerCase();
+  const winnerStyle = (teamWins: boolean): TextStyle => ({
+    color: dark ? Colors.white : Colors.black,
+    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+  });
 
-    if (q.includes("1")) return "1st";
-    if (q.includes("2")) return "2nd";
-    if (q.includes("3")) return "3rd";
-    if (q.includes("4")) return "4th";
-    if (q.includes("ot") || q.includes("overtime")) return "OT";
-    if (q.includes("half")) return "Halftime";
-    if (q.includes("end")) return "End";
-
-    const asNumber = Number(val);
-    if (!isNaN(asNumber)) {
-      if (asNumber === 5) return "OT";
-      if (asNumber > 5) return `${asNumber - 4}OT`;
-    }
-
-    return val;
-  };
-
- 
-
-
-    const winnerStyle = (teamWins: boolean): TextStyle => ({
-      color: dark ? Colors.white : Colors.black,
-      opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
-    });
-
-
-    const ScoreText = ({
+  const ScoreText = ({
     score,
     recordData,
     teamWins,
@@ -343,124 +329,137 @@ const effectiveStatus = useMemo(() => {
     return <Text style={style}>{displayValue}</Text>;
   };
 
+  const renderStatus = () => (
+    <View style={styles.info}>
+      {isCanceled ? (
+        <Text style={styles.finalText}>Canceled</Text>
+      ) : isDelayed ? (
+        <Text style={styles.finalText}>Delayed</Text>
+      ) : isPostponed ? (
+        <Text style={styles.finalText}>Postponed</Text>
+      ) : isHalftime ? (
+        <Text style={styles.finalText}>Halftime</Text>
+      ) : isFinal ? (
+        <View>
+          <Text style={styles.finalText}>
+            {getFinalWithQuarterLabel(currentPeriod)}
+          </Text>
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      ) : inProgress ? (
+        <View>
+          <Text style={styles.date}>{formatQuarter(currentPeriod)}</Text>
+          {liveScore?.displayClock && (
+            <Text style={styles.clock}>{liveScore.displayClock}</Text>
+          )}
+        </View>
+      ) : (
+        <View>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <Text style={styles.date}>{formattedTime ?? "TBD"}</Text>
+        </View>
+      )}
 
-  // --- UI Render ---
+      {!isFinal && broadcastText && (
+        <Text style={styles.broadcast}>{broadcastText}</Text>
+      )}
+    </View>
+  );
+
+  const renderCardContent = () => (
+    <>
+      <View style={styles.cardWrapper}>
+        {/* Away Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={awayTeam.logo}
+              style={[styles.logo]}
+              accessibilityLabel={`${awayTeam.name} logo`}
+            />
+            <Text style={styles.teamName}>
+              {(() => {
+                const rank = getTeamRank(awayEspnId ?? "");
+                return rank != null ? (
+                  <Text style={styles.rank}>{rank} </Text>
+                ) : null;
+              })()}
+
+              {getTeamPreferredName(awayId)}
+            </Text>
+          </View>
+          <ScoreText
+            score={awayScore}
+            recordData={awayTeam.record ?? undefined}
+            teamWins={awayWins}
+            showRecord={
+              effectiveStatus === "Scheduled" || isCanceled || isPostponed
+            }
+          />
+        </View>
+
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={homeTeam.logo}
+              style={[styles.logo]}
+              accessibilityLabel={`${homeTeam.name} logo`}
+            />
+            <Text style={styles.teamName}>
+              {(() => {
+                const rank = getTeamRank(homeEspnId ?? "");
+                return rank != null ? (
+                  <Text style={styles.rank}>{rank} </Text>
+                ) : null;
+              })()}
+              {getTeamPreferredName(homeId)}
+            </Text>
+          </View>
+          {/* Home Team */}
+          <ScoreText
+            score={homeScore}
+            recordData={homeTeam.record ?? undefined}
+            teamWins={homeWins}
+            showRecord={
+              effectiveStatus === "Scheduled" || isCanceled || isPostponed
+            }
+          />
+        </View>
+      </View>
+      {renderStatus()}
+
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headlineText}</Text>
+    </>
+  );
+
   return (
     <TouchableOpacity
       activeOpacity={0.85}
       onPress={() =>
         router.push({
-          pathname: "/game/cfb/[game]",
+          pathname: "/game/cbb/[game]",
           params: { game: JSON.stringify(game) },
         })
       }
     >
-      <View style={styles.card}>
-        <View style={styles.cardWrapper}>
-          {/* Away Team */}
-          <View style={styles.teamSection}>
-            <View style={styles.teamWrapper}>
-              <Image source={awayTeam.logo} style={styles.logo} />
-              <Text style={styles.teamName}>
-                {" "}
-                {getTeamRank(awayTeam.name) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(awayTeam.name)}
-                  </Text>
-                )}{" "}
-                {awayTeam.name}
-              </Text>
-
-     
-            </View>
-          {/* Away Record / Score */}
-         <ScoreText
-        score={awayScore}
-        recordData={awayTeam.record ?? undefined}
-        teamWins={awayWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
-
-          </View>
-
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            <View style={styles.teamWrapper}>
-              <Image source={homeTeam.logo} style={styles.logo} />
-              <Text style={styles.teamName}>
-                {" "}
-                {getTeamRank(homeTeam.name) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(homeTeam.name)}
-                  </Text>
-                )}{" "}
-                {homeTeam.name}
-              </Text>
-       
-            </View>
-         {/* Home Record / Score */}
-         <ScoreText
-        score={homeScore}
-        recordData={homeTeam.record ?? undefined}
-        teamWins={homeWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
-
-          </View>
-        </View>
-
-        {/* Game Info */}
-        <View style={styles.info}>
-          {status.isScheduled && (
-            <>
-              <Text style={styles.date}>{formattedDate}</Text>
-              <Text
-                style={[
-                  styles.time,
-                  { color: dark ? "rgba(255,255,255, .5)" : "rgba(0,0,0,.5)" },
-                ]}
-              >
-                {formattedTime}
-              </Text>
-            </>
-          )}
-
-          {status.isLive && (
-            <>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={[styles.date, { fontSize: 14 }]}>
-                  {formatQuarter(status.short, displayStatus)}
-                </Text>
-                <View
-                  style={{
-                    height: 14,
-                    width: 1,
-                    backgroundColor: "#ccc",
-                    marginHorizontal: 4,
-                  }}
-                />
-                <Text style={styles.clock}>{liveScore?.displayClock}</Text>
-              </View>
-            </>
-          )}
-
-          {status.isHalftime && (
-            <Text style={[styles.date, { fontSize: 14 }]}>Halftime</Text>
-          )}
-          {status.isFinal && (
-            <>
-              <Text style={styles.finalText}>Final</Text>
-              <Text style={styles.dateFinal}>{formattedDate}</Text>
-            </>
-          )}
-
-          {status.isCanceled && <Text style={styles.finalText}>Cancelled</Text>}
-          {status.isDelayed && <Text style={styles.finalText}>Delayed</Text>}
-          <Text style={styles.broadcast}>{broadcastText}</Text>
-        </View>
-      </View>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }
-
-export default memo(CBBStackedGameCard);
+export default memo(CBBGameCard);

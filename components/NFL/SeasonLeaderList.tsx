@@ -2,18 +2,20 @@ import PlayerCardSkeletonList from "components/Player/PlayerCardListSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 
-import { teams as nflTeams } from "constants/teamsNFL";
+import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
 import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as nflTeams } from "constants/teamsNFL";
+import { useEffect, useRef } from "react";
 
+import PlayerCard from "components/Player/PlayerCard";
 import { FlatList, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import HeadingTwo from "../Headings/HeadingTwo";
-import PlayerCard from "./Player/PlayerCard";
 
 interface Leader {
   athleteId: string | number;
+  playerId?: number; // ✅ LOCAL DB ID
   teamId?: string | number | null;
   name: string;
   value: number;
@@ -43,6 +45,16 @@ export default function SeasonLeadersList({
 }: SeasonLeadersListProps) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
+const cacheRef = useRef<
+  Partial<Record<SeasonLeadersListProps["league"], Category[]>>
+>({});
+
+useEffect(() => {
+  if (!categories?.length) return;
+
+  cacheRef.current[league] = categories;
+}, [categories, league]);
+
 
   const leagueTeamsMap = {
     NFL: nflTeams,
@@ -74,47 +86,46 @@ export default function SeasonLeadersList({
   }
 
   return (
-    <FlatList
-      data={categories}
-      contentContainerStyle={{ paddingBottom: 100 }}
-      keyExtractor={(item) => item.categoryName}
-     renderItem={({ item }) => {
-  // 🚫 Skip categories with no leaders
-  if (!item.leaders || item.leaders.length === 0) {
-    return null;
-  }
+  <FlatList
+  data={cacheRef.current[league] ?? categories}
+  contentContainerStyle={{ paddingBottom: 100 }}
+  keyExtractor={(item) => item.categoryName}
+  renderItem={({ item }) => {
+    if (!item.leaders || item.leaders.length === 0) {
+      return null;
+    }
 
-  return (
-    <View style={styles.categoryContainer}>
-      <HeadingTwo style={{ marginBottom: 12 }}>
-        {item.categoryName} Leaders
-      </HeadingTwo>
+    return (
+      <View style={styles.categoryContainer}>
+        <HeadingTwo style={{ marginBottom: 12 }}>
+          {item.categoryName} Leaders
+        </HeadingTwo>
 
-      <View style={styles.playersList}>
-        {item.leaders.slice(0, 5).map((player) => {
-          const teamObj = teamList.find(
-            (t) => Number(t.espnID) === Number(player.teamId)
-          );
+        <View style={styles.playersList}>
+          {item.leaders.slice(0, 5).map((player) => {
+            const teamObj = teamList.find(
+              (t) => Number(t.espnID) === Number(player.teamId)
+            );
 
-          return (
-            <PlayerCard
-              key={player.athleteId}
-              id={Number(player.athleteId)}
-              name={player.name}
-              position={player.position}
-              team={teamObj?.name ?? "Unknown Team"}
-              avatarUrl={player.headshot}
-              statNumber={player.value}
-              league={league}
-            />
-          );
-        })}
+            return (
+              <PlayerCard
+                key={player.playerId ?? player.athleteId}
+                id={Number(player.playerId ?? player.athleteId)}
+                name={player.name}
+                position={player.position}
+                team={teamObj?.name ?? "Unknown Team"}
+                avatarUrl={player.headshot}
+                statNumber={player.value}
+                league={league}
+              />
+            );
+          })}
+        </View>
       </View>
-    </View>
-  );
-}}
+    );
+  }}
+/>
 
-    />
   );
 }
 
@@ -127,7 +138,11 @@ const getStyles = (isDark: boolean) =>
     },
     playersList: { gap: 12 },
     centered: { alignItems: "center", justifyContent: "center", flex: 1 },
-    skeletonList: { alignItems: "center", justifyContent: "center", paddingBottom: 100 },
+    skeletonList: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingBottom: 100,
+    },
     infoText: {
       fontFamily: Fonts.OSLIGHT,
       fontSize: 16,
