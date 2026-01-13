@@ -102,19 +102,19 @@ export default function EditFavoritesScreen() {
           teams={[
             ...teams.map(
               (t) =>
-                ({ ...t, league: "NBA", id: t.id.toString() } as Team & {
+                ({ ...t, league: "NBA", id: t.id } as Team & {
                   league: "NBA";
                 })
             ),
             ...nflteams.map(
               (t) =>
-                ({ ...t, league: "NFL", id: t.id.toString() } as Team & {
+                ({ ...t, league: "NFL", id: t.id } as Team & {
                   league: "NFL";
                 })
             ),
             ...mlbTeams.map(
               (t) =>
-                ({ ...t, league: "MLB", id: t.id.toString() } as Team & {
+                ({ ...t, league: "MLB", id: t.id } as Team & {
                   league: "MLB";
                 })
             ),
@@ -135,7 +135,7 @@ export default function EditFavoritesScreen() {
 
               .map(
                 (t) =>
-                  ({ ...t, league: "CFB", id: t.id.toString() } as Team & {
+                  ({ ...t, league: "CFB", id: t.id } as Team & {
                     league: "CFB";
                   })
               ),
@@ -143,7 +143,7 @@ export default function EditFavoritesScreen() {
             // ✅ Show all CBB teams (don’t depend on FBS map)
             ...cbbTeams.map(
               (t) =>
-                ({ ...t, league: "CBB", id: t.id.toString() } as Team & {
+                ({ ...t, league: "CBB", id: t.id } as Team & {
                   league: "CBB";
                 })
             ),
@@ -154,7 +154,7 @@ export default function EditFavoritesScreen() {
                   ({
                     ...t,
                     league: "WCBB",
-                    id: String(t.wid),
+                    id: t.wid,
                   } as Team & { league: "WCBB" })
               ),
           ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}

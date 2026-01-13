@@ -1,5 +1,5 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { LineScore, TeamLocationSection } from "components/GameDetails";
+import { LineScore, GameLocation } from "components/GameDetails";
 import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import Officials from "components/GameDetails/Officials";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
@@ -14,6 +14,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/MLBHooks/useGameDetails";
 import { useTeamRecord } from "hooks/MLBHooks/useTeamRecords";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo, useRef } from "react";
 import {
   Animated,
@@ -174,8 +175,8 @@ export default function GameDetailsScreen() {
   // 📺 Broadcasts
   // -----------------------------------------------------
   const { broadcasts } = useGameBroadcasts(
-    homeTeamData.name,
-    awayTeamData.name,
+    homeTeamData.espnID,
+    awayTeamData.espnID,
     gameDate,
     "mlb"
   );
@@ -320,7 +321,7 @@ export default function GameDetailsScreen() {
 
           <Officials officials={officials ?? []} loading={false} error={null} />
 
-          <TeamLocationSection
+          <GameLocation
             loading={false}
             error={null}
             venueImage={venue?.images?.[0]?.href}
@@ -329,6 +330,7 @@ export default function GameDetailsScreen() {
             address={homeTeamData.address}
             venueCapacity={String(homeTeamData.venueCapacity)}
             venueAttendance={String(attendance)}
+            weather={null}
           />
         </View>
       </ScrollView>

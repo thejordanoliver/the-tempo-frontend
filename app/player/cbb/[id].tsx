@@ -224,11 +224,7 @@ export default function PlayerDetailScreen() {
       {enrichedLastGame && (
         <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
           <HeadingTwo>Last Game</HeadingTwo>
-          <CBBGameCard
-            game={enrichedLastGame}
-            isDark={isDark}
-            isWomen={isWomen}
-          />
+          <CBBGameCard game={enrichedLastGame} isWomen={isWomen} />
         </View>
       )}
 
