@@ -12,9 +12,6 @@ export type Venue = {
   venueImage: any;
 };
 
-//Arenas
-import ArkansasArena from "assets/Arenas/ArkansasArena.webp";
-
 //Conference Logos
 import MountainWestConference from "assets/College_Logos/MWC.png";
 import NCAALogo from "assets/College_Logos/NCAA.png";
@@ -226,6 +223,7 @@ import WisconsinLogo from "assets/College_Logos/Wisconsin.png";
 import WyomingLogo from "assets/College_Logos/Wyoming.png";
 import WyomingLogoLight from "assets/College_Logos/WyomingLight.png";
 import AbileneChristianLogo from "../assets/College_Logos/AbileneChristian.png";
+import AlaskaAnchorageLogo from "../assets/College_Logos/AlaskaAnchorage.png";
 import AlleghenyLogo from "../assets/College_Logos/Allegheny.png";
 import AlleghenyLogoLight from "../assets/College_Logos/AlleghenyLight.png";
 import ArkansasBaptistLogo from "../assets/College_Logos/ArkansasBaptist.png";
@@ -241,6 +239,8 @@ import BobJonesLogo from "../assets/College_Logos/BobJones.png";
 import BostonUniversityLogo from "../assets/College_Logos/BostonUniversity.png";
 import BowieStateLogo from "../assets/College_Logos/BowieState.png";
 import BradleyLogo from "../assets/College_Logos/Bradley.png";
+import BrevardCollegeLogo from "../assets/College_Logos/BrevardCollege.png";
+import BrewtonParkerLogo from "../assets/College_Logos/BrewtonParker.png";
 import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
 import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
 import BrownLogo from "../assets/College_Logos/Brown.png";
@@ -248,6 +248,7 @@ import BryanTNLogo from "../assets/College_Logos/BryanTN.png";
 import CaliforniaBaptistLogo from "../assets/College_Logos/CaliforniaBaptist.png";
 import CalPolyLogo from "../assets/College_Logos/CalPoly.png";
 import CalStateNorthridgeLogo from "../assets/College_Logos/CalStateNorthridge.png";
+import CampbellsvilleLogo from "../assets/College_Logos/Campbellsville.png";
 import CanisiusLogo from "../assets/College_Logos/Canisius.png";
 import CarolinaUniversityLogo from "../assets/College_Logos/CarolinaUniversity.png";
 import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
@@ -265,6 +266,7 @@ import CornellLogo from "../assets/College_Logos/Cornell.png";
 import CreightonLogo from "../assets/College_Logos/Creighton.png";
 import CSFullertonLogo from "../assets/College_Logos/CSFullerton.png";
 import CSUBakersfieldLogo from "../assets/College_Logos/CSUBakersfield.png";
+import DakotaWesleyanLogo from "../assets/College_Logos/DakotaWesleyan.png";
 import DallasUniversityLogo from "../assets/College_Logos/DallasUniversity.png";
 import DartmouthLogo from "../assets/College_Logos/Dartmouth.png";
 import DavidsonLogo from "../assets/College_Logos/Davidson.png";
@@ -330,6 +332,7 @@ import JacksonvilleLogoLight from "../assets/College_Logos/JacksonvilleLight.png
 import JamesMadisonLogo from "../assets/College_Logos/JamesMadison.png";
 import JaxStateLogo from "../assets/College_Logos/JaxState.png";
 import JohnsonWalesRILogo from "../assets/College_Logos/JohnsonWalesRI.png";
+import KansasChristianLogo from "../assets/College_Logos/KansasChristian.png";
 import KansasCityLogo from "../assets/College_Logos/KansasCity.png";
 import KennesawStateLogo from "../assets/College_Logos/KennesawState.png";
 import KentStateLogo from "../assets/College_Logos/KentState.png";
@@ -364,6 +367,7 @@ import Mercylogo from "../assets/College_Logos/Mercy.png";
 import MercyhurstLogo from "../assets/College_Logos/Mercyhurst.png";
 import MerrimackLogo from "../assets/College_Logos/Merrimack.png";
 import MilliganLogo from "../assets/College_Logos/Milligan.png";
+import MinnesotaCrookstonLogo from "../assets/College_Logos/MinnesotaCrookston.png";
 import MisericordiaLogo from "../assets/College_Logos/Misericordia.png";
 import MississippiValleyStateLogo from "../assets/College_Logos/MississippiValleyState.png";
 import MissouriStateLogo from "../assets/College_Logos/MissouriState.png";
@@ -377,6 +381,7 @@ import MoreheadStateLogo from "../assets/College_Logos/MoreheadState.png";
 import MorehouseCollegeLogo from "../assets/College_Logos/MorehouseCollege.png";
 import MorehouseCollegeLogoLight from "../assets/College_Logos/MorehouseCollegeLight.png";
 import MorganStateLogo from "../assets/College_Logos/MorganState.png";
+import MorrisCollegeLogo from "../assets/College_Logos/MorrisCollege.png";
 import MountSaintMarys from "../assets/College_Logos/MountSt.Mary's.png";
 import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
 import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
@@ -404,6 +409,8 @@ import NorthwesternStateLogo from "../assets/College_Logos/NorthwesternState.png
 import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
 import OaklandLogo from "../assets/College_Logos/Oakland.png";
 import OhioWesleyanLogo from "../assets/College_Logos/OhioWesleyan.png";
+import OlivetLogo from "../assets/College_Logos/Olivet.png";
+import OlivetLogoLight from "../assets/College_Logos/OlivetLight.png";
 import OmahaLogo from "../assets/College_Logos/Omaha.png";
 import PacificLogo from "../assets/College_Logos/Pacific.png";
 import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
@@ -420,6 +427,7 @@ import QuinnipiacLogo from "../assets/College_Logos/Quinnipiac.png";
 import RadfordLogo from "../assets/College_Logos/Radford.png";
 import RegisLogo from "../assets/College_Logos/Regis.png";
 import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
+import RhodesLogo from "../assets/College_Logos/Rhodes.png";
 import RiderLogo from "../assets/College_Logos/Rider.png";
 import RiponLogo from "../assets/College_Logos/Ripon.png";
 import RITLogo from "../assets/College_Logos/RIT.png";
@@ -472,6 +480,7 @@ import SUNYDelhiLogo from "../assets/College_Logos/SUNYDelhi.png";
 import SUNYMaritimeLogo from "../assets/College_Logos/SUNYMaritime.png";
 import SUNYOneontaLogo from "../assets/College_Logos/SUNYOneonta.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
+import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
 import TennesseeSouthernLogo from "../assets/College_Logos/TennesseeSouthern.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
 import TexasAMCCLogo from "../assets/College_Logos/TexasA&M-CorpusChristi.png";
@@ -531,6 +540,7 @@ import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
 import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
 import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
 import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
+import WilliamPeaceLogo from "../assets/College_Logos/WilliamPeace.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
 import WinthropLogo from "../assets/College_Logos/Winthrop.png";
 import WisconsinGreenBayLogo from "../assets/College_Logos/WisconsinGreenBay.png";
@@ -541,18 +551,14 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import AlaskaAnchorageLogo from "../assets/College_Logos/AlaskaAnchorage.png";
-import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
-import BrevardCollegeLogo from "../assets/College_Logos/BrevardCollege.png";
-import WilliamPeaceLogo from "../assets/College_Logos/WilliamPeace.png";
-import DakotaWesleyanLogo from "../assets/College_Logos/DakotaWesleyan.png";
-import RhodesLogo from "../assets/College_Logos/Rhodes.png";
-import CampbellsvilleLogo from "../assets/College_Logos/Campbellsville.png";
-import MinnesotaCrookstonLogo from "../assets/College_Logos/MinnesotaCrookston.png";
+import KingTornadoLogo from "../assets/College_Logos/KingTornado.png";
+import ReinhardtLogo from "../assets/College_Logos/Reinhardt.png";
+import LaSierraLogo from "../assets/College_Logos/LaSierra.png";
 
 export const teams: CBBTeam[] = [
   {
     id: 1504,
+    wid: 7114,
     espnID: 242,
     name: "Rice",
     fullName: "Rice Owls",
@@ -573,6 +579,7 @@ export const teams: CBBTeam[] = [
 
   {
     id: 2201,
+    wid: 7267,
     espnID: 98,
     name: "Western Kentucky",
     shortName: "W Kentucky",
@@ -592,6 +599,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1823,
+    wid: 6754,
     espnID: 2046,
     name: "Austin Peay",
     fullName: "Austin Peay Governors",
@@ -610,6 +618,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2182,
+    wid: 7242,
     espnID: 2670,
     name: "VCU",
     fullName: "VCU Rams",
@@ -629,6 +638,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2053,
+    wid: 7071,
     espnID: 77,
     name: "Northwestern",
     fullName: "Northwestern Wildcats",
@@ -647,6 +657,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2045,
+    wid: 7063,
     espnID: 111,
     name: "Northeastern",
     fullName: "Northeastern Huskies",
@@ -666,6 +677,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1904,
+    wid: 6880,
     espnID: 339,
     name: "Evansville",
     fullName: "Evansville Purple Aces",
@@ -685,6 +697,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 195,
+    wid: 7040,
     espnID: 158,
     name: "Nebraska",
     fullName: "Nebraska Cornhuskers",
@@ -704,6 +717,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2171,
+    wid: 7227,
     espnID: 2439,
     name: "UNLV",
     fullName: "UNLV Rebels",
@@ -723,6 +737,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1943,
+    wid: 6932,
     espnID: 304,
     name: "Idaho State",
     fullName: "Idaho State Bengals",
@@ -741,6 +756,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2074,
+    wid: 7095,
     espnID: 2492,
     name: "Pepperdine",
     fullName: "Pepperdine Waves",
@@ -760,6 +776,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2180,
+    wid: 7238,
     espnID: 328,
     name: "Utah State",
     fullName: "Utah State Aggies",
@@ -779,6 +796,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5875,
+    wid: 7219,
     espnID: 41,
     name: "UConn",
     fullName: "UConn Huskies",
@@ -797,6 +815,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1944,
+    wid: 6935,
     espnID: 356,
     name: "Illinois",
     fullName: "Illinois Fighting Illini",
@@ -815,6 +834,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1506,
+    wid: 7286,
     espnID: 2751,
     name: "Wyoming",
     fullName: "Wyoming Cowboys",
@@ -834,6 +854,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1914,
+    wid: 6892,
     espnID: 52,
     name: "Florida State",
     fullName: "Florida State Seminoles",
@@ -852,6 +873,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1891,
+    wid: 6868,
     espnID: 2184,
     name: "Duquesne",
     fullName: "Duquesne Dukes",
@@ -871,6 +893,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 230,
+    wid: 6888,
     espnID: 2226,
     name: "FAU",
     shortName: "FAU",
@@ -890,6 +913,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3429,
+    wid: 6817,
     espnID: 2429,
     name: "Charlotte",
     fullName: "Charlotte 49ers",
@@ -909,6 +933,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 190,
+    wid: 6978,
     espnID: 288,
     name: "Lipscomb",
     fullName: "Lipscomb Bisons",
@@ -928,6 +953,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1830,
+    wid: 6769,
     espnID: 2066,
     name: "Binghamton",
     fullName: "Binghamton Bearcats",
@@ -966,6 +992,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2505,
+    wid: 7163,
     espnID: 2590,
     name: "Spring Hill",
     fullName: "Spring Hill Badgers",
@@ -1004,6 +1031,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2093,
+    wid: 7116,
     espnID: 2520,
     name: "Rider",
     fullName: "Rider Broncs",
@@ -1023,6 +1051,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2375,
+    wid: 6806,
     espnID: 108942,
     name: "Carolina University",
     fullName: "Carolina University Bruins",
@@ -1061,6 +1090,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1878,
+    wid: 6845,
     espnID: 2154,
     name: "Coppin State",
     fullName: "Coppin State Eagles",
@@ -1080,6 +1110,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2039,
+    wid: 7056,
     espnID: 153,
     name: "North Carolina",
     fullName: "North Carolina Tar Heels",
@@ -1098,6 +1129,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1910,
+    wid: 6887,
     espnID: 50,
     name: "Florida A&M",
     fullName: "Florida A&M Rattlers",
@@ -1116,6 +1148,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2035,
+    wid: 7047,
     espnID: 166,
     name: "New Mexico State",
     shortName: "New Mexico St",
@@ -1135,6 +1168,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2032,
+    wid: 7043,
     espnID: 2440,
     name: "Nevada",
     fullName: "Nevada Wolf Pack",
@@ -1154,6 +1188,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2177,
+    wid: 7232,
     espnID: 2638,
     name: "UTEP",
     fullName: "UTEP Miners",
@@ -1173,6 +1208,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1496,
+    wid: 7061,
     espnID: 249,
     name: "North Texas",
     fullName: "North Texas Mean Green",
@@ -1191,6 +1227,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1933,
+    wid: 6919,
     espnID: 62,
     name: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
@@ -1209,6 +1246,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2185,
+    wid: 7244,
     espnID: 238,
     name: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
@@ -1227,6 +1265,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2060,
+    wid: 7083,
     espnID: 197,
     name: "Oklahoma State",
     fullName: "Oklahoma State Cowboys",
@@ -1245,6 +1284,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 211,
+    wid: 6813,
     espnID: 2117,
     name: "Central Michigan",
     fullName: "Central Michigan Chippewas",
@@ -1264,6 +1304,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2079,
+    wid: 7096,
     espnID: 221,
     name: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
@@ -1283,6 +1324,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 223,
+    wid: 7262,
     espnID: 277,
     name: "West Virginia",
     fullName: "West Virginia Mountaineers",
@@ -1302,6 +1344,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2036,
+    wid: 7051,
     espnID: 315,
     name: "Niagara",
     fullName: "Niagara Purple Eagles",
@@ -1321,6 +1364,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2192,
+    wid: 7252,
     espnID: 154,
     name: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
@@ -1359,6 +1403,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1805,
+    wid: 6730,
     espnID: 2006,
     name: "Akron",
     fullName: "Akron Zips",
@@ -1377,6 +1422,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 201,
+    wid: 7413,
     espnID: 2598,
     name: "Saint Francis",
     fullName: "Saint Francis Red Flash",
@@ -1415,6 +1461,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2141,
+    wid: 7188,
     espnID: 2633,
     name: "Tennessee",
     fullName: "Tennessee Volunteers",
@@ -1434,6 +1481,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1824,
+    wid: 6757,
     espnID: 2050,
     name: "Ball State",
     code: "BALL",
@@ -1449,6 +1497,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2165,
+    wid: 7217,
     espnID: 2116,
     name: "UCF",
     fullName: "UCF Knights",
@@ -1467,6 +1516,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2117,
+    wid: 7147,
     espnID: 2569,
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
@@ -1485,6 +1535,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5782,
+    wid: 6982,
     espnID: 2347,
     name: "Louisiana Christian",
     fullName: "Louisiana Christian Wildcats",
@@ -1504,6 +1555,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2117,
+    wid: 7055,
     espnID: 2569,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
@@ -1523,6 +1575,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 7588,
+    wid: 7721,
     espnID: 2441,
     name: "New Haven",
     fullName: "New Haven Chargers",
@@ -1542,6 +1595,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2187,
+    wid: 7245,
     espnID: 261,
     name: "Vermont",
     fullName: "Vermont Catamounts",
@@ -1599,6 +1653,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2069,
+    wid: 7091,
     espnID: 279,
     name: "Pacific",
     fullName: "Pacific Tigers",
@@ -1618,6 +1673,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5628,
+    wid: 6891,
     espnID: 2229,
     name: "FIU",
     fullName: "Florida International Panthers",
@@ -1637,13 +1693,50 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1860,
+    wid: 7646,
     espnID: 3134,
     name: "Champion Christian",
     fullName: "Champion Christian Tigers",
+    shortName: "Champ Chrstn",
     code: "CHCC",
     color: "#002D62",
     secondaryColor: "#A29061",
     logo: ChampionChristianLogo,
+  },
+  {
+    id: 2486,
+    espnID: 123410,
+    name: "Kansas Christian",
+    fullName: "Kansas Christian Falcons",
+    shortName: "Kansas Chrstn",
+    code: "KCC",
+    color: "#2c4b92",
+    secondaryColor: "#e3b35a",
+    logo: KansasChristianLogo,
+  },
+  {
+    id: 7590,
+    espnID: 354,
+    name: "Olivet",
+    fullName: "Olivet Comets",
+    shortName: "Olivet",
+    code: "OLI",
+    color: "#DA291C",
+    secondaryColor: "#FFFFFF",
+    logo: OlivetLogo,
+    logoLight: OlivetLogoLight,
+  },
+  {
+    id: 2374,
+    wid: 7633,
+    espnID: 2077,
+    name: "Brewton Parker",
+    fullName: "Brewton-Parker Wildcats",
+    shortName: "Brewton Parker",
+    code: "BREW",
+    color: "#FE5000",
+    secondaryColor: "#071D49",
+    logo: BrewtonParkerLogo,
   },
   {
     id: 1859,
@@ -1657,6 +1750,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1843,
+    wid: 6786,
     espnID: 2803,
     name: "Bryant",
     fullName: "Bryant Bulldogs",
@@ -1675,6 +1769,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 204,
+    wid: 7202,
     espnID: 2649,
     name: "Toledo",
     fullName: "Toledo Rockets",
@@ -1694,6 +1789,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1966,
+    wid: 6960,
     espnID: 112358,
     name: "Long Island",
     fullName: "Long Island University Sharks",
@@ -1713,6 +1809,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1974,
+    wid: 6980,
     espnID: 299,
     name: "Long Beach State",
     fullName: "Long Beach State Beach",
@@ -1733,6 +1830,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2358,
+    wid: 6760,
     espnID: 91,
     name: "Bellarmine",
     fullName: "Bellarmine Knights",
@@ -1752,6 +1850,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2233,
+    wid: 7756,
     espnID: 3238,
     name: "Southwestern Christian",
     fullName: "Southwestern Christian Eagles",
@@ -1771,6 +1870,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2418,
+    wid: 6833,
     espnID: 3189,
     name: "Coastal Georgia",
     fullName: "Coastal Georgia Mariner",
@@ -1790,6 +1890,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2085,
+    wid: 7106,
     espnID: 2509,
     name: "Purdue",
     fullName: "Purdue Boilermakers",
@@ -1808,6 +1909,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2073,
+    wid: 7093,
     espnID: 213,
     name: "Penn State",
     fullName: "Penn State Nittany Lions",
@@ -1826,6 +1928,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2048,
+    wid: 7066,
     espnID: 2459,
     name: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
@@ -1844,6 +1947,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1894,
+    wid: 6872,
     espnID: 2197,
     name: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
@@ -1862,6 +1966,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 221,
+    wid: 7210,
     espnID: 5,
     name: "UAB",
     fullName: "UAB Blazers",
@@ -1880,6 +1985,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1806,
+    wid: 6731,
     espnID: 2010,
     name: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
@@ -1899,6 +2005,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2006,
+    wid: 7020,
     espnID: 142,
     name: "Missouri",
     fullName: "Missouri Tigers",
@@ -1916,6 +2023,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1976,
+    wid: 6984,
     espnID: 2348,
     name: "Louisiana Tech",
     shortName: "LA Tech",
@@ -1935,6 +2043,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2003,
+    wid: 7015,
     espnID: 135,
     name: "Minnesota",
     fullName: "Minnesota Golden Gophers",
@@ -1954,6 +2063,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1816,
+    wid: 6745,
     espnID: 9,
     name: "Arizona State",
     fullName: "Arizona State Sun Devils",
@@ -1972,6 +2082,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2046,
+    wid: 7064,
     espnID: 2464,
     name: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
@@ -1991,6 +2102,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1919,
+    wid: 6895,
     espnID: 278,
     name: "Fresno State",
     fullName: "Fresno State Bulldogs",
@@ -2009,6 +2121,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1847,
+    wid: 6795,
     espnID: 13,
     name: "Cal Poly",
     fullName: "Cal Poly Mustangs",
@@ -2027,6 +2140,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2110,
+    wid: 7292,
     espnID: 23,
     name: "San José State",
     fullName: "San José State Spartans",
@@ -2045,6 +2159,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1995,
+    wid: 7010,
     espnID: 127,
     name: "Michigan State",
     fullName: "Michigan State Spartans",
@@ -2064,6 +2179,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2202,
+    wid: 7268,
     espnID: 2711,
     name: "Western Michigan",
     fullName: "Western Michigan Broncos",
@@ -2082,6 +2198,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1896,
+    wid: 6874,
     espnID: 2199,
     name: "Eastern Michigan",
     fullName: "Eastern Michigan Eagles",
@@ -2101,6 +2218,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1895,
+    wid: 6873,
     espnID: 2198,
     name: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
@@ -2120,6 +2238,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2061,
+    wid: 7084,
     espnID: 295,
     name: "Old Dominion",
     fullName: "Old Dominion Monarchs",
@@ -2138,6 +2257,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2190,
+    wid: 7248,
     espnID: 259,
     name: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
@@ -2157,6 +2277,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1983,
+    wid: 6994,
     espnID: 269,
     name: "Marquette",
     fullName: "Marquette Golden Eagles",
@@ -2176,6 +2297,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 214,
+    wid: 6909,
     espnID: 2253,
     name: "Grand Canyon",
     fullName: "Grand Canyon Lopes",
@@ -2196,6 +2318,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 191,
+    wid: 6987,
     espnID: 2350,
     name: "Loyola Chicago",
     fullName: "Loyola Chicago Ramblers",
@@ -2233,6 +2356,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1503,
+    wid: 6988,
     espnID: 2352,
     name: "Loyola Maryland",
     fullName: "Loyola Maryland Greyhounds",
@@ -2252,6 +2376,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3382,
+    wid: 6989,
     espnID: 2351,
     name: "Loyola Marymount",
     fullName: "Loyola Marymount Lions",
@@ -2271,6 +2396,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1489,
+    wid: 6804,
     espnID: 2099,
     name: "Canisius",
     fullName: "Canisius Golden Griffins",
@@ -2290,6 +2416,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1499,
+    wid: 6898,
     espnID: 2244,
     name: "George Mason",
     fullName: "George Mason Patriots",
@@ -2309,6 +2436,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1890,
+    wid: 6867,
     espnID: 150,
     name: "Duke",
     fullName: "Duke Blue Devils",
@@ -2329,6 +2457,7 @@ export const teams: CBBTeam[] = [
 
   {
     id: 2130,
+    wid: 7128,
     espnID: 2608,
     name: "Saint Mary's",
     fullName: "Saint Mary's Gaels",
@@ -2349,6 +2478,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2140,
+    wid: 7185,
     espnID: 218,
     name: "Temple",
     fullName: "Temple Owls",
@@ -2368,6 +2498,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1959,
+    wid: 6954,
     espnID: 2305,
     name: "Kansas",
     fullName: "Kansas Jayhawks",
@@ -2386,6 +2517,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2143,
+    wid: 7187,
     espnID: 2635,
     name: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
@@ -2404,6 +2536,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 189,
+    wid: 6940,
     espnID: 84,
     name: "Indiana",
     fullName: "Indiana Hoosiers",
@@ -2423,6 +2556,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5566,
+    wid: 7156,
     espnID: 88,
     name: "Southern Indiana",
     fullName: "Southern Indiana Screaming Eagles",
@@ -2442,6 +2576,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1570,
+    wid: 7142,
     espnID: 2561,
     name: "Siena",
     fullName: "Siena Saints",
@@ -2461,6 +2596,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 233,
+    wid: 6913,
     espnID: 2261,
     name: "Hampton",
     fullName: "Hampton Pirates",
@@ -2480,6 +2616,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 181,
+    wid: 6838,
     espnID: 38,
     name: "Colorado",
     fullName: "Colorado Buffaloes",
@@ -2498,6 +2635,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 202,
+    wid: 7181,
     espnID: 2628,
     name: "TCU",
     fullName: "TCU Horned Frogs",
@@ -2517,6 +2655,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 176,
+    wid: 6733,
     espnID: 333,
     name: "Alabama",
     fullName: "Alabama Crimson Tide",
@@ -2536,6 +2675,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2058,
+    wid: 7080,
     espnID: 194,
     name: "Ohio State",
     fullName: "Ohio State Buckeyes",
@@ -2555,6 +2695,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2055,
+    wid: 7072,
     espnID: 87,
     name: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
@@ -2574,6 +2715,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1924,
+    wid: 6469,
     espnID: 61,
     name: "Georgia",
     fullName: "Georgia Bulldogs",
@@ -2592,6 +2734,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2065,
+    wid: 7089,
     espnID: 2483,
     name: "Oregon",
     fullName: "Oregon Ducks",
@@ -2611,6 +2754,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2144,
+    wid: 7190,
     espnID: 245,
     name: "Texas A&M",
     fullName: "Texas A&M Aggies",
@@ -2630,6 +2774,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2145,
+    wid: 7191,
     espnID: 357,
     name: "Texas A&M-Corpus Christi",
     fullName: "Texas A&M-Corpus Christi Islanders",
@@ -2649,6 +2794,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1909,
+    wid: 6889,
     espnID: 57,
     name: "Florida",
     fullName: "Florida Gators",
@@ -2668,6 +2814,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2181,
+    wid: 7240,
     espnID: 254,
     name: "Utah",
     fullName: "Utah Utes",
@@ -2687,6 +2834,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1981,
+    wid: 6992,
     espnID: 2363,
     name: "Manhattan",
     fullName: "Manhattan Jaspers",
@@ -2707,6 +2855,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1994,
+    wid: 7011,
     espnID: 130,
     name: "Michigan",
     fullName: "Michigan Wolverines",
@@ -2725,6 +2874,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1870,
+    wid: 6841,
     espnID: 36,
     name: "Colorado State",
     fullName: "Colorado State Rams",
@@ -2743,6 +2893,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2059,
+    wid: 7082,
     espnID: 201,
     name: "Oklahoma",
     fullName: "Oklahoma Sooners",
@@ -2762,6 +2913,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1825,
+    wid: 6759,
     espnID: 239,
     name: "Baylor",
     fullName: "Baylor Bears",
@@ -2781,6 +2933,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1892,
+    wid: 6869,
     espnID: 151,
     name: "East Carolina",
     fullName: "East Carolina Pirates",
@@ -2799,6 +2952,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 194,
+    wid: 7037,
     espnID: 152,
     name: "NC State",
     fullName: "NC State Wolfpack",
@@ -2817,6 +2971,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2172,
+    wid: 7228,
     espnID: 30,
     name: "USC",
     fullName: "USC Trojans",
@@ -2836,6 +2991,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1993,
+    wid: 7008,
     espnID: 2390,
     name: "Miami",
     fullName: "Miami Hurricanes",
@@ -2855,6 +3011,7 @@ export const teams: CBBTeam[] = [
 
   {
     id: 1829,
+    wid: 6768,
     espnID: 2065,
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
@@ -2912,6 +3069,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2214,
+    wid: 7283,
     espnID: 275,
     name: "Wisconsin",
     fullName: "Wisconsin Badgers",
@@ -2930,6 +3088,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1945,
+    wid: 6936,
     espnID: 2287,
     name: "Illinois State",
     fullName: "Illinois State Redbirds",
@@ -2948,6 +3107,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 177,
+    wid: 6748,
     espnID: 8,
     name: "Arkansas",
     fullName: "Arkansas Razorbacks",
@@ -2956,10 +3116,8 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#ffffff",
     logo: ArkansasLogo,
     logoLight: ArkansasLogoLight,
-    coach: "Vacant",
     location: "Fayetteville, AR",
     city: "Fayetteville",
-    venueImage: ArkansasArena,
     venueName: "Bud Walton Arena",
     address: "1270 W Leroy Pond Dr, Fayetteville, AR 72701",
     venueCapacity: "19,368",
@@ -2969,6 +3127,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3347,
+    wid: 6747,
     espnID: 2027,
     name: "Arkansas Baptist",
     shortName: "Ark Baptist",
@@ -2980,6 +3139,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6646,
+    wid: 6946,
     espnID: 294,
     name: "Jacksonville",
     fullName: "Jacksonville Dolphins",
@@ -2999,6 +3159,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1865,
+    wid: 6825,
     espnID: 2132,
     name: "Cincinnati",
     fullName: "Cincinnati Bearcats",
@@ -3018,6 +3179,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1964,
+    wid: 6957,
     espnID: 96,
     name: "Kentucky",
     fullName: "Kentucky Wildcats",
@@ -3037,6 +3199,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1495,
+    wid: 7007,
     espnID: 193,
     name: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
@@ -3055,6 +3218,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2062,
+    wid: 7086,
     espnID: 145,
     name: "Ole Miss",
     fullName: "Ole Miss Rebels",
@@ -3074,6 +3238,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2157,
+    wid: 7206,
     espnID: 2653,
     name: "Troy",
     fullName: "Troy Trojans",
@@ -3105,6 +3270,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1938,
+    wid: 5540,
     espnID: 248,
     name: "Houston",
     fullName: "Houston Cougars",
@@ -3115,6 +3281,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 218,
+    wid: 7153,
     espnID: 58,
     name: "South Florida",
     fullName: "South Florida Bulls",
@@ -3125,6 +3292,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1841,
+    wid: 6756,
     espnID: 252,
     name: "BYU",
     fullName: "BYU Cougars",
@@ -3136,6 +3304,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1856,
+    wid: 6811,
     espnID: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
@@ -3147,6 +3316,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1950,
+    wid: 6943,
     espnID: 2294,
     name: "Iowa",
     fullName: "Iowa Hawkeyes",
@@ -3162,6 +3332,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 200,
+    wid: 7151,
     espnID: 2571,
     name: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
@@ -3173,6 +3344,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1985,
+    wid: 6996,
     espnID: 120,
     name: "Maryland",
     fullName: "Maryland Terrapins",
@@ -3187,6 +3359,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1845,
+    wid: 6789,
     espnID: 2084,
     name: "Buffalo",
     fullName: "Buffalo Bulls",
@@ -3197,6 +3370,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1836,
+    wid: 6776,
     espnID: 103,
     name: "Boston College",
     fullName: "Boston College Eagles",
@@ -3208,6 +3382,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1837,
+    wid: 6777,
     espnID: 104,
     name: "Boston University",
     fullName: "Boston University Terriers",
@@ -3220,6 +3395,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2096,
+    wid: 7120,
     espnID: 164,
     name: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
@@ -3234,6 +3410,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1813,
+    wid: 6742,
     espnID: 2026,
     name: "App State",
     fullName: "App State Mountaineers",
@@ -3244,6 +3421,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2029,
+    wid: 7039,
     espnID: 2426,
     name: "Navy",
     fullName: "Navy Midshipmen",
@@ -3254,6 +3432,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1884,
+    wid: 6859,
     espnID: 48,
     name: "Delaware",
     fullName: "Delaware Blue Hens",
@@ -3264,6 +3443,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2189,
+    wid: 7247,
     espnID: 258,
     name: "Virginia",
     fullName: "Virginia Cavaliers",
@@ -3275,6 +3455,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 243,
+    wid: 7138,
     espnID: 2547,
     name: "Seattle U",
     fullName: "Seattle U Redhawks",
@@ -3286,6 +3467,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6489,
+    wid: 7115,
     espnID: 257,
     name: "Richmond",
     fullName: "Richmond Spiders",
@@ -3297,6 +3479,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1804,
+    wid: 6729,
     espnID: 2005,
     name: "Air Force",
     fullName: "Air Force Falcons",
@@ -3307,6 +3490,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2049,
+    wid: 7067,
     espnID: 2460,
     name: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
@@ -3317,6 +3501,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 209,
+    wid: 6793,
     espnID: 2463,
     name: "Cal State Northridge",
     fullName: "Cal State Northridge Matadors",
@@ -3326,7 +3511,20 @@ export const teams: CBBTeam[] = [
     logo: CalStateNorthridgeLogo,
   },
   {
+    id: 2090,
+    wid: 6793,
+    espnID: 2890,
+    name: "Reinhardt",
+    fullName: "Reinhardt Eagles",
+    shortName: "Reinhardt",
+    code: "RHDT",
+    color: "#002E5D",
+    secondaryColor: "#EAAA00",
+    logo: ReinhardtLogo,
+  },
+  {
     id: 1951,
+    wid: 6944,
     espnID: 66,
     name: "Iowa State",
     fullName: "Iowa State Cyclones",
@@ -3337,6 +3535,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2118,
+    wid: 7122,
     espnID: 2546,
     name: "SE Missouri State",
     fullName: "Southeast Missouri State Redhawks",
@@ -3348,6 +3547,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2166,
+    wid: 7218,
     espnID: 26,
     name: "UCLA",
     fullName: "UCLA Bruins",
@@ -3356,18 +3556,13 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#f2a900",
     logo: UCLALogo,
     logoLight: UCLALogoLight,
-    coach: "Vacant",
-    location: "Pasadena, CA",
-    city: "Pasadena",
-    venueName: "Rose Bowl",
-    address: "1001 Rose Bowl Dr, Pasadena, CA 91103",
-    venueCapacity: "88,565",
     established: 1919,
     latitude: 34.1613,
     longitude: -118.1675,
   },
   {
     id: 1838,
+    wid: 6779,
     espnID: 189,
     name: "Bowling Green",
     fullName: "Bowling Green Falcons",
@@ -3378,6 +3573,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2108,
+    wid: 7132,
     espnID: 21,
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
@@ -3429,6 +3625,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 237,
+    wid: 6995,
     espnID: 276,
     name: "Marshall",
     fullName: "Marshall Thundering Herd",
@@ -3503,6 +3700,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2363,
+    wid: 7215,
     espnID: 28,
     name: "UC San Diego",
     fullName: "UC San Diego Tritons",
@@ -3567,6 +3765,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 247,
+    wid: 7196,
     espnID: 326,
     name: "Texas State",
     fullName: "Texas State Bobcats",
@@ -3587,6 +3786,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2018,
+    wid: 7029,
     espnID: 2415,
     name: "Morgan State",
     fullName: "Morgan State Bears",
@@ -3597,6 +3797,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2057,
+    wid: 7077,
     espnID: 195,
     name: "Ohio",
     fullName: "Ohio Bobcats",
@@ -3607,6 +3808,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1954,
+    wid: 6948,
     espnID: 256,
     name: "JMU",
     fullName: "James Madison Dukes",
@@ -3617,6 +3819,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1999,
+    wid: 7012,
     espnID: 2393,
     name: "Middle Tennessee",
     shortName: "Mid Tenn",
@@ -3628,6 +3831,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1822,
+    wid: 6753,
     espnID: 2,
     name: "Auburn",
     fullName: "Auburn Tigers",
@@ -3674,6 +3878,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1498,
+    wid: 7152,
     espnID: 233,
     name: "South Dakota",
     fullName: "South Dakota Coyotes",
@@ -3794,6 +3999,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2112,
+    wid: 7139,
     espnID: 2550,
     name: "Seton Hall",
     fullName: "Seton Hall Pirates",
@@ -3813,6 +4019,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1906,
+    wid: 6882,
     espnID: 2217,
     name: "Fairfield",
     fullName: "Fairfield Stags",
@@ -3927,6 +4134,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6490,
+    wid: 7127,
     espnID: 2603,
     name: "Saint Joseph's",
     fullName: "Saint Joseph's Hawks",
@@ -4022,6 +4230,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1968,
+    wid: 6963,
     espnID: 2325,
     name: "La Salle",
     fullName: "La Salle Explorers",
@@ -4168,6 +4377,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2116,
+    wid: 7149,
     espnID: 2579,
     name: "South Carolina",
     fullName: "South Carolina Gamecocks",
@@ -4204,6 +4414,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 7578,
+    wid: 6905,
     espnID: 111179,
     name: "Georgian Court",
     shortName: "Georgian Court",
@@ -4279,6 +4490,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2146,
+    wid: 7197,
     espnID: 2641,
     name: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
@@ -4334,6 +4546,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 203,
+    wid: 7194,
     espnID: 251,
     name: "Texas",
     fullName: "Texas Longhorns",
@@ -4371,6 +4584,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2137,
+    wid: 7180,
     espnID: 183,
     name: "Syracuse",
     fullName: "Syracuse Orange",
@@ -4474,6 +4688,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2195,
+    wid: 7257,
     espnID: 265,
     name: "Washington State",
     fullName: "Washington State Cougars",
@@ -4567,6 +4782,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1835,
+    wid: 6775,
     espnID: 68,
     name: "Boise State",
     fullName: "Boise State Broncos",
@@ -4585,6 +4801,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2193,
+    wid: 7258,
     espnID: 264,
     name: "Washington",
     fullName: "Washington Huskies",
@@ -4622,6 +4839,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1967,
+    wid: 6961,
     espnID: 99,
     name: "LSU",
     fullName: "LSU Tigers",
@@ -4658,6 +4876,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 180,
+    wid: 6829,
     espnID: 228,
     name: "Clemson",
     fullName: "Clemson Tigers",
@@ -4787,6 +5006,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1861,
+    wid: 6816,
     espnID: 232,
     name: "Charleston",
     fullName: "Charleston Cougars",
@@ -4808,6 +5028,7 @@ export const teams: CBBTeam[] = [
     id: 1490,
     espnID: 2110,
     name: "Central Arkansas",
+    shortName: "C Arkansas",
     fullName: "Central Arkansas Bears",
     code: "CARK",
     color: "#4f2d7f",
@@ -4821,6 +5042,45 @@ export const teams: CBBTeam[] = [
     established: 1907,
     latitude: 35.0797,
     longitude: -92.4421,
+  },
+  {
+    id: 2446,
+    espnID: 3167,
+    name: "La Sierra",
+    shortName: "La Sierra",
+    fullName: "La Sierra Golden Eagles",
+    code: "LSU",
+    color: "#0A4882",
+    secondaryColor: "#B9975B",
+    logo: LaSierraLogo,
+    location: "Riverside, CA",
+    city: "Riverside",
+    venueName: "Zamperini Court",
+    address: "4500 Riverwalk Pkwy, Riverside, CA 92505",
+    venueCapacity: "1,500",
+    established: 1922,
+    latitude: 33.9156,
+    longitude: -117.4874,
+  },
+  {
+    id: 6220,
+    wid: 6959,
+    espnID: 2312,
+    name: "King (TN)",
+    shortName: "King (TN)",
+    fullName: "King (TN) Tornado",
+    code: "KNG",
+    color: "#1A428A",
+    secondaryColor: "#CF102D",
+    logo: KingTornadoLogo,
+    location: "Bristol, TN",
+    city: "Bristol",
+    venueName: "Student Center Complex",
+    address: "1350 King College Rd, Bristol, TN 37620",
+    venueCapacity: "1,200",
+    established: 1867,
+    latitude: 36.5473,
+    longitude: -82.4503,
   },
   {
     id: 2200,
@@ -4914,6 +5174,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2191,
+    wid: 7251,
     espnID: 2681,
     name: "Wagner",
     fullName: "Wagner Seahawks",
@@ -4931,6 +5192,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2047,
+    wid: 7065,
     espnID: 2458,
     name: "Northern Colorado",
     fullName: "Northern Colorado Bears",
@@ -5087,6 +5349,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1809,
+    wid: 6737,
     espnID: 2016,
     name: "Alcorn State",
     fullName: "Alcorn State Braves",
@@ -5281,7 +5544,6 @@ export const teams: CBBTeam[] = [
     logo: EasternWashingtonLogo,
     logoLight: EasternWashingtonLogoLight,
   },
-
   {
     id: 3299,
     espnID: 2886,
@@ -5291,6 +5553,17 @@ export const teams: CBBTeam[] = [
     color: "#15223B",
     secondaryColor: "#ffffffff",
     logo: NorthwoodLogo,
+  },
+  {
+    id: 3291,
+    espnID: 571,
+    name: "Morris College",
+    fullName: "Morris College Hornets",
+    shortName: "Morris",
+    code: "MRRS",
+    color: "#0032A0",
+    secondaryColor: "#FFC72C",
+    logo: MorrisCollegeLogo,
   },
   {
     id: 3274,
@@ -5325,6 +5598,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2218,
+    wid: 7289,
     espnID: 2754,
     name: "Youngstown State",
     shortName: "Youngstown St",
@@ -5347,6 +5621,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2008,
+    wid: 7019,
     espnID: 2623,
     name: "Missouri State",
     shortName: "Missouri St",
@@ -5358,6 +5633,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2215,
+    wid: 7284,
     espnID: 2747,
     name: "Wofford",
     fullName: "Wofford Terriers",
@@ -5429,7 +5705,6 @@ export const teams: CBBTeam[] = [
     color: "#00205b",
     secondaryColor: "#13b5ea",
     logo: VillanovaLogo,
-    coach: "Kyle Neptune",
     location: "Villanova, PA",
     city: "Villanova",
     venueName: "Finneran Pavilion",
@@ -5441,6 +5716,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2120,
+    wid: 7155,
     espnID: 79,
     name: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
@@ -5476,6 +5752,24 @@ export const teams: CBBTeam[] = [
     longitude: -76.606,
   },
   {
+    id: 6228,
+    espnID: 128342,
+    name: "Notre Dame (MD)",
+    fullName: "Notre Dame (MD) Gators",
+    code: "NDMD",
+    color: "#FFC229",
+    secondaryColor: "#000",
+    logo: TowsonLogo,
+    location: "Towson, MD",
+    city: "Towson",
+    venueName: "SECU Arena",
+    address: "8000 York Rd, Towson, MD 21252",
+    venueCapacity: "5,200",
+    established: 1866,
+    latitude: 39.3936,
+    longitude: -76.606,
+  },
+  {
     id: 1844,
     espnID: 2083,
     name: "Bucknell",
@@ -5495,6 +5789,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2209,
+    wid: 7274,
     espnID: 2729,
     name: "William & Mary",
     fullName: "William & Mary Tribe",
@@ -5587,6 +5882,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 248,
+    wid: 7233,
     espnID: 292,
     name: "UT Rio Grande Valley",
     fullName: "UT Rio Grande Valley Vaqueros",
@@ -5624,25 +5920,24 @@ export const teams: CBBTeam[] = [
     longitude: -97.113,
   },
   {
-  id: 7562,
-  espnID: 1, 
-  name: "Alaska Anchorage",
-  fullName: "Alaska Anchorage Seawolves",
-  shortName: "AK-Anchorage",
-  code: "UAA",
-  color: "#00583F",           
-  secondaryColor: "#F9B612",  
-  logo: AlaskaAnchorageLogo,
-  location: "Anchorage, AK",
-  city: "Anchorage",
-  venueName: "Alaska Airlines Center",
-  address: "3550 Providence Dr, Anchorage, AK 99508",
-  venueCapacity: "5,000",
-  established: 1977,
-  latitude: 61.1876,
-  longitude: -149.8211,
-}
-,
+    id: 7562,
+    espnID: 1,
+    name: "Alaska Anchorage",
+    fullName: "Alaska Anchorage Seawolves",
+    shortName: "AK-Anchorage",
+    code: "UAA",
+    color: "#00583F",
+    secondaryColor: "#F9B612",
+    logo: AlaskaAnchorageLogo,
+    location: "Anchorage, AK",
+    city: "Anchorage",
+    venueName: "Alaska Airlines Center",
+    address: "3550 Providence Dr, Anchorage, AK 99508",
+    venueCapacity: "5,000",
+    established: 1977,
+    latitude: 61.1876,
+    longitude: -149.8211,
+  },
   {
     id: 1965,
     espnID: 3077,
@@ -5663,6 +5958,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2025,
+    wid: 7065,
     espnID: 2448,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
@@ -5719,6 +6015,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1493,
+    wid: 6947,
     espnID: 55,
     name: "Jax State",
     fullName: "Jacksonville State Gamecocks",
@@ -5737,6 +6034,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2054,
+    wid: 7070,
     espnID: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
@@ -5755,6 +6053,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2142,
+    wid: 7186,
     espnID: 2634,
     name: "Tennessee State",
     fullName: "Tennessee State Tigers",
@@ -5774,6 +6073,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2013,
+    wid: 7024,
     espnID: 147,
     name: "Montana State",
     fullName: "Montana State Bobcats",
@@ -5792,6 +6092,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2042,
+    wid: 7058,
     espnID: 2449,
     name: "North Dakota St",
     fullName: "North Dakota State Bison",
@@ -5810,6 +6111,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2359,
+    wid: 6818,
     espnID: 236,
     name: "Chattanooga",
     fullName: "Chattanooga Mocs",
@@ -5828,6 +6130,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 224,
+    wid: 6792,
     espnID: 2239,
     name: "Cal State Fullerton",
     fullName: "Cal State Fullerton Titans",
@@ -5847,6 +6150,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 225,
+    wid: 6798,
     espnID: 2934,
     name: "Cal State Bakersfield",
     fullName: "Cal State Bakersfield Roadrunners",
@@ -5858,6 +6162,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2091,
+    wid: 7113,
     espnID: 227,
     name: "Rhode Island",
     fullName: "Rhode Island Rams",
@@ -5910,6 +6215,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1916,
+    wid: 6893,
     espnID: 2230,
     name: "Fordham",
     fullName: "Fordham Rams",
@@ -5931,6 +6237,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2101,
+    wid: 7125,
     espnID: 16,
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
@@ -5941,6 +6248,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 259,
+    wid: 6925,
     espnID: 2277,
     name: "Houston Christian",
     fullName: "Houston Christian Huskies",
@@ -5962,6 +6270,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6663,
+    wid: 7045,
     espnID: 160,
     name: "New Hampshire",
     fullName: "New Hampshire Wildcats",
@@ -5972,6 +6281,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 239,
+    wid: 7049,
     espnID: 2443,
     name: "New Orleans",
     fullName: "New Orleans Privateers",
@@ -5983,6 +6293,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 206,
+    wid: 7285,
     espnID: 2750,
     name: "Wright State",
     fullName: "Wright State Raiders",
@@ -6005,6 +6316,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 229,
+    wid: 6870,
     espnID: 2193,
     name: "East Tennessee State",
     fullName: "East Tennessee State Buccaneers",
@@ -6016,6 +6328,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2038,
+    wid: 7053,
     espnID: 2453,
     name: "North Alabama",
     fullName: "North Alabama Lions",
@@ -6026,6 +6339,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2379,
+    wid: 7239,
     espnID: 3101,
     name: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
@@ -6036,6 +6350,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2016,
+    wid: 7028,
     espnID: 2413,
     name: "Morehead State",
     fullName: "Morehead State Eagles",
@@ -6046,6 +6361,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5801,
+    wid: 7016,
     espnID: 111902,
     name: "Misericordia",
     fullName: "Misericordia Cougars",
@@ -6056,6 +6372,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 266,
+    wid: 7725,
     espnID: 2822,
     name: "North Greenville",
     fullName: "North Greenville Crusaders",
@@ -6067,6 +6384,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2011,
+    wid: 7022,
     espnID: 2405,
     name: "Monmouth",
     fullName: "Monmouth Hawks",
@@ -6077,6 +6395,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2004,
+    wid: 7017,
     espnID: 2400,
     name: "Mississippi Valley St",
     fullName: "Mississippi Valley State Delta Devils",
@@ -6089,6 +6408,7 @@ export const teams: CBBTeam[] = [
 
   {
     id: 1819,
+    wid: 6751,
     espnID: 3166,
     name: "Arlington Baptist",
     fullName: "Arlington Baptist Patriots",
@@ -6122,6 +6442,7 @@ export const teams: CBBTeam[] = [
 
   {
     id: 274,
+    wid: 7791,
     espnID: 2848,
     name: "Western Oregon",
     fullName: "Western Oregon Wolves",
@@ -6131,6 +6452,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1992,
+    wid: 7006,
     espnID: 2771,
     name: "Merrimack",
     fullName: "Merrimack Warriors",
@@ -6142,6 +6464,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 184,
+    wid: 6856,
     espnID: 2168,
     name: "Dayton",
     fullName: "Dayton Flyers",
@@ -6154,6 +6477,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2125,
+    wid: 7164,
     espnID: 179,
     name: "St. Bonaventure",
     fullName: "St. Bonaventure Bonnies",
@@ -6166,6 +6490,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1502,
+    wid: 7220,
     espnID: 82,
     name: "UIC",
     fullName: "UIC Flames",
@@ -6177,6 +6502,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1839,
+    wid: 6780,
     espnID: 71,
     name: "Bradley",
     fullName: "Bradley Braves",
@@ -6188,6 +6514,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1982,
+    wid: 6993,
     espnID: 2368,
     name: "Marist",
     fullName: "Marist Red Foxes",
@@ -6198,6 +6525,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 186,
+    wid: 6900,
     espnID: 46,
     name: "Georgetown",
     fullName: "Georgetown Hoyas",
@@ -6208,6 +6536,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2102,
+    wid: 7126,
     espnID: 2529,
     name: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
@@ -6218,6 +6547,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 178,
+    wid: 6790,
     espnID: 2086,
     name: "Butler",
     fullName: "Butler Bulldogs",
@@ -6228,6 +6558,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 183,
+    wid: 6854,
     espnID: 2166,
     name: "Davidson",
     fullName: "Davidson Wildcats",
@@ -6238,6 +6569,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1885,
+    wid: 6858,
     espnID: 2169,
     name: "Delaware State",
     fullName: "Delaware State Hornets",
@@ -6248,6 +6580,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2212,
+    wid: 7280,
     espnID: 2737,
     name: "Winthrop",
     fullName: "Winthrop Eagles",
@@ -6269,6 +6602,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2012,
+    wid: 7023,
     espnID: 149,
     name: "Montana",
     fullName: "Montana Grizzlies",
@@ -6280,6 +6614,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 228,
+    wid: 6865,
     espnID: 2181,
     name: "Drake",
     fullName: "Drake Bulldogs",
@@ -6290,6 +6625,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2135,
+    wid: 7176,
     espnID: 56,
     name: "Stetson",
     fullName: "Stetson Hatters",
@@ -6434,6 +6770,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2083,
+    wid: 7102,
     espnID: 2504,
     name: "Prairie View A&M",
     fullName: "Prairie View A&M Panthers",
@@ -6475,6 +6812,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 300,
+    wid: 7133,
     espnID: 301,
     name: "San Diego",
     fullName: "San Diego Toreros",
@@ -6626,6 +6964,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 187,
+    wid: 6915,
     espnID: 108,
     name: "Harvard",
     fullName: "Harvard Crimson",
@@ -6636,6 +6975,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2084,
+    wid: 7104,
     espnID: 163,
     name: "Princeton",
     fullName: "Princeton Tigers",
@@ -6646,6 +6986,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2072,
+    wid: 7094,
     espnID: 219,
     name: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
@@ -6688,6 +7029,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1907,
+    wid: 6883,
     espnID: 161,
     name: "Fairleigh Dickinson",
     fullName: "Fairleigh Dickinson Knights",
@@ -6739,6 +7081,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 241,
+    wid: 7108,
     espnID: 2514,
     name: "Quinnipiac",
     fullName: "Quinnipiac Bobcats",
@@ -6799,6 +7142,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 213,
+    wid: 6857,
     espnID: 305,
     name: "DePaul",
     fullName: "DePaul Blue Demons",
@@ -6810,6 +7154,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1887,
+    wid: 6862,
     espnID: 2174,
     name: "Detroit Mercy",
     fullName: "Detroit Mercy Titans",
@@ -6821,6 +7166,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5796,
+    wid: 7711,
     espnID: 2384,
     name: "Mercy",
     fullName: "Mercy Mavericks",
@@ -6888,6 +7234,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6686,
+    wid: 7261,
     espnID: 2698,
     name: "West Georgia",
     fullName: "West Georgia Wolves",
@@ -6898,6 +7245,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1827,
+    wid: 7630,
     espnID: 2062,
     name: "Bethany (WV)",
     code: "BCWV",
@@ -6907,6 +7255,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 6632,
+    wid: 6736,
     espnID: 399,
     name: "UAlbany",
     fullName: "UAlbany Great Danes",
@@ -6929,7 +7278,8 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 198,
-    espnID: 2534,
+    wid: 6733,
+    espnID: 7130,
     name: "Sam Houston",
     fullName: "Sam Houston Bearkats",
     code: "SHSU",
@@ -6940,6 +7290,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 207,
+    wid: 7287,
     espnID: 2752,
     name: "Xavier",
     fullName: "Xavier Musketeers",
@@ -6986,6 +7337,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1927,
+    wid: 6907,
     espnID: 2250,
     name: "Gonzaga",
     fullName: "Gonzaga Bulldogs",
@@ -6996,6 +7348,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1500,
+    wid: 6899,
     espnID: 45,
     name: "George Washington",
     fullName: "George Washington Revolutionaries",
@@ -7007,6 +7360,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2020,
+    wid: 7033,
     espnID: 116,
     name: "Mount St. Mary's",
     fullName: "Mount St. Mary's Mountaineers",
@@ -7018,6 +7372,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 182,
+    wid: 6848,
     espnID: 156,
     name: "Creighton",
     fullName: "Creighton Bluejays",
@@ -7048,6 +7403,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3289,
+    wid: 7021,
     espnID: 2404,
     name: "Molloy",
     fullName: "Molloy Lions",
@@ -7058,6 +7414,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1867,
+    wid: 6830,
     espnID: 325,
     name: "Cleveland State",
     fullName: "Cleveland State Vikings",
@@ -7069,10 +7426,11 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1940,
+    wid: 6927,
     espnID: 2758,
-    name: "Manor College",
+    name: "Howard Payne",
     fullName: "Howard Payne Yellow Jackets",
-    shortName: "Manor College",
+    shortName: "Howard Payne",
     code: "HWPU",
     color: "#02215b",
     secondaryColor: "#02215b",
@@ -7091,6 +7449,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3336,
+    wid: 7255,
     espnID: 2684,
     name: "Warren Wilson",
     fullName: "Warren Wilson Owls",
@@ -7113,6 +7472,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2472,
+    wid: 7005,
     espnID: 2385,
     name: "Mercyhurst",
     fullName: "Mercyhurst Lakers",
@@ -7709,34 +8069,48 @@ export const modalToMapKey: Record<string, string> = {
   "FBS Independents": "FBS Independents",
 };
 
-export const getTeamInfo = (teamId: number | string) => {
-  if (teamId == null) return undefined;
-  return teams.find((t) => String(t.id) === String(teamId));
+const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
+  if (id == null) return undefined;
+
+  return teams.find(
+    (t) =>
+      isWomen
+        ? String(t.wid) === String(id) // 👈 WCBB
+        : String(t.id) === String(id) // 👈 Men
+  );
 };
 
-// constants/teamsCBB.ts
-export const getCBBTeam = (id: string | number) =>
-  teams.find((t) => String(t.id) === String(id)) || null;
+export const getTeamInfo = (teamId: number | string, isWomen = false) => {
+  return resolveCBBTeam(teamId, isWomen);
+};
 
-export const teamsCBBById: Record<string, CBBTeam> = teams.reduce((map, team) => {
-  map[team.id] = team;
-  return map;
-}, {} as Record<string, CBBTeam>);
+export const getCBBTeam = (id: string | number, isWomen = false) =>
+  resolveCBBTeam(id, isWomen) || null;
 
-export function getTeamLogo(
-  idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean
-) {
-  if (!idOrNicknameOrCode) return PlaceholderLogo;
+export const teamsCBBById: Record<string, CBBTeam> = teams.reduce(
+  (map, team) => {
+    map[team.id] = team;
+    return map;
+  },
+  {} as Record<string, CBBTeam>
+);
 
-  const searchStr = String(idOrNicknameOrCode); // convert to string
+export const getTeamLogo = (id?: number | string, isDark = false) => {
+  if (!id) return PlaceholderLogo;
 
-  const team = teams.find((t) => String(t.id) === searchStr);
+  // 🔍 try MEN first
+  let team = teams.find((t) => String(t.id) === String(id));
+
+  // 🔁 fallback to WOMEN
+  if (!team) {
+    team = teams.find((t) => String(t.wid) === String(id));
+  }
 
   if (!team) return PlaceholderLogo;
 
-  return isDark ? team.logoLight || team.logo : team.logo;
-}
+  return isDark ? team.logoLight ?? team.logo : team.logo;
+};
+
 export function getTeamLogoPreviewModal(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean,
