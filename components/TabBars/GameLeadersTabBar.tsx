@@ -19,7 +19,7 @@ export interface FixedWidthTabBarProps<T extends string> {
   lighter?: boolean;
 }
 
-export default function FixedWidthTabBar<T extends string>({
+export default function GameLeadersTabBar<T extends string>({
   tabs,
   selected,
   onTabPress,

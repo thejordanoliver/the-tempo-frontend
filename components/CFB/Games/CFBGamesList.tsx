@@ -2,8 +2,7 @@ import GameCardSkeleton from "components/Games/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useMemo, useState } from "react";
@@ -60,6 +59,7 @@ export default function CFBGamesList({
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const styles = footballGamesListStyle;
+  
   // --- Group all games as "Regular Season" only ---
   // Paginate base games first
   const paginatedGames = useMemo(() => {
@@ -344,32 +344,3 @@ export default function CFBGamesList({
   );
 }
 
-export const footballGamesListStyle = StyleSheet.create({
-  skeletonWrapper: {
-    paddingHorizontal: 12,
-    gap: 12,
-  },
-  skeletonGridWrapper: {
-    paddingBottom: 20,
-    gap: 12,
-  },
-  gridListContainer: {
-    paddingBottom: 20,
-    gap: 12,
-  },
-  contentContainer: {},
-  gridItem: {
-    flex: 1,
-    marginHorizontal: 12,
-  },
-  emptyText: {
-    fontFamily: Fonts.OSLIGHT,
-    fontSize: 16,
-    textAlign: "center",
-    color: Colors.midTone,
-  },
-  headerWrapper: {
-    marginHorizontal: 12,
-    marginTop: 12,
-  },
-});

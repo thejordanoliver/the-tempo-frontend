@@ -1,112 +1,82 @@
-import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
-import { useEffect, useMemo, useState } from "react";
+import { Colors } from "constants/Colors";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
-import { CFBTeam } from "types/cfb";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-type CFBGameCenterInfoProps = {
-  status: string;
+type NFLGameCenterInfoProps = {
   date: string;
   time: string;
   period?: string;
   clock?: string;
   downAndDistance?: string;
-  colors: Record<string, string>;
   isDark: boolean;
-  playoffInfo?: string | string[]; // 👈 accepted but not used yet
-  homeTeam: CFBTeam;
-  awayTeam: CFBTeam;
-
-  broadcastNetworks: string;
+  broadcastNetworks?: string;
+  headlineText?: string;
+  gameStatusDescription?: string;
+  gameStatusShortDetail?: string;
+  redzone: boolean;
 };
 
 export function CFBGameCenterInfo({
-  status,
   date,
   time,
   period,
   clock,
   downAndDistance,
-  colors,
   isDark,
-  playoffInfo,
-  homeTeam,
-  awayTeam,
-
   broadcastNetworks,
-}: CFBGameCenterInfoProps) {
+  gameStatusDescription,
+  gameStatusShortDetail,
+  redzone = false,
+}: NFLGameCenterInfoProps) {
+  
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
+  const isHalftime = gameStatusShortDetail === "Halftime";
+
+  const isFinal =
+    gameStatusDescription === "Final" ||
+    gameStatusDescription === "After Over Time";
+
+  const isOvertime = gameStatusShortDetail?.includes("OT");
+  const isCanceled = gameStatusDescription == "Canceled";
+
+  const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Not Started";
+
   const styles = getStyles(isDark);
-  const { broadcasts, loading } = useCFBGameBroadcasts(
-    homeTeam.code ?? "",
-    awayTeam.code ?? "",
-    date ?? ""
-  );
+  const isRedzone = redzone;
 
-  const broadcastText = getBroadcastDisplay(broadcasts);
+  const renderDownAndDistance = () => {
+    if (!downAndDistance) return null;
 
-  const [tick, setTick] = useState(0);
+    // Split only once on " at "
+    const [beforeAt, afterAt] = downAndDistance.split(" at ");
 
-  useEffect(() => {
-    if (status === "In Progress" || status === "Halftime") {
-      const interval = setInterval(() => {
-        setTick((t) => t + 1);
-      }, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [status]);
-
-  const formatQuarter = useMemo(
-    () => (short: string) => {
-      switch (short) {
-        case "Q1":
-          return "1st";
-        case "Q2":
-          return "2nd";
-        case "Q3":
-          return "3rd";
-        case "Q4":
-          return "4th";
-        case "OT":
-          return "OT";
-        default:
-          return short;
-      }
-    },
-    []
-  );
-
-  // ---- Derived State ----
-  const normalizedStatus = status?.toLowerCase() ?? "";
-  const isInProgress =
-    normalizedStatus.includes("progress") ||
-    normalizedStatus.includes("live") ||
-    normalizedStatus.includes("end");
-  const isHalftime = normalizedStatus.includes("half");
-  const isFinal = normalizedStatus.includes("final");
-  const isScheduled = normalizedStatus.includes("schedule");
-  const isCanceled =
-    normalizedStatus.includes("canceled") ||
-    normalizedStatus.includes("postponed") ||
-    normalizedStatus.includes("delayed");
-
-  // ---- Period Display ----
-  const renderPeriodDisplay = () => {
-    if (!period) return null;
-
-    const upper = period.toUpperCase();
-    if (upper.includes("END")) {
-      const q = upper.match(/Q\d/)?.[0] ?? "";
-      return (
-        <Text style={styles.date}>
-          End {q ? formatQuarter(q) : formatQuarter(period)}
-        </Text>
-      );
-    }
-
-    return <Text style={styles.date}>{formatQuarter(period)}</Text>;
+    return (
+      <Text style={styles.downAndDistance}>
+        {beforeAt}
+        {afterAt && (
+          <>
+            {" at "}
+            <Text
+              style={[
+                styles.downAndDistance,
+                isRedzone && {
+                  color: isDark ? Colors.dark.lightRed : Colors.light.red,
+                }, // or any red you want
+              ]}
+            >
+              {afterAt}
+            </Text>
+          </>
+        )}
+      </Text>
+    );
   };
 
+  // ---- Render ----
   return (
     <View style={styles.container}>
       {/* Scheduled */}
@@ -119,42 +89,46 @@ export function CFBGameCenterInfo({
       )}
 
       {/* In Progress + End of Period */}
-      {isInProgress && (
+      {inProgress && (
         <>
           <View style={styles.infoWrapper}>
-            {renderPeriodDisplay()}
-            <View style={styles.statusDivider} />
-            {clock && !period?.toLowerCase().includes("end") && (
-              <Text style={styles.clock}>{clock}</Text>
+            {!gameStatusShortDetail?.toLowerCase().includes("end") &&
+              !isOvertime && (
+                <>
+                  <Text style={styles.date}>{period}</Text>
+                  <View style={styles.statusDivider} />
+                  <Text style={styles.clock}>{clock}</Text>
+                </>
+              )}
+            {!gameStatusShortDetail?.toLowerCase().includes("end") &&
+              isOvertime && (
+                <>
+                  <Text style={styles.clock}>{gameStatusShortDetail}</Text>
+                </>
+              )}
+
+            {gameStatusShortDetail?.toLowerCase().includes("end") && (
+              <Text style={styles.clock}>End of {period}</Text>
             )}
           </View>
-          {downAndDistance && (
-            <Text style={styles.downAndDistance}>{downAndDistance}</Text>
-          )}
+          {renderDownAndDistance()}
         </>
       )}
+
       {/* Halftime */}
-      {status === "Halftime" && (
-        <>
-          <Text style={styles.clock}>Halftime</Text>
-        </>
-      )}
+      {isHalftime && <Text style={styles.clock}>Halftime</Text>}
 
       {/* Final */}
       {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>
-            {period && period.toUpperCase().includes("OT")
-              ? "Final/OT"
-              : "Final"}
-          </Text>
+          <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date || ""}</Text>
         </View>
       )}
 
       {/* Canceled / Delayed / Postponed */}
-      {isCanceled && <Text style={styles.finalText}>{status}</Text>}
+      {isCanceled && <Text style={styles.finalText}>Canceled</Text>}
 
       {/* 📺 Broadcast */}
       {broadcastNetworks && (

@@ -293,9 +293,9 @@ export default function CFBeagueScreen() {
             </>
           )}
 
-          {selectedTab === "news" && (
+            {selectedTab === "news" && (
             <ScrollView
-              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}

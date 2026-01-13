@@ -1,6 +1,6 @@
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
-import { CBBPlayer } from "types/cbb";
+import { CBBPlayer } from "types/types";
 
 type PlayerHeaderProps = {
   player: CBBPlayer;
@@ -9,10 +9,12 @@ type PlayerHeaderProps = {
   teamColor?: string;
   teamSecondaryColor?: string;
   team_name?: string;
+  isWomen?: boolean;
 };
 
 export default function PlayerHeader({
   player,
+  isWomen,
   avatarUrl,
   isDark,
   teamColor,
@@ -57,9 +59,15 @@ export default function PlayerHeader({
           {player.height ?? "?"}
         </Text>
 
+        {!isWomen && (
+          <Text style={[styles.playerInfo]}>
+            <Text style={styles.playerInfoLabel}>Weight: </Text>
+            {player.weight ?? "?"}
+          </Text>
+        )}
         <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>Weight: </Text>
-          {player.weight ?? "?"}
+          <Text style={styles.playerInfoLabel}>Birth Place: </Text>
+          {player.birthPlace?.displayText ?? "?"}
         </Text>
       </View>
     </View>

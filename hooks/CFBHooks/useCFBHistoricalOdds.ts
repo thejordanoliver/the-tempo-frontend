@@ -76,7 +76,7 @@ if (timestamp) params.timestamp = new Date(timestamp).toISOString();
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/CFB/historical`, {
+        const res = await axios.get(`${BASE_URL}/api/cfb/odds/historical`, {
           params,
           cancelToken: cancelSource.token,
         });

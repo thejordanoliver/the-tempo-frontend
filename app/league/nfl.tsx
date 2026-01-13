@@ -27,6 +27,7 @@ import { getScoresStyles } from "styles/LeagueStyles";
 import { generateNFLWeeks, getCurrentWeekIndex, NFLWeek } from "utils/nflWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
+import AwardSeasons from "components/League/AwardSeasons";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -76,7 +77,7 @@ export default function NFLLeagueScreen() {
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "draft" | "forum"
+    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -90,6 +91,7 @@ export default function NFLLeagueScreen() {
     "standings",
     "stats",
     "draft",
+    "awards",
     "forum",
   ] as const;
 
@@ -289,6 +291,7 @@ export default function NFLLeagueScreen() {
               league="nfl"
             />
           )}
+          {selectedTab === "awards" && <AwardSeasons league="NFL" />}
 
           {selectedTab === "forum" && <LeagueForum league="NFL" />}
         </View>

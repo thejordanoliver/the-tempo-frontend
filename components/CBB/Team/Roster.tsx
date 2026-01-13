@@ -20,7 +20,7 @@ interface TeamPlayerListProps {
   isDark: boolean;
 }
 
-export default function TeamPlayerList({
+export default function Roster({
   players,
   loading,
   error,

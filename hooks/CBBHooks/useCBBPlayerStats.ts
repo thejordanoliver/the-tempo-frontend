@@ -2,36 +2,61 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-export interface CBBSeasonStats {
+/* ----------------------------------
+   TYPES
+---------------------------------- */
+
+export interface CBBSeasonTotals {
   season: string;
+  team: string,
+  min: number
+  fg?: string | null;
   gp: number | null;
-  min: number | null;
-  fgPct: number | null;
-  threePct: number | null;
-  ftPct: number | null;
-  reb: number | null;
-  ast: number | null;
-  blk: number | null;
-  stl: number | null;
-  pf: number | null;
-  to: number | null;
-  pts: number | null;
+  gs: number | null;
+  fgPct?: number | null;
+  three?: string | null;
+  threePct?: number | null;
+  ft?: string | null;
+  ftPct?: number | null;
+  reb?: number | null;
+  ast?: number | null;
+  blk?: number | null;
+  stl?: number | null;
+  pf?: number | null;
+  to?: number | null;
+  pts?: number | null;
 }
 
 export interface CBBPlayerStatsResponse {
   playerId: string;
+  league: "CBB" | "WCBB";
   name: string | null;
   team: string | null;
   teamId: string | null;
-  seasons: CBBSeasonStats[];
-  currentSeason: CBBSeasonStats | null;
+  seasonTotals: CBBSeasonTotals[];
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+/* ----------------------------------
+   CONFIG
+---------------------------------- */
 
-export function useCBBPlayerStats(playerId: string | number) {
+const BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+
+/* ----------------------------------
+   HOOK
+---------------------------------- */
+
+/**
+ * @param playerId ESPN player ID
+ * @param league "CBB" | "WCBB" (default: "CBB")
+ */
+export function useCBBPlayerStats(
+  playerId: string | number,
+  league: "CBB" | "WCBB" = "CBB"
+) {
   const [data, setData] = useState<CBBPlayerStatsResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = useCallback(async () => {
@@ -41,22 +66,37 @@ export function useCBBPlayerStats(playerId: string | number) {
       setLoading(true);
       setError(null);
 
-      const url = `${BASE_URL}/api/cbb-stats/player/${playerId}`;
+      const leagueParam = league === "WCBB" ? "wcbb" : "cbb";
+
+      const url = `${BASE_URL}/api/cbb-stats/player/${playerId}?league=${leagueParam}`;
 
       const res = await axios.get<CBBPlayerStatsResponse>(url);
 
-      setData(res.data);
+      // 🔒 Defensive cleanup (filters empty rows)
+      const cleaned = {
+        ...res.data,
+        seasonTotals: (res.data.seasonTotals || []).filter(
+          (row) => row && row.season
+        ),
+      };
+
+      setData(cleaned);
     } catch (err: any) {
-      console.error("❌ CBB Player Stats Error:", err);
+      console.error("❌ CBB/WCBB Player Stats Error:", err);
       setError(err?.message ?? "Failed to load player stats");
     } finally {
       setLoading(false);
     }
-  }, [playerId]);
+  }, [playerId, league]);
 
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
 
-  return { data, loading, error, refetch: fetchStats };
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchStats,
+  };
 }

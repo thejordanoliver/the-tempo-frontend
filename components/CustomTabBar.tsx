@@ -1,5 +1,8 @@
+import { Fonts, Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
   StyleSheet,
@@ -8,10 +11,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-
-import { Oswald_400Regular } from "@expo-google-fonts/oswald";
-import { useFonts } from "expo-font";
-import { useEffect, useState } from "react";
 
 const TABS = [
   {
@@ -50,8 +49,6 @@ const TAB_ROUTE_PARENTS: { [key: string]: string } = {
   "/league": "/league",
   "/explore": "/explore",
   "/profile": "/profile",
-
-
 };
 
 function getActiveTab(pathname: string): string | null {
@@ -70,46 +67,41 @@ function getActiveTab(pathname: string): string | null {
 }
 
 export default function CustomTabBar() {
-  const [fontsLoaded] = useFonts({ Oswald_400Regular });
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const pathname = usePathname();
 
   const [lastActiveTab, setLastActiveTab] = useState<string>("/");
 
-  if (!fontsLoaded) return null;
-
   const currentActiveTab = getActiveTab(pathname);
 
-useEffect(() => {
-  if (
-    !pathname.startsWith("/team") &&
-    !pathname.startsWith("/game") &&
-    !pathname.startsWith("/player") &&
-    !pathname.startsWith("/user")
-  ) {
-    setLastActiveTab(currentActiveTab || "/");
-  }
-}, [pathname, currentActiveTab]);
+  useEffect(() => {
+    if (
+      !pathname.startsWith("/team") &&
+      !pathname.startsWith("/game") &&
+      !pathname.startsWith("/player") &&
+      !pathname.startsWith("/user")
+    ) {
+      setLastActiveTab(currentActiveTab || "/");
+    }
+  }, [pathname, currentActiveTab]);
 
-
-const activeTabRoute =
-  pathname.startsWith("/team") ||
-  pathname.startsWith("/game") ||
-  pathname.startsWith("/player") ||
-  pathname.startsWith("/user")
-    ? lastActiveTab
-    : currentActiveTab;
-
+  const activeTabRoute =
+    pathname.startsWith("/team") ||
+    pathname.startsWith("/game") ||
+    pathname.startsWith("/player") ||
+    pathname.startsWith("/user")
+      ? lastActiveTab
+      : currentActiveTab;
 
   if (pathname === "/login") return null;
 
   // Helper to identify detail screens
-const isDetailScreen = (path: string) =>
-  path.startsWith("/team") ||
-  path.startsWith("/game") ||
-  path.startsWith("/player") ||
-  path.startsWith("/user");
+  const isDetailScreen = (path: string) =>
+    path.startsWith("/team") ||
+    path.startsWith("/game") ||
+    path.startsWith("/player") ||
+    path.startsWith("/user");
 
   // Main tabs routes
   const mainTabs = ["/", "/league", "/explore", "/profile"];
@@ -163,7 +155,11 @@ const isDetailScreen = (path: string) =>
                   style={{
                     width: 24,
                     height: 24,
-                    tintColor: focused ? (isDark ? "white" : "black") : "gray",
+                    tintColor: focused
+                      ? isDark
+                        ? Colors.white
+                        : Colors.black
+                      : Colors.midTone,
                   }}
                   resizeMode="contain"
                 />
@@ -171,8 +167,12 @@ const isDetailScreen = (path: string) =>
                   style={{
                     marginTop: 4,
                     fontSize: 12,
-                    fontFamily: "Oswald_400Regular",
-                    color: focused ? (isDark ? "white" : "black") : "gray",
+                    fontFamily: Fonts.OSREGULAR,
+                    color: focused
+                      ? isDark
+                        ? Colors.white
+                        : Colors.black
+                      : Colors.midTone,
                   }}
                 >
                   {name}
@@ -197,8 +197,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
-    elevation: 12, 
-    
+    elevation: 12,
   },
   tabBarContainer: {
     height: 80,

@@ -13,12 +13,11 @@ type TeamInfoProps = {
   opponentScore: number;
   record: string;
   isDark: boolean;
-  isGameOver: boolean;
-  hasStarted: boolean;
   possessionTeamId?: string;
   side: "home" | "away";
   timeouts: number;
   lighter?: boolean;
+  gameStatusDescription: string;
 };
 
 export default function TeamInfo({
@@ -28,28 +27,34 @@ export default function TeamInfo({
   opponentScore,
   record,
   rank,
-  isGameOver,
-  hasStarted,
+  gameStatusDescription,
   possessionTeamId,
   side,
   timeouts,
 }: TeamInfoProps) {
-  const isTie = isGameOver && score === opponentScore;
-  const isWinner = isGameOver && !isTie && score > opponentScore;
+  const isFinal =
+    gameStatusDescription === "Final" || gameStatusDescription === "Finished";
+
+  const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Not Started";
+
+  const isTie = isFinal && score === opponentScore;
+  const isWinner = isFinal && !isTie && score > opponentScore;
 
   const styles = teamInfoStyle;
 
-  const isRecord = !hasStarted;
-  const valueFontSize = isRecord ? 28 : 36;
+  const isRecord = isScheduled;
+  const valueFontSize = isRecord ? 24 : 36;
 
-  const scoreOpacity = !isGameOver ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
+  const scoreOpacity = !isFinal ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
 
   const logo = getTeamLogo(team?.id, true) || getTeamLogo(team?.id, false);
 
-  const displayValue = !hasStarted ? record ?? "-" : score ?? "-";
+  const displayValue = isScheduled ? record ?? "-" : score ?? "-";
 
   const hasPossession =
-    hasStarted && String(possessionTeamId) === String(team?.espnID);
+    gameStatusDescription && String(possessionTeamId) === String(team?.espnID);
 
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 3;
@@ -114,10 +119,10 @@ export default function TeamInfo({
         </Text>
 
         {/* Show timeouts only during live */}
-        {hasStarted && !isGameOver && renderTimeouts(timeouts)}
+        {!isScheduled && !isFinal && renderTimeouts(timeouts)}
 
         {/* Final: show record */}
-        {isGameOver && <Text style={styles.teamRecord}>{record}</Text>}
+        {isFinal && <Text style={styles.teamRecord}>{record}</Text>}
       </View>
 
       {/* ===== AWAY SCORE (RIGHT) ===== */}
@@ -162,15 +167,12 @@ export const teamInfoStyle = StyleSheet.create({
     color: Colors.white,
   },
 
-  teamRank: { fontSize: 10, color: Colors.lightGray },
-
   teamLogo: {
     width: 65,
     height: 65,
     resizeMode: "contain",
   },
 
-  // Score stays centered. Icon is absolute (does NOT push score upward)
   scoreWrapper: {
     justifyContent: "center",
     alignItems: "center",
@@ -180,22 +182,21 @@ export const teamInfoStyle = StyleSheet.create({
 
   possessionIcon: {
     position: "absolute",
-    bottom: -20, // hangs below, does NOT shift score
+    bottom: -20,
     width: 26,
     height: 26,
     resizeMode: "contain",
   },
 
   teamRecord: {
-    fontSize: 12,
     fontFamily: Fonts.OSREGULAR,
     color: Colors.white,
     opacity: 0.7,
   },
 
   teamValue: {
-    fontSize: 32, // dynamically overridden
     fontFamily: Fonts.OSBOLD,
     color: Colors.white,
   },
+  teamRank: { fontSize: 10, color: Colors.lightGray },
 });

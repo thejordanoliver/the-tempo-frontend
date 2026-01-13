@@ -150,13 +150,7 @@ export default function PlayerDetailScreen() {
       }
     : null;
 
-  const seasons = useMemo(() => {
-    const start = player?.nba_start || 2015;
-    return Array.from(
-      { length: new Date().getFullYear() - start + 1 },
-      (_, i) => (start + i).toString()
-    );
-  }, [player]);
+
 
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -185,7 +179,7 @@ export default function PlayerDetailScreen() {
         <>
           <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
             <HeadingTwo>Last Game</HeadingTwo>
-            <GameCard game={enrichedLastGame} isDark={isDark} />
+            <GameCard game={enrichedLastGame} />
           </View>
         </>
       )}

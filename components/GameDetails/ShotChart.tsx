@@ -184,13 +184,17 @@ export default function ShotChart({
   return (
     <View style={styles.container}>
       <HeadingTwo>Shot Chart</HeadingTwo>
-
+      <View style={styles.wrapper}>
       {/* TabBar for quarters */}
       <TabBar
         tabs={TABS}
         selected={selectedQuarter}
         onTabPress={(tab) => setSelectedQuarter(tab as any)}
       />
+
+
+
+   
 
       <View style={styles.chartWrapper} onLayout={onLayout}>
         <Image
@@ -246,12 +250,19 @@ export default function ShotChart({
         )}
       </View>
     </View>
+       </View>
   );
 }
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { width: "100%", marginTop: 20 },
+    container: { width: "100%" },
+      wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 12,
+    },
     chartWrapper: {
       width: "100%",
       aspectRatio: 94 / 50,
@@ -270,6 +281,7 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       marginTop: 10,
+      padding: 12,
     },
 
     legendItem: {

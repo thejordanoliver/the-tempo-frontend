@@ -10,10 +10,9 @@ type TeamInfoProps = {
   score?: number;
   opponentScore?: number;
   record?: string;
-  isDark: boolean;
-  isGameOver: boolean;
-  isScheduled?: boolean;
   side: "home" | "away";
+  timeouts: number;
+  gameStatusDescription: string;
 };
 
 export default function TeamInfo({
@@ -22,23 +21,34 @@ export default function TeamInfo({
   score,
   opponentScore,
   record,
-  isDark,
-  isGameOver,
-  isScheduled = false,
+  gameStatusDescription,
   side,
+  timeouts,
 }: TeamInfoProps) {
   const styles = teamInfoStyle;
 
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "Halftime" ||
+    gameStatusDescription === "End of Period";
+
   // --- Winner / opacity logic ---
-  const isWinner = isGameOver && (score ?? 0) > (opponentScore ?? 0);
-  const isTie = isGameOver && score === opponentScore;
+  const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 
   const scoreOpacity =
-    !isGameOver || isScheduled ? 1 : isTie ? 1 : isWinner ? 1 : 0.4;
+    !isFinal || isScheduled || isDelayed || isPostponed
+      ? 1
+      : isWinner
+      ? 1
+      : 0.4;
 
   // --- Detect record vs score → dynamic font size ---
-  const isRecord = isScheduled;
-  const valueFontSize = isRecord ? 28 : 36;
+  const isRecord = isScheduled || isDelayed || isPostponed;
+  const valueFontSize = isRecord ? 24 : 36;
 
   // --- Value shown ---
   const displayValue = isRecord
@@ -49,6 +59,27 @@ export default function TeamInfo({
 
   // Logos (prefer light variants at night)
   const logo = team ? getTeamLogo(team.id, true) : undefined;
+
+  const renderTimeouts = (remaining: number) => {
+    const totalTimeouts = 7;
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: totalTimeouts }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 5,
+              height: 2,
+              borderRadius: 2,
+              backgroundColor: Colors.white,
+              opacity: i < remaining ? 1 : 0.3,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View
@@ -83,9 +114,10 @@ export default function TeamInfo({
         <Text style={styles.teamName}>{teamName}</Text>
 
         {/* Final only → show record */}
-        {!isScheduled && isGameOver && record && (
+        {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
+        {!isScheduled && !isFinal && renderTimeouts(timeouts)}
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}
@@ -126,14 +158,12 @@ export const teamInfoStyle = StyleSheet.create({
     color: Colors.white,
   },
 
-
   teamLogo: {
     width: 65,
     height: 65,
     resizeMode: "contain",
   },
 
-  // Score stays centered. Icon is absolute (does NOT push score upward)
   scoreWrapper: {
     justifyContent: "center",
     alignItems: "center",
@@ -143,21 +173,19 @@ export const teamInfoStyle = StyleSheet.create({
 
   possessionIcon: {
     position: "absolute",
-    bottom: -20, // hangs below, does NOT shift score
+    bottom: -20,
     width: 26,
     height: 26,
     resizeMode: "contain",
   },
 
   teamRecord: {
-    fontSize: 12,
     fontFamily: Fonts.OSREGULAR,
     color: Colors.white,
     opacity: 0.7,
   },
 
   teamValue: {
-    fontSize: 32, // dynamically overridden
     fontFamily: Fonts.OSBOLD,
     color: Colors.white,
   },

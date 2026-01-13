@@ -1,5 +1,5 @@
 // components/TeamPlayerList.tsx
-import { Player } from "hooks/useDbPlayersByTeam";
+import { Player } from "hooks/usePlayersByTeam";
 import {
   ActivityIndicator,
   RefreshControl,

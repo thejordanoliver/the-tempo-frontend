@@ -1,26 +1,21 @@
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { ReactNode } from "react";
-import { Image, Text, View } from "react-native";
+import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { teams, teamsById } from "../../../constants/teams";
 import { teams as teamsCFB, teamsCFBById } from "../../../constants/teamsCFB";
 import { teams as teamsNFL, teamsNFLById } from "../../../constants/teamsNFL";
-
 type TeamColors = {
   id?: string | number;
   fullName?: string;
   color?: string;
   secondaryColor?: string;
-  constantLight?: string;
-  constantTextLight?: string;
-  constantBlack?: string;
 };
 
 type Props = {
   label: string;
   value: string | number | ReactNode | string[] | number[];
   image?: any;
-  isDark: boolean;
   team: TeamColors;
   teamId?: string;
   teamName?: string;
@@ -33,7 +28,6 @@ export default function InfoCard({
   label,
   value,
   image,
-  isDark,
   team,
   teamId,
   teamName,
@@ -71,8 +65,10 @@ export default function InfoCard({
 
   // Final fallback
   if (!teamObj) teamObj = team;
-
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const isConferenceChampionships = label === "Conference Championships";
+const styles = infoCardStyles(isDark, isConferenceChampionships, teamObj);
 
   // 🧩 Format value: join arrays into a readable comma-separated string
   let formattedValue: string | ReactNode;
@@ -82,76 +78,73 @@ export default function InfoCard({
     formattedValue = value;
   }
 
-  const resolvedLabelColor =
-    labelColor ?? (isDark ? Colors.white : Colors.black);
-  const resolvedTextColor = textColor ?? (isDark ? Colors.white : Colors.black);
-
   return (
     <>
-      <Text
-        style={{
-          color: resolvedLabelColor,
-          fontFamily: Fonts.OSMEDIUM,
-          fontSize: 20,
-          paddingBottom: 4,
-          marginBottom: 8,
-          borderBottomWidth: 0.5,
-          borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-        }}
-      >
-        {label}
-      </Text>
+      <Text style={styles.label}>{label}</Text>
 
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: isConferenceChampionships ? "flex-start" : "center",
-          backgroundColor: backgroundColor ?? teamObj.color,
-          borderRadius: 8,
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          marginBottom: 12,
-          width: "100%",
-          minHeight: 80,
-          flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
-        }}
-      >
+      <View style={styles.cardContainer}>
         {image && (
-          <View
-            style={{
-              borderRadius: 100,
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: 12,
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              source={image}
-              style={{
-                width: 54,
-                height: 54,
-                paddingTop: 8,
-                resizeMode: "contain",
-                backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-              }}
-            />
+          <View style={styles.imageContainer}>
+            <Image source={image} style={styles.image} />
           </View>
         )}
 
-        <Text
-          style={{
-            fontFamily: Fonts.OSREGULAR,
-            fontSize: 16,
-            color: Colors.white,
-            flexShrink: 1,
-            flex: 1,
-            flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
-          }}
-        >
-          {formattedValue}
-        </Text>
+        <Text style={styles.value}>{formattedValue}</Text>
       </View>
     </>
   );
 }
+
+export const infoCardStyles = (
+  isDark: boolean,
+  isConferenceChampionships: boolean,
+  teamObj: TeamColors
+) =>
+  StyleSheet.create({
+    label: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 20,
+      paddingBottom: 4,
+      marginBottom: 8,
+      borderBottomWidth: 0.5,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    cardContainer: {
+      flexDirection: "row",
+      alignItems: isConferenceChampionships ? "flex-start" : "center",
+      backgroundColor: teamObj.color,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      marginBottom: 12,
+      width: "100%",
+      minHeight: 80,
+      flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+    },
+    imageContainer: {
+      borderRadius: 100,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+      overflow: "hidden",
+    },
+    image: {
+      width: 54,
+      height: 54,
+      paddingTop: 8,
+      resizeMode: "contain",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    value: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      color: Colors.white,
+      flexShrink: 1,
+      flex: 1,
+      flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
+    },
+  });

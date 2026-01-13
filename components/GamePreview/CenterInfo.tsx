@@ -1,84 +1,51 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
 import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
-import PlayoffsLogo from "../../assets/Logos/NBAPlayoffs.png";
-import PlayoffsLogoLight from "../../assets/Logos/NBAPlayoffsLight.png";
-import FinalsLogo from "../../assets/Logos/TheNBAFinals.png";
-import FinalsLogoLight from "../../assets/Logos/TheNBAFinalsLight.png";
 
 type CenterInfoProps = {
   isChampionship: boolean;
-  isFinal: boolean;
-  isCanceled?: boolean;
-  isHalftime?: boolean;
   broadcastNetworks?: string;
-  showLiveInfo: boolean;
   period: number | string;
   time: string;
   clock?: string | null;
   endOfPeriod?: boolean;
+  gameStatusDetail: string;
   formattedDate: string;
   isDark: boolean;
-  gameNumberLabel?: string;
-  seriesSummary?: string;
-  isPlayoffs?: boolean;
+  round?: string;
   totalPeriodsPlayed?: number;
   lighter: boolean;
+  statusText?: string;
+  gameStatusDescription: string;
 };
 
 export default function CenterInfo({
   isChampionship,
-  isFinal,
-  isCanceled,
-  isHalftime = false,
+  gameStatusDescription,
+  gameStatusDetail,
   broadcastNetworks,
-  showLiveInfo,
   period,
   clock,
-  endOfPeriod,
   time,
   formattedDate,
   isDark,
-  gameNumberLabel,
-  seriesSummary,
-  isPlayoffs,
-  totalPeriodsPlayed,
-  lighter,
+  statusText,
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
   const styles = getStyles;
 
-  const getQuarterLabel = (
-    currentPeriod: number | string,
-    totalPeriods: number = 4
-  ) => {
-    const periodNum =
-      typeof currentPeriod === "number"
-        ? currentPeriod
-        : parseInt(currentPeriod as string);
-    if (isNaN(periodNum)) return { label: "Live" };
-
-    switch (periodNum) {
-      case 1:
-        return { label: "1st" };
-      case 2:
-        return { label: "2nd" };
-      case 3:
-        return { label: "3rd" };
-      case 4:
-        return { label: "4th" };
-      default:
-        const otNumber = periodNum - totalPeriods;
-        return { label: `OT${otNumber}` };
-    }
-  };
-
-  const { label: periodLabelRaw } = getQuarterLabel(period, totalPeriodsPlayed);
-  const periodLabel = isFinal && !isCanceled ? "Final" : periodLabelRaw;
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
 
   useEffect(() => {
-    if (isChampionship || isPlayoffs) {
+    if (isChampionship) {
       Animated.parallel([
         Animated.timing(lightOpacity, {
           toValue: isDark ? 0 : 1,
@@ -92,53 +59,51 @@ export default function CenterInfo({
         }),
       ]).start();
     }
-  }, [isDark, isChampionship, isPlayoffs, lightOpacity, darkOpacity]);
+  }, [isDark, isChampionship, lightOpacity, darkOpacity]);
 
   return (
     <View style={styles.container}>
-      {(isChampionship || isPlayoffs) && (
-        <View style={styles.logoWrapper}>
-          <Animated.Image
-            source={isChampionship ? FinalsLogo : PlayoffsLogo}
-            style={[styles.logo, { opacity: lightOpacity }]}
-          />
-          <Animated.Image
-            source={isChampionship ? FinalsLogoLight : PlayoffsLogoLight}
-            style={[styles.logo, { opacity: darkOpacity }]}
-          />
-        </View>
-      )}
-
       {isCanceled ? (
         <Text style={styles.finalText}>Cancelled</Text>
       ) : isFinal ? (
-        // 🏁 FINAL GAME — show "Final" and date
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{periodLabel}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
-      ) : showLiveInfo || isHalftime ? (
-        // 🕒 LIVE or HALFTIME
+      ) : isDelayed ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>
-            {isHalftime
-              ? "Halftime"
-              : endOfPeriod
-              ? `End of ${periodLabelRaw}`
-              : periodLabelRaw}
-          </Text>
-          {!isHalftime && !endOfPeriod && <View style={styles.statusDivider} />}
-          {!endOfPeriod && !isHalftime && clock && (
-            <Text style={styles.clock}>{clock}</Text>
-          )}
+          <Text style={styles.finalText}>Delayed</Text>
         </View>
-      ) : (
-        // ⏰ SCHEDULED GAME
+      ) : isPostponed ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      ) : isScheduled ? (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{formattedDate}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.date}>{time}</Text>
+        </View>
+      ) : inProgress ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{period}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{clock}</Text>
+        </View>
+      ) : isHalftime ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Halftime</Text>
+        </View>
+      ) : isEndOfPeriod ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>End of {period}</Text>
+        </View>
+      ) : (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{statusText}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       )}
 

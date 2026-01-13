@@ -1,28 +1,19 @@
 // components/NFL/GameLeaders.tsx
-import Placeholder from "assets/images/placeholder.png";
+import Placeholder from "assets/Placeholders/playerPlaceholder.png";
+import GameLeadersSkeleton from "components/GameDetails/GameLeadersSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import {
   getTeamCode as getCFBCode,
   getTeamLogo as getCFBLogo,
 } from "constants/teamsCFB";
 import { getTeamCode as getNFLCode, getNFLTeamsLogo } from "constants/teamsNFL";
-import { useTeamRoster } from "hooks/NFLHooks/useTeamRoster";
-
-import { useNFLGameLeaders } from "hooks/NFLHooks/useNFLGameLeaders";
-
+import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
+import { useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
 import { useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
-
-import { getStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { Image, Text, useColorScheme, View } from "react-native";
+import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const CATEGORIES = [
   "Passing",
@@ -32,6 +23,7 @@ const CATEGORIES = [
   "Kicking",
   "Punting",
 ] as const;
+
 type Category = (typeof CATEGORIES)[number];
 
 type Props = {
@@ -52,28 +44,30 @@ type DisplayPlayer = {
   group: Category;
   statistics: PlayerStat[];
 };
+
+/* ----------------------------- */
+/* Helpers                       */
+/* ----------------------------- */
+
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "");
+
 const findRosterPlayer = (roster: any[], id: number, name: string) => {
-  if (!roster || roster.length === 0) return null;
+  if (!roster?.length) return null;
 
   return (
     roster.find(
-      (p) =>
-        p.player_id === id ||
-        p.name.trim().toLowerCase() === name.trim().toLowerCase()
+      (p) => p.player_id === id || normalize(p.name) === normalize(name)
     ) ?? null
   );
 };
 
-// -------- Normalize any raw leader to DisplayPlayer --------
 const normalizePlayers = (
   raw: any[],
   teamId: string,
   roster: any[],
   league: "NFL" | "CFB"
 ): DisplayPlayer[] => {
-  const rawCode = league === "NFL" ? getNFLCode(teamId) : getCFBCode(teamId);
-
-  const teamCode = rawCode ?? "UNK";
+  const teamCode = league === "NFL" ? getNFLCode(teamId) : getCFBCode(teamId);
 
   return raw.map((p) => {
     const id = Number(p.id);
@@ -87,12 +81,16 @@ const normalizePlayers = (
       id,
       name: p.name,
       image,
-      teamCode,
+      teamCode: teamCode ?? "UNK",
       group: p.group,
       statistics: p.stats ?? [],
     };
   });
 };
+
+/* ----------------------------- */
+/* Stat Config                   */
+/* ----------------------------- */
 
 const STAT_KEYS: Record<Category, string[]> = {
   Passing: ["Comp Att", "Yards", "Passing Touch Downs", "Interceptions"],
@@ -125,8 +123,11 @@ const ABBR: Record<string, string> = {
   touchbacks: "TBS",
 };
 
-const getAbbreviation = (name: string) =>
-  ABBR[name.toLowerCase()] ?? name.toUpperCase();
+const abbr = (k: string) => ABBR[k.toLowerCase()] ?? k.toUpperCase();
+
+/* ----------------------------- */
+/* Component                     */
+/* ----------------------------- */
 
 export default function GameLeaders({
   gameId,
@@ -136,22 +137,24 @@ export default function GameLeaders({
   lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, lighter);
+  const styles = gameLeadersStyles(isDark, lighter);
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
+
   const {
     leaders: rawHome,
     isLoading: loadingHome,
     isError: errorHome,
-  } = useNFLGameLeaders(gameId, homeTeamId);
+  } = useFootballGameLeaders(gameId, homeTeamId);
 
   const {
     leaders: rawAway,
     isLoading: loadingAway,
     isError: errorAway,
-  } = useNFLGameLeaders(gameId, awayTeamId);
+  } = useFootballGameLeaders(gameId, awayTeamId);
 
-  const { players: homeRoster } = useTeamRoster(homeTeamId, league);
-  const { players: awayRoster } = useTeamRoster(awayTeamId, league);
+  /* 🔑 USE TEAM PLAYERS (FIX) */
+  const { players: homeRoster } = useTeamPlayers(homeTeamId, league);
+  const { players: awayRoster } = useTeamPlayers(awayTeamId, league);
 
   const home = useMemo(
     () => normalizePlayers(rawHome ?? [], homeTeamId, homeRoster, league),
@@ -163,28 +166,6 @@ export default function GameLeaders({
     [rawAway, awayRoster, league]
   );
 
-  const topLeaders = useMemo(() => {
-    return CATEGORIES.reduce((acc, cat) => {
-      acc[cat] = {
-        home: home.find((p) => p.group === cat) ?? null,
-        away: away.find((p) => p.group === cat) ?? null,
-      };
-      return acc;
-    }, {} as Record<Category, { home: DisplayPlayer | null; away: DisplayPlayer | null }>);
-  }, [home, away]);
-
-  if (loadingHome || loadingAway)
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator />
-      </View>
-    );
-
-  if (errorHome || errorAway)
-    return <Text style={[styles.error]}>Failed to load leaders</Text>;
-
-  const { home: homeP, away: awayP } = topLeaders[selectedCategory];
-
   const textColor = lighter
     ? Colors.white
     : isDark
@@ -195,87 +176,82 @@ export default function GameLeaders({
     : isDark
     ? Colors.midTone
     : Colors.midTone;
-  const borderColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.midTone;
+
+  const leadersByCategory = useMemo(() => {
+    return CATEGORIES.reduce((acc, cat) => {
+      acc[cat] = {
+        home: home.find((p) => p.group === cat) ?? null,
+        away: away.find((p) => p.group === cat) ?? null,
+      };
+      return acc;
+    }, {} as Record<Category, { home: DisplayPlayer | null; away: DisplayPlayer | null }>);
+  }, [home, away]);
+
+  if (loadingHome || loadingAway) return <GameLeadersSkeleton />;
+
+  if (errorHome || errorAway)
+    return <Text style={styles.error}>Failed to load leaders</Text>;
+
+  const { home: homeP, away: awayP } = leadersByCategory[selectedCategory];
 
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
+      <View style={styles.wrapper}>
+        <MainScrollTabBar
+          tabs={CATEGORIES}
+          selected={selectedCategory}
+          onTabPress={setSelectedCategory}
+          lighter={lighter} // <-- forward the prop here
+          renderLabel={(tab, isSelected) => (
+            <Text
+              style={{
+                fontFamily: Fonts.OSMEDIUM,
+                fontSize: 16,
+                color: isSelected ? textColor : subTextColor,
+              }}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          )}
+        />
 
-      <MainScrollTabBar
-        tabs={CATEGORIES}
-        lighter={lighter}
-        selected={selectedCategory}
-        onTabPress={(tab) => setSelectedCategory(tab as Category)}
-        renderLabel={(tab, isSelected) => (
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              fontSize: 14,
-              color: isSelected ? textColor : subTextColor,
-            }}
-          >
-            {tab}
-          </Text>
-        )}
-      />
+        {[awayP, homeP].map((p, i) => {
+          if (!p) return null;
 
-      {[awayP, homeP].map((p, i) => {
-        if (!p) return null;
+          const logo =
+            league === "NFL"
+              ? getNFLTeamsLogo(p.teamCode, isDark || lighter)
+              : getCFBLogo(p.teamCode, isDark || lighter);
 
-        // ------------- LOGO DECISION -------------
-        const logo =
-          league === "NFL"
-            ? getNFLTeamsLogo(p.teamCode, isDark || lighter)
-            : getCFBLogo(p.teamCode, isDark || lighter);
-
-        // ------------- FILTER STATS -------------
-        const statList = STAT_KEYS[selectedCategory]
-          .map((key) =>
-            p.statistics.find(
-              (s) => s?.name?.toLowerCase() === key.toLowerCase()
+          const stats = STAT_KEYS[selectedCategory]
+            .map((k) =>
+              p.statistics.find((s) => s.name.toLowerCase() === k.toLowerCase())
             )
-          )
-          .filter((s): s is PlayerStat => !!s);
+            .filter(Boolean) as PlayerStat[];
 
-        return (
-          <View
-            key={i}
-            style={[styles.card, { borderBottomColor: borderColor }]}
-          >
-            {/* Avatar */}
-            <View style={styles.avatarWrapper}>
-              <Image source={p.image} style={styles.avatar} />
-            </View>
-
-            {/* Info */}
-            <View style={styles.infoSection}>
-              <Text style={[styles.playerName, { color: textColor }]}>
-                {p.name}
-              </Text>
-
-              <View style={styles.statRow}>
-                {statList.map((s, idx) => (
-                  <View style={styles.statBlock} key={idx}>
-                    <Text style={[styles.statLabel, { color: subTextColor }]}>
-                      {getAbbreviation(s.name)}
-                    </Text>
-                    <Text style={[styles.statText, { color: textColor }]}>
-                      {s.value ?? "-"}
-                    </Text>
-                  </View>
-                ))}
+          return (
+            <View key={i} style={styles.card}>
+              {/* Avatar */}
+              <View style={styles.avatarWrapper}>
+                <Image source={p.image} style={styles.avatar} />
               </View>
+              <View style={styles.infoSection}>
+                <Text style={styles.playerName}>{p.name}</Text>
+                <View style={styles.statRow}>
+                  {stats.map((s, idx) => (
+                    <View key={idx} style={styles.statBlock}>
+                      <Text style={styles.statLabel}>{abbr(s.name)}</Text>
+                      <Text style={styles.statText}>{s.value ?? "-"}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <Image source={logo} style={styles.teamLogo} />
             </View>
-
-            {/* Team Logo */}
-            <Image source={logo} style={styles.teamLogo} />
-          </View>
-        );
-      })}
+          );
+        })}
+      </View>
     </View>
   );
 }

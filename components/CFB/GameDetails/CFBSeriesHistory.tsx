@@ -1,5 +1,6 @@
 // components/CFB/GameDetails/CFBSeriesHistory.tsx
 
+import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -37,6 +38,7 @@ type Props = {
   // logos for each team
   team1Logo?: any;
   team2Logo?: any;
+  lighter?: boolean;
 };
 
 const CFBSeriesHistory: React.FC<Props> = ({
@@ -48,6 +50,7 @@ const CFBSeriesHistory: React.FC<Props> = ({
   games = [],
   team1Logo,
   team2Logo,
+  lighter = false,
 }) => {
   const isDark = useColorScheme() === "dark";
 
@@ -90,7 +93,7 @@ const CFBSeriesHistory: React.FC<Props> = ({
       .slice(0, 5);
   }, [games]);
 
-  const styles = getStyles(isDark);
+  const styles = getStyles(isDark, lighter);
 
   const formatDate = (iso?: string) => {
     if (!iso) return "";
@@ -186,94 +189,95 @@ const CFBSeriesHistory: React.FC<Props> = ({
 
   return (
     <View>
-      <HeadingTwo>Series History</HeadingTwo>
+      <HeadingTwo lighter={lighter}>Series History</HeadingTwo>
+      <View style={styles.wrapper}>
+        <View style={styles.headerRow}>
+          <View style={styles.headerRowLeft}>
+            {leadingTeamLogo && (
+              <Image
+                source={leadingTeamLogo}
+                style={styles.leaderLogo}
+                resizeMode="contain"
+              />
+            )}
+            <Text style={styles.leaderText}>{leaderText}</Text>
+          </View>
+          <View style={styles.headerRowRight}>
+            <Text style={styles.recordText}>
+              {totalGames} game
+              {totalGames === 1 ? "" : "s"}
+            </Text>
+            <View style={styles.divider} />
+            <Text style={styles.recordText}>{recordText}</Text>
+          </View>
+        </View>
 
-      <View style={styles.headerRow}>
-        <View style={styles.headerRowLeft}>
-          {leadingTeamLogo && (
-            <Image
-              source={leadingTeamLogo}
-              style={styles.leaderLogo}
-              resizeMode="contain"
-            />
-          )}
-          <Text style={styles.leaderText}>{leaderText}</Text>
-        </View>
-        <View style={styles.headerRowRight}>
-          <Text style={styles.recordText}>
-            {totalGames} game
-            {totalGames === 1 ? "" : "s"}
-          </Text>
-          <View style={styles.divider} />
-          <Text style={styles.recordText}>{recordText}</Text>
-        </View>
+        {recentGames.length > 0 && (
+          <View style={styles.recentContainer}>
+            <Text style={styles.recentHeading}>Recent meetings</Text>
+            {recentGames.map((g, idx) => {
+              const { loc, s1, s2, winnerKey } = lineMeta[idx];
+              const isTieGame = winnerKey === "tie";
+              const team1IsWinner = winnerKey === "team1";
+              const team2IsWinner = winnerKey === "team2";
+              const isStreak = streakFlags[idx];
+
+              return (
+                <View key={`${g.date}-${idx}`} style={styles.gameRow}>
+                  <View>
+                    <Text style={styles.gameDate}>{formatDate(g.date)}</Text>
+                    <View style={styles.gameRowLeft}>
+                      {/* Score line with faded loser */}
+                      {isTieGame ? (
+                        <Text style={styles.gameScore}>
+                          {team1Name} {s1} – {team2Name} {s2}
+                        </Text>
+                      ) : (
+                        <Text style={styles.gameScore}>
+                          <Text
+                            style={
+                              team1IsWinner
+                                ? styles.gameScoreWinner
+                                : styles.gameScoreLoser
+                            }
+                          >
+                            {team1Name} {s1}
+                          </Text>
+                          <Text style={styles.gameScoreDash}>{" – "}</Text>
+                          <Text
+                            style={
+                              team2IsWinner
+                                ? styles.gameScoreWinner
+                                : styles.gameScoreLoser
+                            }
+                          >
+                            {team2Name} {s2}
+                          </Text>
+                        </Text>
+                      )}
+                      {isStreak && <Ionicons name="flame" size={20} color={"orange"}/>}
+                    </View>
+                  </View>
+                  <View style={styles.gameRowRight}>
+                    <View style={styles.gameRowRightInner}>
+                      {loc ? (
+                        <Text style={styles.gameLocation}>{loc}</Text>
+                      ) : null}
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
       </View>
-
-      {recentGames.length > 0 && (
-        <View style={styles.recentContainer}>
-          <Text style={styles.recentHeading}>Recent meetings</Text>
-          {recentGames.map((g, idx) => {
-            const { loc, s1, s2, winnerKey } = lineMeta[idx];
-            const isTieGame = winnerKey === "tie";
-            const team1IsWinner = winnerKey === "team1";
-            const team2IsWinner = winnerKey === "team2";
-            const isStreak = streakFlags[idx];
-
-            return (
-              <View key={`${g.date}-${idx}`} style={styles.gameRow}>
-                <View>
-                  <Text style={styles.gameDate}>{formatDate(g.date)}</Text>
-                  <View style={styles.gameRowLeft}>
-                    {/* Score line with faded loser */}
-                    {isTieGame ? (
-                      <Text style={styles.gameScore}>
-                        {team1Name} {s1} – {team2Name} {s2}
-                      </Text>
-                    ) : (
-                      <Text style={styles.gameScore}>
-                        <Text
-                          style={
-                            team1IsWinner
-                              ? styles.gameScoreWinner
-                              : styles.gameScoreLoser
-                          }
-                        >
-                          {team1Name} {s1}
-                        </Text>
-                        <Text style={styles.gameScoreDash}>{" – "}</Text>
-                        <Text
-                          style={
-                            team2IsWinner
-                              ? styles.gameScoreWinner
-                              : styles.gameScoreLoser
-                          }
-                        >
-                          {team2Name} {s2}
-                        </Text>
-                      </Text>
-                    )}
-                    {isStreak && <Text style={styles.streakEmoji}>🔥</Text>}
-                  </View>
-                </View>
-                <View style={styles.gameRowRight}>
-                  <View style={styles.gameRowRightInner}>
-                    {loc ? (
-                      <Text style={styles.gameLocation}>{loc}</Text>
-                    ) : null}
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      )}
     </View>
   );
 };
 
 export default CFBSeriesHistory;
 
-const getStyles = (isDark: boolean) =>
+const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     headerRow: {
       flexDirection: "row",
@@ -286,6 +290,13 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "flex-end",
       gap: 8,
+    },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      overflow: "hidden",
+      padding: 12,
     },
     row: {
       flexDirection: "row",
@@ -311,12 +322,20 @@ const getStyles = (isDark: boolean) =>
     leaderText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     recordText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     recentContainer: {
       marginTop: 12,
@@ -325,14 +344,22 @@ const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
       marginBottom: 6,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
       paddingVertical: 12,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: lighter
+        ? Colors.darkGray
+        : isDark
+        ? Colors.darkGray
+        : Colors.lightGray,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
     gameRowLeft: {
@@ -351,36 +378,64 @@ const getStyles = (isDark: boolean) =>
     gameDate: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 11,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     gameScore: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 13,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameScoreDash: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 13,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameScoreWinner: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 13,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameScoreLoser: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     gameLocation: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 11,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     streakEmoji: {
       fontSize: 14,
-      color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: 6
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
+      marginLeft: 6,
     },
   });

@@ -1,7 +1,14 @@
 import { StyleSheet } from "react-native";
 import { Fonts } from "constants/fonts";
+import { Colors } from "constants/Colors";
 
-export const styles = StyleSheet.create({
+export const gameOddsStyles = (isDark:  boolean) => StyleSheet.create({
+   wrapper: {
+    borderColor: Colors.midTone,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+  },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -56,8 +63,15 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   subtext: {
-    color: "#888",
+    color: Colors.midTone,
     fontSize: 12,
     fontFamily: Fonts.OSLIGHT,
   },
+   errorText: {
+        fontFamily: Fonts.OSREGULAR,
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 20,
+        color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      },
 });

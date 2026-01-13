@@ -1,6 +1,5 @@
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -9,7 +8,9 @@ import {
   TextInput,
   useColorScheme,
   View,
+  Pressable,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   value: string;
@@ -20,7 +21,7 @@ type Props = {
   tabs?: string[];
   selectedTab?: string;
   onTabPress?: (tab: string) => void;
-  placeholder?: string; // ← added
+  placeholder?: string;
 };
 
 export default function SearchBar({
@@ -37,6 +38,7 @@ export default function SearchBar({
   const inputAnim = useRef(new Animated.Value(0)).current;
   const isDark = useColorScheme() === "dark";
   const styles = searchBarStyles(isDark);
+
   useEffect(() => {
     Animated.timing(inputAnim, {
       toValue: visible ? 1 : 0,
@@ -68,17 +70,24 @@ export default function SearchBar({
           },
         ]}
       >
-        <TextInput
-          placeholder={placeholder ?? "Search..."}
-          placeholderTextColor={Colors.midTone}
-          style={styles.searchInput}
-          value={value}
-          onChangeText={onChangeText}
-          autoCapitalize="none"
-          onFocus={onFocus}
-          onBlur={onBlur}
-         autoCorrect={false}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder={placeholder ?? "Search..."}
+            placeholderTextColor={Colors.midTone}
+            style={styles.searchInput}
+            value={value}
+            onChangeText={onChangeText}
+            autoCapitalize="none"
+            autoCorrect={false}
+            onFocus={onFocus}
+            onBlur={onBlur}
+          />
+          {value.length > 0 && (
+            <Pressable onPress={() => onChangeText("")} style={styles.clearButton}>
+              <Ionicons name="close-circle" size={20} color={Colors.midTone} />
+            </Pressable>
+          )}
+        </View>
       </Animated.View>
 
       {visible && tabs.length > 0 && selectedTab && onTabPress && (
@@ -98,6 +107,11 @@ export const searchBarStyles = (isDark: boolean) =>
     searchBarWrapper: {
       overflow: "hidden",
     },
+    inputContainer: {
+      position: "relative",
+      flexDirection: "row",
+      alignItems: "center",
+    },
     searchInput: {
       borderWidth: 1,
       borderColor: Colors.midTone,
@@ -108,6 +122,11 @@ export const searchBarStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSLIGHT,
       flex: 1,
-      width: "100%"
+    },
+    clearButton: {
+      position: "absolute",
+      right: 10,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });

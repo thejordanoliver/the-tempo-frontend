@@ -4,7 +4,7 @@ type TeamRecord = {
   overall: string | null;
 };
 
-export function useCFBTeamRecord(teamId?: string | number) {
+export function useCFBTeamRecord(teamId?:  number) {
   const [record, setRecord] = useState<TeamRecord>({ overall: null });
   const [loading, setLoading] = useState(false);
 

@@ -15,10 +15,12 @@ import {
 import { getAccessToken } from "utils/authStorage"; // ✅ centralized token getter
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
-
+import PostItemSkeleton from "./PostItemSkeleton";
+import { LeagueType } from "types/types";
+import { Colors } from "constants/Colors";
 interface TeamForumProps {
   teamId: string;
-  league: string; // ✅ added league prop
+  league?: LeagueType; // extendable if more leagues later
 }
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
@@ -39,6 +41,13 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getPostItemStyles(isDark);
+const renderSkeletons = (count = 5) => (
+  <>
+    {Array.from({ length: count }).map((_, i) => (
+      <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+    ))}
+  </>
+);
 
   // ✅ Load token and decode user ID
   useEffect(() => {
@@ -176,35 +185,41 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     <View style={styles.container}>
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        renderItem={({ item }) => (
-          <PostItem
-            item={item}
-            isDark={isDark}
-            styles={styles}
-            token={token}
-            currentUserId={currentUserId}
-            deletePost={deletePost}
-            editPost={editPost}
-            BASE_URL={BASE_URL}
-            onImagePress={(imgUri) => {
-              setGlobalImage([], 0);
-              setGlobalImage([imgUri], 0);
-            }}
-          />
-        )}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        ListEmptyComponent={() =>
-          !loading ? <Text style={styles.emptyText}>No posts yet.</Text> : null
-        }
-      />
+   <FlatList
+  data={posts}
+  keyExtractor={(item) => item.id}
+  contentContainerStyle={{ paddingBottom: 120 }}
+  renderItem={({ item }) => (
+    <PostItem
+      item={item}
+      isDark={isDark}
+      styles={styles}
+      token={token}
+      currentUserId={currentUserId}
+      deletePost={deletePost}
+      editPost={editPost}
+      BASE_URL={BASE_URL}
+      onImagePress={(imgUri) => {
+        setGlobalImage([], 0);
+        setGlobalImage([imgUri], 0);
+      }}
+    />
+  )}
+  onEndReached={loadMore}
+  onEndReachedThreshold={0.5}
+  refreshControl={
+    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+  }
+  ListEmptyComponent={() => {
+    if (loading) {
+      return renderSkeletons(5);
+    }
+    return <Text style={styles.emptyText}>No posts yet.</Text>;
+  }}
+  ListHeaderComponent={
+    loading && posts.length > 0 ? renderSkeletons(2) : null
+  }
+/>
 
       {/* ✅ Pass league and teamId to Create Post */}
       <TouchableOpacity
@@ -220,7 +235,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         <Ionicons
           name="create"
           size={20}
-          color={isDark ? "#1d1d1d" : "white"}
+          color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>
     </View>

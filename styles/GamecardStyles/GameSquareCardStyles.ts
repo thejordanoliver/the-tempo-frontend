@@ -2,23 +2,26 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (dark: boolean) =>
+export const gameSquareCardStyles = (
+  isDark: boolean,
+  isChampionship: boolean
+) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
       height: 120,
-      backgroundColor: dark
+      backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 8,
       paddingVertical: 16,
-          paddingHorizontal: 12,
+      paddingHorizontal: 12,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: dark ? Colors.darkGray : Colors.lightGray,
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRightWidth: 0.5,
       gap: 8,
     },
@@ -27,30 +30,30 @@ export const getStyles = (dark: boolean) =>
       justifyContent: "flex-start",
       alignItems: "center",
       gap: 4,
-    paddingRight: 12,
-    
+      paddingRight: 12,
     },
     teamWrapper: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
-      width: 72,
-      
+      gap: 4,
+      width: 60,
     },
-    logo: { width: 24, height: 24, resizeMode: "contain" },
-    footballIcon: {
-      width: 28,
-      height: 28,
+    logo: { width: 20, height: 20, resizeMode: "contain" },
+    footballPossesion: {
+      width: 16,
+      height: 16,
       resizeMode: "contain",
-      position: "absolute",
-      right: -10,
-      top: 0,
     },
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
+    rank: {
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
     teamScore: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
@@ -63,51 +66,71 @@ export const getStyles = (dark: boolean) =>
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
-    info: { alignItems: "center", justifyContent: "center", width: 60,  },
+    info: { alignItems: "center", justifyContent: "center", width: 60 },
     date: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
+    },
+    period: {
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     dateFinal: {
       fontFamily: Fonts.OSREGULAR,
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 12,
     },
     time: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     clock: {
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
-      color: dark ? Colors.dark.lightRed : Colors.light.red,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     finalText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: dark ? Colors.dark.lightRed : Colors.light.red,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     broadcast: {
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: dark ? Colors.dark.text : Colors.light.text,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      position: "absolute",
+      top: 4,
+      left: 8,
     },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 10,
-      color: dark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       position: "absolute",
-      top: 4,
+      bottom: 4,
       left: 12,
       width: "100%",
+    },
+    downDistance: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
+    },
+    notificationBell: {
+      position: "absolute",
+      top: 8,
+      right: 4,
     },
   });

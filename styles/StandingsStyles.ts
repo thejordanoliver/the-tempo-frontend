@@ -128,10 +128,10 @@ export const getStyles = (isDark: boolean) =>
       color: "tomato",
     },
     statusBadge: {
-      marginLeft: 6,
+      marginLeft: 2,
       paddingVertical: 2,
       borderRadius: 4,
-      minWidth: 28,
+      minWidth: 20,
       justifyContent: "center",
       alignItems: "center",
     },

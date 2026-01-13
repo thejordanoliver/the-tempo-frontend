@@ -13,7 +13,7 @@ import {
 } from "constants/teamsCFB";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
 
-import { useNFLGameLeaders } from "hooks/NFLHooks/useNFLGameLeaders";
+import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
 
 import { useMemo, useState } from "react";
 import {
@@ -24,7 +24,7 @@ import {
   View,
 } from "react-native";
 
-import { getStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const CATEGORIES = [
   "Passing",
@@ -135,7 +135,7 @@ export default function GameLeaders({
   lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, lighter);
+  const styles = gameLeadersStyles(isDark, lighter);
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
 
   // ---- ALWAYS use NFL hook (API structure is same)
@@ -143,13 +143,13 @@ export default function GameLeaders({
     leaders: rawHome,
     isLoading: loadingHome,
     isError: errorHome,
-  } = useNFLGameLeaders(gameId, homeTeamId);
+  } = useFootballGameLeaders(gameId, homeTeamId);
 
   const {
     leaders: rawAway,
     isLoading: loadingAway,
     isError: errorAway,
-  } = useNFLGameLeaders(gameId, awayTeamId);
+  } = useFootballGameLeaders(gameId, awayTeamId);
 
   // ---- Normalize depending on League
   const home = useMemo(
@@ -203,78 +203,76 @@ export default function GameLeaders({
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
+      <View style={styles.wrapper}>
+        <MainScrollTabBar
+          tabs={CATEGORIES}
+          lighter={lighter}
+          selected={selectedCategory}
+          onTabPress={(tab) => setSelectedCategory(tab as Category)}
+          renderLabel={(tab, isSelected) => (
+            <Text
+              style={{
+                fontFamily: Fonts.OSMEDIUM,
+                fontSize: 14,
+                color: isSelected ? textColor : subTextColor,
+              }}
+            >
+              {tab}
+            </Text>
+          )}
+        />
 
-      <MainScrollTabBar
-        tabs={CATEGORIES}
-        lighter={lighter}
-        selected={selectedCategory}
-        onTabPress={(tab) => setSelectedCategory(tab as Category)}
-        renderLabel={(tab, isSelected) => (
-          <Text
-            style={{
-              fontFamily: Fonts.OSMEDIUM,
-              fontSize: 14,
-              color: isSelected ? textColor : subTextColor,
-            }}
-          >
-            {tab}
-          </Text>
-        )}
-      />
+        {[awayP, homeP].map((p, i) => {
+          if (!p) return null;
 
-      {[awayP, homeP].map((p, i) => {
-        if (!p) return null;
+          // ------------- LOGO DECISION -------------
+          const logo =
+            league === "NFL"
+              ? getNFLTeamsLogo(p.teamCode, isDark || lighter)
+              : getCFBLogo(p.teamCode, isDark || lighter);
 
-        // ------------- LOGO DECISION -------------
-        const logo =
-          league === "NFL"
-            ? getNFLTeamsLogo(p.teamCode, isDark || lighter)
-            : getCFBLogo(p.teamCode, isDark || lighter);
-
-        // ------------- FILTER STATS -------------
-        const statList = STAT_KEYS[selectedCategory]
-          .map((key) =>
-            p.statistics.find(
-              (s) => s?.name?.toLowerCase() === key.toLowerCase()
+          // ------------- FILTER STATS -------------
+          const statList = STAT_KEYS[selectedCategory]
+            .map((key) =>
+              p.statistics.find(
+                (s) => s?.name?.toLowerCase() === key.toLowerCase()
+              )
             )
-          )
-          .filter((s): s is PlayerStat => !!s);
+            .filter((s): s is PlayerStat => !!s);
 
-        return (
-          <View
-            key={i}
-            style={[styles.card, { borderBottomColor: borderColor }]}
-          >
-            {/* Avatar */}
-            <View style={styles.avatarWrapper}>
-              <Image source={p.image} style={styles.avatar} />
-            </View>
-
-            {/* Info */}
-            <View style={styles.infoSection}>
-              <Text style={[styles.playerName, { color: textColor }]}>
-                {p.name}
-              </Text>
-
-              <View style={styles.statRow}>
-                {statList.map((s, idx) => (
-                  <View style={styles.statBlock} key={idx}>
-                    <Text style={[styles.statLabel, { color: subTextColor }]}>
-                      {getAbbreviation(s.name)}
-                    </Text>
-                    <Text style={[styles.statText, { color: textColor }]}>
-                      {s.value ?? "-"}
-                    </Text>
-                  </View>
-                ))}
+          return (
+            <View key={i} style={styles.card}>
+              {/* Avatar */}
+              <View style={styles.avatarWrapper}>
+                <Image source={p.image} style={styles.avatar} />
               </View>
-            </View>
 
-            {/* Team Logo */}
-            <Image source={logo} style={styles.teamLogo} />
-          </View>
-        );
-      })}
+              {/* Info */}
+              <View style={styles.infoSection}>
+                <Text style={[styles.playerName, { color: textColor }]}>
+                  {p.name}
+                </Text>
+
+                <View style={styles.statRow}>
+                  {statList.map((s, idx) => (
+                    <View style={styles.statBlock} key={idx}>
+                      <Text style={[styles.statLabel, { color: subTextColor }]}>
+                        {getAbbreviation(s.name)}
+                      </Text>
+                      <Text style={[styles.statText, { color: textColor }]}>
+                        {s.value ?? "-"}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              {/* Team Logo */}
+              <Image source={logo} style={styles.teamLogo} />
+            </View>
+          );
+        })}
+      </View>
     </View>
   );
 }

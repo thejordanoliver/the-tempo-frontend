@@ -1,9 +1,9 @@
+import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import players from "constants/players"; // fallback headshot map
-import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
-import { Image, Text, View, useColorScheme, StyleSheet } from "react-native";
+import useDbPlayersByTeam, { Player } from "hooks/usePlayersByTeam";
+import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import { TeamInjury } from "./TeamInjuries"; // import your type
-import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png"
 type Props = {
   injuries: TeamInjury[];
   lighter: boolean;
@@ -92,7 +92,9 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
                       styles.injuryItem,
                       {
                         borderBottomWidth:
-                          idx === team.injuries.length - 1 ? 0 : StyleSheet.hairlineWidth,
+                          idx === team.injuries.length - 1
+                            ? 0
+                            : StyleSheet.hairlineWidth,
                       },
                     ]}
                   >
@@ -114,9 +116,7 @@ export default function TeamInjuriesList({ injuries, lighter }: Props) {
                       </View>
                       <Text style={styles.status}>{inj.status}</Text>
                       {inj.details?.detail && (
-                        <Text style={styles.details}>
-                          {inj.details.detail}
-                        </Text>
+                        <Text style={styles.details}>{inj.details.detail}</Text>
                       )}
                     </View>
                     <View>

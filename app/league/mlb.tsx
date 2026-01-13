@@ -18,7 +18,6 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useLeagueNews } from "hooks/useLeagueNews";
-
 import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import * as React from "react";

@@ -4,10 +4,10 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameDetails } from "hooks/useGameDetails";
 import { useGameInfo } from "hooks/useGameInfo";
-import { useGameScores } from "hooks/useGameScores";
 import { useTeamRecord } from "hooks/useTeamRecords";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Pressable,
   Text,
@@ -16,103 +16,38 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { getTeamLogo, teams } from "../../constants/teams";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { Game, Team } from "../../types/types";
-// --- Helper function to normalize API status ---
-function mapStatus(apiStatus: {
-  short: number | string;
-  long?: string;
-}): string {
-  const long = apiStatus.long?.toLowerCase();
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getTeamById } from "../../constants/teams";
+import { Game } from "../../types/types";
 
-  // ✅ prioritize 'long' from API
-  if (long === "in play") return "In Play";
-  if (long === "finished") return "Final";
-  if (long === "scheduled") return "Scheduled";
-  if (long === "canceled") return "Canceled";
-  if (long === "delayed") return "Delayed";
-  if (long === "postponed") return "Postponed";
-
-  // fallback using numeric 'short' codes
-  const short = Number(apiStatus.short);
-  switch (short) {
-    case 1:
-      return "Scheduled";
-    case 2:
-    case 3:
-      return "Final"; // only if 'long' was missing
-    case 4:
-      return "Postponed";
-    case 5:
-      return "Delayed";
-    case 6:
-      return "Canceled";
-    default:
-      return "Scheduled";
-  }
-}
-
-export default function GameCard({
-  game,
-  isDark,
-}: {
-  game: Game;
-  isDark?: boolean;
-}) {
+export default function StackedGameCard({ game }: { game: Game }) {
   const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === "dark";
-
+  const isDark = colorScheme === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
-  const homeTeam =
-    game.home ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
-  const awayTeam =
-    game.away ?? ({ name: "Unknown", logo: "", record: "-" } as Team);
+  const homeTeam = game.home;
+  const awayTeam = game.away;
 
-  const getTeamById = (id?: number | string) =>
-    teams.find((t) => String(t.id) === String(id));
-  const getTeamName = (id?: number | string) =>
-    getTeamById(id)?.name ?? "Unknown";
+  const homeId = Number(game.home?.id);
+  const awayId = Number(game.away?.id);
 
-  // IDs
-  const homeId = Number(game.home?.id ?? (game as any).homeTeamId ?? 0);
-  const awayId = Number(game.away?.id ?? (game as any).awayTeamId ?? 0);
-  // ESPN IDs
-  const homeEspnId = getTeamById(homeId)?.espnID;
-  const awayEspnId = getTeamById(awayId)?.espnID;
+  const home = getTeamById(homeId);
+  const away = getTeamById(awayId);
+
+  const homeName = home?.fullName;
+  const awayName = away?.fullName;
+
+  const homeLogo = isDark ? home?.logoLight || home?.logo : home?.logo;
+  const awayLogo = isDark ? away?.logoLight || away?.logo : away?.logo;
+
+  const homeEspnId = home?.espnID ?? 0;
+  const awayEspnId = away?.espnID ?? 0;
 
   // Team records
-  const { record: homeRecord } = useTeamRecord(homeEspnId);
-  const { record: awayRecord } = useTeamRecord(awayEspnId);
-
-  // Memoized team data
-  const homeTeamData = useMemo(
-    () => ({
-      id: String(homeId),
-      espnID: homeEspnId ?? "",
-      name: getTeamName(homeId),
-      logo: getTeamLogo(homeId, dark),
-      record: homeRecord?.overall ?? "0-0",
-    }),
-    [homeId, homeEspnId, homeRecord?.overall, dark]
-  );
-
-  const awayTeamData = useMemo(
-    () => ({
-      id: String(awayId),
-      espnID: awayEspnId ?? "",
-      name: getTeamName(awayId),
-      logo: getTeamLogo(awayId, dark),
-      record: awayRecord?.overall ?? "0-0",
-    }),
-    [awayId, awayEspnId, awayRecord?.overall, dark]
-  );
-
-  const homeRecordData = homeRecord?.overall;
-  const awayRecordData = awayRecord?.overall;
+  const homeRecord = useTeamRecord(homeEspnId).record.overall ?? "0-0";
+  const awayRecord = useTeamRecord(awayEspnId).record.overall ?? "0-0";
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -135,68 +70,52 @@ export default function GameCard({
     : isNewYearsDay
     ? "New Year's Day"
     : null;
-  const styles = stackedGameCardStyles(dark, isChampionship);
-  const { score: liveScore } = useGameScores(
+
+  const styles = stackedGameCardStyles(isDark, isChampionship);
+
+  const { score: liveScore } = useGameDetails(
     "nba",
-    homeEspnId,
-    awayEspnId,
+    String(homeEspnId),
+    String(awayEspnId),
     gameDateStr
   );
 
   const currentPeriod =
     liveScore?.period ?? Number(game.periods?.current ?? game.period);
+  const clock = liveScore?.displayClock;
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
     liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
 
-  const baseStatus =
-    typeof game.status === "string" ? game.status : mapStatus(game.status);
-
-  // Prefer live status text when available
-  const liveStatusText = liveScore?.statusText?.toLowerCase() ?? "";
-
-  // Dynamically resolve final state from live data
-  const effectiveStatus = liveStatusText.includes("final")
-    ? "Final"
-    : liveStatusText.includes("halftime")
-    ? "Halftime"
-    : liveStatusText.includes("in progress") ||
-      liveStatusText.includes("in play") ||
-      liveStatusText.includes("qtr") ||
-      liveStatusText.includes("quarter")
-    ? "In Play"
-    : baseStatus;
-
-  // Now derive booleans reactively
-  const isFinal = effectiveStatus === "Final";
-  const inProgress = effectiveStatus === "In Play";
-  const isCanceled = effectiveStatus === "Canceled";
-  const isDelayed = effectiveStatus === "Delayed";
-  const isPostponed = effectiveStatus === "Postponed";
-  const isHalftime = effectiveStatus === "Halftime";
+  const gameStatusDescription = liveScore?.gameStatusDescription;
+  const gameStatusDetail = liveScore?.gameStatusDetail;
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const endOfPeriod = gameStatusDescription === "End of Period";
 
   const homeWins = isFinal && (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = isFinal && (awayScore ?? 0) > (homeScore ?? 0);
+
   const winnerStyle = (teamWins: boolean): TextStyle => ({
-    color: dark ? Colors.white : Colors.black,
-    opacity: inProgress || isHalftime ? 1 : isFinal ? (teamWins ? 1 : 0.5) : 1,
+    color: isDark ? Colors.white : Colors.black,
+    opacity:
+      inProgress || isHalftime || endOfPeriod
+        ? 1
+        : isFinal
+        ? teamWins
+          ? 1
+          : 0.5
+        : 1,
   });
 
-  const getLogo = (teamData?: Team, fallback?: Team) => {
-    if (!teamData)
-      return (
-        fallback?.logo ??
-        require("../../assets/Placeholders/teamPlaceholder.png")
-      );
-    return getTeamLogo(teamData.id, dark);
-  };
+  const { broadcasts } = useGameBroadcasts(homeEspnId, awayEspnId, gameDateStr);
 
-  const { broadcasts } = useGameBroadcasts(
-    homeTeam.name,
-    awayTeam.name,
-    gameDateStr
-  );
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   function getQuarterLabel(period?: number) {
@@ -206,12 +125,6 @@ export default function GameCard({
     return ot === 1 ? "OT" : `${ot}OT`;
   }
 
-  function getFinalWithQuarterLabel(period?: number) {
-    if (!period) return "Final";
-    if (period <= 4) return `Final`;
-    const ot = period - 4;
-    return ot === 1 ? "Final/OT" : `Final/${ot}OT`;
-  }
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -248,53 +161,48 @@ export default function GameCard({
 
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
-      <View style={styles.teamSection}>
-        <Image
-          source={getLogo(awayTeamData, awayTeam)}
-          style={styles.logo}
-          accessibilityLabel={`${awayTeam.name} logo`}
-        />
-        <Text style={styles.teamName}>{getTeamName(awayId)}</Text>
+      <View style={styles.cardWrapper}>
+        {/* Away Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={awayLogo}
+              style={styles.logo}
+              accessibilityLabel={`${awayTeam.name} logo`}
+            />
+            <Text style={styles.teamName}>{awayName}</Text>
+          </View>
+          <ScoreText
+            score={awayScore}
+            recordData={awayRecord ?? undefined}
+            teamWins={awayWins}
+            showRecord={isScheduled || isDelayed || isPostponed || isCanceled}
+          />
+        </View>
+
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={homeLogo}
+              style={styles.logo}
+              accessibilityLabel={`${homeName} logo`}
+            />
+            <Text style={styles.teamName}>{homeName}</Text>
+          </View>
+
+          <ScoreText
+            score={homeScore}
+            recordData={homeRecord}
+            teamWins={homeWins}
+            showRecord={isScheduled || isDelayed || isPostponed || isCanceled}
+          />
+        </View>
       </View>
-      <ScoreText
-        score={awayScore}
-        recordData={awayRecordData ?? undefined}
-        teamWins={awayWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
 
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headline}</Text>
-
-
-
-      {/* Home Team */}
-      <ScoreText
-        score={homeScore}
-        recordData={homeRecordData ?? undefined}
-        teamWins={homeWins}
-        showRecord={effectiveStatus === "Scheduled"}
-      />
-      <View style={styles.teamSection}>
-        <Image
-          source={getLogo(homeTeamData, homeTeam)}
-          style={styles.logo}
-          accessibilityLabel={`${homeTeam.name} logo`}
-        />
-        <Text style={styles.teamName}>{getTeamName(homeId)}</Text>
-      </View>
       {/* Center Info */}
-      <View
-        style={[
-          styles.info,
-          !broadcastText && {
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        ]}
-      >
-        {/* Status / Score */}
+      <View style={styles.info}>
         {isCanceled ? (
           <Text style={styles.finalText}>Canceled</Text>
         ) : isDelayed ? (
@@ -304,34 +212,25 @@ export default function GameCard({
         ) : isHalftime ? (
           <Text style={styles.finalText}>Halftime</Text>
         ) : isFinal ? (
-          <View>
-            <Text style={styles.finalText}>
-              {getFinalWithQuarterLabel(currentPeriod)}
-            </Text>
-        
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>{gameStatusDetail}</Text>
+            <View style={styles.finalStatusDivider} />
             <Text style={styles.finalText}>{formattedDate}</Text>
           </View>
         ) : inProgress ? (
-          <View>
-            {liveScore?.statusText?.toLowerCase().includes("end of") ||
-            liveScore?.statusText?.toLowerCase().includes("final") ? (
-              <Text style={styles.finalText}>{liveScore.statusText}</Text>
-            ) : (
-              <>
-                <Text style={styles.date}>
-                  {getQuarterLabel(currentPeriod)}
-                </Text>
-                {liveScore?.displayClock && (
-                  <>
-                    <View style={styles.statusDivider} />
-                    <Text style={styles.clock}>{liveScore.displayClock}</Text>
-                  </>
-                )}
-              </>
-            )}
+          <View style={styles.infoWrapper}>
+            <Text style={styles.period}>{getQuarterLabel(currentPeriod)}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.clock}>{clock}</Text>
           </View>
+        ) : endOfPeriod ? (
+          <>
+            <Text style={styles.clock}>
+              End of {getQuarterLabel(currentPeriod)}
+            </Text>
+          </>
         ) : (
-          <View>
+          <View style={styles.infoWrapper}>
             <Text style={styles.date}>{formattedDate}</Text>
             <View style={styles.statusDivider} />
             <Text style={styles.date}>{game.time ?? "TBD"}</Text>
@@ -342,7 +241,20 @@ export default function GameCard({
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
- 
+      {/* Notification Bell */}
+      <Pressable
+        onPress={() => setNotifEnabled((prev) => !prev)}
+        style={({ pressed }) => [
+          styles.notificationBell,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Ionicons
+          name={notifEnabled ? "notifications" : "notifications-outline"}
+          size={20}
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </Pressable>
     </>
   );
 

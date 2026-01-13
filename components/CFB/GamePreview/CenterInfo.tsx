@@ -1,20 +1,13 @@
 // ./CFB/GamePreview/CenterInfo.tsx
-import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
+
+import { Colors } from "constants/Colors";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
 import { CFBTeam } from "types/cfb";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 type CFBGameCenterInfoProps = {
-  status:
-    | "Scheduled"
-    | "In Progress"
-    | "Final"
-    | "Canceled"
-    | "Postponed"
-    | "Delayed"
-    | "Halftime";
+  status: string
   date: string;
   week: string;
   time: string;
@@ -28,31 +21,24 @@ type CFBGameCenterInfoProps = {
   lighter: boolean;
   apiDate?: string;
   downAndDistance: string;
+  broadcasts: string;
+  gameStatusDescription: string;
+  gameStatusShortDetail: string;
+  redzone: boolean;
 };
 
 export function CFBCenterInfo({
   status,
-  week,
   date,
   time,
+  redzone,
   period,
   clock,
-  colors,
-  isDark,
-  homeTeam,
-  awayTeam,
-  lighter,
-  apiDate,
   downAndDistance,
+  broadcasts,
+  gameStatusDescription,
+  gameStatusShortDetail,
 }: CFBGameCenterInfoProps) {
-  const { broadcasts, loading } = useCFBGameBroadcasts(
-    homeTeam.code ?? "N/A",
-    awayTeam.code ?? "N/A",
-    apiDate
-  );
-
-  const broadcastText = getBroadcastDisplay(broadcasts);
-
   // ✅ handles quarters & OT
   const formatQuarter = useMemo(
     () => (short: string) => {
@@ -79,35 +65,53 @@ export function CFBCenterInfo({
     []
   );
 
-  // ✅ detect OT for Final state
-  const wentOT =
-    (period && period.toUpperCase().includes("OT")) ||
-    (status && ["AOT"].includes(status as string));
+  const isRedzone = redzone;
 
-  // ⭐ Detect "End of Quarter" from gameStatusDetail or gameStatusShortDetail
-  const endOfQuarterText = (() => {
+  const renderDownAndDistance = () => {
     if (!downAndDistance) return null;
 
-    // possession API usually puts shortDownDistanceText like:
-    // "End of 1st quarter."
-    const lower = downAndDistance.toLowerCase();
+    // Split only once on " at "
+    const [beforeAt, afterAt] = downAndDistance.split(" at ");
 
-    if (lower.includes("end of") && lower.includes("quarter")) {
-      // Normalize capitalization
-      return downAndDistance
-        .replace("quarter.", "Quarter")
-        .replace("quarter", "Quarter");
-    }
+    return (
+      <Text style={styles.downAndDistance}>
+        {beforeAt}
+        {afterAt && (
+          <>
+            {" at "}
+            <Text
+              style={[
+                styles.downAndDistance,
+                isRedzone && {
+                  color: Colors.dark.lightRed,
+                }, // or any red you want
+              ]}
+            >
+              {afterAt}
+            </Text>
+          </>
+        )}
+      </Text>
+    );
+  };
 
-    return null;
-  })();
+  // ✅ detect end-of-quarter using gameStatusShortDetail
+
+  const isFinal = gameStatusDescription === "Final";
+   const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Not Started";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
+  const isOvertime = gameStatusShortDetail?.includes("OT");
 
   const styles = getStyles;
 
   return (
     <View style={styles.container}>
       {/* Scheduled */}
-      {status === "Scheduled" && (
+      {isScheduled && !isFinal && !inProgress && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date || "TBD"}</Text>
           <View style={styles.statusDivider} />
@@ -115,35 +119,42 @@ export function CFBCenterInfo({
         </View>
       )}
 
-      {/* In Progress */}
-      {status === "In Progress" &&
-        (!endOfQuarterText ||
-          !endOfQuarterText.toLowerCase().includes("end of")) && (
-          <>
-            <View style={styles.infoWrapper}>
-              <Text style={styles.period}>
-                {period ? formatQuarter(period) : ""}
-              </Text>
-              <View style={styles.statusDivider} />
-              {clock && <Text style={styles.clock}>{clock}</Text>}
-            </View>
-            {downAndDistance && (
-              <Text style={styles.downAndDistance}>{downAndDistance}</Text>
-            )}
-          </>
-        )}
-
-      {/* Halftime */}
-      {status === "Halftime" && (
+      {/* In Progress + End of Period */}
+      {inProgress && (
         <>
-          <Text style={styles.date}>Halftime</Text>
+          <View style={styles.infoWrapper}>
+            {!gameStatusShortDetail?.toLowerCase().includes("end") &&
+              !isOvertime && (
+                <>
+                  <Text style={styles.period}>{period}</Text>
+                  <View style={styles.statusDivider} />
+                  <Text style={styles.clock}>{clock}</Text>
+                </>
+              )}
+            {!gameStatusShortDetail?.toLowerCase().includes("end of") &&
+              isOvertime && (
+                <>
+                  <Text style={styles.clock}>{gameStatusShortDetail}</Text>
+                </>
+              )}
+
+            {gameStatusShortDetail?.toLowerCase().includes("end of") && (
+              <Text style={styles.clock}>End of {period}</Text>
+            )}
+          </View>
+          {renderDownAndDistance()}
         </>
       )}
 
+      {/* Halftime */}
+      {gameStatusDescription === "Halftime" && (
+        <Text style={styles.finalText}>Halftime</Text>
+      )}
+
       {/* Final */}
-      {status === "Final" && (
+      {gameStatusDescription === "Final" && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{wentOT ? "Final/OT" : "Final"}</Text>
+          <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date || ""}</Text>
         </View>
@@ -154,7 +165,7 @@ export function CFBCenterInfo({
         status === "Postponed" ||
         status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
 
-      {broadcastText && <Text style={styles.broadcast}>{broadcastText}</Text>}
+      {status !== "Final" && <Text style={styles.broadcast}>{broadcasts}</Text>}
     </View>
   );
 }

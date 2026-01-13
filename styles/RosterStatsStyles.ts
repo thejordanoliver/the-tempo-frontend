@@ -1,6 +1,6 @@
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
-import { Colors } from "constants/Colors";
 
 export const rosterStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -11,6 +11,14 @@ export const rosterStatsStyles = (isDark: boolean) =>
         ? Colors.dark.background
         : Colors.light.background,
       zIndex: 2,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    tableWrapper: {
+      borderRadius: 8,
+      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     table: {
       borderWidth: 1,
@@ -20,7 +28,6 @@ export const rosterStatsStyles = (isDark: boolean) =>
     },
     tableRow: {
       flexDirection: "row",
-      borderBottomWidth: 1,
       borderBottomColor: Colors.midTone,
       justifyContent: "space-between",
     },
@@ -44,6 +51,7 @@ export const rosterStatsStyles = (isDark: boolean) =>
     headerText: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.white : Colors.light.black,
+      textTransform: "uppercase",
     },
     playerName: {
       fontFamily: Fonts.OSBOLD,

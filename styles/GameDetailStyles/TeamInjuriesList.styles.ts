@@ -6,7 +6,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
     container: {},
     injuryItem: {
       flexDirection: "row",
-      padding: 8,
+      padding: 12,
+      height: 80,
       alignItems: "center",
       borderBottomColor: lighter
         ? Colors.midTone
@@ -15,12 +16,12 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
         : Colors.midTone,
     },
     avatar: {
-      width: 52,
-      height: 52,
+      width: 50,
+      height: 50,
     },
     avatarWrapper: {
-      width: 60,
-      height: 60,
+      width: 50,
+      height: 50,
       borderRadius: 100,
       paddingTop: 8,
       overflow: "hidden",
@@ -80,7 +81,7 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       flexDirection: "row",
       alignItems: "flex-end", // Align text on the same baseline
     },
-    infoSection: { flex: 1, marginLeft: 10, justifyContent: "flex-end" },
+    infoSection: { flex: 1, marginLeft: 10, justifyContent: "center" },
     details: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
@@ -148,5 +149,20 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
         ? Colors.midTone
         : Colors.lightGray,
       marginHorizontal: 4,
+    },
+    tabLabel: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    logo: {
+      width: 28,
+      height: 28,
+    },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 12,
     },
   });

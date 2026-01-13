@@ -2,8 +2,9 @@
 import PlaceHolderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { useEffect, useRef,  } from "react";
+import { useEffect, useRef } from "react";
 
+import React from "react";
 import {
   Animated,
   Easing,
@@ -13,7 +14,6 @@ import {
   View,
 } from "react-native";
 import type { LeagueType, Team } from "types/types";
-import React from "react";
 
 type TeamWithLeague = Team & { league: LeagueType };
 
@@ -64,21 +64,20 @@ function TeamCard({
       ? item.secondaryColor
       : undefined;
 
-const selectedColor =
-  typeof item.color === "string" && item.color.startsWith("#")
-    ? item.color
-    : Colors.midTone;
+  const selectedColor =
+    typeof item.color === "string" && item.color.startsWith("#")
+      ? item.color
+      : Colors.midTone;
 
-const backgroundColor = selectionAnim.interpolate({
-  inputRange: [0, 1],
-  outputRange: [
-    isDark
-      ? Colors.dark.itemBackground || "#121212"
-      : Colors.light.itemBackground || "#f5f5f5",
-    selectedColor || "#888",
-  ],
-});
-
+  const backgroundColor = selectionAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [
+      isDark
+        ? Colors.dark.itemBackground || "#121212"
+        : Colors.light.itemBackground || "#f5f5f5",
+      selectedColor || "#888",
+    ],
+  });
 
   const textColor = selectionAnim.interpolate({
     inputRange: [0, 1],
@@ -88,37 +87,31 @@ const backgroundColor = selectionAnim.interpolate({
     ],
   });
 
-
   const resolveLogo = (source: any) => {
-  if (!source) return PlaceHolderLogo;
+    if (!source) return PlaceHolderLogo;
 
-  // If already require() or an object, return directly
-  if (typeof source === "number" || typeof source === "object") return source;
+    // If already require() or an object, return directly
+    if (typeof source === "number" || typeof source === "object") return source;
 
-  // If a string, convert to URI
-  if (typeof source === "string") return { uri: source };
+    // If a string, convert to URI
+    if (typeof source === "string") return { uri: source };
 
-  return PlaceHolderLogo;
-};
-
+    return PlaceHolderLogo;
+  };
 
   // ✅ Always use logoLight in dark mode if available, otherwise fallback
   // ✅ Choose correct logo based on theme and selection
-const logoSource = (() => {
-  let selected = item.logo;
+  const logoSource = (() => {
+    let selected = item.logo;
 
-  if (isDark) {
-    selected = item.logoLight || item.logo;
-  } else {
-    if (isSelected && item.logoLight) selected = item.logoLight;
-  }
+    if (isDark) {
+      selected = item.logoLight || item.logo;
+    } else {
+      if (isSelected && item.logoLight) selected = item.logoLight;
+    }
 
-  return resolveLogo(selected);
-})();
-
-
-  
-
+    return resolveLogo(selected);
+  })();
 
   const logoSize = isGridView ? 50 : 40;
 
@@ -148,13 +141,20 @@ const logoSource = (() => {
           },
         ]}
       >
-        {/* League Tag for CFB / CBB */}
-        {(item.league === "CFB" || item.league === "CBB") && (
+        {/* League Tag for CFB / CBB / WCBB */}
+        {(item.league === "CFB" ||
+          item.league === "CBB" ||
+          item.league === "WCBB") && (
           <View
             style={[
               styles.sportTag,
               {
-                backgroundColor: item.league === "CFB" ? "#228B22" : "#1E90FF",
+                backgroundColor:
+                  item.league === "CFB"
+                    ? "#228B22"
+                    : item.league === "WCBB"
+                    ? "#C2185B" // 🎀 WCBB color
+                    : "#1E90FF", // CBB
               },
             ]}
           >
@@ -190,13 +190,20 @@ const logoSource = (() => {
           }}
         >
           <Animated.Text style={[styles.teamName, { color: textColor }]}>
-            {item.league === "CFB" || item.league === "CBB" ? item.name : city}{" "}
+            {item.league === "CFB" ||
+            item.league === "CBB" ||
+            item.league === "WCBB"
+              ? item.name
+              : city}{" "}
           </Animated.Text>
-          {item.league !== "CFB" && item.league !== "CBB" && (
-            <Animated.Text style={[styles.teamName, { color: textColor }]}>
-              {nickname}
-            </Animated.Text>
-          )}
+
+          {item.league !== "CFB" &&
+            item.league !== "CBB" &&
+            item.league !== "WCBB" && (
+              <Animated.Text style={[styles.teamName, { color: textColor }]}>
+                {nickname}
+              </Animated.Text>
+            )}
         </View>
       </Animated.View>
     </Pressable>

@@ -119,10 +119,12 @@ export default function TeamPreviewModal({
 
     return null;
   }
-const darkPreferredLogo =
-  useLogoLight && team.logoLight ? team.logoLight : team.logoLight || team.logo;
+  const darkPreferredLogo =
+    useLogoLight && team.logoLight
+      ? team.logoLight
+      : team.logoLight || team.logo;
 
-const resolvedLogo = resolveLogo(isDark ? darkPreferredLogo : team.logo);
+  const resolvedLogo = resolveLogo(isDark ? darkPreferredLogo : team.logo);
 
   return (
     <Modal animationType="fade" transparent visible={visible}>
@@ -167,14 +169,14 @@ const resolvedLogo = resolveLogo(isDark ? darkPreferredLogo : team.logo);
                   backgroundColor: "rgba(255,255,255,0.05)",
                 }}
               >
-              <Image
-  source={
-    resolvedLogo ??
-    require("assets/Placeholders/teamPlaceholder.png")
-  }
-  style={{ width: 60, height: 60, marginBottom: 10 }}
-  resizeMode="contain"
-/>
+                <Image
+                  source={
+                    resolvedLogo ??
+                    require("assets/Placeholders/teamPlaceholder.png")
+                  }
+                  style={{ width: 60, height: 60, marginBottom: 10 }}
+                  resizeMode="contain"
+                />
                 <Text
                   style={{
                     fontSize: 20,

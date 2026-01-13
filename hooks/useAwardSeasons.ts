@@ -1,14 +1,14 @@
 import axios from "axios";
+import { ResizeMode } from "expo-av";
 import { useCallback, useEffect, useState } from "react";
-import { AwardSeason } from "types/types";
-import { LeagueType } from "types/types";
+import { AwardSeason, LeagueType } from "types/types";
 
 export type League = LeagueType;
 
 export type AwardCategory =
   | "all"
 
-  // ---------------- NBA ----------------
+  // NBA
   | "mvp"
   | "roy"
   | "sixthman"
@@ -17,7 +17,7 @@ export type AwardCategory =
   | "mip"
   | "fmvp"
 
-  // ---------------- CFB ----------------
+  // CFB
   | "heisman"
   | "apoy"
   | "camp"
@@ -36,17 +36,24 @@ export type AwardCategory =
   | "manning"
   | "rimington"
   | "outland"
-  | "unitas";
+  | "unitas"
+  | "apcoy"
+  | "afca"
+
+  // NFL
+  | "ropoy"
+  | "rdpoy"
+  | "opoy"
+  | "dpoy"
+  | "coy";
 
 type Options = {
   category?: AwardCategory;
-    league?: League;          // 👈 NEW
-  playerId?: string;
-  teamId?: string;
+  league?: League;
+  playerId?: string; // NBA only
   season?: string;
   enabled?: boolean;
-    refreshToken?: number; // 👈 ADD
-
+  refreshToken?: number;
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -54,55 +61,64 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export function useAwardSeasons(options: Options = {}) {
   const {
     league = "nba",
-    category = "mvp",
+    category = "all",
     playerId,
-    teamId,
     season,
     enabled = true,
-    refreshToken, // 👈 NEW
+    refreshToken,
   } = options;
-
 
   const [data, setData] = useState<AwardSeason[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-const fetchAwards = useCallback(async () => {
-  if (!enabled) return;
+  const fetchAwards = useCallback(async () => {
+    if (!enabled) return;
 
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    // 👇 CRITICAL: clear data so React re-renders
-    setData([]);
+      const params: Record<string, string | number> = {
+        type: category,
+      };
 
-    const params: Record<string, string | number> = {};
-    if (playerId) params.player_id = playerId;
-    if (teamId) params.team_id = teamId;
-    if (season) params.season = season;
-    if (category) params.type = category;
+      // NBA-only filter
+      if (league === "nba" && playerId) {
+        params.player_id = playerId;
+      }
 
-    // 👇 cache buster
-    params._refresh = Date.now();
+      if (season) {
+        params.season = season;
+      }
 
-    const res = await axios.get(
-      `${API_URL}/api/${league}/award-seasons`,
-      { params }
-    );
+      // cache-buster (safe)
+      params._refresh = refreshToken ?? Date.now();
+      type AwardSeasonsResponse = Record<string, AwardSeason[]>;
 
-    setData(res.data?.[category] ?? []);
-  } catch (err: any) {
-    console.error("❌ Failed to fetch award seasons", err);
-    setError("Failed to load award seasons");
-  } finally {
-    setLoading(false);
-  }
-}, [league, category, playerId, teamId, season, enabled, refreshToken]);
+      const res = await axios.get(`${API_URL}/api/${league}/award-seasons`, {
+        params,
+      });
 
-useEffect(() => {
-  fetchAwards();
-}, [fetchAwards, refreshToken]);
+      const payload = res.data as AwardSeasonsResponse;
+
+      if (category === "all") {
+        const flattened = Object.values(payload).flat();
+        setData(flattened);
+      } else {
+        setData(payload[category] ?? []);
+      }
+    } catch (err) {
+      console.error("❌ Failed to fetch award seasons", err);
+      setError("Failed to load award seasons");
+    } finally {
+      setLoading(false);
+    }
+  }, [league, category, playerId, season, enabled, refreshToken]);
+
+  useEffect(() => {
+    fetchAwards();
+  }, [fetchAwards]);
 
   return {
     data,

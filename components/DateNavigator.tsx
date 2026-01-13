@@ -4,6 +4,7 @@ import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Fonts, Colors } from "constants/Styles";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -31,7 +32,7 @@ export default function DateNavigator({
       >
         <Image
           source={require("../assets/icons8/back.png")}
-          style={{ width: 20, height: 20, tintColor: isDark ? "black" : "white" }}
+          style={{ width: 20, height: 20, tintColor: isDark ? Colors.black : Colors.white }}
         />
       </TouchableOpacity>
 
@@ -49,7 +50,7 @@ export default function DateNavigator({
       >
         <Image
           source={require("../assets/icons8/forward.png")}
-          style={{ width: 20, height: 20, tintColor: isDark ? "black" : "white" }}
+          style={{ width: 20, height: 20, tintColor: isDark ? Colors.black : Colors.white }}
         />
       </TouchableOpacity>
     </View>
@@ -68,13 +69,12 @@ const getStyles = (isDark: boolean) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       marginHorizontal: 12,
-      backgroundColor: isDark ? "white" : "black",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: 6,
     },
     dateNavText: {
-      color: isDark ? "black" : "white",
-      fontWeight: "normal",
+      color: isDark ? Colors.black : Colors.white,
       fontSize: 18,
-      fontFamily: "Oswald_500Medium",
+      fontFamily: Fonts.OSMEDIUM,
     },
   });

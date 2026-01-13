@@ -9,7 +9,6 @@ import {
   ViewStyle,
 } from "react-native";
 import { Colors } from "constants/Colors";
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type GameSquareCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;

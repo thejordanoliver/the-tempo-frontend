@@ -2,7 +2,7 @@ import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { getTeamLogo, teams } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
-import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
+import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { memo, useMemo } from "react";
@@ -15,13 +15,14 @@ import {
   View,
 } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import {
   getTeamRankFromAPById,
   getTeamRankFromCFPById,
   useAPTop25,
   useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+
 type Props = {
   game: any;
   isDark?: boolean;
@@ -32,21 +33,21 @@ type Props = {
 function CFBStackedGameCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  
+
   const router = useRouter();
-  
+
   const homeId = String(game?.teams?.home?.id);
   const awayId = String(game?.teams?.away?.id);
   const gameId = game?.game?.id;
-  
+
   // ✅ Load both CFP and AP rankings
   const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
-  
+
   // ✅ Get ranking, falling back to AP poll if CFP is missing
   // Check if CFP rankings are active (after they’ve been released)
   const isCFPActive = cfpTop25 && cfpTop25.length > 0;
-  
+
   // Main helper to get rank with conditional fallback
   const getTeamRank = (id: number | string) => {
     if (isCFPActive) {
@@ -56,11 +57,11 @@ function CFBStackedGameCard({ game, isDark }: Props) {
     // 🕓 Early season — fallback to AP Top 25
     return getTeamRankFromAPById(id, apTop25) ?? "";
   };
-  
+
   const gameDate = useMemo(() => {
     return game?.game?.date?.timestamp
-    ? new Date(game.game.date.timestamp * 1000)
-    : null;
+      ? new Date(game.game.date.timestamp * 1000)
+      : null;
   }, [game?.game?.date?.timestamp]);
   const gameDateStr = gameDate?.toISOString();
 
@@ -72,7 +73,7 @@ function CFBStackedGameCard({ game, isDark }: Props) {
   );
 
   const styles = stackedGameCardStyles(dark, isChampionship);
-  
+
   const getTeamById = (id?: number | string) =>
     teams.find((t) => String(t.id) === String(id));
   const getTeamName = (id?: number | string): string =>
@@ -86,43 +87,42 @@ function CFBStackedGameCard({ game, isDark }: Props) {
 
   // --- Game status ---
   const status = useMemo(() => {
-    let long = game.game.status.long ?? "";
+    const long = game.game.status.long ?? "";
     const short = game.game.status.short?.toLowerCase() ?? "";
     const longLower = long.toLowerCase();
 
-    if (longLower === "finished") long = "Final";
-
     const wentOT =
       longLower.includes("ot") ||
-      longLower.includes("over time") ||
-      longLower.includes("after over") ||
-      longLower.includes("aot") ||
+      longLower.includes("overtime") ||
       short.includes("ot");
 
     const isFinal =
-      long === "Final" ||
+      longLower === "final" ||
+      longLower === "finished" || // ✅ Added
       longLower.includes("final") ||
+      longLower.includes("finished") || // ✅ Added
       longLower.includes("after over") ||
       longLower.includes("aot") ||
       short.includes("ft");
 
     const live = ![
-      "Not Started",
-      "Final",
-      "Canceled",
-      "Delayed",
-      "Postponed",
-      "Halftime",
-    ].includes(long);
+      "not started",
+      "final",
+      "finished", // ✅ Added
+      "canceled",
+      "delayed",
+      "postponed",
+      "halftime",
+    ].includes(longLower);
 
     return {
-      isScheduled: long === "Not Started",
+      isScheduled: longLower === "not started",
       isFinal,
       wentOT,
-      isCanceled: long === "Canceled",
-      isDelayed: long === "Delayed",
-      isPostponed: long === "Postponed",
-      isHalftime: long === "Halftime",
+      isCanceled: longLower === "canceled",
+      isDelayed: longLower === "delayed",
+      isPostponed: longLower === "postponed",
+      isHalftime: longLower === "halftime",
       isLive: live && !isFinal,
       short: game.game.status.short,
       long,
@@ -130,27 +130,24 @@ function CFBStackedGameCard({ game, isDark }: Props) {
     };
   }, [game.game.status]);
 
-  // --- Possession hook ---
-  const possession = status.isLive
-    ? useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
-    : {
-        gameStatusDescription: undefined,
-        possessionTeamId: undefined,
-        displayClock: undefined,
-        shortDownDistanceText: undefined,
-        downDistanceText: undefined,
-        period: undefined,
-        score: undefined,
-        refresh: () => {},
-      };
-
   const {
     possessionTeamId,
-    displayClock,
     shortDownDistanceText,
-    gameStatusDescription,
-  } = possession;
+    downDistanceText,
+    possessionText,
+    displayClock,
+    period,
+    score,
 
+    gameStatusDescription,
+    gameStatusShortDetail,
+  } = useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr);
+
+  const { broadcast } = useCFBGameDetails(
+    String(awayEspnId || emptyAwayTeam.espnID),
+    String(homeEspnId || emptyHomeTeam.espnID),
+    gameDateStr
+  );
   const displayStatus =
     gameStatusDescription ??
     status.long ??
@@ -159,19 +156,22 @@ function CFBStackedGameCard({ game, isDark }: Props) {
     game.game.status.short ??
     "Scheduled";
 
+  const isLive = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isHalftime = gameStatusShortDetail === "Halftime";
+
   // --- Use possession score when live; fallback to static game scores ---
-  const displayAwayScore =
-    possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-  const displayHomeScore =
-    possession?.score?.home ?? game?.scores?.home?.total ?? 0;
+  const displayAwayScore = score?.away ?? game?.scores?.away?.total ?? 0;
+  const displayHomeScore = score?.home ?? game?.scores?.home?.total ?? 0;
 
   // --- Helper for score or record ---
   const getDisplayValue = (isHome: boolean) => {
     if (status.isScheduled) return isHome ? homeTeam.record : awayTeam.record;
     if (status.isFinal)
       return isHome
-        ? possession?.score?.home ?? game?.scores?.home?.total ?? 0
-        : possession?.score?.away ?? game?.scores?.away?.total ?? 0;
+        ? score?.home ?? game?.scores?.home?.total ?? 0
+        : score?.away ?? game?.scores?.away?.total ?? 0;
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
@@ -214,14 +214,6 @@ function CFBStackedGameCard({ game, isDark }: Props) {
       status.isLive,
     ]
   );
-
-  // --- Broadcasts ---
-  const { broadcasts } = useCFBGameBroadcasts(
-    homeTeam.name,
-    awayTeam.name,
-    gameDateStr
-  );
-  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -298,15 +290,18 @@ function CFBStackedGameCard({ game, isDark }: Props) {
             <View style={styles.teamWrapper}>
               <Image source={awayTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
-                {" "}
-                {awayEspnId && getTeamRank(String(awayEspnId)) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(String(awayEspnId))}
-                  </Text>
-                )}{" "}
-                {awayTeam.name}
+                {(() => {
+                  const rank = awayEspnId
+                    ? getTeamRank(String(awayEspnId))
+                    : "";
+                  return (
+                    <>
+                      {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                      {awayTeam.name}
+                    </>
+                  );
+                })()}
               </Text>
-
               {awayTeam.hasPossession && (
                 <Image
                   source={dark ? FootballLight : Football}
@@ -329,13 +324,17 @@ function CFBStackedGameCard({ game, isDark }: Props) {
             <View style={styles.teamWrapper}>
               <Image source={homeTeam.logo} style={styles.logo} />
               <Text style={styles.teamName}>
-                {" "}
-                {homeEspnId && getTeamRank(String(homeEspnId)) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(String(homeEspnId))}
-                  </Text>
-                )}{" "}
-                {homeTeam.name}
+                {(() => {
+                  const rank = homeEspnId
+                    ? getTeamRank(String(homeEspnId))
+                    : "";
+                  return (
+                    <>
+                      {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                      {homeTeam.name}
+                    </>
+                  );
+                })()}
               </Text>
               {homeTeam.hasPossession && (
                 <Image
@@ -357,55 +356,42 @@ function CFBStackedGameCard({ game, isDark }: Props) {
 
         {/* Game Info */}
         <View style={styles.info}>
-          {status.isScheduled && (
-            <>
+          {status.isScheduled ? (
+            <View style={styles.infoWrapper}>
               <Text style={styles.date}>{formattedDate}</Text>
-              <Text
-                style={[
-                  styles.time,
-                  { color: dark ? "rgba(255,255,255, .5)" : "rgba(0,0,0,.5)" },
-                ]}
-              >
-                {formattedTime}
-              </Text>
-            </>
-          )}
-
-          {status.isLive && (
+              <View style={styles.statusDivider} />
+              <Text style={styles.date}>{formattedTime}</Text>
+            </View>
+          ) : isLive ? (
             <>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={[styles.date, { fontSize: 14 }]}>
-                  {formatQuarter(status.short, displayStatus)}
-                </Text>
-                <View
-                  style={{
-                    height: 14,
-                    width: 1,
-                    backgroundColor: "#ccc",
-                    marginHorizontal: 4,
-                  }}
-                />
-                <Text style={styles.clock}>{displayClock}</Text>
-              </View>
+              {displayClock === "0:00" &&
+              gameStatusShortDetail?.toLowerCase().includes("end of") ? (
+                <Text style={styles.clock}>{gameStatusShortDetail}</Text>
+              ) : (
+                <View style={styles.infoWrapper}>
+                  <Text style={styles.period}>{formatQuarter(period)}</Text>
+                  <View style={styles.statusDivider} />
+                  <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
+                </View>
+              )}
               {shortDownDistanceText && (
-                <Text style={styles.downDistance}>{shortDownDistanceText}</Text>
+                <Text style={styles.downDistance}>{downDistanceText}</Text>
               )}
             </>
-          )}
+          ) : isHalftime ? (
+            <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
+          ) : status.isFinal ? (
+            // ✅ FINAL: show "Final" + date
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
+              <View style={styles.finalStatusDivider} />
+              <Text style={styles.finalText}>{formattedDate}</Text>
+            </View>
+          ) : null}
 
-          {status.isHalftime && (
-            <Text style={[styles.date, { fontSize: 14 }]}>{displayStatus}</Text>
+          {!status.isFinal && broadcast && (
+            <Text style={styles.broadcast}>{broadcast}</Text>
           )}
-          {status.isFinal && (
-            <>
-              <Text style={styles.finalText}>{displayStatus}</Text>
-              <Text style={styles.dateFinal}>{formattedDate}</Text>
-            </>
-          )}
-
-          {status.isCanceled && <Text style={styles.finalText}>Cancelled</Text>}
-          {status.isDelayed && <Text style={styles.finalText}>Delayed</Text>}
-          <Text style={styles.broadcast}>{broadcastText}</Text>
         </View>
       </View>
     </TouchableOpacity>

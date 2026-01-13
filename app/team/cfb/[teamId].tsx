@@ -4,9 +4,10 @@ import CFBGamesList from "components/CFB/Games/CFBGamesList";
 import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
 import Roster from "components/CFB/Team/Roster";
 import FootballRosterStats from "components/CFB/Team/RosterStats";
-import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import TeamInfoModal from "components/Team/TeamInfoModal";
 import { conferenceListMap, teams } from "constants/teamsCFB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
@@ -24,9 +25,7 @@ import {
 } from "react-native";
 import PagerView from "react-native-pager-view";
 import { Game } from "types/cfb";
-import { User } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetailsStyles";
 type PageSelectedEvent = {
   nativeEvent: {
@@ -51,7 +50,6 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
   const [refreshing, setRefreshing] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [cachedGames, setCachedGames] = useState<Game[]>([]);
 
@@ -84,7 +82,6 @@ export default function TeamDetailScreen() {
   const CACHE_KEY = `teamGames-${teamIdNum}`;
   const CACHE_EXPIRY_HOURS = 6;
 
-  // ✅ call hook directly
   const {
     games: rawTeamGames = [],
     loading: gamesLoading,
@@ -193,55 +190,35 @@ export default function TeamDetailScreen() {
     }
   };
 
-  // --- Load logged-in user ---
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const jsonUser = await AsyncStorage.getItem("loggedInUser");
-        if (jsonUser) setLoggedInUser(JSON.parse(jsonUser));
-      } catch (e) {
-        console.error("Failed to load user:", e);
-      }
-    };
-    loadUser();
-  }, []);
-
   // ✅ Use the favorite teams hook
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const { toggleNotifications, isNotified } = useNotifications();
   const league = "CFB";
-
+  const favorited = team ? isFavorite(league, team.id) : false;
+  const teamKey = String(team?.id);
+  const notfied = team ? isNotified(league, teamKey) : false;
+  
   // --- Header ---
   useLayoutEffect(() => {
-    if (!team) return;
-
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team.logo ? { uri: team.logo } : undefined}
-          logoLight={team.logoLight ? { uri: team.logoLight } : undefined}
-          teamColor={team.color}
+          logo={team?.logo ? { uri: team.logo } : undefined}
+          logoLight={team?.logoLight ? { uri: team.logoLight } : undefined}
+          teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team.code}
-          isFavorite={isFavorite(league, team.id)} // recompute here
-          isNotified={isNotified(league, team.id)} // recompute here
-          onToggleFavorite={() => toggleFavorite(league, team.id)}
-          onToggleNotifications={() => toggleNotifications(league, team.id)}
+          teamCode={team?.code}
+          isFavorite={favorited}
+          isNotified={notfied} // ✅ MATCH
+          onToggleNotifications={() => toggleNotifications(league, teamKey)}
+          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [
-    navigation,
-    isDark,
-    team,
-    isFavorite,
-    isNotified,
-    toggleFavorite,
-    toggleNotifications,
-  ]);
+  }, [navigation, isDark, team, favorited]);
 
   if (!teamIdNum || !team) {
     return (
@@ -253,7 +230,7 @@ export default function TeamDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <TabBar
+      <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
         onTabPress={(tab) => {
@@ -302,7 +279,6 @@ export default function TeamDetailScreen() {
             ref={rosterRef}
             teamId={String(team.id)}
             teamName={team.name}
-            refreshing={refreshing}
             league="CFB"
           />
         </View>
@@ -323,7 +299,7 @@ export default function TeamDetailScreen() {
           <CFBConferenceStandingsList
             onlyTeamConference={true}
             teamName={team.fullName}
-          />{" "}
+          />
         </View>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>

@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Colors";
 import players from "constants/players";
 import { teamsById } from "constants/teams";
-import { teamsCBBById } from "constants/teamsCBB";
+import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import { teamsCFBById } from "constants/teamsCFB";
 import { teamsMLBById } from "constants/teamsMLB";
 import { teamsNFLById } from "constants/teamsNFL";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/ExploreStyles";
+import { exploreStyles } from "styles/Explore/ExploreStyles";
 import type {
   PlayerResult,
   ResultItem,
@@ -39,15 +39,20 @@ export default function ResultItemRow({
   // TEAM
   // -------------------------
   const renderTeam = (team: TeamResult) => {
-    const localTeam = team.isNFL
-      ? teamsNFLById[team.id.toString()]
-      : team.isMLB
-      ? teamsMLBById[team.id.toString()]
-      : team.isCFB
-      ? teamsCFBById[team.id.toString()]
-      : team.isCBB
-      ? teamsCBBById[team.id.toString()]
-      : teamsById[team.id.toString()];
+    const localTeam =
+      team.isNFL && team.id != null
+        ? teamsNFLById[String(team.id)]
+        : team.isMLB && team.id != null
+        ? teamsMLBById[String(team.id)]
+        : team.isCFB && team.id != null
+        ? teamsCFBById[String(team.id)]
+        : team.isCBB && team.id != null
+        ? teamsCBBById[String(team.id)]
+        : team.isWCBB && team.wid != null
+        ? teamsWCBBById[String(team.wid)]
+        : team.id != null
+        ? teamsById[String(team.id)]
+        : null;
 
     const logoSource = isDark
       ? localTeam?.logoLight || localTeam?.logo
@@ -71,6 +76,7 @@ export default function ResultItemRow({
               <Text style={styles.name}>
                 {localTeam?.fullName || team.name}
               </Text>
+              {team.isWCBB && <Text style={styles.tag}>WCBB</Text>}
               {team.isCBB && <Text style={styles.tag}>CBB</Text>}
               {team.isCFB && <Text style={styles.tag}>CFB</Text>}
             </View>
@@ -97,15 +103,22 @@ export default function ResultItemRow({
       ? player.avatarUrl
       : players[player.name];
 
-    const localTeam = player.isNFL
-      ? teamsNFLById[player.team_id.toString()]
-      : player.isMLB
-      ? teamsMLBById[player.team_id.toString()]
-      : player.isCFB
-      ? teamsCFBById[player.team_id.toString()]
-      : player.isCBB
-      ? teamsCBBById[player.team_id.toString()]
-      : teamsById[player.team_id.toString()];
+    const teamId = player.team_id != null ? String(player.team_id) : null;
+
+    const localTeam =
+      teamId && player.isNFL
+        ? teamsNFLById[teamId]
+        : teamId && player.isMLB
+        ? teamsMLBById[teamId]
+        : teamId && player.isCFB
+        ? teamsCFBById[teamId]
+        : teamId && player.isCBB
+        ? teamsCBBById[teamId]
+        : teamId && player.isWCBB
+        ? teamsWCBBById[teamId]
+        : teamId
+        ? teamsById[teamId]
+        : null;
 
     return (
       <View style={styles.itemRow}>

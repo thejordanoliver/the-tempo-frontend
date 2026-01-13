@@ -95,7 +95,9 @@ const FavoriteTeamsList = ({
         ? "/team/[teamId]"
         : previewTeam.league === "CFB"
         ? "/team/cfb/[teamId]"
-        : "/team/cbb/[teamId]";
+        : previewTeam.league === "CBB"
+        ? "/team/cbb/[teamId]"
+        : "/team/wcbb/[teamId]";
     router.push({
       pathname: route,
       params: { teamId: previewTeam.id.toString() },
@@ -185,7 +187,11 @@ const FavoriteTeamsList = ({
               : city;
 
           const displayNickname =
-            team.league === "CFB" || team.league === "CBB" ? null : nickname;
+            team.league === "CFB" ||
+            team.league === "CBB" ||
+            team.league === "WCBB"
+              ? null
+              : nickname;
 
           const rawLogo =
             (alwaysLightLogoTeams.includes(team.name ?? team.fullName ?? "") &&
@@ -222,10 +228,17 @@ const FavoriteTeamsList = ({
                       ? "/team/cfb/[teamId]"
                       : team.league === "CBB"
                       ? "/team/cbb/[teamId]"
+                      : team.league === "WCBB"
+                      ? "/team/wcbb/[teamId]"
                       : "/team/mlb/[teamId]";
                   router.push({
                     pathname: route,
-                    params: { teamId: team.id.toString() },
+                    params: {
+                      teamId:
+                        team.league === "WCBB"
+                          ? String((team as any).wid)
+                          : String(team.id),
+                    },
                   });
                 }}
               >
@@ -247,7 +260,9 @@ const FavoriteTeamsList = ({
                   ]}
                 >
                   {/* League Tag for CFB / CBB */}
-                  {(team.league === "CFB" || team.league === "CBB") && (
+                  {(team.league === "CFB" ||
+                    team.league === "CBB" ||
+                    team.league === "WCBB") && (
                     <View
                       style={{
                         position: "absolute",
@@ -260,7 +275,11 @@ const FavoriteTeamsList = ({
                         borderBottomLeftRadius: 100,
                         zIndex: 2,
                         backgroundColor:
-                          team.league === "CFB" ? "#228B22" : "#1E90FF",
+                          team.league === "CFB"
+                            ? "#228B22"
+                            : team.league === "CBB"
+                            ? "#1E90FF"
+                            : "#C2185B",
                       }}
                     >
                       <Text

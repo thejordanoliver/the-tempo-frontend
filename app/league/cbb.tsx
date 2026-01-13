@@ -8,6 +8,7 @@ import { CBBStandingsList } from "components/CBB/Standings/CBBStandingsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/CFB/ConferenceListModal";
+import { getTeamInfo } from "constants/teamsCBB";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
@@ -19,7 +20,6 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueNews } from "hooks/useLeagueNews";
@@ -73,8 +73,6 @@ export default function CBBLeagueScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
-  const { rankings } = useCBBRankings();
-
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
     useState<string>("Top 25");
@@ -99,11 +97,10 @@ export default function CBBLeagueScreen() {
   const { highlights } = useHighlights("cbb", "", 10);
 
   // --- AP Top 25 from rankings ---
-  const apTop25 = useAPTop25();
+  const apTop25 = useAPTop25("116");
 
-  const top25Teams = React.useMemo(() => {
-    return apTop25.map((t) => t.name);
-  }, [apTop25]);
+ const top25Teams = apTop25.map((t) => String(t?.id));
+
 
   // --- Load favorites ---
   useFocusEffect(
@@ -168,33 +165,36 @@ export default function CBBLeagueScreen() {
       return acc;
     }, {});
 
-  const filteredGames = React.useMemo(() => {
-    const gamesForDate = seasonGames.filter((game) =>
-      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
-    );
-
-    // Filter based on selected conference or Top 25
-    let result = gamesForDate;
-    if (selectedConference === "Top 25") {
-      result = gamesForDate.filter(
-        (game) =>
-          top25Teams.includes(game.teams.home.name) ||
-          top25Teams.includes(game.teams.away.name)
-      );
-    } else if (selectedConference) {
-      result = filterCBBGames({
-        games: gamesForDate,
-        selectedConference,
-        top25Teams,
-      });
-    }
-
-    return result;
-  }, [seasonGames, selectedDate, selectedConference, top25Teams]);
-
+const filteredGames = React.useMemo(() => {
   const gamesForDate = seasonGames.filter((game) =>
-    dayjs(game.date).isSame(dayjs(selectedDate), "day")
+    dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
   );
+
+  let result = gamesForDate;
+
+ if (selectedConference === "Top 25") {
+  result = gamesForDate.filter((game) => {
+    const home = getTeamInfo(String(game.teams.home.id));
+    const away = getTeamInfo(String(game.teams.away.id));
+    const homeESPN = home?.espnID;
+    const awayESPN = away?.espnID;
+
+    return (
+      (homeESPN && top25Teams.includes(String(homeESPN))) ||
+      (awayESPN && top25Teams.includes(String(awayESPN)))
+    );
+  });
+}
+ else if (selectedConference) {
+    result = filterCBBGames({
+      games: gamesForDate,
+      selectedConference,
+      top25Teams,
+    });
+  }
+
+  return result;
+}, [seasonGames, selectedDate, selectedConference, top25Teams]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
@@ -235,23 +235,14 @@ export default function CBBLeagueScreen() {
                 onOpenCalendar={() => setShowCalendarModal(true)}
                 isDark={isDark}
               />
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              >
-                <CBBGamesList
-                  games={filteredGames}
-                  loading={cbbloading}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  scrollEnabled={false}
-                />
-              </ScrollView>
+
+              <CBBGamesList
+                games={filteredGames}
+                loading={cbbloading}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={false}
+              />
             </>
           )}
 
@@ -277,7 +268,7 @@ export default function CBBLeagueScreen() {
           {selectedTab === "standings" && (
             <>
               {selectedConference === "Top 25" || !selectedConference ? (
-                <CBBStandingsList />
+                <CBBStandingsList league="116" />
               ) : (
                 <CBBConferenceStandingsList
                   selectedConference={selectedConference}

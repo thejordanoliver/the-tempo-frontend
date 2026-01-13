@@ -20,7 +20,7 @@ export interface PlayerCardProps {
   team: string;
   avatarUrl?: string | null;
   number?: string | number | null;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "MLB";
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB";
   statNumber?: string | number | null;
 }
 
@@ -29,6 +29,7 @@ const LEAGUE_TEAMS = {
   NFL: nflTeams,
   CFB: cfbTeams,
   CBB: cbbTeams,
+  WCBB: cbbTeams,
   MLB: mlbteams,
 };
 
@@ -37,6 +38,7 @@ const LEAGUE_ROUTES = {
   NFL: "/player/nfl/[id]",
   CFB: "/player/cfb/[id]",
   CBB: "/player/cbb/[id]",
+  WCBB: "/player/cbb/[id]",
   MLB: "/player/cbb/[id]",
 } as const;
 

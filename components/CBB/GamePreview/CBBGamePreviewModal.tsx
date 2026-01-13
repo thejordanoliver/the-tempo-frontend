@@ -1,20 +1,20 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/Colors";
-import { neutralVenues, venueImages } from "constants/teams";
-import { teams } from "constants/teamsCBB";
+import { neutralVenues, teams } from "constants/teamsCBB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
-import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
-import { useGameScores } from "hooks/useGameScores";
+import { useGameDetails } from "hooks/useGameDetails";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useTeamRecord } from "hooks/useTeamRecords";
+import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import CenterInfo from "./CenterInfo";
@@ -25,9 +25,15 @@ type Props = {
   visible: boolean;
   game: CBBGame;
   onClose: () => void;
+  isWomen?: boolean;
 };
 
-export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
+export default function CBBGamePreviewModal({
+  visible,
+  game,
+  onClose,
+  isWomen = false,
+}: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
@@ -47,24 +53,29 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
 
   const styles = gamePreviewModalStyle(isChampionship);
 
-  const home = teams.find((t) => String(t.id) === String(game.teams.home?.id));
-  const away = teams.find((t) => String(t.id) === String(game.teams.away?.id));
+  const teamIdKey = isWomen ? "wid" : "id";
+
+  const home = teams.find(
+    (t) => String((t as any)[teamIdKey]) === String(game.teams.home?.id)
+  );
+
+  const away = teams.find(
+    (t) => String((t as any)[teamIdKey]) === String(game.teams.away?.id)
+  );
 
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
 
-  const { record: homeRecord } = useTeamRecord(home?.espnID, "cbb");
-  const { record: awayRecord } = useTeamRecord(away?.espnID, "cbb");
-
-  const neutralVenueData = neutralVenues[game?.venue ?? ""];
-  const lat = neutralVenueData?.latitude ?? home?.latitude ?? null;
-  const lon = neutralVenueData?.longitude ?? home?.longitude ?? null;
-
+  const homeRecord = useTeamRecord(home?.espnID, "cbb").record.overall ?? "0-0";
+  const awayRecord = useTeamRecord(away?.espnID, "cbb").record.overall ?? "0-0";
+  const homeEspnId = home?.espnID ?? 0;
+  const awayEspnId = away?.espnID ?? 0;
   const { broadcasts } = useGameBroadcasts(
-    home?.name ?? "",
-    away?.name ?? "",
+    homeEspnId,
+    awayEspnId,
     gameDate ? gameDate.toISOString() : "",
-    "mens-college-basketball"
+    isWomen ? "womens-college-basketball" : "mens-college-basketball"
   );
+
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
@@ -106,23 +117,18 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     gameDate?.getDate() >= 5 &&
     gameDate?.getDate() <= 7;
 
-  // --- Get Team Info from constants ---
-  const getTeamById = (id?: number | string) =>
-    teams.find((t) => String(t.id) === String(id));
-
-  // Use ESPN team IDs, not internal IDs
-  const homeEspnId = getTeamById(home?.id)?.espnID;
-  const awayEspnId = getTeamById(away?.id)?.espnID;
-
-  // --- Live score (source of truth for status/clock/period) ---
-  const { score: liveScore } = useGameScores(
-    "mens-college-basketball",
+  const {
+    score: liveScore,
+    details,
+    loading: liveScoreLoading,
+  } = useGameDetails(
+    isWomen ? "wcbb" : "cbb",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
     gameDateStr
   );
 
-
+  const statusText = liveScore?.statusText;
   // --- Period scores / line score ---
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -147,74 +153,23 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
     const fallbackShort = (statusData?.short ?? "").toString().toLowerCase();
 
     const combined = liveStatus || fallbackShort || fallbackLong || ""; // never undefined
-
-    const hasClock = !!liveScore?.displayClock || !!statusData?.timer;
-
-    const contains = (needle: string) =>
-      combined.includes(needle.toLowerCase());
-
-    const isCanceled =
-      combined === "canceled" || contains("canceled") || contains("cancelled");
-
-    const isPostponed =
-      combined === "postponed" || contains("postponed") || contains("ppd");
-
-    const isDelayed =
-      combined === "delayed" || contains("delayed") || contains("delay");
-
-    const isHalftime =
-      combined === "halftime" ||
-      contains("halftime") ||
-      fallbackLong === "halftime" ||
-      fallbackShort === "halftime";
-
-    const isFinal =
-      combined === "final" ||
-      contains("final") ||
-      combined === "end_game" ||
-      contains("end of game") ||
-      contains("aot");
-
-    const isScheduled =
-      combined === "scheduled" ||
-      combined === "pre_game" ||
-      contains("not started") ||
-      contains("scheduled") ||
-      combined === "";
-
-    const isLive =
-      !isFinal &&
-      !isHalftime &&
-      !isCanceled &&
-      !isPostponed &&
-      !isDelayed &&
-      (combined === "in_play" ||
-        combined === "live" ||
-        contains("in play") ||
-        contains("playing") ||
-        contains("1st half") ||
-        contains("2nd half") ||
-        contains("q1") ||
-        contains("q2") ||
-        contains("q3") ||
-        contains("q4") ||
-        (hasClock && !contains("end of")));
-
-    const wentOT =
-      contains("ot") ||
-      contains("overtime") ||
-      combined === "aot" ||
-      fallbackLong.includes("aot");
+    const gameStatusDescription = liveScore?.gameStatusDescription;
+    const isCanceled = gameStatusDescription === "Canceled";
+    const isPostponed = gameStatusDescription === "Postponed";
+    const isDelayed = gameStatusDescription === "Delayed";
+    const isHalftime = gameStatusDescription === "Halftime";
+    const isFinal = gameStatusDescription === "Final";
+    const isScheduled = gameStatusDescription === "Scheduled";
+    const inProgress = gameStatusDescription === "In Progress";
 
     return {
       isScheduled,
       isFinal,
-      wentOT,
       isCanceled,
       isDelayed,
       isPostponed,
       isHalftime,
-      isLive,
+      inProgress,
       raw: combined,
       short: statusData?.short,
       long: statusData?.long,
@@ -224,14 +179,30 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
 
   const displayClock = liveScore?.displayClock;
 
-  const {
-    officials,
-    leaders,
-    loading: officialsLoading,
-    error: officialsError,
-  } = useGameDetails("cbb", homeEspnId, awayEspnId, gameDateStr);
+  const fouls = details?.fouls;
 
-  const { rankings } = useCBBRankings();
+  const plays = details?.plays ?? [];
+  const highlights = details?.highlights ?? [];
+  const officials = details?.officials ?? [];
+  const venue = details?.venue; // optional
+  const neutralSite = details?.neutralSite; // optional
+  const leaders = details?.leaders ?? [];
+  const playerStats = details?.playerStats ?? [];
+  const lastPlay = details?.plays?.length
+    ? details.plays[details.plays.length - 1]
+    : undefined;
+
+  const venueNameRaw = (venue?.name ?? (home as any)?.venueName ?? "")
+    .trim()
+    .toLowerCase();
+
+  const neutralMatch = Object.entries(neutralVenues).find(
+    ([key]) => key.trim().toLowerCase() === venueNameRaw
+  );
+
+  const neutralVenueData = neutralMatch ? (neutralMatch[1] as any) : null;
+
+  const { rankings } = useCBBRankings(isWomen ? "423" : "116");
 
   // --- Extract AP Top 25 ---
   const apTop25 = useMemo(() => {
@@ -245,47 +216,109 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
   }, [rankings]);
 
   const getTeamRank = (teamId: string | number) => {
-    const idStr = String(teamId);
-    const found = apTop25.find((t) => t.id === idStr);
+    const found = apTop25.find((t) => t.id === teamId);
     return found ? found.rank : undefined;
   };
+  const lat = neutralVenueData?.latitude ?? home?.latitude ?? null;
+  const lon = neutralVenueData?.longitude ?? home?.longitude ?? null;
 
   const homeScore = liveScore?.home?.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away?.total ?? game.scores?.away?.total ?? 0;
+  const { weather } = useWeatherForecast(lat, lon, gameDateStr);
 
-  const { homeColor, awayColor, resolvedVenueCity, resolvedVenueAddress } =
-    useMemo(() => {
-      const resolvedVenueCity = game?.venue ?? home?.location ?? "";
-      const resolvedVenueAddress =
-        neutralVenueData?.address || home?.address || "";
-      const resolvedVenueImage =
-        neutralVenueData?.venueImage ||
-        venueImages[resolvedVenueCity] ||
-        venueImages[home?.code ?? ""];
+  const {
+    homeColor,
+    awayColor,
+    resolvedVenueImage,
+    resolvedVenueName,
+    resolvedVenueCity,
+    resolvedVenueAddress,
+    resolvedVenueCapacity,
+  } = useMemo(() => {
+    // Base venue = HOME TEAM (default for home games)
+    let resolvedVenue: {
+      image?: string;
+      name?: string;
+      city?: string;
+      address?: string;
+      capacity?: number | string;
+    } = {
+      image: home?.venueImage,
+      name: home?.venueName,
+      city: home?.location,
+      address: home?.address,
+      capacity: home?.venueCapacity,
+    };
 
-      const getTeamColor = (team?: (typeof teams)[number]) =>
-        team?.color ?? Colors.darkGray;
-
-      return {
-        homeColor: getTeamColor(home),
-        awayColor: getTeamColor(away),
-        resolvedVenueCity,
-        resolvedVenueAddress,
-        resolvedVenueImage,
+    // Use ESPN venue object if available
+    if (venue) {
+      resolvedVenue = {
+        ...resolvedVenue,
+        image: venue.images?.[0]?.href ?? resolvedVenue.image,
+        name: venue.fullName ?? venue.name ?? resolvedVenue.name,
+        city: venue.address?.city ?? resolvedVenue.city,
+        address: venue.address?.street ?? resolvedVenue.address,
+        capacity: venue.capacity ?? resolvedVenue.capacity,
       };
-    }, [game, home, neutralVenueData, away]);
+    }
 
-  const getFinalWithOTLabel = (homePeriods: number, awayPeriods: number) => {
-    const maxPeriods = Math.max(homePeriods, awayPeriods);
-    const regulationPeriods = 2; // college basketball halves
-    if (maxPeriods <= regulationPeriods) return "Final";
-    const otCount = maxPeriods - regulationPeriods;
-    return otCount === 1 ? "Final/OT" : `Final/OT${otCount}`;
-  };
+    // Neutral site override (Final Four, Championship, etc.)
+    if (neutralVenueData) {
+      resolvedVenue = {
+        image: neutralVenueData.venueImage ?? resolvedVenue.image,
+        name: neutralVenueData.name ?? resolvedVenue.name,
+        city: neutralVenueData.city ?? resolvedVenue.city,
+        address: neutralVenueData.address ?? resolvedVenue.address,
+        capacity: neutralVenueData.venueCapacity ?? resolvedVenue.capacity,
+      };
+    }
 
-  const homeLastGames = useLastFiveGames(Number(game.teams.home?.id) || 0);
-  const awayLastGames = useLastFiveGames(Number(game.teams.away?.id) || 0);
+    // Normalize capacity → number
+    const normalizedCapacity = (() => {
+      const raw = resolvedVenue.capacity;
+      if (raw == null) return undefined;
+      const num = typeof raw === "string" ? Number(raw.replace(/,/g, "")) : raw;
+      return Number.isFinite(num) ? num : undefined;
+    })();
 
+    const getTeamColor = (team?: (typeof teams)[number]) =>
+      team?.color ?? Colors.darkGray;
+
+    return {
+      homeColor: getTeamColor(home),
+      awayColor: getTeamColor(away),
+      resolvedVenueImage: resolvedVenue.image,
+      resolvedVenueName: resolvedVenue.name,
+      resolvedVenueCity: resolvedVenue.city,
+      resolvedVenueAddress: resolvedVenue.address,
+      resolvedVenueCapacity: normalizedCapacity,
+    };
+  }, [home, away, venue, neutralVenueData]);
+
+  function formatCBBPeriod(period: number, isWomen: boolean): string {
+    if (!period || period <= 0) return "";
+
+    // ---------------- WOMEN (4 quarters) ----------------
+    if (isWomen) {
+      if (period === 1) return "1st";
+      if (period === 2) return "2nd";
+      if (period === 3) return "3rd";
+      if (period === 4) return "4th";
+
+      const ot = period - 4;
+      return ot === 1 ? "OT" : `${ot}OT`;
+    }
+
+    // ---------------- MEN (2 halves) ----------------
+    if (period === 1) return "1st";
+    if (period === 2) return "2nd";
+
+    const ot = period - 2;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  }
+
+  const homeLastGames = useLastFiveGames(Number(game.teams.home?.id) || 0, isWomen);
+  const awayLastGames = useLastFiveGames(Number(game.teams.away?.id) || 0, isWomen);
   const week = game.week;
   const round =
     week === "NCAA - Final"
@@ -299,6 +332,8 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
   // For TeamInfo: consider game "over" if final / canceled / postponed
   const isGameOverForTeams =
     status.isFinal || status.isCanceled || status.isPostponed;
+
+  const isLiveScoreReady = !!liveScore;
 
   return (
     <BottomSheetModal
@@ -345,102 +380,86 @@ export default function CBBGamePreviewModal({ visible, game, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          <>
-            {headlineText && (
-              <>
-                {headlineText && (
-                  <Text style={styles.headlineText}>{headlineText}</Text>
-                )}
-              </>
-            )}
-
-            <View style={styles.gameHeaderContainer}>
-              <TeamInfo
-                team={away}
-                teamName={away?.code ?? away?.shortName ?? away?.name ?? "Away"}
-                score={awayScore}
-                opponentScore={homeScore}
-                record={awayRecord?.overall ?? "0-0"}
-                isDark={isDark}
-                isGameOver={isGameOverForTeams}
-                isScheduled={status.isScheduled}
-                side="away"
-                rank={getTeamRank(away?.espnID ?? 0)}
-                lighter
-              />
-
-              <CenterInfo
-                isChampionship={isChampionship}
-                isFinalFour={isFinalFour}
-                isMarchMadness={isMarchMadness}
-                round={round ?? ""}
-                isFinal={status.isFinal}
-                isCanceled={status.isCanceled}
-                isHalftime={status.isHalftime}
-                isScheduled={status.isScheduled}
-                broadcastNetworks={broadcastText}
-                showLiveInfo={!!status.isLive}
-                clock={displayClock ?? null}
-                period={
-                  status.isLive || status.isHalftime
-                    ? (() => {
-                        const rawPeriod = liveScore?.period ?? statusData.long;
-                        if (typeof rawPeriod === "number") {
-                          // 1 = 1H, 2 = 2H, 3+ = OT variants
-                          if (rawPeriod === 3) return "OT";
-                          if (rawPeriod === 4) return "OT2";
-                          if (rawPeriod > 4) return `OT${rawPeriod - 2}`;
-                        } else if (typeof rawPeriod === "string") {
-                          const p = rawPeriod.toLowerCase();
-                          if (p.includes("3rd")) return "OT";
-                          if (p.includes("4th")) return "OT2";
-                          if (p.includes("5th")) return "OT3";
-                        }
-                        return rawPeriod;
-                      })()
-                    : status.isFinal
-                    ? getFinalWithOTLabel(
-                        lineScore?.home.length ?? 0,
-                        lineScore?.away.length ?? 0
-                      )
-                    : statusData.long
-                }
-                formattedDate={formattedDate}
-                isDark={isDark}
-                time={formattedTime}
-                lighter
-              />
-
-              <TeamInfo
-                team={home}
-                teamName={home?.code ?? home?.shortName ?? home?.name ?? "Home"}
-                score={homeScore}
-                opponentScore={awayScore}
-                record={homeRecord?.overall ?? "0-0"}
-                isDark={isDark}
-                isGameOver={isGameOverForTeams}
-                isScheduled={status.isScheduled}
-                side="home"
-                rank={getTeamRank(home?.espnID ?? 0)}
-                lighter
-              />
+          {!isLiveScoreReady ? (
+            <View style={styles.loadingContainer}>
+              <CustomActivityIndicator lighter />
             </View>
-          </>
+          ) : (
+            <>
+              {headlineText && (
+                <Text style={styles.headlineText}>{headlineText}</Text>
+              )}
+              <View style={styles.gameHeaderContainer}>
+                <TeamInfo
+                  team={away}
+                  teamName={
+                    away?.code ?? away?.shortName ?? away?.name ?? "Away"
+                  }
+                  score={awayScore}
+                  opponentScore={homeScore}
+                  record={awayRecord}
+                  isGameOver={isGameOverForTeams}
+                  isScheduled={status.isScheduled}
+                  side="away"
+                  rank={getTeamRank(away?.espnID ?? 0)}
+                  isWomen={isWomen}
+                  lighter
+                />
 
-          <GamePreviewContent
-            game={game}
-            home={home}
-            away={away}
-            lineScore={lineScore}
-            gameStats={gameStats}
-            leaders={!status.isScheduled ? leaders : null}
-            homeLastGames={homeLastGames}
-            awayLastGames={awayLastGames}
-            officials={officials}
-            isDark={isDark}
-            gameDateISO={gameDateISO} // 👈 NEW
-            gameDateStr={gameDateStr} // 👈 stays
-          />
+                <CenterInfo
+                  isChampionship={isChampionship}
+                  isFinalFour={isFinalFour}
+                  isMarchMadness={isMarchMadness}
+                  round={round ?? ""}
+                  gameStatusDescription={liveScore?.gameStatusDescription ?? ""}
+                  gameStatusDetail={liveScore?.gameStatusDetail ?? ""}
+                  broadcastNetworks={broadcastText}
+                  clock={displayClock ?? null}
+                  period={formatCBBPeriod(Number(liveScore?.period), isWomen)}
+                  formattedDate={formattedDate}
+                  isDark={isDark}
+                  time={formattedTime}
+                  lighter
+                />
+
+                <TeamInfo
+                  team={home}
+                  teamName={home?.code}
+                  score={homeScore}
+                  opponentScore={awayScore}
+                  record={homeRecord}
+                  isGameOver={isGameOverForTeams}
+                  isScheduled={status.isScheduled}
+                  side="home"
+                  rank={getTeamRank(home?.espnID ?? 0)}
+                  isWomen={isWomen}
+                  lighter
+                />
+              </View>
+
+              <GamePreviewContent
+                game={game}
+                home={home}
+                away={away}
+                lineScore={lineScore}
+                gameStats={gameStats}
+                leaders={!status.isScheduled ? leaders : null}
+                homeLastGames={homeLastGames}
+                awayLastGames={awayLastGames}
+                officials={officials}
+                isDark={isDark}
+                gameDateISO={gameDateISO} // 👈 NEW
+                gameDateStr={gameDateStr} // 👈 stays
+                resolvedVenueImage={resolvedVenueImage}
+                resolvedVenueName={resolvedVenueName}
+                resolvedVenueCity={resolvedVenueCity}
+                resolvedVenueAddress={resolvedVenueAddress}
+                resolvedVenueCapacity={resolvedVenueCapacity}
+                weather={weather}
+                highlights={highlights}
+              />
+            </>
+          )}
         </BlurView>
       </View>
     </BottomSheetModal>

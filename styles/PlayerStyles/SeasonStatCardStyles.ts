@@ -35,10 +35,11 @@ export const seasonStatCardStyles = (isDark: boolean) =>
       color: isDark ? Colors.midTone : Colors.midTone,
       marginTop: 2,
     },
-    error: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    errorText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
       textAlign: "center",
-      marginVertical: 20,
-          fontFamily: Fonts.OSREGULAR,
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

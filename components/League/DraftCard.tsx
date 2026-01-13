@@ -2,8 +2,7 @@
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogoESPN } from "constants/teams";
-import { getTeamLogoESPN as getNFLTeamLogoESPN } from "constants/teamsNFL";
+import { getTeamByESPNId } from "constants/teams";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
@@ -80,11 +79,8 @@ export default function DraftCard({ player, index, league }: Props) {
   const styles = getStyles(isDark);
   const router = useRouter();
 
-  // Team logo from ESPN ID
-  const logo =
-    league === "nba"
-      ? getTeamLogoESPN(player.teamId, isDark)
-      : getNFLTeamLogoESPN(player.teamId, isDark);
+  const team = getTeamByESPNId(player.teamId);
+  const logo = isDark ? team?.logoLight || team?.logo : team?.logo;
 
   // Animation
   const slideX = useRef(new Animated.Value(70)).current;

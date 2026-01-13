@@ -1,6 +1,7 @@
 import { Fonts } from "constants/fonts";
 import { WeatherData } from "hooks/useWeather";
 import LottieView from "lottie-react-native";
+import React from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import ClearDay from "../../assets/Weather/clear-day.json";
 import ClearNight from "../../assets/Weather/clear-night.json";
@@ -10,10 +11,6 @@ import RainNight from "../../assets/Weather/rain-night.json";
 import Rain from "../../assets/Weather/rain.json";
 import HeadingTwo from "../Headings/HeadingTwo";
 import TeamLocationSkeleton from "./TeamLocationSkeleton";
-import React from "react";
-
-
-
 
 type Props = {
   arenaImage?: any;

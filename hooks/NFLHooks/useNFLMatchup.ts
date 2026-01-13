@@ -1,10 +1,16 @@
-import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
 
-export function useNFLMatchup(team1: string | number, team2: string | number, options?: {
-  year?: string | number;
-  week?: string | number;
-}) {
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
+export function useNFLMatchup(
+  team1: string | number,
+  team2: string | number,
+  options?: {
+    year?: string | number;
+    week?: string | number;
+  }
+) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +30,7 @@ export function useNFLMatchup(team1: string | number, team2: string | number, op
       if (options?.year) params.year = options.year;
       if (options?.week) params.week = options.week;
 
-      const res = await axios.get("http://localhost:4000/api/pfr/matchup", {
+      const res = await axios.get(`${BASE_URL}/api/pfr/matchup`, {
         params,
       });
 

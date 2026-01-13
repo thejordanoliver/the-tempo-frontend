@@ -1,136 +1,104 @@
+import { Colors } from "constants/Colors";
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, useColorScheme, Animated, Easing } from "react-native";
+import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+
+type PulseBlockProps = {
+  style?: any;
+};
 
 export default function NewsCardSkeleton() {
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = newsCardSkeletonStyles(isDark);
 
-  const shimmerTranslate = useRef(new Animated.Value(-150)).current;
-  const shimmerOpacity = useRef(new Animated.Value(0.5)).current;
+  // 🔁 Master animation value
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Ping-pong shimmer animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(shimmerTranslate, {
-          toValue: 600,
-          duration: 1400,
-          easing: Easing.inOut(Easing.ease),
+        Animated.timing(pulseAnim, {
+          toValue: 0.4,
+          duration: 700,
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerTranslate, {
-          toValue: -150,
-          duration: 1400,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Pulsing opacity animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmerOpacity, {
+        Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 700,
           useNativeDriver: true,
         }),
-        Animated.timing(shimmerOpacity, {
-          toValue: 0.5,
-          duration: 700,
-          useNativeDriver: true,
-        }),
       ])
     ).start();
-  }, []);
+  }, [pulseAnim]);
 
-  const shimmerStyle = {
-    transform: [{ translateX: shimmerTranslate }],
-    opacity: shimmerOpacity,
-  };
+  const baseColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+
+  const shimmerColor = isDark ? Colors.darkGray : Colors.lightGray;
+
+  const PulseBlock = ({ style }: PulseBlockProps) => (
+    <Animated.View
+      style={[
+        style,
+        {
+          opacity: pulseAnim,
+        },
+      ]}
+    />
+  );
 
   return (
     <View style={styles.card}>
-      {/* Thumbnail shimmer */}
-      <View style={styles.shimmerClipper}>
-        <View style={styles.thumbnail} />
-        <Animated.View style={[styles.shimmer, styles.thumbnailShimmer, shimmerStyle]} />
-      </View>
+      {/* Thumbnail */}
+      <PulseBlock style={styles.thumbnail} />
 
-      <View style={styles.details}>
-       {/* Title shimmer */}
-<View style={[styles.shimmerClipper, styles.title]}>
-  <Animated.View style={[styles.shimmer, { width: '40%', height: '100%' }, shimmerStyle]} />
-</View>
-     {/* Source shimmer */}
-<View style={[styles.shimmerClipper, styles.source]}>
-  <Animated.View style={[styles.shimmer, { width: '40%', height: '100%' }, shimmerStyle]} />
-</View>
+      <View style={styles.content}>
+        {/* Title */}
+        <PulseBlock style={styles.title} />
+
+        {/* Source */}
+        <PulseBlock style={styles.source} />
       </View>
     </View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const newsCardSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
-      flexDirection: "column",
-      backgroundColor: isDark ? "#2e2e2e" : "#eee",
-      paddingBottom: 12,
-      marginVertical: 8,
       borderRadius: 8,
-      borderWidth: 1,
-      borderColor: isDark ? "#3a3a3a" : "#e6e6e6",
+      marginBottom: 12,
       overflow: "hidden",
-    },
-    shimmerClipper: {
-      position: "relative",
-      overflow: "hidden",
-    },
-    thumbnail: {
-      width: "100%",
-      height: 300,
-      backgroundColor: isDark ? "#444" : "#ccc",
-      borderRadius: 4,
-    },
-    details: {
-      paddingHorizontal: 12,
-      marginTop: 8,
-      gap: 8,
-    },
-    title: {
-      width: "85%",
-      height: 20,
-      borderRadius: 6,
-      backgroundColor: isDark ? "#444" : "#ccc",
-    },
-    source: {
-      width: "40%",
-      height: 14,
-      borderRadius: 6,
-      backgroundColor: isDark ? "#444" : "#ccc",
-    },
-    shimmer: {
-      position: "absolute",
-      top: 0,
-      left: 0,
       backgroundColor: isDark
-        ? "rgba(255,255,255,0.15)"
-        : "rgba(255,255,255,0.4)",
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderWidth: 1,
     },
-    thumbnailShimmer: {
-      width: 120,
+
+    content: {
+      padding: 12,
+    },
+
+    thumbnail: {
       height: 300,
-      borderRadius: 4,
+      width: "100%",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    titleShimmer: {
-      width: 60,
-      height: 20,
-      borderRadius: 6,
+
+    title: {
+      height: 16,
+      width: "60%",
+      borderRadius: 8,
+      marginTop: 12,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    sourceShimmer: {
-      width: 40,
-      height: 14,
-      borderRadius: 6,
+
+    source: {
+      height: 12,
+      width: "20%",
+      borderRadius: 8,
+      marginTop: 10,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

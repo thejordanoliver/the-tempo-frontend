@@ -1,26 +1,41 @@
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBGame } from "types/types";
+import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
+import { Colors } from "constants/Colors";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-// Cache keys & expiry
-const CACHE_KEY = "cbb_season_games_cache";
+// Leagues
+const MEN_CBB_LEAGUE = "116";
+const WOMEN_CBB_LEAGUE = "423";
+
+// Cache expiry
 const CACHE_DURATION = 1000 * 60 * 60 * 6; // 6 hours
 
 const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
-export function useCBBSeasonGames(
+type UseCBBSeasonGamesOptions = {
+  season?: string;
+  isWomen?: boolean;
+};
+
+export function useCBBSeasonGames({
   season = "2025-2026",
-  league = "116" // NCAA Men's
-) {
+  isWomen = false,
+}: UseCBBSeasonGamesOptions = {}) {
+  const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
+
+  // 🔑 cache per league + season
+  const CACHE_KEY = `cbb_season_games_cache_${league}_${season}`;
+
   const [games, setGames] = useState<CBBGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Load cached games if available ---
+  // --- Load cached games ---
   const loadCachedGames = useCallback(async () => {
     try {
       const cached = await AsyncStorage.getItem(CACHE_KEY);
@@ -28,29 +43,31 @@ export function useCBBSeasonGames(
 
       const { data, timestamp } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_DURATION) {
-        return data;
+        return data as CBBGame[];
       }
 
-      // Expired cache
       await AsyncStorage.removeItem(CACHE_KEY);
       return null;
     } catch (err) {
       console.warn("Failed to load cached CBB games:", err);
       return null;
     }
-  }, []);
+  }, [CACHE_KEY]);
 
   // --- Save cache ---
-  const saveCache = useCallback(async (data: CBBGame[]) => {
-    try {
-      await AsyncStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({ data, timestamp: Date.now() })
-      );
-    } catch (err) {
-      console.warn("Failed to cache CBB games:", err);
-    }
-  }, []);
+  const saveCache = useCallback(
+    async (data: CBBGame[]) => {
+      try {
+        await AsyncStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ data, timestamp: Date.now() })
+        );
+      } catch (err) {
+        console.warn("Failed to cache CBB games:", err);
+      }
+    },
+    [CACHE_KEY]
+  );
 
   // --- Fetch from API ---
   const fetchSeasonGames = useCallback(async () => {
@@ -58,7 +75,6 @@ export function useCBBSeasonGames(
     setError(null);
 
     try {
-      // Attempt to load cached data first
       const cached = await loadCachedGames();
       if (cached && cached.length > 0) {
         setGames(cached);
@@ -66,13 +82,13 @@ export function useCBBSeasonGames(
         return;
       }
 
-      // Fetch from backend
       const res = await axios.get(`${BASE_URL}/api/gamesCBB`, {
         params: { season, league, all: 1 },
       });
 
       const response = res.data.response || [];
-      const normalizedGames = normalizeCBBGames(response);
+      const normalizedGames = normalizeCBBGames(response, league);
+
       setGames(normalizedGames);
       saveCache(normalizedGames);
     } catch (err: any) {
@@ -83,7 +99,7 @@ export function useCBBSeasonGames(
     }
   }, [season, league, loadCachedGames, saveCache]);
 
-  // --- Initial Fetch ---
+  // --- Initial fetch ---
   useEffect(() => {
     fetchSeasonGames();
   }, [fetchSeasonGames]);
@@ -91,37 +107,45 @@ export function useCBBSeasonGames(
   const refreshCBBGames = useCallback(() => {
     AsyncStorage.removeItem(CACHE_KEY);
     fetchSeasonGames();
-  }, [fetchSeasonGames]);
+  }, [CACHE_KEY, fetchSeasonGames]);
 
-  // --- Helper to detect live games ---
+  // --- Live detection ---
   const isLiveGame = useCallback(
-    (game: CBBGame) => game.status?.short && LIVE_STATUSES.includes(game.status.short),
+    (game: CBBGame) =>
+      !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
     []
   );
 
-  // --- Sorted games with live games first ---
-const sortedGames = useMemo(() => {
-  return [...games].sort((a, b) => {
-    const aLive = Number(isLiveGame(a));
-    const bLive = Number(isLiveGame(b));
+  // --- Sort: live first, then chronological ---
+  const sortedGames = useMemo(() => {
+    return [...games].sort((a, b) => {
+      const aLive = Number(isLiveGame(a));
+      const bLive = Number(isLiveGame(b));
 
-    if (aLive !== bLive) return bLive - aLive; // live games first
+      if (aLive !== bLive) return bLive - aLive;
 
-    // For non-live games, sort by timestamp descending (upcoming/latest first)
-    const aTime = a.timestamp ? Number(a.timestamp) : 0;
-    const bTime = b.timestamp ? Number(b.timestamp) : 0;
-    return aTime - bTime; // earliest first
-  });
-}, [games, isLiveGame]);
-
+      const aTime = a.timestamp ? Number(a.timestamp) : 0;
+      const bTime = b.timestamp ? Number(b.timestamp) : 0;
+      return aTime - bTime;
+    });
+  }, [games, isLiveGame]);
 
   return { games: sortedGames, loading, error, refreshCBBGames };
 }
 
-function normalizeCBBGames(data: any[]): CBBGame[] {
+function normalizeCBBGames(data: any[], league: string, isWomen = false): CBBGame[] {
+  const teamsMap = isWomen ? teamsWCBBById : teamsCBBById;
+
   return data
     .map((g) => {
       const date = g.date ? dayjs(g.date).toISOString() : null;
+
+      // Determine keys for team lookup
+      const homeKey = isWomen ? Number(g.teams?.home?.wid) : Number(g.teams?.home?.id);
+      const awayKey = isWomen ? Number(g.teams?.away?.wid) : Number(g.teams?.away?.id);
+
+      const homeTeamData = teamsMap[homeKey] || {};
+      const awayTeamData = teamsMap[awayKey] || {};
 
       return {
         id: g.id,
@@ -137,10 +161,10 @@ function normalizeCBBGames(data: any[]): CBBGame[] {
         status: g.status || { long: "", short: "", timer: null },
 
         league: g.league || {
-          id: Number(g.league_id) || 116,
+          id: Number(league),
           name: "NCAA",
           type: "College Basketball",
-          season: g.season || "2024-2025",
+          season: g.season || "2025-2026",
           logo: "",
           country: {
             id: 1,
@@ -150,11 +174,34 @@ function normalizeCBBGames(data: any[]): CBBGame[] {
           },
         },
 
-        teams: g.teams || { home: {}, away: {} },
-        scores: g.scores || {
-          home: {},
-          away: {},
+        teams: {
+          home: {
+            ...g.teams?.home,
+            id: g.teams?.home?.id,
+            wid: g.teams?.home?.wid,
+            name: homeTeamData.name || g.teams?.home?.name,
+            fullName: homeTeamData.fullName || g.teams?.home?.fullName,
+            logo: homeTeamData.logo || "",
+            color: homeTeamData.color || Colors.midTone,
+            secondaryColor: homeTeamData.secondaryColor || Colors.midTone,
+            location: homeTeamData.location,
+            venueName: homeTeamData.venueName,
+          },
+          away: {
+            ...g.teams?.away,
+            id: g.teams?.away?.id,
+            wid: g.teams?.away?.wid,
+            name: awayTeamData.name || g.teams?.away?.name,
+            fullName: awayTeamData.fullName || g.teams?.away?.fullName,
+            logo: awayTeamData.logo || "",
+            color: awayTeamData.color || Colors.midTone,
+            secondaryColor: awayTeamData.secondaryColor || Colors.midTone,
+            location: awayTeamData.location,
+            venueName: awayTeamData.venueName,
+          },
         },
+
+        scores: g.scores || { home: {}, away: {} },
 
         arena: g.arena ?? null,
         officials: g.officials ?? [],
@@ -162,5 +209,5 @@ function normalizeCBBGames(data: any[]): CBBGame[] {
         period: g.periods?.current ?? 0,
       };
     })
-    .filter((g) => g.date); // only keep games with valid dates
+    .filter((g) => g.date);
 }

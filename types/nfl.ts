@@ -20,8 +20,8 @@ export interface NFLPlayer {
 }
 
 export type NFLTeam = {
-  id: number | string;
-  espnID: string;
+  id: number;
+  espnID: number;
   oddsID: string;
   name: string;
   fullName: string;
@@ -31,16 +31,12 @@ export type NFLTeam = {
   address?: string;
   coach: string;
   coachImage?: string;
-  owner: string;
+  owner?: string;
   venue: string;
   established: number;
   logo: string;
   logoLight?: string;
-  country: {
-    name: string;
-    code: string;
-    flag: string;
-  };
+
   color: string;
   secondaryColor: string;
   latitude: number;
@@ -56,7 +52,9 @@ export type NFLTeam = {
 export type NFLGame = {
   game: {
     id: string;
-    date: { timestamp: number };
+    stage: string;
+    week: string;
+    date: { date: string; time: string; timestamp: number };
     status: { short: string; long: string; timer?: string };
     venue?: { name: string; city: string };
   };
@@ -109,6 +107,8 @@ export type Game = {
       date: string;
       time: string;
       timestamp: number;
+      utc?: string;
+      local?: string;
     };
     venue: {
       name: string;
@@ -131,8 +131,22 @@ export type Game = {
     away: NFLTeam;
   };
   scores: {
-    home: Record<string, number | null>;
-    away: Record<string, number | null>;
+    home: {
+      total: number;
+      quarter_1: number;
+      quarter_2: number;
+      quarter_3: number;
+      quarter_4: number;
+      overtime: number;
+    };
+    away: {
+      total: number;
+      quarter_1: number;
+      quarter_2: number;
+      quarter_3: number;
+      quarter_4: number;
+      overtime: number;
+    };
   };
 };
 
@@ -169,7 +183,7 @@ export interface RawNFLGame {
 
 export const emptyTeam: NFLTeam = {
   id: 0,
-  espnID: "0",
+  espnID: 0,
   oddsID: "0",
   name: "Unknown",
   fullName: "Unknown",
@@ -184,11 +198,7 @@ export const emptyTeam: NFLTeam = {
   established: 0,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
-  country: {
-    name: "Unknown",
-    code: "UNK",
-    flag: "",
-  },
+
   color: Colors.white,
   secondaryColor: Colors.black,
   latitude: 0,
@@ -200,7 +210,7 @@ export const emptyTeam: NFLTeam = {
 // fallback for cards
 export const emptyNFLAwayTeam: NFLTeam = {
   id: 0,
-  espnID: "-2",
+  espnID: -2,
   oddsID: "0",
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
@@ -215,11 +225,6 @@ export const emptyNFLAwayTeam: NFLTeam = {
   established: 0,
   color: Colors.darkGray,
   secondaryColor: Colors.black,
-  country: {
-    name: "Unknown",
-    code: "UNK",
-    flag: "",
-  },
   latitude: 0,
   longitude: 0,
   venueImage: null,
@@ -228,7 +233,7 @@ export const emptyNFLAwayTeam: NFLTeam = {
 
 export const emptyNFLHomeTeam: NFLTeam = {
   id: 0,
-  espnID: "-1",
+  espnID: -1,
   oddsID: "0",
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
@@ -243,11 +248,6 @@ export const emptyNFLHomeTeam: NFLTeam = {
   established: 0,
   color: Colors.lightGray,
   secondaryColor: Colors.black,
-  country: {
-    name: "Unknown",
-    code: "UNK",
-    flag: "",
-  },
   latitude: 0,
   longitude: 0,
   venueImage: null,

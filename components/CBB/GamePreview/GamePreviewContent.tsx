@@ -1,28 +1,36 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { LineScore } from "components/GameDetails";
+import { GameLocation, LineScore } from "components/GameDetails";
 import BoxScore from "components/GameDetails/BoxScore";
 import GameTeamStats from "components/GameDetails/GameTeamStats";
+import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import Officials from "components/GameDetails/Officials";
 import React from "react";
 import { View } from "react-native";
+import { CBBGame } from "types/types";
 import GameLeaders from "../GameDetails/GameLeaders";
 import GameOddsSection from "../GameDetails/GameOddsSection";
 type GamePreviewContentProps = {
-  game: any;
+  game: CBBGame;
   home: any;
   away: any;
   officials: any;
   lineScore: any;
-  gameDateISO: string;  // 👈 full ISO timestamp
-  gameDateStr: string;  // 👈 YYYY-MM-DD
+  gameDateISO: string; // 👈 full ISO timestamp
+  gameDateStr: string; // 👈 YYYY-MM-DD
   leaders: any;
   homeLastGames: any;
   awayLastGames: any;
   gameStats: any;
   data?: any;
+  resolvedVenueImage: any;
+  resolvedVenueName: any;
+  resolvedVenueCity: any;
   resolvedVenueAddress?: string;
+  resolvedVenueCapacity: any;
+  weather: any;
   isDark?: boolean;
+  highlights: any;
 };
 
 export default function GamePreviewContent({
@@ -37,8 +45,15 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   gameStats,
+  resolvedVenueImage,
+  resolvedVenueName,
+  resolvedVenueCity,
+  resolvedVenueAddress,
+  resolvedVenueCapacity,
+  weather,
+  highlights,
 }: GamePreviewContentProps) {
-
+  const isWomen = game.league.id === 423;
 
   return (
     <BottomSheetScrollView
@@ -49,9 +64,9 @@ export default function GamePreviewContent({
         <View style={{ marginBottom: 20 }}>
           <LineScore
             linescore={lineScore}
-            homeCode={home.code}
-            awayCode={away.code}
-            league="CBB"
+            homeCode={home?.code ?? ""}
+            awayCode={away?.code ?? ""}
+            league={isWomen ? "WCBB" : "CBB"}
             lighter
           />
         </View>
@@ -60,12 +75,11 @@ export default function GamePreviewContent({
       {/* Odds */}
       <View style={{ marginBottom: 20 }}>
         <GameOddsSection
-          date={gameDateISO}            // 👈 ISO datetime for upcoming odds
-          gameDate={gameDateStr}        // 👈 YYYY-MM-DD for historical odds
-          awayCode={away.code ?? ""}
-          homeCode={home.code ?? ""}
+          date={gameDateISO}
+          gameDate={gameDateStr}
+          awayCode={away?.code ?? ""}
+          homeCode={home?.code ?? ""}
           gameId={String(game?.id ?? "")}
-          lighter
         />
       </View>
 
@@ -78,12 +92,13 @@ export default function GamePreviewContent({
               leaders={leaders}
               awayTeamId={Number(away.espnID)}
               homeTeamId={Number(home.espnID)}
+              league={isWomen ? "wcbb" : "cbb"}
               lighter
             />
           </View>
         )}
 
-   {/* Last Five Games */}
+      {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (
         <View style={{ marginBottom: 20 }}>
@@ -91,18 +106,18 @@ export default function GamePreviewContent({
             isDark={false}
             lighter
             home={{
-              teamCode: home?.code,
-              teamLogo: home?.logo,
-              teamLogoLight: home?.logoLight,
-              games: homeLastGames?.games,
+              teamCode: home?.code ?? "",
+              teamLogo: home?.logo ?? "",
+              teamLogoLight: home?.logoLight ?? "",
+              games: homeLastGames?.games ?? [],
             }}
             away={{
-              teamCode: away?.code,
-              teamLogo: away?.logo,
-              teamLogoLight: away?.logoLight,
-              games: awayLastGames?.games,
+              teamCode: away?.code ?? "",
+              teamLogo: away?.logo ?? "",
+              teamLogoLight: away?.logoLight ?? "",
+              games: awayLastGames?.games ?? [],
             }}
-            league="CBB"
+           league={isWomen ? "WCBB" : "CBB"}
           />
         </View>
       )}
@@ -121,13 +136,36 @@ export default function GamePreviewContent({
           </View>
         </>
       )}
+      <View style={{ marginBottom: 20 }}>
+        {highlights.length > 0 && (
+          <HighlightVideoList highlights={highlights} lighter />
+        )}
+      </View>
+      <View style={{ marginBottom: 20 }}>
+        <Officials
+          officials={officials ?? []}
+          loading={false}
+          error={null}
+          lighter
+        />
+      </View>
 
-      <Officials
-        officials={officials ?? []}
-        loading={false}
-        error={null}
-        lighter
-      />
+      {/* Venue Info */}
+      {(resolvedVenueImage || resolvedVenueName) && (
+        <View style={{ marginBottom: 20 }}>
+          <GameLocation
+            venueImage={resolvedVenueImage}
+            venueName={resolvedVenueName}
+            location={resolvedVenueCity}
+            address={resolvedVenueAddress}
+            venueCapacity={resolvedVenueCapacity}
+            weather={weather}
+            lighter
+            loading={false}
+            error={null}
+          />
+        </View>
+      )}
     </BottomSheetScrollView>
   );
 }

@@ -2,7 +2,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
+import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
 import FixedWidthTabBar, { getLabelStyle } from "../TabBars/FixedWidthTabBar";
 
@@ -23,11 +23,7 @@ type Props = {
   };
   league: LeagueType;
 };
-function pickTeamLogo(
-  preferLight: boolean,
-  logo?: any,
-  logoLight?: any
-) {
+function pickTeamLogo(preferLight: boolean, logo?: any, logoLight?: any) {
   if (preferLight && logoLight && logoLight !== logo) {
     return logoLight;
   }
@@ -42,21 +38,20 @@ export default function LastFiveGamesSwitcher({
 }: Props) {
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
-  const styles = getStyles(isDark, lighter ?? false);
+  const styles = lastFiveGameStyles(isDark, lighter ?? false);
 
   const renderRow = ({ item, index }: { item: any; index: number }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-const useLightLogo = isDark || (lighter ?? false);
+    const useLightLogo = isDark || (lighter ?? false);
 
-const opponentLogoSource = pickTeamLogo(
-  useLightLogo,
-  item.opponentLogo,
-  item.opponentLogoLight
-);
-
+    const opponentLogoSource = pickTeamLogo(
+      useLightLogo,
+      item.opponentLogo,
+      item.opponentLogoLight
+    );
 
     return (
       <View
@@ -94,7 +89,7 @@ const opponentLogoSource = pickTeamLogo(
       <HeadingTwo lighter={lighter}>Last Five Games</HeadingTwo>
 
       {/* Tabs */}
-      <View style={styles.tabWrapper}>
+      <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabs}
           lighter={lighter}
@@ -102,14 +97,13 @@ const opponentLogoSource = pickTeamLogo(
           onTabPress={(tab) => setSelected(tab as "home" | "away")}
           renderLabel={(tab, isSelected) => {
             const teamData = tab === "home" ? home : away;
-    const useLightLogo = isDark || (lighter ?? false);
+            const useLightLogo = isDark || (lighter ?? false);
 
-const logoSource = pickTeamLogo(
-  useLightLogo,
-  teamData.teamLogo,
-  teamData.teamLogoLight
-);
-
+            const logoSource = pickTeamLogo(
+              useLightLogo,
+              teamData.teamLogo,
+              teamData.teamLogoLight
+            );
 
             return (
               <View style={styles.tabLabel}>
@@ -128,23 +122,25 @@ const logoSource = pickTeamLogo(
             );
           }}
         />
-      </View>
 
-      {/* Game List */}
-      <FlatList
-        data={team.games}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderRow}
-        scrollEnabled={false}
-        ListEmptyComponent={<Text style={styles.empty}>No recent games.</Text>}
-        ListHeaderComponent={
-          <View style={styles.headerRow}>
-            <Text style={[styles.cell, styles.date]}>Date</Text>
-            <Text style={[styles.cell, styles.teamHeader]}>Matchup</Text>
-            <Text style={styles.cell}>Result</Text>
-          </View>
-        }
-      />
+        {/* Game List */}
+        <FlatList
+          data={team.games}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderRow}
+          scrollEnabled={false}
+          ListEmptyComponent={
+            <Text style={styles.empty}>No recent games.</Text>
+          }
+          ListHeaderComponent={
+            <View style={styles.headerRow}>
+              <Text style={[styles.cell, styles.date]}>Date</Text>
+              <Text style={[styles.cell, styles.teamHeader]}>Matchup</Text>
+              <Text style={styles.cell}>Result</Text>
+            </View>
+          }
+        />
+      </View>
     </View>
   );
 }

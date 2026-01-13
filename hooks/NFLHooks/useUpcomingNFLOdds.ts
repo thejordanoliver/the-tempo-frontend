@@ -72,12 +72,13 @@ export const useUpcomingNFLOdds = ({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/nfl/upcoming`, {
+        const res = await axios.get(`${BASE_URL}/api/nfl/odds/upcoming`, {
           params,
           cancelToken: cancelSource?.token,
         });
 
         const games: UpcomingNFLGameOdds[] = res.data.games || [];
+      
         cache[key] = games;
         setData(games);
         setError(null);

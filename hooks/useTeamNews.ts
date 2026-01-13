@@ -89,7 +89,7 @@ function sanitizeContent(rawContent: string | null): string {
 --------------------------------------------------------- */
 export function useTeamNews(
   teamName?: string,
-  league: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" = "NBA"
+  league: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" = "NBA"
 ) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +107,7 @@ export function useTeamNews(
       if (league === "NBA") {
         endpoint = `${API_URL}/api/news`;
       } 
-      else if (league === "NFL" || league === "CFB" || league === "CBB") {
+      else if (league === "NFL" || league === "CFB" || league === "CBB" || league === "WCBB" ) {
         if (!teamName) {
           setArticles([]);
           setLoading(false);

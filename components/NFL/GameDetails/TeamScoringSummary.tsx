@@ -108,6 +108,7 @@ export default function TeamScoringSummary({
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Scoring Summary</HeadingTwo>
 
+    <View style={styles.wrapper}>
       <FixedWidthTabBar
         tabs={teams}
         selected={selectedTeam}
@@ -169,12 +170,20 @@ export default function TeamScoringSummary({
         )}
       </View>
     </View>
+    </View>
   );
 }
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { marginTop: 10 },
+      wrapper: {
+    borderColor: Colors.midTone,
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    paddingTop: 12
+  },
     tabLabel: { flexDirection: "row", alignItems: "center", gap: 4 },
     logo: { width: 26, height: 26 },
     listContainer: { marginTop: 12, gap: 12 },
@@ -182,7 +191,7 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "flex-start",
       gap: 10,
-      paddingBottom: 12,
+      padding: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },

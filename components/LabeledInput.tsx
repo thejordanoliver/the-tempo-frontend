@@ -1,6 +1,12 @@
+import { Fonts } from "constants/Styles";
 import React from "react";
-import { View, Text, TextInput, StyleSheet, useColorScheme } from "react-native";
-import { Fonts } from "constants/fonts";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from "react-native";
 type LabeledInputProps = {
   label: string;
   value: string;
@@ -28,7 +34,9 @@ export default function LabeledInput({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={[styles.label, { color: isDark ? "#fff" : "#000" }, labelStyle]}>
+      <Text
+        style={[styles.label, { color: isDark ? "#fff" : "#000" }, labelStyle]}
+      >
         {label}
       </Text>
       <TextInput
@@ -53,9 +61,7 @@ export default function LabeledInput({
 }
 
 const styles = StyleSheet.create({
-  container: {
-  
-  },
+  container: {},
   label: {
     marginTop: 40,
     marginBottom: 20,

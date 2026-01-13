@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 
 type Props = {
-  league: "MLB" | "NBA" | "CBB" | "CFB" | "NFL";
+  league: "MLB" | "NBA" | "CBB" | "WCBB" | "CFB" | "NFL";
 };
 
 export default function LineScoreSkeleton({ league }: Props) {

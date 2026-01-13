@@ -18,6 +18,7 @@ import { Highlight } from "types/types";
 
 type HighlightVideoProps = {
   highlights: Highlight[];
+  lighter?: boolean
 };
 
 const { width } = Dimensions.get("window");
@@ -37,11 +38,15 @@ const getPlayableUrl = (item: Highlight) => {
 
 export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   highlights,
+  lighter,
 }) => {
   const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
   const videoRefs = useRef<Record<string, Video>>(Object.create(null));
+  const listRef = useRef<FlatList<Highlight>>(null);
+const currentIndexRef = useRef(0);
+
   const [headlineVisible, setHeadlineVisible] = useState<
     Record<string, boolean>
   >({});
@@ -88,6 +93,37 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
     },
     []
   );
+
+  React.useEffect(() => {
+  if (!highlights || highlights.length === 0) return;
+
+  const interval = setInterval(() => {
+    const nextIndex =
+      (currentIndexRef.current + 1) % highlights.length;
+
+    listRef.current?.scrollToIndex({
+      index: nextIndex,
+      animated: true,
+    });
+
+    currentIndexRef.current = nextIndex;
+  }, 10000); // ⏱️ 10 seconds
+
+  return () => clearInterval(interval);
+}, [highlights]);
+
+const onViewableItemsChanged = useRef(
+  ({ viewableItems }: { viewableItems: any[] }) => {
+    if (viewableItems.length > 0) {
+      currentIndexRef.current = viewableItems[0].index ?? 0;
+    }
+  }
+).current;
+
+const viewabilityConfig = useRef({
+  viewAreaCoveragePercentThreshold: 50,
+}).current;
+
 
   const renderItem = useCallback(
     ({ item }: { item: Highlight }) => {
@@ -177,24 +213,30 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   );
 
   return (
-    <View style={{ marginTop: 20 }}>
-      <HeadingTwo>Highlights</HeadingTwo>
-
+    <View>
+      <HeadingTwo lighter={lighter}> Highlights</HeadingTwo>
+   <View style={styles.wrapper}>
       {!highlights || highlights.length === 0 ? (
         <Text style={styles.empty}>No highlights available.</Text>
       ) : (
-        <FlatList
-          data={highlights}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={width * 0.8 + 15}
-          decelerationRate="fast"
-          contentContainerStyle={styles.listContainer}
-          extraData={[playingId, paused]}
-        />
+      <FlatList
+  ref={listRef}
+  data={highlights}
+  keyExtractor={(item) => item.id}
+  renderItem={renderItem}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  snapToInterval={width * 0.8 + 15}
+  decelerationRate="fast"
+  contentContainerStyle={styles.listContainer}
+  extraData={[playingId, paused]}
+  // ✅ Auto-scroll sync
+  onViewableItemsChanged={onViewableItemsChanged}
+  viewabilityConfig={viewabilityConfig}
+/>
+
       )}
+         </View>
     </View>
   );
 };
@@ -202,8 +244,14 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
 const highlightStyles = (isDark: boolean) =>
   StyleSheet.create({
     listContainer: {
-      paddingVertical: 10,
       paddingLeft: 12,
+    },
+
+    wrapper: {
+        borderColor: Colors.midTone,
+        borderWidth: 1,
+      borderRadius: 8,
+      padding: 12,
     },
     cardWrapper: {
       width: width * 0.8,

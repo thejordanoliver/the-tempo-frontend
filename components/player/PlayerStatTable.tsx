@@ -1,36 +1,34 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Player/PlayerStatsTableSkeleton";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
+import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
 
 interface Props {
   playerId: number;
 }
-type StatView = "totals" | "per36";
+type StatView = "totals" | "pergame" | "per36";
 
 const STAT_OPTIONS = [
   { label: "Totals", value: "totals" },
+  { label: "Per Game", value: "pergame" },
   { label: "Per 36 Minutes", value: "per36" },
 ];
 
-const safeDivide = (num: number | null = 0, denom: number | null = 0) =>
-  !denom ? "0.0" : (num! / denom!).toFixed(1);
+
+const perGame = (stat?: number | null, g?: number | null) =>
+  !g ? "0.0" : (Number(stat || 0) / g).toFixed(1);
 
 const pct = (val?: number | string | null) =>
   val == null || isNaN(Number(val))
     ? "—"
     : `${(Number(val) * 100).toFixed(1)}%`;
+
+
+    
 
 export default function PlayerStatTable({ playerId }: Props) {
   const [statView, setStatView] = useState<StatView>("totals");
@@ -63,9 +61,13 @@ export default function PlayerStatTable({ playerId }: Props) {
     return best;
   }, [seasons]);
 
-  if (loading) return <PlayerStatTableSkeleton />;
-  if (error) return <Text style={styles.error}>Failed to load stats</Text>;
-  if (!seasons.length) return <Text>No stats available</Text>;
+  if (loading) return
+  
+<View style={styles.container}>
+  <PlayerStatTableSkeleton />;
+  </View>
+  if (error) return <Text style={styles.errorText}>Failed to load stats</Text>;
+  if (!seasons.length) return <Text style={styles.errorText}>No stats available</Text>;
 
   // 🧮 Career totals (season-level)
   const career = seasons.reduce(
@@ -121,7 +123,9 @@ export default function PlayerStatTable({ playerId }: Props) {
         {/* Season column */}
         <View>
           <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>Season</Text>
+            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
+              SEASON
+            </Text>
           </View>
 
           {seasons.map((s, i) => {
@@ -133,12 +137,7 @@ export default function PlayerStatTable({ playerId }: Props) {
                 : styles.rowAltLight
               : null;
 
-            const highlight =
-              s.season === bestSeason
-                ? isDark
-                  ? styles.bestDark
-                  : styles.bestLight
-                : null;
+            const highlight = s.season === bestSeason ? styles.best : null;
 
             return (
               <View key={s.season} style={[styles.row, zebra, highlight]}>
@@ -148,7 +147,7 @@ export default function PlayerStatTable({ playerId }: Props) {
           })}
 
           <View style={[styles.row, styles.careerRow]}>
-            <Text style={styles.careerHeaderCell}>Career</Text>
+            <Text style={styles.careerHeaderCell}>CAREER</Text>
           </View>
         </View>
 
@@ -192,88 +191,63 @@ export default function PlayerStatTable({ playerId }: Props) {
                   : styles.rowAltLight
                 : null;
 
-              const highlight =
-                s.season === bestSeason
-                  ? isDark
-                    ? styles.bestDark
-                    : styles.bestLight
-                  : null;
+              const highlight = s.season === bestSeason ? styles.best : null;
+
+              const renderStat = (stat?: number | null) =>
+                statView === "totals"
+                  ? stat
+                  : statView === "pergame"
+                  ? perGame(stat, s.g)
+                  : per36(stat, s.mp);
 
               return (
                 <View key={s.season} style={[styles.row, zebra, highlight]}>
+                  {/* TEAM */}
                   <Text style={styles.cell}>{s.team}</Text>
 
-                  {/* GP stays GP */}
+                  {/* GP */}
                   <Text style={styles.cell}>{s.g}</Text>
 
                   {/* PTS */}
-                  <Text style={styles.cell}>
-                    {statView === "per36"
-                      ? per36(s.pts, s.mp)
-                      : safeDivide(s.pts, s.g)}
-                  </Text>
+                  <Text style={styles.cell}>{renderStat(s.pts)}</Text>
 
                   {/* MIN */}
                   <Text style={styles.cell}>
-                    {statView === "per36" ? "36.0" : safeDivide(s.mp, s.g)}
+                    {statView === "totals"
+                      ? s.mp
+                      : statView === "pergame"
+                      ? perGame(s.mp, s.g)
+                      : "36.0"}
                   </Text>
 
                   {/* FG / FGA */}
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.fg, s.mp) : s.fg}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.fga, s.mp) : s.fga}
-                  </Text>
+                  <Text style={styles.cell}>{renderStat(s.fg)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.fga)}</Text>
 
-                  {/* FG% unchanged */}
+                  {/* FG% */}
                   <Text style={styles.cell}>{pct(s.fg_pct)}</Text>
 
                   {/* 3P / 3PA */}
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.three_p, s.mp) : s.three_p}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36"
-                      ? per36(s.three_pa, s.mp)
-                      : s.three_pa}
-                  </Text>
+                  <Text style={styles.cell}>{renderStat(s.three_p)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.three_pa)}</Text>
 
-                  {/* 3P% unchanged */}
+                  {/* 3P% */}
                   <Text style={styles.cell}>{pct(s.three_pct)}</Text>
 
                   {/* FT / FTA */}
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.ft, s.mp) : s.ft}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.fta, s.mp) : s.fta}
-                  </Text>
+                  <Text style={styles.cell}>{renderStat(s.ft)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.fta)}</Text>
 
-                  {/* FT% unchanged */}
+                  {/* FT% */}
                   <Text style={styles.cell}>{pct(s.ft_pct)}</Text>
 
-                  {/* REB / AST / STL / BLK / TO */}
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.trb, s.mp) : s.trb}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.ast, s.mp) : s.ast}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.stl, s.mp) : s.stl}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.blk, s.mp) : s.blk}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.tov, s.mp) : s.tov}
-                  </Text>
-
-                  {/* PF */}
-                  <Text style={styles.cell}>
-                    {statView === "per36" ? per36(s.pf, s.mp) : s.pf}
-                  </Text>
+                  {/* REB / AST / STL / BLK / TO / PF */}
+                  <Text style={styles.cell}>{renderStat(s.trb)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.ast)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.stl)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.blk)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.tov)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.pf)}</Text>
                 </View>
               );
             })}
@@ -312,157 +286,3 @@ export default function PlayerStatTable({ playerId }: Props) {
     </View>
   );
 }
-
-const statsTableStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      paddingTop: 24,
-      paddingHorizontal: 12,
-    },
-
-    tableWrapper: {
-      flexDirection: "row",
-      borderRadius: 8,
-      overflow: "hidden", // 🔑 REQUIRED for clipping rows
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    headerRow: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    row: {
-      flexDirection: "row",
-      paddingVertical: 8,
-      alignItems: "center",
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderBottomWidth: 1,
-    },
-    careerCell: {
-      minWidth: 60,
-      flex: 1,
-      textAlign: "center",
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
-      color: isDark ? Colors.black : Colors.white,
-    },
-    cell: {
-      minWidth: 60,
-      flex: 1,
-      textAlign: "center",
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    seasonHeaderCell: {
-      minWidth: 60,
-      flex: 1,
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    careerHeaderCell: {
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.black : Colors.white,
-      paddingHorizontal: 8,
-    },
-    headerCell: {
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
-      paddingHorizontal: 8,
-    },
-    error: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-      marginVertical: 20,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    seasonCell: {
-      minWidth: 80,
-      justifyContent: "center",
-      paddingHorizontal: 4,
-      paddingVertical: 8,
-      flexDirection: "row",
-      alignItems: "center",
-      color: isDark ? Colors.white : Colors.black,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderBottomWidth: 1,
-    },
-    seasons: {
-      minWidth: 60,
-      flex: 1,
-      textAlign: "left",
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    legendContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 8,
-      marginTop: 12,
-      borderTopColor: "#ccc",
-      borderTopWidth: 1,
-    },
-    legendContainerDark: {
-      borderTopColor: Colors.white,
-    },
-    legendColorBox: {
-      width: 20,
-      height: 20,
-      borderRadius: 4,
-      marginRight: 8,
-    },
-    legendColorBoxLight: {
-      backgroundColor: "#ffd700",
-    },
-    legendColorBoxDark: {
-      backgroundColor: "#5c4300",
-    },
-    legendText: {
-      fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    textDark: {
-      color: "#eee",
-    },
-    legendCareerBoxLight: {
-      backgroundColor: "#ccffcc",
-    },
-    legendCareerBoxDark: {
-      backgroundColor: "#004400",
-    },
-    bestLight: {
-      backgroundColor: "#ffd700",
-    },
-
-    bestDark: {
-      backgroundColor: "#5c4300",
-    },
-
-    careerRow: {
-      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
-
-    seasonText: {
-      minWidth: 70,
-      paddingHorizontal: 8,
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    rowAltLight: {
-      backgroundColor: Colors.light.itemBackground,
-    },
-
-    rowAltDark: {
-      backgroundColor: Colors.dark.itemBackground,
-    },
-  });

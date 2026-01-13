@@ -1,4 +1,5 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
@@ -22,13 +23,7 @@ export type FootballTeamRowProps = {
   isHome?: boolean;
   score?: number | null;
   isWinner?: boolean;
-  status?: string;
-  colors: {
-    text: string;
-    record: string;
-    score: string;
-    winnerScore: string;
-  };
+  gameStatusDescription?: string;
   size?: SizeType; // sizes for font scaling
   possessionTeamId?: string | number;
   timeouts?: number;
@@ -42,9 +37,10 @@ export type NBAProps = {
     logo: any;
     code?: string;
     id?: number;
+    wid?: number; // ✅ ADD THIS
   };
   timeouts?: number;
-  foulsToGive?: number
+  foulsToGive?: number;
   size?: SizeType;
   rank?: string;
   isDark: boolean;
@@ -52,12 +48,13 @@ export type NBAProps = {
   score?: number;
   isWinner?: boolean;
   hideRecord?: boolean;
-  colors: {
+  colors?: {
     text: string;
     record: string;
     score: string;
     winnerScore: string;
   };
+  gameStatusDescription?: string;
 };
 
 export type MLBProps = {
@@ -84,75 +81,86 @@ export type MLBProps = {
 };
 
 // Main static styles
-export const styles = StyleSheet.create<{
-  row: ViewStyle;
-  teamInfoContainer: ViewStyle;
-  teamInfo: ViewStyle;
-  nameRow: ViewStyle;
-  teamName: TextStyle;
-  record: TextStyle;
-  rank: TextStyle;
-  score: TextStyle;
-  preGameRecord: TextStyle;
-  scoreWrapper: ViewStyle;
-  possessionIcon: ImageStyle;
-}>({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 8,
-  },
-  teamInfoContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  teamInfo: {
-    justifyContent: "center",
-  },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  teamName: {
-    fontFamily: Fonts.OSREGULAR,
-    textAlign: "center",
-  },
-  rank: {
-    fontSize: 10,
-    fontFamily: Fonts.OSREGULAR,
-  },
+export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
+  StyleSheet.create<{
+    row: ViewStyle;
+    teamInfoContainer: ViewStyle;
+    teamInfo: ViewStyle;
+    nameRow: ViewStyle;
+    teamName: TextStyle;
+    record: TextStyle;
+    rank: TextStyle;
+    score: TextStyle;
+    preGameRecord: TextStyle;
+    scoreWrapper: ViewStyle;
+    possessionIcon: ImageStyle;
+  }>({
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 8,
+    },
+    teamInfoContainer: {
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    teamInfo: {
+      justifyContent: "center",
+    },
+    nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    teamName: {
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
+    },
+    rank: {
+      fontSize: 10,
+      fontFamily: Fonts.OSREGULAR,
+      color: Colors.lightGray,
+    },
 
-  record: {
-    fontFamily: Fonts.OSREGULAR,
-    textAlign: "center",
-  },
-  score: {
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-    marginHorizontal: 16,
-  },
-  preGameRecord: {
-    fontFamily: Fonts.OSBOLD,
-    textAlign: "center",
-    marginHorizontal: 16,
-  },
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  possessionIcon: {
-    width: 25,
-    height: 40,
-    resizeMode: "contain",
-    position: "absolute",
-    top: "54%",
-    alignSelf: "center",
-  },
-});
+    record: {
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+      color: isTie
+        ? isDark
+          ? Colors.dark.white
+          : Colors.light.black
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
+    },
+    score: {
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+      marginHorizontal: 16,
+    },
+    preGameRecord: {
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+      marginHorizontal: 16,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    scoreWrapper: {
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+    },
+    possessionIcon: {
+      width: 25,
+      height: 40,
+      resizeMode: "contain",
+      position: "absolute",
+      top: "54%",
+      alignSelf: "center",
+    },
+  });
 
 // Size-based dynamic styles
 export const sizeStyles = {

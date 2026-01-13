@@ -84,7 +84,7 @@ export interface UseGameDetails {
 
 // ------------------ Hook ------------------
 export const useGameDetails = (
-  league: "nba" | "cbb",
+  league: "nba" | "cbb" | "wcbb",
   awayTeamId?: string | number,
   homeTeamId?: string | number,
   date?: string | { date?: string; utc?: string; timestamp?: number }
@@ -135,12 +135,17 @@ export const useGameDetails = (
         ];
 
         // ---------------- ESPN PATH ----------------
+        // ---------------- ESPN PATH ----------------
         const sportPath =
           league === "nba"
             ? "basketball/nba"
+            : league === "wcbb"
+            ? "basketball/womens-college-basketball"
             : "basketball/mens-college-basketball";
 
-        const params = league === "cbb" ? "&groups=50&limit=500" : "";
+        // ESPN needs groups/limit for both men & women
+        const params =
+          league === "cbb" || league === "wcbb" ? "&groups=50&limit=500" : "";
 
         // ---------------- FIND GAME ----------------
         let found: any = null;

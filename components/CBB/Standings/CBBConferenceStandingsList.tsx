@@ -1,5 +1,13 @@
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamCodeESPN, getTeamLogoESPN, teams } from "constants/teamsCBB";
+import {
+  conferenceListMap,
+  getTeamByESPNId,
+  getTeamLogo,
+  teams,
+} from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
 import {
@@ -14,13 +22,24 @@ import {
 import { getStyles } from "styles/StandingsStyles";
 
 type Props = {
-  selectedConference: string;
+  selectedConference?: string;
+  onlyTeamConference?: boolean;
+  teamName?: string; // expects full name like "Ohio State Buckeyes"
+  women?: boolean; // NEW: fetch women's standings
 };
+
+// --- Helpers ---
+function getTeamConference(teamName?: string): string | null {
+  if (!teamName) return null;
+  for (const [conference, teamNames] of Object.entries(conferenceListMap)) {
+    if (teamNames.includes(teamName)) return conference;
+  }
+  return null;
+}
 
 const CONFERENCE_ALIASES: Record<string, string> = {
   SEC: "Southeastern Conference",
   ACC: "Atlantic Coast Conference",
-  "Atlantic 10": "Atlantic 10 Conference",
   "Big 12": "Big 12 Conference",
   "Big Ten": "Big Ten Conference",
   "Pac-12": "Pac-12 Conference",
@@ -31,25 +50,53 @@ const CONFERENCE_ALIASES: Record<string, string> = {
   CUSA: "Conference USA",
 };
 
-export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
-  const { standings, loading, error } = useCBBConferenceStandings();
+function stripParen(s: string) {
+  return s.replace(/\s*\(.*?\)\s*/g, "").trim();
+}
+
+function resolveConferenceKey(
+  input: string | null | undefined,
+  groupedKeys: string[]
+): string | null {
+  if (!input) return null;
+
+  if (groupedKeys.includes(input)) return input;
+  const alias = CONFERENCE_ALIASES[input];
+  if (alias && groupedKeys.includes(alias)) return alias;
+
+  const stripped = stripParen(input);
+  const exactStrip = groupedKeys.find((k) => stripParen(k) === stripped);
+  if (exactStrip) return exactStrip;
+
+  const target = stripped.toLowerCase();
+  return (
+    groupedKeys.find((k) => {
+      const key = stripParen(k).toLowerCase();
+      return key === target || key.includes(target) || target.includes(key);
+    }) ?? null
+  );
+}
+
+// --- Component ---
+export const CBBConferenceStandingsList = ({
+  selectedConference,
+  teamName,
+  onlyTeamConference = false,
+  women = false,
+}: Props) => {
+  const { standings, loading, error } = useCBBConferenceStandings({ women });
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-  const router = useRouter(); // ✅ this gives you .push()
+  const router = useRouter();
+  const teamConference = getTeamConference(teamName);
 
-  if (loading)
+  if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            color: isDark ? "#aaa" : "#666",
-            fontFamily: Fonts.OSLIGHT,
-          }}
-        >
-          Loading Conference Standings...
-        </Text>
+        <StandingsSkeleton />
       </View>
     );
+  }
 
   if (error)
     return (
@@ -58,26 +105,42 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
       </View>
     );
 
-  // --- Group by conference ---
-  const grouped = standings.reduce((acc, team) => {
-    if (!acc[team.conference]) acc[team.conference] = [];
-    acc[team.conference].push(team);
-    return acc;
-  }, {} as Record<string, typeof standings>);
+  const safeStandings = Array.isArray(standings) ? standings : [];
 
-  const normalizedConference =
-    CONFERENCE_ALIASES[selectedConference] || selectedConference;
-  const conferences =
-    selectedConference === "Top 25"
-      ? Object.keys(grouped).sort()
-      : Object.keys(grouped).filter((c) => c === normalizedConference);
+  // --- Group by ESPN conference string ---
+  const grouped = safeStandings.reduce((acc, team) => {
+    const key = team?.conference ?? "Unknown";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(team);
+    return acc;
+  }, {} as Record<string, typeof safeStandings>);
+
+  const groupedKeys = Object.keys(grouped);
+
+  const conferences = (() => {
+    // Top 25 = all conferences
+    if (selectedConference === "Top 25") {
+      return groupedKeys.sort();
+    }
+
+    // onlyTeamConference = resolve team’s map conference -> actual grouped key
+    if (onlyTeamConference) {
+      const resolved = resolveConferenceKey(teamConference, groupedKeys);
+      return resolved ? [resolved] : [];
+    }
+
+    // normal single selected conference
+    const resolved = resolveConferenceKey(selectedConference, groupedKeys);
+    return resolved ? [resolved] : [];
+  })();
 
   // --- Render Functions ---
   const renderLeftItem = ({ item }: { item: any }) => {
-    const teamLogo = getTeamLogoESPN(item.teamId, isDark);
-    const teamCode = getTeamCodeESPN(item.teamId);
-
-    // --- ESPN → internal mapping ---
+    const espnId = getTeamByESPNId(item.teamId);
+    const teamId = women ? espnId?.wid : espnId?.id;
+    const team = espnId;
+    const teamLogo = getTeamLogo(teamId, isDark);
+    const teamCode = team?.code;
     const espnToInternal: Record<string, number> = {};
     teams.forEach((t) => {
       if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
@@ -85,31 +148,21 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
 
     const handleTeamPress = () => {
       if (!item.teamId) return;
-
-      // Map ESPN ID to internal ID
       const internalId = espnToInternal[item.teamId];
       if (!internalId) return;
-
-      // Navigate using your internal ID
-      router.push(`/team/cbb/${internalId}`);
+      router.push(`/team/cfb/${teamId}`);
     };
 
     return (
-      <TouchableOpacity
-        onPress={handleTeamPress}
-        style={[
-          styles.row,
-          { borderBottomColor: isDark ? "#333" : "#ccc", alignItems: "center" },
-        ]}
-      >
+      <View style={styles.row}>
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
-        <View style={styles.teamInfo}>
+        <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     );
   };
   const renderRightItem = ({
@@ -121,76 +174,51 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
   }) => {
     // Determine streak display and color
     let streakText = "-";
-    let streakColor = isDark ? "#fff" : "#1d1d1d";
+    let streakColor = item.streak.startsWith("W")
+      ? isDark
+        ? Colors.dark.limeGreen
+        : Colors.light.green
+      : item.streak.startsWith("L")
+      ? isDark
+        ? Colors.dark.lightRed
+        : Colors.light.red
+      : isDark
+      ? Colors.white
+      : Colors.black;
 
     if (item.streak != null && item.streak !== "-") {
       const streakValue = Number(item.streak);
       if (!isNaN(streakValue)) {
         if (streakValue > 0) {
           streakText = `W${streakValue}`;
-          streakColor = "#2ecc71"; // green for win streak
         } else if (streakValue < 0) {
           streakText = `L${Math.abs(streakValue)}`;
-          streakColor = "#e74c3c"; // red for loss streak
         }
       } else if (typeof item.streak === "string") {
-        // Handle ESPN's string-based format like "W6" or "L2"
         streakText = item.streak;
-        streakColor = item.streak.startsWith("W")
-          ? "#2ecc71"
-          : item.streak.startsWith("L")
-          ? "#e74c3c"
-          : isDark
-          ? "#fff"
-          : "#1d1d1d";
       }
     }
 
     return (
-      <View
-        style={[
-          styles.row,
-          { borderBottomColor: isDark ? "#333" : "#ccc", flexDirection: "row" },
-        ]}
-      >
+      <View style={styles.row}>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.overall}
-          </Text>
+          <Text style={styles.statText}>{item.overall}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.confOverall}
-          </Text>
+          <Text style={styles.statText}>{item.confOverall}</Text>
         </View>
 
         {showDivision && (
           <View style={styles.statCell}>
-            <Text
-              style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-            >
-              {item.divisionOverall}
-            </Text>
+            <Text style={styles.statText}>{item.divisionOverall}</Text>
           </View>
         )}
 
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.homeOverall}
-          </Text>
+          <Text style={styles.statText}>{item.homeOverall}</Text>
         </View>
         <View style={styles.statCell}>
-          <Text
-            style={[styles.statText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            {item.awayOverall}
-          </Text>
+          <Text style={styles.statText}>{item.awayOverall}</Text>
         </View>
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.gamesBehind}</Text>
@@ -214,40 +242,18 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
   };
 
   const renderHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
-          alignItems: "center",
-        },
-      ]}
-    >
+    <View style={styles.row}>
       <View style={styles.rankContainer}>
         <Text style={[styles.rankText, { fontFamily: Fonts.OSSEMIBOLD }]}>
           #
         </Text>
       </View>
-      <Text
-        style={[styles.teamHeaderText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-      >
-        Team
-      </Text>
+      <Text style={styles.teamHeaderText}>Team</Text>
     </View>
   );
 
   const renderStatsHeader = (showDivision: boolean) => (
-    <View
-      style={[
-        styles.row,
-        {
-          flexDirection: "row",
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? "#444" : "#ccc",
-        },
-      ]}
-    >
+    <View style={styles.row}>
       {[
         "Overall",
         "Conference",
@@ -261,17 +267,7 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
         "Pts Against",
       ].map((label) => (
         <View key={label} style={styles.statCell}>
-          <Text
-            style={[
-              styles.statText,
-              {
-                fontFamily: Fonts.OSSEMIBOLD,
-                color: isDark ? "#fff" : "#1d1d1d",
-              },
-            ]}
-          >
-            {label}
-          </Text>
+          <Text style={styles.statText}>{label}</Text>
         </View>
       ))}
     </View>
@@ -282,7 +278,7 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
     data,
   }: {
     title: string;
-    data: typeof standings;
+    data: typeof safeStandings;
   }) {
     const divisions = data.reduce((acc, team) => {
       const div = team.division || "Overall";
@@ -290,44 +286,18 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
       acc[div].push(team);
       return acc;
     }, {} as Record<string, typeof data>);
+
     const hasDivisions = Object.keys(divisions).length > 1;
 
+    // ✅ only marginTop 12 on the header container (already what you're doing)
     return (
       <View style={{ marginTop: 12 }}>
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: isDark ? "#444" : "#ccc" },
-          ]}
-        >
-          <Text
-            style={[
-              styles.heading,
-              {
-                color: isDark ? "#fff" : "#1d1d1d",
-                fontSize: 20,
-                fontFamily: Fonts.OSSEMIBOLD,
-              },
-            ]}
-          >
-            {title}
-          </Text>
-        </View>
+        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
 
         {Object.keys(divisions).map((div) => (
           <View key={div} style={{ marginTop: 8 }}>
             {Object.keys(divisions).length > 1 && (
-              <Text
-                style={{
-                  fontFamily: Fonts.OSSEMIBOLD,
-                  color: isDark ? "#aaa" : "#555",
-                  fontSize: 16,
-                  marginBottom: 4,
-                  marginLeft: 4,
-                }}
-              >
-                {div}
-              </Text>
+              <Text style={styles.collegeDivisionHeader}>{div}</Text>
             )}
 
             <View style={{ flexDirection: "row" }}>
@@ -367,24 +337,21 @@ export const CBBConferenceStandingsList = ({ selectedConference }: Props) => {
       contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
     >
       {conferences.length > 0 ? (
-        conferences.map((conf) => (
-          <ConferenceSection
-            key={conf}
-            title={conf}
-            data={grouped[conf].sort(
-              (a, b) => (a.rank ?? 999) - (b.rank ?? 999)
-            )}
-          />
-        ))
+        conferences.map((conf) => {
+          const data = (grouped[conf] ?? [])
+            .slice()
+            .sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
+
+          return <ConferenceSection key={conf} title={conf} data={data} />;
+        })
       ) : (
         <View style={{ alignItems: "center", marginTop: 40 }}>
-          <Text
-            style={{
-              color: isDark ? "#aaa" : "#333",
-              fontFamily: Fonts.OSLIGHT,
-            }}
-          >
-            No standings found for {selectedConference}.
+          <Text style={styles.emptyText}>
+            No standings found for{" "}
+            {onlyTeamConference
+              ? teamConference ?? "team conference"
+              : selectedConference}
+            .
           </Text>
         </View>
       )}

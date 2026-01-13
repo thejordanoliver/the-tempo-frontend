@@ -23,11 +23,20 @@ type NFLGameTeamStatsProps = {
 
 // NFL-specific stat keys to display
 const STAT_KEYS = [
+  { key: "plays.total", label: "Total Plays" },
   { key: "first_downs.total", label: "First Downs" },
+  { key: "first_downs.third_down_efficiency", label: "Third Down Efficiency" },
+  {
+    key: "first_downs.fourth_down_efficiency",
+    label: "Fourth Down Efficiency",
+  },
   { key: "passing.total", label: "Passing Yards" },
+  { key: "passing.comp_att", label: "Passing CMP/ATT" },
+  { key: "passing.yards_per_pass", label: "Passing Yards Per Pass" },
+  { key: "passing.sacks_yards_lost", label: "Sacks Yards Lost" },
   { key: "rushings.total", label: "Rushing Yards" },
   { key: "yards.total", label: "Total Yards" },
-  { key: "plays.total", label: "Total Plays" },
+  { key: "yards.yards_per_play", label: "Yards Per Play" },
   { key: "turnovers.total", label: "Turnovers" },
   { key: "penalties.total", label: "Penalties" },
   { key: "posession.total", label: "Time of Possession" },
@@ -43,9 +52,10 @@ const getValue = (obj: any, path: string) => {
 
 export default function NFLGameTeamStats({
   stats,
-  lighter,
+  lighter = false,
 }: NFLGameTeamStatsProps) {
   const isDark = useColorScheme() === "dark";
+  const styles = gameTeamStatsStyles(isDark, lighter);
   const [expanded, setExpanded] = useState(false);
   const heightAnim = useRef(
     new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
@@ -115,11 +125,11 @@ export default function NFLGameTeamStats({
 
   const teamAColor = getTeamColor(teamA?.team?.id);
   const teamBColor = getTeamColor(teamB?.team?.id);
+  const totalHeight = STAT_KEYS.length * (ROW_HEIGHT + 16); // add marginBottom
+  const collapsedHeight = COLLAPSED_ROWS * (ROW_HEIGHT + 16);
 
   useEffect(() => {
-    const toValue = expanded
-      ? Math.max(STAT_KEYS.length * ROW_HEIGHT, COLLAPSED_ROWS * ROW_HEIGHT)
-      : COLLAPSED_ROWS * ROW_HEIGHT;
+    const toValue = expanded ? totalHeight : collapsedHeight;
 
     Animated.timing(heightAnim, {
       toValue,
@@ -133,63 +143,46 @@ export default function NFLGameTeamStats({
       <HeadingTwo lighter={lighter}>Team Stats</HeadingTwo>
 
       {/* Logos Row */}
-      <View style={[styles.logosRow, { borderColor: dividerColor }]}>
+      <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
           <Image source={teamBLogo} style={styles.logo} />
 
-          <Text style={[styles.teamLabel, { color: textColor, marginLeft: 4 }]}>
-            {teamNameB?.code ?? "Away"}
-          </Text>
+          <Text style={styles.teamLabel}>{teamNameB?.code ?? "Away"}</Text>
         </View>
 
         <View style={styles.teamContainer}>
           <Image source={teamALogo} style={styles.logo} />
 
-          <Text style={[styles.teamLabel, { color: textColor }]}>
-            {teamNameA?.code ?? "Home"}
-          </Text>
+          <Text style={styles.teamLabel}>{teamNameA?.code ?? "Home"}</Text>
         </View>
       </View>
 
       {/* Stats */}
-      <ScrollView style={[styles.container, { borderColor: dividerColor }]}>
+      <ScrollView style={styles.container}>
         <Animated.View style={{ maxHeight: heightAnim, overflow: "hidden" }}>
-          {STAT_KEYS.map(({ key, label }) => {
-            let valueA = getValue(teamA?.statistics, key) ?? 0;
-            let valueB = getValue(teamB?.statistics, key) ?? 0;
+          {STAT_KEYS.map(({ key, label }, index) => {
+            const rawValueA = getValue(teamA?.statistics, key) ?? 0;
+            const rawValueB = getValue(teamB?.statistics, key) ?? 0;
 
-            // Raw values for display
-            let displayA = valueA;
-            let displayB = valueB;
-
-            // Convert to seconds FOR CHART ONLY
-            if (key === "posession.total") {
-              displayA = valueA; // keep original MM:SS text
-              displayB = valueB;
-
-              valueA = convertTimeToSeconds(valueA); // seconds for width
-              valueB = convertTimeToSeconds(valueB);
-            }
+            // 👇 convert ONLY for bar math
+            const valueA = convertTimeToSeconds(rawValueA) ?? 0;
+            const valueB = convertTimeToSeconds(rawValueB) ?? 0;
 
             const max = Math.max(Math.abs(valueA), Math.abs(valueB), 1);
+
             const isTeamALower = valueA < valueB;
             const isTeamBLower = valueB < valueA;
 
             return (
               <View key={key} style={styles.statSection}>
-                <View
-                  style={[
-                    styles.dividerLine,
-                    { backgroundColor: dividerColor },
-                  ]}
-                />
-                <Text style={[styles.statLabel, { color: textColor }]}>
-                  {label}
-                </Text>
+                {/* ✅ NO divider directly under logo row */}
+                {index !== 0 && <View style={styles.dividerLine} />}
+
+                <Text style={styles.statLabel}>{label}</Text>
+
                 <View style={styles.row}>
-                  <Text style={[styles.barText, { color: textColor }]}>
-                    {displayB}
-                  </Text>
+                  <Text style={styles.barText}>{rawValueB}</Text>
+
                   <View style={styles.barContainerLeft}>
                     <View
                       style={[
@@ -202,6 +195,7 @@ export default function NFLGameTeamStats({
                       ]}
                     />
                   </View>
+
                   <View style={styles.barContainerRight}>
                     <View
                       style={[
@@ -214,9 +208,8 @@ export default function NFLGameTeamStats({
                       ]}
                     />
                   </View>
-                  <Text style={[styles.barText, { color: textColor }]}>
-                    {displayA}
-                  </Text>
+
+                  <Text style={styles.barText}>{rawValueA}</Text>
                 </View>
               </View>
             );
@@ -249,78 +242,92 @@ export default function NFLGameTeamStats({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderBottomRightRadius: 12,
-    borderBottomLeftRadius: 12,
-  },
-  logosRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderTopRightRadius: 12,
-    borderTopLeftRadius: 12,
-    alignItems: "center",
-    borderColor: Colors.midTone,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-  },
-  teamContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  logo: {
-    width: 32,
-    height: 32,
-    resizeMode: "contain",
-  },
-  teamLabel: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 16,
-  },
-  statSection: {
-    marginBottom: 16,
-    height: ROW_HEIGHT,
-  },
-  dividerLine: {
-    height: 1,
-    width: "100%",
-  },
-  statLabel: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 12,
-    textAlign: "center",
-    marginTop: 8,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-  },
-  barContainerLeft: {
-    flex: 1,
-    alignItems: "flex-start",
-    marginLeft: 12,
-  },
-  barContainerRight: {
-    flex: 1,
-    alignItems: "flex-end",
-    marginRight: 12,
-  },
-  bar: {
-    height: 8,
-    justifyContent: "center",
-    borderRadius: 100,
-  },
-  barText: {
-    fontFamily: Fonts.OSSEMIBOLD,
-    fontSize: 14,
-    textAlign: "center",
-  },
-});
+const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
+  StyleSheet.create({
+    container: {
+      borderLeftWidth: 1,
+      borderRightWidth: 1,
+      borderBottomRightRadius: 12,
+      borderBottomLeftRadius: 12,
+      borderBottomWidth: 1,
+      borderColor: Colors.midTone,
+    },
+    logosRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderTopRightRadius: 12,
+      borderTopLeftRadius: 12,
+      alignItems: "center",
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+    },
+    teamContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    logo: {
+      width: 28,
+      height: 28,
+      resizeMode: "contain",
+    },
+    teamLabel: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 16,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    statSection: {
+      marginBottom: 16,
+      height: ROW_HEIGHT,
+    },
+    dividerLine: {
+      height: 1,
+      width: "100%",
+      backgroundColor: lighter
+        ? Colors.darkGray
+        : isDark
+        ? Colors.darkGray
+        : Colors.lightGray,
+    },
+    statLabel: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      textAlign: "center",
+      marginTop: 8,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+    },
+    barContainerLeft: {
+      flex: 1,
+      alignItems: "flex-start",
+      marginLeft: 12,
+    },
+    barContainerRight: {
+      flex: 1,
+      alignItems: "flex-end",
+      marginRight: 12,
+    },
+    bar: {
+      height: 8,
+      justifyContent: "center",
+      borderRadius: 100,
+    },
+    barText: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 14,
+      textAlign: "center",
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    showMoreLess: {
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+    },
+  });

@@ -1,10 +1,11 @@
 import { teams } from "constants/teams";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, Text, useColorScheme, View } from "react-native";
+import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../Headings/HeadingTwo";
 import FixedWidthTabBar, { getLabelStyle } from "../TabBars/FixedWidthTabBar";
-import TeamInjuriesList from "./TeamInjuriesList";
 
+import TeamInjuriesList from "./TeamInjuriesList";
 // ✅ Define type for injuries
 export type TeamInjury = {
   team: {
@@ -37,7 +38,7 @@ type Props = {
 export default function TeamInjuries({ injuries, lighter = false }: Props) {
   const isDark = useColorScheme() === "dark";
   const [selectedTeam, setSelectedTeam] = useState<string>("");
-
+  const styles = teamInjuryStyles(isDark, lighter);
   // Reorder so away team is first
   const reorderedInjuries =
     injuries?.length === 2 ? [injuries[1], injuries[0]] : injuries ?? [];
@@ -78,7 +79,7 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
         Injury Report
       </HeadingTwo>
 
-      <View style={{ alignSelf: "center" }}>
+      <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabs.map((t) => t.displayName)}
           selected={selectedTeam}
@@ -92,7 +93,13 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
               <View style={styles.tabLabel}>
                 {tab.logo && (
                   <Image
-                    source={isDark ? tab.logoLight || tab.logo : tab.logo}
+                    source={
+                      lighter
+                        ? tab.logoLight || tab.logo
+                        : isDark
+                        ? tab.logoLight || tab.logo
+                        : tab.logo
+                    }
                     style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
                     resizeMode="contain"
                   />
@@ -108,21 +115,9 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
             );
           }}
         />
-      </View>
 
-      <TeamInjuriesList injuries={[currentInjuries]} lighter={lighter} />
+        <TeamInjuriesList injuries={[currentInjuries]} lighter={lighter} />
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabLabel: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  logo: {
-    width: 28,
-    height: 28,
-  },
-});

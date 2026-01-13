@@ -1,8 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
 import { teams } from "constants/teamsCFB";
-import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { useEffect, useMemo, useState } from "react";
+
 type ApiResponse = {
+  teamId: string;
+  results: number;
   response: any[];
 };
 
@@ -22,12 +25,14 @@ type GameResult = {
   opponentLogoLight?: any;
 };
 
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 export const useLastFiveGames = (teamId: number) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
- 
+  const fallbackLogo = require("assets/Placeholders/teamPlaceholder.png");
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -42,7 +47,7 @@ export const useLastFiveGames = (teamId: number) => {
       map.set(Number(t.id), {
         logo: t.logo,
         logoLight: t.logoLight,
-        code: t.code ?? "",
+        code: t.code,
       })
     );
     return map;
@@ -55,61 +60,48 @@ export const useLastFiveGames = (teamId: number) => {
         setError(null);
 
         const response = await axios.get<ApiResponse>(
-          "https://api-american-football.p.rapidapi.com/games",
-          {
-            params: { team: teamId, season: 2025 },
-            headers: {
-              "X-RapidAPI-Key": process.env.EXPO_PUBLIC_RAPIDAPI_KEY!,
-              "X-RapidAPI-Host": "api-american-football.p.rapidapi.com",
-            },
-          }
+          `${BASE_URL}/api/gamesCFB/team/${teamId}/last-five`
         );
 
-    const recentGames = response.data.response
-  .filter((g) => {
-    const status = g.game.status.long?.toLowerCase();
-    return (
-      status.includes("finished") ||
-      status.includes("after overtime") ||
-      status.includes("ended") ||
-      status.includes("final")
-    );
-  })
-  .sort((a, b) => b.game.date.timestamp - a.game.date.timestamp)
-  .slice(0, 5)
-  .map((g) => {
-    const isHome = g.teams.home.id === teamId;
-    const homeScore = g.scores.home.total ?? 0;
-    const awayScore = g.scores.away.total ?? 0;
+        const recentGames: GameResult[] = response.data.response.map((g) => {
+          const isHome = g.teams.home.id === teamId;
+          const homeScore = g.scores.home.total ?? 0;
+          const awayScore = g.scores.away.total ?? 0;
 
-    const won =
-      (isHome && homeScore > awayScore) ||
-      (!isHome && awayScore > homeScore);
+          const won =
+            (isHome && homeScore > awayScore) ||
+            (!isHome && awayScore > homeScore);
 
-    const opponentId = isHome ? g.teams.away.id : g.teams.home.id;
-    const teamData = teamsMap.get(teamId);
-    const opponentData = teamsMap.get(opponentId);
+          const opponentId = isHome ? g.teams.away.id : g.teams.home.id;
 
-    return {
-      id: g.game.id,
-      date: formatDate(g.game.date.date),
-      homeTeam: g.teams.home.name,
-      awayTeam: g.teams.away.name,
-      homeScore,
-      awayScore,
-      isHome,
-      won,
-      teamLogo: teamData?.logo || PlaceholderLogo,
-      opponentId,
-      opponent: opponentData?.code || "UNK",
-      opponentLogo: opponentData?.logo || PlaceholderLogo,
-      opponentLogoLight: opponentData?.logoLight,
-    };
-  });
+          const teamData = teamsMap.get(teamId);
+          const opponentData = teamsMap.get(opponentId);
+
+          return {
+            id: g.game.id,
+            date: formatDate(g.game.date.date),
+            homeTeam: g.teams.home.name,
+            awayTeam: g.teams.away.name,
+            homeScore,
+            awayScore,
+            isHome,
+            won,
+            teamLogo: teamData?.logo || fallbackLogo,
+            opponentId,
+            opponent: opponentData?.code || "UNK",
+            opponentLogo: opponentData?.logo || fallbackLogo,
+            opponentLogoLight: opponentData?.logoLight,
+          };
+        });
 
         setGames(recentGames);
+
+        await AsyncStorage.setItem(
+          `lastFiveGames_${teamId}`,
+          JSON.stringify({ timestamp: Date.now(), data: recentGames })
+        );
       } catch (err) {
-        console.error("Error fetching last games", err);
+        console.error("Error fetching last five games", err);
         setError(err as Error);
       } finally {
         setLoading(false);

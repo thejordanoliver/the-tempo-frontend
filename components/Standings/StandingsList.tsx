@@ -2,7 +2,7 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
-import { nbaDivisionsById, teams } from "constants/teams"; // your NBA team logos & info
+import { getTeamByESPNId, nbaDivisionsById } from "constants/teams"; // your NBA team logos & info
 import { useRouter } from "expo-router";
 import {
   ConferenceStandings,
@@ -13,7 +13,6 @@ import React, { useState } from "react";
 import {
   FlatList,
   Image,
-  ImageSourcePropType,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -98,13 +97,9 @@ export const StandingsList = () => {
     item: StandingsTeam;
     index: number;
   }) => {
-    const teamInfo = teams.find((t) => t.espnID === item.teamId);
-    const teamLogo: ImageSourcePropType = isDark
-      ? teamInfo?.logoLight ||
-        teamInfo?.logo ||
-        require("assets/Placeholders/teamPlaceholder.png")
-      : teamInfo?.logo || require("assets/Placeholders/teamPlaceholder.png");
-
+    const team = getTeamByESPNId(Number(item.teamId));
+    const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
+    const teamCode = team?.code;
     return (
       <View style={styles.row}>
         <View style={styles.rankContainer}>
@@ -116,12 +111,12 @@ export const StandingsList = () => {
           onPress={() =>
             router.push({
               pathname: "/team/[teamId]",
-              params: { teamId: String(teamInfo?.id) },
+              params: { teamId: String(team?.id) },
             })
           }
         >
           <Image source={teamLogo} style={styles.logo} />
-          <Text style={styles.teamName}>{teamInfo?.code}</Text>
+          <Text style={styles.teamName}>{teamCode}</Text>
         </TouchableOpacity>
       </View>
     );

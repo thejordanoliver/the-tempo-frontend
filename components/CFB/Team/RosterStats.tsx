@@ -420,100 +420,115 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
               ([catName, { headers, rows }]) => (
                 <View key={catName} style={{ marginBottom: 24 }}>
                   <Text style={styles.categoryTitle}>{catName}</Text>
-
-                  <View style={{ flexDirection: "row" }}>
-                    {/* Fixed Player Column */}
-                    <View style={styles.fixedColumnContainer}>
-                      <View>
-                        <View style={[styles.tableRow, styles.headerRow]}>
-                          <Text
-                            style={[
-                              styles.tableCell,
-                              styles.headerText,
-                              { width: 120 },
-                            ]}
-                          >
-                            Player
-                          </Text>
-                        </View>
-                        {rows.map((row, idx) => (
-                          <View
-                            key={`${catName}-${row.playerName}-${idx}`}
-                            style={[
-                              styles.tableRow,
-                              idx % 2 === 1 && {
-                                backgroundColor: isDark
-                                  ? Colors.dark.itemBackground
-                                  : Colors.light.itemBackground,
-                              },
-                            ]}
-                          >
+                  <View style={styles.tableWrapper}>
+                    <View style={{ flexDirection: "row" }}>
+                      {/* Fixed Player Column */}
+                      <View style={styles.fixedColumnContainer}>
+                        <View>
+                          <View style={[styles.tableRow, styles.headerRow]}>
                             <Text
-                              style={[
-                                styles.tableCell,
-                                styles.playerName,
-                                { width: 100 },
-                              ]}
-                              numberOfLines={1}
-                            >
-                              {formatDisplayName(row.playerName)}
-                              {row.position ? ` (${row.position})` : ""}
-                            </Text>
-                          </View>
-                        ))}
-                      </View>
-                    </View>
-
-                    {/* Scrollable Stats Columns */}
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator
-                      style={{ flex: 1 }}
-                    >
-                      <View>
-                        <View style={[styles.tableRow, styles.headerRow]}>
-                          {headers.map((h, i) => (
-                            <Text
-                              key={`${catName}-header-${i}`}
                               style={[
                                 styles.tableCell,
                                 styles.headerText,
-                                { width: 90 },
+                                { width: 120 },
                               ]}
-                              numberOfLines={1}
                             >
-                              {SHORT_HEADER_MAP[h] ?? h}
+                              Player
                             </Text>
-                          ))}
-                        </View>
-                        {rows.map((row, idx) => (
-                          <View
-                            key={`${catName}-${row.playerName}-data-${idx}`}
-                            style={[
-                              styles.tableRow,
-                              idx % 2 === 1 && {
-                                backgroundColor: isDark
-                                  ? Colors.dark.itemBackground
-                                  : Colors.light.itemBackground,
-                              },
-                            ]}
-                          >
-                            {headers.map((h, i) => (
-                              <Text
-                                key={`${catName}-${row.playerName}-val-${i}`}
+                          </View>
+                          {rows.map((row, idx) => {
+                            const isLast = idx === rows.length - 1;
+
+                            return (
+                              <View
+                                key={`${catName}-${row.playerName}-${idx}`}
                                 style={[
-                                  styles.tableCell,
-                                  styles.statValue,
-                                  { width: 90 },
+                                  styles.tableRow,
+                                  !isLast && {
+                                    borderBottomWidth: 1,
+                                  },
+                                  idx % 2 === 1 && {
+                                    backgroundColor: isDark
+                                      ? Colors.dark.itemBackground
+                                      : Colors.light.itemBackground,
+                                  },
                                 ]}
                               >
-                                {row.values[h] ?? "-"}
+                                <Text
+                                  style={[
+                                    styles.tableCell,
+                                    styles.playerName,
+                                    { width: 100 },
+                                  ]}
+                                  numberOfLines={1}
+                                >
+                                  {formatDisplayName(row.playerName)}
+                                  {row.position ? ` (${row.position})` : ""}
+                                </Text>
+                              </View>
+                            );
+                          })}
+                        </View>
+                      </View>
+
+                      {/* Scrollable Stats Columns */}
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator
+                        style={{ flex: 1 }}
+                      >
+                        <View>
+                          <View style={[styles.tableRow, styles.headerRow]}>
+                            {headers.map((h, i) => (
+                              <Text
+                                key={`${catName}-header-${i}`}
+                                style={[
+                                  styles.tableCell,
+                                  styles.headerText,
+                                  { width: 90 },
+                                ]}
+                                numberOfLines={1}
+                              >
+                                {SHORT_HEADER_MAP[h] ?? h}
                               </Text>
                             ))}
                           </View>
-                        ))}
-                      </View>
-                    </ScrollView>
+                          {rows.map((row, idx) => {
+                            const isLast = idx === rows.length - 1;
+
+                            return (
+                              <View
+                                key={`${catName}-${row.playerName}-data-${idx}`}
+                                style={[
+                                  styles.tableRow,
+                                  !isLast && {
+                                    borderBottomWidth: 1,
+                                  },
+                                  idx % 2 === 1 && {
+                                    backgroundColor: isDark
+                                      ? Colors.dark.itemBackground
+                                      : Colors.light.itemBackground,
+                                  },
+                                ]}
+                              >
+                                {headers.map((h, i) => (
+                                  <Text
+                                    key={`${catName}-${row.playerName}-val-${i}`}
+                                    style={[
+                                      styles.tableCell,
+                                      styles.statValue,
+                                      { width: 90 },
+                                    ]}
+                                  >
+                                    {row.values[h] ?? "-"}
+                                  </Text>
+                                ))}
+                              </View>
+                            );
+                          })}
+                        </View>
+                      </ScrollView>
+                    </View>
                   </View>
                 </View>
               )

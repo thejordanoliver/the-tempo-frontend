@@ -1,7 +1,7 @@
 import axios from "axios";
-import { teams } from "constants/teamsCBB"; // adjust path if needed
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { CBBGame } from "types/types";
+import { getTeamInfo } from "constants/teamsCBB";
 
 type ApiResponse = {
   response: CBBGame[];
@@ -20,13 +20,13 @@ type GameResult = {
   opponentId: number;
   opponent: string;
   opponentLogo: any;
-  opponentLogoLight?: any; // added light logo here
+  opponentLogoLight?: any;
 };
 
 const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_BASKETBALL_RAPIDAPI_HOST;
 
-export const useLastFiveGames = (teamId: number) => {
+export const useLastFiveGames = (teamId: number, isWomens = false) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -39,18 +39,6 @@ export const useLastFiveGames = (teamId: number) => {
       day: "2-digit",
       year: "2-digit",
     });
-
-  const teamsMap = useMemo(() => {
-    const map = new Map<number, { logo: any; logoLight?: any; code: string }>();
-    teams.forEach((t) =>
-      map.set(Number(t.id), {
-        logo: t.logo,
-        logoLight: t.logoLight,
-        code: t.code ?? "",
-      })
-    );
-    return map;
-  }, []);
 
   useEffect(() => {
     const fetchLastGames = async () => {
@@ -72,26 +60,24 @@ export const useLastFiveGames = (teamId: number) => {
         const recentGames = response.data.response
           .filter((g) => g.status.long === "Game Finished")
           .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            (a, b) =>
+              new Date(b.date).getTime() - new Date(a.date).getTime()
           )
           .slice(0, 5)
           .map((g) => {
             const isHome = g.teams.home.id === teamId;
-
-            const homePoints = g.scores?.home?.total ?? 0; // use total points
+            const homePoints = g.scores?.home?.total ?? 0;
             const awayPoints = g.scores?.away?.total ?? 0;
 
             const won =
               (isHome && homePoints > awayPoints) ||
               (!isHome && awayPoints > homePoints);
 
-            const opponentId = isHome
-              ? Number(g.teams.away.id)
-              : Number(g.teams.home.id);
-            const opponentCode = isHome ? g.teams.away.name : g.teams.home.name;
+            const opponentTeam = isHome ? g.teams.away : g.teams.home;
 
-            const teamData = teamsMap.get(teamId);
-            const opponentData = teamsMap.get(Number(opponentId));
+            // Resolve team + opponent via getTeamInfo
+            const teamInfo = getTeamInfo(teamId, isWomens);
+            const opponentInfo = getTeamInfo(opponentTeam.id, isWomens);
 
             return {
               id: g.id,
@@ -102,12 +88,20 @@ export const useLastFiveGames = (teamId: number) => {
               awayScore: awayPoints,
               isHome,
               won,
-              teamLogo: teamData?.logo || fallbackLogo,
-              opponentId,
-              opponent: opponentData?.code || opponentCode || "UNK",
+              teamLogo:
+                isWomens
+                  ? teamInfo?.wLogo ?? teamInfo?.logo ?? fallbackLogo
+                  : teamInfo?.logo ?? fallbackLogo,
+              opponentId: opponentTeam.id,
+              opponent: opponentInfo?.code ?? opponentTeam.name ?? "UNK",
               opponentLogo:
-                opponentData?.logo || g.teams.away.logo || fallbackLogo,
-              opponentLogoLight: opponentData?.logoLight,
+                isWomens
+                  ? opponentInfo?.wLogo ?? opponentInfo?.logo ?? fallbackLogo
+                  : opponentInfo?.logo ?? fallbackLogo,
+              opponentLogoLight:
+                isWomens
+                  ? opponentInfo?.wLogo ?? opponentInfo?.logoLight
+                  : opponentInfo?.logoLight,
             };
           });
 
@@ -121,7 +115,7 @@ export const useLastFiveGames = (teamId: number) => {
     };
 
     if (teamId) fetchLastGames();
-  }, [teamId, teamsMap]);
+  }, [teamId, isWomens]);
 
   return { games, loading, error };
 };

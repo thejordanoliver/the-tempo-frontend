@@ -1,23 +1,19 @@
-import { summerGame } from "types/types";
-import CoxPavilionArena from "../../../assets/Arenas/CoxPavilion.webp";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
-
-import SaltLakeArena from "../../../assets/Arenas/SaltLakeArena.webp";
-import VegasArena from "../../../assets/Arenas/VegasSummerLeagueArena.webp";
+import { summerGame } from "types/types";
+import HistoricalOddsCard from "components/summer-league/HistoricalOddsCard";
+import { useHistoricalOdds } from "hooks/useHistoricalOdds";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TeamLocationSection from "../../../components/GameDetails/TeamLocationSection";
+import TeamLocationSection from "../../../components/GameDetails/GameLocation";
 import TeamLocationSkeleton from "../../../components/GameDetails/TeamLocationSkeleton";
 import { GameInfo } from "../../../components/summer-league/GameInfo";
+import HistoricalOddsCardSkeleton from "../../../components/summer-league/HistoricalOddsSkeleton";
 import LineScore from "../../../components/summer-league/LineScore";
 import { TeamRow } from "../../../components/summer-league/TeamRow";
 import { teams } from "../../../constants/teams";
 import { useWeatherForecast } from "../../../hooks/useWeather";
-import HistoricalOddsCard from "components/summer-league/HistoricalOddsCard";
-import { useHistoricalOdds } from "hooks/useHistoricalOdds";
-import HistoricalOddsCardSkeleton from "../../../components/summer-league/HistoricalOddsSkeleton";
 
 const OSEXTRALIGHT = "Oswald_200ExtraLight";
 
@@ -62,8 +58,7 @@ export default function SummerLeagueGameDetails() {
 
   const {
     weather,
-    loading: weatherLoading,
-    error: weatherError,
+ 
   } = useWeatherForecast(
     homeTeamData.latitude ?? null,
     homeTeamData.longitude ?? null,
@@ -82,8 +77,7 @@ export default function SummerLeagueGameDetails() {
 
   const isFinalStatus = ["Final", "Game Finished"].includes(gameStatusLong);
 
-
-const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
+  const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
   const {
     data: historicalOdds,
     loading: oddsLoading,
@@ -93,7 +87,6 @@ const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
     team1: awayTeamData.code,
     team2: homeTeamData.code,
   });
-  
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -154,26 +147,26 @@ const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
   // Determine arena info based on venue string (case-insensitive)
   const venueLower = parsedGame.venue?.toLowerCase() ?? "";
 
-  let arenaImage = VegasArena;
+  let arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
   let arenaName = "Thomas & Mack Center";
   let location = "Las Vegas, NV";
   let address = "4505 S Maryland Pkwy, Las Vegas, NV 89154";
   let arenaCapacity = "17,923";
 
   if (venueLower.includes("cox pavilion")) {
-    arenaImage = CoxPavilionArena;
+    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cox-pavilion.jpg";
     arenaName = "Cox Pavilion";
     location = "Las Vegas, NV";
     address = "3720 S Maryland Pkwy, Las Vegas, NV 89169"; // example address
     arenaCapacity = "2,500"; // example capacity
   } else if (venueLower.includes("thomas & mack center")) {
-    arenaImage = VegasArena;
+    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
     arenaName = "Thomas & Mack Center";
     location = "Las Vegas, NV";
     address = "4505 S Maryland Pkwy, Las Vegas, NV 89154";
     arenaCapacity = "17,923";
   } else if (venueLower.includes("huntsman center")) {
-    arenaImage = SaltLakeArena;
+    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680203/arenas/basketball/salt-lake.avif";
     arenaName = "Jon M. Huntsman Center";
     location = "Salt Lake City, UT";
     address = "1825 E. South Campus Dr, Salt Lake City, UT 84112";
@@ -234,8 +227,8 @@ const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
             isFinalStatus
               ? "Final"
               : parsedGame.clock && parsedGame.status.long !== "Not Started"
-                ? "In Progress"
-                : "Scheduled"
+              ? "In Progress"
+              : "Scheduled"
           }
           date={formattedDate}
           time={
@@ -275,7 +268,7 @@ const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
         />
       </View>
 
-  {oddsLoading ? (
+      {oddsLoading ? (
         <View style={{ marginTop: 20 }}>
           {[...Array(1)].map((_, i) => (
             <HistoricalOddsCardSkeleton key={i} />
@@ -317,8 +310,8 @@ const gameDate = new Date(parsedGame.date).toISOString().split("T")[0];
           address={address}
           arenaCapacity={arenaCapacity}
           weather={weather}
-          loading={weatherLoading}
-          error={weatherError}
+          loading={false}
+          error={null}
         />
       )}
     </ScrollView>

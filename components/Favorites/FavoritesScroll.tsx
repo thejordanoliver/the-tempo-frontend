@@ -49,9 +49,9 @@ export default function FavoritesScroll({
       const [league, id] = fav.split(":");
       let baseTeam:
         | {
-            id: string | number;
+            id:  number;
             name: string;
-            logo: any;
+            logo?: any;
             logoLight?: string;
             color?: string;
           }
@@ -70,6 +70,9 @@ export default function FavoritesScroll({
         case "CBB":
           baseTeam = cbbteams.find((t) => String(t.id) === id);
           break;
+        case "WCBB":
+          baseTeam = cbbteams.find((t) => String(t.wid) === id);
+          break;
         case "MLB":
           baseTeam = mlbTeams.find((t) => String(t.id) === id);
           break;
@@ -78,6 +81,10 @@ export default function FavoritesScroll({
       if (!baseTeam) return null;
       return {
         ...baseTeam,
+        id:
+          league === "WCBB"
+            ? String((baseTeam as any).wid)
+            : String(baseTeam.id),
         league: league as LeagueType,
         key: `${league}-${id}`,
       } as TeamWithLeague;
@@ -115,6 +122,11 @@ export default function FavoritesScroll({
       onPress={async () => {
         await Haptics.selectionAsync();
 
+        if (!item.id) {
+          console.warn("⚠️ Missing team id for navigation:", item);
+          return;
+        }
+
         const route =
           item.league === "NFL"
             ? "/team/nfl/[teamId]"
@@ -124,10 +136,13 @@ export default function FavoritesScroll({
             ? "/team/cfb/[teamId]"
             : item.league === "CBB"
             ? "/team/cbb/[teamId]"
+            : item.league === "WCBB"
+            ? "/team/wcbb/[teamId]"
             : "/team/mlb/[teamId]";
+
         router.push({
           pathname: route,
-          params: { teamId: item.id.toString() },
+          params: { teamId: (item.id) },
         });
       }}
     >
@@ -152,7 +167,9 @@ export default function FavoritesScroll({
       </View>
       <View style={styles.teamLabelContainer}>
         <Text style={styles.teamLabel}>{item.name}</Text>
-        {(item.league === "CFB" || item.league === "CBB") && (
+        {(item.league === "CFB" ||
+          item.league === "CBB" ||
+          item.league === "WCBB") && (
           <>
             <View style={styles.divider} />
             <Text style={styles.teamLabel}>{item.league}</Text>

@@ -1,10 +1,8 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
 import { teamsById } from "constants/teams";
 import { router } from "expo-router";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useEffect, useRef, useState } from "react";
-import BoxScoreSkeleton from "./BoxScoreSkeleton";
 import {
   Animated,
   Image,
@@ -18,12 +16,14 @@ import {
   View,
 } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
+import BoxScoreSkeleton from "./BoxScoreSkeleton";
 
 const COLUMN_WIDTH = 50;
 const NAME_COLUMN_WIDTH = 160;
 const PLAYER_ROW_HEIGHT = 36;
 const COLLAPSED_ROWS = 5;
 const COLLAPSED_HEIGHT = PLAYER_ROW_HEIGHT * COLLAPSED_ROWS;
+
 
 if (
   Platform.OS === "android" &&
@@ -190,27 +190,8 @@ export default function BoxScore({
     return (
       <View style={styles.teamBox}>
         {/* Team Header */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingVertical: 10,
-          }}
-        >
-          <Text
-            style={[
-              styles.teamLabel,
-              {
-                color: lighter
-                  ? Colors.white
-                  : isDark
-                  ? Colors.white
-                  : Colors.black,
-              },
-            ]}
-          >
-            {teamName}
-          </Text>
+        <View style={styles.teamHeader}>
+          <Text style={styles.teamLabel}>{teamName}</Text>
 
           {!!teamLogo && (
             <Image
@@ -338,129 +319,49 @@ export default function BoxScore({
       </View>
     );
   };
+  // ⏳ Loading state — render skeleton only
+  if (isLoading) {
+    return (
+      <ScrollView>
+        <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
+        <BoxScoreSkeleton lighter={lighter} />
+      </ScrollView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ScrollView>
+        <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
+        <Text style={styles.error}>Failed to load box score.</Text>
+      </ScrollView>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
       <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
 
-{isLoading && <BoxScoreSkeleton  lighter={lighter} />}
+      <View style={{ marginBottom: 24 }}>
+        {renderTeamBox(
+          awayPlayers,
+          awayTeam?.fullName ?? "Away Team",
+          getTeamLogo(awayTeam),
+          awayCode,
+          expandedTeams[awayCode] ?? false,
+          heightAnimMap.current[awayCode]
+        )}
+      </View>
 
-      {isError && <Text style={styles.error}>Failed to load box score.</Text>}
-
-      {!isLoading && !isError && (
-        <>
-          <View style={{ marginBottom: 24 }}>
-            {renderTeamBox(
-              awayPlayers,
-              awayTeam?.fullName ?? "Away Team",
-              getTeamLogo(awayTeam),
-              awayCode,
-              expandedTeams[awayCode] ?? false,
-              heightAnimMap.current[awayCode]
-            )}
-          </View>
-
-          {renderTeamBox(
-            homePlayers,
-            homeTeam?.fullName ?? "Home Team",
-            getTeamLogo(homeTeam),
-            homeCode,
-            expandedTeams[homeCode] ?? false,
-            heightAnimMap.current[homeCode]
-          )}
-        </>
+      {renderTeamBox(
+        homePlayers,
+        homeTeam?.fullName ?? "Home Team",
+        getTeamLogo(homeTeam),
+        homeCode,
+        expandedTeams[homeCode] ?? false,
+        heightAnimMap.current[homeCode]
       )}
     </ScrollView>
   );
 }
 
-const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
-  StyleSheet.create({
-    container: {},
-    loading: {
-      textAlign: "center",
-      padding: 20,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-    },
-    error: {
-      textAlign: "center",
-      padding: 20,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: lighter
-        ? Colors.dark.lightRed
-        : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
-    },
-    teamBox: {
-      borderWidth: 1,
-      borderRadius: 10,
-      overflow: "hidden",
-      borderColor: lighter
-        ? Colors.white
-        : isDark
-        ? Colors.white
-        : Colors.black,
-    },
-    teamLabel: {
-      fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
-      marginVertical: 10,
-      paddingHorizontal: 12,
-    },
-    tableHeader: {
-      flexDirection: "row",
-      borderBottomWidth: 1,
-      paddingVertical: 8,
-      height: 40,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
-    },
-    tableRow: {
-      flexDirection: "row",
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingVertical: 6,
-      height: PLAYER_ROW_HEIGHT,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
-    },
-    cellName: {
-      width: NAME_COLUMN_WIDTH,
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 14,
-      paddingHorizontal: 8,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-    },
-    cell: {
-      width: COLUMN_WIDTH,
-      fontSize: 13,
-      textAlign: "center",
-      paddingHorizontal: 4,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    cellHeader: {
-      width: COLUMN_WIDTH,
-      fontSize: 13,
-      textAlign: "center",
-      paddingHorizontal: 4,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    cellContainer: { justifyContent: "center", alignItems: "center" },
-    teamLogo: { width: 28, height: 28, resizeMode: "contain" },
-    showMoreLess: {
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-    },
-  });

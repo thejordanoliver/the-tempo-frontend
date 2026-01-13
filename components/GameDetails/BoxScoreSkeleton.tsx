@@ -11,7 +11,7 @@ import {
 
 const COLUMN_WIDTH = 50;
 const NAME_COLUMN_WIDTH = 160;
-const ROW_HEIGHT = 50;
+const ROW_HEIGHT = 36;
 const ROWS = 5;
 const STAT_COLUMNS = 10; // visual approximation
 
@@ -63,46 +63,54 @@ export default function BoxScoreSkeleton({
         </View>
       )}
 
-      {/* Table */}
-      <View style={{ flexDirection: "row" }}>
-        {/* Player names */}
-        <View style={{ width: NAME_COLUMN_WIDTH }}>
-          <View style={styles.headerRow}>
-            <Skeleton style={styles.headerCellWide} />
-          </View>
+    {/* Table */}
+<View style={{ flexDirection: "row" }}>
+  {/* Player names */}
+  <View style={{ width: NAME_COLUMN_WIDTH }}>
+    <View style={styles.headerRow}>
+      <Skeleton style={styles.headerCellWide} />
+    </View>
 
-          {Array.from({ length: ROWS }).map((_, i) => (
-            <View key={`name-${key}-${i}`} style={styles.row}>
-              <Skeleton style={styles.playerName} />
-            </View>
+    {Array.from({ length: ROWS }).map((_, i) => (
+      <View key={`name-${key}-${i}`} style={styles.row}>
+        <Skeleton style={styles.playerName} />
+      </View>
+    ))}
+  </View>
+
+  {/* Stats */}
+  <View style={{ flex: 1 }}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View>
+        <View style={styles.headerRow}>
+          {Array.from({ length: STAT_COLUMNS }).map((_, i) => (
+            <Skeleton
+              key={`header-${key}-${i}`}
+              style={styles.headerCell}
+            />
           ))}
         </View>
 
-        {/* Stats */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View>
-            <View style={styles.headerRow}>
-              {Array.from({ length: STAT_COLUMNS }).map((_, i) => (
-                <Skeleton
-                  key={`header-${key}-${i}`}
-                  style={styles.headerCell}
-                />
-              ))}
-            </View>
-
-            {Array.from({ length: ROWS }).map((_, r) => (
-              <View key={`row-${key}-${r}`} style={styles.row}>
-                {Array.from({ length: STAT_COLUMNS }).map((_, c) => (
-                  <Skeleton
-                    key={`cell-${key}-${r}-${c}`}
-                    style={styles.statCell}
-                  />
-                ))}
-              </View>
+        {Array.from({ length: ROWS }).map((_, r) => (
+          <View key={`row-${key}-${r}`} style={styles.row}>
+            {Array.from({ length: STAT_COLUMNS }).map((_, c) => (
+              <Skeleton
+                key={`cell-${key}-${r}-${c}`}
+                style={styles.statCell}
+              />
             ))}
           </View>
-        </ScrollView>
+        ))}
       </View>
+    </ScrollView>
+  </View>
+</View>
+
+{/* ✅ FULL-WIDTH BUTTON */}
+<View style={styles.button}>
+  <Skeleton style={styles.buttonSkeleton} />
+</View>
+
     </View>
   );
 
@@ -126,14 +134,11 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
     container: {},
 
     teamBox: {
-      borderWidth: 1,
       borderRadius: 10,
       overflow: "hidden",
-      borderColor: lighter
-        ? Colors.white
-        : isDark
-        ? Colors.white
-        : Colors.black,
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      justifyContent: "center",
     },
 
     teamHeader: {
@@ -198,6 +203,26 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
         : Colors.darkGray,
       paddingHorizontal: 6,
     },
+  button: {
+  flexDirection: "row",
+  height: ROW_HEIGHT,
+  alignItems: "center",
+  justifyContent: "center",
+  borderBottomWidth: StyleSheet.hairlineWidth,
+  borderColor: lighter
+    ? Colors.lightGray
+    : isDark
+    ? Colors.lightGray
+    : Colors.darkGray,
+  paddingHorizontal: 12,
+},
+
+buttonSkeleton: {
+  width: "30%",
+  height: 16,
+  borderRadius: 8,
+  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+},
 
     playerName: {
       width: NAME_COLUMN_WIDTH - 24,

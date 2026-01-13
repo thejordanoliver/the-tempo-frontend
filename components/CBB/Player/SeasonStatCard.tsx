@@ -4,60 +4,84 @@ import { useLocalSearchParams } from "expo-router";
 import { useCBBPlayerStats } from "hooks/CBBHooks/useCBBPlayerStats";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import { teams } from "../../../constants/teamsCBB";
 import CenteredHeader from "../../Headings/CenteredHeader";
+
 type Props = {
   playerId: number;
-  season?: string;
+  season?: string; // e.g. "2025-26"
 };
 
+const safeFixed = (val?: number | null) =>
+  val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
+
 export default function SeasonStatCard({ playerId, season }: Props) {
-  const { data, loading, error } = useCBBPlayerStats(playerId);
+  const params = useLocalSearchParams<{ league?: string }>();
+
+  const league =
+    params.league === "WCBB" || params.league === "wcbb" ? "WCBB" : "CBB";
+
+  const { data, loading, error } = useCBBPlayerStats(playerId, league);
+
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
 
+  /* ------------------------------
+     LOADING / ERROR
+  ------------------------------ */
   if (loading) return <SeasonStatCardSkeleton />;
   if (error || !data)
-    return <Text style={styles.error}>Failed to load stats</Text>;
+    return <Text style={styles.errorText}>Failed to load stats</Text>;
 
-  // 👉 Choose season
+  /* ------------------------------
+     SEASON SELECTION
+  ------------------------------ */
+
+  // remove Career row
+  const seasons = data.seasonTotals.filter(
+    (s) => !s.season.toLowerCase().includes("career")
+  );
+
+  if (!seasons.length) {
+    return (
+      <>
+        <CenteredHeader>Season</CenteredHeader>
+        <Text style={styles.errorText}>No stats available</Text>
+      </>
+    );
+  }
+
   const selectedSeason =
-    data.seasons.find((s) => s.season === season) || data.currentSeason;
+    (season &&
+      seasons.find(
+        (s) => s.season === season || s.season.includes(season)
+      )) ||
+    seasons[0]; // most recent season
 
-  if (!selectedSeason)
-    return <Text style={styles.error}>No stats available</Text>;
+  const displayYear = selectedSeason.season;
 
-  // Extract stats
-  const { gp, pts, ast, reb, fgPct } = selectedSeason;
+  /* ------------------------------
+     DERIVED PER-GAME STATS
+  ------------------------------ */
 
-  const safeFixed = (val: number | null) =>
-    val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
+  const gp = selectedSeason.gp ?? 0;
 
-  const ppg = gp ? safeFixed(pts!) : "0.0";
-  const apg = gp ? safeFixed(ast!) : "0.0";
-  const rpg = gp ? safeFixed(reb!) : "0.0";
-  const fg = fgPct ? safeFixed(fgPct) : "0.0";
+  const ppg = gp ? safeFixed((selectedSeason.pts ?? 0) / gp) : "0.0";
+  const apg = gp ? safeFixed((selectedSeason.ast ?? 0) / gp) : "0.0";
+  const rpg = gp ? safeFixed((selectedSeason.reb ?? 0) / gp) : "0.0";
+  const fg = safeFixed(selectedSeason.fgPct);
 
-  const displayYear = season || selectedSeason.season;
-
-  const { teamId } = useLocalSearchParams<{ teamId: string }>();
-  const sanitizedTeamId = String(teamId).replace(/"/g, "").trim();
-
-  const teamObj = teams.find((t) => String(t.id) === sanitizedTeamId);
   const statColor = isDark ? Colors.white : Colors.black;
 
   function StatItem({
     label,
     value,
-    color,
   }: {
     label: string;
-    value: string | number;
-    color?: string;
+    value: string;
   }) {
     return (
       <View style={styles.statItem}>
-        <Text style={[styles.statValue, { color: color || "#000" }]}>
+        <Text style={[styles.statValue, { color: statColor }]}>
           {value}
         </Text>
         <Text style={styles.statLabel}>{label}</Text>
@@ -65,16 +89,19 @@ export default function SeasonStatCard({ playerId, season }: Props) {
     );
   }
 
+  /* ------------------------------
+     UI
+  ------------------------------ */
   return (
     <>
       <CenteredHeader>{displayYear} Season</CenteredHeader>
 
       <View style={styles.card}>
         <View style={styles.statsRow}>
-          <StatItem label="PTS" value={ppg} color={statColor} />
-          <StatItem label="AST" value={apg} color={statColor} />
-          <StatItem label="REB" value={rpg} color={statColor} />
-          <StatItem label="FG%" value={fg} color={statColor} />
+          <StatItem label="PTS" value={ppg} />
+          <StatItem label="AST" value={apg} />
+          <StatItem label="REB" value={rpg} />
+          <StatItem label="FG%" value={fg} />
         </View>
       </View>
     </>

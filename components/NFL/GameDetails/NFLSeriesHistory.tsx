@@ -6,7 +6,7 @@ import { Fonts } from "constants/fonts";
 import React, { useMemo } from "react";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 import type { TransformedNFLSeriesGame } from "utils/NFLUtils/transformSeriesGame";
-
+import { Ionicons } from "@expo/vector-icons";
 type Props = {
   team1Code: string; // "DAL"
   team2Code: string; // "GB"
@@ -104,7 +104,7 @@ const NFLSeriesHistory: React.FC<Props> = ({
       .slice(0, 5);
   }, [standardizedGames]);
 
-  const styles = getStyles(isDark, lighter);
+  const styles = seriesHistoryStyles(isDark, lighter);
 
   const formatDate = (iso?: string) => {
     if (!iso) return "";
@@ -160,105 +160,113 @@ const NFLSeriesHistory: React.FC<Props> = ({
   return (
     <View>
       <HeadingTwo lighter={lighter}>Series History</HeadingTwo>
+      <View style={styles.wrapper}>
+        {/* HEADER */}
+        <View style={styles.headerRow}>
+          <View style={styles.headerRowLeft}>
+            {leadingTeamLogo && (
+              <Image
+                source={leadingTeamLogo}
+                style={styles.leaderLogo}
+                resizeMode="contain"
+              />
+            )}
+            <Text style={styles.leaderText}>{leaderText}</Text>
+          </View>
 
-      {/* HEADER */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerRowLeft}>
-          {leadingTeamLogo && (
-            <Image
-              source={leadingTeamLogo}
-              style={styles.leaderLogo}
-              resizeMode="contain"
-            />
-          )}
-          <Text style={styles.leaderText}>{leaderText}</Text>
+          <View style={styles.headerRowRight}>
+            <Text style={styles.recordText}>
+              {totalGames} game{totalGames === 1 ? "" : "s"}
+            </Text>
+            <View style={styles.divider} />
+            <Text style={styles.recordText}>{recordText}</Text>
+          </View>
         </View>
 
-        <View style={styles.headerRowRight}>
-          <Text style={styles.recordText}>
-            {totalGames} game{totalGames === 1 ? "" : "s"}
-          </Text>
-          <View style={styles.divider} />
-          <Text style={styles.recordText}>{recordText}</Text>
-        </View>
-      </View>
+        {/* RECENT GAMES */}
+        {recentGames.length > 0 && (
+          <View style={styles.recentContainer}>
+            <Text style={styles.recentHeading}>Recent meetings</Text>
 
-      {/* RECENT GAMES */}
-      {recentGames.length > 0 && (
-        <View style={styles.recentContainer}>
-          <Text style={styles.recentHeading}>Recent meetings</Text>
+            {recentGames.map((g, idx) => {
+              const { s1, s2, loc, winnerKey } = lineMeta[idx];
 
-          {recentGames.map((g, idx) => {
-            const { s1, s2, loc, winnerKey } = lineMeta[idx];
+              const isTie = winnerKey === "tie";
+              const t1Win = winnerKey === "team1";
+              const t2Win = winnerKey === "team2";
 
-            const isTie = winnerKey === "tie";
-            const t1Win = winnerKey === "team1";
-            const t2Win = winnerKey === "team2";
+              const streak = streakFlags[idx];
 
-            const streak = streakFlags[idx];
+              return (
+                <View key={`${g.id}-${idx}`} style={styles.gameRow}>
+                  {/* LEFT SIDE */}
+                  <View>
+                    <Text style={styles.gameDate}>{formatDate(g.date)}</Text>
 
-            return (
-              <View key={`${g.id}-${idx}`} style={styles.gameRow}>
-                {/* LEFT SIDE */}
-                <View>
-                  <Text style={styles.gameDate}>{formatDate(g.date)}</Text>
-
-                  <View style={styles.gameRowLeft}>
-                    <View style={styles.resultsContainer}>
-                      {isTie ? (
-                        <Text style={styles.gameScore}>
-                          {team2Code} {s2} – {team1Code} {s1}
-                        </Text>
-                      ) : (
-                        <Text style={styles.gameScore}>
-                          <Text
-                            style={
-                              t2Win
-                                ? styles.gameScoreWinner
-                                : styles.gameScoreLoser
-                            }
-                          >
-                            {team2Code} {s2}
+                    <View style={styles.gameRowLeft}>
+                      <View style={styles.resultsContainer}>
+                        {isTie ? (
+                          <Text style={styles.gameScore}>
+                            {team2Code} {s2} – {team1Code} {s1}
                           </Text>
+                        ) : (
+                          <Text style={styles.gameScore}>
+                            <Text
+                              style={
+                                t2Win
+                                  ? styles.gameScoreWinner
+                                  : styles.gameScoreLoser
+                              }
+                            >
+                              {team2Code} {s2}
+                            </Text>
 
-                          <Text style={styles.gameScoreDash}> – </Text>
-                          <Text
-                            style={
-                              t1Win
-                                ? styles.gameScoreWinner
-                                : styles.gameScoreLoser
-                            }
-                          >
-                            {team1Code} {s1}
+                            <Text style={styles.gameScoreDash}> – </Text>
+                            <Text
+                              style={
+                                t1Win
+                                  ? styles.gameScoreWinner
+                                  : styles.gameScoreLoser
+                              }
+                            >
+                              {team1Code} {s1}
+                            </Text>
                           </Text>
-                        </Text>
-                      )}
+                        )}
+                      </View>
+                      {streak && <Ionicons name="flame" size={20} color={"orange"}/>   }
                     </View>
-                    {streak && <Text style={styles.streakEmoji}>🔥</Text>}
+                  </View>
+
+                  {/* RIGHT SIDE */}
+                  <View style={styles.gameRowRight}>
+                    <Text style={styles.gameLocation}>{loc}</Text>
                   </View>
                 </View>
-
-                {/* RIGHT SIDE */}
-                <View style={styles.gameRowRight}>
-                  <Text style={styles.gameLocation}>{loc}</Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      )}
+              );
+            })}
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 export default NFLSeriesHistory;
 
-const getStyles = (isDark: boolean, lighter: boolean) =>
+const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     headerRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
+      padding: 12,
+    },
+
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
     },
     headerRowLeft: {
       flexDirection: "row",
@@ -277,12 +285,20 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
     leaderText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
-      color: lighter ? Colors.dark.white : isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     recordText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
-      color: lighter ? Colors.dark.white :  isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     divider: {
       width: 1.5,
@@ -296,7 +312,12 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
       marginBottom: 6,
-      color: lighter ? Colors.dark.white : isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
+      paddingHorizontal: 12,
     },
     gameRow: {
       flexDirection: "row",
@@ -304,7 +325,12 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       alignItems: "center",
       paddingVertical: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: lighter ? Colors.lightGray  : isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.darkGray
+        : Colors.lightGray,
+      paddingHorizontal: 12,
     },
     gameRowLeft: {
       flexDirection: "row",
@@ -320,29 +346,49 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
     gameDate: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 11,
-      color: lighter ? Colors.lightGray : isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     gameScore: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 13,
 
-      color: lighter ? Colors.dark.white :  isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameScoreDash: {
       marginHorizontal: 2,
     },
     gameScoreWinner: {
       fontFamily: Fonts.OSBOLD,
-      color: lighter ? Colors.dark.white : isDark ? Colors.dark.white : Colors.light.black,
+      color: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     gameScoreLoser: {
       fontFamily: Fonts.OSMEDIUM,
-      color: lighter ? Colors.lightGray :  isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     gameLocation: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 11,
-      color: lighter ? Colors.lightGray :  isDark ? Colors.lightGray : Colors.darkGray,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
     },
     streakEmoji: {
       marginLeft: 6,

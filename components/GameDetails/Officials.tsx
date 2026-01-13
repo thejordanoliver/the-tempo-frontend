@@ -35,8 +35,11 @@ export default function Officials({
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="small" color={lighter ? "#fff" : undefined} />
+      <View>
+        <ActivityIndicator
+          size="small"
+          color={lighter ? Colors.white : undefined}
+        />
         <Text style={styles.loadingText}>Loading officials...</Text>
       </View>
     );
@@ -44,7 +47,7 @@ export default function Officials({
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <View>
         <Text style={styles.errorText}>Failed to load officials</Text>
       </View>
     );
@@ -52,102 +55,101 @@ export default function Officials({
 
   if (!officials || officials.length === 0) return null;
 
-  // ensure even number of cells
-  const officialsData =
-    officials.length % 2 === 0
-      ? officials
-      : [...officials, { displayName: "", position: { displayName: "" } }];
-
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo lighter={lighter}>Game Officials</HeadingTwo>
-      <FlatList
-        data={officialsData}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => {
-          if (!item.displayName)
-            return <View style={[styles.card, styles.emptyCard]} />;
+      <View style={styles.wrapper}>
+        <FlatList
+          data={officials}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }) => {
+            const initials = item.displayName
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase();
 
-          const initials = item.displayName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
+            const isLast = index === officials.length - 1;
 
-          return (
-            <View style={styles.card}>
-              <View style={styles.placeholder}>
-                <Text style={styles.initials}>{initials}</Text>
+            return (
+              <View
+                style={[
+                  styles.row,
+                  isLast && { borderBottomWidth: 0 }, // ✅ remove divider
+                ]}
+              >
+                <View style={styles.placeholder}>
+                  <Text style={styles.initials}>{initials}</Text>
+                </View>
+
+                <View style={styles.nameContainer}>
+                  <Text style={styles.name}>{item.displayName}</Text>
+                  <Text style={styles.position}>
+                    {item.position?.displayName ?? "Official"}
+                  </Text>
+                </View>
               </View>
-              <Text style={styles.position}>
-                {item.position?.displayName ?? "Official"}
-              </Text>
-              <Text style={styles.name}>{item.displayName}</Text>
-            </View>
-          );
-        }}
-        numColumns={2}
-        scrollEnabled={false}
-        columnWrapperStyle={styles.row}
-      />
+            );
+          }}
+          scrollEnabled={false}
+        />
+      </View>
     </View>
   );
 }
 
 const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
-    container: {
-      marginTop: 20,
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
     },
     row: {
-      justifyContent: "space-between",
-      marginBottom: 14,
-    },
-    card: {
-      width: "48%",
+      flex: 1,
       padding: 12,
-      borderRadius: 10,
-      backgroundColor: lighter
-        ? "rgba(255,255,255,0.1)"
-        : isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      elevation: 2,
+      flexDirection: "row",
       alignItems: "center",
-    },
-    emptyCard: {
-      backgroundColor: "transparent",
-    },
-    placeholder: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      backgroundColor: lighter
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: lighter
         ? Colors.midTone
         : isDark
         ? Colors.darkGray
         : Colors.lightGray,
-      alignItems: "center",
+    },
+    nameContainer: {
+      marginLeft: 8,
+      flex: 1,
+    },
+    placeholder: {
+      width: 50,
+      height: 50,
+      borderRadius: 100,
+      overflow: "hidden",
       justifyContent: "center",
-      marginBottom: 8,
+      alignItems: "center",
+      borderWidth: 0.5,
+      borderColor: lighter
+        ? Colors.dark.white
+        : isDark
+        ? Colors.dark.white
+        : Colors.light.black,
     },
     initials: {
-      color: Colors.white,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
       fontSize: 18,
       fontFamily: Fonts.OSBOLD,
     },
     position: {
       fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.OSREGULAR,
       color: Colors.midTone,
       marginBottom: 4,
-      textAlign: "center",
     },
     name: {
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
       color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
-      textAlign: "center",
     },
     loadingText: {
       marginTop: 8,

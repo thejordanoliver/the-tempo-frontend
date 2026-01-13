@@ -52,6 +52,11 @@ export default function GameTeamStats({
   const styles = gameTeamStatsStyles(isDark, lighter);
   // 🔥 Early returns BEFORE any useState / useRef / useEffect
   if (!stats || stats.length < 2) return null;
+const numericValue = (v: any) =>
+  typeof v === "number" ? v : Number(v);
+
+const isNumeric = (v: any) =>
+  v !== null && !isNaN(Number(v));
 
   const teamA = stats[0];
   const teamB = stats[1];
@@ -82,48 +87,11 @@ export default function GameTeamStats({
 
   const teamDataA = teamsById[teamA.team.id];
   const teamDataB = teamsById[teamB.team.id];
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
-  const dividerColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
-  const getTeamBarColor = (team: any) => {
-    const darkTeams = [
-      "MEM",
-      "BKN",
-      "NOP",
-      "MIN",
-      "DEN",
-      "PHX",
-      "MIL",
-      "SAS",
-      "CLE",
-      "WAS",
-      "IND",
-      "LAL",
-      "UTA",
-      "ATL",
-      "NYK",
-      "LAC",
-      "SAC",
-      "WAS",
-    ];
-    const isDarkTeam = darkTeams.includes(team?.code);
-    if (isDark && isDarkTeam && team?.secondaryColor) {
-      return team.secondaryColor;
-    }
-    return team?.color;
-  };
 
   return (
     <View>
       <HeadingTwo lighter={lighter}>Game Stats</HeadingTwo>
-      <View style={[styles.logosRow, { borderColor: dividerColor }]}>
+      <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
           <Image
             source={
@@ -131,9 +99,7 @@ export default function GameTeamStats({
             }
             style={styles.logo}
           />
-          <Text style={[styles.teamLabel, { color: textColor, marginLeft: 4 }]}>
-            {teamDataB.code}
-          </Text>
+          <Text style={styles.teamLabel}>{teamDataB.code}</Text>
         </View>
 
         <View style={styles.teamContainer}>
@@ -143,14 +109,12 @@ export default function GameTeamStats({
             }
             style={styles.logo}
           />
-          <Text style={[styles.teamLabel, { color: textColor }]}>
-            {teamDataA.code}
-          </Text>
+          <Text style={styles.teamLabel}>{teamDataA.code}</Text>
         </View>
       </View>
-      <ScrollView style={[styles.container, { borderColor: dividerColor }]}>
+      <ScrollView style={styles.container}>
         <Animated.View style={{ maxHeight: heightAnim, overflow: "hidden" }}>
-          {STAT_KEYS.map(({ key, label }) => {
+          {STAT_KEYS.map(({ key, label }, index) => {
             const rawValueA = statA[key];
             const rawValueB = statB[key];
             if (rawValueA == null && rawValueB == null) return null;
@@ -163,45 +127,45 @@ export default function GameTeamStats({
 
             return (
               <View key={key} style={styles.statSection}>
-                <View
-                  style={[
-                    styles.dividerLine,
-                    { backgroundColor: dividerColor },
-                  ]}
-                />
-                <Text style={[styles.statLabel, { color: textColor }]}>
-                  {label}
-                </Text>
+                {/* ✅ Skip divider for first row */}
+                {index !== 0 && <View style={styles.dividerLine} />}
+
+                <Text style={styles.statLabel}>{label}</Text>
+
                 <View style={styles.row}>
-                  <Text style={[styles.barText, { color: textColor }]}>
+                  <Text style={styles.barText}>
                     {["fgp", "ftp", "tpp"].includes(key)
                       ? `${valueB}%`
                       : valueB}
                   </Text>
+
                   <View style={styles.barContainerLeft}>
                     <View
                       style={[
                         styles.bar,
                         {
-                          backgroundColor: getTeamBarColor(teamDataB),
-                          width: `${(Math.abs(valueB) / max) * 100}%`, // for team B,                          opacity: isTeamBLower ? 0.5 : 1,
+                          backgroundColor: isDark ? Colors.white : Colors.black,
+                          width: `${(Math.abs(valueB) / max) * 100}%`,
+                          opacity: isTeamBLower ? 0.5 : 1,
                         },
                       ]}
                     />
                   </View>
+
                   <View style={styles.barContainerRight}>
                     <View
                       style={[
                         styles.bar,
                         {
-                          backgroundColor: getTeamBarColor(teamDataA),
-                          width: `${(Math.abs(valueA) / max) * 100}%`, // for team A
+                          backgroundColor: isDark ? Colors.white : Colors.black,
+                          width: `${(Math.abs(valueA) / max) * 100}%`,
                           opacity: isTeamALower ? 0.5 : 1,
                         },
                       ]}
                     />
                   </View>
-                  <Text style={[styles.barText, { color: textColor }]}>
+
+                  <Text style={styles.barText}>
                     {["fgp", "ftp", "tpp"].includes(key)
                       ? `${valueA}%`
                       : valueA}
@@ -218,8 +182,8 @@ export default function GameTeamStats({
             paddingVertical: 12,
             justifyContent: "center",
             alignItems: "center",
+            borderColor: Colors.midTone,
             borderTopWidth: 1,
-            borderColor: dividerColor,
           }}
         >
           <Text style={styles.showMoreLess}>
@@ -236,9 +200,10 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
     container: {
       borderLeftWidth: 1,
       borderRightWidth: 1,
-      borderBottomWidth: 1,
       borderBottomRightRadius: 12,
       borderBottomLeftRadius: 12,
+      borderBottomWidth: 1,
+      borderColor: Colors.midTone,
     },
     logosRow: {
       flexDirection: "row",
@@ -249,16 +214,13 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       borderTopRightRadius: 12,
       borderTopLeftRadius: 12,
       alignItems: "center",
-      zIndex: 1,
-      elevation: 3,
       borderColor: Colors.midTone,
-      borderTopWidth: 1,
-      borderLeftWidth: 1,
-      borderRightWidth: 1,
+      borderWidth: 1,
     },
     teamContainer: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 4,
     },
     logo: {
       width: 28,
@@ -268,6 +230,7 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
     teamLabel: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
     },
     statSection: {
       marginBottom: 16,
@@ -276,12 +239,18 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
     dividerLine: {
       height: 1,
       width: "100%",
+      backgroundColor: lighter
+        ? Colors.darkGray
+        : isDark
+        ? Colors.darkGray
+        : Colors.lightGray,
     },
     statLabel: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       textAlign: "center",
       marginTop: 8,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
     },
     row: {
       flexDirection: "row",
@@ -307,6 +276,7 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 14,
       textAlign: "center",
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
     },
     showMoreLess: {
       color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,

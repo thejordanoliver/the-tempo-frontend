@@ -121,6 +121,7 @@ export interface CBBPlayer {
     city?: string;
     state?: string;
     country?: string;
+    displayText: string;
   };
   links?: {
     href: string;
@@ -135,12 +136,12 @@ export type Props = {
 };
 
 export type Team = {
-  id: number | string;
+  id: number ;
+  wid?: any;
   espnID?: string | number;
   name: string;
   fullName?: string;
   logo?: any;
-  logo_filename?: any;
   logoLight?: any;
   color?: string;
   first_season?: string;
@@ -152,15 +153,10 @@ export type Team = {
   wins?: number;
   losses?: number;
   code?: string;
-  current_season_record?: string;
-  coach?: string;
-  coach_image?: string;
   city?: string;
   state?: string;
   arena_name?: string;
-  all_time_record?: string;
   primary_color?: string;
-  championships?: number[];
   conference_championships?: number[]; // or number[]
   conference?: string;
   displayName?: string;
@@ -168,28 +164,21 @@ export type Team = {
 };
 
 export type NBATeam = {
-  id: string;
-  espnID: string;
+  id: number;
+  espnID: number;
+  oddsID: string;
   name: string;
   fullName: string;
-  tertiaryColor: string;
   logo?: any;
   logoLight?: any;
   color: string;
-  firstSeason?: string;
+  established?: string;
   secondaryColor?: string;
-  transparentColor?: string;
-  conferenceLogo: any;
-  uniforms: {
-    home: any;
-    away: any;
-  };
   record?: string;
   wins?: number;
   losses?: number;
-  code: string;
   coach?: string;
-  coachImage?: string;
+  code: string;
   location: string;
   address: string;
   city?: string;
@@ -199,14 +188,11 @@ export type NBATeam = {
   venueName: string;
   venueImage: any;
   venueCapacity: string;
-  allTimeRecord?: string;
-  championships?: number[];
-  conferenceChampionships?: {
-    Titles?: number[]; // or number[]
-  };
   conference?: string;
-  displayName?: string;
-  banner?: any; // <-- add this
+  uniforms: {
+    home: any;
+    away: any;
+  };
 };
 
 export type Arena = {
@@ -216,7 +202,7 @@ export type Arena = {
   country?: string | null;
 };
 
-export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB" | "MLB";
+export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB" | "MLB" | "WCBB";
 
 export type LeagueTeam = Team & { league: LeagueType };
 
@@ -279,6 +265,7 @@ export type CBBGame = {
       code: string;
       flag: string;
     };
+    isWomen?: boolean;
   };
 
   // ✅ Use shared CBBTeam type here
@@ -308,8 +295,9 @@ export type CBBGame = {
 };
 
 export type CBBTeam = {
-  id: number | string;
-  espnID?: string | number;
+  id: number;
+  wid?: number;
+  espnID?: number;
   name: string;
   shortName?: string;
   fullName?: string;
@@ -330,6 +318,7 @@ export type CBBTeam = {
   longitude?: number;
   venueImage?: any;
   venueCapacity?: string;
+  wLogo?: any;
   logo: any;
   logoLight?: any;
   color?: string;
@@ -622,16 +611,19 @@ export type PlayerResult = {
   name: string;
   avatarUrl: string;
   position: string;
+  espn_team_id: string;
   team_id: number;
   isNFL?: boolean;
   isMLB?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
+  isWCBB?: boolean;
   type: "player";
 };
 
 export type TeamResult = {
   id: number;
+  wid?: number;
   name: string;
   nickname: string;
   city: string;
@@ -640,6 +632,7 @@ export type TeamResult = {
   isMLB?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
+  isWCBB?: boolean;
   type: "team";
 };
 

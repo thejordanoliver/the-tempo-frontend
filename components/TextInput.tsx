@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TextInput, StyleSheet, useColorScheme } from "react-native";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 type LabeledInputProps = {
 
   value: string;

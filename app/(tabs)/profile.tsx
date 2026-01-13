@@ -235,11 +235,12 @@ export default function ProfileScreen() {
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id); // convert number to string
       if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id); // convert number to string
       if (!team) return null;
       return {
         ...team,
-        league: league as "NBA" | "NFL" | "CFB" | "CBB" | "MLB",
+        league: league as "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB",
       };
     })
     .filter(Boolean);

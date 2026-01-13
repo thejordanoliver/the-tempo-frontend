@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 type HeaderSkeletonProps = {
-  style?: StyleProp<ViewStyle>; // 👉 optional custom styling
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
@@ -23,16 +23,16 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 1.1,
+          toValue: 1,
           duration: 1200,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: false, // ✅ REQUIRED for color animation
         }),
         Animated.timing(pulseAnim, {
           toValue: 0.3,
           duration: 1200,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ])
     );
@@ -41,34 +41,45 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
     return () => pulse.stop();
   }, []);
 
-  const baseColor = isDark
-    ? Colors.dark.itemBackground
-    : Colors.light.itemBackground;
-
-  const overlayColor = isDark ? Colors.darkGray : Colors.lightGray;
+  const borderBottomColor = pulseAnim.interpolate({
+    inputRange: [0.3, 1],
+    outputRange: [
+      isDark ? Colors.darkGray : Colors.midTone,
+      isDark ? Colors.lightGray : Colors.midTone,
+    ],
+  });
 
   return (
-    <View style={StyleSheet.flatten([styles.container, style])}>
-      <View style={[styles.skeletonBase, { backgroundColor: baseColor }]}>
+    <Animated.View
+      style={[
+        styles.container,
+        style,
+        { borderBottomColor }, // ✅ CORRECT
+      ]}
+    >
+      <View style={styles.skeletonBase}>
         <Animated.View
           style={[
             styles.overlay,
             {
-              backgroundColor: overlayColor,
-              opacity: pulseAnim,
+              backgroundColor: isDark
+                ? Colors.darkGray
+                : Colors.lightGray,
+              opacity: pulseAnim, // opacity CAN use native driver
             },
           ]}
         />
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
 const skeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      marginVertical: 8,
-      marginHorizontal: 12,
+      paddingBottom: 4,
+      marginBottom: 12,
+      borderBottomWidth: 1,
     },
     skeletonBase: {
       height: 28,

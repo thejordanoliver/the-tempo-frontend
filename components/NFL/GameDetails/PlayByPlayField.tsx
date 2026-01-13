@@ -1,3 +1,4 @@
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import {
@@ -8,11 +9,12 @@ import {
   getTeamInfo as getNFLTeamInfo,
   getNFLTeamsLogo,
 } from "constants/teamsNFL";
-import { PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
+import { Athlete, PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Image,
+  LayoutChangeEvent,
   StyleSheet,
   Text,
   View,
@@ -41,6 +43,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const scoreReveal = useRef(new Animated.Value(0)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
 
+  const [currentPlay, setCurrentPlay] = useState(lastPlay);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [fieldWidth, setFieldWidth] = useState(0);
   const [highlightEndzone, setHighlightEndzone] = useState<
     "home" | "away" | null
@@ -51,7 +55,21 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   } | null>(null);
 
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = playByPlayFieldStyles(isDark);
+  const textColor = isDark ? Colors.white : Colors.black;
+
+  const onLayout = (e: LayoutChangeEvent) =>
+    setContainerWidth(e.nativeEvent.layout.width);
+
+  // Always update current play
+  useEffect(() => {
+    setCurrentPlay(lastPlay);
+  }, [lastPlay]);
+
+  const getTextColor = (text?: string) =>
+    text === "Two-minute warning" ? "red" : textColor;
+
+  const isStringPlay = typeof currentPlay === "string";
 
   // League helpers
   const getTeamInfo =
@@ -210,214 +228,335 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     }
   }, [lastPlay]);
 
-  // Animate first down line
-
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.fieldContainer}>
-        {/* Away Endzone */}
-        <View
-          style={[
-            styles.endzone,
-            { backgroundColor: awayColor, borderRightColor: Colors.white },
-            highlightEndzone === "away" && styles.endzoneHighlight,
-          ]}
-        >
-          {highlightEndzone === "away" && (
-            <Animated.View
-              style={[
-                styles.glowOverlay,
-                {
-                  backgroundColor: glowAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [
-                      "rgba(255,255,255,0)",
-                      "rgba(255,255,255,0.52)",
-                    ],
-                  }),
-                },
-              ]}
-            />
-          )}
-          <Image
-            source={getLogo(awayTeam.name, isDark)}
-            style={[styles.endzoneLogo, { transform: [{ rotate: "-90deg" }] }]}
-          />
+    <View>
+      <HeadingTwo>Play By Play</HeadingTwo>
+
+      {isStringPlay && currentPlay && (
+        <View style={{ marginVertical: 12 }} onLayout={onLayout}>
+          <Text
+            style={{
+              fontFamily: Fonts.OSREGULAR,
+              fontSize: 14,
+              color: textColor,
+            }}
+          >
+            {currentPlay}
+          </Text>
         </View>
+      )}
 
-        {/* Field */}
-        <View
-          style={styles.field}
-          onLayout={(e) => setFieldWidth(e.nativeEvent.layout.width)}
-        >
-          {Array.from({ length: 10 }, (_, i) => (
+      {!isStringPlay && currentPlay && (
+        <View style={styles.wrapper}>
+          <View style={styles.lastPlayTextContainer}>
+            {currentPlay.athletesInvolved?.length ? (
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+                {currentPlay.athletesInvolved.map((athlete: Athlete) => (
+                  <View key={athlete.id} style={styles.playerContainer}>
+                    {athlete.headshot && (
+                      <Image
+                        source={{ uri: athlete.headshot }}
+                        style={styles.headshot}
+                      />
+                    )}
+                    <View style={styles.playerContainer}>
+                      <Text style={styles.name}>{athlete.fullName}</Text>
+                      <Text style={styles.posistion}>
+                        {athlete.position || ""}
+                      </Text>
+                      <Text style={styles.number}>{`#${
+                        athlete.jersey || ""
+                      }`}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            <Text
+              style={{
+                fontFamily: Fonts.OSREGULAR,
+                fontSize: 14,
+                color: getTextColor(currentPlay.text),
+              }}
+            >
+              {currentPlay.text}
+            </Text>
+
+            {currentPlay.drive?.description && (
+              <Text style={styles.driveDescription}>
+                Drive: {currentPlay.drive.description}
+                {currentPlay.drive.timeElapsed?.displayValue
+                  ? ` (${currentPlay.drive.timeElapsed.displayValue})`
+                  : ""}
+              </Text>
+            )}
+          </View>
+
+          {/* Field rendering */}
+          <View style={styles.fieldContainer}>
+            {/* Away Endzone */}
             <View
-              key={`stripe-${i}`}
               style={[
-                styles.fieldStripe,
-                {
-                  left: `${i * 10}%`,
-                  backgroundColor:
-                    i % 2 === 0
-                      ? isDark
-                        ? Colors.dark.itemBackground
-                        : Colors.light.itemBackground
-                      : isDark
-                      ? Colors.black
-                      : Colors.white,
-                },
-              ]}
-            />
-          ))}
-
-          {/* Yard lines */}
-          {yardNumbers.map((yard, i) => {
-            const isMajor = yard % 10 === 0;
-            const leftPercent = (i / (yardNumbers.length - 1)) * 100;
-            const lineWidth = yard === 50 ? 4 : 2;
-            return (
-              <React.Fragment key={`yard-${i}`}>
-                {isMajor && (
-                  <View
-                    style={[
-                      styles.yardLine,
-                      {
-                        left: `${leftPercent}%`,
-                        width: lineWidth,
-                        transform: [{ translateX: -lineWidth / 2 }],
-                      },
-                    ]}
-                  />
-                )}
-                {isMajor && yard !== 0 && (
-                  <Text
-                    style={[
-                      styles.yardNumber,
-                      {
-                        left: `${leftPercent}%`,
-                        transform: [{ translateX: -(lineWidth / 2) - 10 }],
-                      },
-                    ]}
-                  >
-                    {yard}
-                  </Text>
-                )}
-              </React.Fragment>
-            );
-          })}
-
-          {/* Ball Marker */}
-          <Animated.View
-            style={[
-              styles.marker,
-              {
-                backgroundColor: isDark
-                  ? Colors.dark.lightRed
-                  : Colors.light.red,
-                left: playAnim.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: [fieldWidth, 0],
-                }),
-              },
-            ]}
-          />
-
-          {/* Score Overlay */}
-          {scoreAnimation && (
-            <Animated.View
-              style={[
-                styles.scoreOverlay,
-                {
-                  opacity: scoreAnim,
-                  transform: [
-                    { translateX: -125 },
-                    { translateY: -20 },
-                    { scale: scoreAnim },
-                  ],
-                },
+                styles.endzone,
+                { backgroundColor: awayColor, borderRightColor: Colors.white },
+                highlightEndzone === "away" && styles.endzoneHighlight,
               ]}
             >
-              <Animated.View
-                style={{
-                  width: scoreReveal.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 250],
-                  }),
-                  overflow: "hidden",
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Image
-                    source={getLogo(
-                      scoreAnimation.team === "home"
-                        ? homeTeam.name
-                        : awayTeam.name,
-                      isDark
-                    )}
-                    style={styles.scoreLogo}
-                  />
-                  <Text
-                    style={[
-                      styles.scoreText,
-                      { color: isDark ? Colors.white : "#1d1d1d" },
-                    ]}
-                  >
-                    {scoreAnimation.text}
-                  </Text>
-                </View>
-              </Animated.View>
-            </Animated.View>
-          )}
-        </View>
+              {highlightEndzone === "away" && (
+                <Animated.View
+                  style={[
+                    styles.glowOverlay,
+                    {
+                      backgroundColor: glowAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [
+                          "rgba(255,255,255,0)",
+                          "rgba(255,255,255,0.52)",
+                        ],
+                      }),
+                    },
+                  ]}
+                />
+              )}
+              <Image
+                source={getLogo(awayTeam.name, true)}
+                style={[
+                  styles.endzoneLogo,
+                  { transform: [{ rotate: "-90deg" }] },
+                ]}
+              />
+            </View>
 
-        {/* Home Endzone */}
-        <View
-          style={[
-            styles.endzone,
-            { backgroundColor: homeColor, borderLeftColor: Colors.white },
-            highlightEndzone === "home" && styles.endzoneHighlight,
-          ]}
-        >
-          {highlightEndzone === "home" && (
-            <Animated.View
+            {/* Field */}
+            <View
+              style={styles.field}
+              onLayout={(e) => setFieldWidth(e.nativeEvent.layout.width)}
+            >
+              {Array.from({ length: 10 }, (_, i) => (
+                <View
+                  key={`stripe-${i}`}
+                  style={[
+                    styles.fieldStripe,
+                    {
+                      left: `${i * 10}%`,
+                      backgroundColor:
+                        i % 2 === 0
+                          ? isDark
+                            ? Colors.dark.itemBackground
+                            : Colors.light.itemBackground
+                          : isDark
+                          ? Colors.black
+                          : Colors.white,
+                    },
+                  ]}
+                />
+              ))}
+
+              {yardNumbers.map((yard, i) => {
+                const isMajor = yard % 10 === 0;
+                const leftPercent = (i / (yardNumbers.length - 1)) * 100;
+                const lineWidth = yard === 50 ? 4 : 2;
+                return (
+                  <React.Fragment key={`yard-${i}`}>
+                    {isMajor && (
+                      <View
+                        style={[
+                          styles.yardLine,
+                          {
+                            left: `${leftPercent}%`,
+                            width: lineWidth,
+                            transform: [{ translateX: -lineWidth / 2 }],
+                          },
+                        ]}
+                      />
+                    )}
+                    {isMajor && yard !== 0 && (
+                      <Text
+                        style={[
+                          styles.yardNumber,
+                          {
+                            left: `${leftPercent}%`,
+                            transform: [{ translateX: -(lineWidth / 2) - 10 }],
+                          },
+                        ]}
+                      >
+                        {yard}
+                      </Text>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+
+              {/* Ball Marker */}
+              <Animated.View
+                style={[
+                  styles.marker,
+                  {
+                    backgroundColor: isDark
+                      ? Colors.dark.lightRed
+                      : Colors.light.red,
+                    left: playAnim.interpolate({
+                      inputRange: [0, 100],
+                      outputRange: [fieldWidth, 0],
+                    }),
+                  },
+                ]}
+              />
+
+              {/* Score Overlay */}
+              {scoreAnimation && (
+                <Animated.View
+                  style={[
+                    styles.scoreOverlay,
+                    {
+                      opacity: scoreAnim,
+                      transform: [
+                        { translateX: -125 },
+                        { translateY: -20 },
+                        { scale: scoreAnim },
+                      ],
+                    },
+                  ]}
+                >
+                  <Animated.View
+                    style={{
+                      width: scoreReveal.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 250],
+                      }),
+                      overflow: "hidden",
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Image
+                        source={getLogo(
+                          scoreAnimation.team === "home"
+                            ? homeTeam.name
+                            : awayTeam.name,
+                          isDark
+                        )}
+                        style={styles.scoreLogo}
+                      />
+                      <Text
+                        style={[
+                          styles.scoreText,
+                          { color: isDark ? Colors.white : Colors.black },
+                        ]}
+                      >
+                        {scoreAnimation.text}
+                      </Text>
+                    </View>
+                  </Animated.View>
+                </Animated.View>
+              )}
+            </View>
+
+            {/* Home Endzone */}
+            <View
               style={[
-                styles.glowOverlay,
-                {
-                  backgroundColor: glowAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [
-                      "rgba(255,255,255,0)",
-                      "rgba(255,255,255,0.52)",
-                    ],
-                  }),
-                },
+                styles.endzone,
+                { backgroundColor: homeColor, borderLeftColor: Colors.white },
+                highlightEndzone === "home" && styles.endzoneHighlight,
               ]}
-            />
-          )}
-          <Image
-            source={getLogo(homeTeam.name, true)}
-            style={[styles.endzoneLogo, { transform: [{ rotate: "90deg" }] }]}
-          />
+            >
+              {highlightEndzone === "home" && (
+                <Animated.View
+                  style={[
+                    styles.glowOverlay,
+                    {
+                      backgroundColor: glowAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [
+                          "rgba(255,255,255,0)",
+                          "rgba(255,255,255,0.52)",
+                        ],
+                      }),
+                    },
+                  ]}
+                />
+              )}
+              <Image
+                source={getLogo(homeTeam.name, true)}
+                style={[
+                  styles.endzoneLogo,
+                  { transform: [{ rotate: "90deg" }] },
+                ]}
+              />
+            </View>
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };
 
 export default PlayByPlayField;
 
-const getStyles = (isDark: boolean) =>
+// Styles
+const playByPlayFieldStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { marginTop: 12, alignItems: "center" },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      overflow: "hidden",
+      padding: 12,
+    },
+    lastPlayTextContainer: {
+      borderColor: Colors.midTone,
+      borderBottomWidth: 1,
+      paddingBottom: 12,
+    },
+    playerContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    headshot: {
+      width: 40,
+      height: 40,
+      borderRadius: 100,
+      marginRight: 6,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderWidth: 0.5,
+      paddingTop: 4,
+    },
+    name: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    posistion: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      marginLeft: 4,
+    },
+    number: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      marginLeft: 2,
+    },
+    driveDescription: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      marginTop: 4,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
     fieldContainer: {
       flexDirection: "row",
       alignItems: "center",
       width: "100%",
       borderWidth: 2,
-      borderColor: isDark ? Colors.white : "#444",
+      borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 4,
+      marginTop: 40,
     },
     endzone: {
       width: 40,
@@ -453,7 +592,7 @@ const getStyles = (isDark: boolean) =>
     field: {
       flex: 1,
       height: 200,
-      backgroundColor: isDark ? "#1d1d1d" : Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       position: "relative",
     },
     marker: {
@@ -464,12 +603,11 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 2,
       zIndex: 1,
     },
-
     yardLine: {
       position: "absolute",
       top: 0,
       height: "100%",
-      backgroundColor: isDark ? Colors.white : "#888",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: 1,
       zIndex: 1,
     },

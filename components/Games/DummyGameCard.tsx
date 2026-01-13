@@ -1,6 +1,5 @@
 import { teams } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Game } from "types/types";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import {
@@ -10,7 +9,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import { Game } from "types/types";
 import GamePreviewModal from "../GamePreview/GamePreviewModal";
 import GameCard from "./GameCard";
 import GameSquareCard from "./GameSquareCard";
@@ -57,57 +56,86 @@ export default function DummyGameCard() {
     return null;
   }
 
-const dummyGames: Game[] = [
-  {
-    id: 1,
-    home: { id: warriors.id, name: warriors.name, logo: warriors.logo, record: "48-34" },
-    away: { id: lakers.id, name: lakers.name, logo: lakers.logo, record: "47-35" },
-    date: new Date(2024, 3, 14).toISOString(),
-    time: "7:00 PM",
-    status: { clock: "", halftime: false, short: 3, long: "Final" },
-    period: "4",
-    homeScore: 112,
-    awayScore: 101,
-    isHalftime: false,
-  },
-  {
-    id: 2,
-    home: { id: celtics.id, name: celtics.name, logo: celtics.logo, record: "58-24" },
-    away: { id: heat.id, name: heat.name, logo: heat.logo, record: "44-38" },
-    date: new Date(2024, 3, 16).toISOString(),
-    time: "8:00 PM",
-    status: { clock: "", halftime: false, short: 3, long: "Final" },
-    period: "4",
-    homeScore: 110,
-    awayScore: 115,
-    isHalftime: false,
-  },
-  {
-    id: 3,
-    home: { id: bucks.id, name: bucks.name, logo: bucks.logo, record: "51-31" },
-    away: { id: suns.id, name: suns.name, logo: suns.logo, record: "49-33" },
-    date: new Date(2024, 3, 19).toISOString(),
-    time: "9:30 PM",
-    status: { clock: "0:05", halftime: false, short: 2, long: "In Progress" },
-    period: "3",
-    homeScore: 104,
-    awayScore: 101,
-    isHalftime: false,
-  },
-  {
-    id: 4,
-    home: { id: knicks.id, name: knicks.name, logo: knicks.logo, record: "45-37" },
-    away: { id: nuggets.id, name: nuggets.name, logo: nuggets.logo, record: "53-29" },
-    date: new Date(2024, 3, 21).toISOString(),
-    time: "7:30 PM",
-    status: { clock: "", halftime: false, short: 1, long: "Scheduled" },
-    period: "",
-    homeScore: 0,
-    awayScore: 0,
-    isHalftime: false,
-  },
-];
-
+  const dummyGames: Game[] = [
+    {
+      id: 1,
+      home: {
+        id: warriors.id,
+        name: warriors.name,
+        logo: warriors.logo,
+        record: "48-34",
+      },
+      away: {
+        id: lakers.id,
+        name: lakers.name,
+        logo: lakers.logo,
+        record: "47-35",
+      },
+      date: new Date(2024, 3, 14).toISOString(),
+      time: "7:00 PM",
+      status: { clock: "", halftime: false, short: 3, long: "Final" },
+      period: "4",
+      homeScore: 112,
+      awayScore: 101,
+      isHalftime: false,
+    },
+    {
+      id: 2,
+      home: {
+        id: celtics.id,
+        name: celtics.name,
+        logo: celtics.logo,
+        record: "58-24",
+      },
+      away: { id: heat.id, name: heat.name, logo: heat.logo, record: "44-38" },
+      date: new Date(2024, 3, 16).toISOString(),
+      time: "8:00 PM",
+      status: { clock: "", halftime: false, short: 3, long: "Final" },
+      period: "4",
+      homeScore: 110,
+      awayScore: 115,
+      isHalftime: false,
+    },
+    {
+      id: 3,
+      home: {
+        id: bucks.id,
+        name: bucks.name,
+        logo: bucks.logo,
+        record: "51-31",
+      },
+      away: { id: suns.id, name: suns.name, logo: suns.logo, record: "49-33" },
+      date: new Date(2024, 3, 19).toISOString(),
+      time: "9:30 PM",
+      status: { clock: "0:05", halftime: false, short: 2, long: "In Progress" },
+      period: "3",
+      homeScore: 104,
+      awayScore: 101,
+      isHalftime: false,
+    },
+    {
+      id: 4,
+      home: {
+        id: knicks.id,
+        name: knicks.name,
+        logo: knicks.logo,
+        record: "45-37",
+      },
+      away: {
+        id: nuggets.id,
+        name: nuggets.name,
+        logo: nuggets.logo,
+        record: "53-29",
+      },
+      date: new Date(2024, 3, 21).toISOString(),
+      time: "7:30 PM",
+      status: { clock: "", halftime: false, short: 1, long: "Scheduled" },
+      period: "",
+      homeScore: 0,
+      awayScore: 0,
+      isHalftime: false,
+    },
+  ];
 
   const renderGameCard = (game: Game) => (
     // <LongPressGestureHandler
@@ -119,13 +147,13 @@ const dummyGames: Game[] = [
     //     }
     //   }}
     // >
-      <View style={viewMode === "grid" ? styles.gridItem : undefined}>
-        {viewMode === "list" ? (
-          <GameCard game={game} isDark={isDark} />
-        ) : (
-          <GameSquareCard game={game} isDark={isDark} />
-        )}
-      </View>
+    <View style={viewMode === "grid" ? styles.gridItem : undefined}>
+      {viewMode === "list" ? (
+        <GameCard game={game} />
+      ) : (
+        <GameSquareCard game={game} />
+      )}
+    </View>
     // {/* </LongPressGestureHandler> */}
   );
 

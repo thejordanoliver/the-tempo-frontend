@@ -1,4 +1,3 @@
-import BoxScoreSkeleton from "components/GameDetails/BoxScoreSkeleton";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -16,6 +15,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
 
 const COLUMN_WIDTH = 70;
 const NAME_COLUMN_WIDTH = 200;
@@ -38,18 +38,16 @@ const STAT_HEADERS = [
 
 const COY_HEADERS = ["G", "W", "L", "Win %"];
 
-// Enable LayoutAnimation on Android
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
 }
 
 type Props = {
-  league: League; // 👈 ADD THIS
+  league: League;
   category: AwardCategory;
   title: string;
   lighter?: boolean;
-    refreshSignal?: number; // 👈 NEW
-
+  refreshSignal?: number;
 };
 
 export function AwardSeasonsTable({
@@ -60,8 +58,14 @@ export function AwardSeasonsTable({
   lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = useMemo(() => tableStyles(isDark, lighter), [isDark, lighter]);
+  const styles = useMemo(
+    () => awardTableStyles(isDark, lighter),
+    [isDark, lighter]
+  );
+
   const router = useRouter();
+  const isSummaryAward = league === "CFB" || league === "NFL";
+  const isCOY = category === "coy";
 
   const { data, loading, error, refetch } = useAwardSeasons({
     league,
@@ -69,13 +73,10 @@ export function AwardSeasonsTable({
   });
 
   useEffect(() => {
-  if (refreshSignal !== undefined) {
-    refetch();
-  }
-}, [refreshSignal]);
-  const isSummaryAward = league === "CFB";
-
-  const isCOY = category === "coy";
+    if (refreshSignal !== undefined) {
+      refetch();
+    }
+  }, [refreshSignal, refetch]);
 
   const headers = useMemo(() => {
     if (isSummaryAward) return ["Summary"];
@@ -87,7 +88,6 @@ export function AwardSeasonsTable({
 
   const [expanded, setExpanded] = useState(false);
 
-  // Animate expand / collapse
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expanded]);
@@ -100,13 +100,11 @@ export function AwardSeasonsTable({
   const getRowBackground = useCallback(
     (index: number) =>
       index % 2 === 1
-        ? lighter
-          ? Colors.darkGray
-          : isDark
+        ? isDark
           ? Colors.dark.itemBackground
           : Colors.light.itemBackground
         : "transparent",
-    [lighter, isDark]
+    [isDark]
   );
 
   const handlePlayerPress = useCallback(
@@ -119,15 +117,11 @@ export function AwardSeasonsTable({
     [router]
   );
 
-  /* ------------------------------------------------------------------ */
-  /* LOADING / ERROR EARLY RETURNS                                       */
-  /* ------------------------------------------------------------------ */
-
   if (loading) {
     return (
       <View style={{ marginVertical: 12 }}>
-        <HeadingTwo lighter={lighter}>{title}</HeadingTwo>
-        <BoxScoreSkeleton teams={1} showTeamHeader={false} lighter={lighter} />
+        <HeadingTwo>{title}</HeadingTwo>
+        <AwardSeasonTableSkeleton teams={1} />
       </View>
     );
   }
@@ -136,14 +130,10 @@ export function AwardSeasonsTable({
     return (
       <View style={{ marginVertical: 12 }}>
         <HeadingTwo lighter={lighter}>{title}</HeadingTwo>
-        <Text style={styles.error}>Failed to load.</Text>
+        <Text style={styles.errorText}>Failed to load.</Text>
       </View>
     );
   }
-
-  /* ------------------------------------------------------------------ */
-  /* MAIN RENDER                                                         */
-  /* ------------------------------------------------------------------ */
 
   return (
     <View style={{ marginVertical: 12 }}>
@@ -151,7 +141,7 @@ export function AwardSeasonsTable({
 
       <View style={styles.table}>
         <View style={{ flexDirection: "row" }}>
-          {/* Player / Coach column */}
+          {/* Name column */}
           <View style={{ width: NAME_COLUMN_WIDTH }}>
             <View style={styles.headerRow}>
               <Text style={styles.headerName}>
@@ -191,7 +181,7 @@ export function AwardSeasonsTable({
             ))}
           </View>
 
-          {/* Stats */}
+          {/* Stats / Summary */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View>
               <View style={styles.headerRow}>
@@ -207,7 +197,7 @@ export function AwardSeasonsTable({
 
               {visibleRows.map((row, index) => {
                 const stats = isSummaryAward
-                  ? [row.summary]
+                  ? [row.voting ?? ""]
                   : isCOY
                   ? [
                       row.stats?.games,
@@ -237,30 +227,25 @@ export function AwardSeasonsTable({
                       { backgroundColor: getRowBackground(index) },
                     ]}
                   >
-                    {stats.map((val, i) => {
-                      const key =
-                        (isCOY ? COY_HEADERS : STAT_HEADERS)[i] ?? `stat-${i}`;
-
-                      return (
-                        <View
-                          key={`${row.id}-${key}`}
-                          style={[styles.cell, { width: columnWidth }]}
+                    {stats.map((val, i) => (
+                      <View
+                        key={`${row.id}-${i}`}
+                        style={[styles.cell, { width: columnWidth }]}
+                      >
+                        <Text
+                          style={[
+                            styles.cellText,
+                            isSummaryAward && {
+                              textAlign: "left",
+                              paddingHorizontal: 10,
+                            },
+                          ]}
+                          numberOfLines={expanded ? 0 : 2}
                         >
-                          <Text
-                            style={[
-                              styles.cellText,
-                              isSummaryAward && {
-                                textAlign: "left",
-                                paddingHorizontal: 10,
-                              },
-                            ]}
-                            numberOfLines={expanded ? 0 : 2}
-                          >
-                            {val}
-                          </Text>
-                        </View>
-                      );
-                    })}
+                          {val}
+                        </Text>
+                      </View>
+                    ))}
                   </View>
                 );
               })}
@@ -283,11 +268,7 @@ export function AwardSeasonsTable({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Styles                                                                     */
-/* -------------------------------------------------------------------------- */
-
-const tableStyles = (isDark: boolean, lighter: boolean) =>
+export const awardTableStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     table: {
       borderWidth: 1,
@@ -300,11 +281,12 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
         : Colors.black,
     },
 
-    error: {
-      padding: 16,
-      textAlign: "center",
+    errorText: {
       fontFamily: Fonts.OSREGULAR,
-      color: Colors.dark.lightRed,
+      fontSize: 16,
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
     headerRow: {
@@ -312,11 +294,7 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
       height: ROW_HEIGHT,
       alignItems: "center",
       borderBottomWidth: 1,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      borderColor: Colors.lightGray,
       backgroundColor: lighter ? "transparent" : Colors.darkGray + "20",
     },
 
@@ -339,21 +317,13 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
       flexDirection: "row",
       height: ROW_HEIGHT,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      borderColor: Colors.lightGray,
     },
 
     nameRow: {
       height: ROW_HEIGHT,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      borderColor: Colors.lightGray,
       paddingHorizontal: 10,
       justifyContent: "center",
     },
@@ -387,5 +357,10 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 14,
       color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    dropdownRow: {
+      flexDirection: "row",
+      gap: 8,
+      justifyContent: "flex-end",
     },
   });

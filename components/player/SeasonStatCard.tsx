@@ -36,7 +36,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
 
   if (loading) return <SeasonStatCardSkeleton />;
   if (error || !seasonData)
-    return <Text style={styles.error}>Failed to load stats</Text>;
+    return <Text style={styles.errorText}>Failed to load stats</Text>;
 
   const { g, pts, ast, trb, fg, fga } = seasonData;
 

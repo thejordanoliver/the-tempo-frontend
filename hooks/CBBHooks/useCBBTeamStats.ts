@@ -33,7 +33,14 @@ export interface CBBStatsResponse {
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-export function useCBBTeamStats(espnID: string, category?: string) {
+/**
+ * Fetch team stats for CBB or WCBB
+ */
+export function useCBBTeamStats(
+  espnID: string,
+  category?: string,
+  league: "CBB" | "WCBB" = "CBB"
+) {
   const [data, setData] = useState<CBBStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,33 +52,32 @@ export function useCBBTeamStats(espnID: string, category?: string) {
       setLoading(true);
       setError(null);
 
-      const cacheKey = `cbb_teamstats_${espnID}_${category || "all"}`;
+      const leagueKey = league.toLowerCase();
+      const cacheKey = `${leagueKey}_teamstats_${espnID}_${category || "all"}`;
 
       try {
-        // 🔹 1. Check cache
+        // 1️⃣ Check cache
         const cached = await AsyncStorage.getItem(cacheKey);
         if (cached) {
           const { timestamp, data: cachedData } = JSON.parse(cached);
           if (Date.now() - timestamp < CACHE_TTL) {
-            // console.log("📦 Loaded cached CBB stats:", cacheKey);
             setData(cachedData);
             setLoading(false);
             return;
-          } else {
-            await AsyncStorage.removeItem(cacheKey);
           }
+          await AsyncStorage.removeItem(cacheKey);
         }
 
-        // 🔹 2. Fetch from your Express backend
-        const url = `${BASE_URL}/api/cbb/teams/${espnID}/stats`;
-        // console.log("🌐 Fetching CBB stats:", url);
+        // 2️⃣ Fetch from backend (league-aware)
+        const url = `${BASE_URL}/api/cbb/teams/${espnID}/stats?league=${leagueKey}`;
+        // console.log("🌐 Fetching team stats:", url);
 
         const response = await axios.get<CBBStatsResponse>(url);
 
-        // Optional filter by category abbreviation
         let responseData = response.data;
 
-        if (category && responseData.stats[category]) {
+        // Optional category filter
+        if (category && responseData.stats?.[category]) {
           responseData = {
             ...responseData,
             stats: {
@@ -80,16 +86,18 @@ export function useCBBTeamStats(espnID: string, category?: string) {
           };
         }
 
-        // 🔹 3. Cache the result
+        // 3️⃣ Cache result
         await AsyncStorage.setItem(
           cacheKey,
-          JSON.stringify({ timestamp: Date.now(), data: responseData })
+          JSON.stringify({
+            timestamp: Date.now(),
+            data: responseData,
+          })
         );
 
-     
         setData(responseData);
       } catch (err: any) {
-        console.error("❌ Error fetching CBB stats:", err.message || err);
+        console.error("❌ Error fetching CBB/WCBB team stats:", err);
         setError(err.message || "Failed to fetch stats");
       } finally {
         setLoading(false);
@@ -97,7 +105,7 @@ export function useCBBTeamStats(espnID: string, category?: string) {
     };
 
     fetchStats();
-  }, [espnID, category]);
+  }, [espnID, category, league]);
 
   return { data, loading, error };
 }

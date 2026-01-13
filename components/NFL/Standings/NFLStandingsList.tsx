@@ -21,6 +21,7 @@ import {
 } from "react-native";
 import { getStyles } from "styles/StandingsStyles";
 import { StatusBadge } from "./StatusBadge";
+import HeadingTwo from "components/Headings/HeadingTwo";
 type DivisionMap = Record<string, NFLDivisionTeam[]>;
 
 export const NFLStandingsList = () => {
@@ -124,7 +125,7 @@ export const NFLStandingsList = () => {
     item: NFLDivisionTeam;
     index: number;
   }) => {
-    const teamMeta = teams.find((t) => t.espnID === item.teamId);
+    const teamMeta = teams.find((t) => String(t.espnID) === item.teamId);
 
     const logo: ImageSourcePropType = isDark
       ? teamMeta?.logoLight ||
@@ -271,9 +272,8 @@ export const NFLStandingsList = () => {
     data: NFLDivisionTeam[];
   }) => (
     <View style={{ marginTop: 12 }}>
-      <View style={styles.header}>
-        <Text style={styles.heading}>{title}</Text>
-      </View>
+            <HeadingTwo style={styles.header}>{title}</HeadingTwo>
+
 
       <View style={{ flexDirection: "row" }}>
         <FlatList

@@ -2,111 +2,82 @@ import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 
 type GameInfoProps = {
-  status:
-    | "Scheduled"
-    | "In Play"
-    | "Final"
-    | "Canceled"
-    | "Postponed"
-    | "Halftime";
+  statusText?: string;
   date: string;
-  time: string;
-  period?: string;
+  time?: string;
+  period?: number | string;
   clock?: string;
-  halftime?: boolean; // 👈 NEW
-  colors: Record<string, string>;
+  halftime?: boolean;
   isDark: boolean;
   playoffInfo?: string | string[];
-  homeTeam: string;
-  awayTeam: string;
-  broadcastNetworks?: string;
+  broadcastNetworks: string;
+  gameStatusDescription: string;
+  gameStatusDetail: string;
 };
 
 export function GameInfo({
-  status,
   date,
   time,
   period,
   clock,
-  halftime, //  added here
   isDark,
-  playoffInfo,
-  homeTeam,
-  awayTeam,
   broadcastNetworks,
+  gameStatusDetail,
+  gameStatusDescription,
 }: GameInfoProps) {
   const styles = getStyles(isDark);
 
-  const renderPlayoffInfo = () => {
-    if (!playoffInfo) return null;
-    if (Array.isArray(playoffInfo)) {
-      return playoffInfo.map((line, index) => (
-        <Text key={index} style={[styles.playoffText]}>
-          {line}
-        </Text>
-      ));
-    }
-    return <Text style={[styles.playoffText]}>{playoffInfo}</Text>;
-  };
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isHalftime = gameStatusDescription === "Halftime";
 
   return (
-    <View style={styles.container}>
-      {/* Scheduled */}
-      {status === "Scheduled" && (
+    <View>
+      {/* Status / Score */}
+      {isCanceled ? (
+        <Text style={styles.finalText}>Canceled</Text>
+      ) : isDelayed ? (
+        <Text style={styles.finalText}>Delayed</Text>
+      ) : isPostponed ? (
+        <Text style={styles.finalText}>Postponed</Text>
+      ) : isHalftime ? (
+        <Text style={styles.finalText}>Halftime</Text>
+      ) : isFinal ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{date}</Text>
-          <View style={styles.statusDivider} />
-          <Text style={styles.date}>{time}</Text>
-        </View>
-      )}
-
-      {/* In Play */}
-      {status === "In Play" && (
-        <>
-          <View style={styles.infoWrapper}>
-            {period && <Text style={styles.date}>{period}</Text>}
-            {period && clock && <View style={styles.statusDivider} />}
-            {clock && <Text style={styles.clock}>{clock}</Text>}
-          </View>
-        </>
-      )}
-      {/*  Final */}
-      {status === "Final" && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Final</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date}</Text>
         </View>
-      )}
-      {/*  Halftime */}
-      {status === "Halftime" && (
+      ) : isEndOfPeriod ? (
+        <Text style={styles.finalText}>End of {period}</Text>
+      ) : inProgress ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Halftime</Text>
+          <>
+            <Text style={styles.date}>{period}</Text>
+            {clock && (
+              <>
+                <View style={styles.statusDivider} />
+                <Text style={styles.clock}>{clock}</Text>
+              </>
+            )}
+          </>
         </View>
-      )}
-
-      {/* Canceled */}
-      {status === "Canceled" && (
-        <>
-          <Text style={styles.finalText}>Canceled</Text>
+      ) : (
+        <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date}</Text>
-        </>
-      )}
-
-      {/*  Postponed */}
-      {status === "Postponed" && (
-        <>
-          <Text style={styles.finalText}>Postponed</Text>
-          <Text style={styles.date}>{date}</Text>
-        </>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time ?? "TBD"}</Text>
+        </View>
       )}
 
       {/* Broadcast */}
       {broadcastNetworks && (
         <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}
-
-      {renderPlayoffInfo()}
     </View>
   );
 }

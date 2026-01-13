@@ -7,6 +7,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBBLogo from "assets/College_Logos/CBB.png";
+import WCBBLogo from "assets/College_Logos/WCBB.png";
 import CFBLogo from "assets/College_Logos/CFB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NBALogo from "assets/Logos/NBA.png";
@@ -35,7 +36,19 @@ type SportsListModalProps = {
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "MLB"];
+const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "WCBB", "MLB", ];
+const leagueConfig: Record<
+  LeagueType,
+  { label: string; logo: any }
+> = {
+  NBA: { label: "NBA", logo: NBALogo },
+  NFL: { label: "NFL", logo: NFLLogo },
+  CFB: { label: "College Football", logo: CFBLogo },
+  CBB: { label: "Men's College Basketball", logo: CBBLogo },
+  WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
+  MLB: { label: "MLB", logo: MLBLogo },
+};
+
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
@@ -59,7 +72,8 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       | "/league/nfl"
       | "/league/cfb"
       | "/league/cbb"
-      | "/league/mlb";
+      | "/league/mlb"
+      | "/league/wcbb";
 
     const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
@@ -74,6 +88,8 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
           ? "/league/cfb"
           : league === "CBB"
           ? "/league/cbb"
+          : league === "WCBB"
+          ? "/league/wcbb"
           : "/league/mlb";
       router.push(route);
       onSelect(league);
@@ -120,37 +136,29 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {leagues.map((league) => (
-              <TouchableOpacity
-                key={league}
-                onPress={() => goToLeague(league)}
-                style={styles.leagueButton}
-                activeOpacity={0.6}
-              >
-                <View style={styles.buttonWrapper}>
-                  <Image
-                    style={styles.leagueLogo}
-                    source={
-                      league === "NBA"
-                        ? NBALogo
-                        : league === "NFL"
-                        ? NFLLogo
-                        : league === "CFB"
-                        ? CFBLogo
-                        : league === "CBB"
-                        ? CBBLogo
-                        : MLBLogo
-                    }
-                  />
-                  <Text style={styles.leagueText}>{league}</Text>
-                </View>
-                <Ionicons
-                  name="chevron-forward"
-                  size={20}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              </TouchableOpacity>
-            ))}
+        {leagues.map((league) => {
+  const { label, logo } = leagueConfig[league];
+
+  return (
+    <TouchableOpacity
+      key={league}
+      onPress={() => goToLeague(league)}
+      style={styles.leagueButton}
+      activeOpacity={0.6}
+    >
+      <View style={styles.buttonWrapper}>
+        <Image style={styles.leagueLogo} source={logo} />
+        <Text style={styles.leagueText}>{label}</Text>
+      </View>
+      <Ionicons
+        name="chevron-forward"
+        size={20}
+        color={isDark ? Colors.white : Colors.black}
+      />
+    </TouchableOpacity>
+  );
+})}
+
           </BottomSheetScrollView>
         </BlurView>
       </BottomSheetModal>

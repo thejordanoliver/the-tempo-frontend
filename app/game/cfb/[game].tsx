@@ -1,25 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
 import CFBGameHeader from "components/CFB/GameDetails/CFBGameHeader";
 import CFBGameOddsSection from "components/CFB/GameDetails/CFBGameOddsSection";
+import CFBGameTeamStats from "components/CFB/GameDetails/CFBGameTeamStats";
 import CFBSeriesHistory from "components/CFB/GameDetails/CFBSeriesHistory";
-import CFBGameTeamStats from "components/CFB/GameDetails/FootballGameTeamStats";
-import LastPlay from "components/CFB/GameDetails/LastPlay";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import {
+  GameLocation,
   LastFiveGamesSwitcher,
   LineScore,
-  TeamLocationSection,
 } from "components/GameDetails";
 import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
 import Officials from "components/GameDetails/Officials";
-import Weather from "components/GameDetails/Weather";
 import WinPredictionVote from "components/GameDetails/WinPredictionVote";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import GameLeaders from "components/CFB/GameDetails/GameLeaders";
+import GameLeaders from "components/NFL/GameDetails/GameLeaders";
 import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
-import { Colors } from "constants/Colors";
 import {
   getRivalryHeadline,
   getTeamInfo,
@@ -28,15 +26,13 @@ import {
 } from "constants/teamsCFB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
-import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBLineScore } from "hooks/CFBHooks/useCFBLineScore";
 import { useCFBMatchup } from "hooks/CFBHooks/useCFBMatchup";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
-import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
+import { useFootballVenues } from "hooks/CFBHooks/useFootballVenues";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
+import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -51,20 +47,19 @@ import { useChatStore } from "store/chatStore";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import {
   formatGameDateTime,
-  getGameStatus,
   getTeamRankFromAPById,
   getTeamRankFromCFPById,
   parseGameDate,
   useAPTop25,
   useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function CFBGameDetailsScreen() {
   const params = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
   const [parsedGame, setParsedGame] = useState<CFBGame | null>(null);
+  const [loading, setLoading] = useState(true); // NEW
   const { openChat, isOpen: isChatOpen } = useChatStore();
   const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
   const isScrollingRef = useRef(false);
@@ -147,6 +142,8 @@ export default function CFBGameDetailsScreen() {
   const homeIdNum = home?.id ?? 0;
   const awayIdNum = away?.id ?? 0;
 
+  const timestamp = parsedGame?.game.date?.timestamp;
+
   const awayTeam =
     awayIdNum === -2 ? emptyAwayTeam : getTeamInfo(awayIdNum) ?? emptyAwayTeam;
 
@@ -164,14 +161,6 @@ export default function CFBGameDetailsScreen() {
   const hasValidTeams =
     homeTeam?.id !== emptyHomeTeam.id && awayTeam?.id !== emptyAwayTeam.id;
 
-  const { lineScore } = useCFBLineScore(
-    homeTeam?.espnID ? Number(homeTeam.espnID) : undefined,
-    awayTeam?.espnID ? Number(awayTeam.espnID) : undefined,
-    parsedGame?.game?.date
-      ? { timestamp: parsedGame.game.date } // ✅ date is third argument
-      : undefined
-  );
-
   // ✅ Safe game date parsing
   const gameDateObj = useMemo(() => {
     const rawDate = parsedGame?.game?.date;
@@ -185,22 +174,46 @@ export default function CFBGameDetailsScreen() {
     return null;
   }, [parsedGame?.game?.date]);
 
-  // --- Officials & Injuries
-  const {
-    officials,
-    neutralSite,
-    scoringPlays,
-    previousDrives,
-    currentDrives,
-    venue,
-    highlights,
-  } = useCFBGameDetails(
-    String(awayEspnId || emptyAwayTeam.espnID),
-    String(homeEspnId || emptyHomeTeam.espnID),
-    gameDateObj?.toISOString()
+  const { data, loading: gameDetailsLoading } = useFootballGameDetails(
+    String(homeTeam.espnID),
+    String(awayTeam.espnID),
+    gameInfo?.date?.timestamp
+      ? new Date(gameInfo.date.timestamp * 1000).toISOString()
+      : "",
+    "cfb"
   );
 
-  const linescore = lineScore ?? { home: [], away: [] };
+  const officials = data?.officials ?? [];
+  const currentDrives = data?.currentDrives;
+  const previousDrives = data?.previousDrives;
+  const venue = data?.venue;
+  const neutralSite = data?.neutralSite;
+  const headline = data?.headline;
+  const broadcast = data?.broadcast;
+  const highlights = data?.highlights;
+  const scoringPlays = data?.scoringPlays;
+
+  const { data: footballVenues } = useFootballVenues();
+
+  const normalizeVenueName = (name?: string | null) =>
+    name
+      ?.toLowerCase()
+      .replace(/stadium|field|arena|center|centre/g, "")
+      .replace(/[^a-z0-9 ]/g, "")
+      .replace(/\s+/g, " ")
+      .trim() ?? "";
+
+  const matchedVenue = useMemo(() => {
+    if (!venue?.name || !footballVenues.length) return null;
+
+    const normalizedGameVenue = normalizeVenueName(venue.name);
+
+    return (
+      footballVenues.find(
+        (v) => normalizeVenueName(v.venue) === normalizedGameVenue
+      ) || null
+    );
+  }, [venue?.name, footballVenues]);
 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
@@ -224,13 +237,23 @@ export default function CFBGameDetailsScreen() {
     : null;
 
   // --- Final Venue Resolution ---
-  let resolvedVenueName = venue?.name ?? homeTeam?.venue ?? "Unknown Stadium";
-  let resolvedVenueCity = homeTeam?.city ?? "Unknown City";
-  let resolvedVenueAddress = homeTeam?.address ?? "";
-  let resolvedVenueCapacity = homeTeam?.venueCapacity?.toString() ?? "";
-  let resolvedVenueImage = venue?.image ?? "";
-  let lat = homeTeam?.latitude ?? null;
-  let lon = homeTeam?.longitude ?? null;
+  let resolvedVenueName =
+    matchedVenue?.venue ?? venue?.name ?? homeTeam?.venue ?? "Unknown Stadium";
+
+  let resolvedVenueCity =
+    matchedVenue?.city ?? homeTeam?.city ?? "Unknown City";
+
+  let resolvedVenueAddress = matchedVenue?.address ?? homeTeam?.address ?? "";
+
+  let resolvedVenueCapacity =
+    matchedVenue?.venue_capacity ?? homeTeam?.venueCapacity?.toString() ?? "";
+
+  let resolvedVenueImage =
+    matchedVenue?.venue_image ?? venue?.image ?? homeTeam?.venueImage ?? null;
+
+  let lat = matchedVenue?.latitude ?? homeTeam?.latitude ?? null;
+
+  let lon = matchedVenue?.longitude ?? homeTeam?.longitude ?? null;
 
   if (neutralSite && neutralStadiumData) {
     resolvedVenueName = neutralStadiumName ?? resolvedVenueName;
@@ -244,6 +267,12 @@ export default function CFBGameDetailsScreen() {
   }
 
   useLayoutEffect(() => {
+    // Only set the header if gameDetails have loaded
+    if (!parsedGame || !homeTeam || !awayTeam || gameDetailsLoading) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+
     const safeHomeCode =
       homeTeam?.code && homeTeam.code !== "UNK" ? homeTeam.code : "HOM";
     const safeAwayCode =
@@ -262,35 +291,44 @@ export default function CFBGameDetailsScreen() {
         />
       ),
     });
-  }, [homeTeam, awayTeam, neutralSite, navigation]);
-
-  // --- Colors ---
-  const colors = useMemo(
-    () => ({
-      background: isDark ? Colors.black : Colors.white,
-      text: isDark ? Colors.dark.white : Colors.light.black,
-      secondaryText: isDark ? Colors.lightGray : Colors.darkGray,
-      record: isDark ? Colors.dark.white : Colors.light.black,
-      score: Colors.midTone,
-      winnerScore: isDark ? Colors.dark.white : Colors.light.black,
-      border: isDark ? Colors.darkGray : Colors.lightGray,
-      finalText: isDark ? Colors.dark.lightRed : Colors.light.red,
-    }),
-    [isDark]
-  );
-
+  }, [
+    parsedGame,
+    homeTeam,
+    awayTeam,
+    neutralSite,
+    gameDetailsLoading,
+    navigation,
+  ]);
   const gameDate = parseGameDate(gameInfo?.date);
   const { iso: gameDateStr } = formatGameDateTime(gameDate);
-  const gameStatus = getGameStatus(
-    gameInfo?.status?.short ?? gameInfo?.status?.long
-  );
 
-  const { headlineText } = useGameInfo(
-    Number(homeTeam?.espnID),
-    Number(awayTeam?.espnID),
-    gameDateStr,
-    "cfb"
-  );
+  const shortStatus = parsedGame?.game?.status?.short;
+  const longStatus = parsedGame?.game?.status?.long ?? "";
+  console.log(longStatus)
+  const finalOT = shortStatus === "AOT" ? "Final/OT" : "Final";
+
+  const localDateTime = useMemo(() => {
+    if (!timestamp) return null;
+
+    // timestamp is assumed to be in seconds, convert to ms
+    const d = new Date(timestamp * 1000);
+    return isNaN(d.getTime()) ? null : d;
+  }, [timestamp]);
+
+  const formattedDate = localDateTime
+    ? localDateTime.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : "";
+
+  const formattedTime = localDateTime
+    ? localDateTime.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "";
 
   // Determine fallback rivalry name
   const rivalryHeadline = useMemo(() => {
@@ -299,65 +337,9 @@ export default function CFBGameDetailsScreen() {
 
   // Choose headline → rivalry → empty string
   const headLine =
-    headlineText && headlineText.trim().length > 0
-      ? headlineText
-      : rivalryHeadline ?? "";
+    headline && headline.trim().length > 0 ? headline : rivalryHeadline ?? "";
 
-  const formatPeriod = (raw: string | number | undefined | null) => {
-    if (!raw) return "";
-
-    const map: Record<string, string> = {
-      1: "1st",
-      2: "2nd",
-      3: "3rd",
-      4: "4th",
-      OT: "OT",
-      OVERTIME: "OT",
-      HT: "Halftime",
-      FT: "Final",
-    };
-
-    if (typeof raw === "string") {
-      const normalized = raw.toUpperCase();
-      if (map[normalized]) return map[normalized];
-    }
-
-    if (typeof raw === "number") {
-      if (raw <= 4) {
-        const suffix =
-          raw === 1 ? "st" : raw === 2 ? "nd" : raw === 3 ? "rd" : "th";
-        return `${raw}${suffix}`;
-      }
-      // Handle OT numbers (5 = OT, 6 = 2OT, 7 = 3OT, etc.)
-      const overtimeNumber = raw - 4;
-      return overtimeNumber === 1 ? "OT" : `${overtimeNumber}OT`;
-    }
-
-    return String(raw);
-  };
-
-  const formattedDate = gameDateObj
-    ? gameDateObj.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
-    : "";
-
-  const formattedTime = gameDateObj
-    ? gameDateObj.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-    : "";
-
-  const { broadcasts, loading } = useCFBGameBroadcasts(
-    homeTeam?.code ?? "",
-    awayTeam?.code ?? "",
-    gameDateStr ?? ""
-  );
-
-  const broadcastText = getBroadcastDisplay(broadcasts);
+  const broadcastText = broadcast ?? "";
 
   const homeTeamIdNum = homeTeam?.id ? Number(homeTeam.id) : 0;
   const awayTeamIdNum = awayTeam?.id ? Number(awayTeam.id) : 0;
@@ -375,6 +357,28 @@ export default function CFBGameDetailsScreen() {
   // ✅ Load both CFP and AP rankings
   const cfpTop25 = useCFPTop25();
   const apTop25 = useAPTop25();
+
+  const formatQuarter = (period?: string) => {
+    if (!period) return "";
+
+    const p = Number(period);
+    if (!isNaN(p)) {
+      if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
+      const otNumber = p - 4;
+      return otNumber === 1 ? "OT" : `OT${otNumber}`;
+    }
+
+    // fallback for string values like "ot", "overtime"
+    const val = String(period).toLowerCase();
+    if (val.includes("ot") || val.includes("overtime")) {
+      const match = val.match(/\d+/);
+      return match ? `OT${match[0]}` : "OT";
+    }
+
+    if (val.includes("half")) return "Halftime";
+
+    return period;
+  };
 
   // ✅ Get ranking, falling back to AP poll if CFP is missing
   // Check if CFP rankings are active (after they’ve been released)
@@ -404,9 +408,7 @@ export default function CFBGameDetailsScreen() {
 
   const {
     possessionTeamId,
-    shortDownDistanceText,
     downDistanceText,
-    firstDownYardLine,
     lastPlay,
     displayClock,
     period,
@@ -414,18 +416,56 @@ export default function CFBGameDetailsScreen() {
     homeTimeouts,
     gameStatusDescription,
     gameStatusShortDetail,
+    redzone,
+    lineScore,
     awayTimeouts,
     loading: possessionLoading,
   } = useCFBGamePossession(
-    homeTeam ? Number(homeTeam.espnID) : undefined,
-    awayTeam ? Number(awayTeam.espnID) : undefined,
+    Number(awayTeam.espnID),
+    Number(homeTeam.espnID),
     gameDateStr
   );
 
+  const awayScore = score?.away ?? scores?.away?.total;
+  const homeScore = score?.home ?? scores?.home?.total;
 
+  const normalizeParsedScore = (
+    score:
+      | {
+          quarter_1?: number;
+          quarter_2?: number;
+          quarter_3?: number;
+          quarter_4?: number;
+          overtime?: number;
+        }
+      | undefined
+  ): number[] => {
+    if (!score) return [];
 
-  if (!parsedGame || !homeTeam || !awayTeam) return <View />;
+    return [
+      score.quarter_1,
+      score.quarter_2,
+      score.quarter_3,
+      score.quarter_4,
+      score.overtime,
+    ].filter((v): v is number => typeof v === "number");
+  };
 
+  const normalizedLineScore = useMemo(() => {
+    return {
+      home: lineScore?.home ?? normalizeParsedScore(parsedGame?.scores?.home),
+
+      away: lineScore?.away ?? normalizeParsedScore(parsedGame?.scores?.away),
+    };
+  }, [lineScore, parsedGame]);
+
+  if (!parsedGame || !homeTeam || !awayTeam || gameDetailsLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <CustomActivityIndicator size={60} />
+      </View>
+    );
+  }
   return (
     <>
       <ScrollView
@@ -438,10 +478,9 @@ export default function CFBGameDetailsScreen() {
           headlineText={headLine}
           awayTeam={awayTeam}
           homeTeam={homeTeam}
-          // ✅ Use live score if available, fallback to parsed score
           scores={{
-            away: { total: score?.away ?? scores?.away?.total },
-            home: { total: score?.home ?? scores?.home?.total },
+            away: { total: awayScore },
+            home: { total: homeScore },
           }}
           possessionTeamId={
             possessionTeamId !== undefined
@@ -452,9 +491,8 @@ export default function CFBGameDetailsScreen() {
           awayTimeouts={awayTimeouts}
           rankHome={getTeamRank(String(homeEspnId)) ?? ""}
           rankAway={getTeamRank(String(awayEspnId)) ?? ""}
-          colors={colors}
-          status={gameStatus}
-          period={formatPeriod(period ?? gameInfo?.status?.short ?? "")}
+          gameStatusDescription={gameStatusDescription ?? longStatus}
+          period={formatQuarter(period ?? "")}
           displayClock={displayClock}
           downAndDistance={downDistanceText}
           isDark={isDark}
@@ -463,22 +501,14 @@ export default function CFBGameDetailsScreen() {
           awayRecord={awayRecord?.overall ?? undefined}
           formattedDate={formattedDate}
           formattedTime={formattedTime}
+          gameStatusShortDetail={gameStatusShortDetail || finalOT}
+          redzone={redzone ?? false}
         />
 
         {/* Lazy-loaded Section */}
         {showDetails && hasValidTeams && (
           <View style={{ gap: 20, marginTop: 20 }}>
-            {/* Odds */}
-            {homeTeam?.code && awayTeam?.code && gameDateStr ? (
-              <CFBGameOddsSection
-                date={gameDateStr}
-                gameDate={gameDateStr}
-                homeCode={homeTeam.code ?? ""}
-                awayCode={awayTeam.code ?? ""}
-              />
-            ) : null}
-
-            {gameStatus !== "Final" && (
+            {gameStatusDescription !== "Final" && (
               <WinPredictionVote
                 gameId={gameInfo?.id ?? ""}
                 awayTeam={{
@@ -500,43 +530,41 @@ export default function CFBGameDetailsScreen() {
               />
             )}
 
-            {/* Last Play Section */}
-            <LastPlay lastPlay={lastPlay} isDark={isDark} />
+            {homeTeam?.code && awayTeam?.code && gameDateStr ? (
+              <CFBGameOddsSection
+                date={gameDateStr}
+                gameDate={gameDateStr}
+                homeId={homeTeam.id}
+                awayId={awayTeam.id}
+                homeCode={homeTeam.code}
+                awayCode={awayTeam.code}
+                neutralSite={neutralSite ?? false}
+              />
+            ) : null}
 
-            {(gameStatus === "In Progress" || gameStatus === "Halftime") && (
+            {gameStatusDescription === "In Progress" ||
+              (gameStatusDescription === "Final" && (
+                <LineScore
+                  linescore={normalizedLineScore}
+                  homeCode={homeTeam?.code}
+                  awayCode={awayTeam?.code}
+                />
+              ))}
+
+            {(gameStatusDescription === "In Progress" ||
+              gameStatusDescription === "Halftime") && (
               <LastPlayField
                 lastPlay={lastPlay}
                 possessionTeamId={possessionTeamId}
-                homeTeamId={Number(homeTeam.id)} // ensure number
-                awayTeamId={Number(awayTeam.id)} // ensure number
+                homeTeamId={Number(homeTeam.id)}
+                awayTeamId={Number(awayTeam.id)}
                 league="CFB"
               />
             )}
 
-            {(gameStatus === "In Progress" ||
-              gameStatus === "Halftime" ||
-              gameStatus === "Final") && (
-              <LineScore
-                linescore={{
-                  home: linescore.home.map(String),
-                  away: linescore.away.map(String),
-                }}
-                homeCode={
-                  homeTeam?.code && homeTeam.code !== "UNK"
-                    ? homeTeam.code
-                    : "HOM"
-                }
-                awayCode={
-                  awayTeam?.code && awayTeam.code !== "UNK"
-                    ? awayTeam.code
-                    : "AWY"
-                }
-              />
-            )}
-
-            {homeTeam && awayTeam && gameStatus !== "Scheduled" && (
+            {homeTeam && awayTeam && gameStatusDescription !== "Scheduled" && (
               <GameLeaders
-                gameId={String(gameInfo?.id)}
+                gameId={String(parsedGame.game.id)}
                 homeTeamId={String(homeTeam.id)}
                 awayTeamId={String(awayTeam.id)}
                 league="CFB"
@@ -563,13 +591,13 @@ export default function CFBGameDetailsScreen() {
             <LastFiveGamesSwitcher
               isDark={isDark}
               home={{
-                teamCode: homeTeam.code ?? "",
+                teamCode: homeTeam.code,
                 teamLogo: homeTeam.logo,
                 teamLogoLight: homeTeam.logoLight,
                 games: homeLastGames.games,
               }}
               away={{
-                teamCode: awayTeam.code ?? "",
+                teamCode: awayTeam.code,
                 teamLogo: awayTeam.logo,
                 teamLogoLight: awayTeam.logoLight,
                 games: awayLastGames.games,
@@ -579,8 +607,8 @@ export default function CFBGameDetailsScreen() {
 
             {matchup.data && (
               <CFBSeriesHistory
-                team1Name={awayTeam.name}
-                team2Name={homeTeam.name}
+                team1Name={awayTeam.code}
+                team2Name={homeTeam.code}
                 team1Wins={matchup.data.team1Wins}
                 team2Wins={matchup.data.team2Wins}
                 team1Logo={
@@ -596,41 +624,25 @@ export default function CFBGameDetailsScreen() {
 
             <Officials officials={officials} loading={false} error={null} />
 
-            {gameStatus === "Final" && (
+            {Array.isArray(highlights) && highlights.length > 0 && (
               <HighlightVideoList highlights={highlights} />
             )}
 
-            {/* ✅ Team Location / Venue Section */}
-            <TeamLocationSection
+            {/* Venue Section */}
+            <GameLocation
               venueImage={resolvedVenueImage}
               venueName={resolvedVenueName}
               location={resolvedVenueCity}
               address={resolvedVenueAddress}
               venueCapacity={resolvedVenueCapacity}
-              venueAttendance={
-                venue?.attendance
-                  ? String(venue.attendance)
-                  : venue?.capacity
-                  ? String(venue.capacity)
-                  : "N/A"
-              }
+              venueAttendance={String(venue?.attendance)}
+              weather={displayWeather}
+              grass={venue?.grass ?? undefined}
+              surface="football"
               loading={false}
               error={null}
               lighter={false}
-              surface="football"
-              grass={venue?.grass ?? undefined}
             />
-
-            {/* Weather */}
-            {displayWeather && gameStatus !== "Final" ? (
-              <Weather
-                weather={displayWeather}
-                address={resolvedVenueAddress ?? ""}
-                loading={false}
-                error={null}
-                lighter={false}
-              />
-            ) : null}
           </View>
         )}
       </ScrollView>

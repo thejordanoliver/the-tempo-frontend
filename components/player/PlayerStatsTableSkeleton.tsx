@@ -1,3 +1,4 @@
+import HeaderSkeleton from "components/Headings/HeaderSkeleton";
 import { Colors } from "constants/Colors";
 import { useEffect, useRef } from "react";
 import {
@@ -46,8 +47,9 @@ export default function PlayerStatTableSkeleton() {
 
   return (
     <View style={styles.container}>
+      <HeaderSkeleton style={{ marginHorizontal: 0 }} />
       {/* ---------------- Fixed 1st Column + Scrollable Block ---------------- */}
-      <View style={styles.rowGroup}>
+      <View style={styles.tableWrapper}>
         {/* FIXED COLUMN BLOCK */}
         <View style={styles.fixedColumn}>
           {Array.from({ length: 12 }).map((_, i) => (
@@ -103,9 +105,13 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 8,
     },
 
-    rowGroup: {
+    tableWrapper: {
       flexDirection: "row",
       width: "100%",
+      borderRadius: 8,
+      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     /* ---------- FIXED LEFT COLUMN ---------- */

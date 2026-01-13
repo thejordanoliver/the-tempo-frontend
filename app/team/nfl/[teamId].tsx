@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
+import Roster from "components/CFB/Team/Roster";
 import FootballRosterStats from "components/CFB/Team/RosterStats";
-import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import NFLGamesList from "components/NFL/Games/NFLGamesList";
-import NFLRoster from "components/NFL/Team/Roster";
+import TeamInfoModal from "components/Team/TeamInfoModal";
 import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -13,12 +14,7 @@ import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
@@ -56,11 +52,11 @@ export default function TeamDetailScreen() {
     [teamIdNum]
   );
 
-  const {
-    games: rawTeamGames = [],
-    loading: gamesLoading,
-    refreshGames: refreshTeamGames,
-  } = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "");
+const {
+  games: rawTeamGames = [],
+  loading: gamesLoading,
+  refreshGames: refreshTeamGames,
+} = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "", "2025", "1", true);
 
   const {
     highlights: teamHighlights,
@@ -139,10 +135,10 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team) {
+  if (!teamIdNum || !team || gamesLoading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -194,11 +190,11 @@ export default function TeamDetailScreen() {
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
-          <NFLRoster
+          <Roster
             ref={rosterRef}
             teamId={String(team.id)}
             teamName={team.name}
-            refreshing={refreshing}
+            league="NFL"
           />
         </View>
 

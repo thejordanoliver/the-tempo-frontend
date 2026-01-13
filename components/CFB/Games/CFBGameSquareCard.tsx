@@ -1,39 +1,47 @@
+import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Fonts } from "constants/fonts";
-import { getTeamCode, getTeamLogo, teams } from "constants/teamsCFB";
+import { Colors } from "constants/Colors";
+import {
+  getRivalryHeadline,
+  getTeamCode,
+  getTeamLogo,
+  teams,
+} from "constants/teamsCFB";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useCFBGameBroadcasts } from "hooks/CFBHooks/useCFBGameBroadcasts";
+import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
 import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
 import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { memo, useMemo, useState } from "react";
 import {
   Image,
+  Pressable,
   Text,
   TextStyle,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { emptyAwayTeam, emptyHomeTeam, emptyTeam, Game } from "types/cfb";
 import {
   getTeamRankFromAPById,
   getTeamRankFromCFPById,
   useAPTop25,
   useCFPTop25,
 } from "utils/CFBUtils/cfbGameUtils";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
-
+import { getShortBroadcastDisplay } from "utils/matchBroadcast";
 type Props = {
-  game: any;
+  game: Game; // TODO: replace with proper CFB Game type
   isDark?: boolean;
 };
 
 function CFBGameSquareCard({ game, isDark }: Props) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
@@ -45,6 +53,16 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     ? new Date(game.game.date.timestamp * 1000)
     : null;
   const gameDateStr = gameDate?.toISOString();
+
+  // Championship Game Detection (Jan 19, 2026)
+  const isChampionship = Boolean(
+    gameDate &&
+      gameDate.getFullYear() === 2026 &&
+      gameDate.getMonth() === 0 &&
+      gameDate.getDate() === 19
+  );
+
+  const styles = gameSquareCardStyles(dark, isChampionship);
 
   // ✅ Load both CFP and AP rankings
   const cfpTop25 = useCFPTop25();
@@ -69,7 +87,7 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     teams.find((t) => String(t.id) === String(id));
 
   const getTeamName = (id?: number | string): string =>
-    getTeamById(id)?.name ?? "Unknown";
+    getTeamById(id)?.name ?? emptyTeam.name;
 
   const getTeamShortName = (id?: number | string): string =>
     getTeamById(id)?.shortName ?? "";
@@ -122,43 +140,47 @@ function CFBGameSquareCard({ game, isDark }: Props) {
       timer: game.game.status.timer,
     };
   }, [game.game.status]);
+  const half = status.isHalftime ? "HT" : "Half";
+  const {
+    possessionTeamId,
+    shortDownDistanceText,
+    downDistanceText,
+    possessionText,
+    displayClock,
+    period,
+    score,
 
-  const possession = status.isLive
-    ? useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr)
-    : {
-        gameStatusDescription: undefined,
-        possessionText: undefined,
-        gameStatusShortDetail: undefined,
-        possessionTeamId: undefined,
-        displayClock: undefined,
-        shortDownDistanceText: undefined,
-        downDistanceText: undefined,
-        period: undefined,
-        score: undefined, // ✅ ADD THIS
-        refresh: () => {},
-      };
+    gameStatusDescription,
+    gameStatusShortDetail,
+  } = useCFBGamePossession(Number(homeEspnId), Number(awayEspnId), gameDateStr);
 
+  const { broadcast } = useCFBGameDetails(
+    String(awayEspnId || emptyAwayTeam.espnID),
+    String(homeEspnId || emptyHomeTeam.espnID),
+    gameDateStr
+  );
   const { headlineText } = useGameInfo(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
+    "cfb"
   );
 
-  const {
-    possessionTeamId,
-    displayClock,
-    shortDownDistanceText,
-    possessionText,
-    gameStatusDescription,
-    gameStatusShortDetail,
-    period,
-  } = possession;
+
+  // Determine fallback rivalry name
+  const rivalryHeadline = useMemo(() => {
+    return getRivalryHeadline(Number(homeEspnId), Number(awayEspnId));
+  }, [homeEspnId, awayEspnId]);
+
+  // Choose headline → rivalry → empty string
+  const headLine =
+    headlineText && headlineText.trim().length > 0
+      ? headlineText
+      : rivalryHeadline ?? "";
 
   // --- Use possession score when live; fallback to static game scores ---
-  const displayAwayScore =
-    possession?.score?.away ?? game?.scores?.away?.total ?? 0;
-  const displayHomeScore =
-    possession?.score?.home ?? game?.scores?.home?.total ?? 0;
+  const displayAwayScore = score?.away ?? game?.scores?.away?.total ?? 0;
+  const displayHomeScore = score?.home ?? game?.scores?.home?.total ?? 0;
 
   // --- Helper for score or record ---
   const getDisplayValue = (isHome: boolean) => {
@@ -168,87 +190,72 @@ function CFBGameSquareCard({ game, isDark }: Props) {
     if (status.isFinal) {
       // ✅ Final: use last known static score as fallback if hook score missing
       return isHome
-        ? possession?.score?.home ?? game?.scores?.home?.total ?? 0
-        : possession?.score?.away ?? game?.scores?.away?.total ?? 0;
+        ? score?.home ?? game?.scores?.home?.total ?? 0
+        : score?.away ?? game?.scores?.away?.total ?? 0;
     }
     // ✅ Live: always prefer possession hook’s live score
     return isHome ? displayHomeScore : displayAwayScore;
   };
 
-  const displayStatus = (() => {
-    const base =
-      gameStatusDescription ??
-      status.long ??
-      status.short ??
-      game.game.status.long ??
-      game.game.status.short ??
-      "Scheduled";
-
-    const lower = base.toLowerCase();
-
-    if (lower === "finished") return "Final";
-    if (lower.includes("after over")) return "Final/OT"; // ✅ Added
-    if (lower.includes("overtime")) return "OT"; // ✅ Optional, handles ESPN variant
-    if (lower.includes("postponed")) return "Postponed";
-    if (lower.includes("canceled")) return "Canceled";
-    return base;
-  })();
+  // Unified game status from possession hook
+  const displayStatus =
+    gameStatusDescription ??
+    gameStatusShortDetail ??
+    (status.isFinal
+      ? "Final"
+      : status.isLive
+      ? "Live"
+      : status.long ?? "Scheduled");
 
   const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
   const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
   // --- Memoized team objects ---
-  const awayTeam = useMemo(
-    () => ({
-      id: awayId,
-      espnID: awayEspnId,
-      code: getTeamCode(awayId),
-      name: getTeamName(awayId),
-      shortName: getTeamShortName(awayId),
-      logo: getTeamLogo(awayId, dark),
+  const awayTeam = useMemo(() => {
+    const base = {
+      ...emptyAwayTeam,
+      id: awayId ?? emptyAwayTeam.id,
+      espnID: awayEspnId ?? emptyAwayTeam.espnID,
+      name: getTeamCode(awayId) ?? emptyAwayTeam.name,
+      shortName: getTeamShortName(awayId) ?? emptyAwayTeam.shortName,
+      logo: getTeamLogo(awayId, dark) || emptyAwayTeam.logo,
       record: awayRecord?.overall ?? "0-0",
       hasPossession:
-        status.isLive && String(possessionTeamId) === String(awayEspnId), // ONLY if live
-    }),
-    [
-      awayId,
-      awayEspnId,
-      awayRecord?.overall,
-      possessionTeamId,
-      dark,
-      status.isLive,
-    ]
-  );
+        status.isLive && String(possessionTeamId) === String(awayEspnId),
+    };
 
-  const homeTeam = useMemo(
-    () => ({
-      id: homeId,
-      espnID: homeEspnId,
-      code: getTeamCode(homeId),
-      name: getTeamName(homeId),
-      shortName: getTeamShortName(homeId),
-      logo: getTeamLogo(homeId, dark),
+    return base;
+  }, [
+    awayId,
+    awayEspnId,
+    awayRecord?.overall,
+    possessionTeamId,
+    dark,
+    status.isLive,
+  ]);
+
+  const homeTeam = useMemo(() => {
+    const base = {
+      ...emptyHomeTeam,
+      id: homeId ?? emptyHomeTeam.id,
+      espnID: homeEspnId ?? emptyHomeTeam.espnID,
+      name: getTeamCode(homeId) ?? emptyHomeTeam.name,
+      shortName: getTeamShortName(homeId) ?? emptyHomeTeam.shortName,
+      logo: getTeamLogo(homeId, dark) ?? emptyHomeTeam.logo,
       record: homeRecord?.overall ?? "0-0",
       hasPossession:
-        status.isLive && String(possessionTeamId) === String(homeEspnId), // ONLY if live
-    }),
-    [
-      homeId,
-      homeEspnId,
-      homeRecord?.overall,
-      possessionTeamId,
-      dark,
-      status.isLive,
-    ]
-  );
-  // --- Broadcasts ---
-  const { broadcasts } = useCFBGameBroadcasts(
-    homeTeam.name,
-    awayTeam.name,
-    gameDateStr
-  );
+        status.isLive && String(possessionTeamId) === String(homeEspnId),
+    };
 
-  const broadcastText = getBroadcastDisplay(broadcasts);
+    return base;
+  }, [
+    homeId,
+    homeEspnId,
+    homeRecord?.overall,
+    possessionTeamId,
+    dark,
+    status.isLive,
+  ]);
 
   // --- Helpers ---
   const formatQuarter = (period?: number | string, statusText?: string) => {
@@ -284,13 +291,6 @@ function CFBGameSquareCard({ game, isDark }: Props) {
       })
     : "";
 
-  // Championship Game Detection (Jan 19, 2026)
-  const isChampionshipGame =
-    gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 && // January = 0
-    gameDate.getDate() === 19;
-
   const getTeamStyle = useMemo(
     () =>
       (isHome: boolean): TextStyle => {
@@ -302,13 +302,139 @@ function CFBGameSquareCard({ game, isDark }: Props) {
           isWinner = isHome ? homeScore > awayScore : awayScore > homeScore;
         }
         return {
-          color: dark ? "#fff" : "#1d1d1d",
+          color: dark ? Colors.white : Colors.black,
           opacity: isWinner ? 1 : 0.5,
         };
       },
     [dark, status, game?.scores]
   );
 
+  const renderCardContent = () => (
+    <>
+      <View style={styles.cardWrapper}>
+        {/* Away Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image source={awayTeam.logo} style={styles.logo} />
+            <Text style={[styles.teamName]}>
+              {(() => {
+                const rank = awayEspnId ? getTeamRank(String(awayEspnId)) : "";
+                return (
+                  <>
+                    {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                    {awayTeam.name}
+                  </>
+                );
+              })()}
+            </Text>
+            {awayTeam.hasPossession && (
+              <Image
+                source={dark ? FootballLight : Football}
+                style={styles.footballPossesion}
+              />
+            )}
+          </View>
+          {/* Away Record / Score */}
+          <Text
+            style={[
+              status.isScheduled ? styles.teamRecord : styles.teamScore,
+              getTeamStyle(false),
+            ]}
+          >
+            {getDisplayValue(false)}
+          </Text>
+        </View>
+
+        {/* Home Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image source={homeTeam.logo} style={styles.logo} />
+            <Text style={styles.teamName}>
+              {(() => {
+                const rank = homeEspnId ? getTeamRank(String(homeEspnId)) : "";
+                return (
+                  <>
+                    {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+                    {homeTeam.name}
+                  </>
+                );
+              })()}
+            </Text>
+            {homeTeam.hasPossession && (
+              <Image
+                source={dark ? FootballLight : Football}
+                style={styles.footballPossesion}
+              />
+            )}
+          </View>
+          {/* Home Record / Score */}
+          <Text
+            style={[
+              status.isScheduled ? styles.teamRecord : styles.teamScore,
+              getTeamStyle(true),
+            ]}
+          >
+            {getDisplayValue(true)}
+          </Text>
+        </View>
+      </View>
+      {/* Game Info */}
+      <View style={styles.info}>
+        {status.isScheduled ? (
+          <>
+            <Text style={styles.date}>{formattedDate}</Text>
+            <Text style={styles.date}>{formattedTime}</Text>
+          </>
+        ) : status.isLive ? (
+          <>
+            {displayClock === "0:00" &&
+            gameStatusDescription?.toLowerCase().includes("end of") ? (
+              //  ✅ Special case: end of quarter
+              <Text style={styles.clock}>{gameStatusShortDetail}</Text>
+            ) : (
+              // ✅ Normal live display
+              <>
+                <Text style={styles.date}>{formatQuarter(period)}</Text>
+                <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
+              </>
+            )}
+            {shortDownDistanceText && (
+              <Text style={styles.downDistance}>{shortDownDistanceText}</Text>
+            )}
+          </>
+        ) : status.isHalftime ? (
+          <>
+            <Text style={styles.finalText}>{half}</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.finalText}>{displayStatus}</Text>
+            <Text style={styles.finalText}>{formattedDate}</Text>
+          </>
+        )}
+
+      
+      </View>
+      <Pressable
+        onPress={() => setNotifEnabled((prev) => !prev)}
+        style={({ pressed }) => [
+          styles.notificationBell,
+          pressed && { opacity: 0.6 },
+        ]}
+      >
+        <Ionicons
+          name={notifEnabled ? "notifications" : "notifications-outline"}
+          size={20}
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </Pressable>
+        {!status.isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
+    </>
+  );
+
+  // --- UI Render ---
   return (
     <TouchableOpacity
       activeOpacity={0.85}
@@ -319,130 +445,23 @@ function CFBGameSquareCard({ game, isDark }: Props) {
         })
       }
     >
-      <View style={styles.card}>
-        <View style={styles.cardWrapper}>
-          {/* Away Team */}
-          <View style={styles.teamSection}>
-            <View style={styles.teamWrapper}>
-              <Image source={awayTeam.logo} style={styles.logo} />
-              <Text style={styles.teamName}>
-                {awayEspnId && getTeamRank(String(awayEspnId)) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(String(awayEspnId))}
-                  </Text>
-                )}{" "}
-                {awayTeam.code}
-              </Text>
-              {awayTeam.hasPossession && (
-                <Image
-                  source={dark ? FootballLight : Football}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    resizeMode: "contain",
-                    position: "absolute",
-                    right: -18,
-                    top: 5,
-                  }}
-                />
-              )}
-            </View>
-            <Text
-              style={[
-                status.isScheduled || status.isCanceled || status.isPostponed
-                  ? styles.teamRecord
-                  : styles.teamScore,
-                getTeamStyle(false),
-              ]}
-            >
-              {getDisplayValue(false)}
-            </Text>
-          </View>
-
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            <View style={styles.teamWrapper}>
-              <Image source={homeTeam.logo} style={styles.logo} />
-              <Text style={styles.teamName}>
-                {homeEspnId && getTeamRank(String(homeEspnId)) && (
-                  <Text style={{ fontSize: 10, color: "#aaa" }}>
-                    {getTeamRank(String(homeEspnId))}
-                  </Text>
-                )}{" "}
-                {homeTeam.code}
-              </Text>
-              {homeTeam.hasPossession && (
-                <Image
-                  source={dark ? FootballLight : Football}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    resizeMode: "contain",
-                    position: "absolute",
-                    right: -18,
-                    top: 5,
-                  }}
-                />
-              )}
-            </View>
-            <Text
-              style={[
-                status.isScheduled || status.isCanceled || status.isPostponed
-                  ? styles.teamRecord
-                  : styles.teamScore,
-                getTeamStyle(true),
-              ]}
-            >
-              {getDisplayValue(true)}
-            </Text>
-          </View>
-        </View>
-
-        {/* Game Info */}
-        <View style={styles.info}>
-          {status.isScheduled && (
-            <>
-              <Text style={styles.date}>{formattedDate}</Text>
-              <Text
-                style={[
-                  styles.time,
-                  {
-                    fontFamily: Fonts.OSREGULAR,
-                    color: dark ? "rgba(255,255,255,.5)" : "rgba(0,0,0,.5)",
-                  },
-                ]}
-              >
-                {formattedTime}
-              </Text>
-            </>
-          )}
-          {status.isLive && (
-            <>
-              <Text style={styles.date}>
-                {formatQuarter(status.short, displayStatus)}
-              </Text>
-              <Text style={styles.clock}>{displayClock}</Text>
-            </>
-          )}
-          {status.isHalftime && (
-            <Text style={styles.date}>{displayStatus}</Text>
-          )}
-          {status.isFinal && (
-            <>
-              <Text style={styles.finalText}>{displayStatus}</Text>
-              <Text style={styles.dateFinal}>{formattedDate}</Text>
-            </>
-          )}
-          {status.isCanceled && <Text style={styles.finalText}>CANC</Text>}
-          {status.isDelayed && <Text style={styles.finalText}>DLY</Text>}
-
-          {broadcastText && (
-            <Text style={styles.broadcast}>{broadcastText}</Text>
-          )}
-        </View>
-      </View>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#DFBD69", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }
-
 export default memo(CFBGameSquareCard);

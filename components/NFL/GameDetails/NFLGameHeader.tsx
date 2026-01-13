@@ -1,18 +1,17 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { getNFLTeamsLogo, getTeamName } from "constants/teamsNFL";
-import { StyleSheet, Text, View } from "react-native";
+import { getNFLTeamsLogo } from "constants/teamsNFL";
+import { Text, View } from "react-native";
+import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
 import { NFLGameCenterInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
+import { NFLTeam } from "types/nfl";
+
 type Props = {
-  homeTeam: any;
-  awayTeam: any;
+  homeTeam: NFLTeam;
+  awayTeam: NFLTeam;
   scores: any;
   possessionTeamId?: string;
   homeTimeouts?: number;
   awayTimeouts?: number;
-  colors: any;
-  status: string;
   period?: string;
   displayClock?: string;
   possessionText?: string;
@@ -21,10 +20,11 @@ type Props = {
   awayRecord?: string;
   formattedDate?: string;
   formattedTime?: string;
-  playoffInfo?: string;
-  networkString?: string;
+  broadcast?: string;
   headlineText?: string;
-  isCollapsed?: boolean; // 👈 add this
+  gameStatusShortDetail?: string;
+  gameStatusDescription?: string;
+  redzone: boolean;
 };
 
 export default function NFLGameHeader({
@@ -34,43 +34,39 @@ export default function NFLGameHeader({
   possessionTeamId,
   homeTimeouts = 0,
   awayTimeouts = 0,
-  colors,
-  status,
   period,
   displayClock,
   possessionText,
   isDark,
   homeRecord,
   awayRecord,
-  networkString = "",
+  broadcast = "",
   formattedDate = "",
   formattedTime = "",
-  playoffInfo = "",
   headlineText,
-  isCollapsed = false, // 👈 default
+  gameStatusShortDetail,
+  gameStatusDescription,
+  redzone = false,
 }: Props) {
-  const styles = getStyles(isDark);
+  const styles = gameHeaderStyles(isDark);
 
   return (
-    <View style={[styles.container, { borderColor: colors.border }]}>
-          {headlineText ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText} numberOfLines={2}>
-                {headlineText}
-              </Text>
-            </View>
-          ) : null}
+    <View style={styles.container}>
+      {headlineText ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText} numberOfLines={2}>
+            {headlineText}
+          </Text>
+        </View>
+      ) : null}
       <View style={styles.teamsContainer}>
-        
         {/* Away Team */}
         <TeamRow
           team={{
             id: String(awayTeam.id),
+            espnID: String(awayTeam.espnID),
             code: awayTeam.code,
-            name:
-              getTeamName(awayTeam.id) ||
-              awayTeam.nickname ||
-              "Away",
+            name: awayTeam.name,
             logo: getNFLTeamsLogo(awayTeam.id, isDark),
             record: awayRecord ?? "0-0",
           }}
@@ -79,31 +75,27 @@ export default function NFLGameHeader({
           score={scores?.away?.total}
           opponentScore={scores?.home?.total}
           isWinner={(scores?.away?.total ?? 0) > (scores?.home?.total ?? 0)}
-          colors={colors}
-          status={status}
           possessionTeamId={possessionTeamId}
           timeouts={awayTimeouts}
           league="nfl"
+          gameStatusDescription={gameStatusDescription}
         />
 
         <View>
-      
-
           {/* Game Info */}
           <NFLGameCenterInfo
-            headlineText={headlineText}
-            status={status}
             date={formattedDate}
             time={formattedTime}
             period={period}
             clock={displayClock}
-            colors={colors}
             isDark={isDark}
-            playoffInfo={playoffInfo}
             homeTeam={homeTeam}
             awayTeam={awayTeam}
-            broadcastNetworks={networkString}
+            broadcast={broadcast}
             downAndDistance={possessionText}
+            gameStatusShortDetail={gameStatusShortDetail}
+            gameStatusDescription={gameStatusDescription}
+            redzone={redzone}
           />
         </View>
 
@@ -111,11 +103,9 @@ export default function NFLGameHeader({
         <TeamRow
           team={{
             id: String(homeTeam.id),
+            espnID: String(homeTeam.espnID),
             code: homeTeam.code,
-            name:
-              getTeamName(homeTeam.id) ||
-              homeTeam.nickname ||
-              "Home",
+            name: homeTeam.name,
             logo: getNFLTeamsLogo(homeTeam.id, isDark),
             record: homeRecord ?? "0-0",
           }}
@@ -124,40 +114,12 @@ export default function NFLGameHeader({
           score={scores?.home?.total}
           opponentScore={scores?.away?.total}
           isWinner={(scores?.home?.total ?? 0) > (scores?.away?.total ?? 0)}
-          colors={colors}
-          status={status}
           possessionTeamId={possessionTeamId}
           timeouts={homeTimeouts}
           league="nfl"
+          gameStatusDescription={gameStatusDescription}
         />
       </View>
     </View>
   );
 }
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      borderBottomWidth: 1,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      paddingVertical: 4,
-    },
-    teamsContainer: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-      alignItems: "center",
-    },
-    headlineContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headlineText: {
-      position: "absolute",
-      width: "100%",
-      top: 0,
-      fontSize: 10,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSEXTRALIGHT,
-      textAlign: "center",
-    },
-  });

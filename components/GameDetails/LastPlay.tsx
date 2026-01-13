@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import players from "constants/players";
-import useDbPlayersByTeam, { Player } from "hooks/useDbPlayersByTeam";
+import useDbPlayersByTeam, { Player } from "hooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -43,19 +43,19 @@ export default function LastPlay({
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-const normalizeText = (text: string) => {
-  if (!text) return text;
+  const normalizeText = (text: string) => {
+    if (!text) return text;
 
-  // Normalize "missed shot" variations → "Missed Shot"
-  return text
-    .replace(/missed\s*shot/gi, "Missed Shot")
-    .replace(/made\s*shot/gi, "Made Shot")
-    .replace(/blocked\s*shot/gi, "Blocked Shot")
-    .replace(/made\s*dunk/gi, "Made Dunk")
-    .replace(/Official\s*TV\s*Timeout/gi, "Official Timeout");
-};
+    // Normalize "missed shot" variations → "Missed Shot"
+    return text
+      .replace(/missed\s*shot/gi, "Missed Shot")
+      .replace(/made\s*shot/gi, "Made Shot")
+      .replace(/blocked\s*shot/gi, "Blocked Shot")
+      .replace(/made\s*dunk/gi, "Made Dunk")
+      .replace(/Official\s*TV\s*Timeout/gi, "Official Timeout");
+  };
 
-const isDark = useColorScheme() === "dark";
+  const isDark = useColorScheme() === "dark";
 
   const styles = lastPlayStyles(isDark);
 
@@ -95,9 +95,12 @@ const isDark = useColorScheme() === "dark";
     const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
-    if (lower.includes("foul")) return isDark ? Colors.dark.lightRed : Colors.light.red;
-    if (lower.includes("made")) return isDark ? Colors.dark.limeGreen : Colors.light.green;
-    if (lower.includes("missed")) return isDark ? Colors.dark.lightRed : Colors.light.red;
+    if (lower.includes("foul"))
+      return isDark ? Colors.dark.lightRed : Colors.light.red;
+    if (lower.includes("made"))
+      return isDark ? Colors.dark.limeGreen : Colors.light.green;
+    if (lower.includes("missed"))
+      return isDark ? Colors.dark.lightRed : Colors.light.red;
     return defaultColor;
   };
 
@@ -106,9 +109,7 @@ const isDark = useColorScheme() === "dark";
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
-        <Text style={styles.simpleText}>
-          {currentPlay}
-        </Text>
+        <Text style={styles.simpleText}>{currentPlay}</Text>
       </View>
     );
   }
@@ -126,7 +127,9 @@ const isDark = useColorScheme() === "dark";
                 <Image source={{ uri: avatarUrl }} style={styles.avatar} />
                 <View style={styles.athleteDetails}>
                   <Text style={styles.athleteName}>{athlete.name}</Text>
-                  <Text style={styles.athleteMeta}>{athlete.position || ""}</Text>
+                  <Text style={styles.athleteMeta}>
+                    {athlete.position || ""}
+                  </Text>
                   <Text style={styles.athleteMeta}>
                     {athlete.jersey ? `#${athlete.jersey}` : ""}
                   </Text>
@@ -137,16 +140,15 @@ const isDark = useColorScheme() === "dark";
         </View>
       ) : null}
 
-  <Text
-  style={[
-    styles.playText,
-    { color: getTextColor(currentPlay.text) },
-    currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
-  ]}
->
-  {normalizeText(currentPlay.text)}
-</Text>
-
+      <Text
+        style={[
+          styles.playText,
+          { color: getTextColor(currentPlay.text) },
+          currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
+        ]}
+      >
+        {normalizeText(currentPlay.text)}
+      </Text>
     </View>
   );
 }

@@ -20,24 +20,17 @@ export type TeamLike = {
 export const hasIdAndName = (team: any): team is TeamLike =>
   team && (typeof team.id === "string" || typeof team.id === "number") && typeof team.name === "string";
 
-export const normalizeTeam = (team: any): TeamLike => {
-  if (hasIdAndName(team)) {
-    return {
-      id: String(team.id), // always string
-      name: team.name,
-      record: team.record,
-      logo: team.logo,
-      fullName: team.fullName ?? team.name ?? "Unknown Team",
-    };
-  }
+export function normalizeTeam(team: any, isWomen = false) {
+  if (!team) return null;
 
-  const fallbackName = team?.name ?? "Unknown Team";
   return {
-    id: fallbackName,
-    name: fallbackName,
-    fullName: fallbackName,
+    ...team,
+    id: isWomen
+      ? String(team.wid ?? team.id) // 👈 WCBB uses wid
+      : String(team.id),
   };
-};
+}
+
 
 
 // ---------- 🗓️ Date Helpers ----------

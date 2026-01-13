@@ -1,19 +1,22 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
+import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 
 export type CBBTeam = {
-  id: number;
+  id?: number;
+  wid?: number;
   name: string;
+  fullName?: string;
   logo?: string;
+  color?: string;
+  secondaryColor?: string;
 };
 
 export type CBBGame = {
   id: number;
   date: string;
-  dateUTC?: string;
-  dateLocal?: string;
-  teams?: {
+  teams: {
     home: CBBTeam;
     away: CBBTeam;
   };
@@ -25,20 +28,52 @@ export type CBBGame = {
     id: number;
     name: string;
   };
-  season?: string;
   status?: {
     long: string;
     short: string;
   };
 };
 
+const MEN_CBB_LEAGUE = "116";
+const WOMEN_CBB_LEAGUE = "423";
+
 const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
-export function useCBBWeeklyGames(timezone: string = "America/New_York") {
+type UseCBBWeeklyGamesOptions = {
+  timezone?: string;
+  isWomen?: boolean;
+};
+
+export function useCBBWeeklyGames({
+  timezone = "America/New_York",
+  isWomen = false,
+}: UseCBBWeeklyGamesOptions = {}) {
+  const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
+  const teamsMap = isWomen ? teamsWCBBById : teamsCBBById;
+
   const [cbbGames, setGames] = useState<CBBGame[]>([]);
-  const [cbbLoading, setLoading] = useState<boolean>(false);
+  const [cbbLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
+
+  const enrichTeams = useCallback(
+    (game: any) => {
+      const homeKey = isWomen ? Number(game.teams.home.wid) : Number(game.teams.home.id);
+      const awayKey = isWomen ? Number(game.teams.away.wid) : Number(game.teams.away.id);
+
+      const homeTeam = teamsMap[homeKey] || game.teams.home;
+      const awayTeam = teamsMap[awayKey] || game.teams.away;
+
+      return {
+        ...game,
+        teams: {
+          home: { ...game.teams.home, ...homeTeam },
+          away: { ...game.teams.away, ...awayTeam },
+        },
+      };
+    },
+    [teamsMap, isWomen]
+  );
 
   const refreshCBBGames = useCallback(async () => {
     setLoading(true);
@@ -47,11 +82,15 @@ export function useCBBWeeklyGames(timezone: string = "America/New_York") {
     try {
       const res = await axios.get(
         `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/gamesCBB/weekly`,
-        { params: { timezone } }
+        {
+          params: { timezone, league },
+        }
       );
 
       const data: CBBGame[] = res.data?.response || [];
-      setGames(data);
+      const enrichedData = data.map(enrichTeams);
+
+      setGames(enrichedData);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
       console.error("Error fetching CBB weekly games:", err.message);
@@ -59,19 +98,20 @@ export function useCBBWeeklyGames(timezone: string = "America/New_York") {
     } finally {
       setLoading(false);
     }
-  }, [timezone]);
+  }, [timezone, league, enrichTeams]);
 
   useEffect(() => {
     refreshCBBGames();
   }, [refreshCBBGames]);
 
-  // Helper to check if a game is live
-  const isLiveGame = (game: CBBGame) => game.status?.short && LIVE_STATUSES.includes(game.status.short);
+  const isLiveGame = useCallback(
+    (game: CBBGame) => !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
+    []
+  );
 
-  // Sorted games with live games first
   const sortedGames = useMemo(() => {
     return [...cbbGames].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
-  }, [cbbGames]);
+  }, [cbbGames, isLiveGame]);
 
   return {
     cbbGames: sortedGames,

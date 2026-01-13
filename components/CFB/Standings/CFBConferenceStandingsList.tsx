@@ -1,3 +1,4 @@
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
@@ -19,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { getStyles } from "styles/StandingsStyles";
+
 type Props = {
   selectedConference?: string;
   onlyTeamConference?: boolean;
@@ -162,7 +164,7 @@ export const CFBConferenceStandingsList = ({
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
-        <TouchableOpacity onPress={handleTeamPress}  style={styles.teamInfo}>
+        <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
         </TouchableOpacity>
@@ -297,9 +299,7 @@ export const CFBConferenceStandingsList = ({
     // ✅ only marginTop 12 on the header container (already what you're doing)
     return (
       <View style={{ marginTop: 12 }}>
-        <View style={styles.header}>
-          <Text style={styles.heading}>{title}</Text>
-        </View>
+        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
 
         {Object.keys(divisions).map((div) => (
           <View key={div} style={{ marginTop: 8 }}>

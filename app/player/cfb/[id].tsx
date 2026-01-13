@@ -1,16 +1,16 @@
-// app/player/nfl/[id].tsx
+// app/player/cfb/[id].tsx
 import CFBGameCard from "components/CFB/Games/CFBGameCard";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerHeader from "components/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/NFL/Player/PlayerStatTable";
 import SeasonStatCard from "components/NFL/Player/SeasonStatCard";
-import { players as allPlayers } from "constants/cfbPlayers";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamInfo } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
+import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -23,54 +23,33 @@ import {
 export default function CFBPlayerDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
   const isDark = useColorScheme() === "dark";
-  const params = useLocalSearchParams();
-  const playerIdParam = Array.isArray(params.id) ? params.id[0] : params.id;
-  const teamIdParam = Array.isArray(params.teamId)
-    ? params.teamId[0]
-    : params.teamId;
 
-  // Find player
-  const player = useMemo(
-    () => allPlayers.find((p) => p.id === Number(id)),
-    [id]
-  );
+  /* ---------------- Route params ---------------- */
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const playerId = Number(id);
+
+  /* ---------------- Fetch player ---------------- */
+  const {
+    player,
+    loading: playerLoading,
+    error: playerError,
+  } = usePlayerById(playerId, "CFB");
+
   const fullName = player?.name ?? "Player";
 
-  // Team info
-  const teamObj = player?.teamId ? getTeamInfo(player.teamId) : null;
+  /* ---------------- Team info ---------------- */
+  const teamObj = player?.team_id ? getTeamInfo(player.team_id) : null;
   const isTeamAvailable = !!teamObj;
 
-  const parsedPlayerId = parseInt(playerIdParam ?? "", 10);
-  const sanitizedTeamId = String(teamIdParam ?? "")
-    .replace(/"/g, "")
-    .trim();
-
-  const goBack = () => router.back();
-  const avatarUrl = player?.image;
-
-  const mappedPlayer = player
-    ? {
-        first_name: player.name.split(" ")[0] || "",
-        last_name: player.name.split(" ").slice(1).join(" ") || "",
-        college: player.college ?? undefined,
-        height: player.height ?? undefined,
-        weight: player.weight ?? undefined,
-        birth_date: player.birth_date ?? undefined,
-        position: player.position ?? undefined,
-        jersey_number: player.number?.toString() ?? undefined,
-        age: player.age ?? undefined,
-      }
-    : null;
-
-  const numericTeamId = teamObj?.id ?? 0;
+  /* ---------------- Last game ---------------- */
   const {
     lastGame,
     loading: lastGameLoading,
     error: lastGameError,
-  } = useLastTeamGame(numericTeamId, "2");
+  } = useLastTeamGame(player?.team_id ?? 0, "2");
 
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -84,82 +63,90 @@ export default function CFBPlayerDetailScreen() {
           logoLight={
             teamObj?.logoLight
               ? { uri: teamObj.logoLight }
-              : require("assets/Football/NFL_Logos/NFL.png")
+              : require("assets/College_Logos/NCAA.png")
           }
-          teamColor={isTeamAvailable ? teamObj?.color : "#1D428A"}
-          onBack={goBack}
+          teamColor={teamObj?.color ?? "#1D428A"}
+          onBack={() => router.back()}
           isTeamScreen={!!teamObj}
           teamCode={teamObj?.code}
-          isPlayerScreen={true}
+          isPlayerScreen
           league="CFB"
         />
       ),
     });
   }, [navigation, fullName, teamObj, isTeamAvailable, isDark]);
 
-  if (!player) {
-    return <View style={{ flex: 1 }} />;
+  /* ---------------- Loading / error ---------------- */
+  if (playerLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
   }
 
-  const seasons = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    if (player?.experience) {
-      const startYear = currentYear - player.experience + 1;
-      return Array.from({ length: player.experience }, (_, i) =>
-        (startYear + i).toString()
-      );
-    }
-    const fallbackStart = 2015;
-    return Array.from({ length: currentYear - fallbackStart + 1 }, (_, i) =>
-      (fallbackStart + i).toString()
+  if (playerError || !player) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Text style={{ textAlign: "center" }}>Player not found</Text>
+      </View>
     );
-  }, [player]);
+  }
 
+  /* ---------------- Seasons (CFB career) ---------------- */
+  const seasons = useMemo(() => {
+    if (!player.experience_years) return [];
+
+    const currentYear = new Date().getFullYear();
+    const startYear = currentYear - player.experience_years + 1;
+
+    return Array.from({ length: player.experience_years }, (_, i) =>
+      (startYear + i).toString()
+    );
+  }, [player.experience_years]);
+
+  /* ---------------- Render ---------------- */
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* Player header */}
-      {mappedPlayer && (
-        <PlayerHeader
-          player={mappedPlayer}
-          avatarUrl={avatarUrl}
-          isDark={isDark}
-          teamColor={teamObj?.color}
-          teamSecondaryColor={teamObj?.secondaryColor}
-          team_name={teamObj?.code}
-          age={player.age ?? 0}
-        />
-      )}
+      {/* Player Header */}
+      <PlayerHeader
+        player={player}
+        avatarUrl={player.headshot_url}
+        isDark={isDark}
+        teamColor={teamObj?.color}
+        team_name={player.team}
+        isCollegePlayer
+      />
 
-      {/* Season stats */}
-      {player && (
-        <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-          <SeasonStatCard
-            playerId={player.id}
-            teamColor={teamObj?.secondaryColor}
-            teamColorDark={teamObj?.secondaryColor}
-            league="CFB"
-          />
-        </View>
-      )}
+      {/* Season Stats */}
+      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
+        <SeasonStatCard
+          playerId={player.player_id}
+          teamColor={teamObj?.secondaryColor}
+          teamColorDark={teamObj?.secondaryColor}
+          league="CFB"
+        />
+      </View>
 
       {/* Last Game */}
       <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
         <HeadingTwo>Last Game</HeadingTwo>
+
         {lastGameLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
+
         {lastGameError && (
-          <View style={{ marginTop: 12 }}>
-            <Text
-              style={{
-                color: isDark ? Colors.dark.lightRed : Colors.light.red,
-                textAlign: "center",
-                marginVertical: 20,
-                fontFamily: Fonts.OSREGULAR,
-              }}
-            >
-              Error loading last game
-            </Text>
-          </View>
+          <Text
+            style={{
+              color: isDark ? Colors.dark.lightRed : Colors.light.red,
+              textAlign: "center",
+              marginVertical: 20,
+              fontFamily: Fonts.OSREGULAR,
+            }}
+          >
+            Error loading last game
+          </Text>
         )}
+
         {lastGame && !lastGameLoading && (
           <CFBGameCard game={lastGame} isDark={isDark} />
         )}
@@ -167,7 +154,7 @@ export default function CFBPlayerDetailScreen() {
 
       {/* Career Stats */}
       <View style={{ marginTop: 24 }}>
-        <PlayerStatTable playerId={parsedPlayerId} seasons={seasons} />
+        <PlayerStatTable playerId={player.player_id} seasons={seasons} />
       </View>
     </ScrollView>
   );

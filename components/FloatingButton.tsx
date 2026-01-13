@@ -1,11 +1,6 @@
-import { Fonts } from "constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-} from "react-native";
+import { Fonts } from "constants/Styles";
+import { StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
 
 export default function FloatingChatButton({
   gameId,
@@ -51,7 +46,6 @@ const getStyles = (isDark: boolean) =>
       elevation: 7,
       zIndex: 999,
       marginHorizontal: 20,
-     
     },
     buttonText: {
       color: isDark ? "#1d1d1d" : "#fff",

@@ -25,6 +25,7 @@ type VoteTeam = {
   id: string | number;
   name: string;
   code?: string;
+  wLogo?: any;
   logo: any;
   logoLight: any;
   color?: string;
@@ -244,8 +245,10 @@ export default function WinPredictionVote({
                     <Animated.Image
                       source={resolveLogo(
                         colorScheme === "dark"
-                          ? awayTeam.logoLight || awayTeam.logo
-                          : awayTeam.logoLight || awayTeam.logo
+                          ? awayTeam.wLogo ||
+                              awayTeam.logoLight ||
+                              awayTeam.logo
+                          :  awayTeam.wLogo || awayTeam.logoLight || awayTeam.logo
                       )}
                       style={[
                         styles.teamLogo,

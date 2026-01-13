@@ -13,13 +13,14 @@ export const Colors = {
     itemBackground: "#eee",
     red: "#cc0000",
     green: "#177901ff",
-      yellow: "#dcb000ff",
+    yellow: "#dcb000ff",
     black: "#1d1d1d",
     background: "#fff",
     tint: tintColorLight,
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    errorBackground: "#ffdada",
   },
   dark: {
     text: "#fff",
@@ -33,8 +34,8 @@ export const Colors = {
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    errorBackground: "#5a1f1f",
   },
-
 
   white: "#fff",
   black: "#1d1d1d",

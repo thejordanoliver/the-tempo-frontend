@@ -46,19 +46,30 @@ export function getCurrentNBASeason() {
   return String(year + 1);
 }
 
-export function getNBASeason() {
+export function getNBASeason(): string {
   const today = dayjs();
   const year = today.year();
+  const month = today.month() + 1; // 1–12
 
-  // Season YEAR runs Oct 1 (YEAR-1) to Sep 30 (YEAR)
-  const seasonStart = dayjs(`${year}-09-01`); // Oct 1 of previous year
-  const seasonEnd = dayjs(`${year + 1}-09-30`); // Sep 30 of current year
-
-  // If today is between last Oct 1 and this Sep 30 → season = current year
-  if (today.isAfter(seasonStart) && today.isBefore(seasonEnd.add(1, "day"))) {
+  // NBA season starts in October
+  if (month >= 10) {
     return String(year);
   }
 
-  // Otherwise we are past Oct 1 → new season
-  return String(year + 1);
+  // Jan–Sep belongs to previous season
+  return String(year - 1);
 }
+
+export const getHolidayLabel = (
+  date: Date | null | undefined
+): string | null => {
+  if (!date) return null;
+
+  const month = date.getMonth(); // 0 = Jan, 11 = Dec
+  const day = date.getDate();
+
+  if (month === 11 && day === 25) return "Christmas Day";
+  if (month === 0 && day === 1) return "New Year's Day";
+
+  return null; // add more holidays here if needed
+};

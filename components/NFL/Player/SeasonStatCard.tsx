@@ -1,4 +1,5 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
+import SeasonStatCardSkeleton from "components/Player/SeasonStatCardSkeleton";
 import { players as cfbPlayers } from "constants/cfbPlayers";
 import { Colors } from "constants/Colors";
 import { players as nflPlayers } from "constants/nflPlayers";
@@ -6,9 +7,8 @@ import { teams as cfbTeams } from "constants/teamsCFB";
 import { teams as nflTeams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { useFootballPlayerStats } from "hooks/NFLHooks/useFootballPlayerStats";
-import { ActivityIndicator, Text, useColorScheme, View } from "react-native";
+import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-
 type Props = {
   playerId: number;
   teamColor?: string;
@@ -34,9 +34,9 @@ export default function SeasonStatCard({
     season || "2025"
   );
 
-  if (loading) return <ActivityIndicator style={{ marginVertical: 20 }} />;
+  if (loading) return <SeasonStatCardSkeleton />;
   if (error || !aggregatedStats)
-    return <Text style={styles.error}>Failed to load stats</Text>;
+    return <Text style={styles.errorText}>Failed to load stats</Text>;
 
   const displayYear = season || new Date().getFullYear().toString();
 

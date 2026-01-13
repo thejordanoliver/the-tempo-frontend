@@ -17,9 +17,6 @@ export interface FixedWidthTabBarProps {
   selected: string;
   onTabPress: (tab: string) => void;
   renderLabel?: (tab: string, isSelected: boolean) => React.ReactNode;
-  /** Optional: enforce away/home order if exactly 2 tabs */
-  awayTeamAbbr?: string;
-  homeTeamAbbr?: string;
   lighter?: boolean;
 }
 
@@ -51,8 +48,6 @@ export default function FixedWidthTabBar({
   selected,
   onTabPress,
   renderLabel,
-  awayTeamAbbr,
-  homeTeamAbbr,
   lighter = false,
 }: FixedWidthTabBarProps) {
   const isDark = useColorScheme() === "dark";

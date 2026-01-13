@@ -4,17 +4,13 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { GameLocation, LastFiveGamesSwitcher } from "components/GameDetails";
+import LineScore from "components/GameDetails/LineScore";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNFLGameBroadcasts } from "hooks/NFLHooks/useNFLGameBroadcasts";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-
-import {
-  LastFiveGamesSwitcher,
-  TeamLocationSection,
-} from "components/GameDetails";
-import LineScore from "components/GameDetails/LineScore";
-import Weather from "components/GameDetails/Weather";
 
 import Officials from "components/GameDetails/Officials";
 import { NFLCenterInfo } from "components/NFL/GamePreview/CenterInfo";
@@ -23,7 +19,6 @@ import {
   getTeamInfo,
   neutralStadiums,
   teams,
-  venueImages,
 } from "constants/teamsNFL";
 import { NFLTeam } from "types/nfl";
 import GameLeaders from "../GameDetails/GameLeaders";
@@ -38,35 +33,94 @@ import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
 import { useGameInfo } from "hooks/CFBHooks/useGameInfo";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useNFLGameDetails } from "hooks/NFLHooks/useNFLGameDetails";
-import { useNFLGamePossession } from "hooks/NFLHooks/useNFLGamePossession";
 import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { useWeatherForecast } from "hooks/useWeather";
 
 import { getGameDate, getNFLGameStatus } from "utils/nflGameCardUtils";
 
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, Game } from "types/nfl";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 
 // --------------------------------------------------------------
 // 🧠 MATCHED LOGIC FROM NFLGameCard
 // --------------------------------------------------------------
 
-function detectEndOfPeriod(statusText?: string) {
-  const text = (statusText ?? "").toLowerCase();
-  return (
-    text.includes("end of") &&
-    (text.includes("quarter") || text.includes("qtr"))
-  );
-}
+const formatPeriod = (raw: string | number | undefined | null) => {
+  if (!raw) return "";
 
-function getESPNPeriodCode(period?: number) {
-  if (!period) return undefined;
-  if (period <= 4) return `Q${period}`;
-  const ot = period - 4;
-  return ot === 1 ? "OT" : `${ot}OT`;
-}
+  // 🔥 FIX: if raw is "5" or "6", convert to number
+  if (typeof raw === "string" && /^\d+$/.test(raw)) {
+    raw = Number(raw);
+  }
 
-function mapNFLStatus(statusObj: any): string {
+  // ----- STRING CASES -----
+  if (typeof raw === "string") {
+    const upper = raw.toUpperCase();
+
+    if (upper === "OT" || upper === "OVERTIME") return "OT";
+    if (upper === "HT") return "Halftime";
+    if (upper === "FT") return "Final";
+
+    if (upper.includes("END")) {
+      const quarterNum = upper.match(/(\d)/)?.[1];
+      if (quarterNum) {
+        return `End ${
+          quarterNum === "1"
+            ? "1st"
+            : quarterNum === "2"
+            ? "2nd"
+            : quarterNum === "3"
+            ? "3rd"
+            : "4th"
+        }`;
+      }
+      return "End";
+    }
+
+    if (upper.startsWith("Q")) {
+      const num = parseInt(upper.replace("Q", ""));
+      return num === 1
+        ? "1st"
+        : num === 2
+        ? "2nd"
+        : num === 3
+        ? "3rd"
+        : num === 4
+        ? "4th"
+        : `${num}OT`;
+    }
+
+    return raw;
+  }
+
+  // ----- NUMBER CASES -----
+  if (typeof raw === "number") {
+    if (raw >= 1 && raw <= 4) {
+      return raw === 1 ? "1st" : raw === 2 ? "2nd" : raw === 3 ? "3rd" : "4th";
+    }
+
+    const ot = raw - 4;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  }
+
+  return String(raw);
+};
+
+function mapNFLStatus(
+  statusObj: any
+):
+  | "Final"
+  | "Halftime"
+  | "Scheduled"
+  | "Canceled"
+  | "Delayed"
+  | "Postponed"
+  | "In Progress" {
   const long = statusObj?.long?.toLowerCase?.() ?? "";
   const short = String(statusObj?.short ?? "").toUpperCase();
 
@@ -79,27 +133,16 @@ function mapNFLStatus(statusObj: any): string {
     return "Final";
 
   if (long.includes("halftime") || short === "HT") return "Halftime";
-  if (long.includes("in") && long.includes("play")) return "In Play";
+  if (long.includes("in") && long.includes("play")) return "In Progress";
   if (long.includes("scheduled")) return "Scheduled";
   if (long.includes("canceled")) return "Canceled";
   if (long.includes("delayed")) return "Delayed";
   if (long.includes("postponed")) return "Postponed";
 
-  if (["Q1", "Q2", "Q3", "Q4", "OT"].includes(short)) return "In Play";
+  if (["Q1", "Q2", "Q3", "Q4", "OT"].includes(short)) return "In Progress";
 
+  // Default fallback
   return "Scheduled";
-}
-
-function formatNFLPeriod(period?: number | string) {
-  if (!period) return "Live";
-
-  const num = Number(period);
-
-  if (num <= 4) return ["1st", "2nd", "3rd", "4th"][num - 1] ?? `${num}`;
-
-  // Overtime logic
-  const ot = num - 4;
-  return ot === 1 ? "OT" : `${ot}OT`;
 }
 
 // --------------------------------------------------------------
@@ -165,49 +208,29 @@ export default function NFLGamePreviewModal({
   const statusObj = getNFLGameStatus(game);
   const mappedStatus = mapNFLStatus(statusObj);
 
-  // Determine live
-  const prelimLive =
-    mappedStatus === "In Play" ||
-    statusObj?.isLive ||
-    String(statusObj?.short).toUpperCase() === "LIVE";
-
-  function normalizePeriod(period: string | number | undefined): number | null {
-    if (period == null) return null;
-    const n = Number(period);
-    return isNaN(n) ? null : n;
-  }
-
   // Possession hook (MATCHED)
-  const possession = prelimLive
-    ? useNFLGamePossession(homeTeamData.name, awayTeamData.name, apiDateStr)
-    : null;
+  const possession = useFootballGamePossession(
+    homeTeamData.espnID,
+    awayTeamData.espnID,
+    apiDateStr,
+    "nfl"
+  );
 
+  const possessionLoading = possession.loading;
   const liveText = (possession?.gameStatusDescription ?? "").toLowerCase();
-  const endOfPeriod = detectEndOfPeriod(liveText);
+  const gameStatusDescription = possession?.gameStatusDescription;
+  const gameStatusShortDetail = possession?.gameStatusShortDetail;
 
-  const effectiveStatus = endOfPeriod
-    ? "EndOfPeriod"
-    : liveText.includes("final")
-    ? "Final"
-    : liveText.includes("halftime")
-    ? "Halftime"
-    : liveText.includes("qtr") ||
-      liveText.includes("quarter") ||
-      liveText.includes("in progress")
-    ? "In Play"
-    : mappedStatus;
-
-  const isScheduled = effectiveStatus === "Scheduled";
-  const isFinal = effectiveStatus === "Final";
-  const isLive = effectiveStatus === "In Play";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isFinal = gameStatusDescription === "Final";
+  const isLive = gameStatusDescription === "In Progress";
 
   // --------------------------------------------------------------
   // SCORE
   // --------------------------------------------------------------
-  const score = possession?.score ?? {
-    home: { total: scores?.home?.total ?? 0 },
-    away: { total: scores?.away?.total ?? 0 },
-  };
+
+  const homeScore = possession.score?.home ?? 0;
+  const awayScore = possession.score?.away ?? 0;
 
   const period = possession?.period;
   const displayClock = possession?.displayClock ?? "";
@@ -216,6 +239,13 @@ export default function NFLGamePreviewModal({
   // HEADLINE + HOLIDAY
   // --------------------------------------------------------------
   const gameDate = new Date(apiDateStr);
+
+  const { headlineText } = useGameInfo(
+    Number(homeTeamData.espnID),
+    Number(awayTeamData.espnID),
+    apiDateStr,
+    "nfl"
+  );
 
   const isChristmas = gameDate.getMonth() === 11 && gameDate.getDate() === 25;
   const isNewYear = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
@@ -226,20 +256,13 @@ export default function NFLGamePreviewModal({
     ? "New Year's Day"
     : null;
 
-  const { headlineText } = useGameInfo(
-    Number(homeTeamData.espnID),
-    Number(awayTeamData.espnID),
-    apiDateStr,
-    "nfl"
-  );
-
   const headline = headlineText || holidayLabel;
 
   // --------------------------------------------------------------
   // RECORDS
   // --------------------------------------------------------------
-  const { record: homeRecord } = useNFLTeamRecord(String(homeId));
-  const { record: awayRecord } = useNFLTeamRecord(String(awayId));
+  const homeRecord = useNFLTeamRecord(String(homeId)).record.overall ?? "0-0";
+  const awayRecord = useNFLTeamRecord(String(awayId)).record.overall ?? "0-0";
 
   // --------------------------------------------------------------
   // LAST 5 GAMES
@@ -250,31 +273,94 @@ export default function NFLGamePreviewModal({
   // --------------------------------------------------------------
   // GAME DETAILS (DRIVES, OFFICIALS, INJURIES)
   // --------------------------------------------------------------
-  const { officials, injuries, previousDrives, currentDrives, venue } =
-    useNFLGameDetails(homeTeamData.espnID, awayTeamData.espnID, apiDateStr);
+  const {
+    officials,
+    injuries,
+    previousDrives,
+    currentDrives,
+    venue,
+    neutralSite,
+    highlights = [], // <-- default to empty array here
+  } = useNFLGameDetails(
+    String(homeTeamData.espnID),
+    String(awayTeamData.espnID),
+    apiDateStr
+  );
 
-  // --------------------------------------------------------------
+  const { data: details, loading: gameDetailsLoading } = useFootballGameDetails(
+    String(homeTeamData.espnID),
+    String(awayTeamData.espnID),
+    apiDateStr,
+    "nfl"
+  );
+
+
+  const { broadcasts } = useNFLGameBroadcasts(
+    homeTeamData.espnID,
+    awayTeamData.espnID,
+    apiDateStr
+  );
+
+  const broadcastText = getBroadcastDisplay(broadcasts); // --------------------------------------------------------------
   // WEATHER
   // --------------------------------------------------------------
+  // --- Neutral Site Detection Using neutralStadiums ---
+  const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
+
+  const neutralStadiumEntry = Object.entries(neutralStadiums).find(
+    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+  );
+
+  // Stadium-lookup detection (fallback only)
+  const isNeutralStadiumMatch = !!neutralStadiumEntry;
+
+  // Safely extract stadium override data
+  const neutralStadiumData = isNeutralStadiumMatch
+    ? neutralStadiumEntry![1]
+    : null;
+  const neutralStadiumName = isNeutralStadiumMatch
+    ? neutralStadiumEntry![0]
+    : null;
+
+  // --- Final Venue Resolution ---
+  let resolvedVenueName =
+    venue?.name ?? homeTeamData?.venue ?? "Unknown Stadium";
+  let resolvedVenueCity = homeTeamData?.city ?? "Unknown City";
+  let resolvedVenueAddress = homeTeamData?.address ?? "";
+  let resolvedVenueCapacity = homeTeamData?.venueCapacity?.toString() ?? "";
+  let resolvedVenueImage = isNeutralStadiumMatch
+    ? venue?.image
+    : homeTeamData.venueImage ?? venue?.image;
+  let lat = homeTeamData?.latitude ?? null;
+  let lon = homeTeamData?.longitude ?? null;
+
+  if (neutralSite && neutralStadiumData) {
+    resolvedVenueName = neutralStadiumName ?? resolvedVenueName;
+    resolvedVenueCity = neutralStadiumData.city ?? resolvedVenueCity;
+    resolvedVenueAddress = neutralStadiumData.address ?? resolvedVenueAddress;
+    resolvedVenueCapacity =
+      neutralStadiumData.venueCapacity?.toString() ?? resolvedVenueCapacity;
+    resolvedVenueImage = neutralStadiumData.venueImage ?? resolvedVenueImage;
+    lat = neutralStadiumData.latitude ?? lat;
+    lon = neutralStadiumData.longitude ?? lon;
+  }
   const isNeutralSite =
-    gameInfo.venue?.name &&
-    ![homeTeamData.venue, awayTeamData.venue].includes(
-      gameInfo.venue?.name ?? ""
-    );
+    gameInfo?.venue?.name &&
+    ![homeTeamData?.venue, awayTeamData?.venue].includes(gameInfo.venue.name);
 
   const stadiumData = isNeutralSite
-    ? neutralStadiums[gameInfo.venue?.name ?? ""]
+    ? neutralStadiums[gameInfo?.venue?.name ?? ""]
     : homeTeamData;
 
   const { weather } = useWeatherForecast(
-    stadiumData.latitude ?? 0,
-    stadiumData.longitude ?? 0,
+    lat,
+    lon,
     apiDateStr,
-    stadiumData.city
+    stadiumData?.city ?? ""
   );
 
   const displayWeather = weather
-    ? { ...weather, cityName: stadiumData.city }
+    ? { ...weather, cityName: stadiumData?.city ?? "Unknown" }
     : null;
 
   // --------------------------------------------------------------
@@ -367,195 +453,185 @@ export default function NFLGamePreviewModal({
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          {headline && <Text style={styles.headlineText}>{headline}</Text>}
-
-          {/* HEADER */}
-          <View style={styles.gameHeaderContainer}>
-            <TeamInfo
-              team={awayTeamData}
-              teamName={awayTeamData.code}
-              score={score.away.total}
-              opponentScore={score.home.total}
-              record={awayRecord?.overall ?? "0-0"}
-              isDark={isDark}
-              isGameOver={isFinal}
-              hasStarted={!isScheduled}
-              possessionTeamId={possession?.possessionTeamId}
-              side="away"
-              timeouts={possession?.awayTimeouts ?? 0}
-            />
-
-            <NFLCenterInfo
-              status={
-                effectiveStatus === "In Play" ? "In Progress" : effectiveStatus
-              }
-              week={gameInfo.week}
-              date={formattedDate}
-              time={formattedTime}
-              period={getESPNPeriodCode(possession?.period) || ""}
-              clock={displayClock}
-              isDark={isDark}
-              homeTeam={homeTeamData}
-              awayTeam={awayTeamData}
-              colors={{ text: "", record: "", score: "", winnerScore: "" }}
-              lighter
-              apiDate={apiDateStr}
-              downAndDistance={possession?.downDistanceText ?? ""}
-              isPlayoff={isChampionship}
-            />
-
-            <TeamInfo
-              team={homeTeamData}
-              teamName={homeTeamData.code}
-              score={score.home.total}
-              opponentScore={score.away.total}
-              record={homeRecord?.overall ?? "0-0"}
-              isDark={isDark}
-              isGameOver={isFinal}
-              hasStarted={!isScheduled}
-              possessionTeamId={possession?.possessionTeamId}
-              side="home"
-              timeouts={possession?.homeTimeouts ?? 0}
-            />
-          </View>
-
-          {/* BODY */}
-          <BottomSheetScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.contentContainerStyle}
-          >
-            <View style={styles.bottomSheetScrollViewWrapper}>
-              <LineScore
-                linescore={linescore}
-                homeCode={homeTeamData.code}
-                awayCode={awayTeamData.code}
-                lighter
-              />
-
-              {!isScheduled && (
-                <GameLeaders
-                  gameId={String(gameInfo.id)}
-                  homeTeamId={String(homeTeamData.id)}
-                  awayTeamId={String(awayTeamData.id)}
-                  lighter
-                  league="NFL"
-                />
-              )}
-
-              <NFLTeamDrives
-                previousDrives={previousDrives}
-                currentDrives={currentDrives}
-                homeTeamId={Number(homeTeamData.espnID)}
-                awayTeamId={Number(awayTeamData.espnID)}
-                lighter
-              />
-
-              <LastFiveGamesSwitcher
-                isDark={isDark}
-                home={{
-                  teamCode: homeTeamData.code,
-                  teamLogo: homeTeamData.logo,
-                  teamLogoLight: homeTeamData.logoLight,
-                  games: homeLastGames.games,
-                }}
-                away={{
-                  teamCode: awayTeamData.code,
-                  teamLogo: awayTeamData.logo,
-                  teamLogoLight: awayTeamData.logoLight,
-                  games: awayLastGames.games,
-                }}
-                league="NFL"
-                lighter
-              />
-
-              {matchup && (
-                <NFLSeriesHistory
-                  team2Code={
-                    getTeamInfo(matchup?.teams.team2.id)?.code ?? "UNK"
-                  }
-                  team1Code={
-                    getTeamInfo(matchup?.teams.team1.id)?.code ?? "UNK"
-                  }
-                  team1Full={matchup?.teams.team1.fullName ?? ""}
-                  team2Full={matchup?.teams.team2.fullName ?? ""}
-                  team1Wins={matchup?.series.winsA ?? 0}
-                  team2Wins={matchup?.series.winsB ?? 0}
-                  ties={matchup?.series.ties ?? 0}
-                  games={seriesGames}
-                  team1Logo={getTeamInfo(matchup?.teams.team1.id)?.logo}
-                  team2Logo={getTeamInfo(matchup?.teams.team2.id)?.logo}
-                  team1LogoLight={
-                    getTeamInfo(matchup?.teams.team1.id)?.logoLight
-                  }
-                  team2LogoLight={
-                    getTeamInfo(matchup?.teams.team2.id)?.logoLight
-                  }
-                  lighter
-                />
-              )}
-
-              <NFLInjuries
-                injuries={injuries}
-                loading={false}
-                error={null}
-                awayTeamAbbr={awayTeamData.code}
-                homeTeamAbbr={homeTeamData.code}
-                lighter
-              />
-
-              {!isScheduled && (
-                <Officials
-                  officials={officials}
-                  loading={false}
-                  error={null}
-                  lighter
-                />
-              )}
-
-              <TeamLocationSection
-                venueImage={
-                  isNeutralSite
-                    ? venueImages[gameInfo.venue?.name ?? ""] ||
-                      venueImages[gameInfo.venue?.city ?? ""]
-                    : homeTeamData.venueImage
-                }
-                venueName={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo?.venue?.name ?? ""]?.name
-                    : homeTeamData.venue
-                }
-                location={
-                  isNeutralSite ? gameInfo.venue?.city : homeTeamData.location
-                }
-                address={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo.venue?.name ?? ""]?.address ?? ""
-                    : homeTeamData.address ?? ""
-                }
-                venueCapacity={
-                  isNeutralSite
-                    ? neutralStadiums[gameInfo.venue?.name ?? ""]
-                        ?.venueCapacity ?? ""
-                    : homeTeamData.venueCapacity
-                }
-                surface="football"
-                grass={venue?.grass ?? true}
-                loading={false}
-                error={null}
-                lighter
-              />
-
-              {!isScheduled && (
-                <Weather
-                  weather={displayWeather}
-                  address={stadiumData.city}
-                  loading={false}
-                  error={null}
-                  lighter
-                />
-              )}
+          {possessionLoading ? (
+            <View style={styles.loadingContainer}>
+              <CustomActivityIndicator lighter />
             </View>
-          </BottomSheetScrollView>
+          ) : (
+            <>
+              {headline && <Text style={styles.headlineText}>{headline}</Text>}
+
+              {/* HEADER */}
+              <View style={styles.gameHeaderContainer}>
+                <TeamInfo
+                  team={awayTeamData}
+                  teamName={awayTeamData.code}
+                  score={awayScore}
+                  opponentScore={homeScore}
+                  record={awayRecord}
+                  isDark={isDark}
+                  isGameOver={isFinal}
+                  hasStarted={!isScheduled}
+                  possessionTeamId={possession?.possessionTeamId}
+                  side="away"
+                  timeouts={possession?.awayTimeouts ?? 0}
+                />
+
+                <NFLCenterInfo
+                  broadcasts={broadcastText}
+                  week={gameInfo.week}
+                  date={formattedDate}
+                  time={formattedTime}
+                  period={formatPeriod(period) ?? ""}
+                  clock={displayClock}
+                  homeTeam={homeTeamData}
+                  awayTeam={awayTeamData}
+                  apiDate={apiDateStr}
+                  downAndDistance={possession?.downDistanceText ?? ""}
+                  redzone={possession?.redzone ?? false}
+                  gameStatusShortDetail={gameStatusShortDetail ?? ""}
+                  status={mappedStatus} // ← use mapped string here
+                  gameStatusDescription={gameStatusDescription ?? ""} // ← default to empty string
+                />
+
+                <TeamInfo
+                  team={homeTeamData}
+                  teamName={homeTeamData.code}
+                  score={homeScore}
+                  opponentScore={awayScore}
+                  record={homeRecord}
+                  isDark={isDark}
+                  isGameOver={isFinal}
+                  hasStarted={!isScheduled}
+                  possessionTeamId={possession?.possessionTeamId}
+                  side="home"
+                  timeouts={possession?.homeTimeouts ?? 0}
+                />
+              </View>
+
+              {/* BODY */}
+              <BottomSheetScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainerStyle}
+              >
+                <View style={styles.bottomSheetScrollViewWrapper}>
+                  {!isScheduled && (
+                    <LineScore
+                      linescore={linescore}
+                      homeCode={homeTeamData.code}
+                      awayCode={awayTeamData.code}
+                      lighter
+                    />
+                  )}
+                  {!isScheduled && (
+                    <GameLeaders
+                      gameId={String(gameInfo.id)}
+                      homeTeamId={String(homeTeamData.id)}
+                      awayTeamId={String(awayTeamData.id)}
+                      lighter
+                      league="NFL"
+                    />
+                  )}
+
+                  <NFLTeamDrives
+                    previousDrives={previousDrives}
+                    currentDrives={currentDrives}
+                    homeTeamId={Number(homeTeamData.espnID)}
+                    awayTeamId={Number(awayTeamData.espnID)}
+                    lighter
+                  />
+
+                  <LastFiveGamesSwitcher
+                    isDark={isDark}
+                    home={{
+                      teamCode: homeTeamData.code,
+                      teamLogo: homeTeamData.logo,
+                      teamLogoLight: homeTeamData.logoLight,
+                      games: homeLastGames.games,
+                    }}
+                    away={{
+                      teamCode: awayTeamData.code,
+                      teamLogo: awayTeamData.logo,
+                      teamLogoLight: awayTeamData.logoLight,
+                      games: awayLastGames.games,
+                    }}
+                    league="NFL"
+                    lighter
+                  />
+
+                  {matchup && (
+                    <NFLSeriesHistory
+                      team2Code={
+                        getTeamInfo(matchup?.teams.team2.id)?.code ?? "UNK"
+                      }
+                      team1Code={
+                        getTeamInfo(matchup?.teams.team1.id)?.code ?? "UNK"
+                      }
+                      team1Full={matchup?.teams.team1.fullName ?? ""}
+                      team2Full={matchup?.teams.team2.fullName ?? ""}
+                      team1Wins={matchup?.series.winsA ?? 0}
+                      team2Wins={matchup?.series.winsB ?? 0}
+                      ties={matchup?.series.ties ?? 0}
+                      games={seriesGames}
+                      team1Logo={getTeamInfo(matchup?.teams.team1.id)?.logo}
+                      team2Logo={getTeamInfo(matchup?.teams.team2.id)?.logo}
+                      team1LogoLight={
+                        getTeamInfo(matchup?.teams.team1.id)?.logoLight
+                      }
+                      team2LogoLight={
+                        getTeamInfo(matchup?.teams.team2.id)?.logoLight
+                      }
+                      lighter
+                    />
+                  )}
+
+                  {!isFinal && (
+                    <NFLInjuries
+                      injuries={injuries}
+                      loading={false}
+                      error={null}
+                      awayTeamId={awayTeamData.espnID}
+                      homeTeamId={homeTeamData.espnID}
+                      awayTeamAbbr={awayTeamData.code}
+                      homeTeamAbbr={homeTeamData.code}
+                      lighter
+                    />
+                  )}
+
+                  <Officials
+                    officials={officials}
+                    loading={false}
+                    error={null}
+                    lighter
+                  />
+
+                  {highlights.length > 0 && (
+                    <HighlightVideoList highlights={highlights} lighter />
+                  )}
+                  <GameLocation
+                    venueImage={resolvedVenueImage}
+                    venueName={resolvedVenueName}
+                    location={resolvedVenueCity}
+                    address={resolvedVenueAddress}
+                    venueCapacity={resolvedVenueCapacity}
+                    venueAttendance={
+                      venue?.attendance
+                        ? String(venue.attendance)
+                        : venue?.capacity
+                        ? String(venue.capacity)
+                        : "N/A"
+                    }
+                    loading={false}
+                    error={null}
+                    lighter
+                    surface="football"
+                    grass={venue?.grass ?? undefined}
+                    weather={displayWeather}
+                  />
+                </View>
+              </BottomSheetScrollView>
+            </>
+          )}
         </BlurView>
       </View>
     </BottomSheetModal>

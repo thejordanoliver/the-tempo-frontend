@@ -1,7 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
+import { WeatherData } from "hooks/useWeather";
 import {
   Alert,
+  Image,
   Linking,
   Platform,
   StyleSheet,
@@ -14,28 +17,55 @@ import HeadingTwo from "../Headings/HeadingTwo";
 import TeamLocationSkeleton from "./TeamLocationSkeleton";
 
 type Props = {
+  weather: WeatherData | null;
+  venueImage?: any;
   venueName?: string;
   location?: string;
   loading: boolean;
   error: string | null;
-  address: string;
+  address?: string;
   venueCapacity: string;
-  lighter?: boolean; // <-- new prop
+  venueAttendance?: number | string;
+  lighter?: boolean;
+  surface?: "football" | "default";
+  grass?: boolean; // <-- new prop
 };
 
 const GameLocation: React.FC<Props> = ({
+  weather,
+  venueImage,
   venueName,
   location,
   address,
   venueCapacity,
+  venueAttendance,
   loading,
   error,
   lighter = false,
+  surface = "default",
+  grass,
 }) => {
   const isDark = useColorScheme() === "dark";
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
+  const styles = gameLocationStyles(isDark, lighter);
+  const desc = weather?.main.toLowerCase();
 
-  // ✅ Early return if values are missing or marked "Unknown"
+  const getWeatherIcon = (desc?: string) => {
+    if (!desc) return "cloud";
+
+    if (desc.includes("clear")) return "sunny";
+    if (desc.includes("cloud")) return "cloud";
+    if (desc.includes("rain")) return "rainy";
+    if (desc.includes("drizzle")) return "rainy";
+    if (desc.includes("thunder")) return "thunderstorm";
+    if (desc.includes("snow")) return "snow";
+    if (desc.includes("fog") || desc.includes("mist") || desc.includes("haze"))
+      return "cloudy";
+    if (desc.includes("wind")) return "leaf";
+
+    return "cloud";
+  };
+
+  // Early return if values are missing or marked "Unknown"
   if (
     !venueName ||
     !location ||
@@ -82,37 +112,84 @@ const GameLocation: React.FC<Props> = ({
   };
 
   return (
-    <View style={{ marginTop: 20 }}>
+    <View>
       <HeadingTwo lighter={lighter}>Location</HeadingTwo>
 
       {loading && !error ? (
         <TeamLocationSkeleton />
       ) : (
         <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <Text style={[styles.venueTitle, { color: textColor }]}>
-              {venueName}
-            </Text>
-          </View>
+          <View style={styles.wrapper}>
+         {venueImage &&(
 
-          <View style={styles.addressContainer}>
-            <Ionicons name="location" size={20} color={textColor} />
-            {address ? (
-              <TouchableOpacity onPress={openInMaps}>
-                <Text
-                  style={[styles.subText, { color: textColor, marginLeft: 8 }]}
-                >
-                  {address}
+           
+           <Image
+           source={
+             typeof venueImage === "string"
+             ? { uri: venueImage }
+             : venueImage
+            }
+            style={styles.venueImage}
+            resizeMode="cover"
+            />
+          )
+          }
+
+            <View style={styles.textContainer}>
+              <Text style={styles.venueTitle}>{venueName}</Text>
+            </View>
+
+            <View style={styles.addressContainer}>
+              <Ionicons name="location" size={20} color={styles.icon.color} />
+              {address && (
+                <TouchableOpacity onPress={openInMaps}>
+                  <Text style={[styles.subText]}>{address}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View style={styles.addressContainer}>
+              <Ionicons
+                name={getWeatherIcon(desc)}
+                size={20}
+                color={styles.icon.color}
+              />
+              <Text style={styles.subText}>
+                Temperature:{" "}
+                {weather?.tempFahrenheit != null
+                  ? `${weather.tempFahrenheit.toFixed(0)}°F`
+                  : "--"}
+              </Text>
+            </View>
+
+            <View style={styles.addressContainer}>
+              <Ionicons name="person" size={20} color={styles.icon.color} />
+              <Text style={styles.subText}>
+                Capacity: {venueCapacity || "N/A"}
+              </Text>
+            </View>
+
+            {venueAttendance !== null &&
+              venueAttendance !== undefined &&
+              !isNaN(Number(venueAttendance)) && (
+                <View style={styles.addressContainer}>
+                  <Ionicons name="person" size={20} color={styles.icon.color} />
+                  <Text style={styles.subText}>
+                    Attendance:{" "}
+                    {Intl.NumberFormat("en-US").format(Number(venueAttendance))}
+                  </Text>
+                </View>
+              )}
+
+            {/* Grass indicator */}
+            {typeof grass === "boolean" && (
+              <View style={styles.addressContainer}>
+                <Ionicons name="leaf" size={20} color={styles.icon.color} />
+                <Text style={styles.subText}>
+                  {grass ? "Natural Grass" : "Artificial Turf"}
                 </Text>
-              </TouchableOpacity>
-            ) : null}
-          </View>
-
-          <View style={styles.addressContainer}>
-            <Ionicons name="person" size={20} color={textColor} />
-            <Text style={[styles.subText, { color: textColor, marginLeft: 8 }]}>
-              Capacity: {venueCapacity || "N/A"}
-            </Text>
+              </View>
+            )}
           </View>
         </View>
       )}
@@ -120,37 +197,51 @@ const GameLocation: React.FC<Props> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {},
-  venueImage: { width: "100%", height: 200, borderRadius: 8 },
-  text: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 20,
-  },
-  subText: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 16,
-    opacity: 0.5,
-  },
-  venueTitle: {
-    fontFamily: Fonts.OSBOLD,
-    fontSize: 24,
-    paddingVertical: 10,
-  },
-  icon: {
-    width: 54,
-    height: 54,
-  },
-  textContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  addressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-  },
-});
+const gameLocationStyles = (isDark: boolean, lighter: boolean) =>
+  StyleSheet.create({
+    container: {},
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      overflow: "hidden",
+    },
+    venueImage: { width: "100%", height: 200 },
+    text: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 20,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    subText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      opacity: 0.5,
+      marginLeft: 8,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    venueTitle: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 24,
+      paddingTop: 12,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    icon: {
+      width: 54,
+      height: 54,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+    },
+    textContainer: {
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      paddingHorizontal: 12,
+    },
+    addressContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginVertical: 8,
+      paddingHorizontal: 12,
+    },
+  });
 
 export default GameLocation;

@@ -4,10 +4,11 @@ import axios from "axios";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useRef, useState } from "react";
+import PostImages, { MediaItem } from "./PostImages";
+
 import {
   Alert,
   Animated,
@@ -21,7 +22,6 @@ import {
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { getAccessToken } from "utils/authStorage";
-import PostImages from "./PostImages";
 export interface Post {
   id: string;
   username: string;
@@ -35,6 +35,7 @@ export interface Post {
   liked_by_current_user: boolean;
   images?: string[];
   videos?: string[];
+  video_thumbnails?: (string | null)[];
 }
 
 interface PostItemProps {
@@ -92,6 +93,29 @@ export const PostItem = memo(function PostItem({
     }
     return `${IMG_BASE_URL}${vid}`;
   });
+
+  const postVideoThumbnails = (item.video_thumbnails ?? []).map((thumb) => {
+    if (!thumb) return null;
+    if (thumb.startsWith("http")) return thumb;
+    if (thumb.startsWith("/uploads/forum-images/")) {
+      return `${IMG_BASE_URL}${thumb.split("/uploads/forum-images/")[1]}`;
+    }
+    return `${IMG_BASE_URL}${thumb}`;
+  });
+
+  const media: MediaItem[] = [
+    ...postImages.map((uri, index) => ({
+      id: `img-${item.id}-${index}`,
+      type: "image" as const,
+      uri,
+    })),
+    ...postVideos.map((uri, index) => ({
+      id: `vid-${item.id}-${index}`,
+      type: "video" as const,
+      uri,
+      thumbnailUri: postVideoThumbnails?.[index] ?? undefined,
+    })),
+  ];
 
   // If no entry yet, initialize it from item props
   useEffect(() => {
@@ -185,11 +209,11 @@ export const PostItem = memo(function PostItem({
     fontSize: 18,
     color: isDelete
       ? isDark
-        ? "#ff4444"
-        : "#cc0000"
+        ? Colors.dark.lightRed
+        : Colors.light.red
       : isDark
-      ? "#fff"
-      : "#1d1d1d",
+      ? Colors.white
+      : Colors.black,
     fontFamily: Fonts.OSREGULAR,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -213,7 +237,9 @@ export const PostItem = memo(function PostItem({
                 />
               ) : (
                 <View style={[styles.profileImage, styles.profilePlaceholder]}>
-                  <Text style={{ color: "#fff", fontFamily: Fonts.OSBOLD }}>
+                  <Text
+                    style={{ color: Colors.white, fontFamily: Fonts.OSBOLD }}
+                  >
                     {item.username[0].toUpperCase()}
                   </Text>
                 </View>
@@ -245,7 +271,7 @@ export const PostItem = memo(function PostItem({
               <Ionicons
                 name="ellipsis-horizontal"
                 size={24}
-                color={isDark ? "#fff" : "#1d1d1d"}
+                color={isDark ? Colors.white : Colors.black}
               />
             </TouchableOpacity>
           )}
@@ -301,7 +327,7 @@ export const PostItem = memo(function PostItem({
             style={[
               styles.postText,
               {
-                borderColor: isDark ? "#444" : "#ccc",
+                borderColor: isDark ? Colors.darkGray : Colors.lightGray,
                 borderWidth: 1,
                 borderRadius: 6,
                 padding: 6,
@@ -316,28 +342,7 @@ export const PostItem = memo(function PostItem({
           <View style={styles.postTextWrapper}>
             <Text style={styles.postText}>{item.text}</Text>
 
-            {(postImages.length > 0 || postVideos.length > 0) && (
-              <>
-                {postImages.length > 0 && (
-                  <PostImages
-                    postImages={postImages}
-                    item={item}
-                    onImagePress={onImagePress}
-                  />
-                )}
-                {postVideos.map((uri, idx) => (
-                  <View key={`video-${idx}`} style={{ marginTop: 10 }}>
-                    <Video
-                      source={{ uri }}
-                      isLooping={true}
-                      useNativeControls
-                      resizeMode={ResizeMode.CONTAIN}
-                      style={{ width: "100%", height: 250, borderRadius: 8 }}
-                    />
-                  </View>
-                ))}
-              </>
-            )}
+            {media.length > 0 && <PostImages media={media} item={item} />}
           </View>
         )}
 
@@ -361,7 +366,7 @@ export const PostItem = memo(function PostItem({
               <TouchableOpacity onPress={() => setIsEditing(false)}>
                 <Text
                   style={{
-                    color: isDark ? "#ff4444" : "#cc0000",
+                    color: isDark ? Colors.dark.lightRed : Colors.light.red,
                     fontSize: 16,
                     fontFamily: Fonts.OSREGULAR,
                   }}
@@ -382,7 +387,7 @@ export const PostItem = memo(function PostItem({
                       <Ionicons
                         name={liked ? "heart" : "heart-outline"}
                         size={28}
-                        color={isDark ? "#fff" : "#1d1d1d"}
+                        color={isDark ? Colors.white : Colors.black}
                       />
                       <Text style={styles.count}>{likeCount}</Text>
                     </TouchableOpacity>
@@ -400,7 +405,7 @@ export const PostItem = memo(function PostItem({
                       <Ionicons
                         name="chatbubble-outline"
                         size={28}
-                        color={isDark ? "#fff" : "#1d1d1d"}
+                        color={isDark ? Colors.white : Colors.black}
                       />
                       <Text style={styles.count}>{item.comments_count}</Text>
                     </TouchableOpacity>
@@ -411,7 +416,7 @@ export const PostItem = memo(function PostItem({
                       <Ionicons
                         name="bookmark-outline"
                         size={28}
-                        color={isDark ? "#fff" : "#1d1d1d"}
+                        color={isDark ? Colors.white : Colors.black}
                       />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.likeButtonContainer}>
@@ -419,7 +424,7 @@ export const PostItem = memo(function PostItem({
                       <Ionicons
                         name="share-social-outline"
                         size={28}
-                        color={isDark ? "#fff" : "#1d1d1d"}
+                        color={isDark ? Colors.white : Colors.black}
                       />
                     </TouchableOpacity>
                   </View>
@@ -448,20 +453,20 @@ export function getStyles(isDark: boolean) {
       paddingHorizontal: 12,
     },
     postContainer: {
-      borderBottomColor: isDark ? "#444" : "#ddd",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderBottomWidth: 1,
       paddingVertical: 10,
     },
     username: {
       fontFamily: Fonts.OSREGULAR,
       marginBottom: 4,
-      color: isDark ? "#fff" : "#000",
+      color: isDark ? Colors.white : Colors.black,
     },
     timeWrapper: { flex: 1, justifyContent: "flex-end" },
     timestamp: {
       fontFamily: Fonts.OSLIGHT,
       fontSize: 12,
-      color: isDark ? "#aaa" : "#666",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "left",
     },
     postTextWrapper: {
@@ -473,7 +478,7 @@ export function getStyles(isDark: boolean) {
       marginBottom: 12,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
-      color: isDark ? "#eee" : "#000",
+      color: isDark ? Colors.white : Colors.black,
     },
     postFooter: {
       flexDirection: "row",
@@ -502,7 +507,7 @@ export function getStyles(isDark: boolean) {
       marginRight: 8,
     },
     profilePlaceholder: {
-      backgroundColor: isDark ? "#555" : "#888",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       justifyContent: "center",
       alignItems: "center",
     },
@@ -513,7 +518,7 @@ export function getStyles(isDark: boolean) {
     },
     count: {
       fontSize: 16,
-      color: isDark ? "#fff" : "#1d1d1d",
+      color: isDark ? Colors.white : Colors.black,
       marginLeft: 4,
       marginRight: 4,
       fontFamily: Fonts.OSREGULAR,
@@ -534,7 +539,7 @@ export function getStyles(isDark: boolean) {
       overflow: "hidden",
       width: 120,
       height: 100,
-      shadowColor: "#000",
+      shadowColor: Colors.black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.25,
       shadowRadius: 4,
@@ -542,19 +547,19 @@ export function getStyles(isDark: boolean) {
       zIndex: 1000,
       justifyContent: "center",
     },
-    dropdownItem: { borderBottomWidth: 1, borderBottomColor: "#888" },
+    dropdownItem: { borderBottomWidth: 1, borderBottomColor: Colors.midTone },
     floatingButton: {
       position: "absolute",
       bottom: 100,
       right: 20,
-      backgroundColor: isDark ? "#eee" : "#1d1d1d",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       width: 56,
       height: 56,
       borderRadius: 28,
       justifyContent: "center",
       alignItems: "center",
       elevation: 6,
-      shadowColor: "#000",
+      shadowColor: Colors.black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 3,
@@ -569,11 +574,11 @@ export function getStyles(isDark: boolean) {
       marginBottom: 10,
     },
     emptyText: {
-      fontFamily: Fonts.OSLIGHT,
-      fontSize: 16,
       textAlign: "center",
       marginTop: 20,
-      color: Colors.midTone,
+      fontSize: 20,
+      fontFamily: Fonts.OSLIGHT,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });
 }

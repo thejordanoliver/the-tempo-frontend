@@ -20,6 +20,8 @@ export interface HistoricalGameOdds {
   commence_time_local?: string;
   home_team: string;
   away_team: string;
+  home_team_id?: string; // Odds API team ID
+  away_team_id?: string;
   bookmakers: Bookmaker[];
 }
 
@@ -28,8 +30,10 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 interface UseHistoricalOddsOptions {
   date?: string; // YYYY-MM-DD
   timestamp?: number;
-  team1?: string;
+  team1?: string;      // string fallback
   team2?: string;
+  team1Id?: string;    // Odds API ID
+  team2Id?: string;
   gameId?: string | number;
   skip?: boolean;
 }
@@ -38,7 +42,7 @@ interface UseHistoricalOddsOptions {
 const cache: Record<string, HistoricalGameOdds[]> = {};
 
 export const useHistoricalOdds = (options: UseHistoricalOddsOptions) => {
-  const { date, timestamp, team1, team2, gameId, skip } = options;
+  const { date, timestamp, team1, team2, team1Id, team2Id, gameId, skip } = options;
 
   const [data, setData] = useState<HistoricalGameOdds[]>([]);
   const [loading, setLoading] = useState(false);
@@ -57,11 +61,16 @@ export const useHistoricalOdds = (options: UseHistoricalOddsOptions) => {
 
     const params: Record<string, string> = { date };
     if (timestamp) params.timestamp = new Date(timestamp).toISOString();
-    if (team1) params.team1 = team1;
-    if (team2) params.team2 = team2;
+
+    // include both string and ID params
+    if (team1Id) params.team1Id = team1Id;
+    if (team2Id) params.team2Id = team2Id;
+    if (!team1Id && team1) params.team1 = team1;
+    if (!team2Id && team2) params.team2 = team2;
 
     const key = JSON.stringify({ ...params, gameId });
 
+    // Return cached data if available
     if (cache[key]) {
       setData(cache[key]);
       setError(null);
@@ -78,27 +87,40 @@ export const useHistoricalOdds = (options: UseHistoricalOddsOptions) => {
       setLoading(true);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/odds/historical`, {
+        const res = await axios.get(`${BASE_URL}/api/nba/odds/historical`, {
           params,
           cancelToken: cancelSource.token,
         });
 
         if (currentId !== requestIdRef.current) return;
 
-        const games: HistoricalGameOdds[] = Array.isArray(res.data?.games)
+        let games: HistoricalGameOdds[] = Array.isArray(res.data?.games)
           ? res.data.games
           : [];
 
+        // --- Filter by Odds API IDs if provided ---
+        if (team1Id && team2Id) {
+          games = games.filter(
+            (g) =>
+              (g.home_team_id === team1Id && g.away_team_id === team2Id) ||
+              (g.home_team_id === team2Id && g.away_team_id === team1Id)
+          );
+        } else if (team1 && team2) {
+          games = games.filter(
+            (g) =>
+              (g.home_team.toLowerCase() === team1.toLowerCase() &&
+                g.away_team.toLowerCase() === team2.toLowerCase()) ||
+              (g.home_team.toLowerCase() === team2.toLowerCase() &&
+                g.away_team.toLowerCase() === team1.toLowerCase())
+          );
+        }
+
         cache[key] = games;
         setData(games);
-
-        // ✅ don’t treat empty array as error
         setError(null);
       } catch (err: any) {
         if (axios.isCancel(err)) return;
-        setError(
-          err.response?.data?.error || err.message || "Failed to fetch odds"
-        );
+        setError(err.response?.data?.error || err.message || "Failed to fetch odds");
       } finally {
         if (currentId === requestIdRef.current) {
           setLoading(false);
@@ -111,7 +133,7 @@ export const useHistoricalOdds = (options: UseHistoricalOddsOptions) => {
     return () => {
       cancelSource.cancel("Component unmounted");
     };
-  }, [date, timestamp, team1, team2, gameId, skip]);
+  }, [date, timestamp, team1, team2, team1Id, team2Id, gameId, skip]);
 
   const refetch = () => {
     lastParamsRef.current = null;

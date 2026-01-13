@@ -1,62 +1,65 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ScrollView, View, useColorScheme } from "react-native";
+import PagerView from "react-native-pager-view";
+
 import CBBGamesList from "components/CBB/Games/CBBGamesList";
+import { CBBConferenceStandingsList } from "components/CBB/Standings/CBBConferenceStandingsList";
 import CBBRosterStats from "components/CBB/Team/RosterStats";
-import TeamPlayerList from "components/CBB/Team/Roster";
-import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import TeamForum from "components/Forum/TeamForum";
+import MonthSelector from "components/MonthSelector";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import TeamInfoModal from "components/Team/TeamInfoModal";
+
 import { players } from "constants/cbbPlayers";
 import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
+
 import { useNotifications } from "contexts/NotificationContext";
-import { useLocalSearchParams } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-} from "react-native";
-import PagerView from "react-native-pager-view";
-import { CBBGame, User } from "types/types";
+
+import Roster from "components/CBB/Team/Roster";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { CBBGame } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
-  nativeEvent: {
-    position: number;
-  };
+  nativeEvent: { position: number };
 };
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
+  const teamIdNum = teamId ? Number(teamId) : null;
+
+  const isDark = useColorScheme() === "dark";
+  const styles = style(isDark);
+
   const [refreshing, setRefreshing] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [cachedGames, setCachedGames] = useState<CBBGame[]>([]);
 
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const styles = style(isDark);
-
-  const tabs = ["schedule", "news", "roster", "stats", "forum"] as const;
+  const tabs = [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "forum",
+  ] as const;
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("schedule");
-  const rosterRef = useRef<{ refresh: () => void }>(null);
 
   const pagerRef = useRef<PagerView>(null);
+  const rosterRef = useRef<{ refresh: () => void }>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -69,13 +72,92 @@ export default function TeamDetailScreen() {
   const CACHE_KEY = `teamGames-${teamIdNum}`;
   const CACHE_EXPIRY_HOURS = 6;
 
-  // ✅ call hook directly
   const {
     games: rawTeamGames = [],
     loading: gamesLoading,
-    error: gamesError,
-    refreshGames: refreshTeamGames,
+    refreshGames,
   } = useCBBTeamGames(teamIdNum ? teamIdNum.toString() : "");
+
+  const teamGames = useMemo(
+    () =>
+      (cachedGames.length ? cachedGames : rawTeamGames).filter(
+        (g) => !!g?.date
+      ),
+    [cachedGames, rawTeamGames]
+  );
+
+  /** ---------------- MONTHS ---------------- */
+
+  const monthsToShow = useMemo(() => {
+    const map = new Map<string, { month: number; year: number }>();
+
+    teamGames.forEach((g) => {
+      const d = new Date(g.date);
+      map.set(`${d.getFullYear()}-${d.getMonth()}`, {
+        year: d.getFullYear(),
+        month: d.getMonth(),
+      });
+    });
+
+    return Array.from(map.values()).sort(
+      (a, b) => a.year * 12 + a.month - (b.year * 12 + b.month)
+    );
+  }, [teamGames]);
+
+  const initialSelectedDate = useMemo(() => {
+    if (monthsToShow.length === 0) return null;
+
+    const today = new Date();
+    const currentMonth = monthsToShow.find(
+      (m) => m.month === today.getMonth() && m.year === today.getFullYear()
+    );
+
+    const start = currentMonth ?? monthsToShow[0];
+    return new Date(start.year, start.month, 1);
+  }, [monthsToShow]);
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    initialSelectedDate
+  );
+
+  useEffect(() => {
+    // Only initialize once, when data arrives
+    if (selectedDate || monthsToShow.length === 0) return;
+
+    const today = new Date();
+
+    const currentMonth = monthsToShow.find(
+      (m) => m.month === today.getMonth() && m.year === today.getFullYear()
+    );
+
+    const start = currentMonth ?? monthsToShow[0];
+
+    setSelectedDate(new Date(start.year, start.month, 1));
+  }, [monthsToShow, selectedDate]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      if (selectedTab === "schedule") {
+        await refreshGames?.();
+      } else if (selectedTab === "roster") {
+        rosterRef.current?.refresh();
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const filteredGames = useMemo(() => {
+    if (!selectedDate) return teamGames;
+    return teamGames.filter((g) => {
+      const d = new Date(g.date);
+      return (
+        d.getMonth() === selectedDate.getMonth() &&
+        d.getFullYear() === selectedDate.getFullYear()
+      );
+    });
+  }, [teamGames, selectedDate]);
 
   const {
     highlights: teamHighlights,
@@ -115,225 +197,74 @@ export default function TeamDetailScreen() {
     return combined;
   }, [newsArticles, teamHighlights]);
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const scrollViewRef = useRef<ScrollView>(null);
-  // --- Memoize valid games ---
-  const teamGames = useMemo(
-    () =>
-      (cachedGames.length ? cachedGames : rawTeamGames).filter(
-        (g: CBBGame) => !!g?.date
-      ),
-    [cachedGames, rawTeamGames]
-  );
+  /** ---------------- CACHE ---------------- */
 
-  const rawMonths = [
-    { label: "Oct", month: 9, year: 2025 },
-    { label: "Nov", month: 10, year: 2025 },
-    { label: "Dec", month: 11, year: 2025 },
-    { label: "Jan", month: 0, year: 2026 },
-    { label: "Feb", month: 1, year: 2026 },
-    { label: "Mar", month: 2, year: 2026 },
-    { label: "Apr", month: 3, year: 2026 },
-  ];
-  const monthsToShow = useMemo(() => {
-    if (!teamGames || teamGames.length === 0) return [];
-    return rawMonths.filter(({ month, year }) =>
-      teamGames.some((game: any) => {
-        const gameDate = new Date(game.date);
-        return gameDate.getFullYear() === year && gameDate.getMonth() === month;
-      })
-    );
-  }, [teamGames]);
-
-  // --- Load cached games on mount ---
   useEffect(() => {
-    const loadCachedGames = async () => {
-      if (!teamIdNum) return;
-      try {
-        const cached = await AsyncStorage.getItem(CACHE_KEY);
-        if (!cached) return;
-
-        const { timestamp, data } = JSON.parse(cached);
-        const diffHours = (Date.now() - timestamp) / (1000 * 60 * 60);
-        if (diffHours < CACHE_EXPIRY_HOURS) {
-          setCachedGames(data);
-        } else {
-          await AsyncStorage.removeItem(CACHE_KEY);
-        }
-      } catch (err) {
-        console.error("Failed to load cached games:", err);
+    if (!teamIdNum) return;
+    AsyncStorage.getItem(CACHE_KEY).then((cached) => {
+      if (!cached) return;
+      const { timestamp, data } = JSON.parse(cached);
+      if ((Date.now() - timestamp) / 36e5 < CACHE_EXPIRY_HOURS) {
+        setCachedGames(data);
       }
-    };
-    loadCachedGames();
+    });
   }, [teamIdNum]);
 
-  // --- Save fresh games to cache ---
   useEffect(() => {
-    if (!teamIdNum || !rawTeamGames?.length) return;
-    const saveToCache = async () => {
-      try {
-        await AsyncStorage.setItem(
-          CACHE_KEY,
-          JSON.stringify({ timestamp: Date.now(), data: rawTeamGames })
-        );
-      } catch (err) {
-        console.error("Failed to save games to cache:", err);
-      }
-    };
-    saveToCache();
+    if (!teamIdNum || !rawTeamGames.length) return;
+    AsyncStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ timestamp: Date.now(), data: rawTeamGames })
+    );
   }, [rawTeamGames, teamIdNum]);
 
-  useEffect(() => {
-    if (
-      !gamesLoading &&
-      teamGames.length > 0 &&
-      !selectedDate &&
-      monthsToShow.length > 0
-    ) {
-      const today = new Date();
+  /** ---------------- HEADER ---------------- */
 
-      // Try to find a month that matches the current month/year
-      const currentMonthWithGames = monthsToShow.find(
-        ({ month, year }) =>
-          month === today.getMonth() && year === today.getFullYear()
-      );
-
-      const startingMonth = currentMonthWithGames ?? monthsToShow[0];
-
-      setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
-
-      // Scroll to that month
-      setTimeout(() => {
-        if (scrollViewRef.current) {
-          const index = monthsToShow.findIndex(
-            (m) =>
-              m.month === startingMonth.month && m.year === startingMonth.year
-          );
-          const itemWidth = 70;
-          const spacing = 12;
-          const screenWidth = Dimensions.get("window").width;
-          const scrollToX =
-            index * itemWidth +
-            index * spacing -
-            screenWidth / 2 +
-            itemWidth / 2;
-
-          scrollViewRef.current.scrollTo({
-            x: Math.max(0, scrollToX),
-            animated: true,
-          });
-        }
-      }, 150);
-    }
-  }, [gamesLoading, teamGames, selectedDate, monthsToShow]);
-
-  const handleSelectMonth = (month: number, year: number, index: number) => {
-    setSelectedDate(new Date(year, month, 1));
-
-    if (scrollViewRef.current) {
-      const screenWidth = Dimensions.get("window").width;
-      const itemWidth = 70; // your month button width
-      const spacing = 12; // your padding/margin
-      const scrollToX =
-        index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
-
-      scrollViewRef.current.scrollTo({
-        x: Math.max(0, scrollToX),
-        animated: true,
-      });
-    }
-  };
-
-  const filteredGames = useMemo(() => {
-    if (!selectedDate) return teamGames;
-    return teamGames.filter((game) => {
-      const gameDate = new Date(game.date);
-      return (
-        gameDate.getMonth() === selectedDate.getMonth() &&
-        gameDate.getFullYear() === selectedDate.getFullYear()
-      );
-    });
-  }, [teamGames, selectedDate]);
-
-  // --- Refresh handler ---
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      if (selectedTab === "schedule") {
-        await refreshTeamGames?.();
-      } else if (selectedTab === "roster") {
-        rosterRef.current?.refresh();
-      }
-    } catch (err) {
-      console.error("Refresh failed:", err);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  // --- Load logged-in user ---
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const jsonUser = await AsyncStorage.getItem("loggedInUser");
-        if (jsonUser) setLoggedInUser(JSON.parse(jsonUser));
-      } catch (e) {
-        console.error("Failed to load user:", e);
-      }
-    };
-    loadUser();
-  }, []);
+  const { toggleNotifications, isNotified } = useNotifications();
 
   // ✅ Use the favorite teams hook
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const { toggleNotifications, isNotified } = useNotifications();
   const league = "CBB";
   const favorited = team ? isFavorite(league, team.id) : false;
+  const teamKey = String(team?.id);
+  const notfied = team ? isNotified(league, teamKey) : false;
 
-  // --- Header ---
   useLayoutEffect(() => {
-    if (!team) return;
-
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team.logo ? { uri: team.logo } : undefined}
-          logoLight={team.logoLight ? { uri: team.logoLight } : undefined}
-          teamColor={team.color}
+          logo={team?.logo}
+          logoLight={team?.logoLight}
+          teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team.code}
-          isFavorite={isFavorite(league, team.id)} // recompute here
-          isNotified={isNotified(league, team.id)} // recompute here
-          onToggleFavorite={() => toggleFavorite(league, team.id)}
-          onToggleNotifications={() => toggleNotifications(league, team.id)}
+          teamCode={team?.code}
+          isFavorite={favorited}
+          isNotified={notfied} // ✅ MATCH
+          onToggleNotifications={() => toggleNotifications(league, teamKey)}
+          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [
-    navigation,
-    isDark,
-    team,
-    isFavorite,
-    isNotified,
-    toggleFavorite,
-    toggleNotifications,
-  ]);
+  }, [navigation, isDark, team, favorited]);
 
   if (!teamIdNum || !team) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <CustomActivityIndicator size={60} />
+        </View>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <TabBar
+      <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
         onTabPress={(tab) => {
@@ -354,48 +285,14 @@ export default function TeamDetailScreen() {
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <View style={styles.monthSelector}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={82} // slightly wider for spacing
-              decelerationRate="fast"
-              scrollEventThrottle={16}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 12,
-                paddingHorizontal: 20,
-              }}
-            >
-              {monthsToShow.map(({ label, month, year }, index) => {
-                const isSelected =
-                  selectedDate?.getMonth() === month &&
-                  selectedDate.getFullYear() === year;
-
-                return (
-                  <TouchableOpacity
-                    key={`${label}-${year}`}
-                    onPress={() => handleSelectMonth(month, year, index)}
-                    style={[
-                      styles.monthButton,
-                      { width: 70 },
-                      isSelected && styles.monthButtonSelected,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.monthText,
-                        isSelected && styles.monthTextSelected,
-                      ]}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+            <MonthSelector
+              months={monthsToShow}
+              selectedDate={selectedDate}
+              onSelect={(month, year) =>
+                setSelectedDate(new Date(year, month, 1))
+              }
+              styles={styles}
+            />
           </View>
           <CBBGamesList
             games={filteredGames}
@@ -418,7 +315,7 @@ export default function TeamDetailScreen() {
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
-          <TeamPlayerList
+          <Roster
             players={players.filter((p) => p.teamId === String(team.espnID))}
             loading={false}
             error={null}
@@ -436,9 +333,18 @@ export default function TeamDetailScreen() {
             <CBBRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
+              league="CBB"
             />
           )}
         </ScrollView>
+
+        {/* Forum Page */}
+        <View key="standings" style={{ flex: 1 }}>
+          <CBBConferenceStandingsList
+            onlyTeamConference={true}
+            teamName={team.fullName}
+          />
+        </View>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
           <TeamForum teamId={teamId as string} league="CBB" />

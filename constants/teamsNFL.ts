@@ -1,5 +1,4 @@
 import { NFLTeam, Venue } from "types/nfl";
-
 //Logos
 import NinersLogo from "assets/Football/NFL_Logos/49ers.png";
 import BearsLogo from "assets/Football/NFL_Logos/Bears.png";
@@ -37,76 +36,11 @@ import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-//Stadiums
-import BearsStadium from "assets/Football/Arenas/BearsStadium.webp";
-import BengalsStadium from "assets/Football/Arenas/BengalsStadium.webp";
-import BillsStadium from "assets/Football/Arenas/BillsStadium.webp";
-import BroncosStadium from "assets/Football/Arenas/BroncosStadium.webp";
-import BrownsStadium from "assets/Football/Arenas/BrownsStadium.webp";
-import BuccaneersStadium from "assets/Football/Arenas/BuccaneersStadium.webp";
-import CardinalsStadium from "assets/Football/Arenas/CardinalsStadium.webp";
-import ChiefsStadium from "assets/Football/Arenas/ChiefsStadium.webp";
-import ColtsStadium from "assets/Football/Arenas/ColtsStadium.webp";
-import CommanderStadium from "assets/Football/Arenas/CommandersStadium.webp";
-import CowboysStadium from "assets/Football/Arenas/CowboysStadium.webp";
-import DolphinsStadium from "assets/Football/Arenas/DolphinsStadium.webp";
-import EaglesStadium from "assets/Football/Arenas/EaglesStadium.webp";
-import FalconsStadium from "assets/Football/Arenas/FalconsStadium.webp";
-import JaguarsStadium from "assets/Football/Arenas/JaguarsStadium.webp";
-import LionsStadium from "assets/Football/Arenas/LionsStadium.webp";
-import MetLifeStadium from "assets/Football/Arenas/MetLifeStadium.webp";
-import NinersStadium from "assets/Football/Arenas/NinersStadium.webp";
-import PackersStadium from "assets/Football/Arenas/PackersStadium.webp";
-import PanthersStadium from "assets/Football/Arenas/PanthersStadium.png";
-import PatriotsStadium from "assets/Football/Arenas/PatriotsStadium.webp";
-import RaidersStadium from "assets/Football/Arenas/RaidersStadium.webp";
-import RavensStadium from "assets/Football/Arenas/RavensStadium.webp";
-import SaintsStadium from "assets/Football/Arenas/SaintsStadium.webp";
-import SeahawksStadium from "assets/Football/Arenas/SeahawksStadium.webp";
-import SoFiStadium from "assets/Football/Arenas/SoFiStadium.webp";
-import SteelersStadium from "assets/Football/Arenas/SteelersStadium.webp";
-import TexansStadium from "assets/Football/Arenas/TexansStadium.webp";
-import TitansStadium from "assets/Football/Arenas/TitansStadium.webp";
-import VikingsStadium from "assets/Football/Arenas/VikingsStadium.webp";
-
-//Coaches
-import BearsCoach from "assets/Football/Coaches/BearsCoach.png";
-import BengalsCoach from "assets/Football/Coaches/BengalsCoach.png";
-import BillsCoach from "assets/Football/Coaches/BillsCoach.png";
-import BroncosCoach from "assets/Football/Coaches/BroncosCoach.png";
-import BrownsCoach from "assets/Football/Coaches/BrownsCoach.png";
-import BuccaneersCoach from "assets/Football/Coaches/BuccaneersCoach.png";
-import CardinalsCoach from "assets/Football/Coaches/CardinalsCoach.png";
-import ChargersCoach from "assets/Football/Coaches/ChargersCoach.png";
-import ChiefsCoach from "assets/Football/Coaches/ChiefsCoach.png";
-import ColtsCoach from "assets/Football/Coaches/ColtsCoach.png";
-import CommandersCoach from "assets/Football/Coaches/CommandersCoach.png";
-import CowboysCoach from "assets/Football/Coaches/CowboysCoach.png";
-import DolphinsCoach from "assets/Football/Coaches/DolphinsCoach.png";
-import EaglesCoach from "assets/Football/Coaches/EaglesCoach.png";
-import FalconsCoach from "assets/Football/Coaches/FalconsCoach.png";
-import GiantsCoach from "assets/Football/Coaches/GiantsCoach.png";
-import JaguarsCoach from "assets/Football/Coaches/JaguarsCoach.png";
-import JetsCoach from "assets/Football/Coaches/JetsCoach.png";
-import LionsCoach from "assets/Football/Coaches/LionsCoach.png";
-import NinersCoach from "assets/Football/Coaches/NinersCoach.png"; // 49ers
-import PackersCoach from "assets/Football/Coaches/PackersCoach.png";
-import PanthersCoach from "assets/Football/Coaches/PanthersCoach.png";
-import PatriotsCoach from "assets/Football/Coaches/PatriotsCoach.png";
-import RaidersCoach from "assets/Football/Coaches/RaidersCoach.png";
-import RamsCoach from "assets/Football/Coaches/RamsCoach.png";
-import RavensCoach from "assets/Football/Coaches/RavensCoach.png";
-import SaintsCoach from "assets/Football/Coaches/SaintsCoach.png";
-import SeahawksCoach from "assets/Football/Coaches/SeahawksCoach.png";
-import SteelersCoach from "assets/Football/Coaches/SteelersCoach.png";
-import TexansCoach from "assets/Football/Coaches/TexansCoach.png";
-import TitansCoach from "assets/Football/Coaches/TitansCoach.png";
-import VikingsCoach from "assets/Football/Coaches/VikingsCoach.png";
 
 export const teams: NFLTeam[] = [
   {
     id: 1,
-    espnID: "13",
+    espnID: 13,
     oddsID: "par_01hqmkr1y9fkaaeekn9w035jft",
     fullName: "Las Vegas Raiders",
     code: "LV",
@@ -114,30 +48,23 @@ export const teams: NFLTeam[] = [
     location: "Las Vegas, NV",
     address: "6475 S. Raiders Way, Las Vegas, NV 89118",
     coach: "Pete Carroll",
-    coachImage: RaidersCoach,
     owner: "Carol and Mark Davis",
     venue: "Allegiant Stadium",
     established: 1960,
     logo: RaidersLogo,
     logoLight: RaidersLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Raiders",
     color: "#000000",
     secondaryColor: "#a5acaf",
     latitude: 36.090794,
     longitude: -115.183952,
-    venueImage: RaidersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/raiders.jpg",
     venueCapacity: "65,000",
-    championships: [1976, 1980, 1983],
-    conferenceChampionships: { Titles: [1976, 1980, 1983, 2002] },
   },
   {
     id: 2,
-    espnID: "30",
+    espnID: 30,
     oddsID: "par_01hqmkr1y7e2r9kcn2qe0dt1d5",
     fullName: "Jacksonville Jaguars",
     code: "JAX",
@@ -145,31 +72,24 @@ export const teams: NFLTeam[] = [
     location: "Jacksonville, FL",
     address: "1 EverBank Stadium Dr, Jacksonville, FL 32202",
     coach: "Liam Coen",
-    coachImage: JaguarsCoach,
     owner: "Shahid Khan",
     venue: "EverBank Stadium",
     established: 1995,
     logo: JaguarsLogo,
     logoLight: JaguarsLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Jaguars",
     color: "#101820",
     secondaryColor: "#d7a22a",
     latitude: 30.323471,
     longitude: -81.636528,
-    venueImage: JaguarsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/jaguars.jpg",
     venueCapacity: "67,838",
-    championships: [],
-    conferenceChampionships: { Titles: [] },
   },
   {
     id: 3,
-    espnID: "17",
+    espnID: 17,
     oddsID: "par_01hqmkr1yeffz9y9spwv8bx3na",
     fullName: "New England Patriots",
     code: "NE",
@@ -182,25 +102,18 @@ export const teams: NFLTeam[] = [
     established: 1960,
     logo: PatriotsLogo,
     logoLight: PatriotsLogo,
-    coachImage: PatriotsCoach,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Patriots",
     color: "#002a5c",
     secondaryColor: "#c60c30",
     latitude: 42.0908,
     longitude: -71.2643,
-    venueImage: PatriotsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/patriots.jpg",
     venueCapacity: "66,829",
-    championships: [2001, 2003, 2004, 2014, 2016, 2018],
-    conferenceChampionships: { Titles: [1985, 1996, 2001, 2003, 2004, 2007, 2011, 2014, 2016, 2017, 2018] },
   },
   {
     id: 4,
-    espnID: "19",
+    espnID: 19,
     oddsID: "par_01hqmkr1ygfzrv5sqe2v97c43e",
     fullName: "New York Giants",
     code: "NYG",
@@ -208,30 +121,23 @@ export const teams: NFLTeam[] = [
     location: "New York, NY",
     address: "1 MetLife Stadium Dr., East Rutherford, NJ 07073",
     coach: "Brian Daboll",
-    coachImage: GiantsCoach,
     owner: "John Mara, Steve Tisch",
     venue: "MetLife Stadium",
     established: 1925,
     logo: GiantsLogo,
     logoLight: GiantsLogoLight,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Giants",
     color: "#003c7f",
     secondaryColor: "#c9243f",
     latitude: 40.813778,
     longitude: -74.07431,
-    venueImage: MetLifeStadium,
+    venueImage:
+    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/metlife-nyg.jpg",
     venueCapacity: "82,500",
-    championships: [1927, 1934, 1938, 1956, 1986, 1990, 2007, 2011],
-    conferenceChampionships: { Titles: [1986, 1990, 2000, 2007, 2011] },
   },
   {
     id: 5,
-    espnID: "33",
+    espnID: 33,
     oddsID: "par_01hqmkr1xvev9rf557fy09k2cx",
     fullName: "Baltimore Ravens",
     code: "BAL",
@@ -239,30 +145,23 @@ export const teams: NFLTeam[] = [
     location: "Baltimore, MD",
     address: "1101 Russell Street, Baltimore, MD 21230",
     coach: "John Harbaugh",
-    coachImage: RavensCoach,
     owner: "Steve Bisciotti",
     venue: "M&T Bank Stadium",
     established: 1996,
     logo: RavensLogo,
     logoLight: RavensLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Ravens",
     color: "#29126f",
     secondaryColor: "#000000",
     latitude: 39.278088,
     longitude: -76.623322,
-    venueImage: RavensStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/ravens.jpg",
     venueCapacity: "71,008",
-    championships: [2000, 2012],
-    conferenceChampionships: { Titles: [2000, 2012] },
   },
   {
     id: 6,
-    espnID: "10",
+    espnID: 10,
     fullName: "Tennessee Titans",
     oddsID: "par_01hqmkr1yqexebpc06vyfwxqqm",
     code: "TEN",
@@ -270,30 +169,23 @@ export const teams: NFLTeam[] = [
     location: "Nashville, TN",
     address: "1 Titans Way, Nashville, TN 37213",
     coach: "Brian Callahan",
-    coachImage: TitansCoach,
     owner: "Amy Adams Strunk",
     venue: "Nissan Stadium",
     established: 1960,
     logo: TitansLogo,
     logoLight: TitansLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Titans",
     color: "#4b92db",
     secondaryColor: "#002a5c",
     latitude: 36.1665,
     longitude: -86.7713,
-    venueImage: TitansStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/titans.jpg",
     venueCapacity: "69,143",
-    championships: [1960, 1961],
-    conferenceChampionships: { Titles: [1999] },
   },
   {
     id: 7,
-    espnID: "8",
+    espnID: 8,
     oddsID: "par_01hqmkr1y3fex9sq94dgg1107y",
     fullName: "Detroit Lions",
     code: "DET",
@@ -301,61 +193,24 @@ export const teams: NFLTeam[] = [
     location: "Detroit, MI",
     address: "2000 Brush Street, Detroit, MI 48226",
     coach: "Dan Campbell",
-    coachImage: LionsCoach,
     owner: "Sheila Ford Hamp",
     venue: "Ford Field",
     established: 1930,
     logo: LionsLogo,
     logoLight: LionsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Lions",
     color: "#0076b6",
     secondaryColor: "#bbbbbb",
     latitude: 42.34,
     longitude: -83.0456,
-    venueImage: LionsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/lions.jpg",
     venueCapacity: "65,000",
-    championships: [1935, 1952, 1953, 1957],
-    conferenceChampionships: { Titles: [] },
   },
-  {
-    id: 7,
-    espnID: "8",
-    oddsID: "par_01hqmkr1y3fex9sq94dgg1107y",
-    fullName: "Detroit Lions",
-    code: "DET",
-    city: "Detroit",
-    location: "Detroit, MI",
-    address: "2000 Brush Street, Detroit, MI 48226",
-    coach: "Dan Campbell",
-    coachImage: LionsCoach,
-    owner: "Sheila Ford Hamp",
-    venue: "Ford Field",
-    established: 1930,
-    logo: LionsLogo,
-    logoLight: LionsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
-    name: "Lions",
-    color: "#0076b6",
-    secondaryColor: "#bbbbbb",
-    latitude: 42.34,
-    longitude: -83.0456,
-    venueImage: LionsStadium,
-    venueCapacity: "65,000",
-    championships: [1935, 1952, 1953, 1957],
-    conferenceChampionships: { Titles: [] },
-  },
+
   {
     id: 8,
-    espnID: "1",
+    espnID: 1,
     fullName: "Atlanta Falcons",
     oddsID: "par_01hqmkr1xtexkbhkq7ct921rne",
     code: "ATL",
@@ -363,30 +218,23 @@ export const teams: NFLTeam[] = [
     location: "Atlanta, GA",
     address: "181 Donald Lee Hollowell Pkwy NW, Atlanta, GA 30318",
     coach: "Raheem Morris",
-    coachImage: FalconsCoach,
     owner: "Arthur Blank",
     venue: "Mercedes-Benz Stadium",
     established: 1966,
     logo: FalconsLogo,
     logoLight: FalconsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Falcons",
     color: "#a71930",
     secondaryColor: "#000000",
     latitude: 33.7554,
     longitude: -84.4009,
-    venueImage: FalconsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/falcons.jpg",
     venueCapacity: "71,000",
-    championships: [],
-    conferenceChampionships: { Titles: [1998, 2016] },
   },
   {
     id: 9,
-    espnID: "5",
+    espnID: 5,
     oddsID: "par_01hqmkr1y0ez5bem3gdncd8a0d",
     fullName: "Cleveland Browns",
     code: "CLE",
@@ -394,30 +242,23 @@ export const teams: NFLTeam[] = [
     location: "Cleveland, OH",
     address: "76 Lou Groza Blvd., Berea, OH 44017",
     coach: "Kevin Stefanski",
-    coachImage: BrownsCoach,
     owner: "Dee and Jimmy Haslam",
     venue: "Huntington Bank Field",
     established: 1946,
     logo: BrownsLogo,
     logoLight: BrownsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Browns",
     color: "#472a08",
     secondaryColor: "#ff3c00",
     latitude: 41.5061,
     longitude: -81.6995,
-    venueImage: BrownsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/browns.jpg",
     venueCapacity: "67,431",
-    championships: [1950, 1954, 1955, 1964],
-    conferenceChampionships: { Titles: [] },
   },
   {
     id: 10,
-    espnID: "4",
+    espnID: 4,
     oddsID: "par_01hqmkr1xze7xbceshy9tka512",
     fullName: "Cincinnati Bengals",
     code: "CIN",
@@ -425,30 +266,23 @@ export const teams: NFLTeam[] = [
     location: "Cincinnati, OH",
     address: "1 Paycor Stadium, Cincinnati, OH 45202",
     coach: "Zac Taylor",
-    coachImage: BengalsCoach,
     owner: "Mike Brown",
     venue: "Paycor Stadium",
     established: 1968,
     logo: BengalsLogo,
     logoLight: BengalsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Bengals",
     color: "#fb4f14",
     secondaryColor: "000000",
     latitude: 39.095,
     longitude: -84.516,
-    venueImage: BengalsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bengals.jpg",
     venueCapacity: "65,515",
-    championships: [],
-    conferenceChampionships: { Titles: [1981, 1988, 2021] },
   },
   {
     id: 11,
-    espnID: "22",
+    espnID: 22,
     oddsID: "par_01hqmkr1xsfxmrj5pdq0f23asx",
     fullName: "Arizona Cardinals",
     code: "ARI",
@@ -456,30 +290,23 @@ export const teams: NFLTeam[] = [
     location: "Glendale, AZ",
     address: "1 Cardinals Dr, Glendale, AZ 85305",
     coach: "Jonathan Gannon",
-    coachImage: CardinalsCoach,
     owner: "Michael Bidwill",
     venue: "State Farm Stadium",
     established: 1920,
     logo: CardinalsLogo,
     logoLight: CardinalsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Cardinals",
     color: "#a40227",
     secondaryColor: "#ffffff",
     latitude: 33.5276,
     longitude: -112.2626,
-    venueImage: CardinalsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/cardinals.jpg",
     venueCapacity: "63,400",
-    championships: [1925, 1947],
-    conferenceChampionships: { Titles: [2008] },
   },
   {
     id: 12,
-    espnID: "21",
+    espnID: 21,
     oddsID: "par_01hqmkr1yjedgakx37g743855e",
     fullName: "Philadelphia Eagles",
     code: "PHI",
@@ -487,31 +314,24 @@ export const teams: NFLTeam[] = [
     location: "Philadelphia, PA",
     address: "1 Lincoln Financial Field Way, Philadelphia, PA 19148",
     coach: "Nick Sirianni",
-    coachImage: EaglesCoach,
     owner: "Jeffrey Lurie",
     venue: "Lincoln Financial Field",
     established: 1933,
     logo: EaglesLogo,
     logoLight: EaglesLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Eagles",
     color: "#06424d",
     secondaryColor: "#000000",
     latitude: 39.9015,
     longitude: -75.1665,
-    venueImage: EaglesStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/eagles.jpg",
     venueCapacity: "69,596",
-    championships: [1948, 1949, 1960, 2017],
-    conferenceChampionships: { Titles: [1980, 2004, 2017, 2022] },
   },
   {
     id: 13,
-    espnID: "20",
+    espnID: 20,
     oddsID: "par_01hqmkr1yhe4sb3y0wfzga67tf",
     fullName: "New York Jets",
     code: "NYJ",
@@ -519,30 +339,23 @@ export const teams: NFLTeam[] = [
     location: "New York, NY",
     address: "1 MetLife Stadium Dr., East Rutherford, NJ 07073",
     coach: "Aaron Glenn",
-    coachImage: JetsCoach,
     owner: "Robert Wood Johnson IV",
     venue: "MetLife Stadium",
     established: 1960,
     logo: JetsLogo,
     logoLight: JetsLogoLight,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Jets",
     color: "#115740",
     secondaryColor: "#ffffff",
     latitude: 40.813778,
     longitude: -74.07431,
-    venueImage: MetLifeStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/metlife-nyj.jpg",
     venueCapacity: "82,500",
-    championships: [1968],
-    conferenceChampionships: { Titles: [1968] },
   },
   {
     id: 14,
-    espnID: "25",
+    espnID: 25,
     oddsID: "par_01hqmkr1ymfv0a8kfg96ha10ag",
     fullName: "San Francisco 49ers",
     code: "SF",
@@ -550,30 +363,23 @@ export const teams: NFLTeam[] = [
     location: "San Francisco, CA",
     address: "4900 Marie P DeBartolo Way, Santa Clara, CA 95054",
     coach: "Kyle Shanahan",
-    coachImage: NinersCoach,
     owner: "Jed York",
     venue: "Levi's Stadium",
     established: 1946,
     logo: NinersLogo,
     logoLight: NinersLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "49ers",
     color: "#aa0000",
     secondaryColor: "#b3995d",
     latitude: 37.4033,
     longitude: -121.9694,
-    venueImage: NinersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/niners.jpg",
     venueCapacity: "68,500",
-    championships: [1981, 1984, 1988, 1989, 1994],
-    conferenceChampionships: { Titles: [1981, 1984, 1988, 1989, 1994, 2012, 2019, 2023] },
   },
   {
     id: 15,
-    espnID: "9",
+    espnID: 9,
     oddsID: "par_01hqmkr1y4ez38hyananses4hq",
 
     fullName: "Green Bay Packers",
@@ -582,31 +388,24 @@ export const teams: NFLTeam[] = [
     location: "Green Bay, WI",
     address: "1265 Lombardi Ave, Green Bay, WI 54304",
     coach: "Matt LaFleur",
-    coachImage: PackersCoach,
     owner: "Green Bay Packers, Inc.",
     venue: "Lambeau Field",
     established: 1921,
     logo: PackersLogo,
     logoLight: PackersLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Packers",
     color: "#203731",
     secondaryColor: "#ffb612",
     latitude: 44.5078291,
     longitude: -88.0955556,
-    venueImage: PackersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/packers.jpg",
     venueCapacity: "81,441",
-    championships: [1929, 1930, 1931, 1936, 1939, 1944, 1961, 1962, 1965, 1966, 1967, 1996, 2010],
-    conferenceChampionships: { Titles: [1966, 1967, 1996, 1997, 2010] },
   },
   {
     id: 16,
-    espnID: "3",
+    espnID: 3,
     oddsID: "par_01hqmkr1xye20ahvp8fr2bvt74",
     fullName: "Chicago Bears",
     code: "CHI",
@@ -614,31 +413,23 @@ export const teams: NFLTeam[] = [
     location: "Chicago, IL",
     address: "1410 Special Olympics Dr, Chicago, IL 60605",
     coach: "Ben Johnson",
-    coachImage: BearsCoach,
     owner: "Virginia Halas McCaskey",
     venue: "Soldier Field",
     established: 1920,
     logo: BearsLogo,
     logoLight: BearsLogo,
-
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Bears",
     color: "#0B162A",
     secondaryColor: "#e64100",
     latitude: 41.8624,
     longitude: -87.6166,
-    venueImage: BearsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bears.webp",
     venueCapacity: "61,500",
-    championships: [1921, 1932, 1933, 1940, 1941, 1943, 1946, 1963, 1985],
-    conferenceChampionships: { Titles: [1985, 2006] },
   },
   {
     id: 17,
-    espnID: "12",
+    espnID: 12,
     fullName: "Kansas City Chiefs",
     oddsID: "par_01hqmkr1y8e9gt2q2rhmv196pv",
     code: "KC",
@@ -646,31 +437,24 @@ export const teams: NFLTeam[] = [
     location: "Kansas City, MO",
     address: "1 Arrowhead Dr, Kansas City, MO 64129",
     coach: "Andy Reid",
-    coachImage: ChiefsCoach,
     owner: "Clark Hunt",
     venue: "GEHA Field at Arrowhead Stadium",
     established: 1960,
     logo: ChiefsLogo,
     logoLight: ChiefsLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Chiefs",
     color: "#E31837",
     secondaryColor: "#ffb612",
     latitude: 39.0997,
     longitude: -94.5786,
-    venueImage: ChiefsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/chiefs.jpg",
     venueCapacity: "76,416",
-    championships: [1969, 2019, 2022, 2023],
-    conferenceChampionships: { Titles: [1966, 1969, 2019, 2020, 2022, 2023] },
   },
   {
     id: 18,
-    espnID: "28",
+    espnID: 28,
     oddsID: "par_01hqmkr1yrfsvbjjasn01a7xz4",
     fullName: "Washington Commanders",
     code: "WSH",
@@ -678,30 +462,23 @@ export const teams: NFLTeam[] = [
     location: "Washington, DC",
     address: "1600 Fedex Way, Landover, MD 20785",
     coach: "Dan Quinn",
-    coachImage: CommandersCoach,
     owner: "Josh Harris",
     venue: "Northwest Stadium",
     established: 1932,
     logo: CommandersLogo,
     logoLight: CommandersLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Commanders",
     color: "#5a1414",
     secondaryColor: "#ffb612",
     latitude: 38.9081,
     longitude: -76.864,
-    venueImage: CommanderStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/commanders.jpg",
     venueCapacity: "64,000",
-    championships: [1937, 1942, 1982, 1987, 1991],
-    conferenceChampionships: { Titles: [1972, 1982, 1983, 1987, 1991] },
   },
   {
     id: 19,
-    espnID: "29",
+    espnID: 29,
     oddsID: "par_01hqmkr1xxf2ebbqzb95qzxxxm",
     fullName: "Carolina Panthers",
     code: "CAR",
@@ -709,31 +486,24 @@ export const teams: NFLTeam[] = [
     location: "Charlotte, NC",
     address: "800 S Mint St, Charlotte, NC 28202",
     coach: "David Canales",
-    coachImage: PanthersCoach,
     owner: "David Tepper",
     venue: "Bank of America Stadium",
     established: 1995,
     logo: PanthersLogo,
     logoLight: PanthersLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Panthers",
     color: "#0085ca",
     secondaryColor: "#000000",
     latitude: 35.2251,
     longitude: -80.8528,
-    venueImage: PanthersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766954261/stadiums/football/panthers.jpg",
     venueCapacity: "75,523",
-    championships: [],
-    conferenceChampionships: { Titles: [2003, 2015] },
   },
   {
     id: 20,
-    espnID: "2",
+    espnID: 2,
     oddsID: "par_01hqmkr1xwe6prjwr3j4gpqwx8",
     fullName: "Buffalo Bills",
     code: "BUF",
@@ -741,31 +511,24 @@ export const teams: NFLTeam[] = [
     location: "Buffalo, NY",
     address: "1 Bills Dr, Orchard Park, NY 14127",
     coach: "Sean McDermott",
-    coachImage: BillsCoach,
     owner: "Kim and Terry Pegula",
     venue: "Highmark Stadium",
     established: 1960,
     logo: BillsLogo,
     logoLight: BillsLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Bills",
     color: "#00338d",
     secondaryColor: "#d50a0a",
     latitude: 42.7738,
     longitude: -78.787,
-    venueImage: BillsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bills.jpg",
     venueCapacity: "71,608",
-    championships: [1964, 1965],
-    conferenceChampionships: { Titles: [1990, 1991, 1992, 1993] },
   },
   {
     id: 21,
-    espnID: "11",
+    espnID: 11,
     oddsID: "par_01hqmkr1y6f10rxbf8y2y2xthh",
     fullName: "Indianapolis Colts",
     code: "IND",
@@ -773,31 +536,24 @@ export const teams: NFLTeam[] = [
     location: "Indianapolis, IN",
     address: "500 S Capitol Ave, Indianapolis, IN 46225",
     coach: "Shane Steichen",
-    coachImage: ColtsCoach,
     owner: "Jim Irsay",
     venue: "Lucas Oil Stadium",
     established: 1944,
     logo: ColtsLogo,
     logoLight: ColtsLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Colts",
     color: "#002C5F",
     secondaryColor: "#ffffff",
     latitude: 39.7691,
     longitude: -86.158,
-    venueImage: ColtsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
     venueCapacity: "71,608",
-    championships: [1958, 1959, 1970, 2006],
-    conferenceChampionships: { Titles: [1968, 1970, 2006, 2009] },
   },
   {
     id: 22,
-    espnID: "23",
+    espnID: 23,
     oddsID: "par_01hqmkr1yker5bwcznt0b1jpj1",
     fullName: "Pittsburgh Steelers",
     code: "PIT",
@@ -805,31 +561,24 @@ export const teams: NFLTeam[] = [
     location: "Pittsburgh, PA",
     address: "100 Art Rooney Ave, Pittsburgh, PA 15212",
     coach: "Mike Tomlin",
-    coachImage: SteelersCoach,
     owner: "Art Rooney II and Family",
     venue: "Acrisure Stadium",
     established: 1933,
     logo: SteelersLogo,
     logoLight: SteelersLogo,
 
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Steelers",
     color: "#000000",
     secondaryColor: "#ffb612",
     latitude: 40.4468,
     longitude: -80.0157,
-    venueImage: SteelersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/steelers.jpg",
     venueCapacity: "68,400",
-    championships: [1974, 1975, 1978, 1979, 2005, 2008],
-    conferenceChampionships: { Titles: [1974, 1975, 1978, 1979, 1995, 2005, 2008, 2010] },
   },
   {
     id: 23,
-    espnID: "26",
+    espnID: 26,
     oddsID: "par_01hqmkr1ynfwaa91y9zvagkavd",
     fullName: "Seattle Seahawks",
     code: "SEA",
@@ -837,30 +586,23 @@ export const teams: NFLTeam[] = [
     location: "Seattle, WA",
     address: "800 Occidental Ave S, Seattle, WA 98134",
     coach: "Mike Macdonald",
-    coachImage: SeahawksCoach,
     owner: "Seattle Seahawks Ownership Trust",
     venue: "Lumen Field",
     established: 1976,
     logo: SeahawksLogo,
     logoLight: SeahawksLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Seahawks",
     color: "#002244",
     secondaryColor: "#69be28",
     latitude: 47.5952,
     longitude: -122.3316,
-    venueImage: SeahawksStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/seahawks.jpg",
     venueCapacity: "69,000",
-    championships: [2013],
-    conferenceChampionships: { Titles: [2005, 2013, 2014] },
   },
   {
     id: 24,
-    espnID: "27",
+    espnID: 27,
     fullName: "Tampa Bay Buccaneers",
     oddsID: "par_01hqmkr1ypeszan8sq8dh7rqbg",
     code: "TB",
@@ -868,30 +610,23 @@ export const teams: NFLTeam[] = [
     location: "Tampa, FL",
     address: "4201 N Dale Mabry Hwy, Tampa, FL 33607",
     coach: "Todd Bowles",
-    coachImage: BuccaneersCoach,
     owner: "Bryan Glazer, Edward Glazer, Joel Glazer",
     venue: "Raymond James Stadium",
     established: 1976,
     logo: BuccaneersLogo,
     logoLight: BuccaneersLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Buccaneers",
     color: "#bd1c36",
     secondaryColor: "#3e3a35",
     latitude: 27.9759,
     longitude: -82.5033,
-    venueImage: BuccaneersStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766778404/stadiums/football/buccaneers.jpg",
     venueCapacity: "69,218",
-    championships: [2002, 2020],
-    conferenceChampionships: { Titles: [2002, 2020] },
   },
   {
     id: 25,
-    espnID: "15",
+    espnID: 15,
     fullName: "Miami Dolphins",
     oddsID: "par_01hqmkr1ycf7dsbr1997gz03y9",
     code: "MIA",
@@ -899,30 +634,23 @@ export const teams: NFLTeam[] = [
     location: "Miami, FL",
     address: "347 Don Shula Dr, Miami Gardens, FL 33056",
     coach: "Mike McDaniel",
-    coachImage: DolphinsCoach,
     owner: "Stephen M. Ross",
     venue: "Hard Rock Stadium",
     established: 1966,
     logo: DolphinsLogo,
     logoLight: DolphinsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Dolphins",
     color: "#008e97",
     secondaryColor: "#fc4c02",
     latitude: 25.9579,
     longitude: -80.239,
-    venueImage: DolphinsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/dolphins.jpg",
     venueCapacity: "65,326",
-    championships: [1972, 1973],
-    conferenceChampionships: { Titles: [1971, 1972, 1973, 1982, 1984] },
   },
   {
     id: 26,
-    espnID: "34",
+    espnID: 34,
     oddsID: "par_01hqmkr1y5f63reha26n71p2jx",
     fullName: "Houston Texans",
     code: "HOU",
@@ -930,30 +658,23 @@ export const teams: NFLTeam[] = [
     location: "Houston, TX",
     address: "Two NRG Park, Houston, TX 77054",
     coach: "DeMeco Ryans",
-    coachImage: TexansCoach,
     owner: "Janice S. McNair",
     venue: "NRG Stadium",
     established: 2002,
     logo: TexansLogo,
     logoLight: TexansLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Texans",
     color: "#03202f",
     secondaryColor: "#c41230",
     latitude: 29.6847,
     longitude: -95.4107,
-    venueImage: TexansStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/texans.jpg",
     venueCapacity: "72,220",
-    championships: [],
-    conferenceChampionships: { Titles: [] },
   },
   {
     id: 27,
-    espnID: "18",
+    espnID: 18,
     oddsID: "par_01hqmkr1yfe62tp0rvy8bn2jyc",
     fullName: "New Orleans Saints",
     code: "NO",
@@ -961,30 +682,23 @@ export const teams: NFLTeam[] = [
     location: "New Orleans, LA",
     address: "1500 Sugar Bowl Dr, New Orleans, LA 70112",
     coach: "Dennis Allen",
-    coachImage: SaintsCoach,
     owner: "Gayle Benson",
     venue: "Caesars Superdome",
     established: 1967,
     logo: SaintsLogo,
     logoLight: SaintsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Saints",
     color: "#d3bc8d",
     secondaryColor: "#000000",
     latitude: 29.9507,
     longitude: -90.0811,
-    venueImage: SaintsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/saints.jpg",
     venueCapacity: "73,208",
-    championships: [2009],
-    conferenceChampionships: { Titles: [2009] },
   },
   {
     id: 28,
-    espnID: "7",
+    espnID: 7,
     oddsID: "par_01hqmkr1y2e15tjsz9afcsj7da",
     fullName: "Denver Broncos",
     code: "DEN",
@@ -992,30 +706,23 @@ export const teams: NFLTeam[] = [
     location: "Denver, CO",
     address: "1701 Bryant St, Denver, CO 80204",
     coach: "Sean Payton",
-    coachImage: BroncosCoach,
     owner: "Walton-Penner Family Ownership Group",
     venue: "Empower Field at Mile High",
     established: 1960,
     logo: BroncosLogo,
     logoLight: BroncosLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Broncos",
     color: "#0a2343",
     secondaryColor: "#fc4c02",
     latitude: 39.7439,
     longitude: -105.0201,
-    venueImage: BroncosStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/broncos.jpg",
     venueCapacity: "76,125",
-    championships: [1997, 1998, 2015],
-    conferenceChampionships: { Titles: [1977, 1986, 1987, 1989, 1997, 1998, 2013, 2015] },
   },
   {
     id: 29,
-    espnID: "6",
+    espnID: 6,
     oddsID: "par_01hqmkr1y1esas88pmaxe87by4",
     fullName: "Dallas Cowboys",
     code: "DAL",
@@ -1023,30 +730,23 @@ export const teams: NFLTeam[] = [
     location: "Dallas, TX",
     address: "1 AT&T Way, Arlington, TX 76011",
     coach: "Brian Schottenheimer",
-    coachImage: CowboysCoach,
     owner: "Jerry Jones",
     venue: "AT&T Stadium",
     established: 1960,
     logo: CowboysLogo,
     logoLight: CowboysLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Cowboys",
     color: "#041E42",
     secondaryColor: "#b0b7bc",
     latitude: 32.748,
     longitude: -97.0934,
-    venueImage: CowboysStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/cowboys.jpg",
     venueCapacity: "80,000",
-    championships: [1971, 1977, 1992, 1993, 1995],
-    conferenceChampionships: { Titles: [1970, 1971, 1975, 1977, 1978, 1992, 1993, 1995] },
   },
   {
     id: 30,
-    espnID: "24",
+    espnID: 24,
     oddsID: "par_01hqmkr1yafvas6wtv3jfs9f7a",
     fullName: "Los Angeles Chargers",
     code: "LAC",
@@ -1054,30 +754,23 @@ export const teams: NFLTeam[] = [
     location: "Los Angeles, CA",
     address: "1001 Stadium Dr, Inglewood, CA 90301",
     coach: "Giff Smith (interim)",
-    coachImage: ChargersCoach,
     owner: "Alex Spanos and Family",
     venue: "SoFi Stadium",
     established: 1960,
     logo: ChargersLogo,
     logoLight: ChargersLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Chargers",
     color: "#0080C6",
     secondaryColor: "#ffc20e",
     latitude: 33.9618,
     longitude: -118.3534,
-    venueImage: SoFiStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/sofi-lac.jpg",
     venueCapacity: "70,240",
-    championships: [1963],
-    conferenceChampionships: { Titles: [1994] },
   },
   {
     id: 31,
-    espnID: "14",
+    espnID: 14,
     oddsID: "par_01hqmkr1ybfmfb8mhz10drfe21",
     fullName: "Los Angeles Rams",
     code: "LAR",
@@ -1085,30 +778,23 @@ export const teams: NFLTeam[] = [
     location: "Los Angeles, CA",
     address: "1001 Stadium Dr, Inglewood, CA 90301",
     coach: "Sean McVay",
-    coachImage: RamsCoach,
     owner: "Stan Kroenke",
     venue: "SoFi Stadium",
     established: 1937,
     logo: RamsLogo,
     logoLight: RamsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Rams",
     color: "#003594",
     secondaryColor: "#ffd100",
     latitude: 33.9618,
     longitude: -118.3534,
-    venueImage: SoFiStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/sofi-lar.jpg",
     venueCapacity: "70,240",
-    championships: [1945, 1951, 1999, 2021],
-    conferenceChampionships: { Titles: [1979, 1999, 2001, 2018, 2021] },
   },
   {
     id: 32,
-    espnID: "16",
+    espnID: 16,
     fullName: "Minnesota Vikings",
     oddsID: "par_01hqmkr1ydf6vrfmd5f07caj88",
     code: "MIN",
@@ -1116,72 +802,23 @@ export const teams: NFLTeam[] = [
     location: "Minneapolis, MN",
     address: "900 S 5th St, Minneapolis, MN 55415",
     coach: "Kevin O'Connell",
-    coachImage: VikingsCoach,
     owner: "Zygi Wilf",
     venue: "U.S. Bank Stadium",
     established: 1961,
     logo: VikingsLogo,
     logoLight: VikingsLogo,
-    country: {
-      name: "USA",
-      code: "US",
-      flag: "https://media.api-sports.io/flags/us.svg",
-    },
     name: "Vikings",
     color: "#4f2683",
     secondaryColor: "#ffc62f",
     latitude: 44.9736,
     longitude: -93.2575,
-    venueImage: VikingsStadium,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/vikings.jpg",
     venueCapacity: "66,655",
-    championships: [],
-    conferenceChampionships: { Titles: [1969, 1973, 1974, 1976] },
   },
 ] as const;
 
-export const nflCoachImages: { [key: string]: any } = {
-  CardinalsCoach,
-  FalconsCoach,
-  RavensCoach,
-  BillsCoach,
-  PanthersCoach,
-  BearsCoach,
-  BengalsCoach,
-  BrownsCoach,
-  CowboysCoach,
-  BroncosCoach,
-  LionsCoach,
-  PackersCoach,
-  TexansCoach,
-  ColtsCoach,
-  JaguarsCoach,
-  ChiefsCoach,
-  RaidersCoach,
-  ChargersCoach,
-  RamsCoach,
-  DolphinsCoach,
-  VikingsCoach,
-  PatriotsCoach,
-  SaintsCoach,
-  GiantsCoach,
-  JetsCoach,
-  EaglesCoach,
-  SteelersCoach,
-  NinersCoach,
-  SeahawksCoach,
-  BuccaneersCoach,
-  TitansCoach,
-  CommandersCoach,
-};
 
-export const venueImages: Record<string, any> = {
-  "Corinthians Arena": require("assets/Football/Arenas/CorinthiansArena.webp"),
-  "Croke Park": require("assets/Football/Arenas/CrokePark.webp"),
-  "Tottenham Hotspur Stadium": require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
-  "Olympic Stadium Berlin": require("assets/Football/Arenas/OlympicStadium.webp"),
-  "Wembley Stadium": require("assets/Football/Arenas/WembleyStadium.webp"),
-  "Cotton Bowl": require("assets/Football/Arenas/CottonBowl.webp"),
-};
 
 export const neutralStadiums: Record<string, Venue> = {
   "Corinthians Arena": {
@@ -1192,7 +829,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 23.5453,
     longitude: -46.4742,
     venueCapacity: "49,205",
-    venueImage: require("assets/Football/Arenas/CorinthiansArena.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/corinthians.jpg",
   },
   "Croke Park": {
     name: "Croke Park",
@@ -1201,7 +839,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 53.3607,
     longitude: 6.2511,
     venueCapacity: "82,300",
-    venueImage: require("assets/Football/Arenas/CrokePark.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/croke.jpg",
   },
   "Tottenham Hotspur Stadium": {
     name: "Tottenham Hotspur Stadium",
@@ -1210,7 +849,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 51.6043,
     longitude: 0.0662,
     venueCapacity: "62,850",
-    venueImage: require("assets/Football/Arenas/TottenhamHotspurStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/tottenham-hotspur.jpg",
   },
   "Olympic Stadium Berlin": {
     name: "Olympiastadion Berlin",
@@ -1219,7 +859,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 51.5387,
     longitude: 0.0165,
     venueCapacity: "74,475",
-    venueImage: require("assets/Football/Arenas/OlympicStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/olympic.jpg",
   },
   "Levi's® Stadium": {
     name: "Levi's® Stadium",
@@ -1228,7 +869,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 37.4033,
     longitude: -121.9694,
     venueCapacity: "68,500",
-    venueImage: require("assets/Football/Arenas/NinersStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/niners.jpg",
   },
   "Wembley Stadium": {
     name: "Wembley Stadium",
@@ -1237,7 +879,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 51.556,
     longitude: 0.2796,
     venueCapacity: "68,500",
-    venueImage: require("assets/Football/Arenas/WembleyStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/wembley.jpg",
   },
   "Camping World Stadium": {
     name: "Camping World Stadium",
@@ -1257,7 +900,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 27.9759,
     longitude: -82.5033,
     venueCapacity: "69,218",
-    venueImage: require("assets/Football/Arenas/BuccaneersStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/buccaneers.jpg",
   },
   "SoFi Stadium": {
     name: "SoFi Stadium",
@@ -1266,7 +910,8 @@ export const neutralStadiums: Record<string, Venue> = {
     latitude: 33.9618,
     longitude: -118.3534,
     venueCapacity: "70,240",
-    venueImage: require("assets/Football/Arenas/SoFiStadium.webp"),
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/so-fi.jpg",
   },
 };
 
@@ -1373,8 +1018,8 @@ export const teamIdMap: Record<number, string> = {
 };
 
 export const nflDivisionsById = {
- " AFC East": [
-    "2",  // Bills
+  " AFC East": [
+    "2", // Bills
     "15", // Dolphins
     "17", // Patriots
     "20", // Jets
@@ -1382,8 +1027,8 @@ export const nflDivisionsById = {
 
   "AFC North": [
     "33", // Ravens
-    "4",  // Bengals
-    "5",  // Browns
+    "4", // Bengals
+    "5", // Browns
     "23", // Steelers
   ],
 
@@ -1395,28 +1040,28 @@ export const nflDivisionsById = {
   ],
 
   "AFC West": [
-    "7",  // Broncos
+    "7", // Broncos
     "12", // Chiefs
     "13", // Raiders
     "24", // Chargers
   ],
 
   "NFC East": [
-    "6",  // Cowboys
+    "6", // Cowboys
     "19", // Giants
     "21", // Eagles
     "28", // Commanders
   ],
 
   "NFC North": [
-    "3",  // Bears
-    "8",  // Lions
-    "9",  // Packers
+    "3", // Bears
+    "8", // Lions
+    "9", // Packers
     "16", // Vikings
   ],
 
   "NFC South": [
-    "1",  // Falcons
+    "1", // Falcons
     "29", // Panthers
     "18", // Saints
     "27", // Buccaneers

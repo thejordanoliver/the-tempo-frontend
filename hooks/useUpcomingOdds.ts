@@ -14,7 +14,7 @@ export interface Bookmaker {
   }[];
 }
 
-export interface UpcomingGameOdds {
+export interface GameOdds {
   id: string;
   commence_time: string;
   commence_time_local?: string;
@@ -25,27 +25,25 @@ export interface UpcomingGameOdds {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
+// Simple cache
+const cache: Record<string, GameOdds[]> = {};
+
 interface UseUpcomingOddsOptions {
   timestamp?: string | number; // ISO string or epoch
   team1?: string; // abbreviation or full
   team2?: string;
 }
 
-const cache: Record<string, UpcomingGameOdds[]> = {};
-
 export const useUpcomingOdds = ({
   timestamp,
   team1,
   team2,
 }: UseUpcomingOddsOptions) => {
-  const [data, setData] = useState<UpcomingGameOdds[]>([]);
+  const [data, setData] = useState<GameOdds[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const lastParamsRef = useRef<string | null>(null);
-
   useEffect(() => {
-    // ✅ normalize timestamp
     const normalizedTs = timestamp
       ? new Date(timestamp).toISOString()
       : undefined;
@@ -55,34 +53,30 @@ export const useUpcomingOdds = ({
     if (team1) params.team1 = team1;
     if (team2) params.team2 = team2;
 
-    // ✅ consistent cache key
     const key = JSON.stringify(params);
 
-    // Return cached data if available
+    // If cached, immediately set it
     if (cache[key]) {
       setData(cache[key]);
       setError(null);
-      return;
+    } else {
+      setData([]); // clear previous data
+      setError(null);
     }
-
-    // Prevent refetch if params unchanged
-    if (lastParamsRef.current === key) return;
-    lastParamsRef.current = key;
 
     let cancelSource: CancelTokenSource | null = axios.CancelToken.source();
 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/odds/upcoming`, {
+        const res = await axios.get(`${BASE_URL}/api/nba/odds/upcoming`, {
           params,
           cancelToken: cancelSource?.token,
         });
 
         const games = res.data.games || [];
-        cache[key] = games;
+        cache[key] = games; // cache result
         setData(games);
-        setError(null);
       } catch (err: any) {
         if (axios.isCancel(err)) return;
         setError(err.response?.data?.error || "Failed to fetch upcoming odds");
@@ -91,7 +85,8 @@ export const useUpcomingOdds = ({
       }
     };
 
-    fetchData();
+    // Fetch if not cached
+    if (!cache[key]) fetchData();
 
     return () => {
       cancelSource?.cancel("Component unmounted");

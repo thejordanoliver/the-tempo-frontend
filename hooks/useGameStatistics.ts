@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { loadGameStats, saveGameStats } from "utils/gameStatsStorage";
 
 export type TeamStat = {
   team: {
@@ -11,12 +10,12 @@ export type TeamStat = {
     logo: string;
   };
   statistics: {
-    fastBreakPoints: number;
-    pointsInPaint: number;
-    biggestLead: number;
-    secondChancePoints: number;
-    pointsOffTurnovers: number;
-    longestRun: number;
+    fastBreakPoints: number | null;
+    pointsInPaint: number | null;
+    biggestLead: number | null;
+    secondChancePoints: number | null;
+    pointsOffTurnovers: number | null;
+    longestRun: number | null;
     points: number;
     fgm: number;
     fga: number;
@@ -59,13 +58,6 @@ export function useGameStatistics(gameId: number) {
       try {
         setLoading(true);
 
-        const cached = await loadGameStats(gameId);
-     if (cached && cached.length > 0) {
-  setData(cached);
-  setLoading(false);
-  return;
-}
-
         const res = await axios.get(`https://${RAPIDAPI_HOST}/games/statistics`, {
           params: { id: gameId },
           headers: {
@@ -74,11 +66,9 @@ export function useGameStatistics(gameId: number) {
           },
         });
 
-
         const stats = res.data.response ?? [];
+     
         setData(stats);
-        saveGameStats(gameId, stats);
-
       } catch (err) {
         console.error(err);
         setError("Failed to fetch game statistics");
@@ -92,4 +82,3 @@ export function useGameStatistics(gameId: number) {
 
   return { data, loading, error };
 }
-

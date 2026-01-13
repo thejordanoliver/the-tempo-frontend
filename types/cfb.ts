@@ -21,13 +21,13 @@ export interface CFBPlayer {
 }
 
 export type CFBTeam = {
-  id: number | string;
+  id: number;
   espnID?: string | number;
   oddsID?: string;
   name: string;
   shortName?: string;
   fullName?: string;
-  code?: string;
+  code: string;
   abbreviation?: string;
   city?: string;
   location?: string;
@@ -35,6 +35,7 @@ export type CFBTeam = {
   coach?: string;
   coachImage?: string;
   venue?: string;
+  firstSeason?: number;
   established?: number;
   country?: {
     name: string;
@@ -57,7 +58,14 @@ export type CFBTeam = {
 export type CFBGame = {
   game: {
     id: string;
-    date: { timestamp: number };
+    date: {
+      timezone: string;
+      date: string;
+      time: string;
+      timestamp: number;
+      utc?: string;
+      local?: string;
+    };
     status: { short: string; long: string; timer?: string | null }; // 👈 updated here
     venue?: { name: string; city: string };
     week?: string;
@@ -263,7 +271,6 @@ export const emptyHomeTeam: CFBTeam = {
   venueCapacity: "",
 };
 
-
 export interface BracketTeam {
   id: number | string;
   espnID?: string | number;
@@ -291,12 +298,14 @@ export interface BracketBroadcast {
   name: string;
   type: string;
 }
+export type Round = "first" | "quarterfinal" | "semifinal" | "championship";
 
 export interface BracketGame {
   id: string;
 
   top: BracketTeam | null;
   bottom: BracketTeam | null;
+  round: Round;
 
   // NEW FIELDS REQUIRED BY useCFPBracket
   status: "scheduled" | "live" | "final";
@@ -317,5 +326,5 @@ export interface BracketData {
   quarterfinal: BracketRound;
   semifinal: BracketRound;
   championship: BracketRound;
-  isDark: boolean
+  isDark: boolean;
 }

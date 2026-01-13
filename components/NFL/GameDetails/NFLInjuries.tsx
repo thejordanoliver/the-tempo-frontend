@@ -1,6 +1,5 @@
-import { players } from "constants/nflPlayers";
 import { getNFLTeamsLogo } from "constants/teamsNFL";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -17,36 +16,24 @@ import FixedWidthTabBar, {
 } from "../../TabBars/FixedWidthTabBar";
 
 type Injury = {
-  status: string;
-  date: string;
-  athlete: {
-    id: string;
-    displayName: string;
-    position?: { displayName: string; abbreviation: string };
-    headshot?: { href: string };
-    jersey?: string;
-  };
-  details?: {
-    type?: string;
-    location?: string;
-    returnDate?: string;
-  };
-};
-
-type TeamInjuries = {
-  team: {
-    id: string;
-    displayName: string;
-    abbreviation: string;
-    logo?: string;
-  };
-  injuries: Injury[];
+  espnId: number | null;
+  name: string;
+  position?: string | null;
+  jerseyNumber?: number | null;
+  image?: string | null;
+  status?: string | null;
+  detail?: string | null;
+  returnDate?: string | null;
+  teamId?: number | null;
+  location: string;
 };
 
 type Props = {
-  injuries: TeamInjuries[];
+  injuries?: Injury[]; // ✅ optional now
   loading: boolean;
   error: any;
+  awayTeamId?: string | number;
+  homeTeamId?: string | number;
   awayTeamAbbr?: string;
   homeTeamAbbr?: string;
   lighter?: boolean;
@@ -55,9 +42,11 @@ type Props = {
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
 
 export default function NFLInjuries({
-  injuries,
+  injuries = [], // ✅ DEFAULT FIX
   loading,
   error,
+  awayTeamId,
+  homeTeamId,
   awayTeamAbbr,
   homeTeamAbbr,
   lighter = false,
@@ -65,29 +54,54 @@ export default function NFLInjuries({
   const isDark = useColorScheme() === "dark";
   const styles = teamInjuryStyles(isDark, lighter);
 
-  const awayAbbr = awayTeamAbbr?.toUpperCase();
-  const homeAbbr = homeTeamAbbr?.toUpperCase();
+  /* -------------------------------------------------- */
+  /* Group injuries by teamId                           */
+  /* -------------------------------------------------- */
 
-  const orderedTabs = useMemo(() => {
-    // ALWAYS create 2 tabs
-    const away =
-      awayAbbr || injuries[0]?.team.abbreviation?.toUpperCase() || "AWY";
+  const grouped = useMemo(() => {
+    const list = Array.isArray(injuries) ? injuries : [];
 
-    const home =
-      homeAbbr ||
-      injuries[1]?.team.abbreviation?.toUpperCase() ||
-      (away !== "HOM" ? "HOM" : "HOME");
+    const away = list.filter(
+      (i) => String(i.teamId) === String(awayTeamId)
+    );
 
-    return [away, home];
-  }, [awayAbbr, homeAbbr, injuries]);
+    const home = list.filter(
+      (i) => String(i.teamId) === String(homeTeamId)
+    );
 
-  const [selectedTeam, setSelectedTeam] = useState<string>(() => {
-    if (awayAbbr && orderedTabs.includes(awayAbbr)) return awayAbbr;
-    if (homeAbbr && orderedTabs.includes(homeAbbr)) return homeAbbr;
-    return orderedTabs[0] || "";
-  });
+    // 🔥 fallback: if teamIds are missing, split evenly
+    if (!away.length && !home.length && list.length) {
+      return {
+        away: list.slice(0, Math.ceil(list.length / 2)),
+        home: list.slice(Math.ceil(list.length / 2)),
+      };
+    }
 
-  const selected = selectedTeam || orderedTabs[0];
+    return { away, home };
+  }, [injuries, awayTeamId, homeTeamId]);
+
+  const tabs = useMemo(() => {
+    return [
+      awayTeamAbbr?.toUpperCase() ?? "AWAY",
+      homeTeamAbbr?.toUpperCase() ?? "HOME",
+    ];
+  }, [awayTeamAbbr, homeTeamAbbr]);
+
+  const [selected, setSelected] = useState(tabs[0]);
+
+  useEffect(() => {
+    if (tabs[0] !== selected) {
+      setSelected(tabs[0]);
+    }
+  }, [tabs.join("|")]);
+
+  const selectedInjuries = useMemo(() => {
+    return selected === tabs[0] ? grouped.away : grouped.home;
+  }, [grouped, selected, tabs]);
+
+  /* -------------------------------------------------- */
+  /* States                                             */
+  /* -------------------------------------------------- */
 
   if (loading) {
     return (
@@ -106,23 +120,14 @@ export default function NFLInjuries({
     );
   }
 
-  if (!injuries || injuries.length === 0) return null;
+  if (!injuries.length) return null;
 
-  const teamData = injuries.find(
-    (t) => t.team.abbreviation.toUpperCase() === selected
-  );
+  /* -------------------------------------------------- */
+  /* Render                                             */
+  /* -------------------------------------------------- */
 
   const renderInjury = ({ item, index }: { item: Injury; index: number }) => {
-    const player = item.athlete;
-
-    // ✅ Try to find player image from constants/nflPlayers by name (case-insensitive)
-    const playerMatch = players.find(
-      (p) =>
-        p.name.trim().toLowerCase() === player.displayName.trim().toLowerCase()
-    );
-
-    const avatarUrl =
-      playerMatch?.image || player.headshot?.href || DEFAULT_HEADSHOT;
+    const avatar = item.image || DEFAULT_HEADSHOT;
 
     return (
       <View
@@ -130,7 +135,7 @@ export default function NFLInjuries({
           styles.injuryItem,
           {
             borderBottomWidth:
-              index === (teamData?.injuries.length ?? 0) - 1
+              index === selectedInjuries.length - 1
                 ? 0
                 : StyleSheet.hairlineWidth,
           },
@@ -138,36 +143,39 @@ export default function NFLInjuries({
       >
         <View style={styles.avatarWrapper}>
           <Image
-            source={{ uri: avatarUrl }}
+            source={{ uri: avatar }}
             style={styles.avatar}
             resizeMode="cover"
           />
         </View>
+
         <View style={{ flex: 1 }}>
           <View style={styles.infoSection}>
             <View style={styles.playerHeader}>
               <Text style={styles.name}>
-                {player?.displayName ?? "Unknown Player"}
+                {item.name ?? "Unknown Player"}
               </Text>
               <Text style={styles.jersey}>
-                {player?.position?.abbreviation ?? "—"}{" "}
-                {player?.jersey ? `#${player.jersey}` : ""}
+                {item.position ?? "—"}{" "}
+                {item.jerseyNumber ? `#${item.jerseyNumber}` : ""}
               </Text>
             </View>
-            {item.details?.type && (
+
+            {item.detail && (
               <>
                 <Text style={styles.status}>{item.status}</Text>
                 <Text style={styles.details}>
-                  {item.details.type} — {item.details.location ?? "N/A"}
+                  {item.detail} — {item.location ?? "N/A"}
                 </Text>
               </>
             )}
           </View>
         </View>
-        {item.details?.returnDate && (
+
+        {item.returnDate && (
           <View style={styles.bottom}>
             <Text style={styles.status}>
-              Return: {new Date(item.details.returnDate).toLocaleDateString()}
+              Return: {new Date(item.returnDate).toLocaleDateString()}
             </Text>
           </View>
         )}
@@ -179,54 +187,40 @@ export default function NFLInjuries({
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Injury Report</HeadingTwo>
 
-      <FixedWidthTabBar
-        tabs={orderedTabs}
-        selected={selected}
-        lighter={lighter}
-        onTabPress={setSelectedTeam}
-        renderLabel={(tab, isSelected) => {
-          const useLightLogo = lighter || isDark;
-
-          // ALWAYS USE TAB (ABBR), not the injuries array
-          const logo = getNFLTeamsLogo(tab, useLightLogo);
-
-          return (
-            <View
-              style={{
-                alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "center",
-                gap: 4,
-              }}
-            >
-              <Image source={logo} style={styles.tabLogo} />
-
-              <Text
-                style={getLabelStyle(isDark, isSelected, lighter, {
-                  opacity: isSelected ? 1 : 0.5,
-                })}
+      <View style={styles.wrapper}>
+        <FixedWidthTabBar
+          tabs={tabs}
+          selected={selected}
+          lighter={lighter}
+          onTabPress={setSelected}
+          renderLabel={(tab, isSelected) => {
+            const logo = getNFLTeamsLogo(tab, lighter || isDark);
+            return (
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
               >
-                {tab}
-              </Text>
-            </View>
-          );
-        }}
-      />
-
-      {teamData && teamData.injuries.length > 0 ? (
-        <FlatList
-          data={teamData.injuries}
-          renderItem={renderInjury}
-          keyExtractor={(inj) => inj.athlete.id}
-          scrollEnabled={false}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          contentContainerStyle={{ paddingVertical: 8 }}
+                <Image source={logo} style={styles.tabLogo} />
+                <Text style={getLabelStyle(isDark, isSelected, lighter)}>
+                  {tab}
+                </Text>
+              </View>
+            );
+          }}
         />
-      ) : (
-        <Text style={styles.errorText}>
-          No injuries reported for this team.
-        </Text>
-      )}
+
+        {selectedInjuries.length > 0 ? (
+          <FlatList
+            data={selectedInjuries}
+            renderItem={renderInjury}
+            keyExtractor={(i, idx) => `${i.espnId ?? idx}`}
+            scrollEnabled={false}
+          />
+        ) : (
+          <Text style={styles.errorText}>
+            No injuries reported for this team.
+          </Text>
+        )}
+      </View>
     </View>
   );
 }

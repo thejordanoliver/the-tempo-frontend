@@ -38,7 +38,7 @@ export const getStyles =
     },
     finalText: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 20,
+      fontSize: 16,
       color: Colors.dark.lightRed,
       textAlign: "center",
     },
@@ -127,7 +127,7 @@ export const getStyles =
       gap: 4,
     },
     statusDivider: {
-      height: 16,
+      height: 20,
       width: 1,
       alignSelf: "center",
       backgroundColor: Colors.dark.white,

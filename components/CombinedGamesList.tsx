@@ -62,16 +62,18 @@ type SportsCategory =
   | "NFL"
   | "NBA"
   | "Men's College Basketball"
+  | "Women's College Basketball"
   | "NBA Summer League"
   | "Favorites";
 
 export type CombinedGamesSection =
   | { category: "College Football"; data: CFBGameType[] }
   | { category: "Men's College Basketball"; data: CBBGame[] }
+  | { category: "Women's College Basketball"; data: CBBGame[] }
   | { category: "NFL"; data: NFLGameType[] }
   | { category: "NBA"; data: NBAGameType[] }
   | { category: "NBA Summer League"; data: summerGame[] }
-  | { category: "Favorites"; data: NBAGameType[] };
+  | { category: "Favorites"; data: CombinedGame[] };
 
 type CombinedGame =
   | CFBGameType
@@ -98,24 +100,32 @@ type CFBGameExtended = CFBGameType & {
   league?: { id?: number; name?: string; season?: string; logo?: string };
 };
 
-type CBBGameExtended = CBBGame & {
-  league?: { id?: number; name?: string; season?: string; logo?: string };
-};
-
 const getCategoryForFavorites = (
   item: CFBGameType | NBAGameType | NFLGameType | CBBGameType | summerGame
 ): SportsCategory => {
-  const leagueName = (item as any).league?.name ?? "NBA";
+  const league = (item as any).league;
 
-  if (leagueName === "NFL") return "NFL";
-  if (leagueName === "College Football") return "College Football";
+  // ✅ WOMEN'S CBB — must be first
   if (
-    leagueName === "CBB" ||
-    leagueName === "College Basketball" ||
-    leagueName === "Men's College Basketball"
-  )
+    league?.name === "Women's College Basketball" ||
+    league?.gender === "female" ||
+    league?.shortName === "WCBB"
+  ) {
+    return "Women's College Basketball";
+  }
+
+  // MEN'S CBB
+  if (
+    league?.name === "CBB" ||
+    league?.name === "College Basketball" ||
+    league?.name === "Men's College Basketball"
+  ) {
     return "Men's College Basketball";
-  if (leagueName === "NBA Summer League") return "NBA Summer League";
+  }
+
+  if (league?.name === "NFL") return "NFL";
+  if (league?.name === "College Football") return "College Football";
+  if (league?.name === "NBA Summer League") return "NBA Summer League";
 
   return "NBA";
 };
@@ -328,64 +338,66 @@ export default function CombinedGamesList({
       );
     };
 
+    // ✅ NFL
     if (category === "NFL") {
       const nflGame = transformNFLGame(item as NFLGameExtended);
-      if (viewMode === "list")
-        return wrapper(<NFLGameCard game={nflGame} isDark={isDark} />);
+      if (viewMode === "list") return wrapper(<NFLGameCard game={nflGame} />);
       if (viewMode === "grid")
-        return wrapper(
-          <NFLGameSquareCard game={nflGame} isDark={isDark} />,
-          index
-        );
-      return wrapper(<NFLStackedGameCard game={nflGame} isDark={isDark} />);
+        return wrapper(<NFLGameSquareCard game={nflGame} />, index);
+      return wrapper(<NFLStackedGameCard game={nflGame} />);
     }
 
+    // ✅ College Football
     if (category === "College Football") {
       const cfbGame = transformCFBGame(item as CFBGameExtended);
-      if (viewMode === "list")
-        return wrapper(<CFBGameCard game={cfbGame} isDark={isDark} />);
+      if (viewMode === "list") return wrapper(<CFBGameCard game={cfbGame} />);
       if (viewMode === "grid")
-        return wrapper(
-          <CFBGameSquareCard game={cfbGame} isDark={isDark} />,
-          index
-        );
-      return wrapper(<CFBStackedGameCard game={cfbGame} isDark={isDark} />);
+        return wrapper(<CFBGameSquareCard game={cfbGame} />, index);
+      return wrapper(<CFBStackedGameCard game={cfbGame} />);
     }
 
+    // ✅ NBA
     if (category === "NBA") {
       const nbaGame = item as NBAGameType;
-      if (viewMode === "list")
-        return wrapper(<GameCard game={nbaGame} isDark={isDark} />);
+      if (viewMode === "list") return wrapper(<GameCard game={nbaGame} />);
       if (viewMode === "grid")
-        return wrapper(
-          <GameSquareCard game={nbaGame} isDark={isDark} />,
-          index
-        );
-      return wrapper(<StackedGameCard game={nbaGame} isDark={isDark} />);
+        return wrapper(<GameSquareCard game={nbaGame} />, index);
+      return wrapper(<StackedGameCard game={nbaGame} />);
     }
 
+    // ✅ Men's College Basketball
     if (category === "Men's College Basketball") {
       const cbbGame = item as CBBGameType;
       if (viewMode === "list")
-        return wrapper(<CBBGameCard game={cbbGame} isDark={isDark} />);
+        return wrapper(<CBBGameCard game={cbbGame} isWomen={false} />);
       if (viewMode === "grid")
         return wrapper(
-          <CBBGameSquareCard game={cbbGame} isDark={isDark} />,
+          <CBBGameSquareCard game={cbbGame} isWomen={false} />,
           index
         );
-      return wrapper(<CBBStackedGameCard game={cbbGame} isDark={isDark} />);
+      return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={false} />);
     }
 
-    if (category === "NBA Summer League") {
-      const slGame = item as summerGame;
+    // ✅ Women's College Basketball
+    if (category === "Women's College Basketball") {
+      const cbbGame = item as CBBGameType;
       if (viewMode === "list")
-        return wrapper(<SummerGameCard game={slGame} isDark={isDark} />);
+        return wrapper(<CBBGameCard game={cbbGame} isWomen={true} />);
       if (viewMode === "grid")
         return wrapper(
-          <SummerGameSquareCard game={slGame} isDark={isDark} />,
+          <CBBGameSquareCard game={cbbGame} isWomen={true} />,
           index
         );
-      return wrapper(<SummerStackedGameCard game={slGame} isDark={isDark} />);
+      return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={true} />);
+    }
+
+    // ✅ NBA Summer League
+    if (category === "NBA Summer League") {
+      const slGame = item as summerGame;
+      if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} />);
+      if (viewMode === "grid")
+        return wrapper(<SummerGameSquareCard game={slGame} />, index);
+      return wrapper(<SummerStackedGameCard game={slGame} />);
     }
 
     return null;
@@ -452,10 +464,14 @@ export default function CombinedGamesList({
   if (loading) {
     const skeletonCount = expectedCount ?? 4;
     return (
-      <View>
+      <View style={{ paddingBottom: 100 }}>
         {gamesByCategory.map((section, idx) => (
           <View key={idx}>
-            {showHeaders && <HeaderSkeleton />}
+            {showHeaders && 
+             <View key={idx} style={{ paddingHorizontal: 12 }}>
+            <HeaderSkeleton />
+            </View>
+            }
             {renderSkeletons(skeletonCount)}
           </View>
         ))}
@@ -485,6 +501,7 @@ export default function CombinedGamesList({
       case "College Football":
       case "NFL":
       case "Men's College Basketball":
+      case "Women's College Basketball":
         return { category, game: item };
       default:
         return null;
@@ -520,6 +537,7 @@ export default function CombinedGamesList({
               case "College Football":
               case "NFL":
               case "Men's College Basketball":
+              case "Women's College Basketball":
                 return { category, game: item };
               default:
                 return null;
@@ -614,13 +632,16 @@ export default function CombinedGamesList({
         )}
       {modalVisible &&
         previewGame &&
-        previewCategory === "Men's College Basketball" && (
+        (previewCategory === "Men's College Basketball" ||
+          previewCategory === "Women's College Basketball") && (
           <CBBGamePreviewModal
             visible={modalVisible}
             game={previewGame as CBBGameType}
+            isWomen={previewCategory === "Women's College Basketball"}
             onClose={() => setModalVisible(false)}
           />
         )}
+
       {modalVisible && previewGame && previewCategory === "NBA" && (
         <GamePreviewModal
           visible={modalVisible}

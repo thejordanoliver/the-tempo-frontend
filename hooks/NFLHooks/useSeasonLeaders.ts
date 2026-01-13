@@ -47,7 +47,7 @@ const matchRosterPlayer = (roster: any[], athleteId: string | number) => {
 
 export function useSeasonLeaders(
   season: number,
-  league: "NFL" | "CFB" | "MLB" | "CBB" = "NFL"
+  league: "NFL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL"
 ): SeasonLeaderResult {
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(true);

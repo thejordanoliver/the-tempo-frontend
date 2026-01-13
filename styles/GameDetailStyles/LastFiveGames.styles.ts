@@ -1,7 +1,6 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
-export const getStyles = (isDark: boolean, lighter: boolean) => {
+export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
   const baseTextColor = lighter
     ? Colors.white
     : isDark
@@ -26,8 +25,11 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
       container: {
         flex: 1,
       },
-      tabWrapper: {
-        alignSelf: "center",
+      wrapper: {
+       borderColor: Colors.midTone,
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingTop: 12,
       },
       tabLabel: {
         flexDirection: "row",
@@ -56,7 +58,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
       row: {
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingVertical: 6,
+        paddingVertical: 12,
         borderBottomColor: lighter
           ? Colors.lightGray
           : isDark
@@ -69,7 +71,7 @@ export const getStyles = (isDark: boolean, lighter: boolean) => {
         paddingBottom: 4,
         borderBottomWidth: 1,
         borderColor: Colors.midTone,
-        marginVertical: 6,
+        marginVertical: 8,
       },
       cell: {
         fontSize: 14,

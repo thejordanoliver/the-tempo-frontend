@@ -1,9 +1,10 @@
-import CropEditorModal from "components/CropEditorModal";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Fonts } from "constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import CropEditorModal from "components/CropEditorModal";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import VideoEditorModal from "components/Forum/VideoEditorModal";
+import { Fonts } from "constants/fonts";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -20,13 +21,16 @@ import {
   View,
 } from "react-native";
 import PostButton from "../components/Forum/PostButton";
-import { getAccessToken } from "utils/authStorage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 type MediaItem = {
+  id: string; // ✅ ADD
   uri: string;
   type: "image" | "video";
+  thumbnailUri?: string; // ✅ for video preview + upload
+  trimStartMs?: number; // ✅ for future trimming
+  trimEndMs?: number; // ✅ for future trimming
 };
 
 export default function CreatePost() {
@@ -34,6 +38,8 @@ export default function CreatePost() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const [videoEditorVisible, setVideoEditorVisible] = useState(false);
+  const [videoToEditIndex, setVideoToEditIndex] = useState<number | null>(null);
 
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
@@ -41,7 +47,10 @@ export default function CreatePost() {
 
   const router = useRouter();
   const navigation = useNavigation();
-const { teamId, league } = useLocalSearchParams<{ teamId?: string; league?: "NBA" | "NFL" }>();
+  const { teamId, league } = useLocalSearchParams<{
+    teamId?: string;
+    league?: "NBA" | "NFL";
+  }>();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getStyles(isDark);
@@ -54,17 +63,15 @@ const { teamId, league } = useLocalSearchParams<{ teamId?: string; league?: "NBA
     });
   }, [navigation]);
 
-useEffect(() => {
-  AsyncStorage.getItem("accessToken")
-    .then((t) => {
+  useEffect(() => {
+    AsyncStorage.getItem("accessToken").then((t) => {
       setToken(t);
       console.log("Loaded accessToken:", t);
       if (!t) {
         Alert.alert("Not Logged In", "You must be logged in to create a post.");
       }
-    })
-}, []);
-
+    });
+  }, []);
 
   const pickMedia = async () => {
     if (media.length >= 8) {
@@ -73,23 +80,22 @@ useEffect(() => {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images", "videos"],
       allowsMultipleSelection: true,
       selectionLimit: 8 - media.length,
       quality: 0.8,
     });
 
     if (!result.canceled) {
-     const selected: MediaItem[] = result.assets.map((asset) => ({
-  uri: asset.uri,
-  type: asset.type === "video" ? "video" : "image",
-}));
+      const selected: MediaItem[] = result.assets.map((asset) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        uri: asset.uri,
+        type: asset.type === "video" ? "video" : "image",
+      }));
 
       setMedia((prev) => [...prev, ...selected]);
     }
   };
-
-  
 
   const onMediaPress = (item: MediaItem, index: number) => {
     if (item.type === "image") {
@@ -97,14 +103,20 @@ useEffect(() => {
       setCroppingIndex(index);
       setCropModalVisible(true);
     } else {
-      Alert.alert("Video Selected", "Trimming coming soon.");
+      setVideoToEditIndex(index);
+      setVideoEditorVisible(true);
     }
   };
 
   const onCropComplete = (croppedUri: string) => {
     if (croppingIndex !== null) {
       const updated = [...media];
-      updated[croppingIndex] = { uri: croppedUri, type: "image" };
+      updated[croppingIndex] = {
+        ...updated[croppingIndex],
+        uri: croppedUri,
+        type: "image",
+      };
+
       setMedia(updated);
     }
     setCropModalVisible(false);
@@ -112,59 +124,78 @@ useEffect(() => {
     setCroppingIndex(null);
   };
 
-const createPost = async () => {
-  if (!token) {
-    Alert.alert("Error", "You must be logged in to post.");
-    return;
-  }
+  const createPost = async () => {
+    if (!token) {
+      Alert.alert("Error", "You must be logged in to post.");
+      return;
+    }
 
-  if (!league) {
-    Alert.alert("Error", "League is required to create a post.");
-    return;
-  }
+    if (!league) {
+      Alert.alert("Error", "League is required to create a post.");
+      return;
+    }
 
-  setLoading(true);
-  const formData = new FormData();
-  formData.append("text", newPostText);
-  formData.append("league", league); // ALWAYS include league
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("text", newPostText);
+    formData.append("league", league); // ALWAYS include league
 
-  media.forEach((item) => {
-    const filename = item.uri.split("/").pop()!;
-    const ext = /\.(\w+)$/.exec(filename)?.[1];
-    const type = item.type === "video" ? `video/${ext}` : `image/${ext}`;
+    media.forEach((item, idx) => {
+      const filename = item.uri.split("/").pop()!;
+      const ext = /\.(\w+)$/.exec(filename)?.[1];
+      const type = item.type === "video" ? `video/${ext}` : `image/${ext}`;
 
-    formData.append("media", {
-      uri: item.uri,
-      name: filename,
-      type,
-    } as any);
-  });
+      formData.append("media", {
+        uri: item.uri,
+        name: filename,
+        type,
+      } as any);
+      if (item.type === "video") {
+        if (item.thumbnailUri) {
+          const thumbName =
+            item.thumbnailUri.split("/").pop() || `thumb-${idx}.jpg`;
+          formData.append("thumbnails", {
+            uri: item.thumbnailUri,
+            name: thumbName,
+            type: "image/jpeg",
+          } as any);
+        }
 
-  try {
-    const endpoint = teamId
-      ? `${BASE_URL}/api/forum/team/${teamId}`
-      : `${BASE_URL}/api/forum/league/${league}`; // league post
-
-    await axios.post(endpoint, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
+        formData.append(
+          "trimMeta",
+          JSON.stringify({
+            idx,
+            startMs: item.trimStartMs ?? 0,
+            endMs: item.trimEndMs ?? null,
+          })
+        );
+      }
     });
 
-    Alert.alert("Success", "Post created!", [
-      { text: "OK", onPress: () => router.back() },
-    ]);
-  } catch (err: any) {
-    Alert.alert(
-      "Failed to create post",
-      err.response?.data?.error || err.message || "Please try again later."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const endpoint = teamId
+        ? `${BASE_URL}/api/forum/team/${teamId}`
+        : `${BASE_URL}/api/forum/league/${league}`; // league post
 
+      await axios.post(endpoint, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      Alert.alert("Success", "Post created!", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    } catch (err: any) {
+      Alert.alert(
+        "Failed to create post",
+        err.response?.data?.error || err.message || "Please try again later."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView
@@ -213,23 +244,26 @@ const createPost = async () => {
         <FlatList
           horizontal
           data={media}
-          keyExtractor={(item, index) => item.uri + index}
-          contentContainerStyle={{ marginTop: 10, paddingHorizontal: 4 }}
-          showsHorizontalScrollIndicator={false}
+          extraData={media} // ✅ ADD THIS
+          keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               onPress={() => onMediaPress(item, index)}
-              style={{ position: "relative", marginRight: 10 }}
+              style={{ marginRight: 10 }}
             >
               {item.type === "image" ? (
                 <Image
                   source={{ uri: item.uri }}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: 8,
+                  style={{ width: 80, height: 80, borderRadius: 8 }}
+                />
+              ) : item.thumbnailUri ? (
+                <Image
+                  source={{
+                    uri: `${item.thumbnailUri}?v=${
+                      item.trimStartMs ?? Date.now()
+                    }`,
                   }}
-                  resizeMode="cover"
+                  style={{ width: 80, height: 80, borderRadius: 8 }}
                 />
               ) : (
                 <View
@@ -266,6 +300,33 @@ const createPost = async () => {
           onCrop={onCropComplete}
         />
       )}
+
+      {videoToEditIndex !== null &&
+        media[videoToEditIndex]?.type === "video" && (
+          <VideoEditorModal
+            visible={videoEditorVisible}
+            videoUri={media[videoToEditIndex].uri}
+            initialThumbnailUri={media[videoToEditIndex].thumbnailUri}
+            initialTrimStartMs={media[videoToEditIndex].trimStartMs}
+            initialTrimEndMs={media[videoToEditIndex].trimEndMs}
+            onClose={() => {
+              setVideoEditorVisible(false);
+              setVideoToEditIndex(null);
+            }}
+            onSave={({ thumbnailUri, trimStartMs, trimEndMs }) => {
+              const updated = [...media];
+              updated[videoToEditIndex] = {
+                ...updated[videoToEditIndex], // ✅ PRESERVE ID
+                thumbnailUri,
+                trimStartMs,
+                trimEndMs,
+              };
+              setMedia(updated);
+              setVideoEditorVisible(false);
+              setVideoToEditIndex(null);
+            }}
+          />
+        )}
     </ScrollView>
   );
 }

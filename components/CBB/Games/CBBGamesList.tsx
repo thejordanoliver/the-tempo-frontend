@@ -33,6 +33,7 @@ type Props = {
   day?: "todayTomorrow";
   showHeaders?: boolean;
   scrollEnabled?: boolean;
+  isWomen?: boolean;
 };
 
 type CBBGameSection = {
@@ -50,9 +51,11 @@ export default function CBBGamesList({
   day,
   showHeaders,
   scrollEnabled,
+  isWomen = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const { viewMode } = usePreferences();
+  const isWomenGame = (game: any) => String(game?.league?.id) === "423";
 
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -76,7 +79,9 @@ export default function CBBGamesList({
 
   const renderGameCard = (game: any, index?: number) => {
     if ((game as any)?._isPlaceholder) {
-      return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
+      return (
+        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
+      );
     }
 
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
@@ -104,16 +109,20 @@ export default function CBBGamesList({
     };
 
     if (viewMode === "list") {
-      return wrapper(<CBBGameCard game={game} isDark={isDark} />);
+      return wrapper(<CBBGameCard game={game} isWomen={isWomenGame(game)} />);
     }
 
     if (viewMode === "grid") {
-      return wrapper(<CBBGameSquareCard game={game} isDark={isDark} />, index);
+      return wrapper(
+        <CBBGameSquareCard game={game} isWomen={isWomenGame(game)} />,
+        index
+      );
     }
 
-    return wrapper(<CBBStackedGameCard game={game} isDark={isDark} />);
+    return wrapper(
+      <CBBStackedGameCard game={game} isWomen={isWomenGame(game)} />
+    );
   };
-
   /* --------------------------- Skeletons ------------------------------- */
 
   const renderSkeletons = (count: number) => {
@@ -146,7 +155,11 @@ export default function CBBGamesList({
           contentContainerStyle={styles.skeletonGridWrapper}
           renderItem={({ item, index }) => {
             if (item === "_placeholder") {
-              return <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />;
+              return (
+                <View
+                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
+                />
+              );
             }
 
             const isLastOdd = count % 2 === 1 && index === count - 1;
@@ -257,6 +270,7 @@ export default function CBBGamesList({
           game={previewGame}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+             isWomen={isWomenGame(previewGame)}
         />
       )}
     </>

@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams, conferenceObjectListMap } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
@@ -47,6 +46,7 @@ type CustomHeaderTitleProps = {
   isTeamScreen?: boolean;
   transparentColor?: string;
   onSearchToggle?: () => void;
+  onAddWidget?: () => void;
   teamCode?: string;
   homeTeamCode?: string;
   awayTeamCode?: string;
@@ -55,7 +55,7 @@ type CustomHeaderTitleProps = {
   selectedConferenceName?: string;
   isPlayerScreen?: boolean;
   showBackButton?: boolean;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "MLB" | "Leagues";
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
   isNotified?: boolean;
@@ -64,10 +64,7 @@ type CustomHeaderTitleProps = {
   onToggleNotifications?: () => void;
 };
 
-// ---------- UTIL ----------
-function hasLogoLight(team: any): team is { logoLight?: ImageSourcePropType } {
-  return team?.logoLight !== undefined;
-}
+
 
 function resolveImage(source: any): ImageSourcePropType {
   if (!source) return undefined as any;
@@ -103,7 +100,7 @@ const TeamBackground = ({
   isPlayerScreen?: boolean;
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
-
+const styles = customHeaderStyles
   if (!(isTeamScreen || isPlayerScreen)) {
     return (
       <View
@@ -161,7 +158,7 @@ const ConferenceBackground = ({
   isConferenceScreen: boolean;
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
-
+const styles = customHeaderStyles
   if (!isConferenceScreen) {
     return (
       <View
@@ -234,7 +231,7 @@ const GameHeader = ({
   isNeutralSite: boolean;
 }) => {
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
-
+const styles = customHeaderStyles
   const homeColor = homeTeam?.color || "#aaa";
   const awayColor = awayTeam?.color || Colors.midTone;
   const dividerText = isNeutralSite ? "vs" : "@";
@@ -453,6 +450,7 @@ export function CustomHeaderTitle({
   teamColor,
   isTeamScreen = false,
   onSearchToggle,
+  onAddWidget,
   teamCode,
   homeTeamCode,
   awayTeamCode,
@@ -474,7 +472,7 @@ export function CustomHeaderTitle({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-
+const styles = customHeaderStyles
   const modalToMapKey: Record<string, string> = {
     SEC: "SEC",
     "Big Ten": "Big Ten",
@@ -570,7 +568,6 @@ export function CustomHeaderTitle({
     );
   }, [awayTeamCode, league]);
 
-  const defaultBgColor = isDark ? Colors.black : Colors.white;
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
@@ -640,6 +637,14 @@ export function CustomHeaderTitle({
                   ? Colors.white
                   : Colors.black
               }
+            />
+          </TouchableOpacity>
+        ) : tabName === "Explore" && onAddWidget ? (
+          <TouchableOpacity onPress={onAddWidget}>
+            <Ionicons
+              name="add"
+              size={24}
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
         ) : (
@@ -776,7 +781,7 @@ export function CustomHeaderTitle({
 }
 
 // ---------- STYLES ----------
-const styles = StyleSheet.create({
+export const customHeaderStyles = StyleSheet.create({
   bgImage: {
     height: 200,
     width: "100%",

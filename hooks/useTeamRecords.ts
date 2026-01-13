@@ -4,12 +4,18 @@ export type TeamRecord = {
   overall: string | null;
 };
 
-export type League = "nba" | "cbb";
+export type League =
+  | "nba"
+  | "cbb"
+  | "wcbb"; // 👈 NEW (women's college basketball)
 
 /**
  * useTeamRecord (memoized)
  */
-export function useTeamRecord(teamId?: string | number, league: League = "nba") {
+export function useTeamRecord(
+  teamId?: string | number,
+  league: League = "nba"
+) {
   const [record, setRecord] = useState<TeamRecord>({ overall: null });
   const [loading, setLoading] = useState(false);
 
@@ -48,13 +54,23 @@ export function useTeamRecord(teamId?: string | number, league: League = "nba") 
     return () => clearInterval(interval);
   }, []);
 
-  // --- Memoize ESPN URL so fetch effect doesn’t re-run unnecessarily ---
+  // --- Memoize ESPN URL ---
   const teamUrl = useMemo(() => {
     if (!isValidTeamId) return null;
 
-    return league === "nba"
-      ? `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}`
-      : `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}`;
+    switch (league) {
+      case "nba":
+        return `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${teamId}`;
+
+      case "cbb":
+        return `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${teamId}`;
+
+      case "wcbb":
+        return `https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/teams/${teamId}`;
+
+      default:
+        return null;
+    }
   }, [teamId, league, isValidTeamId]);
 
   // --- Fetch logic ---
@@ -78,20 +94,17 @@ export function useTeamRecord(teamId?: string | number, league: League = "nba") 
 
         let recordSummary: string | null = null;
 
-        // NBA structure
-        if (data?.team?.record?.items) {
+        // Preferred structure (NBA / CBB / WCBB)
+        if (data?.team?.record?.items?.length) {
           recordSummary =
             data.team.record.items.find(
               (r: any) =>
                 r.type === "total" ||
                 r.type === "overall" ||
                 r.name === "overall"
-            )?.summary ?? null;
-        }
-
-        // CBB fallback
-        if (!recordSummary && data?.team?.record?.items?.length) {
-          recordSummary = data.team.record.items[0]?.summary ?? null;
+            )?.summary ??
+            data.team.record.items[0]?.summary ??
+            null;
         }
 
         // Ultimate fallback
@@ -102,7 +115,10 @@ export function useTeamRecord(teamId?: string | number, league: League = "nba") 
         setRecord({ overall: recordSummary });
       } catch (err) {
         if (!canceled) {
-          console.error(`Error fetching record for team ${teamId}:`, err);
+          console.error(
+            `Error fetching record for team ${teamId} (${league}):`,
+            err
+          );
           setRecord({ overall: null });
         }
       } finally {
@@ -115,7 +131,7 @@ export function useTeamRecord(teamId?: string | number, league: League = "nba") 
     return () => {
       canceled = true;
     };
-  }, [teamUrl, dayWindow.current]); // stable + memoized deps
+  }, [teamUrl, dayWindow.current]);
 
   return { record, loading };
 }

@@ -3,9 +3,10 @@ import {
   ActivityIndicator,
   FlatList,
   Text,
+  TouchableOpacity,
   useColorScheme,
 } from "react-native";
-import { exploreStyles } from "styles/ExploreStyles";
+import { exploreStyles } from "styles/Explore/ExploreStyles";
 import type { ResultItem } from "types/types";
 import ResultItemRow from "./ResultItemRow";
 
@@ -16,6 +17,8 @@ type Props = {
   onSelect: (item: ResultItem) => void;
   onDelete?: (item: ResultItem) => void;
   query: string;
+  onSeeAll?: () => void;
+  showAll?: boolean;
 };
 
 export default function SearchResultsList({
@@ -25,6 +28,8 @@ export default function SearchResultsList({
   onSelect,
   onDelete,
   query,
+  onSeeAll,
+  showAll = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = exploreStyles(isDark);
@@ -34,8 +39,22 @@ export default function SearchResultsList({
     if (item.isMLB) return "mlb";
     if (item.isCFB) return "cfb";
     if (item.isCBB) return "cbb";
-    return "nba"; // default
+    if (item.isWCBB) return "wcbb";
+    return "nba";
   }
+
+  const visibleData = showAll ? data : data.slice(0, 5);
+  const remainingCount = data.length - visibleData.length;
+
+  const SeeAllRow = () => (
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={onSeeAll}
+      style={styles.seeAllRow}
+    >
+      <Text style={styles.seeAllText}>See all results ({data.length})</Text>
+    </TouchableOpacity>
+  );
 
   if (loading)
     return (
@@ -52,15 +71,22 @@ export default function SearchResultsList({
       {query.length === 0 && data.length > 0 && (
         <HeadingThree>Recents</HeadingThree>
       )}
+
       <FlatList
-        data={data}
+        data={visibleData}
         keyExtractor={(item, index) => {
           if (item.type === "team") {
             const league = getTeamLeagueKey(item);
-            return `team-${league}-${item.id}`;
+            const teamKey =
+              item.id != null
+                ? String(item.id)
+                : item.wid != null
+                ? String(item.wid)
+                : `idx-${index}`;
+
+            return `team-${league}-${teamKey}`;
           }
 
-          // players + users already have unique IDs
           return `${item.type}-${item.id}-${index}`;
         }}
         renderItem={({ item }) => (
@@ -71,6 +97,7 @@ export default function SearchResultsList({
             query={query}
           />
         )}
+        ListFooterComponent={!showAll && data.length > 5 ? <SeeAllRow /> : null}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
     </>

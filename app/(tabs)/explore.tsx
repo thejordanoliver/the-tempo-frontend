@@ -1,62 +1,47 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
 import { useRouter } from "expo-router";
+import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, Easing, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/ExploreStyles";
-import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
+import { exploreStyles } from "styles/Explore/ExploreStyles";
+import { ResultItem } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const RECENT_SEARCHES_KEY = "recentSearches";
 
 const tabs = ["All", "Teams", "Players", "Accounts"] as const;
 
+const tabToTypeMap = {
+  Teams: "team",
+  Players: "player",
+  Accounts: "user",
+};
+
 export default function ExplorePage() {
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<ResultItem[]>([]);
   const [searchVisible, setSearchVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedTab, setSelectedTab] = useState<(typeof tabs)[number]>("All");
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
+  const [showAll, setShowAll] = useState(false);
+
+  const inputAnim = useRef(new Animated.Value(0)).current;
+
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = exploreStyles(isDark);
-  const inputAnim = useRef(new Animated.Value(0)).current;
-  const deleteRecentSearch = async (itemToDelete: ResultItem) => {
-    try {
-      const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
 
-      parsed = parsed.filter(
-        (item) =>
-          !(
-            item.type === itemToDelete.type &&
-            (item as any).id === (itemToDelete as any).id
-          )
-      );
-
-      await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
-      setRecentSearches(parsed);
-    } catch (err) {
-      console.warn("Failed to delete recent search", err);
-    }
-  };
-
-  useEffect(() => {
-    const loadUserId = async () => {
-      const id = await AsyncStorage.getItem("userId");
-      if (id) setCurrentUserId(Number(id));
-    };
-    loadUserId();
-  }, []);
+  const {
+    query,
+    setQuery,
+    results,
+    recentSearches,
+    loading,
+    error,
+    search,
+    saveToRecentSearches,
+    deleteRecentSearch,
+  } = useExplore();
 
   useEffect(() => {
     Animated.timing(inputAnim, {
@@ -65,128 +50,7 @@ export default function ExplorePage() {
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-
-    if (searchVisible) {
-      loadRecentSearches();
-    }
   }, [searchVisible]);
-
-  useEffect(() => {
-    if (query.trim().length === 0) {
-      setResults([]);
-      setError(null);
-      setSelectedTab("All");
-      return;
-    }
-
-    const fetchFromDb = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await axios.get<{
-          players: PlayerResult[];
-          teams: TeamResult[];
-          users: UserResult[];
-        }>(`${API_URL}/api/explore/search`, { params: { query } });
-
-        const combined: ResultItem[] = [
-          ...res.data.teams.map((t) => ({ ...t, type: "team" as const })),
-          ...res.data.players.map((p) => ({ ...p, type: "player" as const })),
-          ...res.data.users.map((u) => ({ ...u, type: "user" as const })),
-        ];
-
-        setResults(combined);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch data");
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const debounce = setTimeout(fetchFromDb, 400);
-    return () => clearTimeout(debounce);
-  }, [query]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          tabName="Explore"
-          title="Explore"
-          onSearchToggle={() => {
-            setSearchVisible((prev) => {
-              if (prev) {
-                // 🔒 Closing search
-                setQuery(""); // clear text
-                setSelectedTab("All"); // reset tabs
-                setIsFocused(false); // sync focus state
-              }
-              return !prev;
-            });
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
-
-  const handleChangeText = (text: string) => {
-    if (!searchVisible) return;
-    setQuery(text);
-  };
-
-  const loadRecentSearches = async () => {
-    try {
-      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const validResults = parsed.filter(
-          (item: any) =>
-            typeof item === "object" &&
-            item !== null &&
-            "type" in item &&
-            "id" in item
-        );
-        setRecentSearches(validResults);
-      }
-    } catch (err) {
-      console.warn("Error loading recent searches", err);
-    }
-  };
-
-  const saveToRecentSearches = async (item: ResultItem) => {
-    if (!item || typeof item !== "object" || !item.type || !(item as any).id) {
-      console.warn("Invalid item passed to saveToRecentSearches:", item);
-      return;
-    }
-
-    try {
-      const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
-
-      parsed = parsed.filter(
-        (r) =>
-          !(
-            typeof r === "object" &&
-            r.type === item.type &&
-            (r as any).id === (item as any).id
-          )
-      );
-
-      parsed.unshift(item);
-      parsed = parsed.slice(0, 10);
-      await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
-      setRecentSearches(parsed);
-    } catch (err) {
-      console.warn("Failed to save recent search", err);
-    }
-  };
-
-  const tabToTypeMap = {
-    Teams: "team",
-    Players: "player",
-    Accounts: "user",
-  };
 
   const filteredResults = (query.trim() ? results : recentSearches).filter(
     (item) => {
@@ -197,55 +61,50 @@ export default function ExplorePage() {
 
   const handleSelectItem = (item: ResultItem) => {
     saveToRecentSearches(item);
+
     switch (item.type) {
       case "team":
-        if (item.isNFL) {
-          router.push(`/team/nfl/${item.id}`);
-        } else if (item.isMLB) {
-          router.push(`/team/mlb/${item.id}`);
-        } else if (item.isCFB) {
-          router.push(`/team/cfb/${item.id}`);
-        } else if (item.isCBB) {
-          router.push(`/team/cbb/${item.id}`);
-        } else {
-          router.push(`/team/${item.id}`);
-        }
+        if (item.isNFL) router.push(`/team/nfl/${item.id}`);
+        else if (item.isMLB) router.push(`/team/mlb/${item.id}`);
+        else if (item.isCFB) router.push(`/team/cfb/${item.id}`);
+        else if (item.isCBB) router.push(`/team/cbb/${item.id}`);
+        else if (item.isWCBB) router.push(`/team/wcbb/${item.wid}`);
+        else router.push(`/team/${item.id}`);
         break;
-
       case "player":
-        if (item.isNFL) {
+        if (item.isNFL)
           router.push({
             pathname: "/player/nfl/[id]",
             params: {
-              id: item.player_id.toString(),
-              teamId: item.team_id?.toString() || "",
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
             },
           });
-        } else if (item.isCFB) {
+        else if (item.isCFB)
           router.push({
             pathname: "/player/cfb/[id]",
             params: {
-              id: item.player_id.toString(),
-              teamId: item.team_id?.toString() || "",
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
             },
           });
-        } else if (item.isCBB) {
+        else if (item.isCBB || item.isWCBB)
           router.push({
             pathname: "/player/cbb/[id]",
             params: {
-              id: item.player_id.toString(),
-              teamId: item.team_id?.toString() || "",
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
+              league: item.isWCBB ? "WCBB" : "CBB",
             },
           });
-        } else {
+        else
           router.push({
             pathname: "/player/[id]",
             params: {
-              id: item.player_id.toString(),
-              teamId: item.team_id?.toString() || "",
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
             },
           });
-        }
         break;
       case "user":
         router.push(`/user/${item.id}`);
@@ -253,8 +112,36 @@ export default function ExplorePage() {
     }
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          tabName="Explore"
+          title="Explore"
+          onSearchToggle={() => {
+            setSearchVisible((prev) => {
+              if (prev) {
+                setQuery(""); // clear text
+                setSelectedTab("All"); // reset tabs
+                setIsFocused(false);
+              }
+              return !prev;
+            });
+          }}
+          onAddWidget={() => {}}
+        />
+      ),
+    });
+  }, [navigation]);
+
+  const handleChangeText = (text: string) => {
+    if (!searchVisible) return;
+    setQuery(text);
+    search(text); // 🔹 trigger search from hook
+  };
+
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <SearchBar
         value={query}
         placeholder="Explore Teams, Players and Accounts..."
@@ -262,9 +149,9 @@ export default function ExplorePage() {
         visible={searchVisible}
         onFocus={() => setIsFocused(true)}
         onBlur={() => {
-          if (query.trim().length === 0) setIsFocused(false);
+          if (!query.trim()) setIsFocused(false);
         }}
-        tabs={[...tabs]} // spread to convert readonly tuple to mutable string[]
+        tabs={[...tabs]}
         selectedTab={selectedTab}
         onTabPress={(tab) => setSelectedTab(tab as typeof selectedTab)}
       />
@@ -279,6 +166,8 @@ export default function ExplorePage() {
           onSelect={handleSelectItem}
           onDelete={deleteRecentSearch}
           query={query}
+          onSeeAll={() => setShowAll(true)}
+          showAll={showAll}
         />
       )}
     </View>

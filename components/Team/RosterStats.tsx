@@ -16,8 +16,6 @@ import {
 } from "react-native";
 import { PlayerInfo, PlayerStats, Props, TeamStats } from "types/types";
 
-
-
 const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
   rosterStats,
   playersDb,
@@ -161,6 +159,7 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
           <Text style={styles.cardLabel}>{label}</Text>
 
           <TouchableOpacity
+          activeOpacity={0.75}
             onPress={() =>
               router.push(`/player/${player.playerId}?teamId=${teamId}`)
             }
@@ -249,20 +248,20 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
 
           <View style={styles.table}>
             {displayAverages.map((item, idx) => (
-  <View
-  key={item.label}
-  style={[
-    styles.teamTableRow,
-    idx % 2 === 1 && {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    idx === displayAverages.length - 1 && { borderBottomWidth: 0 }, // ← remove border on LAST row
-  ]}
->
-
-
+              <View
+                key={item.label}
+                style={[
+                  styles.teamTableRow,
+                  idx % 2 === 1 && {
+                    backgroundColor: isDark
+                      ? Colors.dark.itemBackground
+                      : Colors.light.itemBackground,
+                  },
+                  idx === displayAverages.length - 1 && {
+                    borderBottomWidth: 0,
+                  }, // ← remove border on LAST row
+                ]}
+              >
                 <Text style={[styles.tableCell, styles.headerText]}>
                   {item.label}
                 </Text>
@@ -280,19 +279,18 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
 
           <View style={styles.table}>
             {displayTotals.map((item, idx) => (
-   <View
-  key={item.label}
-  style={[
-    styles.teamTableRow,
-    idx % 2 === 1 && {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    idx === displayTotals.length - 1 && { borderBottomWidth: 0 }, // ← same here
-  ]}
->
-
+              <View
+                key={item.label}
+                style={[
+                  styles.teamTableRow,
+                  idx % 2 === 1 && {
+                    backgroundColor: isDark
+                      ? Colors.dark.itemBackground
+                      : Colors.light.itemBackground,
+                  },
+                  idx === displayTotals.length - 1 && { borderBottomWidth: 0 }, // ← same here
+                ]}
+              >
                 <Text style={[styles.tableCell, styles.headerText]}>
                   {item.label}
                 </Text>
@@ -321,7 +319,7 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
           setViewMode(val as "Player Stats" | "Team Stats")
         }
         isDark={isDark}
-        style={{ paddingBottom: 12 }}
+        absolute
       />
 
       <ScrollView style={styles.scrollContainer}>
@@ -350,7 +348,7 @@ const RosterStats: React.FC<Props & { teamStats?: TeamStats | null }> = ({
             </ScrollView>
 
             {/* Player Table */}
-            <View style={{ flexDirection: "row" }}>
+            <View style={styles.tableWrapper}>
               {/* Fixed name column */}
               <View style={styles.fixedColumnContainer}>
                 {/* Header for name column */}
@@ -528,13 +526,22 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1, paddingTop: 20, paddingHorizontal: 12 },
     scrollContainer: { flexGrow: 1, borderRadius: 4, overflow: "hidden" },
-    fixedColumnContainer: {
+   fixedColumnContainer: {
       zIndex: 2,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     table: {
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
+    },
+    tableWrapper: {
+      flexDirection: "row",
+      borderRadius: 8,
+      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     tableRow: {
       flexDirection: "row",

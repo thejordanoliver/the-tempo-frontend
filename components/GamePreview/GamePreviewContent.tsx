@@ -1,5 +1,5 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { GameLeaders } from "components/GameDetails";
+import { GameLeaders, GameLocation } from "components/GameDetails";
 import BoxScore from "components/GameDetails/BoxScore";
 import GameTeamStats from "components/GameDetails/GameTeamStats";
 import GameUniforms from "components/GameDetails/GameUniforms";
@@ -7,11 +7,9 @@ import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
 import LineScore from "components/GameDetails/LineScore";
 import Officials from "components/GameDetails/Officials";
 import TeamInjuries from "components/GameDetails/TeamInjuries";
-import TeamLocationSection from "components/GameDetails/TeamLocationSection";
-import Weather from "components/GameDetails/Weather";
 import React, { useMemo } from "react";
 import { View } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
 
 export default function GamePreviewContent({
   game,
@@ -60,6 +58,35 @@ export default function GamePreviewContent({
         </View>
       )}
 
+      {/* Game Stats */}
+      {game?.id && gameStats?.length > 0 && (
+        <>
+          <View style={{ marginBottom: 20 }}>
+            <GameLeaders
+              gameId={game.id.toString()}
+              awayTeamId={away?.id}
+              homeTeamId={home?.id}
+              lighter
+            />
+          </View>
+
+          <View style={{ marginBottom: 20 }}>
+            <BoxScore
+              gameId={game.id.toString()}
+              awayTeamId={away?.id}
+              homeTeamId={home?.id}
+              lighter
+            />
+          </View>
+
+          <View style={{ marginBottom: 20 }}>
+            {gameStats.length > 0 && (
+              <GameTeamStats stats={gameStats} lighter />
+            )}
+          </View>
+        </>
+      )}
+
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (
@@ -84,33 +111,6 @@ export default function GamePreviewContent({
         </View>
       )}
 
-      {/* Game Stats */}
-      {game?.id && gameStats?.length > 0 && (
-        <>
-          <View style={{ marginBottom: 20 }}>
-            <GameLeaders
-              gameId={game.id.toString()}
-              awayTeamId={away?.id}
-              homeTeamId={home?.id}
-              lighter
-            />
-          </View>
-
-          <View style={{ marginBottom: 20 }}>
-            <BoxScore
-              gameId={game.id.toString()}
-              awayTeamId={away?.id}
-              homeTeamId={home?.id}
-              lighter
-            />
-          </View>
-
-          <View style={{ marginBottom: 20 }}>
-            <GameTeamStats stats={gameStats} lighter />
-          </View>
-        </>
-      )}
-
       {/* Injuries */}
 
       <View style={{ marginBottom: 20 }}>
@@ -120,46 +120,32 @@ export default function GamePreviewContent({
       {/* Uniforms */}
       {home?.id && away?.id && (
         <View style={{ marginBottom: 20 }}>
-          <GameUniforms
-            homeTeamId={home.id.toString()}
-            awayTeamId={away.id.toString()}
-            lighter
-          />
+          <GameUniforms homeTeamId={home.id} awayTeamId={away.id} lighter />
         </View>
       )}
 
-      <Officials
-        officials={officials ?? []}
-        loading={false}
-        error={null}
-        lighter
-      />
+      <View style={{ marginBottom: 20 }}>
+        <Officials
+          officials={officials ?? []}
+          loading={false}
+          error={null}
+          lighter
+        />
+      </View>
 
       {/* Venue Info */}
       {(resolvedVenueImage || resolvedVenueName) && (
         <View style={{ marginBottom: 20 }}>
-          <TeamLocationSection
+          <GameLocation
             venueImage={resolvedVenueImage}
             venueName={resolvedVenueName}
             location={resolvedVenueCity}
             address={resolvedVenueAddress}
             venueCapacity={resolvedVenueCapacity}
+            weather={weather}
             lighter
             loading={detailsLoading}
             error={detailsError ?? null}
-          />
-        </View>
-      )}
-
-      {/* Weather */}
-      {weather && (
-        <View style={{ marginBottom: 20 }}>
-          <Weather
-            address={resolvedVenueAddress}
-            weather={weather}
-            lighter
-            loading={weatherLoading}
-            error={weatherError ?? null}
           />
         </View>
       )}

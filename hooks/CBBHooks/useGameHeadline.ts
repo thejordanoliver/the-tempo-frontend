@@ -9,7 +9,9 @@ type ESPNDateInput =
       timestamp?: number;
     };
 
-interface MBBGameInfoResult {
+type CBBLeague = "cbb" | "wcbb";
+
+interface CBBGameInfoResult {
   headlineText?: string;
   loading: boolean;
   error: string | null;
@@ -17,15 +19,16 @@ interface MBBGameInfoResult {
 }
 
 /**
- * Fetches ESPN Men's College Basketball game headline from competition.notes[0].headline only.
- * Handles regular games and special events (tournaments, championship games) with TBD teams.
- * Fetches data from ±1 day around target date, including all Division I groups.
+ * Fetches ESPN College Basketball game headline
+ * (competition.notes[0].headline)
+ * Supports Men's and Women's CBB
  */
 export const useCBBHeadline = (
   homeEspnId?: number,
   awayEspnId?: number,
-  date?: ESPNDateInput
-): MBBGameInfoResult => {
+  date?: ESPNDateInput,
+  league: CBBLeague = "cbb" // 👈 NEW
+): CBBGameInfoResult => {
   const [headlineText, setHeadlineText] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +41,7 @@ export const useCBBHeadline = (
     setError(null);
 
     try {
-      // Parse date
+      // --- Parse date ---
       let targetDate: Date | null = null;
       if (typeof date === "string") targetDate = new Date(date);
       else if (typeof date === "object") {
@@ -53,11 +56,10 @@ export const useCBBHeadline = (
 
       if (!targetDate || isNaN(targetDate.getTime())) {
         setError("Invalid or missing date");
-        setLoading(false);
         return;
       }
 
-      // Format YYYYMMDD (UTC)
+      // --- Format YYYYMMDD (UTC) ---
       const makeYMD = (d: Date) => {
         const year = d.getUTCFullYear();
         const month = String(d.getUTCMonth() + 1).padStart(2, "0");
@@ -65,60 +67,68 @@ export const useCBBHeadline = (
         return `${year}${month}${day}`;
       };
 
-      // Fetch ±1 day (day before, day of, day after)
+      const sportKey =
+        league === "wcbb"
+          ? "womens-college-basketball"
+          : "mens-college-basketball";
+
+      // --- Fetch ±1 day ---
       const dateOffsets = [-1, 0, 1];
       const urls = dateOffsets.map((offset) => {
         const d = new Date(targetDate);
         d.setUTCDate(d.getUTCDate() + offset);
-        return `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard?dates=${makeYMD(
+        return `https://site.api.espn.com/apis/site/v2/sports/basketball/${sportKey}/scoreboard?dates=${makeYMD(
           d
         )}&groups=50&limit=500`;
       });
 
-      // Fetch all three days in parallel
       const results = await Promise.allSettled(urls.map((u) => axios.get(u)));
       const allEvents = results
-        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+        .filter(
+          (r): r is PromiseFulfilledResult<any> => r.status === "fulfilled"
+        )
         .flatMap((r) => r.value.data?.events || []);
 
       if (!allEvents.length) {
-        console.warn("[MBB Headline] No events found in ESPN response.");
         setHeadlineText(undefined);
         return;
       }
 
-      // --- Match both team IDs and flexible date (day before, same day, day after) ---
+      // --- Match teams + flexible date window ---
       const targetTime = targetDate.getTime();
       const game = allEvents.find((g: any) => {
         const competitors = g?.competitions?.[0]?.competitors ?? [];
         const ids = competitors.map((c: any) => Number(c.team?.id));
-        if (!ids.includes(Number(homeEspnId)) || !ids.includes(Number(awayEspnId)))
+
+        if (
+          !ids.includes(Number(homeEspnId)) ||
+          !ids.includes(Number(awayEspnId))
+        ) {
           return false;
+        }
 
         const gameDate = new Date(g.date).getTime();
-        const diffDays = Math.round((gameDate - targetTime) / (1000 * 60 * 60 * 24));
-        return diffDays >= -1 && diffDays <= 1; // within ±1 day
+        const diffDays = Math.round(
+          (gameDate - targetTime) / (1000 * 60 * 60 * 24)
+        );
+
+        return diffDays >= -1 && diffDays <= 1;
       });
 
       if (!game) {
-        console.warn(
-          `[MBB Headline] No exact match found for teams ${homeEspnId} vs ${awayEspnId}`
-        );
         setHeadlineText(undefined);
         return;
       }
 
       const competition = game.competitions?.[0];
-      const noteHeadline = competition?.notes?.[0]?.headline;
-
-      setHeadlineText(noteHeadline);
+      setHeadlineText(competition?.notes?.[0]?.headline);
     } catch (err: any) {
-      console.error("[MBB Headline] Error fetching headline:", err.message);
+      console.error("[CBB Headline] Error:", err.message);
       setError(err?.message || "Failed to fetch headline");
     } finally {
       setLoading(false);
     }
-  }, [homeEspnId, awayEspnId, date, skipFetch]);
+  }, [homeEspnId, awayEspnId, date, league, skipFetch]);
 
   useEffect(() => {
     if (!skipFetch) fetchData();

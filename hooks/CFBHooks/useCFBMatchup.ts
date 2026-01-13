@@ -94,7 +94,6 @@ export const useCFBMatchup = (
 
       setData(response.data);
     } catch (err: any) {
-      console.log("CFB matchup error:", err?.response?.data || err.message);
 
       setError(
         err?.response?.data?.error ||

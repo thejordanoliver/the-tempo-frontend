@@ -11,13 +11,15 @@ type Props = {
     birth_date?: string;
     position?: string;
     jersey_number?: string;
+    experience_display?: string;
+    birth_display?: string;
   };
   avatarUrl?: string;
   isDark: boolean;
   teamColor?: string;
-  teamSecondaryColor?: string; // new optional prop for secondary color
   team_name?: string;
   age?: number;
+  isCollegePlayer?: boolean;
 };
 
 export default function PlayerHeader({
@@ -25,9 +27,9 @@ export default function PlayerHeader({
   avatarUrl,
   isDark,
   teamColor,
-  teamSecondaryColor,
   team_name,
   age,
+  isCollegePlayer,
 }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
 
@@ -70,11 +72,24 @@ export default function PlayerHeader({
         <Text style={styles.name}>{player.first_name}</Text>
         <Text style={styles.name}>{player.last_name}</Text>
 
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>School: </Text>
-          {player.college || "Unknown"}
-        </Text>
-
+          {isCollegePlayer && (
+          <Text style={[styles.playerInfo]}>
+            <Text style={styles.playerInfoLabel}>Hometown: </Text>
+            {player.birth_display}
+          </Text>
+        )}
+        {isCollegePlayer && (
+          <Text style={[styles.playerInfo]}>
+            <Text style={styles.playerInfoLabel}>Class: </Text>
+            {player.experience_display}
+          </Text>
+        )}
+        {!isCollegePlayer && (
+          <Text style={[styles.playerInfo]}>
+            <Text style={styles.playerInfoLabel}>School: </Text>
+            {player.college || "Unknown"}
+          </Text>
+        )}
         <Text style={[styles.playerInfo]}>
           <Text style={styles.playerInfoLabel}>Height: </Text>
           {player.height ?? "?"}
@@ -85,10 +100,13 @@ export default function PlayerHeader({
           {player.weight ?? "?"}
         </Text>
 
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>Age: </Text>
-          {age != null ? `${age} years old` : "Unknown"}
-        </Text>
+        {!isCollegePlayer && (
+          <Text style={[styles.playerInfo]}>
+            <Text style={styles.playerInfoLabel}>Age: </Text>
+            {age != null ? `${age} years old` : "Unknown"}
+          </Text>
+        )}
+      
       </View>
     </View>
   );

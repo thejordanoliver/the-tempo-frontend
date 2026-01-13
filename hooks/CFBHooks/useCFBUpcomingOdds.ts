@@ -74,7 +74,7 @@ export const useCFBUpcomingOdds = ({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/cfb/upcoming`, {
+        const res = await axios.get(`${BASE_URL}/api/cfb/odds/upcoming`, {
           params,
           cancelToken: cancelSource?.token,
         });

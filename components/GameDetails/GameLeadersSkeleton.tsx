@@ -1,35 +1,39 @@
+import HeaderSkeleton from "components/Headings/HeaderSkeleton";
 import { Colors } from "constants/Colors";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
-  Dimensions,
+  Easing,
   StyleSheet,
   useColorScheme,
   View,
 } from "react-native";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-
 // Reusable pulse block
 const PulseBlock = ({ style }: { style: any }) => {
-  const opacity = useRef(new Animated.Value(0.4)).current;
   const isDark = useColorScheme() === "dark";
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const pulse = Animated.loop(
       Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
+        Animated.timing(pulseAnim, {
+          toValue: 0.3,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+
+    pulse.start();
+    return () => pulse.stop();
   }, []);
 
   return (
@@ -37,7 +41,7 @@ const PulseBlock = ({ style }: { style: any }) => {
       style={[
         style,
         {
-          opacity,
+          opacity: pulseAnim, // ✅ ACTUALLY animated now
           backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
         },
       ]}
@@ -47,29 +51,31 @@ const PulseBlock = ({ style }: { style: any }) => {
 
 const SkeletonCard = () => {
   const isDark = useColorScheme() === "dark";
-
-  // 🔥 Pulse for border bottom
-  const borderOpacity = useRef(new Animated.Value(0.4)).current;
-
+  const pulseAnim = useRef(new Animated.Value(0.3)).current;
   useEffect(() => {
-    Animated.loop(
+    const pulse = Animated.loop(
       Animated.sequence([
-        Animated.timing(borderOpacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: false, // must be false since it's a color
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
         }),
-        Animated.timing(borderOpacity, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: false,
+        Animated.timing(pulseAnim, {
+          toValue: 0.3,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+
+    pulse.start();
+    return () => pulse.stop();
   }, []);
 
   // Interpolate between two subtle border shades
-  const borderColor = borderOpacity.interpolate({
+  const borderColor = pulseAnim.interpolate({
     inputRange: [0.4, 1],
     outputRange: [
       isDark ? Colors.darkGray : Colors.lightGray,
@@ -119,39 +125,78 @@ const SkeletonCard = () => {
 
 export default function GameLeadersSkeleton() {
   const isDark = useColorScheme() === "dark";
-  const bg = isDark ? Colors.darkGray : Colors.lightGray;
+  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+
+
+  useEffect(() => {
+  const pulse = Animated.loop(
+    Animated.sequence([
+      Animated.timing(pulseAnim, {
+        toValue: 1,
+        duration: 1200,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false, // ✅ REQUIRED for color
+      }),
+      Animated.timing(pulseAnim, {
+        toValue: 0.3,
+        duration: 1200,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }),
+    ])
+  );
+
+  pulse.start();
+  return () => pulse.stop();
+}, []);
+
+
+  const borderColor = pulseAnim.interpolate({
+    inputRange: [0.4, 1],
+    outputRange: [
+      isDark ? Colors.darkGray : Colors.lightGray,
+      isDark ? Colors.lightGray : Colors.darkGray,
+    ],
+  });
 
   return (
-    <View style={{ marginTop: 12 }}>
-      {/* Tab Bar Placeholder */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingHorizontal: 12,
-          marginBottom: 16,
-        }}
-      >
-        {[...Array(4)].map((_, idx) => (
-          <PulseBlock
-            key={idx}
-            style={{
-              width: 80,
-              height: 26,
-              borderRadius: 8,
-            }}
-          />
-        ))}
-      </View>
+    <View>
+      <HeaderSkeleton />
+      <Animated.View style={[styles.wrapper, { borderColor }]}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingHorizontal: 12,
+            marginBottom: 16,
+          }}
+        >
+          {[...Array(4)].map((_, idx) => (
+            <PulseBlock
+              key={idx}
+              style={{
+                width: 80,
+                height: 26,
+                borderRadius: 8,
+              }}
+            />
+          ))}
+        </View>
 
-      {[...Array(2)].map((_, idx) => (
-        <SkeletonCard key={idx} />
-      ))}
+        {[...Array(2)].map((_, idx) => (
+          <SkeletonCard key={idx} />
+        ))}
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingTop: 12,
+  },
   card: {
     flexDirection: "row",
     alignItems: "center",

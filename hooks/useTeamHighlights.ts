@@ -9,7 +9,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
  * @param maxResults max number of results (default 30)
  */
 export function useTeamHighlights(
-  league: "nba" | "nfl" | "cfb" | "cbb" | "mlb" | "all" = "nba",
+  league: "nba" | "nfl" | "cfb" | "cbb" | "wcbb" | "mlb" |  "all" = "nba",
   teamName?: string,
   maxResults = 30
 ) {

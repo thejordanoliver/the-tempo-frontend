@@ -9,7 +9,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 
 
 type SignInFormProps = {

@@ -1,8 +1,11 @@
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { getTeamLogo, teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams, getTeamLogo as getCBBTeamLogo } from "constants/teamsCBB";
+import { Colors, Fonts } from "constants/Styles";
+import { getTeamInfo, getTeamLogo, teams as nbaTeams } from "constants/teams";
+import {
+  teams as cbbTeams,
+  getTeamInfo as getCBBTeamInfo,
+  getTeamLogo as getCBBTeamLogo,
+} from "constants/teamsCBB";
 import { useMemo, useState } from "react";
 import {
   Image,
@@ -12,8 +15,10 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { LeagueType } from "types/types";
+import { CBBTeam, LeagueType, NBATeam } from "types/types";
 import HeadingTwo from "../Headings/HeadingTwo";
+
+type AnyTeam = NBATeam | CBBTeam;
 
 interface Play {
   id: string;
@@ -61,17 +66,19 @@ export default function GameSummary({
   >("All");
 
   const quarterTabs =
-    league === "CBB" ? ["All", "1st Half", "2nd Half"] : ["All", "1st", "2nd", "3rd", "4th"];
+    league === "CBB"
+      ? ["All", "1st Half", "2nd Half"]
+      : ["All", "1st", "2nd", "3rd", "4th"];
 
-const QUARTER_MAP: Record<string, number[] | number> =
-  league === "CBB"
-    ? { "1st Half": [1], "2nd Half": [2] }
-    : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
+  const QUARTER_MAP: Record<string, number[] | number> =
+    league === "CBB"
+      ? { "1st Half": [1], "2nd Half": [2] }
+      : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
 
   const teamPlays = useMemo(() => {
     return plays
-      ?.filter(sp => sp.period)
-      .filter(sp => {
+      ?.filter((sp) => sp.period)
+      .filter((sp) => {
         if (selectedQuarter === "All") return true;
         const periods = QUARTER_MAP[selectedQuarter];
         return Array.isArray(periods)
@@ -98,84 +105,100 @@ const QUARTER_MAP: Record<string, number[] | number> =
   if (!loading && plays?.length === 0) return null;
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo lighter={lighter}>Game Summary</HeadingTwo>
+      <View style={styles.wrapper}>
+        <TabBar
+          tabs={quarterTabs}
+          selected={selectedQuarter}
+          onTabPress={(tab) => setSelectedQuarter(tab as any)}
+        />
+        <ScrollView
+          style={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          snapToInterval={40}
+          decelerationRate="fast"
+        >
+          {teamPlays?.map((play, index) => {
+            const playTeamId = play.team?.id;
+            const allTeams: AnyTeam[] =
+              league === "CBB" || league === "WCBB"
+                ? (cbbTeams as CBBTeam[])
+                : (nbaTeams as NBATeam[]);
 
-      <TabBar
-        tabs={quarterTabs}
-        selected={selectedQuarter}
-        onTabPress={(tab) => setSelectedQuarter(tab as any)}
-      />
+            const teamObj = allTeams.find(
+              (team) => String(team.espnID) === playTeamId
+            );
 
-      <ScrollView
-        style={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        snapToInterval={40}
-        decelerationRate="fast"
-      >
-        {teamPlays?.map((play, index) => {
-          const playTeamId = play.team?.id;
-          const allTeams = league === "CBB" ? cbbTeams : nbaTeams;
+            const showLogo =
+              !!playTeamId &&
+              play.text &&
+              !play.text.toLowerCase().includes("start of game") &&
+              !play.text.toLowerCase().includes("start of") &&
+              !play.text.toLowerCase().includes("end of");
 
-          // Find team
-          const teamObj =
-            allTeams.find(t => String(t.espnID) === playTeamId) ||
-            allTeams.find(t => String(t.espnID) === playTeamId);
+            const team = getTeamInfo(teamObj?.id ?? 0);
+            const cbbTeam = getCBBTeamInfo(teamObj?.id ?? 0);
+            const wcbbTeam = getCBBTeamInfo(teamObj?.id ?? 0);
 
-          // Determine if we should show a logo
-          let teamLogo: any = null;
+            const nbaLogo = getTeamLogo(team?.id, isDark);
+            const cbbLogo = getCBBTeamLogo(
+              league === "WCBB" ? wcbbTeam?.wid : cbbTeam?.id,
+              isDark
+            );
 
-          if (teamObj?.id) {
-            teamLogo =
+            const teamLogo =
               league === "CBB"
-                ? getCBBTeamLogo(teamObj.id, isDark)
-                : getTeamLogo(teamObj.id, isDark);
-          }
+                ? cbbLogo
+                : league === "WCBB"
+                ? cbbLogo
+                : nbaLogo;
 
-          return (
-            <View key={index} style={styles.playRow}>
-              <Text style={styles.periodText}>
-                {periodMap[String(play.period?.number)] ?? "-"}
-                <Text style={styles.clockText}> {play.clock?.displayValue ?? ""}</Text>
-              </Text>
+            return (
+              <View key={index} style={styles.playRow}>
+                <Text style={styles.periodText}>
+                  {periodMap[String(play.period?.number)] ?? "-"}
+                  <Text style={styles.clockText}>
+                    {" "}
+                    {play.clock?.displayValue ?? ""}
+                  </Text>
+                </Text>
 
-              {/* Only show logo if valid */}
-              {teamLogo ? (
-                <Image source={teamLogo} style={styles.logo} />
-              ) : null}
+                {showLogo && teamLogo ? (
+                  <Image source={teamLogo} style={styles.logo} />
+                ) : null}
 
-              <View style={{ flex: 1 }}>
-                <Text style={styles.playDesc}>{play.text}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.playDesc}>{play.text}</Text>
+                </View>
+
+                <Text style={styles.clockText}>
+                  {play.awayScore ?? ""}-{play.homeScore}
+                </Text>
               </View>
+            );
+          })}
 
-              <Text style={styles.clockText}>
-                {play.awayScore ?? ""}-{play.homeScore}
-              </Text>
-            </View>
-          );
-        })}
-
-        {teamPlays?.length === 0 && (
-          <Text style={styles.empty}>No plays available</Text>
-        )}
-      </ScrollView>
+          {teamPlays?.length === 0 && (
+            <Text style={styles.empty}>No plays available</Text>
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { marginTop: 10, height: 600 },
-    logo: { width: 26, height: 26 },
-    listContainer: { marginTop: 12, gap: 12 },
+    logo: { width: 26, height: 26, marginRight: 8 },
+    listContainer: { marginTop: 12, height: 400 },
     playRow: {
       flexDirection: "row",
       alignItems: "flex-start",
-      gap: 10,
-      paddingVertical: 12,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: Colors.midTone,
+      padding: 12,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: Colors.midTone,
     },
     periodText: {
       fontFamily: Fonts.OSBOLD,
@@ -198,5 +221,11 @@ const getStyles = (isDark: boolean) =>
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 12,
     },
   });

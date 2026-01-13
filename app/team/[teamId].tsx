@@ -1,20 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import TeamInfoModal from "components/CFB/Team/TeamInfoModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import GamesList from "components/Games/GamesList";
+import MonthSelector from "components/MonthSelector";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import { StandingsList } from "components/Standings/StandingsList";
 import TabBar from "components/TabBar";
-import RosterStats from "components/Team/RosterStats";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import TeamPlayerList from "components/Team/Roster";
+import RosterStats from "components/Team/RosterStats";
+import TeamInfoModal from "components/Team/TeamInfoModal";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams";
+import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNewsStore } from "hooks/newsStore";
-import useDbPlayersByTeam from "hooks/useDbPlayersByTeam";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import useDbPlayersByTeam from "hooks/usePlayersByTeam";
 import { useTeamGames } from "hooks/useTeamGames";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
@@ -28,26 +32,32 @@ import {
   RefreshControl,
   ScrollView,
   Text,
-  TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import PagerView from "react-native-pager-view";
 import { style } from "styles/TeamDetailsStyles";
 import { User } from "types/types";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
-  const { teamId } = useLocalSearchParams();
   const [refreshing, setRefreshing] = useState(false);
-  const teamIdNum = parseInt(teamId as string, 10);
+  const { teamId } = useLocalSearchParams();
+  const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
+  const teamIdNum = parseInt(teamIdStr);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false); // ✅ bottom sheet state
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
-  const tabs = ["schedule", "news", "roster", "stats", "forum"] as const;
+  const tabs = [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "forum",
+  ] as const;
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("schedule");
   const underlineX = useRef(new Animated.Value(0)).current;
@@ -60,7 +70,7 @@ export default function TeamDetailScreen() {
   const indexToTab = (index: number) => tabs[index];
 
   const team = useMemo(
-    () => teams.find((t) => t.id === teamIdNum.toString()),
+    () => teams.find((t) => t.id === teamIdNum),
     [teamIdNum]
   );
 
@@ -164,27 +174,21 @@ export default function TeamDetailScreen() {
   } = useTeamStats(teamIdNum);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const rawMonths = [
-    { label: "Oct", month: 9, year: 2025 },
-    { label: "Nov", month: 10, year: 2025 },
-    { label: "Dec", month: 11, year: 2025 },
-    { label: "Jan", month: 0, year: 2026 },
-    { label: "Feb", month: 1, year: 2026 },
-    { label: "Mar", month: 2, year: 2026 },
-    { label: "Apr", month: 3, year: 2026 },
-    { label: "May", month: 4, year: 2026 },
-    { label: "Jun", month: 5, year: 2026 },
-  ];
+  const monthsToShow = useMemo(() => {
+    const map = new Map<string, { month: number; year: number }>();
 
-  const monthsToShow = rawMonths.filter(({ month, year }) => {
-    return teamGames.some((game: any) => {
-      const gameDate = new Date(game.date);
-      return gameDate.getFullYear() === year && gameDate.getMonth() === month;
+    teamGames.forEach((g) => {
+      const d = new Date(g.date);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      map.set(key, { year: d.getFullYear(), month: d.getMonth() });
     });
-  });
+
+    return Array.from(map.values()).sort(
+      (a, b) => a.year * 12 + a.month - (b.year * 12 + b.month)
+    );
+  }, [teamGames]);
 
   useEffect(() => {
     if (
@@ -254,15 +258,6 @@ export default function TeamDetailScreen() {
     refreshPlayers,
   } = useDbPlayersByTeam(teamIdNum.toString());
 
-  const handleConfirmDate = (date: Date) => {
-    setShowDatePicker(false);
-    setSelectedDate(date);
-  };
-
-  const handleCancelDate = () => {
-    setShowDatePicker(false);
-  };
-
   const filteredGames = useMemo(() => {
     if (!selectedDate) return [];
     return teamGames.filter((game: any) => {
@@ -288,9 +283,12 @@ export default function TeamDetailScreen() {
 
   // ✅ Use the favorite teams hook
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
+  const { toggleNotifications, isNotified } = useNotifications();
+
   const league = "NBA";
   const favorited = team ? isFavorite(league, team.id) : false;
-
+  const teamKey = String(team?.id);
+  const notfied = team ? isNotified(league, teamKey) : false;
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -302,6 +300,7 @@ export default function TeamDetailScreen() {
           isTeamScreen={true}
           teamCode={team?.code}
           isFavorite={favorited}
+          isNotified={notfied}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
@@ -341,7 +340,7 @@ export default function TeamDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <TabBar tabs={tabs} selected={selectedTab} onTabPress={handleTabPress} />
+      <MainScrollTabBar tabs={tabs} selected={selectedTab} onTabPress={handleTabPress} />
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
@@ -354,60 +353,15 @@ export default function TeamDetailScreen() {
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <View style={styles.monthSelector}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={82} // slightly wider for spacing
-              decelerationRate="fast"
-              scrollEventThrottle={16}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-              }}
-            >
-              {monthsToShow.map(({ label, month, year }, index) => {
-                const isSelected =
-                  selectedDate?.getMonth() === month &&
-                  selectedDate.getFullYear() === year;
-
-                return (
-                  <TouchableOpacity
-                    key={`${label}-${year}`}
-                    onPress={() => handleSelectMonth(month, year, index)}
-                    style={[
-                      styles.monthButton,
-                      { width: 70 },
-                      isSelected && styles.monthButtonSelected,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.monthText,
-                        isSelected && styles.monthTextSelected,
-                      ]}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+            <MonthSelector
+              months={monthsToShow}
+              selectedDate={selectedDate}
+              onSelect={(month, year, index) =>
+                handleSelectMonth(month, year, index)
+              }
+              styles={styles}
+            />
           </View>
-
-          <DateTimePickerModal
-            isVisible={showDatePicker}
-            mode="date"
-            date={selectedDate ?? undefined} // ✅ FIXED
-            onConfirm={handleConfirmDate}
-            onCancel={handleCancelDate}
-            maximumDate={new Date(2100, 11, 31)}
-            minimumDate={new Date(2000, 0, 1)}
-          />
 
           <GamesList
             games={filteredGames}
@@ -416,14 +370,6 @@ export default function TeamDetailScreen() {
             onRefresh={handleRefresh}
             expectedCount={filteredGames.length}
           />
-
-          {/* <GamesList
-            games={mockGames}
-            loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            expectedCount={filteredGames.length}
-          /> */}
         </View>
 
         {/* News Page */}
@@ -515,6 +461,10 @@ export default function TeamDetailScreen() {
           </ScrollView>
         </View>
 
+        {/* Standings Page */}
+        <View key="standings" style={{ flex: 1 }}>
+          <StandingsList />
+        </View>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
           <TeamForum teamId={teamId as string} league="NBA" />
@@ -526,7 +476,6 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          coachName={team.coach ?? "N/A"}
           league="NBA"
         />
       )}

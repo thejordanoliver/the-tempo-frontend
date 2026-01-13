@@ -70,6 +70,7 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       contentContainerStyle={{
         paddingHorizontal: 12,
         gap: 12,
+        paddingBottom: 100
       }}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) =>

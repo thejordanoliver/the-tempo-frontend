@@ -34,7 +34,7 @@ interface SeasonLeadersListProps {
   loading?: boolean;
   error?: string | null;
   categories?: Category[];
-  league: "NFL" | "CFB" | "MLB" | "CBB";
+  league: "NFL" | "CFB" | "MLB" | "CBB" | "WCBB";
 }
 
 export default function SeasonLeadersList({
@@ -61,6 +61,7 @@ useEffect(() => {
     CFB: cfbTeams,
     MLB: mlbTeams,
     CBB: cbbTeams,
+    WCBB: cbbTeams,
   };
 
   const teamList = leagueTeamsMap[league];

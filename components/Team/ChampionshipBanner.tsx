@@ -14,7 +14,7 @@ import { teams as mlbTeams } from "../../constants/teamsMLB";
 import { teams as nflTeams } from "../../constants/teamsNFL";
 
 type Props = {
-  years?: number[];
+  years?: (number | string)[];
   currentYear?: number;
   logo?: any;
   teamId?: string | number;
@@ -100,63 +100,65 @@ export default function ChampionshipBanner({
 
   return (
     <View style={styles.wrapper}>
-      {bannerList.map((yearVal, index) => {
-        const yearShort = isNone
-          ? "NONE"
-          : isMany
-          ? `x${yearVal}`
-          : `'${String(yearVal).slice(-2)}`;
+    {bannerList.map((yearVal, index) => {
+  // shorten the year for display
+  const yearShort = isNone
+    ? "NONE"
+    : isMany
+    ? `x${yearVal}`
+    : typeof yearVal === "number" || !isNaN(Number(yearVal))
+    ? league === "CFB"
+      ? `'${String(Number(yearVal)).slice(-2)}`
+      : `'${String(yearVal).slice(-2)}`
+    : String(yearVal);
 
-        let label = `${league} CHAMPIONS`;
+  let label = `${league} CHAMPIONS`;
 
-        if (league === "CFB" && typeof yearVal === "number") {
-          label = yearVal <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
-        }
-        if (league === "MLB" && typeof yearVal === "number") {
-          label = "WORLD SERIES CHAMPIONS";
-        }
-        if (league === "NFL" && typeof yearVal === "number") {
-          label = "SUPER BOWL CHAMPIONS";
-        }
+  // CFB: coerce yearVal to number to split BCS / CFP
+  if (league === "CFB" && !isMany && yearVal != null) {
+    const numericYear = Number(yearVal);
+    if (!isNaN(numericYear)) {
+      label = numericYear <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
+    }
+  }
 
-        return (
-          <View key={index} style={styles.bannerWrapper}>
-            {/* fill (tinted) */}
-            <Image
-              source={Fill}
-              style={[
-                styles.bannerFill,
-                {
-                  tintColor: team?.color ?? Colors.midTone,
-                },
-              ]}
-              resizeMode="contain"
-            />
+  // MLB always
+  if (league === "MLB" && yearVal != null && !isNaN(Number(yearVal))) {
+    label = "WORLD SERIES CHAMPIONS";
+  }
 
-            {/* outline */}
-            <Image
-              source={
-                isColorDark(team?.color) // team color dark?
-                  ? OutlineLight // use LIGHT outline
-                  : Outline // use DARK outline
-              }
-              style={styles.bannerOutline}
-              resizeMode="contain"
-            />
+  // NFL always show SUPER BOWL CHAMPIONS
+  if (league === "NFL" && yearVal != null) {
+    label = "SUPER BOWL CHAMPIONS";
+  }
 
-            {/* content */}
-            <View style={styles.contentOverlay}>
-              <Text style={styles.leagueLabel}>{label}</Text>
-              <Text style={styles.yearText}>{yearShort}</Text>
+  return (
+    <View key={index} style={styles.bannerWrapper}>
+      <Image
+        source={Fill}
+        style={[
+          styles.bannerFill,
+          { tintColor: team?.color ?? Colors.midTone },
+        ]}
+        resizeMode="contain"
+      />
+      <Image
+        source={isColorDark(team?.color) ? OutlineLight : Outline}
+        style={styles.bannerOutline}
+        resizeMode="contain"
+      />
+      <View style={styles.contentOverlay}>
+        <Text style={styles.leagueLabel}>{label}</Text>
+        <Text style={styles.yearText}>{yearShort}</Text>
+        <Image
+          source={resolveTeamLogo(team) || PlaceholderLogo}
+          style={styles.teamLogo}
+        />
+      </View>
+    </View>
+  );
+})}
 
-              <Image
-                source={resolveTeamLogo(team) || PlaceholderLogo}
-                style={styles.teamLogo}
-              />
-            </View>
-          </View>
-        );
-      })}
     </View>
   );
 }

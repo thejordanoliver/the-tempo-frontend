@@ -20,11 +20,15 @@ function parseDateString(d: string) {
   return null;
 }
 
-type LeagueType = "nba" | "mens-college-basketball" | "mlb"; // 👈 MLB now included
+type LeagueType =
+  | "nba"
+  | "mens-college-basketball"
+  | "womens-college-basketball"
+  | "mlb";
 
 export const useGameBroadcasts = (
-  home: string,
-  away: string,
+  homeId: number,
+  awayId: number,
   date:
     | string
     | { date?: string; utc?: string; timestamp?: number }
@@ -45,7 +49,7 @@ export const useGameBroadcasts = (
   }, [date]);
 
   useEffect(() => {
-    if (!home || !away || !normalizedDate) return;
+    if (!homeId || !awayId || !normalizedDate) return;
 
     let cancelled = false;
 
@@ -54,14 +58,10 @@ export const useGameBroadcasts = (
       setError(null);
 
       try {
-        // ---------------------------
-        // Normalize incoming date
-        // ---------------------------
         let targetDate: Date | null = null;
 
-        if (typeof date === "string") {
-          targetDate = parseDateString(date);
-        } else if (typeof date === "object") {
+        if (typeof date === "string") targetDate = parseDateString(date);
+        else if (typeof date === "object") {
           targetDate = date.timestamp
             ? new Date(date.timestamp * 1000)
             : date.utc
@@ -73,65 +73,40 @@ export const useGameBroadcasts = (
 
         if (!targetDate) return;
 
-        const makeYMD = (d: Date) =>
-          d.toISOString().slice(0, 10).replace(/-/g, "");
+        const makeYMD = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, "");
 
         const datesToCheck = [
-          makeYMD(new Date(targetDate.getTime() - 86400000)),
-          makeYMD(targetDate),
-          makeYMD(new Date(targetDate.getTime() + 86400000)),
+          makeYMD(new Date(targetDate.getTime() - 86400000)), // yesterday
+          makeYMD(targetDate), // today
+          makeYMD(new Date(targetDate.getTime() + 86400000)), // tomorrow
         ];
 
-        // ------------------------------------------------
-        // ESPN path per sport
-        // ------------------------------------------------
         const leaguePath =
           league === "mens-college-basketball"
             ? "basketball/mens-college-basketball"
             : league === "mlb"
-            ? "baseball/mlb" // 👈 MLB path
+            ? "baseball/mlb"
             : "basketball/nba";
 
-        // ------------------------------------------------
-        // Params per league
-        // ------------------------------------------------
         const params =
           league === "mens-college-basketball"
             ? "&groups=50&limit=500"
             : league === "mlb"
-            ? "&limit=200" // MLB scoreboard limit
+            ? "&limit=200"
             : "&limit=300";
 
         let foundGame: any = null;
 
-        // ------------------------------------------------
-        // Try yesterday / today / tomorrow
-        // ------------------------------------------------
         for (const yyyymmdd of datesToCheck) {
           const scoreboardUrl = `https://site.api.espn.com/apis/site/v2/sports/${leaguePath}/scoreboard?dates=${yyyymmdd}${params}`;
           const scoreboardRes = await axios.get(scoreboardUrl);
           const games = scoreboardRes.data.events || [];
 
-          // Try to match by name OR abbreviation
           const game = games.find((g: any) => {
             const competitors = g.competitions?.[0]?.competitors || [];
-            const normalize = (v: string) => v?.toLowerCase();
+            const ids = competitors.map((c: any) => Number(c.team?.id));
 
-            const teamNames = competitors.flatMap((c: any) => [
-              c.team?.abbreviation?.toLowerCase(),
-              c.team?.displayName?.toLowerCase(),
-              c.team?.shortDisplayName?.toLowerCase(),
-              c.team?.name?.toLowerCase(),
-            ]);
-
-            return (
-              teamNames.some((n: string | undefined) =>
-                n?.includes(normalize(home))
-              ) &&
-              teamNames.some((n: string | undefined) =>
-                n?.includes(normalize(away))
-              )
-            );
+            return ids.includes(homeId) && ids.includes(awayId);
           });
 
           if (game) {
@@ -148,9 +123,6 @@ export const useGameBroadcasts = (
           return;
         }
 
-        // ------------------------------------------------
-        // Extract actual broadcast info
-        // ------------------------------------------------
         const eventBroadcasts = foundGame.competitions?.[0]?.broadcasts || [];
         if (!cancelled) setBroadcasts(eventBroadcasts);
       } catch (err: any) {
@@ -166,7 +138,8 @@ export const useGameBroadcasts = (
     return () => {
       cancelled = true;
     };
-  }, [home, away, normalizedDate, league]);
+  }, [homeId, awayId, normalizedDate, league]);
 
   return { broadcasts, loading, error };
 };
+

@@ -9,7 +9,8 @@ import { Fonts } from "constants/fonts";
 import { getTeamInfo } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
-import { useTeamRoster } from "hooks/NFLHooks/useTeamRoster";
+import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
+
 import { useLayoutEffect, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -24,54 +25,23 @@ export default function NFLPlayerDetailScreen() {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
 
-  // -------------------------
-  // Route params
-  // -------------------------
-  const params = useLocalSearchParams<{
-    id: string;
-    teamId?: string;
-  }>();
+  /* ---------------- Route params ---------------- */
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const playerId = Number(id);
 
-  const playerIdParam = Array.isArray(params.id) ? params.id[0] : params.id;
+  /* ---------------- Fetch player ---------------- */
+  const {
+    player,
+    loading: playerLoading,
+    error: playerError,
+  } = usePlayerById(playerId, "NFL");
 
-  const teamIdParam = Array.isArray(params.teamId)
-    ? params.teamId[0]
-    : params.teamId;
-
-  const parsedPlayerId = Number(playerIdParam);
-  const sanitizedTeamId = teamIdParam?.toString();
-
-  // -------------------------
-  // Fetch roster
-  // -------------------------
-  const { players: teamPlayers, loading: rosterLoading } = useTeamRoster(
-    sanitizedTeamId ?? ""
-  );
-
-  // -------------------------
-  // Find player in roster
-  // -------------------------
-  const player = useMemo(() => {
-    if (!teamPlayers || !parsedPlayerId) return null;
-
-    return (
-      teamPlayers.find(
-        (p) => p.player_id === parsedPlayerId || p.id === parsedPlayerId
-      ) ?? null
-    );
-  }, [teamPlayers, parsedPlayerId]);
-
-  // -------------------------
-  // Team info
-  // -------------------------
+  /* ---------------- Team info ---------------- */
   const teamObj = player?.team_id ? getTeamInfo(player.team_id) : null;
-
   const isTeamAvailable = !!teamObj;
   const fullName = player?.name ?? "Player";
 
-  // -------------------------
-  // Last game
-  // -------------------------
+  /* ---------------- Last game ---------------- */
   const numericTeamId = teamObj?.id ?? 0;
   const {
     lastGame,
@@ -79,9 +49,7 @@ export default function NFLPlayerDetailScreen() {
     error: lastGameError,
   } = useLastTeamGame(numericTeamId);
 
-  // -------------------------
-  // Header
-  // -------------------------
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -108,10 +76,8 @@ export default function NFLPlayerDetailScreen() {
     });
   }, [navigation, fullName, teamObj, isTeamAvailable, isDark]);
 
-  // -------------------------
-  // Loading / empty states
-  // -------------------------
-  if (rosterLoading) {
+  /* ---------------- Loading / error ---------------- */
+  if (playerLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
         <ActivityIndicator />
@@ -119,7 +85,7 @@ export default function NFLPlayerDetailScreen() {
     );
   }
 
-  if (!player) {
+  if (playerError || !player) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
         <Text style={{ textAlign: "center" }}>Player not found</Text>
@@ -127,52 +93,30 @@ export default function NFLPlayerDetailScreen() {
     );
   }
 
-  // -------------------------
-  // Player mapping
-  // -------------------------
-  const avatarUrl = player.avatarUrl ?? undefined;
-
-  const mappedPlayer = {
-    first_name: player.name.split(" ")[0] ?? "",
-    last_name: player.name.split(" ").slice(1).join(" "),
-    college: player.college ?? undefined,
-    height: player.height ?? undefined,
-    weight: player.weight ?? undefined,
-    position: player.position ?? undefined,
-    jersey_number: player.jersey_number?.toString(),
-    age: player.age ?? undefined,
-  };
-
-  // -------------------------
-  // Seasons for career stats
-  // -------------------------
+  /* ---------------- Seasons for stats ---------------- */
   const seasons = useMemo(() => {
+    if (!player.experience || !player.age) return [];
+
     const currentYear = new Date().getFullYear();
+    const startYear = currentYear - player.experience + 1;
 
-    if (player.experience) {
-      const startYear = currentYear - player.experience + 1;
-      return Array.from({ length: player.experience }, (_, i) =>
-        (startYear + i).toString()
-      );
-    }
-
-    return [];
+    return Array.from({ length: player.experience }, (_, i) =>
+      (startYear + i).toString()
+    );
   }, [player]);
 
-  // -------------------------
-  // Render
-  // -------------------------
+  /* ---------------- Render ---------------- */
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
       {/* Player Header */}
       <PlayerHeader
-        player={mappedPlayer}
-        avatarUrl={avatarUrl}
+        player={player}
+        avatarUrl={player.headshot_url}
         isDark={isDark}
         teamColor={teamObj?.color}
-        teamSecondaryColor={teamObj?.secondaryColor}
         team_name={teamObj?.code}
-        age={player.age ?? 0}
+        age={player.age}
+        isCollegePlayer={false}
       />
 
       {/* Season Stats */}
@@ -181,6 +125,7 @@ export default function NFLPlayerDetailScreen() {
           playerId={player.player_id}
           teamColor={teamObj?.secondaryColor}
           teamColorDark={teamObj?.secondaryColor}
+          league="NFL"
         />
       </View>
 

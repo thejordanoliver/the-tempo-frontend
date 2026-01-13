@@ -1,4 +1,5 @@
 // utils/nflGameCardUtils.ts
+import { Colors } from "constants/Colors";
 import { getNFLTeamsLogo, getTeamCode, getTeamName } from "constants/teamsNFL";
 
 /**
@@ -177,13 +178,13 @@ export const getTeamTextStyle = (
 
   if (isSuperBowl) {
     return {
-      color: "#1d1d1d",
+      color: Colors.black,
       opacity: isWinner ? 1 : 0.5,
     };
   }
 
   return {
-    color: dark ? "#fff" : "#1d1d1d",
+    color: dark ? Colors.white : Colors.black,
     opacity: isWinner ? 1 : 0.5,
   };
 };

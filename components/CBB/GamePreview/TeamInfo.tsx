@@ -1,19 +1,18 @@
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogo } from "constants/teamsCBB";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { CBBTeam } from "types/types";
 
 type TeamInfoProps = {
   team?: CBBTeam;
-  teamName: string;
+  teamName: string | undefined;
   score?: number;
   opponentScore?: number;
-  record?: string;
-  isDark: boolean;
+  record: string;
   lighter: boolean;
   isGameOver: boolean;
-  isScheduled?: boolean; // scheduled games
+  isScheduled?: boolean;
+  isWomen?: boolean;
   side?: "home" | "away";
   rank?: number;
 };
@@ -24,8 +23,9 @@ export default function TeamInfo({
   score,
   opponentScore,
   record,
+  lighter,
   rank,
-  isDark,
+  isWomen,
   isGameOver,
   isScheduled = false,
   side,
@@ -41,7 +41,7 @@ export default function TeamInfo({
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled;
-  const valueFontSize = isRecord ? 28 : 36;
+  const valueFontSize = isRecord ? 24 : 36;
 
   // --- Value shown ---
   const displayValue = isRecord
@@ -51,7 +51,11 @@ export default function TeamInfo({
     : "-";
 
   // Logos (prefer light variants at night)
-  const logo = team ? getTeamLogo(team.id, true) : undefined;
+  const logo = isWomen
+    ? team?.wLogo || team?.logoLight || team?.logo
+    : lighter
+    ? team?.logoLight || team?.logo
+    : team?.logo;
   const showRank = typeof rank === "number" && rank > 0;
 
   return (
@@ -83,12 +87,9 @@ export default function TeamInfo({
       {/* ─────────── TEAM LOGO + NAME ─────────── */}
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
-
         <Text style={styles.teamName}>
-{showRank ? (
-  <Text style={styles.teamRank}>{rank} </Text>
-) : null}
-{teamName}
+          {showRank ? <Text style={styles.teamRank}>{rank} </Text> : null}
+          {teamName}
         </Text>
 
         {/* Final only → show record */}
@@ -135,15 +136,12 @@ export const teamInfoStyle = StyleSheet.create({
     color: Colors.white,
   },
 
-  teamRank: { fontSize: 10, color: Colors.lightGray },
-
   teamLogo: {
     width: 65,
     height: 65,
     resizeMode: "contain",
   },
 
-  // Score stays centered. Icon is absolute (does NOT push score upward)
   scoreWrapper: {
     justifyContent: "center",
     alignItems: "center",
@@ -153,22 +151,21 @@ export const teamInfoStyle = StyleSheet.create({
 
   possessionIcon: {
     position: "absolute",
-    bottom: -20, // hangs below, does NOT shift score
+    bottom: -20,
     width: 26,
     height: 26,
     resizeMode: "contain",
   },
 
   teamRecord: {
-    fontSize: 12,
     fontFamily: Fonts.OSREGULAR,
     color: Colors.white,
     opacity: 0.7,
   },
 
   teamValue: {
-    fontSize: 32, // dynamically overridden
     fontFamily: Fonts.OSBOLD,
     color: Colors.white,
   },
+  teamRank: { fontSize: 10, color: Colors.lightGray },
 });

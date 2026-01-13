@@ -1,10 +1,12 @@
 // components/CBBStandingsList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Standings/StandingsSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
-import { getTeamLogoESPN } from "constants/teamsCBB";
+import { getTeamByESPNId } from "constants/teamsCBB";
+
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useRef, useState } from "react";
 import {
@@ -17,8 +19,13 @@ import {
   useColorScheme,
 } from "react-native";
 import { getStyles } from "styles/StandingsStyles";
-export const CBBStandingsList = () => {
-  const { rankings = [], loading, error } = useCBBRankings();
+
+type Props = {
+  league: "116" | "423"; // 116 = Men, 423 = Women
+};
+
+export const CBBStandingsList = ({ league = "116" }: Props) => {
+  const { rankings = [], loading, error } = useCBBRankings(league);
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
@@ -84,10 +91,16 @@ export const CBBStandingsList = () => {
     item: CBBTeamRank;
     index: number;
   }) => {
-    const teamLogo = item.team
-      ? getTeamLogoESPN(item.team.id, isDark)
-      : undefined;
-
+    const team = getTeamByESPNId(item.team?.id ?? "");
+    const teamLogo =
+      isDark && league === "423"
+        ? team?.wLogo || team?.logoLight || team?.logo
+        : league === "423"
+        ? team?.wLogo || team?.logo
+        : isDark
+        ? team?.logoLight || team?.logo
+        : team?.logo;
+    const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
     const isDown = trendNum < 0;
@@ -105,9 +118,7 @@ export const CBBStandingsList = () => {
 
         <View style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
-          <Text style={styles.collegeTeamName}>
-            {item.team?.abbreviation || item.team?.nickname || "N/A"}
-          </Text>
+          <Text style={styles.collegeTeamName}>{teamcode}</Text>
 
           {trendNum !== 0 && !isNaN(trendNum) && (
             <View
@@ -247,20 +258,24 @@ export const CBBStandingsList = () => {
           </Text>
         </View>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {droppedOutTeams.map((item) => (
-            <Text
-              key={item.team?.id || `dropped-${item.previous}-${item.date}`}
-              style={{
-                color: isDark ? Colors.white : Colors.black,
-                fontFamily: Fonts.OSLIGHT,
-                fontSize: 16,
-                marginVertical: 2,
-                marginRight: 8,
-              }}
-            >
-              {item.team?.nickname || "Unknown"} ({item.previous})
-            </Text>
-          ))}
+          {droppedOutTeams.map((item) => {
+            const team = getTeamByESPNId(item.team?.id ?? "");
+            const teamName = team?.shortName || team?.name || "N/A";
+            return (
+              <Text
+                key={item.team?.id || `dropped-${item.previous}-${item.date}`}
+                style={{
+                  color: isDark ? Colors.white : Colors.black,
+                  fontFamily: Fonts.OSLIGHT,
+                  fontSize: 16,
+                  marginVertical: 2,
+                  marginRight: 8,
+                }}
+              >
+                {teamName} ({item.previous})
+              </Text>
+            );
+          })}
         </View>
       </View>
     );
@@ -268,32 +283,17 @@ export const CBBStandingsList = () => {
 
   function Section({ title, data }: { title: string; data: CBBTeamRank[] }) {
     return (
-      <View style={{ marginTop: 24 }}>
-        <View
-          style={[
-            styles.header,
-            { borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray },
-          ]}
-        >
-          <Text
-            style={[
-              styles.heading,
-              {
-                color: isDark ? Colors.white : Colors.black,
-                fontSize: 20,
-                fontFamily: Fonts.OSSEMIBOLD,
-              },
-            ]}
-          >
-            {title}
-          </Text>
+      <>
+        <View style={{ marginTop: 24 }}>
+          <HeadingTwo style={{ marginBottom: 0 }}>{title}</HeadingTwo>
         </View>
-
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}
-            keyExtractor={(item) =>
-              item.team?.id || `dropped-${item.current}-${item.date}`
+            keyExtractor={(item, index) =>
+              item.team?.id
+                ? String(item.team.id)
+                : `fallback-${index}-${item.date}`
             }
             renderItem={renderLeftItem}
             scrollEnabled={false}
@@ -307,8 +307,10 @@ export const CBBStandingsList = () => {
           >
             <FlatList
               data={data}
-              keyExtractor={(item) =>
-                item.team?.id || `dropped-${item.current}-${item.date}`
+              keyExtractor={(item, index) =>
+                item.team?.id
+                  ? String(item.team.id)
+                  : `fallback-${index}-${item.date}`
               }
               renderItem={renderRightItem}
               scrollEnabled={false}
@@ -317,7 +319,7 @@ export const CBBStandingsList = () => {
             />
           </ScrollView>
         </View>
-      </View>
+      </>
     );
   }
 

@@ -5,22 +5,13 @@ import GameSquareCard from "components/Games/GameSquareCard";
 import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
 import StackedGameCard from "components/Games/StackedGameCard";
 import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  ViewStyle,
-} from "react-native";
+import { FlatList, Text, useColorScheme, View, ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import type { Game } from "types/types";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
+import type { Game } from "types/types";
 type GamesListProps = {
   games: Game[];
   loading: boolean;
@@ -40,10 +31,10 @@ export default function GamesList({
   day,
   scrollEnabled = true,
 }: GamesListProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const { viewMode } = usePreferences();
-  const styles = gameListStyles;
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme === "dark"
+  const styles = gameListStyles(isDark);
   const [previewGame, setPreviewGame] = useState<Game | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -56,7 +47,9 @@ export default function GamesList({
   const renderGameCard = (game: Game, index?: number) => {
     if ((game as any)?._isPlaceholder) {
       return (
-        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
+        <View
+          style={[styles.itemContainer, { backgroundColor: "transparent" }]}
+        />
       );
     }
 
@@ -86,15 +79,15 @@ export default function GamesList({
 
     if (viewMode === "list")
       return wrapper(
-        <View style={{ marginBottom: 12 }}>
-          <GameCard game={game} isDark={isDark} />
+        <View>
+          <GameCard game={game} />
         </View>
       );
     if (viewMode === "grid")
-      return wrapper(<GameSquareCard game={game} isDark={isDark} />, index);
+      return wrapper(<GameSquareCard game={game} />, index);
     return wrapper(
-      <View style={{ marginBottom: 12 }}>
-        <StackedGameCard game={game} isDark={isDark} />
+      <View>
+        <StackedGameCard game={game} />
       </View>
     );
   };
@@ -206,6 +199,7 @@ export default function GamesList({
         refreshing={refreshing}
         onRefresh={onRefresh}
         contentContainerStyle={styles.contentContainer}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
       />
@@ -219,4 +213,3 @@ export default function GamesList({
     </>
   );
 }
-

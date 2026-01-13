@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import React, { useRef, useState } from "react";
 import {

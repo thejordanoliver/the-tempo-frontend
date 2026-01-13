@@ -11,7 +11,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
 import { MLBGame } from "types/mlb";
 
 type Props = {
@@ -58,7 +58,7 @@ function MLBGameSquareCard({ game, isDark }: Props) {
   const dark = isDark ?? colorScheme === "dark";
   const router = useRouter();
 
-  const styles = getStyles(dark);
+  const styles = gameSquareCardStyles(dark);
 
   /* ===============================
      BASIC GAME FIELDS FROM API

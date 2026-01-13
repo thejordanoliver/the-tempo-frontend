@@ -4,7 +4,7 @@ import { Image, Pressable, Text, View } from "react-native";
 import {
   FootballTeamRowProps,
   sizeStyles,
-  styles,
+  teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../assets/icons8/Football.png";
 import FootballLight from "../../../assets/icons8/FootballLight.png";
@@ -17,8 +17,7 @@ export const TeamRow = ({
   isHome = false,
   score,
   isWinner,
-  status,
-  colors,
+  gameStatusDescription,
   possessionTeamId,
   size = "medium",
   timeouts = 3,
@@ -33,18 +32,19 @@ export const TeamRow = ({
     router.push(`/team/${league}/${id}`);
   };
 
-  const isScheduled = status === "Scheduled";
-  const isLive =
-    status &&
-    status !== "Scheduled" &&
-    status !== "Final" &&
-    status !== undefined;
-  const isFinal = status === "Final";
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Not Started";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period" ||
+    gameStatusDescription === "Halftime";
 
   // 🔥 CFB uses team.espnID, NFL uses team.id
-  const teamIdentifier = league === "cfb" ? team.espnID : team.id;
+  const teamIdentifier = team.espnID;
   const hasPossession =
-    isLive && String(possessionTeamId) === String(teamIdentifier);
+    inProgress && String(possessionTeamId) === String(teamIdentifier);
 
   const isTie =
     isFinal &&
@@ -52,26 +52,29 @@ export const TeamRow = ({
     opponentScore != null &&
     score === opponentScore;
 
+  const styles = teamRowStyles(isDark, isTie);
+
   const getScoreStyle = () => {
-    if (score == null) return { color: colors.score, opacity: 0.5 };
-    if (isLive) return { color: isDark ? Colors.white : Colors.black };
+    if (score == null) return { color: Colors.midTone, opacity: 0.5 };
+    if (inProgress) return { color: isDark ? Colors.white : Colors.black };
     if (isFinal) {
       if (isTie)
         return { color: isDark ? Colors.white : Colors.black, opacity: 1 };
       return {
-        color: isWinner ? colors.winnerScore : colors.score,
-        opacity: isWinner ? 1 : 0.5,
+        color: isWinner
+          ? isDark
+            ? Colors.dark.white
+            : Colors.light.black
+          : Colors.midTone,
       };
     }
-    return { color: colors.score };
+    return { color: Colors.midTone };
   };
 
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 3;
     return (
-      <View
-        style={{ flexDirection: "row", marginTop: league === "cfb" ? 2 : 4 }}
-      >
+      <View style={{ flexDirection: "row" }}>
         {Array.from({ length: totalTimeouts }).map((_, i) => (
           <View
             key={i}
@@ -93,7 +96,7 @@ export const TeamRow = ({
     ? team.record ?? "0-0"
     : score != null
     ? score
-    : isLive
+    : inProgress
     ? "..."
     : team.record ?? "0-0";
 
@@ -105,11 +108,7 @@ export const TeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [
-                    styles.preGameRecord,
-                    sizeStyles[size].preGameRecord,
-                    { color: colors.record },
-                  ]
+                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >
@@ -135,29 +134,19 @@ export const TeamRow = ({
           <View style={styles.nameRow}>
             {/* 🔥 League-specific name formatting */}
             {league === "cfb" ? (
-              <Text style={[styles.teamName, { color: colors.text }]}>
-                <>
-                  {rank != null ? (
-                    <Text style={[ styles.rank ,{fontSize: 10, color: Colors.lightGray }]}>
-                      {rank}{" "}
-                    </Text>
-                  ) : null}
-
-                  {team.shortName || team.name}
-                </>
+              <Text style={styles.teamName}>
+                {rank && <Text style={styles.rank}>{rank} </Text>}
+                {team.shortName || team.name}
               </Text>
             ) : (
-              <Text style={[styles.teamName, { color: colors.text }]}>
-                {team.code}
-              </Text>
+              <Text style={styles.teamName}>{team.code}</Text>
             )}
           </View>
 
-          {isLive && (
+          {inProgress && (
             <View
               style={{
                 alignItems: "center",
-                marginTop: league === "cfb" ? 2 : 4,
               }}
             >
               {renderTimeouts(timeouts)}
@@ -165,15 +154,7 @@ export const TeamRow = ({
           )}
 
           {isFinal && (
-            <Text
-              style={[
-                styles.record,
-                sizeStyles[size].record,
-                {
-                  color: isTie ? colors.text : colors.record,
-                },
-              ]}
-            >
+            <Text style={[styles.record, sizeStyles[size].record]}>
               {team.record ?? "0-0"}
             </Text>
           )}
@@ -186,11 +167,7 @@ export const TeamRow = ({
           <Text
             style={[
               isScheduled
-                ? [
-                    styles.preGameRecord,
-                    sizeStyles[size].preGameRecord,
-                    { color: colors.record },
-                  ]
+                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
                 : [styles.score, sizeStyles[size].score, getScoreStyle()],
             ]}
           >

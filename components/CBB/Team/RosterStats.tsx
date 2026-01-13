@@ -7,7 +7,6 @@ import { useCBBRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
 import { useCBBTeamStats } from "hooks/CBBHooks/useCBBTeamStats";
 import React, { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -18,14 +17,17 @@ import {
 } from "react-native";
 
 // ✅ rename to avoid conflict
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { players as cbbPlayers } from "constants/cbbPlayers";
+import { players as wcbbPlayers } from "constants/wcbbPlayers";
 
 interface Props {
   espnID: number;
   teamID: number;
+  league?: "CBB" | "WCBB";
 }
 
-const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
+const CBBRosterStats: React.FC<Props> = ({ espnID, teamID, league }) => {
   const [viewMode, setViewMode] = useState<"players" | "team">("players");
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
@@ -34,20 +36,25 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
   /** ==========================
    *   FETCH DATA
    *  ========================== */
+  const leagueKey = league === "WCBB" ? "WCBB" : "CBB";
+
   const {
     data: teamStats,
     loading: loadingTeam,
     error: errorTeam,
-  } = useCBBTeamStats(String(espnID), String(teamID));
+  } = useCBBTeamStats(String(espnID), String(teamID), league);
 
   const {
     data: rosterStats,
     loading: loadingRoster,
     error: errorRoster,
-  } = useCBBRosterStats(String(espnID));
+  } = useCBBRosterStats(String(espnID), leagueKey);
 
   const loading = viewMode === "team" ? loadingTeam : loadingRoster;
   const error = viewMode === "team" ? errorTeam : errorRoster;
+  const headshotLeague =
+    league === "WCBB" ? "womens-college-basketball" : "mens-college-basketball";
+  const localPlayers = league === "WCBB" ? wcbbPlayers : cbbPlayers;
 
   /** ==========================
    *   MERGE LOCAL + ESPN PLAYERS
@@ -58,37 +65,38 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
     return rosterStats.players
       .filter((p: any) => p.espnId && p.firstName !== "Total")
       .map((scraped: any) => {
-        const meta = cbbPlayers.find(
+        const meta = localPlayers.find(
           (x: any) => String(x.id) === String(scraped.espnId)
         );
 
+        const avatar =
+          meta?.imageUrl ??
+          `https://a.espncdn.com/i/headshots/${headshotLeague}/players/full/${scraped.espnId}.png`;
+
         return {
           id: scraped.espnId,
-          // names
           firstName: meta?.firstname ?? scraped.firstName,
           lastName: meta?.lastname ?? scraped.lastName,
           shortName:
             meta?.shortName ?? `${scraped.firstName[0]}. ${scraped.lastName}`,
-          // details
           jersey: meta?.jersey ?? scraped.jersey,
           position: meta?.position ?? scraped.position,
           height: meta?.height ?? null,
           weight: meta?.weight ?? null,
           experience: meta?.experience ?? null,
-
-          // stats (ESPN only)
           stats: scraped.stats,
           gamesPlayed: scraped.stats["GP"] ?? 0,
-
-          // avatar priority local > ESPN
-          avatar:
-            meta?.imageUrl ??
-            `https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/${scraped.espnId}.png`,
+          avatar,
         };
       });
   }, [rosterStats]);
 
-  if (loading) return <ActivityIndicator size="large" style={{ margin: 20 }} />;
+  if (loading)
+    return (
+      <View style={styles.center}>
+        <CustomActivityIndicator />
+      </View>
+    );
 
   if (error)
     return (
@@ -167,7 +175,7 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
 
     return (
       <Text style={styles.cardName}>
-        {firstInitial}. {lastName}{" "}
+        {firstInitial}. {lastName}
         <Text style={styles.number}>{jerseyNum}</Text>
       </Text>
     );
@@ -180,7 +188,9 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
 
         <TouchableOpacity
           onPress={() =>
-            router.push(`/player/cbb/${item.player.id}?teamId=${teamID}`)
+            router.push(
+              `/player/cbb/${item.player.id}?teamId=${teamID}&league=${league}`
+            )
           }
         >
           <View style={styles.statCard}>
@@ -298,7 +308,7 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
             </ScrollView>
 
             {/* Player Table */}
-            <View style={{ flexDirection: "row" }}>
+            <View style={styles.tableWrapper}>
               {/* Fixed Name Column */}
               <View style={styles.fixedColumnContainer}>
                 <View
@@ -336,10 +346,15 @@ const CBBRosterStats: React.FC<Props> = ({ espnID, teamID }) => {
                   >
                     <TouchableOpacity
                       onPress={() =>
-                        router.push(`/player/cbb/${p.id}?teamId=${teamID}`)
+                        router.push(
+                          `/player/cbb/${p.id}?teamId=${teamID}&league=${league}`
+                        )
                       }
                     >
-                      <Text style={[styles.tableCell, { width: 140 }]}>
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.tableCell, { width: 140 }]}
+                      >
                         {formatDisplayName(p.firstName, p.lastName, p.jersey)}
                       </Text>
                     </TouchableOpacity>
@@ -431,11 +446,20 @@ const getStyles = (isDark: boolean) =>
     scrollContainer: { flexGrow: 1, borderRadius: 4, overflow: "hidden" },
     fixedColumnContainer: {
       zIndex: 2,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     table: {
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
+    },
+    tableWrapper: {
+      flexDirection: "row",
+      borderRadius: 8,
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     tableRow: {
       flexDirection: "row",
@@ -537,11 +561,13 @@ const getStyles = (isDark: boolean) =>
       marginLeft: 4,
     },
     center: { marginTop: 20, alignItems: "center" },
+
     errorText: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
-      color: "red",
+      textAlign: "center",
+      marginTop: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });
-
 export default CBBRosterStats;

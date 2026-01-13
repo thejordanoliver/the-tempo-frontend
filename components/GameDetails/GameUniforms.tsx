@@ -4,10 +4,11 @@ import { teams } from "constants/teams";
 import { Image } from "expo-image";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import HeadingTwo from "../Headings/HeadingTwo";
+import { Colors } from "constants/Colors";
 
 type GameUniforms = {
-  homeTeamId: string;
-  awayTeamId: string;
+  homeTeamId: number;
+  awayTeamId: number;
   lighter?: boolean; // <-- new prop
 };
 
@@ -28,7 +29,7 @@ export default function GameUniforms({
         <Text
           style={[
             styles.errorText,
-            { color: lighter ? "#fff" : isDark ? "#fff" : "#000" },
+            { color: lighter ? Colors.white : isDark ? Colors.white : Colors.black },
           ]}
         >
           Team data not found
@@ -37,12 +38,12 @@ export default function GameUniforms({
     );
   }
 
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#000";
+  const textColor = lighter ? Colors.white : isDark ? Colors.white : Colors.black;
 
   return (
     <>
       <View style={styles.container}>
-      <HeadingTwo style={{ marginBottom: 12 }} lighter={lighter}>Uniform Matchup</HeadingTwo>
+      <HeadingTwo lighter={lighter}>Uniform Matchup</HeadingTwo>
         <View style={styles.wrapper}>
         {/* Away Team Away uniforms */}
         <View style={styles.uniformsContainer}>
@@ -82,9 +83,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
   },
+  
   uniformsContainer: {
     alignItems: "center",
+    padding: 12,
   },
   uniformsImage: {
     width: 200,

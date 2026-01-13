@@ -25,7 +25,7 @@ type Props = {
   awayCode: string | undefined;
   lighter?: boolean;
   loading?: boolean;
-  league?: "NBA" | "CBB" | "MLB"; // <<< MLB ADDED
+  league?: "NBA" | "CBB" | "WCBB" | "MLB"; // <<< MLB ADDED
 };
 
 export default function LineScore({
@@ -114,65 +114,72 @@ export default function LineScore({
       <HeadingTwo style={{ marginBottom: 8 }} lighter={lighter}>
         Score Summary
       </HeadingTwo>
+      <View style={styles.wrapper}>
+        {/* Header */}
+        <View style={styles.headerRow}>
+          <Text style={[styles.teamCode, { color: "transparent" }]}>-</Text>
 
-      {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={[styles.teamCode, { color: "transparent" }]}>-</Text>
-
-        <View style={styles.scoresWrapper}>
-          {columns.map((label, idx) => (
-            <View key={`h-${idx}`} style={columnStyle}>
-              <Text style={[styles.header, { color: textColor }]}>{label}</Text>
+          <View style={styles.scoresWrapper}>
+            {columns.map((label, idx) => (
+              <View key={`h-${idx}`} style={columnStyle}>
+                <Text style={[styles.header, { color: textColor }]}>
+                  {label}
+                </Text>
+              </View>
+            ))}
+            <View style={columnStyle}>
+              <Text style={[styles.header, { color: textColor }]}>Total</Text>
             </View>
-          ))}
-          <View style={columnStyle}>
-            <Text style={[styles.header, { color: textColor }]}>Total</Text>
           </View>
         </View>
-      </View>
 
-      {/* Away */}
-      <View
-        style={[
-          styles.row,
-          {
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: borderColor,
-          },
-        ]}
-      >
-        <Text style={[styles.teamCode, { color: textColor }]}>{awayCode}</Text>
-        <View style={styles.scoresWrapper}>
-          {columns.map((_, idx) => (
-            <View key={`away-${idx}`} style={columnStyle}>
-              <Text style={[styles.score, { color: textColor }]}>
-                {renderScore(linescore.away[idx])}
+        {/* Away */}
+        <View
+          style={[
+            styles.row,
+            {
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: borderColor,
+            },
+          ]}
+        >
+          <Text style={[styles.teamCode, { color: textColor }]}>
+            {awayCode}
+          </Text>
+          <View style={styles.scoresWrapper}>
+            {columns.map((_, idx) => (
+              <View key={`away-${idx}`} style={columnStyle}>
+                <Text style={[styles.score, { color: textColor }]}>
+                  {renderScore(linescore.away[idx])}
+                </Text>
+              </View>
+            ))}
+            <View style={columnStyle}>
+              <Text style={[styles.totalScore, { color: textColor }]}>
+                {awayTotal}
               </Text>
             </View>
-          ))}
-          <View style={columnStyle}>
-            <Text style={[styles.totalScore, { color: textColor }]}>
-              {awayTotal}
-            </Text>
           </View>
         </View>
-      </View>
 
-      {/* Home */}
-      <View style={styles.row}>
-        <Text style={[styles.teamCode, { color: textColor }]}>{homeCode}</Text>
-        <View style={styles.scoresWrapper}>
-          {columns.map((_, idx) => (
-            <View key={`home-${idx}`} style={columnStyle}>
-              <Text style={[styles.score, { color: textColor }]}>
-                {renderScore(linescore.home[idx])}
+        {/* Home */}
+        <View style={styles.row}>
+          <Text style={[styles.teamCode, { color: textColor }]}>
+            {homeCode}
+          </Text>
+          <View style={styles.scoresWrapper}>
+            {columns.map((_, idx) => (
+              <View key={`home-${idx}`} style={columnStyle}>
+                <Text style={[styles.score, { color: textColor }]}>
+                  {renderScore(linescore.home[idx])}
+                </Text>
+              </View>
+            ))}
+            <View style={columnStyle}>
+              <Text style={[styles.totalScore, { color: textColor }]}>
+                {homeTotal}
               </Text>
             </View>
-          ))}
-          <View style={columnStyle}>
-            <Text style={[styles.totalScore, { color: textColor }]}>
-              {homeTotal}
-            </Text>
           </View>
         </View>
       </View>
@@ -183,6 +190,13 @@ export default function LineScore({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+  },
+  wrapper: {
+    borderColor: Colors.midTone,
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    padding: 12,
   },
   headerRow: {
     flexDirection: "row",

@@ -21,7 +21,11 @@ export type CBBTeamStanding = {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
-export function useCBBConferenceStandings() {
+interface UseCBBConferenceStandingsOptions {
+  women?: boolean;
+}
+
+export function useCBBConferenceStandings({ women = false }: UseCBBConferenceStandingsOptions = {}) {
   const [standings, setStandings] = useState<CBBTeamStanding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +34,8 @@ export function useCBBConferenceStandings() {
     const fetchStandings = async () => {
       try {
         setLoading(true);
-
-        const res = await fetch(`${BASE_URL}/api/cbb-standings`);
+        const url = `${BASE_URL}/api/cbb-standings${women ? "?women=true" : ""}`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
 
@@ -43,7 +47,7 @@ export function useCBBConferenceStandings() {
             const divName = div.name || null;
             for (const team of div.teams || []) {
               parsed.push({
-                teamId: team.teamId,
+                teamId: String(team.teamId),
                 teamName: team.name,
                 conference: confName,
                 division: divName,
@@ -73,7 +77,7 @@ export function useCBBConferenceStandings() {
     };
 
     fetchStandings();
-  }, []);
+  }, [women]);
 
   return { standings, loading, error };
 }

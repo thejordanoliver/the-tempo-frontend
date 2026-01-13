@@ -1,6 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teamsCBB";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -9,13 +8,13 @@ import {
   Image,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   UIManager,
   useColorScheme,
   View,
 } from "react-native";
+import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
 
 const COLUMN_WIDTH = 50;
 const NAME_COLUMN_WIDTH = 160;
@@ -75,15 +74,16 @@ export default function BoxScore({
   playerStats,
   isLoading = false,
   isError = false,
+  lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
+  const styles = boxScoreStyles(isDark, lighter);
 
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {}
   );
 
   const heightAnimMap = useRef<Record<string, Animated.Value>>({});
-  const teamsById = Object.fromEntries(teams.map((t) => [Number(t.id), t]));
   const teamsByEspnId = Object.fromEntries(
     teams.map((t) => [Number(t.espnID), t])
   );
@@ -105,37 +105,43 @@ export default function BoxScore({
 
     return block.athletes.map((ath: any) => {
       const a = ath.athlete || {};
+      const stats = ath.stats ?? ath.statValues ?? [];
+      const fg = stats[2]?.split("-") ?? ["0", "0"];
+      const tp = stats[3]?.split("-") ?? ["0", "0"];
+      const ft = stats[4]?.split("-") ?? ["0", "0"];
 
       return {
         localPlayer: {
           first_name: a.displayName?.split(" ")[0] ?? "",
-          last_name: a.displayName?.split(" ")[1] ?? "",
+          last_name: a.displayName?.split(" ").slice(1).join(" ") ?? "",
           player_id: a.id,
         },
         teamType: teamId === homeTeamId ? "home" : "away",
-        min: ath.statValues?.[0] ?? "0",
-        points: ath.statValues?.[1] ?? 0,
-        fgm: Number(ath.statValues?.[2]?.split("-")[0] ?? 0),
-        fga: Number(ath.statValues?.[2]?.split("-")[1] ?? 0),
 
-        tpm: Number(ath.statValues?.[3]?.split("-")[0] ?? 0),
-        tpa: Number(ath.statValues?.[3]?.split("-")[1] ?? 0),
+        min: stats[0] ?? "0",
+        points: Number(stats[1] ?? 0),
 
-        ftm: Number(ath.statValues?.[4]?.split("-")[0] ?? 0),
-        fta: Number(ath.statValues?.[4]?.split("-")[1] ?? 0),
+        fgm: Number(fg[0]),
+        fga: Number(fg[1]),
 
-        offReb: Number(ath.statValues?.[10] ?? 0),
-        defReb: Number(ath.statValues?.[11] ?? 0),
-        totReb: Number(ath.statValues?.[5] ?? 0),
+        tpm: Number(tp[0]),
+        tpa: Number(tp[1]),
 
-        assists: Number(ath.statValues?.[6] ?? 0),
-        steals: Number(ath.statValues?.[8] ?? 0),
-        blocks: Number(ath.statValues?.[9] ?? 0),
-        turnovers: Number(ath.statValues?.[7] ?? 0),
-        pFouls: Number(ath.statValues?.[12] ?? 0),
+        ftm: Number(ft[0]),
+        fta: Number(ft[1]),
+
+        totReb: Number(stats[5] ?? 0),
+        assists: Number(stats[6] ?? 0),
+        turnovers: Number(stats[7] ?? 0),
+        steals: Number(stats[8] ?? 0),
+        blocks: Number(stats[9] ?? 0),
+
+        offReb: Number(stats[10] ?? 0),
+        defReb: Number(stats[11] ?? 0),
+
+        pFouls: Number(stats[12] ?? 0),
         plusMinus: 0,
 
-        // FIX: use internal team id
         team: { id: internalTeamId },
       };
     });
@@ -219,26 +225,11 @@ export default function BoxScore({
     isExpanded: boolean,
     heightAnim: Animated.Value
   ) => {
-    const borderColor = isDark ? Colors.white : Colors.black;
-
     return (
-      <View style={[styles.teamBox, { borderColor }]}>
+      <View style={styles.teamBox}>
         {/* HEADER */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingVertical: 10,
-          }}
-        >
-          <Text
-            style={[
-              styles.teamLabel,
-              { color: isDark ? Colors.white : teamColor },
-            ]}
-          >
-            {teamName}
-          </Text>
+        <View style={styles.teamHeader}>
+          <Text style={styles.teamLabel}>{teamName}</Text>
 
           {!!teamLogo && (
             <Image
@@ -252,13 +243,12 @@ export default function BoxScore({
         {/* TABLE */}
         <View style={{ flexDirection: "row", width: "100%" }}>
           {/* PLAYER NAMES */}
-          <View style={{ width: NAME_COLUMN_WIDTH }}>
-            <View
-              style={[
-                styles.tableHeader,
-                { borderColor: isDark ? Colors.darkGray : Colors.lightGray },
-              ]}
-            >
+          <View
+            style={{
+              width: NAME_COLUMN_WIDTH,
+            }}
+          >
+            <View style={styles.tableHeader}>
               <Text
                 style={[
                   styles.cellName,
@@ -313,7 +303,6 @@ export default function BoxScore({
                 style={[
                   styles.tableHeader,
                   {
-                    borderColor: isDark ? Colors.darkGray : Colors.lightGray,
                     minWidth: STAT_LABELS.length * COLUMN_WIDTH,
                   },
                 ]}
@@ -341,14 +330,7 @@ export default function BoxScore({
                 {players.map((p, index) => (
                   <View
                     key={`${teamCode}-row-${p.localPlayer.player_id}-${index}`}
-                    style={[
-                      styles.tableRow,
-                      {
-                        borderColor: isDark
-                          ? Colors.darkGray
-                          : Colors.lightGray,
-                      },
-                    ]}
+                    style={styles.tableRow}
                   >
                     {[
                       formatMin(p.min),
@@ -376,19 +358,7 @@ export default function BoxScore({
                         key={`${teamCode}-${index}-${i}`}
                         style={styles.cellContainer}
                       >
-                        <Text
-                          style={[
-                            styles.cell,
-                            {
-                              color: isDark
-                                ? Colors.lightGray
-                                : Colors.darkGray,
-                              fontFamily: Fonts.OSREGULAR,
-                            },
-                          ]}
-                        >
-                          {val}
-                        </Text>
+                        <Text style={styles.cell}>{val}</Text>
                       </View>
                     ))}
                   </View>
@@ -404,13 +374,7 @@ export default function BoxScore({
             onPress={() => toggleExpand(teamCode)}
             style={{ padding: 10, alignItems: "center" }}
           >
-            <Text
-              style={{
-                color: isDark ? Colors.lightGray : Colors.darkGray,
-                fontFamily: Fonts.OSMEDIUM,
-                fontSize: 14,
-              }}
-            >
+            <Text style={styles.showMoreLess}>
               {isExpanded ? "Show Less" : "Show More"}
             </Text>
           </TouchableOpacity>
@@ -420,30 +384,12 @@ export default function BoxScore({
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
       <HeadingTwo>Box Score</HeadingTwo>
 
-      {isLoading && (
-        <Text
-          style={[
-            styles.loading,
-            { color: isDark ? Colors.white : Colors.black },
-          ]}
-        >
-          Loading box score...
-        </Text>
-      )}
+      {isLoading && <Text style={styles.loading}>Loading box score...</Text>}
 
-      {isError && (
-        <Text
-          style={[
-            styles.error,
-            { color: isDark ? Colors.dark.lightRed : Colors.light.red },
-          ]}
-        >
-          Failed to load box score.
-        </Text>
-      )}
+      {isError && <Text style={styles.error}>Failed to load box score.</Text>}
 
       {!isLoading && !isError && (
         <>
@@ -475,57 +421,3 @@ export default function BoxScore({
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-  loading: {
-    textAlign: "center",
-    padding: 20,
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 16,
-  },
-  error: {
-    textAlign: "center",
-    padding: 20,
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 16,
-  },
-  teamBox: {
-    borderWidth: 1,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  teamLabel: {
-    fontSize: 20,
-    fontFamily: Fonts.OSBOLD,
-    marginVertical: 10,
-    paddingHorizontal: 12,
-  },
-  tableHeader: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    paddingVertical: 8,
-    height: 40,
-  },
-  tableRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    paddingVertical: 6,
-    height: PLAYER_ROW_HEIGHT,
-  },
-  cellName: {
-    width: NAME_COLUMN_WIDTH,
-    fontFamily: Fonts.OSBOLD,
-    fontSize: 14,
-    paddingHorizontal: 8,
-    textAlignVertical: "center",
-  },
-  cell: {
-    width: COLUMN_WIDTH,
-    fontSize: 13,
-    textAlign: "center",
-    paddingHorizontal: 4,
-  },
-  cellContainer: { justifyContent: "center", alignItems: "center" },
-  teamLogo: { width: 28, height: 28, resizeMode: "contain" },
-});

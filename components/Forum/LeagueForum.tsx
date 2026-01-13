@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Fonts } from "constants/fonts";
 import { useFocusEffect, useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useState } from "react";
@@ -16,6 +15,7 @@ import { LeagueType } from "types/types";
 import { getAccessToken } from "utils/authStorage";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
+import PostItemSkeleton from "./PostItemSkeleton";
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 type LeagueForumProps = {
@@ -38,6 +38,14 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getPostItemStyles(isDark);
+
+  const renderSkeletons = (count = 5) => (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+      ))}
+    </>
+  );
 
   // 🔑 Load token + decode user
   useEffect(() => {
@@ -191,21 +199,12 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        ListEmptyComponent={() =>
-          !loading ? (
-            <Text
-              style={{
-                color: isDark ? "#aaa" : "#999",
-                marginTop: 20,
-                fontSize: 20,
-                fontFamily: Fonts.OSLIGHT,
-                textAlign: "center",
-              }}
-            >
-              No posts yet.
-            </Text>
-          ) : null
-        }
+        ListEmptyComponent={() => {
+          if (loading) {
+            return renderSkeletons(5);
+          }
+          return <Text style={styles.emptyText}>No posts yet.</Text>;
+        }}
       />
 
       {/* 🔑 Floating action button to create post */}

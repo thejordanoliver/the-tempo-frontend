@@ -1,5 +1,5 @@
-// screens/HomeScreen.tsx
 import { useNavigation } from "@react-navigation/native";
+import PagerView from "react-native-pager-view";
 import CombinedGamesList from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
@@ -8,7 +8,7 @@ import FavoritesScrollSkeleton from "components/Favorites/FavoritesScrollSkeleto
 import TabBar from "components/TabBar";
 import { Colors } from "constants/Colors";
 import { useHomeData } from "hooks/useHomeData";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -18,16 +18,17 @@ import {
 } from "react-native";
 import { homeStyles } from "styles/homeStyles";
 
-
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = homeStyles(isDark);
   const navigation = useNavigation();
 
-  const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
-    "scores"
-  );
+  const pagerRef = useRef<PagerView>(null);
+
+  const [selectedTab, setSelectedTab] =
+    React.useState<"scores" | "news">("scores");
+
   const {
     favorites,
     setFavorites,
@@ -47,6 +48,11 @@ export default function HomeScreen() {
     });
   }, [navigation, isDark]);
 
+  const handleTabPress = (tab: "scores" | "news") => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.contentArea}>
@@ -54,22 +60,31 @@ export default function HomeScreen() {
           <TabBar
             tabs={["scores", "news"]}
             selected={selectedTab}
-            onTabPress={setSelectedTab}
+            onTabPress={handleTabPress}
           />
         </View>
 
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={isDark ? Colors.white : Colors.black}
-              colors={[isDark ? Colors.white : Colors.black]}
-            />
-          }
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(index === 0 ? "scores" : "news");
+          }}
         >
-          {selectedTab === "scores" ? (
-            <>
+          {/* -------- SCORES PAGE -------- */}
+          <View key="scores">
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  tintColor={isDark ? Colors.white : Colors.black}
+                  colors={[isDark ? Colors.white : Colors.black]}
+                />
+              }
+            >
               {loading ? (
                 <FavoritesScrollSkeleton />
               ) : (
@@ -78,24 +93,41 @@ export default function HomeScreen() {
                   onFavoritesChange={setFavorites}
                 />
               )}
+
               <CombinedGamesList
                 gamesByCategory={gamesByCategory}
                 loading={loading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
-            </>
-          ) : newsError ? (
-            <Text style={styles.errorText}>{newsError}</Text>
-          ) : (
-            <NewsHighlightsList
-              items={combinedNewsAndHighlights}
-              loading={loading}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          )}
-        </ScrollView>
+            </ScrollView>
+          </View>
+
+          {/* -------- NEWS PAGE -------- */}
+          <View key="news">
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  tintColor={isDark ? Colors.white : Colors.black}
+                  colors={[isDark ? Colors.white : Colors.black]}
+                />
+              }
+            >
+              {newsError ? (
+                <Text style={styles.errorText}>{newsError}</Text>
+              ) : (
+                <NewsHighlightsList
+                  items={combinedNewsAndHighlights}
+                  loading={loading}
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              )}
+            </ScrollView>
+          </View>
+        </PagerView>
       </View>
     </View>
   );

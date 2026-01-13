@@ -1,6 +1,6 @@
 // components/SignupSteps.tsx
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teams } from "constants/teams";
 import {
   conferenceListMap as cbbConferenceListMap,
@@ -30,6 +30,8 @@ import Reanimated, {
 import { getSignupStepsStyles } from "styles/SignupStepStyles";
 import type { LeagueTeam, LeagueType } from "types/types";
 import SearchBar from "./SearchBars/SearchBar";
+
+
 type SignupData = {
   fullName: string;
   username: string;

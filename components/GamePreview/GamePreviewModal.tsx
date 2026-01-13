@@ -1,19 +1,19 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { neutralVenues, teams, venueImages } from "constants/teams";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { Colors } from "constants/Colors";
+import { neutralVenues, teams } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGameDetails } from "hooks/CBBHooks/useGameDetails";
 import { useGameBroadcasts } from "hooks/useBroadcasts";
+import { useGameDetails } from "hooks/useGameDetails";
 import { useGameInfo } from "hooks/useGameInfo";
-import { useGameScores } from "hooks/useGameScores";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
-import { useFetchPlayoffGames } from "hooks/usePlayoffSeries";
 import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModal";
+import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
 import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import CenterInfo from "./CenterInfo";
@@ -41,6 +41,14 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     dateObj.getDate() >= 5 &&
     dateObj.getDate() <= 22;
 
+  const isChristmasDay = dateObj.getMonth() === 11 && dateObj.getDate() === 25;
+  const isNewYearsDay = dateObj.getMonth() === 0 && dateObj.getDate() === 1;
+  const holidayLabel = isChristmasDay
+    ? "Christmas Day"
+    : isNewYearsDay
+    ? "New Year's Day"
+    : null;
+
   const styles = gamePreviewModalStyle(isChampionship);
 
   // --- Safeguard ---
@@ -51,16 +59,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const away = teams.find((t) => String(t.id) === String(game.away?.id));
   const homeId = Number(home?.id) || 0;
   const awayId = Number(away?.id) || 0;
-  const { games: playoffGames } = useFetchPlayoffGames(homeId, awayId, 2025);
-
-  const currentPlayoffGame = useMemo(
-    () => playoffGames?.find((g) => g.id === game.id),
-    [playoffGames, game]
-  );
-  const seriesSummary = currentPlayoffGame?.seriesSummary;
-  const gameNumberLabel = currentPlayoffGame?.gameNumber
-    ? `Game ${currentPlayoffGame.gameNumber}`
-    : undefined;
 
   // --- Team stats, weather, details ---
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
@@ -74,6 +72,8 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     new Date(game.date).toISOString()
   );
 
+  const headline = headlineText || holidayLabel;
+
   // --- Weather + Broadcasts ---
   const neutralVenueData = neutralVenues[game?.venue?.name ?? ""];
   const lat = neutralVenueData?.latitude ?? home?.latitude ?? null;
@@ -84,8 +84,8 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     new Date(game.date).toISOString()
   );
   const { broadcasts } = useGameBroadcasts(
-    home?.name ?? "",
-    away?.name ?? "",
+    home?.espnID ?? 0,
+    away?.espnID ?? 0,
     new Date(game.date).toISOString()
   );
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -110,12 +110,22 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     game?.status?.long !== "Scheduled" && game?.status?.long !== "Finished";
 
   // --- Live scores + LineScore logic ---
-  const { score: liveScore } = useGameScores(
+  const { score: liveScore, details } = useGameDetails(
     "nba",
     home?.espnID?.toString(),
     away?.espnID?.toString(),
     new Date(game.date).toISOString().split("T")[0]
   );
+const gameStatusDescription = liveScore?.gameStatusDescription ?? ""
+  const fouls = details?.fouls;
+  const awayTimeouts = details?.timeouts.away ?? 0;
+  const homeTimeouts = details?.timeouts.home ?? 0;
+  const plays = details?.plays ?? [];
+  const injuries = details?.injuries ?? [];
+  const officials = details?.officials ?? [];
+  const lastPlay = details?.plays?.length
+    ? details.plays[details.plays.length - 1]
+    : undefined;
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -149,17 +159,16 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     const resolvedVenueCapacity =
       neutralVenueData?.venueCapacity || home?.venueCapacity || "";
     const resolvedVenueImage =
-      neutralVenueData?.venueImage ||
-      venueImages[game?.venue?.name ?? ""] ||
-      venueImages[game?.venue?.city ?? ""] ||
-      venueImages[home?.code ?? ""] ||
+      neutralVenueData?.venueImage || home?.venueImage || "";
+    neutralVenues[game?.venue?.city ?? ""] ||
+      neutralVenues[home?.code ?? ""] ||
       home?.venueImage;
 
     const getTeamColor = (team?: (typeof teams)[number]) => {
-      if (!team) return "#444";
+      if (!team) return Colors.white;
       const { code, color, secondaryColor } = team;
-      if (code === "SAS") return secondaryColor || "#fff";
-      return color || "#444";
+      if (code === "SAS") return secondaryColor || Colors.white;
+      return color || Colors.white;
     };
 
     return {
@@ -181,21 +190,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeLastGames = useLastFiveGames(homeId);
   const awayLastGames = useLastFiveGames(awayId);
 
-  const {
-    officials,
-    injuries,
-    highlights,
-    loading: officialsLoading,
-    error: officialsError,
-  } = useGameDetails(
-    "nba",
-    home?.espnID,
-    away?.espnID,
-    new Date(game.date).toISOString().split("T")[0]
-  );
-
   // --- Clock display ---
-  const displayClock = liveScore?.displayClock ?? game.status?.clock;
   const displayPeriod = liveScore?.period ?? game.status?.short;
 
   // --- Quarter / period label + halftime flag ---
@@ -227,7 +222,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     4,
     liveScore?.statusText
   );
-
+  const isLiveScoreReady = !!liveScore;
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
@@ -282,84 +277,82 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          <>
-            {headlineText && (
-              <>
-                {headlineText && (
-                  <Text style={styles.headlineText}>{headlineText}</Text>
-                )}
-              </>
-            )}
-
-            {/* --- Header Section --- */}
-            <View style={styles.gameHeaderContainer}>
-              <TeamInfo
-                team={away}
-                teamName={away?.code ?? ""}
-                score={awayScore}
-                opponentScore={homeScore}
-                record={awayRecord?.overall ?? "-"}
-                isDark={isDark}
-                isGameOver={isFinal}
-                isScheduled={game.status.long === "Scheduled"}
-                side="away"
-              />
-
-              <CenterInfo
-                isChampionship={isChampionship}
-                isFinal={isFinal}
-                isCanceled={isCanceled}
-                isHalftime={halftime} // ✅ default to false
-                broadcastNetworks={broadcastText}
-                showLiveInfo={showLiveInfo}
-                period={quarterLabel}
-                endOfPeriod={game.periods?.endOfPeriod ?? false}
-                totalPeriodsPlayed={totalPeriodsPlayed}
-                time={game.time}
-                clock={liveScore?.displayClock}
-                formattedDate={formattedDate}
-                isDark={isDark}
-                gameNumberLabel={gameNumberLabel}
-                seriesSummary={seriesSummary}
-                isPlayoffs={!!seriesSummary}
-                lighter
-              />
-
-              <TeamInfo
-                team={home}
-                teamName={home?.code ?? ""}
-                score={homeScore}
-                opponentScore={awayScore}
-                record={homeRecord?.overall ?? "-"}
-                isDark={isDark}
-                isGameOver={isFinal}
-                isScheduled={game.status.long === "Scheduled"}
-                side="home"
-              />
+          {!isLiveScoreReady ? (
+            <View style={styles.loadingContainer}>
+              <CustomActivityIndicator lighter />
             </View>
+          ) : (
+            <>
+              {headline && (
+                <>
+                  {headline && (
+                    <Text style={styles.headlineText}>{headline}</Text>
+                  )}
+                </>
+              )}
 
-            {/* --- Scrollable Content --- */}
-            <GamePreviewContent
-              game={game}
-              home={home}
-              away={away}
-              lineScore={lineScore}
-              homeLastGames={homeLastGames}
-              awayLastGames={awayLastGames}
-              injuries={injuries}
-              gameStats={gameStats}
-              officials={officials}
-              resolvedVenueImage={resolvedVenueImage}
-              resolvedVenueName={resolvedVenueName}
-              resolvedVenueCity={resolvedVenueCity}
-              resolvedVenueAddress={resolvedVenueAddress}
-              resolvedVenueCapacity={resolvedVenueCapacity}
-              weather={weather}
-              weatherLoading={weatherLoading}
-              weatherError={weatherError}
-              isDark={isDark}
-            />
-          </>
+              {/* --- Header Section --- */}
+              <View style={styles.gameHeaderContainer}>
+                <TeamInfo
+                  team={away}
+                  teamName={away?.code ?? ""}
+                  score={awayScore}
+                  opponentScore={homeScore}
+                  record={awayRecord?.overall ?? "-"}
+                  side="away"
+                  timeouts={awayTimeouts}
+                  gameStatusDescription={gameStatusDescription}
+                />
+
+                <CenterInfo
+                  isChampionship={isChampionship}
+                  gameStatusDescription={liveScore?.gameStatusDescription ?? ""}
+                  gameStatusDetail={liveScore?.gameStatusDetail ?? ""}
+                  broadcastNetworks={broadcastText}
+                  period={quarterLabel}
+                  totalPeriodsPlayed={totalPeriodsPlayed}
+                  time={game.time}
+                  clock={liveScore?.displayClock}
+                  formattedDate={formattedDate}
+                  isDark={isDark}
+                  lighter
+                />
+
+                <TeamInfo
+                  team={home}
+                  teamName={home?.code ?? ""}
+                  score={homeScore}
+                  opponentScore={awayScore}
+                  record={homeRecord?.overall ?? "-"}
+                  side="home"
+                  timeouts={homeTimeouts}
+                  gameStatusDescription={gameStatusDescription}
+                />
+              </View>
+
+              {/* --- Scrollable Content --- */}
+              <GamePreviewContent
+                game={game}
+                home={home}
+                away={away}
+                lineScore={lineScore}
+                gameStats={gameStats}
+                homeLastGames={homeLastGames}
+                awayLastGames={awayLastGames}
+                injuries={injuries}
+                officials={officials}
+                resolvedVenueImage={resolvedVenueImage}
+                resolvedVenueName={resolvedVenueName}
+                resolvedVenueCity={resolvedVenueCity}
+                resolvedVenueAddress={resolvedVenueAddress}
+                resolvedVenueCapacity={resolvedVenueCapacity}
+                weather={weather}
+                weatherLoading={weatherLoading}
+                weatherError={weatherError}
+                isDark={isDark}
+              />
+            </>
+          )}
         </BlurView>
       </View>
     </BottomSheetModal>

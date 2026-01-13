@@ -74,7 +74,7 @@ export const useUpcomingOdds = ({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${BASE_URL}/api/cbb/upcoming`, {
+        const res = await axios.get(`${BASE_URL}/api/cbb/odds/upcoming`, {
           params,
           cancelToken: cancelSource?.token,
         });

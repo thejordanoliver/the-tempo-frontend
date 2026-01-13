@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
-import UpcomingOddsCard from "./UpcomingOddsCard";
-import HistoricalOddsCard from "components/GameDetails/HistoricalOddsCard";
+import { OddsCard } from "components/GameDetails/OddsCard";
 import OddsSkeleton from "components/GameDetails/OddsSkeleton";
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { useHistoricalOdds } from "hooks/CBBHooks/useHistoricalOdds";
 import { useUpcomingOdds } from "hooks/CBBHooks/useUpcomingOdds";
-import { useHistoricalOdds } from "hooks/useHistoricalOdds";
+import { View } from "react-native";
 
 type GameOddsSectionProps = {
   date: string; // ISO date-time string
@@ -11,7 +11,6 @@ type GameOddsSectionProps = {
   homeCode: string;
   awayCode: string;
   gameId: string;
-  lighter?: boolean
 };
 
 export default function GameOddsSection({
@@ -20,7 +19,6 @@ export default function GameOddsSection({
   homeCode,
   awayCode,
   gameId,
-  lighter,
 }: GameOddsSectionProps) {
   // --- Upcoming odds ---
   const {
@@ -29,8 +27,8 @@ export default function GameOddsSection({
     error: upcomingError,
   } = useUpcomingOdds({
     timestamp: date,
-    team2: awayCode,
-    team1: homeCode,
+    team1: awayCode,
+    team2: homeCode,
   });
 
   const hasUpcomingOdds =
@@ -43,16 +41,17 @@ export default function GameOddsSection({
     error: oddsError,
   } = useHistoricalOdds({
     date: gameDate,
-    team2: awayCode,
-    team1: homeCode,
+    team1: awayCode,
+    team2: homeCode,
     gameId,
     skip: hasUpcomingOdds, // ✅ don't fetch if upcoming exists
   });
 
   const isLoading = upcomingLoading || oddsLoading;
+  const error = upcomingError || oddsError;
 
   // ✅ If both odds arrays are empty (and not loading), return null
-  if (!isLoading && (!upcomingOdds?.length && !historicalOdds?.length)) {
+  if (!isLoading && !upcomingOdds?.length && !historicalOdds?.length) {
     return null;
   }
 
@@ -63,30 +62,12 @@ export default function GameOddsSection({
 
   return (
     <View>
-      {/* --- Upcoming Odds --- */}
-      {upcomingError ? (
-        <Text style={{ color: "red" }}>
-          Error loading upcoming odds: {upcomingError}
-        </Text>
-      ) : hasUpcomingOdds ? (
-        <View>
-          {upcomingOdds.map((game) => (
-            <UpcomingOddsCard key={game.id} game={game} lighter={lighter} />
-          ))}
-        </View>
-      ) : null}
-
-      {/* --- Historical Odds (only if no upcoming) --- */}
-      {!hasUpcomingOdds &&
-        (oddsError ? (
-          <Text style={{ color: "red" }}>{oddsError}</Text>
-        ) : historicalOdds.length > 0 ? (
-          <View>
-            {historicalOdds.map((game) => (
-              <HistoricalOddsCard key={game.id} game={game} />
-            ))}
-          </View>
-        ) : null)}
+      <HeadingTwo>Betting Odds</HeadingTwo>
+      <View>
+        {upcomingOdds.map((game) => (
+          <OddsCard key={game.id} league="cbb" game={game} error={error} />
+        ))}
+      </View>
     </View>
   );
 }

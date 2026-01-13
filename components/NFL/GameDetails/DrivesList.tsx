@@ -1,4 +1,5 @@
-import { Colors } from "constants/Colors";
+import { Colors, Fonts } from "constants/Styles";
+
 import { teams as CFBTeams, getTeamLogo } from "constants/teamsCFB";
 import { getNFLTeamsLogo, teams as NFLTeams } from "constants/teamsNFL";
 import { FlatList, Image, Text, useColorScheme, View } from "react-native";
@@ -101,7 +102,8 @@ export default function DrivesList({
           keyExtractor={(item) => item.id} // 👈 now ID is unique
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
+            const isLast = index === drives.length - 1;
             const useLightLogo = lighter || isDark;
 
             const teamId = item.team?.id;
@@ -145,7 +147,11 @@ export default function DrivesList({
 
             return (
               <View
-                style={[styles.driveCard, { borderBottomColor: borderColor }]}
+                style={[
+                  styles.driveCard,
+                  !isLast && { borderBottomColor: borderColor },
+                  isLast && { borderBottomWidth: 0 },
+                ]}
               >
                 <View style={styles.headerRow}>
                   {logo && (

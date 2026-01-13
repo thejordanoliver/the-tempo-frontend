@@ -19,15 +19,20 @@ export function GameCard({
 
   const formattedTime = game.startTime
     ? new Date(game.startTime).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
         hour: "numeric",
         minute: "2-digit",
+      })
+    : null;
+  const formattedDate = game.startTime
+    ? new Date(game.startTime).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
       })
     : null;
 
   const showRecord = game.status === "scheduled";
   const showScore = !showRecord;
+  const isFinal = game.status === "final";
   const broadcasts = game.broadcasts ?? [];
   const broadcast = broadcasts?.length > 0 && (
     <Text style={styles.infoText}>
@@ -35,15 +40,29 @@ export function GameCard({
     </Text>
   );
 
-  const renderTeamRow = (team: BracketTeam) => {
+  const topScore = game.top?.score != null ? Number(game.top.score) : null;
+
+  const bottomScore =
+    game.bottom?.score != null ? Number(game.bottom.score) : null;
+
+  const losingSide =
+    showScore && topScore != null && bottomScore != null
+      ? topScore > bottomScore
+        ? "bottom"
+        : bottomScore > topScore
+        ? "top"
+        : null // tie
+      : null;
+
+  const renderTeamRow = (team: BracketTeam, dimmed = false) => {
     const recordScore = showScore ? (
-      <Text style={styles.name}>{team.score}</Text>
+      <Text style={styles.score}>{team.score}</Text>
     ) : (
       <Text style={styles.record}>{team.record}</Text>
     );
 
     return (
-      <View style={styles.teamRow}>
+      <View style={[styles.teamRow, dimmed && { opacity: 0.5 }]}>
         <View style={styles.teamWrapper}>
           {team.seed && <Text style={styles.seed}>{team.seed}</Text>}
           <Image
@@ -59,8 +78,8 @@ export function GameCard({
     );
   };
 
-  const renderTeam = (team: BracketTeam | null) => {
-    if (team) return renderTeamRow(team);
+  const renderTeam = (team: BracketTeam | null, dimmed = false) => {
+    if (team) return renderTeamRow(team, dimmed);
 
     if (isFirstRound) return null;
 
@@ -78,11 +97,15 @@ export function GameCard({
 
   return (
     <View style={styles.card}>
-      {renderTeam(game.top)}
-      {renderTeam(game.bottom)}
+      <View style={styles.teamContainer}>
+        {renderTeam(game.top, losingSide === "top")}
+        {renderTeam(game.bottom, losingSide === "bottom")}
+      </View>
       <View style={styles.gameInfo}>
-        <Text style={styles.infoText}>{formattedTime}</Text>
-        {broadcast}
+        {isFinal && <Text style={styles.finalText}>Final</Text>}
+        {!isFinal && <Text style={styles.infoText}>{formattedDate}</Text>}
+        {!isFinal && <Text style={styles.infoText}>{formattedTime}</Text>}
+        {!isFinal && <Text style={styles.infoText}>{broadcast}</Text>}
       </View>
     </View>
   );
@@ -92,7 +115,9 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       width: 220,
-      paddingHorizontal: 12,
+      height: 100,
+      flexDirection: "row",
+      alignItems: "center",
       paddingVertical: 6,
       borderRadius: 12,
       backgroundColor: isDark
@@ -106,46 +131,68 @@ const getStyles = (isDark: boolean) =>
       borderWidth: 0.5,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
+    teamContainer: {
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRightWidth: StyleSheet.hairlineWidth,
+      gap: 12,
+      width: "75%",
+    },
     teamRow: {
       flexDirection: "row",
       alignItems: "center",
+      width: "95%",
       justifyContent: "space-between",
-      paddingVertical: 6,
     },
     gameInfo: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+      alignItems: "center",
+      width: "25%",
     },
     teamWrapper: {
       flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
+      justifyContent: "space-between",
     },
     seed: {
-      width: 26,
+      width: 18,
       fontFamily: Fonts.OSBOLD,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
+      marginLeft: 4,
     },
     name: {
       fontSize: 15,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
+  
+    },
+    score: {
+      fontSize: 14,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
     },
     record: {
-      fontSize: 11,
+      fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     logo: {
       width: 22,
       height: 22,
-      marginHorizontal: 6,
+      marginLeft: 4,
+      marginRight: 4,
     },
     infoText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: 6,
+      textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
+    },
+    finalText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
   });
