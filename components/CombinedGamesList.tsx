@@ -1,4 +1,5 @@
 // components/Games/CombinedGamesList.tsx
+import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
@@ -20,42 +21,47 @@ import type {
   summerGame,
 } from "types/types";
 import { CBBGame } from "types/types";
-import CBBGamePreviewModal from "./CBB/GamePreview/CBBGamePreviewModal";
-import CFBGamePreviewModal from "./CFB/GamePreview/CFBGamePreviewModal";
-import GamePreviewModal from "./GamePreview/GamePreviewModal";
 import HeaderSkeleton from "./Headings/HeaderSkeleton";
 import HeadingTwo from "./Headings/HeadingTwo";
-import NFLGamePreviewModal from "./NFL/GamePreview/NFLGamePreviewModal";
+import CBBGamePreviewModal from "./Sports/CBB/GamePreview/CBBGamePreviewModal";
+import CFBGamePreviewModal from "./Sports/CFB/GamePreview/CFBGamePreviewModal";
+import NFLGamePreviewModal from "./Sports/NFL/GamePreview/NFLGamePreviewModal";
 import SummerLeagueGamePreviewModal from "./summer-league/SummerLeagueGamePreviewModal";
 // ✅ Shared skeletons
-import GameCardSkeleton from "components/Games/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Games/GameSquareCardSkeleton";
-import StackedGameCardSkeleton from "components/Games/StackedGameCardSkeleton";
+import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
+import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 
 // ✅ NFL cards
-import NFLGameCard from "components/NFL/Games/NFLGameCard";
-import NFLGameSquareCard from "components/NFL/Games/NFLGameSquareCard";
-import NFLStackedGameCard from "components/NFL/Games/NFLStackedGameCard";
+import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
+import NFLGameSquareCard from "components/Sports/NFL/Games/NFLGameSquareCard";
+import NFLStackedGameCard from "components/Sports/NFL/Games/NFLStackedGameCard";
 
 // ✅ CFB cards
-import CFBGameCard from "components/CFB/Games/CFBGameCard";
-import CFBGameSquareCard from "components/CFB/Games/CFBGameSquareCard";
-import CFBStackedGameCard from "./CFB/Games/CFBStackedGameCard";
+import CFBGameCard from "components/Sports/CFB/Games/CFBGameCard";
+import CFBGameSquareCard from "components/Sports/CFB/Games/CFBGameSquareCard";
+import CFBStackedGameCard from "./Sports/CFB/Games/CFBStackedGameCard";
 
 // ✅ NBA cards
-import GameCard from "components/Games/GameCard";
-import GameSquareCard from "components/Games/GameSquareCard";
-import StackedGameCard from "components/Games/StackedGameCard";
+import GameCard from "components/Sports/NBA/Games/GameCard";
+import GameSquareCard from "components/Sports/NBA/Games/GameSquareCard";
+import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 
 // ✅ CBB cards
-import CBBStackedGameCard from "components/CBB/Games/CBBStackedGameCard";
-import CBBGameCard from "./CBB/Games/CBBGameCard";
-import CBBGameSquareCard from "./CBB/Games/CBBGameSquareCard";
+import CBBStackedGameCard from "components/Sports/CBB/Games/CBBStackedGameCard";
+import CBBGameCard from "./Sports/CBB/Games/CBBGameCard";
+import CBBGameSquareCard from "./Sports/CBB/Games/CBBGameSquareCard";
 
 // ✅ Summer League cards
 import SummerGameSquareCard from "components/summer-league/SummerGameSquareCard";
 import SummerGameCard from "components/summer-league/SummerLeagueGameCard";
 import SummerStackedGameCard from "components/summer-league/SummerLeagueStackedGameCard";
+
+
+const NCAA_FOOTBALL_LEAGUE_ID = 2;
+const NCAA_MENS_BASKETBALL_LEAGUE_ID = 116;
+const NCAA_WOMENS_BASKETBALL_LEAGUE_ID = 423;
+
 
 type SportsCategory =
   | "College Football"
@@ -101,34 +107,33 @@ type CFBGameExtended = CFBGameType & {
 };
 
 const getCategoryForFavorites = (
-  item: CFBGameType | NBAGameType | NFLGameType | CBBGameType | summerGame
+  item: CombinedGame
 ): SportsCategory => {
   const league = (item as any).league;
 
-  // ✅ WOMEN'S CBB — must be first
-  if (
-    league?.name === "Women's College Basketball" ||
-    league?.gender === "female" ||
-    league?.shortName === "WCBB"
-  ) {
+  if (!league) return "NBA";
+
+  // Women's CBB
+  if (league.id === NCAA_WOMENS_BASKETBALL_LEAGUE_ID) {
     return "Women's College Basketball";
   }
 
-  // MEN'S CBB
-  if (
-    league?.name === "CBB" ||
-    league?.name === "College Basketball" ||
-    league?.name === "Men's College Basketball"
-  ) {
+  // Men's CBB
+  if (league.id === NCAA_MENS_BASKETBALL_LEAGUE_ID) {
     return "Men's College Basketball";
   }
 
-  if (league?.name === "NFL") return "NFL";
-  if (league?.name === "College Football") return "College Football";
-  if (league?.name === "NBA Summer League") return "NBA Summer League";
+  // College Football
+  if (league.id === NCAA_FOOTBALL_LEAGUE_ID) {
+    return "College Football";
+  }
+
+  if (league.name === "NFL") return "NFL";
+  if (league.name === "NBA Summer League") return "NBA Summer League";
 
   return "NBA";
 };
+
 
 const liveStatuses = [
   "In Progress",
@@ -467,11 +472,11 @@ export default function CombinedGamesList({
       <View style={{ paddingBottom: 100 }}>
         {gamesByCategory.map((section, idx) => (
           <View key={idx}>
-            {showHeaders && 
-             <View key={idx} style={{ paddingHorizontal: 12 }}>
-            <HeaderSkeleton />
-            </View>
-            }
+            {showHeaders && (
+              <View key={idx} style={{ paddingHorizontal: 12 }}>
+                <HeaderSkeleton />
+              </View>
+            )}
             {renderSkeletons(skeletonCount)}
           </View>
         ))}

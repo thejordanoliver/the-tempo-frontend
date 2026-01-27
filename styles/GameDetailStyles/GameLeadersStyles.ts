@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
@@ -10,19 +9,8 @@ export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      paddingTop: 12,
     },
-    error: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
-      color: lighter
-        ? Colors.dark.lightRed
-        : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
-    },
+  
     card: {
       flexDirection: "row",
       alignItems: "center",

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -23,7 +23,11 @@ export function useExplore() {
       if (stored) {
         const parsed = JSON.parse(stored);
         const validResults = parsed.filter(
-          (item: any) => item && typeof item === "object" && "type" in item && ("id" in item || "player_id" in item)
+          (item: any) =>
+            item &&
+            typeof item === "object" &&
+            "type" in item &&
+            ("id" in item || "player_id" in item)
         );
         setRecentSearches(validResults);
       }
@@ -40,7 +44,9 @@ export function useExplore() {
       const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
       let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
 
-      parsed = parsed.filter((r) => getResultKey(r) !== key || r.type !== item.type);
+      parsed = parsed.filter(
+        (r) => getResultKey(r) !== key || r.type !== item.type
+      );
       parsed.unshift(item);
       parsed = parsed.slice(0, 10);
 
@@ -58,7 +64,9 @@ export function useExplore() {
 
       const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
       let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
-      parsed = parsed.filter((r) => getResultKey(r) !== deleteKey || r.type !== itemToDelete.type);
+      parsed = parsed.filter(
+        (r) => getResultKey(r) !== deleteKey || r.type !== itemToDelete.type
+      );
 
       await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
       setRecentSearches(parsed);
@@ -77,10 +85,11 @@ export function useExplore() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<{ players: PlayerResult[]; teams: TeamResult[]; users: UserResult[] }>(
-        `${API_URL}/api/explore/search`,
-        { params: { query: searchQuery } }
-      );
+      const res = await axios.get<{
+        players: PlayerResult[];
+        teams: TeamResult[];
+        users: UserResult[];
+      }>(`${API_URL}/api/explore/search`, { params: { query: searchQuery } });
 
       const combined: ResultItem[] = [
         ...res.data.teams.map((t) => ({ ...t, type: "team" as const })),

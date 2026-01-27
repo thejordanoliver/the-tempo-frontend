@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import * as ImagePicker from "expo-image-picker";
@@ -21,7 +22,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getSignupStepsStyles } from "styles/SignupStepStyles";
+import { formStyles } from "styles/FormStyles";
 import CropEditorModal from "../components/CropEditorModal";
 import SignInForm from "../components/SignInForm";
 import SignupSteps from "../components/SignUpSteps";
@@ -35,7 +36,7 @@ export default function LoginScreen() {
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("sign in");
   const isDark = useColorScheme() === "dark";
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCropModalVisible, setCropModalVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(
@@ -49,7 +50,14 @@ export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const showAlert = (config: AlertConfig) => {
+    setAlertConfig(config);
+  };
 
+  const closeAlert = () => {
+    setAlertConfig(null);
+  };
   const [signupStep, setSignupStep] = useState(0);
   const [signupData, setSignupData] = useState({
     fullName: "",
@@ -62,7 +70,7 @@ export default function LoginScreen() {
     bannerImage: null as string | null,
   });
 
-  const styles = getSignupStepsStyles(isDark);
+  const styles = formStyles(isDark);
 
   // ====================== IMAGE PICKER / CROP ======================
   const openImagePickerFor = async (target: "profile" | "banner") => {
@@ -126,12 +134,14 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     const trimmedUsername = username?.trim().toLowerCase();
     if (!trimmedUsername || password.length < 4) {
-      Alert.alert(
-        "Invalid credentials",
-        "Please enter a valid username and password (min 8 chars)."
-      );
+      showAlert({
+        title: "Invalid credentials",
+        message: "Please enter a valid username and password.",
+        cancelText: undefined,
+      });
       return;
     }
+
     try {
       const res = await axios.post<{
         user: User;
@@ -152,7 +162,10 @@ export default function LoginScreen() {
         params: { id: user.id, token: accessToken },
       });
     } catch (err: any) {
-      Alert.alert("Login failed", err.response?.data?.error || err.message);
+      showAlert({
+        title: "Login failed",
+        message: err.response?.data?.error || err.message,
+      });
     }
   };
 
@@ -174,10 +187,10 @@ export default function LoginScreen() {
     } = signupData;
 
     if (!fullName || !username || !email || password !== confirmPassword) {
-      Alert.alert(
-        "Please check your details",
-        "Make sure all fields are filled and passwords match."
-      );
+      showAlert({
+        title: "Invalid details",
+        message: "Make sure all fields are filled and passwords match.",
+      });
       return null;
     }
 
@@ -211,8 +224,10 @@ export default function LoginScreen() {
 
       return res.data;
     } catch (err: any) {
-      console.error("Signup error:", err);
-      Alert.alert("Signup failed", err.response?.data?.error || err.message);
+      showAlert({
+        title: "Signup failed",
+        message: err.response?.data?.error || err.message,
+      });
       return null;
     }
   };
@@ -441,9 +456,26 @@ export default function LoginScreen() {
               />
             </View>
             <Pressable
-              onPress={() =>
-                signupStep === 3 ? handleSignup() : setSignupStep((s) => s + 1)
-              }
+              onPress={() => {
+                if (signupStep === 3) {
+                  showAlert({
+                    title: "Create Account?",
+                    message:
+                      "Are you sure you want to create this account with the provided information?",
+                    confirmText: "Sign Up",
+                    cancelText: "Cancel",
+                    onConfirm: async () => {
+                      if (isSubmitting) return;
+                      setIsSubmitting(true);
+                      closeAlert();
+                      await handleSignup();
+                      setIsSubmitting(false);
+                    },
+                  });
+                } else {
+                  setSignupStep((s) => s + 1);
+                }
+              }}
               style={styles.button}
             >
               <Text style={styles.buttonText}>
@@ -464,6 +496,19 @@ export default function LoginScreen() {
           />
         )}
       </View>
+      <AlertModal
+        visible={!!alertConfig}
+        isDark={isDark}
+        title={alertConfig?.title}
+        message={alertConfig?.message}
+        confirmText={alertConfig?.confirmText ?? "OK"}
+        cancelText={alertConfig?.cancelText}
+        onCancel={closeAlert}
+        onConfirm={() => {
+          alertConfig?.onConfirm?.();
+          if (!alertConfig?.onConfirm) closeAlert();
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }

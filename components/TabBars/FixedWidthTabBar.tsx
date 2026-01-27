@@ -1,6 +1,5 @@
-// components/NFL/FixedWidthTabBar.tsx
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+// components/TabBars/FixedWidthTabBar.tsx
+import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -12,6 +11,13 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+
+export type TabItem = {
+  id: string | number;
+  label?: string;
+  logo?: any; // Image source
+};
+
 export interface FixedWidthTabBarProps {
   tabs: readonly string[];
   selected: string;
@@ -40,6 +46,7 @@ export const getLabelStyle = (
     ? Colors.midTone
     : Colors.midTone,
   fontFamily: Fonts.OSMEDIUM,
+  opacity: isSelected ? 1 : 0.5, // ← move opacity here
   ...extra,
 });
 
@@ -142,7 +149,6 @@ const styles = StyleSheet.create({
   tabPressable: {
     alignItems: "center",
     paddingBottom: 10,
-    
   },
   underline: {
     position: "absolute",

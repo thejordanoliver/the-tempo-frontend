@@ -5,14 +5,14 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 
-import CBBGamesList from "components/CBB/Games/CBBGamesList";
-import { CBBConferenceStandingsList } from "components/CBB/Standings/CBBConferenceStandingsList";
-import CBBRosterStats from "components/CBB/Team/RosterStats";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
+import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
+import CBBRosterStats from "components/Sports/CBB/Team/RosterStats";
+import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import TeamInfoModal from "components/Team/TeamInfoModal";
 
 import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
@@ -24,10 +24,10 @@ import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 
-import Roster from "components/CBB/Team/Roster";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import Roster from "components/Sports/CBB/Team/Roster";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { style } from "../../../styles/TeamDetailsStyles";
+import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: { position: number };

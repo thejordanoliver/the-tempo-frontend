@@ -56,130 +56,58 @@ export function matchBroadcastToGame(
   });
 }
 
-export function getBroadcastDisplay(broadcasts: Broadcast[]) {
+export function getBroadcastDisplay(broadcasts?: string[]) {
   if (!broadcasts?.length) return "";
 
   const allNames = broadcasts
-    .map((b) =>
-      Array.isArray(b.names) ? b.names.join("/") : b.name || b.shortName || ""
-    )
-    .filter(Boolean)
-    .map((n) => n.toLowerCase());
+    .map((n) => n.toLowerCase())
+    .filter(Boolean);
 
-const networkMap: [string, string][] = [
-  ["espn2", "ESPN2"],
-  ["espn3", "ESPN3"],
-  ["espn+", "ESPN+"],
-  ["espnu", "ESPNU"],
-  ["sec network", "SECN"],
-  ["secn+", "SECN+"],
-  ["acc network", "ACCN"],
-  ["abc", "ABC"],
-  ["tnt", "TNT"],
-  ["btn", "BTN"],
-  ["tbs", "TBS"],
-  ["fox sports", "FS1"],
-  ["fs1", "FS1"],
-  ["fox", "FOX"],
-  ["cbs", "CBS"],
-  ["Peacock","Peacock"],
-  ["NBC/Peacock","NBC/Peacock"],
-  ["nbcsn", "NBC"],
-  ["nbc", "NBC"],
-  ["nfl network", "NFLN"],
-  ["nfl net", "NFLN"],
-  ["netflix", "Netflix"],
-  ["peacock", "Peacock"],
-  ["prime video", "Prime"],
-  ["amazon", "Prime"],
-  ["nba league pass", "NBA League Pass"],
-  ["nba tv", "NBA TV"],
-  ["hbo max", "MAX"],
-  ["max", "MAX"],
-  ["espn", "ESPN"],
-];
+  const networkMap: [string, string][] = [
+    ["espn2", "ESPN2"],
+    ["espn3", "ESPN3"],
+    ["espn+", "ESPN+"],
+    ["espnu", "ESPNU"],
+    ["sec network", "SECN"],
+    ["secn+", "SECN+"],
+    ["acc network", "ACCN"],
+    ["abc", "ABC"],
+    ["tnt", "TNT"],
+    ["btn", "BTN"],
+    ["tbs", "TBS"],
+    ["fox sports", "FS1"],
+    ["fs1", "FS1"],
+    ["fox", "FOX"],
+    ["cbs", "CBS"],
+    ["peacock", "Peacock"],
+    ["nbc", "NBC"],
+    ["netflix", "Netflix"],
+    ["prime video", "Prime"],
+    ["amazon", "Prime"],
+    ["nba league pass", "NBA League Pass"],
+    ["nba tv", "NBA TV"],
+    ["hbo max", "MAX"],
+    ["max", "MAX"],
+    ["espn", "ESPN"],
+  ];
 
+  // special combos
+  if (allNames.some(n => n.includes("abc")) && allNames.some(n => n.includes("espn")))
+    return "ABC/ESPN";
+  if (allNames.some(n => n.includes("nbc")) && allNames.some(n => n.includes("peacock")))
+    return "NBC/Peacock";
+  if (allNames.some(n => n.includes("tnt")) && allNames.some(n => n.includes("max")))
+    return "TNT/MAX";
 
-  // special cases
-  const hasABC = allNames.some((n) => n.includes("abc"));
-  const hasNBC = allNames.some((n) => n.includes("nbc"));
-  const hasPeacock = allNames.some((n) => n.includes("peacock"));
-  const hasESPN = allNames.some((n) => n.includes("espn"));
-  const hasTNT = allNames.some((n) => n.includes("tnt"));
-  const hasHBOMax = allNames.some(
-    (n) => n.includes("hbo max") || n.includes("max")
-  );
-
-  if (hasABC && hasESPN) return "ABC/ESPN";
-  if (hasPeacock && hasNBC) return "NBC/Peacock";
-  if (hasTNT && hasHBOMax) return "TNT/MAX";
-
-  // find first main network match
- for (const [key, value] of networkMap) {
-  if (allNames.some((n) => n.includes(key))) {
-    return value;
-  }
-}
-
-
-  // fallback: first valid name (capitalized)
-  const first = broadcasts[0]?.name || broadcasts[0]?.shortName || "";
-  return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
-}
-
-export function getShortBroadcastDisplay(broadcasts?: Broadcast[]) {
-  if (!Array.isArray(broadcasts) || broadcasts.length === 0) return "";
-
-  const allNames = broadcasts
-    .map((b) =>
-      Array.isArray(b.names) ? b.names.join("/") : b.name || b.shortName || ""
-    )
-    .filter(Boolean)
-    .map((n) => n.toLowerCase());
-
-  const networkMap: Record<string, string> = {
-    espn: "ESPN",
-    espn2: "ESPN2",
-    espn3: "ESPN3",
-    netflix: "Netflix",
-    "sec network": "SECN",
-    "acc network": "ACCN",
-    abc: "ABC",
-    "nba league pass": "NBA LP",
-    tnt: "TNT",
-    tbs: "TBS",
-    fox: "FOX",
-    "fox sports": "FS1",
-    fs1: "FS1",
-    cbs: "CBS",
-    nbcsn: "NBCSN",
-    nbc: "NBC",
-    peacock: "Peacock",
-    "nfl network": "NFLN",
-    "nfl net": "NFLN",
-    "prime video": "Prime",
-    amazon: "Prime",
-    "nba tv": "NBA TV",
-    "hbo max": "MAX",
-  };
-
-  // special cases
-  const hasABC = allNames.some((n) => n.includes("abc"));
-  const hasESPN = allNames.some((n) => n.includes("espn"));
-  const hasTNT = allNames.some((n) => n.includes("tnt"));
-  const hasHBOMax = allNames.some((n) => n.includes("hbo max") || n.includes("max"));
-
-  if (hasABC && hasESPN) return "ABC/ESPN";
-  if (hasTNT && hasHBOMax) return "TNT/MAX";
-
-  // find first main network match
-  for (const key in networkMap) {
+  for (const [key, value] of networkMap) {
     if (allNames.some((n) => n.includes(key))) {
-      return networkMap[key];
+      return value;
     }
   }
 
-  // fallback: first valid name (capitalized)
-  const first = broadcasts[0]?.name || broadcasts[0]?.shortName || "";
+  // fallback
+  const first = broadcasts[0];
   return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
 }
+
+

@@ -5,7 +5,7 @@ import {
   EXPANDED_PLAYERS_PER_TEAM,
 } from "constants/widgetLeaders";
 import { Text } from "react-native";
-import { gameWidgetStyles } from "styles/Explore/GameWidgetStyles";
+import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
 
 type PlayerLeader = {
   team: { id: number };
@@ -14,7 +14,7 @@ type PlayerLeader = {
 
 type displayeValue = {
   isHome: boolean;
-  record: string;
+  record: string ;
   score: number;
   status: boolean;
   isFinal: boolean;
@@ -58,7 +58,7 @@ export default function displayeValue(
   score = 0,
   isDark = true,
   height = 150,
-  width = 150,
+  width = 150
 ) {
   const styles = gameWidgetStyles(isDark, height, width);
 

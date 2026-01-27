@@ -40,6 +40,52 @@ export interface GameDetailsResponse {
   league: LeagueType;
   gameId: string;
   neutralSite: boolean;
+  homeRank?: number;
+  awayRank?: number;
+  homeRecords: {
+    total: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    home: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    road: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    vsconf: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+  };
+  awayRecords: {
+    total: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    home: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    road: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+    vsconf: {
+      name: string;
+      summary: string;
+      abbreviation: string | null;
+    };
+  };
   headline?: string | null;
   broadcast?: string | null;
   broadcasts?: string[];
@@ -97,5 +143,3 @@ export const useFootballGameDetails = (
 
   return { data, loading };
 };
-
-

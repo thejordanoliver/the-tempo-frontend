@@ -1,29 +1,27 @@
-import BoxScore from "components/CBB/GameDetails/BoxScore";
-import GameHeader from "components/CBB/GameDetails/GameHeader";
-import GameLeaders from "components/CBB/GameDetails/GameLeaders";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FloatingChatButton from "components/FloatingButton";
+import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
+import GameHeader from "components/Sports/CBB/GameDetails/GameHeader";
+import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
+import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
+import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import {
   GameLocation,
   LastFiveGamesSwitcher,
   LineScore,
-} from "components/GameDetails";
-import GameSummary from "components/GameDetails/GameSummary";
-import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
-import LastPlay from "components/GameDetails/LastPlay";
-import Officials from "components/GameDetails/Officials";
-import ShotChart from "components/GameDetails/ShotChart";
-import WinPredictionVote from "components/GameDetails/WinPredictionVote";
+} from "components/Sports/NBA/GameDetails";
+import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
+import Officials from "components/Sports/NBA/GameDetails/Officials";
+import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
+import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import { neutralVenues, teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
-import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
-import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
-import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo, useRef } from "react";
 import {
@@ -46,10 +44,6 @@ function parseGameDate(raw: any) {
   if (!raw) return new Date();
   if (typeof raw === "number") return new Date(raw * 1000);
   return new Date(raw);
-}
-
-function safeStr(v: any) {
-  return typeof v === "string" ? v : v == null ? "" : String(v);
 }
 
 /* ------------------------------------------------------------------ */
@@ -107,12 +101,6 @@ export default function GameDetailsScreen() {
   const isWomen =
     String(gameObj?.league?.id) === "423" ||
     gameObj?.league?.name === "Women's College Basketball";
-
-  const recordLeague = (isWomen ? "wcbb" : "cbb") as "cbb" | "wcbb";
-
-  const scoresLeagueKey = isWomen
-    ? "womens-college-basketball"
-    : "mens-college-basketball";
 
   /* ---------------- Teams ---------------- */
 
@@ -206,15 +194,6 @@ export default function GameDetailsScreen() {
   const gameDateISO = gameDateObj.toISOString();
   const gameDateYMD = gameDateISO.split("T")[0];
 
-  /* ---------------- Rankings ---------------- */
-
-  const { getTeamRankingById } = useCBBRankings(isWomen ? "423" : "116");
-
-  const currentHomeRank = getTeamRankingById(homeEspnId)?.current ?? "";
-  const currentAwayRank = getTeamRankingById(awayEspnId)?.previous ?? "";
-  const homeRank = String(currentHomeRank);
-  const awayRank = String(currentAwayRank);
-
   /* ---------------- Hooks ---------------- */
   const detailsLeague = isWomen ? "wcbb" : "cbb";
 
@@ -233,45 +212,40 @@ export default function GameDetailsScreen() {
 
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const period = liveScore?.period;
+  const displayClock = liveScore?.displayClock;
   const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
-  const plays = details?.plays ?? [];
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const homeRank = details?.homeRank;
+  const awayRank = details?.awayRank;
+  const plays = liveScore?.plays ?? [];
+  const headlineText = details?.headline;
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const venue = details?.venue; // optional
-  const neutralSite = details?.neutralSite; // optional
-  const leaders = details?.leaders ?? [];
-  const playerStats = details?.playerStats ?? [];
-  const lastPlay = details?.plays?.length
-    ? details.plays[details.plays.length - 1]
-    : undefined;
+  const venue = details?.venue;
+  const neutralSite = details?.neutralSite;
+  const leaders = liveScore?.leaders ?? [];
+  const playerStats = liveScore?.playerStats ?? [];
+  const teamStats = liveScore?.teamStats ?? [];
+  const lastPlay = liveScore?.lastPlay ?? "";
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
+  // console.log(JSON.stringify(leaders,null ,2))
 
-  // ✅ Your hook typings are currently too narrow (e.g. "cbb" | "nba"),
-  // so we cast only at the call site until you expand the union types.
-  const { record: homeRecord } = useTeamRecord(homeEspnId, recordLeague as any);
-  const { record: awayRecord } = useTeamRecord(awayEspnId, recordLeague as any);
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
 
   /* ---------------- Hooks ---------------- */
 
   // Pass `isWomen` flag to useLastFiveGames
   const homeLastGames = useLastFiveGames(homeTeamId, isWomen);
   const awayLastGames = useLastFiveGames(awayTeamId, isWomen);
-
-  const { broadcasts } = useGameBroadcasts(
-    homeEspnId,
-    awayEspnId,
-    gameDateISO,
-    scoresLeagueKey
-  );
-  const broadcastText = getBroadcastDisplay(broadcasts);
-
-  // Some versions of this hook accept (home, away, date, leagueKey)
-  const { headlineText } = useCBBHeadline(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateISO,
-    recordLeague as any
-  );
 
   /* ---------------- Neutral site / venue ---------------- */
 
@@ -340,66 +314,16 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Status / linescore ---------------- */
 
-  const displayClock = safeStr((liveScore as any)?.displayClock);
+  const displayHomeScore = liveScore?.home.total ?? 0;
+  const displayAwayScore = liveScore?.away.total ?? 0;
 
-  const displayHomeScore =
-    (liveScore as any)?.home?.total ??
-    (gameObj as any)?.scores?.home?.total ??
-    0;
-
-  const displayAwayScore =
-    (liveScore as any)?.away?.total ??
-    (gameObj as any)?.scores?.away?.total ??
-    0;
-
-  const lineScore =
-    gameStatusDescription && (liveScore as any)?.periodScores?.length
-      ? {
-          home: (liveScore as any).periodScores.map((p: any) =>
-            String(p.home ?? "")
-          ),
-          away: (liveScore as any).periodScores.map((p: any) =>
-            String(p.away ?? "")
-          ),
-        }
-      : undefined;
-
-  const shouldShowGameDetails = !isScheduled;
-
-  // --- Helpers ---
-  const formatQuarter = (period?: number | string, statusText?: string) => {
-    if (!period && !statusText) return "";
-
-    if (typeof period === "string") {
-      const val = period.toLowerCase();
-      if (val.includes("ot")) return val.toUpperCase();
-      if (val.includes("halftime")) return "Halftime";
-      return val;
-    }
-
-    const p = Number(period);
-
-    // ✅ WOMEN: 4 quarters
-    if (isWomen) {
-      if (p === 1) return "1st";
-      if (p === 2) return "2nd";
-      if (p === 3) return "3rd";
-      if (p === 4) return "4th";
-
-      const ot = p - 4;
-      return ot === 1 ? "OT" : `${ot}OT`;
-    }
-
-    // ✅ MEN: 2 halves
-    if (p === 1) return "1st";
-    if (p === 2) return "2nd";
-
-    const ot = p - 2;
-    return ot === 1 ? "OT" : `${ot}OT`;
-  };
-  const period = liveScore?.period;
-
-
+  // --- Period scores / line score ---
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
 
   /* ---------------- Header ---------------- */
 
@@ -418,10 +342,12 @@ export default function GameDetailsScreen() {
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
+          homeTeamId={isWomen ? (homeTeamData as any).wid : homeTeamData.id}
+          awayTeamId={isWomen ? (awayTeamData as any).wid : awayTeamData.id}
           homeTeamCode={homeTeamData.code}
           awayTeamCode={awayTeamData.code}
           isNeutralSite={!!neutralSite}
-          league="CBB"
+          league={isWomen ? "WCBB" : "CBB"}
         />
       ),
     });
@@ -489,7 +415,7 @@ export default function GameDetailsScreen() {
           homeRecord={homeRecord}
           awayRecord={awayRecord}
           displayClock={displayClock}
-          period={formatQuarter(period)}
+          period={period}
           isDark={isDark}
           formattedDate={formattedDate}
           time={formattedTime}
@@ -499,19 +425,20 @@ export default function GameDetailsScreen() {
           gameStatusShortDescription={gameStatusDetail}
         />
 
-        <View style={{ gap: 20, marginTop: 20 }}>
-          {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
+        {!dontShowDetails && (
+          <View style={{ gap: 20, marginTop: 20 }}>
+            {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
 
-          {shouldShowGameDetails && lineScore && (
-            <LineScore
-              linescore={lineScore}
-              homeCode={homeTeamData.code ?? ""}
-              awayCode={awayTeamData.code ?? ""}
-              league={isWomen ? "WCBB" : "CBB"} // ✅ FIX
-            />
-          )}
+            {!isScheduled && (
+              <LineScore
+                linescore={lineScore}
+                homeCode={homeTeamData.code ?? ""}
+                awayCode={awayTeamData.code ?? ""}
+                league={isWomen ? "WCBB" : "CBB"} // ✅ FIX
+              />
+            )}
 
-          {/* <GameOddsSection
+            {/* <GameOddsSection
             date={gameDateISO}
             gameDate={gameDateISO}
             awayCode={awayTeamData.code ?? ""}
@@ -519,86 +446,105 @@ export default function GameDetailsScreen() {
             gameId={`${homeTeamId}-${awayTeamId}`}
           /> */}
 
-          {!isFinal && (
-            <WinPredictionVote
-              gameId={`${homeTeamId}-${awayTeamId}`}
-              awayTeam={voteAwayTeam as any}
-              homeTeam={voteHomeTeam as any}
-            />
-          )}
-          {/* Game Leaders show during and after game */}
-          {shouldShowGameDetails && (
+            {!isFinal && (
+              <WinPredictionVote
+                gameId={`${homeTeamId}-${awayTeamId}`}
+                awayTeam={voteAwayTeam as any}
+                homeTeam={voteHomeTeam as any}
+              />
+            )}
+
             <GameLeaders
               leaders={leaders}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
               league={detailsLeague}
+              gameStatusDescription={gameStatusDescription}
             />
-          )}
 
-          {shouldShowGameDetails && (
-            <ShotChart
-              plays={plays}
-              homeTeamId={String(homeEspnId)}
-              awayTeamId={String(awayEspnId)}
-              neutralSite={neutralSite}
-              isCBB={true}
+            {dontShowDetails && (
+              <ShotChart
+                plays={plays}
+                homeTeamId={String(homeEspnId)}
+                awayTeamId={String(awayEspnId)}
+                neutralSite={neutralSite}
+                league={isWomen ? "WCBB" : "CBB"}
+              />
+            )}
+
+            {dontShowDetails && (
+              <GameSummary
+                plays={plays ?? []}
+                homeTeamId={String(homeEspnId)}
+                awayTeamId={String(awayEspnId)}
+                league={isWomen ? "WCBB" : "CBB"}
+              />
+            )}
+
+            <GameTeamStats
+              stats={teamStats}
+              gameStatusDescription={gameStatusDescription}
             />
-          )}
 
-          {shouldShowGameDetails && (
-            <GameSummary
-              plays={plays ?? []}
-              homeTeamId={String(homeEspnId)}
-              awayTeamId={String(awayEspnId)}
-              league={isWomen ? "WCBB" : "CBB"}
+            {dontShowDetails && (
+              <BoxScore
+                playerStats={playerStats}
+                homeTeamId={Number(homeEspnId)}
+                awayTeamId={Number(awayEspnId)}
+                league={isWomen ? "WCBB" : "CBB"}
+              />
+            )}
+
+            {(isHalftime || inProgress) && (
+              <PlayersOnCourt
+                playerStats={playerStats}
+                homeTeamId={Number(homeEspnId)}
+                awayTeamId={Number(awayEspnId)}
+                league={isWomen ? "WCBB" : "CBB"}
+              />
+            )}
+
+            <LastFiveGamesSwitcher
+              isDark={isDark}
+              home={{
+                teamCode: homeTeamData.code ?? "",
+                teamLogo: homeLogo,
+                teamLogoLight: isWomen
+                  ? homeTeamData.wLogo
+                  : homeTeamData.logoLight ?? homeTeamData.logo,
+                games: (homeLastGames as any)?.games ?? [],
+              }}
+              away={{
+                teamCode: awayTeamData.code ?? "",
+                teamLogo: awayTeamData.logo,
+                teamLogoLight: awayTeamData.logoLight ?? awayTeamData.logo,
+                games: (awayLastGames as any)?.games ?? [],
+              }}
+              league="CBB"
             />
-          )}
 
-          {shouldShowGameDetails && (
-            <BoxScore
-              playerStats={playerStats}
-              homeTeamId={Number(homeEspnId)}
-              awayTeamId={Number(awayEspnId)}
+            {highlights?.length > 0 && (
+              <HighlightVideoList highlights={highlights} />
+            )}
+
+            <Officials
+              officials={officials ?? []}
+              loading={false}
+              error={null}
             />
-          )}
 
-          <LastFiveGamesSwitcher
-            isDark={isDark}
-            home={{
-              teamCode: homeTeamData.code ?? "",
-              teamLogo: homeLogo,
-              teamLogoLight: isWomen
-                ? homeTeamData.wLogo
-                : homeTeamData.logoLight ?? homeTeamData.logo,
-              games: (homeLastGames as any)?.games ?? [],
-            }}
-            away={{
-              teamCode: awayTeamData.code ?? "",
-              teamLogo: awayTeamData.logo,
-              teamLogoLight: awayTeamData.logoLight ?? awayTeamData.logo,
-              games: (awayLastGames as any)?.games ?? [],
-            }}
-            league="CBB"
-          />
-
-          {highlights?.length > 0 && (
-            <HighlightVideoList highlights={highlights} />
-          )}
-
-          <Officials officials={officials ?? []} loading={false} error={null} />
-
-          <GameLocation
-            venueImage={resolvedVenue.image}
-            venueName={resolvedVenue.name}
-            location={resolvedVenue.city}
-            address={resolvedVenue.address}
-            venueCapacity={String(resolvedVenue.capacity ?? "")}
-            weather={weather}
-            loading={false}
-            error={null}
-          />
-        </View>
+            <GameLocation
+              venueImage={resolvedVenue.image}
+              venueName={resolvedVenue.name}
+              location={resolvedVenue.city}
+              address={resolvedVenue.address}
+              venueCapacity={String(resolvedVenue.capacity ?? "")}
+              weather={weather}
+              loading={false}
+              error={null}
+            />
+          </View>
+        )}
       </ScrollView>
 
       <Animated.View

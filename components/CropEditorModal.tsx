@@ -1,15 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Styles";
 import * as ImageManipulator from "expo-image-manipulator";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   Dimensions,
   Image,
   Modal,
   PanResponder,
   Pressable,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
+import { cropEditorModalStyles } from "styles/ModalsStyles/CropEditorModalStyles";
+
+// ============================================================================
+// Types
+// ============================================================================
 
 type CropEditorModalProps = {
   visible: boolean;
@@ -17,11 +28,26 @@ type CropEditorModalProps = {
   onCancel: () => void;
   onCrop: (uri: string) => void;
   aspectRatio: number;
-  mode: "profile" | "banner" | "post"; // 👈 Added "post"
+  mode: "profile" | "banner" | "post";
 };
 
-const BANNER_HEIGHT = 100; // Increased banner height
-const PROFILE_PIC_SIZE = 300; // Increased profile circle size
+type Coordinate = { x: number; y: number };
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const BANNER_HEIGHT = 100;
+const PROFILE_PIC_SIZE = 300;
+const MAX_SCALE = 4;
+const MIN_SCALE = 1;
+
+const POST_WIDTH = 1080;
+const POST_HEIGHT = 1350;
+
+// ============================================================================
+// Component
+// ============================================================================
 
 export default function CropEditorModal({
   visible,
@@ -32,289 +58,346 @@ export default function CropEditorModal({
   mode,
 }: CropEditorModalProps) {
   const windowWidth = Dimensions.get("window").width;
+  const isDark = useColorScheme() === "dark";
 
-const isProfile = mode === "profile";
-const isBanner = mode === "banner";
-const isPost = mode === "post";
+  const isProfile = mode === "profile";
+  const isBanner = mode === "banner";
+  const isPost = mode === "post";
 
-let cropWidth = windowWidth * 0.9;
-let cropHeight = cropWidth / aspectRatio;
+  // --------------------------------------------------------------------------
+  // State
+  // --------------------------------------------------------------------------
+  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
+  const [displayedImageSize, setDisplayedImageSize] = useState({ width: 0, height: 0 });
 
-if (isProfile) {
-  cropWidth = PROFILE_PIC_SIZE;
-  cropHeight = PROFILE_PIC_SIZE;
-} else if (isBanner) {
-  cropWidth = windowWidth * 0.9;
-  cropHeight = BANNER_HEIGHT;
-} else if (isPost) {
-  cropWidth = windowWidth * 0.9;
-  cropHeight = cropWidth * (3 / 4); // 4:3 aspect ratio
-}
+  // --------------------------------------------------------------------------
+  // Refs
+  // --------------------------------------------------------------------------
+  const lastScale = useRef(MIN_SCALE);
+  const currentScale = useRef(MIN_SCALE);
 
-  const [scale, setScale] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [rotation, setRotation] = useState(0);
+  const lastOffset = useRef<Coordinate>({ x: 0, y: 0 });
+  const currentOffset = useRef<Coordinate>({ x: 0, y: 0 });
+  const gestureStartOffset = useRef<Coordinate>({ x: 0, y: 0 });
 
-  const lastOffset = useRef(offset);
+  const initialDistance = useRef(0);
+  const rotation = useRef(0);
 
-  // Store the displayed image size inside the crop box, after resizing with "contain"
-  const [displayedImageSize, setDisplayedImageSize] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [imageSize, setImageSize] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
+  // --------------------------------------------------------------------------
+  // Animated values
+  // --------------------------------------------------------------------------
+  const animatedOffset = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
+  const animatedScale = useRef(new Animated.Value(MIN_SCALE)).current;
+  const animatedRotation = useRef(new Animated.Value(0)).current;
 
-  // Get real image size from URI
+  // --------------------------------------------------------------------------
+  // Crop box size
+  // --------------------------------------------------------------------------
+  let cropWidth = windowWidth * 0.9;
+  let cropHeight = cropWidth / aspectRatio;
+
+  if (isProfile) {
+    cropWidth = PROFILE_PIC_SIZE;
+    cropHeight = PROFILE_PIC_SIZE;
+  } else if (isBanner) {
+    cropHeight = BANNER_HEIGHT;
+  } else if (isPost) {
+    cropWidth = Math.min(windowWidth * 0.9, POST_WIDTH);
+    cropHeight = (cropWidth * POST_HEIGHT) / POST_WIDTH;
+  }
+
+  const styles = cropEditorModalStyles(isDark, isProfile, cropWidth, cropHeight);
+
+  // --------------------------------------------------------------------------
+  // Load image size
+  // --------------------------------------------------------------------------
   useEffect(() => {
     if (!imageUri) return;
     Image.getSize(
       imageUri,
       (width, height) => setImageSize({ width, height }),
-      () => {
-        Alert.alert("Error", "Could not get image size");
-        setImageSize(null);
-      }
+      () => Alert.alert("Error", "Could not load image")
     );
   }, [imageUri]);
 
-  // Calculate displayed image size inside crop box (resizeMode: contain)
+  // --------------------------------------------------------------------------
+  // Displayed image size (cover)
+  // --------------------------------------------------------------------------
   useEffect(() => {
     if (!imageSize) return;
 
-    // Calculate scaled size of image to fit inside crop box with contain mode
     const imageRatio = imageSize.width / imageSize.height;
     const cropRatio = cropWidth / cropHeight;
 
-    let displayedWidth = 0;
-    let displayedHeight = 0;
+    let width: number;
+    let height: number;
 
     if (imageRatio > cropRatio) {
-      // Image wider than crop box
-      displayedWidth = cropWidth;
-      displayedHeight = cropWidth / imageRatio;
+      height = cropHeight;
+      width = height * imageRatio;
     } else {
-      // Image taller than crop box
-      displayedHeight = cropHeight;
-      displayedWidth = cropHeight * imageRatio;
+      width = cropWidth;
+      height = width / imageRatio;
     }
 
-    setDisplayedImageSize({ width: displayedWidth, height: displayedHeight });
-
-    // Reset offset and scale on new image/aspect ratio
-    setOffset({ x: 0, y: 0 });
-    setScale(1);
-    setRotation(0);
+    setDisplayedImageSize({ width, height });
   }, [imageSize, cropWidth, cropHeight]);
 
-  // Clamp offset so user cannot drag image out of crop box
-  const clampOffset = (x: number, y: number) => {
-    if (!displayedImageSize.width || !displayedImageSize.height)
-      return { x, y };
+  // --------------------------------------------------------------------------
+  // Min scale (rotation-aware)
+  // --------------------------------------------------------------------------
+  const minScale = useMemo(() => {
+    if (!displayedImageSize.width) return MIN_SCALE;
 
-    const scaledWidth = displayedImageSize.width * scale;
-    const scaledHeight = displayedImageSize.height * scale;
+    const rot = rotation.current;
+    const baseWidth = rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
+    const baseHeight = rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
 
-    const maxX = (scaledWidth - cropWidth) / 2;
-    const maxY = (scaledHeight - cropHeight) / 2;
+    return Math.max(cropWidth / baseWidth, cropHeight / baseHeight);
+  }, [displayedImageSize, cropWidth, cropHeight]);
 
-    // Clamp between -max and max
-    const clampedX = Math.min(maxX, Math.max(-maxX, x));
-    const clampedY = Math.min(maxY, Math.max(-maxY, y));
+  // --------------------------------------------------------------------------
+  // Init transforms
+  // --------------------------------------------------------------------------
+  useEffect(() => {
+    if (!displayedImageSize.width) return;
 
-    return { x: clampedX, y: clampedY };
-  };
+    rotation.current = 0;
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        lastOffset.current = offset;
+    lastScale.current = minScale;
+    currentScale.current = minScale;
+
+    lastOffset.current = { x: 0, y: 0 };
+    currentOffset.current = { x: 0, y: 0 };
+
+    animatedScale.setValue(minScale);
+    animatedOffset.setValue({ x: 0, y: 0 });
+    animatedRotation.setValue(0);
+  }, [displayedImageSize, minScale]);
+
+  // --------------------------------------------------------------------------
+  // Clamp offset (rotation-aware)
+  // --------------------------------------------------------------------------
+  const clampOffset = useCallback(
+    (x: number, y: number, scale: number): Coordinate => {
+      const rot = rotation.current;
+
+      const baseWidth = rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
+      const baseHeight = rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
+
+      const scaledWidth = baseWidth * scale;
+      const scaledHeight = baseHeight * scale;
+
+      const maxX = Math.max(0, (scaledWidth - cropWidth) / 2);
+      const maxY = Math.max(0, (scaledHeight - cropHeight) / 2);
+
+      return {
+        x: Math.min(maxX, Math.max(-maxX, x)),
+        y: Math.min(maxY, Math.max(-maxY, y)),
+      };
+    },
+    [displayedImageSize, cropWidth, cropHeight]
+  );
+
+  // --------------------------------------------------------------------------
+  // Helpers
+  // --------------------------------------------------------------------------
+  const getDistance = ([a, b]: any[]) =>
+    Math.hypot(b.pageX - a.pageX, b.pageY - a.pageY);
+
+  // --------------------------------------------------------------------------
+  // PanResponder
+  // --------------------------------------------------------------------------
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+
+        onPanResponderGrant: (evt) => {
+          gestureStartOffset.current = { ...currentOffset.current };
+
+          if (evt.nativeEvent.touches.length === 2) {
+            initialDistance.current = getDistance(evt.nativeEvent.touches);
+          }
+        },
+
+        onPanResponderMove: (evt, gesture) => {
+          const touches = evt.nativeEvent.touches;
+
+          // ---- PAN
+          if (touches.length === 1) {
+            const x = gestureStartOffset.current.x + gesture.dx;
+            const y = gestureStartOffset.current.y + gesture.dy;
+
+            const clamped = clampOffset(x, y, currentScale.current);
+
+            currentOffset.current = clamped;
+            animatedOffset.setValue(clamped);
+          }
+
+          // ---- PINCH
+          if (touches.length === 2) {
+            const distance = getDistance(touches);
+            const scaleRatio = distance / initialDistance.current;
+
+            const nextScale = Math.min(
+              MAX_SCALE,
+              Math.max(minScale, lastScale.current * scaleRatio)
+            );
+
+            const clamped = clampOffset(
+              currentOffset.current.x,
+              currentOffset.current.y,
+              nextScale
+            );
+
+            currentScale.current = nextScale;
+            currentOffset.current = clamped;
+
+            animatedScale.setValue(nextScale);
+            animatedOffset.setValue(clamped);
+          }
+        },
+
+        onPanResponderRelease: () => {
+          lastOffset.current = currentOffset.current;
+          lastScale.current = currentScale.current;
+        },
+      }),
+    [clampOffset, minScale]
+  );
+
+  // --------------------------------------------------------------------------
+  // Rotate 90°
+  // --------------------------------------------------------------------------
+  const rotate90 = useCallback(() => {
+    rotation.current = (rotation.current + 90) % 360;
+
+    const clamped = clampOffset(
+      currentOffset.current.x,
+      currentOffset.current.y,
+      currentScale.current
+    );
+
+    currentOffset.current = clamped;
+    lastOffset.current = clamped;
+
+    Animated.parallel([
+      Animated.timing(animatedRotation, {
+        toValue: rotation.current,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(animatedOffset, {
+        toValue: clamped,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [clampOffset]);
+
+  // --------------------------------------------------------------------------
+  // Crop
+  // --------------------------------------------------------------------------
+  const handleCrop = useCallback(async () => {
+    if (!imageSize) return;
+
+    const { width: imgW, height: imgH } = imageSize;
+    const scale = currentScale.current;
+    const rot = rotation.current;
+
+    const rotatedW = rot % 180 === 0 ? imgW : imgH;
+    const rotatedH = rot % 180 === 0 ? imgH : imgW;
+
+    const displayToOriginalScale = rotatedW / (displayedImageSize.width * scale);
+
+    const originX =
+      rotatedW / 2 -
+      (cropWidth / 2) * displayToOriginalScale -
+      currentOffset.current.x * displayToOriginalScale;
+
+    const originY =
+      rotatedH / 2 -
+      (cropHeight / 2) * displayToOriginalScale -
+      currentOffset.current.y * displayToOriginalScale;
+
+    const actions: ImageManipulator.Action[] = [];
+
+    if (rot !== 0) actions.push({ rotate: rot });
+
+    actions.push({
+      crop: {
+        originX: Math.max(0, Math.round(originX)),
+        originY: Math.max(0, Math.round(originY)),
+        width: Math.round(cropWidth * displayToOriginalScale),
+        height: Math.round(cropHeight * displayToOriginalScale),
       },
-      onPanResponderMove: (_evt, gestureState) => {
-        const newOffset = {
-          x: lastOffset.current.x + gestureState.dx,
-          y: lastOffset.current.y + gestureState.dy,
-        };
-        setOffset(clampOffset(newOffset.x, newOffset.y));
-      },
-      onPanResponderRelease: () => {},
-    })
-  ).current;
-
-  const handleRotate = () => {
-    // Reset offset after rotation to avoid issues
-    setRotation((r) => (r + 90) % 360);
-    setOffset({ x: 0, y: 0 });
-  };
-
-  const handleZoomIn = () => {
-    setScale((s) => {
-      const newScale = Math.min(4, s + 0.2);
-      return newScale;
     });
-  };
 
-  const handleZoomOut = () => {
-    setScale((s) => {
-      const newScale = Math.max(0.8, s - 0.2);
-      // Also clamp offset to new scale bounds
-      const clamped = clampOffset(offset.x, offset.y);
-      setOffset(clamped);
-      return newScale;
-    });
-  };
-
-  const handleCrop = async () => {
-    if (!imageSize) {
-      Alert.alert("Error", "Image size not loaded yet.");
-      return;
+    if (isPost) {
+      actions.push({ resize: { width: POST_WIDTH, height: POST_HEIGHT } });
     }
 
-    try {
-      // Image real dimensions (rotated)
-      let rotatedWidth = imageSize.width;
-      let rotatedHeight = imageSize.height;
-      const normalizedRotation = rotation % 360;
-      if (normalizedRotation === 90 || normalizedRotation === 270) {
-        rotatedWidth = imageSize.height;
-        rotatedHeight = imageSize.width;
-      }
+    const result = await ImageManipulator.manipulateAsync(imageUri, actions, {
+      compress: 1,
+      format: ImageManipulator.SaveFormat.PNG,
+    });
 
-      // Calculate the scale from displayed image size to real image size
-      const scaleX = rotatedWidth / (displayedImageSize.width * scale);
-      const scaleY = rotatedHeight / (displayedImageSize.height * scale);
+    onCrop(result.uri);
+  }, [imageSize, displayedImageSize, cropWidth, cropHeight, isPost, imageUri, onCrop]);
 
-      // Calculate top-left corner of crop box relative to displayed image center
-      // offset.x/y are relative to crop box center -> flip sign to get image offset inside crop box
-      // Because image is centered, to get crop box origin relative to image, add half crop box size
-      const cropOriginX =
-        (displayedImageSize.width * scale) / 2 - cropWidth / 2 - offset.x;
-      const cropOriginY =
-        (displayedImageSize.height * scale) / 2 - cropHeight / 2 - offset.y;
-
-      // Map crop origin from displayed image to original image
-      const originX = cropOriginX * scaleX;
-      const originY = cropOriginY * scaleY;
-
-      const cropWidthScaled = cropWidth * scaleX;
-      const cropHeightScaled = cropHeight * scaleY;
-
-      // Clamp crop origins to image bounds
-      const cropXClamped = Math.min(
-        Math.max(0, originX),
-        rotatedWidth - cropWidthScaled
-      );
-      const cropYClamped = Math.min(
-        Math.max(0, originY),
-        rotatedHeight - cropHeightScaled
-      );
-
-      const manipResult = await ImageManipulator.manipulateAsync(
-        imageUri,
-        [
-          { rotate: rotation },
-          {
-            crop: {
-              originX: cropXClamped,
-              originY: cropYClamped,
-              width: cropWidthScaled,
-              height: cropHeightScaled,
-            },
-          },
-        ],
-        { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-      );
-
-      onCrop(manipResult.uri);
-    } catch (err) {
-      Alert.alert("Error cropping image", (err as Error).message);
-    }
-  };
-
+  // --------------------------------------------------------------------------
+  // Render
+  // --------------------------------------------------------------------------
   return (
-    <Modal visible={visible} animationType="slide" transparent={false}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "#000",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-    <View
-  style={{
-    width: cropWidth,
-    height: cropHeight,
-    borderColor: "#fff",
-    borderWidth: 2,
-    borderRadius: isProfile ? cropHeight / 2 : 8, // 👈 circle for profile
-    overflow: "hidden",
-    backgroundColor: "#111",
-  }}
->
+    <Modal visible={visible} animationType="slide" transparent>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.wrapper}>
+          <View style={styles.header}>
+            <Pressable onPress={onCancel}>
+              <Ionicons name="close" size={28} color={isDark ? Colors.white : Colors.black} />
+            </Pressable>
 
-          <View
-            {...panResponder.panHandlers}
-            style={{
-              width: displayedImageSize.width,
-              height: displayedImageSize.height,
-              transform: [
-                { translateX: offset.x },
-                { translateY: offset.y },
-                { scale },
-                { rotate: `${rotation}deg` },
-              ],
-            }}
-          >
-            <Image
-              source={{ uri: imageUri }}
-              style={{
-                width: displayedImageSize.width,
-                height: displayedImageSize.height,
-                resizeMode: "cover",
-              }}
-            />
+            <Text style={styles.headerTitle}>Crop</Text>
+
+            <Pressable onPress={rotate90}>
+              <Ionicons name="refresh" size={24} color={isDark ? Colors.white : Colors.black} />
+            </Pressable>
+
+            <TouchableOpacity onPress={handleCrop}>
+              <Text style={styles.saveText}>Save</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.cropContainer}>
+            <View style={styles.imageContainer} {...panResponder.panHandlers}>
+              <Animated.View
+                style={{
+                  width: displayedImageSize.width,
+                  height: displayedImageSize.height,
+                  transform: [
+                    { translateX: animatedOffset.x },
+                    { translateY: animatedOffset.y },
+                    { scale: animatedScale },
+                    {
+                      rotate: animatedRotation.interpolate({
+                        inputRange: [0, 360],
+                        outputRange: ["0deg", "360deg"],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <Image
+                  source={{ uri: imageUri }}
+                  style={{ width: displayedImageSize.width, height: displayedImageSize.height }}
+                />
+              </Animated.View>
+            </View>
           </View>
         </View>
-
-        <View style={{ flexDirection: "row", marginTop: 20 }}>
-          <Pressable onPress={handleZoomOut} style={{ marginHorizontal: 20 }}>
-            <Ionicons name="remove-circle-outline" size={36} color="#fff" />
-          </Pressable>
-          <Pressable onPress={handleRotate} style={{ marginHorizontal: 20 }}>
-            <Ionicons name="reload-circle-outline" size={36} color="#fff" />
-          </Pressable>
-          <Pressable onPress={handleZoomIn} style={{ marginHorizontal: 20 }}>
-            <Ionicons name="add-circle-outline" size={36} color="#fff" />
-          </Pressable>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 40,
-            justifyContent: "space-around",
-            width: "100%",
-            paddingHorizontal: 40,
-          }}
-        >
-          <Pressable
-            onPress={onCancel}
-            style={{ backgroundColor: "#444", padding: 12, borderRadius: 8 }}
-          >
-            <Ionicons name="close" size={24} color="#fff" />
-          </Pressable>
-          <Pressable
-            onPress={handleCrop}
-            style={{ backgroundColor: "#007AFF", padding: 12, borderRadius: 8 }}
-          >
-            <Ionicons name="checkmark" size={24} color="#fff" />
-          </Pressable>
-        </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }

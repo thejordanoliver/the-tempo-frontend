@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const statsTableStyles = (isDark: boolean) =>
@@ -54,18 +53,21 @@ export const statsTableStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: isDark ? Colors.white : Colors.black,
+      textTransform: "uppercase",
     },
     careerHeaderCell: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.black : Colors.white,
       paddingHorizontal: 8,
+      textTransform: "uppercase",
     },
     headerCell: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
       paddingHorizontal: 8,
+      textTransform: "uppercase",
     },
-     errorText: {
+    errorText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
       textAlign: "center",
@@ -135,5 +137,33 @@ export const statsTableStyles = (isDark: boolean) =>
 
     rowAltDark: {
       backgroundColor: Colors.dark.itemBackground,
+    },
+
+    glossaryContainer: {
+      marginTop: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    headerName: {
+      padding: 10,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
+      borderBottomWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    glossaryAbbr: {
+      width: 48,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSBOLD,
+      textTransform: "uppercase",
+    },
+    glossaryDisplayName: {
+      flex: 1,
+      fontSize: 12,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSREGULAR,
     },
   });

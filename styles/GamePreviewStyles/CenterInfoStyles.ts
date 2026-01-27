@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const getStyles = 
@@ -42,16 +41,6 @@ export const getStyles =
       color: Colors.dark.lightRed,
       textAlign: "center",
     },
-
-    gameTitle: {
-      position: "absolute",
-      top: -40,
-      width: 200,
-      textAlign: "center",
-      fontSize: 20,
-      fontFamily: Fonts.OSEXTRALIGHT,
-      color: Colors.dark.white,
-    },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 10,
@@ -74,17 +63,11 @@ export const getStyles =
       top: 0,
       left: 0,
     },
-
     gameInfoRow: {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
       marginTop: 6,
-    },
-    gameNumberLabel: {
-      fontSize: 12,
-      fontFamily: Fonts.OSLIGHT,
-      color: Colors.midTone,
     },
 
     headline: {
@@ -94,28 +77,8 @@ export const getStyles =
       position: "absolute",
       top: -48,
     },
-
-    canceled: {
-      fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
-      color: Colors.dark.lightRed,
-      marginTop: 6,
-    },
-
-    livePeriod: {
-      fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
-      marginTop: 4,
-    },
-
-    formattedDate: {
-      fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
-      color: Colors.dark.white,
-    },
-
     broadcast: {
-      fontSize: 10,
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
       textAlign: "center",

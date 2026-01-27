@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Game } from "types/types";
+import { getNBASeason } from "utils/dateUtils";
 
 export type GameWithStatusText = Game & {
   statusText: string;
@@ -15,10 +16,10 @@ export type GameWithStatusText = Game & {
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL;
 
-export function useTeamGames(teamId?: string, season = "2025") {
+export function useTeamGames(teamId?: string, season = getNBASeason()) {
   const [games, setGames] = useState<GameWithStatusText[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -36,7 +37,8 @@ export function useTeamGames(teamId?: string, season = "2025") {
       setGames(res.data.games ?? []);
     } catch (err: any) {
       console.error("[useTeamGames] error:", err);
-      setError("Failed to load team games");
+      const message = err?.message || "Failed to load team games";
+      setError(new Error(message));
       setGames([]);
     } finally {
       setLoading(false);
@@ -44,8 +46,8 @@ export function useTeamGames(teamId?: string, season = "2025") {
   };
 
   const refreshLiveGames = () => {
-    setGames((prev) =>
-      prev.map((g) => ({ ...g })) // backend handles freshness
+    setGames(
+      (prev) => prev.map((g) => ({ ...g })) // backend handles freshness
     );
   };
 

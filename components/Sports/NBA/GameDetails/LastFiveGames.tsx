@@ -1,0 +1,146 @@
+// ---- LastFiveGamesSwitcher.tsx ----
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
+import { LeagueType } from "types/types";
+import FixedWidthTabBar, { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
+
+type Props = {
+  isDark: boolean;
+  lighter?: boolean;
+  home: {
+    teamCode: string;
+    teamLogoLight: any;
+    teamLogo: any;
+    games: any[];
+  };
+  away: {
+    teamCode: string;
+    teamLogoLight: any;
+    teamLogo: any;
+    games: any[];
+  };
+  league: LeagueType;
+};
+function pickTeamLogo(preferLight: boolean, logo?: any, logoLight?: any) {
+  if (preferLight && logoLight && logoLight !== logo) {
+    return logoLight;
+  }
+  return logo;
+}
+
+export default function LastFiveGamesSwitcher({
+  isDark,
+  lighter,
+  home,
+  away,
+}: Props) {
+  const [selected, setSelected] = useState<"home" | "away">("away");
+  const team = selected === "home" ? home : away;
+  const styles = lastFiveGameStyles(isDark, lighter ?? false);
+
+  const renderRow = ({ item, index }: { item: any; index: number }) => {
+    const matchupSymbol = item.isHome ? "vs" : "@";
+    const resultSymbol = item.won ? "W" : "L";
+    const resultColor = item.won ? styles.colors.win : styles.colors.loss;
+
+    const useLightLogo = isDark || (lighter ?? false);
+
+    const opponentLogoSource = pickTeamLogo(
+      useLightLogo,
+      item.opponentLogo,
+      item.opponentLogoLight
+    );
+
+    return (
+      <View
+        style={[
+          styles.row,
+          {
+            borderBottomWidth:
+              index === team.games.length - 1 ? 0 : StyleSheet.hairlineWidth,
+          },
+        ]}
+      >
+        <Text style={[styles.cell, styles.date]}>{item.date}</Text>
+
+        <View style={[styles.cell, styles.teamWithLogo]}>
+          <Text style={styles.matchupText}>
+            {matchupSymbol} {item.opponent}
+          </Text>
+          {opponentLogoSource && (
+            <Image source={opponentLogoSource} style={styles.opponentLogo} />
+          )}
+        </View>
+
+        <Text style={[styles.cell, { color: resultColor }]}>
+          {resultSymbol} {item.isHome ? item.homeScore : item.awayScore} -{" "}
+          {item.isHome ? item.awayScore : item.homeScore}
+        </Text>
+      </View>
+    );
+  };
+
+  const tabs: readonly ("away" | "home")[] = ["away", "home"];
+
+  return (
+    <View style={styles.container}>
+      <HeadingTwo lighter={lighter}>Last Five Games</HeadingTwo>
+
+      {/* Tabs */}
+      <View style={styles.wrapper}>
+        <FixedWidthTabBar
+          tabs={tabs}
+          lighter={lighter}
+          selected={selected}
+          onTabPress={(tab) => setSelected(tab as "home" | "away")}
+          renderLabel={(tab, isSelected) => {
+            const teamData = tab === "home" ? home : away;
+            const useLightLogo = isDark || (lighter ?? false);
+
+            const logoSource = pickTeamLogo(
+              useLightLogo,
+              teamData.teamLogo,
+              teamData.teamLogoLight
+            );
+
+            return (
+              <View style={styles.tabLabel}>
+                <Image
+                  source={logoSource}
+                  style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
+                />
+                <Text
+                  style={getLabelStyle(isDark, isSelected, lighter, {
+                    opacity: isSelected ? 1 : 0.5,
+                  })}
+                >
+                  {teamData.teamCode}
+                </Text>
+              </View>
+            );
+          }}
+        />
+
+        {/* Game List */}
+        <FlatList
+          data={team.games}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderRow}
+          scrollEnabled={false}
+          ListEmptyComponent={
+            <Text style={styles.empty}>No recent games.</Text>
+          }
+          ListHeaderComponent={
+            <View style={styles.headerRow}>
+              <Text style={[styles.cell, styles.date]}>Date</Text>
+              <Text style={[styles.cell, styles.teamHeader]}>Matchup</Text>
+              <Text style={styles.cell}>Result</Text>
+            </View>
+          }
+        />
+      </View>
+    </View>
+  );
+}

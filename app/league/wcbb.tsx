@@ -1,44 +1,33 @@
 // app/league/cbb.tsx (WOMEN)
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import CBBGamesList from "components/CBB/Games/CBBGamesList";
-import { CBBConferenceStandingsList } from "components/CBB/Standings/CBBConferenceStandingsList";
-import { CBBStandingsList } from "components/CBB/Standings/CBBStandingsList";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "components/CFB/ConferenceListModal";
+import { useNavigation } from "@react-navigation/native";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
-import { Colors } from "constants/Colors";
+import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
+import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
+import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "components/Sports/CFB/ConferenceListModal";
+import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
+import { getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import isBetween from "dayjs/plugin/isBetween";
-import { goBack } from "expo-router/build/global-state/routing";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
-import {
-  filterCBBGames,
-  useAPTop25,
-} from "utils/CBBUtils/cbbGameUtils";
-import {
-  RefreshControl,
-  ScrollView,
-  useColorScheme,
-  View,
-} from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
 import { useHighlights } from "../../hooks/useHighlights";
-import { getTeamInfo } from "constants/teamsCBB";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -109,7 +98,7 @@ export default function WCBBLeagueScreen() {
     refreshCBBGames,
   } = useCBBSeasonGames({ isWomen: true });
 
-   const handleRefresh = async () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
     try {
       await Promise.all([refreshCBBGames()]);
@@ -157,58 +146,57 @@ export default function WCBBLeagueScreen() {
   /* -------------------------------
      FILTERED GAMES (FIXED)
   -------------------------------- */
-const filteredGames = React.useMemo(() => {
-  const gamesForDate = seasonGames.filter((game) =>
-    dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
-  );
-
-  let result = gamesForDate;
-
- if (selectedConference === "Top 25") {
-  result = gamesForDate.filter((game) => {
-     const home = getTeamInfo(String(game.teams.home.id), true);
-    const away = getTeamInfo(String(game.teams.away.id), true);
-    const homeESPN = home?.espnID;
-    const awayESPN = away?.espnID;
-
-    return (
-      (homeESPN && top25Teams.includes(String(homeESPN))) ||
-      (awayESPN && top25Teams.includes(String(awayESPN)))
+  const filteredGames = React.useMemo(() => {
+    const gamesForDate = seasonGames.filter((game) =>
+      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
     );
-  });
-}
- else if (selectedConference) {
-    result = filterCBBGames({
-      games: gamesForDate,
-      selectedConference,
-      top25Teams,
-    });
-  }
 
-  return result;
-}, [seasonGames, selectedDate, selectedConference, top25Teams]);
+    let result = gamesForDate;
 
-    // --- Combine news + highlights ---
-    const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-      const taggedNews: CombinedItem[] = cbbNews.map((item) => ({
-        ...item,
-        itemType: "news",
-        publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-      }));
-      const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-        ...item,
-        itemType: "highlight",
-        publishedAt: item.publishedAt ?? new Date().toISOString(),
-      }));
-      const combined = [...taggedNews, ...taggedHighlights];
-      combined.sort(
-        (a, b) =>
-          new Date(b.publishedAt || new Date().toISOString()).getTime() -
-          new Date(a.publishedAt || new Date().toISOString()).getTime()
-      );
-      return combined;
-    }, [cbbNews, highlights]);
-  
+    if (selectedConference === "Top 25") {
+      result = gamesForDate.filter((game) => {
+        const home = getTeamInfo(game.teams.home.id, true);
+        const away = getTeamInfo(game.teams.away.id, true);
+        const homeESPN = home?.espnID;
+        const awayESPN = away?.espnID;
+
+        return (
+          (homeESPN && top25Teams.includes(String(homeESPN))) ||
+          (awayESPN && top25Teams.includes(String(awayESPN)))
+        );
+      });
+    } else if (selectedConference) {
+      result = filterCBBGames({
+        games: gamesForDate,
+        selectedConference,
+        top25Teams,
+      });
+    }
+
+    return result;
+  }, [seasonGames, selectedDate, selectedConference, top25Teams]);
+
+  // --- Combine news + highlights ---
+  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
+    const taggedNews: CombinedItem[] = cbbNews.map((item) => ({
+      ...item,
+      itemType: "news",
+      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
+    }));
+    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
+      ...item,
+      itemType: "highlight",
+      publishedAt: item.publishedAt ?? new Date().toISOString(),
+    }));
+    const combined = [...taggedNews, ...taggedHighlights];
+    combined.sort(
+      (a, b) =>
+        new Date(b.publishedAt || new Date().toISOString()).getTime() -
+        new Date(a.publishedAt || new Date().toISOString()).getTime()
+    );
+    return combined;
+  }, [cbbNews, highlights]);
+
   /* -------------------------------
      RENDER
   -------------------------------- */
@@ -227,9 +215,7 @@ const filteredGames = React.useMemo(() => {
               <DateNavigator
                 selectedDate={selectedDate}
                 onChangeDate={(d) =>
-                  setSelectedDate(
-                    dayjs(selectedDate).add(d, "day").toDate()
-                  )
+                  setSelectedDate(dayjs(selectedDate).add(d, "day").toDate())
                 }
                 onOpenCalendar={() => setShowCalendarModal(true)}
                 isDark={isDark}

@@ -1,19 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Bracket } from "components/CFB/Bracket/Bracket";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "components/CFB/ConferenceListModal";
-import CFBGamesList from "components/CFB/Games/CFBGamesList";
-import RecruitsList from "components/CFB/RecruitsList";
-import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
-import { CFBStandingsList } from "components/CFB/Standings/CFBStandingsList";
-import TransferList from "components/CFB/TransferList";
-import WeekSelector from "components/CFB/WeekSelector";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
+import { Bracket } from "components/Sports/CFB/Bracket/Bracket";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "components/Sports/CFB/ConferenceListModal";
+import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
+import RecruitsList from "components/Sports/CFB/RecruitsList";
+import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
+import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsList";
+import TransferList from "components/Sports/CFB/TransferList";
+import WeekSelector from "components/Sports/CFB/WeekSelector";
+import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -29,7 +29,7 @@ import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import {
   CFBWeek,
@@ -38,6 +38,8 @@ import {
 } from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
+import { getTeamById } from "constants/teamsCFB";
+import { CFBGame } from "types/cfb";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -218,35 +220,47 @@ export default function CFBeagueScreen() {
     return combined;
   }, [cfbNews, highlights]);
 
+  const isValidBowlStage = (game: CFBGame) => {
+    const stage = game?.game?.stage;
+    return (
+      typeof stage === "string" &&
+      (stage.startsWith("FBS") || stage.startsWith("FCS (Division I-A)"))
+    );
+  };
+
   // --- Filter games by selected conference ---
   const filteredGames = React.useMemo(() => {
+    // 🔒 Always filter by valid stage first
+    const stageFilteredGames = cfbgames.filter(isValidBowlStage);
+
     const weekLabel = selectedWeek.label.toLowerCase();
 
+    // 🏆 Bowl / Championship logic
     if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
-      if (selectedWeek.label.toLowerCase().includes("championship")) {
+      if (weekLabel.includes("championship")) {
         // Championship week: show only the final game
-        return cfbgames.length ? [cfbgames[cfbgames.length - 1]] : [];
+        return stageFilteredGames.length
+          ? [stageFilteredGames[stageFilteredGames.length - 1]]
+          : [];
       }
 
-      // 🧠 Otherwise (Bowls week): exclude the latest game, which is the championship
-      if (cfbgames.length > 0) {
-        // Sort games by date to identify the last one (championship)
-        const sorted = [...cfbgames].sort(
+      // Bowls week: exclude championship game
+      if (stageFilteredGames.length > 0) {
+        const sorted = [...stageFilteredGames].sort(
           (a, b) =>
             new Date(a.game?.date?.date ?? 0).getTime() -
             new Date(b.game?.date?.date ?? 0).getTime()
         );
 
-        // Remove the last (latest) game — usually the championship
         return sorted.slice(0, -1);
       }
 
-      return cfbgames;
+      return stageFilteredGames;
     }
 
-    // Regular weeks: filter by conference / top 25
+    // 📅 Regular weeks: conference / Top 25 filtering
     return filterCFBGames({
-      games: cfbgames,
+      games: stageFilteredGames,
       selectedConference,
       top25Teams,
     });
@@ -293,7 +307,7 @@ export default function CFBeagueScreen() {
             </>
           )}
 
-            {selectedTab === "news" && (
+          {selectedTab === "news" && (
             <ScrollView
               contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={

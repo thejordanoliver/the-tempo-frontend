@@ -22,7 +22,14 @@ export const stackedGameCardStyles = (
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRightColor:
+        isChampionship && isDark
+          ? Colors.lightGray
+          : isChampionship
+          ? Colors.darkGray
+          : isDark
+          ? Colors.darkGray
+          : Colors.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
       gap: 8,
@@ -82,7 +89,7 @@ export const stackedGameCardStyles = (
     },
     date: {
       fontSize: 12,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       color: isDark ? Colors.dark.text : Colors.light.text,
     },

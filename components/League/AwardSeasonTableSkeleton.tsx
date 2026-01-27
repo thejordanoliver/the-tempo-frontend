@@ -10,10 +10,9 @@ import {
 } from "react-native";
 
 const COLUMN_WIDTH = 70;
-const NAME_COLUMN_WIDTH = 200;
+const NAME_COLUMN_WIDTH = "100%";
 const ROW_HEIGHT = 50;
 const ROWS = 5;
-const STAT_COLUMNS = 10; // visual approximation
 
 type Props = {
   lighter?: boolean;
@@ -83,35 +82,9 @@ export default function AwardSeasonTableSkeleton({
           {rowsArray.map((_, i) => (
             <View key={`name-${key}-${i}`} style={getRowStyle(i)}>
               <Skeleton style={styles.playerName} />
+              <Skeleton style={styles.playerTeam} />
             </View>
           ))}
-        </View>
-
-        {/* Stats */}
-        <View style={{ flex: 1 }}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View>
-              <View style={styles.headerRow}>
-                {Array.from({ length: STAT_COLUMNS }).map((_, i) => (
-                  <Skeleton
-                    key={`header-${key}-${i}`}
-                    style={styles.headerCell}
-                  />
-                ))}
-              </View>
-
-              {rowsArray.map((_, r) => (
-                <View key={`row-${key}-${r}`} style={getRowStyle(r)}>
-                  {Array.from({ length: STAT_COLUMNS }).map((_, c) => (
-                    <Skeleton
-                      key={`cell-${key}-${r}-${c}`}
-                      style={styles.statCell}
-                    />
-                  ))}
-                </View>
-              ))}
-            </View>
-          </ScrollView>
         </View>
       </View>
 
@@ -125,7 +98,7 @@ export default function AwardSeasonTableSkeleton({
   return (
     <ScrollView>
       {Array.from({ length: teams }).map((_, i) => (
-        <View key={`team-skeleton-${i}`} style={{ marginBottom: 24 }}>
+        <View key={`team-skeleton-${i}`}>
           {renderTeam(i)}
         </View>
       ))}
@@ -178,6 +151,7 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       flexDirection: "row",
       height: ROW_HEIGHT,
       alignItems: "center",
+      justifyContent: "space-between",
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: lighter
         ? Colors.lightGray
@@ -207,7 +181,13 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
     },
 
     playerName: {
-      width: NAME_COLUMN_WIDTH - 80,
+      width: 120,
+      height: 14,
+      borderRadius: 4,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    playerTeam: {
+      width: 60,
       height: 14,
       borderRadius: 4,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,

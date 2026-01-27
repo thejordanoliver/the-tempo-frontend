@@ -1,6 +1,5 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";
@@ -30,19 +29,19 @@ export type FootballTeamRowProps = {
   opponentScore?: number | null;
 };
 
-export type NBAProps = {
+export type BasketballTeamRowProps = {
   team: {
     name: string;
-    record?: string;
+    record: string | undefined;
     logo: any;
     code?: string;
     id?: number;
     wid?: number; // ✅ ADD THIS
   };
   timeouts?: number;
-  foulsToGive?: number;
+  bonusState: string | undefined | null;
   size?: SizeType;
-  rank?: string;
+  rank?: number | null;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
@@ -54,17 +53,12 @@ export type NBAProps = {
     score: string;
     winnerScore: string;
   };
+
   gameStatusDescription?: string;
 };
 
 export type MLBProps = {
-  team: {
-    name: string;
-    record?: string;
-    logo: any;
-    code?: string;
-    id?: number;
-  };
+  team: TeamRowTeam;
   size?: SizeType;
   rank?: string;
   isDark: boolean;
@@ -72,12 +66,8 @@ export type MLBProps = {
   score?: number;
   isWinner?: boolean;
   hideRecord?: boolean;
-  colors: {
-    text: string;
-    record: string;
-    score: string;
-    winnerScore: string;
-  };
+  gameStatusDescription?: string;
+  league: "mlb" | "cbb"
 };
 
 // Main static styles
@@ -92,6 +82,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     rank: TextStyle;
     score: TextStyle;
     preGameRecord: TextStyle;
+    bonus: TextStyle;
     scoreWrapper: ViewStyle;
     possessionIcon: ImageStyle;
   }>({
@@ -160,6 +151,16 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       top: "54%",
       alignSelf: "center",
     },
+    bonus: {
+      marginTop: 2,
+      position: "absolute",
+      bottom: -10,
+      fontSize: 8,
+      fontFamily: Fonts.OSMEDIUM,
+      letterSpacing: 0.5,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
   });
 
 // Size-based dynamic styles
@@ -170,6 +171,7 @@ export const sizeStyles = {
     logo: { width: 40, height: 40 },
     teamName: { fontSize: 12 },
     record: { fontSize: 12 },
+    bonus: { fontSize: 8 },
   },
   medium: {
     score: { fontSize: 36, width: 60 },
@@ -177,6 +179,7 @@ export const sizeStyles = {
     logo: { width: 50, height: 50 },
     teamName: { fontSize: 12 },
     record: { fontSize: 12 },
+    bonus: { fontSize: 8 },
   },
   large: {
     score: { fontSize: 28, width: 70 },
@@ -184,5 +187,6 @@ export const sizeStyles = {
     logo: { width: 60, height: 60 },
     teamName: { fontSize: 12 },
     record: { fontSize: 14 },
+    bonus: { fontSize: 8 },
   },
 };

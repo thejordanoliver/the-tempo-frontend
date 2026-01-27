@@ -1,9 +1,9 @@
-import CBBGameCard from "components/CBB/Games/CBBGameCard";
-import PlayerHeader from "components/CBB/Player/PlayerHeader";
-import PlayerStatTable from "components/CBB/Player/PlayerStatTable";
-import SeasonStatCard from "components/CBB/Player/SeasonStatCard";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import CBBGameCard from "components/Sports/CBB/Games/CBBGameCard";
+import PlayerHeader from "components/Sports/CBB/Player/PlayerHeader";
+import PlayerStatTable from "components/Sports/CBB/Player/PlayerStatTable";
+import SeasonStatCard from "components/Sports/CBB/Player/SeasonStatCard";
 import { players as cbbPlayers } from "constants/cbbPlayers";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";

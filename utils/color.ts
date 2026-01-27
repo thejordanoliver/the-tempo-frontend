@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 
 // utils/color.ts
 export function getContrastingTextColor(

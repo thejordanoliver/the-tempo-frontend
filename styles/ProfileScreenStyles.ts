@@ -1,6 +1,4 @@
-// ProfileScreen.styles.ts
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 const BANNER_HEIGHT = 120;
 const PROFILE_PIC_SIZE = 120;

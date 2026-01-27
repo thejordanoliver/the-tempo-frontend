@@ -5,7 +5,64 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /* Types                              */
 /* ---------------------------------- */
 
-export type NBAScore = {
+// type lastPlay = {
+// "id": string,
+// "sequenceNumber": string,
+// "type": {
+// "id":string,
+// "text": "JumpShot"
+// },
+// "text": string,
+// "awayScore": number,
+// "homeScore": 39,
+// "period": {
+// "number": 2,
+// "displayValue": "2nd Half"
+// },
+// "clock": {
+// "displayValue": "14:41"
+// },
+// "scoringPlay": true,
+// "scoreValue": 3,
+// "team": {
+// "id": "57"
+// },
+// "participants": [
+// {
+// "athlete": {
+// "id": "5238200"
+// }
+// },
+// {
+// "athlete": {
+// "id": "5174657"
+// }
+// }
+// ],
+// "wallclock": "2026-01-24T22:32:22Z",
+// "shootingPlay": true,
+// "coordinate": {
+// "x": 38,
+// "y": 21
+// },
+// "pointsAttempted": 3,
+// "shortDescription": "+3 Points"
+// },
+// }
+
+type TeamFouls = {
+  bonusState: string | null;
+  foulsToGive: number;
+  teamFouls: number;
+  teamFoulsCurrent: number;
+};
+
+type TeamStat = {
+  name: string;
+  displayValue: string;
+};
+
+export type Score = {
   home: { total: number };
   away: { total: number };
   periodScores?: { period: number; home: number; away: number }[];
@@ -18,25 +75,12 @@ export type NBAScore = {
   displayClock?: string;
   period?: number;
   lastUpdated?: number;
-};
-
-export type TeamRecords = {
-  overall: string | null;
-  home?: string | null;
-  away?: string | null;
-  conference?: string | null;
-};
-
-export type GameDetails = {
-  officials: any[];
-  injuries: any[];
-  highlights: any[];
-  plays: any[];
   boxScore: any | null;
-
+  plays: any[];
+  lastPlay: string;
   teamStats: {
     team: any;
-    stats: any[];
+    stats: TeamStat[];
   }[];
 
   playerStats: {
@@ -48,21 +92,34 @@ export type GameDetails = {
   }[];
 
   leaders: any[];
-
-  neutralSite: boolean;
-  venue: any | null;
-
   timeouts: {
     home: number | null;
     away: number | null;
   };
-
   fouls: {
-    home: any | null;
-    away: any | null;
+    home: TeamFouls;
+    away: TeamFouls;
   };
+};
 
-  /* ✅ NEW */
+export type TeamRecords = {
+  overall: string | null;
+  home?: string | null;
+  away?: string | null;
+  conference?: string | null;
+};
+
+export type GameDetails = {
+  homeRank: number;
+  awayRank: number;
+  broadcast?: string | null;
+  broadcasts?: string[];
+  officials: any[];
+  injuries: any[];
+  highlights: any[];
+  neutralSite: boolean;
+  venue: any | null;
+  headline?: string | null;
   records: {
     home: TeamRecords;
     away: TeamRecords;
@@ -79,11 +136,11 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const useGameDetails = (
   league: string,
-  homeIdOrName?: string | null,
-  awayIdOrName?: string | null,
+  homeId?: string | null,
+  awayId?: string | null,
   date?: DateParam
 ) => {
-  const [score, setScore] = useState<NBAScore | undefined>();
+  const [score, setScore] = useState<Score | undefined>();
   const [details, setDetails] = useState<GameDetails | undefined>();
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
@@ -91,8 +148,7 @@ export const useGameDetails = (
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const skipFetch =
-    !league || !homeIdOrName || !awayIdOrName || homeIdOrName === awayIdOrName;
+  const skipFetch = !league || !homeId || !awayId || homeId === awayId;
 
   /* ---------------------------------- */
   /* Fetch from /api/details             */
@@ -107,8 +163,8 @@ export const useGameDetails = (
 
         const params: Record<string, any> = {
           league,
-          home: homeIdOrName,
-          away: awayIdOrName,
+          home: homeId,
+          away: awayId,
         };
 
         if (date) {
@@ -119,6 +175,7 @@ export const useGameDetails = (
         }
 
         const { data } = await axios.get(`${BASE_URL}/api/details`, { params });
+        // console.log(JSON.stringify(details?.leaders, null, 2))
 
         if (data?.score) {
           setScore(data.score);
@@ -134,7 +191,7 @@ export const useGameDetails = (
         if (!silent) setLoading(false);
       }
     },
-    [league, homeIdOrName, awayIdOrName, date, skipFetch]
+    [league, homeId, awayId, date, skipFetch]
   );
 
   /* ---------------------------------- */

@@ -14,7 +14,13 @@ type Highlight = {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-// Decode HTML entities in video titles
+/* ----------------------------- */
+/* HTML & Text Utilities          */
+/* ----------------------------- */
+
+/**
+ * Decodes HTML entities in YouTube titles.
+ */
 function decodeHTMLEntities(text: string): string {
   return text
     .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec))
@@ -24,6 +30,17 @@ function decodeHTMLEntities(text: string): string {
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
 }
+
+/**
+ * Capitalize the first letter of a word.
+ */
+function capitalize(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+/* ----------------------------- */
+/* Acronyms & Proper Nouns        */
+/* ----------------------------- */
 
 const ACRONYMS = new Set([
   "NBA", "NFL", "MLB", "NHL", "CFB", "WNBA", "FIBA", "USA", "NCAA",
@@ -43,10 +60,9 @@ const PROPER_NOUNS = new Set([
   "Real Madrid", "Manchester City", "Manchester United",
 ]);
 
-function capitalize(word: string) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
+/**
+ * Converts a string to sentence case while preserving acronyms and proper nouns.
+ */
 function toSentenceCasePreserveAcronyms(str: string): string {
   const cleaned = str.toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -54,9 +70,10 @@ function toSentenceCasePreserveAcronyms(str: string): string {
     const upper = word.toUpperCase();
     if (ACRONYMS.has(upper)) return upper;
 
+    // Check for two-word proper nouns
     const twoWord = i < arr.length - 1 ? `${capitalize(word)} ${capitalize(arr[i + 1])}` : "";
     if (PROPER_NOUNS.has(twoWord)) {
-      arr[i + 1] = "";
+      arr[i + 1] = ""; // skip next word
       return twoWord;
     }
 
@@ -67,11 +84,16 @@ function toSentenceCasePreserveAcronyms(str: string): string {
   return words.filter(Boolean).join(" ");
 }
 
+/* ----------------------------- */
+/* React Hook: useHighlights      */
+/* ----------------------------- */
+
 /**
- * Fetches and caches YouTube highlights for the given sport.
- * @param sport - One of "nba", "nfl", "mlb", "nhl", "cfb", "soccer"
+ * Fetches and caches YouTube highlights for a given sport.
+ *
+ * @param sport - League abbreviation: "nba", "nfl", "mlb", "nhl", "cfb", "soccer"
  * @param query - Optional search query (defaults to league highlights)
- * @param maxResults - Max results (1–50)
+ * @param maxResults - Number of highlights to fetch (1–50)
  */
 export function useHighlights(
   sport: string = "nba",
@@ -82,7 +104,7 @@ export function useHighlights(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Include sport in cache key
+  // Unique key for caching
   const cacheKey = `cachedHighlights-${sport}-${query}-${maxResults}`;
 
   useEffect(() => {
@@ -91,6 +113,7 @@ export function useHighlights(
       setError(null);
 
       try {
+        // Check AsyncStorage cache first
         const cached = await AsyncStorage.getItem(cacheKey);
         if (cached) {
           const cachedData: Highlight[] = JSON.parse(cached);
@@ -98,26 +121,28 @@ export function useHighlights(
           setLoading(false);
         }
 
-        // ✅ New unified endpoint call
+        // Fetch from API
         const response = await axios.get<Highlight[]>(`${BASE_URL}/api/highlights`, {
           params: { sport, query, maxResults },
         });
 
         const data = response.data;
 
+        // Clean and format highlights
         const cleanedData = data
           .filter((item) => !/tickets|playstation/i.test(item.title))
           .map((item) => ({
             ...item,
             title: toSentenceCasePreserveAcronyms(decodeHTMLEntities(item.title)),
             channelName: item.channelName || "Unknown",
-            duration: item.duration,
           }));
 
         setHighlights(cleanedData);
+
+        // Cache the results
         await AsyncStorage.setItem(cacheKey, JSON.stringify(cleanedData));
       } catch (err: any) {
-        setError(err.message);
+        setError(err.message || "Failed to load highlights");
         if (!highlights.length) setHighlights([]);
       } finally {
         setLoading(false);

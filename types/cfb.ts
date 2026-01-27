@@ -46,8 +46,8 @@ export type CFBTeam = {
   longitude?: number;
   venueImage?: any;
   venueCapacity?: string;
-  logo: string;
-  logoLight?: string;
+  logo: any;
+  logoLight?: any;
   color?: string;
   secondaryColor?: string;
   championships?: number[];
@@ -66,6 +66,7 @@ export type CFBGame = {
       utc?: string;
       local?: string;
     };
+    stage: string;
     status: { short: string; long: string; timer?: string | null }; // 👈 updated here
     venue?: { name: string; city: string };
     week?: string;

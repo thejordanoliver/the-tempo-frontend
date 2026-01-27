@@ -2,18 +2,18 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
-import CBBGamesList from "components/CBB/Games/CBBGamesList";
-import { CBBConferenceStandingsList } from "components/CBB/Standings/CBBConferenceStandingsList";
-import { CBBStandingsList } from "components/CBB/Standings/CBBStandingsList";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "components/CFB/ConferenceListModal";
-import { getTeamInfo } from "constants/teamsCBB";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
+import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
+import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
+import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "components/Sports/CFB/ConferenceListModal";
+import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import { Colors } from "constants/Colors";
+import { getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -26,7 +26,7 @@ import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
@@ -99,8 +99,7 @@ export default function CBBLeagueScreen() {
   // --- AP Top 25 from rankings ---
   const apTop25 = useAPTop25("116");
 
- const top25Teams = apTop25.map((t) => String(t?.id));
-
+  const top25Teams = apTop25.map((t) => String(t?.id));
 
   // --- Load favorites ---
   useFocusEffect(
@@ -165,36 +164,35 @@ export default function CBBLeagueScreen() {
       return acc;
     }, {});
 
-const filteredGames = React.useMemo(() => {
-  const gamesForDate = seasonGames.filter((game) =>
-    dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
-  );
-
-  let result = gamesForDate;
-
- if (selectedConference === "Top 25") {
-  result = gamesForDate.filter((game) => {
-    const home = getTeamInfo(String(game.teams.home.id));
-    const away = getTeamInfo(String(game.teams.away.id));
-    const homeESPN = home?.espnID;
-    const awayESPN = away?.espnID;
-
-    return (
-      (homeESPN && top25Teams.includes(String(homeESPN))) ||
-      (awayESPN && top25Teams.includes(String(awayESPN)))
+  const filteredGames = React.useMemo(() => {
+    const gamesForDate = seasonGames.filter((game) =>
+      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
     );
-  });
-}
- else if (selectedConference) {
-    result = filterCBBGames({
-      games: gamesForDate,
-      selectedConference,
-      top25Teams,
-    });
-  }
 
-  return result;
-}, [seasonGames, selectedDate, selectedConference, top25Teams]);
+    let result = gamesForDate;
+
+    if (selectedConference === "Top 25") {
+      result = gamesForDate.filter((game) => {
+        const home = getTeamInfo(game.teams.home.id);
+        const away = getTeamInfo(game.teams.away.id);
+        const homeESPN = home?.espnID;
+        const awayESPN = away?.espnID;
+
+        return (
+          (homeESPN && top25Teams.includes(String(homeESPN))) ||
+          (awayESPN && top25Teams.includes(String(awayESPN)))
+        );
+      });
+    } else if (selectedConference) {
+      result = filterCBBGames({
+        games: gamesForDate,
+        selectedConference,
+        top25Teams,
+      });
+    }
+
+    return result;
+  }, [seasonGames, selectedDate, selectedConference, top25Teams]);
 
   // --- Combine news + highlights ---
   const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {

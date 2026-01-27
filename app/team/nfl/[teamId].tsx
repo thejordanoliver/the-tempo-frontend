@@ -1,11 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import Roster from "components/CFB/Team/Roster";
-import FootballRosterStats from "components/CFB/Team/RosterStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import NFLGamesList from "components/NFL/Games/NFLGamesList";
-import TeamInfoModal from "components/Team/TeamInfoModal";
+import Roster from "components/Sports/CFB/Team/Roster";
+import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
+import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
+import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -18,7 +18,8 @@ import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamDetailsStyles";
+import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -38,7 +39,14 @@ export default function TeamDetailScreen() {
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
 
-  const tabs = ["schedule", "news", "roster", "stats", "forum"] as const;
+  const tabs = [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "forum",
+  ] as const;
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("schedule");
   const rosterRef = useRef<{ refresh: () => void }>(null);
@@ -52,11 +60,11 @@ export default function TeamDetailScreen() {
     [teamIdNum]
   );
 
-const {
-  games: rawTeamGames = [],
-  loading: gamesLoading,
-  refreshGames: refreshTeamGames,
-} = useNFLTeamGames(teamIdNum ? teamIdNum.toString() : "", "2025", "1", true);
+  const {
+    games: rawTeamGames,
+    loading: gamesLoading,
+    refreshGames: refreshTeamGames,
+  } = useNFLTeamGames(teamIdNum);
 
   const {
     highlights: teamHighlights,
@@ -207,6 +215,10 @@ const {
               league="nfl"
             />
           )}
+        </ScrollView>
+        {/* Stats Page */}
+        <ScrollView key="standings" contentContainerStyle={{ paddingBottom: 100 }}>
+         <NFLStandingsList />
         </ScrollView>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>

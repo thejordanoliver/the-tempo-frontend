@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 type PlayerStat = {
   points: number;
@@ -46,7 +46,8 @@ const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
 
 export function usePlayerStats(playerId: number, season = "2025") {
-  const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null);
+  const [aggregatedStats, setAggregatedStats] =
+    useState<AggregatedStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -58,18 +59,17 @@ export function usePlayerStats(playerId: number, season = "2025") {
       setError(null);
 
       try {
-   const response = await axios.request<{ response: PlayerStat[] }>({
-  method: "GET",
-  url: `https:/${RAPIDAPI_HOST}/players/statistics`,
-  params: { id: playerId.toString(), season },
-  headers: {
-    "x-rapidapi-key": RAPIDAPI_KEY,
-    "x-rapidapi-host": RAPIDAPI_HOST,
-  },
-});
+        const response = await axios.request<{ response: PlayerStat[] }>({
+          method: "GET",
+          url: `https:/${RAPIDAPI_HOST}/players/statistics`,
+          params: { id: playerId.toString(), season },
+          headers: {
+            "x-rapidapi-key": RAPIDAPI_KEY,
+            "x-rapidapi-host": RAPIDAPI_HOST,
+          },
+        });
 
-const games = response.data.response || [];
-
+        const games = response.data.response || [];
 
         let totals: AggregatedStats = {
           gamesPlayed: games.length,

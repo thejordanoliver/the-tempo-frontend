@@ -1,23 +1,26 @@
 // components/Forum/TeamForum.tsx
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
+import { Colors } from "constants/Colors";
+import { globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
-import { jwtDecode } from "jwt-decode";
+import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
+import { useTeamForumPosts } from "hooks/useTeamForumPosts";
 import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
   RefreshControl,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
   useColorScheme,
 } from "react-native";
-import { getAccessToken } from "utils/authStorage"; // ✅ centralized token getter
-import { useImagePreviewStore } from "../../store/imagePreviewStore";
-import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
-import PostItemSkeleton from "./PostItemSkeleton";
 import { LeagueType } from "types/types";
-import { Colors } from "constants/Colors";
+import { useImagePreviewStore } from "../../store/imagePreviewStore";
+import AlertModal from "./AlertModal";
+import { PostItem } from "./PostItem";
+import PostItemSkeleton from "./PostItemSkeleton";
+
 interface TeamForumProps {
   teamId: string;
   league?: LeagueType; // extendable if more leagues later
@@ -26,153 +29,49 @@ interface TeamForumProps {
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function TeamForum({ teamId, league }: TeamForumProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
-
   const setGlobalImage = useImagePreviewStore((state) => state.setImages);
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getPostItemStyles(isDark);
-const renderSkeletons = (count = 5) => (
-  <>
-    {Array.from({ length: count }).map((_, i) => (
-      <PostItemSkeleton key={`skeleton-${i}`} showMedia />
-    ))}
-  </>
-);
+  const styles = ForumStyles(isDark);
+  const global = globalStyles(isDark);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const {
+    posts,
+    loading,
+    refreshing,
+    error,
+    token,
+    currentUserId,
+    refresh,
+    loadMore,
+    deletePost,
+    editPost,
+  } = useTeamForumPosts({ teamId, league });
 
-  // ✅ Load token and decode user ID
-  useEffect(() => {
-    (async () => {
-      try {
-        const storedToken = await getAccessToken();
-        setToken(storedToken);
-        if (storedToken) {
-          const decoded: { id: number } = jwtDecode(storedToken);
-          setCurrentUserId(decoded.id);
-        }
-      } catch (err) {
-        console.error("Error loading token:", err);
-      }
-    })();
-  }, []);
+  const showAlert = (config: AlertConfig) => {
+    setAlertConfig(config);
+  };
 
-  // ✅ Fixed: fetchPosts route path updated to match backend
+  const closeAlert = () => {
+    setAlertConfig(null);
+  };
 
-  const fetchPosts = useCallback(
-    async (pageNumber = 1) => {
-      if (!teamId || !league) return;
-
-      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
-      setError(null);
-
-      try {
-        // ✅ Corrected URL order
-        const res = await axios.get(
-          `${BASE_URL}/api/forum/team/${league}/${teamId}`,
-          {
-            params: { page: pageNumber, limit: 10 },
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-          }
-        );
-
-        const data = res.data;
-
-        if (pageNumber === 1) {
-          setPosts(data.posts);
-        } else {
-          setPosts((prev) => [...prev, ...data.posts]);
-        }
-
-        setPage(data.pagination.page);
-        setTotalPages(data.pagination.totalPages);
-
-        const likedSet = new Set<string>(
-          data.posts
-            .filter((post: Post) => post.liked_by_current_user)
-            .map((post: Post) => String(post.id))
-        );
-
-        setLikedPosts(likedSet);
-      } catch (err: any) {
-        console.error("Fetch posts error:", err);
-        setError(
-          err.response?.data?.error || err.message || "Error loading posts"
-        );
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [teamId, league, token]
+  const renderSkeletons = (count = 5) => (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+      ))}
+    </>
   );
 
-  // ✅ Initial + focus refetch
-  useEffect(() => {
-    if (token) fetchPosts(1);
-  }, [token, fetchPosts]);
+  const onRefresh = () => refresh();
 
   useFocusEffect(
     useCallback(() => {
-      if (token) fetchPosts(1);
-    }, [fetchPosts, token])
+      refresh();
+    }, [refresh])
   );
-
-  const onRefresh = () => fetchPosts(1);
-
-  const loadMore = () => {
-    if (page < totalPages && !loading && !refreshing) {
-      fetchPosts(page + 1);
-    }
-  };
-
-  const deletePost = async (postId: string) => {
-    if (!token) {
-      alert("You must be logged in to delete posts.");
-      return;
-    }
-
-    try {
-      await axios.delete(`${BASE_URL}/api/forum/post/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPosts((prev) => prev.filter((p) => p.id !== postId));
-      alert("Post deleted.");
-    } catch (err: any) {
-      alert(
-        err.response?.data?.error || err.message || "Failed to delete post"
-      );
-    }
-  };
-
-  const editPost = async (postId: string, newText: string) => {
-    if (!token) {
-      alert("You must be logged in to edit posts.");
-      return;
-    }
-
-    try {
-      const res = await axios.patch(
-        `${BASE_URL}/api/forum/post/${postId}`,
-        { text: newText },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setPosts((prev) =>
-        prev.map((p) => (p.id === postId ? res.data.post : p))
-      );
-      alert("Post updated.");
-    } catch (err: any) {
-      alert(err.response?.data?.error || err.message || "Failed to edit post");
-    }
-  };
 
   // ✅ Cleanup on unmount
   useEffect(() => {
@@ -181,45 +80,70 @@ const renderSkeletons = (count = 5) => (
     };
   }, []);
 
-  return (
-    <View style={styles.container}>
-      {error && <Text style={styles.error}>{error}</Text>}
+  if (loading)
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        {renderSkeletons()}
+      </ScrollView>
+    );
+  if (error) return <Text style={global.errorText}>{error}</Text>;
 
-   <FlatList
-  data={posts}
-  keyExtractor={(item) => item.id}
-  contentContainerStyle={{ paddingBottom: 120 }}
-  renderItem={({ item }) => (
-    <PostItem
-      item={item}
-      isDark={isDark}
-      styles={styles}
-      token={token}
-      currentUserId={currentUserId}
-      deletePost={deletePost}
-      editPost={editPost}
-      BASE_URL={BASE_URL}
-      onImagePress={(imgUri) => {
-        setGlobalImage([], 0);
-        setGlobalImage([imgUri], 0);
-      }}
-    />
-  )}
-  onEndReached={loadMore}
-  onEndReachedThreshold={0.5}
-  refreshControl={
-    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-  }
-  ListEmptyComponent={() => {
-    if (loading) {
-      return renderSkeletons(5);
-    }
-    return <Text style={styles.emptyText}>No posts yet.</Text>;
-  }}
-  ListHeaderComponent={
-    loading && posts.length > 0 ? renderSkeletons(2) : null
-  }
-/>
+  return (
+    <>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.container}
+        renderItem={({ item }) => (
+          <PostItem
+            item={item}
+            isDark={isDark}
+            token={token}
+            currentUserId={currentUserId}
+            deletePost={async (id) => {
+              try {
+                await deletePost(id);
+                showAlert({
+                  title: "Deleted",
+                  message: "Post deleted.",
+                  confirmText: "OK",
+                });
+              } catch {
+                showAlert({
+                  title: "Error",
+                  message: "Failed to delete post.",
+                  confirmText: "OK",
+                });
+              }
+            }}
+            editPost={async (id, text) => {
+              try {
+                await editPost(id, text);
+                showAlert({
+                  title: "Updated",
+                  message: "Post updated.",
+                  confirmText: "OK",
+                });
+              } catch {
+                showAlert({
+                  title: "Error",
+                  message: "Failed to update post.",
+                  confirmText: "OK",
+                });
+              }
+            }}
+            BASE_URL={BASE_URL}
+            onImagePress={(imgUri) => {
+              setGlobalImage([], 0);
+              setGlobalImage([imgUri], 0);
+            }}
+          />
+        )}
+        onEndReached={loadMore}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
 
       {/* ✅ Pass league and teamId to Create Post */}
       <TouchableOpacity
@@ -238,6 +162,41 @@ const renderSkeletons = (count = 5) => (
           color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>
-    </View>
+      <AlertModal
+        visible={!!alertConfig}
+        isDark={isDark}
+        title={alertConfig?.title}
+        message={alertConfig?.message}
+        confirmText={alertConfig?.confirmText ?? "OK"}
+        cancelText={alertConfig?.cancelText}
+        onCancel={closeAlert}
+        onConfirm={() => {
+          alertConfig?.onConfirm?.();
+          if (!alertConfig?.onConfirm) closeAlert();
+        }}
+      />
+    </>
   );
+}
+
+export function ForumStyles(isDark: boolean) {
+  return StyleSheet.create({
+    container: { paddingBottom: 100 },
+    floatingButton: {
+      position: "absolute",
+      bottom: 100,
+      right: 20,
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      justifyContent: "center",
+      alignItems: "center",
+      elevation: 6,
+      shadowColor: Colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+    },
+  });
 }

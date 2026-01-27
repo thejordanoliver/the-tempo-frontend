@@ -1,5 +1,6 @@
 // types.ts
 import { ImageSourcePropType } from "react-native";
+import { NFLTeam } from "./nfl";
 
 // types/types.ts (backend User)
 export type BackendUser = {
@@ -86,9 +87,12 @@ export type TeamStats = {
 
 export type PlayerInfo = {
   player_id: number;
+  short_name: string,
+  full_name: string,
   first_name: string;
   last_name: string;
   jersey_number: string;
+  position: string | null;
   headshot_url?: string;
   active?: boolean;
 };
@@ -129,14 +133,19 @@ export interface CBBPlayer {
   }[];
 }
 
-export type Props = {
+export type RosterStatsProps = {
   rosterStats: PlayerStats[];
-  playersDb: PlayerInfo[];
-  teamId: string; // Add this
+  players: PlayerInfo[];
+  teamId: string;
+  teamStats?: TeamStats | null;
+  loading?: boolean;
+  error?: Error | null; // ✅ change here
+  refreshing: boolean;
+  onRefresh: () => void;
 };
 
 export type Team = {
-  id: number ;
+  id: number;
   wid?: any;
   espnID?: string | number;
   name: string;
@@ -450,8 +459,10 @@ export type DBPlayer = {
   birth_date: string;
   college: string;
   active: boolean;
-  nba_start: number;
-  nba_pro: number;
+  draft_round: number;
+  draft_year: number;
+  draft_number: number;
+  awards: string[]
 };
 
 export type APIGame = {
@@ -600,11 +611,12 @@ export type AwardSeason = {
   coach?: string;
   stats: AwardStats | null;
   school: string;
-  award_team?: NBATeam | null;
-  current_team?: NBATeam | null;
+  award_team?: NBATeam | NFLTeam;
+  current_team?: NBATeam | NFLTeam;
   current_team_id?: number | null;
   created_at: string;
 };
+
 export type PlayerResult = {
   id: number;
   player_id: number;

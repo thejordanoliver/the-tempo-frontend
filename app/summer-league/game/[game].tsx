@@ -1,13 +1,12 @@
+import { GameLocation } from "components/Sports/NBA/GameDetails";
+import HistoricalOddsCard from "components/summer-league/HistoricalOddsCard";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useHistoricalOdds } from "hooks/useHistoricalOdds";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { summerGame } from "types/types";
-import HistoricalOddsCard from "components/summer-league/HistoricalOddsCard";
-import { useHistoricalOdds } from "hooks/useHistoricalOdds";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TeamLocationSection from "../../../components/GameDetails/GameLocation";
-import TeamLocationSkeleton from "../../../components/GameDetails/TeamLocationSkeleton";
 import { GameInfo } from "../../../components/summer-league/GameInfo";
 import HistoricalOddsCardSkeleton from "../../../components/summer-league/HistoricalOddsSkeleton";
 import LineScore from "../../../components/summer-league/LineScore";
@@ -56,10 +55,7 @@ export default function SummerLeagueGameDetails() {
     [isDark]
   );
 
-  const {
-    weather,
- 
-  } = useWeatherForecast(
+  const { weather } = useWeatherForecast(
     homeTeamData.latitude ?? null,
     homeTeamData.longitude ?? null,
     parsedGame.date // ✅ This is already complete with time + timezone
@@ -147,26 +143,30 @@ export default function SummerLeagueGameDetails() {
   // Determine arena info based on venue string (case-insensitive)
   const venueLower = parsedGame.venue?.toLowerCase() ?? "";
 
-  let arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
+  let arenaImage =
+    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
   let arenaName = "Thomas & Mack Center";
   let location = "Las Vegas, NV";
   let address = "4505 S Maryland Pkwy, Las Vegas, NV 89154";
   let arenaCapacity = "17,923";
 
   if (venueLower.includes("cox pavilion")) {
-    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cox-pavilion.jpg";
+    arenaImage =
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cox-pavilion.jpg";
     arenaName = "Cox Pavilion";
     location = "Las Vegas, NV";
     address = "3720 S Maryland Pkwy, Las Vegas, NV 89169"; // example address
     arenaCapacity = "2,500"; // example capacity
   } else if (venueLower.includes("thomas & mack center")) {
-    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
+    arenaImage =
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg";
     arenaName = "Thomas & Mack Center";
     location = "Las Vegas, NV";
     address = "4505 S Maryland Pkwy, Las Vegas, NV 89154";
     arenaCapacity = "17,923";
   } else if (venueLower.includes("huntsman center")) {
-    arenaImage = "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680203/arenas/basketball/salt-lake.avif";
+    arenaImage =
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680203/arenas/basketball/salt-lake.avif";
     arenaName = "Jon M. Huntsman Center";
     location = "Salt Lake City, UT";
     address = "1825 E. South Campus Dr, Salt Lake City, UT 84112";
@@ -299,21 +299,16 @@ export default function SummerLeagueGameDetails() {
         />
       )}
 
-      {/* Arena & Weather Info */}
-      {isLoading ? (
-        <TeamLocationSkeleton />
-      ) : (
-        <TeamLocationSection
-          arenaImage={arenaImage}
-          arenaName={arenaName}
-          location={location}
-          address={address}
-          arenaCapacity={arenaCapacity}
-          weather={weather}
-          loading={false}
-          error={null}
-        />
-      )}
+      <GameLocation
+        venueImage={arenaImage}
+        venueName={arenaName}
+        location={location}
+        address={address}
+        venueCapacity={arenaCapacity}
+        weather={weather}
+        loading={false}
+        error={null}
+      />
     </ScrollView>
   );
 }

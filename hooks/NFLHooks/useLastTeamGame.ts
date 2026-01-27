@@ -3,9 +3,7 @@ import rateLimit from "axios-rate-limit";
 import { teams as nflTeams } from "constants/teamsNFL";
 import { teams as cfbTeams } from "constants/teamsCFB";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { NFLGame, NFLTeam } from "types/nfl";
-import type { CFBGame, CFBTeam } from "types/cfb";
-import { Game } from "types/cfb";
+import { Game } from "types/nfl";
 const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_FOOTBALL_RAPIDAPI_HOST || "";
 
@@ -14,14 +12,10 @@ const http = rateLimit(axios.create(), {
   perMilliseconds: 1000,
 });
 
-type GameType<L extends string> = L extends "1" ? NFLGame : Game;
+type GameType<L extends string> = Game;
 
-/**
- * useLastTeamGame
- * Fetches the most recent completed game for an NFL or CFB team.
- * - league "1" = NFL
- * - league "2" = College Football
- */
+
+
 export function useLastTeamGame<L extends "1" | "2">(
   teamId: string | number,
   league: L = "1" as L

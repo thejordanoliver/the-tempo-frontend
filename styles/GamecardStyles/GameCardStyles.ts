@@ -3,7 +3,7 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean, isChampionship: boolean) =>
+export const GameCardStyles = (isDark: boolean, isChampionship: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
@@ -63,7 +63,7 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      width: 48,
+      width: 50,
     },
     info: {
       alignItems: "center",
@@ -77,6 +77,11 @@ export const getStyles = (isDark: boolean, isChampionship: boolean) =>
       gap: 4,
     },
     date: {
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontSize: 14,
+    },
+    period: {
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,

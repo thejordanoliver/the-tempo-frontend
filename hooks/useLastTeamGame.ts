@@ -1,8 +1,13 @@
-import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 import type { Game } from "types/types";
 
-export function useLastTeamGame(teamId: string | number, season: string | number = "2025") {
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
+export function useLastTeamGame(
+  teamId: string | number,
+  season: string | number = "2025"
+) {
   const [lastGame, setLastGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +30,7 @@ export function useLastTeamGame(teamId: string | number, season: string | number
 
     try {
       const res = await axios.get<{ success: boolean; game: Game | null }>(
-        `http://localhost:4000/api/games/last/${teamId}/${season}`
+        `${BASE_URL}/api/games/last/${teamId}/${season}`
       );
 
       const game = res.data.game ?? null;

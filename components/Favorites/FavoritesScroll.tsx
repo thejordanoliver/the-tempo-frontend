@@ -10,7 +10,7 @@ import { Pressable, Text, View, useColorScheme } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { favoritesScrollStyles } from "styles/FavoritesScrollStyles";
+import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
 import { teams } from "../../constants/teams";
 import { teams as cbbteams } from "../../constants/teamsCBB";
@@ -30,6 +30,8 @@ type TeamWithLeague = {
 type Props = {
   favoriteTeamIds: string[];
   onFavoritesChange?: (ids: string[]) => void;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 };
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -37,6 +39,8 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 export default function FavoritesScroll({
   favoriteTeamIds,
   onFavoritesChange,
+  onDragStart,
+  onDragEnd,
 }: Props) {
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -49,7 +53,7 @@ export default function FavoritesScroll({
       const [league, id] = fav.split(":");
       let baseTeam:
         | {
-            id:  number;
+            id: number;
             name: string;
             logo?: any;
             logoLight?: string;
@@ -142,7 +146,7 @@ export default function FavoritesScroll({
 
         router.push({
           pathname: route,
-          params: { teamId: (item.id) },
+          params: { teamId: item.id },
         });
       }}
     >
@@ -190,6 +194,7 @@ export default function FavoritesScroll({
         // 👇 Start of drag
         onDragBegin={async () => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          onDragStart?.(); // notify parent
         }}
         // 👇 Fires when the placeholder position changes during drag
         onPlaceholderIndexChange={async () => {
@@ -200,12 +205,13 @@ export default function FavoritesScroll({
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success
           );
+   
 
           setData(data);
           const orderedIds = data.map((t) => `${t.league}:${t.id}`);
           await AsyncStorage.setItem("favorites", JSON.stringify(orderedIds));
           onFavoritesChange?.(orderedIds);
-
+          onDragEnd?.(); // notify parent
           const storedUsername = await AsyncStorage.getItem("username");
           if (!storedUsername) {
             console.warn("No username found — will sync favorites later.");

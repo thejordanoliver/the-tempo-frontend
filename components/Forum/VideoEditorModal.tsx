@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Slider from "@react-native-community/slider";
 import { AVPlaybackStatusSuccess, ResizeMode, Video } from "expo-av";
-import { BlurView } from "expo-blur";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -55,9 +55,6 @@ export default function VideoEditorModal({
   const [thumbnailUri, setThumbnailUri] = useState<string | null>(
     initialThumbnailUri ?? null
   );
-
-  // --- Snap points ---
-  const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
 
   // --- Present / dismiss ---
   useEffect(() => {
@@ -119,40 +116,16 @@ export default function VideoEditorModal({
   };
 
   return (
-    <BottomSheetModal
-      ref={sheetRef}
-      index={1}
-      snapPoints={snapPoints}
-      onDismiss={() => {}}
-      enableContentPanningGesture
-      enableHandlePanningGesture
-      enableDynamicSizing={false}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-        />
-      )}
-      handleStyle={styles.handleStyle}
-      handleIndicatorStyle={styles.handleIndicatorStyle}
-      backgroundStyle={styles.backgroundStyle}
-    >
+    <Modal visible={visible} animationType="slide" transparent={true}>
       <SafeAreaView style={styles.container}>
-        <BlurView
-          intensity={100}
-          tint="systemUltraThinMaterialDark"
-          style={StyleSheet.absoluteFill}
-        />
-
-        <View style={styles.sheet}>
+        <View style={styles.wrapper}>
           {/* HEADER */}
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.headerBtn}>
               <Ionicons name="close" size={24} color={Colors.white} />
             </TouchableOpacity>
 
-            <Text style={styles.title}>Edit video</Text>
+            <Text style={styles.headerTitle}>Edit video</Text>
 
             <TouchableOpacity
               style={styles.headerBtn}
@@ -268,7 +241,7 @@ export default function VideoEditorModal({
           </Text>
         </View>
       </SafeAreaView>
-    </BottomSheetModal>
+    </Modal>
   );
 }
 
@@ -279,29 +252,12 @@ function getStyles(isDark: boolean) {
       overflow: "hidden",
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
-    handleStyle: {
-      backgroundColor: "transparent",
-      height: 40,
-      justifyContent: "center",
-      alignItems: "center",
-      position: "absolute",
-      left: 8,
-      right: 8,
-      top: 0,
-    },
-    handleIndicatorStyle: {
-      backgroundColor: Colors.midTone,
-      width: 36,
-      height: 4,
-      borderRadius: 2,
-    },
-    backgroundStyle: { backgroundColor: "transparent" },
-    sheet: {
+    wrapper: {
       padding: 12,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
     },
+
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -309,15 +265,15 @@ function getStyles(isDark: boolean) {
       marginVertical: 20,
     },
     headerBtn: { padding: 8 },
-    title: {
-      color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 16,
+    headerTitle: {
+      fontSize: 18,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.white : Colors.black,
     },
     save: {
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 15,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 18,
     },
     video: {
       width: "100%",

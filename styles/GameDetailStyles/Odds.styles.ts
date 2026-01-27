@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Fonts } from "constants/fonts";
-import { Colors } from "constants/Colors";
+import { Fonts, Colors } from "constants/Styles";
 
 export const gameOddsStyles = (isDark:  boolean) => StyleSheet.create({
    wrapper: {

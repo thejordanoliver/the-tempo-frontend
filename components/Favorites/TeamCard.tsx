@@ -57,13 +57,6 @@ function TeamCard({
     }
   }, [isSelected]);
 
-  const secondaryColor =
-    "secondary_color" in item
-      ? item.secondary_color
-      : "secondaryColor" in item
-      ? item.secondaryColor
-      : undefined;
-
   const selectedColor =
     typeof item.color === "string" && item.color.startsWith("#")
       ? item.color
@@ -72,10 +65,8 @@ function TeamCard({
   const backgroundColor = selectionAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [
-      isDark
-        ? Colors.dark.itemBackground || "#121212"
-        : Colors.light.itemBackground || "#f5f5f5",
-      selectedColor || "#888",
+      isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+      selectedColor,
     ],
   });
 

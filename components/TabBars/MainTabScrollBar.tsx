@@ -57,28 +57,33 @@ export default function MainScrollTabBar<T extends string>({
     maybeInitializeUnderline();
   };
 
-  const maybeInitializeUnderline = () => {
-    if (
-      textMeasurements.current.length === tabs.length &&
-      pressableMeasurements.current.length === tabs.length &&
-      textMeasurements.current.every((m) => m !== undefined) &&
-      pressableMeasurements.current.every((m) => m !== undefined) &&
-      !isInitialized.current
-    ) {
-      const index = tabs.indexOf(selected);
-      const initialX = calculateUnderlineX(index);
-      underlineX.setValue(initialX);
-      underlineWidth.setValue(textMeasurements.current[index].width);
-      isInitialized.current = true;
+const maybeInitializeUnderline = () => {
+  const index = tabs.indexOf(selected);
+  if (index === -1) return;
 
-      scrollToActive(index);
-    }
-  };
+  const text = textMeasurements.current[index];
+  const pressable = pressableMeasurements.current[index];
+
+  if (!text || !pressable || isInitialized.current) return;
+
+  const initialX = calculateUnderlineX(index);
+  underlineX.setValue(initialX);
+  underlineWidth.setValue(text.width);
+
+  isInitialized.current = true;
+  scrollToActive(index);
+};
+
 
   const calculateUnderlineX = (index: number) => {
-    const textWidth = textMeasurements.current[index].width;
+    const text = textMeasurements.current[index];
     const pressable = pressableMeasurements.current[index];
-    return pressable.x + (pressable.width - textWidth) / 2;
+
+    if (!text || !pressable) {
+      return 0; // safe fallback
+    }
+
+    return pressable.x + (pressable.width - text.width) / 2;
   };
 
   const scrollToActive = (index: number) => {

@@ -1,15 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import DraftList from "components/League/DraftList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import NFLGamesList from "components/NFL/Games/NFLGamesList";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
-import { NFLStandingsList } from "components/NFL/Standings/NFLStandingsList";
-import WeekSelector from "components/NFL/WeekSelector";
+import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
+import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
+import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
+import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -23,11 +24,14 @@ import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
-import { generateNFLWeeks, getCurrentWeekIndex, NFLWeek } from "utils/nflWeeks";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import {
+  generateWeeksFromGames,
+  getCurrentWeekIndexFromGames,
+  NFLWeekFromGames,
+} from "utils/nflWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
-import AwardSeasons from "components/League/AwardSeasons";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -85,6 +89,9 @@ export default function NFLLeagueScreen() {
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
 
+  const [weeks, setWeeks] = useState<NFLWeekFromGames[]>([]);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+
   const tabs = [
     "scores",
     "news",
@@ -98,23 +105,33 @@ export default function NFLLeagueScreen() {
   // --- Fetch News & Highlights ---
   const { news: nflNews, loading: newsLoading } = useLeagueNews("NFL");
   const { highlights } = useHighlights("nfl", "", 10);
-  // --- Week handling ---
-  const weeks: NFLWeek[] = React.useMemo(() => generateNFLWeeks(), []);
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(
-    getCurrentWeekIndex(weeks)
-  );
 
-  const selectedWeek = weeks[selectedWeekIndex];
-  // --- Fetch games using the updated hook ---
+  const selectedWeek = weeks[selectedWeekIndex] ?? null;
+
   const {
     games: nflGames,
     loading: nflLoading,
     refresh: refreshNFLGames,
   } = useNFLGamesByWeek({
-    week: selectedWeek,
+    selectedWeek,
   });
 
-  // --- Load favorites ---
+  // --- Generate weeks dynamically once games load ---
+  React.useEffect(() => {
+    if (!nflGames || nflGames.length === 0) return;
+
+    // Only generate weeks if we haven't done it yet
+    if (weeks.length === 0) {
+      const generatedWeeks = generateWeeksFromGames(nflGames);
+      setWeeks(generatedWeeks);
+
+      // Set current week on first load
+      const currentWeekIndex = getCurrentWeekIndexFromGames(generatedWeeks);
+      setSelectedWeekIndex(currentWeekIndex);
+    }
+  }, [nflGames, weeks.length]);
+
+  // --- Load favorites from AsyncStorage ---
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -136,7 +153,7 @@ export default function NFLLeagueScreen() {
         <CustomHeaderTitle
           tabName="League"
           league="NFL"
-          modalVisible={leagueModalVisible} // now updates
+          modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
             setLeagueModalVisible(true);
@@ -152,7 +169,7 @@ export default function NFLLeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshNFLGames()]);
+      await refreshNFLGames();
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -160,35 +177,27 @@ export default function NFLLeagueScreen() {
     }
   };
 
-  // --- Sort games: live games first ---
+  // --- Sort games: live games first, then by date ---
   const sortedGames = React.useMemo(() => {
     if (!nflGames) return [];
 
-    // Prioritize live games (based on status.long or status.short)
     return [...nflGames].sort((a, b) => {
       const aStatus = a?.game?.status?.long?.toLowerCase?.() || "";
       const bStatus = b?.game?.status?.long?.toLowerCase?.() || "";
 
-      const aIsLive = ![
+      const liveStatuses = [
         "not started",
         "final",
         "finished",
         "postponed",
         "canceled",
-      ].includes(aStatus);
-      const bIsLive = ![
-        "not started",
-        "final",
-        "finished",
-        "postponed",
-        "canceled",
-      ].includes(bStatus);
+      ];
+      const aIsLive = !liveStatuses.includes(aStatus);
+      const bIsLive = !liveStatuses.includes(bStatus);
 
-      // Live games come first
       if (aIsLive && !bIsLive) return -1;
       if (!aIsLive && bIsLive) return 1;
 
-      // Otherwise sort by start time ascending
       const aTime = a?.game?.date.timestamp ?? 0;
       const bTime = b?.game?.date.timestamp ?? 0;
       return aTime - bTime;
@@ -292,7 +301,6 @@ export default function NFLLeagueScreen() {
             />
           )}
           {selectedTab === "awards" && <AwardSeasons league="NFL" />}
-
           {selectedTab === "forum" && <LeagueForum league="NFL" />}
         </View>
       </View>

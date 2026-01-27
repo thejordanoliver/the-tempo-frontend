@@ -1,38 +1,36 @@
 import { useNavigation } from "@react-navigation/native";
-import CFBGameHeader from "components/CFB/GameDetails/CFBGameHeader";
-import CFBGameOddsSection from "components/CFB/GameDetails/CFBGameOddsSection";
-import CFBGameTeamStats from "components/CFB/GameDetails/CFBGameTeamStats";
-import CFBSeriesHistory from "components/CFB/GameDetails/CFBSeriesHistory";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
+import CFBGameHeader from "components/Sports/CFB/GameDetails/CFBGameHeader";
+import CFBGameOddsSection from "components/Sports/CFB/GameDetails/CFBGameOddsSection";
+import CFBGameTeamStats from "components/Sports/CFB/GameDetails/CFBGameTeamStats";
+import CFBSeriesHistory from "components/Sports/CFB/GameDetails/CFBSeriesHistory";
 import {
   GameLocation,
   LastFiveGamesSwitcher,
   LineScore,
-} from "components/GameDetails";
-import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
-import Officials from "components/GameDetails/Officials";
-import WinPredictionVote from "components/GameDetails/WinPredictionVote";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import GameLeaders from "components/NFL/GameDetails/GameLeaders";
-import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
-import TeamDrives from "components/NFL/GameDetails/TeamDrives";
-import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
+} from "components/Sports/NBA/GameDetails";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import Officials from "components/Sports/NBA/GameDetails/Officials";
+import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
+import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
+import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
+import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
+import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import {
   getRivalryHeadline,
   getTeamInfo,
   neutralStadiums,
-  teams,
 } from "constants/teamsCFB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
 import { useCFBMatchup } from "hooks/CFBHooks/useCFBMatchup";
-import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
 import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
 import { useFootballVenues } from "hooks/CFBHooks/useFootballVenues";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -45,14 +43,7 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
-import {
-  formatGameDateTime,
-  getTeamRankFromAPById,
-  getTeamRankFromCFPById,
-  parseGameDate,
-  useAPTop25,
-  useCFPTop25,
-} from "utils/CFBUtils/cfbGameUtils";
+import { formatGameDateTime, parseGameDate } from "utils/CFBUtils/cfbGameUtils";
 
 export default function CFBGameDetailsScreen() {
   const params = useLocalSearchParams();
@@ -139,40 +130,24 @@ export default function CFBGameDetailsScreen() {
   const home = teamsData?.home;
   const away = teamsData?.away;
 
-  const homeIdNum = home?.id ?? 0;
-  const awayIdNum = away?.id ?? 0;
+  const homeId = home?.id ?? 0;
+  const awayId = away?.id ?? 0;
 
   const timestamp = parsedGame?.game.date?.timestamp;
 
   const awayTeam =
-    awayIdNum === -2 ? emptyAwayTeam : getTeamInfo(awayIdNum) ?? emptyAwayTeam;
+    awayId === -2 ? emptyAwayTeam : getTeamInfo(awayId) ?? emptyAwayTeam;
 
   const homeTeam =
-    homeIdNum === -1 ? emptyHomeTeam : getTeamInfo(homeIdNum) ?? emptyHomeTeam;
+    homeId === -1 ? emptyHomeTeam : getTeamInfo(homeId) ?? emptyHomeTeam;
 
-  // --- Get Team Info from constants ---
-  const getTeamById = (id?: number | string) =>
-    teams.find((t) => String(t.id) === String(id));
-
-  // --- Team records ---
-  const awayEspnId = getTeamById(away?.id)?.espnID;
-  const homeEspnId = getTeamById(home?.id)?.espnID;
+  const homeCode = homeTeam.code;
+  const awayCode = awayTeam.code;
+  const homeEspnId = homeTeam.espnID ?? "";
+  const awayEspnId = awayTeam.espnID ?? "";
 
   const hasValidTeams =
     homeTeam?.id !== emptyHomeTeam.id && awayTeam?.id !== emptyAwayTeam.id;
-
-  // ✅ Safe game date parsing
-  const gameDateObj = useMemo(() => {
-    const rawDate = parsedGame?.game?.date;
-    if (!rawDate) return null;
-
-    if (typeof rawDate === "number") return new Date(rawDate * 1000);
-    if (typeof rawDate === "string") return new Date(rawDate);
-    if (typeof rawDate === "object" && rawDate.timestamp)
-      return new Date(rawDate.timestamp * 1000);
-
-    return null;
-  }, [parsedGame?.game?.date]);
 
   const { data, loading: gameDetailsLoading } = useFootballGameDetails(
     String(homeTeam.espnID),
@@ -186,13 +161,17 @@ export default function CFBGameDetailsScreen() {
   const officials = data?.officials ?? [];
   const currentDrives = data?.currentDrives;
   const previousDrives = data?.previousDrives;
+
   const venue = data?.venue;
   const neutralSite = data?.neutralSite;
   const headline = data?.headline;
   const broadcast = data?.broadcast;
   const highlights = data?.highlights;
   const scoringPlays = data?.scoringPlays;
-
+  const homeRank = data?.homeRank;
+  const awayRank = data?.awayRank;
+  const homeRecord = data?.homeRecords.total.summary;
+  const awayRecord = data?.awayRecords.total.summary;
   const { data: footballVenues } = useFootballVenues();
 
   const normalizeVenueName = (name?: string | null) =>
@@ -214,9 +193,6 @@ export default function CFBGameDetailsScreen() {
       ) || null
     );
   }, [venue?.name, footballVenues]);
-
-  const { record: awayRecord } = useCFBTeamRecord(Number(awayEspnId));
-  const { record: homeRecord } = useCFBTeamRecord(Number(homeEspnId));
 
   // --- Neutral Site Detection Using neutralStadiums ---
   const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
@@ -273,21 +249,17 @@ export default function CFBGameDetailsScreen() {
       return;
     }
 
-    const safeHomeCode =
-      homeTeam?.code && homeTeam.code !== "UNK" ? homeTeam.code : "HOM";
-    const safeAwayCode =
-      awayTeam?.code && awayTeam.code !== "UNK" ? awayTeam.code : "AWY";
-
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
+          homeTeamId={homeId}
+          awayTeamId={awayId}
+          homeTeamCode={homeCode}
+          awayTeamCode={awayCode}
+          isNeutralSite={neutralSite}
           league="CFB"
-          homeTeamCode={safeHomeCode}
-          awayTeamCode={safeAwayCode}
-          isTeamScreen={false}
-          isNeutralSite={neutralSite} // ESPN true/false from summary > scoreboard
         />
       ),
     });
@@ -304,7 +276,7 @@ export default function CFBGameDetailsScreen() {
 
   const shortStatus = parsedGame?.game?.status?.short;
   const longStatus = parsedGame?.game?.status?.long ?? "";
-  console.log(longStatus)
+
   const finalOT = shortStatus === "AOT" ? "Final/OT" : "Final";
 
   const localDateTime = useMemo(() => {
@@ -354,46 +326,6 @@ export default function CFBGameDetailsScreen() {
     homeTeam?.espnID
   );
 
-  // ✅ Load both CFP and AP rankings
-  const cfpTop25 = useCFPTop25();
-  const apTop25 = useAPTop25();
-
-  const formatQuarter = (period?: string) => {
-    if (!period) return "";
-
-    const p = Number(period);
-    if (!isNaN(p)) {
-      if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
-      const otNumber = p - 4;
-      return otNumber === 1 ? "OT" : `OT${otNumber}`;
-    }
-
-    // fallback for string values like "ot", "overtime"
-    const val = String(period).toLowerCase();
-    if (val.includes("ot") || val.includes("overtime")) {
-      const match = val.match(/\d+/);
-      return match ? `OT${match[0]}` : "OT";
-    }
-
-    if (val.includes("half")) return "Halftime";
-
-    return period;
-  };
-
-  // ✅ Get ranking, falling back to AP poll if CFP is missing
-  // Check if CFP rankings are active (after they’ve been released)
-  const isCFPActive = cfpTop25 && cfpTop25.length > 0;
-
-  // Main helper to get rank with conditional fallback
-  const getTeamRank = (id: number | string) => {
-    if (isCFPActive) {
-      // ✅ Use CFP ranking if rankings are active
-      return getTeamRankFromCFPById(id, cfpTop25) ?? "";
-    }
-    // 🕓 Early season — fallback to AP Top 25
-    return getTeamRankFromAPById(id, apTop25) ?? "";
-  };
-
   // --- Weather data ---
   const { weather } = useWeatherForecast(
     lat,
@@ -406,58 +338,34 @@ export default function CFBGameDetailsScreen() {
     ? { ...weather, cityName: resolvedVenueCity }
     : null;
 
-  const {
-    possessionTeamId,
-    downDistanceText,
-    lastPlay,
-    displayClock,
-    period,
-    score,
-    homeTimeouts,
-    gameStatusDescription,
-    gameStatusShortDetail,
-    redzone,
-    lineScore,
-    awayTimeouts,
-    loading: possessionLoading,
-  } = useCFBGamePossession(
-    Number(awayTeam.espnID),
-    Number(homeTeam.espnID),
+  // --- Possession & Score ---
+  const possession = useFootballGamePossession(
+    Number(homeEspnId),
+    Number(awayEspnId),
     gameDateStr
   );
+
+  const {
+    gameStatusShortDetail,
+    gameStatusDescription,
+    period,
+    score,
+    possessionTeamId,
+    firstDownYardLine,
+    homeTimeouts,
+    awayTimeouts,
+    displayClock,
+    redzone,
+    lastPlay,
+    lineScore,
+    downDistanceText,
+    redzone: isRedzone,
+  } = possession;
 
   const awayScore = score?.away ?? scores?.away?.total;
   const homeScore = score?.home ?? scores?.home?.total;
 
-  const normalizeParsedScore = (
-    score:
-      | {
-          quarter_1?: number;
-          quarter_2?: number;
-          quarter_3?: number;
-          quarter_4?: number;
-          overtime?: number;
-        }
-      | undefined
-  ): number[] => {
-    if (!score) return [];
-
-    return [
-      score.quarter_1,
-      score.quarter_2,
-      score.quarter_3,
-      score.quarter_4,
-      score.overtime,
-    ].filter((v): v is number => typeof v === "number");
-  };
-
-  const normalizedLineScore = useMemo(() => {
-    return {
-      home: lineScore?.home ?? normalizeParsedScore(parsedGame?.scores?.home),
-
-      away: lineScore?.away ?? normalizeParsedScore(parsedGame?.scores?.away),
-    };
-  }, [lineScore, parsedGame]);
+  const linescore = lineScore ?? { home: [], away: [] };
 
   if (!parsedGame || !homeTeam || !awayTeam || gameDetailsLoading) {
     return (
@@ -489,16 +397,16 @@ export default function CFBGameDetailsScreen() {
           }
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
-          rankHome={getTeamRank(String(homeEspnId)) ?? ""}
-          rankAway={getTeamRank(String(awayEspnId)) ?? ""}
+          rankHome={homeRank}
+          rankAway={awayRank}
           gameStatusDescription={gameStatusDescription ?? longStatus}
-          period={formatQuarter(period ?? "")}
+          period={period}
           displayClock={displayClock}
           downAndDistance={downDistanceText}
           isDark={isDark}
-          homeRecord={homeRecord?.overall ?? undefined}
-          networkString={broadcastText}
-          awayRecord={awayRecord?.overall ?? undefined}
+          homeRecord={homeRecord}
+          broadcast={broadcastText}
+          awayRecord={awayRecord}
           formattedDate={formattedDate}
           formattedTime={formattedTime}
           gameStatusShortDetail={gameStatusShortDetail || finalOT}
@@ -542,22 +450,29 @@ export default function CFBGameDetailsScreen() {
               />
             ) : null}
 
-            {gameStatusDescription === "In Progress" ||
-              (gameStatusDescription === "Final" && (
-                <LineScore
-                  linescore={normalizedLineScore}
-                  homeCode={homeTeam?.code}
-                  awayCode={awayTeam?.code}
-                />
-              ))}
+            {(gameStatusDescription === "In Progress" ||
+              gameStatusDescription === "Halftime" ||
+              gameStatusDescription === "End of Period" ||
+              gameStatusDescription === "Final") && (
+              <LineScore
+                linescore={{
+                  home: linescore.home.map(String),
+                  away: linescore.away.map(String),
+                }}
+                homeCode={homeCode}
+                awayCode={awayCode}
+              />
+            )}
 
             {(gameStatusDescription === "In Progress" ||
-              gameStatusDescription === "Halftime") && (
-              <LastPlayField
+              gameStatusDescription === "Halftime" ||
+              gameStatusDescription === "End of Period") && (
+              <PlayByPlayField
                 lastPlay={lastPlay}
                 possessionTeamId={possessionTeamId}
                 homeTeamId={Number(homeTeam.id)}
                 awayTeamId={Number(awayTeam.id)}
+                firstDownYardLine={firstDownYardLine}
                 league="CFB"
               />
             )}
@@ -581,8 +496,8 @@ export default function CFBGameDetailsScreen() {
 
             <TeamScoringSummary
               scoringPlays={scoringPlays ?? []}
-              awayTeamAbbr={awayTeam?.code}
-              homeTeamAbbr={homeTeam?.code}
+              homeTeamId={Number(homeEspnId)}
+              awayTeamId={Number(awayEspnId)}
               league="CFB"
             />
 

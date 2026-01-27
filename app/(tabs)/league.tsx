@@ -20,7 +20,7 @@ import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
 import { useSeasonGames } from "hooks/useSeasonGames";
 import * as React from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 
 dayjs.extend(utc);
@@ -224,17 +224,15 @@ export default function LeagueScreen() {
   // Favorites
   // --------------------------------------------------
   const favoriteGames = React.useMemo(() => {
-    const collect = (games: any[], prefix: string, name: string) =>
-      games
-        .filter((g) => isFavoriteGame(g, prefix))
-        .map((g) => ({ ...g, league: { name } }));
+    const collect = (games: any[], prefix: string) =>
+      games.filter((g) => isFavoriteGame(g, prefix));
 
     return [
-      ...collect(filteredNBA, "NBA", "NBA"),
-      ...collect(filteredNFL, "NFL", "NFL"),
-      ...collect(filteredCFB, "CFB", "College Football"),
-      ...collect(filteredMensCBB, "CBB", "Men's College Basketball"),
-      ...collect(filteredWomensCBB, "WCBB", "Women's College Basketball"),
+      ...collect(filteredNBA, "NBA"),
+      ...collect(filteredNFL, "NFL"),
+      ...collect(filteredCFB, "CFB"),
+      ...collect(filteredMensCBB, "CBB"),
+      ...collect(filteredWomensCBB, "WCBB"),
     ];
   }, [
     favorites,
@@ -245,37 +243,31 @@ export default function LeagueScreen() {
     filteredWomensCBB,
   ]);
 
+
   // --------------------------------------------------
   // Sections
   // --------------------------------------------------
-  const gamesByCategory = React.useMemo(() => {
-    const sections: CombinedGamesSection[] = [
-      { category: "Favorites", data: sortLiveFirst(favoriteGames) },
-      { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
-      { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
-      {
-        category: "College Football",
-        data: limitNonFavorites(filteredCFB, "CFB"),
-      },
-      {
-        category: "Men's College Basketball",
-        data: limitNonFavorites(filteredMensCBB, "CBB"),
-      },
-      {
-        category: "Women's College Basketball",
-        data: limitNonFavorites(filteredWomensCBB, "WCBB"),
-      },
-    ];
+const gamesByCategory = React.useMemo(() => {
+  const sections: CombinedGamesSection[] = [
+    { category: "Favorites", data: sortLiveFirst(favoriteGames) },
+    { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
+    { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
+    {
+      category: "College Football",
+      data: limitNonFavorites(filteredCFB, "CFB"),
+    },
+    {
+      category: "Men's College Basketball",
+      data: limitNonFavorites(filteredMensCBB, "CBB"), // <--- OK
+    },
+    {
+      category: "Women's College Basketball",
+      data: limitNonFavorites(filteredWomensCBB, "WCBB"), // <--- OK
+    },
+  ];
 
-    return sections.filter((s) => s.data.length > 0);
-  }, [
-    favoriteGames,
-    filteredNBA,
-    filteredNFL,
-    filteredCFB,
-    filteredMensCBB,
-    filteredWomensCBB,
-  ]);
+  return sections.filter((s) => s.data.length > 0);
+}, [favoriteGames, filteredNBA, filteredNFL, filteredCFB, filteredMensCBB, filteredWomensCBB]);
 
   // --------------------------------------------------
   // Refresh

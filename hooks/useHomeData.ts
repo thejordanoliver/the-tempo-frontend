@@ -222,28 +222,28 @@ const normalizedNBA = weeklyGames
   const filteredWomensCBB = filterByDate(normalizedWomensCBB);
 
   // ⭐ Favorites
-  const favoriteGames = useMemo(() => {
-    if (!favorites.length) return [];
-    const collect = (games: any[], prefix: string, name: string) =>
-      games
-        .filter((g) => isFavorite(g, prefix))
-        .map((g) => ({ ...g, league: { name } }));
+const favoriteGames = useMemo(() => {
+  if (!favorites.length) return [];
 
-    return [
-      ...collect(filteredNBA, "NBA", "NBA"),
-      ...collect(filteredNFL, "NFL", "NFL"),
-      ...collect(filteredCFB, "CFB", "College Football"),
-      ...collect(filteredMensCBB, "CBB", "College Basketball"),
-      ...collect(filteredWomensCBB, "WCBB", "Women's College Basketball"),
-    ];
-  }, [
-    favorites,
-    filteredNBA,
-    filteredNFL,
-    filteredCFB,
-    filteredMensCBB,
-    filteredWomensCBB,
-  ]);
+  const collect = (games: any[], prefix: string) =>
+    games.filter((g) => isFavorite(g, prefix));
+
+  return [
+    ...collect(filteredNBA, "NBA"),
+    ...collect(filteredNFL, "NFL"),
+    ...collect(filteredCFB, "CFB"),
+    ...collect(filteredMensCBB, "CBB"),
+    ...collect(filteredWomensCBB, "WCBB"),
+  ];
+}, [
+  favorites,
+  filteredNBA,
+  filteredNFL,
+  filteredCFB,
+  filteredMensCBB,
+  filteredWomensCBB,
+]);
+
 
   // 🧩 Limit sections
   const limitedNBA = limitNonFavorites(filteredNBA, "NBA");

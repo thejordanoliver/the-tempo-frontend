@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 import { StyleSheet } from "react-native";
 export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({

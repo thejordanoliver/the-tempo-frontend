@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams, conferenceObjectListMap } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
@@ -26,7 +26,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
-
 type CustomHeaderTitleProps = {
   title?: string;
   playerName?: string;
@@ -50,6 +49,8 @@ type CustomHeaderTitleProps = {
   teamCode?: string;
   homeTeamCode?: string;
   awayTeamCode?: string;
+  homeTeamId?: string | number;
+  awayTeamId?: string | number;
   teamCoach?: string;
   teamHistory?: string;
   selectedConferenceName?: string;
@@ -64,7 +65,14 @@ type CustomHeaderTitleProps = {
   onToggleNotifications?: () => void;
 };
 
-
+const leagueTeamsMap = {
+  NBA: nbaTeams,
+  NFL: nflTeams,
+  CFB: cfbTeams,
+  CBB: cbbTeams,
+  WCBB: cbbTeams,
+  MLB: mlbTeams,
+};
 
 function resolveImage(source: any): ImageSourcePropType {
   if (!source) return undefined as any;
@@ -100,7 +108,7 @@ const TeamBackground = ({
   isPlayerScreen?: boolean;
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
-const styles = customHeaderStyles
+  const styles = customHeaderStyles;
   if (!(isTeamScreen || isPlayerScreen)) {
     return (
       <View
@@ -158,7 +166,7 @@ const ConferenceBackground = ({
   isConferenceScreen: boolean;
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
-const styles = customHeaderStyles
+  const styles = customHeaderStyles;
   if (!isConferenceScreen) {
     return (
       <View
@@ -203,8 +211,15 @@ const styles = customHeaderStyles
   );
 };
 
-const getLogoSource = (team: any, preferLight: boolean = false) => {
-  const source = preferLight && team.logoLight ? team.logoLight : team.logo;
+const getLogoSource = (
+  team: any,
+  {
+    preferLight = false,
+    isWomen = false,
+  }: { preferLight?: boolean; isWomen?: boolean } = {}
+) => {
+  const source =
+    (isWomen && team.wLogo) || (preferLight && team.logoLight) || team.logo;
 
   if (!source) {
     return require("assets/Placeholders/teamPlaceholder.png");
@@ -224,15 +239,17 @@ const GameHeader = ({
   homeTeam,
   awayTeam,
   isNeutralSite,
+  isWomen,
 }: {
   tabName?: string;
   homeTeam: any;
   awayTeam: any;
   isNeutralSite: boolean;
+  isWomen: boolean;
 }) => {
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
-const styles = customHeaderStyles
-  const homeColor = homeTeam?.color || "#aaa";
+  const styles = customHeaderStyles;
+  const homeColor = homeTeam?.color || Colors.lightGray;
   const awayColor = awayTeam?.color || Colors.midTone;
   const dividerText = isNeutralSite ? "vs" : "@";
 
@@ -338,8 +355,11 @@ const styles = customHeaderStyles
             { transform: [{ scale: scaleAway }] },
           ]}
         >
-            <Image
-            source={getLogoSource(awayTeam, true)}
+          <Image
+            source={getLogoSource(awayTeam, {
+              preferLight: true,
+              isWomen,
+            })}
             style={styles.bgLogo}
             resizeMode="contain"
           />
@@ -394,8 +414,11 @@ const styles = customHeaderStyles
             { transform: [{ scale: scaleHome }] },
           ]}
         >
-            <Image
-            source={getLogoSource(homeTeam, true)}
+          <Image
+            source={getLogoSource(homeTeam, {
+              preferLight: true,
+              isWomen,
+            })}
             style={styles.bgLogo}
             resizeMode="contain"
           />
@@ -454,6 +477,8 @@ export function CustomHeaderTitle({
   teamCode,
   homeTeamCode,
   awayTeamCode,
+  homeTeamId,
+  awayTeamId,
   isFavorite,
   isNotified,
   selectedConferenceName,
@@ -472,7 +497,7 @@ export function CustomHeaderTitle({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-const styles = customHeaderStyles
+  const styles = customHeaderStyles;
   const modalToMapKey: Record<string, string> = {
     SEC: "SEC",
     "Big Ten": "Big Ten",
@@ -528,46 +553,50 @@ const styles = customHeaderStyles
     return nbaTeams.find((t) => t.code === teamCode);
   }, [teamCode, league]);
 
-  const homeTeam = useMemo(() => {
-    const teams =
-      league === "NFL"
-        ? nflTeams
-        : league === "CFB"
-        ? cfbTeams
-        : league === "CBB"
-        ? cbbTeams
-        : league === "MLB"
-        ? mlbTeams
-        : nbaTeams;
-    return (
-      teams.find((t) => t.code === homeTeamCode) ?? {
-        code: homeTeamCode ?? "HOM",
-        color: Colors.lightGray,
-        logo: null,
-      }
-    );
-  }, [homeTeamCode, league]);
+const teamsForLeague =
+  league === "NFL"
+    ? nflTeams
+    : league === "CFB"
+    ? cfbTeams
+    : league === "CBB" || league === "WCBB"
+    ? cbbTeams
+    : league === "MLB"
+    ? mlbTeams
+    : nbaTeams;
 
-  const awayTeam = useMemo(() => {
-    const teams =
-      league === "NFL"
-        ? nflTeams
-        : league === "CFB"
-        ? cfbTeams
-        : league === "CBB"
-        ? cbbTeams
-        : league === "MLB"
-        ? mlbTeams
-        : nbaTeams;
-    return (
-      teams.find((t) => t.code === awayTeamCode) ?? {
-        code: awayTeamCode ?? "AWY",
-        color: Colors.midTone,
-        logo: null,
-      }
-    );
-  }, [awayTeamCode, league]);
+const homeTeam = useMemo(() => {
+  const team =
+    league === "WCBB"
+      ? teamsForLeague.find((t: any) => t.wid === homeTeamId)
+      : teamsForLeague.find((t: any) => t.id === homeTeamId);
 
+  return (
+    team ?? {
+      id: homeTeamId,
+      code: homeTeamCode ?? "HOM",
+      color: Colors.lightGray,
+      logo: null,
+    }
+  );
+}, [homeTeamId, homeTeamCode, league]);
+
+const awayTeam = useMemo(() => {
+  const team =
+    league === "WCBB"
+      ? teamsForLeague.find((t: any) => t.wid === awayTeamId)
+      : teamsForLeague.find((t: any) => t.id === awayTeamId);
+
+  return (
+    team ?? {
+      id: awayTeamId,
+      code: awayTeamCode ?? "AWY",
+      color: Colors.midTone,
+      logo: null,
+    }
+  );
+}, [awayTeamId, awayTeamCode, league]);
+
+  const isWomenLeague = league === "WCBB";
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
@@ -658,6 +687,7 @@ const styles = customHeaderStyles
             homeTeam={homeTeam}
             awayTeam={awayTeam}
             isNeutralSite={isNeutralSite}
+            isWomen={isWomenLeague}
           />
         ) : tabName === "League" ? (
           <View

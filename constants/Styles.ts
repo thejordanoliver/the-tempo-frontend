@@ -1,3 +1,4 @@
+import { StyleSheet } from "react-native";
 /**
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
@@ -44,7 +45,6 @@ export const Colors = {
   darkGray: "#555",
 };
 
-
 export const Fonts = {
   OSEXTRALIGHT: "Oswald_200ExtraLight",
   OSLIGHT: "Oswald_300Light",
@@ -53,3 +53,25 @@ export const Fonts = {
   OSSEMIBOLD: "Oswald_600SemiBold",
   OSBOLD: "Oswald_700Bold",
 };
+
+export const globalStyles = (isDark: boolean, lighter?: boolean) =>
+  StyleSheet.create({
+    errorText: {
+      marginTop: 20,
+      textAlign: "center",
+      fontSize: 20,
+      fontFamily: Fonts.OSREGULAR,
+      color: lighter
+        ? Colors.dark.lightRed
+        : isDark
+        ? Colors.dark.lightRed
+        : Colors.light.red,
+    },
+    emptyText: {
+      marginTop: 20,
+      textAlign: "center",
+      fontSize: 20,
+      fontFamily: Fonts.OSREGULAR,
+      color: Colors.midTone,
+    },
+  });

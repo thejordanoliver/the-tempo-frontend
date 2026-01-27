@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
-import { exploreStyles } from "styles/Explore/ExploreStyles";
+import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/types";
 import ResultItemRow from "./ResultItemRow";
 

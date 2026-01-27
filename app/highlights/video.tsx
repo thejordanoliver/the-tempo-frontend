@@ -42,7 +42,7 @@ export default function HighlightVideoScreen() {
     error: highlightsError,
   } = useHighlights(
     "NBA dunks OR game winners OR buzzer beaters OR crossovers OR trending",
-    10
+   " 10"
   );
 
   const queue = React.useMemo(

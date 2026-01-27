@@ -7,7 +7,7 @@ const API_BASE = process.env.EXPO_PUBLIC_API_URL;
 export function useSeasonGames(season: string) {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   const cacheRef = useRef<Map<string, Game[]>>(new Map());
 
@@ -21,9 +21,7 @@ export function useSeasonGames(season: string) {
         return;
       }
 
-      const res = await axios.get(
-        `${API_BASE}/api/games/season/${season}`
-      );
+      const res = await axios.get(`${API_BASE}/api/games/season/${season}`);
 
       const seasonGames = res.data?.games ?? [];
 
@@ -31,7 +29,8 @@ export function useSeasonGames(season: string) {
       setGames(seasonGames);
     } catch (err: any) {
       console.error("[useSeasonGames] error:", err);
-      setError("Failed to fetch season games");
+      const message = err?.message || "Failed to load season games";
+      setError(new Error(message));
       setGames([]);
     } finally {
       setLoading(false);

@@ -3,7 +3,6 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import GamesList from "components/Games/GamesList";
 import AwardSeasons from "components/League/AwardSeasons";
 import DraftList from "components/League/DraftList";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
@@ -11,7 +10,8 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import { StandingsList } from "components/Standings/StandingsList";
+import GamesList from "components/Sports/NBA/Games/GamesList";
+import { StandingsList } from "components/Sports/NBA/Standings/StandingsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
 import { getTeamInfo } from "constants/teams";
@@ -25,7 +25,7 @@ import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -53,8 +53,9 @@ export default function NBALeagueScreen() {
   const currentYear = getNBASeason();
   const {
     games,
-    loading: liveLoading,
-    refreshGames: refreshLiveGames,
+    error: errorGames,
+    loading: loadingGames,
+    refreshGames: refreshGames,
   } = useSeasonGames(currentYear);
 
   const { news, loading: newsLoading, refreshNews } = useLeagueNews("NBA");
@@ -173,7 +174,7 @@ export default function NBALeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshLiveGames(), refreshNews()]);
+      await Promise.all([refreshGames(), refreshNews()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -252,7 +253,8 @@ export default function NBALeagueScreen() {
               >
                 <GamesList
                   games={filteredSeasonGames}
-                  loading={liveLoading}
+                  error={errorGames}
+                  loading={loadingGames}
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                   scrollEnabled={false}

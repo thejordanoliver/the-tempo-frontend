@@ -1,5 +1,5 @@
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 export type StatCategory =
@@ -90,8 +90,8 @@ export function useFootballRosterStats(
           // 👇 call either /api/cfb/teams or /api/cfb/nfl/teams
           const endpoint =
             league === "nfl"
-              ? `${BASE_URL}/api/nfl/teams/${espnID}/stats`
-              : `${BASE_URL}/api/teams/${espnID}/stats`;
+              ? `${BASE_URL}/api/football-stats/nfl/teams/${espnID}/stats`
+              : `${BASE_URL}/api/football-stats/cfb/teams/${espnID}/stats`;
 
           const url = `${endpoint}${category ? `?category=${category}` : ""}`;
           console.log("🌐 Fetching team stats:", url);
@@ -99,14 +99,15 @@ export function useFootballRosterStats(
         }
 
         // --- RapidAPI player stats ---
-       else {
-  const url = `${BASE_URL}/api/${teamId}/players/stats${
-    category ? `?category=${category}` : ""
-  }`;
+        else {
+          const url = `${BASE_URL}/api/football-stats/${teamId}/players/stats${
+            category ? `?category=${category}` : ""
+          }`;
           console.log("🌐 Fetching player stats:", url);
           response = await axios.get(url);
 
-          const players = response.data?.players || response.data?.response || [];
+          const players =
+            response.data?.players || response.data?.response || [];
           if (!Array.isArray(players) || players.length === 0) {
             console.warn("⚠️ No players found in response.");
             setData({

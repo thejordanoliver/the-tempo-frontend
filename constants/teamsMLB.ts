@@ -1,5 +1,67 @@
 import { MLBTeam } from "types/mlb";
 
+import DiamondbacksLogo from "assets/Baseball/MLB_Logos/Diamondbacks.png";
+import DiamondbacksLogoLight from "assets/Baseball/MLB_Logos/Diamondbacks.png";
+import DodgersLogo from "assets/Baseball/MLB_Logos/Dodgers.png";
+import DodgersLogoLight from "assets/Baseball/MLB_Logos/DodgersLight.png";
+import GiantsLogo from "assets/Baseball/MLB_Logos/Giants.png";
+import GiantsLogoLight from "assets/Baseball/MLB_Logos/Giants.png";
+import PadresLogo from "assets/Baseball/MLB_Logos/Padres.png";
+import PadresLogoLight from "assets/Baseball/MLB_Logos/PadresLight.png";
+import RockiesLogo from "assets/Baseball/MLB_Logos/Rockies.png";
+import RockiesLogoLight from "assets/Baseball/MLB_Logos/RockiesLight.png";
+import CubsLogo from "assets/Baseball/MLB_Logos/Cubs.png";
+import CubsLogoLight from "assets/Baseball/MLB_Logos/Cubs.png";
+import RedsLogo from "assets/Baseball/MLB_Logos/Reds.png";
+import RedsLogoLight from "assets/Baseball/MLB_Logos/RedsLight.png";
+import BrewersLogo from "assets/Baseball/MLB_Logos/Brewers.png";
+import BrewersLogoLight from "assets/Baseball/MLB_Logos/Brewers.png";
+import CardinalsLogo from "assets/Baseball/MLB_Logos/Cardinals.png";
+import CardinalsLogoLight from "assets/Baseball/MLB_Logos/CardinalsLight.png";
+import PiratesLogo from "assets/Baseball/MLB_Logos/Pirates.png";
+import PiratesLogoLight from "assets/Baseball/MLB_Logos/Pirates.png";
+import BravesLogo from "assets/Baseball/MLB_Logos/Braves.png";
+import BravesLogoLight from "assets/Baseball/MLB_Logos/BravesLight.png";
+import MetsLogo from "assets/Baseball/MLB_Logos/Mets.png";
+import MetsLogoLight from "assets/Baseball/MLB_Logos/Mets.png";
+import PhilliesLogo from "assets/Baseball/MLB_Logos/Phillies.png";
+import PhilliesLogoLight from "assets/Baseball/MLB_Logos/PhilliesLight.png";
+import MarlinsLogo from "assets/Baseball/MLB_Logos/Marlins.png";
+import MarlinsLogoLight from "assets/Baseball/MLB_Logos/Marlins.png";
+import NationalsLogo from "assets/Baseball/MLB_Logos/Nationals.png";
+import NationalsLogoLight from "assets/Baseball/MLB_Logos/NationalsLight.png";
+import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
+import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
+import RedSoxLogo from "assets/Baseball/MLB_Logos/RedSox.png";
+import RedSoxLogoLight from "assets/Baseball/MLB_Logos/RedSox.png";
+import BlueJaysLogo from "assets/Baseball/MLB_Logos/BlueJays.png";
+import BlueJaysLogoLight from "assets/Baseball/MLB_Logos/BlueJays.png";
+import OriolesLogo from "assets/Baseball/MLB_Logos/Orioles.png";
+import OriolesLogoLight from "assets/Baseball/MLB_Logos/Orioles.png";
+import RaysLogo from "assets/Baseball/MLB_Logos/Rays.png";
+import RaysLogoLight from "assets/Baseball/MLB_Logos/RaysLight.png";
+import WhiteSoxLogo from "assets/Baseball/MLB_Logos/WhiteSox.png";
+import WhiteSoxLogoLight from "assets/Baseball/MLB_Logos/WhiteSoxLight.png";
+import GuardiansLogo from "assets/Baseball/MLB_Logos/Guardians.png";
+import GuardiansLogoLight from "assets/Baseball/MLB_Logos/GuardiansLight.png";
+import TigersLogo from "assets/Baseball/MLB_Logos/Tigers.png";
+import TigersLogoLight from "assets/Baseball/MLB_Logos/TigersLight.png";
+import TwinsLogo from "assets/Baseball/MLB_Logos/Twins.png";
+import TwinsLogoLight from "assets/Baseball/MLB_Logos/TwinsLight.png";
+import RoyalsLogo from "assets/Baseball/MLB_Logos/Royals.png";
+import RoyalsLogoLight from "assets/Baseball/MLB_Logos/RoyalsLight.png";
+import AstrosLogo from "assets/Baseball/MLB_Logos/Astros.png";
+import AstrosLogoLight from "assets/Baseball/MLB_Logos/Astros.png";
+import AthleticsLogo from "assets/Baseball/MLB_Logos/Athletics.png";
+import AthleticsLogoLight from "assets/Baseball/MLB_Logos/AthleticsLight.png";
+import MarinersLogo from "assets/Baseball/MLB_Logos/Mariners.png";
+import MarinersLogoLight from "assets/Baseball/MLB_Logos/Mariners.png";
+import RangersLogo from "assets/Baseball/MLB_Logos/Rangers.png";
+import RangersLogoLight from "assets/Baseball/MLB_Logos/RangersLight.png";
+import AngelsLogo from "assets/Baseball/MLB_Logos/Angels.png";
+import AngelsLogoLight from "assets/Baseball/MLB_Logos/Angels.png";
+
+
 export const teams: MLBTeam[] = [
   {
     id: 2,
@@ -9,8 +71,8 @@ export const teams: MLBTeam[] = [
     code: "ARI",
     color: "#aa182c",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/ari.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/ari.png",
+    logo: DiamondbacksLogo,
+    logoLight: DiamondbacksLogoLight,
     firstSeason: 1998,
     latitude: 33.4455,
     longitude: -112.0667,
@@ -28,8 +90,8 @@ export const teams: MLBTeam[] = [
     code: "ATH",
     color: "#003831",
     secondaryColor: "#efb21e",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/ath.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/ath.png",
+    logo: AthleticsLogo,
+    logoLight: AthleticsLogoLight,
     firstSeason: 1901,
     latitude: 37.7516,
     longitude: -122.2005,
@@ -47,8 +109,8 @@ export const teams: MLBTeam[] = [
     code: "ATL",
     color: "#0c2340",
     secondaryColor: "#ba0c2f",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/atl.png",
+    logo: BravesLogo,
+    logoLight:BravesLogoLight,
     firstSeason: 1876,
     latitude: 33.8907,
     longitude: -84.4677,
@@ -66,8 +128,8 @@ export const teams: MLBTeam[] = [
     code: "BAL",
     color: "#df4601",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/bal.png",
+    logo: OriolesLogo,
+    logoLight: OriolesLogoLight,
     firstSeason: 1901,
     latitude: 39.2839,
     longitude: -76.6217,
@@ -85,8 +147,8 @@ export const teams: MLBTeam[] = [
     code: "BOS",
     color: "#0d2b56",
     secondaryColor: "#bd3039",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/bos.png",
+    logo: RedSoxLogo,
+    logoLight: RedSoxLogoLight,
     firstSeason: 1901,
     latitude: 42.3465,
     longitude: -71.0972,
@@ -104,8 +166,8 @@ export const teams: MLBTeam[] = [
     code: "CHC",
     color: "#0e3386",
     secondaryColor: "#cc3433",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/chc.png",
+    logo: CubsLogo,
+    logoLight: CubsLogoLight,
     firstSeason: 1876,
     latitude: 41.9484,
     longitude: -87.6553,
@@ -123,8 +185,8 @@ export const teams: MLBTeam[] = [
     code: "CHW",
     color: "#000000",
     secondaryColor: "#c4ced4",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/chw.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/chw.png",
+    logo: WhiteSoxLogo,
+    logoLight: WhiteSoxLogoLight,
     firstSeason: 1901,
     latitude: 41.8299,
     longitude: -87.6339,
@@ -142,8 +204,8 @@ export const teams: MLBTeam[] = [
     code: "CIN",
     color: "#c6011f",
     secondaryColor: "#ffffff",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/cin.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/cin.png",
+    logo:RedsLogo,
+    logoLight: RedsLogoLight,
     firstSeason: 1882,
     latitude: 39.097,
     longitude: -84.507,
@@ -161,8 +223,8 @@ export const teams: MLBTeam[] = [
     code: "CLE",
     color: "#002b5c",
     secondaryColor: "#e31937",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/cle.png",
+    logo:GuardiansLogo,
+    logoLight: GuardiansLogoLight,
     firstSeason: 1901,
     latitude: 41.4962,
     longitude: -81.6852,
@@ -180,8 +242,8 @@ export const teams: MLBTeam[] = [
     code: "COL",
     color: "#33006f",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/col.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/col.png",
+    logo: RockiesLogo,
+    logoLight: RockiesLogoLight,
     firstSeason: 1993,
     latitude: 39.7559,
     longitude: -104.9942,
@@ -199,8 +261,8 @@ export const teams: MLBTeam[] = [
     code: "DET",
     color: "#0a2240",
     secondaryColor: "#ff4713",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/det.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/det.png",
+    logo: TigersLogo,
+    logoLight: TigersLogoLight,
     firstSeason: 1901,
     latitude: 42.3391,
     longitude: -83.0484,
@@ -218,8 +280,8 @@ export const teams: MLBTeam[] = [
     code: "HOU",
     color: "#002d62",
     secondaryColor: "#eb6e1f",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/hou.png",
+    logo: AstrosLogo,
+    logoLight: AstrosLogoLight,
     firstSeason: 1962,
     latitude: 29.7573,
     longitude: -95.3555,
@@ -237,8 +299,8 @@ export const teams: MLBTeam[] = [
     code: "KC",
     color: "#004687",
     secondaryColor: "#7ab2dd",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/kc.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/kc.png",
+    logo: RoyalsLogo,
+    logoLight: RoyalsLogoLight,
     firstSeason: 1969,
     latitude: 39.0516,
     longitude: -94.4808,
@@ -256,8 +318,8 @@ export const teams: MLBTeam[] = [
     code: "LAA",
     color: "#ba0021",
     secondaryColor: "#c4ced4",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/laa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/laa.png",
+    logo: AngelsLogo,
+    logoLight: AngelsLogoLight,
     firstSeason: 1961,
     latitude: 33.8003,
     longitude: -117.8827,
@@ -275,8 +337,8 @@ export const teams: MLBTeam[] = [
     code: "LAD",
     color: "#005a9c",
     secondaryColor: "#ffffff",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/lad.png",
+    logo: DodgersLogo,
+    logoLight: DodgersLogoLight,
     firstSeason: 1884,
     latitude: 34.0739,
     longitude: -118.24,
@@ -294,8 +356,8 @@ export const teams: MLBTeam[] = [
     code: "MIA",
     color: "#00a3e0",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/mia.png",
+    logo:MarlinsLogo,
+    logoLight: MarlinsLogoLight,
     firstSeason: 1993,
     latitude: 25.7781,
     longitude: -80.2198,
@@ -313,8 +375,8 @@ export const teams: MLBTeam[] = [
     code: "MIL",
     color: "#13294b",
     secondaryColor: "#ffc72c",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/mil.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/mil.png",
+    logo: BrewersLogo,
+    logoLight: BrewersLogoLight,
     firstSeason: 1969,
     latitude: 43.028,
     longitude: -87.9712,
@@ -332,8 +394,8 @@ export const teams: MLBTeam[] = [
     code: "MIN",
     color: "#031f40",
     secondaryColor: "#e20e32",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/min.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/min.png",
+    logo: TwinsLogo,
+    logoLight: TwinsLogoLight,
     firstSeason: 1901,
     latitude: 44.9817,
     longitude: -93.2777,
@@ -351,8 +413,8 @@ export const teams: MLBTeam[] = [
     code: "NYM",
     color: "#002d72",
     secondaryColor: "#ff5910",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/nym.png",
+    logo: MetsLogo,
+    logoLight: MetsLogoLight,
     firstSeason: 1962,
     latitude: 40.7571,
     longitude: -73.8458,
@@ -370,8 +432,8 @@ export const teams: MLBTeam[] = [
     code: "NYY",
     color: "#132448",
     secondaryColor: "#c4ced4",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/nyy.png",
+    logo: YankeesLogo,
+    logoLight: YankeesLogoLight,
     firstSeason: 1901,
     latitude: 40.8296,
     longitude: -73.9262,
@@ -393,8 +455,8 @@ export const teams: MLBTeam[] = [
     code: "PHI",
     color: "#e81828",
     secondaryColor: "#003278",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/phi.png",
+    logo: PhilliesLogo,
+    logoLight: PhilliesLogoLight,
     firstSeason: 1883,
     latitude: 39.9057,
     longitude: -75.1665,
@@ -412,8 +474,8 @@ export const teams: MLBTeam[] = [
     code: "PIT",
     color: "#000000",
     secondaryColor: "#fdb827",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/pit.png",
+    logo: PiratesLogo,
+    logoLight: PiratesLogoLight,
     firstSeason: 1882,
     latitude: 40.4469,
     longitude: -80.0057,
@@ -431,8 +493,8 @@ export const teams: MLBTeam[] = [
     code: "SD",
     color: "#2f241d",
     secondaryColor: "#ffc425",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/sd.png",
+    logo:PadresLogo,
+    logoLight: PadresLogoLight,
     firstSeason: 1969,
     latitude: 32.7073,
     longitude: -117.1573,
@@ -450,8 +512,8 @@ export const teams: MLBTeam[] = [
     code: "SF",
     color: "#000000",
     secondaryColor: "#fd5a1e",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/sf.png",
+    logo:GiantsLogo,
+    logoLight: GiantsLogoLight,
     firstSeason: 1883,
     latitude: 37.7786,
     longitude: -122.3893,
@@ -469,8 +531,8 @@ export const teams: MLBTeam[] = [
     code: "SEA",
     color: "#005c5c",
     secondaryColor: "#0c2c56",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/sea.png",
+    logo: MarinersLogo,
+    logoLight: MarinersLogoLight,
     firstSeason: 1977,
     latitude: 47.5914,
     longitude: -122.3325,
@@ -488,8 +550,8 @@ export const teams: MLBTeam[] = [
     code: "STL",
     color: "#be0a14",
     secondaryColor: "#001541",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/stl.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/stl.png",
+    logo: CardinalsLogo,
+    logoLight: CardinalsLogoLight,
     firstSeason: 1882,
     latitude: 38.6226,
     longitude: -90.1928,
@@ -509,8 +571,8 @@ export const teams: MLBTeam[] = [
     code: "TB",
     color: "#092c5c",
     secondaryColor: "#8fbce6",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/tb.png",
+    logo: RaysLogo,
+    logoLight: RaysLogoLight,
     firstSeason: 1998,
     latitude: 27.7683,
     longitude: -82.6534,
@@ -528,8 +590,8 @@ export const teams: MLBTeam[] = [
     code: "TEX",
     color: "#003278",
     secondaryColor: "#c0111f",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/tex.png",
+    logo: RangersLogo,
+    logoLight:RangersLogoLight,
     firstSeason: 1961,
     latitude: 32.7473,
     longitude: -97.0842,
@@ -547,8 +609,8 @@ export const teams: MLBTeam[] = [
     code: "TOR",
     color: "#134a8e",
     secondaryColor: "#6cace5",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/tor.png",
+    logo: BlueJaysLogo,
+    logoLight: BlueJaysLogoLight,
     firstSeason: 1977,
     latitude: 43.6415,
     longitude: -79.3894,
@@ -566,8 +628,8 @@ export const teams: MLBTeam[] = [
     code: "WSH",
     color: "#ab0003",
     secondaryColor: "#11225b",
-    logo: "https://a.espncdn.com/i/teamlogos/mlb/500/wsh.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/mlb/500-dark/wsh.png",
+    logo: NationalsLogo,
+    logoLight: NationalsLogoLight,
     firstSeason: 1969,
     latitude: 38.873,
     longitude: -77.0074,

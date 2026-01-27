@@ -20,7 +20,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { summerGame } from "types/types";
 import LineScore from "./LineScore";
 import TeamInfo from "./TeamInfo";
@@ -88,7 +88,7 @@ export default function SummerLeagueGamePreviewModal({
 }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark); // <--- call here
+  const styles = GameCardStyles(isDark); // <--- call here
 
   const sheetRef = useRef<BottomSheetModal>(null);
 

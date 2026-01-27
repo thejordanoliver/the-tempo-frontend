@@ -1,10 +1,10 @@
 // app/player/cfb/[id].tsx
-import CFBGameCard from "components/CFB/Games/CFBGameCard";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import PlayerHeader from "components/NFL/Player/PlayerHeader";
-import PlayerStatTable from "components/NFL/Player/PlayerStatTable";
-import SeasonStatCard from "components/NFL/Player/SeasonStatCard";
+import CFBGameCard from "components/Sports/CFB/Games/CFBGameCard";
+import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
+import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
+import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamInfo } from "constants/teamsCFB";
@@ -147,9 +147,7 @@ export default function CFBPlayerDetailScreen() {
           </Text>
         )}
 
-        {lastGame && !lastGameLoading && (
-          <CFBGameCard game={lastGame} isDark={isDark} />
-        )}
+        {lastGame && !lastGameLoading && <CFBGameCard game={lastGame} />}
       </View>
 
       {/* Career Stats */}

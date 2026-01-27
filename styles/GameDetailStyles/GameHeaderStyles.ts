@@ -1,6 +1,5 @@
-import { Colors } from "constants/Colors";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
-import { Fonts } from "constants/fonts";
 export const gameHeaderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
@@ -23,8 +22,14 @@ export const gameHeaderStyles = (isDark: boolean) =>
       width: "100%",
       top: 0,
       fontSize: 10,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSEXTRALIGHT,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
+    },
+    divider: {
+      height: 10,
+      width: StyleSheet.hairlineWidth,
+      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+
     },
   });

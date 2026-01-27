@@ -1,7 +1,10 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { useGameDetails } from "hooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
-import { gameWidgetStyles } from "styles/Explore/GameWidgetStyles";
+import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { formatCBBQuarter } from "utils/games";
+import displayeValue from "utils/widgetUtils";
+
 export type CBBGameWidgetProps = {
   league: "CBB" | "WCBB";
   id: number;
@@ -39,7 +42,7 @@ export type CBBGameWidgetProps = {
   height?: number; // NEW
   width?: number; // NEW
   isWomen?: boolean; // ✅ optional override
-  loading: boolean,
+  loading: boolean;
 };
 
 export default function CBBGameWidget({
@@ -52,13 +55,24 @@ export default function CBBGameWidget({
   const isDark = useColorScheme() === "dark";
   const styles = gameWidgetStyles(isDark, height, width);
 
+  const gameDate = new Date(props.gameDateISO); // parse ISO date
+  // Format local date with short month
+  const localDate = gameDate.toLocaleString(undefined, {
+    month: "short", // Jan, Feb, etc.
+    day: "numeric", // day of month
+  });
+  const localTime = gameDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   const isWomen = isWomenOverride ?? props.league === "WCBB"; // use override if passed
 
   const detailsLeague = isWomen ? "wcbb" : "cbb";
   const {
     score: liveScore,
     details,
-   loading:  scoreLoading,
+    loading: scoreLoading,
   } = useGameDetails(
     detailsLeague,
     String(props.homeTeam.espnID),
@@ -86,25 +100,43 @@ export default function CBBGameWidget({
   const period = liveScore?.period ?? props.periods;
   const gameStatusDescription = liveScore?.gameStatusDescription;
   const gameStatusDetail = liveScore?.gameStatusDetail;
-
+  const isScheduled = gameStatusDescription === "Scheduled";
   const isFinal = gameStatusDescription === "Final";
-  const inProgress = gameStatusDescription === "In Progress";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
   const isHalftime = gameStatusDescription === "Halftime";
-
+  const endOfPeriod = gameStatusDescription === "End of Period";
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
+  const homeRank = details?.homeRank;
+  const awayRank = details?.awayRank;
   const homeScore = liveScore?.home.total ?? props.homeScore ?? 0;
   const awayScore = liveScore?.away.total ?? props.awayScore ?? 0;
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
+  // Compute values at top-level
+  const awayDisplay = displayeValue(
+    false,
+    isScheduled,
+    isFinal,
+    awayIsWinner,
+    awayRecord,
+    awayScore,
+    isDark
+  );
+  const homeDisplay = displayeValue(
+    true,
+    isScheduled,
+    isFinal,
+    homeIsWinner,
+    homeRecord,
+    homeScore,
+    isDark
+  );
 
-  function formatQuarter(period: number) {
-    if (period === 1) return "1st";
-    if (period === 2) return "2nd";
-    if (period === 3) return "3rd";
-    if (period === 4) return "4th";
-  }
-
-if (loading || scoreLoading) {
+  if (loading || scoreLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <CustomActivityIndicator />
@@ -119,47 +151,54 @@ if (loading || scoreLoading) {
         <View style={styles.awaySection}>
           <View style={styles.teamWrapper}>
             <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>{props.awayTeam.code}</Text>
+            <Text style={styles.teamName}>
+              {awayRank && <Text style={styles.teamRank}>{awayRank} </Text>}
+              {props.awayTeam.code}
+            </Text>
           </View>
-          <Text
-            style={[
-              styles.awayScore,
-              isFinal && { opacity: awayIsWinner ? 1 : 0.5 },
-            ]}
-          >
-            {awayScore}
-          </Text>
+          {awayDisplay}
         </View>
 
         {/* Game Info */}
         <View style={styles.gameInfo}>
-          {isFinal && <Text style={styles.finalText}>{gameStatusDetail}</Text>}
-          {inProgress && !isHalftime && (
-            <>
-              <Text style={styles.finalText}>{formatQuarter(period)}</Text>
+          {isScheduled && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.dateTime}>{localDate}</Text>
               <View style={styles.divider} />
-              <Text style={styles.finalText}>{clock}</Text>
+              <Text style={styles.dateTime}>{localTime}</Text>
+            </View>
+          )}
+          {isFinal && <Text style={styles.finalText}>{gameStatusDetail}</Text>}
+          {inProgress && !isHalftime && endOfPeriod && (
+            <>
+              <Text style={styles.finalText}>
+                End of {formatCBBQuarter(period, isWomen)}
+              </Text>
             </>
           )}
-          {inProgress && isHalftime && (
-            <Text style={styles.finalText}>Halftime</Text>
+          {inProgress && !isHalftime && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.period}>{formatCBBQuarter(period)}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.clock}>{clock}</Text>
+            </View>
+          )}
+          {isHalftime && (
+            <>
+              <Text style={styles.finalText}>Halftime</Text>
+            </>
           )}
         </View>
-
         {/* Home Team */}
         <View style={styles.homeSection}>
+          {homeDisplay}
           <View style={styles.teamWrapper}>
             <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>{props.homeTeam.code}</Text>
+            <Text style={styles.teamName}>
+              {homeRank && <Text style={styles.teamRank}>{homeRank} </Text>}
+              {props.homeTeam.code}
+            </Text>
           </View>
-          <Text
-            style={[
-              styles.homeScore,
-              isFinal && { opacity: homeIsWinner ? 1 : 0.5 },
-            ]}
-          >
-            {homeScore}
-          </Text>
         </View>
       </View>
     </View>

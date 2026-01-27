@@ -1,0 +1,87 @@
+import { Ionicons } from "@expo/vector-icons";
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { Colors, Fonts } from "constants/Styles";
+import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { DBPlayer } from "types/types";
+
+type Props = {
+  player: DBPlayer | null;
+};
+
+export default function PlayerAwardList(player: Props) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const styles = playerAwardListStyles(isDark);
+  const playerAward = player.player?.awards;
+
+  const playerAwards = playerAward?.map((p, i) => {
+    const award = p;
+    const isAlt = i % 2 === 1;
+    const isLast = i === playerAward.length - 1;
+
+    const zebra = isAlt
+      ? isDark
+        ? styles.rowAltDark
+        : styles.rowAltLight
+      : null;
+    return (
+      <View
+        key={award}
+        style={[
+          styles.awardItem,
+          zebra,
+          { borderBottomWidth: isLast ? 0 : StyleSheet.hairlineWidth },
+        ]}
+      >
+        <Ionicons
+          name="trophy"
+          size={20}
+          color={isDark ? Colors.white : Colors.black}
+        />
+        <Text style={styles.awardText}>{award}</Text>
+      </View>
+    );
+  });
+
+  if (playerAward?.length === undefined) return null;
+
+  return (
+    <View style={styles.container}>
+      <HeadingTwo>Awards</HeadingTwo>
+      <View style={styles.wrapper}>{playerAwards}</View>
+    </View>
+  );
+}
+
+export const playerAwardListStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: 12,
+    },
+    wrapper: {
+      borderRadius: 8,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderWidth: StyleSheet.hairlineWidth,
+      overflow: "hidden",
+    },
+    awardItem: {
+      gap: 12,
+      paddingHorizontal: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      paddingVertical: 12,
+    },
+    awardText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    rowAltLight: {
+      backgroundColor: Colors.light.itemBackground,
+    },
+
+    rowAltDark: {
+      backgroundColor: Colors.dark.itemBackground,
+    },
+  });

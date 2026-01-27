@@ -6,9 +6,10 @@ import LeagueForum from "components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
-import MLBGamesList from "components/MLB/Games/MLBGamesList";
-import { StandingsList } from "components/MLB/Standings/StandingsList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
+import { StandingsList } from "components/Sports/MLB/Standings/StandingsList";
+import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import { Colors } from "constants/Colors";
 import { getMLBTeam } from "constants/teamsMLB";
 import dayjs from "dayjs";
@@ -17,9 +18,8 @@ import utc from "dayjs/plugin/utc";
 import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
-import { useLeagueNews } from "hooks/useLeagueNews";
-import SeasonLeadersList from "components/NFL/SeasonLeaderList";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
+import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -29,7 +29,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getScoresStyles } from "styles/LeagueStyles";
+import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { MLBGame } from "types/mlb";
 import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";

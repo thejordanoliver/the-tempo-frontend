@@ -9,7 +9,7 @@ export const gameListStyles = (isDark: boolean) =>
     },
     skeletonGridWrapper: {
       paddingBottom: 20,
-      gap: 12,
+      paddingHorizontal: 12,
     },
     gridListContainer: {
       paddingBottom: 100,
@@ -22,6 +22,7 @@ export const gameListStyles = (isDark: boolean) =>
     gridRow: {
       justifyContent: "space-between",
       marginBottom: 12,
+      gap: 12,
     },
     emptyText: {
       textAlign: "center",
@@ -32,6 +33,10 @@ export const gameListStyles = (isDark: boolean) =>
     },
     listItem: {
       marginHorizontal: 12,
+    },
+
+    gridItem: {
+      flex: 1,
     },
 
     itemContainer: {

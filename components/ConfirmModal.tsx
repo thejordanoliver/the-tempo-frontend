@@ -1,4 +1,5 @@
 import { Fonts } from "constants/fonts";
+import { Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {
@@ -35,7 +36,7 @@ export default function ConfirmModal({
   children, // 👈 accept children
 }: ConfirmModalProps) {
   const isDark = useColorScheme() === "dark";
-
+  const styles = confirmModalStyles(isDark);
   // Internal state to delay unmount after animation out
   const [showModal, setShowModal] = useState(visible);
 
@@ -49,78 +50,6 @@ export default function ConfirmModal({
   }, [visible]);
 
   if (!showModal) return null;
-
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: isDark
-        ? "rgba(100, 100, 100, 0.5)"
-        : "rgba(255, 255, 255, 0.5)",
-      borderRadius: 20,
-      justifyContent: "center",
-      padding: 20,
-      paddingBottom: 30,
-      width: "100%",
-      alignItems: "center",
-      overflow: "hidden",
-      marginBottom: 10,
-      minHeight: 400,
-    },
-    dragIndicator: {
-      width: 40,
-      height: 4,
-      borderRadius: 2,
-      backgroundColor: isDark ? "#ccc" : "#666",
-      marginBottom: 12,
-      alignSelf: "center",
-    },
-
-    title: {
-      fontSize: 28,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? "#fff" : "#000",
-      textAlign: "center",
-    },
-    message: {
-      fontSize: 16,
-      color: isDark ? "#ddd" : "#333",
-      marginBottom: 20,
-      textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
-    },
-    buttonRow: {
-      width: "100%",
-    },
-    button: {
-      paddingVertical: 14,
-      paddingHorizontal: 16,
-      borderRadius: 8,
-      marginVertical: 4,
-    },
-    cancelButton: {
-      backgroundColor: isDark ? "#555" : "#eee",
-    },
-    confirmButton: {
-      backgroundColor: isDark ? "#e74c3c" : "#d9534f",
-    },
-    cancelText: {
-      color: isDark ? "#ddd" : "#333",
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      fontSize: 16,
-    },
-    confirmText: {
-      color: "#fff",
-      fontFamily: Fonts.OSBOLD,
-      textAlign: "center",
-      fontSize: 16,
-    },
-    content: {
-      flex: 1,
-      justifyContent: "space-evenly",
-      alignItems: "center",
-      width: "100%",
-    },
-  });
 
   return (
     <Modal
@@ -197,3 +126,75 @@ export default function ConfirmModal({
     </Modal>
   );
 }
+const confirmModalStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: isDark
+        ? "rgba(100, 100, 100, 0.5)"
+        : "rgba(255, 255, 255, 0.5)",
+      borderRadius: 20,
+      justifyContent: "center",
+      padding: 20,
+      paddingBottom: 30,
+      width: "100%",
+      alignItems: "center",
+      overflow: "hidden",
+      marginBottom: 10,
+      minHeight: 400,
+    },
+    dragIndicator: {
+      width: 40,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+      marginBottom: 12,
+      alignSelf: "center",
+    },
+
+    title: {
+      fontSize: 28,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    message: {
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+      marginBottom: 20,
+      textAlign: "center",
+      fontFamily: Fonts.OSREGULAR,
+    },
+    buttonRow: {
+      width: "100%",
+    },
+    button: {
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      marginVertical: 4,
+    },
+    cancelButton: {
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    confirmButton: {
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    cancelText: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+      fontSize: 16,
+    },
+    confirmText: {
+      color: Colors.white,
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+      fontSize: 16,
+    },
+    content: {
+      flex: 1,
+      justifyContent: "space-evenly",
+      alignItems: "center",
+      width: "100%",
+    },
+  });

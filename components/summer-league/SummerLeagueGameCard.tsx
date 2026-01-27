@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/GamecardStyles/GameCardStyles";
+import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { teams } from "../../constants/teams";
 import type { summerGame } from "../../types/types";
 
@@ -71,7 +71,7 @@ export default function SummerLeagueGameCard({
 }) {
   const colorScheme = useColorScheme();
   const dark = isDark ?? colorScheme === "dark";
-  const styles = getStyles(dark);
+  const styles = GameCardStyles(dark);
   const router = useRouter();
 
   const { standings } = useSummerLeagueStandings();

@@ -8,7 +8,7 @@ import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
-import { SkeletonProfileScreen } from "components/SkeletonProfileScreen";
+import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { teams } from "constants/teams";
 import { teams as cbbteams } from "constants/teamsCBB";
 import { teams as cfbteams } from "constants/teamsCFB";
@@ -231,7 +231,7 @@ export default function ProfileScreen() {
     .map((fav: string) => {
       const [league, id] = fav.split(":");
       let team;
-      if (league === "NBA") team = teams.find((t) => t.id === id); // NBA IDs are strings
+      if (league === "NBA") team = teams.find((t) => String(t.id) === id); // NBA IDs are strings
       if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
       if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string

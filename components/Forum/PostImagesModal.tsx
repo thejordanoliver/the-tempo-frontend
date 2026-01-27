@@ -331,7 +331,7 @@ export default function PostImagesModal({
             style={[styles.captionOverlay, { opacity: captionOpacity }]}
           >
             <BlurView
-              intensity={80}
+              intensity={100}
               tint="dark"
               style={StyleSheet.absoluteFill}
             />
@@ -371,7 +371,13 @@ export default function PostImagesModal({
                 <Ionicons
                   name={liked ? "heart" : "heart-outline"}
                   size={28}
-                  color={liked ? "#ff3b30" : Colors.white}
+                  color={
+                    liked && isDark
+                      ? Colors.dark.lightRed
+                      : liked
+                      ? Colors.light.red
+                      : Colors.white
+                  }
                 />
                 <Text style={styles.engagementText}>{likeCount}</Text>
               </TouchableOpacity>
@@ -405,7 +411,7 @@ function getStyles(isDark: boolean) {
     },
     modalBackground: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0, 0, 0, 0.4)",
+      backgroundColor: "rgba(0, 0, 0, 0.10)",
       zIndex: 0,
     },
     galleryWrapper: {
@@ -445,6 +451,7 @@ function getStyles(isDark: boolean) {
     image: {
       width: "100%",
       height: "100%",
+      paddingVertical: 12,
       borderRadius: 10,
       overflow: "hidden",
       resizeMode: "contain",
@@ -516,7 +523,7 @@ function getStyles(isDark: boolean) {
       color: Colors.lightGray,
       fontSize: 13,
       fontFamily: Fonts.OSREGULAR,
-      marginTop: 4,
+      marginVertical: 12,
     },
     playOverlay: {
       position: "absolute",

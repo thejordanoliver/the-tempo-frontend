@@ -62,9 +62,7 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
           style={[
             styles.overlay,
             {
-              backgroundColor: isDark
-                ? Colors.darkGray
-                : Colors.lightGray,
+              backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
               opacity: pulseAnim, // opacity CAN use native driver
             },
           ]}
@@ -90,5 +88,6 @@ const skeletonStyles = (isDark: boolean) =>
     overlay: {
       ...StyleSheet.absoluteFillObject,
       borderRadius: 6,
+    
     },
   });

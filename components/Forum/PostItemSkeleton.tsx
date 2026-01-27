@@ -44,7 +44,6 @@ export default function PostItemSkeleton({ showMedia = true }: Props) {
           <PulseBlock style={styles.avatar} />
           <View style={{ flex: 1 }}>
             <PulseBlock style={styles.usernameLine} />
-            <PulseBlock style={styles.subLine} />
           </View>
         </View>
 

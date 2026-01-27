@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, Easing, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/Explore/ExploreStyles";
+import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import { ResultItem } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";

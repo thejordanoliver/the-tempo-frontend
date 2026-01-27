@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Fonts, Colors } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const getStyles = (isDark: boolean) =>
@@ -16,12 +15,12 @@ export const getStyles = (isDark: boolean) =>
     time: {
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontSize: 12,
+      fontSize: 16,
     },
     broadcasts: {
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.midTone : Colors.midTone,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     clock: {

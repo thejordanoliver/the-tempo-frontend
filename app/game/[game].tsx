@@ -1,5 +1,9 @@
+import MemoizedFloatingChatButton from "components//MemoizedFloatingChatButton";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
+import { useNBAStore } from "store/nbaStore";
+
 import {
   BoxScore,
   GameLeaders,
@@ -7,29 +11,27 @@ import {
   GameTeamStats,
   LastFiveGamesSwitcher,
   LineScore,
-} from "components/GameDetails";
-import GameHeader from "components/GameDetails/GameHeader";
-import GameOddsSection from "components/GameDetails/GameOddsSection";
-import GameSummary from "components/GameDetails/GameSummary";
-import GameUniforms from "components/GameDetails/GameUniforms";
-import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
-import LastPlay from "components/GameDetails/LastPlay";
-import Officials from "components/GameDetails/Officials";
-import ShotChart from "components/GameDetails/ShotChart";
-import TeamInjuries from "components/GameDetails/TeamInjuries";
-import WinPredictionVote from "components/GameDetails/WinPredictionVote";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
+} from "components/Sports/NBA/GameDetails";
+import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
+import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
+import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
+import GameUniforms from "components/Sports/NBA/GameDetails/GameUniforms";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
+import Officials from "components/Sports/NBA/GameDetails/Officials";
+import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
+import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
+import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
+import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import { getTeamById, neutralVenues, teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useGameBroadcasts } from "hooks/useBroadcasts";
 import { useGameDetails } from "hooks/useGameDetails";
-import { useGameInfo } from "hooks/useGameInfo";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
-import { useTeamRecord } from "hooks/useTeamRecords";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+
 import {
   Animated,
   Easing,
@@ -39,6 +41,7 @@ import {
   View,
 } from "react-native";
 import { useChatStore } from "store/chatStore";
+import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameDetailsScreen() {
@@ -79,16 +82,21 @@ export default function GameDetailsScreen() {
 
   if (typeof game !== "string") return null;
 
-  let parsedGame: any;
+  let parsedGame: Game;
+
   try {
-    parsedGame = JSON.parse(game);
+    parsedGame = JSON.parse(game) as Game;
   } catch (e) {
     console.warn("Failed to parse game:", game);
     return null;
   }
-  if (!parsedGame?.id) return null;
-  const { home, away, date, time, status, arena, id: gameId } = parsedGame;
 
+  if (!parsedGame?.id) return null;
+
+  if (!parsedGame?.id) return null;
+  const { home, away, date, time, status, venue, id } = parsedGame;
+
+  const gameId = String(id);
   const gameDateObj = useMemo(() => {
     if (!date) return new Date(); // fallback to now
     const d = new Date(date);
@@ -108,8 +116,6 @@ export default function GameDetailsScreen() {
       day: "numeric",
     });
   }, [gameDateObj]);
-
-  const gameDateStr = useMemo(() => gameDateObj.toISOString(), [gameDateObj]);
 
   const homeTeamData = teams.find(
     (t) =>
@@ -137,8 +143,8 @@ export default function GameDetailsScreen() {
     gameDate
   );
 
-  const venueNameFromGame = arena?.name ?? "";
-  const venueCityFromGame = arena?.city ?? "";
+  const venueNameFromGame = venue?.name ?? "";
+  const venueCityFromGame = venue?.city ?? "";
   const neutralArenaData = neutralVenues[venueNameFromGame];
 
   const cleanedArenaName = venueNameFromGame.replace(/\s*\(.*?\)/, "").trim();
@@ -158,16 +164,8 @@ export default function GameDetailsScreen() {
   const awayCode = useMemo(() => awayTeamData.code, [awayTeamData.code]);
   const homeCode = useMemo(() => homeTeamData.code, [homeTeamData.code]);
 
-  const lat =
-    neutralArenaData?.latitude ??
-    arena?.latitude ??
-    homeTeamData.latitude ??
-    null;
-  const lon =
-    neutralArenaData?.longitude ??
-    arena?.longitude ??
-    homeTeamData.longitude ??
-    null;
+  const lat = neutralArenaData?.latitude ?? homeTeamData.latitude ?? null;
+  const lon = neutralArenaData?.longitude ?? homeTeamData.longitude ?? null;
 
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
@@ -182,9 +180,6 @@ export default function GameDetailsScreen() {
     date
   );
 
-  const awayRecord = useTeamRecord(awayEspnId).record.overall ?? "0-0";
-  const homeRecord = useTeamRecord(homeEspnId).record.overall ?? "0-0";
-
   const cleanedArenaNameLower = cleanedArenaName.toLowerCase();
   const homeArenaNameLower = homeTeamData.venueName.toLowerCase();
   const awayArenaNameLower = awayTeamData.venueName.toLowerCase();
@@ -194,17 +189,18 @@ export default function GameDetailsScreen() {
     cleanedArenaNameLower !== homeArenaNameLower &&
     cleanedArenaNameLower !== awayArenaNameLower;
 
-  const homeFouls = details?.fouls.home;
-  const awayFouls = details?.fouls.away;
-  const homeTimeouts = details?.timeouts.home ?? 0;
-  const awayTimeouts = details?.timeouts.away ?? 0;
-  const plays = details?.plays ?? [];
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
+  const fouls = liveScore?.fouls;
+  const awayBonus = fouls?.away?.bonusState;
+  const homeBonus = fouls?.home?.bonusState;
+  const homeTimeouts = liveScore?.timeouts?.home ?? 0;
+  const awayTimeouts = liveScore?.timeouts?.away ?? 0;
+  const plays = liveScore?.plays ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const lastPlay = details?.plays?.length
-    ? details.plays[details.plays.length - 1]
-    : undefined;
+  const lastPlay = liveScore?.lastPlay
 
   /* ---------------- Header ---------------- */
 
@@ -223,9 +219,12 @@ export default function GameDetailsScreen() {
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
+          homeTeamId={homeTeamId}
+          awayTeamId={awayTeamId}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
           isNeutralSite={isNeutralSiteByArena}
+          league="NBA"
         />
       ),
     });
@@ -243,25 +242,26 @@ export default function GameDetailsScreen() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const { broadcasts } = useGameBroadcasts(
-    homeTeamData.espnID,
-    awayTeamData.espnID,
-    gameDateStr
-  );
-
+  // --- Broadcasts ---
+  const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
 
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-
-  // Now derive booleans reactively
+  const displayClock = liveScore?.displayClock;
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const headlineText = details?.headline;
+  const playerStats = liveScore?.playerStats ?? [];
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
+  const period = liveScore?.period;
 
   const isChristmasDay =
     gameDateObj.getMonth() === 11 && gameDateObj.getDate() === 25;
@@ -273,12 +273,6 @@ export default function GameDetailsScreen() {
     ? "New Year's Day"
     : null;
 
-  const { headlineText } = useGameInfo(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateStr
-  );
-
   const headline = headlineText ?? holidayLabel ?? "";
 
   const lineScore = liveScore?.periodScores?.length
@@ -287,48 +281,6 @@ export default function GameDetailsScreen() {
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
-  const { homeScoreValue, awayScoreValue } = useMemo(() => {
-    return {
-      homeScoreValue:
-        liveScore?.home.total ?? parsedGame.scores?.home?.points ?? 0,
-      awayScoreValue:
-        liveScore?.away.total ?? parsedGame.scores?.visitors?.points ?? 0,
-    };
-  }, [liveScore, parsedGame.scores]);
-
-  // --- Clock display ---
-  const displayClock = liveScore?.displayClock;
-  const displayPeriod = liveScore?.period;
-
-  // --- Quarter / period label + halftime flag ---
-  function getQuarterLabel(period?: number | string) {
-    const p = Number(period);
-    if (!p || isNaN(p)) return "Live";
-
-    if (p <= 4) {
-      return ["1st", "2nd", "3rd", "4th"][p - 1];
-    }
-
-    const ot = p - 4;
-    return ot === 1 ? "OT" : `${ot}OT`;
-  }
-  const periodLabel = useMemo(
-    () => getQuarterLabel(displayPeriod),
-    [displayPeriod]
-  );
-
-  // Replace your currentClock logic
-  const [refreshTick, setRefreshTick] = useState(0);
-  useEffect(() => {
-    if (!inProgress) return;
-
-    const interval = setInterval(() => {
-      setRefreshTick((prev) => prev + 1);
-    }, 12000);
-
-    return () => clearInterval(interval);
-  }, [inProgress]);
 
   if (isLoading || !liveScore) {
     return (
@@ -349,24 +301,22 @@ export default function GameDetailsScreen() {
       >
         <GameHeader
           headlineText={headline}
-          homeScore={homeScoreValue}
-          awayScore={awayScoreValue}
+          homeScore={homeScore}
+          awayScore={awayScore}
           home={home}
           away={away}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
-          homeFoulsToGive={homeFouls}
-          awayFoulsToGive={awayFouls}
+          homeBonusState={homeBonus}
+          awayBonusState={awayBonus}
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
-          statusText={liveScore?.statusText}
           displayClock={displayClock}
-          period={periodLabel}
+          period={period}
           isDark={isDark}
           formattedDate={formattedDate}
           time={time}
           networkString={broadcastText}
-          refreshTick={refreshTick}
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
         />
@@ -374,11 +324,11 @@ export default function GameDetailsScreen() {
         <View style={{ gap: 20, marginTop: 20 }}>
           {!dontShowDetails && (
             <>
-              {!isFinal && isScheduled && <LastPlay lastPlay={lastPlay} />}
+              {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
 
               {!isFinal && (
                 <WinPredictionVote
-                  gameId={parsedGame.id}
+                  gameId={gameId}
                   awayTeam={{
                     id: awayTeamData.id,
                     name: awayTeamData.name || awayTeamData.code,
@@ -419,11 +369,16 @@ export default function GameDetailsScreen() {
                 awayTeamId={awayTeamId}
                 homeTeamId={homeTeamId}
               />
+
+              {(isHalftime || inProgress) && (
+                <PlayersInFoulTrouble gameId={gameId} home={home} away={away} />
+              )}
+
               {!isScheduled && (
                 <BoxScore
                   gameId={gameId.toString()}
-                  homeTeamId={awayTeamId}
-                  awayTeamId={homeTeamId}
+                  homeTeamId={homeTeamId}
+                  awayTeamId={awayTeamId}
                 />
               )}
               {!isScheduled && (
@@ -431,7 +386,16 @@ export default function GameDetailsScreen() {
                   plays={plays}
                   homeTeamId={String(homeEspnId)}
                   awayTeamId={String(awayEspnId)}
-                  isCBB={false}
+                  league="NBA"
+                />
+              )}
+
+              {inProgress && (
+                <PlayersOnCourt
+                  playerStats={playerStats}
+                  homeTeamId={Number(homeEspnId)}
+                  awayTeamId={Number(awayEspnId)}
+                  league={"NBA"}
                 />
               )}
               {!isScheduled && (

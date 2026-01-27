@@ -2,83 +2,102 @@ import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getRivalryHeadline } from "constants/teamsCFB";
-import { useCFBGameDetails } from "hooks/CFBHooks/useCFBGameDetails";
-import { useCFBGamePossession } from "hooks/CFBHooks/useCFBGamePossession";
-import { useCFBTeamRecord } from "hooks/CFBHooks/useCFBTeamRecord";
+import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
+import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
 import { Image, Text, View, useColorScheme } from "react-native";
-import { gameWidgetStyles } from "styles/Explore/GameWidgetStyles";
+import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { formatQuarter } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 import { FootballGameWidgetProps } from "./NFLGameWidget";
+
 export default function CFBGameWidget({
   height = 150,
   width = 150,
   loading,
   ...props
 }: FootballGameWidgetProps) {
+  // -------------------------
+  // Appearance & styles
+  // -------------------------
   const isDark = useColorScheme() === "dark";
   const styles = gameWidgetStyles(isDark, height, width);
 
+  // -------------------------
+  // Game date/time formatting
+  // -------------------------
+  const gameDate = new Date(props.gameDateISO);
+  const localDate = gameDate.toLocaleString(undefined, { month: "short", day: "numeric" });
+  const localTime = gameDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
   const gameDateStr = props.gameDateISO;
 
-  const gameDate = new Date(props.gameDateISO); // parse ISO date
-  // Format local date with short month
-  const localDate = gameDate.toLocaleString(undefined, {
-    month: "short", // Jan, Feb, etc.
-    day: "numeric", // day of month
-  });
-  const localTime = gameDate.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const homeId = props.homeTeam?.id;
-  const awayId = props.awayTeam?.id;
+  // -------------------------
+  // Team IDs
+  // -------------------------
   const homeEspnId = props.homeTeam?.espnID;
   const awayEspnId = props.awayTeam?.espnID;
 
-  const possession = useCFBGamePossession(homeEspnId, awayEspnId, gameDateStr);
-
-  const homeRecord = useCFBTeamRecord(homeEspnId).record.overall ?? "0-0";
-  const awayRecord = useCFBTeamRecord(awayEspnId).record.overall ?? "0-0";
-
-  const { broadcast, headline } = useCFBGameDetails(
-    String(props.homeTeam?.espnID),
-    String(props.awayTeam?.espnID),
-    gameDateStr
+  // -------------------------
+  // Live game data hooks
+  // -------------------------
+  const possession = useFootballGamePossession(homeEspnId, awayEspnId, gameDateStr);
+  const { data: details } = useFootballGameDetails(
+    String(homeEspnId),
+    String(awayEspnId),
+    gameDateStr,
+    "cfb"
   );
-  const headlineText = headline
-    ? headline
-    : getRivalryHeadline(homeEspnId, awayEspnId);
 
-  const scoreLoading = possession.loading;
-  const period = possession.period;
-  const displayClock = possession.displayClock;
-  const downAndDistance = possession.downDistanceText;
-  const isScheduled = possession.gameStatusDescription === "Scheduled";
-  const isFinal = possession.gameStatusDescription === "Final";
-  const inProgress =
-    possession.gameStatusDescription === "In Progress" ||
-    possession.gameStatusDescription === "End of Period";
-  const isHalftime = possession.gameStatusDescription === "Halftime";
-  const endOfPeriod = possession.gameStatusDescription === "End of Period";
+  // -------------------------
+  // Headline and broadcast
+  // -------------------------
+  const headlineText = details?.headline ?? getRivalryHeadline(homeEspnId, awayEspnId);
+  const broadcast = details?.broadcasts;
+
+  // -------------------------
+  // Game status flags
+  // -------------------------
+  const status = possession.gameStatusDescription;
+  const isScheduled = status === "Scheduled";
+  const isFinal = status === "Final";
+  const inProgress = status === "In Progress" || status === "End of Period";
+  const isHalftime = status === "Halftime";
+  const endOfPeriod = status === "End of Period";
+
+  // -------------------------
+  // Possession info
+  // -------------------------
   const possessingTeamId = possession.possessionTeamId;
+  const homeHasPossession = possessingTeamId != null && String(possessingTeamId) === String(homeEspnId);
+  const awayHasPossession = possessingTeamId != null && String(possessingTeamId) === String(awayEspnId);
 
-  const homeHasPossession =
-    possessingTeamId != null &&
-    String(possessingTeamId) === String(props.homeTeam?.espnID);
-  const awayHasPossession =
-    possessingTeamId != null &&
-    String(possessingTeamId) === String(props.awayTeam?.espnID);
-
-  const homeScore = isFinal
-    ? props.homeScore ?? 0
-    : possession.score?.home ?? 0;
-  const awayScore = isFinal
-    ? props.awayScore ?? 0
-    : possession.score?.away ?? 0;
+  // -------------------------
+  // Scores & winner determination
+  // -------------------------
+  const homeScore = isFinal ? props.homeScore ?? 0 : possession.score?.home ?? 0;
+  const awayScore = isFinal ? props.awayScore ?? 0 : possession.score?.away ?? 0;
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
+
+  // -------------------------
+  // Team records
+  // -------------------------
+  const homeRecord = details?.homeRecords.total?.summary;
+  const awayRecord = details?.awayRecords.total?.summary;
+
+  // -------------------------
+  // Display components for scores
+  // -------------------------
+  const homeDisplay = displayeValue(
+    true,
+    isScheduled,
+    isFinal,
+    homeIsWinner,
+    homeRecord,
+    homeScore,
+    isDark
+  );
 
   const awayDisplay = displayeValue(
     false,
@@ -89,24 +108,11 @@ export default function CFBGameWidget({
     awayScore,
     isDark
   );
-  const homeDisplay = displayeValue(
-    true,
-    isScheduled,
-    isFinal,
-    homeIsWinner,
-    homeRecord,
-    homeScore,
-    isDark
-  ); // fixed: used correct winner
 
-  function formatQuarter(period: string) {
-    if (period === "1") return "1st";
-    if (period === "2") return "2nd";
-    if (period === "3") return "3rd";
-    if (period === "4") return "4th";
-  }
-
-  if (loading && scoreLoading) {
+  // -------------------------
+  // Loading state
+  // -------------------------
+  if (loading && possession.loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <CustomActivityIndicator />
@@ -114,15 +120,22 @@ export default function CFBGameWidget({
     );
   }
 
+  // -------------------------
+  // Render widget
+  // -------------------------
   return (
     <View style={styles.container}>
+      {/* Headline */}
       {headlineText && (
         <View style={styles.headlineContainer}>
           <Text style={styles.headline}>{headlineText}</Text>
         </View>
       )}
+
       <View style={styles.wrapper}>
-        {/* Away Team */}
+        {/* ---------------------- */}
+        {/* Away Team Section */}
+        {/* ---------------------- */}
         <View style={styles.awaySection}>
           <View style={styles.teamWrapper}>
             <Image
@@ -134,15 +147,14 @@ export default function CFBGameWidget({
           <View style={styles.scorePossession}>
             {awayDisplay}
             {awayHasPossession && (
-              <Image
-                style={styles.awayPossession}
-                source={isDark ? FootballLight : Football}
-              />
+              <Image style={styles.awayPossession} source={isDark ? FootballLight : Football} />
             )}
           </View>
         </View>
 
-        {/* Game Info */}
+        {/* ---------------------- */}
+        {/* Game Info Section */}
+        {/* ---------------------- */}
         <View style={styles.gameInfo}>
           {isScheduled && (
             <View style={styles.infoWrapper}>
@@ -151,51 +163,42 @@ export default function CFBGameWidget({
               <Text style={styles.dateTime}>{localTime}</Text>
             </View>
           )}
+
           {isFinal && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>
-                {possession.gameStatusShortDetail}
-              </Text>
+              <Text style={styles.finalText}>{possession.gameStatusShortDetail}</Text>
             </View>
           )}
+
           {inProgress && !isHalftime && endOfPeriod && (
-            <>
-              <Text style={styles.finalText}>
-                End of {formatQuarter(period ?? "")}
-              </Text>
-            </>
+            <Text style={styles.finalText}>End of {formatQuarter(possession.period ?? "")}</Text>
           )}
+
           {inProgress && !isHalftime && !endOfPeriod && (
             <>
               <View style={styles.infoWrapper}>
-                <Text style={styles.period}>{formatQuarter(period ?? "")}</Text>
+                <Text style={styles.period}>{formatQuarter(possession.period ?? "")}</Text>
                 <View style={styles.divider} />
-                <Text style={styles.finalText}>{displayClock}</Text>
+                <Text style={styles.finalText}>{possession.displayClock}</Text>
               </View>
-              <Text style={styles.downAndDistance}>{downAndDistance}</Text>
+              <Text style={styles.downAndDistance}>{possession.downDistanceText}</Text>
             </>
           )}
-          {inProgress && isHalftime && (
-            <>
-              <Text style={styles.finalText}>Halftime</Text>
-            </>
-          )}
+
+          {inProgress && isHalftime && <Text style={styles.finalText}>Halftime</Text>}
+
           {broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
         </View>
 
-        {/* Home Team */}
+        {/* ---------------------- */}
+        {/* Home Team Section */}
+        {/* ---------------------- */}
         <View style={styles.homeSection}>
-          <View style={styles.homeSection}>
-            <View style={styles.scorePossession}>
-              {homeDisplay}
-              {/* Home Team */}
-              {homeHasPossession && (
-                <Image
-                  style={styles.homePossession}
-                  source={isDark ? FootballLight : Football}
-                />
-              )}
-            </View>
+          <View style={styles.scorePossession}>
+            {homeDisplay}
+            {homeHasPossession && (
+              <Image style={styles.homePossession} source={isDark ? FootballLight : Football} />
+            )}
           </View>
           <View style={styles.teamWrapper}>
             <Image

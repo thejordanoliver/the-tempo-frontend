@@ -1,0 +1,221 @@
+import HeadingTwo from "components/Headings/HeadingTwo";
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "components/TabBars/FixedWidthTabBar";
+import { getTeamByESPNId } from "constants/teams";
+import { getTeamByESPNId as getCBBTeamByESPNId } from "constants/teamsCBB";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  UIManager,
+  useColorScheme,
+  View,
+} from "react-native";
+import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+type Props = {
+  homeTeamId: number;
+  awayTeamId: number;
+  playerStats: any[];
+  teamStats?: any[];
+  isLoading?: boolean;
+  isError?: boolean;
+  lighter?: boolean;
+  league: "NBA" | "CBB" | "WCBB";
+};
+
+type Player = {
+  athlete: {
+    id: string;
+    uid: string;
+    guid: string;
+    displayName: string;
+    shortName: string;
+    headshot: {
+      href: string;
+      alt: string;
+    };
+    jersey: string;
+    position: {
+      name: string;
+      displayName: string;
+      abbreviation: string;
+    };
+  };
+  teamType: "home" | "away";
+  active: boolean;
+  team: { id: number };
+};
+
+export default function PlayersOnCourt({
+  homeTeamId,
+  awayTeamId,
+  playerStats,
+  isLoading = false,
+  isError = false,
+  lighter = false,
+  league,
+}: Props) {
+  const isDark = useColorScheme() === "dark";
+  const styles = playerOnCourtStyles(isDark, lighter);
+  const homeTeam = getTeamByESPNId(homeTeamId);
+  const awayTeam = getTeamByESPNId(awayTeamId);
+  const homeCBBTeam = getCBBTeamByESPNId(homeTeamId);
+  const awayCBBTeam = getCBBTeamByESPNId(awayTeamId);
+
+  const isWomen = league === "WCBB";
+  const isNBA = league === "NBA";
+
+  const homeCode = isNBA ? homeTeam?.code : homeCBBTeam?.code;
+  const awayCode = isNBA ? awayTeam?.code : awayCBBTeam?.code;
+  const homeName = isNBA ? homeTeam?.fullName : homeCBBTeam?.fullName;
+  const awayName = isNBA ? awayTeam?.fullName : awayCBBTeam?.fullName;
+
+  const homeLogo =
+    isDark && isWomen
+      ? homeCBBTeam?.wLogo || homeCBBTeam?.logoLight || homeCBBTeam?.logo
+      : isDark && isNBA
+      ? homeTeam?.logoLight || homeTeam?.logo
+      : isNBA
+      ? homeTeam?.logo
+      : homeCBBTeam?.logo;
+
+  const awayLogo =
+    isDark && isWomen
+      ? awayCBBTeam?.wLogo || awayCBBTeam?.logoLight || awayCBBTeam?.logo
+      : isDark && isNBA
+      ? awayTeam?.logoLight || awayTeam?.logo
+      : isNBA
+      ? awayTeam?.logo
+      : awayCBBTeam?.logo;
+
+  const tabs = [
+    { key: "away", label: awayName ?? "Away Team" },
+    { key: "home", label: homeName ?? "Home Team" },
+  ];
+  const [selectedTab, setSelectedTab] = useState<"home" | "away">("away");
+
+  // Map ESPN players
+  const mapESPNPlayers = (teamId: number) => {
+    const block = playerStats.find(
+      (p) => Number(p.team?.id) === Number(teamId)
+    );
+    if (!block) return [];
+
+    const internalTeamId = getTeamByESPNId(teamId)?.id;
+
+    return block.athletes.map((ath: any) => {
+      const a = ath.athlete || {};
+      return {
+        athlete: a,
+        teamType: teamId === homeTeamId ? "home" : "away",
+        team: { id: internalTeamId },
+        active: ath.active,
+      };
+    });
+  };
+
+  const homePlayers = mapESPNPlayers(homeTeamId);
+  const awayPlayers = mapESPNPlayers(awayTeamId);
+
+  // Render team list
+  const renderOnCourtList = (
+    players: Player[],
+    teamCode: string | undefined
+  ) => (
+    <View>
+      {players
+        .filter((p) => p.active)
+        .map((p, index, arr) => (
+          <View
+            key={`${teamCode}-row-${p.athlete.id}-${index}`}
+            style={[
+              styles.tableRow,
+              index === arr.length - 1 && { borderBottomWidth: 0 },
+            ]}
+          >
+            <TouchableOpacity
+              key={`${teamCode}-${index}`}
+              onPress={() =>
+                router.push(`/player/cbb/${p.athlete.id}?teamId=${p.team.id}`)
+              }
+              activeOpacity={0.6}
+              style={styles.playerInfo}
+            >
+              <View style={styles.playerInfoWrapper}>
+                <View style={styles.avatarWrapper}>
+                  <Image
+                    source={{ uri: p?.athlete?.headshot?.href ?? "" }}
+                    alt={p?.athlete?.headshot?.alt}
+                    style={styles.avatar}
+                  />
+                </View>
+                <View style={styles.nameWrapper}>
+                  <Text style={styles.playerName}>{p.athlete.shortName}</Text>
+                  <Text style={styles.posistion}>
+                    {p.athlete.position.abbreviation}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", alignContent: "center" }}>
+                <Text style={styles.jersey}>#{p.athlete.jersey}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+    </View>
+  );
+
+  return (
+    <ScrollView>
+      <HeadingTwo>On The Court</HeadingTwo>
+      <View style={styles.wrapper}>
+        <FixedWidthTabBar
+          tabs={tabs.map((t) => t.key)}
+          selected={selectedTab}
+          renderLabel={(tabKey, isSelected) => {
+            const teamLogo = tabKey === "home" ? homeLogo : awayLogo;
+            const teamCode = tabKey === "home" ? homeCode : awayCode;
+            return (
+              <View style={styles.tabLabel}>
+                <Image
+                  source={teamLogo}
+                  style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
+                />
+                <Text
+                  style={getLabelStyle(isDark, isSelected, lighter, {
+                    opacity: isSelected ? 1 : 0.5,
+                  })}
+                >
+                  {teamCode}
+                </Text>
+              </View>
+            );
+          }}
+          onTabPress={(tabKey) => setSelectedTab(tabKey as "home" | "away")}
+          lighter={lighter}
+        />
+
+        {!isLoading && !isError && (
+          <View style={styles.container}>
+            {selectedTab === "home"
+              ? renderOnCourtList(homePlayers, homeCode)
+              : renderOnCourtList(awayPlayers, awayCode)}
+          </View>
+        )}
+      </View>
+    </ScrollView>
+  );
+}

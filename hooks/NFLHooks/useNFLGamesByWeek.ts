@@ -1,76 +1,97 @@
 // hooks/NFLHooks/useNFLGamesByWeek.ts
-import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { Game } from "types/nfl";
-
-type WeekObject = {
-  stage: string;       // "Pre Season", "Regular Season", "Playoffs", "Super Bowl"
-  weekNumber: number;  // numeric week for preseason/regular season, 1-4 for playoffs
-  label?: string;      // e.g., "Wild Card", "Divisional" (needed for playoffs)
-};
+import { NFLWeekFromGames } from "utils/nflWeeks";
 
 type UseNFLGamesByWeekParams = {
-  week: WeekObject;
-  date?: string;
+  selectedWeek: NFLWeekFromGames | null;
 };
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL; // your backend base URL, e.g. https://192.168.1.35:4000
+interface UseNFLGamesByWeekReturn {
+  games: Game[];
+  loading: boolean;
+  error: string | null;
+  season: number | null;
+  refresh: () => Promise<number | null>;
+}
 
-export const useNFLGamesByWeek = ({ week }: UseNFLGamesByWeekParams) => {
+export const useNFLGamesByWeek = ({
+  selectedWeek,
+}: UseNFLGamesByWeekParams): UseNFLGamesByWeekReturn => {
   const [games, setGames] = useState<Game[]>([]);
+  const [season, setSeason] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchGames = useCallback(async () => {
+  const fetchGames = useCallback(async (): Promise<number | null> => {
     setLoading(true);
     setError(null);
 
     try {
-      // ✅ Now calling your backend route instead of RapidAPI
-      const response = await axios.get(`${API_URL}/api/gamesNFL`, {
-        params: {
-          season: 2025,
-          league: 1,
-          timezone: "America/New_York",
-        },
+      const res = await axios.get(`${BASE_URL}/api/gamesNFL`, {
+        params: { league: 1 },
       });
 
-      const allGames = response.data?.response || [];
+      const allGames: Game[] = res.data?.response || [];
+      const backendSeason: number =
+        res.data?.response?.[0]?.game?.season || null;
 
-      // 🧩 Filter by week and stage
-      const filtered = allGames.filter((g: any) => {
-        const apiStage = g.game.stage; // e.g., "Regular Season" or "Post Season"
-        const apiWeek = g.game.week;   // e.g., "1", "2", "Wild Card", etc.
+      setSeason(backendSeason);
 
-        if (week.stage === "Pre Season" || week.stage === "Regular Season") {
-          const apiWeekNumber = parseInt(apiWeek.replace(/[^\d]/g, ""), 10);
-          return apiStage === week.stage && apiWeekNumber === week.weekNumber;
-        }
+      // ✅ Filter by week label + stage
+      let filteredGames = allGames;
 
-        // Playoffs / Super Bowl
-        if (week.stage === "Playoffs" || week.stage === "Super Bowl") {
+      if (selectedWeek) {
+        filteredGames = allGames.filter((g) => {
+          if (!g?.game) return false;
+
+          let gameWeek = g.game.week;
+          const gameStage = g.game.stage;
+
+          // Normalize preseason week labels
+          if (
+            gameStage === "Pre Season" &&
+            gameWeek.toLowerCase().startsWith("week")
+          ) {
+            gameWeek = "Pre " + gameWeek;
+          }
+
           return (
-            apiStage === "Post Season" &&
-            week.label &&
-            apiWeek.toLowerCase() === week.label.toLowerCase()
+            gameStage === selectedWeek.stage &&
+            gameWeek.toLowerCase() === selectedWeek.label.toLowerCase()
           );
-        }
+        });
+      }
 
-        return false;
+      filteredGames.sort((a, b) => {
+        const aTime = a.game.date?.timestamp
+          ? dayjs.unix(a.game.date.timestamp).valueOf()
+          : 0;
+        const bTime = b.game.date?.timestamp
+          ? dayjs.unix(b.game.date.timestamp).valueOf()
+          : 0;
+        return aTime - bTime;
       });
 
-      setGames(filtered);
+      setGames(filteredGames);
+      return backendSeason;
     } catch (err: any) {
-      console.error("Error fetching NFL games:", err.message);
-      setError("Failed to fetch games");
+      console.error("Error fetching NFL games by week:", err.message || err);
+      setError("Failed to load games");
+      return season;
     } finally {
       setLoading(false);
     }
-  }, [week]);
+  }, [selectedWeek, season]);
 
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
 
-  return { games, loading, error, refresh: fetchGames };
+  const refresh = useCallback(() => fetchGames(), [fetchGames]);
+
+  return { games, season, loading, error, refresh };
 };

@@ -6,8 +6,8 @@ export interface MLBTeam {
   code: string;
   color: string;
   secondaryColor: string;
-  logo: string;
-  logoLight?: string;
+  logo: any;
+  logoLight?: any;
   firstSeason?: number;
   latitude?: number;
   longitude?: number;
@@ -54,17 +54,17 @@ export interface MLBGame {
 }
 
 export interface MLBPlayer {
- id: string,
-    name: string,
-    shortName: string,
-    firstName: string,
-    lastName: string,
-    jersey: string,
-    position: string,
-    height: string,
-    weight:string,
-    age: number,
-    team: string,
-    teamId:string,
-    imageUrl: string
+  id: string;
+  name: string;
+  shortName: string;
+  firstName: string;
+  lastName: string;
+  jersey: string;
+  position: string;
+  height: string;
+  weight: string;
+  age: number;
+  team: string;
+  teamId: string;
+  imageUrl: string;
 }

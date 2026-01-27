@@ -1,11 +1,11 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import NFLGameCard from "components/NFL/Games/NFLGameCard";
-import PlayerHeader from "components/NFL/Player/PlayerHeader";
-import PlayerStatTable from "components/NFL/Player/PlayerStatTable";
-import SeasonStatCard from "components/NFL/Player/SeasonStatCard";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
+import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
+import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
+import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
+import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
+import { globalStyles } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
@@ -24,7 +24,7 @@ export default function NFLPlayerDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-
+  const global = globalStyles(isDark);
   /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
@@ -133,29 +133,18 @@ export default function NFLPlayerDetailScreen() {
       <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
         <HeadingTwo>Last Game</HeadingTwo>
 
-        {lastGameLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
+        {lastGameLoading && <GameCardSkeleton />}
 
         {lastGameError && (
-          <Text
-            style={{
-              color: isDark ? Colors.dark.lightRed : Colors.light.red,
-              textAlign: "center",
-              marginVertical: 20,
-              fontFamily: Fonts.OSREGULAR,
-            }}
-          >
-            Error loading last game
-          </Text>
+          <Text style={global.errorText}>Error loading last game</Text>
         )}
 
-        {lastGame && !lastGameLoading && (
-          <NFLGameCard game={lastGame} isDark={isDark} />
-        )}
+        {lastGame && !lastGameLoading && <NFLGameCard game={lastGame} />}
       </View>
 
       {/* Career Stats */}
       <View style={{ marginTop: 24 }}>
-        <PlayerStatTable playerId={player.player_id} seasons={seasons} />
+        <PlayerStatTable playerId={player.player_id} />
       </View>
     </ScrollView>
   );

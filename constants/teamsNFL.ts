@@ -924,16 +924,16 @@ export const getTeamInfo = (teamId: number | string) => {
 };
 
 export function getNFLTeamsLogo(
-  idOrNicknameOrCode: number | string | undefined,
+  id: number ,
   isDark: boolean
 ) {
-  if (!idOrNicknameOrCode) return PlaceholderLogo; // fallback
+  if (!id) return PlaceholderLogo; // fallback
 
-  const searchStr = String(idOrNicknameOrCode).toLowerCase();
+  const searchStr = String(id).toLowerCase();
 
   const team = teams.find((t) => {
     return (
-      t.id === Number(idOrNicknameOrCode) || // match by ID
+      t.id === Number(id) || // match by ID
       (t.name && t.name.toLowerCase() === searchStr) || // match by name
       (t.code && t.code.toLowerCase() === searchStr) // match by code
     );
@@ -949,13 +949,13 @@ export const getTeamByESPNId = (espnId: number | string) => {
 };
 
 export function getTeamLogoESPN(
-  idOrNicknameOrCode: number | string | undefined,
+  id: number | string | undefined,
   isDark: boolean
 ) {
-  if (!idOrNicknameOrCode) return PlaceholderLogo; // fallback
+  if (!id) return PlaceholderLogo; // fallback
 
   const team = teams.find((t) => {
-    return Number(t.espnID) === Number(idOrNicknameOrCode);
+    return Number(t.espnID) === Number(id);
   });
 
   if (!team) return PlaceholderLogo;

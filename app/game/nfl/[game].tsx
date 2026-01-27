@@ -21,25 +21,24 @@ import {
 /* --- UI Components --- */
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 
 /* --- Game Detail Components --- */
-import { GameLocation, LineScore } from "components/GameDetails";
-import { HighlightVideoList } from "components/GameDetails/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/GameDetails/LastFiveGames";
-import Officials from "components/GameDetails/Officials";
-import WinPredictionVote from "components/GameDetails/WinPredictionVote";
+import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
+import Officials from "components/Sports/NBA/GameDetails/Officials";
+import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 
 /* --- NFL Components --- */
-import GameLeaders from "components/NFL/GameDetails/GameLeaders";
-import NFLGameHeader from "components/NFL/GameDetails/NFLGameHeader";
-import NFLGameOddsSection from "components/NFL/GameDetails/NFLGameOddsSection";
-import NFLGameTeamStats from "components/NFL/GameDetails/NFLGameTeamStats";
-import NFLInjuries from "components/NFL/GameDetails/NFLInjuries";
-import NFLSeriesHistory from "components/NFL/GameDetails/NFLSeriesHistory";
-import LastPlayField from "components/NFL/GameDetails/PlayByPlayField";
-import TeamDrives from "components/NFL/GameDetails/TeamDrives";
-import TeamScoringSummary from "components/NFL/GameDetails/TeamScoringSummary";
+import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
+import NFLGameHeader from "components/Sports/NFL/GameDetails/NFLGameHeader";
+import NFLGameOddsSection from "components/Sports/NFL/GameDetails/NFLGameOddsSection";
+import NFLGameTeamStats from "components/Sports/NFL/GameDetails/NFLGameTeamStats";
+import NFLInjuries from "components/Sports/NFL/GameDetails/NFLInjuries";
+import NFLSeriesHistory from "components/Sports/NFL/GameDetails/NFLSeriesHistory";
+import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
+import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
+import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 
 /* --- Hooks --- */
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
@@ -55,6 +54,7 @@ import { getTeamInfo, neutralStadiums } from "constants/teamsNFL";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, NFLGame } from "types/nfl";
 
 /* --- Utils & Stores --- */
+import FloatingChatButton from "components/FloatingButton";
 import { useChatStore } from "store/chatStore";
 import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
 import { getHolidayLabel } from "utils/dateUtils";
@@ -72,10 +72,6 @@ export default function NFLGameDetailsScreen() {
   /* UI State & Animation                              */
   /* -------------------------------------------------- */
 
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const [showDetails, setShowDetails] = useState(false);
 
   /* -------------------------------------------------- */
@@ -88,33 +84,37 @@ export default function NFLGameDetailsScreen() {
   /* Chat State                                        */
   /* -------------------------------------------------- */
 
-  const { isOpen: isChatOpen } = useChatStore();
+  const { openChat, isOpen: isChatOpen } = useChatStore();
 
   useEffect(() => {
     const timeout = setTimeout(() => setShowDetails(true), 300); // load after 300ms
     return () => clearTimeout(timeout);
   }, []);
 
+  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const handleScrollStart = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    setIsScrolling(true);
+    Animated.timing(opacityAnim, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
   };
 
   const handleScrollEnd = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
     scrollTimeout.current = setTimeout(() => {
-      setIsScrolling(false);
+      Animated.timing(opacityAnim, {
+        toValue: isChatOpen ? 0 : 1,
+        duration: 200,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start();
     }, 1000);
   };
-
-  useEffect(() => {
-    Animated.timing(opacityAnim, {
-      toValue: isChatOpen || isScrolling ? 0 : 1,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  }, [isChatOpen, isScrolling]);
 
   useEffect(() => {
     if (!params?.game) return;
@@ -156,8 +156,11 @@ export default function NFLGameDetailsScreen() {
   const { game: gameInfo, teams, scores } = parsedGame || {};
   const home = teams?.home;
   const away = teams?.away;
-  const awayId = away?.id ? String(away.id) : "";
-  const homeId = home?.id ? String(home.id) : "";
+  const awayId = away?.id;
+  const homeId = home?.id;
+
+  const homeTeamId = home?.id;
+  const awayTeamId = away?.id;
 
   const homeTeam = getTeamInfo(String(home?.id ?? "")) ?? emptyNFLHomeTeam;
   const awayTeam = getTeamInfo(String(away?.id ?? "")) ?? emptyNFLAwayTeam;
@@ -205,6 +208,7 @@ export default function NFLGameDetailsScreen() {
     redzone,
     lineScore,
     lastPlay,
+    firstDownYardLine,
     displayClock,
     period,
     homeTimeouts,
@@ -252,7 +256,6 @@ export default function NFLGameDetailsScreen() {
   const holidayLabel = getHolidayLabel(gameDateObj);
   const headline = headlineText ?? holidayLabel ?? "";
 
-  
   useLayoutEffect(() => {
     // Only set the header if gameDetails have loaded
     if (!parsedGame || !homeTeam || !awayTeam || gameDetailsLoading) {
@@ -260,21 +263,17 @@ export default function NFLGameDetailsScreen() {
       return;
     }
 
-    const safeHomeCode =
-      homeTeam?.code && homeTeam.code !== "UNK" ? homeTeam.code : "HOM";
-    const safeAwayCode =
-      awayTeam?.code && awayTeam.code !== "UNK" ? awayTeam.code : "AWY";
-
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
+          homeTeamId={homeTeamId}
+          awayTeamId={awayTeamId}
+          homeTeamCode={homeCode}
+          awayTeamCode={awayCode}
+          isNeutralSite={neutralSite}
           league="NFL"
-          homeTeamCode={safeHomeCode}
-          awayTeamCode={safeAwayCode}
-          isTeamScreen={false}
-          isNeutralSite={neutralSite} // ESPN true/false from summary > scoreboard
         />
       ),
     });
@@ -327,75 +326,8 @@ export default function NFLGameDetailsScreen() {
     lon = neutralStadiumData.longitude ?? lon;
   }
 
-  const formatPeriod = (raw: string | number | undefined | null) => {
-    if (!raw) return "";
-
-    // 🔥 FIX: if raw is "5" or "6", convert to number
-    if (typeof raw === "string" && /^\d+$/.test(raw)) {
-      raw = Number(raw);
-    }
-
-    // ----- STRING CASES -----
-    if (typeof raw === "string") {
-      const upper = raw.toUpperCase();
-
-      if (upper === "OT" || upper === "OVERTIME") return "OT";
-      if (upper === "HT") return "Halftime";
-      if (upper === "FT") return "Final";
-
-      if (upper.includes("END")) {
-        const quarterNum = upper.match(/(\d)/)?.[1];
-        if (quarterNum) {
-          return `End ${
-            quarterNum === "1"
-              ? "1st"
-              : quarterNum === "2"
-              ? "2nd"
-              : quarterNum === "3"
-              ? "3rd"
-              : "4th"
-          }`;
-        }
-        return "End";
-      }
-
-      if (upper.startsWith("Q")) {
-        const num = parseInt(upper.replace("Q", ""));
-        return num === 1
-          ? "1st"
-          : num === 2
-          ? "2nd"
-          : num === 3
-          ? "3rd"
-          : num === 4
-          ? "4th"
-          : `${num}OT`;
-      }
-
-      return raw;
-    }
-
-    // ----- NUMBER CASES -----
-    if (typeof raw === "number") {
-      if (raw >= 1 && raw <= 4) {
-        return raw === 1
-          ? "1st"
-          : raw === 2
-          ? "2nd"
-          : raw === 3
-          ? "3rd"
-          : "4th";
-      }
-
-      const ot = raw - 4;
-      return ot === 1 ? "OT" : `${ot}OT`;
-    }
-
-    return String(raw);
-  };
-
-  const awayRecord = useNFLTeamRecord(awayId).record.overall ?? "0-0";
-  const homeRecord = useNFLTeamRecord(homeId).record.overall ?? "0-0";
+  const awayRecord = useNFLTeamRecord(awayEspnId).record.overall ?? "0-0";
+  const homeRecord = useNFLTeamRecord(homeEspnId).record.overall ?? "0-0";
 
   const stadiumData = neutralSite
     ? neutralStadiums[gameInfo?.venue?.name ?? ""]
@@ -418,8 +350,8 @@ export default function NFLGameDetailsScreen() {
   const awayLastGames = useLastFiveGames(awayTeamIdNum);
 
   const linescore = lineScore ?? { home: [], away: [] };
-  const homeScore = score?.home;
-  const awayScore = score?.away;
+  const homeScore = score?.home ?? 0;
+  const awayScore = score?.away ?? 0;
 
   // --- Matchup Route (Series History) ---
   const { data: matchup } = useNFLMatchup(homeCode, awayCode);
@@ -452,18 +384,12 @@ export default function NFLGameDetailsScreen() {
           headlineText={headline}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
-          scores={{
-            away: { total: awayScore },
-            home: { total: homeScore },
-          }}
-          possessionTeamId={
-            possessionTeamId !== undefined
-              ? String(possessionTeamId)
-              : undefined
-          }
+          awayScore={awayScore}
+          homeScore={homeScore}
+          possessionTeamId={possessionTeamId}
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
-          period={formatPeriod(period)}
+          period={period}
           displayClock={displayClock}
           possessionText={downDistanceText}
           isDark={isDark}
@@ -533,8 +459,9 @@ export default function NFLGameDetailsScreen() {
             {/* Last Play Field - only show when game is live */}
             {(gameStatusDescription === "In Progress" ||
               gameStatusDescription === "Halftime") && (
-              <LastPlayField
+              <PlayByPlayField
                 lastPlay={lastPlay}
+                firstDownYardLine={firstDownYardLine}
                 possessionTeamId={possessionTeamId}
                 homeTeamId={Number(homeTeam.id)} // ensure number
                 awayTeamId={Number(awayTeam.id)} // ensure number
@@ -563,8 +490,8 @@ export default function NFLGameDetailsScreen() {
             )}
             <TeamScoringSummary
               scoringPlays={scoringPlays ?? []}
-              awayTeamAbbr={awayCode}
-              homeTeamAbbr={homeCode}
+              homeTeamId={Number(homeTeam?.espnID)}
+              awayTeamId={Number(awayTeam?.espnID)}
               league="NFL"
             />
 
@@ -648,8 +575,18 @@ export default function NFLGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-
-      <MemoizedFloatingChatButton gameId={parsedGame?.game?.id} />
+      <Animated.View
+        style={{
+          opacity: opacityAnim,
+          position: "absolute",
+          bottom: 100,
+          left: 0,
+          right: 0,
+        }}
+        pointerEvents={isChatOpen ? "none" : "auto"}
+      >
+        <FloatingChatButton gameId={parsedGame?.game?.id} openChat={openChat} />
+      </Animated.View>
     </>
   );
 }

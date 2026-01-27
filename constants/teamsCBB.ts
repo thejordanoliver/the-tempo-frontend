@@ -279,6 +279,7 @@ import DepaulLogo from "../assets/College_Logos/Depaul.png";
 import DepauwLogo from "../assets/College_Logos/Depauw.png";
 import DetroitLogo from "../assets/College_Logos/Detroit.png";
 import DrakeLogo from "../assets/College_Logos/Drake.png";
+import DrexelLogo from "../assets/College_Logos/Drexel.png";
 import ECULogo from "../assets/College_Logos/EastCarolina.png";
 import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
 import EasternWashingtonLogo from "../assets/College_Logos/EasternWashington.png";
@@ -566,7 +567,6 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import DrexelLogo from "../assets/College_Logos/Drexel.png";
 
 export const teams: CBBTeam[] = [
   {
@@ -7187,14 +7187,14 @@ export const teams: CBBTeam[] = [
   {
     id: 1889,
     wid: 6866,
-  espnID: 2182,
+    espnID: 2182,
     name: "Drexel",
     fullName: "Drexel Dragons",
     shortName: "Drexel",
     code: "DREX",
     color: "#020260",
     secondaryColor: "#ffd65a",
-    logo: DrexelLogo
+    logo: DrexelLogo,
   },
   {
     id: 228,
@@ -7629,6 +7629,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1883,
+    wid: 6853,
     espnID: 159,
     name: "Dartmouth",
     fullName: "Dartmouth Big Green",
@@ -7663,6 +7664,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1971,
+    wid: 6971,
     espnID: 2329,
     name: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
@@ -9081,25 +9083,26 @@ export const getTeamLogo = (id?: number | string, isDark = false) => {
   return isDark ? team.logoLight ?? team.logo : team.logo;
 };
 
-export function getTeamLogoPreviewModal(
-  idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean,
-  lighter: boolean
-) {
-  if (!idOrNicknameOrCode) return PlaceholderLogo;
+export const getCBBTeamLogo = (id?: number | string, isDark = false, isWomen = false) => {
+  if (!id) return PlaceholderLogo;
 
-  const searchStr = String(idOrNicknameOrCode); // convert to string
+  // Try MEN first
+  let team = teams.find((t) => String(t.id) === String(id));
 
-  const team = teams.find((t) => String(t.id) === searchStr);
+  
+  if (!team) {
+    team = teams.find((t) => String(t.wid) === String(id));
+    isWomen = !!team;
+  }
 
   if (!team) return PlaceholderLogo;
 
-  return lighter
-    ? team.logoLight || team.logo
-    : isDark
-    ? team.logoLight || team.logo
-    : team.logo;
-}
+  // Men’s logo
+  return isDark ? team.logoLight ?? team.logo : team.logo;
+};
+
+
+
 
 
 export const teamsCBById: Record<string, CBBTeam> = teams.reduce(

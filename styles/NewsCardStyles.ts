@@ -1,7 +1,6 @@
 // GameCard.styles.ts
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
-import { Fonts } from "constants/fonts";
-import { Colors } from "constants/Colors";
 export const newsCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {

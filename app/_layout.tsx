@@ -1,11 +1,11 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import ChatInputBar from "components/GameDetails/ChatInputBar";
-import LiveChatBottomSheet from "components/GameDetails/LiveChat";
 import FollowersModal from "components/Profile/FollowersModal";
+import ChatInputBar from "components/Sports/NBA/GameDetails/ChatInputBar";
+import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
+import { NotificationProvider } from "contexts/NotificationContext";
 import { PreferencesProvider } from "contexts/PreferencesContext";
 import { useChatStore } from "store/chatStore";
 import { useFollowersModalStore } from "store/followersModalStore";
-import { NotificationProvider } from "contexts/NotificationContext";
 
 import {
   Oswald_200ExtraLight,
@@ -98,9 +98,7 @@ export default function RootLayout() {
   // Tab bar visibility
   const [visibleTabBar, setVisibleTabBar] = useState(true);
 
-  const shouldHideTabBar = hiddenRoutes.some((r) =>
-    pathname?.startsWith(r)
-  );
+  const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
   // Update tab bar visibility + close chat if navigating away
   useEffect(() => {
@@ -137,104 +135,102 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-            <NotificationProvider>
-      <BottomSheetModalProvider>
+      <NotificationProvider>
+        <BottomSheetModalProvider>
+          <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
+            <PreferencesProvider>
+              <Stack
+                screenOptions={({ route, navigation }) => {
+                  const isTabScreen = route.name === "(tabs)";
+                  const isSplashScreen = route.name === "signup/success";
+                  const isProfileScreen = route.name === "profile";
 
-        <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-          <PreferencesProvider>
-            <Stack
-              screenOptions={({ route, navigation }) => {
-                const isTabScreen = route.name === "(tabs)";
-                const isSplashScreen = route.name === "signup/success";
-                const isProfileScreen = route.name === "profile";
-
-                return {
-                  headerShown: !isSplashScreen && !isTabScreen,
-                  header: !isSplashScreen
-                    ? () => (
-                        <CustomHeaderTitle
-                          title={route.name}
-                          onBack={
-                            navigation.canGoBack()
-                              ? navigation.goBack
-                              : undefined
-                          }
-                        />
-                      )
-                    : undefined,
-                  gestureEnabled: !isTabScreen,
-                  animation: isProfileScreen
-                    ? "fade"
-                    : isSplashScreen
-                    ? "fade"
-                    : isTabScreen
-                    ? "none"
-                    : "default",
-                  gestureDirection: "horizontal",
-                };
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="+not-found"
-                options={{ title: "Page Not Found" }}
-              />
-              <Stack.Screen name="signup/success" />
-            </Stack>
-
-            <StatusBar style={isDark ? "light" : "dark"} />
-
-            {/* Tab Bar */}
-            {!shouldHideTabBar && visibleTabBar && (
-              <Animated.View
-                style={{
-                  opacity,
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
+                  return {
+                    headerShown: !isSplashScreen && !isTabScreen,
+                    header: !isSplashScreen
+                      ? () => (
+                          <CustomHeaderTitle
+                            title={route.name}
+                            onBack={
+                              navigation.canGoBack()
+                                ? navigation.goBack
+                                : undefined
+                            }
+                          />
+                        )
+                      : undefined,
+                    gestureEnabled: !isTabScreen,
+                    animation: isProfileScreen
+                      ? "fade"
+                      : isSplashScreen
+                      ? "fade"
+                      : isTabScreen
+                      ? "none"
+                      : "default",
+                    gestureDirection: "horizontal",
+                  };
                 }}
               >
-                <CustomTabBar />
-              </Animated.View>
-            )}
-
-            {/* Global Followers Modal */}
-            <FollowersModal
-              visible={isVisible}
-              onClose={closeModal}
-              type={type}
-              currentUserId={currentUserId ?? ""}
-              targetUserId={targetUserId ?? ""}
-            />
-
-            {/* Global Chat */}
-            {gameId && isOpen && pathname?.startsWith("/game/") && (
-              <>
-                <LiveChatBottomSheet
-                  gameId={gameId}
-                  onChange={(index) => index === -1 && closeChat()}
-                  onSend={(sendMessage) => setSendFn(() => sendMessage)}
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="+not-found"
+                  options={{ title: "Page Not Found" }}
                 />
+                <Stack.Screen name="signup/success" />
+              </Stack>
 
-                <ChatInputBar
-                  value={input}
-                  onChange={setInput}
-                  onSend={() => {
-                    if (!input.trim() || !gameId) return;
-                    if (sendFn) {
-                      sendFn(input);
-                      setInput("");
-                    }
+              <StatusBar style={isDark ? "light" : "dark"} />
+
+              {/* Tab Bar */}
+              {!shouldHideTabBar && visibleTabBar && (
+                <Animated.View
+                  style={{
+                    opacity,
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                   }}
-                />
-              </>
-            )}
-          </PreferencesProvider>
-        </ThemeProvider>
+                >
+                  <CustomTabBar />
+                </Animated.View>
+              )}
 
-      </BottomSheetModalProvider>
-            </NotificationProvider>
+              {/* Global Followers Modal */}
+              <FollowersModal
+                visible={isVisible}
+                onClose={closeModal}
+                type={type}
+                currentUserId={currentUserId ?? ""}
+                targetUserId={targetUserId ?? ""}
+              />
+
+              {/* Global Chat */}
+              {gameId && isOpen && pathname?.startsWith("/game/") && (
+                <>
+                  <LiveChatBottomSheet
+                    gameId={gameId}
+                    onChange={(index) => index === -1 && closeChat()}
+                    onSend={(sendMessage) => setSendFn(() => sendMessage)}
+                  />
+
+                  <ChatInputBar
+                    value={input}
+                    onChange={setInput}
+                    onSend={() => {
+                      if (!input.trim() || !gameId) return;
+                      if (sendFn) {
+                        sendFn(input);
+                        setInput("");
+                      }
+                    }}
+                  />
+                </>
+              )}
+            </PreferencesProvider>
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </NotificationProvider>
     </GestureHandlerRootView>
   );
 }

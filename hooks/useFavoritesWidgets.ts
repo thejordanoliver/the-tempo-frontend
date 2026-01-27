@@ -10,7 +10,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 import { CFBTeam } from "types/cfb";
 import { NFLTeam } from "types/nfl";
-import { NBATeam } from "types/types";
 import { useMultipleCBBTeamGames } from "./CBBHooks/useMultipleCBBTeamGames";
 import { useMultipleCFBTeamGames } from "./CFBHooks/useMultipleCFBTeamGames";
 import { useMultipleNFLTeamGames } from "./NFLHooks/useMultipleNFLTeamGames";
@@ -30,27 +29,69 @@ export function useFavoriteWidgets(topN = 4) {
     }, [])
   );
 
-  const nbaTeamIds = useMemo(() => favorites.filter(f => f.startsWith("NBA:")).map(f => f.split(":")[1]), [favorites]);
-  const nflTeamIds = useMemo(() => favorites.filter(f => f.startsWith("NFL:")).map(f => f.split(":")[1]), [favorites]);
-  const cfbTeamIds = useMemo(() => favorites.filter(f => f.startsWith("CFB:")).map(f => f.split(":")[1]), [favorites]);
-  const cbbTeamIds = useMemo(() => favorites.filter(f => f.startsWith("CBB:")).map(f => f.split(":")[1]), [favorites]);
-  const wcbbTeamIds = useMemo(() => favorites.filter(f => f.startsWith("WCBB:")).map(f => f.split(":")[1]), [favorites]);
+  const nbaTeamIds = useMemo(
+    () =>
+      favorites.filter((f) => f.startsWith("NBA:")).map((f) => f.split(":")[1]),
+    [favorites]
+  );
+  const nflTeamIds = useMemo(
+    () =>
+      favorites.filter((f) => f.startsWith("NFL:")).map((f) => f.split(":")[1]),
+    [favorites]
+  );
+  const cfbTeamIds = useMemo(
+    () =>
+      favorites.filter((f) => f.startsWith("CFB:")).map((f) => f.split(":")[1]),
+    [favorites]
+  );
+  const cbbTeamIds = useMemo(
+    () =>
+      favorites.filter((f) => f.startsWith("CBB:")).map((f) => f.split(":")[1]),
+    [favorites]
+  );
+  const wcbbTeamIds = useMemo(
+    () =>
+      favorites
+        .filter((f) => f.startsWith("WCBB:"))
+        .map((f) => f.split(":")[1]),
+    [favorites]
+  );
 
-  const { allGames: nbaGames, loading: nbaLoading } = useMultipleTeamGames(nbaTeamIds);
-  const { allGames: nflGames, loading: nflLoading } = useMultipleNFLTeamGames(nflTeamIds);
-  const { allGames: cfbGames, loading: cfbLoading } = useMultipleCFBTeamGames(cfbTeamIds);
-  const { allGames: cbbGames, loading: cbbLoading } = useMultipleCBBTeamGames(cbbTeamIds, { isWomen: false });
-  const { allGames: wcbbGames, loading: wcbbLoading } = useMultipleCBBTeamGames(wcbbTeamIds, { isWomen: true });
+  const { allGames: nbaGames, loading: nbaLoading } =
+    useMultipleTeamGames(nbaTeamIds);
+  const { allGames: nflGames, loading: nflLoading } =
+    useMultipleNFLTeamGames(nflTeamIds);
+  const { allGames: cfbGames, loading: cfbLoading } =
+    useMultipleCFBTeamGames(cfbTeamIds);
+  const { allGames: cbbGames, loading: cbbLoading } = useMultipleCBBTeamGames(
+    cbbTeamIds,
+    { isWomen: false }
+  );
+  const { allGames: wcbbGames, loading: wcbbLoading } = useMultipleCBBTeamGames(
+    wcbbTeamIds,
+    { isWomen: true }
+  );
 
-  const loading = useMemo(() => nbaLoading || nflLoading || cfbLoading || cbbLoading || wcbbLoading, [
-    nbaLoading, nflLoading, cfbLoading, cbbLoading, wcbbLoading,
-  ]);
+  const loading = useMemo(
+    () => nbaLoading || nflLoading || cfbLoading || cbbLoading || wcbbLoading,
+    [nbaLoading, nflLoading, cfbLoading, cbbLoading, wcbbLoading]
+  );
 
   // -------------------------------
   // Helper to sort by live > scheduled > final
   // -------------------------------
   const statusOrder = (status: string) => {
-    const liveStatuses = ["In Play", "Q1", "Q2", "Q3", "Q4", "OT", "Halftime", "BT", "HT"];
+    const liveStatuses = [
+      "In Play",
+      "Q1",
+      "Q2",
+      "Q3",
+      "Q4",
+      "OT",
+      "Halftime",
+      "BT",
+      "HT",
+    ];
     const scheduledStatuses = ["NS", "Scheduled"];
     const finalStatuses = ["Final", "FT", "AOT"];
 
@@ -60,70 +101,39 @@ export function useFavoriteWidgets(topN = 4) {
     return 3; // unknown status
   };
 
-// NBA / generic games
-const pickRelevantGame = useCallback((games: any[]) => {
-  if (!games?.length) return null;
+  const pickNearestGame = useCallback((games: any[]) => {
+    if (!games?.length) return null;
 
-  // Live games first
-  const liveGame = games.find(g => ["In Play"].includes(g.statusText));
-  if (liveGame) return liveGame;
+    const now = Date.now();
 
-  // Scheduled games second (earliest upcoming)
-  const scheduledGame = games
-    .filter(g => ["Scheduled", "NS"].includes(g.statusText))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-  if (scheduledGame) return scheduledGame;
+    return (
+      games
+        .map((g) => ({
+          game: g,
+          diff: Math.abs(new Date(g.date).getTime() - now),
+        }))
+        .sort((a, b) => a.diff - b.diff)[0]?.game ?? null
+    );
+  }, []);
 
-  // Final games last (pick the most recent final)
-  const finalGame = games
-    .filter(g => ["Final", "FT", "AOT"].includes(g.statusText))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  return finalGame ?? null;
-}, []);
+  const pickNearestFootballGame = useCallback((games: any[]) => {
+    if (!games?.length) return null;
 
-// NFL / CFB
-const pickRelevantFootballGame = useCallback((games: any[]) => {
-  if (!games?.length) return null;
+    const now = Date.now();
 
-  // Live / in-progress / halftime games first
-  const liveGame = games.find(g =>
-    ["In Progress", "Halftime"].includes(g.statusText || g.game.status?.long)
-  );
-  if (liveGame) return liveGame;
+    return (
+      games
+        .map((g) => {
+          const date = g.game?.date?.utc ?? g.game?.date?.date;
 
-  // Scheduled games second (earliest upcoming)
-  const scheduledGame = games
-    .filter(g => ["NS", "Scheduled"].includes(g.statusText || g.game.status?.long))
-    .sort((a, b) => new Date(a.game.date.utc || a.game.date.date).getTime() - new Date(b.game.date.utc || b.game.date.date).getTime())[0];
-  if (scheduledGame) return scheduledGame;
-
-  // Final games last (pick the most recent final)
-  const finalGame = games
-    .filter(g => ["Final", "FT", "AOT"].includes(g.statusText || g.game.status?.long))
-    .sort((a, b) => new Date(b.game.date.utc || b.game.date.date).getTime() - new Date(a.game.date.utc || a.game.date.date).getTime())[0];
-  return finalGame ?? null;
-}, []);
-
-// CBB / WCBB
-const pickRelevantCBBGame = useCallback((games: any[]) => {
-  if (!games?.length) return null;
-
-  // Live games first
-  const liveGame = games.find(g => ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"].includes(g.status));
-  if (liveGame) return liveGame;
-
-  // Scheduled games second
-  const scheduledGame = games
-    .filter(g => ["NS"].includes(g.status))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
-  if (scheduledGame) return scheduledGame;
-
-  // Final games last, most recent first
-  const finalGame = games
-    .filter(g => ["FT", "AOT"].includes(g.status))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  return finalGame ?? null;
-}, []);
+          return {
+            game: g,
+            diff: Math.abs(new Date(date).getTime() - now),
+          };
+        })
+        .sort((a, b) => a.diff - b.diff)[0]?.game ?? null
+    );
+  }, []);
 
   // -------------------------------
   // Build widgets
@@ -139,34 +149,40 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
       logoLight: team.logoLight ?? team.logo,
     });
 
-    return nbaTeamIds.flatMap(teamId => {
-      const game = pickRelevantGame(nbaGames[teamId]);
+    return nbaTeamIds.flatMap((teamId) => {
+      const game = pickNearestGame(nbaGames[teamId]);
+
       if (!game) return [];
       const gameDate = new Date(game.date);
-      return [{
-        league: "NBA",
-        id: game.id,
-        date: `${gameDate.getMonth() + 1}/${gameDate.getDate()}`,
-        time: gameDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        gameDateISO: game.date,
-        homeTeam: normalizeTeam(game.home),
-        awayTeam: normalizeTeam(game.away),
-        homeScore: game.scores?.home.points ?? 0,
-        awayScore: game.scores?.visitors.points ?? 0,
-        status: game.status?.long ?? "",
-        halftime: game.status?.halftime,
-        periods: game.periods.current,
-        clock: game.status.clock,
-        loading: nbaLoading,
-      }];
+      return [
+        {
+          league: "NBA",
+          id: game.id,
+          date: `${gameDate.getMonth() + 1}/${gameDate.getDate()}`,
+          time: gameDate.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          gameDateISO: game.date,
+          homeTeam: normalizeTeam(game.home),
+          awayTeam: normalizeTeam(game.away),
+          homeScore: game.scores?.home.points ?? 0,
+          awayScore: game.scores?.visitors.points ?? 0,
+          status: game.status?.long ?? "",
+          halftime: game.status?.halftime,
+          periods: game.periods.current,
+          clock: game.status.clock,
+          loading: nbaLoading,
+        },
+      ];
     });
-  }, [nbaGames, nbaTeamIds, pickRelevantGame, nbaLoading]);
+  }, [nbaGames, nbaTeamIds, pickNearestGame, nbaLoading]);
 
   /* ---------- NFL Widgets ---------- */
   const nflWidgets: FootballGameWidgetProps[] = useMemo(() => {
     const normalizeTeam = (team: NFLTeam) => ({
       id: Number(team.id),
-      espnID: String(team.espnID),
+      espnID: team.espnID,
       name: team.name ?? "",
       code: team.code ?? "",
       logo: team.logo,
@@ -174,7 +190,8 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
     });
 
     return nflTeamIds.flatMap((teamId) => {
-      const game = pickRelevantFootballGame(nflGames[teamId]);
+      const game = pickNearestFootballGame(nflGames[teamId]);
+
       if (!game) return [];
       const gameDate = new Date(game.game.date.date);
       return [
@@ -199,13 +216,13 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
         },
       ];
     });
-  }, [nflGames, nflTeamIds, pickRelevantFootballGame, nflLoading]);
+  }, [nflGames, nflTeamIds, pickNearestFootballGame, nflLoading]);
 
   /* ---------- CFB Widgets ---------- */
   const cfbWidgets: FootballGameWidgetProps[] = useMemo(() => {
     const normalizeTeam = (team: CFBTeam) => ({
       id: Number(team.id),
-      espnID: String(team.espnID),
+      espnID: Number(team.espnID), // ✅ force number
       name: team.name ?? "",
       code: team.code ?? "",
       logo: team.logo,
@@ -213,7 +230,8 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
     });
 
     return cfbTeamIds.flatMap((teamId) => {
-      const game = pickRelevantFootballGame(cfbGames[teamId]);
+      const game = pickNearestFootballGame(nflGames[teamId]);
+
       if (!game) return [];
       const gameDate = new Date(game.game.date.date);
       return [
@@ -238,7 +256,7 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
         },
       ];
     });
-  }, [cfbGames, cfbTeamIds, pickRelevantFootballGame, cfbLoading]);
+  }, [cfbGames, cfbTeamIds, pickNearestFootballGame, cfbLoading]);
 
   /* ---------- CBB / WCBB Widgets ---------- */
   const buildCBBWidgets = useCallback(
@@ -249,13 +267,13 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
       widgetLoading = false
     ): CBBGameWidgetProps[] => {
       return teamIds.flatMap((teamId) => {
-        const game = pickRelevantCBBGame(gamesMap[teamId]);
+        const game = pickNearestGame(gamesMap[teamId]);
         if (!game) return [];
         const date = new Date(game.date);
 
         const normalizeTeam = (team: any) => {
           const logo = isWomen
-            ? team.wLogo ?? getCBBTeamLogo(team.id, isDark, true)
+            ? team.wLogo ?? getCBBTeamLogo(team.id, isDark)
             : getCBBTeamLogo(team.id, isDark);
           return {
             id: team.id,
@@ -292,7 +310,7 @@ const pickRelevantCBBGame = useCallback((games: any[]) => {
         ];
       });
     },
-    [pickRelevantCBBGame, isDark]
+    [pickNearestGame, isDark]
   );
 
   const cbbWidgets = useMemo(

@@ -15,6 +15,7 @@ import PAC12Conference from "../assets/College_Logos/PAC12.png";
 import SoutheasternConference from "../assets/College_Logos/SEC.png";
 import SunBeltConference from "../assets/College_Logos/SunBelt.png";
 
+//Team Logos
 import AirForceLogo from "assets/College_Logos/AirForce.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
 import AkronLogo from "assets/College_Logos/Akron.png";
@@ -79,6 +80,7 @@ import EasternMichiganLogo from "assets/College_Logos/EasternMichigan.png";
 import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLight.png";
 import FAMULogo from "assets/College_Logos/FAMU.png";
 import FAULogo from "assets/College_Logos/FAU.png";
+import FerrisStateLogo from "assets/College_Logos/FerrisState.png";
 import FIULogo from "assets/College_Logos/FIU.png";
 import FloridaLogo from "assets/College_Logos/Florida.png";
 import FloridaStateLogo from "assets/College_Logos/FSU.png";
@@ -238,6 +240,7 @@ import GeorgiaTechLogo from "../assets/College_Logos/GeorgiaTech.png";
 import GeorgiaTechLogoLight from "../assets/College_Logos/GeorgiaTechLight.png";
 import GramblingLogo from "../assets/College_Logos/Grambling.png";
 import HamptonLogo from "../assets/College_Logos/Hampton.png";
+import HardingLogo from "../assets/College_Logos/Harding.png";
 import HarvardLogo from "../assets/College_Logos/Harvard.png";
 import HiramCollegeLogo from "../assets/College_Logos/HiramCollege.png";
 import HoustonChristianLogo from "../assets/College_Logos/HoustonChristian.png";
@@ -249,6 +252,8 @@ import IowaStateLogo from "../assets/College_Logos/IowaState.png";
 import JacksonStateLogo from "../assets/College_Logos/JacksonState.png";
 import JamesMadisonLogo from "../assets/College_Logos/JamesMadison.png";
 import JaxStateLogo from "../assets/College_Logos/JaxState.png";
+import JohnCarrollLogo from "../assets/College_Logos/JohnCarroll.png";
+import JohnsHopkinsLogo from "../assets/College_Logos/JohnsHopkins.png";
 import KennesawStateLogo from "../assets/College_Logos/KennesawState.png";
 import KentStateLogo from "../assets/College_Logos/KentState.png";
 import KentuckyStateLogo from "../assets/College_Logos/KentuckyState.png";
@@ -275,6 +280,7 @@ import MoreheadStateLogo from "../assets/College_Logos/MoreheadState.png";
 import MorganStateLogo from "../assets/College_Logos/MorganState.png";
 import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
 import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
+import NewberryLogo from "../assets/College_Logos/Newberry.png";
 import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
 import NewMexicoLogo from "../assets/College_Logos/NewMexico.png";
 import NewMexicoStateLogo from "../assets/College_Logos/NewMexicoState.png";
@@ -282,6 +288,7 @@ import NicholsLogo from "../assets/College_Logos/Nichols.png";
 import NorthAlabamaLogo from "../assets/College_Logos/NorthAlabama.png";
 import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
 import NorthCarolinaCentralLogo from "../assets/College_Logos/NorthCarolinaCentral.png";
+import NorthCentralCollegeLogo from "../assets/College_Logos/NorthCentralCollege.png";
 import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
 import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
 import NorthernColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
@@ -307,6 +314,8 @@ import SouthCarolinaLogo from "../assets/College_Logos/SouthCarolina.png";
 import SouthCarolinaLogoLight from "../assets/College_Logos/SouthCarolinaLight.png";
 import SouthCarolinaStateLogo from "../assets/College_Logos/SouthCarolinaState.png";
 import SouthDakotaLogo from "../assets/College_Logos/SouthDakota.png";
+import SouthDakotaMinesLogo from "../assets/College_Logos/SouthDakotaMines.png";
+import SouthDakotaMinesLogoLight from "../assets/College_Logos/SouthDakotaMinesLight.png";
 import SoutheastMissouriStateLogo from "../assets/College_Logos/SoutheastMissouriState.png";
 import SouthernLogo from "../assets/College_Logos/Southern.png";
 import SouthernIllinoisLogo from "../assets/College_Logos/SouthernIllinois.png";
@@ -319,6 +328,7 @@ import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
 import SusquehannaLogo from "../assets/College_Logos/Susquehanna.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
+import TarletonStateLogo from "../assets/College_Logos/TarletonState.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
 import TexasSouthernLogo from "../assets/College_Logos/TexasSouthern.png";
 import TexasStLogo from "../assets/College_Logos/TexasSt.png";
@@ -362,6 +372,7 @@ import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
 import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
 import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
 import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
+import WisconsinRiverFallsLogo from "../assets/College_Logos/WisconsinRiverFalls.png";
 import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
@@ -648,6 +659,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2c7f488twkhsfvg36ma",
     name: "Arkansas-Pine Bluff",
     fullName: "Arkansas-Pine Bluff Golden Lions",
+    shortName: "AR-Pine Bluff",
     code: "UAPB",
     color: "#e0aa0f",
     secondaryColor: "#eaaa00",
@@ -831,6 +843,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2cgfy7s7gw2skf5f5e5",
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
+    shortName: "Bethune",
     code: "BCU",
     color: "#7b1831",
     secondaryColor: "#e9aa12",
@@ -1173,6 +1186,7 @@ export const teams: CFBTeam[] = [
     espnID: 2120,
     name: "Central Washington",
     fullName: "Central Washington",
+    shortName: "C Wash",
     code: "CWAU",
     color: "#AB0032",
     secondaryColor: "#000000",
@@ -3844,7 +3858,6 @@ export const teams: CFBTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762506/stadiums/football/cfb_55_aggie_memorial_stadium.jpg",
   },
-
   {
     id: 164,
     espnID: 2447,
@@ -3867,11 +3880,9 @@ export const teams: CFBTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_164_john_l__guidry_stadium.jpg",
   },
-
   {
     id: 393,
     espnID: 2884,
-
     name: "Nichols",
     fullName: "Nichols College Bison",
     code: "NICHOLS",
@@ -3965,6 +3976,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2gaeqjbqdwbf4vs7bzn",
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
+    shortName: "NC A&T",
     code: "NCAT",
     color: "#0505aa",
     secondaryColor: "#004684",
@@ -3983,11 +3995,55 @@ export const teams: CFBTeam[] = [
   },
 
   {
+    id: 717,
+    espnID: 2222,
+    name: "Ferris State",
+    fullName: "Ferris State Bulldogs",
+    shortName: "Ferris St",
+    code: "FSU",
+    color: "#c41230",
+    secondaryColor: "#000000",
+    logo: FerrisStateLogo,
+    logoLight: FerrisStateLogo,
+    location: "Big Rapids, MI",
+    city: "Big Rapids",
+    venue: "Top Taggart Field",
+    address: "805 Campus Dr, Big Rapids, MI 49307",
+    venueCapacity: "6,500",
+    established: 1884,
+    latitude: 43.6986,
+    longitude: -85.4839,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_249_top_taggart_field.jpg",
+  },
+  {
+    id: 454,
+    espnID: 2444,
+    name: "Newberry",
+    fullName: "Newberry Wolves",
+    shortName: "Newberry",
+    code: "NBY",
+    color: "#4b2e83",
+    secondaryColor: "#fdb913",
+    logo: NewberryLogo,
+    logoLight: NewberryLogo,
+    location: "Newberry, SC",
+    city: "Newberry",
+    venue: "Setzler Field",
+    address: "1100 College St, Newberry, SC 29108",
+    venueCapacity: "4,000",
+    established: 1856,
+    latitude: 34.2745,
+    longitude: -81.6187,
+    venueImage: "",
+  },
+  {
     id: 302,
     espnID: 2428,
     oddsID: "par_01hqmkr2gbeks8k9fraeed72r3",
     name: "North Carolina Central",
     fullName: "North Carolina Central Eagles",
+    shortName: "NC Central",
     code: "NCCU",
     color: "#880023",
     secondaryColor: "#c2c3c0",
@@ -4003,7 +4059,113 @@ export const teams: CFBTeam[] = [
     longitude: -78.8994,
     venueImage: null,
   },
+  {
+    id: 731,
+    espnID: 2627,
+    name: "Tarleton State",
+    fullName: "Tarleton State Texans",
+    shortName: "Tarleton St",
+    code: "TAR",
+    color: "#4f2d7f",
+    secondaryColor: "#ffffff",
+    logo: TarletonStateLogo,
+    logoLight: TarletonStateLogo,
+    location: "Stephenville, TX",
+    city: "Stephenville",
+    venue: "Memorial Stadium",
+    address: "1940 W Washington St, Stephenville, TX 76401",
+    venueCapacity: "24,000",
+    established: 1899,
+    latitude: 32.2156,
+    longitude: -98.2189,
+    venueImage: "",
+  },
+  {
+    id: 518,
+    espnID: 2302,
+    name: "John Carroll University",
+    fullName: "John Carroll University Blue Streaks",
+    shortName: "John Carroll",
+    code: "JCU",
+    color: "#003366",
+    secondaryColor: "#c7a34b",
+    logo: JohnCarrollLogo,
+    logoLight: JohnCarrollLogo,
+    location: "University Heights, OH",
+    city: "University Heights",
+    venue: "Don Shula Stadium",
+    address: "20700 North Park Blvd, University Heights, OH 44118",
+    venueCapacity: "5,416",
+    established: 1886,
+    latitude: 41.4997,
+    longitude: -81.5325,
+    venueImage: "",
+  },
+  {
+    id: 678,
+    espnID: 2723,
+    name: "Wisconsin-River Falls",
+    fullName: "Wisconsin-River Falls Falcons",
+    shortName: "UW River Falls",
+    code: "WIRF",
+    color: "#D31145",
+    secondaryColor: "#FFFFFF",
+    logo: WisconsinRiverFallsLogo,
+    logoLight: WisconsinRiverFallsLogo,
+    location: "River Falls, WI",
+    city: "River Falls",
+    venue: "Ramer Field",
+    address: "410 S 3rd St, River Falls, WI 54022",
+    venueCapacity: "3,000",
+    established: 1874,
+    latitude: 44.85,
+    longitude: -92.623,
+    venueImage: "https://example.com/stadiums/uwrf_ramer_field.jpg",
+  },
+  {
+    id: 860,
+    espnID: 3071,
+    name: "North Central College",
+    fullName: "North Central College Cardinals",
+    shortName: "N Central (IL)",
+    code: "NCC",
+    color: "#CC0033",
+    secondaryColor: "#FFFFFF",
+    logo: NorthCentralCollegeLogo,
+    logoLight: NorthCentralCollegeLogo,
+    location: "Naperville, IL",
+    city: "Naperville",
+    venue: "Benedict Field",
+    address: "33 E Chicago Ave, Naperville, IL 60540",
+    venueCapacity: "5,500",
+    established: 1861,
+    latitude: 41.784,
+    longitude: -88.142,
+    venueImage: "https://example.com/stadiums/ncc_benedict_field.jpg",
+  },
 
+  {
+    id: 837,
+    espnID: 118,
+    name: "Johns Hopkins University",
+    fullName: "Johns Hopkins University Blue Jays",
+    shortName: "Johns Hopkins",
+    code: "JHU",
+    color: "#73B0E4",
+    secondaryColor: "#FFFFFF",
+    logo: JohnsHopkinsLogo,
+    logoLight: JohnsHopkinsLogo,
+    location: "Baltimore, MD",
+    city: "Baltimore",
+    venue: "Homewood Field",
+    address: "3400 N Charles St, Baltimore, MD 21218",
+    venueCapacity: "8,500",
+    established: 1876,
+    latitude: 39.33,
+    longitude: -76.62,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_165_homewood_field.jpg",
+  },
   {
     id: 157,
     espnID: 155,
@@ -4026,7 +4188,28 @@ export const teams: CFBTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762569/stadiums/football/cfb_157_alerus_center.jpg",
   },
-
+  {
+    id: 652,
+    espnID: 2264,
+    name: "Harding University",
+    fullName: "Harding University Bisons",
+    shortName: "Harding",
+    code: "HARDING",
+    color: "#00205B",
+    secondaryColor: "#C8102E",
+    logo: HardingLogo,
+    logoLight: HardingLogo,
+    location: "Searcy, AR",
+    city: "Searcy",
+    venue: "First Security Stadium at Estes Stadium",
+    address: "2000 W Maple St, Searcy, AR 72143",
+    venueCapacity: "10,000",
+    established: 1924,
+    latitude: 35.2465,
+    longitude: -91.7377,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_harding_estes_stadium.jpg",
+  },
   {
     id: 254,
     espnID: 2449,
@@ -4053,7 +4236,6 @@ export const teams: CFBTeam[] = [
   {
     id: 266,
     espnID: 2822,
-
     name: "North Greenville",
     fullName: "North Greenville Crusaders",
     code: "NG",
@@ -4072,7 +4254,6 @@ export const teams: CFBTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762581/stadiums/football/cfb_266_younts_stadium.jpg",
   },
-
   {
     id: 58,
     espnID: 249,
@@ -4216,6 +4397,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2gmfagrzba888g3s4jb",
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
+    shortName: "N'Western St",
     code: "NWST",
     color: "#492F91",
     secondaryColor: "#ed6118",
@@ -4578,7 +4760,6 @@ export const teams: CFBTeam[] = [
   {
     id: 295,
     espnID: 2504,
-
     name: "Prairie View",
     fullName: "Prairie View A&M Panthers",
     code: "PVAM",
@@ -4993,6 +5174,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2hhehdttrcgv6ekzszd",
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
+    shortName: "San Diego St",
     code: "SDSU",
     color: "#c41230",
     secondaryColor: "#000000",
@@ -5123,6 +5305,27 @@ export const teams: CFBTeam[] = [
     longitude: -96.9253,
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762894/stadiums/football/cfb_175_dakotadome.jpg",
+  },
+  {
+    id: 600,
+    espnID: 613,
+    name: "South Dakota Mines",
+    fullName: "South Dakota Mines Hardrockers",
+    shortName: "SD Mines",
+    code: "SDMT",
+    color: "#071D49",
+    secondaryColor: "#B3A369",
+    logo: SouthDakotaMinesLogo,
+    logoLight: SouthDakotaMinesLogoLight,
+    location: "Rapid City, SD",
+    city: "Rapid City",
+    venue: "O'Harra Stadium",
+    address: "330 Founders Park Dr, Rapid City, SD 57701",
+    venueCapacity: "6,500",
+    established: 1889,
+    latitude: 44.0783,
+    longitude: -103.225,
+    venueImage: "",
   },
 
   {
@@ -6738,6 +6941,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2kte08app1gjph42xez",
     name: "Youngstown State",
     fullName: "Youngstown State Penguins",
+    shortName: "Youngstown St",
     code: "YSU",
     color: "#E51936",
     secondaryColor: "#690717",
@@ -7489,15 +7693,16 @@ export const neutralStadiums: Record<string, Venue> = {
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/titans.jpg",
     venueCapacity: "69,143",
   },
-"Independence Stadium": {
-  name: "Independence Stadium",
-  latitude: 32.5252, // Shreveport, LA
-  longitude: -93.7502,
-  venueCapacity: "50,000", // updated approximate capacity
-  address: "4000 Clyde Fant Pkwy, Shreveport, LA 71101",
-  city: "Shreveport, LA",
-  venueImage: "https://assets.simpleviewinc.com/simpleview/image/upload/crm/shreveport/20241228_202959_032B00EF-CD4D-7480-D2225FCC188209DC-032af8dfb2655d3_032b0ebc-a656-af67-f8cec304f3a2e5c1.jpg",
-},
+  "Independence Stadium": {
+    name: "Independence Stadium",
+    latitude: 32.5252, // Shreveport, LA
+    longitude: -93.7502,
+    venueCapacity: "50,000", // updated approximate capacity
+    address: "4000 Clyde Fant Pkwy, Shreveport, LA 71101",
+    city: "Shreveport, LA",
+    venueImage:
+      "https://assets.simpleviewinc.com/simpleview/image/upload/crm/shreveport/20241228_202959_032B00EF-CD4D-7480-D2225FCC188209DC-032af8dfb2655d3_032b0ebc-a656-af67-f8cec304f3a2e5c1.jpg",
+  },
 
   "Yankee Stadium": {
     name: "Yankee Stadium",
@@ -7509,16 +7714,15 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage: require("assets/Baseball/Stadiums/YankeeStadium.webp"),
   },
   "Sun Bowl": {
-  name: "Sun Bowl",
-  city: "El Paso",
-  address: "2701 Sun Bowl Dr, El Paso, TX 79902",
-  latitude: 31.7732,
-  longitude: -106.5067,
-  venueCapacity: "51,500",
-  venueImage:
-    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1767220397/stadiums/football/cfb_57_sun_bowl_stadium.jpg",
-},
-
+    name: "Sun Bowl",
+    city: "El Paso",
+    address: "2701 Sun Bowl Dr, El Paso, TX 79902",
+    latitude: 31.7732,
+    longitude: -106.5067,
+    venueCapacity: "51,500",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1767220397/stadiums/football/cfb_57_sun_bowl_stadium.jpg",
+  },
 };
 
 // --- Helper mapping from modal name to conference key ---

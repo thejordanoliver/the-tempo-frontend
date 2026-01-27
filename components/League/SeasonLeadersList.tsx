@@ -1,5 +1,5 @@
-import PlayerCard from "components/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Player/PlayerCardListSkeleton";
+import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
+import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { teams } from "constants/teams"; // import your teams list
@@ -111,7 +111,6 @@ export default function SeasonLeadersList({
                   }}
                 >
                   <PlayerCard
-                    playerId={player.player_id}
                     id={player.player_id}
                     name={fullName}
                     team={cleanTeam}

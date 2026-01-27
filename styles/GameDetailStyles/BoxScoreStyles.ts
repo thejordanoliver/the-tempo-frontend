@@ -5,8 +5,6 @@ import { StyleSheet } from "react-native";
 const COLUMN_WIDTH = 50;
 const NAME_COLUMN_WIDTH = 160;
 const PLAYER_ROW_HEIGHT = 36;
-const COLLAPSED_ROWS = 5;
-const COLLAPSED_HEIGHT = PLAYER_ROW_HEIGHT * COLLAPSED_ROWS;
 
 export const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({

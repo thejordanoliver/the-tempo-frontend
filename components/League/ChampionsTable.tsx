@@ -1,4 +1,3 @@
-import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { getTeamLogo } from "constants/teams";
@@ -7,6 +6,9 @@ import { getNFLTeamsLogo } from "constants/teamsNFL";
 import { useChampions } from "hooks/useChampions";
 import { useMemo } from "react";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
+
+const ROW_HEIGHT = 50;
 
 type Props = {
   title: string;
@@ -35,9 +37,8 @@ export default function ChampionsTable({
 
   if (loading) {
     return (
-      <View style={{ marginVertical: 12 }}>
-        <HeadingTwo>{title}</HeadingTwo>
-        <Text style={styles.muted}>Loading…</Text>
+      <View>
+        <AwardSeasonTableSkeleton teams={1} />
       </View>
     );
   }
@@ -45,7 +46,6 @@ export default function ChampionsTable({
   if (error) {
     return (
       <View style={{ marginVertical: 12 }}>
-        <HeadingTwo>{title}</HeadingTwo>
         <Text style={styles.error}>Failed to load.</Text>
       </View>
     );
@@ -57,16 +57,18 @@ export default function ChampionsTable({
 
   return (
     <View style={{ marginBottom: 24 }}>
-      <HeadingTwo>{title}</HeadingTwo>
-
       <View style={styles.table}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerName}>{title}</Text>
+        </View>
+
         {data.map((row) => {
           const logo =
             row.team && league === "CFB"
               ? getCFBTeamLogo(row.team.id, useLightLogo)
               : row.team && league === "NBA"
               ? getTeamLogo(row.team?.id, useLightLogo)
-              : getNFLTeamsLogo(row.team?.id, useLightLogo);
+              : getNFLTeamsLogo(row.team?.id ?? 0, useLightLogo);
           const isSuperBowl = league === "NFL";
 
           return (
@@ -91,9 +93,7 @@ export default function ChampionsTable({
                     </Text>
 
                     {row.team?.conference && (
-                      <Text style={styles.subText}>
-                        {row.team.conference}
-                      </Text>
+                      <Text style={styles.subText}>{row.team.conference}</Text>
                     )}
                   </View>
                 </View>
@@ -137,6 +137,22 @@ const tableStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.lightGray,
       alignItems: "center",
+    },
+
+    headerRow: {
+      flexDirection: "row",
+      height: ROW_HEIGHT,
+      alignItems: "center",
+      borderBottomWidth: 1,
+      borderColor: Colors.lightGray,
+      backgroundColor: lighter ? "transparent" : Colors.darkGray + "20",
+    },
+
+    headerName: {
+      paddingHorizontal: 10,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 20,
+      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
     },
 
     teamRow: {

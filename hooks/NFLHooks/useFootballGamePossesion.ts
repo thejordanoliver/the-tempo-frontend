@@ -1,7 +1,7 @@
 import axios from "axios";
 import { teams as cfbTeams } from "constants/teamsCFB";
 import { teams as nflTeams } from "constants/teamsNFL";
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type Athlete = {
   id: string;
@@ -28,8 +28,8 @@ export type PlayObject = {
 };
 
 export type Score = {
-  home: number;
-  away: number;
+  home: number | null;
+  away: number | null;
   homeTeam: string;
   awayTeam: string;
   periodScores?: { period: number; home: number; away: number }[];
@@ -60,6 +60,8 @@ export const useFootballGamePossession = (
   const [gameStatusShortDetail, setGameStatusShortDetail] = useState<string>();
   const [possessionText, setPossessionText] = useState<string>();
   const [redzone, setRedzone] = useState<boolean>();
+  const firstDownLineRef = useRef<number | undefined>(undefined);
+  const downStateRef = useRef<string | null>(null);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const fatalErrorRef = useRef(false);
@@ -97,16 +99,22 @@ export const useFootballGamePossession = (
       setError(null);
 
       try {
-        const { data } = await axios.get(`${BASE_URL}/api/football/details/game-possession`, {
-          params: {
-            homeId: homeEspnId,
-            awayId: awayEspnId,
-            date,
-            league, // ✅ Pass league param
-          },
-        });
+        const { data } = await axios.get(
+          `${BASE_URL}/api/football/details/game-possession`,
+          {
+            params: {
+              homeId: homeEspnId,
+              awayId: awayEspnId,
+              date,
+              league, // ✅ Pass league param
+            },
+          }
+        );
 
         const { status, possession, score } = data;
+
+        const downMatch = possession.downDistanceText?.match(/^(\d)/);
+        const downNumber = downMatch ? Number(downMatch[1]) : undefined;
 
         setDisplayClock(status.clock);
         setPeriod(status.period?.toString());
@@ -119,22 +127,29 @@ export const useFootballGamePossession = (
 
         if (status.state === "in" && possession) {
           setPossessionTeamId(
-            possession.teamId ? espnToInternal[String(possession.teamId)] : undefined
+            possession.teamId
+              ? espnToInternal[String(possession.teamId)]
+              : undefined
           );
 
-          const firstDown =
-            possession.yardLine != null && possession.distance != null
-              ? possession.yardLine + possession.distance
-              : undefined;
+          if (possession.yardLine != null && possession.distance != null) {
+            // New possession OR new set of downs (1st down)
+            if (
+              downNumber === 1 ||
+              downStateRef.current !== possession.teamId
+            ) {
+              firstDownLineRef.current =
+                possession.yardLine + possession.distance;
 
-          setFirstDownYardLine(firstDown);
+              downStateRef.current = possession.teamId;
+            }
+          }
+
+          setFirstDownYardLine(firstDownLineRef.current);
+
           setShortDownDistanceText(possession.shortDownDistanceText);
           setDownDistanceText(possession.downDistanceText);
-          setPossessionText(
-            possession.shortDownDistanceText && possession.possessionText
-              ? `${possession.shortDownDistanceText}, ${possession.possessionText}`
-              : possession.shortDownDistanceText || possession.possessionText
-          );
+          setPossessionText(possession.possessionText);
 
           setHomeTimeouts(possession.homeTimeouts);
           setAwayTimeouts(possession.awayTimeouts);
@@ -143,6 +158,8 @@ export const useFootballGamePossession = (
           setPossessionTeamId(undefined);
           setShortDownDistanceText(undefined);
           setDownDistanceText(undefined);
+          firstDownLineRef.current = undefined;
+          downStateRef.current = null;
           setFirstDownYardLine(undefined);
           setPossessionText(undefined);
           setHomeTimeouts(undefined);

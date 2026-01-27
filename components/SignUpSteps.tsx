@@ -27,10 +27,9 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { getSignupStepsStyles } from "styles/SignupStepStyles";
+import { formStyles } from "styles/FormStyles";
 import type { LeagueTeam, LeagueType } from "types/types";
 import SearchBar from "./SearchBars/SearchBar";
-
 
 type SignupData = {
   fullName: string;
@@ -69,7 +68,7 @@ export default function SignupSteps({
   toggleLayout,
 }: SignupStepsProps) {
   const isDark = useColorScheme() === "dark";
-  const styles = getSignupStepsStyles(isDark);
+  const styles = formStyles(isDark);
   const { width: screenWidth } = useWindowDimensions();
 
   const numColumns = 3;
@@ -162,7 +161,7 @@ export default function SignupSteps({
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
             >
-              <View style={styles.inputContainer}>
+              <View style={styles.signUpInputContainer}>
                 <TextInput
                   placeholder="Name"
                   value={signupData.fullName}
@@ -341,11 +340,21 @@ export default function SignupSteps({
             {signupData.favorites.length > 0 ? (
               <ScrollView horizontal={false} style={styles.favoritesScroll}>
                 {signupData.favorites.map((favId) => {
-                  const team = teams.find((t) => t.id === favId);
+                  // Check which league it belongs to
+                  const [league, id] = favId.split(":") as [LeagueType, string];
+
+                  let team;
+                  if (league === "CBB") {
+                    team = cbbTeams.find((t) => String(t.wid) === id);
+                  } else {
+                    team = teams.find((t) => String(t.id) === id); // NBA as example
+                  }
+
                   if (!team) return null;
+
                   return (
                     <View
-                      key={team.id}
+                      key={favId}
                       style={[
                         styles.teamCardList,
                         { backgroundColor: team.color || "#007AFF" },

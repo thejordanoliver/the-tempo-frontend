@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useEffect, useState } from "react";
@@ -38,7 +39,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getPostItemStyles(isDark);
-
+  const global = globalStyles(isDark);
   const renderSkeletons = (count = 5) => (
     <>
       {Array.from({ length: count }).map((_, i) => (
@@ -172,7 +173,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
 
   return (
     <View style={styles.container}>
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={global.errorText}>{error}</Text>}
 
       <FlatList
         data={posts}
@@ -203,7 +204,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
           if (loading) {
             return renderSkeletons(5);
           }
-          return <Text style={styles.emptyText}>No posts yet.</Text>;
+          return <Text style={global.emptyText}>No posts yet.</Text>;
         }}
       />
 

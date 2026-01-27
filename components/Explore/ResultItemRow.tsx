@@ -8,7 +8,7 @@ import { teamsMLBById } from "constants/teamsMLB";
 import { teamsNFLById } from "constants/teamsNFL";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import { exploreStyles } from "styles/Explore/ExploreStyles";
+import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
   PlayerResult,
   ResultItem,

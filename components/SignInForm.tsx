@@ -1,17 +1,16 @@
 // components/SignInForm.tsx
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Styles";
+import React from "react";
 import {
-  View,
-  TextInput,
   Pressable,
   Text,
-  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Fonts, Colors } from "constants/Styles";
-
-
+import { formStyles } from "styles/FormStyles";
 type SignInFormProps = {
   username: string;
   password: string;
@@ -21,8 +20,6 @@ type SignInFormProps = {
   onToggleShowPassword: () => void;
   onSubmit: () => void;
 };
-
-
 
 export default function SignInForm({
   username,
@@ -35,16 +32,16 @@ export default function SignInForm({
 }: SignInFormProps) {
   const isDark = useColorScheme() === "dark";
 
-  const styles = getStyles(isDark);
+  const styles = formStyles(isDark);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.signInInputContainer}>
       <TextInput
         placeholder="Username"
         value={username}
         onChangeText={onUsernameChange}
         style={styles.input}
-        placeholderTextColor={isDark ? "#888" : "#aaa"}
+        placeholderTextColor={Colors.midTone}
         autoCapitalize="none"
       />
       <View style={styles.passwordRow}>
@@ -54,7 +51,7 @@ export default function SignInForm({
           onChangeText={onPasswordChange}
           secureTextEntry={!showPassword}
           style={styles.passwordInput}
-          placeholderTextColor={isDark ? "#888" : "#aaa"}
+          placeholderTextColor={Colors.midTone}
         />
         <Pressable
           onPress={onToggleShowPassword}
@@ -64,57 +61,17 @@ export default function SignInForm({
           <Ionicons
             name={showPassword ? "eye-off" : "eye"}
             size={20}
-            color={isDark ? "#fff" : "#000"}
+            color={isDark ? Colors.white : Colors.black}
           />
         </Pressable>
       </View>
-      <Pressable onPress={onSubmit} style={styles.button}>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={onSubmit}
+        style={styles.button}
+      >
         <Text style={styles.buttonText}>Sign In</Text>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 }
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    input: {
-      color: isDark ? "#fff" : "#000",
-      backgroundColor: isDark ? "#222" : "#eee",
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 16,
-      marginVertical: 20,
-      fontFamily: Fonts.OSLIGHT,
-    },
-    passwordRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: isDark ? "#222" : "#eee",
-      borderRadius: 8,
-      marginBottom: 12,
-    },
-    passwordInput: {
-      fontFamily: Fonts.OSLIGHT,
-      flex: 1,
-      fontSize: 16,
-      padding: 20,
-      color: isDark ? "#fff" : "#000",
-    },
-    iconButton: { padding: 20 },
-    button: {
-      backgroundColor: isDark ? "#fff" : "#1d1d1d",
-      padding: 14,
-      borderRadius: 8,
-      alignItems: "center",
-      marginTop: 10,
-    },
-    buttonText: {
-      color: isDark ? "#000" : "#fff",
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-    },
-  });

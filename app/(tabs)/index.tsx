@@ -1,10 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
-import PagerView from "react-native-pager-view";
 import CombinedGamesList from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import FavoritesScrollSkeleton from "components/Favorites/FavoritesScrollSkeleton";
+import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
 import { Colors } from "constants/Colors";
 import { useHomeData } from "hooks/useHomeData";
@@ -16,18 +15,21 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { homeStyles } from "styles/homeStyles";
+import PagerView from "react-native-pager-view";
+import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = homeStyles(isDark);
   const navigation = useNavigation();
+  const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
 
   const pagerRef = useRef<PagerView>(null);
 
-  const [selectedTab, setSelectedTab] =
-    React.useState<"scores" | "news">("scores");
+  const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
+    "scores"
+  );
 
   const {
     favorites,
@@ -68,6 +70,7 @@ export default function HomeScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
+          scrollEnabled={!isDraggingFavorites} // ✅ disable swipe while dragging
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
             setSelectedTab(index === 0 ? "scores" : "news");
@@ -91,6 +94,8 @@ export default function HomeScreen() {
                 <FavoritesScroll
                   favoriteTeamIds={favorites}
                   onFavoritesChange={setFavorites}
+                  onDragStart={() => setIsDraggingFavorites(true)}
+                  onDragEnd={() => setIsDraggingFavorites(false)}
                 />
               )}
 
@@ -115,16 +120,16 @@ export default function HomeScreen() {
                 />
               }
             >
-              {newsError ? (
-                <Text style={styles.errorText}>{newsError}</Text>
-              ) : (
+             
+   
                 <NewsHighlightsList
                   items={combinedNewsAndHighlights}
                   loading={loading}
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
+                  error={newsError}
                 />
-              )}
+  
             </ScrollView>
           </View>
         </PagerView>

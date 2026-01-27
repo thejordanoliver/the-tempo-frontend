@@ -34,9 +34,8 @@ export type NFLTeam = {
   owner?: string;
   venue: string;
   established: number;
-  logo: string;
-  logoLight?: string;
-
+  logo: any;
+  logoLight?: any;
   color: string;
   secondaryColor: string;
   latitude: number;

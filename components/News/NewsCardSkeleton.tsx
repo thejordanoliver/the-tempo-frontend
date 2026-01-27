@@ -67,7 +67,6 @@ const newsCardSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       borderRadius: 8,
-      marginBottom: 12,
       overflow: "hidden",
       backgroundColor: isDark
         ? Colors.dark.itemBackground

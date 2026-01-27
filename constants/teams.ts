@@ -667,7 +667,7 @@ export const teams: NBATeam[] = [
     secondaryColor: "rgb(255, 255, 255)",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/sixers.jpg",
-    venueName: "Wells Fargo Arena",
+    venueName: "Xfinity Mobile Arena",
     established: "1949",
     conference: "Eastern",
     latitude: 39.9012,
@@ -990,7 +990,27 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cdmx.jpg",
   },
-  // add more neutral venues if needed here
+  "Uber Arena": {
+    name: "Uber Arena",
+    city: "Berlin",
+    address: "Mercedes-Platz 1, 10243 Berlin, Germany",
+    latitude: 52.5062,
+    longitude: 13.4434,
+    venueCapacity: "17,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/uber.jpg",
+  },
+  "The O2": {
+  name: "The O2 Arena",
+  city: "London",
+  address: "Peninsula Square, London SE10 0DX, United Kingdom",
+  latitude: 51.5030,
+  longitude: 0.0032,
+  venueCapacity: "20,000",
+  venueImage:
+    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680191/arenas/basketball/the-o2.webp",
+},
+
 };
 
 export const nbaDivisionsById = {

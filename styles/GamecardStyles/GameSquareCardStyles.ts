@@ -15,13 +15,20 @@ export const gameSquareCardStyles = (
         : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 8,
-      paddingVertical: 16,
+      paddingVertical: 28,
       paddingHorizontal: 12,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
+       borderRightColor:
+        isChampionship && isDark
+          ? Colors.lightGray
+          : isChampionship
+          ? Colors.darkGray
+          : isDark
+          ? Colors.darkGray
+          : Colors.lightGray,
       borderRightWidth: 0.5,
       gap: 8,
     },
@@ -67,6 +74,7 @@ export const gameSquareCardStyles = (
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
       color: isDark ? Colors.dark.text : Colors.light.text,
+      
     },
     info: { alignItems: "center", justifyContent: "center", width: 60 },
     date: {
@@ -76,7 +84,7 @@ export const gameSquareCardStyles = (
       textAlign: "center",
     },
     period: {
-      fontSize: 12,
+      fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
@@ -93,7 +101,7 @@ export const gameSquareCardStyles = (
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     clock: {
-      fontSize: 12,
+      fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
@@ -118,9 +126,9 @@ export const gameSquareCardStyles = (
       fontSize: 8,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       position: "absolute",
-      bottom: 4,
-      left: 12,
       width: "100%",
+      bottom: 4,
+      left: 8,
     },
     downDistance: {
       fontFamily: Fonts.OSMEDIUM,

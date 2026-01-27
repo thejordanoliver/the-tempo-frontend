@@ -22,30 +22,6 @@ export const isTodayOrTomorrow = (dateString: string) => {
   );
 };
 
-export function getCurrentNBASeason() {
-  const today = dayjs();
-  const year = today.year();
-
-  const seasonStart = dayjs(`${year}-10-01`);
-  const seasonEnd = dayjs(`${year + 1}-06-30`);
-
-  // Case 1: Oct–Dec → season = current year
-  if (
-    today.isAfter(seasonStart) &&
-    today.isBefore(dayjs(`${year}-12-31`).endOf("day"))
-  ) {
-    return String(year + 1); // Example: October 2024 → returns 2025 season
-  }
-
-  // Case 2: Jan–Jun → season = previous year + 1
-  if (today.isBefore(seasonEnd)) {
-    return String(year);
-  }
-
-  // Case 3: July–Sept → offseason, next season
-  return String(year + 1);
-}
-
 export function getNBASeason(): string {
   const today = dayjs();
   const year = today.year();
@@ -58,6 +34,12 @@ export function getNBASeason(): string {
 
   // Jan–Sep belongs to previous season
   return String(year - 1);
+}
+
+export function getFootballSeasonYear(date = new Date()) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  return month < 7 ? year - 1 : year;
 }
 
 export const getHolidayLabel = (

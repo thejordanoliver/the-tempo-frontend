@@ -1,7 +1,13 @@
-import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, View, useColorScheme } from "react-native";
-import { favoritesScrollSkeletonStyles } from "styles/FavoritesScrollSkeletonStyles";
 import { Colors } from "constants/Colors";
+import { useEffect, useRef } from "react";
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
+  useColorScheme,
+} from "react-native";
+import { favoritesScrollSkeletonStyles } from "styles/HomeStyles/FavoritesScrollSkeletonStyles";
 
 export default function FavoritesScrollSkeleton() {
   const isDark = useColorScheme() === "dark";
@@ -37,7 +43,7 @@ export default function FavoritesScrollSkeleton() {
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
 
-   const overlayColor = isDark
+  const overlayColor = isDark
     ? "rgba(136, 136, 136, 0.5)"
     : "rgba(136, 136, 136, 0.5)";
 
@@ -47,7 +53,12 @@ export default function FavoritesScrollSkeleton() {
         <View key={index} style={styles.skeletonItem}>
           {/* Circle (team logo placeholder) */}
           <View style={styles.circleWrapper}>
-            <View style={[styles.circle, { backgroundColor: baseColor, overflow: "hidden" }]}>
+            <View
+              style={[
+                styles.circle,
+                { backgroundColor: baseColor, overflow: "hidden" },
+              ]}
+            >
               <Animated.View
                 style={[
                   StyleSheet.absoluteFillObject,
@@ -62,7 +73,12 @@ export default function FavoritesScrollSkeleton() {
 
           {/* Label (team name placeholder) */}
           <View style={styles.labelWrapper}>
-            <View style={[styles.label, { backgroundColor: baseColor, overflow: "hidden" }]}>
+            <View
+              style={[
+                styles.label,
+                { backgroundColor: baseColor, overflow: "hidden" },
+              ]}
+            >
               <Animated.View
                 style={[
                   StyleSheet.absoluteFillObject,

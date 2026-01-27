@@ -14,6 +14,8 @@ export type CFBWeek = {
 export function generateCFBWeeks(): CFBWeek[] {
   const result: CFBWeek[] = [];
 
+  
+
   // --- Week 0 ---
   const week0Start = dayjs("2025-08-18").startOf("day");
   const week0End = week0Start.add(6, "day").endOf("day");
@@ -76,7 +78,10 @@ export function getWeekForDate(
   const target = dayjs(date);
 
   const armyNavyWeek = weeks.find((w) => w.label === "Week 16");
-  if (armyNavyWeek && target.isBetween(armyNavyWeek.start, armyNavyWeek.end, null, "[]")) {
+  if (
+    armyNavyWeek &&
+    target.isBetween(armyNavyWeek.start, armyNavyWeek.end, null, "[]")
+  ) {
     return armyNavyWeek;
   }
 
@@ -85,6 +90,8 @@ export function getWeekForDate(
 
 export function getCurrentWeekIndex(weeks: CFBWeek[]): number {
   const today = dayjs();
-  const index = weeks.findIndex((w) => today.isBetween(w.start, w.end, null, "[]"));
+  const index = weeks.findIndex((w) =>
+    today.isBetween(w.start, w.end, null, "[]")
+  );
   return index !== -1 ? index : 0;
 }

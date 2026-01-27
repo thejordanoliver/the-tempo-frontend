@@ -1,9 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import TeamForum from "components/Forum/TeamForum";
-import MLBGamesList from "components/MLB/Games/MLBGamesList";
-import TeamInfoBottomSheet from "components/MLB/Team/TeamInfoModal";
-import TeamPlayerList from "components/MLB/Team/TeamRoster";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
+import TeamInfoBottomSheet from "components/Sports/MLB/Team/TeamInfoModal";
+import TeamPlayerList from "components/Sports/MLB/Team/TeamRoster";
 import { Colors } from "constants/Colors";
 import { players } from "constants/mlbPlayers";
 import { teams } from "constants/teamsMLB";
@@ -26,7 +26,7 @@ import {
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamDetailsStyles";
+import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: {

@@ -1,10 +1,14 @@
 import axios from "axios";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
 
 export interface Player {
   id: number;
   player_id: number;
+  first_name: string;
+  last_name: string;
+  short_name: string;
+  team_id: number;
   name: string;
   full_name: string;
   jersey_number: string;
@@ -30,7 +34,7 @@ function getApiBaseUrl() {
   return "http://192.168.1.90:4000";
 }
 
-export default function useDbPlayersByTeam(teamId: string) {
+export default function usePlayersByTeam(teamId: string) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +58,10 @@ export default function useDbPlayersByTeam(teamId: string) {
       const mappedPlayers: Player[] = (res.data.players || []).map((p) => ({
         id: p.id ?? 0,
         player_id: p.player_id ?? 0,
+        first_name: p.first_name || "",
+        last_name: p.last_name || "",
+        short_name: p.short_name || "",
+        team_id: p.team_id ?? 0,
         name: p.name || "",
         full_name: p.full_name || p.name || "",
         jersey_number: p.jersey_number || "",

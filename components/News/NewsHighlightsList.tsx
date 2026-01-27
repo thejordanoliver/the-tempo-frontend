@@ -1,11 +1,11 @@
 // components/NewsHighlightsList.tsx
-import { Fonts } from "constants/fonts";
+import { globalStyles } from "constants/Styles";
 import React from "react";
 import { FlatList, Text, useColorScheme, View } from "react-native";
+import { newsHighlightsListStyles } from "styles/newsHighlightsListStyles";
 import HighlightCard from "./HighlightCard";
 import NewsCard from "./NewsCard";
 import NewsCardSkeleton from "./NewsCardSkeleton";
-import { Colors } from "constants/Colors";
 type NewsItem = {
   id: string;
   title: string;
@@ -31,6 +31,7 @@ type CombinedItem =
 type NewsHighlightsListProps = {
   items: CombinedItem[];
   loading: boolean;
+  error?: string | null; // ✅ allow string for custom messages
   refreshing: boolean;
   onRefresh: () => void;
 };
@@ -40,17 +41,18 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
   loading,
   refreshing,
   onRefresh,
+  error,
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const styles = newsHighlightsListStyles(isDark);
+  const global = globalStyles(isDark);
+
+  if (error) return <Text style={global.errorText}>Failed to load news</Text>;
 
   if (loading) {
     return (
-      <View
-        style={{
-          paddingHorizontal: 16,
-        }}
-      >
+      <View style={styles.container}>
         <NewsCardSkeleton />
         <NewsCardSkeleton />
         <NewsCardSkeleton />
@@ -67,11 +69,7 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       refreshing={refreshing}
       onRefresh={onRefresh}
       scrollEnabled={false} // ✅ Disable scrolling
-      contentContainerStyle={{
-        paddingHorizontal: 12,
-        gap: 12,
-        paddingBottom: 100
-      }}
+      contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) =>
         item.itemType === "news" ? (
@@ -88,23 +86,13 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
             title={item.title}
             publishedAt={item.publishedAt}
             thumbnail={item.thumbnail}
-            channelName={item.channelName} // <-- now this is defined
-            duration={item.duration} // <-- add this line
+            channelName={item.channelName}
+            duration={item.duration}
           />
         )
       }
       ListEmptyComponent={
-        <Text
-          style={{
-          fontFamily: Fonts.OSLIGHT,
-               fontSize: 16,
-               textAlign: "center",
-               marginTop: 20,
-               color: isDark ? Colors.lightGray : Colors.darkGray,
-          }}
-        >
-          No news or highlights found.
-        </Text>
+        <Text style={global.emptyText}>No news or highlights found.</Text>
       }
     />
   );

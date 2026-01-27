@@ -2,7 +2,6 @@
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { CBBTeam } from "types/types";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -18,7 +17,9 @@ export type TeamLike = {
 
 // ---------- 🧩 Team Helpers ----------
 export const hasIdAndName = (team: any): team is TeamLike =>
-  team && (typeof team.id === "string" || typeof team.id === "number") && typeof team.name === "string";
+  team &&
+  (typeof team.id === "string" || typeof team.id === "number") &&
+  typeof team.name === "string";
 
 export function normalizeTeam(team: any, isWomen = false) {
   if (!team) return null;
@@ -30,8 +31,6 @@ export function normalizeTeam(team: any, isWomen = false) {
       : String(team.id),
   };
 }
-
-
 
 // ---------- 🗓️ Date Helpers ----------
 export const localDateOnly = (date: string | Date) => {
@@ -46,7 +45,10 @@ export function toLocalDate(apiDate: any) {
   const nowLocal = dayjs();
 
   if (!apiDate) {
-    return { date: nowLocal.toDate(), dateString: nowLocal.format("YYYY-MM-DD") };
+    return {
+      date: nowLocal.toDate(),
+      dateString: nowLocal.format("YYYY-MM-DD"),
+    };
   }
 
   let local;
@@ -77,28 +79,6 @@ export function filterByDate(games: any[], date: Date) {
   });
 }
 
-// ---------- 🏈 Normalize NFL Games ----------
-/**
- * Normalizes NFL game data to device local time.
- */
-export const normalizeNFLGames = (games: any[]) => {
-  return games.map((g) => {
-    const { date, dateString } = toLocalDate(g.game?.date);
-
-    // Optional: handle rare early-morning kickoff display issues if needed
-    const hhmm = dayjs(date).format("HH:mm");
-    const finalDate = hhmm >= "00:00" && hhmm <= "00:29" ? dayjs(date).subtract(4, "hour").toDate() : date;
-
-    return {
-      ...g,
-      home: normalizeTeam(g.teams?.home),
-      away: normalizeTeam(g.teams?.away),
-      date: finalDate,
-      dateString,
-      status: g.game?.status ?? "unknown",
-    };
-  });
-};
 
 // ---------- ⏱️ Live Game Check ----------
 export function isLiveGame(game: any) {
@@ -111,8 +91,67 @@ export function isLiveGame(game: any) {
   if (statusShort === 3) return false; // Finished
 
   // fallback for string-based leagues
-  const nonLive = ["not started", "final", "game finished", "canceled", "postponed", "delayed"];
+  const nonLive = [
+    "not started",
+    "final",
+    "game finished",
+    "canceled",
+    "postponed",
+    "delayed",
+  ];
   if (nonLive.includes(statusLong)) return false;
 
   return true;
+}
+
+export const formatQuarter = (period?: number | string) => {
+  if (!period) return "";
+
+  const p = Number(period);
+  if (!isNaN(p)) {
+    if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
+    const otNumber = p - 4;
+    return otNumber === 1 ? "OT" : `OT${otNumber}`;
+  }
+
+  // fallback for string values like "ot", "overtime"
+  const val = String(period).toLowerCase();
+  if (val.includes("ot") || val.includes("overtime")) {
+    const match = val.match(/\d+/);
+    return match ? `OT${match[0]}` : "OT";
+  }
+
+  return period;
 };
+
+ // --- Helpers ---
+  export const formatCBBQuarter = (period?: number | string, isWomen?: boolean, statusText?: string) => {
+    if (!period && !statusText) return "";
+
+    if (typeof period === "string") {
+      const val = period.toLowerCase();
+      if (val.includes("ot")) return val.toUpperCase();
+      if (val.includes("halftime")) return "Halftime";
+      return val;
+    }
+
+    const p = Number(period);
+
+    // ✅ WOMEN: 4 quarters
+    if (isWomen) {
+      if (p === 1) return "1st";
+      if (p === 2) return "2nd";
+      if (p === 3) return "3rd";
+      if (p === 4) return "4th";
+
+      const ot = p - 4;
+      return ot === 1 ? "OT" : `${ot}OT`;
+    }
+
+    // ✅ MEN: 2 halves
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+
+    const ot = p - 2;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  };

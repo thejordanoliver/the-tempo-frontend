@@ -10,10 +10,10 @@ import { useChampionTeams } from "hooks/CFBHooks/useChampionTeams";
 import { AwardCategory, League } from "hooks/useAwardSeasons";
 import { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
-import CFBAwardSchoolsTable from "../CFB/League/CFBAwardSchoolsTable";
-import { AwardSeasonsTable, awardTableStyles } from "./AwardSeasonsTable";
+import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
+import CFBAwardSchoolsTable from "../Sports/CFB/League/CFBAwardSchoolsTable";
+import { AwardSeasonsTable } from "./AwardSeasonsTable";
 import TopThreeTeams from "./TopThreeTeams";
-
 type ViewMode = "champions" | "players" | "teams";
 
 const VIEW_MODE_OPTIONS = [
@@ -223,8 +223,6 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
       {showChampionTopThree && championTeams.length > 0 && (
         <TopThreeTeams
           teams={championTeams.map((t) => {
-            console.log(t.team.id);
-
             return {
               team: t.team,
               value: t.total_championships,
@@ -239,15 +237,14 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
         />
       )}
       {showAwardTopThree && awardTeams.length > 0 && (
-      <TopThreeTeams
-  limit={5}
-  teams={awardTeams.map((t) => ({
-    team: t.team,
-    value: t.total_awards,
-    logo: getCFBTeamLogo(t.team.id, isDark),
-  }))}
-/>
-
+        <TopThreeTeams
+          limit={5}
+          teams={awardTeams.map((t) => ({
+            team: t.team,
+            value: t.total_awards,
+            logo: getCFBTeamLogo(t.team.id, isDark),
+          }))}
+        />
       )}
       {/* Champions */}
       {viewMode === "champions" &&

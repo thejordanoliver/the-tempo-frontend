@@ -1,7 +1,5 @@
-// app/news/NewsArticle.styles.ts
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
-import { Colors } from "constants/Colors";
 
 export const getStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -13,7 +11,7 @@ export const getStyles = (isDark: boolean) =>
       fontSize: 24,
       fontFamily: Fonts.OSBOLD,
       marginBottom: 12,
-      color: isDark ? Colors.white: Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     image: {
       width: "100%",

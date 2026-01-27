@@ -1,6 +1,7 @@
-import { Game } from "types/nfl";
 import axios from "axios";
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { teams } from "constants/teamsNFL";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Game } from "types/nfl";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -18,8 +19,27 @@ export function usetodayYesterday(season = "2025", league = "1") {
         params: { season, league },
       });
 
-      const games = res.data.response || [];
-      setGames(games);
+      const rawGames: Game[] = res.data.response || [];
+
+      // Map each game to include full team info
+      const enrichedGames = rawGames.map((game) => {
+        const homeTeam =
+          teams.find((t) => t.id === Number(game.teams.home.id)) ||
+          game.teams.home;
+        const awayTeam =
+          teams.find((t) => t.id === Number(game.teams.away.id)) ||
+          game.teams.away;
+
+        return {
+          ...game,
+          teams: {
+            home: { ...game.teams.home, ...homeTeam },
+            away: { ...game.teams.away, ...awayTeam },
+          },
+        };
+      });
+
+      setGames(enrichedGames);
     } catch (err: any) {
       console.error("Error fetching weekly games:", err.message);
       setError(err.message || "Failed to fetch weekly games");
@@ -40,7 +60,9 @@ export function usetodayYesterday(season = "2025", league = "1") {
 
   // Sorted games with live games first
   const sortedGames = useMemo(() => {
-    return [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+    return [...games].sort(
+      (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a))
+    );
   }, [games]);
 
   return { games: sortedGames, loading, error, refetch: fetchWeeklyGames };

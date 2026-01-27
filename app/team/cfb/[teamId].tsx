@@ -1,13 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import CFBGamesList from "components/CFB/Games/CFBGamesList";
-import { CFBConferenceStandingsList } from "components/CFB/Standings/CFBConferenceStandingsList";
-import Roster from "components/CFB/Team/Roster";
-import FootballRosterStats from "components/CFB/Team/RosterStats";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
+import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
+import Roster from "components/Sports/CFB/Team/Roster";
+import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
+import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import TeamInfoModal from "components/Team/TeamInfoModal";
 import { conferenceListMap, teams } from "constants/teamsCFB";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
@@ -16,7 +15,7 @@ import { useCFBTeamGames } from "hooks/CFBHooks/useCFBTeamGames";
 import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -24,9 +23,8 @@ import {
   useColorScheme,
 } from "react-native";
 import PagerView from "react-native-pager-view";
-import { Game } from "types/cfb";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { style } from "../../../styles/TeamDetailsStyles";
+import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -51,7 +49,6 @@ export default function TeamDetailScreen() {
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cachedGames, setCachedGames] = useState<Game[]>([]);
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -79,15 +76,12 @@ export default function TeamDetailScreen() {
     [teamIdNum]
   );
 
-  const CACHE_KEY = `teamGames-${teamIdNum}`;
-  const CACHE_EXPIRY_HOURS = 6;
-
   const {
-    games: rawTeamGames = [],
+    games: teamGames,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useCFBTeamGames(teamIdNum ? teamIdNum.toString() : "");
+  } =  useCFBTeamGames(teamIdNum ?? 0);
 
   const {
     highlights: teamHighlights,
@@ -127,53 +121,6 @@ export default function TeamDetailScreen() {
     return combined;
   }, [newsArticles, teamHighlights]);
 
-  // --- Load cached games on mount ---
-  useEffect(() => {
-    const loadCachedGames = async () => {
-      if (!teamIdNum) return;
-      try {
-        const cached = await AsyncStorage.getItem(CACHE_KEY);
-        if (!cached) return;
-
-        const { timestamp, data } = JSON.parse(cached);
-        const diffHours = (Date.now() - timestamp) / (1000 * 60 * 60);
-        if (diffHours < CACHE_EXPIRY_HOURS) {
-          setCachedGames(data);
-        } else {
-          await AsyncStorage.removeItem(CACHE_KEY);
-        }
-      } catch (err) {
-        console.error("Failed to load cached games:", err);
-      }
-    };
-    loadCachedGames();
-  }, [teamIdNum]);
-
-  // --- Save fresh games to cache ---
-  useEffect(() => {
-    if (!teamIdNum || !rawTeamGames?.length) return;
-    const saveToCache = async () => {
-      try {
-        await AsyncStorage.setItem(
-          CACHE_KEY,
-          JSON.stringify({ timestamp: Date.now(), data: rawTeamGames })
-        );
-      } catch (err) {
-        console.error("Failed to save games to cache:", err);
-      }
-    };
-    saveToCache();
-  }, [rawTeamGames, teamIdNum]);
-
-  // --- Memoize valid games ---
-  const teamGames = useMemo(
-    () =>
-      (cachedGames.length ? cachedGames : rawTeamGames).filter(
-        (g: Game) => g?.game?.date?.date
-      ),
-    [cachedGames, rawTeamGames]
-  );
-
   // --- Refresh handler ---
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -197,7 +144,7 @@ export default function TeamDetailScreen() {
   const favorited = team ? isFavorite(league, team.id) : false;
   const teamKey = String(team?.id);
   const notfied = team ? isNotified(league, teamKey) : false;
-  
+
   // --- Header ---
   useLayoutEffect(() => {
     navigation.setOptions({

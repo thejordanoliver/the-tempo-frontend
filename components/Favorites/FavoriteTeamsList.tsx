@@ -2,6 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import TeamPreviewModal from "components/Sports/NBA/Team/TeamPreviewModal";
 import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import * as Haptics from "expo-haptics";
@@ -11,7 +12,6 @@ import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import type { Team } from "types/types"; // Team type should include `league: "NBA" | "NFL" | "CFB" | "CBB"`
 import { LeagueType } from "types/types";
-import TeamPreviewModal from "./../Team/TeamPreviewModal";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 type TeamWithLeague = Team & { league: LeagueType };
 

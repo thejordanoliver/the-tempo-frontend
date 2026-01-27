@@ -7,10 +7,7 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useRef, useState } from "react";
-import PostImages, { MediaItem } from "./PostImages";
-
 import {
-  Alert,
   Animated,
   Easing,
   Image,
@@ -22,6 +19,9 @@ import {
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { getAccessToken } from "utils/authStorage";
+import AlertModal from "./AlertModal";
+import PostImages, { MediaItem } from "./PostImages";
+
 export interface Post {
   id: string;
   username: string;
@@ -41,7 +41,6 @@ export interface Post {
 interface PostItemProps {
   item: Post;
   isDark: boolean;
-  styles: ReturnType<typeof getStyles>;
   token: string | null;
   currentUserId: number | null;
   deletePost: (postId: string) => void;
@@ -54,7 +53,6 @@ interface PostItemProps {
 export const PostItem = memo(function PostItem({
   item,
   isDark,
-  styles,
   token,
   currentUserId,
   deletePost,
@@ -67,9 +65,11 @@ export const PostItem = memo(function PostItem({
   const likeState = likes[item.id];
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const router = useRouter();
-
+  const styles = PostItemStyles(isDark);
   const profileImageUri = item.profile_image
     ? item.profile_image.startsWith("http")
       ? item.profile_image
@@ -168,22 +168,16 @@ export const PostItem = memo(function PostItem({
     currentUserId != null && String(currentUserId) === String(item.user_id);
 
   const confirmDelete = () => {
-    Alert.alert(
-      "Confirm Delete",
-      "Are you sure you want to delete this post?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            deletePost(item.id);
-            setDropdownVisible(false);
-          },
-        },
-      ]
-    );
+    setShowDeleteModal(true);
   };
+
+  const handleDeleteConfirm = () => {
+    deletePost(item.id);
+    setShowDeleteModal(false);
+    setDropdownVisible(false);
+  };
+
+  const handleDeleteCancel = () => setShowDeleteModal(false);
 
   const dropdownAnim = useRef(new Animated.Value(0)).current;
   const showDropdown = () => {
@@ -220,9 +214,9 @@ export const PostItem = memo(function PostItem({
   });
 
   return (
-    <View style={styles.containerWrapper}>
+    <View style={styles.container}>
       <View style={styles.postContainer}>
-        <View style={[styles.userRow, { justifyContent: "space-between" }]}>
+        <View style={[styles.userRow, {}]}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity
               onPress={() => {
@@ -324,16 +318,7 @@ export const PostItem = memo(function PostItem({
 
         {isEditing ? (
           <TextInput
-            style={[
-              styles.postText,
-              {
-                borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-                borderWidth: 1,
-                borderRadius: 6,
-                padding: 6,
-                minHeight: 100,
-              },
-            ]}
+            style={[styles.editPostText, {}]}
             multiline
             value={editText}
             onChangeText={setEditText}
@@ -348,31 +333,25 @@ export const PostItem = memo(function PostItem({
 
         <View style={styles.postFooter}>
           {isEditing ? (
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity
-                onPress={onSaveEdit}
-                style={{ marginRight: 10 }}
-              >
-                <Text
-                  style={{
-                    color: "green",
-                    fontSize: 16,
-                    fontFamily: Fonts.OSREGULAR,
-                  }}
-                >
-                  Save
-                </Text>
+            <View style={styles.editActionsContainer}>
+              <TouchableOpacity style={styles.button} onPress={onSaveEdit}>
+                <Text style={styles.saveText}>Save</Text>
+                <Ionicons
+                  name={"checkmark"}
+                  size={30}
+                  color={isDark ? Colors.dark.limeGreen : Colors.light.green}
+                />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsEditing(false)}>
-                <Text
-                  style={{
-                    color: isDark ? Colors.dark.lightRed : Colors.light.red,
-                    fontSize: 16,
-                    fontFamily: Fonts.OSREGULAR,
-                  }}
-                >
-                  Cancel
-                </Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setIsEditing(false)}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+                <Ionicons
+                  name={"close"}
+                  size={30}
+                  color={isDark ? Colors.dark.lightRed : Colors.light.red}
+                />
               </TouchableOpacity>
             </View>
           ) : (
@@ -441,14 +420,23 @@ export const PostItem = memo(function PostItem({
           )}
         </View>
       </View>
+      <AlertModal
+        title="Delete Post"
+        message="Are you sure you want to delete this post?"
+        visible={showDeleteModal}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDark={isDark}
+      />
     </View>
   );
 });
 
-export function getStyles(isDark: boolean) {
+export function PostItemStyles(isDark: boolean) {
   return StyleSheet.create({
-    container: { flex: 1 },
-    containerWrapper: {
+    container: {
       paddingTop: 12,
       paddingHorizontal: 12,
     },
@@ -459,7 +447,7 @@ export function getStyles(isDark: boolean) {
     },
     username: {
       fontFamily: Fonts.OSREGULAR,
-      marginBottom: 4,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     timeWrapper: { flex: 1, justifyContent: "flex-end" },
@@ -480,6 +468,19 @@ export function getStyles(isDark: boolean) {
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
+    editPostText: {
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderWidth: 1,
+      borderRadius: 6,
+      padding: 8,
+      minHeight: 100,
+      maxHeight: 280,
+      marginTop: 12,
+      marginBottom: 12,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+    },
     postFooter: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -490,15 +491,11 @@ export function getStyles(isDark: boolean) {
     rightSide: {
       flexDirection: "row",
     },
-    error: {
-      color: "red",
-      marginVertical: 10,
-      textAlign: "center",
-    },
     userRow: {
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 4,
+      justifyContent: "space-between",
     },
     profileImage: {
       width: 40,
@@ -548,22 +545,7 @@ export function getStyles(isDark: boolean) {
       justifyContent: "center",
     },
     dropdownItem: { borderBottomWidth: 1, borderBottomColor: Colors.midTone },
-    floatingButton: {
-      position: "absolute",
-      bottom: 100,
-      right: 20,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      justifyContent: "center",
-      alignItems: "center",
-      elevation: 6,
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 3,
-    },
+
     singleImageWrapper: {
       marginTop: 4,
     },
@@ -573,12 +555,26 @@ export function getStyles(isDark: boolean) {
       borderRadius: 8,
       marginBottom: 10,
     },
-    emptyText: {
-      textAlign: "center",
-      marginTop: 20,
+    editActionsContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+    },
+    saveText: {
+      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
       fontSize: 20,
-      fontFamily: Fonts.OSLIGHT,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
+    },
+    cancelText: {
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      fontSize: 20,
+      fontFamily: Fonts.OSREGULAR,
+    },
+    button: {
+      padding: 10,
+      flexDirection: "row",
+      alignItems: "center",
     },
   });
 }
