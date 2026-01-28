@@ -8,11 +8,16 @@ const STAT_COL_WIDTH = 70;
 
 export const getStyles = (isDark: boolean) =>
   StyleSheet.create({
+     contentContainer:{
+        paddingHorizontal: 12,
+        paddingBottom: 100,
+      },
     center: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
     },
+
     header: {
       flexDirection: "row",
       justifyContent: "flex-start",
@@ -22,9 +27,11 @@ export const getStyles = (isDark: boolean) =>
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     heading: {
-      fontSize: 22,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 24,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingBottom: 4,
+      marginBottom: 12,
+      color: isDark ? Colors.dark.white : Colors.light.black,
     },
     row: {
       flexDirection: "row",

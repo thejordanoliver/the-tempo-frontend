@@ -1,8 +1,7 @@
 // hooks/useNFLStandings.ts
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-// hooks/useNFLStandings.ts
+import { useCallback } from "react";
 
 export type NFLDivisionTeam = {
   teamId: string; // ESPN ID always comes as string
@@ -17,7 +16,7 @@ export type NFLDivisionTeam = {
   clincher: string | null;
   wins: number | null;
   losses: number | null;
-  ties: number | null;              // ✅ ADDED (your UI expects ties)
+  ties: number | null; // ✅ ADDED (your UI expects ties)
   winPercent: number | null;
   gamesBehind: number | null;
   streak: string | null;
@@ -41,7 +40,6 @@ export type NFLDivisionTeam = {
   pointDifferential: number | null;
 };
 
-
 export type NFLStandingsData = {
   season: number;
   seasonDisplayName: string;
@@ -56,7 +54,9 @@ export type NFLStandingsData = {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export const useNFLStandings = () => {
+
+
+export const useNFLStandings = (year?: string) => {
   const [data, setData] = useState<NFLStandingsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,10 +65,11 @@ export const useNFLStandings = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(`${BASE_URL}/api/standings/nfl`);
-      const standingsData = res.data;
+      const res = await axios.get(`${BASE_URL}/api/standings/nfl`, {
+        params: year ? { season: year } : undefined,
+      });
 
-      setData(standingsData);
+      setData(res.data);
       setError(null);
     } catch (err: any) {
       console.error("Failed to fetch NFL standings:", err);
@@ -79,10 +80,10 @@ export const useNFLStandings = () => {
     }
   };
 
-
   useEffect(() => {
     fetchStandings();
-  }, []);
+  }, [year]); // 🔑 THIS is the missing piece
+
   return {
     standings: data?.conferences ?? [],
     divisions: data?.divisions ?? {},

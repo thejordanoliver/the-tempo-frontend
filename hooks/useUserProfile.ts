@@ -1,0 +1,174 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Animated } from "react-native";
+import { useFollowersModalStore } from "store/followersModalStore";
+
+import { teams } from "constants/teams";
+import { teams as cbbteams } from "constants/teamsCBB";
+import { teams as cfbteams } from "constants/teamsCFB";
+import { teams as mlbteams } from "constants/teamsMLB";
+import { teams as nflteams } from "constants/teamsNFL";
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+
+const parseImageUrl = (url?: string | null) => {
+  if (!url || url === "null") return null;
+  if (url.startsWith("http")) return url;
+  return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+};
+
+export function useUserProfile(userId?: string) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  const [username, setUsername] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
+  const [bio, setBio] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
+
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const { shouldRestore, targetUserId, type, openModal, clearRestore } =
+    useFollowersModalStore();
+
+  // Load current user
+  useEffect(() => {
+    AsyncStorage.getItem("userId").then((id) => {
+      if (id) setCurrentUserId(Number(id));
+    });
+  }, []);
+
+  const fetchUserData = useCallback(async () => {
+    if (!userId || currentUserId === null) return;
+
+    setIsLoading(true);
+    try {
+      const res = await fetch(
+        `${BASE_URL}/api/users/${userId}?currentUserId=${currentUserId}`
+      );
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+
+      setUsername(data.username ?? null);
+      setFullName(data.fullName ?? null);
+      setBio(data.bio ?? null);
+      setProfileImage(parseImageUrl(data.profileImage));
+      setBannerImage(parseImageUrl(data.bannerImage));
+      setFollowersCount(data.followersCount ?? 0);
+      setFollowingCount(data.followingCount ?? 0);
+      setFavorites(Array.isArray(data.favorites) ? data.favorites : []);
+      setIsFollowing(Boolean(data.isFollowing));
+    } catch {
+      setUsername(null);
+      setFullName(null);
+      setBio(null);
+      setProfileImage(null);
+      setBannerImage(null);
+      setFollowersCount(0);
+      setFollowingCount(0);
+      setFavorites([]);
+      setIsFollowing(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId, currentUserId]);
+
+  // Restore modal + refetch on focus
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldRestore && targetUserId) {
+        clearRestore();
+        openModal(type, targetUserId, currentUserId?.toString());
+      }
+
+      if (currentUserId !== null) {
+        fetchUserData();
+      }
+    }, [
+      shouldRestore,
+      targetUserId,
+      type,
+      currentUserId,
+      fetchUserData,
+      openModal,
+      clearRestore,
+    ])
+  );
+
+  const toggleFollow = async () => {
+    if (!userId || currentUserId === null || followLoading) return;
+
+    const prev = isFollowing;
+    const prevCount = followersCount;
+
+    const optimistic = !prev;
+    setIsFollowing(optimistic);
+    setFollowersCount((c) => (optimistic ? c + 1 : Math.max(c - 1, 0)));
+    setFollowLoading(true);
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/follows/toggle`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          followerId: currentUserId,
+          followeeId: userId,
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setIsFollowing(data.isFollowing);
+    } catch {
+      setIsFollowing(prev);
+      setFollowersCount(prevCount);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  const favoriteTeamsWithLeague = favorites
+    .map((fav) => {
+      const [league, id] = fav.split(":");
+      let team;
+      if (league === "NBA") team = teams.find((t) => String(t.id) === id);
+      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
+      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
+      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id);
+      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id);
+      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id);
+      return team ? { ...team, league } : null;
+    })
+    .filter(Boolean);
+
+  return {
+    // state
+    isLoading,
+    username,
+    fullName,
+    bio,
+    profileImage,
+    bannerImage,
+    followersCount,
+    followingCount,
+    isFollowing,
+    followLoading,
+    favoriteTeamsWithLeague,
+    fadeAnim,
+    currentUserId,
+
+    // actions
+    toggleFollow,
+    fetchUserData,
+  };
+}

@@ -31,7 +31,7 @@ import {
 } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { MLBGame } from "types/mlb";
-import { getNBASeason } from "utils/dateUtils";
+import { getMLBSeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import TabBar from "../../components/TabBar";
@@ -40,7 +40,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2025, "MLB");
+  const { categories, loading, error } = useSeasonLeaders(
+    Number(getMLBSeason()),
+    "MLB"
+  );
 
   return (
     <SeasonLeadersList
@@ -52,8 +55,8 @@ function StatsTabContent() {
   );
 }
 
-export default function NBALeagueScreen() {
-  const currentYear = getNBASeason();
+export default function MLBLeagueScreen() {
+  const currentYear = getMLBSeason();
   const { games, loading: liveLoading } = useMLBSeasonGames(2023);
 
   const { news, loading: newsLoading, refreshNews } = useLeagueNews("MLB");
@@ -65,7 +68,8 @@ export default function NBALeagueScreen() {
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-
+  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -301,9 +305,14 @@ export default function NBALeagueScreen() {
             </ScrollView>
           )}
 
-          {selectedTab === "standings" && <StandingsList />}
+          {selectedTab === "standings" && (
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+            />
+          )}
           {selectedTab === "stats" && <StatsTabContent />}
-          {selectedTab === "forum" && <LeagueForum league="NBA" />}
+          {selectedTab === "forum" && <LeagueForum league="MLB" />}
         </View>
       </View>
 

@@ -15,8 +15,9 @@ import {
 import { LeagueType } from "types/types";
 import { getAccessToken } from "utils/authStorage";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
-import { Post, PostItem, getStyles as getPostItemStyles } from "./PostItem";
+import { Post, PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
+import { forumStyles } from "./TeamForum";
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 type LeagueForumProps = {
@@ -38,7 +39,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getPostItemStyles(isDark);
+  const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
   const renderSkeletons = (count = 5) => (
     <>
@@ -127,6 +128,8 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     }
   };
 
+  // console.log(JSON.stringify(posts, null,2))
+
   const deletePost = async (postId: string) => {
     if (!token) {
       alert("You must be logged in to delete posts.");
@@ -172,18 +175,17 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <>
       {error && <Text style={global.errorText}>{error}</Text>}
 
       <FlatList
         data={posts}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={styles.container}
         renderItem={({ item }) => (
           <PostItem
             item={item}
             isDark={isDark}
-            styles={styles}
             token={token}
             currentUserId={currentUserId}
             deletePost={deletePost}
@@ -225,6 +227,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
           color={isDark ? "#1d1d1d" : "white"}
         />
       </TouchableOpacity>
-    </View>
+    </>
   );
 }

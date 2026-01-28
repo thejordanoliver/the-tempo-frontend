@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import FollowButton from "components/Profile/FollowButton";
+import { Colors } from "constants/Styles";
 import { Pressable, Text, View } from "react-native";
-import { getStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileScreenStyles";
 
 type Props = {
   fullName?: string | null;
@@ -28,7 +29,7 @@ export default function ProfileHeader({
   loading,
   onToggleFollow,
 }: Props) {
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
 
   return (
     <View style={styles.wrapper}>
@@ -45,7 +46,7 @@ export default function ProfileHeader({
             style={styles.editIcon}
             name="create"
             size={18}
-            color={isDark ? "#000" : "#fff"}
+            color={isDark ? Colors.black : Colors.white}
           />
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </Pressable>

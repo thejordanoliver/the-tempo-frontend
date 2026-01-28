@@ -1,23 +1,18 @@
-// hooks/useTeamForumPosts.ts
+// hooks/useLeagueForumPosts.ts
 import axios from "axios";
-import { useAuth } from "hooks/useAuth"; // adjust path if needed
+import { useAuth } from "hooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
-interface UseTeamForumPostsParams {
+interface useLeagueForumPostsParams {
   teamId: string;
   league?: LeagueType;
 }
 
-interface Pagination {
-  page: number;
-  totalPages: number;
-}
-
-export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
-  const { token, user, loading: authLoading } = useAuth();
+export function useLeagueForumPosts({  league }: useLeagueForumPostsParams) {
+  const { token, user } = useAuth();
 
   const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -27,17 +22,17 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 🔒 Prevent concurrent fetch loops
+  // 🔒 Prevent double-fetch loops
   const isFetchingRef = useRef(false);
 
   const fetchPosts = useCallback(
     async (pageNumber = 1) => {
-      if (!teamId || !league) return;
+      if ( !league) return;
 
-      // Wait for token to be ready
-      if (!token) return;
+      // ⛔ Token still loading → do nothing
+      if (token === undefined) return;
 
-      // Prevent concurrent fetches
+      // ⛔ Prevent concurrent fetch loops
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
 
@@ -45,20 +40,27 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       setError(null);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/forum/team/${league}/${teamId}`, {
-          params: { page: pageNumber, limit: 10 },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${BASE_URL}/api/forum/league/${league}`,
+          {
+            params: { page: pageNumber, limit: 10 },
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          }
+        );
 
         const { posts: newPosts, pagination } = res.data;
 
-        setPosts((prev) => (pageNumber === 1 ? newPosts : [...prev, ...newPosts]));
+        setPosts((prev) =>
+          pageNumber === 1 ? newPosts : [...prev, ...newPosts]
+        );
+
         setPage(pagination.page);
         setTotalPages(pagination.totalPages);
       } catch (err: any) {
-        console.error("Failed to fetch team posts:", err);
         setError(
-          err.response?.data?.error || err.message || "Failed to load forum posts"
+          err.response?.data?.error ||
+            err.message ||
+            "Failed to load forum posts"
         );
       } finally {
         setLoading(false);
@@ -66,28 +68,25 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
         isFetchingRef.current = false;
       }
     },
-    [teamId, league, token]
+    [ league, token]
   );
 
-  // 🔄 Fetch posts when token is ready or team/league changes
+  // 🔁 Initial load
   useEffect(() => {
-    if (authLoading) return; // wait for auth to finish
-    if (!token) return; // wait for token
     fetchPosts(1);
-  }, [fetchPosts, token, authLoading]);
+  }, [fetchPosts]);
 
-  // 🔄 Pull-to-refresh
+  // 🔄 Pull to refresh
   const refresh = useCallback(() => {
-    if (!token) return;
     fetchPosts(1);
-  }, [fetchPosts, token]);
+  }, [fetchPosts]);
 
   // ⬇️ Infinite scroll
   const loadMore = useCallback(() => {
-    if (!token || loading || refreshing) return;
+    if (loading || refreshing) return;
     if (page >= totalPages) return;
     fetchPosts(page + 1);
-  }, [fetchPosts, token, page, totalPages, loading, refreshing]);
+  }, [fetchPosts, page, totalPages, loading, refreshing]);
 
   // 🗑 Delete post
   const deletePost = useCallback(
@@ -111,7 +110,9 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       const res = await axios.put(
         `${BASE_URL}/api/forum/posts/${postId}`,
         { text },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       setPosts((prev) =>

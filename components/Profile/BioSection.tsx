@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { getStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileScreenStyles";
 
 type Props = {
   bio?: string | null;
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function BioSection({ bio, isDark }: Props) {
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
 
   return (
     <View style={styles.bioContainer}>

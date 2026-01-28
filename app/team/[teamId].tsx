@@ -33,6 +33,7 @@ import {
 import PagerView from "react-native-pager-view";
 import { style } from "styles/TeamStyles/TeamDetailsStyles";
 import { PlayerInfo, User } from "types/types";
+import { getNBASeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -42,6 +43,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = parseInt(teamIdStr);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false); // ✅ bottom sheet state
+  const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
@@ -426,7 +428,7 @@ export default function TeamDetailScreen() {
 
         {/* Standings Page */}
         <View key="standings" style={{ flex: 1 }}>
-          <StandingsList />
+          <StandingsList year={standingsYear} onYearChange={setStandingsYear} />
         </View>
 
         {/* Forum Page */}

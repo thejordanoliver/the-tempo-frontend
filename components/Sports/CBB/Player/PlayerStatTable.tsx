@@ -2,7 +2,7 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Sports/NBA/Player/PlayerStatsTableSkeleton";
 import { useLocalSearchParams } from "expo-router";
-import { useCBBPlayerStats } from "hooks/CBBHooks/useCBBPlayerStats";
+import { useCBBPlayerSeasons, PlayerSeasonStat } from "hooks/CBBHooks/useCBBPlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
@@ -18,75 +18,46 @@ const STAT_OPTIONS = [
   { label: "Per Game", value: "pergame" },
 ];
 
-const safe = (v?: number | null) =>
-  v == null || isNaN(v) ? "—" : Number(v).toFixed(1);
-
-const formatTotal = (v?: number | null) =>
-  v == null || isNaN(v) ? "—" : String(v);
-
+const safe = (v?: number | null) => (v == null || isNaN(v) ? "—" : Number(v).toFixed(1));
+const formatTotal = (v?: number | null) => (v == null || isNaN(v) ? "—" : String(v));
 const perGame = (stat?: number | null, gp?: number | null) =>
   !gp || gp === 0 ? "—" : (Number(stat || 0) / gp).toFixed(1);
-
-const parseSeasonTeam = (season: string) => {
-  const match = season.match(/^(\d{4}-\d{2})([A-Z]+)$/);
-
-  if (!match) {
-    return { year: season, team: "—" };
-  }
-
-  return {
-    year: match[1], // "2023-24"
-    team: match[2], // "FLA"
-  };
-};
 
 export default function PlayerStatTable({ playerId }: Props) {
   const [statView, setStatView] = useState<StatView>("totals");
 
   const params = useLocalSearchParams<{ league?: string }>();
-  const league =
-    params.league === "WCBB" || params.league === "wcbb" ? "WCBB" : "CBB";
+  const league = params.league?.toUpperCase() === "WCBB" ? "WCBB" : "CBB";
 
-  const { data, loading, error } = useCBBPlayerStats(playerId, league);
+  const { player, careerStats, seasonStats, loading, error } = useCBBPlayerSeasons(playerId);
 
   const isDark = useColorScheme() === "dark";
   const styles = statsTableStyles(isDark);
 
-  /* ------------------------------
-     LOADING / ERROR
-  ------------------------------ */
+  // ------------------------------
+  // LOADING / ERROR STATES
+  // ------------------------------
   if (loading)
     return (
       <View style={styles.container}>
         <PlayerStatTableSkeleton />
       </View>
     );
+
   if (error)
-    return (
-      <Text style={[styles.cell, styles.errorText]}>Error loading stats</Text>
-    );
-  if (!data || !data.seasonTotals?.length)
+    return <Text style={[styles.cell, styles.errorText]}>Error loading stats</Text>;
+
+  if (!careerStats?.length)
     return <Text style={styles.errorText}>No stats available</Text>;
 
-  /* ------------------------------
-     DATA
-  ------------------------------ */
-  const seasons = data.seasonTotals.filter(
-    (s) => !s.season.toLowerCase().includes("career")
-  );
-
-  const career = data.seasonTotals.find((s) =>
-    s.season.toLowerCase().includes("career")
-  );
-
-  /* ------------------------------
-     BEST SEASON (TOTAL PTS)
-  ------------------------------ */
+  // ------------------------------
+  // BEST SEASON (TOTAL PTS)
+  // ------------------------------
   const bestSeason = useMemo(() => {
     let best: string | null = null;
     let max = -Infinity;
 
-    seasons.forEach((s) => {
+    seasonStats.forEach((s) => {
       if ((s.pts ?? 0) > max) {
         max = s.pts ?? 0;
         best = s.season;
@@ -94,37 +65,30 @@ export default function PlayerStatTable({ playerId }: Props) {
     });
 
     return best;
-  }, [seasons]);
+  }, [seasonStats]);
 
-  /* ------------------------------
-     TEAMS PLAYED COUNT
-  ------------------------------ */
+  // ------------------------------
+  // TEAMS PLAYED COUNT
+  // ------------------------------
   const teamsPlayedCount = useMemo(() => {
     const teams = new Set<string>();
-
-    seasons.forEach((s) => {
-      if (s.team && s.team !== "—") {
-        teams.add(s.team);
-      }
+    seasonStats.forEach((s) => {
+      if (s.team && s.team !== "—") teams.add(s.team);
     });
-
     const count = teams.size;
     return count === 1 ? "1 TEAM" : `${count} TEAMS`;
-  }, [seasons]);
+  }, [seasonStats]);
 
-  const renderStat = (stat?: number | null, gp?: number | null) => {
-    if (statView === "pergame") return perGame(stat, gp);
-    return formatTotal(stat);
-  };
+  const renderStat = (stat?: number | null, gp?: number | null) =>
+    statView === "pergame" ? perGame(stat, gp) : formatTotal(stat);
 
   const statLabels = [
     "TEAM",
     "GP",
     "GS",
-    "MIN",
     "PTS",
-    "REB",
     "AST",
+    "REB",
     "STL",
     "BLK",
     "FG%",
@@ -134,9 +98,9 @@ export default function PlayerStatTable({ playerId }: Props) {
     "PF",
   ];
 
-  /* ------------------------------
-     UI
-  ------------------------------ */
+  // ------------------------------
+  // UI
+  // ------------------------------
   return (
     <View style={styles.container}>
       <HeadingTwo>Career Stats</HeadingTwo>
@@ -153,19 +117,11 @@ export default function PlayerStatTable({ playerId }: Props) {
         {/* SEASON COLUMN */}
         <View>
           <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
-              SEASON
-            </Text>
+            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>SEASON</Text>
           </View>
 
-          {seasons.map((s, i) => {
-            const zebra =
-              i % 2 === 1
-                ? isDark
-                  ? styles.rowAltDark
-                  : styles.rowAltLight
-                : null;
-
+          {seasonStats.map((s, i) => {
+            const zebra = i % 2 === 1 ? (isDark ? styles.rowAltDark : styles.rowAltLight) : null;
             const highlight = s.season === bestSeason ? styles.best : null;
 
             return (
@@ -175,7 +131,7 @@ export default function PlayerStatTable({ playerId }: Props) {
             );
           })}
 
-          {career && (
+          {careerStats.length > 0 && (
             <View style={[styles.row, styles.careerRow]}>
               <Text style={styles.careerHeaderCell}>CAREER</Text>
             </View>
@@ -185,6 +141,7 @@ export default function PlayerStatTable({ playerId }: Props) {
         {/* STATS */}
         <ScrollView horizontal>
           <View>
+            {/* Header */}
             <View style={[styles.row, styles.headerRow]}>
               {statLabels.map((label) => (
                 <Text key={label} style={[styles.cell, styles.headerCell]}>
@@ -193,14 +150,9 @@ export default function PlayerStatTable({ playerId }: Props) {
               ))}
             </View>
 
-            {seasons.map((s, i) => {
-              const zebra =
-                i % 2 === 1
-                  ? isDark
-                    ? styles.rowAltDark
-                    : styles.rowAltLight
-                  : null;
-
+            {/* Season Rows */}
+            {seasonStats.map((s, i) => {
+              const zebra = i % 2 === 1 ? (isDark ? styles.rowAltDark : styles.rowAltLight) : null;
               const highlight = s.season === bestSeason ? styles.best : null;
 
               return (
@@ -208,39 +160,79 @@ export default function PlayerStatTable({ playerId }: Props) {
                   <Text style={styles.cell}>{s.team}</Text>
                   <Text style={styles.cell}>{s.gp ?? "—"}</Text>
                   <Text style={styles.cell}>{s.gs ?? "—"}</Text>
-                  <Text style={styles.cell}>{s.min}</Text>
                   <Text style={styles.cell}>{renderStat(s.pts, s.gp)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.reb, s.gp)}</Text>
                   <Text style={styles.cell}>{renderStat(s.ast, s.gp)}</Text>
+                  <Text style={styles.cell}>{renderStat(s.reb, s.gp)}</Text>
                   <Text style={styles.cell}>{renderStat(s.stl, s.gp)}</Text>
                   <Text style={styles.cell}>{renderStat(s.blk, s.gp)}</Text>
-                  <Text style={styles.cell}>{safe(s.fgPct)}</Text>
-                  <Text style={styles.cell}>{safe(s.threePct)}</Text>
-                  <Text style={styles.cell}>{safe(s.ftPct)}</Text>
+                  <Text style={styles.cell}>{safe(s["fg%"])}</Text>
+                  <Text style={styles.cell}>{safe(s["3p%"])}</Text>
+                  <Text style={styles.cell}>{safe(s["ft%"])}</Text>
                   <Text style={styles.cell}>{renderStat(s.to, s.gp)}</Text>
                   <Text style={styles.cell}>{renderStat(s.pf, s.gp)}</Text>
                 </View>
               );
             })}
 
-            {career && (
-              <View style={[styles.row, styles.careerRow]}>
-                <Text style={styles.careerCell}>{teamsPlayedCount}</Text>
-                <Text style={styles.careerCell}>{career.gp ?? "—"}</Text>
-                <Text style={styles.careerCell}>{career.gs ?? "—"}</Text>
-                <Text style={styles.careerCell}>{career.min}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.pts, career.gp)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.reb, career.gp)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.ast, career.gp)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.stl, career.gp)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.blk, career.gp)}</Text>
-                <Text style={styles.careerCell}>{safe(career.fgPct)}</Text>
-                <Text style={styles.careerCell}>{safe(career.threePct)}</Text>
-                <Text style={styles.careerCell}>{safe(career.ftPct)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.to, career.gp)}</Text>
-                <Text style={styles.careerCell}>{renderStat(career.pf, career.gp)}</Text>
-              </View>
-            )}
+            {/* Career Row */}
+          {careerStats.length > 0 && (() => {
+  const totalGP = careerStats.reduce((acc, s) => acc + (s.gp ?? 0), 0) || 0;
+  const totalGS = careerStats.reduce((acc, s) => acc + (s.gs ?? 0), 0) || 0;
+  const totalPTS = careerStats.reduce((acc, s) => acc + (s.pts ?? 0), 0);
+  const totalREB = careerStats.reduce((acc, s) => acc + (s.reb ?? 0), 0);
+  const totalAST = careerStats.reduce((acc, s) => acc + (s.ast ?? 0), 0);
+  const totalSTL = careerStats.reduce((acc, s) => acc + (s.stl ?? 0), 0);
+  const totalBLK = careerStats.reduce((acc, s) => acc + (s.blk ?? 0), 0);
+  const totalTO = careerStats.reduce((acc, s) => acc + (s.to ?? 0), 0);
+  const totalPF = careerStats.reduce((acc, s) => acc + (s.pf ?? 0), 0);
+
+  // Percentages (simple average if you don't have attempts)
+  const fgPercent = safe(
+    careerStats.reduce((acc, s) => acc + (s["fg%"] ?? 0), 0) /
+      careerStats.length
+  );
+  const threePPercent = safe(
+    careerStats.reduce((acc, s) => acc + (s["3p%"] ?? 0), 0) /
+      careerStats.length
+  );
+  const ftPercent = safe(
+    careerStats.reduce((acc, s) => acc + (s["ft%"] ?? 0), 0) /
+      careerStats.length
+  );
+
+  return (
+    <View style={[styles.row, styles.careerRow]}>
+      <Text style={styles.careerCell}>{teamsPlayedCount}</Text>
+      <Text style={styles.careerCell}>{totalGP}</Text>
+      <Text style={styles.careerCell}>{totalGS}</Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalPTS, totalGP) : totalPTS}
+      </Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalAST, totalGP) : totalAST}
+      </Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalREB, totalGP) : totalREB}
+      </Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalSTL, totalGP) : totalSTL}
+      </Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalBLK, totalGP) : totalBLK}
+      </Text>
+      <Text style={styles.careerCell}>{fgPercent}</Text>
+      <Text style={styles.careerCell}>{threePPercent}</Text>
+      <Text style={styles.careerCell}>{ftPercent}</Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalTO, totalGP) : totalTO}
+      </Text>
+      <Text style={styles.careerCell}>
+        {statView === "pergame" ? perGame(totalPF, totalGP) : totalPF}
+      </Text>
+    </View>
+  );
+})()}
+
           </View>
         </ScrollView>
       </View>

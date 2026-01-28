@@ -2,6 +2,7 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
+import { globalStyles } from "constants/Styles";
 import { getTeamByESPNId, nbaDivisionsById } from "constants/teams"; // your NBA team logos & info
 import { useRouter } from "expo-router";
 import {
@@ -9,7 +10,7 @@ import {
   StandingsTeam,
   useStandings,
 } from "hooks/useStandings";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -21,22 +22,47 @@ import {
 } from "react-native";
 import { getStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StandingsSkeleton } from "./StandingsSkeleton";
-import { globalStyles } from "constants/Styles";
 
 type SectionType = {
   title: string;
   data: StandingsTeam[];
 };
 
-export const StandingsList = () => {
-  const { data = [], loading, error } = useStandings();
+type Props = {
+  year?: string;
+  onYearChange?: (y: string) => void;
+};
+
+export const StandingsList = ({ year, onYearChange }: Props) => {
+  const { data = [], loading, error } = useStandings(year);
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-  const global = globalStyles(isDark)
+  const global = globalStyles(isDark);
   const router = useRouter();
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference"
   );
+
+  const yearOptions = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // NFL season starts Aug 1
+    const seasonHasStarted =
+      now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+
+    const maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+
+    const arr = [];
+    for (let y = maxSeason; y >= maxSeason - 24; y--) {
+      arr.push({ label: String(y), value: String(y) });
+    }
+
+    return arr;
+  }, []);
+
+  const safeYear =
+    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
 
   if (loading)
     return (
@@ -205,7 +231,7 @@ export const StandingsList = () => {
 
   function Section({ title, data }: SectionType) {
     return (
-      <View style={{ marginTop: 12 }}>
+      <View style={{ marginTop: 20 }}>
         <HeadingTwo style={styles.header}>{title}</HeadingTwo>
 
         <View style={{ flexDirection: "row" }}>
@@ -237,27 +263,35 @@ export const StandingsList = () => {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingTop: 10,
-        paddingBottom: 100,
-      }}
-    >
-      <Dropdown
-        options={[
-          { label: "Conference", value: "conference" },
-          { label: "Division", value: "division" },
-        ]}
-        selectedValue={sortMode}
-        onSelect={(value) => setSortMode(value as "conference" | "division")}
-        isDark={isDark}
-        absolute
-      />
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={{ flexDirection: "row" }}>
+        <Dropdown
+          options={[
+            { label: "Conference", value: "conference" },
+            { label: "Division", value: "division" },
+          ]}
+          selectedValue={sortMode}
+          onSelect={(value) => setSortMode(value as any)}
+          isDark={isDark}
+          absolute
+          style={{ right: 100 }}
+        />
+
+        {onYearChange && (
+          <Dropdown
+            options={yearOptions}
+            selectedValue={safeYear ?? ""}
+            onSelect={onYearChange}
+            isDark={isDark}
+            absolute
+            style={{ right: 0 }}
+          />
+        )}
+      </View>
       {sortMode === "conference" ? (
         <>
-          <Section title="Eastern Conference" data={east} />
-          <Section title="Western Conference" data={west} />
+          <Section title="East Conference" data={east} />
+          <Section title="West Conference" data={west} />
         </>
       ) : (
         divisionStandings.map((section) => (

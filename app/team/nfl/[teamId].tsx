@@ -6,6 +6,7 @@ import Roster from "components/Sports/CFB/Team/Roster";
 import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
+import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
 import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -16,10 +17,10 @@ import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
+import { getFootballSeasonYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -34,7 +35,9 @@ export default function TeamDetailScreen() {
   const league = "NFL";
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [standingsYear, setStandingsYear] = useState(
+    getFootballSeasonYear().toString()
+  );
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = style(isDark);
@@ -217,8 +220,11 @@ export default function TeamDetailScreen() {
           )}
         </ScrollView>
         {/* Stats Page */}
-        <ScrollView key="standings" contentContainerStyle={{ paddingBottom: 100 }}>
-         <NFLStandingsList />
+        <ScrollView key="standings">
+          <NFLStandingsList
+            year={standingsYear}
+            onYearChange={setStandingsYear}
+          />
         </ScrollView>
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>

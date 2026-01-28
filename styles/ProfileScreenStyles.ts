@@ -1,32 +1,18 @@
 import { Colors, Fonts } from "constants/Styles";
-import { StyleSheet } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 const BANNER_HEIGHT = 120;
 const PROFILE_PIC_SIZE = 120;
 
-const theme = (isDark: boolean) => ({
-  colors: {
-    background: isDark ? Colors.black : Colors.white,
-    inverse: isDark ? Colors.white : Colors.black,
-    bannerBackground: isDark ? Colors.darkGray : Colors.lightGray,
-    profileBorder: isDark ? "#222" : Colors.white,
-    profileBackground: isDark ? Colors.darkGray : Colors.lightGray,
-    textPrimary: isDark ? Colors.white : Colors.black,
-    textSecondary: isDark ? Colors.lightGray : Colors.darkGray,
-    textTertiary: isDark ? Colors.midTone : Colors.midTone,
-    accent: isDark ? Colors.black : Colors.white,
-    border: isDark ? Colors.darkGray : Colors.lightGray,
-    followCount: isDark ? Colors.white : Colors.black,
-  },
-});
-
-export const getStyles = (isDark: boolean) => {
-  const { colors } = theme(isDark);
-
+export const profileStyles = (
+  isDark: boolean,
+  isFollowing?: boolean,
+  opacityAnim?: Animated.Value
+) => {
   return StyleSheet.create({
     container: {
       flex: 1,
       paddingTop: 0,
-      backgroundColor: colors.background,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     title: {
       padding: 0,
@@ -36,7 +22,7 @@ export const getStyles = (isDark: boolean) => {
       top: 0,
       width: "100%",
       height: BANNER_HEIGHT,
-      backgroundColor: colors.bannerBackground,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     banner: {
       width: "100%",
@@ -49,11 +35,11 @@ export const getStyles = (isDark: boolean) => {
       marginLeft: -PROFILE_PIC_SIZE / 2,
       borderRadius: PROFILE_PIC_SIZE / 2,
       borderWidth: 4,
-      borderColor: colors.profileBorder,
+      borderColor: isDark ? Colors.black : Colors.white,
       overflow: "hidden",
       width: PROFILE_PIC_SIZE,
       height: PROFILE_PIC_SIZE,
-      backgroundColor: colors.profileBackground,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     profilePic: {
       width: "100%",
@@ -77,12 +63,12 @@ export const getStyles = (isDark: boolean) => {
     fullNameText: {
       fontSize: 20,
       fontFamily: Fonts.OSBOLD,
-      color: colors.textPrimary,
+      color: isDark ? Colors.white : Colors.black,
     },
     usernameText: {
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
-      color: "gray",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     followContainer: {
       flexDirection: "row",
@@ -95,25 +81,66 @@ export const getStyles = (isDark: boolean) => {
     followItem: {
       alignItems: "center",
     },
+
+    followButtonContainer: {
+      opacity: opacityAnim,
+      width: 120,
+      borderRadius: 10,
+      overflow: "hidden",
+    },
+    followButton: {
+      backgroundColor: isFollowing
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+        ? Colors.black
+        : Colors.white,
+      borderColor: isFollowing
+        ? isDark
+          ? Colors.black
+          : Colors.black 
+        : isDark
+        ? Colors.white
+        : Colors.black,
+      borderWidth: 1,
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+    },
+    followText: {
+      color: isFollowing
+        ? isDark
+          ? Colors.black
+          : Colors.white
+        : isDark
+        ? Colors.white
+        : Colors.black,
+      fontSize: 16,
+      fontFamily: Fonts.OSMEDIUM,
+    },
     followCount: {
       fontSize: 20,
-      fontWeight: "bold",
-      color: colors.followCount,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
     },
     followLabel: {
       fontSize: 16,
-      color: colors.textSecondary,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.OSMEDIUM,
     },
     bioText: {
       marginVertical: 20,
       fontSize: 16,
-      color: colors.textSecondary,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       lineHeight: 22,
       fontFamily: Fonts.OSLIGHT,
     },
     editProfileBtn: {
-      backgroundColor: colors.inverse,
+      backgroundColor: isDark ? Colors.white : Colors.black,
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 10,
@@ -138,8 +165,8 @@ export const getStyles = (isDark: boolean) => {
       marginBottom: 12,
       paddingBottom: 8,
       borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-      color: colors.textPrimary,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      color: isDark ? Colors.white : Colors.black,
     },
     toggleIcon: {
       paddingHorizontal: 4,
@@ -152,7 +179,7 @@ export const getStyles = (isDark: boolean) => {
     },
     noFavoritesText: {
       fontStyle: "italic",
-      color: colors.textTertiary,
+      color: isDark ? Colors.midTone : Colors.midTone,
       textAlign: "center",
     },
     teamGrid: {

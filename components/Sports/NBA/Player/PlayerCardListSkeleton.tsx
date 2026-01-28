@@ -118,7 +118,7 @@ const skeletonStyles = (isDark: boolean) =>
       gap: 12,
     },
     container: {
-      paddingBottom: 100,
+      paddingBottom: 24,
       paddingHorizontal: 12,
       width: "100%",
     },

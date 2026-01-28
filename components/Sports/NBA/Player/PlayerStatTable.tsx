@@ -93,7 +93,7 @@ export default function PlayerStatTable({ playerId }: Props) {
   <View style={styles.container}>
     <PlayerStatTableSkeleton />;
   </View>;
-  
+
   if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
   if (!seasons.length)
     return <Text style={global.errorText}>No stats available</Text>;
@@ -188,8 +188,8 @@ export default function PlayerStatTable({ playerId }: Props) {
                 "TEAM",
                 "AGE",
                 "GP",
-                "PTS",
                 "MIN",
+                "PTS",
                 "FG",
                 "FGA",
                 "FG%",
@@ -241,9 +241,6 @@ export default function PlayerStatTable({ playerId }: Props) {
                   {/* GP */}
                   <Text style={styles.cell}>{s.g}</Text>
 
-                  {/* PTS */}
-                  <Text style={styles.cell}>{renderStat(s.pts)}</Text>
-
                   {/* MIN */}
                   <Text style={styles.cell}>
                     {statView === "totals"
@@ -252,6 +249,10 @@ export default function PlayerStatTable({ playerId }: Props) {
                       ? perGame(s.mp, s.g)
                       : "36.0"}
                   </Text>
+
+                  {/* PTS */}
+                  <Text style={styles.cell}>{renderStat(s.pts)}</Text>
+
 
                   {/* FG / FGA */}
                   <Text style={styles.cell}>{renderStat(s.fg)}</Text>
@@ -290,8 +291,8 @@ export default function PlayerStatTable({ playerId }: Props) {
               <Text style={styles.careerCell}>{""}</Text>
               <Text style={styles.careerCell}>{""}</Text>
               <Text style={styles.careerCell}>{career.g}</Text>
-              <Text style={styles.careerCell}>{career.pts}</Text>
               <Text style={styles.careerCell}>{career.mp}</Text>
+              <Text style={styles.careerCell}>{career.pts}</Text>
               <Text style={styles.careerCell}>{career.fg}</Text>
               <Text style={styles.careerCell}>{career.fga}</Text>
               <Text style={styles.careerCell}>

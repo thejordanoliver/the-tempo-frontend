@@ -862,7 +862,7 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/olympic.jpg",
   },
-  "Levi's® Stadium": {
+  "Levi's Stadium": {
     name: "Levi's® Stadium",
     city: "San Francisco",
     address: "4900 Marie P DeBartolo Way, Santa Clara, CA 95054",
@@ -913,6 +913,17 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/so-fi.jpg",
   },
+  "Tom Benson Hall of Fame Stadium": {
+  name: "Tom Benson Hall of Fame Stadium",
+  city: "Canton",
+  address: "2625 Fulton Dr NW, Canton, OH 44718",
+  latitude: 40.8216,
+  longitude: -81.3865,
+  venueCapacity: "23,000",
+  venueImage:
+    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/tom-benson-hall-of-fame.jpg",
+},
+
 };
 
 export const getNFLTeam = (id: number | string) =>
@@ -981,41 +992,7 @@ export const teamsNFLById: Record<string, NFLTeam> = teams.reduce(
   {} as Record<string, NFLTeam>
 );
 
-// Map your numeric team IDs to ESPN team IDs
-export const teamIdMap: Record<number, string> = {
-  1: "13",
-  2: "30",
-  3: "17",
-  4: "19",
-  5: "33",
-  6: "10",
-  7: "8",
-  8: "1",
-  9: "5",
-  10: "4",
-  11: "22",
-  12: "21",
-  13: "20",
-  14: "25",
-  15: "9",
-  16: "3",
-  17: "12",
-  18: "28",
-  19: "29",
-  20: "2",
-  21: "11",
-  22: "23",
-  23: "26",
-  24: "27",
-  25: "15",
-  26: "34",
-  27: "18",
-  28: "7",
-  29: "6",
-  30: "24",
-  31: "14",
-  32: "16",
-};
+
 
 export const nflDivisionsById = {
   " AFC East": [

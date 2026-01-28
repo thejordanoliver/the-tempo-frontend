@@ -55,3 +55,18 @@ export const getHolidayLabel = (
 
   return null; // add more holidays here if needed
 };
+
+
+export function getMLBSeason(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0 = Jan, 11 = Dec
+
+  // MLB season starts in April
+  // Jan–Mar belong to previous season
+  if (month < 3) {
+    return String(year - 1);
+  }
+
+  // Apr–Dec belongs to current year season
+  return String(year);
+}

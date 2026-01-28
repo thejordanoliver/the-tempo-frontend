@@ -33,7 +33,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = ForumStyles(isDark);
+  const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const {
@@ -179,7 +179,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   );
 }
 
-export function ForumStyles(isDark: boolean) {
+export function forumStyles(isDark: boolean) {
   return StyleSheet.create({
     container: { paddingBottom: 100 },
     floatingButton: {

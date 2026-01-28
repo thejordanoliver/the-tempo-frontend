@@ -48,7 +48,7 @@ export type SignupStepsProps = {
   onChangeSignupData: (data: Partial<SignupData>) => void;
   onNextStep: () => void;
   onPreviousStep: () => void;
-  onToggleFavorite: (league: LeagueType, id: string) => void; // ✅ updated
+  onToggleFavorite: (league: LeagueType, id: string) => void;
   onOpenImagePickerFor: (target: "profile" | "banner") => void;
   toggleLayout: () => void;
   isGridView: boolean;
@@ -115,7 +115,6 @@ export default function SignupSteps({
       secondaryColor: raw.secondaryColor ?? raw.color ?? "#777",
       firstSeason: raw.firstSeason?.toString() ?? "",
       displayName: raw.displayName ?? raw.fullName ?? raw.name ?? "",
-      // anything else your LeagueTeam requires
     } satisfies LeagueTeam;
   }
 
@@ -123,7 +122,6 @@ export default function SignupSteps({
     ...teams.map((t) => normalizeTeam(t, "NBA")),
     ...nflteams.map((t) => normalizeTeam(t, "NFL")),
     ...mlbteams.map((t) => normalizeTeam(t, "MLB")),
-
     ...cfbteams
       .filter((t) => {
         const fbsTeamNames = Object.values(conferenceListMap)
@@ -133,7 +131,6 @@ export default function SignupSteps({
         return fbsTeamNames.some((n) => n.includes(name) || name.includes(n));
       })
       .map((t) => normalizeTeam(t, "CFB")),
-
     ...cbbTeams
       .filter((t) => {
         const cbbTeamNames = Object.values(cbbConferenceListMap)
@@ -145,12 +142,12 @@ export default function SignupSteps({
       .map((t) => normalizeTeam(t, "CBB")),
   ];
 
-  // REMOVE DUPLICATES
   const uniqueTeams = Array.from(
     new Map(allTeamsRaw.map((t) => [`${t.league}-${t.id}`, t])).values()
   );
 
   switch (signupStep) {
+    // Step 0: Name & Username
     case 0:
       return (
         <GestureDetector gesture={pan}>
@@ -179,6 +176,23 @@ export default function SignupSteps({
                   placeholderTextColor={Colors.midTone}
                   autoCapitalize="none"
                 />
+              </View>
+            </ScrollView>
+          </Reanimated.View>
+        </GestureDetector>
+      );
+
+    // Step 1: Email & Password
+    case 1:
+      return (
+        <GestureDetector gesture={pan}>
+          <Reanimated.View style={[{ flex: 1 }, animatedStyle]}>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1 }}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.signUpInputContainer}>
                 <TextInput
                   placeholder="Email"
                   keyboardType="email-address"
@@ -212,15 +226,10 @@ export default function SignupSteps({
         </GestureDetector>
       );
 
-    case 1:
+    // Step 2: Favorite Teams
+    case 2:
       return (
         <View style={{ flex: 1 }}>
-          {/* <View style={styles.titleRow}>
-            <View style={{ flex: 1 }} />
-            <Pressable onPress={onNextStep}>
-              <Text style={styles.skipText}>Skip</Text>
-            </Pressable>
-          </View> */}
           <SearchBar
             placeholder="Search teams..."
             value={search}
@@ -242,7 +251,8 @@ export default function SignupSteps({
         </View>
       );
 
-    case 2:
+    // Step 3: Banner & Profile Images
+    case 3:
       return (
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
           <Text
@@ -286,7 +296,8 @@ export default function SignupSteps({
         </ScrollView>
       );
 
-    case 3:
+    // Step 4: Review
+    case 4:
       return (
         <ScrollView>
           <View style={styles.reviewContainer}>
@@ -340,18 +351,14 @@ export default function SignupSteps({
             {signupData.favorites.length > 0 ? (
               <ScrollView horizontal={false} style={styles.favoritesScroll}>
                 {signupData.favorites.map((favId) => {
-                  // Check which league it belongs to
                   const [league, id] = favId.split(":") as [LeagueType, string];
-
                   let team;
                   if (league === "CBB") {
                     team = cbbTeams.find((t) => String(t.wid) === id);
                   } else {
-                    team = teams.find((t) => String(t.id) === id); // NBA as example
+                    team = teams.find((t) => String(t.id) === id);
                   }
-
                   if (!team) return null;
-
                   return (
                     <View
                       key={favId}

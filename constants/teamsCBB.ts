@@ -6302,6 +6302,7 @@ export const teams: CBBTeam[] = [
     espnID: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
+    shortName: "N'Western St",
     code: "NWST",
     color: "#492F91",
     secondaryColor: "#ed6118",
@@ -9083,13 +9084,16 @@ export const getTeamLogo = (id?: number | string, isDark = false) => {
   return isDark ? team.logoLight ?? team.logo : team.logo;
 };
 
-export const getCBBTeamLogo = (id?: number | string, isDark = false, isWomen = false) => {
+export const getCBBTeamLogo = (
+  id?: number | string,
+  isDark = false,
+  isWomen = false
+) => {
   if (!id) return PlaceholderLogo;
 
   // Try MEN first
   let team = teams.find((t) => String(t.id) === String(id));
 
-  
   if (!team) {
     team = teams.find((t) => String(t.wid) === String(id));
     isWomen = !!team;
@@ -9100,10 +9104,6 @@ export const getCBBTeamLogo = (id?: number | string, isDark = false, isWomen = f
   // Men’s logo
   return isDark ? team.logoLight ?? team.logo : team.logo;
 };
-
-
-
-
 
 export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
   (map, team) => {

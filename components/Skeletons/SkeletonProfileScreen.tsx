@@ -9,12 +9,12 @@ import {
   View,
   ViewProps,
 } from "react-native";
-import { getStyles } from "styles/ProfileScreenStyles";
+import { profileStyles } from "styles/ProfileScreenStyles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
 
   // Smooth breathing pulse animation
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
@@ -108,32 +108,42 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
         ))}
       </View>
 
-      {/* Bio + edit button */}
-      <View style={styles.bioContainer}>
-        <View style={styles.wrapper}>
-          <View style={styles.nameContainer}>
-            <ShimmerBlock
-              style={{ height: 20, width: 120 }}
-              testID="skeleton-name-line1"
-            />
-            <ShimmerBlock
-              style={{ height: 16, width: 100 }}
-              testID="skeleton-name-line2"
-            />
-          </View>
+      {/* Name + edit button */}
+      <View style={styles.wrapper}>
+        <View style={styles.nameContainer}>
           <ShimmerBlock
-            style={styles.editProfileBtn}
-            testID="skeleton-edit-profile-btn"
+            style={{ height: 20, width: 120 }}
+            testID="skeleton-name-line1"
+          />
+          <ShimmerBlock
+            style={{ height: 16, width: 100 }}
+            testID="skeleton-name-line2"
           />
         </View>
         <ShimmerBlock
-          style={{ height: 40, width: "100%" }}
+          style={[styles.editProfileBtn, { height: 40, width: 110 }]}
+          testID="skeleton-edit-profile-btn"
+        />
+      </View>
+
+      {/* Bio */}
+      <View style={styles.bioContainer}>
+        <ShimmerBlock
+          style={{ height: 10, width: "100%" }}
+          testID="skeleton-bio"
+        />
+        <ShimmerBlock
+          style={{ height: 10, width: "90%" }}
+          testID="skeleton-bio"
+        />
+        <ShimmerBlock
+          style={{ height: 10, width: "80%" }}
           testID="skeleton-bio"
         />
       </View>
 
       {/* Favorites */}
-      <View style={[styles.favoritesContainer, { marginTop: 80 }]}>
+      <View style={[styles.favoritesContainer, { marginTop: 60 }]}>
         <View style={styles.favoritesHeader}>
           <ShimmerBlock
             style={{ height: 20, width: 150 }}
@@ -150,7 +160,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
-            marginTop: 10,
+            
           }}
         >
           {[...Array(6)].map((_, i) => (

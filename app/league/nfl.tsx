@@ -25,6 +25,7 @@ import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import { getFootballSeasonYear } from "utils/dateUtils";
 import {
   generateWeeksFromGames,
   getCurrentWeekIndexFromGames,
@@ -38,7 +39,9 @@ dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2025);
+  const { categories, loading, error } = useSeasonLeaders(
+    getFootballSeasonYear()
+  );
 
   return (
     <SeasonLeadersList
@@ -85,7 +88,12 @@ export default function NFLLeagueScreen() {
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [draftYear, setDraftYear] = useState(
+    getFootballSeasonYear().toString()
+  );
+  const [standingsYear, setStandingsYear] = useState(
+    getFootballSeasonYear().toString()
+  );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
 
@@ -286,7 +294,12 @@ export default function NFLLeagueScreen() {
             </ScrollView>
           )}
 
-          {selectedTab === "standings" && <NFLStandingsList />}
+          {selectedTab === "standings" && (
+            <NFLStandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+            />
+          )}
           {selectedTab === "stats" && <StatsTabContent />}
 
           {selectedTab === "draft" && (

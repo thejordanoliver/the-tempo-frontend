@@ -26,15 +26,18 @@ import {
 } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
-import { getStyles } from "styles/ProfileScreenStyles";
+import { profileStyles } from "styles/ProfileScreenStyles";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
 function parseImageUrl(url: string | null | undefined): string | null {
-  if (!url || url === "null") return null;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+  if (!url) return null;
+  if (url === "null" || url === "undefined") return null;
+  if (typeof url !== "string") return null;
+  if (!url.startsWith("http")) return null; // Cloudinary URLs are always https
+  return url;
 }
+
 
 export default function ProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
@@ -225,7 +228,7 @@ export default function ProfileScreen() {
     });
   }, [navigation, username, isDark]);
 
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
 
   const favoriteTeamsWithLeague = favorites
     .map((fav: string) => {
@@ -258,6 +261,8 @@ export default function ProfileScreen() {
       openModal("following", String(currentUserId), String(currentUserId));
     }
   };
+
+
 
   return (
     <>

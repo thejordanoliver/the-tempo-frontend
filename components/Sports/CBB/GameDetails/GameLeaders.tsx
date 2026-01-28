@@ -414,7 +414,8 @@ export default function GameLeaders({
             if (!teamObj) return null;
 
             if (isWomen) {
-              if (lighter) return teamObj.wLogo || teamObj.logo;
+              if (lighter)
+                return teamObj.wLogo || teamObj.logoLight || teamObj.logo;
               return isDark
                 ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
                 : teamObj.wLogo || teamObj.logo;

@@ -31,8 +31,6 @@ export type PlayerSeason = {
   tov: number | null;
   pf: number | null;
   pts: number | null;
-  triple_doubles: number | null;
-  awards: string | null;
 };
 
 type PlayerInfo = {

@@ -3,13 +3,14 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Sports/NBA/Standings/StandingsSkeleton";
 import { StatusLegend } from "components/Sports/NFL/Standings/StatusLegend";
 import { Fonts } from "constants/fonts";
+import { globalStyles } from "constants/Styles";
 import { getTeamByESPNId, nflDivisionsById, teams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
 import {
   NFLDivisionTeam,
   useNFLStandings,
 } from "hooks/NFLHooks/useNFLStandings";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -24,15 +25,41 @@ import { getStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StatusBadge } from "./StatusBadge";
 type DivisionMap = Record<string, NFLDivisionTeam[]>;
 
-export const NFLStandingsList = () => {
-  const { standings: conferences, loading, error } = useNFLStandings();
+type Props = {
+  year?: string;
+  onYearChange?: (y: string) => void;
+};
+
+export const NFLStandingsList = ({ year, onYearChange }: Props) => {
+  const { standings: conferences, loading, error } = useNFLStandings(year);
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
-
+  const global = globalStyles(isDark);
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference"
   );
+
+  const yearOptions = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // NFL season starts Aug 1
+    const seasonHasStarted =
+      now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+
+    const maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+
+    const arr = [];
+    for (let y = maxSeason; y >= maxSeason - 24; y--) {
+      arr.push({ label: String(y), value: String(y) });
+    }
+
+    return arr;
+  }, []);
+
+  const safeYear =
+    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
 
   // ========= 1. Loading / Error =========
   if (loading)
@@ -45,7 +72,7 @@ export const NFLStandingsList = () => {
   if (error || !conferences)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "red" }}>
+        <Text style={global.errorText}>
           {error || "Failed to load standings"}
         </Text>
       </View>
@@ -271,7 +298,7 @@ export const NFLStandingsList = () => {
     title: string;
     data: NFLDivisionTeam[];
   }) => (
-    <View style={{ marginTop: 12 }}>
+    <View style={{ marginTop: 20 }}>
       <HeadingTwo style={styles.header}>{title}</HeadingTwo>
 
       <View style={{ flexDirection: "row" }}>
@@ -304,24 +331,31 @@ export const NFLStandingsList = () => {
 
   // ========= FINAL RENDER =============
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingTop: 14,
-        paddingBottom: 100,
-      }}
-    >
-      <Dropdown
-        options={[
-          { label: "Conference", value: "conference" },
-          { label: "Division", value: "division" },
-        ]}
-        selectedValue={sortMode}
-        onSelect={(value) => setSortMode(value as any)}
-        isDark={isDark}
-        absolute
-      />
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={{ flexDirection: "row" }}>
+        <Dropdown
+          options={[
+            { label: "Conference", value: "conference" },
+            { label: "Division", value: "division" },
+          ]}
+          selectedValue={sortMode}
+          onSelect={(value) => setSortMode(value as any)}
+          isDark={isDark}
+          absolute
+          style={{ right: 100 }}
+        />
 
+        {onYearChange && (
+          <Dropdown
+            options={yearOptions}
+            selectedValue={safeYear ?? ""}
+            onSelect={onYearChange}
+            isDark={isDark}
+            absolute
+            style={{ right: 0 }}
+          />
+        )}
+      </View>
       {sortMode === "conference" ? (
         <>
           <Section title="AFC" data={afcData} />

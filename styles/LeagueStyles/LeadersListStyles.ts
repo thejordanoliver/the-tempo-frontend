@@ -11,8 +11,6 @@ export const leadersListStyles = (isDark: boolean) =>
     centered: { alignItems: "center", justifyContent: "center", flex: 1 },
     skeletonList: {
       paddingTop: 6,
-      alignItems: "center",
-      justifyContent: "center",
       paddingBottom: 100,
     },
     infoText: {

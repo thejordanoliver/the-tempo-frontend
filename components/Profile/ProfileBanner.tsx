@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { getStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileScreenStyles";
 
 type Props = {
   bannerImage?: string | null;
@@ -16,8 +16,22 @@ type Props = {
   onPressProfile?: (e: GestureResponderEvent) => void;
 };
 
-const bannerDefault = { uri: "https://via.placeholder.com/800x200.png" };
-const profileDefault = { uri: "https://via.placeholder.com/120.png" };
+const bannerDefault = { uri: "https://placehold.co/800x200/png" };
+const profileDefault = { uri: "https://placehold.co/120" };
+
+function safeSource(uri?: string | null) {
+  if (
+    !uri ||
+    uri === "null" ||
+    uri === "undefined" ||
+    typeof uri !== "string" ||
+    !uri.startsWith("http")
+  ) {
+    return undefined;
+  }
+
+  return { uri };
+}
 
 export default function ProfileBanner({
   bannerImage,
@@ -27,7 +41,7 @@ export default function ProfileBanner({
   onPressBanner,
   onPressProfile,
 }: Props) {
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
 
   const BannerComponent = editable ? TouchableOpacity : View;
   const ProfileComponent = editable ? TouchableOpacity : View;
@@ -36,7 +50,7 @@ export default function ProfileBanner({
     <View style={styles.bannerContainer}>
       <BannerComponent onPress={onPressBanner} activeOpacity={0.7}>
         <Image
-          source={bannerImage ? { uri: bannerImage } : bannerDefault}
+          source={safeSource(bannerImage) ?? bannerDefault}
           style={styles.banner}
         />
       </BannerComponent>
@@ -44,7 +58,7 @@ export default function ProfileBanner({
       <View style={styles.profilePicWrapper}>
         <ProfileComponent onPress={onPressProfile} activeOpacity={0.7}>
           <Image
-            source={profileImage ? { uri: profileImage } : profileDefault}
+            source={safeSource(profileImage) ?? profileDefault}
             style={styles.profilePic}
           />
         </ProfileComponent>

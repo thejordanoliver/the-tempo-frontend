@@ -60,7 +60,7 @@ export default function TeamPlayerList({
             <PlayerCard
               key={player.id}
               id={player.player_id}
-              name={player.name}
+              name={player.full_name}
               position={player.position}
               team={teamFullName}
               avatarUrl={player.avatarUrl}

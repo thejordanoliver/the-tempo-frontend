@@ -117,14 +117,8 @@ export default function LoginScreen() {
     await safeSetItem("username", user.username);
     await safeSetItem("fullName", user.full_name);
     await safeSetItem("email", user.email);
-    await safeSetItem(
-      "profileImage",
-      user.profile_image ? `${BASE_URL}${user.profile_image}` : null
-    );
-    await safeSetItem(
-      "bannerImage",
-      user.banner_image ? `${BASE_URL}${user.banner_image}` : null
-    );
+    await safeSetItem("profileImage", user.profile_image ?? null);
+    await safeSetItem("bannerImage", user.banner_image ?? null);
     await safeSetItem("favorites", JSON.stringify(user.favorites || []));
     await safeSetItem("bio", user.bio ?? "");
     await AsyncStorage.setItem("loggedInUser", JSON.stringify(user));
@@ -324,9 +318,10 @@ export default function LoginScreen() {
   // ======================================================
   const headerTitles: Record<number, string> = {
     0: "Create Account",
-    1: "Select Favorite Teams",
-    2: "Upload Images",
-    3: "Review Details",
+    1: "Email & Password",
+    2: "Select Favorite Teams",
+    3: "Upload Images",
+    4: "Review Details",
   };
 
   // ======================================================

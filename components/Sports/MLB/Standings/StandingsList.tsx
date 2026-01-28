@@ -1,14 +1,15 @@
 // components/MLBStandingsList.tsx
 import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Colors";
 import { mlbDivisionsById, teams } from "constants/teamsMLB"; // your MLB team logos & info
 import { useRouter } from "expo-router";
 import {
   ConferenceStandings,
   StandingsTeam,
-  useStandings,
+  useMLBStandings,
 } from "hooks/MLBHooks/useStandings";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -21,19 +22,43 @@ import {
 import { getStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StandingsSkeleton } from "./StandingsSkeleton";
 
+type Props = {
+  year?: string;
+  onYearChange?: (y: string) => void;
+};
 type SectionType = {
   title: string;
   data: StandingsTeam[];
 };
 
-export const StandingsList = () => {
-  const { data = [], loading, error } = useStandings();
+export const StandingsList = ({ year, onYearChange }: Props) => {
+  const { standings: conferences, loading, error } = useMLBStandings(year);
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
   const router = useRouter();
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference"
   );
+
+  const yearOptions = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    const seasonHasStarted =
+      now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+
+    const maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+
+    const arr = [];
+    for (let y = maxSeason; y >= maxSeason - 24; y--) {
+      arr.push({ label: String(y), value: String(y) });
+    }
+
+    return arr;
+  }, []);
+
+  const safeYear =
+    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
 
   if (loading)
     return (
@@ -51,18 +76,20 @@ export const StandingsList = () => {
 
   // --- Group by conference ---
   const american = (
-    data?.find((c) => c.abbreviation === "AL" || c.name === "American League")
-      ?.standings || []
+    conferences?.find(
+      (c) => c.abbreviation === "AL" || c.name === "American League"
+    )?.standings || []
   ).sort((a, b) => b.winPercent - a.winPercent);
 
   const national = (
-    data?.find((c) => c.abbreviation === "NL" || c.name === "National League")
-      ?.standings || []
+    conferences?.find(
+      (c) => c.abbreviation === "NL" || c.name === "National League"
+    )?.standings || []
   ).sort((a, b) => b.winPercent - a.winPercent);
 
   // --- Group by division ---
   const divisions: Record<string, StandingsTeam[]> = {};
-  data?.forEach((conf) => {
+  conferences?.forEach((conf) => {
     conf.standings.forEach((team) => {
       if (!divisions[team.division]) divisions[team.division] = [];
       divisions[team.division].push(team);
@@ -75,7 +102,7 @@ export const StandingsList = () => {
       const numericIds = idList.map(Number); // <-- FIX
 
       const teamsInDivision =
-        data
+        conferences
           ?.flatMap((conf: ConferenceStandings) => conf.standings)
           .filter((team: StandingsTeam) =>
             numericIds.includes(Number(team.teamId))
@@ -116,7 +143,7 @@ export const StandingsList = () => {
             })
           }
         >
-          <Image source={{ uri: teamLogo }} style={styles.logo} />
+          <Image source={teamLogo} style={styles.logo} />
           <Text style={styles.teamName}>{teamInfo?.code}</Text>
         </TouchableOpacity>
       </View>
@@ -160,12 +187,7 @@ export const StandingsList = () => {
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.roadRecord}</Text>
         </View>
-        <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.conferenceRecord}</Text>
-        </View>
-        <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.vsdiv}</Text>
-        </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.pointsFor}</Text>
         </View>
@@ -196,8 +218,6 @@ export const StandingsList = () => {
         "GB",
         "Home",
         "Away",
-        "Conf",
-        "Div",
         "Pts For",
         "Pts Against",
       ].map((label) => (
@@ -210,17 +230,8 @@ export const StandingsList = () => {
 
   function Section({ title, data }: SectionType) {
     return (
-      <View style={{ marginTop: 12 }}>
-        <View style={styles.header}>
-          <Text
-            style={[
-              styles.heading,
-              { color: isDark ? Colors.white : Colors.black },
-            ]}
-          >
-            {title}
-          </Text>
-        </View>
+      <View style={{ marginTop: 20 }}>
+        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}
@@ -250,23 +261,31 @@ export const StandingsList = () => {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingTop: 10,
-        paddingBottom: 100,
-      }}
-    >
-      <Dropdown
-        options={[
-          { label: "Conference", value: "conference" },
-          { label: "Division", value: "division" },
-        ]}
-        selectedValue={sortMode}
-        onSelect={(value) => setSortMode(value as "conference" | "division")}
-        isDark={isDark}
-        absolute
-      />
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={{ flexDirection: "row" }}>
+        <Dropdown
+          options={[
+            { label: "Conference", value: "conference" },
+            { label: "Division", value: "division" },
+          ]}
+          selectedValue={sortMode}
+          onSelect={(value) => setSortMode(value as any)}
+          isDark={isDark}
+          absolute
+          style={{ right: 100 }}
+        />
+
+        {onYearChange && (
+          <Dropdown
+            options={yearOptions}
+            selectedValue={safeYear ?? ""}
+            onSelect={onYearChange}
+            isDark={isDark}
+            absolute
+            style={{ right: 0 }}
+          />
+        )}
+      </View>
       {sortMode === "conference" ? (
         <>
           <Section title="American League" data={american} />

@@ -30,7 +30,7 @@ export type ConferenceStandings = {
   standings: StandingsTeam[];
 };
 
-export function useStandings() {
+export function useStandings(year?: string) {
   const [data, setData] = useState<ConferenceStandings[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,19 +40,23 @@ export function useStandings() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/standings/nba`);
+      const res = await axios.get(`${BASE_URL}/api/standings/nba`, {
+        params: year ? { season: year } : undefined,
+      });
 
       setData(res.data.conferences);
     } catch (err: any) {
+      console.error("Failed to fetch NBA standings:", err);
       setError(err.message || "Failed to fetch standings");
+      setData(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [year]); // 🔑 add year as a dependency
 
   useEffect(() => {
     fetchStandings();
-  }, [fetchStandings]);
+  }, [fetchStandings]); // fetch whenever `year` changes
 
   return {
     data,

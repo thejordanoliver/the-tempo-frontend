@@ -664,21 +664,21 @@ export const teamsMLBById: Record<string, MLBTeam> = teams.reduce(
 );
 
 export const mlbDivisionsById = {
-  "American League East": [
+  "AL East": [
     5, // Boston Red Sox
     1, // Baltimore Orioles
     36, // Toronto Blue Jays
     27, // Tampa Bay Rays
     25, // New York Yankees
   ],
-  "American League Central": [
+  "AL Central": [
     9, // Cleveland Guardians
     12, // Detroit Tigers
     16, // Kansas City Royals
     22, // Minnesota Twins
     33, // Chicago White Sox
   ],
-  "American League West": [
+  "AL West": [
     3, // Oakland Athletics
     15, // Houston Astros
     17, // Los Angeles Angels
@@ -686,21 +686,21 @@ export const mlbDivisionsById = {
     35, // Texas Rangers
   ],
 
-  "National League East": [
+  "NL East": [
     19, // Miami Marlins
     24, // New York Mets
     27, // Philadelphia Phillies
     37, // Washington Nationals
     3, // Atlanta Braves
   ],
-  "National League Central": [
+  "NL Central": [
     6, // Chicago Cubs
     8, // Cincinnati Reds
     20, // Milwaukee Brewers
     28, // Pittsburgh Pirates
     22, // St. Louis Cardinals
   ],
-  "National League West": [
+  "NL West": [
     2, // Arizona Diamondbacks
     10, // Colorado Rockies
     18, // Los Angeles Dodgers

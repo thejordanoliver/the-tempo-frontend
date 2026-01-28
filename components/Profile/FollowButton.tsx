@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Easing,
   GestureResponderEvent,
@@ -8,14 +7,13 @@ import {
   Text,
   useColorScheme,
 } from "react-native";
-import { Fonts } from "constants/fonts";
+import { profileStyles } from "styles/ProfileScreenStyles";
+
 type FollowButtonProps = {
   isFollowing: boolean;
   loading: boolean;
   onToggle: () => void;
 };
-
-
 
 export default function FollowButton({
   isFollowing,
@@ -23,83 +21,43 @@ export default function FollowButton({
   onToggle,
 }: FollowButtonProps) {
   const isDark = useColorScheme() === "dark";
-
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.sequence([
-      Animated.timing(opacityAnim, {
-        toValue: 0.3,
-        duration: 150,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 150,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    Animated.timing(opacityAnim, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
   }, [isFollowing]);
+
+  const styles = profileStyles(isDark, isFollowing);
 
   const handlePress = (e: GestureResponderEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!loading) onToggle();
+    if (!loading) {
+      opacityAnim.setValue(0); // fade out instantly
+      onToggle();              // state flips → fade back in
+    }
   };
-
-  const backgroundColor = isFollowing
-    ? isDark
-      ? "#fff"
-      : "#1d1d1d"
-    : "transparent";
-
-  const textColor = isFollowing
-    ? isDark
-      ? "#1d1d1d"
-      : "#fff"
-    : isDark
-      ? "#fff"
-      : "#1d1d1d";
 
   return (
     <Animated.View
-      style={{
-        opacity: opacityAnim,
-        width: 120,
-        borderRadius: 10,
-        overflow: "hidden",
-      }}
+      style={[
+        styles.followButtonContainer,
+        { opacity: opacityAnim },
+      ]}
     >
       <Pressable
         onPress={handlePress}
         disabled={loading}
-        style={{
-          backgroundColor,
-          borderColor: isDark ? "#fff" : "#1d1d1d",
-          borderWidth: 1,
-          borderRadius: 10,
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-        }}
+        style={styles.followButton}
       >
-        {loading ? (
-          <ActivityIndicator size="small" color={textColor} />
-        ) : (
-          <Text
-            style={{
-              color: textColor,
-              fontSize: 16,
-              fontFamily: Fonts.OSMEDIUM,
-            }}
-          >
-            {isFollowing ? "Following" : "Follow"}
-          </Text>
-        )}
+        <Text style={styles.followText}>
+          {isFollowing ? "Following" : "Follow"}
+        </Text>
       </Pressable>
     </Animated.View>
   );

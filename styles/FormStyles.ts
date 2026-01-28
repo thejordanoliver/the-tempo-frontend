@@ -9,20 +9,39 @@ export const formStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.black : Colors.white,
       marginBottom: 30,
     },
-    signInContainer: {
-      flex: 1,
 
-      justifyContent: "center",
-    },
     signUpInputContainer: {
       flex: 1,
-      justifyContent: "space-evenly",
+      justifyContent: "center",
+      gap: 12,
     },
+    signInContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 40,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+    },
+
     signInInputContainer: {
       flex: 1,
       justifyContent: "center",
       gap: 12,
     },
+
+    signInInput: {
+      width: "100%",
+      color: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      padding: 16,
+      borderRadius: 8,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+    },
+
     title: {
       fontSize: 24,
       fontFamily: Fonts.OSBOLD,

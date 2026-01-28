@@ -26,7 +26,7 @@ import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getNBASeason } from "utils/dateUtils";
+import { getFootballSeasonYear, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
@@ -73,6 +73,9 @@ export default function NBALeagueScreen() {
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [standingsYear, setStandingsYear] = useState(
+    getNBASeason().toString()
+  );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
 
@@ -282,7 +285,12 @@ export default function NBALeagueScreen() {
             </ScrollView>
           )}
 
-          {selectedTab === "standings" && <StandingsList />}
+          {selectedTab === "standings" && (
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+            />
+          )}
           {selectedTab === "stats" && <StatsTabContent />}
           {selectedTab === "draft" && (
             <DraftList

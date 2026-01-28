@@ -95,19 +95,44 @@ export default function DraftList({
   // ---------------------------
   // YEAR OPTIONS
   // ---------------------------
-  const yearOptions = useMemo(() => {
-    const now = new Date().getFullYear();
-    const arr = [];
-    for (let y = now + 0; y >= now - 24; y--) {
-      arr.push({ label: String(y), value: String(y) });
-    }
-    return arr;
-  }, []);
+const yearOptions = useMemo(() => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  let maxSeason: number;
+
+  if (league === "nfl") {
+    // NFL season starts Aug 1
+    const seasonHasStarted =
+      now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+    maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+  } else if (league === "nba") {
+    // NBA season typically starts Oct 15
+    const seasonHasStarted =
+      now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 15);
+    maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+  } else {
+    maxSeason = currentYear;
+  }
+
+  const arr = [];
+  for (let y = maxSeason; y >= maxSeason - 24; y--) {
+    arr.push({ label: String(y), value: String(y) });
+  }
+
+  return arr;
+}, [league]);
+
+
+const safeYear =
+  Number(year) > Number(yearOptions[0]?.value)
+    ? yearOptions[0].value
+    : year;
 
   // ---------------------------
   // FETCH NBA DRAFT
   // ---------------------------
-  const { draft, loading, error } = useDraft(league, Number(selectedYear));
+const { draft, loading, error } = useDraft(league, Number(safeYear));
 
   const picks = draft?.picks ?? [];
 
@@ -237,7 +262,7 @@ export default function DraftList({
           <View style={{ flexDirection: "row", gap: 8 }}>
             <Dropdown
               options={yearOptions}
-              selectedValue={year}
+              selectedValue={safeYear}
               onSelect={onYearChange}
               isDark={isDark}
               width={120}

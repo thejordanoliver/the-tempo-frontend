@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
 import { Follow } from "types/types";
-import { getStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileScreenStyles";
 
 export default function FollowStats({
   followersCount,
@@ -10,7 +10,7 @@ export default function FollowStats({
   currentUserId,
   targetUserId,
 }: Follow) {
-  const styles = getStyles(isDark);
+  const styles = profileStyles(isDark);
   const openModal = useFollowersModalStore((state) => state.openModal);
 
   return (
