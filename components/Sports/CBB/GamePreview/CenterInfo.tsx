@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
+import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 
 type CenterInfoProps = {
   isChampionship: boolean;

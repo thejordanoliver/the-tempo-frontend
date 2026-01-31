@@ -14,7 +14,7 @@ type Props = {
   teamId?: number | string;
 };
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
-export function usePlayersInFoulTrouble({ gameId, foulLimit = 4, teamId }: Props) {
+export function usePlayersInFoulTrouble({ gameId, foulLimit = 3, teamId }: Props) {
   const [players, setPlayers] = useState<PlayerStat[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

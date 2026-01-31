@@ -24,10 +24,11 @@ import { useNFLMatchup } from "hooks/NFLHooks/useNFLMatchup";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { Game } from "types/nfl";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { snapPoints } from "utils/modalUtils";
 import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
 import GameLeaders from "../GameDetails/GameLeaders";
 import NFLInjuries from "../GameDetails/NFLInjuries";
@@ -50,8 +51,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   // --------------------------------------------------------------
   // SHEET VISIBILITY
   // --------------------------------------------------------------
-  const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
-
   useEffect(() => {
     visible ? sheetRef.current?.present() : sheetRef.current?.dismiss();
   }, [visible]);

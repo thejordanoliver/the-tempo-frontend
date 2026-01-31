@@ -5,6 +5,8 @@ import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameHeader from "components/Sports/CBB/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
+import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
+import PlayersInFoulTrouble from "components/Sports/CBB/GameDetails/PlayersInFoulTrouble";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import {
   GameLocation,
@@ -13,7 +15,6 @@ import {
 } from "components/Sports/NBA/GameDetails";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
-import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
@@ -462,7 +463,15 @@ export default function GameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
-            {dontShowDetails && (
+            {(isHalftime || inProgress) && (
+              <PlayersInFoulTrouble
+                gameId={gameObj.id}
+                home={homeTeamData}
+                away={awayTeamData}
+              />
+            )}
+
+            {(isHalftime || inProgress) && (
               <ShotChart
                 plays={plays}
                 homeTeamId={String(homeEspnId)}
@@ -472,7 +481,7 @@ export default function GameDetailsScreen() {
               />
             )}
 
-            {dontShowDetails && (
+            {(isHalftime || inProgress) && (
               <GameSummary
                 plays={plays ?? []}
                 homeTeamId={String(homeEspnId)}
@@ -486,7 +495,7 @@ export default function GameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
-            {dontShowDetails && (
+            {(isHalftime || inProgress) && (
               <BoxScore
                 playerStats={playerStats}
                 homeTeamId={Number(homeEspnId)}

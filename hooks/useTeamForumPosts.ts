@@ -1,6 +1,6 @@
 // hooks/useTeamForumPosts.ts
 import axios from "axios";
-import { useAuth } from "hooks/useAuth"; // adjust path if needed
+import { useAuth } from "hooks/UserHooks/useAuth"; // adjust path if needed
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
@@ -45,20 +45,27 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       setError(null);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/forum/team/${league}/${teamId}`, {
-          params: { page: pageNumber, limit: 10 },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${BASE_URL}/api/forum/team/${league}/${teamId}`,
+          {
+            params: { page: pageNumber, limit: 10 },
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const { posts: newPosts, pagination } = res.data;
 
-        setPosts((prev) => (pageNumber === 1 ? newPosts : [...prev, ...newPosts]));
+        setPosts((prev) =>
+          pageNumber === 1 ? newPosts : [...prev, ...newPosts]
+        );
         setPage(pagination.page);
         setTotalPages(pagination.totalPages);
       } catch (err: any) {
         console.error("Failed to fetch team posts:", err);
         setError(
-          err.response?.data?.error || err.message || "Failed to load forum posts"
+          err.response?.data?.error ||
+            err.message ||
+            "Failed to load forum posts"
         );
       } finally {
         setLoading(false);

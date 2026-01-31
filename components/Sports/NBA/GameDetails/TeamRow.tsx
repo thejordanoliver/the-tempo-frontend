@@ -115,7 +115,9 @@ export const TeamRow = ({
   };
 
   const renderBonus = () =>
-    bonusState === "DOUBLE" ? <Text style={styles.bonus}>BONUS</Text> : null;
+    bonusState === "DOUBLE" && !isFinal ? (
+      <Text style={styles.bonus}>BONUS</Text>
+    ) : null;
 
   /* -----------------------------------------------------
    * Render

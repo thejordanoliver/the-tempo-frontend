@@ -1,10 +1,13 @@
 // ---- LastFiveGamesSwitcher.tsx ----
 import HeadingTwo from "components/Headings/HeadingTwo";
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "components/TabBars/FixedWidthTabBar";
+import { globalStyles } from "constants/Styles";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
-import FixedWidthTabBar, { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
 
 type Props = {
   isDark: boolean;
@@ -39,7 +42,6 @@ export default function LastFiveGamesSwitcher({
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
   const styles = lastFiveGameStyles(isDark, lighter ?? false);
-
   const renderRow = ({ item, index }: { item: any; index: number }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
@@ -130,7 +132,9 @@ export default function LastFiveGamesSwitcher({
           renderItem={renderRow}
           scrollEnabled={false}
           ListEmptyComponent={
-            <Text style={styles.empty}>No recent games.</Text>
+            <View style={styles.emptyContainer}>
+              <Text style={styles.empty}>No recent games.</Text>
+            </View>
           }
           ListHeaderComponent={
             <View style={styles.headerRow}>

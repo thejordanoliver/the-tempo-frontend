@@ -20,7 +20,7 @@ import { players } from "constants/wcbbPlayers";
 
 import { useNotifications } from "contexts/NotificationContext";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 
@@ -73,6 +73,19 @@ export default function TeamDetailScreen() {
   } = useCBBTeamGames(teamIdNum?.toString() ?? "", { isWomen: true });
 
   /** ---------------- MONTHS ---------------- */
+
+  const gameCountByMonth = useMemo(() => {
+    const map = new Map<string, number>();
+
+    teamGames.forEach((game) => {
+      const d = new Date(game.date);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+
+      map.set(key, (map.get(key) ?? 0) + 1);
+    });
+
+    return map;
+  }, [teamGames]);
 
   const monthsToShow = useMemo(() => {
     const map = new Map<string, { month: number; year: number }>();
@@ -246,7 +259,8 @@ export default function TeamDetailScreen() {
               onSelect={(month, year) =>
                 setSelectedDate(new Date(year, month, 1))
               }
-              styles={styles}
+              loading={gamesLoading}
+              gameCountByMonth={gameCountByMonth}
             />
           </View>
           <CBBGamesList

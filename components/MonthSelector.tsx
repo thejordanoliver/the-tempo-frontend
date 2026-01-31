@@ -1,11 +1,15 @@
+import { Colors, Fonts } from "constants/Styles";
 import { useEffect, useRef } from "react";
 import {
   Dimensions,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
+import WeekSelectorSkeleton from "./Skeletons/WeekSelectorSkeleton";
 
 type MonthItem = {
   month: number; // 0–11
@@ -16,21 +20,19 @@ type Props = {
   months: MonthItem[];
   selectedDate: Date | null;
   onSelect: (month: number, year: number, index: number) => void;
-  styles: {
-    monthSelector: any;
-    monthButton: any;
-    monthButtonSelected: any;
-    monthText: any;
-    monthTextSelected: any;
-  };
+  loading: boolean;
+  gameCountByMonth: Map<string, number>;
 };
 
 export default function MonthSelector({
   months,
   selectedDate,
   onSelect,
-  styles,
+  loading,
+  gameCountByMonth,
 }: Props) {
+  const isDark = useColorScheme() === "dark";
+  const styles = monthSelectorStyles(isDark);
   const scrollRef = useRef<ScrollView>(null);
 
   const ITEM_WIDTH = 70;
@@ -65,6 +67,8 @@ export default function MonthSelector({
     });
   }, [selectedDate, months, needsScroll]);
 
+  if (loading) return <WeekSelectorSkeleton />;
+
   return (
     <View style={styles.monthSelector}>
       <ScrollView
@@ -89,6 +93,8 @@ export default function MonthSelector({
           const isSelected =
             selectedDate?.getMonth() === month &&
             selectedDate?.getFullYear() === year;
+          const key = `${year}-${month}`;
+          const count = gameCountByMonth.get(key) ?? 0;
 
           const label = new Date(year, month).toLocaleString("en-US", {
             month: "short",
@@ -115,6 +121,14 @@ export default function MonthSelector({
               >
                 {label}
               </Text>
+              <Text
+                style={[
+                  styles.gameCountText,
+                  isSelected && styles.gameCountTextSelected,
+                ]}
+              >
+                {count} Games
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -122,3 +136,39 @@ export default function MonthSelector({
     </View>
   );
 }
+
+export const monthSelectorStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    monthSelector: {
+      flexDirection: "row",
+    },
+    monthButton: {
+      marginBottom: 8,
+      textAlign: "center",
+    },
+    monthButtonSelected: {
+      backgroundColor: "transparent",
+    },
+    monthText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 20,
+      color: Colors.midTone,
+      textAlign: "center",
+    },
+    gameCountText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: Colors.midTone,
+      textAlign: "center",
+    },
+    monthTextSelected: {
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
+    },
+    gameCountTextSelected: {
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
+    },
+  });

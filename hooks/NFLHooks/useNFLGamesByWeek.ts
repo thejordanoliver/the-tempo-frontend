@@ -1,13 +1,15 @@
 // hooks/NFLHooks/useNFLGamesByWeek.ts
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { getTeamInfo } from "constants/teamsNFL";
 import dayjs from "dayjs";
+import { useCallback, useEffect, useState } from "react";
 import { Game } from "types/nfl";
 import { NFLWeekFromGames } from "utils/nflWeeks";
 
 type UseNFLGamesByWeekParams = {
   selectedWeek: NFLWeekFromGames | null;
 };
+
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 interface UseNFLGamesByWeekReturn {
@@ -37,11 +39,11 @@ export const useNFLGamesByWeek = ({
 
       const allGames: Game[] = res.data?.response || [];
       const backendSeason: number =
-        res.data?.response?.[0]?.game?.season || null;
+        res.data?.response?.[0]?.game?.season ?? null;
 
       setSeason(backendSeason);
 
-      // ✅ Filter by week label + stage
+      // --- Filter by week ---
       let filteredGames = allGames;
 
       if (selectedWeek) {
@@ -66,7 +68,23 @@ export const useNFLGamesByWeek = ({
         });
       }
 
-      filteredGames.sort((a, b) => {
+      // --- Enrich home / away teams ---
+      const enrichedGames = filteredGames.map((game) => {
+        const homeTeam = getTeamInfo(game.teams.home.id);
+        const awayTeam = getTeamInfo(game.teams.away.id);
+
+        return {
+          ...game,
+          season: backendSeason,
+          teams: {
+            home: { ...game.teams.home, ...homeTeam },
+            away: { ...game.teams.away, ...awayTeam },
+          },
+        };
+      });
+
+      // --- Sort by kickoff time ---
+      enrichedGames.sort((a, b) => {
         const aTime = a.game.date?.timestamp
           ? dayjs.unix(a.game.date.timestamp).valueOf()
           : 0;
@@ -76,7 +94,7 @@ export const useNFLGamesByWeek = ({
         return aTime - bTime;
       });
 
-      setGames(filteredGames);
+      setGames(enrichedGames);
       return backendSeason;
     } catch (err: any) {
       console.error("Error fetching NFL games by week:", err.message || err);

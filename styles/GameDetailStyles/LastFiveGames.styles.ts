@@ -26,10 +26,11 @@ export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
         flex: 1,
       },
       wrapper: {
-       borderColor: Colors.midTone,
+        borderColor: Colors.midTone,
         borderWidth: 1,
         borderRadius: 8,
         paddingTop: 12,
+        overflow: "hidden",
       },
       tabLabel: {
         flexDirection: "row",
@@ -71,7 +72,19 @@ export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
         paddingBottom: 4,
         borderBottomWidth: 1,
         borderColor: Colors.midTone,
-        marginVertical: 8,
+        marginTop: 8,
+      },
+      emptyContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      },
+      empty: {
+        textAlign: "center",
+        fontSize: 20,
+        fontFamily: Fonts.OSREGULAR,
+        color: Colors.midTone,
       },
       cell: {
         fontSize: 14,
@@ -106,12 +119,6 @@ export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
         height: 18,
         resizeMode: "contain",
         marginLeft: 4,
-      },
-      empty: {
-        textAlign: "center",
-        color: Colors.midTone,
-        marginTop: 12,
-        fontFamily: Fonts.OSREGULAR,
       },
     }),
   };

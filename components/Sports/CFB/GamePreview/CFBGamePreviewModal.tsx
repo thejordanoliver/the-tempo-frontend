@@ -31,9 +31,10 @@ import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesi
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
 
@@ -47,7 +48,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
+
   useEffect(() => {
     visible ? sheetRef.current?.present() : sheetRef.current?.dismiss();
   }, [visible]);

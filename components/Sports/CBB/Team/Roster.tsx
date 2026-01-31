@@ -59,7 +59,7 @@ export default function Roster({
             <PlayerCard
               key={player.id}
               id={Number(player.id)}
-              name={player.name ?? ""}
+              name={player.fullName ?? ""}
               position={player.position}
               team={teamFullName}
               avatarUrl={player.imageUrl}

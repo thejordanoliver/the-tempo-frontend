@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
-import players from "constants/players";
+import { Colors } from "constants/Styles";
 import { teamsById } from "constants/teams";
 import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import { teamsCFBById } from "constants/teamsCFB";
 import { teamsMLBById } from "constants/teamsMLB";
 import { teamsNFLById } from "constants/teamsNFL";
 import { Image } from "expo-image";
+import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png"
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
@@ -99,10 +99,8 @@ export default function ResultItemRow({
   // PLAYER
   // -------------------------
   const renderPlayer = (player: PlayerResult) => {
-    const avatarUrl = player.avatarUrl?.trim()
-      ? player.avatarUrl
-      : players[player.name];
-
+    // console.log(JSON.stringify(player, null, 2));
+    const avatarUrl = player.avatarUrl ?? player.headshot_url ?? playerPlaceholderImage;
     const teamId = player.team_id != null ? String(player.team_id) : null;
 
     const localTeam =
@@ -116,7 +114,7 @@ export default function ResultItemRow({
         ? teamsCBBById[teamId]
         : teamId && player.isWCBB
         ? teamsWCBBById[teamId]
-        : teamId
+        : teamId && player.isNBA
         ? teamsById[teamId]
         : null;
 

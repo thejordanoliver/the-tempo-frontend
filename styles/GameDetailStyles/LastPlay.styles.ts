@@ -1,4 +1,4 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const lastPlayStyles = (isDark: boolean) =>
@@ -7,38 +7,53 @@ export const lastPlayStyles = (isDark: boolean) =>
       marginVertical: 12,
       flexGrow: 1,
     },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      overflow: "hidden",
+      justifyContent: "center",
+      gap: 8,
+      padding: 12,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      paddingBottom: 8,
+      marginBottom: 8,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    statusContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
     simpleContainer: {
       marginVertical: 12,
     },
     simpleText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: isDark ? Colors.white : Colors.black
+      color: isDark ? Colors.white : Colors.black,
     },
-    athleteContainer: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 12,
-      marginTop: 4,
+    subText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    athleteItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginRight: 12,
-    },
+
     avatar: {
       width: 40,
       height: 40,
       borderRadius: 100,
-      marginRight: 6,
       borderWidth: 0.5,
       paddingTop: 4,
+      marginRight: 8,
       borderColor: isDark ? Colors.white : Colors.black,
     },
     athleteDetails: {
       flexDirection: "row",
       alignItems: "flex-end",
-      marginRight: 12,
     },
     athleteName: {
       fontFamily: Fonts.OSREGULAR,

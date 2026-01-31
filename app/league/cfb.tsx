@@ -30,6 +30,7 @@ import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import { CFBGame } from "types/cfb";
 import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import {
   CFBWeek,
@@ -38,8 +39,6 @@ import {
 } from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
-import { getTeamById } from "constants/teamsCFB";
-import { CFBGame } from "types/cfb";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);

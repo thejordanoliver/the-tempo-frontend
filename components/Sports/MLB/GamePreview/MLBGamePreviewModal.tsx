@@ -4,24 +4,26 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { teams } from "constants/teamsMLB";
+import { getMLBTeam } from "constants/teamsMLB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGameInfo } from "hooks/MLBHooks/useGameInfo";
-import { useTeamRecord } from "hooks/MLBHooks/useTeamRecords";
+import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { MLBGame } from "types/mlb";
-import { CenterInfo } from "./CenterInfo";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getGameDate } from "utils/nflGameCardUtils";
+
+import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
+import CenterInfo from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
 type Props = {
   game: MLBGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
   onClose: () => void;
 };
-
 
 export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const colorScheme = useColorScheme();
@@ -32,57 +34,22 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const home = game.teams.home;
   const away = game.teams.away;
 
-  // Ensure timestamp is a number
-  const timestampNum = Number(gameInfo.date.timestamp);
-  const apiDateStr = new Date(timestampNum * 1000).toISOString().split("T")[0]; // ✅ for API hooks
-  const displayDateStr = new Date(timestampNum * 1000).toLocaleDateString(
-    "en-us",
-    {
-      month: "short",
-      day: "numeric",
-    }
-  ); // ✅ for UI
-  const displayTimeStr = new Date(timestampNum * 1000).toLocaleTimeString(
-    "en-us",
-    {
-      hour: "numeric",
-      minute: "numeric",
-    }
-  );
+  /* ===============================
+     DATE / TIME
+  =============================== */
+  const timestamp = game?.date?.timestamp;
 
-  type GameStatus =
-    | "Not Started"
-    | "In Progress"
-    | "Final"
-    | "Canceled"
-    | "Postponed"
-    | "Delayed"
-    | "Abandoned";
-
-  const statusMap: Record<string, GameStatus> = {
-    NS: "Not Started",
-    FT: "Final",
-    POST: "Postponed",
-    CANC: "Canceled",
-    INTR: "Delayed",
-    ABD: "Abandoned",
-  };
-
+  const {
+    date: gameDate,
+    iso: gameDateStr,
+    formattedDate,
+    formattedTime,
+  } = getGameDate(timestamp);
   const rawStatus = (
     gameInfo.status.short ||
     gameInfo.status.long ||
     ""
   ).toUpperCase();
-
-  let gameStatus: GameStatus =
-    statusMap[rawStatus] ??
-    (rawStatus.startsWith("IN") ? "In Progress" : "Not Started");
-
-  // --- Compute game date ---
-  const gameDate = useMemo(() => {
-    return game?.date?.timestamp ? new Date(game.date.timestamp * 1000) : null;
-  }, [game?.date?.timestamp]);
-  const gameDateStr = gameDate?.toISOString();
 
   // Snap points
   const snapPoints = useMemo(() => ["80%", "94%"], []);
@@ -104,38 +71,49 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
     []
   );
 
-  // --- Get Team Info from constants ---
-  const getTeamById = (id?: number | string) =>
-    teams.find((t) => String(t.id) === String(id));
+  // Find matching internal teams using ESPN ID
+  const homeTeam = getMLBTeam(home?.id);
+  const awayTeam = getMLBTeam(away?.id);
 
-  const homeTeamData = teams.find((t) => t.id === home.id) ?? home;
-  const awayTeamData = teams.find((t) => t.id === away.id) ?? away;
+  const homeName = homeTeam?.code ?? emptyHomeTeam.code ?? "";
+  const awayName = awayTeam?.code ?? emptyAwayTeam.code ?? "";
 
-  // --- Team records ---
-  const awayEspnId = getTeamById(away?.id)?.espnID;
-  const homeEspnId = getTeamById(home?.id)?.espnID;
+  const homeEspnId = homeTeam?.espnID;
+  const awayEspnId = awayTeam?.espnID;
 
+  const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
+  const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
 
-
-  const { record: awayRecord } = useTeamRecord(
-    awayEspnId ? Number(awayEspnId) : undefined
-  );
-  const { record: homeRecord } = useTeamRecord(
-    homeEspnId ? Number(homeEspnId) : undefined
-  );
-
-  const { headlineText } = useGameInfo(
-    Number(homeEspnId),
-    Number(awayEspnId),
+  const { score: liveScore, details } = useBaseballGameDetails(
+    "mlb",
+    String(awayEspnId),
+    String(homeEspnId),
     gameDateStr
   );
-
-  // Championship Game Detection (Jan 19, 2026)
-  const isChampionship =
-    gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 && // January = 0
-    gameDate.getDate() === 19;
+  const isChampionship = details?.playoffRound === "World Series";
+  const styles = gamePreviewModalStyle(isChampionship);
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
+  const headline = details?.headline;
+  const seriesSummary = details?.seriesSummary;
+  const seasonState = details?.seasonState;
+  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const endOfInning = gameStatusDescription === "End of Inning";
+  const period = liveScore?.period ?? 0;
+  const headlineText = details?.headline;
+  const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
+  const isLiveScoreReady = !!liveScore;
 
   return (
     <BottomSheetModal
@@ -151,39 +129,18 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
           disappearsOnIndex={-1}
         />
       )}
-      handleStyle={{
-        backgroundColor: "transparent",
-        height: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        position: "absolute",
-        left: 8,
-        right: 8,
-        top: 0,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: Colors.lightGray,
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-      }}
-      backgroundStyle={{ backgroundColor: "transparent" }}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
     >
-      <View
-        style={{
-          flex: 1,
-          overflow: "hidden",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-        }}
-      >
+      <View style={styles.container}>
         <LinearGradient
           colors={
             isChampionship
               ? ["#DFBD69", "#CDA765"]
-              : [awayTeamData.color, homeTeamData.color]
+              : [awayColor, awayColor, homeColor, homeColor]
           }
-          locations={isChampionship ? undefined : [0, 1]}
+          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -198,94 +155,64 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
         <BlurView
           intensity={100}
           tint={"systemUltraThinMaterialDark"}
-          style={{
-            flex: 1,
-            padding: 12,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            paddingTop: 40,
-          }}
+          style={styles.blurViewContainer}
         >
-          <>
-            {headlineText && (
-              <>
-                {headlineText && (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontFamily: Fonts.OSLIGHT,
-                      color: Colors.dark.white,
-                      textAlign: "center",
-                    }}
-                  >
-                    {headlineText}
-                  </Text>
-                )}
-              </>
-            )}
-
-            {/* Teams + Center Info */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 20,
-              }}
-            >
-              <TeamInfo
-                team={awayTeamData}
-                teamName={awayTeamData.code ?? awayTeamData.name ?? "Away"}
-                score={game.scores.away.total}
-                opponentScore={game.scores.home.total}
-                record={awayRecord?.overall ?? "0-0"}
-                isGameOver={
-                  gameStatus === "Final" ||
-                  gameStatus === "Canceled" ||
-                  gameStatus === "Postponed"
-                }
-                hasStarted={gameStatus !== "Not Started"}
-                side="away"
-                lighter
-              />
-              <CenterInfo
-                status={gameStatus}
-                date={displayDateStr}
-                time={displayTimeStr}
-
-                isDark={isDark}
-                homeTeam={homeTeamData}
-                awayTeam={awayTeamData}
-                colors={colorsRecord}
-                lighter
-                apiDate={apiDateStr}
-              />
-
-              <TeamInfo
-                team={homeTeamData}
-                teamName={homeTeamData.code ?? homeTeamData.name ?? "Home"}
-                score={game.scores.home.total}
-                opponentScore={game.scores.away.total}
-                record={homeRecord?.overall ?? "0-0"}
-                isGameOver={
-                  gameStatus === "Final" ||
-                  gameStatus === "Canceled" ||
-                  gameStatus === "Postponed"
-                }
-                hasStarted={gameStatus !== "Not Started"}
-                side="home"
-                lighter
-              />
+          {!isLiveScoreReady ? (
+            <View style={styles.loadingContainer}>
+              <CustomActivityIndicator lighter />
             </View>
-          </>
-          {/* Scrollable Details */}
-          <BottomSheetScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            style={{ flex: 1 }}
-          >
-            <View style={{ gap: 20 }}></View>
-          </BottomSheetScrollView>
+          ) : (
+            <>
+              {headlineText && (
+                <>
+                  {headlineText && (
+                    <Text style={styles.headlineText}>{headlineText}</Text>
+                  )}
+                </>
+              )}
+
+              <View style={styles.gameHeaderContainer}>
+                <TeamInfo
+                  side="away"
+                  team={away}
+                  teamName={awayName}
+                  score={awayScore}
+                  opponentScore={homeScore}
+                  record={awayRecord}
+                  gameStatusDescription={gameStatusDescription}
+                />
+
+                <CenterInfo
+                  isChampionship={isChampionship}
+                  gameStatusDescription={gameStatusDescription}
+                  gameStatusDetail={gameStatusDetail}
+                  broadcastNetworks={broadcastText}
+                  inning={period}
+                  time={formattedTime}
+                  formattedDate={formattedDate}
+                  isDark={isDark}
+                  lighter
+                />
+                <TeamInfo
+                  side="home"
+                  team={home}
+                  teamName={homeName}
+                  score={homeScore}
+                  opponentScore={awayScore}
+                  record={homeRecord}
+                  gameStatusDescription={gameStatusDescription}
+                />
+              </View>
+
+              <BottomSheetScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.bottomSheetScrollViewContainer}
+                style={{ flex: 1 }}
+              >
+                <View style={{ gap: 20 }}></View>
+              </BottomSheetScrollView>
+            </>
+          )}
         </BlurView>
       </View>
     </BottomSheetModal>

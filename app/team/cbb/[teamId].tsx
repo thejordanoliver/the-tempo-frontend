@@ -15,13 +15,12 @@ import CBBRosterStats from "components/Sports/CBB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 
-import { players } from "constants/cbbPlayers";
 import { Colors } from "constants/Colors";
 import { teams } from "constants/teamsCBB";
 
 import { useNotifications } from "contexts/NotificationContext";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 
@@ -30,6 +29,7 @@ import Roster from "components/Sports/CBB/Team/Roster";
 import { CBBGame } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 
 type PageSelectedEvent = {
   nativeEvent: { position: number };
@@ -77,7 +77,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     refreshGames,
   } = useCBBTeamGames(teamIdNum ? teamIdNum.toString() : "");
-// console.log(rawTeamGames)
+  // console.log(rawTeamGames)
   const teamGames = useMemo(
     () =>
       (cachedGames.length ? cachedGames : rawTeamGames).filter(
@@ -87,6 +87,19 @@ export default function TeamDetailScreen() {
   );
 
   /** ---------------- MONTHS ---------------- */
+
+  const gameCountByMonth = useMemo(() => {
+    const map = new Map<string, number>();
+
+    teamGames.forEach((game) => {
+      const d = new Date(game.date);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+
+      map.set(key, (map.get(key) ?? 0) + 1);
+    });
+
+    return map;
+  }, [teamGames]);
 
   const monthsToShow = useMemo(() => {
     const map = new Map<string, { month: number; year: number }>();
@@ -158,6 +171,16 @@ export default function TeamDetailScreen() {
       );
     });
   }, [teamGames, selectedDate]);
+
+
+    const {
+      players,
+      loading: playersLoading,
+      error: playersError,
+      refreshPlayers,
+    } = usePlayersByTeam(team?.espnID?.toString() ?? "");
+
+
 
   const {
     highlights: teamHighlights,
@@ -291,7 +314,8 @@ export default function TeamDetailScreen() {
               onSelect={(month, year) =>
                 setSelectedDate(new Date(year, month, 1))
               }
-              styles={styles}
+              loading={gamesLoading}
+              gameCountByMonth={gameCountByMonth}
             />
           </View>
           <CBBGamesList
@@ -317,7 +341,7 @@ export default function TeamDetailScreen() {
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
           <Roster
-            players={players.filter((p) => p.teamId === String(team.espnID))}
+            players={players}
             loading={false}
             error={null}
             refreshing={refreshing}

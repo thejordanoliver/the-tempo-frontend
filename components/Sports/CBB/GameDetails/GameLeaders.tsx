@@ -4,6 +4,7 @@ import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSke
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { teams } from "constants/teamsCBB";
+import { teams as SLTeams } from "constants/teams";
 import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TextStyle, useColorScheme, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
@@ -115,6 +116,15 @@ export default function GameLeaders({
     STAT_KEYS.find((s) => s.key === key)?.label ?? key;
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
+
+  const isSummerLeague =
+  league === "nba-summer" ||
+  league === "summerleague" ||
+  league === "sl";
+
+const teamSource = isSummerLeague
+  ? SLTeams
+  : teams;
 
   const textColor = lighter
     ? Colors.white
@@ -405,26 +415,39 @@ export default function GameLeaders({
         {topPlayers.map((player, idx) => {
           const p = player.localPlayer;
 
-          const teamObj =
-            teams.find((t) => String(t.espnID) === String(player.team?.id)) ??
-            teams.find((t) => t.espnID === homeTeamId) ??
-            teams.find((t) => t.espnID === awayTeamId);
+const teamObj = teamSource.find(
+  (t) => String(t.espnID) === String(player.team?.id)
+) ?? teamSource.find(
+  (t) => String(t.espnID) === String(homeTeamId)
+) ?? teamSource.find(
+  (t) => String(t.espnID) === String(awayTeamId)
+);
 
-          const teamLogo = (() => {
-            if (!teamObj) return null;
+// Type guard for teams that have wLogo
+function hasWLogo(team: any): team is { wLogo?: string } {
+  return team && "wLogo" in team;
+}
 
-            if (isWomen) {
-              if (lighter)
-                return teamObj.wLogo || teamObj.logoLight || teamObj.logo;
-              return isDark
-                ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
-                : teamObj.wLogo || teamObj.logo;
-            }
+const teamLogo = teamObj
+  ? isWomen
+    ? lighter
+      ? hasWLogo(teamObj)
+        ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
+        : teamObj.logoLight || teamObj.logo
+      : isDark
+      ? hasWLogo(teamObj)
+        ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
+        : teamObj.logoLight || teamObj.logo
+      : hasWLogo(teamObj)
+      ? teamObj.wLogo || teamObj.logo
+      : teamObj.logo
+    : lighter
+    ? teamObj.logoLight || teamObj.logo
+    : isDark
+    ? teamObj.logoLight || teamObj.logo
+    : teamObj.logo
+  : Placeholder;
 
-            // MEN'S LOGIC (never touch wLogo)
-            if (lighter) return teamObj.logoLight || teamObj.logo;
-            return isDark ? teamObj.logoLight || teamObj.logo : teamObj.logo;
-          })();
 
           return (
             <View key={idx} style={styles.card}>

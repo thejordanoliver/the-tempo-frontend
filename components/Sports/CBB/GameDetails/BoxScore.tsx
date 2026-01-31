@@ -1,5 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { getTeamByESPNId as getSLTeamByESPNId } from "constants/teams";
 import { getTeamByESPNId } from "constants/teamsCBB";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -38,7 +39,7 @@ type Props = {
   isLoading?: boolean;
   isError?: boolean;
   lighter?: boolean;
-  league: "CBB" | "WCBB";
+  league: "CBB" | "WCBB" | "SL";
 };
 
 type MappedPlayer = {
@@ -75,33 +76,59 @@ export default function BoxScore({
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = boxScoreStyles(isDark, lighter);
-  const global = globalStyles(isDark, lighter)
+  const global = globalStyles(isDark, lighter);
   const heightAnimMap = useRef<Record<string, Animated.Value>>({});
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {}
   );
 
-  const homeTeam = getTeamByESPNId(homeTeamId);
-  const awayTeam = getTeamByESPNId(awayTeamId);
+  const homeTeam =
+    league === "SL"
+      ? getSLTeamByESPNId(homeTeamId)
+      : getTeamByESPNId(homeTeamId);
+  const awayTeam =
+    league === "SL"
+      ? getSLTeamByESPNId(awayTeamId)
+      : getTeamByESPNId(awayTeamId);
   const isWomen = league === "WCBB";
   const homeCode = homeTeam?.code ?? "home";
   const awayCode = awayTeam?.code ?? "away";
-  const homeLogo =
-    isDark && isWomen
-      ? homeTeam?.wLogo || homeTeam?.logoLight || homeTeam?.logo
-      : isDark
-      ? homeTeam?.logoLight || homeTeam?.logo
-      : isWomen
-      ? homeTeam?.wLogo || homeTeam?.logo
-      : homeTeam?.logo;
-  const awayLogo =
-    isDark && isWomen
-      ? awayTeam?.wLogo || awayTeam?.logoLight || awayTeam?.logo
-      : isDark
-      ? awayTeam?.logoLight || awayTeam?.logo
-      : isWomen
-      ? awayTeam?.wLogo || awayTeam?.logo
-      : awayTeam?.logo;
+  // Determine home logo
+  const homeLogo = (() => {
+    if (league === "CBB" || league === "WCBB") {
+      // college teams may have wLogo
+      const cTeam = homeTeam as {
+        wLogo?: string;
+        logo?: string;
+        logoLight?: string;
+      };
+      return isDark
+        ? cTeam.wLogo || cTeam.logoLight || cTeam.logo
+        : cTeam.wLogo || cTeam.logo;
+    } else {
+      // SL / NBA teams
+      const nTeam = homeTeam as { logo?: string; logoLight?: string };
+      return isDark ? nTeam.logoLight || nTeam.logo : nTeam.logo;
+    }
+  })();
+
+  // Determine away logo
+  const awayLogo = (() => {
+    if (league === "CBB" || league === "WCBB") {
+      const cTeam = awayTeam as {
+        wLogo?: string;
+        logo?: string;
+        logoLight?: string;
+      };
+      return isDark
+        ? cTeam.wLogo || cTeam.logoLight || cTeam.logo
+        : cTeam.wLogo || cTeam.logo;
+    } else {
+      const nTeam = awayTeam as { logo?: string; logoLight?: string };
+      return isDark ? nTeam.logoLight || nTeam.logo : nTeam.logo;
+    }
+  })();
+
   // ----- MAP ESPN PLAYER STATS INTO UI SHAPE -----
   const mapESPNPlayers = (teamId: number) => {
     const block = playerStats.find(
@@ -385,8 +412,7 @@ export default function BoxScore({
     );
   };
 
-
-    // ⏳ Loading state — render skeleton only
+  // ⏳ Loading state — render skeleton only
   if (isLoading) {
     return (
       <ScrollView>

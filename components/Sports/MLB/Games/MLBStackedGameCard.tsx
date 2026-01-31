@@ -1,7 +1,8 @@
 import { Colors } from "constants/Styles";
 import { getMLBTeam } from "constants/teamsMLB";
 import { useRouter } from "expo-router";
-import { useTeamRecord } from "hooks/MLBHooks/useTeamRecords";
+import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
+
 import { memo } from "react";
 
 import {
@@ -13,56 +14,33 @@ import {
 } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MLBGame } from "types/mlb";
+import { formatQuarter } from "utils/games";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getGameDate } from "utils/nflGameCardUtils";
 
 type Props = {
-  game: MLBGame; // Your API Game shape
-  isDark?: boolean;
+  game: MLBGame;
 };
 
-// Maps MLB API status codes to readable display text
-const formatMLBStatus = (statusObj: any) => {
-  if (!statusObj) return "";
-
-  const short = statusObj.short;
-  const long = statusObj.long ?? "";
-  const inning = statusObj.inning ?? null;
-
-  switch (short) {
-    case "NS":
-      return "Not Started";
-
-    case "FT":
-      return "Final";
-
-    case "POST":
-      return "Postponed";
-
-    case "CANC":
-      return "Canceled";
-
-    case "INTR":
-      return "Delayed";
-
-    case "ABD":
-      return "Abandoned";
-
-    default:
-      break;
-  }
-
-  return long || short || "";
-};
-
-function MLBStackedGameCard({ game, isDark }: Props) {
-  const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === "dark";
+function MLBStackedGameCard({ game }: Props) {
+  const isDark = useColorScheme() === "dark";
   const router = useRouter();
 
-  const styles = stackedGameCardStyles(dark);
+  /* ===============================
+     DATE / TIME
+  =============================== */
+  const timestamp = game?.date?.timestamp;
+
+  const {
+    date: gameDate,
+    iso: gameDateStr,
+    formattedDate,
+    formattedTime,
+  } = getGameDate(timestamp);
 
   /* ===============================
-     BASIC GAME FIELDS FROM API
-  =============================== */
+      BASIC GAME FIELDS FROM API
+   =============================== */
   const home = game?.teams?.home;
   const away = game?.teams?.away;
 
@@ -70,62 +48,151 @@ function MLBStackedGameCard({ game, isDark }: Props) {
   const homeTeam = getMLBTeam(home?.id);
   const awayTeam = getMLBTeam(away?.id);
 
-  const homeEspnId = getMLBTeam(home?.espnID);
-  const awayEspnId = getMLBTeam(away?.espnID);
+  const homeName = homeTeam?.fullName;
+  const awayName = awayTeam?.fullName;
 
-  const { record: homeRecord } = useTeamRecord(Number(homeEspnId), "mlb");
-  const { record: awayRecord } = useTeamRecord(Number(awayEspnId), "mlb");
+  const homeLogo = isDark ? homeTeam?.logoLight : homeTeam?.logo;
+  const awayLogo = isDark ? awayTeam?.logoLight : awayTeam?.logo;
 
-  const homeScore = game?.scores?.home?.total ?? 0;
-  const awayScore = game?.scores?.away?.total ?? 0;
+  const homeEspnId = homeTeam?.espnID;
+  const awayEspnId = awayTeam?.espnID;
 
-  const status = game?.status || {};
-  const longStatus = status.long?.toLowerCase() || "";
+  const { score: liveScore, details } = useBaseballGameDetails(
+    "mlb",
+    String(awayEspnId),
+    String(homeEspnId),
+    gameDateStr
+  );
+  const isChampionship = details?.playoffRound === "World Series";
+  const styles = stackedGameCardStyles(isDark, isChampionship);
 
-  const isFinal =
-    longStatus.includes("final") ||
-    longStatus.includes("finished") ||
-    longStatus === "ft";
-
-  const isScheduled =
-    longStatus === "not started" || longStatus.includes("scheduled");
-
-  const isCancelled = longStatus === "cancelled";
-
-  /* ===============================
-     DATE / TIME
-  =============================== */
-  const timestamp = game?.date?.timestamp;
-  const gameDate = timestamp ? new Date(timestamp * 1000) : null;
-
-  const formattedDate = gameDate
-    ? gameDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      })
-    : "";
-
-  const formattedTime = gameDate
-    ? gameDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-      })
-    : "";
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
+  const headline = details?.headline;
+  const seriesSummary = details?.seriesSummary;
+  const seasonState = details?.seasonState;
+  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const endOfInning = gameStatusDescription === "End of Inning";
+  const period = liveScore?.period;
+  const headlineText = details?.headline;
+  const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
 
   /* ===============================
-     WIN/LOSS STYLE
-  =============================== */
+      WIN/LOSS STYLE
+   =============================== */
   const getTeamStyle = (isHome: boolean) => {
     if (!isFinal)
-      return { color: dark ? Colors.white : Colors.black, opacity: 1 };
+      return { color: isDark ? Colors.white : Colors.black, opacity: 1 };
 
     const winnerIsHome = homeScore > awayScore;
     const winner = isHome ? winnerIsHome : !winnerIsHome;
 
     return {
-      color: dark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       opacity: winner ? 1 : 0.5,
     };
+  };
+
+  const filteredHeadline =
+    headlineText && !headlineText.toLowerCase().includes("final")
+      ? headline
+      : null;
+
+  // -----------------------------------------------------
+  // SCORE TEXT COMPONENT
+  // -----------------------------------------------------
+  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+
+  const winnerStyle = (teamWins: boolean) => ({
+    color: isDark ? Colors.white : Colors.black,
+    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+  });
+
+  const ScoreText = ({
+    score,
+    record,
+    teamWins,
+  }: {
+    score: number | undefined;
+    record: string | undefined;
+    teamWins: boolean;
+  }) => {
+    const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
+
+    return (
+      <Text
+        style={
+          showRecord
+            ? styles.teamRecord
+            : [styles.teamScore, winnerStyle(teamWins)]
+        }
+      >
+        {showRecord ? record : score}
+      </Text>
+    );
+  };
+
+  const renderHeadline = () => (
+    <>
+      {seasonState === "post-season" ? (
+        <View style={styles.headlineContainer}>
+          {seriesSummary ? (
+            <Text style={styles.mlbHeadlineText}>{seriesSummary.summary}</Text>
+          ) : null}
+        </View>
+      ) : filteredHeadline ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.mlbHeadlineText}>{filteredHeadline}</Text>
+        </View>
+      ) : null}
+    </>
+  );
+
+  const renderStatus = () => {
+    if (inProgress)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{formatQuarter(period)}</Text>
+        </View>
+      );
+
+    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Cancelled</Text>;
+    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
+    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+
+    if (endOfInning)
+      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+
+    if (isFinal)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      );
+
+    return (
+      <View style={styles.infoWrapper}>
+        <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.date}>{formattedTime}</Text>
+      </View>
+    );
   };
 
   /* ===============================
@@ -147,72 +214,47 @@ function MLBStackedGameCard({ game, isDark }: Props) {
           <View style={styles.teamSection}>
             <View style={styles.teamWrapper}>
               <Image
-                source={{ uri: dark ? awayTeam?.logoLight : awayTeam?.logo }}
+                source={awayLogo}
                 style={styles.logo}
+                accessibilityLabel={`${awayName} logo`}
               />
-              <Text style={styles.teamName}>
-                {awayTeam?.fullName ?? away?.name}
-              </Text>
+              <Text style={styles.teamName}>{awayName}</Text>
             </View>
+
             {/* Away Score / Record */}
-            <Text
-              style={[
-                isScheduled ? styles.teamRecord : styles.teamScore,
-                getTeamStyle(false),
-              ]}
-            >
-              {isScheduled ? awayRecord.overall ?? "0-0" : awayScore}
-            </Text>
-          </View>
+            <ScoreText
+              score={awayScore}
+              record={awayRecord}
+              teamWins={awayWins}
+            />
 
-          {/* Home Team */}
-          <View style={styles.teamSection}>
-            <View style={styles.teamWrapper}>
-              <Image
-                source={{ uri: dark ? homeTeam?.logoLight : homeTeam?.logo }}
-                style={styles.logo}
+            {/* Home Team */}
+            <View style={styles.teamSection}>
+              <View style={styles.teamWrapper}>
+                <Image
+                  source={homeLogo}
+                  style={styles.logo}
+                  accessibilityLabel={`${homeName} logo`}
+                />
+                <Text style={styles.teamName}>{homeName}</Text>
+              </View>
+              {/* Home Score / Record */}
+              <ScoreText
+                score={homeScore}
+                record={homeRecord}
+                teamWins={homeWins}
               />
-              <Text style={styles.teamName}>
-                {homeTeam?.fullName ?? homeTeam?.name}
-              </Text>
             </View>
-            {/* Home Score / Record */}
-            <Text
-              style={[
-                isScheduled ? styles.teamRecord : styles.teamScore,
-                getTeamStyle(true),
-              ]}
-            >
-              {isScheduled ? homeRecord.overall ?? "0-0" : homeScore}
-            </Text>
           </View>
-        </View>
 
-        {/* Center Game Info */}
-        <View style={styles.info}>
-          {isScheduled ? (
-            <>
-              <Text style={styles.date}>{formattedDate}</Text>
-              <View style={styles.statusDivider} />
-              <Text style={styles.date}>{formattedTime}</Text>
-            </>
-          ) : isFinal ? (
-            <>
-              <Text style={styles.finalText}>{formatMLBStatus(status)}</Text>
-
-              <Text style={styles.finalText}>{formattedDate}</Text>
-            </>
-          ) : isCancelled ? (
-            <>
-              <Text style={styles.finalText}>{formatMLBStatus(status)}</Text>
-            </>
-          ) : (
-            <>
-              <Text style={styles.date}>{formatMLBStatus(status)}</Text>
-              <View style={styles.statusDivider} />
-              <Text style={styles.clock}>{formattedDate}</Text>
-            </>
-          )}
+          {/* Game Info */}
+          <View style={styles.info}>
+            {renderStatus()}
+            {renderHeadline()}
+            {!isFinal && broadcastText && (
+              <Text style={styles.broadcast}>{broadcastText}</Text>
+            )}
+          </View>
         </View>
       </View>
     </TouchableOpacity>

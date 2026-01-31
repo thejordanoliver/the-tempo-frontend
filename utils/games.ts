@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-
+import { neutralVenues } from "constants/teams";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -155,3 +155,71 @@ export const formatQuarter = (period?: number | string) => {
     const ot = p - 2;
     return ot === 1 ? "OT" : `${ot}OT`;
   };
+
+
+  export function resolveVenue({
+    espnVenue,
+    homeTeam,
+    isNeutralSite,
+  }: {
+    espnVenue?: any;
+    homeTeam?: any;
+    isNeutralSite?: boolean;
+  }) {
+    const venueName =
+      espnVenue?.fullName ??
+      espnVenue?.name ??
+      homeTeam?.venueName ??
+      "";
+  
+    // 1️⃣ Exact neutral venue match
+    const neutralVenue = neutralVenues[venueName];
+    if (neutralVenue) {
+      return {
+        name: neutralVenue.name,
+        city: neutralVenue.city ?? "",
+        address: neutralVenue.address,
+        image: neutralVenue.venueImage,
+        capacity: neutralVenue.venueCapacity ?? "",
+        latitude: neutralVenue.latitude ?? null,
+        longitude: neutralVenue.longitude ?? null,
+      };
+    }
+  
+    // 2️⃣ Prefer TEAM venue for non-neutral games
+    if (!isNeutralSite && homeTeam?.address) {
+      return {
+        name: homeTeam.venueName ?? "",
+        city: homeTeam.location ?? "",
+        address: homeTeam.address ?? "",
+        image: homeTeam.venueImage ?? "",
+        capacity: homeTeam.venueCapacity ?? "",
+        latitude: homeTeam.latitude ?? null,
+        longitude: homeTeam.longitude ?? null,
+      };
+    }
+  
+    // 3️⃣ ESPN fallback
+    if (espnVenue) {
+      return {
+        name: espnVenue.fullName ?? espnVenue.name ?? "",
+        city: espnVenue.address?.city ?? "",
+        address: espnVenue.address?.street ?? "",
+        image: espnVenue.images?.[0]?.href ?? "",
+        capacity: espnVenue.capacity ?? "",
+        latitude: espnVenue.latitude ?? null,
+        longitude: espnVenue.longitude ?? null,
+      };
+    }
+  
+    return {
+      name: "",
+      city: "",
+      address: "",
+      image: "",
+      capacity: "",
+      latitude: null,
+      longitude: null,
+    };
+  }
+  

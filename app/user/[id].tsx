@@ -14,7 +14,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useFollowersModalStore } from "store/followersModalStore";
-
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { useUserProfile } from "hooks/useUserProfile";
 import { profileStyles } from "styles/ProfileScreenStyles";

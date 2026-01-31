@@ -1,18 +1,29 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
+/**
+ * User shape returned by the followers / following endpoints
+ * Images are expected to be remote URLs (Cloudinary or normalized server URLs)
+ */
 export type User = {
   id: number | string;
   username: string;
   profile_image: string;
-  full_name: string; // ✅ add this
-  banner_image: string; // ✅ add this
+  full_name: string;
+  banner_image: string;
   bio?: string | null;
   favorites?: string[];
   followers_count?: number;
   isFollowing: boolean;
 };
 
-
+/**
+ * Hook to fetch and manage followers / following users for a profile
+ *
+ * @param currentUserId - Logged-in user's ID (used for follow toggling)
+ * @param targetUserId - Profile user ID whose followers/following are being viewed
+ * @param type - Whether to fetch "followers" or "following"
+ */
 export function useFollowers(
   currentUserId: string,
   targetUserId: string,
@@ -22,69 +33,72 @@ export function useFollowers(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Fetch followers or following users whenever:
+   * - the target user changes
+   * - the type (followers / following) changes
+   */
   useEffect(() => {
-    if (!targetUserId) {
-      return;
-    }
+    if (!targetUserId) return;
 
     setLoading(true);
     setError(null);
 
-    fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/follows/${Number(targetUserId)}/${type}`)
+    axios
+      .get<User[]>(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/follows/${Number(
+          targetUserId
+        )}/${type}`
+      )
       .then((res) => {
-        console.log(`[useFollowers] Response status: ${res.status}`);
-        if (!res.ok) throw new Error("Failed to fetch users");
-        return res.json();
-      })
-      .then((data: User[]) => {
-        console.log("[useFollowers] Fetched users:", data);
-        setUsers(data);
+        setUsers(res.data);
       })
       .catch((err) => {
-        console.error("[useFollowers] Error fetching users:", err);
-        setError(err.message || "Error fetching users");
+        setError(
+          err?.response?.data?.error || err.message || "Error fetching users"
+        );
       })
       .finally(() => {
-        console.log("[useFollowers] Fetch completed");
         setLoading(false);
       });
   }, [targetUserId, type]);
 
-const toggleFollow = async (followeeId: string) => {
-  if (followeeId === currentUserId) {
-    console.warn("[useFollowers] Attempted to follow self, ignoring.");
-    return;
-  }
+  /**
+   * Toggle follow/unfollow for a specific user
+   *
+   * @param followeeId - ID of the user to follow or unfollow
+   */
+  const toggleFollow = async (followeeId: string) => {
+    // Prevent attempting to follow yourself
+    if (followeeId === currentUserId) return;
 
+    try {
+      const res = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/follows/toggle`,
+        {
+          followerId: currentUserId,
+          followeeId: Number(followeeId),
+        }
+      );
 
-  try {
-    const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/follows/toggle`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        followerId: currentUserId,
-        followeeId: Number(followeeId),
-      }),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.error || "Failed to toggle follow");
+      // Update follow state for the affected user only
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id.toString() === followeeId.toString()
+            ? { ...user, isFollowing: res.data.isFollowing }
+            : user
+        )
+      );
+    } catch {
+      // Failure is silently ignored to avoid UI disruption
+      // Server remains the source of truth
     }
+  };
 
-    const data = await res.json();
-
-   setUsers((prevUsers) =>
-  prevUsers.map((user) =>
-    user.id.toString() === followeeId.toString() ? { ...user, isFollowing: data.isFollowing } : user
-  )
-);
-
-  } catch (err) {
-    console.error("[useFollowers] Toggle follow failed:", err);
-  }
-};
-
-
-  return { users, loading, error, toggleFollow };
+  return {
+    users,
+    loading,
+    error,
+    toggleFollow,
+  };
 }

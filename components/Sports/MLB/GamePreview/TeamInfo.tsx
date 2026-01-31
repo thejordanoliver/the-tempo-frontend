@@ -1,5 +1,5 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
+import { getTeamLogo } from "constants/teamsMLB";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { MLBTeam } from "types/mlb";
 
@@ -9,11 +9,8 @@ type TeamInfoProps = {
   score?: number;
   opponentScore?: number;
   record?: string;
-  lighter: boolean;
-  isGameOver: boolean;
-  hasStarted?: boolean; // scheduled games
-  side?: "home" | "away";
-  rank?: number;
+  side: "home" | "away";
+  gameStatusDescription: string;
 };
 
 export default function TeamInfo({
@@ -22,19 +19,33 @@ export default function TeamInfo({
   score,
   opponentScore,
   record,
-  isGameOver,
-  hasStarted,
+  gameStatusDescription,
   side,
 }: TeamInfoProps) {
   const styles = teamInfoStyle;
 
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "Halftime" ||
+    gameStatusDescription === "End of Period";
+  const dontShowDetails = isDelayed || isCanceled || isPostponed;
   // --- Winner / opacity logic ---
-  const isWinner = isGameOver && (score ?? 0) > (opponentScore ?? 0);
+  const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 
-  const scoreOpacity = !isGameOver || !hasStarted ? 1 : isWinner ? 1 : 0.4;
+  const scoreOpacity =
+    !isFinal || isScheduled || isDelayed || isPostponed
+      ? 1
+      : isWinner
+      ? 1
+      : 0.4;
 
   // --- Detect record vs score → dynamic font size ---
-  const isRecord = !hasStarted;
+  const isRecord = isScheduled || isDelayed || isPostponed;
   const valueFontSize = isRecord ? 24 : 36;
 
   // --- Value shown ---
@@ -43,6 +54,30 @@ export default function TeamInfo({
     : score !== undefined
     ? score
     : "-";
+
+  // Logos (prefer light variants at night)
+  const logo = team ? getTeamLogo(team.id, true) : undefined;
+
+  const renderTimeouts = (remaining: number) => {
+    const totalTimeouts = 7;
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: totalTimeouts }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 5,
+              height: 2,
+              borderRadius: 2,
+              backgroundColor: Colors.white,
+              opacity: i < remaining ? 1 : 0.3,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View
@@ -72,15 +107,12 @@ export default function TeamInfo({
 
       {/* ─────────── TEAM LOGO + NAME ─────────── */}
       <View style={styles.teamContainer}>
-        {/* Team Logo */}
-        <Image
-          source={{ uri: team?.logoLight || team?.logo }}
-          style={styles.teamLogo}
-        />
+        <Image source={logo} style={styles.teamLogo} />
+
         <Text style={styles.teamName}>{teamName}</Text>
 
         {/* Final only → show record */}
-        {!hasStarted && isGameOver && record && (
+        {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
       </View>
@@ -93,7 +125,7 @@ export default function TeamInfo({
               styles.teamValue,
               {
                 opacity: scoreOpacity,
-                fontSize: valueFontSize,
+                fontSize: valueFontSize, // 🔥 dynamic
               },
             ]}
           >
@@ -154,5 +186,4 @@ export const teamInfoStyle = StyleSheet.create({
     fontFamily: Fonts.OSBOLD,
     color: Colors.white,
   },
-  teamRank: { fontSize: 10, color: Colors.lightGray },
 });

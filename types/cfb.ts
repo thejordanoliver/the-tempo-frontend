@@ -52,7 +52,7 @@ export type CFBTeam = {
   secondaryColor?: string;
   championships?: number[];
   conference_championships?: string[];
-  banner?: any;
+  isAllStar?: boolean;
 };
 
 export type CFBGame = {

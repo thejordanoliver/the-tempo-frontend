@@ -1,5 +1,5 @@
 import { Animated } from "react-native";
-import { getStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileScreenStyles";
 import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
 import SectionHeaderWithToggle from "../SectionHeaderWithToggle";
 
@@ -8,7 +8,7 @@ type Props = {
   isGridView: boolean;
   fadeAnim: Animated.Value;
   toggleFavoriteTeamsView: () => void;
-  styles: ReturnType<typeof getStyles>;
+  styles: ReturnType<typeof profileStyles>;
   itemWidth: number;
   isCurrentUser: boolean;
   username?: string;

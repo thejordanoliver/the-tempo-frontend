@@ -16,6 +16,7 @@ export interface MLBTeam {
   address?: string;
   city?: string;
   championships?: number[];
+  isAllStar: boolean
 }
 
 export interface MLBScoreSide {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { teams } from "constants/teamsNFL";
+import { getTeamInfo } from "constants/teamsNFL";
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "types/nfl";
 
@@ -39,12 +39,8 @@ export function useNFLTeamGames(
       const backendSeason: string = res.data.season || "";
 
       const enrichedGames = rawGames.map((game) => {
-        const homeTeam =
-          teams.find((t) => t.id === Number(game.teams.home.id)) ||
-          game.teams.home;
-        const awayTeam =
-          teams.find((t) => t.id === Number(game.teams.away.id)) ||
-          game.teams.away;
+        const homeTeam = getTeamInfo(game.teams.home.id);
+        const awayTeam = getTeamInfo(game.teams.away.id);
 
         return {
           ...game,

@@ -12,7 +12,7 @@ import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVo
 import { getMLBTeam } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
+import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -128,7 +128,12 @@ export default function GameDetailsScreen() {
     score: liveScore,
     details,
     loading,
-  } = useGameDetails("mlb", awayTeam?.espnID, homeTeam?.espnID, gameDate);
+  } = useBaseballGameDetails(
+    "mlb",
+    awayTeam?.espnID,
+    homeTeam?.espnID,
+    gameDate
+  );
 
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -192,14 +197,7 @@ export default function GameDetailsScreen() {
         />
       ),
     });
-  }, [
-    navigation,
-    isLoading,
-    liveScore,
-    homeCode,
-    awayCode,
-    neutralSite,
-  ]);
+  }, [navigation, isLoading, liveScore, homeCode, awayCode, neutralSite]);
   useEffect(() => {
     const timeout = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timeout);
@@ -269,7 +267,7 @@ export default function GameDetailsScreen() {
           gameStatusDetail={gameStatusDetail}
         />
 
-        <LastPlay lastPlay={lastPlay}/>
+        <LastPlay lastPlay={lastPlay} />
 
         <View style={{ gap: 20, marginTop: 20 }}>
           {parsedGame.status.short !== "FT" && (

@@ -12,9 +12,10 @@ import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
-import { gamePreviewModalStyle } from "styles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { CBBGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -35,7 +36,6 @@ export default function CBBGamePreviewModal({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["60%", "80%", "88%", "94%"], []);
   if (!game) return null;
 
   // --- Date ---

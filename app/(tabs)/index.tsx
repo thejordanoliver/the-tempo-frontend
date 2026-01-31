@@ -8,13 +8,7 @@ import TabBar from "components/TabBar";
 import { Colors } from "constants/Colors";
 import { useHomeData } from "hooks/useHomeData";
 import React, { useLayoutEffect, useRef } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
@@ -120,16 +114,13 @@ export default function HomeScreen() {
                 />
               }
             >
-             
-   
-                <NewsHighlightsList
-                  items={combinedNewsAndHighlights}
-                  loading={loading}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  error={newsError}
-                />
-  
+              <NewsHighlightsList
+                items={combinedNewsAndHighlights}
+                loading={loading}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                error={newsError}
+              />
             </ScrollView>
           </View>
         </PagerView>

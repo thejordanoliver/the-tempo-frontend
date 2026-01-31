@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 export const gameSquareCardStyles = (
   isDark: boolean,
-  isChampionship: boolean
+  isChampionship?: boolean
 ) =>
   StyleSheet.create({
     card: {

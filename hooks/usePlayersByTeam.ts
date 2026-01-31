@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 export interface Player {
   id: number;
   player_id: number;
+  espn_id: number;
   first_name: string;
   last_name: string;
   short_name: string;
@@ -58,6 +59,7 @@ export default function usePlayersByTeam(teamId: string) {
       const mappedPlayers: Player[] = (res.data.players || []).map((p) => ({
         id: p.id ?? 0,
         player_id: p.player_id ?? 0,
+        espn_id: p.espn_id ?? 0,
         first_name: p.first_name || "",
         last_name: p.last_name || "",
         short_name: p.short_name || "",

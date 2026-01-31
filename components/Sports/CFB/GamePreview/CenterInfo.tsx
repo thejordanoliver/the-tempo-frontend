@@ -1,7 +1,7 @@
 // ./CFB/GamePreview/CenterInfo.tsx
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
+import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
 
 export type CenterInfoProps = {

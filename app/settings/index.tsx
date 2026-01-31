@@ -1,11 +1,11 @@
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Fonts } from "constants/fonts";
-import { useAuth } from "hooks/useAuth";
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useAuth } from "hooks/UserHooks/useAuth";
 import { useLayoutEffect, useState } from "react";
 import {
   Dimensions,
@@ -90,7 +90,6 @@ export default function SettingsScreen() {
           />
         </Pressable>
 
-  
         <Pressable
           style={[
             styles.optionButton,

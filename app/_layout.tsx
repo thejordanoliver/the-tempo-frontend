@@ -1,11 +1,9 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FollowersModal from "components/Profile/FollowersModal";
 import ChatInputBar from "components/Sports/NBA/GameDetails/ChatInputBar";
 import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
 import { NotificationProvider } from "contexts/NotificationContext";
 import { PreferencesProvider } from "contexts/PreferencesContext";
 import { useChatStore } from "store/chatStore";
-import { useFollowersModalStore } from "store/followersModalStore";
 
 import {
   Oswald_200ExtraLight,
@@ -22,6 +20,7 @@ import {
   DefaultTheme as NavigationLightTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { Colors } from "constants/Styles";
 import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
@@ -41,8 +40,8 @@ const CustomDarkTheme = {
   ...NavigationDarkTheme,
   colors: {
     ...NavigationDarkTheme.colors,
-    background: "#1d1d1d",
-    text: "#ffffff",
+    background: Colors.black,
+    text: Colors.white,
   },
 };
 
@@ -50,8 +49,8 @@ const CustomLightTheme = {
   ...NavigationLightTheme,
   colors: {
     ...NavigationLightTheme.colors,
-    background: "#ffffff",
-    text: "#1d1d1d",
+    background: Colors.white,
+    text: Colors.black,
   },
 };
 
@@ -111,10 +110,6 @@ export default function RootLayout() {
     }
   }, [pathname, shouldHideTabBar, closeChat]);
 
-  // Followers modal state from Zustand
-  const { isVisible, type, targetUserId, closeModal, currentUserId } =
-    useFollowersModalStore();
-
   // While fonts are loading
   if (!fontsLoaded) {
     return (
@@ -124,10 +119,13 @@ export default function RootLayout() {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: isDark ? "#1d1d1d" : "#ffffff",
+            backgroundColor: isDark ? Colors.black : Colors.white,
           }}
         >
-          <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
+          <ActivityIndicator
+            size="large"
+            color={isDark ? Colors.white : Colors.black}
+          />
         </View>
       </GestureHandlerRootView>
     );
@@ -195,15 +193,6 @@ export default function RootLayout() {
                   <CustomTabBar />
                 </Animated.View>
               )}
-
-              {/* Global Followers Modal */}
-              <FollowersModal
-                visible={isVisible}
-                onClose={closeModal}
-                type={type}
-                currentUserId={currentUserId ?? ""}
-                targetUserId={targetUserId ?? ""}
-              />
 
               {/* Global Chat */}
               {gameId && isOpen && pathname?.startsWith("/game/") && (

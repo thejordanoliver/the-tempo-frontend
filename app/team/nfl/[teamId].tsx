@@ -11,7 +11,7 @@ import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNFLTeamGames } from "hooks/NFLHooks/useNFLTeamGames";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";

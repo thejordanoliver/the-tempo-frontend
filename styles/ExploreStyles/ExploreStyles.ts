@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 export const exploreStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -55,6 +54,8 @@ export const exploreStyles = (isDark: boolean) =>
       borderRadius: 24,
       marginRight: 12,
       overflow: "hidden",
+      borderWidth: 0.5,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     avatar: {
       width: 44,
@@ -82,7 +83,6 @@ export const exploreStyles = (isDark: boolean) =>
     centerPrompt: {
       flex: 1,
       justifyContent: "flex-start",
-     
     },
     promptText: {
       fontSize: 24,

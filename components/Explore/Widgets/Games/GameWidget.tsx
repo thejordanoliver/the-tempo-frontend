@@ -1,6 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { useGameDetails } from "hooks/useGameDetails";
-import { useTeamRecord } from "hooks/useTeamRecords";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
 import { formatQuarter } from "utils/games";
@@ -57,21 +56,25 @@ export default function GameWidget({
   // Game date/time formatting
   // -------------------------
   const gameDate = new Date(props.gameDateISO);
-  const localDate = gameDate.toLocaleString(undefined, { month: "short", day: "numeric" });
-  const localTime = gameDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const localDate = gameDate.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+  const localTime = gameDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const gameDateStr = props.gameDateISO;
 
   // -------------------------
-  // Team records
-  // -------------------------
-  const homeRecord = useTeamRecord(props.homeTeam.espnID, "nba").record.overall ?? "";
-  const awayRecord = useTeamRecord(props.awayTeam.espnID, "nba").record.overall ?? "";
-
-  // -------------------------
   // Live game data
   // -------------------------
-  const { score: liveScore, loading: scoreLoading } = useGameDetails(
+  const {
+    score: liveScore,
+    details,
+    loading: scoreLoading,
+  } = useGameDetails(
     "nba",
     props.homeTeam.espnID,
     props.awayTeam.espnID,
@@ -80,7 +83,8 @@ export default function GameWidget({
 
   const clock = liveScore?.displayClock ?? props.clock;
   const period = liveScore?.period ?? props.periods;
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? props.status;
+  const gameStatusDescription =
+    liveScore?.gameStatusDescription ?? props.status;
   const gameStatusDetail = liveScore?.gameStatusDetail ?? props.status;
 
   // -------------------------
@@ -89,7 +93,8 @@ export default function GameWidget({
   const isScheduled = gameStatusDescription === "Scheduled";
   const isFinal = gameStatusDescription === "Final";
   const inProgress =
-    gameStatusDescription === "In Progress" || gameStatusDescription === "End of Period";
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
@@ -101,6 +106,13 @@ export default function GameWidget({
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
+
+  // -------------------------
+  // Team records
+  // -------------------------
+
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
 
   // -------------------------
   // Display components for scores

@@ -32,7 +32,7 @@ export function useUserProfile(userId?: string) {
   const [followingCount, setFollowingCount] = useState(0);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState<boolean | null>(null); // null = not loaded yet
   const [followLoading, setFollowLoading] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -40,35 +40,44 @@ export function useUserProfile(userId?: string) {
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersModalStore();
 
-  // Load current user
+  // Load current user ID from AsyncStorage
   useEffect(() => {
     AsyncStorage.getItem("userId").then((id) => {
       if (id) setCurrentUserId(Number(id));
     });
   }, []);
 
+  // Fetch user profile
   const fetchUserData = useCallback(async () => {
     if (!userId || currentUserId === null) return;
 
     setIsLoading(true);
     try {
       const res = await fetch(
-        `${BASE_URL}/api/users/${userId}?currentUserId=${currentUserId}`
+        `${BASE_URL}/api/users/id/${userId}?currentUserId=${currentUserId}`
       );
-      if (!res.ok) throw new Error();
+
+      if (!res.ok) throw new Error("Failed to fetch user");
 
       const data = await res.json();
 
       setUsername(data.username ?? null);
-      setFullName(data.fullName ?? null);
+      setFullName(data.full_name ?? null);
       setBio(data.bio ?? null);
-      setProfileImage(parseImageUrl(data.profileImage));
-      setBannerImage(parseImageUrl(data.bannerImage));
+
+      setProfileImage(parseImageUrl(data.profile_image));
+      setBannerImage(parseImageUrl(data.banner_image));
+
       setFollowersCount(data.followersCount ?? 0);
       setFollowingCount(data.followingCount ?? 0);
       setFavorites(Array.isArray(data.favorites) ? data.favorites : []);
-      setIsFollowing(Boolean(data.isFollowing));
-    } catch {
+      if (typeof data.isFollowing === "boolean") {
+        setIsFollowing(data.isFollowing);
+      }
+      console.log(JSON.stringify(setIsFollowing(data.isFollowing), null, 2));
+    } catch (err) {
+      console.warn("Failed to load user profile", err);
+
       setUsername(null);
       setFullName(null);
       setBio(null);
@@ -83,6 +92,13 @@ export function useUserProfile(userId?: string) {
     }
   }, [userId, currentUserId]);
 
+  // Refetch when both userId and currentUserId are ready
+  useEffect(() => {
+    if (userId && currentUserId !== null) {
+      fetchUserData();
+    }
+  }, [userId, currentUserId, fetchUserData]);
+
   // Restore modal + refetch on focus
   useFocusEffect(
     useCallback(() => {
@@ -91,7 +107,8 @@ export function useUserProfile(userId?: string) {
         openModal(type, targetUserId, currentUserId?.toString());
       }
 
-      if (currentUserId !== null) {
+      // Only refetch if both IDs are ready
+      if (userId && currentUserId !== null) {
         fetchUserData();
       }
     }, [
@@ -99,12 +116,14 @@ export function useUserProfile(userId?: string) {
       targetUserId,
       type,
       currentUserId,
+      userId,
       fetchUserData,
       openModal,
       clearRestore,
     ])
   );
 
+  // Toggle follow/unfollow
   const toggleFollow = async () => {
     if (!userId || currentUserId === null || followLoading) return;
 
@@ -126,9 +145,11 @@ export function useUserProfile(userId?: string) {
         }),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("Failed to toggle follow");
+
       const data = await res.json();
       setIsFollowing(data.isFollowing);
+      setFollowersCount(data.followersCount ?? followersCount);
     } catch {
       setIsFollowing(prev);
       setFollowersCount(prevCount);
@@ -137,6 +158,7 @@ export function useUserProfile(userId?: string) {
     }
   };
 
+  // Map favorite teams with league info
   const favoriteTeamsWithLeague = favorites
     .map((fav) => {
       const [league, id] = fav.split(":");
@@ -161,7 +183,7 @@ export function useUserProfile(userId?: string) {
     bannerImage,
     followersCount,
     followingCount,
-    isFollowing,
+    isFollowing: isFollowing ?? false, // default false if not loaded
     followLoading,
     favoriteTeamsWithLeague,
     fadeAnim,

@@ -46,6 +46,7 @@ export type NFLTeam = {
   conferenceChampionships?: {
     Titles?: number[]; // or number[]
   };
+  isAllStar: boolean;
 };
 
 export type NFLGame = {
@@ -197,13 +198,13 @@ export const emptyTeam: NFLTeam = {
   established: 0,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
-
   color: Colors.white,
   secondaryColor: Colors.black,
   latitude: 0,
   longitude: 0,
   venueImage: null,
   venueCapacity: "",
+  isAllStar: false,
 };
 
 // fallback for cards
@@ -228,6 +229,7 @@ export const emptyNFLAwayTeam: NFLTeam = {
   longitude: 0,
   venueImage: null,
   venueCapacity: "",
+  isAllStar: false,
 };
 
 export const emptyNFLHomeTeam: NFLTeam = {
@@ -251,4 +253,5 @@ export const emptyNFLHomeTeam: NFLTeam = {
   longitude: 0,
   venueImage: null,
   venueCapacity: "",
+  isAllStar: false,
 };

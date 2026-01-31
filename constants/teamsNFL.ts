@@ -1,6 +1,7 @@
 import { NFLTeam, Venue } from "types/nfl";
 //Logos
 import NinersLogo from "assets/Football/NFL_Logos/49ers.png";
+import AFCLogo from "assets/Football/NFL_Logos/AFC.png";
 import BearsLogo from "assets/Football/NFL_Logos/Bears.png";
 import BengalsLogo from "assets/Football/NFL_Logos/Bengals.png";
 import BillsLogo from "assets/Football/NFL_Logos/Bills.png";
@@ -22,6 +23,7 @@ import JaguarsLogo from "assets/Football/NFL_Logos/Jaguars.png";
 import JetsLogo from "assets/Football/NFL_Logos/Jets.png";
 import JetsLogoLight from "assets/Football/NFL_Logos/JetsLight.png";
 import LionsLogo from "assets/Football/NFL_Logos/Lions.png";
+import NFCLogo from "assets/Football/NFL_Logos/NFC.png";
 import PackersLogo from "assets/Football/NFL_Logos/Packers.png";
 import PanthersLogo from "assets/Football/NFL_Logos/Panthers.png";
 import PatriotsLogo from "assets/Football/NFL_Logos/Patriots.png";
@@ -35,7 +37,6 @@ import TexansLogo from "assets/Football/NFL_Logos/Texans.png";
 import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-
 
 export const teams: NFLTeam[] = [
   {
@@ -61,6 +62,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/raiders.jpg",
     venueCapacity: "65,000",
+    isAllStar: false,
   },
   {
     id: 2,
@@ -86,6 +88,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/jaguars.jpg",
     venueCapacity: "67,838",
+    isAllStar: false,
   },
   {
     id: 3,
@@ -110,6 +113,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/patriots.jpg",
     venueCapacity: "66,829",
+    isAllStar: false,
   },
   {
     id: 4,
@@ -132,8 +136,9 @@ export const teams: NFLTeam[] = [
     latitude: 40.813778,
     longitude: -74.07431,
     venueImage:
-    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/metlife-nyg.jpg",
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/metlife-nyg.jpg",
     venueCapacity: "82,500",
+    isAllStar: false,
   },
   {
     id: 5,
@@ -158,6 +163,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/ravens.jpg",
     venueCapacity: "71,008",
+    isAllStar: false,
   },
   {
     id: 6,
@@ -182,6 +188,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/titans.jpg",
     venueCapacity: "69,143",
+    isAllStar: false,
   },
   {
     id: 7,
@@ -206,6 +213,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/lions.jpg",
     venueCapacity: "65,000",
+    isAllStar: false,
   },
 
   {
@@ -231,6 +239,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/falcons.jpg",
     venueCapacity: "71,000",
+    isAllStar: false,
   },
   {
     id: 9,
@@ -255,6 +264,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/browns.jpg",
     venueCapacity: "67,431",
+    isAllStar: false,
   },
   {
     id: 10,
@@ -279,6 +289,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bengals.jpg",
     venueCapacity: "65,515",
+    isAllStar: false,
   },
   {
     id: 11,
@@ -303,6 +314,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/cardinals.jpg",
     venueCapacity: "63,400",
+    isAllStar: false,
   },
   {
     id: 12,
@@ -319,7 +331,6 @@ export const teams: NFLTeam[] = [
     established: 1933,
     logo: EaglesLogo,
     logoLight: EaglesLogo,
-
     name: "Eagles",
     color: "#06424d",
     secondaryColor: "#000000",
@@ -328,6 +339,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/eagles.jpg",
     venueCapacity: "69,596",
+    isAllStar: false,
   },
   {
     id: 13,
@@ -352,6 +364,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/metlife-nyj.jpg",
     venueCapacity: "82,500",
+    isAllStar: false,
   },
   {
     id: 14,
@@ -376,6 +389,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/niners.jpg",
     venueCapacity: "68,500",
+    isAllStar: false,
   },
   {
     id: 15,
@@ -402,6 +416,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/packers.jpg",
     venueCapacity: "81,441",
+    isAllStar: false,
   },
   {
     id: 16,
@@ -426,6 +441,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bears.webp",
     venueCapacity: "61,500",
+    isAllStar: false,
   },
   {
     id: 17,
@@ -442,7 +458,6 @@ export const teams: NFLTeam[] = [
     established: 1960,
     logo: ChiefsLogo,
     logoLight: ChiefsLogo,
-
     name: "Chiefs",
     color: "#E31837",
     secondaryColor: "#ffb612",
@@ -451,6 +466,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/chiefs.jpg",
     venueCapacity: "76,416",
+    isAllStar: false,
   },
   {
     id: 18,
@@ -475,6 +491,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/commanders.jpg",
     venueCapacity: "64,000",
+    isAllStar: false,
   },
   {
     id: 19,
@@ -491,7 +508,6 @@ export const teams: NFLTeam[] = [
     established: 1995,
     logo: PanthersLogo,
     logoLight: PanthersLogo,
-
     name: "Panthers",
     color: "#0085ca",
     secondaryColor: "#000000",
@@ -500,6 +516,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766954261/stadiums/football/panthers.jpg",
     venueCapacity: "75,523",
+    isAllStar: false,
   },
   {
     id: 20,
@@ -516,7 +533,6 @@ export const teams: NFLTeam[] = [
     established: 1960,
     logo: BillsLogo,
     logoLight: BillsLogo,
-
     name: "Bills",
     color: "#00338d",
     secondaryColor: "#d50a0a",
@@ -525,6 +541,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/bills.jpg",
     venueCapacity: "71,608",
+    isAllStar: false,
   },
   {
     id: 21,
@@ -541,7 +558,6 @@ export const teams: NFLTeam[] = [
     established: 1944,
     logo: ColtsLogo,
     logoLight: ColtsLogo,
-
     name: "Colts",
     color: "#002C5F",
     secondaryColor: "#ffffff",
@@ -550,6 +566,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
     venueCapacity: "71,608",
+    isAllStar: false,
   },
   {
     id: 22,
@@ -566,7 +583,6 @@ export const teams: NFLTeam[] = [
     established: 1933,
     logo: SteelersLogo,
     logoLight: SteelersLogo,
-
     name: "Steelers",
     color: "#000000",
     secondaryColor: "#ffb612",
@@ -575,6 +591,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/steelers.jpg",
     venueCapacity: "68,400",
+    isAllStar: false,
   },
   {
     id: 23,
@@ -599,6 +616,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/seahawks.jpg",
     venueCapacity: "69,000",
+    isAllStar: false,
   },
   {
     id: 24,
@@ -623,6 +641,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766778404/stadiums/football/buccaneers.jpg",
     venueCapacity: "69,218",
+    isAllStar: false,
   },
   {
     id: 25,
@@ -647,6 +666,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/dolphins.jpg",
     venueCapacity: "65,326",
+    isAllStar: false,
   },
   {
     id: 26,
@@ -671,6 +691,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/texans.jpg",
     venueCapacity: "72,220",
+    isAllStar: false,
   },
   {
     id: 27,
@@ -695,6 +716,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/saints.jpg",
     venueCapacity: "73,208",
+    isAllStar: false,
   },
   {
     id: 28,
@@ -719,6 +741,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/broncos.jpg",
     venueCapacity: "76,125",
+    isAllStar: false,
   },
   {
     id: 29,
@@ -743,6 +766,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/cowboys.jpg",
     venueCapacity: "80,000",
+    isAllStar: false,
   },
   {
     id: 30,
@@ -767,6 +791,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/sofi-lac.jpg",
     venueCapacity: "70,240",
+    isAllStar: false,
   },
   {
     id: 31,
@@ -791,6 +816,7 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/sofi-lar.jpg",
     venueCapacity: "70,240",
+    isAllStar: false,
   },
   {
     id: 32,
@@ -815,10 +841,54 @@ export const teams: NFLTeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/vikings.jpg",
     venueCapacity: "66,655",
+    isAllStar: false,
+  },
+  {
+    id: 34,
+    espnID: 31,
+    fullName: "AFC All-Stars",
+    code: "AFC",
+    city: "American Football Conference",
+    location: "AFC",
+    coach: "null",
+    venue: "Pro Bowl Stadium",
+    established: 1950,
+    logo: AFCLogo,
+    logoLight: AFCLogo,
+    name: "AFC",
+    color: "#D71920", // AFC red
+    secondaryColor: "#002A5C",
+    oddsID: "",
+    latitude: 0,
+    longitude: 0,
+    venueImage: undefined,
+    venueCapacity: "",
+    isAllStar: true,
+  },
+
+  {
+    id: 33,
+    espnID: 32,
+    fullName: "NFC All-Stars",
+    code: "NFC",
+    city: "National Football Conference",
+    location: "NFC",
+    venue: "Pro Bowl Stadium",
+    established: 1950,
+    logo: NFCLogo,
+    logoLight: NFCLogo,
+    name: "NFC",
+    color: "#013369", // NFC blue
+    secondaryColor: "#A5ACAF",
+    oddsID: "",
+    latitude: 0,
+    longitude: 0,
+    venueImage: undefined,
+    venueCapacity: "",
+    coach: "null",
+    isAllStar: true,
   },
 ] as const;
-
-
 
 export const neutralStadiums: Record<string, Venue> = {
   "Corinthians Arena": {
@@ -914,16 +984,25 @@ export const neutralStadiums: Record<string, Venue> = {
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/so-fi.jpg",
   },
   "Tom Benson Hall of Fame Stadium": {
-  name: "Tom Benson Hall of Fame Stadium",
-  city: "Canton",
-  address: "2625 Fulton Dr NW, Canton, OH 44718",
-  latitude: 40.8216,
-  longitude: -81.3865,
-  venueCapacity: "23,000",
-  venueImage:
-    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/tom-benson-hall-of-fame.jpg",
-},
-
+    name: "Tom Benson Hall of Fame Stadium",
+    city: "Canton",
+    address: "2625 Fulton Dr NW, Canton, OH 44718",
+    latitude: 40.8216,
+    longitude: -81.3865,
+    venueCapacity: "23,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671637/stadiums/football/tom-benson-hall-of-fame.jpg",
+  },
+  "Moscone Center": {
+    name: "Moscone Center",
+    city: "San Francisco",
+    address: "747 Howard St, San Francisco, CA 94103",
+    latitude: 37.784,
+    longitude: -122.4014,
+    venueCapacity: "N/A",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1769676975/stadiums/football/moscone-center.png",
+  },
 };
 
 export const getNFLTeam = (id: number | string) =>
@@ -934,10 +1013,7 @@ export const getTeamInfo = (teamId: number | string) => {
   return teams.find((t) => String(t.id) === String(teamId));
 };
 
-export function getNFLTeamsLogo(
-  id: number ,
-  isDark: boolean
-) {
+export function getNFLTeamsLogo(id: number, isDark: boolean) {
   if (!id) return PlaceholderLogo; // fallback
 
   const searchStr = String(id).toLowerCase();
@@ -991,8 +1067,6 @@ export const teamsNFLById: Record<string, NFLTeam> = teams.reduce(
   },
   {} as Record<string, NFLTeam>
 );
-
-
 
 export const nflDivisionsById = {
   " AFC East": [

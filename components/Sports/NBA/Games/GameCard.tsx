@@ -5,7 +5,6 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/useGameDetails";
-import { useGameInfo } from "hooks/useGameInfo";
 import { useState } from "react";
 import {
   Pressable,
@@ -20,13 +19,9 @@ import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameCard({ game }: { game: Game }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
-
-  const homeTeam = game.home;
-  const awayTeam = game.away;
 
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
@@ -93,7 +88,10 @@ export default function GameCard({ game }: { game: Game }) {
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
+  const headlineText = details?.headline;
+  const headline = headlineText || holidayLabel;
 
+  
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
@@ -113,13 +111,7 @@ export default function GameCard({ game }: { game: Game }) {
       hour12: true,
     }) || "";
 
-  const { headlineText } = useGameInfo(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateStr
-  );
 
-  const headline = headlineText || holidayLabel;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -201,7 +193,7 @@ export default function GameCard({ game }: { game: Game }) {
         <Image
           source={awayLogo}
           style={styles.logo}
-          accessibilityLabel={`${awayTeam.name} logo`}
+          accessibilityLabel={`${awayName} logo`}
         />
         <Text style={styles.teamName}>{awayName}</Text>
       </View>

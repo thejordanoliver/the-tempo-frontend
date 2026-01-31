@@ -1,6 +1,6 @@
 // hooks/useLeagueForumPosts.ts
 import axios from "axios";
-import { useAuth } from "hooks/useAuth"; // adjust if your auth hook path differs
+import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
@@ -11,7 +11,7 @@ interface useLeagueForumPostsParams {
   league?: LeagueType;
 }
 
-export function useLeagueForumPosts({  league }: useLeagueForumPostsParams) {
+export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
   const { token, user } = useAuth();
 
   const [posts, setPosts] = useState<any[]>([]);
@@ -27,7 +27,7 @@ export function useLeagueForumPosts({  league }: useLeagueForumPostsParams) {
 
   const fetchPosts = useCallback(
     async (pageNumber = 1) => {
-      if ( !league) return;
+      if (!league) return;
 
       // ⛔ Token still loading → do nothing
       if (token === undefined) return;
@@ -40,13 +40,10 @@ export function useLeagueForumPosts({  league }: useLeagueForumPostsParams) {
       setError(null);
 
       try {
-        const res = await axios.get(
-          `${BASE_URL}/api/forum/league/${league}`,
-          {
-            params: { page: pageNumber, limit: 10 },
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-          }
-        );
+        const res = await axios.get(`${BASE_URL}/api/forum/league/${league}`, {
+          params: { page: pageNumber, limit: 10 },
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
 
         const { posts: newPosts, pagination } = res.data;
 
@@ -68,7 +65,7 @@ export function useLeagueForumPosts({  league }: useLeagueForumPostsParams) {
         isFetchingRef.current = false;
       }
     },
-    [ league, token]
+    [league, token]
   );
 
   // 🔁 Initial load

@@ -12,7 +12,7 @@ import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBTeamGames } from "hooks/CFBHooks/useCFBTeamGames";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -81,7 +81,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } =  useCFBTeamGames(teamIdNum ?? 0);
+  } = useCFBTeamGames(teamIdNum ?? 0);
 
   const {
     highlights: teamHighlights,

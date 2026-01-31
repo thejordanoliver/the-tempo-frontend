@@ -20,18 +20,17 @@ const bannerDefault = { uri: "https://placehold.co/800x200/png" };
 const profileDefault = { uri: "https://placehold.co/120" };
 
 function safeSource(uri?: string | null) {
-  if (
-    !uri ||
-    uri === "null" ||
-    uri === "undefined" ||
-    typeof uri !== "string" ||
-    !uri.startsWith("http")
-  ) {
-    return undefined;
-  }
+  if (!uri || typeof uri !== "string") return undefined;
 
-  return { uri };
+  // Show local file URIs for preview
+  if (uri.startsWith("file://")) return { uri };
+
+  // Show remote URLs
+  if (uri.startsWith("http")) return { uri };
+
+  return undefined;
 }
+
 
 export default function ProfileBanner({
   bannerImage,
@@ -45,6 +44,7 @@ export default function ProfileBanner({
 
   const BannerComponent = editable ? TouchableOpacity : View;
   const ProfileComponent = editable ? TouchableOpacity : View;
+
 
   return (
     <View style={styles.bannerContainer}>

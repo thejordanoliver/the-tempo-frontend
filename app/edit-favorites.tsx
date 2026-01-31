@@ -10,7 +10,7 @@ import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
 import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflteams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useLayoutEffect } from "react";
 import {
   Animated,
@@ -49,7 +49,6 @@ export default function EditFavoritesScreen() {
     isGridView,
     toggleLayout,
     fadeAnim,
-    username,
     saveFavorites,
     isLoading,
   } = useFavoriteTeams();
@@ -100,39 +99,50 @@ export default function EditFavoritesScreen() {
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <FavoriteTeamsSelector
           teams={[
-            ...teams.map(
-              (t) =>
-                ({ ...t, league: "NBA", id: t.id } as Team & {
-                  league: "NBA";
-                })
-            ),
-            ...nflteams.map(
-              (t) =>
-                ({ ...t, league: "NFL", id: t.id } as Team & {
-                  league: "NFL";
-                })
-            ),
-            ...mlbTeams.map(
-              (t) =>
-                ({ ...t, league: "MLB", id: t.id } as Team & {
-                  league: "MLB";
-                })
-            ),
+            // NBA
+            ...teams
+              .filter((t) => !t.isAllStar)
+              .map(
+                (t) =>
+                  ({ ...t, league: "NBA", id: t.id } as Team & {
+                    league: "NBA";
+                  })
+              ),
 
-            // ✅ Show all CFB teams, but prioritize matching names in FBS map if available
+            // NFL
+            ...nflteams
+              .filter((t) => !t.isAllStar)
+              .map(
+                (t) =>
+                  ({ ...t, league: "NFL", id: t.id } as Team & {
+                    league: "NFL";
+                  })
+              ),
+
+            // MLB
+            ...mlbTeams
+              .filter((t) => !t.isAllStar)
+              .map(
+                (t) =>
+                  ({ ...t, league: "MLB", id: t.id } as Team & {
+                    league: "MLB";
+                  })
+              ),
+
+            // CFB (still respects FBS logic)
             ...cfbteams
+              .filter((t) => !t.isAllStar)
               .filter((t) => {
                 const fbsTeamNames = Object.values(conferenceListMap)
                   .flat()
                   .map((n) => n.toLowerCase());
                 const name = (t.fullName || t.name || "").toLowerCase();
-                // Include team if its name partially matches any FBS team
+
                 return (
                   fbsTeamNames.length === 0 ||
                   fbsTeamNames.some((n) => n.includes(name) || name.includes(n))
                 );
               })
-
               .map(
                 (t) =>
                   ({ ...t, league: "CFB", id: t.id } as Team & {
@@ -140,15 +150,19 @@ export default function EditFavoritesScreen() {
                   })
               ),
 
-            // ✅ Show all CBB teams (don’t depend on FBS map)
-            ...cbbTeams.map(
-              (t) =>
-                ({ ...t, league: "CBB", id: t.id } as Team & {
-                  league: "CBB";
-                })
-            ),
+            // CBB
             ...cbbTeams
-              .filter((t) => t.wid != null)
+              .filter((t) => !t.isAllStar)
+              .map(
+                (t) =>
+                  ({ ...t, league: "CBB", id: t.id } as Team & {
+                    league: "CBB";
+                  })
+              ),
+
+            // WCBB
+            ...cbbTeams
+              .filter((t) => !t.isAllStar && t.wid != null)
               .map(
                 (t) =>
                   ({

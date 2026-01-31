@@ -21,7 +21,6 @@ export function useAuth() {
   // 🔹 User/token state
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-
   // 🔹 Loading states
   const [loadingUser, setLoadingUser] = useState(true); // loading from AsyncStorage
   const [loadingAction, setLoadingAction] = useState(false); // login/signup/delete
@@ -31,7 +30,7 @@ export function useAuth() {
   };
 
   
-console.log(user)
+// console.log(JSON.stringify(user, null, 2))
   // 🔹 Load user & token from AsyncStorage
 useEffect(() => {
   const loadUser = async () => {

@@ -2,7 +2,6 @@ import MemoizedFloatingChatButton from "components//MemoizedFloatingChatButton";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
-import { useNBAStore } from "store/nbaStore";
 
 import {
   BoxScore,
@@ -23,7 +22,7 @@ import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFou
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
-import { getTeamById, neutralVenues, teams } from "constants/teams";
+import { getTeamById, teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/useGameDetails";
@@ -42,6 +41,7 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { Game } from "types/types";
+import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameDetailsScreen() {
@@ -92,11 +92,10 @@ export default function GameDetailsScreen() {
   }
 
   if (!parsedGame?.id) return null;
-
-  if (!parsedGame?.id) return null;
-  const { home, away, date, time, status, venue, id } = parsedGame;
+  const { home, away, date, venue, id } = parsedGame;
 
   const gameId = String(id);
+
   const gameDateObj = useMemo(() => {
     if (!date) return new Date(); // fallback to now
     const d = new Date(date);
@@ -108,14 +107,16 @@ export default function GameDetailsScreen() {
     [gameDateObj]
   );
 
-  const formattedDate = useMemo(() => {
-    if (!gameDateObj || isNaN(gameDateObj.getTime())) return "Unknown";
-
-    return gameDateObj.toLocaleDateString("en-US", {
-      month: "short", // 👈 short month name (Jan, Feb, Mar, etc.)
-      day: "numeric",
-    });
-  }, [gameDateObj]);
+  const formattedDate = gameDateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  const formattedTime =
+    gameDateObj?.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
 
   const homeTeamData = teams.find(
     (t) =>
@@ -143,29 +144,8 @@ export default function GameDetailsScreen() {
     gameDate
   );
 
-  const venueNameFromGame = venue?.name ?? "";
-  const venueCityFromGame = venue?.city ?? "";
-  const neutralArenaData = neutralVenues[venueNameFromGame];
-
-  const cleanedArenaName = venueNameFromGame.replace(/\s*\(.*?\)/, "").trim();
-  const resolvedArenaName = cleanedArenaName || homeTeamData.venueName;
-  const resolvedArenaCity = venueCityFromGame || homeTeamData.location;
-  const resolvedArenaAddress =
-    neutralArenaData?.address || homeTeamData.address || "";
-  const resolvedArenaCapacity =
-    neutralArenaData?.venueCapacity || homeTeamData.venueCapacity || "";
-  const resolvedArenaImage =
-    neutralArenaData?.venueImage ||
-    neutralVenues[venueNameFromGame] ||
-    neutralVenues[venueCityFromGame] ||
-    neutralVenues[homeTeamData.code] ||
-    homeTeamData.venueImage;
-
   const awayCode = useMemo(() => awayTeamData.code, [awayTeamData.code]);
   const homeCode = useMemo(() => homeTeamData.code, [homeTeamData.code]);
-
-  const lat = neutralArenaData?.latitude ?? homeTeamData.latitude ?? null;
-  const lon = neutralArenaData?.longitude ?? homeTeamData.longitude ?? null;
 
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
@@ -173,21 +153,6 @@ export default function GameDetailsScreen() {
   const { data: gameStats, loading: statsLoading } = useGameStatistics(
     Number(gameId)
   );
-
-  const { weather, weatherLoading, weatherError } = useWeatherForecast(
-    lat,
-    lon,
-    date
-  );
-
-  const cleanedArenaNameLower = cleanedArenaName.toLowerCase();
-  const homeArenaNameLower = homeTeamData.venueName.toLowerCase();
-  const awayArenaNameLower = awayTeamData.venueName.toLowerCase();
-
-  const isNeutralSiteByArena =
-    cleanedArenaNameLower !== "" &&
-    cleanedArenaNameLower !== homeArenaNameLower &&
-    cleanedArenaNameLower !== awayArenaNameLower;
 
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
@@ -200,7 +165,42 @@ export default function GameDetailsScreen() {
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const lastPlay = liveScore?.lastPlay
+  const lastPlay = liveScore?.lastPlay;
+  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const displayClock = liveScore?.displayClock;
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const headlineText = details?.headline;
+  const playerStats = liveScore?.playerStats ?? [];
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
+  const period = liveScore?.period;
+  const neutralSite = details?.neutralSite;
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
+
+  const resolvedVenue = useMemo(
+    () =>
+      resolveVenue({
+        espnVenue: details?.venue,
+        homeTeam: homeTeam,
+        isNeutralSite: neutralSite,
+      }),
+    [details?.venue, homeTeam, neutralSite]
+  );
+
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    resolvedVenue.latitude,
+    resolvedVenue.longitude,
+    date
+  );
 
   /* ---------------- Header ---------------- */
 
@@ -223,45 +223,19 @@ export default function GameDetailsScreen() {
           awayTeamId={awayTeamId}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
-          isNeutralSite={isNeutralSiteByArena}
+          isNeutralSite={neutralSite}
           league="NBA"
         />
       ),
     });
-  }, [
-    navigation,
-    isLoading,
-    liveScore,
-    homeCode,
-    awayCode,
-    isNeutralSiteByArena,
-  ]);
+  }, [navigation, isLoading, liveScore, homeCode, awayCode]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setIsLoading(false), 400);
     return () => clearTimeout(timeout);
   }, []);
 
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-  const displayClock = liveScore?.displayClock;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
-  const headlineText = details?.headline;
-  const playerStats = liveScore?.playerStats ?? [];
-  const homeScore = liveScore?.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? 0;
-  const period = liveScore?.period;
+  // console.log(JSON.stringify(lastPlay, null, 2))
 
   const isChristmasDay =
     gameDateObj.getMonth() === 11 && gameDateObj.getDate() === 25;
@@ -284,7 +258,7 @@ export default function GameDetailsScreen() {
 
   if (isLoading || !liveScore) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.loadingContainer}>
         <CustomActivityIndicator />
       </View>
     );
@@ -315,7 +289,7 @@ export default function GameDetailsScreen() {
           period={period}
           isDark={isDark}
           formattedDate={formattedDate}
-          time={time}
+          time={formattedTime}
           networkString={broadcastText}
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
@@ -324,7 +298,13 @@ export default function GameDetailsScreen() {
         <View style={{ gap: 20, marginTop: 20 }}>
           {!dontShowDetails && (
             <>
-              {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
+              {!isFinal && !isScheduled && (
+                <LastPlay
+                  lastPlay={lastPlay}
+                  homeTeamId={String(homeTeamId)}
+                  awayTeamId={String(awayTeamId)}
+                />
+              )}
 
               {!isFinal && (
                 <WinPredictionVote
@@ -448,14 +428,14 @@ export default function GameDetailsScreen() {
               />
 
               <GameLocation
-                venueImage={resolvedArenaImage}
-                venueName={resolvedArenaName}
-                location={resolvedArenaCity}
-                address={resolvedArenaAddress}
-                venueCapacity={resolvedArenaCapacity}
+                venueImage={resolvedVenue.image}
+                venueName={resolvedVenue.name}
+                location={resolvedVenue.city}
+                address={resolvedVenue.address}
+                venueCapacity={resolvedVenue.capacity}
+                weather={weather}
                 loading={weatherLoading}
                 error={weatherError}
-                weather={weather}
               />
             </>
           )}
@@ -471,4 +451,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingBottom: 60,
   },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
 });

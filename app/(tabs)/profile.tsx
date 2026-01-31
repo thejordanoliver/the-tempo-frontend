@@ -1,10 +1,13 @@
 // profile.tsx
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BioSection from "components/Profile/BioSection";
+import FollowersModal from "components/Profile/FollowersModal";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
@@ -14,8 +17,9 @@ import { teams as cbbteams } from "constants/teamsCBB";
 import { teams as cfbteams } from "constants/teamsCFB";
 import { teams as mlbteams } from "constants/teamsMLB";
 import { teams as nflteams } from "constants/teamsNFL";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useAuth } from "hooks/useAuth";
+import { useNavigation, useRouter } from "expo-router";
+import { useProfile } from "hooks/useProfile";
+import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -28,17 +32,6 @@ import { useFollowersModalStore } from "store/followersModalStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
 import { profileStyles } from "styles/ProfileScreenStyles";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-
-function parseImageUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  if (url === "null" || url === "undefined") return null;
-  if (typeof url !== "string") return null;
-  if (!url.startsWith("http")) return null; // Cloudinary URLs are always https
-  return url;
-}
-
-
 export default function ProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
@@ -47,45 +40,50 @@ export default function ProfileScreen() {
   const totalGap = columnGap * (numColumns - 1);
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
+
   const { deleteAccount } = useAuth();
-  const { id } = useLocalSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [showSignOutModal, setShowSignOutModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [username, setUsername] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string | null>(null);
-  const [bio, setBio] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const [followersCount, setFollowersCount] = useState<number>(0);
-  const [followingCount, setFollowingCount] = useState<number>(0);
-  const [isGridView, setIsGridView] = useState(true);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const [password, setPassword] = useState("");
   const navigation = useNavigation();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
+  const styles = profileStyles(isDark);
+
+  // Local UI state
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [isGridView, setIsGridView] = useState(true);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const followersModalRef = useRef<BottomSheetModal>(null);
+  // Add local state for modal props
+  const [modalType, setModalType] = useState<"followers" | "following">(
+    "followers"
+  );
+  const [modalTargetUserId, setModalTargetUserId] = useState<string>("");
+
+  // Profile hook
+  const {
+    isLoading,
+    currentUserId,
+    username,
+    fullName,
+    bio,
+    profileImage,
+    bannerImage,
+    favorites,
+    followersCount,
+    followingCount,
+    loadProfile,
+  } = useProfile();
   const viewedUserId = currentUserId;
 
-  const {
-    isVisible,
-    type,
-    targetUserId,
-    openModal,
-    closeModal,
-    shouldRestore,
-    clearRestore,
-  } = useFollowersModalStore();
-  const {
-    showSettingsModal,
-    setShowSettingsModal,
-    showOnReturn,
-    setShowOnReturn,
-  } = useSettingsModalStore();
+  // Followers modal & settings modal stores
+  const { type, targetUserId, openModal, shouldRestore, clearRestore } =
+    useFollowersModalStore();
 
+  const { showOnReturn, setShowOnReturn, setShowSettingsModal } =
+    useSettingsModalStore();
+
+  /** Toggle between grid and list view for favorite teams */
   const toggleFavoriteTeamsView = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -101,64 +99,23 @@ export default function ProfileScreen() {
     });
   };
 
-  const loadFollowCounts = async (userId: string) => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/users/${userId}`);
-      const data = await res.json();
-      setFollowersCount(data.followersCount ?? 0);
-      setFollowingCount(data.followingCount ?? 0);
-    } catch (error) {
-      console.warn("Failed to load follow counts:", error);
-    }
-  };
-
-  const loadProfileData = async () => {
-    try {
-      const keys = [
-        "userId",
-        "username",
-        "fullName",
-        "bio",
-        "profileImage",
-        "bannerImage",
-        "favorites",
-      ];
-      const result = await AsyncStorage.multiGet(keys);
-      const data = Object.fromEntries(result);
-
-      setUsername(data.username ?? null);
-      setFullName(data.fullName ?? null);
-      setBio(data.bio ?? null);
-      setProfileImage(parseImageUrl(data.profileImage));
-      setBannerImage(parseImageUrl(data.bannerImage));
-      setFavorites(data.favorites ? JSON.parse(data.favorites) : []);
-
-      if (data.userId) {
-        setCurrentUserId(Number(data.userId));
-        await loadFollowCounts(data.userId);
-      }
-    } catch (error) {
-      console.warn("Failed to load profile data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  /** Delete account handler */
   const confirmDeleteAccount = async () => {
+    if (!password.trim()) {
+      alert("Please enter your password.");
+      return;
+    }
     try {
-      if (!password.trim()) {
-        alert("Please enter your password.");
-        return;
-      }
-      await deleteAccount(password); // backend call
+      await deleteAccount(password);
       setShowDeleteModal(false);
       setPassword("");
       router.replace("/settings/deleteaccountsplash");
-    } catch (error) {
+    } catch {
       alert("Failed to delete account. Check your password and try again.");
     }
   };
 
+  /** Sign out handler */
   const signOut = async () => {
     try {
       await AsyncStorage.clear();
@@ -170,13 +127,17 @@ export default function ProfileScreen() {
     }
   };
 
+  /** Load profile on focus and handle modal restore / settings */
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
 
       const initialize = async () => {
+        if (!isActive) return;
+        await loadProfile();
+
         if (shouldRestore && targetUserId) {
-          clearRestore(); // ✅ clear first
+          clearRestore();
           openModal(
             type,
             targetUserId,
@@ -184,15 +145,9 @@ export default function ProfileScreen() {
           );
         }
 
-        if (isVisible || !isActive) return;
-
-        setIsLoading(true);
-        await loadProfileData();
-
-        // If user navigated back and expects the settings modal, show it
         if (showOnReturn) {
           setShowSettingsModal(true);
-          setShowOnReturn(false); // reset the flag
+          setShowOnReturn(false);
         }
       };
 
@@ -202,10 +157,10 @@ export default function ProfileScreen() {
         isActive = false;
       };
     }, [
+      loadProfile,
       shouldRestore,
       targetUserId,
       type,
-      isVisible,
       currentUserId,
       openModal,
       clearRestore,
@@ -215,6 +170,7 @@ export default function ProfileScreen() {
     ])
   );
 
+  /** Header with logout/settings buttons */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -222,53 +178,49 @@ export default function ProfileScreen() {
           title={`@${username}`}
           tabName="Profile"
           onLogout={() => setShowSignOutModal(true)}
-          onSettings={() => router.push("/settings")} // ← this is the fix
+          onSettings={() => router.push("/settings")}
         />
       ),
     });
   }, [navigation, username, isDark]);
 
-  const styles = profileStyles(isDark);
-
+  /** Map favorites strings to team objects */
   const favoriteTeamsWithLeague = favorites
-    .map((fav: string) => {
+    .map((fav) => {
       const [league, id] = fav.split(":");
       let team;
-      if (league === "NBA") team = teams.find((t) => String(t.id) === id); // NBA IDs are strings
-      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id); // convert number to string
-      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id); // convert number to string
-      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id); // convert number to string
-      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id); // convert number to string
-      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id); // convert number to string
+      if (league === "NBA") team = teams.find((t) => String(t.id) === id);
+      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
+      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
+      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id);
+      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id);
+      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id);
       if (!team) return null;
-      return {
-        ...team,
-        league: league as "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB",
-      };
+      return { ...team, league: league as any };
     })
     .filter(Boolean);
 
   if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
 
+  // Handlers
   const onFollowersPress = () => {
-    if (currentUserId) {
-      openModal("followers", String(currentUserId), String(currentUserId));
-    }
+    if (!currentUserId) return;
+    setModalType("followers");
+    setModalTargetUserId(String(currentUserId));
+    followersModalRef.current?.present();
   };
 
   const onFollowingPress = () => {
-    if (currentUserId) {
-      openModal("following", String(currentUserId), String(currentUserId));
-    }
+    if (!currentUserId) return;
+    setModalType("following");
+    setModalTargetUserId(String(currentUserId));
+    followersModalRef.current?.present();
   };
-
-
 
   return (
     <>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{ paddingBottom: 30 }}
         contentInsetAdjustmentBehavior="never"
       >
         <ProfileBanner
@@ -291,7 +243,7 @@ export default function ProfileScreen() {
           fullName={fullName}
           username={username}
           isDark={isDark}
-          isCurrentUser={true}
+          isCurrentUser
           onEditPress={() => router.push("/edit-profile")}
         />
 
@@ -317,10 +269,7 @@ export default function ProfileScreen() {
         message="Are you sure you want to sign out?"
         confirmText="Sign Out"
         cancelText="Cancel"
-        onConfirm={() => {
-          setShowSignOutModal(false);
-          signOut();
-        }}
+        onConfirm={signOut}
         onCancel={() => setShowSignOutModal(false)}
       />
 
@@ -332,6 +281,16 @@ export default function ProfileScreen() {
         cancelText="Cancel"
         onConfirm={confirmDeleteAccount}
         onCancel={() => setShowDeleteModal(false)}
+      />
+
+      {/* Add Followers Modal */}
+
+      <FollowersModal
+        ref={followersModalRef}
+        type={modalType}
+        currentUserId={currentUserId ? String(currentUserId) : ""}
+        targetUserId={modalTargetUserId}
+        onClose={() => followersModalRef.current?.dismiss()}
       />
     </>
   );

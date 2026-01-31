@@ -18,15 +18,15 @@ import type { Game as NFLGameType } from "types/nfl";
 import type {
   CBBGame as CBBGameType,
   Game as NBAGameType,
-  summerGame,
+  SummerGame,
 } from "types/types";
 import { CBBGame } from "types/types";
-import HeaderSkeleton from "./Headings/HeaderSkeleton";
 import HeadingTwo from "./Headings/HeadingTwo";
+import HeaderSkeleton from "./Skeletons/HeaderSkeleton";
 import CBBGamePreviewModal from "./Sports/CBB/GamePreview/CBBGamePreviewModal";
 import CFBGamePreviewModal from "./Sports/CFB/GamePreview/CFBGamePreviewModal";
+
 import NFLGamePreviewModal from "./Sports/NFL/GamePreview/NFLGamePreviewModal";
-import SummerLeagueGamePreviewModal from "./summer-league/SummerLeagueGamePreviewModal";
 // ✅ Shared skeletons
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
@@ -53,15 +53,13 @@ import CBBGameCard from "./Sports/CBB/Games/CBBGameCard";
 import CBBGameSquareCard from "./Sports/CBB/Games/CBBGameSquareCard";
 
 // ✅ Summer League cards
-import SummerGameSquareCard from "components/summer-league/SummerGameSquareCard";
-import SummerGameCard from "components/summer-league/SummerLeagueGameCard";
-import SummerStackedGameCard from "components/summer-league/SummerLeagueStackedGameCard";
-
+import SummerGameSquareCard from "components/Sports/NBASummerLeague/Games/SummerGameSquareCard";
+import SummerGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueGameCard";
+import SummerStackedGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueStackedGameCard";
 
 const NCAA_FOOTBALL_LEAGUE_ID = 2;
 const NCAA_MENS_BASKETBALL_LEAGUE_ID = 116;
 const NCAA_WOMENS_BASKETBALL_LEAGUE_ID = 423;
-
 
 type SportsCategory =
   | "College Football"
@@ -78,7 +76,7 @@ export type CombinedGamesSection =
   | { category: "Women's College Basketball"; data: CBBGame[] }
   | { category: "NFL"; data: NFLGameType[] }
   | { category: "NBA"; data: NBAGameType[] }
-  | { category: "NBA Summer League"; data: summerGame[] }
+  | { category: "NBA Summer League"; data: SummerGame[] }
   | { category: "Favorites"; data: CombinedGame[] };
 
 type CombinedGame =
@@ -86,7 +84,7 @@ type CombinedGame =
   | NFLGameType
   | NBAGameType
   | CBBGameType
-  | summerGame;
+  | SummerGame;
 
 type CombinedGamesListProps = {
   gamesByCategory: CombinedGamesSection[];
@@ -106,9 +104,7 @@ type CFBGameExtended = CFBGameType & {
   league?: { id?: number; name?: string; season?: string; logo?: string };
 };
 
-const getCategoryForFavorites = (
-  item: CombinedGame
-): SportsCategory => {
+const getCategoryForFavorites = (item: CombinedGame): SportsCategory => {
   const league = (item as any).league;
 
   if (!league) return "NBA";
@@ -133,7 +129,6 @@ const getCategoryForFavorites = (
 
   return "NBA";
 };
-
 
 const liveStatuses = [
   "In Progress",
@@ -184,7 +179,7 @@ const getGameStatus = (game: CombinedGame): string => {
   if (hasGameProperty(game)) {
     return String(game.game?.status?.short ?? game.game?.status ?? "");
   } else {
-    return String((game as NBAGameType | summerGame)?.status ?? "");
+    return String((game as NBAGameType | SummerGame)?.status ?? "");
   }
 };
 
@@ -201,7 +196,7 @@ const getGameTimestamp = (game: CombinedGame): number => {
       ? game.game.date.timestamp * 1000
       : new Date(game.game?.date?.date ?? "").getTime();
   } else {
-    return new Date((game as NBAGameType | summerGame)?.date ?? "").getTime();
+    return new Date((game as NBAGameType | SummerGame)?.date ?? "").getTime();
   }
 };
 
@@ -398,7 +393,7 @@ export default function CombinedGamesList({
 
     // ✅ NBA Summer League
     if (category === "NBA Summer League") {
-      const slGame = item as summerGame;
+      const slGame = item as SummerGame;
       if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} />);
       if (viewMode === "grid")
         return wrapper(<SummerGameSquareCard game={slGame} />, index);
@@ -654,15 +649,7 @@ export default function CombinedGamesList({
           onClose={() => setModalVisible(false)}
         />
       )}
-      {modalVisible &&
-        previewGame &&
-        previewCategory === "NBA Summer League" && (
-          <SummerLeagueGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as summerGame}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+     
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const followersListModalStyles = (isDark: boolean) =>
@@ -14,26 +14,32 @@ export const followersListModalStyles = (isDark: boolean) =>
       top: 0,
     },
     handleIndicatorStyle: {
-      backgroundColor: isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      backgroundColor: isDark ? Colors.lightGray : Colors.midTone,
       width: 36,
       height: 4,
       borderRadius: 2,
-      marginTop: 12,
+    },
+    backgroundStyle: { backgroundColor: "transparent" },
+    container: {
+      flex: 1,
+    },
+    blurViewContainer: {
+      flex: 1,
+
+      paddingTop: 40,
+    },
+    contentContainerStyle: {
+      paddingHorizontal: 12,
+      paddingBottom: 100,
     },
     header: {
       position: "absolute",
       width: "100%",
       top: 0,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     headerText: {
       textAlign: "center",
@@ -45,27 +51,11 @@ export const followersListModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 18,
     },
-    blurContainer: {
+    bottomSheetScrollViewContainer: {
       flex: 1,
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
-      overflow: "hidden",
     },
-    modalContainer: {
-      paddingTop: 68,
-      paddingHorizontal: 12,
-      paddingBottom: 40,
-    },
-    searchInput: {
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      fontSize: 16,
-      fontFamily: Fonts.OSLIGHT,
-      marginBottom: 12,
-      borderColor: isDark ? Colors.midTone : Colors.midTone,
-      color: isDark ? Colors.white : Colors.black,
+    bottomSheetScrollViewWrapper: {
+      gap: 24,
     },
     userItem: {
       flexDirection: "row",
@@ -90,10 +80,9 @@ export const followersListModalStyles = (isDark: boolean) =>
       top: 15,
       right: 20,
     },
-    error: {
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-      marginVertical: 8,
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });

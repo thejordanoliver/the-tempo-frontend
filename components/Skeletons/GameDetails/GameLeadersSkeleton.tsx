@@ -1,4 +1,4 @@
-import HeaderSkeleton from "components/Headings/HeaderSkeleton";
+import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/Colors";
 import React, { useEffect, useRef } from "react";
 import {

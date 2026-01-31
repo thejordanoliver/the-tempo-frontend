@@ -1,15 +1,16 @@
 import HeadingThree from "components/Headings/HeadingThree";
+import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
+import { globalStyles } from "constants/Styles";
 import {
-  ActivityIndicator,
   FlatList,
   Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/types";
 import ResultItemRow from "./ResultItemRow";
-
 type Props = {
   data: ResultItem[];
   loading: boolean;
@@ -19,6 +20,7 @@ type Props = {
   query: string;
   onSeeAll?: () => void;
   showAll?: boolean;
+  isSearching?: boolean;
 };
 
 export default function SearchResultsList({
@@ -30,9 +32,11 @@ export default function SearchResultsList({
   query,
   onSeeAll,
   showAll = false,
+  isSearching,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = exploreStyles(isDark);
+  const global = globalStyles(isDark);
 
   function getTeamLeagueKey(item: any) {
     if (item.isNFL) return "nfl";
@@ -40,7 +44,8 @@ export default function SearchResultsList({
     if (item.isCFB) return "cfb";
     if (item.isCBB) return "cbb";
     if (item.isWCBB) return "wcbb";
-    return "nba";
+    if (item.isNBA) return "nba";
+    return null;
   }
 
   const visibleData = showAll ? data : data.slice(0, 5);
@@ -56,15 +61,19 @@ export default function SearchResultsList({
     </TouchableOpacity>
   );
 
-  if (loading)
+ if (isSearching)
     return (
-      <ActivityIndicator size="large" color={isDark ? "white" : "black"} />
+      <View>
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <ResultItemSkeleton key={idx} />
+        ))}
+      </View>
     );
 
-  if (error) return <Text style={styles.errorText}>{error}</Text>;
+  if (error) return <Text style={global.errorText}>{error}</Text>;
 
   if (!loading && data.length === 0 && query.length > 0)
-    return <Text style={styles.emptyText}>No results found.</Text>;
+    return <Text style={global.emptyText}>No results found.</Text>;
 
   return (
     <>

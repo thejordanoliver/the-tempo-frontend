@@ -10,7 +10,7 @@ import { teams } from "constants/teamsMLB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBTeamGames } from "hooks/MLBHooks/useMLBTeamGames";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";

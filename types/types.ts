@@ -87,8 +87,8 @@ export type TeamStats = {
 
 export type PlayerInfo = {
   player_id: number;
-  short_name: string,
-  full_name: string,
+  short_name: string;
+  full_name: string;
   first_name: string;
   last_name: string;
   jersey_number: string;
@@ -169,12 +169,13 @@ export type Team = {
   conference_championships?: number[]; // or number[]
   conference?: string;
   displayName?: string;
-  banner?: any; // <-- add this
+  isAllStar: boolean
 };
 
 export type NBATeam = {
   id: number;
   espnID: number;
+  summerLeagueId?: number;
   oddsID: string;
   name: string;
   fullName: string;
@@ -202,6 +203,7 @@ export type NBATeam = {
     home: any;
     away: any;
   };
+  isAllStar: boolean
 };
 
 export type Arena = {
@@ -335,7 +337,7 @@ export type CBBTeam = {
   championships?: number[];
   conference_championships?: string[]; // or number[]
   venueName?: string; // ✅ Add this
-  banner?: any; // <-- add this
+  isAllStar?: boolean
 };
 
 export type Conference = {
@@ -365,61 +367,63 @@ export type GameStatus = {
   timer: string | null;
 };
 
-export interface summerGame {
+export type SummerGame = {
   id: number;
-  date: string;
-  time: string;
-  status: GameStatus;
-  period?: number;
-  clock?: string;
-  timezone?: string;
-  homeScore?: number;
-  awayScore?: number;
-  isHalftime?: boolean;
-  stage?: number;
-  league?: {
-    name: string;
+  date: string; // "2025-12-16T21:00:00+00:00"
+  time: string; // "21:00"
+  timestamp: number; // 1765918800
+  timezone: string; // "UTC"
+
+  stage: string | null;
+  week: string | null;
+  venue: string | null;
+
+  status: {
+    long: string; // "Not Started"
+    short: string; // "NS"
+    timer: string | null;
   };
-  home: {
-    id: string;
+
+  league: {
+    id: number;
     name: string;
-    record?: string;
-    logo?: any;
-    code?: string;
-    fullName?: string;
-    logoLight?: any;
+    type: string;
+    season: string;
+    logo: string;
+    country: {
+      id: number;
+      name: string;
+      code: string;
+      flag: string;
+    };
+    isWomen?: boolean;
   };
-  away: {
-    id: string;
-    name: string;
-    record?: string;
-    logo?: any;
-    code?: string;
-    fullName?: string;
-    logoLight?: any;
+
+  // ✅ Use shared CBBTeam type here
+  teams: {
+    home: NBATeam;
+    away: NBATeam;
   };
-  venue?: string;
-  currentHomeScore?: number;
-  currentAwayScore?: number;
-  scores?: {
+
+  scores: {
     home: {
-      q1?: number;
-      q2?: number;
-      q3?: number;
-      q4?: number;
-      ot?: number;
-      total?: number;
+      quarter_1: number | null;
+      quarter_2: number | null;
+      quarter_3: number | null;
+      quarter_4: number | null;
+      over_time: number | null;
+      total: number | null;
     };
     away: {
-      q1?: number;
-      q2?: number;
-      q3?: number;
-      q4?: number;
-      ot?: number;
-      total?: number;
+      quarter_1: number | null;
+      quarter_2: number | null;
+      quarter_3: number | null;
+      quarter_4: number | null;
+      over_time: number | null;
+      total: number | null;
     };
   };
-}
+};
 
 export interface GameOddsCardProps {
   team1: {
@@ -462,7 +466,7 @@ export type DBPlayer = {
   draft_round: number;
   draft_year: number;
   draft_number: number;
-  awards: string[]
+  awards: string[];
 };
 
 export type APIGame = {
@@ -622,15 +626,18 @@ export type PlayerResult = {
   player_id: number;
   name: string;
   avatarUrl: string;
+  headshot_url: string;
   position: string;
   espn_team_id: string;
   team_id: number;
   isNFL?: boolean;
+  isNBA?: boolean;
   isMLB?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
   type: "player";
+  score: number;
 };
 
 export type TeamResult = {
@@ -646,6 +653,7 @@ export type TeamResult = {
   isCBB?: boolean;
   isWCBB?: boolean;
   type: "team";
+  score: number;
 };
 
 export type UserResult = {
@@ -654,6 +662,7 @@ export type UserResult = {
   username: string;
   profileImageUrl: string;
   type: "user";
+  score: number;
 };
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;

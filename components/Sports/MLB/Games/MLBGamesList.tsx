@@ -85,14 +85,14 @@ export default function MLBGamesList({
     if (viewMode === "list")
       return wrapper(
         <View style={{ marginBottom: 12 }}>
-          <MLBGameCard game={game} isDark={isDark} />
+          <MLBGameCard game={game} />
         </View>
       );
     if (viewMode === "grid")
-      return wrapper(<MLBGameSquareCard game={game} isDark={isDark} />, index);
+      return wrapper(<MLBGameSquareCard game={game} />, index);
     return wrapper(
       <View style={{ marginBottom: 12 }}>
-        <MLBStackedGameCard game={game} isDark={isDark} />
+        <MLBStackedGameCard game={game} />
       </View>
     );
   };

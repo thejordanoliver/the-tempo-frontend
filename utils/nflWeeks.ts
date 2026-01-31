@@ -2,11 +2,11 @@ import dayjs from "dayjs";
 import { Game } from "types/nfl";
 
 export type NFLWeekFromGames = {
-  label: string;       // e.g., "Pre Week 1", "Week 1", "Hall of Fame Weekend"
-  stage: string;       // "Pre Season", "Regular Season", "Post Season"
+  label: string; // e.g., "Pre Week 1", "Week 1", "Hall of Fame Weekend"
+  stage: string; // "Pre Season", "Regular Season", "Post Season"
   start: dayjs.Dayjs;
   end: dayjs.Dayjs;
-  games: Game[]
+  games: Game[];
 };
 
 /**
@@ -52,29 +52,40 @@ export function generateWeeksFromGames(games: Game[]): NFLWeekFromGames[] {
   );
 }
 
-
 /**
  * Get current week index
  */
-export function getCurrentWeekIndexFromGames(weeks: NFLWeekFromGames[]): number {
+export function getCurrentWeekIndexFromGames(
+  weeks: NFLWeekFromGames[]
+): number {
   const today = dayjs();
-  const index = weeks.findIndex((w) => today.isBetween(w.start, w.end, null, "[]"));
+  const index = weeks.findIndex((w) =>
+    today.isBetween(w.start, w.end, null, "[]")
+  );
   if (index !== -1) return index;
 
   // If today is after all weeks, return last past week
   const pastWeeks = weeks.filter((w) => today.isAfter(w.end));
-  return pastWeeks.length > 0 ? weeks.indexOf(pastWeeks[pastWeeks.length - 1]) : 0;
+  return pastWeeks.length > 0
+    ? weeks.indexOf(pastWeeks[pastWeeks.length - 1])
+    : 0;
 }
 
 /**
  * Filter games by a selected week
  */
-export function filterGamesByWeek(games: Game[], week: NFLWeekFromGames): Game[] {
+export function filterGamesByWeek(
+  games: Game[],
+  week: NFLWeekFromGames
+): Game[] {
   return games.filter((g) => {
     let gameWeek = g.game.week;
 
     // Prepend "Pre " for Preseason numeric weeks
-    if (g.game.stage === "Pre Season" && gameWeek.toLowerCase().startsWith("week")) {
+    if (
+      g.game.stage === "Pre Season" &&
+      gameWeek.toLowerCase().startsWith("week")
+    ) {
       gameWeek = "Pre " + gameWeek;
     }
 

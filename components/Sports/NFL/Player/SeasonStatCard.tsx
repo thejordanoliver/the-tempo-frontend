@@ -4,9 +4,6 @@ import { players as cfbPlayers } from "constants/cfbPlayers";
 import { Colors } from "constants/Colors";
 import { players as nflPlayers } from "constants/nflPlayers";
 import { globalStyles } from "constants/Styles";
-import { getTeamInfo as getCFBTeamInfo } from "constants/teamsCFB";
-import { getTeamInfo } from "constants/teamsNFL";
-import { useLocalSearchParams } from "expo-router";
 import { useFootballPlayerStats } from "hooks/NFLHooks/useFootballPlayerStats";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
@@ -16,7 +13,6 @@ type Props = {
   teamColor?: string;
   teamColorDark?: string;
   season?: string;
-  /** ✅ Choose between NFL or CFB */
   league?: "NFL" | "CFB";
 };
 
@@ -39,10 +35,7 @@ export default function SeasonStatCard({
   if (error || !aggregatedStats)
     return <Text style={global.errorText}>Failed to load stats</Text>;
 
-
-
-const displayYear = getFootballSeasonYear().toString();
-
+  const displayYear = getFootballSeasonYear().toString();
 
   // ✅ Handle players by league
   const players = league === "NFL" ? nflPlayers : cfbPlayers;
@@ -69,9 +62,7 @@ const displayYear = getFootballSeasonYear().toString();
     return (
       <View style={styles.statItem}>
         <Text style={styles.statLabel}>{label}</Text>
-        <Text style={[styles.statValue, { color: color || Colors.black }]}>
-          {formatValue(value)}
-        </Text>
+        <Text style={styles.statValue}>{formatValue(value)}</Text>
       </View>
     );
   }
@@ -95,12 +86,16 @@ const displayYear = getFootballSeasonYear().toString();
   const interceptions = findStat("interceptions");
 
   // --- Rushing stats ---
-  const rushingYardsPerGame = findStat("yards per game");
   const rushingYards = findStat("yards");
+  const rushingYardsPerGame = findStat("rushing attempts");
   const rushingTDs = findStat("rushing touchdowns");
   const fumbles = findStat("fumbles");
 
   // --- Receiving stats ---
+  const receptions = findStat("receptions");
+  const receivingTargets = findStat("receiving targets");
+  const receptionTargets = `${receptions}/${receivingTargets}`;
+  const receivingYardsPer = findStat("yards per reception avg");
   const receivingYards = findStat("receiving yards");
   const receivingTDs = findStat("receiving touchdowns");
 
@@ -148,13 +143,13 @@ const displayYear = getFootballSeasonYear().toString();
           {showRushing && (
             <>
               <StatItem
-                label="RUSH YDS"
-                value={rushingYards}
+                label="RUSH ATT"
+                value={rushingYardsPerGame}
                 color={statColor}
               />
               <StatItem
-                label="RUSH YDS/G"
-                value={rushingYardsPerGame}
+                label="RUSH YDS"
+                value={rushingYards}
                 color={statColor}
               />
               <StatItem label="RUSH TD" value={rushingTDs} color={statColor} />
@@ -165,8 +160,18 @@ const displayYear = getFootballSeasonYear().toString();
           {showReceiving && (
             <>
               <StatItem
+                label="REC/TAR"
+                value={receptionTargets}
+                color={statColor}
+              />
+              <StatItem
                 label="REC YDS"
                 value={receivingYards}
+                color={statColor}
+              />
+              <StatItem
+                label="YDS/REC"
+                value={receivingYardsPer}
                 color={statColor}
               />
               <StatItem label="REC TD" value={receivingTDs} color={statColor} />

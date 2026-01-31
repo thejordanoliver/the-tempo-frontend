@@ -1,7 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import players from "constants/players";
-import useDbPlayersByTeam, { Player } from "hooks/usePlayersByTeam";
+import { Colors } from "constants/Styles";
+import { getTeamByESPNId } from "constants/teams";
+import useDbPlayersByTeam from "hooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -11,7 +12,6 @@ import {
   useColorScheme,
 } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
-
 type NBALastPlay = {
   id?: string;
   text: string;
@@ -25,11 +25,26 @@ type NBALastPlay = {
     jersey?: string;
     teamId?: string;
   }[];
+  scoringPlay: boolean;
+  period: { number: number; displayValue: string };
+  homeScore: number;
+  awayScore: number;
+  clock: { displayValue: string };
+  team: { id: string };
+  participants?: {
+    athlete: {
+      id: string;
+      name?: string;
+      headshot?: string;
+      position?: string;
+      jersey?: string;
+    };
+    teamId?: string;
+  }[];
 };
 
 type LastPlayProps = {
   lastPlay?: string | NBALastPlay;
-  isDark?: boolean; // optional override
   homeTeamId?: string;
   awayTeamId?: string;
 };
@@ -43,22 +58,8 @@ export default function LastPlay({
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-const normalizeText = (text: string) => {
-  if (!text) return text;
-
-  return text
-    .replace(/missed\s*shot/gi, "Missed Shot")
-    .replace(/made\s*shot/gi, "Made Shot")
-    .replace(/blocked\s*shot/gi, "Blocked Shot")
-    .replace(/made\s*dunk/gi, "Made Dunk")
-    .replace(/official\s*tv\s*timeout/gi, "Official Timeout")
-
-    // ✅ Normalize foul (capital F, keep rest of phrase)
-    .replace(/\bfoul\b/gi, "Foul");
-};
 
   const isDark = useColorScheme() === "dark";
-
   const styles = lastPlayStyles(isDark);
 
   const onLayout = (e: LayoutChangeEvent) =>
@@ -68,52 +69,78 @@ const normalizeText = (text: string) => {
     setCurrentPlay(lastPlay);
   }, [lastPlay]);
 
-  // ✅ Hooks for player lookup
   const homePlayersResult = useDbPlayersByTeam(homeTeamId || "");
   const awayPlayersResult = useDbPlayersByTeam(awayTeamId || "");
 
   const homePlayers = homePlayersResult.players || [];
   const awayPlayers = awayPlayersResult.players || [];
 
-  // ✅ Avatar helper
-  const getPlayerAvatar = (name?: string, headshot?: string): string => {
-    if (!name) return headshot || DEFAULT_HEADSHOT;
-    const fullName = name.trim().toLowerCase();
-
-    const findMatch = (playerList: Player[]) =>
-      playerList.find((p) => {
-        if (!p.full_name) return false;
-        const dbName = p.full_name.toLowerCase().trim();
-        return dbName.includes(fullName) || fullName.includes(dbName);
-      });
-
-    const dbPlayer = findMatch(homePlayers) || findMatch(awayPlayers) || null;
-
-    return dbPlayer?.avatarUrl || players[name] || headshot || DEFAULT_HEADSHOT;
+  const getPlayerAvatar = (espnId?: string, fallbackUrl?: string): string => {
+    if (!espnId) return fallbackUrl || DEFAULT_HEADSHOT;
+    const dbPlayer =
+      homePlayers.find((p) => String(p.espn_id) === String(espnId)) ||
+      awayPlayers.find((p) => String(p.espn_id) === String(espnId));
+    return dbPlayer?.avatarUrl || fallbackUrl || DEFAULT_HEADSHOT;
   };
 
-  // ✅ Text color helper
-  const getTextColor = (text?: string) => {
+  const participantsToAthletes = (participants?: any[]) => {
+    if (!participants || !participants.length) return [];
+    return participants.map((p) => ({
+      id: p.athlete?.id,
+      name: p.athlete?.name || "",
+      headshot: p.athlete?.headshot || "",
+      position: p.athlete?.position || "",
+      jersey: p.athlete?.jersey || "",
+      teamId: p.teamId || "",
+    }));
+  };
+
+  const athletes =
+    "participants" in (currentPlay as any)
+      ? participantsToAthletes((currentPlay as any).participants)
+      : (currentPlay as NBALastPlay).athletes || [];
+
+  const firstAthlete = athletes[0];
+
+  const getTextColor = (currentPlay: NBALastPlay, text?: string) => {
     const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
+    if (currentPlay.scoringPlay === true)
+      return isDark ? Colors.dark.limeGreen : Colors.light.green;
     if (lower.includes("foul"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
-    if (lower.includes("made"))
-      return isDark ? Colors.dark.limeGreen : Colors.light.green;
-    if (lower.includes("makes"))
-      return isDark ? Colors.dark.limeGreen : Colors.light.green;
-    if (lower.includes("missed"))
+    if (lower.includes("violation"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
-    if (lower.includes("misses"))
+    if (lower.includes("missed") || lower.includes("misses"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
     if (lower.includes("turnover"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
     return defaultColor;
   };
 
-  if (!currentPlay) return null;
+  const getIcon = (currentPlay: NBALastPlay) => {
+    if (currentPlay.text.includes("timeout"))
+      return (
+        <Ionicons
+          name="time-outline"
+          color={isDark ? Colors.white : Colors.black}
+          size={20}
+          style={{ marginRight: 4 }}
+        />
+      );
+  };
+  // Determine team color safely
+  let teamColor = Colors.light.green; // default
 
+  if (typeof currentPlay !== "string" && currentPlay?.team?.id) {
+    const team = getTeamByESPNId(currentPlay.team.id);
+    teamColor = isDark
+      ? team?.secondaryColor || Colors.light.green
+      : team?.color || Colors.light.green;
+  }
+
+  if (!currentPlay) return null;
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
@@ -125,39 +152,36 @@ const normalizeText = (text: string) => {
   return (
     <View style={styles.container} onLayout={onLayout}>
       <HeadingTwo>Last Play</HeadingTwo>
-
-      {currentPlay.athletes?.length ? (
-        <View style={styles.athleteContainer}>
-          {currentPlay.athletes.map((athlete, idx) => {
-            const avatarUrl = getPlayerAvatar(athlete.name, athlete.headshot);
-            console.log(avatarUrl)
-            return (
-              <View key={athlete.id || idx} style={styles.athleteItem}>
-                <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-                <View style={styles.athleteDetails}>
-                  <Text style={styles.athleteName}>{athlete.name}</Text>
-                  <Text style={styles.athleteMeta}>
-                    {athlete.position || ""}
-                  </Text>
-                  <Text style={styles.athleteMeta}>
-                    {athlete.jersey ? `#${athlete.jersey}` : ""}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
+      <View style={styles.wrapper}>
+        <View style={styles.row}>
+          {firstAthlete && (
+            <Image
+              source={{
+                uri: getPlayerAvatar(firstAthlete.id, firstAthlete.headshot),
+              }}
+              style={styles.avatar}
+            />
+          )}
+          {getIcon(currentPlay)}
+          <Text
+            style={[
+              styles.playText,
+              { color: getTextColor(currentPlay, currentPlay.text) },
+              athletes.length ? styles.playTextWithAthletes : null,
+            ]}
+          >
+            {currentPlay.text}
+          </Text>
         </View>
-      ) : null}
-
-      <Text
-        style={[
-          styles.playText,
-          { color: getTextColor(currentPlay.text) },
-          currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
-        ]}
-      >
-        {normalizeText(currentPlay.text)}
-      </Text>
+        <View style={styles.statusContainer}>
+          <Text style={styles.subText}>
+            {currentPlay.clock.displayValue} {currentPlay.period.displayValue}
+          </Text>
+          <Text style={styles.subText}>
+            {currentPlay.awayScore} - {currentPlay.homeScore}
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }

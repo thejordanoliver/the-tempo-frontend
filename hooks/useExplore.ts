@@ -12,6 +12,28 @@ export function useExplore() {
   const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const isSearching =
+    loading || (query.trim().length > 0 && debouncedQuery !== query);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 400); // wait 400ms after last keystroke
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
+
+  // trigger search only when debouncedQuery changes
+  useEffect(() => {
+    if (debouncedQuery.trim()) {
+      search(debouncedQuery);
+    } else {
+      setResults([]); // clear results if input is empty
+    }
+  }, [debouncedQuery]);
 
   useEffect(() => {
     loadRecentSearches();
@@ -91,10 +113,37 @@ export function useExplore() {
         users: UserResult[];
       }>(`${API_URL}/api/explore/search`, { params: { query: searchQuery } });
 
+      const q = searchQuery.toLowerCase();
+
+      // Add scoring for users
+      const scoredUsers: ResultItem[] = res.data.users.map((u) => {
+        let score = u.score ?? 0;
+        const uname = u.username.toLowerCase();
+        if (uname === q) score += 1000; // exact match boost
+        else if (uname.startsWith(q)) score += 500; // prefix boost
+        return { ...u, type: "user" as const, score };
+      });
+
+      // Sort users by score descending
+      const sortedUsers = scoredUsers.sort(
+        (a, b) => (b.score ?? 0) - (a.score ?? 0)
+      );
+
+      // Sort players by score descending
+      const sortedPlayers = res.data.players
+        .map((p) => ({ ...p, type: "player" as const }))
+        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+
+      // Sort teams by score descending
+      const sortedTeams = res.data.teams
+        .map((t) => ({ ...t, type: "team" as const }))
+        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+
+      // Combine results: users first, then players, then teams
       const combined: ResultItem[] = [
-        ...res.data.teams.map((t) => ({ ...t, type: "team" as const })),
-        ...res.data.players.map((p) => ({ ...p, type: "player" as const })),
-        ...res.data.users.map((u) => ({ ...u, type: "user" as const })),
+        ...sortedTeams,
+        ...sortedUsers,
+        ...sortedPlayers,
       ];
 
       setResults(combined);
@@ -123,5 +172,6 @@ export function useExplore() {
     search,
     saveToRecentSearches,
     deleteRecentSearch,
+    isSearching,
   };
 }

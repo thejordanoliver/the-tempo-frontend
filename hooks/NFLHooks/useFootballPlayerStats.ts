@@ -43,7 +43,7 @@ export function useFootballPlayerStats(playerId: number, season = "2025") {
             });
           });
         });
-console.log(JSON.stringify(playerData, null, 2))
+
         setAggregatedStats(totals);
       } catch (err: any) {
         setError(err);

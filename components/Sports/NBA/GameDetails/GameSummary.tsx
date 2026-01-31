@@ -50,7 +50,7 @@ export default function GameSummary({
   league = "NBA",
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = gameSummaryStyles(isDark);
 
   const periodMap: Record<string, string> = {
     1: "1st",
@@ -187,7 +187,7 @@ export default function GameSummary({
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const gameSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     logo: { width: 26, height: 26, marginRight: 8 },
     listContainer: { marginTop: 12, height: 400 },

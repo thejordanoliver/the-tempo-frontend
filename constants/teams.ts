@@ -103,6 +103,7 @@ export const teams: NBATeam[] = [
   {
     id: 1,
     espnID: 1,
+    summerLeagueId: 132,
     oddsID: "par_01hqmkq6fceknv7cwebesgrx03",
     name: "Hawks",
     fullName: "Atlanta Hawks",
@@ -124,10 +125,12 @@ export const teams: NBATeam[] = [
       home: HawksHome,
       away: HawksAway,
     },
+    isAllStar: false
   },
   {
     id: 2,
     espnID: 2,
+    summerLeagueId: 133,
     oddsID: "par_01hqmkq6fdf1pvq7jgdd7hdmpf",
     name: "Celtics",
     fullName: "Boston Celtics",
@@ -149,10 +152,12 @@ export const teams: NBATeam[] = [
       home: CelticsHome,
       away: CelticsAway,
     },
+    isAllStar: false
   },
   {
     id: 4,
     espnID: 17,
+    summerLeagueId: 134,
     oddsID: "par_01hqmkq6fefp3r8597cv3wj3cr",
     name: "Nets",
     fullName: "Brooklyn Nets",
@@ -174,10 +179,12 @@ export const teams: NBATeam[] = [
       home: NetsHome,
       away: NetsAway,
     },
+    isAllStar: false
   },
   {
     id: 5,
     espnID: 30,
+    summerLeagueId: 135,
     oddsID: "par_01hqmkq6fffqq9gze9hqf1fwn6",
     name: "Hornets",
     fullName: "Charlotte Hornets",
@@ -198,11 +205,12 @@ export const teams: NBATeam[] = [
     uniforms: {
       home: HornetsHome,
       away: HornetsAway,
-    },
+    },isAllStar: false
   },
   {
     id: 6,
     espnID: 4,
+    summerLeagueId: 136,
     oddsID: "par_01hqmkq6fgf7krk5evvjfy9mr1",
     name: "Bulls",
     fullName: "Chicago Bulls",
@@ -224,10 +232,12 @@ export const teams: NBATeam[] = [
       home: BullsHome,
       away: BullsAway,
     },
+    isAllStar: false
   },
   {
     id: 7,
     espnID: 5,
+    summerLeagueId: 137,
     oddsID: "par_01hqmkq6fhec0t7bezwtzqv0fq",
     name: "Cavaliers",
     fullName: "Cleveland Cavaliers",
@@ -249,10 +259,12 @@ export const teams: NBATeam[] = [
       home: CavsHome,
       away: CavsAway,
     },
+    isAllStar: false
   },
   {
     id: 8,
     espnID: 6,
+    summerLeagueId: 138,
     oddsID: "par_01hqmkq6fje5rrsbnbx97seg30",
     name: "Mavericks",
     fullName: "Dallas Mavericks",
@@ -274,10 +286,12 @@ export const teams: NBATeam[] = [
       home: MavsHome,
       away: MavsAway,
     },
+    isAllStar: false
   },
   {
     id: 9,
     espnID: 7,
+    summerLeagueId: 139,
     oddsID: "par_01hqmkq6fkf9r8wh7303b8hy40",
     name: "Nuggets",
     fullName: "Denver Nuggets",
@@ -299,10 +313,12 @@ export const teams: NBATeam[] = [
       home: NuggetsHome,
       away: NuggetsAway,
     },
+    isAllStar: false
   },
   {
     id: 10,
     espnID: 8,
+    summerLeagueId: 140,
     oddsID: "par_01hqmkq6fmfyjsnjtexnh7vdwm",
     name: "Pistons",
     fullName: "Detroit Pistons",
@@ -324,10 +340,12 @@ export const teams: NBATeam[] = [
       home: PistonsHome,
       away: PistonsAway,
     },
+    isAllStar: false
   },
   {
     id: 11,
     espnID: 9,
+    summerLeagueId: 141,
     oddsID: "par_01hqmkq6fne7nsfvf365y98r0h",
     name: "Warriors",
     fullName: "Golden State Warriors",
@@ -349,10 +367,12 @@ export const teams: NBATeam[] = [
       home: WarriorsHome,
       away: WarriorsAway,
     },
+    isAllStar: false
   },
   {
     id: 14,
     espnID: 10,
+    summerLeagueId: 142,
     oddsID: "par_01hqmkq6fpetbrrcfrsgh982ed",
     name: "Rockets",
     fullName: "Houston Rockets",
@@ -375,10 +395,12 @@ export const teams: NBATeam[] = [
       home: RocketsHome,
       away: RocketsAway,
     },
+    isAllStar: false
   },
   {
     id: 15,
     espnID: 11,
+    summerLeagueId: 143,
     oddsID: "par_01hqmkq6fqfcgtzyhmce1m5g86",
     name: "Pacers",
     fullName: "Indiana Pacers",
@@ -400,10 +422,12 @@ export const teams: NBATeam[] = [
       home: PacersHome,
       away: PacersAway,
     },
+    isAllStar: false
   },
   {
     id: 16,
     espnID: 12,
+    summerLeagueId: 144,
     oddsID: "par_01hqmkq6frex7v4gfdda5g204q",
     name: "Clippers",
     fullName: "Los Angeles Clippers",
@@ -425,10 +449,12 @@ export const teams: NBATeam[] = [
       home: ClippersHome,
       away: ClippersAway,
     },
+    isAllStar: false
   },
   {
     id: 17,
     espnID: 13,
+    summerLeagueId: 145,
     oddsID: "par_01hqmkq6fser5vcxm0fprbrcjz",
     name: "Lakers",
     fullName: "Los Angeles Lakers",
@@ -450,10 +476,12 @@ export const teams: NBATeam[] = [
       home: LakersHome,
       away: LakersAway,
     },
+    isAllStar: false
   },
   {
     id: 19,
     espnID: 29,
+    summerLeagueId: 146,
     oddsID: "par_01hqmkq6ftf24avayqxfd8840c",
     name: "Grizzlies",
     fullName: "Memphis Grizzlies",
@@ -475,10 +503,12 @@ export const teams: NBATeam[] = [
       home: GrizzliesHome,
       away: GrizzliesAway,
     },
+    isAllStar: false
   },
   {
     id: 20,
     espnID: 14,
+    summerLeagueId: 147,
     oddsID: "par_01hqmkq6fvemwsm7z5cv5d24q1",
     name: "Heat",
     fullName: "Miami Heat",
@@ -500,10 +530,12 @@ export const teams: NBATeam[] = [
       home: HeatHome,
       away: HeatAway,
     },
+    isAllStar: false
   },
   {
     id: 21,
     espnID: 15,
+    summerLeagueId: 148,
     oddsID: "par_01hqmkq6fwfsdt20kfva62r4t7",
     name: "Bucks",
     fullName: "Milwaukee Bucks",
@@ -525,10 +557,12 @@ export const teams: NBATeam[] = [
       home: BucksHome,
       away: BucksAway,
     },
+    isAllStar: false
   },
   {
     id: 22,
     espnID: 16,
+    summerLeagueId: 149,
     oddsID: "par_01hqmkq6fxfsca5pyfcqjjtaw9",
     name: "Timberwolves",
     fullName: "Minnesota Timberwolves",
@@ -550,11 +584,13 @@ export const teams: NBATeam[] = [
       home: TimberwolvesHome,
       away: TimberwolvesAway,
     },
+    isAllStar: false
   },
 
   {
     id: 23,
     espnID: 3,
+    summerLeagueId: 150,
     oddsID: "par_01hqmkq6fyed09scyb5yv7xt2s",
     name: "Pelicans",
     fullName: "New Orleans Pelicans",
@@ -576,10 +612,12 @@ export const teams: NBATeam[] = [
       home: PelicansHome,
       away: PelicansAway,
     },
+    isAllStar: false
   },
   {
     id: 24,
     espnID: 18,
+    summerLeagueId: 151,
     oddsID: "par_01hqmkq6fzfvyvrsb30jj85ade",
     name: "Knicks",
     fullName: "New York Knicks",
@@ -601,10 +639,12 @@ export const teams: NBATeam[] = [
       home: KnicksHome,
       away: KnicksAway,
     },
+    isAllStar: false
   },
   {
     id: 25,
     espnID: 25,
+    summerLeagueId: 152,
     oddsID: "par_01hqmkq6g0f44vajb32zbpwnbr",
     name: "Thunder",
     fullName: "Oklahoma City Thunder",
@@ -626,11 +666,13 @@ export const teams: NBATeam[] = [
       home: ThunderHome,
       away: ThunderAway,
     },
+    isAllStar: false
   },
 
   {
     id: 26,
     espnID: 19,
+    summerLeagueId: 153,
     oddsID: "par_01hqmkq6g1edytehr6s6fzpfzn",
     name: "Magic",
     fullName: "Orlando Magic",
@@ -652,10 +694,12 @@ export const teams: NBATeam[] = [
       home: MagicHome,
       away: MagicAway,
     },
+    isAllStar: false
   },
   {
     id: 27,
     espnID: 20,
+    summerLeagueId: 154,
     oddsID: "par_01hqmkq6g2egdt6asd59yp0vxp",
     name: "76ers",
     fullName: "Philadelphia 76ers",
@@ -678,10 +722,12 @@ export const teams: NBATeam[] = [
       home: SixersHome,
       away: SixersAway,
     },
+    isAllStar: false
   },
   {
     id: 28,
     espnID: 21,
+    summerLeagueId: 155,
     oddsID: "par_01hqmkq6g3fnvve924dqwzxh90",
     name: "Suns",
     fullName: "Phoenix Suns",
@@ -703,10 +749,12 @@ export const teams: NBATeam[] = [
       home: SunsHome,
       away: SunsAway,
     },
+    isAllStar: false
   },
   {
     id: 29,
     espnID: 22,
+    summerLeagueId: 156,
     oddsID: "par_01hqmkq6g4fz3tkx3w1w30mxb8",
     name: "Trail Blazers",
     fullName: "Portland Trail Blazers",
@@ -728,10 +776,12 @@ export const teams: NBATeam[] = [
       home: TrailBlazersHome,
       away: TrailBlazersAway,
     },
+    isAllStar: false
   },
   {
     id: 30,
     espnID: 23,
+    summerLeagueId: 157,
     oddsID: "par_01hqmkq6g5f22am45k13jkjtn2",
     name: "Kings",
     fullName: "Sacramento Kings",
@@ -753,10 +803,12 @@ export const teams: NBATeam[] = [
       home: KingsHome,
       away: KingsAway,
     },
+    isAllStar: false
   },
   {
     id: 31,
     espnID: 24,
+    summerLeagueId: 158,
     oddsID: "par_01hqmkq6g6fzr95vwm0a66qmh5",
     name: "Spurs",
     fullName: "San Antonio Spurs",
@@ -778,10 +830,12 @@ export const teams: NBATeam[] = [
       home: SpursHome,
       away: SpursAway,
     },
+    isAllStar: false
   },
   {
     id: 38,
     espnID: 28,
+    summerLeagueId: 159,
     oddsID: "par_01hqmkq6g7ffc92tna8axq3t4s",
     name: "Raptors",
     fullName: "Toronto Raptors",
@@ -804,10 +858,12 @@ export const teams: NBATeam[] = [
       home: RaptorsHome,
       away: RaptorsAway,
     },
+    isAllStar: false
   },
   {
     id: 40,
     espnID: 26,
+    summerLeagueId: 160,
     oddsID: "par_01hqmkq6g8e11sj1g4zv9z9snc",
     name: "Jazz",
     fullName: "Utah Jazz",
@@ -830,10 +886,12 @@ export const teams: NBATeam[] = [
       home: JazzHome,
       away: JazzAway,
     },
+    isAllStar: false
   },
   {
     id: 41,
     espnID: 27,
+    summerLeagueId: 161,
     oddsID: "par_01hqmkq6g9f0d9n781t7z01mn2",
     name: "Wizards",
     fullName: "Washington Wizards",
@@ -855,6 +913,7 @@ export const teams: NBATeam[] = [
       home: WizardsHome,
       away: WizardsAway,
     },
+    isAllStar: false
   },
 ];
 
@@ -868,6 +927,10 @@ export const getTeamByESPNId = (espnId: number | string) => {
 };
 export const getTeamById = (id?: number | string) =>
   teams.find((t) => String(t.id) === String(id));
+
+
+export const getTeamBySummerId = (id?: number | string) =>
+  teams.find((t) => String(t.summerLeagueId) === String(id));
 
 export const getNBATeam = (id: number | string) =>
   teams.find((t) => String(t.id) === String(id)) || null;
@@ -907,6 +970,8 @@ export type Venue = {
 };
 
 export const neutralVenues: Record<string, Venue> = {
+  /* ---------------- International / Neutral ---------------- */
+
   "Etihad Arena": {
     name: "Etihad Arena",
     address:
@@ -917,17 +982,19 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680251/arenas/basketball/etihad.avif",
   },
+
   "Stan Sheriff Center": {
     name: "Stan Sheriff Center",
     address: "1355 Lower Campus Rd, Honolulu, HI 96822",
     latitude: 21.3099,
-    longitude: 157.8581,
+    longitude: -157.8581,
     venueCapacity: "10,300",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/stan-sheriff-center.jpg",
   },
+
   "Accor Arena": {
-    name: "Accor Arenar",
+    name: "Accor Arena",
     address: "8 Bd de Bercy, 75012 Paris, France",
     latitude: 48.8575,
     longitude: 2.3514,
@@ -935,51 +1002,7 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/accor.jpg",
   },
-  "Acrisure Arena": {
-    name: "Acrisure Arena",
-    address: " 75702 Varner Rd, Palm Desert, CA 92211",
-    latitude: 33.7222,
-    longitude: -116.3745,
-    venueCapacity: "20,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/acrisure.jpg",
-  },
-  "Coliseo de Puerto Rico": {
-    name: "Coliseo de Puerto Rico",
-    address: "500 Av. Arterial B, San Juan, 00918, Puerto Rico",
-    latitude: 18.4655,
-    longitude: -66.1057,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/coliseode-puerto-rico.jpg",
-  },
-  "Pechanga Arena": {
-    name: "Pechanga Arena",
-    address: "3500 Sports Arena Blvd, San Diego, CA 92110",
-    latitude: 32.7468,
-    longitude: -117.1882,
-    venueCapacity: "16,100",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pechanga.jpg",
-  },
-  "North Charleston Coliseum": {
-    name: "North Charleston Coliseum",
-    address: "5001 Coliseum Dr, North Charleston, SC 29418",
-    latitude: 32.8655,
-    longitude: -80.0224,
-    venueCapacity: "13,295",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/north-charleston-coliseum.jpg",
-  },
-  "Legacy Arena at BJCC": {
-    name: "Legacy Arena at BJCC",
-    address: "1001 19th St N, Birmingham, AL 35234",
-    latitude: 33.5207,
-    longitude: -86.8025,
-    venueCapacity: "17,654",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/legacy.jpg",
-  },
+
   "Arena CDMX": {
     name: "Arena CDMX",
     city: "Mexico City",
@@ -990,6 +1013,7 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cdmx.jpg",
   },
+
   "Uber Arena": {
     name: "Uber Arena",
     city: "Berlin",
@@ -1000,18 +1024,106 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/uber.jpg",
   },
-  "The O2": {
-  name: "The O2 Arena",
-  city: "London",
-  address: "Peninsula Square, London SE10 0DX, United Kingdom",
-  latitude: 51.5030,
-  longitude: 0.0032,
-  venueCapacity: "20,000",
-  venueImage:
-    "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680191/arenas/basketball/the-o2.webp",
-},
 
+  "The O2": {
+    name: "The O2 Arena",
+    city: "London",
+    address: "Peninsula Square, London SE10 0DX, United Kingdom",
+    latitude: 51.503,
+    longitude: 0.0032,
+    venueCapacity: "20,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680191/arenas/basketball/the-o2.webp",
+  },
+
+  /* ---------------- NBA SUMMER LEAGUE ---------------- */
+
+  "Thomas & Mack Center": {
+    name: "Thomas & Mack Center",
+    city: "Las Vegas",
+    address: "4505 S Maryland Pkwy, Las Vegas, NV 89154",
+    latitude: 36.1057,
+    longitude: -115.1426,
+    venueCapacity: "17,923",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg",
+  },
+
+  "Cox Pavilion": {
+    name: "Cox Pavilion",
+    city: "Las Vegas",
+    address: "4505 S Maryland Pkwy, Las Vegas, NV 89154",
+    latitude: 36.1054,
+    longitude: -115.1433,
+    venueCapacity: "3,286",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1767000000/arenas/basketball/cox-pavilion.jpg",
+  },
+
+  "Jon M. Huntsman Center": {
+    name: "Jon M. Huntsman Center",
+    city: "Salt Lake City",
+    address: "1825 E South Campus Dr, Salt Lake City, UT 84112",
+    latitude: 40.7625,
+    longitude: -111.8508,
+    venueCapacity: "15,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1769869282/basketball/arenas/huntsman-center.jpg",
+  },
+
+  /* ---------------- Other US Neutral ---------------- */
+
+  "Acrisure Arena": {
+    name: "Acrisure Arena",
+    address: "75702 Varner Rd, Palm Desert, CA 92211",
+    latitude: 33.7222,
+    longitude: -116.3745,
+    venueCapacity: "20,300",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/acrisure.jpg",
+  },
+
+  "Coliseo de Puerto Rico": {
+    name: "Coliseo de Puerto Rico",
+    address: "500 Av. Arterial B, San Juan, 00918, Puerto Rico",
+    latitude: 18.4655,
+    longitude: -66.1057,
+    venueCapacity: "18,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/coliseode-puerto-rico.jpg",
+  },
+
+  "Pechanga Arena": {
+    name: "Pechanga Arena",
+    address: "3500 Sports Arena Blvd, San Diego, CA 92110",
+    latitude: 32.7468,
+    longitude: -117.1882,
+    venueCapacity: "16,100",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pechanga.jpg",
+  },
+
+  "North Charleston Coliseum": {
+    name: "North Charleston Coliseum",
+    address: "5001 Coliseum Dr, North Charleston, SC 29418",
+    latitude: 32.8655,
+    longitude: -80.0224,
+    venueCapacity: "13,295",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/north-charleston-coliseum.jpg",
+  },
+
+  "Legacy Arena at BJCC": {
+    name: "Legacy Arena at BJCC",
+    address: "1001 19th St N, Birmingham, AL 35234",
+    latitude: 33.5207,
+    longitude: -86.8025,
+    venueCapacity: "17,654",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/legacy.jpg",
+  },
 };
+
 
 export const nbaDivisionsById = {
   Atlantic: [

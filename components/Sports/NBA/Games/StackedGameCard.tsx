@@ -5,7 +5,6 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/useGameDetails";
-import { useGameInfo } from "hooks/useGameInfo";
 import { useState } from "react";
 import {
   Pressable,
@@ -92,6 +91,8 @@ export default function StackedGameCard({ game }: { game: Game }) {
   const isForfeited = gameStatusDescription === "Forfeited";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
+  const headlineText = details?.headline;
+  const headline = headlineText || holidayLabel;
 
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
@@ -111,14 +112,6 @@ export default function StackedGameCard({ game }: { game: Game }) {
       minute: "2-digit",
       hour12: true,
     }) || "";
-
-  const { headlineText } = useGameInfo(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateStr
-  );
-
-  const headline = headlineText || holidayLabel;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT

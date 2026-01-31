@@ -1,4 +1,4 @@
-import { Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import React from "react";
 import {
   StyleSheet,
@@ -17,6 +17,7 @@ type LabeledInputProps = {
   inputStyle?: object | object[];
   labelStyle?: object | object[];
   [key: string]: any; // for other TextInput props
+  hint?: string | null;
 };
 
 export default function LabeledInput({
@@ -28,55 +29,84 @@ export default function LabeledInput({
   containerStyle,
   inputStyle,
   labelStyle,
+  hint,
   ...rest
 }: LabeledInputProps) {
   const isDark = useColorScheme() === "dark";
+  const styles = labeledInputStyles(isDark);
+
+  const MAX_LENGTH = 150;
+
+  const handleChange = (text: string) => {
+    if (multiline && text.length > MAX_LENGTH) return;
+    onChangeText(text);
+  };
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      <Text
-        style={[styles.label, { color: isDark ? "#fff" : "#000" }, labelStyle]}
-      >
-        {label}
-      </Text>
+    <View style={containerStyle}>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
+
       <TextInput
         value={value}
-        onChangeText={onChangeText}
+        onChangeText={handleChange}
         multiline={multiline}
+        maxLength={multiline ? MAX_LENGTH : undefined}
         placeholder={placeholder}
-        placeholderTextColor={isDark ? "#888" : "#666"}
+        placeholderTextColor={Colors.midTone}
         style={[
           styles.input,
-          multiline && styles.bioInput,
-          {
-            color: isDark ? "#fff" : "#000",
-            backgroundColor: isDark ? "#2e2e2e" : "#eee",
-          },
           inputStyle,
+          multiline && { minHeight: 120, textAlignVertical: "top" },
         ]}
         {...rest}
       />
+
+      <View style={styles.hintContainer}>
+        {multiline && (
+          <Text style={styles.count}>
+            {value.length}/{MAX_LENGTH}
+          </Text>
+        )}
+        {!!hint && <Text style={styles.errorText}>{hint}</Text>}
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {},
-  label: {
-    marginTop: 40,
-    marginBottom: 20,
-    fontSize: 16,
-    fontFamily: Fonts.OSREGULAR,
-  },
-  input: {
-    padding: 20,
-    borderRadius: 8,
-    fontSize: 16,
-    marginBottom: 12,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  bioInput: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-});
+
+const labeledInputStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    label: {
+      marginVertical: 12,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    input: {
+      padding: 20,
+      borderRadius: 8,
+      fontSize: 16,
+      marginBottom: 12,
+      fontFamily: Fonts.OSLIGHT,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    hintContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    errorText: {
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+    },
+    count: {
+      color: Colors.midTone,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+    },
+  });

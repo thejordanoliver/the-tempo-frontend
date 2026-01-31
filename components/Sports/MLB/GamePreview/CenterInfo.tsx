@@ -1,74 +1,106 @@
-import { Colors } from "constants/Styles";
-import { Text, View } from "react-native";
-import { getStyles } from "styles/GamePreviewStyles/CenterInfoStyles";
-import { MLBTeam } from "types/mlb";
-
-export type MLBGameStatus =
-  | "Not Started"
-  | "In Progress"
-  | "Final"
-  | "Canceled"
-  | "Postponed"
-  | "Delayed"
-  | "Abandoned";
-
+import { useEffect, useRef } from "react";
+import { Animated, Text, View } from "react-native";
+import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import { formatQuarter } from "utils/games";
 type CenterInfoProps = {
-  status: MLBGameStatus;
-  date: string;
+  isChampionship: boolean;
+  broadcastNetworks?: string;
+  inning: number;
   time: string;
-  inning?: string | null; // "Top 3", "Bot 7", "Inning 5"
+  endOfPeriod?: boolean;
+  gameStatusDetail: string;
+  formattedDate: string;
   isDark: boolean;
-  homeTeam: MLBTeam;
-  awayTeam: MLBTeam;
-  colors: Record<string, string>;
-  lighter?: boolean;
-  apiDate?: string;
+  round?: string;
+  lighter: boolean;
+  statusText?: string;
+  gameStatusDescription: string;
 };
 
-export function CenterInfo({
-  status,
-  date,
-  time,
+export default function CenterInfo({
+  isChampionship,
+  gameStatusDescription,
+  gameStatusDetail,
+  broadcastNetworks,
   inning,
+  time,
+  formattedDate,
   isDark,
+  statusText,
 }: CenterInfoProps) {
-  const textColor = isDark ? Colors.white : Colors.black;
+  const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
+  const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
   const styles = getStyles;
+
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isEndOfInning = gameStatusDescription === "End of Period";
+  const displayInning = formatQuarter(inning);
+
+  useEffect(() => {
+    if (isChampionship) {
+      Animated.parallel([
+        Animated.timing(lightOpacity, {
+          toValue: isDark ? 0 : 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(darkOpacity, {
+          toValue: isDark ? 1 : 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isDark, isChampionship, lightOpacity, darkOpacity]);
+
   return (
     <View style={styles.container}>
-      {/* NOT STARTED */}
-      {status === "Not Started" && (
+      {isCanceled ? (
+        <Text style={styles.finalText}>Cancelled</Text>
+      ) : isFinal ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{date}</Text>
-          <View style={styles.statusDivider} />
-          <Text style={styles.time}>{time}</Text>
-        </View>
-      )}
-
-      {/* IN PROGRESS */}
-      {status === "In Progress" && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{inning ?? "Live"}</Text>
-        </View>
-      )}
-
-      {/* FINAL */}
-      {status === "Final" && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Final</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{date}</Text>
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      ) : isDelayed ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Delayed</Text>
+        </View>
+      ) : isPostponed ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      ) : isScheduled ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time}</Text>
+        </View>
+      ) : inProgress ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{displayInning}</Text>
+        </View>
+      ) : isEndOfInning ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>End of {displayInning}</Text>
+        </View>
+      ) : (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{statusText}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       )}
 
-      {/* SPECIAL STATUSES */}
-      {(status === "Canceled" ||
-        status === "Postponed" ||
-        status === "Delayed" ||
-        status === "Abandoned") && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{status}</Text>
-        </View>
+      {broadcastNetworks && (
+        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
       )}
     </View>
   );

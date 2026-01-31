@@ -1,5 +1,4 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { useFollowersModalStore } from "store/followersModalStore";
 import { Follow } from "types/types";
 import { profileStyles } from "../../styles/ProfileScreenStyles";
 
@@ -7,16 +6,15 @@ export default function FollowStats({
   followersCount,
   followingCount,
   isDark,
-  currentUserId,
-  targetUserId,
-}: Follow) {
+  onFollowersPress, // <-- new
+  onFollowingPress, // <-- new
+}: Follow & { onFollowersPress: () => void; onFollowingPress: () => void }) {
   const styles = profileStyles(isDark);
-  const openModal = useFollowersModalStore((state) => state.openModal);
 
   return (
     <View style={styles.followContainer}>
       <TouchableOpacity
-        onPress={() => openModal("followers", targetUserId, currentUserId)}
+        onPress={onFollowersPress}  // <-- use handler from props
         style={styles.followItem}
         activeOpacity={0.6}
       >
@@ -25,7 +23,7 @@ export default function FollowStats({
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => openModal("following", targetUserId, currentUserId)}
+        onPress={onFollowingPress} // <-- use handler from props
         style={styles.followItem}
         activeOpacity={0.6}
       >
@@ -35,3 +33,4 @@ export default function FollowStats({
     </View>
   );
 }
+

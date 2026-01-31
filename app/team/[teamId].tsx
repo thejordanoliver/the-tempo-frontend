@@ -14,8 +14,8 @@ import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNewsStore } from "hooks/newsStore";
-import { useFavoriteTeams } from "hooks/useFavoriteTeams";
 import usePlayersByTeam from "hooks/usePlayersByTeam";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamGames } from "hooks/useTeamGames";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
@@ -186,6 +186,19 @@ export default function TeamDetailScreen() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const gameCountByMonth = useMemo(() => {
+    const map = new Map<string, number>();
+
+    teamGames.forEach((game) => {
+      const d = new Date(game.date);
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+
+      map.set(key, (map.get(key) ?? 0) + 1);
+    });
+
+    return map;
+  }, [teamGames]);
 
   const monthsToShow = useMemo(() => {
     const map = new Map<string, { month: number; year: number }>();
@@ -374,7 +387,8 @@ export default function TeamDetailScreen() {
               onSelect={(month, year, index) =>
                 handleSelectMonth(month, year, index)
               }
-              styles={styles}
+              loading={gamesLoading}
+              gameCountByMonth={gameCountByMonth}
             />
           </View>
 

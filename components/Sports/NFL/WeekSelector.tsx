@@ -2,6 +2,7 @@
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
   LayoutChangeEvent,
   ScrollView,
   Text,
@@ -22,7 +23,8 @@ type Props = {
   monthTextSelectedStyle: any;
   loading?: boolean;
 };
-
+const ITEM_WIDTH = 100;
+const SPACING = 12;
 export default function WeekSelector({
   weeks,
   selectedWeekIndex = 0,
@@ -37,6 +39,10 @@ export default function WeekSelector({
   const itemWidth = 60; // width of each week button
   const spacing = 8; // space between buttons
 
+  const contentWidth = weeks.length * ITEM_WIDTH + (weeks.length - 1) * SPACING;
+  const screenWidth = Dimensions.get("window").width;
+  const needsScroll = contentWidth > screenWidth;
+  
   const indexToOffset = (
     index: number,
     itemWidth: number,
@@ -46,8 +52,6 @@ export default function WeekSelector({
     const centerOffset =
       index * (itemWidth + spacing) + itemWidth / 2 - containerWidth / 2;
 
-    const contentWidth =
-      weeks.length * itemWidth + (weeks.length - 1) * spacing;
     const maxOffset = Math.max(0, contentWidth - containerWidth);
 
     return Math.max(0, Math.min(centerOffset, maxOffset));
@@ -86,8 +90,20 @@ export default function WeekSelector({
       <ScrollView
         horizontal
         ref={scrollViewRef}
+        snapToInterval={ITEM_WIDTH + SPACING}
+        decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 4 }}
+        contentContainerStyle={
+          needsScroll
+            ? {
+                paddingHorizontal: SPACING / 2,
+              }
+            : {
+                width: screenWidth, // 🔥 THIS IS THE KEY
+                alignItems: "center", // center items horizontally
+                justifyContent: "space-around",
+              }
+        }
       >
         {weeks.map((week, index) => {
           const isSelected = index === selectedWeekIndex;

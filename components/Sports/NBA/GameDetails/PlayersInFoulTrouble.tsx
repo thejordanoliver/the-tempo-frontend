@@ -18,12 +18,12 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { Team } from "types/types";
+import { CBBTeam, Team } from "types/types";
 
 type Props = {
   gameId: number | string;
-  home?: Team;
-  away?: Team;
+  home?: Team | CBBTeam;
+  away?: Team | CBBTeam;
   lighter?: boolean;
 };
 

@@ -1,4 +1,4 @@
-import HeaderSkeleton from "components/Headings/HeaderSkeleton";
+import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/Colors";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
@@ -20,9 +20,7 @@ const TEAM_INFO_WIDTH = LOGO_SIZE + TEAM_INFO_GAP + TEAM_NAME_WIDTH + 8;
 // Adjust spacing here for more horizontal space
 const ODDS_FLEX = 0.3;
 const FIRST_ODDS_MARGIN = 80; // smaller than 200
-const OTHER_ODDS_MARGIN = 40;  // smaller than 16
-
-
+const OTHER_ODDS_MARGIN = 40; // smaller than 16
 
 /* -------------------------------------------------- */
 /* Reusable Pulse Block                               */
@@ -184,18 +182,15 @@ const styles = StyleSheet.create({
   headerCell: {
     height: 12,
     borderRadius: 6,
-
   },
   teamRow: {
     flexDirection: "row",
     alignItems: "center",
-   
   },
   teamInfo: {
     flexDirection: "row",
     alignItems: "center",
     gap: TEAM_INFO_GAP,
-    
   },
   logoSkeleton: {
     width: LOGO_SIZE,

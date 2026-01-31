@@ -47,15 +47,15 @@ export const profileStyles = (
       objectFit: "cover",
     },
     bioContainer: {
-      marginTop: 20,
-      paddingHorizontal: 16,
+      marginTop: 0,
+      paddingHorizontal: 12,
     },
     wrapper: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
       marginBottom: 16,
-      paddingHorizontal: 16,
+      paddingHorizontal: 12,
     },
     nameContainer: {
       flexDirection: "column",
@@ -99,7 +99,7 @@ export const profileStyles = (
       borderColor: isFollowing
         ? isDark
           ? Colors.black
-          : Colors.black 
+          : Colors.black
         : isDark
         ? Colors.white
         : Colors.black,
@@ -133,7 +133,7 @@ export const profileStyles = (
       fontFamily: Fonts.OSMEDIUM,
     },
     bioText: {
-      marginVertical: 20,
+      marginVertical: 8,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       lineHeight: 22,

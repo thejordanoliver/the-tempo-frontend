@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
+
 import { useRouter } from "expo-router";
 import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -23,14 +24,12 @@ export default function ExplorePage() {
   const [isFocused, setIsFocused] = useState(false);
   const [selectedTab, setSelectedTab] = useState<(typeof tabs)[number]>("All");
   const [showAll, setShowAll] = useState(false);
-
   const inputAnim = useRef(new Animated.Value(0)).current;
 
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = exploreStyles(isDark);
-
   const {
     query,
     setQuery,
@@ -39,6 +38,7 @@ export default function ExplorePage() {
     loading,
     error,
     search,
+    isSearching,
     saveToRecentSearches,
     deleteRecentSearch,
   } = useExplore();
@@ -136,8 +136,7 @@ export default function ExplorePage() {
 
   const handleChangeText = (text: string) => {
     if (!searchVisible) return;
-    setQuery(text);
-    search(text); // 🔹 trigger search from hook
+    setQuery(text); // only update state, search is handled by debounce
   };
 
   return (
@@ -168,6 +167,7 @@ export default function ExplorePage() {
           query={query}
           onSeeAll={() => setShowAll(true)}
           showAll={showAll}
+          isSearching={isSearching} 
         />
       )}
     </View>

@@ -1,7 +1,7 @@
 // hooks/useAccountActions.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAuth } from "hooks/useAuth";
 import { useRouter } from "expo-router";
+import { useAuth } from "hooks/UserHooks/useAuth";
 
 export function useAccountActions() {
   const { deleteAccount } = useAuth();

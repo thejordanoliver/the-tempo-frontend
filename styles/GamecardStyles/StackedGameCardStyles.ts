@@ -174,4 +174,27 @@ export const stackedGameCardStyles = (
       height: 25,
       resizeMode: "contain",
     },
+
+    mlbHeadlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+        ? Colors.lightGray
+        : Colors.darkGray,
+      textAlign: "center",
+    },
+
+    headlineContainer: {
+      flexDirection: "row",
+      alignItems: "center", // ← ensures vertical centering
+      justifyContent: "center", // ← centers entire group horizontally
+      position: "absolute",
+      top: 4,
+      width: "100%",
+      gap: 4,
+    },
   });

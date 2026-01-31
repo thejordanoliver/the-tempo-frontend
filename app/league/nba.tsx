@@ -12,13 +12,14 @@ import SportsListModal, {
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
 import { StandingsList } from "components/Sports/NBA/Standings/StandingsList";
+import SummerGamesList from "components/Sports/NBASummerLeague/Games/SummerGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Colors";
-import { getTeamInfo } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
 import { useLeagueNews } from "hooks/useLeagueNews";
 import { useSeasonGames } from "hooks/useSeasonGames";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
@@ -26,7 +27,7 @@ import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getFootballSeasonYear, getNBASeason } from "utils/dateUtils";
+import { getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
@@ -51,12 +52,21 @@ function StatsTabContent() {
 
 export default function NBALeagueScreen() {
   const currentYear = getNBASeason();
+
   const {
     games,
     error: errorGames,
     loading: loadingGames,
     refreshGames: refreshGames,
   } = useSeasonGames(currentYear);
+
+  // --- NBA Summer League Games ---
+  const {
+    games: summerGames,
+    loading: loadingSummer,
+    error: errorSummer,
+    refreshSummerGames,
+  } = useNBASLGames({ season: currentYear.toString() });
 
   const { news, loading: newsLoading, refreshNews } = useLeagueNews("NBA");
   const { highlights, loading: highlightsLoading } = useHighlights(
@@ -73,9 +83,7 @@ export default function NBALeagueScreen() {
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const [draftYear, setDraftYear] = useState(dayjs().year().toString());
-  const [standingsYear, setStandingsYear] = useState(
-    getNBASeason().toString()
-  );
+  const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
 
@@ -137,25 +145,6 @@ export default function NBALeagueScreen() {
     "forum",
   ] as const;
 
-  // --- Normalize regular season games ---
-  const normalizedSeasonGames = games.map((game: any) => {
-    const home = getTeamInfo(game.teams?.home.id);
-    const away = getTeamInfo(game.teams?.visitors.id);
-    const rawDate = game.date?.start ?? game.date;
-
-    // ✅ Use local time directly (no timezone conversion)
-    const date = dayjs(rawDate);
-
-    return {
-      ...game,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.format("h:mm A"),
-      home,
-      away,
-    };
-  });
-
   // --- Helper to sort live games on top ---
   const sortLiveGamesFirst = (gamesArray: any[]) =>
     [...gamesArray].sort((a, b) => {
@@ -171,13 +160,14 @@ export default function NBALeagueScreen() {
 
   // Filter both sets by selectedDate
   const filteredSeasonGames = sortLiveGamesFirst(
-    filterByDate(normalizedSeasonGames, selectedDate)
+    filterByDate(games, selectedDate)
   );
+  const filteredSummerGames = filterByDate(summerGames, selectedDate);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshGames(), refreshNews()]);
+      await Promise.all([refreshGames(), refreshSummerGames(), refreshNews()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -254,14 +244,24 @@ export default function NBALeagueScreen() {
                   />
                 }
               >
-                <GamesList
-                  games={filteredSeasonGames}
-                  error={errorGames}
-                  loading={loadingGames}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  scrollEnabled={false}
-                />
+                {filteredSummerGames.length > 0 ? (
+                  <SummerGamesList
+                    games={filteredSummerGames}
+                    loading={loadingSummer}
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    scrollEnabled={false}
+                  />
+                ) : (
+                  <GamesList
+                    games={filteredSeasonGames}
+                    error={errorGames}
+                    loading={loadingGames}
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    scrollEnabled={false}
+                  />
+                )}
               </ScrollView>
             </>
           )}
@@ -319,7 +319,7 @@ export default function NBALeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...normalizedSeasonGames]),
+          ...markDates([...games, ...summerGames]),
         }}
       />
 

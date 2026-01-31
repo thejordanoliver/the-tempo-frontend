@@ -81,6 +81,7 @@ export const teams: MLBTeam[] = [
     address: "401 E Jefferson St, Phoenix, AZ 85004",
     city: "Phoenix, AZ",
     championships: [2001],
+    isAllStar: false
   },
   {
     id: 26,
@@ -100,6 +101,7 @@ export const teams: MLBTeam[] = [
     address: "7000 Coliseum Way, Oakland, CA 94621",
     city: "Oakland, CA",
     championships: [1910, 1911, 1913, 1929, 1930, 1972, 1973, 1974, 1989],
+    isAllStar: false
   },
   {
     id: 3,
@@ -119,6 +121,7 @@ export const teams: MLBTeam[] = [
     address: "755 Battery Ave SE, Atlanta, GA 30339",
     city: "Atlanta, GA",
     championships: [1914, 1957, 1995, 2021],
+    isAllStar: false
   },
   {
     id: 4,
@@ -138,6 +141,7 @@ export const teams: MLBTeam[] = [
     address: "333 W Camden St, Baltimore, MD 21201",
     city: "Baltimore, MD",
     championships: [1966, 1970, 1983],
+    isAllStar: false
   },
   {
     id: 5,
@@ -157,6 +161,7 @@ export const teams: MLBTeam[] = [
     address: "4 Jersey St, Boston, MA 02215",
     city: "Boston, MA",
     championships: [1903, 1912, 1915, 1916, 1918, 2004, 2007, 2013, 2018],
+    isAllStar: false
   },
   {
     id: 6,
@@ -176,6 +181,7 @@ export const teams: MLBTeam[] = [
     address: "1060 W Addison St, Chicago, IL 60613",
     city: "Chicago, IL",
     championships: [1907, 1908, 2016],
+    isAllStar: false
   },
   {
     id: 7,
@@ -195,6 +201,7 @@ export const teams: MLBTeam[] = [
     address: "333 W 35th St, Chicago, IL 60616",
     city: "Chicago, IL",
     championships: [1906, 1917, 2005],
+    isAllStar: false
   },
   {
     id: 8,
@@ -214,6 +221,7 @@ export const teams: MLBTeam[] = [
     address: "100 Joe Nuxhall Way, Cincinnati, OH 45202",
     city: "Cincinnati, OH",
     championships: [1919, 1940, 1975, 1976, 1990],
+    isAllStar: false
   },
   {
     id: 9,
@@ -233,6 +241,7 @@ export const teams: MLBTeam[] = [
     address: "2401 Ontario St, Cleveland, OH 44115",
     city: "Cleveland, OH",
     championships: [1920, 1948],
+    isAllStar: false
   },
   {
     id: 10,
@@ -252,6 +261,7 @@ export const teams: MLBTeam[] = [
     address: "2001 Blake St, Denver, CO 80205",
     city: "Denver, CO",
     championships: [],
+    isAllStar: false
   },
   {
     id: 12,
@@ -271,6 +281,7 @@ export const teams: MLBTeam[] = [
     address: "2100 Woodward Ave, Detroit, MI 48201",
     city: "Detroit, MI",
     championships: [1935, 1945, 1968, 1984],
+    isAllStar: false
   },
   {
     id: 15,
@@ -290,6 +301,7 @@ export const teams: MLBTeam[] = [
     address: "501 Crawford St, Houston, TX 77002",
     city: "Houston, TX",
     championships: [2017, 2022],
+    isAllStar: false
   },
   {
     id: 16,
@@ -309,6 +321,7 @@ export const teams: MLBTeam[] = [
     address: "1 Royal Way, Kansas City, MO 64129",
     city: "Kansas City, MO",
     championships: [1985, 2015],
+    isAllStar: false
   },
   {
     id: 17,
@@ -328,6 +341,7 @@ export const teams: MLBTeam[] = [
     address: "2000 E Gene Autry Way, Anaheim, CA 92806",
     city: "Anaheim, CA",
     championships: [2002],
+    isAllStar: false
   },
   {
     id: 18,
@@ -347,6 +361,7 @@ export const teams: MLBTeam[] = [
     address: "1000 Vin Scully Ave, Los Angeles, CA 90012",
     city: "Los Angeles, CA",
     championships: [1955, 1959, 1963, 1965, 1981, 1988, 2020, 2025],
+    isAllStar: false
   },
   {
     id: 19,
@@ -366,6 +381,7 @@ export const teams: MLBTeam[] = [
     address: "501 Marlins Way, Miami, FL 33125",
     city: "Miami, FL",
     championships: [1997, 2003],
+    isAllStar: false
   },
   {
     id: 20,
@@ -385,6 +401,7 @@ export const teams: MLBTeam[] = [
     address: "1 Brewers Way, Milwaukee, WI 53214",
     city: "Milwaukee, WI",
     championships: [],
+    isAllStar: false
   },
   {
     id: 22,
@@ -404,6 +421,7 @@ export const teams: MLBTeam[] = [
     address: "1 Twins Way, Minneapolis, MN 55403",
     city: "Minneapolis, MN",
     championships: [1924, 1987, 1991],
+    isAllStar: false
   },
   {
     id: 24,
@@ -423,6 +441,7 @@ export const teams: MLBTeam[] = [
     address: "41 Seaver Way, Queens, NY 11368",
     city: "Queens, NY",
     championships: [1969, 1986],
+    isAllStar: false
   },
   {
     id: 25,
@@ -446,6 +465,7 @@ export const teams: MLBTeam[] = [
       1950, 1951, 1952, 1953, 1956, 1958, 1961, 1962, 1977, 1978, 1996, 1998,
       1999, 2000, 2009,
     ],
+    isAllStar: false
   },
   {
     id: 27,
@@ -465,6 +485,7 @@ export const teams: MLBTeam[] = [
     address: "1 Citizens Bank Way, Philadelphia, PA 19148",
     city: "Philadelphia, PA",
     championships: [1980, 2008],
+    isAllStar: false
   },
   {
     id: 28,
@@ -484,6 +505,7 @@ export const teams: MLBTeam[] = [
     address: "115 Federal St, Pittsburgh, PA 15212",
     city: "Pittsburgh, PA",
     championships: [1909, 1925, 1960, 1971, 1979],
+    isAllStar: false
   },
   {
     id: 30,
@@ -503,6 +525,7 @@ export const teams: MLBTeam[] = [
     address: "100 Park Blvd, San Diego, CA 92101",
     city: "San Diego, CA",
     championships: [],
+    isAllStar: false
   },
   {
     id: 31,
@@ -522,6 +545,7 @@ export const teams: MLBTeam[] = [
     address: "24 Willie Mays Plaza, San Francisco, CA 94107",
     city: "San Francisco, CA",
     championships: [1905, 1921, 1922, 1933, 1954, 2010, 2012, 2014],
+    isAllStar: false
   },
   {
     id: 32,
@@ -541,6 +565,7 @@ export const teams: MLBTeam[] = [
     address: "1250 1st Ave S, Seattle, WA 98134",
     city: "Seattle, WA",
     championships: [],
+    isAllStar: false
   },
   {
     id: 33,
@@ -562,6 +587,7 @@ export const teams: MLBTeam[] = [
     championships: [
       1926, 1931, 1934, 1942, 1944, 1946, 1964, 1967, 1982, 2006, 2011,
     ],
+    isAllStar: false
   },
   {
     id: 34,
@@ -581,6 +607,7 @@ export const teams: MLBTeam[] = [
     address: "1 Tropicana Dr, St. Petersburg, FL 33705",
     city: "St. Petersburg, FL",
     championships: [],
+    isAllStar: false
   },
   {
     id: 35,
@@ -600,6 +627,7 @@ export const teams: MLBTeam[] = [
     address: "734 Stadium Dr, Arlington, TX 76011",
     city: "Arlington, TX",
     championships: [2023],
+    isAllStar: false
   },
   {
     id: 36,
@@ -619,6 +647,7 @@ export const teams: MLBTeam[] = [
     address: "1 Blue Jays Way, Toronto, ON M5V 1J1",
     city: "Toronto, Ontario",
     championships: [1992, 1993],
+    isAllStar: false
   },
   {
     id: 37,
@@ -638,6 +667,7 @@ export const teams: MLBTeam[] = [
     address: "1500 S Capitol St SE, Washington, DC 20003",
     city: "Washington, DC",
     championships: [2019],
+    isAllStar: false
   },
 ];
 

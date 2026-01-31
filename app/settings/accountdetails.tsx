@@ -1,11 +1,12 @@
+import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Fonts } from "constants/fonts";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { Colors, Fonts } from "constants/Styles";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
+import { useLayoutEffect, useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -18,47 +19,22 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-
-function parseImageUrl(url: string | null | undefined): string | null {
-  if (!url || url === "null") return null;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
-}
 
 export default function AccountDetailsScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [userData, setUserData] = useState<any>(null);
   const styles = getStyles(isDark);
-
-  // password change state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  const fetchUserData = useCallback(async (userId: number) => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${BASE_URL}/api/users/${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch user data");
-      const data = await res.json();
-      setUserData({
-        ...data,
-        profile_image: parseImageUrl(data.profile_image),
-        banner_image: parseImageUrl(data.banner_image),
-      });
-    } catch (err) {
-      console.error("Fetch account details error:", err);
-      setUserData(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const {
+    isLoading,
+    currentUserId,
+    userData,
+    isChangingPassword,
+    changePassword,
+  } = useAccountDetails();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -68,24 +44,7 @@ export default function AccountDetailsScreen() {
     });
   }, [navigation, isDark]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const storedId = await AsyncStorage.getItem("userId");
-        if (storedId) {
-          const idNum = Number(storedId);
-          setCurrentUserId(idNum);
-          await fetchUserData(idNum);
-        }
-      } catch {
-        setCurrentUserId(null);
-      }
-    })();
-  }, [fetchUserData]);
-
   const handleChangePassword = async () => {
-    if (!userData?.username) return;
-
     if (!currentPassword || !newPassword || !confirmPassword) {
       Alert.alert("Error", "Please fill out all fields.");
       return;
@@ -110,27 +69,14 @@ export default function AccountDetailsScreen() {
     }
 
     try {
-      setIsChangingPassword(true);
-      const res = await fetch(
-        `${BASE_URL}/api/users/${userData.username}/password`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ currentPassword, newPassword }),
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update password");
-
+      await changePassword(currentPassword, newPassword);
       Alert.alert("Success", "Password updated successfully.");
+
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err: any) {
       Alert.alert("Error", err.message);
-    } finally {
-      setIsChangingPassword(false);
     }
   };
 
@@ -146,7 +92,10 @@ export default function AccountDetailsScreen() {
           },
         ]}
       >
-        <ActivityIndicator size="large" color={isDark ? "#fff" : "#000"} />
+        <ActivityIndicator
+          size="large"
+          color={isDark ? Colors.white : "#000"}
+        />
       </View>
     );
   }
@@ -163,7 +112,7 @@ export default function AccountDetailsScreen() {
           },
         ]}
       >
-        <Text style={{ color: isDark ? "#fff" : "#000" }}>
+        <Text style={{ color: isDark ? Colors.white : "#000" }}>
           Unable to load account details.
         </Text>
       </View>
@@ -185,129 +134,55 @@ export default function AccountDetailsScreen() {
     >
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          paddingBottom: 120,
-        }}
+        contentContainerStyle={styles.contentContainerStyle}
       >
-        <View style={{ marginTop: 5 }}>
-          <HeadingTwo>Full Name</HeadingTwo>
-          <Text
-            style={{
-              color: isDark ? "#aaa" : "#555",
-              fontSize: 16,
-              fontFamily: Fonts.OSREGULAR,
-            }}
-          >
-            {userData.fullName}
-          </Text>
-        </View>
+        <HeadingTwo>Full Name</HeadingTwo>
+        <Text style={styles.text}>{userData.fullName}</Text>
 
-        <View style={{ marginTop: 20 }}>
-          <HeadingTwo>Username</HeadingTwo>
-          <Text
-            style={{
-              color: isDark ? "#aaa" : "#555",
-              fontSize: 16,
-              fontFamily: Fonts.OSREGULAR,
-            }}
-          >
-            {userData.username}
-          </Text>
-        </View>
+        <HeadingTwo>Username</HeadingTwo>
+        <Text style={styles.text}>{userData.username}</Text>
 
-        <View style={{ marginTop: 20 }}>
-          <HeadingTwo>Email</HeadingTwo>
-          <Text
-            style={{
-              color: isDark ? "#aaa" : "#555",
-              fontSize: 16,
-              fontFamily: Fonts.OSREGULAR,
-            }}
-          >
-            {userData.email}
-          </Text>
-        </View>
+        <HeadingTwo>Email</HeadingTwo>
+        <Text style={styles.text}>{userData.email}</Text>
 
         {/* Password Section */}
-        <View style={{ marginTop: 30 }}>
-          <HeadingTwo>Password</HeadingTwo>
-          <Text
-            style={{
-              color: isDark ? "#aaa" : "#555",
-              fontSize: 16,
-              fontFamily: Fonts.OSREGULAR,
-              marginBottom: 10,
-            }}
-          >
-            ••••••••
-          </Text>
 
-          {/* Change Password Inputs */}
-          <TextInput
-            placeholder="Current Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-            style={[
-              styles.input,
-              {
-                color: isDark ? "#fff" : "#000",
-                borderColor: isDark ? "#444" : "#ccc",
-              },
-            ]}
-          />
-          <TextInput
-            placeholder="New Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-            style={[
-              styles.input,
-              {
-                color: isDark ? "#fff" : "#000",
-                borderColor: isDark ? "#444" : "#ccc",
-              },
-            ]}
-          />
-          <TextInput
-            placeholder="Confirm New Password"
-            placeholderTextColor="#888"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            style={[
-              styles.input,
-              {
-                color: isDark ? "#fff" : "#000",
-                borderColor: isDark ? "#444" : "#ccc",
-              },
-            ]}
-          />
+        <HeadingTwo>Password</HeadingTwo>
+        <Text style={styles.text}>••••••••</Text>
 
-          <Button
-            onPress={handleChangePassword}
-            disabled={isChangingPassword}
-            loading={isChangingPassword}
-            title="Change Password"
-          />
-        </View>
+        {/* Change Password Inputs */}
+        <TextInput
+          placeholder="Current Password"
+          placeholderTextColor={Colors.midTone}
+          secureTextEntry
+          value={currentPassword}
+          onChangeText={setCurrentPassword}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="New Password"
+          placeholderTextColor={Colors.midTone}
+          secureTextEntry
+          value={newPassword}
+          onChangeText={setNewPassword}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Confirm New Password"
+          placeholderTextColor={Colors.midTone}
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          style={styles.input}
+        />
 
-        <Text
-          style={{
-            color: isDark ? "#888" : "#444",
-            fontSize: 16,
-            marginTop: 12,
-            fontFamily: Fonts.OSREGULAR,
-            textAlign: "center",
-          }}
-        >
-          Member Since: {formattedDate}
-        </Text>
+        <Button
+          onPress={handleChangePassword}
+          disabled={isChangingPassword}
+          title="Change Password"
+        />
+
+        <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -315,18 +190,40 @@ export default function AccountDetailsScreen() {
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1 },
+    contentContainerStyle: {
+      flexGrow: 1,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      paddingBottom: 120,
+      gap: 16,
+    },
     input: {
-      color: isDark ? "#fff" : "#000",
-      backgroundColor: isDark ? "#222" : "#eee",
-      padding: 20,
+      color: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
       fontSize: 16,
-      marginVertical: 12,
+      padding: 20,
       fontFamily: Fonts.OSLIGHT,
     },
     button: {
       padding: 14,
       borderRadius: 8,
       alignItems: "center",
+    },
+    text: {
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+      marginBottom: 10,
+    },
+    memberSince: {
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+      fontSize: 16,
+      marginTop: 12,
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
     },
   });

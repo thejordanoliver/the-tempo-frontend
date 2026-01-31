@@ -118,7 +118,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 /* Hook                               */
 /* ---------------------------------- */
 
-export const useGameDetails = (
+export const useBaseballGameDetails = (
   league: string,
   homeId?: string | number | null,
   awayId?: string | number | null,

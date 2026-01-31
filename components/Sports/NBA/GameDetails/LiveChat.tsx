@@ -1,12 +1,12 @@
-import { Fonts } from "constants/fonts";
-import { useAuth } from "hooks/useAuth";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Fonts } from "constants/fonts";
 import { format } from "date-fns"; // optional helper to get date string
 import { BlurView } from "expo-blur";
+import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Dimensions,
@@ -45,7 +45,7 @@ export default function LiveChatBottomSheet({
 }: Props) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
-const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const flatListRef = useRef<FlatList>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const isDark = useColorScheme() === "dark";
@@ -158,11 +158,10 @@ const socketRef = useRef<Socket | null>(null);
   }, [gameId]);
 
   useEffect(() => {
-  if (!gameId) return;
-  const key = getTodayKey(gameId);
-  AsyncStorage.setItem(key, JSON.stringify(messages));
-}, [messages, gameId]);
-
+    if (!gameId) return;
+    const key = getTodayKey(gameId);
+    AsyncStorage.setItem(key, JSON.stringify(messages));
+  }, [messages, gameId]);
 
   const renderMessage = ({ item, index }: { item: Message; index: number }) => (
     <ChatMessage

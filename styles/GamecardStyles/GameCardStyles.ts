@@ -3,7 +3,7 @@ import { Colors } from "constants/Colors";
 import { Fonts } from "constants/fonts";
 import { StyleSheet } from "react-native";
 
-export const GameCardStyles = (isDark: boolean, isChampionship: boolean) =>
+export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
