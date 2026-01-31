@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { WeatherData } from "hooks/useWeather";
 import {
   Alert,
@@ -14,7 +13,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import TeamLocationSkeleton from "../../../Skeletons/GameDetails/GameLocationSkeleton";
+import GameLocationSkeleton from "../../../Skeletons/GameDetails/GameLocationSkeleton";
 
 type Props = {
   weather: WeatherData | null;
@@ -116,7 +115,7 @@ const GameLocation: React.FC<Props> = ({
       <HeadingTwo lighter={lighter}>Location</HeadingTwo>
 
       {loading && !error ? (
-        <TeamLocationSkeleton />
+        <GameLocationSkeleton />
       ) : (
         <View style={styles.container}>
           <View style={styles.wrapper}>

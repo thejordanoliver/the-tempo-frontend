@@ -175,7 +175,6 @@ export const useGameDetails = (
         }
 
         const { data } = await axios.get(`${BASE_URL}/api/details`, { params });
-        // console.log(JSON.stringify(details?.leaders, null, 2))
 
         if (data?.score) {
           setScore(data.score);

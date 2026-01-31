@@ -1,6 +1,9 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { players as cbbPlayers } from "constants/cbbPlayers";
 import { Colors, Fonts } from "constants/Styles";
+import { players as wcbbPlayers } from "constants/wcbbPlayers";
 import { useRouter } from "expo-router";
 import { useCBBRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
 import { useCBBTeamStats } from "hooks/CBBHooks/useCBBTeamStats";
@@ -14,11 +17,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-
-// ✅ rename to avoid conflict
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { players as cbbPlayers } from "constants/cbbPlayers";
-import { players as wcbbPlayers } from "constants/wcbbPlayers";
 
 interface Props {
   espnID: number;
@@ -519,7 +517,7 @@ const getStyles = (isDark: boolean) =>
     cardValue: {
       fontSize: 24,
       fontFamily: Fonts.OSBOLD,
-      color: Colors.midTone,
+      color: isDark ? Colors.white : Colors.black,
     },
     nameValue: { marginLeft: 12, flexDirection: "column" },
     avatar: {

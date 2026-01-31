@@ -14,7 +14,6 @@ import {
 import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
 import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
-import GameUniforms from "components/Sports/NBA/GameDetails/GameUniforms";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
@@ -235,7 +234,7 @@ export default function GameDetailsScreen() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // console.log(JSON.stringify(lastPlay, null, 2))
+  
 
   const isChristmasDay =
     gameDateObj.getMonth() === 11 && gameDateObj.getDate() === 25;
@@ -412,13 +411,6 @@ export default function GameDetailsScreen() {
 
               {highlights.length > 0 && (
                 <HighlightVideoList highlights={highlights} />
-              )}
-
-              {!isFinal && (
-                <GameUniforms
-                  homeTeamId={homeTeamData.id}
-                  awayTeamId={awayTeamData.id}
-                />
               )}
 
               <Officials

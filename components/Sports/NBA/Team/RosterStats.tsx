@@ -78,8 +78,6 @@ export default function RosterStats({
       .filter(Boolean) as (PlayerStats & PlayerInfo)[];
   }, [rosterStats, players, playersMap]);
 
-  console.log(JSON.stringify(players, null, 2));
-
   if (!mergedRoster?.length && !teamStats) return null;
 
   const formatDisplayName = (name: string, jersey: string) => {
@@ -309,8 +307,6 @@ export default function RosterStats({
 
   if (rosterStats.length === 0)
     return <Text style={global.emptyText}>No player stats available.</Text>;
-
-  // console.log(JSON.stringify(players, null, 2));
 
   return (
     <ScrollView
