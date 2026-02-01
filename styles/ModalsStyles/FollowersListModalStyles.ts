@@ -14,19 +14,27 @@ export const followersListModalStyles = (isDark: boolean) =>
       top: 0,
     },
     handleIndicatorStyle: {
-      backgroundColor: isDark ? Colors.lightGray : Colors.midTone,
+      backgroundColor: Colors.midTone,
       width: 36,
       height: 4,
       borderRadius: 2,
     },
-    backgroundStyle: { backgroundColor: "transparent" },
+    // Updated: add top border radius here
+    backgroundStyle: {
+      backgroundColor: "transparent",
+      overflow: "hidden",
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
     container: {
       flex: 1,
     },
     blurViewContainer: {
       flex: 1,
-
-      paddingTop: 40,
+      borderTopLeftRadius: 20, // already there
+      borderTopRightRadius: 20, // already there
+      overflow: "hidden",
+      paddingTop: 70,
     },
     contentContainerStyle: {
       paddingHorizontal: 12,
@@ -40,6 +48,10 @@ export const followersListModalStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderTopLeftRadius: 20, // optional: match the modal
+      borderTopRightRadius: 20, // optional
+      overflow: "hidden",
+      paddingVertical: 12,
     },
     headerText: {
       textAlign: "center",
@@ -47,7 +59,6 @@ export const followersListModalStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       fontFamily: Fonts.OSBOLD,
-      paddingVertical: 6,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 18,
     },

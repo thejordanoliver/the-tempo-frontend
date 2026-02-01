@@ -18,6 +18,7 @@ export const lastPlayStyles = (isDark: boolean) =>
     },
     row: {
       flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
       paddingBottom: 8,

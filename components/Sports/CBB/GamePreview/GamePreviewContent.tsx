@@ -8,7 +8,6 @@ import React from "react";
 import { View } from "react-native";
 import { CBBGame } from "types/types";
 import GameLeaders from "../GameDetails/GameLeaders";
-import GameOddsSection from "../GameDetails/GameOddsSection";
 import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
@@ -76,17 +75,6 @@ export default function GamePreviewContent({
           />
         </View>
       )}
-
-      {/* Odds */}
-      <View style={{ marginBottom: 20 }}>
-        <GameOddsSection
-          date={gameDateISO}
-          gameDate={gameDateStr}
-          awayCode={away?.code ?? ""}
-          homeCode={home?.code ?? ""}
-          gameId={String(game?.id ?? "")}
-        />
-      </View>
 
       <View style={{ marginBottom: 20 }}>
         <GameLeaders

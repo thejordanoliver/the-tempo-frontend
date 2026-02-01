@@ -16,7 +16,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useColorScheme } from "react-native";
+import { Text, useColorScheme, View } from "react-native";
 import { followersListModalStyles } from "styles/ModalsStyles/FollowersListModalStyles";
 import { snapPoints } from "utils/modalUtils";
 import FollowersList from "./FollowersList";
@@ -98,6 +98,14 @@ const FollowersModal = forwardRef<BottomSheetModal, Props>(
         index={1}
         snapPoints={snapPoints}
         onDismiss={onClose}
+        handleComponent={() => (
+          <View style={styles.header}>
+            <View style={styles.handleIndicatorStyle} />
+            <Text style={styles.headerText}>
+              {type === "followers" ? "Followers" : "Following"}
+            </Text>
+          </View>
+        )}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}
@@ -119,7 +127,7 @@ const FollowersModal = forwardRef<BottomSheetModal, Props>(
             contentContainerStyle={styles.contentContainerStyle}
           >
             <SearchBar
-              placeholder="Search..."
+              placeholder="Search."
               value={search}
               onChangeText={setSearch}
             />

@@ -1,7 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useHistoricalOdds } from "hooks/useHistoricalOdds";
 import { useUpcomingOdds } from "hooks/useUpcomingOdds";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
+import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
 import { GameOddsSectionProps } from "types/odds";
 import OddsSkeleton from "../../../Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "./OddsCard";
@@ -11,6 +12,9 @@ export default function GameOddsSection({
   homeCode,
   awayCode,
 }: GameOddsSectionProps) {
+  const isDark = useColorScheme() === "dark";
+  const styles = gameOddsStyles(isDark);
+
   // --- Upcoming odds ---
   const {
     data: upcomingOdds = [],
@@ -49,7 +53,7 @@ export default function GameOddsSection({
     <View>
       <HeadingTwo>Betting Odds</HeadingTwo>
 
-      <View>
+      <View style={styles.wrapper}>
         {oddsToRender.map((game) => (
           <OddsCard key={game.id} league="nba" game={game} error={error} />
         ))}

@@ -1,6 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { neutralVenues, teams } from "constants/teamsCBB";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";

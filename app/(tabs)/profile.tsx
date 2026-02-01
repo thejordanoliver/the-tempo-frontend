@@ -1,7 +1,6 @@
 // profile.tsx
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";

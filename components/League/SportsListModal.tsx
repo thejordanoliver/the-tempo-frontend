@@ -5,10 +5,11 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { snapPoints } from "utils/modalUtils";
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBBLogo from "assets/College_Logos/CBB.png";
-import WCBBLogo from "assets/College_Logos/WCBB.png";
 import CFBLogo from "assets/College_Logos/CFB.png";
+import WCBBLogo from "assets/College_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import { Colors } from "constants/Colors";
@@ -36,11 +37,8 @@ type SportsListModalProps = {
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "WCBB", "MLB", ];
-const leagueConfig: Record<
-  LeagueType,
-  { label: string; logo: any }
-> = {
+const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "WCBB", "MLB"];
+const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   NBA: { label: "NBA", logo: NBALogo },
   NFL: { label: "NFL", logo: NFLLogo },
   CFB: { label: "College Football", logo: CFBLogo },
@@ -48,7 +46,6 @@ const leagueConfig: Record<
   WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
   MLB: { label: "MLB", logo: MLBLogo },
 };
-
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
@@ -99,7 +96,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       <BottomSheetModal
         ref={sheetRef as any}
         index={2}
-        snapPoints={["60%", "80%", "90%"]}
+        snapPoints={snapPoints}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}
@@ -114,7 +111,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
           <View style={styles.header}>
             <View
               style={{
-                backgroundColor: "#777",
+                backgroundColor: Colors.midTone,
                 width: 36,
                 height: 4,
                 borderRadius: 2,
@@ -136,29 +133,28 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-        {leagues.map((league) => {
-  const { label, logo } = leagueConfig[league];
+            {leagues.map((league) => {
+              const { label, logo } = leagueConfig[league];
 
-  return (
-    <TouchableOpacity
-      key={league}
-      onPress={() => goToLeague(league)}
-      style={styles.leagueButton}
-      activeOpacity={0.6}
-    >
-      <View style={styles.buttonWrapper}>
-        <Image style={styles.leagueLogo} source={logo} />
-        <Text style={styles.leagueText}>{label}</Text>
-      </View>
-      <Ionicons
-        name="chevron-forward"
-        size={20}
-        color={isDark ? Colors.white : Colors.black}
-      />
-    </TouchableOpacity>
-  );
-})}
-
+              return (
+                <TouchableOpacity
+                  key={league}
+                  onPress={() => goToLeague(league)}
+                  style={styles.leagueButton}
+                  activeOpacity={0.6}
+                >
+                  <View style={styles.buttonWrapper}>
+                    <Image style={styles.leagueLogo} source={logo} />
+                    <Text style={styles.leagueText}>{label}</Text>
+                  </View>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={20}
+                    color={isDark ? Colors.white : Colors.black}
+                  />
+                </TouchableOpacity>
+              );
+            })}
           </BottomSheetScrollView>
         </BlurView>
       </BottomSheetModal>

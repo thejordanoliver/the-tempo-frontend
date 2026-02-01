@@ -18,7 +18,7 @@ import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightV
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
-import { neutralVenues, teams } from "constants/teamsCBB";
+import { teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
@@ -35,6 +35,7 @@ import {
 } from "react-native";
 import { useChatStore } from "store/chatStore";
 import { CBBGame } from "types/types";
+import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 /* ------------------------------------------------------------------ */
@@ -250,68 +251,21 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Neutral site / venue ---------------- */
 
-  const venueNameRaw = (
-    details?.venue?.fullName ??
-    details?.venue?.name ??
-    (homeTeamData as any).venueName ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
-
-  const neutralMatch = Object.entries(neutralVenues).find(([key]) =>
-    key.trim().toLowerCase().includes(venueNameRaw)
+  const resolvedVenue = useMemo(
+    () =>
+      resolveVenue({
+        espnVenue: details?.venue,
+        homeTeam: homeTeamData,
+        isNeutralSite: neutralSite,
+      }),
+    [details?.venue, homeTeamData, neutralSite]
   );
 
-  let resolvedVenue = {
-    image:
-      (venue as any)?.images?.[0]?.href ??
-      (homeTeamData as any).venueImage ??
-      "",
-    name:
-      (venue as any)?.fullName ??
-      (venue as any)?.name ??
-      (homeTeamData as any).venueName ??
-      "",
-    city:
-      (venue as any)?.address?.city ??
-      (homeTeamData as any).location ??
-      (homeTeamData as any).city ??
-      "",
-    address:
-      (venue as any)?.address?.street ?? (homeTeamData as any).address ?? "",
-    capacity:
-      (venue as any)?.capacity ?? (homeTeamData as any).venueCapacity ?? "",
-    latitude: (venue as any)?.latitude ?? null,
-    longitude: (venue as any)?.longitude ?? null,
-  };
-
-  if (neutralMatch) {
-    const [venueKey, arena] = neutralMatch as any;
-    resolvedVenue = {
-      image: arena.venueImage ?? resolvedVenue.image,
-      name: arena.name ?? venueKey,
-      city: arena.city ?? resolvedVenue.city ?? "",
-      address: arena.address ?? resolvedVenue.address ?? "",
-      capacity: arena.venueCapacity ?? resolvedVenue.capacity ?? "",
-      latitude: arena.latitude ?? resolvedVenue.latitude,
-      longitude: arena.longitude ?? resolvedVenue.longitude,
-    };
-  }
-
-  const lat =
-    resolvedVenue?.latitude ??
-    (venue as any)?.latitude ??
-    (homeTeamData as any)?.latitude ??
-    null;
-
-  const lon =
-    resolvedVenue?.longitude ??
-    (venue as any)?.longitude ??
-    (homeTeamData as any)?.longitude ??
-    null;
-
-  const { weather } = useWeatherForecast(lat, lon, gameDateYMD);
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    resolvedVenue.latitude,
+    resolvedVenue.longitude,
+    gameDateYMD
+  );
 
   /* ---------------- Status / linescore ---------------- */
 
@@ -439,14 +393,6 @@ export default function GameDetailsScreen() {
               />
             )}
 
-            {/* <GameOddsSection
-            date={gameDateISO}
-            gameDate={gameDateISO}
-            awayCode={awayTeamData.code ?? ""}
-            homeCode={homeTeamData.code ?? ""}
-            gameId={`${homeTeamId}-${awayTeamId}`}
-          /> */}
-
             {!isFinal && (
               <WinPredictionVote
                 gameId={`${homeTeamId}-${awayTeamId}`}
@@ -543,7 +489,7 @@ export default function GameDetailsScreen() {
             />
 
             <GameLocation
-              venueImage={resolvedVenue.image}
+              venueImage={details.venue.images?.[0]?.href}
               venueName={resolvedVenue.name}
               location={resolvedVenue.city}
               address={resolvedVenue.address}
