@@ -27,6 +27,7 @@ import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import TabBar from "../../../components/TabBar";
 import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -231,13 +232,14 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team) {
+if (!team) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }
+
 
   // -------------------------------
   // UI

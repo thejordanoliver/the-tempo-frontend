@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface FollowersModalState {
+interface FollowersState {
   isVisible: boolean;
   type: "followers" | "following";
   targetUserId: string | null;
@@ -17,7 +17,7 @@ interface FollowersModalState {
   clearRestore: () => void;
 }
 
-export const useFollowersModalStore = create<FollowersModalState>((set, get) => ({
+export const useFollowersStore = create<FollowersState>((set, get) => ({
   isVisible: false,
   type: "followers",
   targetUserId: null,

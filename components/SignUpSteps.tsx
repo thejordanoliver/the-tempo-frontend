@@ -104,7 +104,7 @@ export default function SignupSteps({
   }));
 
   function normalizeTeam(raw: any, league: LeagueType) {
-    return {
+    const team: LeagueTeam = {
       league,
       id: raw.id?.toString() ?? "",
       name: raw.name ?? raw.fullName ?? "",
@@ -115,13 +115,19 @@ export default function SignupSteps({
       secondaryColor: raw.secondaryColor ?? raw.color ?? "#777",
       firstSeason: raw.firstSeason?.toString() ?? "",
       displayName: raw.displayName ?? raw.fullName ?? raw.name ?? "",
-    } satisfies LeagueTeam;
+      isAllStar: raw.isAllStar ?? false,
+    };
+
+    // Skip All-Star teams entirely
+    if (team.isAllStar) return null;
+    return team;
   }
 
+  // Then map and filter nulls:
   const allTeamsRaw = [
-    ...teams.map((t) => normalizeTeam(t, "NBA")),
-    ...nflteams.map((t) => normalizeTeam(t, "NFL")),
-    ...mlbteams.map((t) => normalizeTeam(t, "MLB")),
+    ...teams.map((t) => normalizeTeam(t, "NBA")).filter(Boolean),
+    ...nflteams.map((t) => normalizeTeam(t, "NFL")).filter(Boolean),
+    ...mlbteams.map((t) => normalizeTeam(t, "MLB")).filter(Boolean),
     ...cfbteams
       .filter((t) => {
         const fbsTeamNames = Object.values(conferenceListMap)
@@ -130,7 +136,8 @@ export default function SignupSteps({
         const name = (t.fullName || t.name || "").toLowerCase();
         return fbsTeamNames.some((n) => n.includes(name) || name.includes(n));
       })
-      .map((t) => normalizeTeam(t, "CFB")),
+      .map((t) => normalizeTeam(t, "CFB"))
+      .filter(Boolean),
     ...cbbTeams
       .filter((t) => {
         const cbbTeamNames = Object.values(cbbConferenceListMap)
@@ -139,11 +146,17 @@ export default function SignupSteps({
         const name = (t.fullName || t.name || "").toLowerCase();
         return cbbTeamNames.some((n) => n.includes(name) || name.includes(n));
       })
-      .map((t) => normalizeTeam(t, "CBB")),
+      .map((t) => normalizeTeam(t, "CBB"))
+      .filter(Boolean),
   ];
 
+  // After creating allTeamsRaw
   const uniqueTeams = Array.from(
-    new Map(allTeamsRaw.map((t) => [`${t.league}-${t.id}`, t])).values()
+    new Map(
+      allTeamsRaw
+        .filter((t): t is LeagueTeam => t !== null) // <-- type guard to remove nulls
+        .map((t) => [`${t.league}-${t.id}`, t])
+    ).values()
   );
 
   switch (signupStep) {
@@ -237,7 +250,7 @@ export default function SignupSteps({
           />
           <FavoriteTeamsSelector
             teams={uniqueTeams.sort((a, b) =>
-              a.name.localeCompare(b.fullName ?? "")
+              a.name.localeCompare(b?.fullName ?? "")
             )}
             favorites={signupData.favorites}
             toggleFavorite={(league: LeagueType, id: string) =>

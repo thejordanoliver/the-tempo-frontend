@@ -8,7 +8,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
-import { useNFLTeamRecord } from "hooks/NFLHooks/useNFLTeamRecord";
 import { memo, useMemo, useState } from "react";
 import {
   Pressable,
@@ -65,6 +64,13 @@ function NFLGameCard({ game }: NFLGameCardProps) {
     "nfl"
   );
 
+  const { data: details, loading } = useFootballGameDetails(
+    String(homeEspnId),
+    String(awayEspnId),
+    gameDateStr,
+    "nfl"
+  );
+
   const {
     gameStatusShortDetail,
     gameStatusDescription,
@@ -94,8 +100,8 @@ function NFLGameCard({ game }: NFLGameCardProps) {
   // -----------------------------------------------------
   // TEAM RECORDS
   // -----------------------------------------------------
-  const awayRecord = useNFLTeamRecord(awayEspnId).record.overall ?? "0-0";
-  const homeRecord = useNFLTeamRecord(homeEspnId).record.overall ?? "0-0";
+  const homeRecord = details?.homeRecords?.total?.summary;
+  const awayRecord = details?.awayRecords?.total?.summary;
 
   // -----------------------------------------------------
   // TEAM DATA
@@ -131,13 +137,6 @@ function NFLGameCard({ game }: NFLGameCardProps) {
   const awayScore = isFinal
     ? game.scores.away.total
     : possession?.score?.away ?? 0;
-
-  const { data: details, loading } = useFootballGameDetails(
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-    "nfl"
-  );
 
   const headlineText = details?.headline;
   const broadcast = details?.broadcast;

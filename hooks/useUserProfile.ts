@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
-import { useFollowersModalStore } from "store/followersModalStore";
+import { useFollowersStore } from "store/followersStore";
 
 import { teams } from "constants/teams";
 import { teams as cbbteams } from "constants/teamsCBB";
@@ -12,11 +13,14 @@ import { teams as nflteams } from "constants/teamsNFL";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
-const parseImageUrl = (url?: string | null) => {
-  if (!url || url === "null") return null;
-  if (url.startsWith("http")) return url;
-  return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
-};
+/**
+ * Normalize image URLs (Cloudinary or server URLs)
+ */
+function parseImageUrl(url: string | null | undefined): string | null {
+  if (!url || url === "null" || url === "undefined") return null;
+  if (!url.startsWith("http")) return null;
+  return url;
+}
 
 export function useUserProfile(userId?: string) {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,13 +36,13 @@ export function useUserProfile(userId?: string) {
   const [followingCount, setFollowingCount] = useState(0);
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  const [isFollowing, setIsFollowing] = useState<boolean | null>(null); // null = not loaded yet
+  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
-    useFollowersModalStore();
+    useFollowersStore();
 
   // Load current user ID from AsyncStorage
   useEffect(() => {
@@ -53,31 +57,22 @@ export function useUserProfile(userId?: string) {
 
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `${BASE_URL}/api/users/id/${userId}?currentUserId=${currentUserId}`
-      );
-
-      if (!res.ok) throw new Error("Failed to fetch user");
-
-      const data = await res.json();
+      const { data } = await axios.get(`${BASE_URL}/api/users/id/${userId}`, {
+        params: { currentUserId },
+      });
 
       setUsername(data.username ?? null);
-      setFullName(data.full_name ?? null);
+      setFullName(data.fullName ?? null);
       setBio(data.bio ?? null);
-
-      setProfileImage(parseImageUrl(data.profile_image));
-      setBannerImage(parseImageUrl(data.banner_image));
-
+      setProfileImage(parseImageUrl(data.profileImage));
+      setBannerImage(parseImageUrl(data.bannerImage));
       setFollowersCount(data.followersCount ?? 0);
       setFollowingCount(data.followingCount ?? 0);
       setFavorites(Array.isArray(data.favorites) ? data.favorites : []);
-      if (typeof data.isFollowing === "boolean") {
+      if (typeof data.isFollowing === "boolean")
         setIsFollowing(data.isFollowing);
-      }
-      console.log(JSON.stringify(setIsFollowing(data.isFollowing), null, 2));
     } catch (err) {
       console.warn("Failed to load user profile", err);
-
       setUsername(null);
       setFullName(null);
       setBio(null);
@@ -107,7 +102,6 @@ export function useUserProfile(userId?: string) {
         openModal(type, targetUserId, currentUserId?.toString());
       }
 
-      // Only refetch if both IDs are ready
       if (userId && currentUserId !== null) {
         fetchUserData();
       }
@@ -123,35 +117,28 @@ export function useUserProfile(userId?: string) {
     ])
   );
 
-  // Toggle follow/unfollow
+  // Toggle follow/unfollow with optimistic update
   const toggleFollow = async () => {
     if (!userId || currentUserId === null || followLoading) return;
 
-    const prev = isFollowing;
+    const prevFollowing = isFollowing;
     const prevCount = followersCount;
+    const optimistic = !prevFollowing;
 
-    const optimistic = !prev;
+    // Optimistic update
     setIsFollowing(optimistic);
     setFollowersCount((c) => (optimistic ? c + 1 : Math.max(c - 1, 0)));
     setFollowLoading(true);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/follows/toggle`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          followerId: currentUserId,
-          followeeId: userId,
-        }),
+      await axios.post(`${BASE_URL}/api/follows/toggle`, {
+        followerId: currentUserId,
+        followeeId: userId,
       });
-
-      if (!res.ok) throw new Error("Failed to toggle follow");
-
-      const data = await res.json();
-      setIsFollowing(data.isFollowing);
-      setFollowersCount(data.followersCount ?? followersCount);
-    } catch {
-      setIsFollowing(prev);
+      // No need to update count if backend doesn't return it
+    } catch (err) {
+      // Revert if request fails
+      setIsFollowing(prevFollowing);
       setFollowersCount(prevCount);
     } finally {
       setFollowLoading(false);
@@ -174,7 +161,6 @@ export function useUserProfile(userId?: string) {
     .filter(Boolean);
 
   return {
-    // state
     isLoading,
     username,
     fullName,
@@ -183,13 +169,13 @@ export function useUserProfile(userId?: string) {
     bannerImage,
     followersCount,
     followingCount,
-    isFollowing: isFollowing ?? false, // default false if not loaded
+    isFollowing: isFollowing ?? false,
     followLoading,
     favoriteTeamsWithLeague,
     fadeAnim,
     currentUserId,
 
-    // actions
+    // Actions
     toggleFollow,
     fetchUserData,
   };

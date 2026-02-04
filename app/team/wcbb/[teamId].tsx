@@ -217,14 +217,10 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team) {
+  if (!team) {
     return (
-      <View style={styles.container}>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <CustomActivityIndicator size={60} />
-        </View>
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { profileStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 type Props = {
   bannerImage?: string | null;
@@ -31,7 +31,6 @@ function safeSource(uri?: string | null) {
   return undefined;
 }
 
-
 export default function ProfileBanner({
   bannerImage,
   profileImage,
@@ -44,7 +43,6 @@ export default function ProfileBanner({
 
   const BannerComponent = editable ? TouchableOpacity : View;
   const ProfileComponent = editable ? TouchableOpacity : View;
-
 
   return (
     <View style={styles.bannerContainer}>

@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { Follow } from "types/types";
-import { profileStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 export default function FollowStats({
   followersCount,
@@ -14,7 +14,7 @@ export default function FollowStats({
   return (
     <View style={styles.followContainer}>
       <TouchableOpacity
-        onPress={onFollowersPress}  // <-- use handler from props
+        onPress={onFollowersPress} // <-- use handler from props
         style={styles.followItem}
         activeOpacity={0.6}
       >
@@ -33,4 +33,3 @@ export default function FollowStats({
     </View>
   );
 }
-

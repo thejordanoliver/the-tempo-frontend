@@ -51,10 +51,9 @@ export default function NFLGamesList({
   showHeaders,
   scrollEnabled,
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = footballGamesListStyle(isDark);
-  const global = globalStyles(isDark)
+  const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -96,7 +95,7 @@ export default function NFLGamesList({
     );
 
     const regularSeasonGames = paginatedGames.filter(
-      (game) => game?.game.stage === "Regular Season"  
+      (game) => game?.game.stage === "Regular Season"
     );
 
     const builtSections: NFLGameSection[] = [];
@@ -131,37 +130,24 @@ export default function NFLGamesList({
     }));
   }, [sections]);
 
-  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
-    return (
-      <View style={styles.gridRow}>
-        {item.map((game, index) => {
-          if (!game) {
-            return (
-              <View
-                key={`empty-${index}`}
-                style={[styles.gridItem, { backgroundColor: "transparent" }]}
-              />
-            );
-          }
+const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+  return (
+    <View style={styles.gridRow}>
+      {item.map((game, index) => {
+        if (!game) {
+          return <View key={`empty-${index}`} style={styles.gridItem} />;
+        }
 
-          return (
-            <View
-              key={game.game.id}
-              style={[
-                styles.gridItem,
-                {
-                  marginLeft: index === 0 ? 12 : 6,
-                  marginRight: index === 0 ? 6 : 12,
-                },
-              ]}
-            >
-              <NFLGameSquareCard game={game} />
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
+        return (
+          <View key={game.game.id} style={styles.gridItem}>
+            <NFLGameSquareCard game={game} />
+          </View>
+        );
+      })}
+    </View>
+  );
+};
+
   const loadMore = () => {
     if (paginatedGames.length >= games.length) return;
     setPage((prev) => prev + 1);
@@ -181,10 +167,11 @@ export default function NFLGamesList({
     }
 
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
-      // Apply marginLeft/marginRight for grid columns
-      let gridStyle: ViewStyle = styles.gridItem;
+      let wrapperStyle: ViewStyle = {};
+
+      // ✅ ONLY apply grid styles in grid mode
       if (viewMode === "grid" && indexInRow !== undefined) {
-        gridStyle = {
+        wrapperStyle = {
           ...styles.gridItem,
           marginLeft: indexInRow % 2 === 0 ? 12 : 6,
           marginRight: indexInRow % 2 === 0 ? 6 : 12,
@@ -199,7 +186,7 @@ export default function NFLGamesList({
             if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
           }}
         >
-          <View style={gridStyle}>{child}</View>
+          <View style={wrapperStyle}>{child}</View>
         </LongPressGestureHandler>
       );
     };
@@ -292,11 +279,7 @@ export default function NFLGamesList({
               key={`skel-section-${section.title}`}
               style={{ marginBottom: 16 }}
             >
-              {showHeaders && (
-                <View style={styles.headerWrapper}>
-                  <HeadingTwo>{section.title}</HeadingTwo>
-                </View>
-              )}
+              {showHeaders && <HeadingTwo style={{marginHorizontal: 12}}>{section.title}</HeadingTwo>}
               {renderSkeletons(count)}
             </View>
           );
@@ -312,11 +295,7 @@ export default function NFLGamesList({
       <View>
         {sections.map((section) => (
           <View key={`skel-section-${section.title}`}>
-            {showHeaders && (
-              <View style={styles.headerWrapper}>
-                <HeadingTwo>{section.title}</HeadingTwo>
-              </View>
-            )}
+            {showHeaders && <HeadingTwo>{section.title}</HeadingTwo>}
             {renderSkeletons(section.data.length || totalSkeletonCount)}
           </View>
         ))}
@@ -334,11 +313,7 @@ export default function NFLGamesList({
           keyExtractor={(item, index) => `row-${index}`}
           renderItem={renderGridRow}
           renderSectionHeader={({ section }) =>
-            showHeaders ? (
-              <View style={styles.headerWrapper}>
-                <HeadingTwo>{section.title}</HeadingTwo>
-              </View>
-            ) : null
+            showHeaders ? <HeadingTwo>{section.title}</HeadingTwo> : null
           }
           stickySectionHeadersEnabled={false}
           refreshing={refreshing}
@@ -366,8 +341,8 @@ export default function NFLGamesList({
             showHeaders && section.data.length > 0 ? (
               <View
                 style={[
-                  styles.headerWrapper,
-                  section.title === "Postseason" && { marginTop: 12 },
+                  (section.title === "Postseason" ||
+                    section.title === "Regular Season") && { marginTop: 12 },
                 ]}
               >
                 <HeadingTwo>{section.title}</HeadingTwo>
@@ -391,7 +366,7 @@ export default function NFLGamesList({
           }
           ListEmptyComponent={
             <View>
-              <Text style={styles.emptyText}>
+              <Text style={global.emptyText}>
                 {day === "todayTomorrow"
                   ? "No NFL games found for today or tomorrow."
                   : "No NFL games found."}

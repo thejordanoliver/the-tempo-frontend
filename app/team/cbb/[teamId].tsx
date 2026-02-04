@@ -26,10 +26,10 @@ import { useTeamNews } from "hooks/useTeamNews";
 
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import Roster from "components/Sports/CBB/Team/Roster";
+import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { CBBGame } from "types/types";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 
 type PageSelectedEvent = {
   nativeEvent: { position: number };
@@ -172,15 +172,12 @@ export default function TeamDetailScreen() {
     });
   }, [teamGames, selectedDate]);
 
-
-    const {
-      players,
-      loading: playersLoading,
-      error: playersError,
-      refreshPlayers,
-    } = usePlayersByTeam(team?.espnID?.toString() ?? "");
-
-
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+    refreshPlayers,
+  } = usePlayersByTeam(team?.espnID?.toString() ?? "");
 
   const {
     highlights: teamHighlights,
@@ -273,14 +270,10 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team) {
+  if (!team) {
     return (
-      <View style={styles.container}>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <CustomActivityIndicator size={60} />
-        </View>
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }

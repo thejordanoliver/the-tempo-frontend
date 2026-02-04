@@ -1,13 +1,22 @@
 import { create } from "zustand";
 
 interface LikeState {
-  likes: Record<string, { liked: boolean; count: number }>;
+  currentUserId: string | null; // currently logged in user
+  likes: Record<string, { liked: boolean; count: number }>; // per post
+  setUser: (userId: string | null) => void;
   setLike: (postId: string, liked: boolean, count: number) => void;
   toggleLike: (postId: string) => void;
+  resetLikes: () => void;
 }
 
-export const useLikesStore = create<LikeState>((set) => ({
+export const useLikesStore = create<LikeState>((set, get) => ({
+  currentUserId: null,
   likes: {},
+
+  setUser: (userId) => set({ currentUserId: userId, likes: {} }),
+
+  resetLikes: () => set({ likes: {} }),
+
   setLike: (postId, liked, count) =>
     set((state) => ({
       likes: {
@@ -15,6 +24,7 @@ export const useLikesStore = create<LikeState>((set) => ({
         [postId]: { liked, count },
       },
     })),
+
   toggleLike: (postId) =>
     set((state) => {
       const prev = state.likes[postId];

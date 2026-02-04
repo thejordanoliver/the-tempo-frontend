@@ -19,6 +19,7 @@ import CBBGamePreviewModal from "../GamePreview/CBBGamePreviewModal";
 import CBBGameCard from "./CBBGameCard";
 import CBBGameSquareCard from "./CBBGameSquareCard";
 import CBBStackedGameCard from "./CBBStackedGameCard";
+import { globalStyles } from "constants/Styles";
 
 type Props = {
   games: any[];
@@ -47,15 +48,18 @@ export default function CBBGamesList({
   expectedCount,
   day,
   showHeaders,
-  scrollEnabled,
+  scrollEnabled = true,
   isWomen = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const { viewMode } = usePreferences();
-  const isWomenGame = (game: any) => String(game?.league?.id) === "423";
   const styles = gameListStyles(isDark);
+  const global = globalStyles(isDark);
+
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const isWomenGame = (game: any) => String(game?.league?.id) === "423";
 
   /* ----------------------------- Sections ----------------------------- */
 
@@ -74,54 +78,48 @@ export default function CBBGamesList({
 
   /* -------------------------- Game Renderer ---------------------------- */
 
-  const renderGameCard = (game: any, index?: number) => {
+  const renderGameCard = (game: any) => {
     if ((game as any)?._isPlaceholder) {
-      return (
-        <View
-          style={[styles.itemContainer, { backgroundColor: "transparent" }]}
-        />
-      );
+      return <View style={styles.gridItem} />;
     }
 
-    const wrapper = (child: React.ReactNode, indexInRow?: number) => {
-      let gridStyle: ViewStyle = {};
-
-      if (viewMode === "grid" && indexInRow !== undefined) {
-        gridStyle = {
-          flex: 1,
-          marginLeft: indexInRow % 2 === 0 ? 12 : 6,
-          marginRight: indexInRow % 2 === 0 ? 6 : 12,
-        };
-      }
-
-      return (
-        <LongPressGestureHandler
-          key={game.id}
-          minDurationMs={300}
-          onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
-          }}
-        >
-          <View style={gridStyle}>{child}</View>
-        </LongPressGestureHandler>
-      );
-    };
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <LongPressGestureHandler
+        key={game?.game?.id ?? game?.id}
+        minDurationMs={300}
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+        }}
+      >
+        <View style={viewMode === "grid" ? styles.gridItem : undefined}>
+          {children}
+        </View>
+      </LongPressGestureHandler>
+    );
 
     if (viewMode === "list") {
-      return wrapper(<CBBGameCard game={game} isWomen={isWomenGame(game)} />);
+      return (
+        <Wrapper>
+          <CBBGameCard game={game} isWomen={isWomenGame(game)} />
+        </Wrapper>
+      );
     }
 
     if (viewMode === "grid") {
-      return wrapper(
-        <CBBGameSquareCard game={game} isWomen={isWomenGame(game)} />,
-        index
+      return (
+        <Wrapper>
+          <CBBGameSquareCard game={game} isWomen={isWomenGame(game)} />
+        </Wrapper>
       );
     }
 
-    return wrapper(
-      <CBBStackedGameCard game={game} isWomen={isWomenGame(game)} />
+    return (
+      <Wrapper>
+        <CBBStackedGameCard game={game} isWomen={isWomenGame(game)} />
+      </Wrapper>
     );
   };
+
   /* --------------------------- Skeletons ------------------------------- */
 
   const renderSkeletons = (count: number) => {
@@ -140,17 +138,36 @@ export default function CBBGamesList({
         _id: `grid-skel-${i}`,
       }));
 
+      // Add placeholder if odd count
+      const dataWithPlaceholder =
+        count % 2 === 1
+          ? [...skeletons, { _id: `grid-skel-placeholder` }]
+          : skeletons;
+
       return (
         <FlatList
-          data={skeletons}
+          data={dataWithPlaceholder}
           keyExtractor={(item) => item._id}
           numColumns={2}
-          renderItem={({ item }) => (
-            <View style={styles.gridItem}>
-              <GameSquareCardSkeleton />
-            </View>
-          )}
-          columnWrapperStyle={styles.gridRow}
+          renderItem={({ item, index }) => {
+            if (item._id.includes("placeholder")) {
+              return (
+                <View
+                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
+                />
+              );
+            }
+
+            const isLastOdd = count % 2 === 1 && index === count - 1;
+
+            const itemStyle: ViewStyle = {
+              flex: 1,
+              marginLeft: isLastOdd ? 12 : index % 2 === 0 ? 12 : 6,
+              marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
+            };
+
+            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+          }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}
         />
@@ -166,7 +183,8 @@ export default function CBBGamesList({
     );
   };
 
-  /* --------------------------- LOADING ------------------------------- */
+
+  /* ----------------------------- LOADING ------------------------------ */
 
   if (loading) {
     const count = games.length > 0 ? games.length : expectedCount ?? 4;
@@ -175,8 +193,8 @@ export default function CBBGamesList({
 
   if (!loading && games.length === 0) {
     return (
-      <View>
-        <Text style={styles.emptyText}>
+      <View style={styles.emptyWrapper}>
+        <Text style={global.emptyText}>
           {day === "todayTomorrow"
             ? "No games found for today or tomorrow."
             : "No games found on this date."}
@@ -188,7 +206,7 @@ export default function CBBGamesList({
   /* ----------------------------- ERROR -------------------------------- */
 
   if (error) {
-    return <Text style={styles.emptyText}>Error: {error}</Text>;
+    return <Text style={global.errorText}>Error: {error}</Text>;
   }
 
   /* ----------------------------- CONTENT ------------------------------ */
@@ -208,13 +226,14 @@ export default function CBBGamesList({
               : `game-${item?.game?.id ?? index}`
           }
           numColumns={2}
-          renderItem={({ item, index }) => renderGameCard(item, index)}
+          columnWrapperStyle={styles.gridRow}
+          renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          scrollEnabled={scrollEnabled ?? true}
+          scrollEnabled={scrollEnabled}
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <Text style={styles.emptyText}>
+            <Text style={global.emptyText}>
               {day === "todayTomorrow"
                 ? "No CBB games found for today or tomorrow."
                 : "No CBB games found."}
@@ -224,8 +243,10 @@ export default function CBBGamesList({
       ) : (
         <SectionList
           sections={sections as SectionListData<any, CBBGameSection>[]}
-          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
-          renderItem={({ item, index }) => renderGameCard(item, index)}
+          keyExtractor={(item, index) =>
+            `${item?.game?.id ?? "game"}-${index}`
+          }
+          renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
           stickySectionHeadersEnabled={false}

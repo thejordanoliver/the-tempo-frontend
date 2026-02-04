@@ -15,6 +15,7 @@ export type User = {
   favorites?: string[];
   followers_count?: number;
   isFollowing: boolean;
+  followsYou?: boolean; // 👈 add this
 };
 
 /**
@@ -48,7 +49,10 @@ export function useFollowers(
       .get<User[]>(
         `${process.env.EXPO_PUBLIC_API_URL}/api/follows/${Number(
           targetUserId
-        )}/${type}`
+        )}/${type}`,
+        {
+          params: { currentUserId },
+        }
       )
       .then((res) => {
         setUsers(res.data);

@@ -87,8 +87,6 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
-      flex: 1,
-        height: 94,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

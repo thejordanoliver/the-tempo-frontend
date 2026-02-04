@@ -9,7 +9,7 @@ import {
   View,
   ViewProps,
 } from "react-native";
-import { profileStyles } from "styles/ProfileScreenStyles";
+import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -160,7 +160,6 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
-            
           }}
         >
           {[...Array(6)].map((_, i) => (

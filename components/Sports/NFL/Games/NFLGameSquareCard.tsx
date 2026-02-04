@@ -117,8 +117,8 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
   );
 
   // --- Team records ---
-  const homeRecord = details?.homeRecords.total.summary;
-  const awayRecord = details?.awayRecords.total.summary;
+  const homeRecord = details?.homeRecords?.total?.summary;
+  const awayRecord = details?.awayRecords?.total?.summary;
 
   // -----------------------------------------------------
   // TEAM DATA

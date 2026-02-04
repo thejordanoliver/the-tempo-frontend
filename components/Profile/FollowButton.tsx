@@ -7,7 +7,7 @@ import {
   Text,
   useColorScheme,
 } from "react-native";
-import { profileStyles } from "styles/ProfileScreenStyles";
+import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 type FollowButtonProps = {
   isFollowing: boolean;
@@ -39,16 +39,13 @@ export default function FollowButton({
     e.stopPropagation();
     if (!loading) {
       opacityAnim.setValue(0); // fade out instantly
-      onToggle();              // state flips → fade back in
+      onToggle(); // state flips → fade back in
     }
   };
 
   return (
     <Animated.View
-      style={[
-        styles.followButtonContainer,
-        { opacity: opacityAnim },
-      ]}
+      style={[styles.followButtonContainer, { opacity: opacityAnim }]}
     >
       <Pressable
         onPress={handlePress}

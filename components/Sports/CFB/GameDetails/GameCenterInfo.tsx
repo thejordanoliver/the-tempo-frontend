@@ -30,9 +30,7 @@ export function GameCenterInfo({
 }: GameCenterInfoProps) {
   const inProgress = gameStatusDescription === "In Progress";
 
-  const isFinal =
-    gameStatusDescription === "Final" ||
-    gameStatusDescription === "After Over Time";
+  const isFinal = gameStatusDescription === "Final";
 
   const isHalftime = gameStatusDescription == "Halftime";
   const isCanceled = gameStatusDescription == "Canceled";

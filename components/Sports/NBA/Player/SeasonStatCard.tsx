@@ -1,12 +1,9 @@
+import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, globalStyles } from "constants/Styles";
-import { useLocalSearchParams } from "expo-router";
-import { usePlayerSingleSeasonStats } from "hooks/usePlayerSingleSeasonStats";
+import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import { teams } from "constants/teams";
-import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "./SeasonStatCardSkeleton";
-
 type Props = {
   playerId: number;
   teamColor?: string;
@@ -25,15 +22,13 @@ export default function SeasonStatCard({ playerId, season }: Props) {
         : `${year - 1}-${String(year).slice(-2)}`;
     })();
 
-  const {
-    season: seasonData,
-    loading,
-    error,
-  } = usePlayerSingleSeasonStats(playerId, displaySeason);
+  const { seasons, loading, error } = usePlayerSeasons(playerId);
+
+  const seasonData = seasons.find((s) => s.season === displaySeason);
 
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
-  const global = globalStyles(isDark)
+  const global = globalStyles(isDark);
 
   if (loading) return <SeasonStatCardSkeleton />;
   if (error || !seasonData)
@@ -48,10 +43,6 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   const apg = g ? safeFixed(ast! / g) : "0.0";
   const rpg = g ? safeFixed(trb! / g) : "0.0";
   const fgPercent = fga ? safeFixed((fg! / fga) * 100) : "0.0";
-
-  // Optional: team-based coloring
-  const { teamId } = useLocalSearchParams<{ teamId?: string }>();
-  const teamObj = teams.find((t) => String(t.id) === teamId);
 
   function StatItem({ label, value }: { label: string; value: string }) {
     return (

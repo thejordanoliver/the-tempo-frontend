@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FollowButton from "components/Profile/FollowButton";
 import { Colors } from "constants/Styles";
 import { Pressable, Text, View } from "react-native";
-import { profileStyles } from "../../styles/ProfileScreenStyles";
+import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 type Props = {
   fullName?: string | null;

@@ -146,9 +146,9 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team || gamesLoading) {
+  if (!team) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.loadContainer}>
         <CustomActivityIndicator />
       </View>
     );
@@ -175,19 +175,15 @@ export default function TeamDetailScreen() {
         }}
       >
         {/* Schedule Page */}
-        <ScrollView
-          key="schedule"
-          contentContainerStyle={{ paddingBottom: 100 }}
-        >
+        <View key="schedule" style={{ flex: 1 }}>
           <NFLGamesList
             games={rawTeamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             showHeaders={true}
-            scrollEnabled={false}
           />
-        </ScrollView>
+        </View>
 
         {/* News Page */}
         <ScrollView key="news" style={{ flex: 1 }}>

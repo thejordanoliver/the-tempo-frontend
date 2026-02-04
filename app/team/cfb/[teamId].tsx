@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
@@ -16,12 +17,7 @@ import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
@@ -167,10 +163,10 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-  if (!teamIdNum || !team) {
+  if (!team) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -196,19 +192,15 @@ export default function TeamDetailScreen() {
         }}
       >
         {/* Schedule Page */}
-        <ScrollView
-          key="schedule"
-          contentContainerStyle={{ paddingBottom: 100 }}
-        >
+        <View key="schedule" style={{ flex: 1 }}>
           <CFBGamesList
             games={teamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             showHeaders={true}
-            scrollEnabled={false}
           />
-        </ScrollView>
+        </View>
 
         {/* News Page */}
         <ScrollView key="news" style={{ flex: 1 }}>

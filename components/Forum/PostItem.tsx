@@ -1,8 +1,7 @@
 // components/Forum/PostItem.tsx
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -11,13 +10,13 @@ import {
   Animated,
   Easing,
   Image,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
+import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
 import { getAccessToken } from "utils/authStorage";
 import AlertModal from "./AlertModal";
 import PostImages, { MediaItem } from "./PostImages";
@@ -62,14 +61,15 @@ export const PostItem = memo(function PostItem({
   disableCommentNavigation,
 }: PostItemProps) {
   const { likes, setLike, toggleLike } = useLikesStore();
-  const likeState = likes[item.id];
+
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const [dropdownVisible, setDropdownVisible] = useState(false);
+
   const router = useRouter();
-  const styles = PostItemStyles(isDark);
+  const styles = postItemStyles(isDark);
+
   const profileImageUri = item.profile_image
     ? item.profile_image.startsWith("http")
       ? item.profile_image
@@ -117,28 +117,29 @@ export const PostItem = memo(function PostItem({
     })),
   ];
 
-  // If no entry yet, initialize it from item props
+  // Initialize store only once on mount
   useEffect(() => {
-    if (!likeState) {
+    if (!likes[item.id]) {
       setLike(item.id, item.liked_by_current_user, item.likes);
     }
-  }, [item.id, item.liked_by_current_user, item.likes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  const likeState = useLikesStore((state) => state.likes[item.id]);
+
+  // fallback values if not yet initialized
   const liked = likeState?.liked ?? item.liked_by_current_user;
   const likeCount = likeState?.count ?? item.likes;
 
   const toggleLikePress = async () => {
-    // Try passed token first, then fallback to AsyncStorage
-    let authToken = token;
-    if (!authToken) {
-      authToken = await getAccessToken();
-    }
+    let authToken = token ?? (await getAccessToken());
 
     if (!authToken) {
       alert("You must be logged in to like posts.");
       return;
     }
 
+    // Optimistic UI update
     toggleLike(item.id);
 
     try {
@@ -148,7 +149,7 @@ export const PostItem = memo(function PostItem({
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
     } catch (err: any) {
-      // rollback
+      // rollback on failure
       toggleLike(item.id);
       alert(
         err.response?.data?.error || err.message || "Failed to toggle like"
@@ -156,30 +157,19 @@ export const PostItem = memo(function PostItem({
     }
   };
 
-  const onSaveEdit = () => {
-    if (editText.trim() && editText !== item.text) {
-      editPost(item.id, editText);
-    }
-    setIsEditing(false);
-    setDropdownVisible(false);
-  };
-
   const isAuthor =
     currentUserId != null && String(currentUserId) === String(item.user_id);
 
-  const confirmDelete = () => {
-    setShowDeleteModal(true);
-  };
-
+  const confirmDelete = () => setShowDeleteModal(true);
   const handleDeleteConfirm = () => {
     deletePost(item.id);
     setShowDeleteModal(false);
     setDropdownVisible(false);
   };
-
   const handleDeleteCancel = () => setShowDeleteModal(false);
 
   const dropdownAnim = useRef(new Animated.Value(0)).current;
+
   const showDropdown = () => {
     setDropdownVisible(true);
     Animated.timing(dropdownAnim, {
@@ -199,6 +189,14 @@ export const PostItem = memo(function PostItem({
     }).start(() => setDropdownVisible(false));
   };
 
+  const onSaveEdit = () => {
+    if (editText.trim() && editText !== item.text) {
+      editPost(item.id, editText);
+    }
+    setIsEditing(false);
+    setDropdownVisible(false);
+  };
+
   const getTextStyle = (isDark: boolean, isDelete?: boolean) => ({
     fontSize: 18,
     color: isDelete
@@ -216,12 +214,11 @@ export const PostItem = memo(function PostItem({
   return (
     <View style={styles.container}>
       <View style={styles.postContainer}>
-        <View style={[styles.userRow, {}]}>
+        {/* User Row */}
+        <View style={styles.userRow}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <TouchableOpacity
-              onPress={() => {
-                router.push(`/user/${item.user_id}`);
-              }}
+              onPress={() => router.push(`/user/${item.user_id}`)}
               activeOpacity={0.7}
             >
               {profileImageUri ? (
@@ -239,11 +236,8 @@ export const PostItem = memo(function PostItem({
                 </View>
               )}
             </TouchableOpacity>
-
             <TouchableOpacity
-              onPress={() => {
-                router.push(`/user/${item.user_id}`);
-              }}
+              onPress={() => router.push(`/user/${item.user_id}`)}
               activeOpacity={0.7}
               style={{ marginLeft: 4 }}
             >
@@ -253,13 +247,9 @@ export const PostItem = memo(function PostItem({
 
           {isAuthor && (
             <TouchableOpacity
-              onPress={() => {
-                if (dropdownVisible) {
-                  hideDropdown();
-                } else {
-                  showDropdown();
-                }
-              }}
+              onPress={() =>
+                dropdownVisible ? hideDropdown() : showDropdown()
+              }
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons
@@ -271,6 +261,7 @@ export const PostItem = memo(function PostItem({
           )}
         </View>
 
+        {/* Dropdown */}
         {dropdownVisible && (
           <Animated.View
             style={[
@@ -316,9 +307,10 @@ export const PostItem = memo(function PostItem({
           </Animated.View>
         )}
 
+        {/* Post Content */}
         {isEditing ? (
           <TextInput
-            style={[styles.editPostText, {}]}
+            style={styles.editPostText}
             multiline
             value={editText}
             onChangeText={setEditText}
@@ -326,18 +318,18 @@ export const PostItem = memo(function PostItem({
         ) : (
           <View style={styles.postTextWrapper}>
             <Text style={styles.postText}>{item.text}</Text>
-
             {media.length > 0 && <PostImages media={media} item={item} />}
           </View>
         )}
 
+        {/* Footer */}
         <View style={styles.postFooter}>
           {isEditing ? (
             <View style={styles.editActionsContainer}>
               <TouchableOpacity style={styles.button} onPress={onSaveEdit}>
                 <Text style={styles.saveText}>Save</Text>
                 <Ionicons
-                  name={"checkmark"}
+                  name="checkmark"
                   size={30}
                   color={isDark ? Colors.dark.limeGreen : Colors.light.green}
                 />
@@ -348,78 +340,77 @@ export const PostItem = memo(function PostItem({
               >
                 <Text style={styles.cancelText}>Cancel</Text>
                 <Ionicons
-                  name={"close"}
+                  name="close"
                   size={30}
                   color={isDark ? Colors.dark.lightRed : Colors.light.red}
                 />
               </TouchableOpacity>
             </View>
           ) : (
-            <>
-              <View style={styles.interactionContainer}>
-                <View style={styles.interactionWrapper}>
-                  <View style={styles.leftSide}>
-                    <TouchableOpacity
-                      onPress={toggleLikePress}
-                      style={styles.likeButtonContainer}
-                    >
-                      <Ionicons
-                        name={liked ? "heart" : "heart-outline"}
-                        size={28}
-                        color={isDark ? Colors.white : Colors.black}
-                      />
-                      <Text style={styles.count}>{likeCount}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (!disableCommentNavigation) {
-                          router.push({
-                            pathname: "/comment-thread/[postId]",
-                            params: { postId: item.id },
-                          });
-                        }
-                      }}
-                      style={styles.likeButtonContainer}
-                    >
-                      <Ionicons
-                        name="chatbubble-outline"
-                        size={28}
-                        color={isDark ? Colors.white : Colors.black}
-                      />
-                      <Text style={styles.count}>{item.comments_count}</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.rightSide}>
-                    <TouchableOpacity style={styles.likeButtonContainer}>
-                      <Text style={styles.count}>0</Text>
-                      <Ionicons
-                        name="bookmark-outline"
-                        size={28}
-                        color={isDark ? Colors.white : Colors.black}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.likeButtonContainer}>
-                      <Text style={styles.count}>0</Text>
-                      <Ionicons
-                        name="share-social-outline"
-                        size={28}
-                        color={isDark ? Colors.white : Colors.black}
-                      />
-                    </TouchableOpacity>
-                  </View>
+            <View style={styles.interactionContainer}>
+              <View style={styles.interactionWrapper}>
+                <View style={styles.leftSide}>
+                  <TouchableOpacity
+                    onPress={toggleLikePress}
+                    style={styles.likeButtonContainer}
+                  >
+                    <Ionicons
+                      name={liked ? "heart" : "heart-outline"}
+                      size={28}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                    <Text style={styles.count}>{likeCount}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (!disableCommentNavigation) {
+                        router.push({
+                          pathname: "/comment-thread/[postId]",
+                          params: { postId: item.id },
+                        });
+                      }
+                    }}
+                    style={styles.likeButtonContainer}
+                  >
+                    <Ionicons
+                      name="chatbubble-outline"
+                      size={28}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                    <Text style={styles.count}>{item.comments_count}</Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.timeWrapper}>
-                  <Text style={styles.timestamp}>
-                    {formatDistanceToNow(new Date(item.created_at), {
-                      addSuffix: true,
-                    }).replace(/^about /, "")}
-                  </Text>
+                <View style={styles.rightSide}>
+                  <TouchableOpacity style={styles.likeButtonContainer}>
+                    <Text style={styles.count}>0</Text>
+                    <Ionicons
+                      name="bookmark-outline"
+                      size={28}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.likeButtonContainer}>
+                    <Text style={styles.count}>0</Text>
+                    <Ionicons
+                      name="share-social-outline"
+                      size={28}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
-            </>
+              <View style={styles.timeWrapper}>
+                <Text style={styles.timestamp}>
+                  {formatDistanceToNow(new Date(item.created_at), {
+                    addSuffix: true,
+                  }).replace(/^about /, "")}
+                </Text>
+              </View>
+            </View>
           )}
         </View>
       </View>
+
       <AlertModal
         title="Delete Post"
         message="Are you sure you want to delete this post?"
@@ -433,148 +424,3 @@ export const PostItem = memo(function PostItem({
     </View>
   );
 });
-
-export function PostItemStyles(isDark: boolean) {
-  return StyleSheet.create({
-    container: {
-      paddingTop: 12,
-      paddingHorizontal: 12,
-    },
-    postContainer: {
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderBottomWidth: 1,
-      paddingVertical: 10,
-    },
-    username: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    timeWrapper: { flex: 1, justifyContent: "flex-end" },
-    timestamp: {
-      fontFamily: Fonts.OSLIGHT,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "left",
-    },
-    postTextWrapper: {
-      minHeight: 100,
-      justifyContent: "center",
-    },
-    postText: {
-      marginTop: 12,
-      marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    editPostText: {
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderWidth: 1,
-      borderRadius: 6,
-      padding: 8,
-      minHeight: 100,
-      maxHeight: 280,
-      marginTop: 12,
-      marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    postFooter: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    leftSide: {
-      flexDirection: "row",
-    },
-    rightSide: {
-      flexDirection: "row",
-    },
-    userRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 4,
-      justifyContent: "space-between",
-    },
-    profileImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 50,
-      marginRight: 8,
-    },
-    profilePlaceholder: {
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    likeButtonContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: 50,
-    },
-    count: {
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      marginLeft: 4,
-      marginRight: 4,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    interactionContainer: { flex: 1 },
-    interactionWrapper: {
-      flex: 1,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginVertical: 8,
-    },
-    dropdownMenu: {
-      position: "absolute",
-      right: 12,
-      top: 36,
-      borderRadius: 8,
-      borderTopRightRadius: 2,
-      overflow: "hidden",
-      width: 120,
-      height: 100,
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-      zIndex: 1000,
-      justifyContent: "center",
-    },
-    dropdownItem: { borderBottomWidth: 1, borderBottomColor: Colors.midTone },
-
-    singleImageWrapper: {
-      marginTop: 4,
-    },
-    singlePostImage: {
-      width: "100%",
-      height: 250,
-      borderRadius: 8,
-      marginBottom: 10,
-    },
-    editActionsContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "100%",
-    },
-    saveText: {
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-      fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    cancelText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    button: {
-      padding: 10,
-      flexDirection: "row",
-      alignItems: "center",
-    },
-  });
-}

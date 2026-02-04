@@ -399,7 +399,7 @@ export default function CFBGameDetailsScreen() {
           awayTimeouts={awayTimeouts}
           rankHome={homeRank}
           rankAway={awayRank}
-          gameStatusDescription={gameStatusDescription ?? longStatus}
+          gameStatusDescription={gameStatusDescription ?? ""}
           period={period}
           displayClock={displayClock}
           downAndDistance={downDistanceText}

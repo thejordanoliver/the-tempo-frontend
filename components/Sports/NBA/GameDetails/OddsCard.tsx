@@ -12,11 +12,17 @@ interface Props {
   game: GameOdds;
   league: "nba" | "cbb" | "nfl" | "cfb";
   error?: string | null;
+  lighter?: boolean;
 }
 
-export const OddsCard: React.FC<Props> = ({ game, league, error }) => {
+export const OddsCard: React.FC<Props> = ({
+  game,
+  league,
+  error,
+  lighter = false,
+}) => {
   const isDark = useColorScheme() === "dark";
-  const styles = oddsCardStyles(isDark);
+  const styles = oddsCardStyles(isDark, lighter);
 
   /* -------------------- Error State -------------------- */
   if (error) {
@@ -158,14 +164,12 @@ export const OddsCard: React.FC<Props> = ({ game, league, error }) => {
           </Text>
         ))}
       </View>
-
-   
     </View>
   );
 };
 
 /* -------------------- Styles -------------------- */
-const oddsCardStyles = (isDark: boolean) =>
+const oddsCardStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     wrapper: {
       padding: 4,
@@ -216,7 +220,12 @@ const oddsCardStyles = (isDark: boolean) =>
     },
     divider: {
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: lighter
+        ? Colors.lightGray
+        : isDark
+        ? Colors.midTone
+        : Colors.lightGray,
+
       marginVertical: 8,
     },
     bookmaker: {

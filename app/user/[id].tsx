@@ -4,7 +4,9 @@ import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
+import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useUserProfile } from "hooks/useUserProfile";
 import { useLayoutEffect, useState } from "react";
 import {
   Animated,
@@ -13,12 +15,8 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
-import { useFollowersModalStore } from "store/followersModalStore";
-import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
-import { useUserProfile } from "hooks/useUserProfile";
-import { profileStyles } from "styles/ProfileScreenStyles";
-
-
+import { useFollowersStore } from "store/followersStore";
+import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 export default function UserProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
@@ -61,7 +59,7 @@ export default function UserProfileScreen() {
     closeModal,
     shouldRestore,
     clearRestore,
-  } = useFollowersModalStore();
+  } = useFollowersStore();
 
   // Navigation header
   useLayoutEffect(() => {
@@ -98,20 +96,36 @@ export default function UserProfileScreen() {
     return <SkeletonProfileScreen isDark={isDark} />;
   }
 
-  const onFollowersPress = () => {
-    if (currentUserId && userId) {
-      openModal("followers", userId, String(currentUserId));
-    }
-  };
+const onFollowersPress = () => {
+  if (!currentUserId || !userId) return;
 
-  const onFollowingPress = () => {
-    if (currentUserId && userId) {
-      openModal("following", userId, String(currentUserId));
-    }
-  };
+  router.push({
+    pathname: "/user/followers",
+    params: {
+      type: "followers",
+      currentUserId: String(currentUserId),
+      targetUserId: String(userId), // ✅ viewed profile
+    },
+  });
+};
+
+const onFollowingPress = () => {
+  if (!currentUserId || !userId) return;
+
+  router.push({
+    pathname: "/user/followers",
+    params: {
+      type: "following",
+      currentUserId: String(currentUserId),
+      targetUserId: String(userId), // ✅ viewed profile
+    },
+  });
+};
+
 
   const isCurrentUser =
     currentUserId !== null && String(currentUserId) === userId;
+
   return (
     <>
       <ScrollView

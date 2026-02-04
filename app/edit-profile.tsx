@@ -15,7 +15,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from "react-native";
@@ -84,15 +83,23 @@ export default function EditProfileScreen() {
   // ====================== IMAGE PICKER ======================
   const openImagePickerFor = async (target: "profile" | "banner") => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // ✅ includes GIF
+      allowsEditing: false, // ❗ must be false for animated GIFs
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImageToCrop(result.assets[0].uri);
-      setCropTarget(target);
-      setCropModalVisible(true);
+      const uri = result.assets[0].uri;
+      const isGif = uri.toLowerCase().endsWith(".gif");
+
+      if (isGif) {
+        if (target === "profile") setProfileImage(uri);
+        else setBannerImage(uri);
+      } else {
+        setImageToCrop(uri);
+        setCropTarget(target);
+        setCropModalVisible(true);
+      }
     }
   };
 
@@ -123,21 +130,39 @@ export default function EditProfileScreen() {
 
       if (profileImage?.startsWith("file://")) {
         const filename = profileImage.split("/").pop()!;
-        const ext = filename.split(".").pop();
+        const ext = filename.split(".").pop()?.toLowerCase();
+        const mimeType =
+          ext === "jpg" || ext === "jpeg"
+            ? "image/jpeg"
+            : ext === "png"
+            ? "image/png"
+            : ext === "gif"
+            ? "image/gif"
+            : "image/*";
+
         formData.append("profileImage", {
           uri: profileImage,
           name: filename,
-          type: `image/${ext === "jpg" ? "jpeg" : ext}`,
+          type: mimeType,
         } as any);
       }
 
       if (bannerImage?.startsWith("file://")) {
         const filename = bannerImage.split("/").pop()!;
-        const ext = filename.split(".").pop();
+        const ext = filename.split(".").pop()?.toLowerCase();
+        const mimeType =
+          ext === "jpg" || ext === "jpeg"
+            ? "image/jpeg"
+            : ext === "png"
+            ? "image/png"
+            : ext === "gif"
+            ? "image/gif"
+            : "image/*";
+
         formData.append("bannerImage", {
           uri: bannerImage,
           name: filename,
-          type: `image/${ext === "jpg" ? "jpeg" : ext}`,
+          type: mimeType,
         } as any);
       }
 
@@ -227,7 +252,7 @@ export default function EditProfileScreen() {
               onChangeText={setBio}
               multiline
             />
-    
+
             <Button onPress={handleSave} disabled={saving} />
           </View>
         </View>

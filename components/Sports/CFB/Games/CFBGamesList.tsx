@@ -2,10 +2,10 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
+import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useMemo, useState } from "react";
-import { globalStyles } from "constants/Styles";
 import {
   FlatList,
   SectionList,
@@ -53,7 +53,7 @@ export default function CFBGamesList({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = footballGamesListStyle(isDark);
-  const global = globalStyles(isDark)
+  const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
@@ -122,37 +122,24 @@ export default function CFBGamesList({
     }));
   }, [sections]);
 
-  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
-    return (
-      <View style={styles.gridRow}>
-        {item.map((game, index) => {
-          if (!game) {
-            return (
-              <View
-                key={`empty-${index}`}
-                style={[styles.gridItem, { backgroundColor: "transparent" }]}
-              />
-            );
-          }
+const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+  return (
+    <View style={styles.gridRow}>
+      {item.map((game, index) => {
+        if (!game) {
+          return <View key={`empty-${index}`} style={styles.gridItem} />;
+        }
 
-          return (
-            <View
-              key={game.game.id}
-              style={[
-                styles.gridItem,
-                {
-                  marginLeft: index === 0 ? 12 : 6,
-                  marginRight: index === 0 ? 6 : 12,
-                },
-              ]}
-            >
-              <CFBGameSquareCard game={game} />
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
+        return (
+          <View key={game.game.id} style={styles.gridItem}>
+            <CFBGameSquareCard game={game} />
+          </View>
+        );
+      })}
+    </View>
+  );
+};
+
 
   const loadMore = () => {
     if (paginatedGames.length >= games.length) return;
@@ -231,6 +218,7 @@ export default function CFBGamesList({
         _id: `grid-skel-${i}`,
       }));
 
+      // Add placeholder if odd count
       const dataWithPlaceholder =
         count % 2 === 1
           ? [...skeletons, { _id: `grid-skel-placeholder` }]
@@ -274,30 +262,29 @@ export default function CFBGamesList({
       </View>
     );
   };
-
   if (loading) {
-    const totalSkeletonCount =
-      games.length > 0 ? games.length : expectedCount ?? 4;
     return (
       <View>
-        {sections.map((section) => (
-          <View
-            key={`skel-section-${section.title}`}
-            style={{ marginBottom: 16 }}
-          >
-            {showHeaders && (
-              <View style={styles.headerWrapper}>
-                <HeadingTwo>{section.title}</HeadingTwo>
-              </View>
-            )}
-            {renderSkeletons(section.data.length || totalSkeletonCount)}
-          </View>
-        ))}
+        {sections.map((section) => {
+          const count =
+            section.data.length > 0 ? section.data.length : expectedCount ?? 4;
+
+          return (
+            <View
+              key={`skel-section-${section.title}`}
+              style={{ marginBottom: 16 }}
+            >
+              {showHeaders && <HeadingTwo style={{marginHorizontal: 12}}>{section.title}</HeadingTwo>}
+              {renderSkeletons(count)}
+            </View>
+          );
+        })}
       </View>
     );
   }
 
-  if (error) return <Text style={styles.errorText}>Error: {error}</Text>;
+
+  if (error) return <Text style={global.errorText}>Error: {error}</Text>;
 
   return (
     <>
@@ -307,11 +294,7 @@ export default function CFBGamesList({
           keyExtractor={(item, index) => `row-${index}`}
           renderItem={renderGridRow}
           renderSectionHeader={({ section }) =>
-            showHeaders ? (
-              <View style={styles.headerWrapper}>
-                <HeadingTwo>{section.title}</HeadingTwo>
-              </View>
-            ) : null
+            showHeaders ? <HeadingTwo>{section.title}</HeadingTwo> : null
           }
           stickySectionHeadersEnabled={false}
           refreshing={refreshing}
@@ -338,10 +321,7 @@ export default function CFBGamesList({
           renderSectionHeader={({ section }) =>
             showHeaders && section.data.length > 0 ? (
               <View
-                style={[
-                  styles.headerWrapper,
-                  section.title === "Postseason" && { marginTop: 12 },
-                ]}
+                style={[section.title === "Postseason" && { marginTop: 12 }]}
               >
                 <HeadingTwo>{section.title}</HeadingTwo>
               </View>

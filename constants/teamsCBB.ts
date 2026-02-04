@@ -8067,6 +8067,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 7806,
+    wid: 7807,
     espnID: 2837,
     name: "East Texas A&M",
     fullName: "East Texas A&M Lions",

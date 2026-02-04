@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
@@ -23,7 +24,6 @@ import { useTeamRosterStats } from "hooks/useTeamRosterStats";
 import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Dimensions,
   ScrollView,
@@ -356,8 +356,8 @@ export default function TeamDetailScreen() {
 
   if (!team) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ marginTop: 40 }} />
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }

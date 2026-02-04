@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type PlayerSeason = {
   player_id: number;
@@ -47,7 +47,6 @@ type ApiResponse = {
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-
 export function usePlayerSeasons(playerId?: number | string) {
   const [player, setPlayer] = useState<PlayerInfo | null>(null);
   const [seasons, setSeasons] = useState<PlayerSeason[]>([]);
@@ -61,19 +60,18 @@ export function usePlayerSeasons(playerId?: number | string) {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(
-        `${API_URL}/api/players/${playerId}/seasons`
-      );
+      const res = await fetch(`${API_URL}/api/players/${playerId}/seasons`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch player seasons");
       }
 
       const data: ApiResponse = await res.json();
+
       setPlayer(data.player);
       setSeasons(
         // defensive: remove empty rows if any slipped in
-        data.seasons.filter(s => s?.season)
+        data.seasons.filter((s) => s?.season)
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");

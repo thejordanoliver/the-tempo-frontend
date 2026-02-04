@@ -27,6 +27,7 @@ export const Colors = {
     text: "#fff",
     lightRed: "#ff4444",
     limeGreen: "#2fff00ff",
+    leafGreen: "#4CAF50",
     yellow: "#facc15",
     itemBackground: "#2e2e2e",
     white: "#fff",

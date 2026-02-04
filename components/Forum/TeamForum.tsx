@@ -15,10 +15,11 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
+import { useLikesStore } from "store/useLikesStore";
 import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import AlertModal from "./AlertModal";
-import { PostItem } from "./PostItem";
+import { Post, PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
 interface TeamForumProps {
@@ -36,6 +37,8 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const { likes, setLike, setUser, toggleLike } = useLikesStore();
+
   const {
     posts,
     loading,
@@ -49,23 +52,81 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     editPost,
   } = useTeamForumPosts({ teamId, league });
 
-  const showAlert = (config: AlertConfig) => {
+  // TeamForum.tsx
+  useEffect(() => {
+    if (currentUserId != null) {
+      setUser(String(currentUserId)); // store setter
+    }
+  }, [currentUserId]);
+  // Stable callbacks
+  const showAlert = useCallback((config: AlertConfig) => {
     setAlertConfig(config);
-  };
+  }, []);
 
-  const closeAlert = () => {
+  const closeAlert = useCallback(() => {
     setAlertConfig(null);
-  };
+  }, []);
 
-  const renderSkeletons = (count = 5) => (
-    <>
-      {Array.from({ length: count }).map((_, i) => (
-        <PostItemSkeleton key={`skeleton-${i}`} showMedia />
-      ))}
-    </>
+  const handleDeletePost = useCallback(
+    async (id: string) => {
+      try {
+        await deletePost(id);
+        showAlert({
+          title: "Deleted",
+          message: "Post deleted.",
+          confirmText: "OK",
+        });
+      } catch {
+        showAlert({
+          title: "Error",
+          message: "Failed to delete post.",
+          confirmText: "OK",
+        });
+      }
+    },
+    [deletePost, showAlert]
   );
 
-  const onRefresh = () => refresh();
+  const handleEditPost = useCallback(
+    async (id: string, text: string) => {
+      try {
+        await editPost(id, text);
+        showAlert({
+          title: "Updated",
+          message: "Post updated.",
+          confirmText: "OK",
+        });
+      } catch {
+        showAlert({
+          title: "Error",
+          message: "Failed to update post.",
+          confirmText: "OK",
+        });
+      }
+    },
+    [editPost, showAlert]
+  );
+
+  const handleImagePress = useCallback(
+    (imgUri: string) => {
+      setGlobalImage([], 0);
+      setGlobalImage([imgUri], 0);
+    },
+    [setGlobalImage]
+  );
+
+  const renderSkeletons = useCallback(
+    (count = 5) => (
+      <>
+        {Array.from({ length: count }).map((_, i) => (
+          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+        ))}
+      </>
+    ),
+    []
+  );
+
+  const onRefresh = useCallback(() => refresh(), [refresh]);
 
   useFocusEffect(
     useCallback(() => {
@@ -73,12 +134,12 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     }, [refresh])
   );
 
-  // ✅ Cleanup on unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       setGlobalImage([], 0);
     };
-  }, []);
+  }, [setGlobalImage]);
 
   if (loading)
     return (
@@ -88,64 +149,43 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     );
   if (error) return <Text style={global.errorText}>{error}</Text>;
 
+  const renderPostItem = useCallback(
+    ({ item }: { item: Post }) => (
+      <PostItem
+        item={item}
+        isDark={isDark}
+        token={token}
+        currentUserId={currentUserId}
+        deletePost={handleDeletePost}
+        editPost={handleEditPost}
+        BASE_URL={BASE_URL}
+        onImagePress={handleImagePress}
+      />
+    ),
+    [
+      isDark,
+      token,
+      currentUserId,
+      handleDeletePost,
+      handleEditPost,
+      handleImagePress,
+    ]
+  );
+
   return (
     <>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.container}
-        renderItem={({ item }) => (
-          <PostItem
-            item={item}
-            isDark={isDark}
-            token={token}
-            currentUserId={currentUserId}
-            deletePost={async (id) => {
-              try {
-                await deletePost(id);
-                showAlert({
-                  title: "Deleted",
-                  message: "Post deleted.",
-                  confirmText: "OK",
-                });
-              } catch {
-                showAlert({
-                  title: "Error",
-                  message: "Failed to delete post.",
-                  confirmText: "OK",
-                });
-              }
-            }}
-            editPost={async (id, text) => {
-              try {
-                await editPost(id, text);
-                showAlert({
-                  title: "Updated",
-                  message: "Post updated.",
-                  confirmText: "OK",
-                });
-              } catch {
-                showAlert({
-                  title: "Error",
-                  message: "Failed to update post.",
-                  confirmText: "OK",
-                });
-              }
-            }}
-            BASE_URL={BASE_URL}
-            onImagePress={(imgUri) => {
-              setGlobalImage([], 0);
-              setGlobalImage([imgUri], 0);
-            }}
-          />
-        )}
+        renderItem={renderPostItem}
         onEndReached={loadMore}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
 
-      {/* ✅ Pass league and teamId to Create Post */}
+      {/* Floating Create Post Button */}
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() =>
@@ -162,6 +202,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
           color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>
+
       <AlertModal
         visible={!!alertConfig}
         isDark={isDark}

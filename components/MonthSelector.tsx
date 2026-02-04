@@ -9,7 +9,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import WeekSelectorSkeleton from "./Skeletons/WeekSelectorSkeleton";
+import MonthSelectorSkeleton from "./Skeletons/MonthSelectorSkeleton";
 
 type MonthItem = {
   month: number; // 0–11
@@ -67,7 +67,7 @@ export default function MonthSelector({
     });
   }, [selectedDate, months, needsScroll]);
 
-  if (loading) return <WeekSelectorSkeleton />;
+  if (loading) return <MonthSelectorSkeleton />;
 
   return (
     <View style={styles.monthSelector}>

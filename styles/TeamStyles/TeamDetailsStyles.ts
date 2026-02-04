@@ -6,6 +6,11 @@ export const style = (isDark: boolean) =>
     container: {
       flex: 1,
     },
+    loadContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     monthSelector: {
       flexDirection: "row",
       paddingHorizontal: 0,

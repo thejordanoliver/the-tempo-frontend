@@ -1,12 +1,10 @@
 // profile.tsx
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BioSection from "components/Profile/BioSection";
-import FollowersModal from "components/Profile/FollowersModal";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
@@ -27,9 +25,9 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
-import { useFollowersModalStore } from "store/followersModalStore";
+import { useFollowersStore } from "store/followersStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
-import { profileStyles } from "styles/ProfileScreenStyles";
+import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 export default function ProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
@@ -52,12 +50,6 @@ export default function ProfileScreen() {
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState("");
-  const followersModalRef = useRef<BottomSheetModal>(null);
-  // Add local state for modal props
-  const [modalType, setModalType] = useState<"followers" | "following">(
-    "followers"
-  );
-  const [modalTargetUserId, setModalTargetUserId] = useState<string>("");
 
   // Profile hook
   const {
@@ -77,7 +69,7 @@ export default function ProfileScreen() {
 
   // Followers modal & settings modal stores
   const { type, targetUserId, openModal, shouldRestore, clearRestore } =
-    useFollowersModalStore();
+    useFollowersStore();
 
   const { showOnReturn, setShowOnReturn, setShowSettingsModal } =
     useSettingsModalStore();
@@ -201,21 +193,31 @@ export default function ProfileScreen() {
 
   if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
 
-  // Handlers
   const onFollowersPress = () => {
     if (!currentUserId) return;
-    setModalType("followers");
-    setModalTargetUserId(String(currentUserId));
-    followersModalRef.current?.present();
+
+    router.push({
+      pathname: "/user/followers",
+      params: {
+        type: "followers",
+        currentUserId: String(currentUserId),
+        targetUserId: String(currentUserId),
+      },
+    });
   };
 
   const onFollowingPress = () => {
     if (!currentUserId) return;
-    setModalType("following");
-    setModalTargetUserId(String(currentUserId));
-    followersModalRef.current?.present();
-  };
 
+    router.push({
+      pathname: "/user/followers",
+      params: {
+        type: "following",
+        currentUserId: String(currentUserId),
+        targetUserId: String(currentUserId),
+      },
+    });
+  };
   return (
     <>
       <ScrollView
@@ -280,16 +282,6 @@ export default function ProfileScreen() {
         cancelText="Cancel"
         onConfirm={confirmDeleteAccount}
         onCancel={() => setShowDeleteModal(false)}
-      />
-
-      {/* Add Followers Modal */}
-
-      <FollowersModal
-        ref={followersModalRef}
-        type={modalType}
-        currentUserId={currentUserId ? String(currentUserId) : ""}
-        targetUserId={modalTargetUserId}
-        onClose={() => followersModalRef.current?.dismiss()}
       />
     </>
   );
