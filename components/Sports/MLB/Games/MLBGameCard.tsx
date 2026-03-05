@@ -171,7 +171,7 @@ function MLBGameCard({ game }: Props) {
             <View style={styles.statusDivider} />
             <Text style={styles.clock}>Outs: {outs}</Text>
           </View>
-          <BasesIndicator bases={bases} isDark={isDark} size={12} />
+          <BasesIndicator bases={bases} isDark={isDark} size={8} />
         </>
       );
 

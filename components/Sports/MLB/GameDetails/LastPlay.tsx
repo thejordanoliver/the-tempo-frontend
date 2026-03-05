@@ -83,7 +83,7 @@ export default function LastPlay({ lastPlay }: LastPlayProps) {
     );
   }
 
-  console.log(JSON.stringify(currentPlay, null, 2));
+  
 
   return (
     <View style={styles.container} onLayout={onLayout}>

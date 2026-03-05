@@ -82,14 +82,16 @@ const PulsingBase = ({
 export const BasesIndicator: React.FC<BasesProps> = ({
   bases,
   isDark,
-  size = 16,
+  size = 12, // default icon size
 }) => {
-  const containerSize = 24;
+  const containerSize = size * 2; // dynamic container size based on icon
   const center = containerSize / 2;
-  const offset = 8;
+
+  // Adjust offset based on icon size
+  const offset = size <= 8 ? 5 : 8;
 
   const colorOccupied = isDark ? Colors.dark.limeGreen : Colors.light.green;
-  const colorEmpty = isDark ? Colors.darkGray : Colors.lightGray;
+  const colorEmpty = isDark ? Colors.lightGray : Colors.darkGray;
 
   return (
     <View
@@ -98,6 +100,7 @@ export const BasesIndicator: React.FC<BasesProps> = ({
         height: containerSize,
         alignSelf: "center",
         position: "relative",
+        marginVertical: 2,
       }}
     >
       {/* Second Base (Top) */}
