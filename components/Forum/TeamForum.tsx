@@ -1,7 +1,6 @@
 // components/Forum/TeamForum.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
-import { globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
 import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
 import { useTeamForumPosts } from "hooks/useTeamForumPosts";
@@ -84,7 +83,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         });
       }
     },
-    [deletePost, showAlert]
+    [deletePost, showAlert],
   );
 
   const handleEditPost = useCallback(
@@ -104,7 +103,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         });
       }
     },
-    [editPost, showAlert]
+    [editPost, showAlert],
   );
 
   const handleImagePress = useCallback(
@@ -112,7 +111,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
       setGlobalImage([], 0);
       setGlobalImage([imgUri], 0);
     },
-    [setGlobalImage]
+    [setGlobalImage],
   );
 
   const renderSkeletons = useCallback(
@@ -123,7 +122,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         ))}
       </>
     ),
-    []
+    [],
   );
 
   const onRefresh = useCallback(() => refresh(), [refresh]);
@@ -131,7 +130,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   useFocusEffect(
     useCallback(() => {
       refresh();
-    }, [refresh])
+    }, [refresh]),
   );
 
   // Cleanup on unmount
@@ -169,7 +168,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
       handleDeletePost,
       handleEditPost,
       handleImagePress,
-    ]
+    ],
   );
 
   return (

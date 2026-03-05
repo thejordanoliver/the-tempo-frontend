@@ -14,9 +14,11 @@ import { teams as cbbteams } from "constants/teamsCBB";
 import { teams as cfbteams } from "constants/teamsCFB";
 import { teams as mlbteams } from "constants/teamsMLB";
 import { teams as nflteams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
 import { useNavigation, useRouter } from "expo-router";
-import { useProfile } from "hooks/useProfile";
 import { useAuth } from "hooks/UserHooks/useAuth";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
+import { useProfile } from "hooks/UserHooks/useProfile";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -43,7 +45,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = profileStyles(isDark);
-
+  const { favorites } = useFavoriteTeams();
   // Local UI state
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [isGridView, setIsGridView] = useState(true);
@@ -60,7 +62,6 @@ export default function ProfileScreen() {
     bio,
     profileImage,
     bannerImage,
-    favorites,
     followersCount,
     followingCount,
     loadProfile,
@@ -132,7 +133,7 @@ export default function ProfileScreen() {
           openModal(
             type,
             targetUserId,
-            currentUserId ? String(currentUserId) : undefined
+            currentUserId ? String(currentUserId) : undefined,
           );
         }
 
@@ -158,7 +159,7 @@ export default function ProfileScreen() {
       showOnReturn,
       setShowSettingsModal,
       setShowOnReturn,
-    ])
+    ]),
   );
 
   /** Header with logout/settings buttons */
@@ -186,6 +187,7 @@ export default function ProfileScreen() {
       if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id);
       if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id);
       if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id);
+      if (league === "NHL") team = nhlTeams.find((t) => String(t.id) === id);
       if (!team) return null;
       return { ...team, league: league as any };
     })
@@ -252,14 +254,13 @@ export default function ProfileScreen() {
 
         <View style={styles.favoritesContainer}>
           <FavoriteTeamsSection
-            favoriteTeams={favoriteTeamsWithLeague}
+            favorites={favoriteTeamsWithLeague}
             isGridView={isGridView}
             fadeAnim={fadeAnim}
             toggleFavoriteTeamsView={toggleFavoriteTeamsView}
             styles={styles}
             itemWidth={itemWidth}
             isCurrentUser={currentUserId === viewedUserId}
-            username={username ?? undefined}
           />
         </View>
       </ScrollView>

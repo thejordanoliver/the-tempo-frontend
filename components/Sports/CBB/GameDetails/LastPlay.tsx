@@ -3,15 +3,21 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Styles";
 import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
-import { LayoutChangeEvent, Text, View, useColorScheme } from "react-native";
+import {
+  Image,
+  LayoutChangeEvent,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
 type PlayerAvatarSource = {
-  espnId?: string | number;
+  id?: string | number;
   avatar?: string | null;
 };
 
-type NBALastPlay = {
+type LastPlay = {
   id?: string;
   text: string;
   scoringPlay: boolean;
@@ -32,9 +38,10 @@ type NBALastPlay = {
 };
 
 type LastPlayProps = {
-  lastPlay?: string | NBALastPlay;
-  homeTeamId?: string;
-  awayTeamId?: string;
+  lastPlay?: string | LastPlay;
+  homeTeamId?: number;
+  awayTeamId?: number;
+  isWomen?: boolean;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
@@ -43,6 +50,7 @@ export default function LastPlay({
   lastPlay,
   homeTeamId,
   awayTeamId,
+  isWomen = false,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -57,45 +65,25 @@ export default function LastPlay({
     setCurrentPlay(lastPlay);
   }, [lastPlay]);
 
-  /**
-   * 🔒 CBB player hooks
-   */
-  const homeResult = usePlayersByTeam(homeTeamId || "");
-  const awayResult = usePlayersByTeam(awayTeamId || "");
+  // Fetch team rosters
+  const homeResult = usePlayersByTeam(String(homeTeamId) || "", isWomen);
+  const awayResult = usePlayersByTeam(String(awayTeamId) || "", isWomen);
 
-  /**
-   * ✅ Normalize CBB players
-   */
   const homePlayers: PlayerAvatarSource[] = (homeResult.players ?? []).map(
     (p) => ({
-      espnId: p.id,
+      id: p.id,
       avatar: p.imageUrl ?? null,
-    })
+    }),
   );
 
   const awayPlayers: PlayerAvatarSource[] = (awayResult.players ?? []).map(
     (p) => ({
-      espnId: p.id,
+      id: p.id,
       avatar: p.imageUrl ?? null,
-    })
+    }),
   );
 
-  /**
-   * 🧠 Unified avatar lookup
-   */
-  const getPlayerAvatar = (
-    espnId?: string | number,
-    fallbackUrl?: string
-  ): string => {
-    if (!espnId) return fallbackUrl || DEFAULT_HEADSHOT;
-
-    const player =
-      homePlayers.find((p) => String(p.espnId) === String(espnId)) ||
-      awayPlayers.find((p) => String(p.espnId) === String(espnId));
-
-    return player?.avatar || fallbackUrl || DEFAULT_HEADSHOT;
-  };
-
+  // Normalize play participants
   const participantsToAthletes = (participants?: any[]) => {
     if (!participants?.length) return [];
     return participants.map((p) => ({
@@ -115,15 +103,27 @@ export default function LastPlay({
 
   const firstAthlete = athletes[0];
 
-  const getTextColor = (play: NBALastPlay, text?: string) => {
+  // Get avatar using the CBB player id first, then fallback to participant headshot
+  const getPlayerAvatar = (
+    id?: string | number,
+    participantHeadshot?: string,
+  ): string => {
+    if (!id) return participantHeadshot || DEFAULT_HEADSHOT;
+
+    const player =
+      homePlayers.find((p) => String(p.id) === String(id)) ||
+      awayPlayers.find((p) => String(p.id) === String(id));
+
+    return player?.avatar || participantHeadshot || DEFAULT_HEADSHOT;
+  };
+
+  const getTextColor = (play: LastPlay, text?: string) => {
     const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
 
     const lower = text.toLowerCase();
-
     if (play.scoringPlay)
       return isDark ? Colors.dark.limeGreen : Colors.light.green;
-
     if (
       lower.includes("foul") ||
       lower.includes("violation") ||
@@ -133,11 +133,10 @@ export default function LastPlay({
     ) {
       return isDark ? Colors.dark.lightRed : Colors.light.red;
     }
-
     return defaultColor;
   };
 
-  const getIcon = (play: NBALastPlay) => {
+  const getIcon = (play: LastPlay) => {
     if (play.text.toLowerCase().includes("timeout")) {
       return (
         <Ionicons
@@ -164,10 +163,18 @@ export default function LastPlay({
   return (
     <View style={styles.container} onLayout={onLayout}>
       <HeadingTwo>Last Play</HeadingTwo>
-
       <View style={styles.wrapper}>
         <View style={styles.row}>
           {getIcon(currentPlay)}
+
+          {firstAthlete && (
+            <Image
+              source={{
+                uri: getPlayerAvatar(firstAthlete.id, firstAthlete.headshot),
+              }}
+              style={styles.avatar}
+            />
+          )}
 
           <Text
             style={[

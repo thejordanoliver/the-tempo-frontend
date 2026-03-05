@@ -250,6 +250,7 @@ import CalStateNorthridgeLogo from "../assets/College_Logos/CalStateNorthridge.p
 import CampbellsvilleLogo from "../assets/College_Logos/Campbellsville.png";
 import CanisiusLogo from "../assets/College_Logos/Canisius.png";
 import CarolinaUniversityLogo from "../assets/College_Logos/CarolinaUniversity.png";
+import CCNYLogo from "../assets/College_Logos/CCNY.png";
 import CentenaryNJLogo from "../assets/College_Logos/CentenaryNJ.png";
 import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
 import ChaminadeLogo from "../assets/College_Logos/Chaminade.png";
@@ -459,6 +460,7 @@ import SanFranciscoLogo from "../assets/College_Logos/SanFrancisco.png";
 import SanFranciscoLogoLight from "../assets/College_Logos/SanFranciscoLight.png";
 import SanJoseStateLogo from "../assets/College_Logos/SanJoséState.png";
 import SantaClaraLogo from "../assets/College_Logos/SantaClara.png";
+import SCUpstateLogo from "../assets/College_Logos/SCUpstate.png";
 import SeattleLogo from "../assets/College_Logos/Seattle.png";
 import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
 import SetonHallLogo from "../assets/College_Logos/SetonHall.png";
@@ -495,6 +497,7 @@ import SUNYMaritimeLogo from "../assets/College_Logos/SUNYMaritime.png";
 import SUNYOneontaLogo from "../assets/College_Logos/SUNYOneonta.png";
 import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
 import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
+import TarletonStateLogo from "../assets/College_Logos/TarletonState.png";
 import TennesseeSouthernLogo from "../assets/College_Logos/TennesseeSouthern.png";
 import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
 import TexasAMCCLogo from "../assets/College_Logos/TexasA&M-CorpusChristi.png";
@@ -2878,7 +2881,7 @@ export const teams: CBBTeam[] = [
     established: 1853,
     latitude: 29.652,
     longitude: -82.325,
-    championships: [2006, 2007, 2025],
+    
   },
   {
     id: 2181,
@@ -3056,6 +3059,27 @@ export const teams: CBBTeam[] = [
     established: 1880,
     latitude: 34.0141,
     longitude: -118.2879,
+  },
+  {
+    id: 2173,
+    wid: 0,
+    espnID: 2908,
+    name: "South Carolina Upstate",
+    fullName: "South Carolina Upstate Spartans",
+    shortName: "SC Upstate",
+    code: "UPST",
+    color: "#008545",
+    secondaryColor: "#000000",
+    logo: SCUpstateLogo,
+    logoLight: SCUpstateLogo,
+    location: "Spartanburg, SC",
+    city: "Spartanburg",
+    venueName: "G.B. Hodge Center",
+    address: "800 University Way, Spartanburg, SC 29303",
+    venueCapacity: "1100",
+    established: 1967,
+    latitude: 34.9986,
+    longitude: -81.969,
   },
   {
     id: 2173,
@@ -4150,8 +4174,8 @@ export const teams: CBBTeam[] = [
     name: "UMass",
     fullName: "Massachusetts Minutemen",
     code: "MASS",
-    color: "#880007",
-    secondaryColor: "null",
+    color: "#971B2F",
+    secondaryColor: "#572932",
     logo: UmassLogo,
     location: "Amherst, MA",
     city: "Amherst",
@@ -4256,6 +4280,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1505,
+    wid: 7222,
     espnID: 140,
     name: "Kansas City",
     fullName: "Kansas City Roos",
@@ -5968,7 +5993,6 @@ export const teams: CBBTeam[] = [
     venueName: "Finneran Pavilion",
     address: "800 E Lancaster Ave, Villanova, PA 19085",
     venueCapacity: "6,501",
-    championships: [1985, 2016, 2018],
     latitude: 40.0379,
     longitude: -75.3396,
   },
@@ -7368,6 +7392,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1886,
+    wid: 6861,
     espnID: 2172,
     name: "Denver",
     fullName: "Denver Pioneers",
@@ -7550,6 +7575,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1973,
+    wid: 6977,
     espnID: 2815,
     name: "Lindenwood",
     fullName: "Lindenwood Lions",
@@ -7561,6 +7587,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2430,
+    wid: 7107,
     espnID: 2511,
     name: "Queens",
     fullName: "Queens University Royals",
@@ -7642,6 +7669,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2217,
+    wid: 7288,
     espnID: 43,
     name: "Yale",
     fullName: "Yale Bulldogs",
@@ -7677,6 +7705,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 249,
+    wid: 7282,
     espnID: 2739,
     name: "Wisc. Green Bay",
     fullName: "Green Bay Phoenix",
@@ -7695,6 +7724,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 1871,
+    wid: 6843,
     espnID: 171,
     name: "Columbia",
     fullName: "Columbia Lions",
@@ -7704,6 +7734,19 @@ export const teams: CBBTeam[] = [
     secondaryColor: "#183863",
     logo: ColumbiaLogo,
   },
+  {
+    id: 2362,
+    wid: 7184,
+    espnID: 2627,
+    name: "Tarleton State",
+    fullName: "Tarleton State Texans",
+    shortName: "Tarleton St",
+    code: "TAR",
+    color: "#4f2d7f",
+    secondaryColor: "#ffffff",
+    logo: TarletonStateLogo,
+  },
+
   {
     id: 241,
     wid: 7108,
@@ -8341,6 +8384,25 @@ export const teams: CBBTeam[] = [
     established: 1926,
     latitude: 42.1129,
     longitude: -80.0866,
+  },
+  {
+    id: 7569,
+    espnID: 170,
+    name: "City College NY",
+    fullName: "City College of New York Beavers",
+    shortName: "CCNY",
+    code: "CCNY",
+    color: "#0033A0",
+    secondaryColor: "#FFFFFF",
+    logo: CCNYLogo,
+    location: "New York, NY",
+    city: "New York",
+    venueName: "Nat Holman Gymnasium",
+    address: "160 Convent Ave, New York, NY 10031",
+    venueCapacity: "1,000",
+    established: 1847,
+    latitude: 40.8216,
+    longitude: -73.9496,
   },
 ];
 
@@ -9014,7 +9076,7 @@ const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
     (t) =>
       isWomen
         ? String(t.wid) === String(id) // 👈 WCBB
-        : String(t.id) === String(id) // 👈 Men
+        : String(t.id) === String(id), // 👈 Men
   );
 };
 
@@ -9030,7 +9092,7 @@ export const teamsCBBById: Record<string, CBBTeam> = teams.reduce(
     map[team.id] = team;
     return map;
   },
-  {} as Record<string, CBBTeam>
+  {} as Record<string, CBBTeam>,
 );
 export const teamsWCBBById: Record<string, CBBTeam> = teams.reduce(
   (map, team) => {
@@ -9039,7 +9101,7 @@ export const teamsWCBBById: Record<string, CBBTeam> = teams.reduce(
     }
     return map;
   },
-  {} as Record<string, CBBTeam>
+  {} as Record<string, CBBTeam>,
 );
 
 export const getTeamByESPNId = (id: number | string): CBBTeam | null => {
@@ -9077,33 +9139,39 @@ export const getTeamLogo = (id?: number | string, isDark = false) => {
   if (isWomen) {
     // Use women’s logo if available
     return isDark
-      ? team.wLogo ?? team.logoLight ?? team.logo
-      : team.wLogo ?? team.logo ?? PlaceholderLogo;
+      ? (team.wLogo ?? team.logoLight ?? team.logo)
+      : (team.wLogo ?? team.logo ?? PlaceholderLogo);
   }
 
   // Men’s logo
-  return isDark ? team.logoLight ?? team.logo : team.logo;
+  return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
 
 export const getCBBTeamLogo = (
   id?: number | string,
   isDark = false,
-  isWomen = false
+  isWomen = false,
 ) => {
   if (!id) return PlaceholderLogo;
 
-  // Try MEN first
+  // Try men's id first
   let team = teams.find((t) => String(t.id) === String(id));
 
+  // If not found, try women's id
   if (!team) {
     team = teams.find((t) => String(t.wid) === String(id));
-    isWomen = !!team;
+    if (team) isWomen = true;
   }
 
   if (!team) return PlaceholderLogo;
 
-  // Men’s logo
-  return isDark ? team.logoLight ?? team.logo : team.logo;
+  // 🔥 If women's, always use wlogo first
+  if (isWomen && team.wLogo) {
+    return team.wLogo;
+  }
+
+  // Men's logo logic
+  return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
 
 export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
@@ -9111,12 +9179,12 @@ export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
     map[team.id] = team;
     return map;
   },
-  {} as Record<string, CBBTeam>
+  {} as Record<string, CBBTeam>,
 );
 
 export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
 export const teamMapByESPNID = Object.fromEntries(
-  teams.map((t) => [t.espnID, t])
+  teams.map((t) => [t.espnID, t]),
 );
 
 export function mapToInternalCBBTeam(apiTeam: any) {

@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 export const combinedGameListStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -10,7 +9,7 @@ export const combinedGameListStyles = (isDark: boolean) =>
     gridItem: { flex: 1 },
     listItem: { marginHorizontal: 12 },
     gridListContainer: { paddingBottom: 100 },
-    contentContainer: {  paddingBottom: 100, },
+    contentContainer: { paddingBottom: 100 },
     emptyText: {
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,

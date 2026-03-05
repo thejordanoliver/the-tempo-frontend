@@ -2,8 +2,7 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import React, { useMemo } from "react";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 
@@ -255,7 +254,9 @@ const CFBSeriesHistory: React.FC<Props> = ({
                           </Text>
                         </Text>
                       )}
-                      {isStreak && <Ionicons name="flame" size={20} color={"orange"}/>}
+                      {isStreak && (
+                        <Ionicons name="flame" size={20} color={"orange"} />
+                      )}
                     </View>
                   </View>
                   <View style={styles.gameRowRight}>
@@ -325,8 +326,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     recordText: {
       fontFamily: Fonts.OSBOLD,
@@ -334,8 +335,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     recentContainer: {
       marginTop: 12,
@@ -347,8 +348,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameRow: {
       flexDirection: "row",
@@ -358,8 +359,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomColor: lighter
         ? Colors.darkGray
         : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+          ? Colors.darkGray
+          : Colors.lightGray,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
     gameRowLeft: {
@@ -381,8 +382,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     gameScore: {
       fontFamily: Fonts.OSMEDIUM,
@@ -390,8 +391,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameScoreDash: {
       fontFamily: Fonts.OSMEDIUM,
@@ -399,8 +400,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameScoreWinner: {
       fontFamily: Fonts.OSBOLD,
@@ -408,8 +409,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameScoreLoser: {
       fontFamily: Fonts.OSMEDIUM,
@@ -417,8 +418,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     gameLocation: {
       fontFamily: Fonts.OSBOLD,
@@ -426,16 +427,16 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     streakEmoji: {
       fontSize: 14,
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
       marginLeft: 6,
     },
   });

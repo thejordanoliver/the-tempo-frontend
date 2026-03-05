@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Colors } from "constants/Styles";
+import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBGame } from "types/types";
-import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
-import { Colors } from "constants/Colors";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -60,13 +60,13 @@ export function useCBBSeasonGames({
       try {
         await AsyncStorage.setItem(
           CACHE_KEY,
-          JSON.stringify({ data, timestamp: Date.now() })
+          JSON.stringify({ data, timestamp: Date.now() }),
         );
       } catch (err) {
         console.warn("Failed to cache CBB games:", err);
       }
     },
-    [CACHE_KEY]
+    [CACHE_KEY],
   );
 
   // --- Fetch from API ---
@@ -82,7 +82,7 @@ export function useCBBSeasonGames({
         return;
       }
 
-      const res = await axios.get(`${BASE_URL}/api/gamesCBB`, {
+      const res = await axios.get(`${BASE_URL}/api/games/cbb`, {
         params: { season, league, all: 1 },
       });
 
@@ -113,7 +113,7 @@ export function useCBBSeasonGames({
   const isLiveGame = useCallback(
     (game: CBBGame) =>
       !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
-    []
+    [],
   );
 
   // --- Sort: live first, then chronological ---
@@ -133,7 +133,11 @@ export function useCBBSeasonGames({
   return { games: sortedGames, loading, error, refreshCBBGames };
 }
 
-function normalizeCBBGames(data: any[], league: string, isWomen = false): CBBGame[] {
+function normalizeCBBGames(
+  data: any[],
+  league: string,
+  isWomen = false,
+): CBBGame[] {
   const teamsMap = isWomen ? teamsWCBBById : teamsCBBById;
 
   return data
@@ -141,8 +145,12 @@ function normalizeCBBGames(data: any[], league: string, isWomen = false): CBBGam
       const date = g.date ? dayjs(g.date).toISOString() : null;
 
       // Determine keys for team lookup
-      const homeKey = isWomen ? Number(g.teams?.home?.wid) : Number(g.teams?.home?.id);
-      const awayKey = isWomen ? Number(g.teams?.away?.wid) : Number(g.teams?.away?.id);
+      const homeKey = isWomen
+        ? Number(g.teams?.home?.wid)
+        : Number(g.teams?.home?.id);
+      const awayKey = isWomen
+        ? Number(g.teams?.away?.wid)
+        : Number(g.teams?.away?.id);
 
       const homeTeamData = teamsMap[homeKey] || {};
       const awayTeamData = teamsMap[awayKey] || {};

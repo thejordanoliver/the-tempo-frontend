@@ -1,4 +1,5 @@
 import { NBATeam } from "types/types";
+import { Venue } from "types/types";
 
 // Logos
 import SixersLogo from "../assets/Logos/76ers.png";
@@ -125,7 +126,7 @@ export const teams: NBATeam[] = [
       home: HawksHome,
       away: HawksAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 2,
@@ -152,7 +153,7 @@ export const teams: NBATeam[] = [
       home: CelticsHome,
       away: CelticsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 4,
@@ -179,7 +180,7 @@ export const teams: NBATeam[] = [
       home: NetsHome,
       away: NetsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 5,
@@ -191,8 +192,8 @@ export const teams: NBATeam[] = [
     code: "CHA",
     location: "Charlotte, NC",
     logo: HornetsLogo,
-    color: "rgb(0, 120, 140)",
-    secondaryColor: "rgba(29, 17, 96, 1)",
+    color: "rgba(29, 17, 96, 1)",
+    secondaryColor: "rgba(0, 120, 140, 1)",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/hornets.jpg",
     venueName: "Spectrum Center",
@@ -205,7 +206,8 @@ export const teams: NBATeam[] = [
     uniforms: {
       home: HornetsHome,
       away: HornetsAway,
-    },isAllStar: false
+    },
+    isAllStar: false,
   },
   {
     id: 6,
@@ -232,7 +234,7 @@ export const teams: NBATeam[] = [
       home: BullsHome,
       away: BullsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 7,
@@ -259,7 +261,7 @@ export const teams: NBATeam[] = [
       home: CavsHome,
       away: CavsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 8,
@@ -286,7 +288,7 @@ export const teams: NBATeam[] = [
       home: MavsHome,
       away: MavsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 9,
@@ -313,7 +315,7 @@ export const teams: NBATeam[] = [
       home: NuggetsHome,
       away: NuggetsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 10,
@@ -340,7 +342,7 @@ export const teams: NBATeam[] = [
       home: PistonsHome,
       away: PistonsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 11,
@@ -367,7 +369,7 @@ export const teams: NBATeam[] = [
       home: WarriorsHome,
       away: WarriorsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 14,
@@ -395,7 +397,7 @@ export const teams: NBATeam[] = [
       home: RocketsHome,
       away: RocketsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 15,
@@ -422,7 +424,7 @@ export const teams: NBATeam[] = [
       home: PacersHome,
       away: PacersAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 16,
@@ -449,7 +451,7 @@ export const teams: NBATeam[] = [
       home: ClippersHome,
       away: ClippersAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 17,
@@ -476,7 +478,7 @@ export const teams: NBATeam[] = [
       home: LakersHome,
       away: LakersAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 19,
@@ -503,7 +505,7 @@ export const teams: NBATeam[] = [
       home: GrizzliesHome,
       away: GrizzliesAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 20,
@@ -530,7 +532,7 @@ export const teams: NBATeam[] = [
       home: HeatHome,
       away: HeatAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 21,
@@ -557,7 +559,7 @@ export const teams: NBATeam[] = [
       home: BucksHome,
       away: BucksAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 22,
@@ -584,7 +586,7 @@ export const teams: NBATeam[] = [
       home: TimberwolvesHome,
       away: TimberwolvesAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
 
   {
@@ -612,7 +614,7 @@ export const teams: NBATeam[] = [
       home: PelicansHome,
       away: PelicansAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 24,
@@ -639,7 +641,7 @@ export const teams: NBATeam[] = [
       home: KnicksHome,
       away: KnicksAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 25,
@@ -666,7 +668,7 @@ export const teams: NBATeam[] = [
       home: ThunderHome,
       away: ThunderAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
 
   {
@@ -694,7 +696,7 @@ export const teams: NBATeam[] = [
       home: MagicHome,
       away: MagicAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 27,
@@ -722,7 +724,7 @@ export const teams: NBATeam[] = [
       home: SixersHome,
       away: SixersAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 28,
@@ -749,7 +751,7 @@ export const teams: NBATeam[] = [
       home: SunsHome,
       away: SunsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 29,
@@ -776,7 +778,7 @@ export const teams: NBATeam[] = [
       home: TrailBlazersHome,
       away: TrailBlazersAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 30,
@@ -803,7 +805,7 @@ export const teams: NBATeam[] = [
       home: KingsHome,
       away: KingsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 31,
@@ -830,7 +832,7 @@ export const teams: NBATeam[] = [
       home: SpursHome,
       away: SpursAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 38,
@@ -858,7 +860,7 @@ export const teams: NBATeam[] = [
       home: RaptorsHome,
       away: RaptorsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 40,
@@ -886,7 +888,7 @@ export const teams: NBATeam[] = [
       home: JazzHome,
       away: JazzAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 41,
@@ -913,7 +915,7 @@ export const teams: NBATeam[] = [
       home: WizardsHome,
       away: WizardsAway,
     },
-    isAllStar: false
+    isAllStar: false,
   },
 ];
 
@@ -928,7 +930,6 @@ export const getTeamByESPNId = (espnId: number | string) => {
 export const getTeamById = (id?: number | string) =>
   teams.find((t) => String(t.id) === String(id));
 
-
 export const getTeamBySummerId = (id?: number | string) =>
   teams.find((t) => String(t.summerLeagueId) === String(id));
 
@@ -937,7 +938,7 @@ export const getNBATeam = (id: number | string) =>
 
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean
+  isDark: boolean,
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo;
 
@@ -954,20 +955,15 @@ export function getTeamLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export const teamsById: Record<string, NBATeam> = teams.reduce((map, team) => {
-  map[team.id] = team;
-  return map;
-}, {} as Record<string, NBATeam>);
+export const teamsById: Record<string, NBATeam> = teams.reduce(
+  (map, team) => {
+    map[team.id] = team;
+    return map;
+  },
+  {} as Record<string, NBATeam>,
+);
 
-export type Venue = {
-  name: string;
-  city?: string;
-  address: string;
-  latitude?: number;
-  longitude?: number;
-  venueCapacity?: string;
-  venueImage: string;
-};
+
 
 export const neutralVenues: Record<string, Venue> = {
   /* ---------------- International / Neutral ---------------- */
@@ -1123,7 +1119,6 @@ export const neutralVenues: Record<string, Venue> = {
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/legacy.jpg",
   },
 };
-
 
 export const nbaDivisionsById = {
   Atlantic: [

@@ -1,22 +1,23 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as nflTeams } from "constants/teamsNFL";
 import { teams as cfbTeams } from "constants/teamsCFB";
+import { teams as mlbTeams } from "constants/teamsMLB";
+import { teams as nflTeams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
+import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
-import { useRouter } from "expo-router";
-import * as Haptics from "expo-haptics";
-import axios from "axios";
 import type { LeagueType, Team } from "types/types";
 
-type TeamWithLeague = Team & { league: LeagueType };
+export type TeamWithLeague = Team & { league: LeagueType };
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
 const STORAGE_KEY = "favorites";
 
 export function useFavoriteTeams() {
-  /* ------------------ STATE ------------------ */
   const [search, setSearch] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -30,22 +31,42 @@ export function useFavoriteTeams() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const router = useRouter();
 
-  /* ------------------ ALL TEAMS ------------------ */
+  /* ---------------- TEAM ID HELPER ---------------- */
+
+  const getTeamId = (team: TeamWithLeague) => {
+    if (team.league === "WCBB") {
+      return (team as any).wid;
+    }
+    return team.id;
+  };
+
+  /* ---------------- ALL TEAMS ---------------- */
+
   const allTeams = useMemo(
-    () => [...nbaTeams, ...nflTeams, ...cfbTeams, ...cbbTeams],
-    []
+    () => [
+      ...nbaTeams,
+      ...nflTeams,
+      ...cfbTeams,
+      ...cbbTeams,
+      ...mlbTeams,
+      ...nhlTeams,
+    ],
+    [],
   );
 
   const filteredTeams = useMemo(() => {
     const q = search.toLowerCase();
+
     return allTeams.filter((team) =>
-      (team.fullName ?? team.name ?? "").toLowerCase().includes(q)
+      (team.fullName ?? team.name ?? "").toLowerCase().includes(q),
     );
   }, [search, allTeams]);
 
-  /* ------------------ LOAD FAVORITES ------------------ */
+  /* ---------------- LOAD FAVORITES ---------------- */
+
   const loadFavorites = useCallback(async () => {
     setIsLoading(true);
+
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
       const storedFavorites = await AsyncStorage.getItem(STORAGE_KEY);
@@ -71,14 +92,15 @@ export function useFavoriteTeams() {
     loadFavorites();
   }, [loadFavorites]);
 
-  /* ------------------ FAVORITE HELPERS ------------------ */
+  /* ---------------- FAVORITE HELPERS ---------------- */
+
   const buildKey = (league: LeagueType, id: string | number) =>
     `${league}:${id}`;
 
   const isFavorite = useCallback(
     (league: LeagueType, id: string | number) =>
       favorites.includes(buildKey(league, id)),
-    [favorites]
+    [favorites],
   );
 
   const toggleFavorite = useCallback(
@@ -91,16 +113,17 @@ export function useFavoriteTeams() {
           : [...prev, key];
 
         AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch((err) =>
-          console.error("Failed to persist favorites", err)
+          console.error("Failed to persist favorites", err),
         );
 
         return next;
       });
     },
-    []
+    [],
   );
 
-  /* ------------------ LAYOUT ------------------ */
+  /* ---------------- GRID / LIST TOGGLE ---------------- */
+
   const toggleLayout = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -108,6 +131,7 @@ export function useFavoriteTeams() {
       useNativeDriver: true,
     }).start(() => {
       setIsGridView((prev) => !prev);
+
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 200,
@@ -116,95 +140,111 @@ export function useFavoriteTeams() {
     });
   };
 
-  /* ------------------ SAVE TO BACKEND ------------------ */
+  /* ---------------- SAVE FAVORITES ---------------- */
+
   const saveFavorites = async () => {
-    if (!ready) {
-      console.warn("saveFavorites aborted: not ready");
-      return false;
-    }
-    if (!userId) {
-      console.warn("saveFavorites aborted: userId missing");
-      return false;
-    }
+    if (!ready || !userId) return false;
 
     const normalizedFavorites = favorites.filter(
-      (f): f is string => typeof f === "string" && f.includes(":")
+      (f): f is string => typeof f === "string" && f.includes(":"),
     );
 
     try {
       const url = `${BASE_URL}/api/users/id/${userId}/favorites`;
-      console.log("Saving favorites →", url, normalizedFavorites);
 
-      const res = await axios.patch(url, { favorites: normalizedFavorites });
+      const res = await axios.patch(url, {
+        favorites: normalizedFavorites,
+      });
 
-      if (res.status !== 200) {
-        console.error("Favorites update failed:", res.status, res.data);
-        return false;
-      }
+      if (res.status !== 200) return false;
 
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(normalizedFavorites));
+      await AsyncStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(normalizedFavorites),
+      );
+
       return true;
     } catch (err: any) {
-      console.error("Error saving favorites", err.response?.data ?? err.message ?? err);
+      console.error(
+        "Error saving favorites",
+        err.response?.data ?? err.message ?? err,
+      );
       return false;
     }
   };
 
-  /* ------------------ MODAL & TEAM PREVIEW ------------------ */
+  /* ---------------- TEAM PREVIEW ---------------- */
+
   const handleLongPress = useCallback((team: TeamWithLeague) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setPreviewTeam(team);
     setModalVisible(true);
   }, []);
 
+  /* ---------------- NAVIGATION ---------------- */
+
   const handleGoToTeam = useCallback(() => {
     if (!previewTeam) return;
+
+    const id = getTeamId(previewTeam);
 
     const route =
       previewTeam.league === "NFL"
         ? "/team/nfl/[teamId]"
         : previewTeam.league === "NBA"
-        ? "/team/[teamId]"
-        : previewTeam.league === "CFB"
-        ? "/team/cfb/[teamId]"
-        : previewTeam.league === "CBB"
-        ? "/team/cbb/[teamId]"
-        : "/team/wcbb/[teamId]";
+          ? "/team/[teamId]"
+          : previewTeam.league === "CFB"
+            ? "/team/cfb/[teamId]"
+            : previewTeam.league === "CBB"
+              ? "/team/cbb/[teamId]"
+              : previewTeam.league === "WCBB"
+                ? "/team/wcbb/[teamId]"
+                : previewTeam.league === "MLB"
+                  ? "/team/mlb/[teamId]"
+                  : "/team/nhl/[teamId]";
 
     router.push({
       pathname: route,
-      params: { teamId: previewTeam.id.toString() },
+      params: { teamId: id.toString() },
     });
 
     setModalVisible(false);
   }, [previewTeam, router]);
 
-  const handleRemoveFavorite = useCallback(async () => {
-    if (!previewTeam) return;
+  /* ---------------- REMOVE FAVORITE ---------------- */
 
-    const key = buildKey(previewTeam.league, previewTeam.id);
+  const handleRemoveFavorite = useCallback(
+    async (team: TeamWithLeague) => {
+      const id = getTeamId(team);
+      const key = buildKey(team.league, id);
 
-    const updatedFavorites = favorites.filter((f) => f !== key);
-    setFavorites(updatedFavorites);
+      const updatedFavorites = favorites.filter((f) => f !== key);
 
-    setModalVisible(false);
-    setPreviewTeam(null);
+      setFavorites(updatedFavorites);
+      setModalVisible(false);
+      setPreviewTeam(null);
 
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedFavorites));
 
-    if (userId) {
-      const url = `${BASE_URL}/api/users/id/${userId}/favorites`;
-      try {
-        await axios.patch(url, { favorites: updatedFavorites });
-      } catch (err: any) {
-        console.error("Failed to remove favorite on backend", err.response?.data ?? err.message ?? err);
+      if (userId) {
+        try {
+          await axios.patch(`${BASE_URL}/api/users/id/${userId}/favorites`, {
+            favorites: updatedFavorites,
+          });
+        } catch (err: any) {
+          console.error(
+            "Failed to remove favorite",
+            err.response?.data ?? err.message ?? err,
+          );
+        }
       }
-    }
-  }, [previewTeam, favorites, userId]);
+    },
+    [favorites, userId],
+  );
 
-  /* ------------------ RETURN ------------------ */
+  /* ---------------- RETURN ---------------- */
+
   return {
-    // state
     search,
     setSearch,
     favorites,
@@ -214,20 +254,16 @@ export function useFavoriteTeams() {
     isGridView,
     ready,
 
-    // layout
     toggleLayout,
     fadeAnim,
 
-    // favorites API
     toggleFavorite,
     isFavorite,
     saveFavorites,
     loadFavorites,
 
-    // search
     filteredTeams,
 
-    // modal & preview
     previewTeam,
     modalVisible,
     setModalVisible,

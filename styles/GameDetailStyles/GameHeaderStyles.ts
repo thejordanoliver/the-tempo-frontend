@@ -28,8 +28,22 @@ export const gameHeaderStyles = (isDark: boolean) =>
     },
     divider: {
       height: 10,
-      width: StyleSheet.hairlineWidth,
+      marginHorizontal: 4,
+      width: 1,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
-
+    },
+    seriesContainer: {
+      position: "absolute",
+      width: "100%",
+      top: 0,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    seriesText: {
+      fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
     },
   });

@@ -1,5 +1,8 @@
 // utils/games.ts
 import { neutralVenues } from "constants/teams";
+import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
+import { neutralStadiums } from "constants/teamsNFL";
+import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -79,6 +82,24 @@ export function filterByDate(games: any[], date: Date) {
   });
 }
 
+export const filterMLBByDate = (
+  games: any[],
+  selectedDate: Date
+) => {
+  return games.filter((game) => {
+    if (!game.date) return false;
+
+    const gameDate = new Date(game.date);
+
+    return (
+      gameDate.getFullYear() === selectedDate.getFullYear() &&
+      gameDate.getMonth() === selectedDate.getMonth() &&
+      gameDate.getDate() === selectedDate.getDate()
+    );
+  });
+};
+
+
 // ---------- ⏱️ Live Game Check ----------
 export function isLiveGame(game: any) {
   const statusLong = String(game.status?.long ?? "").toLowerCase();
@@ -122,12 +143,50 @@ export const formatQuarter = (period?: number | string) => {
 
   return period;
 };
+export const formatNHLQuarter = (period?: number | string) => {
+  if (!period) return "";
+
+  const p = Number(period);
+  if (!isNaN(p)) {
+    if (p <= 3) return ["1st", "2nd", "3rd"][p - 1];
+    const otNumber = p - 3;
+    return otNumber === 1 ? "OT" : `OT${otNumber}`;
+  }
+
+  // fallback for string values like "ot", "overtime"
+  const val = String(period).toLowerCase();
+  if (val.includes("ot") || val.includes("overtime")) {
+    const match = val.match(/\d+/);
+    return match ? `OT${match[0]}` : "OT";
+  }
+
+  return period;
+};
+export const formatMLBQuarter = (period?: number | string) => {
+  if (!period) return "";
+
+  const p = Number(period);
+  if (!isNaN(p)) {
+    if (p <= 3) return ["1st", "2nd", "3rd"][p - 1];
+    const otNumber = p - 3;
+    return otNumber === 1 ? "OT" : `OT${otNumber}`;
+  }
+
+  // fallback for string values like "ot", "overtime"
+  const val = String(period).toLowerCase();
+  if (val.includes("ot") || val.includes("overtime")) {
+    const match = val.match(/\d+/);
+    return match ? `OT${match[0]}` : "OT";
+  }
+
+  return period;
+};
 
 // --- Helpers ---
 export const formatCBBQuarter = (
   period?: number | string,
   isWomen?: boolean,
-  statusText?: string
+  statusText?: string,
 ) => {
   if (!period && !statusText) return "";
 
@@ -163,62 +222,119 @@ export function resolveVenue({
   espnVenue,
   homeTeam,
   isNeutralSite,
+  league,
 }: {
   espnVenue?: any;
   homeTeam?: any;
   isNeutralSite?: boolean;
+  league?: string;
 }) {
-  const venueName =
-    espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "";
+  const venueNameRaw =
+    espnVenue?.fullName ??
+    espnVenue?.name ??
+    homeTeam?.venueName ??
+    "";
 
-  // 1️⃣ Exact neutral venue match
-  const neutralVenue = neutralVenues[venueName];
-  if (neutralVenue) {
+  const venueName = venueNameRaw.trim();
+  const leagueKey = league?.toLowerCase();
+
+  // -------------------------------------------------
+  // 🔁 Select correct neutral venue map by league
+  // -------------------------------------------------
+  let neutralMap: Record<string, any> = {};
+
+  switch (leagueKey) {
+    case "nhl":
+      neutralMap = nhlNeutralVenues;
+      break;
+    case "nfl":
+      neutralMap = neutralStadiums;
+      break;
+    case "cfb":
+      neutralMap = cfbNeutralStadiums;
+      break;
+    case "mlb":
+      neutralMap = neutralVenues; // adjust if you add mlbNeutralVenues
+      break;
+    case "nba":
+    default:
+      neutralMap = neutralVenues;
+  }
+
+  // -------------------------------------------------
+  // 1️⃣ Neutral site handling
+  // -------------------------------------------------
+  if (isNeutralSite && venueName) {
+    const neutralMatch = Object.keys(neutralMap).find(
+      (key) =>
+        key.toLowerCase().trim() ===
+        venueName.toLowerCase().trim()
+    );
+
+    if (neutralMatch) {
+      const neutralVenue = neutralMap[neutralMatch];
+
+      return {
+        name: neutralVenue.name ?? "",
+        city: neutralVenue.city ?? "",
+        address: neutralVenue.address ?? "",
+        image: neutralVenue.venueImage ?? "",
+        capacity: neutralVenue.venueCapacity ?? "",
+        latitude: neutralVenue.latitude ?? null,
+        longitude: neutralVenue.longitude ?? null,
+      };
+    }
+  }
+
+  // -------------------------------------------------
+  // 2️⃣ Non-neutral → Prefer ESPN, fallback to homeTeam
+  // -------------------------------------------------
+  if (!isNeutralSite) {
     return {
-      name: neutralVenue.name,
-      city: neutralVenue.city ?? "",
-      address: neutralVenue.address ?? "",
-      image: neutralVenue.venueImage ?? "",
-      capacity: neutralVenue.venueCapacity ?? "",
-      latitude: neutralVenue.latitude ?? null,
-      longitude: neutralVenue.longitude ?? null,
+      name:
+        espnVenue?.fullName ??
+        espnVenue?.name ??
+        homeTeam?.venueName ??
+        "",
+      city:
+        espnVenue?.address?.city ??
+        homeTeam?.location ??
+        "",
+      address:
+        espnVenue?.address?.street ??
+        homeTeam?.address ??
+        "",
+      image:
+        espnVenue?.images?.[0]?.href ??
+        homeTeam?.venueImage ??
+        "",
+      capacity:
+        espnVenue?.capacity ??
+        homeTeam?.venueCapacity ??
+        "",
+      latitude:
+        espnVenue?.address?.latitude ??
+        homeTeam?.latitude ??
+        null,
+      longitude:
+        espnVenue?.address?.longitude ??
+        homeTeam?.longitude ??
+        null,
     };
   }
 
-  // 2️⃣ Prefer TEAM venue for non-neutral games
-  if (!isNeutralSite && homeTeam?.address) {
-    return {
-      name: homeTeam.venueName ?? "",
-      city: homeTeam.location ?? "",
-      address: homeTeam.address ?? "",
-      image: homeTeam.venueImage ?? "",
-      capacity: homeTeam.venueCapacity ?? "",
-      latitude: homeTeam.latitude ?? null,
-      longitude: homeTeam.longitude ?? null,
-    };
-  }
-
-  // 3️⃣ ESPN fallback
-  if (espnVenue) {
-    return {
-      name: espnVenue.fullName ?? espnVenue.name ?? "",
-      city: espnVenue.address?.city ?? "",
-      address: espnVenue.address?.street ?? "",
-      image: espnVenue.images?.[0]?.href ?? "", // ✅ this is valid
-      capacity: espnVenue.capacity ?? "",
-      latitude: espnVenue.latitude ?? null,
-      longitude: espnVenue.longitude ?? null,
-    };
-  }
-
-  // 4️⃣ Default fallback
+  // -------------------------------------------------
+  // 3️⃣ Final fallback
+  // -------------------------------------------------
   return {
     name: "",
     city: "",
     address: "",
-    image: "", // will never happen if espnVenue exists
+    image: "",
     capacity: "",
     latitude: null,
     longitude: null,
   };
 }
+
+

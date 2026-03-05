@@ -1,11 +1,10 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const gameWidgetStyles = (
   isDark: boolean,
   height: number,
-  width: number
+  width: number,
 ) => {
   const base = Math.min(height, width);
 
@@ -57,7 +56,6 @@ export const gameWidgetStyles = (
       height: base * 0.24,
       marginLeft: base * 0.2,
       resizeMode: "contain",
-      
     },
 
     homePossession: {
@@ -126,7 +124,6 @@ export const gameWidgetStyles = (
 
     headlineContainer: {
       width: "100%",
-     
     },
     headline: {
       fontFamily: Fonts.OSREGULAR,
@@ -150,10 +147,10 @@ export const gameWidgetStyles = (
     dateTime: {
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.white : Colors.black,
-      fontSize: base * 0.10,
+      fontSize: base * 0.1,
       textAlign: "center",
     },
- 
+
     period: {
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.white : Colors.black,

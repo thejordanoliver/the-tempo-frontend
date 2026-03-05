@@ -1,14 +1,16 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { StandingsSkeleton } from "components/Sports/NBA/Standings/StandingsSkeleton";
-import { Colors } from "constants/Colors";
+import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
+import { Colors } from "constants/Styles";
 import {
   conferenceListMap,
+  getTeamByESPNId,
   getTeamCodeESPN,
   getTeamLogoESPN,
   teams,
 } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { useCFBConferenceStandings } from "hooks/CFBHooks/useCFBConferenceStandings";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import {
   FlatList,
   Image,
@@ -18,7 +20,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
   selectedConference?: string;
@@ -57,7 +59,7 @@ function stripParen(s: string) {
 
 function resolveConferenceKey(
   input: string | null | undefined,
-  groupedKeys: string[]
+  groupedKeys: string[],
 ): string | null {
   if (!input) return null;
 
@@ -90,11 +92,11 @@ export const CFBConferenceStandingsList = ({
 }: Props) => {
   const { standings, loading, error } = useCFBConferenceStandings();
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = standingsStyles(isDark);
   const router = useRouter();
-
+  const league = "CFB";
+  const { isFavorite } = useFavoriteTeams();
   const teamConference = getTeamConference(teamName);
-
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -114,12 +116,15 @@ export const CFBConferenceStandingsList = ({
   const safeStandings = Array.isArray(standings) ? standings : [];
 
   // --- Group by ESPN conference string ---
-  const grouped = safeStandings.reduce((acc, team) => {
-    const key = team?.conference ?? "Unknown";
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(team);
-    return acc;
-  }, {} as Record<string, typeof safeStandings>);
+  const grouped = safeStandings.reduce(
+    (acc, team) => {
+      const key = team?.conference ?? "Unknown";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(team);
+      return acc;
+    },
+    {} as Record<string, typeof safeStandings>,
+  );
 
   const groupedKeys = Object.keys(grouped);
 
@@ -142,8 +147,10 @@ export const CFBConferenceStandingsList = ({
 
   // --- Render Functions ---
   const renderLeftItem = ({ item }: { item: any }) => {
+    const team = getTeamByESPNId(Number(item.teamId));
     const teamLogo = getTeamLogoESPN(item.teamId, isDark);
     const teamCode = getTeamCodeESPN(item.teamId);
+    const favorited = team ? isFavorite(league, team.id) : false;
 
     // ESPN → internal mapping
     const espnToInternal: Record<string, number> = {};
@@ -159,7 +166,16 @@ export const CFBConferenceStandingsList = ({
     };
 
     return (
-      <View style={styles.row}>
+      <View
+        style={[
+          styles.row,
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
+        ]}
+      >
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
@@ -208,6 +224,8 @@ export const CFBConferenceStandingsList = ({
     item: any;
     showDivision: boolean;
   }) => {
+    const team = getTeamByESPNId(Number(item.teamId));
+    const favorited = team ? isFavorite(league, team.id) : false;
     // Determine streak display and color
     let streakText = "-";
     let streakColor = item.streak.startsWith("W")
@@ -215,12 +233,12 @@ export const CFBConferenceStandingsList = ({
         ? Colors.dark.limeGreen
         : Colors.light.green
       : item.streak.startsWith("L")
-      ? isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red
-      : isDark
-      ? Colors.white
-      : Colors.black;
+        ? isDark
+          ? Colors.dark.lightRed
+          : Colors.light.red
+        : isDark
+          ? Colors.white
+          : Colors.black;
 
     if (item.streak != null && item.streak !== "-") {
       const streakValue = Number(item.streak);
@@ -236,7 +254,16 @@ export const CFBConferenceStandingsList = ({
     }
 
     return (
-      <View style={styles.row}>
+      <View
+        style={[
+          styles.row,
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
+        ]}
+      >
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.overall}</Text>
         </View>
@@ -284,12 +311,15 @@ export const CFBConferenceStandingsList = ({
     title: string;
     data: typeof safeStandings;
   }) {
-    const divisions = data.reduce((acc, team) => {
-      const div = team.division || "Overall";
-      if (!acc[div]) acc[div] = [];
-      acc[div].push(team);
-      return acc;
-    }, {} as Record<string, typeof data>);
+    const divisions = data.reduce(
+      (acc, team) => {
+        const div = team.division || "Overall";
+        if (!acc[div]) acc[div] = [];
+        acc[div].push(team);
+        return acc;
+      },
+      {} as Record<string, typeof data>,
+    );
 
     const hasDivisions = Object.keys(divisions).length > 1;
 
@@ -353,7 +383,7 @@ export const CFBConferenceStandingsList = ({
           <Text style={styles.emptyText}>
             No standings found for{" "}
             {onlyTeamConference
-              ? teamConference ?? "team conference"
+              ? (teamConference ?? "team conference")
               : selectedConference}
             .
           </Text>

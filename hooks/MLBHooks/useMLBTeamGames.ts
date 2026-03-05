@@ -6,7 +6,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useMLBTeamGames(
   teamId: string | number,
-  season = "2023",
+  season = "2026",
   league = "1",
   fetchAll = false
 ) {
@@ -21,7 +21,7 @@ export function useMLBTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/gamesMLB/team/${teamId}`, {
+      const res = await axios.get(`${BASE_URL}/api/games/mlb/team/${teamId}`, {
         params: { season, league, all: fetchAll ? 1 : 0 },
       });
 

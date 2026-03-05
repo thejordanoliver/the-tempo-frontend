@@ -2,61 +2,43 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
-import { Colors, Fonts } from "constants/Styles";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
   Easing,
-  GestureResponderEvent,
   KeyboardAvoidingView,
-  PanResponder,
-  PanResponderGestureState,
   Platform,
   Pressable,
   Text,
   View,
   useColorScheme,
 } from "react-native";
+import PagerView from "react-native-pager-view";
 import { formStyles } from "styles/FormStyles";
 import CropEditorModal from "../components/CropEditorModal";
 import SignInForm from "../components/SignInForm";
-import SignupSteps from "../components/SignUpSteps";
+import SignUpForm from "../components/SignUpForm";
 import TabBar from "../components/TabBar";
 import { LeagueType, User } from "../types/types";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const tabs = ["sign in", "sign up"] as const;
-  const [selectedTab, setSelectedTab] =
-    useState<(typeof tabs)[number]>("sign in");
   const isDark = useColorScheme() === "dark";
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCropModalVisible, setCropModalVisible] = useState(false);
-  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(
-    null
-  );
-  const [isGridView, setIsGridView] = useState(true);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const styles = formStyles(isDark);
 
   const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const showAlert = (config: AlertConfig) => {
-    setAlertConfig(config);
-  };
-
-  const closeAlert = () => {
-    setAlertConfig(null);
-  };
+  // ====================== STATE ======================
+  const tabs = ["sign in", "sign up"] as const;
+  const [selectedTab, setSelectedTab] = useState<"sign in" | "sign up">(
+    "sign in",
+  );
   const [signupStep, setSignupStep] = useState(0);
   const [signupData, setSignupData] = useState({
     fullName: "",
@@ -68,8 +50,22 @@ export default function LoginScreen() {
     profileImage: null as string | null,
     bannerImage: null as string | null,
   });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCropModalVisible, setCropModalVisible] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(
+    null,
+  );
+  const [isGridView, setIsGridView] = useState(true);
+  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
 
-  const styles = formStyles(isDark);
+  const pagerRef = useRef<PagerView>(null);
+
+  const showAlert = (config: AlertConfig) => setAlertConfig(config);
+  const closeAlert = () => setAlertConfig(null);
 
   // ====================== IMAGE PICKER / CROP ======================
   const openImagePickerFor = async (target: "profile" | "banner") => {
@@ -96,7 +92,7 @@ export default function LoginScreen() {
     setCropTarget(null);
   };
 
-  // ====================== HELPER FUNCTIONS ======================
+  // ====================== STORAGE ======================
   const safeSetItem = async (key: string, value: string | null | undefined) => {
     if (value === null || value === undefined) {
       await AsyncStorage.removeItem(key);
@@ -108,7 +104,7 @@ export default function LoginScreen() {
   const storeUserData = async (
     user: User,
     accessToken: string,
-    refreshToken: string
+    refreshToken: string,
   ) => {
     await safeSetItem("accessToken", accessToken);
     await safeSetItem("refreshToken", refreshToken);
@@ -130,7 +126,6 @@ export default function LoginScreen() {
       showAlert({
         title: "Invalid credentials",
         message: "Please enter a valid username and password.",
-        cancelText: undefined,
       });
       return;
     }
@@ -143,12 +138,7 @@ export default function LoginScreen() {
       }>(`${BASE_URL}/api/login`, { username: trimmedUsername, password });
 
       const { user, accessToken, refreshToken } = res.data;
-
       await storeUserData(user, accessToken, refreshToken);
-      console.log(
-        "✅ Login token stored:",
-        await AsyncStorage.getItem("accessToken")
-      );
 
       router.replace({
         pathname: "/(tabs)/profile",
@@ -232,22 +222,31 @@ export default function LoginScreen() {
     const { user, accessToken, refreshToken } = result;
     try {
       await storeUserData(user, accessToken, refreshToken);
-      console.log(
-        "✅ Signup access token:",
-        await AsyncStorage.getItem("accessToken")
-      );
 
       router.replace({
         pathname: "/(tabs)/profile",
         params: { id: user.id, token: accessToken },
       });
     } catch (err: any) {
-      console.error("Auto-login after signup failed:", err);
       Alert.alert("Login failed", err.response?.data?.error || err.message);
     }
   };
 
-  // ====================== UI / ANIMATION LOGIC ======================
+  // ====================== FAVORITES ======================
+  const handleToggleFavorite = (league: LeagueType, id: string) => {
+    const key = `${league}:${id}`;
+    setSignupData((prev) => {
+      const isFavorite = prev.favorites.includes(key);
+      return {
+        ...prev,
+        favorites: isFavorite
+          ? prev.favorites.filter((f) => f !== key)
+          : [...prev.favorites, key],
+      };
+    });
+  };
+
+  // ====================== LAYOUT TOGGLE ======================
   const toggleLayout = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -263,58 +262,7 @@ export default function LoginScreen() {
     });
   };
 
-  const progress = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.timing(progress, {
-      toValue: signupStep / 3,
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [signupStep]);
-
-  const progressInterpolate = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0%", "100%"],
-  });
-
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const animateTransition = () => {
-    fadeAnim.setValue(0);
-    scaleAnim.setValue(0.9);
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }),
-    ]).start();
-  };
-  useEffect(() => animateTransition(), [signupStep]);
-
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (
-          _evt: GestureResponderEvent,
-          gesture: PanResponderGestureState
-        ) => gesture.dx > 20 && Math.abs(gesture.dy) < 20,
-        onPanResponderRelease: (
-          _evt: GestureResponderEvent,
-          gesture: PanResponderGestureState
-        ) => {
-          if (gesture.dx > 50 && signupStep > 0) {
-            setSignupStep((s) => Math.max(0, s - 1));
-          }
-        },
-      }),
-    [signupStep]
-  );
-  // ======================================================
-  // HEADER TITLE MAP
-  // ======================================================
+  // ====================== HEADER ======================
   const headerTitles: Record<number, string> = {
     0: "Create Account",
     1: "Email & Password",
@@ -323,9 +271,6 @@ export default function LoginScreen() {
     4: "Review Details",
   };
 
-  // ======================================================
-  // USELAYOUTEFFECT FOR HEADER
-  // ======================================================
   useLayoutEffect(() => {
     const showBackButton = !(
       selectedTab === "sign in" ||
@@ -350,25 +295,32 @@ export default function LoginScreen() {
             }
           }}
           isGrid={isGridView}
-          onToggleLayout={signupStep === 1 ? toggleLayout : undefined}
+          onToggleLayout={signupStep === 2 ? toggleLayout : undefined}
           showBackButton={showBackButton}
         />
       ),
     });
   }, [navigation, selectedTab, signupStep, isGridView]);
 
-  const handleToggleFavorite = (league: LeagueType, id: string) => {
-    const key = `${league}:${id}`;
-    setSignupData((prev) => {
-      const isFavorite = prev.favorites.includes(key);
-      return {
-        ...prev,
-        favorites: isFavorite
-          ? prev.favorites.filter((f) => f !== key)
-          : [...prev.favorites, key],
-      };
-    });
-  };
+  const progress = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: signupStep / 4,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: false,
+    }).start();
+  }, [signupStep]);
+
+  const progressInterpolate = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
+  <View style={styles.progressBarBackground}>
+    <Animated.View
+      style={[styles.progressBarFill, { width: progressInterpolate }]}
+    />
+  </View>;
 
   // ====================== RENDER ======================
   return (
@@ -385,99 +337,63 @@ export default function LoginScreen() {
               onTabPress={(tab) => {
                 setSelectedTab(tab);
                 setSignupStep(0);
+                if (pagerRef.current) {
+                  const pageIndex = tab === "sign in" ? 0 : 1;
+                  pagerRef.current.setPage(pageIndex);
+                }
               }}
-              renderLabel={(tab, isSelected) => (
-                <Text
-                  style={{
-                    fontSize: 20,
-                    color: isSelected
-                      ? isDark
-                        ? Colors.white
-                        : Colors.black
-                      : Colors.midTone,
-                    fontFamily: Fonts.OSREGULAR,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {tab}
-                </Text>
-              )}
             />
           </View>
         )}
+        {/* PAGERVIEW FOR SIGN IN / SIGN UP */}
+        <PagerView
+          style={{ flex: 1 }}
+          initialPage={selectedTab === "sign in" ? 0 : 1}
+          ref={pagerRef}
+          scrollEnabled={signupStep === 0 || selectedTab === "sign in"} // <-- disable swiping if signupStep > 0
+          onPageSelected={(e) => {
+            if (signupStep === 0) {
+              setSelectedTab(
+                e.nativeEvent.position === 0 ? "sign in" : "sign up",
+              );
+            }
+          }}
+        >
+          {/* Sign In Page */}
+          <View key="1" style={{ flex: 1 }}>
+            <SignInForm
+              username={username}
+              password={password}
+              showPassword={showPassword}
+              onUsernameChange={setUsername}
+              onPasswordChange={setPassword}
+              onToggleShowPassword={() => setShowPassword((p) => !p)}
+              onSubmit={handleLogin}
+            />
+          </View>
 
-        {selectedTab === "sign in" ? (
-          <SignInForm
-            username={username}
-            password={password}
-            showPassword={showPassword}
-            onUsernameChange={setUsername}
-            onPasswordChange={setPassword}
-            onToggleShowPassword={() => setShowPassword((p) => !p)}
-            onSubmit={handleLogin}
-          />
-        ) : (
-          <Animated.View
-            {...panResponder.panHandlers}
-            style={{
-              flex: 1,
-              opacity: fadeAnim,
-              transform: [{ scale: scaleAnim }],
-            }}
-          >
-            <SignupSteps
+          {/* Sign Up Page */}
+          <View key="2" style={{ flex: 1 }}>
+            <SignUpForm
               signupData={signupData}
               signupStep={signupStep}
               onChangeSignupData={(updates) =>
                 setSignupData((prev) => ({ ...prev, ...updates }))
               }
-              onNextStep={() => setSignupStep((s) => Math.min(s + 1, 3))}
+              onNextStep={() => setSignupStep((s) => Math.min(s + 1, 4))}
               onPreviousStep={() => setSignupStep((s) => Math.max(s - 1, 0))}
               onToggleFavorite={handleToggleFavorite}
               onOpenImagePickerFor={openImagePickerFor}
               isGridView={isGridView}
               toggleLayout={toggleLayout}
               fadeAnim={fadeAnim}
+              isSubmitting={isSubmitting} // ✅ ADD THIS
+              onSubmit={handleSignup}
             />
-          </Animated.View>
-        )}
 
-        {selectedTab === "sign up" && (
-          <>
-            <View style={styles.progressBarBackground}>
-              <Animated.View
-                style={[styles.progressBarFill, { width: progressInterpolate }]}
-              />
-            </View>
-            <Pressable
-              onPress={() => {
-                if (signupStep === 3) {
-                  showAlert({
-                    title: "Create Account?",
-                    message:
-                      "Are you sure you want to create this account with the provided information?",
-                    confirmText: "Sign Up",
-                    cancelText: "Cancel",
-                    onConfirm: async () => {
-                      if (isSubmitting) return;
-                      setIsSubmitting(true);
-                      closeAlert();
-                      await handleSignup();
-                      setIsSubmitting(false);
-                    },
-                  });
-                } else {
-                  setSignupStep((s) => s + 1);
-                }
-              }}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>
-                {signupStep === 3 ? "Sign Up" : "Next"}
-              </Text>
-            </Pressable>
-          </>
-        )}
+     
+          </View>
+        </PagerView>
 
         {imageToCrop && cropTarget && (
           <CropEditorModal
@@ -490,6 +406,7 @@ export default function LoginScreen() {
           />
         )}
       </View>
+
       <AlertModal
         visible={!!alertConfig}
         isDark={isDark}

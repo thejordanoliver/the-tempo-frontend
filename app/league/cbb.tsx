@@ -4,6 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
@@ -12,7 +13,7 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -36,7 +37,7 @@ dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2025, "CBB");
+  const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
 
   return (
     <SeasonLeadersList
@@ -84,13 +85,20 @@ export default function CBBLeagueScreen() {
   } = useCBBSeasonGames();
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "awards" | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const tabs = ["scores", "news", "standings", "stats", "forum"] as const;
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "awards",
+    "forum",
+  ] as const;
 
   // --- News & Highlights ---
   const { news: cbbNews, loading: cfbLoading } = useLeagueNews("CBB");
@@ -113,7 +121,7 @@ export default function CBBLeagueScreen() {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // --- Header with rotating chevron ---
@@ -166,7 +174,7 @@ export default function CBBLeagueScreen() {
 
   const filteredGames = React.useMemo(() => {
     const gamesForDate = seasonGames.filter((game) =>
-      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
+      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day"),
     );
 
     let result = gamesForDate;
@@ -210,7 +218,7 @@ export default function CBBLeagueScreen() {
     combined.sort(
       (a, b) =>
         new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime()
+        new Date(a.publishedAt || new Date().toISOString()).getTime(),
     );
     return combined;
   }, [cbbNews, highlights]);
@@ -274,7 +282,7 @@ export default function CBBLeagueScreen() {
               )}
             </>
           )}
-
+          {selectedTab === "awards" && <AwardSeasons league="CBB" />}
           {selectedTab === "stats" && <StatsTabContent />}
           {selectedTab === "forum" && <LeagueForum league="CBB" />}
         </View>

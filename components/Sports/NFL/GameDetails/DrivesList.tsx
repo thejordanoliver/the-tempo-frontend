@@ -122,9 +122,9 @@ export default function DrivesList({
               resultUpper.includes("FG")
             ) {
               resultColor = lighter
-                ? Colors.dark.limeGreen
+                ? Colors.dark.leafGreen
                 : isDark
-                ? Colors.dark.limeGreen
+                ? Colors.dark.leafGreen
                 : Colors.light.green;
             } else if (resultUpper.includes("PUNT")) {
               resultColor = lighter

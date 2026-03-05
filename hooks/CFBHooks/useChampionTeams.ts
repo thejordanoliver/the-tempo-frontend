@@ -15,7 +15,7 @@ export type ChampionTeam = {
 };
 
 type Options = {
-  league: "CFB" | "NBA" | "NFL";
+  league: "CFB" | "CBB" | "WCBB" |  "NBA" | "NFL";
   enabled?: boolean;
   refreshToken?: number;
 };

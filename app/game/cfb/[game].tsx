@@ -136,10 +136,10 @@ export default function CFBGameDetailsScreen() {
   const timestamp = parsedGame?.game.date?.timestamp;
 
   const awayTeam =
-    awayId === -2 ? emptyAwayTeam : getTeamInfo(awayId) ?? emptyAwayTeam;
+    awayId === -2 ? emptyAwayTeam : (getTeamInfo(awayId) ?? emptyAwayTeam);
 
   const homeTeam =
-    homeId === -1 ? emptyHomeTeam : getTeamInfo(homeId) ?? emptyHomeTeam;
+    homeId === -1 ? emptyHomeTeam : (getTeamInfo(homeId) ?? emptyHomeTeam);
 
   const homeCode = homeTeam.code;
   const awayCode = awayTeam.code;
@@ -155,7 +155,7 @@ export default function CFBGameDetailsScreen() {
     gameInfo?.date?.timestamp
       ? new Date(gameInfo.date.timestamp * 1000).toISOString()
       : "",
-    "cfb"
+    "cfb",
   );
 
   const officials = data?.officials ?? [];
@@ -189,7 +189,7 @@ export default function CFBGameDetailsScreen() {
 
     return (
       footballVenues.find(
-        (v) => normalizeVenueName(v.venue) === normalizedGameVenue
+        (v) => normalizeVenueName(v.venue) === normalizedGameVenue,
       ) || null
     );
   }, [venue?.name, footballVenues]);
@@ -198,7 +198,7 @@ export default function CFBGameDetailsScreen() {
   const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
 
   const neutralStadiumEntry = Object.entries(neutralStadiums).find(
-    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName,
   );
 
   // Stadium-lookup detection (fallback only)
@@ -309,7 +309,7 @@ export default function CFBGameDetailsScreen() {
 
   // Choose headline → rivalry → empty string
   const headLine =
-    headline && headline.trim().length > 0 ? headline : rivalryHeadline ?? "";
+    headline && headline.trim().length > 0 ? headline : (rivalryHeadline ?? "");
 
   const broadcastText = broadcast ?? "";
 
@@ -323,7 +323,7 @@ export default function CFBGameDetailsScreen() {
     undefined,
     undefined,
     awayTeam?.espnID,
-    homeTeam?.espnID
+    homeTeam?.espnID,
   );
 
   // --- Weather data ---
@@ -331,7 +331,7 @@ export default function CFBGameDetailsScreen() {
     lat,
     lon,
     gameDateStr,
-    resolvedVenueCity
+    resolvedVenueCity,
   );
 
   const displayWeather = weather
@@ -342,7 +342,7 @@ export default function CFBGameDetailsScreen() {
   const possession = useFootballGamePossession(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   const {
@@ -505,17 +505,15 @@ export default function CFBGameDetailsScreen() {
 
             <LastFiveGamesSwitcher
               isDark={isDark}
-              home={{
-                teamCode: homeTeam.code,
-                teamLogo: homeTeam.logo,
-                teamLogoLight: homeTeam.logoLight,
-                games: homeLastGames.games,
-              }}
               away={{
+                teamId: awayTeam.id,
                 teamCode: awayTeam.code,
-                teamLogo: awayTeam.logo,
-                teamLogoLight: awayTeam.logoLight,
                 games: awayLastGames.games,
+              }}
+              home={{
+                teamId: homeTeam.id,
+                teamCode: homeTeam.code,
+                games: homeLastGames.games,
               }}
               league="CFB"
             />
@@ -561,7 +559,9 @@ export default function CFBGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <MemoizedFloatingChatButton gameId={parsedGame?.game?.id} />
+      <Animated.View style={{ opacity: opacityAnim }}>
+        <MemoizedFloatingChatButton gameId={String(parsedGame.game.id)} />
+      </Animated.View>
     </>
   );
 }

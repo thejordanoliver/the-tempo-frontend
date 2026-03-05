@@ -128,7 +128,7 @@ export function postItemStyles(isDark: boolean) {
       width: "100%",
     },
     saveText: {
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
+      color: isDark ? Colors.dark.leafGreen : Colors.light.green,
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,
     },

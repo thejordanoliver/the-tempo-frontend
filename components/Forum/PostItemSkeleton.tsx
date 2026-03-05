@@ -1,7 +1,7 @@
 // components/Forum/PostItemSkeleton.tsx
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
-import { Colors } from "constants/Colors";
 
 type Props = {
   showMedia?: boolean; // set true if your post can have images/videos
@@ -26,7 +26,7 @@ export default function PostItemSkeleton({ showMedia = true }: Props) {
           duration: 650,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     anim.start();
     return () => anim.stop();
@@ -77,7 +77,9 @@ export default function PostItemSkeleton({ showMedia = true }: Props) {
 }
 
 function getStyles(isDark: boolean) {
-  const base = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
+  const base = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const border = isDark ? Colors.darkGray : Colors.lightGray;
 
   return StyleSheet.create({

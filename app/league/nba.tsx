@@ -9,46 +9,30 @@ import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
-import { StandingsList } from "components/Sports/NBA/Standings/StandingsList";
 import SummerGamesList from "components/Sports/NBASummerLeague/Games/SummerGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
 import { useLeagueNews } from "hooks/useLeagueNews";
-import { useSeasonGames } from "hooks/useSeasonGames";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getNBASeason } from "utils/dateUtils";
+import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-function StatsTabContent() {
-  const { leaders, loading, error } = useSeasonLeaders({
-    season: 2025,
-    limit: 5,
-    minGames: 2,
-  });
-
-  return (
-    <SeasonLeadersList
-      leadersByStat={leaders}
-      loading={loading}
-      error={error}
-    />
-  );
-}
 
 export default function NBALeagueScreen() {
   const currentYear = getNBASeason();
@@ -72,7 +56,7 @@ export default function NBALeagueScreen() {
   const { highlights, loading: highlightsLoading } = useHighlights(
     "nba",
     "",
-    10
+    10,
   );
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
@@ -83,7 +67,9 @@ export default function NBALeagueScreen() {
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const [draftYear, setDraftYear] = useState(dayjs().year().toString());
-  const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
+  const [standingsYear, setStandingsYear] = useState(
+    getNBACalendarSeason().toString(),
+  );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
 
@@ -91,7 +77,7 @@ export default function NBALeagueScreen() {
 
   // --- State ---
   const [selectedDate, setSelectedDate] = React.useState<Date>(
-    dayjs().startOf("day").toDate()
+    dayjs().startOf("day").toDate(),
   );
 
   const [selectedTab, setSelectedTab] = useState<
@@ -113,7 +99,7 @@ export default function NBALeagueScreen() {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // Header
@@ -160,7 +146,7 @@ export default function NBALeagueScreen() {
 
   // Filter both sets by selectedDate
   const filteredSeasonGames = sortLiveGamesFirst(
-    filterByDate(games, selectedDate)
+    filterByDate(games, selectedDate),
   );
   const filteredSummerGames = filterByDate(summerGames, selectedDate);
 
@@ -178,7 +164,7 @@ export default function NBALeagueScreen() {
   // --- Change Date (now local) ---
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
-      dayjs(prev).add(days, "day").startOf("day").toDate()
+      dayjs(prev).add(days, "day").startOf("day").toDate(),
     );
   };
 
@@ -201,23 +187,28 @@ export default function NBALeagueScreen() {
     return [...taggedNews, ...taggedHighlights].sort(
       (a, b) =>
         new Date(b.publishedAt ?? 0).getTime() -
-        new Date(a.publishedAt ?? 0).getTime()
+        new Date(a.publishedAt ?? 0).getTime(),
     );
   }, [news, highlights]);
 
+  const { leaders, loading, error } = useSeasonLeaders();
+
   // Helper to mark games on calendar
   const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce((acc, game) => {
-      const localDate = new Date(game.date);
-      const iso = `${localDate.getFullYear()}-${String(
-        localDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
-      acc[iso] = {
-        marked: true,
-        dotColor: isDark ? Colors.white : Colors.black,
-      };
-      return acc;
-    }, {} as Record<string, { marked: boolean; dotColor: string }>);
+    gamesArray.reduce(
+      (acc, game) => {
+        const localDate = new Date(game.date);
+        const iso = `${localDate.getFullYear()}-${String(
+          localDate.getMonth() + 1,
+        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+        acc[iso] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+        return acc;
+      },
+      {} as Record<string, { marked: boolean; dotColor: string }>,
+    );
 
   return (
     <>
@@ -286,12 +277,21 @@ export default function NBALeagueScreen() {
           )}
 
           {selectedTab === "standings" && (
-            <StandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
+            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
+              <StandingsList
+                year={standingsYear}
+                onYearChange={setStandingsYear}
+                league="NBA"
+              />
+            </View>
+          )}
+          {selectedTab === "stats" && (
+            <SeasonLeadersList
+              leadersByStat={leaders}
+              loading={loading}
+              error={error}
             />
           )}
-          {selectedTab === "stats" && <StatsTabContent />}
           {selectedTab === "draft" && (
             <DraftList
               year={draftYear}

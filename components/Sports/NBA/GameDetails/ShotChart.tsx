@@ -2,8 +2,7 @@ import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
 import { teams as cbbteams } from "constants/teamsCBB";
 import React, { useState } from "react";
@@ -79,13 +78,13 @@ export default function ShotChart({
       return team.wLogo;
     }
 
-    return isDark ? team.logoLight ?? team.logo : team.logo;
+    return isDark ? (team.logoLight ?? team.logo) : team.logo;
   };
 
   const homeLogo = getLogo(homeTeam, isDark);
   const awayLogo = getLogo(awayTeam, isDark);
 
-  const courtLogo = getLogo(homeTeam, false);;
+  const courtLogo = getLogo(homeTeam, false);
   const courtImage = league === "CBB" || "WCBB" ? CBBCourtImage : CourtImage;
 
   // Tabs

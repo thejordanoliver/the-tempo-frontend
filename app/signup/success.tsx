@@ -1,5 +1,5 @@
-import { Fonts } from "constants/fonts";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { Fonts } from "constants/Styles";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme } from "react-native";
 

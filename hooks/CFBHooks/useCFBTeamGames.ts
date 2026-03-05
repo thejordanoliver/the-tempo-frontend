@@ -31,7 +31,7 @@ export function useCFBTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/gamesCFB/team/${teamId}`, {
+      const res = await axios.get(`${BASE_URL}/api/games/cfb/team/${teamId}`, {
         params: { league, all: fetchAll ? 1 : 0, season },
       });
 

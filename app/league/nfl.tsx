@@ -6,17 +6,16 @@ import DraftList from "components/League/DraftList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNFLGamesByWeek } from "hooks/NFLHooks/useNFLGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
@@ -37,21 +36,6 @@ import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
-
-function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(
-    getFootballSeasonYear()
-  );
-
-  return (
-    <SeasonLeadersList
-      loading={loading}
-      error={error}
-      categories={categories}
-      league={"NFL"}
-    />
-  );
-}
 
 type NewsItem = {
   id: string;
@@ -75,9 +59,7 @@ type CombinedItem =
 
 export default function NFLLeagueScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
@@ -89,14 +71,16 @@ export default function NFLLeagueScreen() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(
-    getFootballSeasonYear().toString()
+    getFootballSeasonYear().toString(),
   );
   const [standingsYear, setStandingsYear] = useState(
-    getFootballSeasonYear().toString()
+    getFootballSeasonYear().toString(),
+  );
+  const { categories, loading, error } = useSeasonLeaders(
+    getFootballSeasonYear(),
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-
   const [weeks, setWeeks] = useState<NFLWeekFromGames[]>([]);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
 
@@ -151,7 +135,7 @@ export default function NFLLeagueScreen() {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // --- Header ---
@@ -229,7 +213,7 @@ export default function NFLLeagueScreen() {
     combined.sort(
       (a, b) =>
         new Date(a.publishedAt || new Date().toISOString()).getTime() -
-        new Date(b.publishedAt || new Date().toISOString()).getTime()
+        new Date(b.publishedAt || new Date().toISOString()).getTime(),
     );
     return combined;
   }, [nflNews, highlights]);
@@ -295,12 +279,22 @@ export default function NFLLeagueScreen() {
           )}
 
           {selectedTab === "standings" && (
-            <NFLStandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
+            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
+              <StandingsList
+                year={standingsYear}
+                onYearChange={setStandingsYear}
+                league="NFL"
+              />
+            </View>
+          )}
+          {selectedTab === "stats" && (
+            <SeasonLeadersList
+              loading={loading}
+              error={error}
+              categories={categories}
+              league={"NFL"}
             />
           )}
-          {selectedTab === "stats" && <StatsTabContent />}
 
           {selectedTab === "draft" && (
             <DraftList

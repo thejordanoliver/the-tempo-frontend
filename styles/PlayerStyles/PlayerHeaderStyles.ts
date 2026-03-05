@@ -52,7 +52,7 @@ export const playerHeaderStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
     name: {
-      fontSize: 24,
+      fontSize: 20,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },

@@ -26,12 +26,12 @@ export type TeamPlayer = {
   birth_display?: string | null;
 
   active: boolean;
-  affiliation: "NFL" | "CFB";
+  affiliation: "NFL" | "CFB" | "MLB";
 };
 
 export function useTeamPlayers(
   teamId?: number | string,
-  league?: "NFL" | "CFB"
+  league?: "NFL" | "CFB" | "MLB"
 ) {
   const [players, setPlayers] = useState<TeamPlayer[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,9 +47,10 @@ export function useTeamPlayers(
       try {
         isRefresh ? setRefreshing(true) : setLoading(true);
         setError(null);
-
+        
         const res = await axios.get(url);
         setPlayers(res.data.players ?? []);
+        
       } catch (err) {
         console.error("❌ useTeamPlayers error:", err);
         setError("Failed to load team players");

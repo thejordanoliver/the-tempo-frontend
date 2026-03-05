@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { teams } from "constants/teamsNFL";
-import { UpcomingNFLGameOdds } from "hooks/NFLHooks/useUpcomingNFLOdds";
+import { UpcomingNFLGameOdds } from "hooks/NFLHooks/useOdds";
 import React from "react";
 import { Image, Text, useColorScheme, View } from "react-native";
 import { styles } from "styles/GameDetailStyles/Odds.styles";
@@ -22,10 +22,9 @@ const getTeamFromApi = (teamIdentifier: string) => {
 
   // Fallback to full name or short name
   return teams.find(
-    (t) => t.fullName === teamIdentifier || t.name === teamIdentifier
+    (t) => t.fullName === teamIdentifier || t.name === teamIdentifier,
   );
 };
-
 
 const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   const colorScheme = useColorScheme();
@@ -71,7 +70,7 @@ const UpcomingOddsCard: React.FC<Props> = ({ game }) => {
   const formatOutcome = (
     market: typeof h2h | typeof spreads | typeof totals,
     index: number,
-    label: string
+    label: string,
   ) => {
     const outcome = market?.outcomes?.[index];
     if (!outcome) return "-";

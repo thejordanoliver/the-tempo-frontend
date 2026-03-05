@@ -18,7 +18,7 @@ export function useCFBSeasonGames(season = "2025", league = "2") {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/gamesCFB`, {
+      const res = await axios.get(`${BASE_URL}/api/games/cfb`, {
         params: { season, league },
       });
 

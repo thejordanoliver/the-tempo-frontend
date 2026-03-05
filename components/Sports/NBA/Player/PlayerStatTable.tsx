@@ -1,6 +1,6 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import PlayerStatTableSkeleton from "components/Sports/NBA/Player/PlayerStatsTableSkeleton";
+import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
@@ -134,7 +134,7 @@ export default function PlayerStatTable({ playerId }: Props) {
       blk: 0,
       tov: 0,
       pf: 0,
-    }
+    },
   );
 
   return (
@@ -227,8 +227,8 @@ export default function PlayerStatTable({ playerId }: Props) {
                 statView === "totals"
                   ? stat
                   : statView === "pergame"
-                  ? perGame(stat, s.g)
-                  : per36(stat, s.mp);
+                    ? perGame(stat, s.g)
+                    : per36(stat, s.mp);
 
               return (
                 <View key={s.season} style={[styles.row, zebra, highlight]}>
@@ -246,13 +246,12 @@ export default function PlayerStatTable({ playerId }: Props) {
                     {statView === "totals"
                       ? s.mp
                       : statView === "pergame"
-                      ? perGame(s.mp, s.g)
-                      : "36.0"}
+                        ? perGame(s.mp, s.g)
+                        : "36.0"}
                   </Text>
 
                   {/* PTS */}
                   <Text style={styles.cell}>{renderStat(s.pts)}</Text>
-
 
                   {/* FG / FGA */}
                   <Text style={styles.cell}>{renderStat(s.fg)}</Text>

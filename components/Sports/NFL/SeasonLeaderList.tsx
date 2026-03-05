@@ -1,5 +1,4 @@
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
-
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
@@ -10,16 +9,7 @@ import { FlatList, Text, useColorScheme, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
 import HeadingTwo from "../../Headings/HeadingTwo";
-
-interface Leader {
-  athleteId: string | number;
-  playerId?: number; // ✅ LOCAL DB ID
-  teamId?: string | number | null;
-  name: string;
-  value: number;
-  position?: string;
-  headshot?: string;
-}
+import { Leader } from "hooks/NFLHooks/useSeasonLeaders";
 
 interface Category {
   categoryName: string;
@@ -62,7 +52,7 @@ export default function SeasonLeadersList({
   };
 
   const teamList = leagueTeamsMap[league];
-
+  const isMLB = league === "MLB";
   if (loading) {
     return (
       <ScrollView contentContainerStyle={styles.skeletonList}>
@@ -102,18 +92,19 @@ export default function SeasonLeadersList({
             <View style={styles.playersList}>
               {item.leaders.slice(0, 5).map((player) => {
                 const teamObj = teamList.find(
-                  (t) => Number(t.espnID) === Number(player.teamId)
+                  (t) => Number(t.espnID) === Number(player.teamId),
                 );
 
                 return (
                   <PlayerCard
                     key={player.playerId ?? player.athleteId}
+                    rank={player.rank}
                     id={Number(player.playerId ?? player.athleteId)}
-                    name={player.name}
+                    name={player.shortName}
                     position={player.position}
                     team={teamObj?.name ?? "Unknown Team"}
                     avatarUrl={player.headshot}
-                    statNumber={player.value}
+                    statNumber={isMLB ? player.value : player.displayValue}
                     league={league}
                   />
                 );

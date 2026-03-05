@@ -112,7 +112,7 @@ export const cropEditorModalStyles = (
       justifyContent: "center",
     },
     saveButton: {
-      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
       paddingVertical: 12,
       paddingHorizontal: 24,
       borderRadius: 8,

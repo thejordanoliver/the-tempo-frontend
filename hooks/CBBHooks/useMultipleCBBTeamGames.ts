@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import { useCallback, useEffect, useState } from "react";
 import { CBBGame } from "types/types";
@@ -39,7 +39,7 @@ export function useMultipleCBBTeamGames(
     season = "2025-2026",
     isWomen = false,
     fetchAll = false,
-  }: UseMultipleCBBTeamGamesOptions = {}
+  }: UseMultipleCBBTeamGamesOptions = {},
 ) {
   const [allGames, setAllGames] = useState<Record<string, CBBGame[]>>({});
   const [loading, setLoading] = useState(true);
@@ -60,14 +60,14 @@ export function useMultipleCBBTeamGames(
       await Promise.all(
         teamIds.map(async (teamId) => {
           const res = await axios.get(
-            `${BASE_URL}/api/gamesCBB/team/${teamId}`,
+            `${BASE_URL}/api/games/cbb/team/${teamId}`,
             {
               params: {
                 season,
                 league,
                 all: fetchAll ? 1 : 0,
               },
-            }
+            },
           );
 
           const rawGames: CBBGame[] = res.data.response || [];
@@ -108,7 +108,7 @@ export function useMultipleCBBTeamGames(
                   wid: awayTeamData.wid,
                   espnID: awayTeamData.espnID,
                   name: awayTeamData.name || game.teams.away.name,
-                      code: awayTeamData.code || game.teams.away.code,
+                  code: awayTeamData.code || game.teams.away.code,
                   fullName: awayTeamData.fullName || game.teams.away.fullName,
                   logo: awayTeamData.logo || game.teams.away.logo,
                   color: awayTeamData.color || Colors.midTone,
@@ -127,14 +127,14 @@ export function useMultipleCBBTeamGames(
           // );
 
           result[String(teamId)] = enrichedGames;
-        })
+        }),
       );
 
       setAllGames(result);
     } catch (err: any) {
       console.error(
         "Error fetching multiple CBB team games:",
-        err.message || err
+        err.message || err,
       );
       setError("Failed to load college games");
       setAllGames({});

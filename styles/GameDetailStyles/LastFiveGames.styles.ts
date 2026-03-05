@@ -10,9 +10,9 @@ export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
   return {
     colors: {
       win: lighter
-        ? Colors.dark.limeGreen
+        ? Colors.dark.leafGreen
         : isDark
-        ? Colors.dark.limeGreen
+        ? Colors.dark.leafGreen
         : Colors.light.green,
       loss: lighter
         ? Colors.dark.lightRed

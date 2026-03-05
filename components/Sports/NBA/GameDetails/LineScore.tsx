@@ -24,7 +24,7 @@ type Props = {
   awayCode: string | undefined;
   lighter?: boolean;
   loading?: boolean;
-  league?: "NBA" | "CBB" | "WCBB" | "MLB"; // <<< MLB ADDED
+league?: "NBA" | "CBB" | "WCBB" | "MLB" | "NHL";
 };
 
 export default function LineScore({
@@ -76,31 +76,46 @@ export default function LineScore({
   // PERIOD LABELS
   // ------------------------------------------------------------
 
-  const numColumns = Math.max(
-    league === "CBB" ? 2 : 4,
-    linescore.home.length,
-    linescore.away.length
-  );
+const baseColumns =
+  league === "CBB"
+    ? 2
+    : league === "NHL"
+    ? 3
+    : 4;
 
-  const getPeriodLabel = (index: number): string => {
-    // ---------------- MLB ----------------
-    if (league === "MLB") {
-      return String(index + 1); // 1,2,3,4...
-    }
+const numColumns = Math.max(
+  baseColumns,
+  linescore.home.length,
+  linescore.away.length
+);
 
-    // ---------------- CBB ----------------
-    if (league === "CBB") {
-      if (index === 0) return "1H";
-      if (index === 1) return "2H";
-      if (index === 2) return "OT";
-      return `OT${index - 1}`;
-    }
+const getPeriodLabel = (index: number): string => {
+  // ---------------- MLB ----------------
+  if (league === "MLB") {
+    return String(index + 1);
+  }
 
-    // ---------------- NBA ----------------
-    if (index < 4) return `Q${index + 1}`;
-    if (index === 4) return "OT";
-    return `OT${index - 3}`;
-  };
+  // ---------------- NHL ----------------
+  if (league === "NHL") {
+    if (index < 3) return `P${index + 1}`; // P1, P2, P3
+    if (index === 3) return "OT";
+    return `OT${index - 2}`; // OT2, OT3 (playoffs)
+  }
+
+  // ---------------- CBB ----------------
+  if (league === "CBB" || league === "WCBB") {
+    if (index === 0) return "1H";
+    if (index === 1) return "2H";
+    if (index === 2) return "OT";
+    return `OT${index - 1}`;
+  }
+
+  // ---------------- NBA ----------------
+  if (index < 4) return `Q${index + 1}`;
+  if (index === 4) return "OT";
+  return `OT${index - 3}`;
+};
+
 
   const columns = Array.from({ length: numColumns }, (_, i) =>
     getPeriodLabel(i)

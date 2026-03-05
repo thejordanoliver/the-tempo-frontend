@@ -2,13 +2,13 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
 import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflteams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
 import { useRouter } from "expo-router";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useLayoutEffect } from "react";
@@ -39,6 +39,9 @@ export const leagueMap: Record<string, LeagueType> = {};
 [...mlbTeams].forEach((t) => {
   leagueMap[t.id.toString()] = "MLB";
 });
+[...nhlTeams].forEach((t) => {
+  leagueMap[t.id.toString()] = "NHL";
+});
 
 export default function EditFavoritesScreen() {
   const {
@@ -63,8 +66,7 @@ export default function EditFavoritesScreen() {
 
   const navigation = useNavigation();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark, isGridView);
 
   useLayoutEffect(() => {
@@ -104,9 +106,9 @@ export default function EditFavoritesScreen() {
               .filter((t) => !t.isAllStar)
               .map(
                 (t) =>
-                  ({ ...t, league: "NBA", id: t.id } as Team & {
+                  ({ ...t, league: "NBA", id: t.id }) as Team & {
                     league: "NBA";
-                  })
+                  },
               ),
 
             // NFL
@@ -114,9 +116,9 @@ export default function EditFavoritesScreen() {
               .filter((t) => !t.isAllStar)
               .map(
                 (t) =>
-                  ({ ...t, league: "NFL", id: t.id } as Team & {
+                  ({ ...t, league: "NFL", id: t.id }) as Team & {
                     league: "NFL";
-                  })
+                  },
               ),
 
             // MLB
@@ -124,9 +126,19 @@ export default function EditFavoritesScreen() {
               .filter((t) => !t.isAllStar)
               .map(
                 (t) =>
-                  ({ ...t, league: "MLB", id: t.id } as Team & {
+                  ({ ...t, league: "MLB", id: t.id }) as Team & {
                     league: "MLB";
-                  })
+                  },
+              ),
+
+            // NHL
+            ...nhlTeams
+              .filter((t) => !t.isAllStar)
+              .map(
+                (t) =>
+                  ({ ...t, league: "NHL", id: t.id }) as Team & {
+                    league: "NHL";
+                  },
               ),
 
             // CFB (still respects FBS logic)
@@ -145,9 +157,9 @@ export default function EditFavoritesScreen() {
               })
               .map(
                 (t) =>
-                  ({ ...t, league: "CFB", id: t.id } as Team & {
+                  ({ ...t, league: "CFB", id: t.id }) as Team & {
                     league: "CFB";
-                  })
+                  },
               ),
 
             // CBB
@@ -155,9 +167,9 @@ export default function EditFavoritesScreen() {
               .filter((t) => !t.isAllStar)
               .map(
                 (t) =>
-                  ({ ...t, league: "CBB", id: t.id } as Team & {
+                  ({ ...t, league: "CBB", id: t.id }) as Team & {
                     league: "CBB";
-                  })
+                  },
               ),
 
             // WCBB
@@ -169,7 +181,7 @@ export default function EditFavoritesScreen() {
                     ...t,
                     league: "WCBB",
                     id: t.wid,
-                  } as Team & { league: "WCBB" })
+                  }) as Team & { league: "WCBB" },
               ),
           ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
           favorites={favorites}

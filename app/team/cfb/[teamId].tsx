@@ -19,8 +19,8 @@ import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
+import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -48,7 +48,7 @@ export default function TeamDetailScreen() {
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = style(isDark);
+  const styles = teamDetailStyles;
 
   const tabs = [
     "schedule",
@@ -69,7 +69,7 @@ export default function TeamDetailScreen() {
 
   const team = useMemo(
     () => (teamIdNum ? teams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum]
+    [teamIdNum],
   );
 
   const {
@@ -133,9 +133,8 @@ export default function TeamDetailScreen() {
     }
   };
 
-  // ✅ Use the favorite teams hook
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const { toggleNotifications, isNotified } = useNotifications();
+  const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const league = "CFB";
   const favorited = team ? isFavorite(league, team.id) : false;
   const teamKey = String(team?.id);
@@ -146,12 +145,11 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo ? { uri: team.logo } : undefined}
-          logoLight={team?.logoLight ? { uri: team.logoLight } : undefined}
+          teamId={team?.id}
+          logo={team?.logoLight || team?.logo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team?.code}
           isFavorite={favorited}
           isNotified={notfied} // ✅ MATCH
           onToggleNotifications={() => toggleNotifications(league, teamKey)}

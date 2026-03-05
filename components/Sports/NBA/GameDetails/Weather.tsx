@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { WeatherData } from "hooks/useWeather";
 import LottieView from "lottie-react-native";
 import React from "react";

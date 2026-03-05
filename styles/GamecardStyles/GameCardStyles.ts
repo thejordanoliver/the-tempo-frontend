@@ -1,6 +1,5 @@
 // GameCard.styles.ts
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
@@ -145,14 +144,14 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       textAlign: "center",
       position: "absolute",
       top: 4,
       width: "100%",
     },
-    mlbHeadlineText: {
+    postSeasonHeadlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 8,
       color: isChampionship
@@ -160,11 +159,22 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       textAlign: "center",
     },
 
+    headlineDivider: {
+      height: 8,
+      width: 1,
+      backgroundColor: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+          ? Colors.lightGray
+          : Colors.darkGray,
+    },
     headlineContainer: {
       flexDirection: "row",
       alignItems: "center", // ← ensures vertical centering

@@ -60,7 +60,7 @@ export const useLastFiveGames = (teamId: number) => {
         setError(null);
 
         const response = await axios.get<ApiResponse>(
-          `${BASE_URL}/api/gamesNFL/team/${teamId}/last-five`
+          `${BASE_URL}/api/games/nfl/team/${teamId}/last-five`
         );
 
         const recentGames: GameResult[] = response.data.response.map((g) => {

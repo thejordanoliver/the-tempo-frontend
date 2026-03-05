@@ -26,23 +26,32 @@ export function useLastTeamGame({
   const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
 
   const fetchLastGame = useCallback(async () => {
-    if (!teamId) return;
+    if (!teamId) {
+      setLastGame(null);
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
       const res = await axios.get(
-        `${BASE_URL}/api/gamesCBB/team/${teamId}/last`,
+        `${BASE_URL}/api/games/cbb/team/${teamId}/last`,
         {
           params: { season, league },
-        }
+        },
       );
 
-      setLastGame(res.data.response ?? null);
+      // Backend returns: { league, results, response }
+      if (res.data?.results > 0) {
+        setLastGame(res.data.response);
+      } else {
+        setLastGame(null);
+      }
     } catch (err: any) {
-      console.error("Error fetching last CBB game:", err.message);
+      console.error("Error fetching last CBB game:", err?.message);
       setError("Failed to load last game");
+      setLastGame(null);
     } finally {
       setLoading(false);
     }
@@ -52,5 +61,10 @@ export function useLastTeamGame({
     fetchLastGame();
   }, [fetchLastGame]);
 
-  return { lastGame, loading, error, refresh: fetchLastGame };
+  return {
+    lastGame,
+    loading,
+    error,
+    refresh: fetchLastGame,
+  };
 }

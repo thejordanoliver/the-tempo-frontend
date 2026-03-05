@@ -14,6 +14,7 @@ import {
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
 import type { Game as CFBGameType } from "types/cfb";
+import { MLBGame } from "types/mlb";
 import type { Game as NFLGameType } from "types/nfl";
 import type {
   CBBGame as CBBGameType,
@@ -47,6 +48,11 @@ import GameCard from "components/Sports/NBA/Games/GameCard";
 import GameSquareCard from "components/Sports/NBA/Games/GameSquareCard";
 import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 
+// ✅ MLB cards
+import MLBGameCard from "./Sports/MLB/Games/MLBGameCard";
+import MLBGameSquareCard from "./Sports/MLB/Games/MLBGameSquareCard";
+import MLBStackedGameCard from "./Sports/MLB/Games/MLBStackedGameCard";
+
 // ✅ CBB cards
 import CBBStackedGameCard from "components/Sports/CBB/Games/CBBStackedGameCard";
 import CBBGameCard from "./Sports/CBB/Games/CBBGameCard";
@@ -56,6 +62,7 @@ import CBBGameSquareCard from "./Sports/CBB/Games/CBBGameSquareCard";
 import SummerGameSquareCard from "components/Sports/NBASummerLeague/Games/SummerGameSquareCard";
 import SummerGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueGameCard";
 import SummerStackedGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueStackedGameCard";
+import MLBGamePreviewModal from "./Sports/MLB/GamePreview/MLBGamePreviewModal";
 
 const NCAA_FOOTBALL_LEAGUE_ID = 2;
 const NCAA_MENS_BASKETBALL_LEAGUE_ID = 116;
@@ -65,6 +72,7 @@ type SportsCategory =
   | "College Football"
   | "NFL"
   | "NBA"
+  | "MLB"
   | "Men's College Basketball"
   | "Women's College Basketball"
   | "NBA Summer League"
@@ -75,6 +83,7 @@ export type CombinedGamesSection =
   | { category: "Men's College Basketball"; data: CBBGame[] }
   | { category: "Women's College Basketball"; data: CBBGame[] }
   | { category: "NFL"; data: NFLGameType[] }
+  | { category: "MLB"; data: MLBGame[] }
   | { category: "NBA"; data: NBAGameType[] }
   | { category: "NBA Summer League"; data: SummerGame[] }
   | { category: "Favorites"; data: CombinedGame[] };
@@ -84,6 +93,7 @@ type CombinedGame =
   | NFLGameType
   | NBAGameType
   | CBBGameType
+  | MLBGame
   | SummerGame;
 
 type CombinedGamesListProps = {
@@ -125,6 +135,9 @@ const getCategoryForFavorites = (item: CombinedGame): SportsCategory => {
   }
 
   if (league.name === "NFL") return "NFL";
+
+  if (league.name === "MLB") return "MLB";
+  if (league.name === "MLB - Spring Training") return "MLB";
   if (league.name === "NBA Summer League") return "NBA Summer League";
 
   return "NBA";
@@ -170,7 +183,7 @@ const liveStatuses = [
 ];
 
 const hasGameProperty = (
-  game: CombinedGame
+  game: CombinedGame,
 ): game is CFBGameType | NFLGameType => {
   return "game" in game && typeof game.game === "object";
 };
@@ -186,7 +199,7 @@ const getGameStatus = (game: CombinedGame): string => {
 export const isLiveGame = (game: CombinedGame): boolean => {
   const status = getGameStatus(game);
   return liveStatuses.some(
-    (live) => status?.toString()?.toUpperCase() === live.toUpperCase()
+    (live) => status?.toString()?.toUpperCase() === live.toUpperCase(),
   );
 };
 
@@ -225,7 +238,7 @@ export default function CombinedGamesList({
   const styles = combinedGameListStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
   const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(
-    null
+    null,
   );
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -301,7 +314,7 @@ export default function CombinedGamesList({
     item: CombinedGame,
     category: SportsCategory,
     index?: number,
-    total?: number
+    total?: number,
   ) => {
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
       let itemStyle: ViewStyle =
@@ -347,6 +360,15 @@ export default function CombinedGamesList({
       return wrapper(<NFLStackedGameCard game={nflGame} />);
     }
 
+        // ✅ NFL
+    if (category === "MLB") {
+      const mlbGame = item as MLBGame;
+      if (viewMode === "list") return wrapper(<MLBGameCard game={mlbGame} />);
+      if (viewMode === "grid")
+        return wrapper(<MLBGameSquareCard game={mlbGame} />, index);
+      return wrapper(<MLBStackedGameCard game={mlbGame} />);
+    }
+
     // ✅ College Football
     if (category === "College Football") {
       const cfbGame = transformCFBGame(item as CFBGameExtended);
@@ -373,7 +395,7 @@ export default function CombinedGamesList({
       if (viewMode === "grid")
         return wrapper(
           <CBBGameSquareCard game={cbbGame} isWomen={false} />,
-          index
+          index,
         );
       return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={false} />);
     }
@@ -386,7 +408,7 @@ export default function CombinedGamesList({
       if (viewMode === "grid")
         return wrapper(
           <CBBGameSquareCard game={cbbGame} isWomen={true} />,
-          index
+          index,
         );
       return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={true} />);
     }
@@ -487,7 +509,7 @@ export default function CombinedGamesList({
   // Inside CombinedGamesList, before renderItem/renderSectionFooter
   const getCategoryAndValidatedGame = (
     item: CombinedGame,
-    sectionCategory: SportsCategory
+    sectionCategory: SportsCategory,
   ): { category: SportsCategory; game: CombinedGame } | null => {
     const category =
       sectionCategory === "Favorites"
@@ -500,6 +522,7 @@ export default function CombinedGamesList({
       case "NBA Summer League":
       case "College Football":
       case "NFL":
+      case "MLB":
       case "Men's College Basketball":
       case "Women's College Basketball":
         return { category, game: item };
@@ -513,7 +536,7 @@ export default function CombinedGamesList({
       <SectionList
         sections={
           sortedSections.filter(
-            (section) => section.data.length > 0
+            (section) => section.data.length > 0,
           ) as SectionListData<CombinedGame, CombinedGamesSection>[]
         }
         keyExtractor={(item) => getItemId(item)}
@@ -523,7 +546,7 @@ export default function CombinedGamesList({
           // Narrow the type safely
           const getCategoryAndValidatedGame = (
             item: CombinedGame,
-            sectionCategory: SportsCategory
+            sectionCategory: SportsCategory,
           ) => {
             const category =
               sectionCategory === "Favorites"
@@ -536,6 +559,7 @@ export default function CombinedGamesList({
               case "NBA Summer League":
               case "College Football":
               case "NFL":
+              case "MLB":
               case "Men's College Basketball":
               case "Women's College Basketball":
                 return { category, game: item };
@@ -551,7 +575,7 @@ export default function CombinedGamesList({
             validated.game,
             validated.category,
             index,
-            section.data.length
+            section.data.length,
           );
         }}
         renderSectionHeader={({ section }) => {
@@ -594,14 +618,14 @@ export default function CombinedGamesList({
                   renderItem={({ item, index }) => {
                     const validated = getCategoryAndValidatedGame(
                       item,
-                      section.category
+                      section.category,
                     );
                     if (!validated) return null;
                     return renderGameCard(
                       validated.game,
                       validated.category,
                       index,
-                      section.data.length
+                      section.data.length,
                     );
                   }}
                   scrollEnabled={false}
@@ -632,6 +656,15 @@ export default function CombinedGamesList({
         )}
       {modalVisible &&
         previewGame &&
+        previewCategory === "MLB" && (
+          <MLBGamePreviewModal
+            visible={modalVisible}
+            game={previewGame as MLBGame}
+            onClose={() => setModalVisible(false)}
+          />
+        )}
+      {modalVisible &&
+        previewGame &&
         (previewCategory === "Men's College Basketball" ||
           previewCategory === "Women's College Basketball") && (
           <CBBGamePreviewModal
@@ -649,7 +682,6 @@ export default function CombinedGamesList({
           onClose={() => setModalVisible(false)}
         />
       )}
-     
     </>
   );
 }

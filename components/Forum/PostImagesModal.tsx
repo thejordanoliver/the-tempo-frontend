@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef, useState } from "react";
@@ -109,7 +108,7 @@ export default function PostImagesModal({
       await axios.patch(
         `${BASE_URL}/api/forum/post/${postId}/like`,
         { like: !liked },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
     } catch {
       toggleLike(postId);
@@ -190,7 +189,7 @@ export default function PostImagesModal({
       if (viewableItems.length > 0) {
         setActiveIndex(viewableItems[0].index ?? 0);
       }
-    }
+    },
   ).current;
 
   const viewabilityConfig = {
@@ -375,8 +374,8 @@ export default function PostImagesModal({
                     liked && isDark
                       ? Colors.dark.lightRed
                       : liked
-                      ? Colors.light.red
-                      : Colors.white
+                        ? Colors.light.red
+                        : Colors.white
                   }
                 />
                 <Text style={styles.engagementText}>{likeCount}</Text>

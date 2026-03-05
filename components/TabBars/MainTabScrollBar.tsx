@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -57,23 +56,22 @@ export default function MainScrollTabBar<T extends string>({
     maybeInitializeUnderline();
   };
 
-const maybeInitializeUnderline = () => {
-  const index = tabs.indexOf(selected);
-  if (index === -1) return;
+  const maybeInitializeUnderline = () => {
+    const index = tabs.indexOf(selected);
+    if (index === -1) return;
 
-  const text = textMeasurements.current[index];
-  const pressable = pressableMeasurements.current[index];
+    const text = textMeasurements.current[index];
+    const pressable = pressableMeasurements.current[index];
 
-  if (!text || !pressable || isInitialized.current) return;
+    if (!text || !pressable || isInitialized.current) return;
 
-  const initialX = calculateUnderlineX(index);
-  underlineX.setValue(initialX);
-  underlineWidth.setValue(text.width);
+    const initialX = calculateUnderlineX(index);
+    underlineX.setValue(initialX);
+    underlineWidth.setValue(text.width);
 
-  isInitialized.current = true;
-  scrollToActive(index);
-};
-
+    isInitialized.current = true;
+    scrollToActive(index);
+  };
 
   const calculateUnderlineX = (index: number) => {
     const text = textMeasurements.current[index];
@@ -137,8 +135,8 @@ const maybeInitializeUnderline = () => {
     backgroundColor: lighter
       ? Colors.white
       : isDark
-      ? Colors.white
-      : Colors.black,
+        ? Colors.white
+        : Colors.black,
     position: "absolute",
     bottom: 0,
     left: 0,

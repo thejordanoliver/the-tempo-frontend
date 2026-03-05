@@ -1,10 +1,12 @@
 // ...
-import PlaceHolderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { useEffect, useRef } from "react";
-
-import React from "react";
+import { Colors, Fonts } from "constants/Styles";
+import { getTeamLogo } from "constants/teams";
+import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
+import React, { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
@@ -35,7 +37,7 @@ function TeamCard({
   onImageLoad,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-
+  const styles = teamCardStyles;
   // Split fullName into city + nickname
   const [city, nickname] = (() => {
     const parts = item.fullName?.split(" ");
@@ -78,31 +80,20 @@ function TeamCard({
     ],
   });
 
-  const resolveLogo = (source: any) => {
-    if (!source) return PlaceHolderLogo;
-
-    // If already require() or an object, return directly
-    if (typeof source === "number" || typeof source === "object") return source;
-
-    // If a string, convert to URI
-    if (typeof source === "string") return { uri: source };
-
-    return PlaceHolderLogo;
-  };
-
-  // ✅ Always use logoLight in dark mode if available, otherwise fallback
-  // ✅ Choose correct logo based on theme and selection
-  const logoSource = (() => {
-    let selected = item.logo;
-
-    if (isDark) {
-      selected = item.logoLight || item.logo;
-    } else {
-      if (isSelected && item.logoLight) selected = item.logoLight;
-    }
-
-    return resolveLogo(selected);
-  })();
+  const logo =
+    item.league === "CFB"
+      ? getCFBTeamLogo(item.id, isDark || isSelected)
+      : item.league === "CBB"
+        ? getCBBTeamLogo(item.id, isDark || isSelected, false)
+        : item.league === "WCBB"
+          ? getCBBTeamLogo(item.id, isDark || isSelected, true)
+          : item.league === "MLB"
+            ? getMLBTeamLogo(item.id, isDark || isSelected)
+            : item.league === "NBA"
+              ? getTeamLogo(item.id, isDark || isSelected)
+              : item.league === "NFL"
+                ? getNFLTeamLogo(item.id, isDark || isSelected)
+                : getNHLTeamLogo(item.id, isDark || isSelected);
 
   const logoSize = isGridView ? 50 : 40;
 
@@ -144,8 +135,8 @@ function TeamCard({
                   item.league === "CFB"
                     ? "#228B22"
                     : item.league === "WCBB"
-                    ? "#C2185B" // 🎀 WCBB color
-                    : "#1E90FF", // CBB
+                      ? "#C2185B" // 🎀 WCBB color
+                      : "#1E90FF", // CBB
               },
             ]}
           >
@@ -167,7 +158,7 @@ function TeamCard({
           ]}
         >
           <Animated.Image
-            source={logoSource}
+            source={logo}
             style={[styles.logo, { width: logoSize, height: logoSize }]}
             onLoad={onImageLoad}
           />
@@ -201,7 +192,7 @@ function TeamCard({
   );
 }
 
-const styles = StyleSheet.create({
+const teamCardStyles = StyleSheet.create({
   teamCard: {
     borderRadius: 8,
     overflow: "hidden",

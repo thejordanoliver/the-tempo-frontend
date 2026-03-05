@@ -1,172 +1,52 @@
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
-import { globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
-import { jwtDecode } from "jwt-decode";
-import { useCallback, useEffect, useState } from "react";
+import { useLeagueForum } from "hooks/useLeagueForum";
+import { useCallback, useEffect } from "react";
 import {
   FlatList,
   RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
-  View,
   useColorScheme,
 } from "react-native";
 import { LeagueType } from "types/types";
-import { getAccessToken } from "utils/authStorage";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
-import { Post, PostItem } from "./PostItem";
+import { PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 import { forumStyles } from "./TeamForum";
+type LeagueForumProps = {
+  league?: LeagueType;
+};
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
-type LeagueForumProps = {
-  league?: LeagueType; // extendable if more leagues later
-};
-
 export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const {
+    posts,
+    loading,
+    refreshing,
+    error,
+    token,
+    currentUserId,
+    fetchPosts,
+    refresh,
+    loadMore,
+    deletePost,
+    editPost,
+  } = useLeagueForum(league);
 
-  const setGlobalImage = useImagePreviewStore((state) => state.setImages);
+  const setGlobalImage = useImagePreviewStore((s) => s.setImages);
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
-  const renderSkeletons = (count = 5) => (
-    <>
-      {Array.from({ length: count }).map((_, i) => (
-        <PostItemSkeleton key={`skeleton-${i}`} showMedia />
-      ))}
-    </>
-  );
-
-  // 🔑 Load token + decode user
-  useEffect(() => {
-    (async () => {
-      try {
-        const storedToken = await getAccessToken();
-        setToken(storedToken);
-        if (storedToken) {
-          const decoded: { id: number } = jwtDecode(storedToken);
-          setCurrentUserId(decoded.id);
-        }
-      } catch (err) {
-        console.error("Error loading token:", err);
-      }
-    })();
-  }, []);
-
-  // 🔑 Fetch league posts
-  const fetchPosts = useCallback(
-    async (pageNumber = 1) => {
-      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
-      setError(null);
-
-      try {
-        const res = await axios.get(`${BASE_URL}/api/forum/league/${league}`, {
-          params: { page: pageNumber, limit: 10 },
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
-
-        const data = res.data;
-
-        if (pageNumber === 1) {
-          setPosts(data.posts);
-        } else {
-          setPosts((prev) => [...prev, ...data.posts]);
-        }
-
-        setPage(data.pagination.page);
-        setTotalPages(data.pagination.totalPages);
-
-        const likedSet = new Set<string>(
-          data.posts
-            .filter((post: Post) => post.liked_by_current_user)
-            .map((post: Post) => String(post.id))
-        );
-        setLikedPosts(likedSet);
-      } catch (err: any) {
-        setError(
-          err.response?.data?.error || err.message || "Error loading posts"
-        );
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [token, league]
-  );
-
-  useEffect(() => {
-    if (token) {
-      fetchPosts(1);
-    }
-  }, [token, fetchPosts]);
 
   useFocusEffect(
     useCallback(() => {
-      if (token) {
-        fetchPosts(1);
-      }
-    }, [fetchPosts, token])
+      fetchPosts(1);
+    }, [fetchPosts]),
   );
-
-  const onRefresh = () => fetchPosts(1);
-
-  const loadMore = () => {
-    if (page < totalPages && !loading && !refreshing) {
-      fetchPosts(page + 1);
-    }
-  };
-
-  // console.log(JSON.stringify(posts, null,2))
-
-  const deletePost = async (postId: string) => {
-    if (!token) {
-      alert("You must be logged in to delete posts.");
-      return;
-    }
-    try {
-      await axios.delete(`${BASE_URL}/api/forum/post/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
-      alert("Post deleted.");
-    } catch (err: any) {
-      alert(
-        err.response?.data?.error || err.message || "Failed to delete post"
-      );
-    }
-  };
-
-  const editPost = async (postId: string, newText: string) => {
-    if (!token) {
-      alert("You must be logged in to edit posts.");
-      return;
-    }
-    try {
-      const res = await axios.patch(
-        `${BASE_URL}/api/forum/post/${postId}`,
-        { text: newText },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setPosts((prev) =>
-        prev.map((p) => (String(p.id) === postId ? res.data.post : p))
-      );
-      alert("Post updated.");
-    } catch (err: any) {
-      alert(err.response?.data?.error || err.message || "Failed to edit post");
-    }
-  };
 
   useEffect(() => {
     return () => {
@@ -174,10 +54,36 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     };
   }, []);
 
+  const renderSkeletons = useCallback(
+    (count = 5) => (
+      <>
+        {Array.from({ length: count }).map((_, i) => (
+          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+        ))}
+      </>
+    ),
+    [],
+  );
+
+  const onRefresh = useCallback(() => refresh(), [refresh]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setGlobalImage([], 0);
+    };
+  }, [setGlobalImage]);
+
+  if (loading)
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        {renderSkeletons()}
+      </ScrollView>
+    );
+  if (error) return <Text style={global.errorText}>{error}</Text>;
+
   return (
     <>
-      {error && <Text style={global.errorText}>{error}</Text>}
-
       <FlatList
         data={posts}
         keyExtractor={(item) => String(item.id)}
@@ -190,7 +96,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
             currentUserId={currentUserId}
             deletePost={deletePost}
             editPost={editPost}
-            BASE_URL={BASE_URL}
+            BASE_URL={BASE_URL || "http://localhost:4000"}
             onImagePress={(imgUri) => {
               setGlobalImage([], 0);
               setGlobalImage([imgUri], 0);
@@ -202,21 +108,26 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        ListEmptyComponent={() => {
-          if (loading) {
-            return renderSkeletons(5);
-          }
-          return <Text style={global.emptyText}>No posts yet.</Text>;
-        }}
+        ListEmptyComponent={() =>
+          loading ? (
+            <>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <PostItemSkeleton key={i} showMedia />
+              ))}
+            </>
+          ) : (
+            <Text style={global.emptyText}>No posts yet.</Text>
+          )
+        }
       />
 
-      {/* 🔑 Floating action button to create post */}
+      {/* Floating create button */}
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() =>
           router.push({
             pathname: "/create-post",
-            params: { league }, // ✅ pass correct league
+            params: { league },
           })
         }
         activeOpacity={0.8}
@@ -224,7 +135,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         <Ionicons
           name="create"
           size={20}
-          color={isDark ? "#1d1d1d" : "white"}
+          color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>
     </>

@@ -1,6 +1,5 @@
 import { Dropdown } from "components/Dropdown";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { useCFBPortalPlayers } from "hooks/CFBHooks/useCFBPortalPlayers";
 import React, { useEffect, useMemo, useRef } from "react";
 import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
@@ -82,8 +81,8 @@ export default function TransferList({
       new Set(
         playerData
           .map((r: any) => r.committedTo)
-          .filter((t): t is string => Boolean(t?.trim()))
-      )
+          .filter((t): t is string => Boolean(t?.trim())),
+      ),
     ).sort((a, b) => a.localeCompare(b));
 
     return [

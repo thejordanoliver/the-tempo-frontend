@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -34,7 +34,7 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
-      ])
+      ]),
     );
 
     pulse.start();
@@ -88,6 +88,5 @@ const skeletonStyles = (isDark: boolean) =>
     overlay: {
       ...StyleSheet.absoluteFillObject,
       borderRadius: 6,
-    
     },
   });

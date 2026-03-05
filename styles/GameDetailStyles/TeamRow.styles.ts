@@ -67,7 +67,19 @@ export type MLBProps = {
   isWinner?: boolean;
   hideRecord?: boolean;
   gameStatusDescription?: string;
-  league: "mlb" | "cbb"
+  league: "mlb" | "cbb";
+};
+export type NHLProps = {
+  team: TeamRowTeam;
+  size?: SizeType;
+  timeouts?: number;
+  rank?: string;
+  isDark: boolean;
+  isHome?: boolean;
+  score?: number;
+  isWinner?: boolean;
+  hideRecord?: boolean;
+  gameStatusDescription?: string;
 };
 
 // Main static styles
@@ -124,8 +136,8 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
           ? Colors.dark.white
           : Colors.light.black
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     score: {
       fontFamily: Fonts.OSBOLD,

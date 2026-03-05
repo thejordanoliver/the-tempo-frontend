@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teamsById } from "constants/teams";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -54,13 +54,13 @@ export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
       try {
         await AsyncStorage.setItem(
           CACHE_KEY,
-          JSON.stringify({ data, timestamp: Date.now() })
+          JSON.stringify({ data, timestamp: Date.now() }),
         );
       } catch (err) {
         console.warn("Failed to cache Summer League games:", err);
       }
     },
-    [CACHE_KEY]
+    [CACHE_KEY],
   );
 
   // ------------------------------
@@ -80,23 +80,25 @@ export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
       }
 
       // 2️⃣ Fetch combined season games
-      const res = await axios.get(`${BASE_URL}/api/gamesNBASL`, {
+      const res = await axios.get(`${BASE_URL}/api/games/nba-summer`, {
         params: { season },
       });
 
       const response = res.data.response || [];
 
       // 3️⃣ Normalize + dedupe by game ID (safety)
-const normalizedGames = Object.values(
-  normalizeSummerGames(response).reduce((acc, game) => {
-    const leagueId = game.league?.id ?? "unknown";
-    const key = `${leagueId}-${game.id}`;
+      const normalizedGames = Object.values(
+        normalizeSummerGames(response).reduce(
+          (acc, game) => {
+            const leagueId = game.league?.id ?? "unknown";
+            const key = `${leagueId}-${game.id}`;
 
-    acc[key] = game;
-    return acc;
-  }, {} as Record<string, SummerGame>)
-);
-
+            acc[key] = game;
+            return acc;
+          },
+          {} as Record<string, SummerGame>,
+        ),
+      );
 
       setGames(normalizedGames);
       saveCache(normalizedGames);
@@ -129,7 +131,7 @@ const normalizedGames = Object.values(
   const isLiveGame = useCallback(
     (game: SummerGame) =>
       !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
-    []
+    [],
   );
 
   // ------------------------------
@@ -195,8 +197,7 @@ function normalizeSummerGames(data: any[]): SummerGame[] {
             fullName: homeTeamData.fullName || g.teams?.home?.fullName,
             logo: homeTeamData.logo || "",
             color: homeTeamData.color || Colors.midTone,
-            secondaryColor:
-              homeTeamData.secondaryColor || Colors.midTone,
+            secondaryColor: homeTeamData.secondaryColor || Colors.midTone,
             location: homeTeamData.location,
             venueName: homeTeamData.venueName,
           },
@@ -208,8 +209,7 @@ function normalizeSummerGames(data: any[]): SummerGame[] {
             fullName: awayTeamData.fullName || g.teams?.away?.fullName,
             logo: awayTeamData.logo || "",
             color: awayTeamData.color || Colors.midTone,
-            secondaryColor:
-              awayTeamData.secondaryColor || Colors.midTone,
+            secondaryColor: awayTeamData.secondaryColor || Colors.midTone,
             location: awayTeamData.location,
             venueName: awayTeamData.venueName,
           },

@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 type Props = {
@@ -36,7 +36,7 @@ export default function PlayerHeader({
   const getPrimaryTextColor = (
     isDark: boolean,
     teamName?: string,
-    teamColor?: string
+    teamColor?: string,
   ): string => {
     const normalizedTeamName = teamName?.trim().toLowerCase() ?? "";
 
@@ -72,7 +72,7 @@ export default function PlayerHeader({
         <Text style={styles.name}>{player.first_name}</Text>
         <Text style={styles.name}>{player.last_name}</Text>
 
-          {isCollegePlayer && (
+        {isCollegePlayer && (
           <Text style={[styles.playerInfo]}>
             <Text style={styles.playerInfoLabel}>Hometown: </Text>
             {player.birth_display}
@@ -106,7 +106,6 @@ export default function PlayerHeader({
             {age != null ? `${age} years old` : "Unknown"}
           </Text>
         )}
-      
       </View>
     </View>
   );

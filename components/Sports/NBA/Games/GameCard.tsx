@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamById } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useState } from "react";
 import {
   Pressable,
@@ -57,8 +57,8 @@ export default function GameCard({ game }: { game: Game }) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = GameCardStyles(isDark, isChampionship);
 
@@ -66,7 +66,7 @@ export default function GameCard({ game }: { game: Game }) {
     "nba",
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   const period =
@@ -91,7 +91,6 @@ export default function GameCard({ game }: { game: Game }) {
   const headlineText = details?.headline;
   const headline = headlineText || holidayLabel;
 
-  
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
@@ -110,8 +109,6 @@ export default function GameCard({ game }: { game: Game }) {
       minute: "2-digit",
       hour12: true,
     }) || "";
-
-
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT

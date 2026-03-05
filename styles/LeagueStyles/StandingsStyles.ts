@@ -6,12 +6,9 @@ const RANK_WIDTH = 40;
 const TEAM_COL_WIDTH = 60; // Increased to fit badge
 const STAT_COL_WIDTH = 70;
 
-export const getStyles = (isDark: boolean) =>
+export const standingsStyles = (isDark: boolean) =>
   StyleSheet.create({
-     contentContainer:{
-        paddingHorizontal: 12,
-        paddingBottom: 100,
-      },
+   
     center: {
       flex: 1,
       justifyContent: "center",
@@ -118,33 +115,25 @@ export const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
-    statTextSecondary: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    statTextPositive: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
-    statTextNegative: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: "tomato",
-    },
     statusBadge: {
       marginLeft: 2,
       paddingVertical: 2,
       borderRadius: 4,
-      minWidth: 20,
       justifyContent: "center",
       alignItems: "center",
+      paddingHorizontal: 6,
     },
     statusBadgeText: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 10,
       color: Colors.white,
+    },
+    statusText: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 10,
+      color: isDark ? Colors.dark.white : Colors.light.black,
+      marginLeft: 4,
+      flexWrap: "wrap",
     },
     legendContainer: {
       marginTop: 10,
@@ -163,12 +152,6 @@ export const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 12,
-    },
-
-    legendLabel: {
-      fontFamily: Fonts.OSREGULAR,
-      marginLeft: 6,
-      color: isDark ? Colors.white : Colors.black,
     },
 
     droppedoutNames: {

@@ -8,21 +8,19 @@ import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
 import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersInFoulTrouble from "components/Sports/CBB/GameDetails/PlayersInFoulTrouble";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
-import {
-  GameLocation,
-  LastFiveGamesSwitcher,
-  LineScore,
-} from "components/Sports/NBA/GameDetails";
+import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
+import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
-import { teams } from "constants/teamsCBB";
+import { getCBBTeamLogo, teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo, useRef } from "react";
 import {
@@ -112,13 +110,13 @@ export default function GameDetailsScreen() {
   const homeTeamData = teams.find((t) =>
     isWomen
       ? String((t as any).wid) === String(homeTeamId)
-      : String((t as any).id) === String(homeTeamId)
+      : String((t as any).id) === String(homeTeamId),
   );
 
   const awayTeamData = teams.find((t) =>
     isWomen
       ? String((t as any).wid) === String(awayTeamId)
-      : String((t as any).id) === String(awayTeamId)
+      : String((t as any).id) === String(awayTeamId),
   );
 
   if (!homeTeamData || !awayTeamData) {
@@ -154,23 +152,8 @@ export default function GameDetailsScreen() {
     return null;
   }
 
-  const homeLogo =
-    isWomen && isDark
-      ? homeTeamData.wLogo || homeTeamData.logoLight || homeTeamData.logo
-      : isDark
-      ? homeTeamData.logoLight || homeTeamData.logo
-      : isWomen
-      ? homeTeamData.wLogo || homeTeamData.logo
-      : homeTeamData.logo;
-
-  const awayLogo =
-    isWomen && isDark
-      ? awayTeamData.wLogo || awayTeamData.logoLight || awayTeamData.logo
-      : isDark
-      ? awayTeamData.logoLight || awayTeamData.logo
-      : isWomen
-      ? awayTeamData.wLogo || awayTeamData.logo
-      : awayTeamData.logo;
+  const homeLogo = getCBBTeamLogo(homeTeamId, isDark, isWomen);
+  const awayLogo = getCBBTeamLogo(awayTeamId, isDark, isWomen);
 
   const homeEspnId = homeTeamData.espnID ?? 0;
   const awayEspnId = awayTeamData.espnID ?? 0;
@@ -179,7 +162,7 @@ export default function GameDetailsScreen() {
 
   const gameDateObj = useMemo(
     () => parseGameDate((gameObj as any)?.timestamp ?? (gameObj as any)?.date),
-    [gameObj]
+    [gameObj],
   );
 
   const formattedDate = gameDateObj.toLocaleDateString("en-US", {
@@ -203,7 +186,7 @@ export default function GameDetailsScreen() {
     detailsLeague,
     String(homeEspnId),
     String(awayEspnId),
-    gameDateYMD
+    gameDateYMD,
   );
 
   const isLoadingGame =
@@ -238,7 +221,8 @@ export default function GameDetailsScreen() {
   const lastPlay = liveScore?.lastPlay ?? "";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-  // console.log(JSON.stringify(leaders,null ,2))
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) ?? 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
 
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
@@ -258,13 +242,13 @@ export default function GameDetailsScreen() {
         homeTeam: homeTeamData,
         isNeutralSite: neutralSite,
       }),
-    [details?.venue, homeTeamData, neutralSite]
+    [details?.venue, homeTeamData, neutralSite],
   );
 
   const { weather, weatherError, weatherLoading } = useWeatherForecast(
     resolvedVenue.latitude,
     resolvedVenue.longitude,
-    gameDateYMD
+    gameDateYMD,
   );
 
   /* ---------------- Status / linescore ---------------- */
@@ -382,13 +366,19 @@ export default function GameDetailsScreen() {
 
         {!dontShowDetails && (
           <View style={{ gap: 20, marginTop: 20 }}>
-            {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
+            {!isFinal && !isScheduled && (
+              <LastPlay
+                lastPlay={lastPlay}
+                homeTeamId={homeEspnId}
+                awayTeamId={awayEspnId}
+              />
+            )}
 
             {!isScheduled && (
               <LineScore
                 linescore={lineScore}
-                homeCode={homeTeamData.code ?? ""}
                 awayCode={awayTeamData.code ?? ""}
+                homeCode={homeTeamData.code ?? ""}
                 league={isWomen ? "WCBB" : "CBB"} // ✅ FIX
               />
             )}
@@ -398,6 +388,28 @@ export default function GameDetailsScreen() {
                 gameId={`${homeTeamId}-${awayTeamId}`}
                 awayTeam={voteAwayTeam as any}
                 homeTeam={voteHomeTeam as any}
+              />
+            )}
+
+            {isScheduled && (
+              <MatchupPredictor
+                away={{
+                  name: awayTeamData.code ?? "UNK",
+                  logo: awayLogo,
+                  color: isDark
+                    ? awayTeamData.secondaryColor
+                    : awayTeamData.color,
+                  chance: awayChance,
+                }}
+                home={{
+                  name: homeTeamData.code ?? "UNK",
+                  logo: homeLogo,
+                  color: isDark
+                    ? homeTeamData.secondaryColor
+                    : homeTeamData.color,
+                  chance: homeChance,
+                }}
+                size={180}
               />
             )}
 
@@ -412,12 +424,12 @@ export default function GameDetailsScreen() {
             {(isHalftime || inProgress) && (
               <PlayersInFoulTrouble
                 gameId={gameObj.id}
-                home={homeTeamData}
                 away={awayTeamData}
+                home={homeTeamData}
               />
             )}
 
-            {(isHalftime || inProgress) && (
+            {(isHalftime || inProgress || isFinal) && (
               <ShotChart
                 plays={plays}
                 homeTeamId={String(homeEspnId)}
@@ -427,11 +439,11 @@ export default function GameDetailsScreen() {
               />
             )}
 
-            {(isHalftime || inProgress) && (
+            {(isHalftime || inProgress || isFinal) && (
               <GameSummary
                 plays={plays ?? []}
-                homeTeamId={String(homeEspnId)}
                 awayTeamId={String(awayEspnId)}
+                homeTeamId={String(homeEspnId)}
                 league={isWomen ? "WCBB" : "CBB"}
               />
             )}
@@ -439,13 +451,14 @@ export default function GameDetailsScreen() {
             <GameTeamStats
               stats={teamStats}
               gameStatusDescription={gameStatusDescription}
+              league={isWomen ? "WCBB" : "CBB"}
             />
 
-            {(isHalftime || inProgress) && (
+            {(isHalftime || inProgress || isFinal) && (
               <BoxScore
                 playerStats={playerStats}
-                homeTeamId={Number(homeEspnId)}
                 awayTeamId={Number(awayEspnId)}
+                homeTeamId={Number(homeEspnId)}
                 league={isWomen ? "WCBB" : "CBB"}
               />
             )}
@@ -453,29 +466,25 @@ export default function GameDetailsScreen() {
             {(isHalftime || inProgress) && (
               <PlayersOnCourt
                 playerStats={playerStats}
-                homeTeamId={Number(homeEspnId)}
                 awayTeamId={Number(awayEspnId)}
+                homeTeamId={Number(homeEspnId)}
                 league={isWomen ? "WCBB" : "CBB"}
               />
             )}
 
-            <LastFiveGamesSwitcher
+            <LastFiveGames
               isDark={isDark}
-              home={{
-                teamCode: homeTeamData.code ?? "",
-                teamLogo: homeLogo,
-                teamLogoLight: isWomen
-                  ? homeTeamData.wLogo
-                  : homeTeamData.logoLight ?? homeTeamData.logo,
-                games: (homeLastGames as any)?.games ?? [],
-              }}
               away={{
+                teamId: awayTeamData.id ?? "",
                 teamCode: awayTeamData.code ?? "",
-                teamLogo: awayTeamData.logo,
-                teamLogoLight: awayTeamData.logoLight ?? awayTeamData.logo,
                 games: (awayLastGames as any)?.games ?? [],
               }}
-              league="CBB"
+              home={{
+                teamId: homeTeamData.id ?? "",
+                teamCode: homeTeamData.code ?? "",
+                games: (homeLastGames as any)?.games ?? [],
+              }}
+              league={isWomen ? "WCBB" : "CBB"}
             />
 
             {highlights?.length > 0 && (

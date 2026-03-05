@@ -3,57 +3,75 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar, {
   getLabelStyle,
 } from "components/TabBars/FixedWidthTabBar";
-import { globalStyles } from "constants/Styles";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 import { LeagueType } from "types/types";
 
+import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getTeamLogo } from "constants/teams";
+import { getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getMLBTeamLogo } from "constants/teamsMLB";
+import { getCFBTeamLogo } from "constants/teamsCFB";
+
+type TeamData = {
+  teamId?: number; // 👈 make optional to reflect real data
+  teamCode: string | undefined;
+  games: any[];
+};
+
 type Props = {
   isDark: boolean;
   lighter?: boolean;
-  home: {
-    teamCode: string;
-    teamLogoLight: any;
-    teamLogo: any;
-    games: any[];
-  };
-  away: {
-    teamCode: string;
-    teamLogoLight: any;
-    teamLogo: any;
-    games: any[];
-  };
+  home: TeamData;
+  away: TeamData;
   league: LeagueType;
 };
-function pickTeamLogo(preferLight: boolean, logo?: any, logoLight?: any) {
-  if (preferLight && logoLight && logoLight !== logo) {
-    return logoLight;
-  }
-  return logo;
-}
 
-export default function LastFiveGamesSwitcher({
+export default function LastFiveGames({
   isDark,
   lighter,
   home,
   away,
+  league,
 }: Props) {
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
+
   const styles = lastFiveGameStyles(isDark, lighter ?? false);
+const logoIsDark = lighter ? true : isDark;
+
+const resolveLogo = (teamId?: number) => {
+  if (!teamId) return undefined;
+
+  switch (league) {
+    case "NBA":
+      return getTeamLogo(teamId, logoIsDark);
+    case "NFL":
+      return getNFLTeamLogo(teamId, logoIsDark);
+    case "NHL":
+      return getNHLTeamLogo(teamId, logoIsDark);
+    case "MLB":
+      return getMLBTeamLogo(teamId, logoIsDark);
+    case "CBB":
+      return getCBBTeamLogo(teamId, logoIsDark, false);
+    case "WCBB":
+      return getCBBTeamLogo(teamId, logoIsDark, true);
+    case "CFB":
+      return getCFBTeamLogo(teamId, logoIsDark);
+    default:
+      return undefined;
+  }
+};
+
+
   const renderRow = ({ item, index }: { item: any; index: number }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-    const useLightLogo = isDark || (lighter ?? false);
-
-    const opponentLogoSource = pickTeamLogo(
-      useLightLogo,
-      item.opponentLogo,
-      item.opponentLogoLight
-    );
+    const opponentLogo = resolveLogo(item.opponentId);
 
     return (
       <View
@@ -61,7 +79,9 @@ export default function LastFiveGamesSwitcher({
           styles.row,
           {
             borderBottomWidth:
-              index === team.games.length - 1 ? 0 : StyleSheet.hairlineWidth,
+              index === team.games.length - 1
+                ? 0
+                : StyleSheet.hairlineWidth,
           },
         ]}
       >
@@ -71,13 +91,19 @@ export default function LastFiveGamesSwitcher({
           <Text style={styles.matchupText}>
             {matchupSymbol} {item.opponent}
           </Text>
-          {opponentLogoSource && (
-            <Image source={opponentLogoSource} style={styles.opponentLogo} />
+
+          {opponentLogo && (
+            <Image
+              source={opponentLogo}
+              style={styles.opponentLogo}
+              resizeMode="contain"
+            />
           )}
         </View>
 
         <Text style={[styles.cell, { color: resultColor }]}>
-          {resultSymbol} {item.isHome ? item.homeScore : item.awayScore} -{" "}
+          {resultSymbol}{" "}
+          {item.isHome ? item.homeScore : item.awayScore} -{" "}
           {item.isHome ? item.awayScore : item.homeScore}
         </Text>
       </View>
@@ -90,7 +116,6 @@ export default function LastFiveGamesSwitcher({
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Last Five Games</HeadingTwo>
 
-      {/* Tabs */}
       <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabs}
@@ -99,20 +124,22 @@ export default function LastFiveGamesSwitcher({
           onTabPress={(tab) => setSelected(tab as "home" | "away")}
           renderLabel={(tab, isSelected) => {
             const teamData = tab === "home" ? home : away;
-            const useLightLogo = isDark || (lighter ?? false);
 
-            const logoSource = pickTeamLogo(
-              useLightLogo,
-              teamData.teamLogo,
-              teamData.teamLogoLight
-            );
+            const teamLogo = resolveLogo(teamData.teamId); // ✅ no toString()
 
             return (
               <View style={styles.tabLabel}>
-                <Image
-                  source={logoSource}
-                  style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                />
+                {teamLogo && (
+                  <Image
+                    source={teamLogo}
+                    style={[
+                      styles.tabLogo,
+                      { opacity: isSelected ? 1 : 0.5 },
+                    ]}
+                    resizeMode="contain"
+                  />
+                )}
+
                 <Text
                   style={getLabelStyle(isDark, isSelected, lighter, {
                     opacity: isSelected ? 1 : 0.5,
@@ -125,7 +152,6 @@ export default function LastFiveGamesSwitcher({
           }}
         />
 
-        {/* Game List */}
         <FlatList
           data={team.games}
           keyExtractor={(item) => item.id.toString()}
@@ -139,7 +165,9 @@ export default function LastFiveGamesSwitcher({
           ListHeaderComponent={
             <View style={styles.headerRow}>
               <Text style={[styles.cell, styles.date]}>Date</Text>
-              <Text style={[styles.cell, styles.teamHeader]}>Matchup</Text>
+              <Text style={[styles.cell, styles.teamHeader]}>
+                Matchup
+              </Text>
               <Text style={styles.cell}>Result</Text>
             </View>
           }

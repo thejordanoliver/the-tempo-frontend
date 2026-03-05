@@ -2,8 +2,7 @@
 
 import CFPLogoLight from "assets/College_Logos/CFPLight.png";
 import CFPLogo from "assets/College_Logos/CFPLogo.png";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { BracketRound } from "types/cfb";
 import { GameCard } from "./GameCard";
@@ -86,7 +85,7 @@ const getStyles = (isDark: boolean) =>
       flex: 1,
       width: "100%",
       alignItems: "center",
-      height: "100%"
+      height: "100%",
     },
 
     rowTitle: {

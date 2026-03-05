@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getRivalryHeadline, getTeamInfo } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -47,9 +47,9 @@ function CFBGameSquareCard({ game }: Props) {
 
   const isChampionship = Boolean(
     gameDate &&
-      gameDate.getFullYear() === 2026 &&
-      gameDate.getMonth() === 0 &&
-      gameDate.getDate() === 19
+    gameDate.getFullYear() === 2026 &&
+    gameDate.getMonth() === 0 &&
+    gameDate.getDate() === 19,
   );
 
   const styles = gameSquareCardStyles(isDark, isChampionship);
@@ -63,7 +63,7 @@ function CFBGameSquareCard({ game }: Props) {
   const possession = useFootballGamePossession(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Details ---
@@ -71,7 +71,7 @@ function CFBGameSquareCard({ game }: Props) {
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
-    "cfb"
+    "cfb",
   );
 
   const {
@@ -102,10 +102,10 @@ function CFBGameSquareCard({ game }: Props) {
   // -----------------------------------------------------
   const homeScore = isFinal
     ? game.scores.home.total
-    : possession?.score?.home ?? 0;
+    : (possession?.score?.home ?? 0);
   const awayScore = isFinal
     ? game.scores.away.total
-    : possession?.score?.away ?? 0;
+    : (possession?.score?.away ?? 0);
 
   // --- Team records ---
   const homeRecord = details?.homeRecords.total.summary;
@@ -120,7 +120,7 @@ function CFBGameSquareCard({ game }: Props) {
   const headline = details?.headline;
   const rivalryHeadline = useMemo(
     () => getRivalryHeadline(Number(homeEspnId), Number(awayEspnId)),
-    [homeEspnId, awayEspnId]
+    [homeEspnId, awayEspnId],
   );
   const headlineText = headline || rivalryHeadline || "";
 
@@ -150,7 +150,7 @@ function CFBGameSquareCard({ game }: Props) {
       hasPossession:
         inProgress && String(possessionTeamId) === String(awayEspnId),
     }),
-    [awayId, awayEspnId, awayRecord, possessionTeamId, isDark, inProgress]
+    [awayId, awayEspnId, awayRecord, possessionTeamId, isDark, inProgress],
   );
 
   const homeTeam = useMemo(
@@ -166,7 +166,7 @@ function CFBGameSquareCard({ game }: Props) {
       hasPossession:
         inProgress && String(possessionTeamId) === String(homeEspnId),
     }),
-    [homeId, homeEspnId, homeRecord, possessionTeamId, isDark, inProgress]
+    [homeId, homeEspnId, homeRecord, possessionTeamId, isDark, inProgress],
   );
 
   const homeTeamName = homeTeam.name;

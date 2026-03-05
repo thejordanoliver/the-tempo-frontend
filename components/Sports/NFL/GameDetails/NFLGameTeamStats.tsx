@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getNFLTeamsLogo, getTeamInfo } from "constants/teamsNFL";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -58,7 +57,7 @@ export default function NFLGameTeamStats({
   const styles = gameTeamStatsStyles(isDark, lighter);
   const [expanded, setExpanded] = useState(false);
   const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
+    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
 
   // ✅ Safe: conditional rendering AFTER hooks
@@ -106,13 +105,13 @@ export default function NFLGameTeamStats({
   const textColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.white
-    : Colors.black;
+      ? Colors.white
+      : Colors.black;
   const dividerColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.midTone
-    : Colors.midTone;
+      ? Colors.midTone
+      : Colors.midTone;
 
   // Safe: optional chaining
   const teamNameA = getTeamInfo(teamA?.team?.id) ?? { code: "Home" };
@@ -289,8 +288,8 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: lighter
         ? Colors.darkGray
         : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+          ? Colors.darkGray
+          : Colors.lightGray,
     },
     statLabel: {
       fontFamily: Fonts.OSREGULAR,

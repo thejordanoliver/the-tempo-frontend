@@ -1,15 +1,29 @@
-// components/WeekSelectorSkeleton.tsx
 import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import {
+  Animated,
+  Dimensions,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
+
+const ITEM_WIDTH = 70;
+const SPACING = 12;
 
 export default function MonthSelectorSkeleton({
-  itemCount = 10,
+  itemCount = 4,
 }: {
   itemCount?: number;
 }) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
+
+  const screenWidth = Dimensions.get("window").width;
+  const contentWidth =
+    itemCount * ITEM_WIDTH + (itemCount - 1) * SPACING;
+
+  const needsScroll = contentWidth > screenWidth;
 
   // Pulse animation
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -36,9 +50,23 @@ export default function MonthSelectorSkeleton({
   );
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        !needsScroll && {
+          width: screenWidth,
+          justifyContent: "space-around",
+        },
+      ]}
+    >
       {Array.from({ length: itemCount }).map((_, i) => (
-        <View key={i} style={styles.buttonContainer}>
+        <View
+          key={i}
+          style={[
+            styles.buttonContainer,
+            { marginHorizontal: SPACING / 2 },
+          ]}
+        >
           <SkeletonBlock style={styles.month} />
           <SkeletonBlock style={styles.gameCount} />
         </View>
@@ -51,27 +79,25 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
-      marginVertical: 8,
       paddingVertical: 6,
-      paddingHorizontal: 4,
+      paddingHorizontal: SPACING / 2,
     },
     buttonContainer: {
-      gap: 4,
-      justifyContent: "center",
+      width: ITEM_WIDTH,
       alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
     },
     month: {
-      width: 60,
-      height: 16,
-      borderRadius: 12,
-      marginRight: 8,
+      width: 40,
+      height: 18, // closer to fontSize 20
+      borderRadius: 8,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     gameCount: {
-      width: 30,
+      width: 52,
       height: 12,
-      borderRadius: 12,
-      marginRight: 8,
+      borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

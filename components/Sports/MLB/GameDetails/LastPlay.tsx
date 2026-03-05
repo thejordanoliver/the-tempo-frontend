@@ -1,62 +1,32 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import players from "constants/players";
-import useDbPlayersByTeam, { Player } from "hooks/usePlayersByTeam";
+import { Colors } from "constants/Styles";
 import { useEffect, useState } from "react";
-import {
-  Image,
-  LayoutChangeEvent,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { LayoutChangeEvent, Text, View, useColorScheme } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
-type NBALastPlay = {
+type MLBLastPlay = {
   id?: string;
   text: string;
-  teamId?: string;
-  homeWinPercentage?: number;
-  athletes?: {
-    id?: string;
-    name?: string;
-    headshot?: string;
-    position?: string;
-    jersey?: string;
-    teamId?: string;
-  }[];
+  inning?: number;
+  half?: "Top" | "Bottom";
+  pitchVelocity: number;
+  awayScore: number;
+  homeScore: number;
+  pitchCount: {
+    balls: number;
+    strikes: number;
+  };
 };
 
 type LastPlayProps = {
-  lastPlay?: string | NBALastPlay;
-  isDark?: boolean; // optional override
-  homeTeamId?: string;
-  awayTeamId?: string;
+  lastPlay?: string | MLBLastPlay;
 };
 
-const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
-
-export default function LastPlay({
-  lastPlay,
-  homeTeamId,
-  awayTeamId,
-}: LastPlayProps) {
+export default function LastPlay({ lastPlay }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-  const normalizeText = (text: string) => {
-    if (!text) return text;
-
-    // Normalize "missed shot" variations → "Missed Shot"
-    return text
-      .replace(/missed\s*shot/gi, "Missed Shot")
-      .replace(/made\s*shot/gi, "Made Shot")
-      .replace(/blocked\s*shot/gi, "Blocked Shot")
-      .replace(/made\s*dunk/gi, "Made Dunk")
-      .replace(/Official\s*TV\s*Timeout/gi, "Official Timeout");
-  };
 
   const isDark = useColorScheme() === "dark";
-
   const styles = lastPlayStyles(isDark);
 
   const onLayout = (e: LayoutChangeEvent) =>
@@ -66,41 +36,39 @@ export default function LastPlay({
     setCurrentPlay(lastPlay);
   }, [lastPlay]);
 
-  // ✅ Hooks for player lookup
-  const homePlayersResult = useDbPlayersByTeam(homeTeamId || "");
-  const awayPlayersResult = useDbPlayersByTeam(awayTeamId || "");
+  const normalizeText = (text: string) => {
+    if (!text) return text;
 
-  const homePlayers = homePlayersResult.players || [];
-  const awayPlayers = awayPlayersResult.players || [];
-
-  // ✅ Avatar helper
-  const getPlayerAvatar = (name?: string, headshot?: string): string => {
-    if (!name) return headshot || DEFAULT_HEADSHOT;
-    const fullName = name.trim().toLowerCase();
-
-    const findMatch = (playerList: Player[]) =>
-      playerList.find((p) => {
-        if (!p.full_name) return false;
-        const dbName = p.full_name.toLowerCase().trim();
-        return dbName.includes(fullName) || fullName.includes(dbName);
-      });
-
-    const dbPlayer = findMatch(homePlayers) || findMatch(awayPlayers) || null;
-
-    return dbPlayer?.avatarUrl || players[name] || headshot || DEFAULT_HEADSHOT;
+    return text
+      .replace(/home\s*run/gi, "Home Run")
+      .replace(/strikeout/gi, "Strikeout")
+      .replace(/walk/gi, "Walk")
+      .replace(/double\s*play/gi, "Double Play")
+      .replace(/flyout/gi, "Flyout")
+      .replace(/groundout/gi, "Groundout")
+      .replace(/single/gi, "Single")
+      .replace(/double/gi, "Double")
+      .replace(/triple/gi, "Triple");
   };
 
-  // ✅ Text color helper
   const getTextColor = (text?: string) => {
     const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
+
     const lower = text.toLowerCase();
-    if (lower.includes("foul"))
-      return isDark ? Colors.dark.lightRed : Colors.light.red;
-    if (lower.includes("made"))
+
+    if (lower.includes("home run"))
       return isDark ? Colors.dark.limeGreen : Colors.light.green;
-    if (lower.includes("missed"))
+
+    if (lower.includes("strikeout"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
+
+    if (lower.includes("double play"))
+      return isDark ? Colors.dark.limeGreen : Colors.light.green;
+
+    if (lower.includes("walk"))
+      return isDark ? Colors.dark.limeGreen : Colors.light.green;
+
     return defaultColor;
   };
 
@@ -109,46 +77,35 @@ export default function LastPlay({
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
-        <Text style={styles.simpleText}>{currentPlay}</Text>
+        <HeadingTwo>Last Play</HeadingTwo>
+        <Text style={styles.simpleText}>{normalizeText(currentPlay)}</Text>
       </View>
     );
   }
+
+  console.log(JSON.stringify(currentPlay, null, 2));
 
   return (
     <View style={styles.container} onLayout={onLayout}>
       <HeadingTwo>Last Play</HeadingTwo>
 
-      {currentPlay.athletes?.length ? (
-        <View style={styles.athleteContainer}>
-          {currentPlay.athletes.map((athlete, idx) => {
-            const avatarUrl = getPlayerAvatar(athlete.name, athlete.headshot);
-            return (
-              <View key={athlete.id || idx} style={styles.athleteItem}>
-                <Image source={{ uri: avatarUrl }} style={styles.avatar} />
-                <View style={styles.athleteDetails}>
-                  <Text style={styles.athleteName}>{athlete.name}</Text>
-                  <Text style={styles.athleteMeta}>
-                    {athlete.position || ""}
-                  </Text>
-                  <Text style={styles.athleteMeta}>
-                    {athlete.jersey ? `#${athlete.jersey}` : ""}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
+      <View style={styles.wrapper}>
+        <View style={styles.statusContainer}>
+          <Text
+            style={[styles.playText, { color: getTextColor(currentPlay.text) }]}
+          >
+            {normalizeText(currentPlay.text)}
+          </Text>
+          {currentPlay.pitchVelocity ? (
+            <Text style={[styles.subText]}>
+              {currentPlay.pitchVelocity} MPH
+            </Text>
+          ) : null}
         </View>
-      ) : null}
-
-      <Text
-        style={[
-          styles.playText,
-          { color: getTextColor(currentPlay.text) },
-          currentPlay.athletes?.length ? styles.playTextWithAthletes : null,
-        ]}
-      >
-        {normalizeText(currentPlay.text)}
-      </Text>
+        <Text style={styles.subText}>
+          {currentPlay.awayScore} - {currentPlay.homeScore}
+        </Text>
+      </View>
     </View>
   );
 }

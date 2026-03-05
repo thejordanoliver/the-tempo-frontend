@@ -1,7 +1,5 @@
-// hooks/CBBHooks/usePlayersByTeam.ts
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
 import { CBBPlayer } from "types/types";
 
 interface ApiPlayer {
@@ -35,22 +33,22 @@ interface PlayersResponse {
   teamId: number;
   count: number;
   players: Partial<ApiPlayer>[];
+  isWomen: boolean;
+  league: "cbb" | "wcbb";
 }
 
-function getApiBaseUrl() {
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
-
-  if (Platform.OS === "android") return "http://10.0.2.2:4000";
-
-  return "http://192.168.1.90:4000";
-}
-
-export default function usePlayersByTeam(teamId: string) {
+export default function usePlayersByTeam(
+  teamId: string,
+  isWomen: boolean = false
+) {
   const [players, setPlayers] = useState<CBBPlayer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = getApiBaseUrl();
+  const BASE_URL =
+    process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.90:4000";
+
+  const leagueKey = isWomen ? "wcbb" : "cbb";
 
   const refreshPlayers = useCallback(async () => {
     if (!teamId) {
@@ -61,22 +59,23 @@ export default function usePlayersByTeam(teamId: string) {
     }
 
     setLoading(true);
+
     try {
       const res = await axios.get<PlayersResponse>(
-        `${API_URL}/api/cbb/players/team/${teamId}`
+        `${BASE_URL}/api/${leagueKey}/players/team/${teamId}`
       );
 
       const mappedPlayers: CBBPlayer[] = (res.data.players || []).map((p) => ({
-        id: String(p.id ?? 0),                // number → string
-        teamId: String(p.team_id ?? 0),       // number → string
+        id: String(p.id ?? 0),
+        teamId: String(p.team_id ?? 0),
         jersey: p.jersey_number ?? "",
-        imageUrl: p.headshot_url ?? undefined, // null → undefined
+        imageUrl: p.headshot_url ?? undefined,
         firstName: p.first_name ?? "",
         lastName: p.last_name ?? "",
-        league: p.league ?? "CBB",
+        league: p.league ?? leagueKey.toUpperCase(),
         position: p.position ?? undefined,
         height: p.height ?? "",
-        weight: p.weight ?? undefined,        // null → undefined
+        weight: p.weight ?? undefined,
         experienceYears: p.experience_years ?? undefined,
         experienceDisplay: p.experience_display ?? undefined,
         experienceAbbr: p.experience_abbr ?? undefined,
@@ -103,7 +102,7 @@ export default function usePlayersByTeam(teamId: string) {
     } finally {
       setLoading(false);
     }
-  }, [teamId, API_URL]);
+  }, [teamId, leagueKey, BASE_URL]);
 
   useEffect(() => {
     refreshPlayers();

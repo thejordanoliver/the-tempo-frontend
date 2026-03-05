@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamBySummerId } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useState } from "react";
 import {
   Pressable,
@@ -57,8 +57,8 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = GameCardStyles(isDark, isChampionship);
 
@@ -69,7 +69,7 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
     isVegas ? "summerVegas" : "summerUtah",
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
   const isFinished = game.status.long === "Game Finished";
   const status = isFinished ? "Final" : game.status.long;
@@ -111,7 +111,7 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
       minute: "2-digit",
       hour12: true,
     }) || "";
-JSON.stringify(game)
+  JSON.stringify(game);
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------

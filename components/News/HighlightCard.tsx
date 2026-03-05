@@ -7,7 +7,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { BlurView } from "expo-blur";
 
 type HighlightCardProps = {

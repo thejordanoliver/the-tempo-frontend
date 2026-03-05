@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsNFL";
 import { NFLEventOdds, PlayerOutcome } from "hooks/NFLHooks/useNFLEventOdds";
 import React from "react";
@@ -26,43 +25,43 @@ export const PlayerOddsCard: React.FC<Props> = ({ game }) => {
   const neutralSite = game.neutral ? "vs" : "@";
 
   const NFL_MARKET_HEADERS: Record<string, string> = {
-  player_assists: "Assists",
-  player_defensive_interceptions: "Defensive Interceptions",
-  player_field_goals: "Field Goals",
-  player_kicking_points: "Kicking Points",
-  player_pass_attempts: "Pass Attempts",
-  player_pass_completions: "Pass Completions",
-  player_pass_interceptions: "Pass Interceptions",
-  player_pass_longest_completion: "Longest Completion",
-  player_pass_rush_yds: "Pass + Rush Yards",
-  player_pass_rush_reception_tds: "Pass + Rush + Reception TDs",
-  player_pass_tds: "Passing Touchdowns",
-  player_pass_yds: "Passing Yards",
-  player_pass_yds_q1: "Passing Yards Q1",
-  player_pats: "PATs",
-  player_receptions: "Receptions",
-  player_reception_longest: "Longest Reception",
-  player_reception_tds: "Reception TDs",
-  player_reception_yds: "Reception Yards",
-  player_rush_attempts: "Rush Attempts",
-  player_rush_longest: "Longest Rush",
-  player_rush_reception_tds: "Rush + Reception TDs",
-  player_rush_reception_yds: "Rush + Reception Yards",
-  player_rush_tds: "Rush TDs",
-  player_rush_yds: "Rush Yards",
-  player_sacks: "Sacks",
-  player_solo_tackles: "Solo Tackles",
-  player_tackles_assists: "Tackles + Assists",
-  player_tds_over: "Total TDs Over",
-  player_1st_td: "1st TD",
-  player_anytime_td: "Anytime TD",
-  player_last_td: "Last TD",
-};
+    player_assists: "Assists",
+    player_defensive_interceptions: "Defensive Interceptions",
+    player_field_goals: "Field Goals",
+    player_kicking_points: "Kicking Points",
+    player_pass_attempts: "Pass Attempts",
+    player_pass_completions: "Pass Completions",
+    player_pass_interceptions: "Pass Interceptions",
+    player_pass_longest_completion: "Longest Completion",
+    player_pass_rush_yds: "Pass + Rush Yards",
+    player_pass_rush_reception_tds: "Pass + Rush + Reception TDs",
+    player_pass_tds: "Passing Touchdowns",
+    player_pass_yds: "Passing Yards",
+    player_pass_yds_q1: "Passing Yards Q1",
+    player_pats: "PATs",
+    player_receptions: "Receptions",
+    player_reception_longest: "Longest Reception",
+    player_reception_tds: "Reception TDs",
+    player_reception_yds: "Reception Yards",
+    player_rush_attempts: "Rush Attempts",
+    player_rush_longest: "Longest Rush",
+    player_rush_reception_tds: "Rush + Reception TDs",
+    player_rush_reception_yds: "Rush + Reception Yards",
+    player_rush_tds: "Rush TDs",
+    player_rush_yds: "Rush Yards",
+    player_sacks: "Sacks",
+    player_solo_tackles: "Solo Tackles",
+    player_tackles_assists: "Tackles + Assists",
+    player_tds_over: "Total TDs Over",
+    player_1st_td: "1st TD",
+    player_anytime_td: "Anytime TD",
+    player_last_td: "Last TD",
+  };
 
-const marketHeader =
-  market && NFL_MARKET_HEADERS[market.key]
-    ? NFL_MARKET_HEADERS[market.key]
-    : market?.key.replace(/_/g, " ").toUpperCase();
+  const marketHeader =
+    market && NFL_MARKET_HEADERS[market.key]
+      ? NFL_MARKET_HEADERS[market.key]
+      : market?.key.replace(/_/g, " ").toUpperCase();
 
   if (!market || !market.outcomes?.length) {
     return (
@@ -99,7 +98,9 @@ const marketHeader =
               {outcomes.map((o) => (
                 <View key={o.name} style={styles.outcomeBox}>
                   <Text style={styles.outcomeLabel}>{o.name}</Text>
-                  <Text style={styles.outcomePoint}>{o.price} {`(${o.point})`} </Text>
+                  <Text style={styles.outcomePoint}>
+                    {o.price} {`(${o.point})`}{" "}
+                  </Text>
                 </View>
               ))}
             </View>

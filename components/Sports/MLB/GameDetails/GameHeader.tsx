@@ -16,8 +16,10 @@ type Props = {
   awayScore: number;
   inning?: string;
   isDark: boolean;
+  isTopInning: boolean;
   formattedDate?: string;
   headlineText?: string | null;
+  outs?: number;
   time?: string;
   networkString?: string;
   refreshTick?: number;
@@ -26,11 +28,16 @@ type Props = {
   gameStatusDescription: string;
   gameStatusDetail: string;
   league?: "mlb" | "cbb"; // ✅ new addition
+    bases: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
+  };
 };
 
 export default function GameHeader({
   seriesSummary,
-  seasonState,
+  isTopInning,
   headlineText,
   home,
   away,
@@ -49,6 +56,8 @@ export default function GameHeader({
   homeRecord,
   awayRecord,
   league = "mlb", // ✅ default league
+  outs,
+  bases
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 
@@ -59,13 +68,15 @@ export default function GameHeader({
 
   function renderHeadline(
     seriesSummary: SeriesSummary | undefined,
-    headline?: string | null
+    headline?: string | null,
   ) {
     if (seriesSummary?.type === "playoff") {
       return (
         <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText}>{headline} {} <View style={styles.divider}/> {} {seriesSummary.summary}</Text>
-      
+          <Text style={styles.headlineText}>
+            {headline} {} <View style={styles.divider} /> {}{" "}
+            {seriesSummary.summary}
+          </Text>
         </View>
       );
     }
@@ -115,6 +126,9 @@ export default function GameHeader({
             inning={inning}
             isDark={isDark}
             broadcastNetworks={networkString}
+            isTopInning={isTopInning}
+            outs={outs ?? 0}
+            bases={bases}
           />
         </View>
 

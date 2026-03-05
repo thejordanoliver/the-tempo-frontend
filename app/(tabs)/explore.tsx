@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
-
 import { useRouter } from "expo-router";
 import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -66,6 +65,7 @@ export default function ExplorePage() {
       case "team":
         if (item.isNFL) router.push(`/team/nfl/${item.id}`);
         else if (item.isMLB) router.push(`/team/mlb/${item.id}`);
+        else if (item.isNHL) router.push(`/team/nhl/${item.id}`);
         else if (item.isCFB) router.push(`/team/cfb/${item.id}`);
         else if (item.isCBB) router.push(`/team/cbb/${item.id}`);
         else if (item.isWCBB) router.push(`/team/wcbb/${item.wid}`);
@@ -83,6 +83,14 @@ export default function ExplorePage() {
         else if (item.isCFB)
           router.push({
             pathname: "/player/cfb/[id]",
+            params: {
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
+            },
+          });
+        else if (item.isMLB)
+          router.push({
+            pathname: "/player/mlb/[id]",
             params: {
               id: String(item.player_id),
               teamId: String(item.team_id ?? ""),

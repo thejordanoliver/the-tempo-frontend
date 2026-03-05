@@ -2,17 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
-
-export type CBBTeam = {
-  id?: number;
-  wid?: number;
-  name: string;
-  fullName?: string;
-  logo?: string;
-  color?: string;
-  secondaryColor?: string;
-};
-
+import { CBBTeam } from "types/types";
 export type CBBGame = {
   id: number;
   date: string;
@@ -81,7 +71,7 @@ export function useCBBWeeklyGames({
 
     try {
       const res = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/gamesCBB/weekly`,
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/games/cbb/weekly`,
         {
           params: { timezone, league },
         }

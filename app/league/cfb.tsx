@@ -8,10 +8,9 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
 import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
-import RecruitsList from "components/Sports/CFB/RecruitsList";
+import RecruitsList from "components/Sports/CFB/Recruiting/RecruitsList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsList";
-import TransferList from "components/Sports/CFB/TransferList";
 import WeekSelector from "components/Sports/CFB/WeekSelector";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -19,10 +18,8 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
-import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueNews } from "hooks/useLeagueNews";
@@ -78,18 +75,16 @@ type CombinedItem =
 
 export default function CFBeagueScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
-  const { rankings } = useCFBRankings();
 
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
     useState<string>("Top 25");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
-    "players"
+    "players",
   );
   const [recruitYear, setRecruitYear] = useState(dayjs().year().toString());
   const [recruitTeam, setRecruitTeam] = useState("all");
@@ -102,7 +97,6 @@ export default function CFBeagueScreen() {
     | "awards"
     | "recruting"
     | "bracket"
-    | "transfer portal"
     | "forum"
   >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -116,7 +110,6 @@ export default function CFBeagueScreen() {
     "awards",
     "bracket",
     "recruting",
-    "transfer portal",
     "forum",
   ] as const;
 
@@ -128,7 +121,7 @@ export default function CFBeagueScreen() {
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(
-    getCurrentWeekIndex(weeks)
+    getCurrentWeekIndex(weeks),
   );
   const selectedWeek = weeks[selectedWeekIndex];
 
@@ -166,7 +159,7 @@ export default function CFBeagueScreen() {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // --- Header with rotating chevron ---
@@ -214,7 +207,7 @@ export default function CFBeagueScreen() {
     combined.sort(
       (a, b) =>
         new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime()
+        new Date(a.publishedAt || new Date().toISOString()).getTime(),
     );
     return combined;
   }, [cfbNews, highlights]);
@@ -248,7 +241,7 @@ export default function CFBeagueScreen() {
         const sorted = [...stageFilteredGames].sort(
           (a, b) =>
             new Date(a.game?.date?.date ?? 0).getTime() -
-            new Date(b.game?.date?.date ?? 0).getTime()
+            new Date(b.game?.date?.date ?? 0).getTime(),
         );
 
         return sorted.slice(0, -1);
@@ -341,16 +334,6 @@ export default function CFBeagueScreen() {
 
           {selectedTab === "bracket" && data && <Bracket data={data} />}
 
-          {selectedTab === "transfer portal" && (
-            <TransferList
-              year={recruitYear}
-              team={recruitTeam}
-              view={recruitView}
-              onYearChange={setRecruitYear}
-              onTeamChange={setRecruitTeam}
-              onViewChange={setRecruitView}
-            />
-          )}
           {selectedTab === "recruting" && (
             <RecruitsList
               year={recruitYear}

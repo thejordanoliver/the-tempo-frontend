@@ -1,5 +1,5 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 
@@ -42,7 +42,7 @@ const Pulse = ({ style, color }: { style?: any; color: string }) => {
           duration: 1300,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [opacity]);
 

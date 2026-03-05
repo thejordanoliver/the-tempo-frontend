@@ -30,6 +30,12 @@ export const playerCardStyles = (isDark: boolean) =>
       alignItems: "center",
       borderColor: Colors.midTone,
     },
+    rank: {
+      fontSize: 24,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontFamily: Fonts.OSBOLD,
+      marginRight: 12,
+    },
     initial: {
       fontSize: 24,
       color: isDark ? Colors.dark.text : Colors.light.text,

@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamById } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useState } from "react";
 import {
   Pressable,
@@ -62,8 +62,8 @@ export default function GameSquareCard({ game }: { game: Game }) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = gameSquareCardStyles(isDark, isChampionship);
 
@@ -71,7 +71,7 @@ export default function GameSquareCard({ game }: { game: Game }) {
     "nba",
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   const period =
@@ -95,7 +95,7 @@ export default function GameSquareCard({ game }: { game: Game }) {
   const endOfPeriod = gameStatusDescription === "End of Period";
   const headlineText = details?.headline;
   const headline = headlineText || holidayLabel;
-  
+
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
@@ -113,10 +113,10 @@ export default function GameSquareCard({ game }: { game: Game }) {
       inProgress || isHalftime || endOfPeriod
         ? 1
         : isFinal
-        ? teamWins
-          ? 1
-          : 0.5
-        : 1,
+          ? teamWins
+            ? 1
+            : 0.5
+          : 1,
   });
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
@@ -143,7 +143,9 @@ export default function GameSquareCard({ game }: { game: Game }) {
   }) => {
     const hasScore = typeof score === "number" && !isNaN(score);
     const displayValue =
-      showRecord || !hasScore ? recordData ?? "-" : score?.toString() ?? "-";
+      showRecord || !hasScore
+        ? (recordData ?? "-")
+        : (score?.toString() ?? "-");
     const style =
       showRecord || !hasScore
         ? styles.teamRecord

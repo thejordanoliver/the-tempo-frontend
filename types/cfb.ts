@@ -1,6 +1,6 @@
 // types/cfb.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { ImageSourcePropType } from "react-native";
 
 export interface CFBPlayer {

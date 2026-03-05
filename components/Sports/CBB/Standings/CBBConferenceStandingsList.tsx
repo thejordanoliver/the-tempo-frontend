@@ -1,14 +1,15 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { StandingsSkeleton } from "components/Sports/NBA/Standings/StandingsSkeleton";
-import { Colors, Fonts } from "constants/Styles";
+import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
+import { Colors, Fonts, globalStyles } from "constants/Styles";
 import {
   conferenceListMap,
+  getCBBTeamLogo,
   getTeamByESPNId,
-  getTeamLogo,
   teams,
 } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import {
   FlatList,
   Image,
@@ -18,7 +19,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
   selectedConference?: string;
@@ -55,7 +56,7 @@ function stripParen(s: string) {
 
 function resolveConferenceKey(
   input: string | null | undefined,
-  groupedKeys: string[]
+  groupedKeys: string[],
 ): string | null {
   if (!input) return null;
 
@@ -85,13 +86,15 @@ export const CBBConferenceStandingsList = ({
 }: Props) => {
   const { standings, loading, error } = useCBBConferenceStandings({ women });
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = standingsStyles(isDark);
+  const global = globalStyles(isDark);
   const router = useRouter();
   const teamConference = getTeamConference(teamName);
-
+  const league = women ? "WCBB" : "CBB";
+  const { isFavorite } = useFavoriteTeams();
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.center}>
         <StandingsSkeleton />
       </View>
     );
@@ -99,20 +102,23 @@ export const CBBConferenceStandingsList = ({
 
   if (error)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "red" }}>{error}</Text>
+      <View style={styles.center}>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
 
   const safeStandings = Array.isArray(standings) ? standings : [];
 
   // --- Group by ESPN conference string ---
-  const grouped = safeStandings.reduce((acc, team) => {
-    const key = team?.conference ?? "Unknown";
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(team);
-    return acc;
-  }, {} as Record<string, typeof safeStandings>);
+  const grouped = safeStandings.reduce(
+    (acc, team) => {
+      const key = team?.conference ?? "Unknown";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(team);
+      return acc;
+    },
+    {} as Record<string, typeof safeStandings>,
+  );
 
   const groupedKeys = Object.keys(grouped);
 
@@ -135,11 +141,12 @@ export const CBBConferenceStandingsList = ({
 
   // --- Render Functions ---
   const renderLeftItem = ({ item }: { item: any }) => {
-    const espnId = getTeamByESPNId(item.teamId);
-    const teamId = women ? espnId?.wid : espnId?.id;
-    const team = espnId;
-    const teamLogo = getTeamLogo(teamId, isDark);
+    const team = getTeamByESPNId(item.teamId);
+    const teamId = women ? team?.wid : team?.id;
+    const teamLogo = getCBBTeamLogo(teamId, isDark, women);
     const teamCode = team?.code;
+    const favorited = team ? isFavorite(league, String(teamId)) : false;
+
     const espnToInternal: Record<string, number> = {};
     teams.forEach((t) => {
       if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
@@ -149,11 +156,20 @@ export const CBBConferenceStandingsList = ({
       if (!item.teamId) return;
       const internalId = espnToInternal[item.teamId];
       if (!internalId) return;
-      router.push(`/team/cfb/${teamId}`);
+      router.push(`/team/cbb/${teamId}`);
     };
 
     return (
-      <View style={styles.row}>
+      <View
+        style={[
+          styles.row,
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
+        ]}
+      >
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
@@ -171,19 +187,22 @@ export const CBBConferenceStandingsList = ({
     item: any;
     showDivision: boolean;
   }) => {
+    const team = getTeamByESPNId(item.teamId);
+    const teamId = women ? team?.wid : team?.id;
+    const favorited = team ? isFavorite(league, String(teamId)) : false;
     // Determine streak display and color
     let streakText = "-";
     let streakColor = item.streak.startsWith("W")
       ? isDark
-        ? Colors.dark.limeGreen
+        ? Colors.dark.leafGreen
         : Colors.light.green
       : item.streak.startsWith("L")
-      ? isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red
-      : isDark
-      ? Colors.white
-      : Colors.black;
+        ? isDark
+          ? Colors.dark.lightRed
+          : Colors.light.red
+        : isDark
+          ? Colors.white
+          : Colors.black;
 
     if (item.streak != null && item.streak !== "-") {
       const streakValue = Number(item.streak);
@@ -199,7 +218,16 @@ export const CBBConferenceStandingsList = ({
     }
 
     return (
-      <View style={styles.row}>
+      <View
+        style={[
+          styles.row,
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
+        ]}
+      >
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.overall}</Text>
         </View>
@@ -279,12 +307,15 @@ export const CBBConferenceStandingsList = ({
     title: string;
     data: typeof safeStandings;
   }) {
-    const divisions = data.reduce((acc, team) => {
-      const div = team.division || "Overall";
-      if (!acc[div]) acc[div] = [];
-      acc[div].push(team);
-      return acc;
-    }, {} as Record<string, typeof data>);
+    const divisions = data.reduce(
+      (acc, team) => {
+        const div = team.division || "Overall";
+        if (!acc[div]) acc[div] = [];
+        acc[div].push(team);
+        return acc;
+      },
+      {} as Record<string, typeof data>,
+    );
 
     const hasDivisions = Object.keys(divisions).length > 1;
 
@@ -348,7 +379,7 @@ export const CBBConferenceStandingsList = ({
           <Text style={styles.emptyText}>
             No standings found for{" "}
             {onlyTeamConference
-              ? teamConference ?? "team conference"
+              ? (teamConference ?? "team conference")
               : selectedConference}
             .
           </Text>

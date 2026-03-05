@@ -1,11 +1,11 @@
-// components/TeamPlayerList.tsx
+// components/Roster.tsx
 import { globalStyles } from "constants/Styles";
 import { Player } from "hooks/usePlayersByTeam";
-import { RefreshControl, ScrollView, Text } from "react-native";
+import React from "react";
+import { RefreshControl, ScrollView, Text, useColorScheme } from "react-native";
 import PlayerCard from "../Player/PlayerCard";
 import PlayerCardSkeletonList from "../Player/PlayerCardListSkeleton";
-
-interface TeamPlayerListProps {
+interface RosterProps {
   players: Player[];
   loading: boolean;
   error?: string | null;
@@ -13,10 +13,9 @@ interface TeamPlayerListProps {
   onRefresh: () => void;
   teamFullName: string;
   teamColor: string;
-  isDark: boolean;
 }
 
-export default function TeamPlayerList({
+export default function Roster({
   players,
   loading,
   error,
@@ -24,8 +23,8 @@ export default function TeamPlayerList({
   onRefresh,
   teamFullName,
   teamColor,
-  isDark,
-}: TeamPlayerListProps) {
+}: RosterProps) {
+  const isDark = useColorScheme() === "dark";
   const global = globalStyles(isDark);
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;

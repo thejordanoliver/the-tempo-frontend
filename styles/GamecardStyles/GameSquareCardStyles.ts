@@ -1,10 +1,9 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const gameSquareCardStyles = (
   isDark: boolean,
-  isChampionship?: boolean
+  isChampionship?: boolean,
 ) =>
   StyleSheet.create({
     card: {
@@ -21,14 +20,14 @@ export const gameSquareCardStyles = (
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-       borderRightColor:
+      borderRightColor:
         isChampionship && isDark
           ? Colors.lightGray
           : isChampionship
-          ? Colors.darkGray
-          : isDark
-          ? Colors.darkGray
-          : Colors.lightGray,
+            ? Colors.darkGray
+            : isDark
+              ? Colors.darkGray
+              : Colors.lightGray,
       borderRightWidth: 0.5,
       gap: 8,
     },
@@ -74,7 +73,6 @@ export const gameSquareCardStyles = (
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
       color: isDark ? Colors.dark.text : Colors.light.text,
-      
     },
     info: { alignItems: "center", justifyContent: "center", width: 60 },
     date: {
@@ -129,6 +127,43 @@ export const gameSquareCardStyles = (
       width: "100%",
       bottom: 4,
       left: 8,
+    },
+    headlineContainer: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      position: "absolute",
+      width: "100%",
+      bottom: 4,
+      left: 8,
+    },
+    postSeasonHeadlineContainer: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      position: "absolute",
+      flexDirection: "row",
+      width: "100%",
+      bottom: 4,
+      left: 8,
+      alignItems: "center",
+    },
+    postSeasonHeadlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    headlineDivider: {
+      height: 8,
+      width: 0.5,
+      backgroundColor: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+          ? Colors.lightGray
+          : Colors.darkGray,
+      marginHorizontal: 4,
     },
     downDistance: {
       fontFamily: Fonts.OSMEDIUM,

@@ -1,6 +1,5 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamLogoESPN } from "constants/teamsCFB";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { BracketGame, BracketTeam } from "types/cfb";
@@ -50,8 +49,8 @@ export function GameCard({
       ? topScore > bottomScore
         ? "bottom"
         : bottomScore > topScore
-        ? "top"
-        : null // tie
+          ? "top"
+          : null // tie
       : null;
 
   const renderTeamRow = (team: BracketTeam, dimmed = false) => {
@@ -165,7 +164,6 @@ const getStyles = (isDark: boolean) =>
       fontSize: 15,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
-  
     },
     score: {
       fontSize: 14,

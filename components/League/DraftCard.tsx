@@ -1,7 +1,6 @@
 // components/NBA/DraftCard.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teams";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { LinearGradient } from "expo-linear-gradient";
@@ -117,8 +116,8 @@ export default function DraftCard({ player, index, league }: Props) {
 
   const positionAbbr =
     league === "nba"
-      ? POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId
-      : NFL_POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId;
+      ? (POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId)
+      : (NFL_POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId);
 
   return (
     <View style={styles.cardWrapper}>

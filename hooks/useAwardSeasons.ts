@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ResizeMode } from "expo-av";
 import { useCallback, useEffect, useState } from "react";
 import { AwardSeason, LeagueType } from "types/types";
 
@@ -39,6 +38,16 @@ export type AwardCategory =
   | "unitas"
   | "apcoy"
   | "afca"
+
+  // CBB
+  | "apoy"
+  | "naismith"
+  | "cousy"
+  | "erving"
+  | "kareem"
+  | "malone"
+  | "west"
+  | "wooden"
 
   // NFL
   | "ropoy"

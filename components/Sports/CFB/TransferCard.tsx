@@ -1,7 +1,6 @@
 // components/CFB/RecruitCard.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamLogo } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -56,7 +55,7 @@ export default function TransferPlayerCard({ recruit, index }: Props) {
 
   /** Safe team logo lookup */
   const logo = destination ? getTeamLogo(destination.id, isDark) : null;
-console.log(destination?.school);
+  console.log(destination?.school);
   // Animation
   const slideX = useRef(new Animated.Value(70)).current;
   const fade = useRef(new Animated.Value(0)).current;

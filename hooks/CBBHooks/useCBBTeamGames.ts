@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import { useCallback, useEffect, useState } from "react";
 import { CBBGame } from "types/types";
@@ -21,7 +21,7 @@ export function useCBBTeamGames(
     season = "2025-2026",
     isWomen = false,
     fetchAll = false,
-  }: UseCBBTeamGamesOptions = {}
+  }: UseCBBTeamGamesOptions = {},
 ) {
   const [games, setGames] = useState<CBBGame[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ export function useCBBTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/gamesCBB/team/${teamId}`, {
+      const res = await axios.get(`${BASE_URL}/api/games/cbb/team/${teamId}`, {
         params: {
           season,
           league,

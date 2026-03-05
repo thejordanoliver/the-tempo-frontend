@@ -1,5 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
 import { formatQuarter } from "utils/games";
@@ -78,7 +78,7 @@ export default function GameWidget({
     "nba",
     props.homeTeam.espnID,
     props.awayTeam.espnID,
-    gameDateStr
+    gameDateStr,
   );
 
   const clock = liveScore?.displayClock ?? props.clock;
@@ -101,8 +101,8 @@ export default function GameWidget({
   // -------------------------
   // Scores & winner
   // -------------------------
-  const homeScore = isFinal ? props.homeScore : liveScore?.home?.total ?? 0;
-  const awayScore = isFinal ? props.awayScore : liveScore?.away?.total ?? 0;
+  const homeScore = isFinal ? props.homeScore : (liveScore?.home?.total ?? 0);
+  const awayScore = isFinal ? props.awayScore : (liveScore?.away?.total ?? 0);
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
@@ -124,7 +124,7 @@ export default function GameWidget({
     homeIsWinner,
     homeRecord,
     homeScore,
-    isDark
+    isDark,
   );
   const awayDisplay = displayeValue(
     false,
@@ -133,7 +133,7 @@ export default function GameWidget({
     awayIsWinner,
     awayRecord,
     awayScore,
-    isDark
+    isDark,
   );
 
   // -------------------------

@@ -1,41 +1,77 @@
-import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { MLBGame, MLBScoreSide, MLBTeam } from "types/mlb";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { MLBGame } from "types/mlb";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export function useMLBSeasonGames(season: string | number) {
+export function useMLBSeasonGames(
+  season: string,
+  league: string = "71"
+) {
   const [games, setGames] = useState<MLBGame[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchGames = useCallback(async () => {
-    if (!season) return;
-
-    setLoading(true);
-    setError(null);
-
     try {
+      setLoading(true);
+      setError(null);
+
       const res = await axios.get(
-        `${BASE_URL}/api/gamesMLB/season/${season}`
+        `${BASE_URL}/api/games/mlb/season/${season}`,
+        {
+          params: { league },
+        }
       );
 
-      setGames(res.data.games || []);
+      if (!res.data?.success) {
+        throw new Error("API returned unsuccessful response");
+      }
+
+      const gamesArray: MLBGame[] = Array.isArray(res.data.games)
+        ? res.data.games
+        : [];
+
+      setGames(gamesArray);
+
     } catch (err: any) {
-      setError(err.message || "Failed to load MLB games");
+      console.error(
+        "Error fetching MLB season games:",
+        err?.response?.data || err?.message
+      );
+      setError("Failed to load season games");
+      setGames([]);
     } finally {
       setLoading(false);
     }
-  }, [season]);
+  }, [season, league]);
 
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
 
+  // ✅ Live games sorted to top
+  const sortedGames = useMemo(() => {
+    const isLive = (game: MLBGame) => {
+      const short = game.status?.short ?? "";
+      const long = game.status?.long ?? "";
+
+      return (
+        short.startsWith("IN") ||
+        short === "LIVE" ||
+        long.includes("Inning")
+      );
+    };
+
+    return [...games].sort((a, b) => {
+      return Number(isLive(b)) - Number(isLive(a));
+    });
+  }, [games]);
+
   return {
-    games,
+    games: sortedGames,
     loading,
     error,
-    refetch: fetchGames,
+    refreshGames: fetchGames,
   };
 }

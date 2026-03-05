@@ -4,8 +4,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import ChampionshipBanner from "components/Sports/NBA/Team/ChampionshipBanner";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
 import { getCFBTeam } from "constants/teamsCFB";
@@ -13,12 +12,13 @@ import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { useChampions } from "hooks/useChampions";
+import { useTeamCoaches } from "hooks/useTeamCoaches";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
 import TeamInfoCard from "./TeamInfoCard";
-import { useTeamCoaches } from "hooks/useTeamCoaches";
+import { getNHLTeam } from "constants/teamsNHL";
 
 type Props = {
   visible: boolean;
@@ -38,12 +38,24 @@ export default function TeamInfoModal({
   const isDark = useColorScheme() === "dark";
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
-  const isChampionsSupported = league === "NBA" || league === "CFB" || league === "NFL";
+  const isChampionsSupported =
+    league === "NBA" ||
+    league === "CFB" ||
+    league === "NFL" ||
+    league === "MLB" ||
+    league === "NHL" ||
+    league === "CBB" ||
+    league === "WCBB";
 
-  const { coaches } = useTeamCoaches(teamId != null ? Number(teamId) : 0, league);
+  const { coaches } = useTeamCoaches(
+    teamId != null ? Number(teamId) : 0,
+    league,
+  );
 
   const { data: champions } = useChampions({
-    league: ["NBA", "CFB", "NFL"].includes(league) ? league : "NBA",
+    league: ["NBA", "CFB", "NFL", "MLB", "NHL", "CBB", "WCBB"].includes(league)
+      ? league
+      : "NBA",
     enabled: isChampionsSupported && !!teamId,
   });
 
@@ -55,10 +67,14 @@ export default function TeamInfoModal({
     switch (league) {
       case "CBB":
         return getCBBTeam(teamId);
+      case "WCBB":
+        return getCBBTeam(teamId, true);
       case "CFB":
         return getCFBTeam(teamId);
       case "MLB":
         return getMLBTeam(teamId);
+      case "NHL":
+        return getNHLTeam(teamId);
       case "NFL":
         return getNFLTeam(teamId);
       case "NBA":
@@ -71,24 +87,15 @@ export default function TeamInfoModal({
   // --------------------------------------------------
   // CHAMPIONSHIP NOTES / YEARS
   // --------------------------------------------------
-  const teamChampionshipNotes = useMemo(() => {
-    if (!isChampionsSupported || !teamId) return [];
+const teamChampionshipNotes = useMemo(() => {
+  if (!isChampionsSupported || !teamId || !champions) return [];
 
-    return champions
-      .filter(
-        (c) =>
-          c.team?.id === teamId || c.team?.code === fetchedTeam?.code
-      )
-      .map((c) => c.notes ?? c.season) // use notes first, fallback to season
-      .filter((val) => val != null) // remove null/undefined
-      .sort((a, b) => {
-        // numeric sort if both are numbers
-        const numA = typeof a === "number" ? a : NaN;
-        const numB = typeof b === "number" ? b : NaN;
-        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
-        return 0;
-      });
-  }, [champions, teamId, fetchedTeam, isChampionsSupported]);
+  return champions
+    .filter((c) => Number(c.team?.id) === Number(teamId))
+    .map((c) => c.notes ?? c.season)
+    .filter((val) => val != null)
+    .sort((a, b) => Number(a) - Number(b));
+}, [champions, teamId, isChampionsSupported]);
 
   useEffect(() => {
     if (visible) sheetRef.current?.present();
@@ -161,7 +168,9 @@ export default function TeamInfoModal({
               style={[
                 styles.sectionTitle,
                 {
-                  borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+                  borderBottomColor: isDark
+                    ? Colors.lightGray
+                    : Colors.darkGray,
                   color: isDark ? Colors.white : Colors.black,
                 },
               ]}
@@ -175,8 +184,8 @@ export default function TeamInfoModal({
                 isChampionsSupported
                   ? teamChampionshipNotes
                   : Array.isArray((fetchedTeam as any)?.championships)
-                  ? (fetchedTeam as any).championships
-                  : []
+                    ? (fetchedTeam as any).championships
+                    : []
               }
               logo={fetchedTeam?.logo}
               teamName={fetchedTeam?.fullName}

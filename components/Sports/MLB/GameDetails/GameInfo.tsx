@@ -1,5 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
+import BasesIndicator from "./BasesIndicator";
 
 type GameInfoProps = {
   gameStatusDescription: string;
@@ -8,7 +11,14 @@ type GameInfoProps = {
   time: string;
   inning?: string;
   isDark: boolean;
+  isTopInning: boolean;
   broadcastNetworks?: string;
+  outs: number;
+  bases: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
+  };
 };
 
 export function GameInfo({
@@ -16,10 +26,11 @@ export function GameInfo({
   gameStatusDetail,
   date,
   time,
-  inning,
   isDark,
-
   broadcastNetworks,
+  isTopInning,
+  outs,
+  bases,
 }: GameInfoProps) {
   const styles = getStyles(isDark);
 
@@ -47,8 +58,20 @@ export function GameInfo({
 
       {/* 🕒 In Play */}
       {inProgress && (
-        <View style={styles.infoWrapper}>
-          {inning && <Text style={styles.date}>{inning}</Text>}
+        <View>
+          <View style={[styles.infoWrapper, { marginBottom: 2 }]}>
+            <Ionicons
+              name={isTopInning ? "caret-up" : "caret-down"}
+              size={14}
+              color={isDark ? Colors.white : Colors.black}
+            />
+            <Text style={styles.date}>{gameStatusDetail}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.finalText}>Outs: {outs}</Text>
+          </View>
+          <View style={{ marginTop: 2 }}>
+            <BasesIndicator bases={bases} isDark={isDark} />
+          </View>
         </View>
       )}
 
@@ -89,9 +112,10 @@ export function GameInfo({
       )}
 
       {/* 📺 Broadcast */}
-      {broadcastNetworks && inProgress || isScheduled  && (
-        <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
-      )}
+      {(broadcastNetworks && inProgress) ||
+        (isScheduled && (
+          <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
+        ))}
     </View>
   );
 }

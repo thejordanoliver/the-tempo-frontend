@@ -3,15 +3,15 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
+import { StandingsList } from "components/League/Standings/StandingsList";
 import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
-import { StandingsList } from "components/Sports/MLB/Standings/StandingsList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import { Colors } from "constants/Colors";
-import { getMLBTeam } from "constants/teamsMLB";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { Colors } from "constants/Styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -19,7 +19,6 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueNews } from "hooks/useLeagueNews";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -30,60 +29,35 @@ import {
   useColorScheme,
 } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { MLBGame } from "types/mlb";
-import { getMLBSeason } from "utils/dateUtils";
-import { filterByDate } from "utils/games";
+import { getMLBSeason, getMLBStandingsSeason } from "utils/dateUtils";
+import { filterMLBByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
-import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(
-    Number(getMLBSeason()),
-    "MLB"
-  );
-
-  return (
-    <SeasonLeadersList
-      loading={loading}
-      error={error}
-      categories={categories}
-      league={"CBB"}
-    />
-  );
-}
-
 export default function MLBLeagueScreen() {
-  const currentYear = getMLBSeason();
-  const { games, loading: liveLoading } = useMLBSeasonGames(2023);
-
-  const { news, loading: newsLoading, refreshNews } = useLeagueNews("MLB");
-  const { highlights, loading: highlightsLoading } = useHighlights(
-    "mlb",
-    "",
-    10
-  );
+  const {
+    games,
+    loading: liveLoading,
+    refreshGames,
+  } = useMLBSeasonGames(getMLBSeason().toString());
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
-  const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
+  const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-
+  const { categories, loading, error } = useSeasonLeaders(2025, "MLB");
   // --- State ---
   const [selectedDate, setSelectedDate] = React.useState<Date>(
-    dayjs().startOf("day").toDate()
+    dayjs().startOf("day").toDate(),
   );
 
   const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
   >("scores");
 
   const underlineX = useRef(new Animated.Value(0)).current;
@@ -106,7 +80,7 @@ export default function MLBLeagueScreen() {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // Header
@@ -128,134 +102,64 @@ export default function MLBLeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  const handleTabPress = (tab: typeof selectedTab) => {
-    setSelectedTab(tab);
-    const index = ["scores", "news", "standings", "stats", "forum"].indexOf(
-      tab
-    );
-    if (tabMeasurements.current[index]) {
-      Animated.parallel([
-        Animated.timing(underlineX, {
-          toValue: tabMeasurements.current[index].x,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-        Animated.timing(underlineWidth, {
-          toValue: tabMeasurements.current[index].width,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    }
-  };
-
-  // --- Normalize regular season games ---
-  const normalizedSeasonGames = games.map((game: MLBGame) => {
-    const home = getMLBTeam(game.teams?.home.id ?? {});
-    const away = getMLBTeam(game.teams?.away.id ?? {});
-
-    let rawTimestamp: number | null = null;
-
-    if (typeof game.date === "number") {
-      rawTimestamp = game.date;
-    } else if (typeof game.date?.timestamp === "number") {
-      rawTimestamp = game.date.timestamp;
-    }
-
-    const date = rawTimestamp ? dayjs(rawTimestamp * 1000) : dayjs(NaN);
-
-    return {
-      ...game,
-      date: date.toDate(),
-      dateString: date.isValid() ? date.format("YYYY-MM-DD") : "",
-      time: date.isValid() ? date.format("h:mm A") : "",
-      home,
-      away,
-    };
-  });
-
-  // --- Helper to sort live games on top ---
-  const sortLiveGamesFirst = (gamesArray: any[]) =>
-    [...gamesArray].sort((a, b) => {
-      const aStatus = a.status?.long?.toLowerCase() || "";
-      const bStatus = b.status?.long?.toLowerCase() || "";
-
-      if (aStatus === "in play" && bStatus !== "in play") return -1;
-      if (aStatus !== "in play" && bStatus === "in play") return 1;
-
-      // Otherwise, sort by date/time
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
-
-  // Filter both sets by selectedDate
-  const filteredSeasonGames = sortLiveGamesFirst(
-    filterByDate(normalizedSeasonGames, selectedDate)
-  );
+  const filteredSeasonGames = filterMLBByDate(games, selectedDate);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshNews()]);
+      await Promise.all([refreshGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
       setRefreshing(false);
     }
   };
-
   // --- Change Date (now local) ---
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
-      dayjs(prev).add(days, "day").startOf("day").toDate()
+      dayjs(prev).add(days, "day").startOf("day").toDate(),
     );
   };
 
-  // Combine news + highlights
-  const combinedNewsAndHighlights = React.useMemo(() => {
-    const taggedNews = news.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      // convert numeric duration to string
-      duration: String(item.duration),
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    return [...taggedNews, ...taggedHighlights].sort(
-      (a, b) =>
-        new Date(b.publishedAt ?? 0).getTime() -
-        new Date(a.publishedAt ?? 0).getTime()
-    );
-  }, [news, highlights]);
-
-  // Helper to mark games on calendar
   const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce((acc, game) => {
-      const localDate = new Date(game.date);
-      const iso = `${localDate.getFullYear()}-${String(
-        localDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
-      acc[iso] = {
-        marked: true,
-        dotColor: isDark ? Colors.white : Colors.black,
-      };
-      return acc;
-    }, {} as Record<string, { marked: boolean; dotColor: string }>);
+    gamesArray.reduce(
+      (acc, game) => {
+        if (!game.date) return acc;
+
+        const localDate = new Date(game.date);
+
+        const iso = `${localDate.getFullYear()}-${String(
+          localDate.getMonth() + 1,
+        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+
+        acc[iso] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return acc;
+      },
+      {} as Record<string, { marked: boolean; dotColor: string }>,
+    );
+
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ] as const;
 
   return (
     <>
       <View style={styles.container}>
-        <TabBar
-          tabs={["scores", "news", "standings", "stats", "forum"]}
+        <MainScrollTabBar
+          tabs={tabs}
           selected={selectedTab}
-          onTabPress={handleTabPress}
+          onTabPress={setSelectedTab}
         />
-
         <View style={styles.contentArea}>
           {selectedTab === "scores" && (
             <>
@@ -295,23 +199,27 @@ export default function MLBLeagueScreen() {
                   onRefresh={handleRefresh}
                 />
               }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={newsLoading || highlightsLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            ></ScrollView>
           )}
 
           {selectedTab === "standings" && (
-            <StandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
+            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
+              <StandingsList
+                year={standingsYear}
+                onYearChange={setStandingsYear}
+                league="MLB"
+              />
+            </View>
+          )}
+          {selectedTab === "stats" && (
+            <SeasonLeadersList
+              loading={loading}
+              error={error}
+              categories={categories}
+              league={"MLB"}
             />
           )}
-          {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "awards" && <AwardSeasons league="MLB" />}
           {selectedTab === "forum" && <LeagueForum league="MLB" />}
         </View>
       </View>
@@ -327,7 +235,7 @@ export default function MLBLeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...normalizedSeasonGames]),
+          ...markDates([...games]),
         }}
       />
 

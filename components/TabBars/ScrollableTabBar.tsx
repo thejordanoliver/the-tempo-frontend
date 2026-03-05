@@ -1,5 +1,5 @@
 // components/NFL/ScrollableTabBar.tsx
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -26,20 +26,20 @@ export const getLabelStyle = (
   isDark: boolean,
   isSelected: boolean,
   lighter?: boolean,
-  extra?: TextStyle
+  extra?: TextStyle,
 ): TextStyle => ({
   fontSize: 16,
   color: isSelected
     ? lighter
       ? "#fff"
       : isDark
-      ? "#fff"
-      : "#1d1d1d"
+        ? "#fff"
+        : "#1d1d1d"
     : lighter
-    ? "#ccc"
-    : isDark
-    ? "#888"
-    : "rgba(0,0,0,0.5)",
+      ? "#ccc"
+      : isDark
+        ? "#888"
+        : "rgba(0,0,0,0.5)",
   fontFamily: Fonts.OSMEDIUM,
   ...extra,
 });
@@ -59,7 +59,7 @@ export default function ScrollableTabBar({
   const [scrollWidth, setScrollWidth] = useState(0);
 
   const safeTabs = (tabs ?? []).filter(
-    (t): t is string => typeof t === "string" && t.trim().length > 0
+    (t): t is string => typeof t === "string" && t.trim().length > 0,
   );
 
   // measure tab widths individually
@@ -87,7 +87,10 @@ export default function ScrollableTabBar({
 
       // scroll to keep selected tab in view (center-ish)
       const selectedWidth = tabWidths[index];
-      const scrollToX = Math.max(xOffset + selectedWidth / 2 - scrollWidth / 2, 0);
+      const scrollToX = Math.max(
+        xOffset + selectedWidth / 2 - scrollWidth / 2,
+        0,
+      );
       scrollRef.current?.scrollTo({ x: scrollToX, animated: true });
     }
   }, [selected, tabWidths, safeTabs, scrollWidth]);
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     position: "relative",
     width: "100%",
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
   },
   scrollContent: {
     flexDirection: "row",

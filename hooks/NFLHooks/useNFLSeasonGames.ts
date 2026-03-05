@@ -16,7 +16,7 @@ export function useNFLSeasonGames(season = "2025", league = "1") {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/gamesNFL`, {
+      const res = await axios.get(`${BASE_URL}/api/games/nfl`, {
         params: { season, league },
       });
 

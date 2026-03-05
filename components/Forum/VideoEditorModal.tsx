@@ -15,8 +15,7 @@ import {
   useColorScheme,
 } from "react-native";
 
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 
 type Props = {
   visible: boolean;
@@ -53,7 +52,7 @@ export default function VideoEditorModal({
   const [trimEndMs, setTrimEndMs] = useState(initialTrimEndMs ?? 0);
   const [thumbTimeMs, setThumbTimeMs] = useState(initialTrimStartMs);
   const [thumbnailUri, setThumbnailUri] = useState<string | null>(
-    initialThumbnailUri ?? null
+    initialThumbnailUri ?? null,
   );
 
   // --- Present / dismiss ---
@@ -84,7 +83,7 @@ export default function VideoEditorModal({
     if (!durationMs || durationMs <= 1) return;
 
     const safeTime = Math.floor(
-      Math.min(Math.max(timeMs, 0), Math.max(durationMs - 200, 0))
+      Math.min(Math.max(timeMs, 0), Math.max(durationMs - 200, 0)),
     ); // ✅ FORCE INT
 
     try {
@@ -100,7 +99,7 @@ export default function VideoEditorModal({
       console.warn("Thumbnail capture failed", e);
       Alert.alert(
         "Thumbnail Error",
-        "Could not generate thumbnail from this video."
+        "Could not generate thumbnail from this video.",
       );
     }
   };
@@ -133,7 +132,7 @@ export default function VideoEditorModal({
                 if (!thumbnailUri) {
                   Alert.alert(
                     "Pick a thumbnail",
-                    "Tap “Set thumbnail” before saving."
+                    "Tap “Set thumbnail” before saving.",
                   );
                   return;
                 }

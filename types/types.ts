@@ -1,4 +1,5 @@
 // types.ts
+import { AwardCategory } from "hooks/useAwardSeasons";
 import { ImageSourcePropType } from "react-native";
 import { NFLTeam } from "./nfl";
 
@@ -9,7 +10,6 @@ export type BackendUser = {
   full_name: string;
   email: string;
   profile_image?: string;
-  // ...
 };
 
 // types/forum.ts (forum User)
@@ -158,9 +158,6 @@ export type Team = {
   transparent_color?: string;
   secondary_color?: string;
   secondaryColor?: string;
-  record?: string;
-  wins?: number;
-  losses?: number;
   code?: string;
   city?: string;
   state?: string;
@@ -169,7 +166,8 @@ export type Team = {
   conference_championships?: number[]; // or number[]
   conference?: string;
   displayName?: string;
-  isAllStar: boolean
+  isAllStar: boolean;
+  league?: string;
 };
 
 export type NBATeam = {
@@ -203,8 +201,32 @@ export type NBATeam = {
     home: any;
     away: any;
   };
-  isAllStar: boolean
+  isAllStar: boolean;
 };
+
+export interface NHLTeam {
+  id: number;
+  espnID: number;
+  name: string;
+  fullName: string;
+  nickname: string;
+  code: string;
+  color: string;
+  secondaryColor: string;
+  logo: any;
+  logoLight?: any;
+  location?: string;
+  established?: number;
+  latitude?: number;
+  longitude?: number;
+  venueName?: string;
+  venueCapacity?: string;
+  address?: string;
+  city?: string;
+  championships?: number[];
+  isAllStar: boolean;
+  isActive: boolean;
+}
 
 export type Arena = {
   name: string;
@@ -213,7 +235,15 @@ export type Arena = {
   country?: string | null;
 };
 
-export type LeagueType = "NBA" | "NFL" | "CFB" | "CBB" | "MLB" | "WCBB";
+export type LeagueType =
+  | "NBA"
+  | "NFL"
+  | "CFB"
+  | "CBB"
+  | "MLB"
+  | "WCBB"
+  | "NHL"
+  | "UFC";
 
 export type LeagueTeam = Team & { league: LeagueType };
 
@@ -337,7 +367,7 @@ export type CBBTeam = {
   championships?: number[];
   conference_championships?: string[]; // or number[]
   venueName?: string; // ✅ Add this
-  isAllStar?: boolean
+  isAllStar?: boolean;
 };
 
 export type Conference = {
@@ -467,6 +497,13 @@ export type DBPlayer = {
   draft_year: number;
   draft_number: number;
   awards: string[];
+  experience_years: string;
+  experience_display: string;
+  experience_abbr: string;
+  birth_place_city: string;
+  birth_place_state: string;
+  birth_place_country: string;
+  birth_place_display_text: string;
 };
 
 export type APIGame = {
@@ -636,6 +673,7 @@ export type PlayerResult = {
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
+  isNHL?: boolean;
   type: "player";
   score: number;
 };
@@ -644,11 +682,13 @@ export type TeamResult = {
   id: number;
   wid?: number;
   name: string;
+  full_name: string;
   nickname: string;
   city: string;
   logo_filename: string;
   isNFL?: boolean;
   isMLB?: boolean;
+  isNHL?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
@@ -666,3 +706,144 @@ export type UserResult = {
 };
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;
+
+export const AWARD_CONFIG: Partial<
+  Record<LeagueType, { label: string; value: AwardCategory; title: string }[]>
+> = {
+  NBA: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "MVP", value: "mvp", title: "NBA MVP" },
+    { label: "ROTY", value: "roy", title: "NBA Rookie of the Year" },
+    { label: "DPOY", value: "dpoy", title: "NBA Defensive Player of the Year" },
+    { label: "6MOY", value: "sixthman", title: "NBA Sixth Man of the Year" },
+    { label: "COY", value: "coy", title: "NBA Coach of the Year" },
+    { label: "MIP", value: "mip", title: "NBA Most Improved Player" },
+    { label: "FMVP", value: "fmvp", title: "NBA Finals MVP" },
+  ],
+
+  CFB: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "Heisman Trophy", value: "heisman", title: "Heisman Trophy" },
+    {
+      label: "AP Player of the Year",
+      value: "apoy",
+      title: "AP Player of the Year",
+    },
+    { label: "Walter Camp POY", value: "camp", title: "Walter Camp POY" },
+    { label: "Maxwell Award", value: "maxwell", title: "Maxwell Award" },
+    {
+      label: "Fred Biletnikoff Award",
+      value: "biletnikoff",
+      title: "Fred Biletnikoff Award",
+    },
+    { label: "Doak Walker Award", value: "doak", title: "Doak Walker Award" },
+    { label: "John Mackey Award", value: "mackey", title: "John Mackey Award" },
+    { label: "Lou Groza Award", value: "groza", title: "Lou Groza Award" },
+    {
+      label: "Dave Rimington Trophy",
+      value: "rimington",
+      title: "Dave Rimington Trophy",
+    },
+    { label: "Outland Trophy", value: "outland", title: "Outland Trophy" },
+    { label: "Jim Thorpe Award", value: "thorpe", title: "Jim Thorpe Award" },
+    {
+      label: "Bronko Nagurski Award",
+      value: "nagurski",
+      title: "Bronko Nagurski Award",
+    },
+    { label: "Dick Butkus Award", value: "butkus", title: "Dick Butkus Award" },
+    {
+      label: "Ted Hendricks Award",
+      value: "hendricks",
+      title: "Ted Hendricks Award",
+    },
+    { label: "Lombardi Award", value: "lombardi", title: "Lombardi Award" },
+    { label: "Ronnie Lott Trophy", value: "lott", title: "Ronnie Lott Trophy" },
+    {
+      label: "Davey O’Brien Award",
+      value: "obrien",
+      title: "Davey O’Brien Award",
+    },
+    { label: "Manning Award", value: "manning", title: "Manning Award" },
+    {
+      label: "Johnny Unitas Award",
+      value: "unitas",
+      title: "Johnny Unitas Award",
+    },
+    {
+      label: "AP Coach of the Year",
+      value: "apcoy",
+      title: "AP Coach of the Year",
+    },
+    {
+      label: "AFCA Coach of the Year",
+      value: "afca",
+      title: "AFCA Coach of the Year",
+    },
+  ],
+
+  CBB: [
+    { label: "All Awards", value: "all", title: "" },
+    {
+      label: "Men's AP Player of the Year",
+      value: "apoy",
+      title: "Men's AP Player of The Year",
+    },
+    {
+      label: "Men's Naismith Award",
+      value: "naismith",
+      title: "Men's Naismith Award",
+    },
+    {
+      label: "Men's Kareem Abdul-Jabbar Award",
+      value: "kareem",
+      title: "Men's Kareem Abdul-Jabbar Award",
+    },
+    {
+      label: "Men's Bob Cousy Award",
+      value: "cousy",
+      title: "Men's Bob Cousy Award",
+    },
+    {
+      label: "Men's Julius Erving Award",
+      value: "erving",
+      title: "Men's Julius Erving Award",
+    },
+    {
+      label: "Men's Karl Malone Award",
+      value: "malone",
+      title: "Men's Karl Malone Award",
+    },
+    {
+      label: "Men's Jerry West Award",
+      value: "west",
+      title: "Men's Jerry West Award",
+    },
+    {
+      label: "Men's Wooden Award",
+      value: "wooden",
+      title: "Men's Wooden Award",
+    },
+  ],
+  NFL: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "MVP", value: "mvp", title: "NFL Most Valuable Player" },
+    {
+      label: "OROY",
+      value: "ropoy",
+      title: "NFL Offensive Rookie of the Year",
+    },
+    {
+      label: "DROY",
+      value: "rdpoy",
+      title: "NFL Defensive Rookie of the Year",
+    },
+    { label: "OPOY", value: "opoy", title: "NFL Offensive Player of the Year" },
+    { label: "DPOY", value: "dpoy", title: "NFL Defensive Player of the Year" },
+    {
+      label: "Coach of the Year",
+      value: "coy",
+      title: "NFL Coach of the Year",
+    },
+  ],
+};

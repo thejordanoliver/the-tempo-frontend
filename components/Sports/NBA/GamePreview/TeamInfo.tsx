@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamLogo } from "constants/teams";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Team } from "types/types";
@@ -46,8 +45,8 @@ export default function TeamInfo({
     !isFinal || isScheduled || isDelayed || isPostponed
       ? 1
       : isWinner
-      ? 1
-      : 0.4;
+        ? 1
+        : 0.4;
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled || isDelayed || isPostponed;
@@ -55,10 +54,10 @@ export default function TeamInfo({
 
   // --- Value shown ---
   const displayValue = isRecord
-    ? record ?? "-"
+    ? (record ?? "-")
     : score !== undefined
-    ? score
-    : "-";
+      ? score
+      : "-";
 
   // Logos (prefer light variants at night)
   const logo = team ? getTeamLogo(team.id, true) : undefined;
@@ -144,7 +143,7 @@ export default function TeamInfo({
         {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
-        {!dontShowDetails || isScheduled && renderTimeouts(timeouts)}
+        {!dontShowDetails || (isScheduled && renderTimeouts(timeouts))}
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}

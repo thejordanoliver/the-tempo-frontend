@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -61,14 +61,14 @@ function NFLGameCard({ game }: NFLGameCardProps) {
     homeEspnId,
     awayEspnId,
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   const { data: details, loading } = useFootballGameDetails(
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   const {
@@ -96,6 +96,8 @@ function NFLGameCard({ game }: NFLGameCardProps) {
   const isChampionship = game.game.week === "Super Bowl";
 
   const styles = GameCardStyles(isDark, isChampionship);
+
+  // console.log(JSON.stringify(game, null, 2))
 
   // -----------------------------------------------------
   // TEAM RECORDS
@@ -133,10 +135,10 @@ function NFLGameCard({ game }: NFLGameCardProps) {
 
   const homeScore = isFinal
     ? game.scores.home.total
-    : possession?.score?.home ?? 0;
+    : (possession?.score?.home ?? 0);
   const awayScore = isFinal
     ? game.scores.away.total
-    : possession?.score?.away ?? 0;
+    : (possession?.score?.away ?? 0);
 
   const headlineText = details?.headline;
   const broadcast = details?.broadcast;
@@ -147,8 +149,8 @@ function NFLGameCard({ game }: NFLGameCardProps) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const headline = headlineText ?? holidayLabel ?? "";
 

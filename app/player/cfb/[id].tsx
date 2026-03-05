@@ -1,12 +1,12 @@
 // app/player/cfb/[id].tsx
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import CFBGameCard from "components/Sports/CFB/Games/CFBGameCard";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
@@ -24,7 +24,7 @@ export default function CFBPlayerDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-
+  const global = globalStyles(isDark);
   /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
@@ -80,7 +80,7 @@ export default function CFBPlayerDetailScreen() {
   if (playerLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -88,7 +88,7 @@ export default function CFBPlayerDetailScreen() {
   if (playerError || !player) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <Text style={{ textAlign: "center" }}>Player not found</Text>
+        <Text style={global.errorText}>Player not found</Text>
       </View>
     );
   }
@@ -101,7 +101,7 @@ export default function CFBPlayerDetailScreen() {
     const startYear = currentYear - player.experience_years + 1;
 
     return Array.from({ length: player.experience_years }, (_, i) =>
-      (startYear + i).toString()
+      (startYear + i).toString(),
     );
   }, [player.experience_years]);
 

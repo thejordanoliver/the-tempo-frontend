@@ -1,9 +1,9 @@
 import axios from "axios";
-import { Platform } from "react-native";
-import { useEffect, useMemo, useState } from "react";
 import { getTeamInfo, teams } from "constants/teams";
-import { useLastTeamGame } from "hooks/useLastTeamGame";
-import type { Game, DBPlayer } from "types/types";
+import { useLastTeamGame } from "hooks/NBAHooks/useLastTeamGame";
+import { useEffect, useMemo, useState } from "react";
+import { Platform } from "react-native";
+import type { DBPlayer, Game } from "types/types";
 
 type TeamWithRecord = (typeof teams)[number] & { record?: string };
 
@@ -19,12 +19,11 @@ function getApiBaseUrl() {
   return BASE_API_URL;
 }
 
-export function usePlayerDetail(
-  playerId?: string,
-  teamId?: string
-) {
+export function usePlayerDetail(playerId?: string, teamId?: string) {
   const parsedPlayerId = parseInt(playerId ?? "", 10);
-  const sanitizedTeamId = String(teamId ?? "").replace(/"/g, "").trim();
+  const sanitizedTeamId = String(teamId ?? "")
+    .replace(/"/g, "")
+    .trim();
   const teamNumericId = Number(sanitizedTeamId);
 
   const API_URL = getApiBaseUrl();
@@ -34,12 +33,11 @@ export function usePlayerDetail(
   const [error, setError] = useState<string | null>(null);
 
   const team = getTeamInfo(String(teamId));
-  const teamObj = teams.find(
-    (t) => String(t.id) === sanitizedTeamId
-  ) as TeamWithRecord | undefined;
+  const teamObj = teams.find((t) => String(t.id) === sanitizedTeamId) as
+    | TeamWithRecord
+    | undefined;
 
-  const { lastGame, loading: teamGameLoading } =
-    useLastTeamGame(teamNumericId);
+  const { lastGame, loading: teamGameLoading } = useLastTeamGame(teamNumericId);
 
   /* ---------------- Fetch player ---------------- */
   useEffect(() => {
@@ -53,7 +51,7 @@ export function usePlayerDetail(
       setLoading(true);
       try {
         const res = await axios.get<{ player: DBPlayer }>(
-          `${API_URL}/api/players/player-id/${parsedPlayerId}`
+          `${API_URL}/api/players/player-id/${parsedPlayerId}`,
         );
         setPlayer(res.data.player);
       } catch (err: any) {
@@ -70,9 +68,9 @@ export function usePlayerDetail(
   const enrichedLastGame: Game | null = useMemo(() => {
     if (!lastGame) return null;
 
-    const awayTeamObj = teams.find(
-      (t) => t.id === lastGame.away.id
-    ) as TeamWithRecord | undefined;
+    const awayTeamObj = teams.find((t) => t.id === lastGame.away.id) as
+      | TeamWithRecord
+      | undefined;
 
     return {
       ...lastGame,
@@ -104,8 +102,7 @@ export function usePlayerDetail(
 
   const calculateExperience = (draftYear?: number | string) => {
     if (!draftYear) return null;
-    const year =
-      typeof draftYear === "string" ? Number(draftYear) : draftYear;
+    const year = typeof draftYear === "string" ? Number(draftYear) : draftYear;
     if (isNaN(year)) return null;
     return new Date().getFullYear() - year;
   };

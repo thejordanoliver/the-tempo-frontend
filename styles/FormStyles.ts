@@ -5,29 +5,22 @@ export const formStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 12,
+      margin: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
       marginBottom: 30,
     },
 
-    signUpInputContainer: {
+    formContainer: {
       flex: 1,
-      justifyContent: "center",
+      justifyContent: "space-around",
       gap: 12,
-    },
-    signInContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingHorizontal: 20,
-      paddingVertical: 40,
-      backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
-    signInInputContainer: {
+    formWrapper: {
       flex: 1,
       justifyContent: "center",
       gap: 12,
+      
     },
 
     signInInput: {
@@ -42,29 +35,6 @@ export const formStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
     },
 
-    title: {
-      fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
-      marginTop: 10,
-      marginBottom: 20,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    titleRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginVertical: 16,
-    },
-    titleCentered: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      textAlign: "center",
-      fontSize: 24,
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
-    },
     input: {
       color: isDark ? Colors.white : Colors.black,
       backgroundColor: isDark
@@ -75,33 +45,27 @@ export const formStyles = (isDark: boolean) =>
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
     },
-    passwordRow: {
+    passwordInput: {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      marginBottom: 12,
+      padding: 20,
     },
-    passwordInput: {
+    passwordText: {
       flex: 1,
       color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      padding: 20,
-      borderRadius: 8,
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
     },
-    iconButton: { padding: 20 },
+
     button: {
       backgroundColor: isDark ? Colors.white : Colors.black,
       padding: 14,
       borderRadius: 8,
       alignItems: "center",
-      marginTop: 10,
     },
     buttonText: {
       color: isDark ? Colors.black : Colors.white,
@@ -195,9 +159,9 @@ export const formStyles = (isDark: boolean) =>
       height: 2,
       width: "100%",
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 5,
+      borderRadius: 100,
       overflow: "hidden",
-      marginVertical: 8,
+      marginBottom: 10,
     },
     progressBarFill: {
       height: "100%",

@@ -1,7 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { teamsById } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
@@ -29,7 +28,7 @@ export default function GameLeaders({
   const { data, isLoading, isError } = useGameLeaders(
     gameId,
     awayTeamId,
-    homeTeamId
+    homeTeamId,
   );
 
   const colorScheme = useColorScheme();
@@ -53,18 +52,18 @@ export default function GameLeaders({
       const field = CATEGORY_FIELD_MAP[category];
 
       const validPlayers = data.filter(
-        (p) => p.player && typeof p[field] === "number"
+        (p) => p.player && typeof p[field] === "number",
       );
 
       const teams = [...new Set(validPlayers.map((p) => p.team.id))];
 
       return teams.map((teamId) => {
         const playersFromTeam = validPlayers.filter(
-          (p) => p.team.id === teamId
+          (p) => p.team.id === teamId,
         );
 
         return playersFromTeam.sort(
-          (a, b) => (b[field] ?? 0) - (a[field] ?? 0)
+          (a, b) => (b[field] ?? 0) - (a[field] ?? 0),
         )[0];
       });
     };
@@ -86,13 +85,13 @@ export default function GameLeaders({
   const textColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.white
-    : Colors.black;
+      ? Colors.white
+      : Colors.black;
   const subTextColor = lighter
     ? Colors.lightGray
     : isDark
-    ? Colors.midTone
-    : Colors.midTone;
+      ? Colors.midTone
+      : Colors.midTone;
 
   if (isLoading) {
     return (
@@ -241,8 +240,8 @@ export default function GameLeaders({
                   lighter
                     ? team.logoLight || team.logo
                     : isDark
-                    ? team.logoLight || team.logo
-                    : team.logo
+                      ? team.logoLight || team.logo
+                      : team.logo
                 }
                 style={styles.teamLogo}
                 resizeMode="contain"

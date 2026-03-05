@@ -1,5 +1,4 @@
-import { Fonts } from "constants/fonts";
-import { Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {

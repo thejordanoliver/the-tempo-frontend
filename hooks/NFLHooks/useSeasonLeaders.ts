@@ -7,19 +7,21 @@ const API_BASE = process.env.EXPO_PUBLIC_API_URL;
 
 export interface Leader {
   value: number;
+  rank: number;
+  playerId?: number; // ✅ LOCAL DB ID
   displayValue: string;
   athleteId: string | number;
   name: string;
   position?: string;
   headshot?: string;
-
+  shortName: string;
   teamId?: string | number;
   teamName?: string;
   teamAbbrev?: string;
   teamLogo?: string;
 
   /** 🔥 NFL only */
-  playerId?: number;
+  id?: number;
 }
 
 export interface LeaderCategory {
@@ -47,7 +49,7 @@ const matchRosterPlayer = (roster: any[], athleteId: string | number) => {
 
 export function useSeasonLeaders(
   season: number,
-  league: "NFL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL"
+  league: "NFL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL",
 ): SeasonLeaderResult {
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,8 +74,8 @@ export function useSeasonLeaders(
 
         /* ✅ CORRECT ENDPOINT */
         const leadersRes = await axios.get(
-          `${API_BASE}/api/${leaguePath}/leaders`,
-          { params: { season } }
+          `${API_BASE}/api/season-leaders/${leaguePath}/leaders`,
+          { params: { season } },
         );
 
         const rawCategories: LeaderCategory[] =
@@ -93,41 +95,36 @@ export function useSeasonLeaders(
               cat.leaders
                 .map((l) => l.teamId)
                 .filter(Boolean)
-                .map(String)
-            )
-          )
+                .map(String),
+            ),
+          ),
         );
 
         const rosterResponses = await Promise.all(
           teamIds.map(async (teamId) => {
             const res = await axios.get(
-              `${API_BASE}/api/nfl/players/team/${teamId}`
+              `${API_BASE}/api/nfl/players/team/${teamId}`,
             );
             return {
               teamId,
               players: res.data.players ?? [],
             };
-          })
+          }),
         );
 
         const rosterMap: Record<string, any[]> = Object.fromEntries(
-          rosterResponses.map((r) => [r.teamId, r.players])
+          rosterResponses.map((r) => [r.teamId, r.players]),
         );
 
         const enrichedCategories = rawCategories.map((cat) => ({
           ...cat,
           leaders: cat.leaders.map((leader) => {
             const roster =
-              leader.teamId != null
-                ? rosterMap[String(leader.teamId)]
-                : null;
+              leader.teamId != null ? rosterMap[String(leader.teamId)] : null;
 
             if (!roster) return leader;
 
-            const matched = matchRosterPlayer(
-              roster,
-              leader.athleteId
-            );
+            const matched = matchRosterPlayer(roster, leader.athleteId);
 
             if (!matched) return leader;
 
@@ -150,7 +147,7 @@ export function useSeasonLeaders(
         setLoading(false);
       }
     },
-    [season, league]
+    [season, league],
   );
 
   useEffect(() => {

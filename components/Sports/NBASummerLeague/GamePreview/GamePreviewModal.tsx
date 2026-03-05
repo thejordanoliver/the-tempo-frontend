@@ -3,7 +3,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getTeamInfo, neutralVenues } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -51,8 +51,8 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = gamePreviewModalStyle(isChampionship);
 
@@ -82,7 +82,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const { weather, weatherLoading, weatherError } = useWeatherForecast(
     lat,
     lon,
-    new Date(game.date).toISOString()
+    new Date(game.date).toISOString(),
   );
 
   // --- Handle modal visibility safely ---
@@ -100,7 +100,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     "nba",
     home?.espnID?.toString(),
     away?.espnID?.toString(),
-    new Date(game.date).toISOString().split("T")[0]
+    new Date(game.date).toISOString().split("T")[0],
   );
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
@@ -136,11 +136,11 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : game?.linescore?.home?.length
-    ? {
-        home: game.linescore.home.map((v) => v.toString()),
-        away: game.linescore.away.map((v) => v.toString()),
-      }
-    : undefined;
+      ? {
+          home: game.linescore.home.map((v) => v.toString()),
+          away: game.linescore.away.map((v) => v.toString()),
+        }
+      : undefined;
 
   // --- Venue memoization ---
   const {

@@ -1,6 +1,6 @@
+import { Fonts } from "constants/Styles";
 import React from "react";
-import { Pressable, Text, StyleSheet, useColorScheme } from "react-native";
-import { Fonts } from "constants/fonts";
+import { Pressable, StyleSheet, Text, useColorScheme } from "react-native";
 
 type PostButtonProps = {
   onPress: () => void;

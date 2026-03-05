@@ -7,7 +7,28 @@ export const statsTableStyles = (isDark: boolean) =>
       paddingTop: 24,
       paddingHorizontal: 12,
     },
+headerRowContainer: {
+  flexDirection: "row",
+  justifyContent: "space-between", // Heading left, dropdowns right
+  alignItems: "center",
+  marginHorizontal: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ccc", // same as table
+  paddingBottom: 4,
+  marginBottom: 8,
+},
 
+dropdownContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+},
+
+heading: {
+  fontWeight: "bold",
+},
+dropdownWrapper: {
+  marginLeft: 8, // spacing between dropdowns
+},
     tableWrapper: {
       flexDirection: "row",
       borderRadius: 8,
@@ -35,7 +56,7 @@ export const statsTableStyles = (isDark: boolean) =>
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
-      color: isDark ? Colors.black : Colors.white,
+      color: isDark ? Colors.white : Colors.white,
     },
     cell: {
       minWidth: 60,
@@ -57,7 +78,7 @@ export const statsTableStyles = (isDark: boolean) =>
     },
     careerHeaderCell: {
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.black : Colors.white,
+      color: isDark ? Colors.white : Colors.white,
       paddingHorizontal: 8,
       textTransform: "uppercase",
     },
@@ -120,7 +141,7 @@ export const statsTableStyles = (isDark: boolean) =>
     },
 
     careerRow: {
-      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
 
     seasonText: {

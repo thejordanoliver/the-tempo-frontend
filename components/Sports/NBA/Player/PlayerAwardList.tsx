@@ -12,18 +12,22 @@ export default function PlayerAwardList(player: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = playerAwardListStyles(isDark);
-  const playerAward = player.player?.awards;
 
-  const playerAwards = playerAward?.map((p, i) => {
-    const award = p;
+  const playerAwardsArray = player.player?.awards;
+
+  // If there are no awards, don't render anything
+  if (!playerAwardsArray || playerAwardsArray.length === 0) return null;
+
+  const playerAwards = playerAwardsArray.map((award, i) => {
     const isAlt = i % 2 === 1;
-    const isLast = i === playerAward.length - 1;
+    const isLast = i === playerAwardsArray.length - 1;
 
     const zebra = isAlt
       ? isDark
         ? styles.rowAltDark
         : styles.rowAltLight
       : null;
+
     return (
       <View
         key={award}
@@ -43,8 +47,6 @@ export default function PlayerAwardList(player: Props) {
     );
   });
 
-  if (playerAward?.length === undefined) return null;
-
   return (
     <View style={styles.container}>
       <HeadingTwo>Awards</HeadingTwo>
@@ -52,6 +54,7 @@ export default function PlayerAwardList(player: Props) {
     </View>
   );
 }
+
 
 export const playerAwardListStyles = (isDark: boolean) =>
   StyleSheet.create({

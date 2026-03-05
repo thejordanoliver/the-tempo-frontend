@@ -242,7 +242,7 @@ export const CommentItem = ({
                   <Ionicons
                     name="checkmark"
                     size={30}
-                    color={isDark ? Colors.dark.limeGreen : Colors.light.green}
+                    color={isDark ? Colors.dark.leafGreen : Colors.light.green}
                   />
                 </TouchableOpacity>
 

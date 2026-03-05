@@ -1,9 +1,9 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 
 type Props = {
-  league: "MLB" | "NBA" | "CBB" | "WCBB" | "CFB" | "NFL";
+  league: "MLB" | "NBA" | "CBB" | "WCBB" | "CFB" | "NFL" | "NHL";
 };
 
 export default function LineScoreSkeleton({ league }: Props) {
@@ -28,7 +28,7 @@ export default function LineScoreSkeleton({ league }: Props) {
           duration: 650,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulse]);
 

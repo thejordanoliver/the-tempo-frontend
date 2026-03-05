@@ -1,6 +1,5 @@
 // components/CFB/TeamRankCard.tsx
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamLogoESPN } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -20,8 +19,8 @@ type Props = {
     rank: number;
     points: number;
     teamInfo: {
-      id: number
-    }
+      id: number;
+    };
   };
   index: number;
 };
@@ -53,14 +52,11 @@ export default function TeamRankCard({ item, index }: Props) {
     ]).start();
   }, []);
 
-const teamId = item?.teamInfo?.id ?? null;
-const logo = teamId ? getTeamLogoESPN(teamId, isDark) : null;
+  const teamId = item?.teamInfo?.id ?? null;
+  const logo = teamId ? getTeamLogoESPN(teamId, isDark) : null;
 
-const displayName =
-  item.team === "Southeastern Louisiana"
-    ? "SE Louisiana"
-    : item.team;
-
+  const displayName =
+    item.team === "Southeastern Louisiana" ? "SE Louisiana" : item.team;
 
   return (
     <View style={styles.cardWrapper}>
@@ -75,32 +71,32 @@ const displayName =
           <Image source={logo} style={styles.backgroundLogo} />
         </Animated.View>
       )}
- {/* Gradient */}
-     <LinearGradient
-           colors={
-             isDark
-               ? [
-                   "rgba(29,29,29,0.90)",
-                   "rgba(29, 29, 29, 1)",
-                   "rgba(29, 29, 29, 1)",
-                   "rgba(29, 29, 29, 0.69)",
-                   "rgba(29, 29, 29, 0.29)",
-                   "rgba(0,0,0,0.0)",
-                 ]
-               : [
-                   "rgba(255, 255, 255, 0.9)",
-                   "rgba(255, 255, 255, 1)",
-                   "rgba(255, 255, 255, 1)",
-                   "rgba(255, 255, 255, 0.69)",
-                   "rgba(255, 255, 255, 0.29)",
-                   "rgba(255, 255, 255, 0)",
-                 ]
-           }
-           locations={[0, 0.35, 0.60, 0.75,  0.85, 1]}
-           start={{ x: 0, y: 0 }}
-           end={{ x: 1, y: 0 }}
-           style={styles.cardGradient}
-         />
+      {/* Gradient */}
+      <LinearGradient
+        colors={
+          isDark
+            ? [
+                "rgba(29,29,29,0.90)",
+                "rgba(29, 29, 29, 1)",
+                "rgba(29, 29, 29, 1)",
+                "rgba(29, 29, 29, 0.69)",
+                "rgba(29, 29, 29, 0.29)",
+                "rgba(0,0,0,0.0)",
+              ]
+            : [
+                "rgba(255, 255, 255, 0.9)",
+                "rgba(255, 255, 255, 1)",
+                "rgba(255, 255, 255, 1)",
+                "rgba(255, 255, 255, 0.69)",
+                "rgba(255, 255, 255, 0.29)",
+                "rgba(255, 255, 255, 0)",
+              ]
+        }
+        locations={[0, 0.35, 0.6, 0.75, 0.85, 1]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.cardGradient}
+      />
 
       {/* Content */}
       <View style={styles.cardContent}>
@@ -124,7 +120,7 @@ const getStyles = (isDark: boolean) =>
       position: "relative",
     },
 
- logoContainer: {
+    logoContainer: {
       position: "absolute",
       right: 0,
       top: 0,
@@ -132,7 +128,7 @@ const getStyles = (isDark: boolean) =>
       width: "45%",
       justifyContent: "center",
       alignItems: "flex-end",
-       overflow: "hidden",
+      overflow: "hidden",
     },
 
     backgroundLogo: {
@@ -156,7 +152,7 @@ const getStyles = (isDark: boolean) =>
     row: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8
+      gap: 8,
     },
 
     rank: {
@@ -167,7 +163,7 @@ const getStyles = (isDark: boolean) =>
 
     teamName: {
       fontFamily: Fonts.OSBOLD,
-     fontSize: 26,
+      fontSize: 26,
       color: isDark ? Colors.white : Colors.black,
     },
 

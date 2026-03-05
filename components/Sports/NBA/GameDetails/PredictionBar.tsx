@@ -1,6 +1,6 @@
-import { Fonts } from "constants/fonts";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { Fonts } from "constants/Styles";
+import { StyleSheet, Text, View, useColorScheme } from "react-native";
 
 type Props = {
   homeWinProbability: number;
@@ -35,7 +35,7 @@ export default function PredictionBar({
   const resolveColor = (
     teamId: string | number,
     primary: string,
-    secondary?: string
+    secondary?: string,
   ) => {
     const id = String(teamId);
 
@@ -44,7 +44,7 @@ export default function PredictionBar({
     }
 
     if (contrast.includes(id)) {
-      return isDark ? primary : secondary ?? primary;
+      return isDark ? primary : (secondary ?? primary);
     }
 
     return isDark && secondary ? secondary : primary;
@@ -53,12 +53,12 @@ export default function PredictionBar({
   const effectiveHomeColor = resolveColor(
     homeTeamId,
     homeColor,
-    homeSecondaryColor
+    homeSecondaryColor,
   );
   const effectiveAwayColor = resolveColor(
     awayTeamId,
     awayColor,
-    awaySecondaryColor
+    awaySecondaryColor,
   );
   const textColor = isDark ? "#fff" : "#1d1d1d";
 

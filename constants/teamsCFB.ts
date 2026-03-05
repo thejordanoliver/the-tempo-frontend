@@ -7748,8 +7748,8 @@ export const getTeamInfo = (teamId: number | string) => {
 export const getCFBTeam = (id: string | number) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
-export function getTeamLogo(
-  idOrAbbr: number,
+export function getCFBTeamLogo(
+  idOrAbbr: number | string,
   isDark: boolean,
   lighter: boolean = false
 ) {

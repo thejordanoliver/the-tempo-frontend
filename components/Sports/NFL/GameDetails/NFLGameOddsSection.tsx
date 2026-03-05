@@ -3,7 +3,7 @@ import OddsSkeleton from "components/Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "components/Sports/NBA/GameDetails/OddsCard";
 import { PlayerOddsCard } from "components/Sports/NBA/GameDetails/PlayerOddsCard";
 import { useNFLEventOdds } from "hooks/NFLHooks/useNFLEventOdds";
-import { useUpcomingNFLOdds } from "hooks/NFLHooks/useUpcomingNFLOdds";
+import { useOdds } from "hooks/NFLHooks/useOdds";
 import { useColorScheme, View } from "react-native";
 import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
 import { GameOddsSectionProps } from "types/odds";
@@ -22,27 +22,27 @@ export default function NFLGameOddsSection({
   // --- Event odds ---
   const {
     odds,
-    loading: oddsLoading,
-    error: oddsError,
+    loading: eventOddsLoading,
+    error: eventsOddsError,
   } = useNFLEventOdds({
     homeId: homeId ?? 0,
     awayId: awayId ?? 0,
     date,
   });
 
-  // --- Upcoming odds ---
+  // --- Odds  ---
   const {
-    data: upcomingOdds,
-    loading: upcomingLoading,
-    error: upcomingError,
-  } = useUpcomingNFLOdds({
+    data: OddsOdds,
+    loading: oddsLoading,
+    error: oddsError,
+  } = useOdds({
     timestamp: date,
     team1: awayCode,
     team2: homeCode,
   });
 
-  const loading = oddsLoading || upcomingLoading;
-  const error = oddsError || upcomingError;
+  const loading = oddsLoading || eventOddsLoading;
+  const error = oddsError || eventsOddsError;
 
   // If nothing to show and not loading, render nothing
   if (
@@ -62,9 +62,9 @@ export default function NFLGameOddsSection({
     <View>
       <HeadingTwo>Betting Odds</HeadingTwo>
       <View style={styles.wrapper}>
-        {/* Upcoming odds cards */}
-        {Array.isArray(upcomingOdds) &&
-          upcomingOdds.map((game) => (
+        {/* Odds odds cards */}
+        {Array.isArray(OddsOdds) &&
+          OddsOdds.map((game) => (
             <OddsCard key={game.id} league="nfl" game={game} error={error} />
           ))}
 

@@ -1,34 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { PlayerLeader, STAT_CATEGORIES, StatCategory } from "types/stats";
+import { PlayerLeader, StatCategory } from "types/stats";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type LeadersByStat = Partial<Record<StatCategory, PlayerLeader[]>>;
 
 interface ApiResponse {
-  stat: StatCategory;
-  limit: number;
-  minGames: number;
-  season: number;
-  leaders: PlayerLeader[];
+  season: string;
+  perMode: string;
+  seasonType: string;
+  leaderboards: LeadersByStat;
 }
 
 interface UseSeasonLeadersOptions {
-  season?: number;
   limit?: number;
-  minGames?: number;
   baseUrl?: string;
 }
 
 export function useSeasonLeaders({
-  season = 2025,
   limit = 5,
-  minGames = 2,
   baseUrl = API_URL,
 }: UseSeasonLeadersOptions = {}) {
   const [leaders, setLeaders] = useState<LeadersByStat>({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,16 +34,16 @@ export function useSeasonLeaders({
       setError(null);
 
       try {
-        // 🚀 Only ONE request needed when all=true
-        const { data } = await axios.get(`${baseUrl}/api/season-leaders`, {
-          params: { all: true, season, limit, minGames },
-        });
+        const { data } = await axios.get<ApiResponse>(
+          `${baseUrl}/api/season-leaders/nba/leaders`,
+          {
+            params: { limit }, // only send limit now
+          }
+        );
 
         if (!isCancelled) {
-          // backend returns: { leaders: { points: [...], assists: [...], ... } }
-          setLeaders(data.leaders);
+          setLeaders(data.leaderboards);
         }
-
       } catch (err) {
         if (!isCancelled) {
           if (axios.isAxiosError(err)) {
@@ -65,11 +60,11 @@ export function useSeasonLeaders({
     }
 
     fetchLeaders();
+
     return () => {
       isCancelled = true;
     };
-  }, [season, limit, minGames, baseUrl]);
+  }, [limit, baseUrl]);
 
   return { leaders, loading, error };
 }
-

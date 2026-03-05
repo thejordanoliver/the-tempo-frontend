@@ -1,8 +1,8 @@
-// components/SignInForm.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
+  Animated,
   Pressable,
   Text,
   TextInput,
@@ -11,6 +11,8 @@ import {
   View,
 } from "react-native";
 import { formStyles } from "styles/FormStyles";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
+
 type SignInFormProps = {
   username: string;
   password: string;
@@ -21,57 +23,72 @@ type SignInFormProps = {
   onSubmit: () => void;
 };
 
-export default function SignInForm({
-  username,
-  password,
-  showPassword,
-  onUsernameChange,
-  onPasswordChange,
-  onToggleShowPassword,
-  onSubmit,
-}: SignInFormProps) {
+export default function SignInForm({ ...props }: SignInFormProps) {
   const isDark = useColorScheme() === "dark";
-
   const styles = formStyles(isDark);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 1.2,
+      friction: 3,
+      useNativeDriver: true,
+    }).start(() =>
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }).start(),
+    );
+  }, [props.showPassword]);
 
   return (
-    <View style={styles.signInInputContainer}>
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={onUsernameChange}
-        style={styles.input}
-        placeholderTextColor={Colors.midTone}
-        autoCapitalize="none"
-      />
-      <View style={styles.passwordRow}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.formContainer}>
+      <View style={styles.formWrapper}>
         <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={onPasswordChange}
-          secureTextEntry={!showPassword}
-          style={styles.passwordInput}
+          placeholder="Username"
+          value={props.username}
+          onChangeText={props.onUsernameChange}
+          style={styles.input}
           placeholderTextColor={Colors.midTone}
+          autoCapitalize="none"
         />
-        <Pressable
-          onPress={onToggleShowPassword}
-          style={styles.iconButton}
-          accessibilityLabel={showPassword ? "Hide password" : "Show password"}
-        >
-          <Ionicons
-            name={showPassword ? "eye-off" : "eye"}
-            size={20}
-            color={isDark ? Colors.white : Colors.black}
+
+        <View style={styles.passwordInput}>
+          <TextInput
+            placeholder="Password"
+            value={props.password}
+            onChangeText={props.onPasswordChange}
+            secureTextEntry={!props.showPassword}
+            style={styles.passwordText}
+            placeholderTextColor={Colors.midTone}
           />
-        </Pressable>
+          <Pressable
+            onPress={props.onToggleShowPassword}
+            accessibilityLabel={
+              props.showPassword ? "Hide password" : "Show password"
+            }
+          >
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+              <Ionicons
+                name={props.showPassword ? "eye-off" : "eye"}
+                size={20}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </Animated.View>
+          </Pressable>
+        </View>
+        </View>
+
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={props.onSubmit}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        activeOpacity={0.85}
-        onPress={onSubmit}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }

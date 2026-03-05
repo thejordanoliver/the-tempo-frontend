@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getRivalryHeadline, getTeamInfo } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";

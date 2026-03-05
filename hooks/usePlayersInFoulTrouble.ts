@@ -14,7 +14,11 @@ type Props = {
   teamId?: number | string;
 };
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
-export function usePlayersInFoulTrouble({ gameId, foulLimit = 3, teamId }: Props) {
+export function usePlayersInFoulTrouble({
+  gameId,
+  foulLimit = 3,
+  teamId,
+}: Props) {
   const [players, setPlayers] = useState<PlayerStat[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,9 +32,12 @@ export function usePlayersInFoulTrouble({ gameId, foulLimit = 3, teamId }: Props
       setLoading(true);
       setError(null);
       try {
-        const { data } = await axios.get(`${BASE_URL}/api/details/foul-trouble`, {
-          params: { gameId, teamId, foulLimit },
-        });
+        const { data } = await axios.get(
+          `${BASE_URL}/api/details/foul-trouble`,
+          {
+            params: { gameId, teamId, foulLimit },
+          },
+        );
         if (isMounted) setPlayers(data.players);
       } catch (err) {
         if (isMounted) setError("Failed to load foul trouble players");

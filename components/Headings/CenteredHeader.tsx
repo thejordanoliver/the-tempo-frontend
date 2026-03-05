@@ -1,6 +1,5 @@
 // components/Heading.tsx
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import React from "react";
 import { StyleSheet, Text, useColorScheme } from "react-native";
 type Props = {

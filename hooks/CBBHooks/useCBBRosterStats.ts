@@ -1,58 +1,121 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+/** ------------------- TYPES ------------------- */
+export interface SeasonAverages {
+  avgPoints: number;
+  avgRebounds: number;
+  avgAssists: number;
+  avgMinutes: number;
+  gamesPlayed: number;
+  [key: string]: number | undefined;
+}
 
-export type CBBTeamPlayer = {
-  rawName: string;
-  firstName: string;
-  lastName: string;
+export interface Player {
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  jersey_number: string;
   position: string;
-  espnId: string | null;
-  stats: Record<string, number | null>;
-};
+  headshot_url: string;
+  team: string;
+  team_id: number;
 
-export type CBBTeamStatsResponse = {
-  teamId: string;
-  teamName: string | null;
-  headers: string[];
-  players: CBBTeamPlayer[];
-};
+  currentSeason?: {
+    season: number;
+    displaySeason: string;
+    averages: SeasonAverages;
+  };
+}
 
-/**
- * Fetch roster + stats for CBB or WCBB
- */
-export function useCBBRosterStats(
-  teamId?: string | number,
-  league: "CBB" | "WCBB" = "CBB"
-) {
-  const [data, setData] = useState<CBBTeamStatsResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+type League = "cbb" | "wcbb";
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
+/** ------------------- HOOK ------------------- */
+export const useRosterStats = (league: League, teamId: number) => {
+  const [rosterStats, setRosterStats] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshingStats, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchStats = useCallback(async () => {
-    if (!teamId) return;
-
+  const fetchRoster = useCallback(async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
       setError(null);
 
-      const url = `${BASE_URL}/api/cbb-stats/team/${teamId}?league=${league.toLowerCase()}`;
-      // console.log("Fetching:", url);
+      const response = await axios.get(
+        `${BASE_URL}/api/players/${league}/roster/${teamId}`
+      );
 
-      const res = await axios.get(url);
-      setData(res.data);
-    } catch (err: any) {
-      console.error("CBB/WCBB Team Stats Fetch Error:", err);
-      setError("Failed to load team stats.");
+      const normalizedRoster: Player[] = response.data.map((player: any) => {
+        const seasons = player.seasonStats || player.season_stats || [];
+
+        const currentSeason =
+          seasons.length > 0
+            ? seasons.reduce((latest: any, season: any) =>
+                season.season > latest.season ? season : latest
+              )
+            : null;
+
+        const averages: SeasonAverages | undefined = currentSeason
+          ? (Object.fromEntries(
+              Object.entries(currentSeason.averages || {}).map(
+                ([key, value]) => [key, Number(value) || 0]
+              )
+            ) as SeasonAverages)
+          : undefined;
+
+        return {
+          id: player.id,
+          name: player.name,
+          first_name: player.first_name,
+          last_name: player.last_name,
+          jersey_number: player.jersey_number,
+          position: player.position,
+          headshot_url: player.headshot_url,
+          team: player.team,
+          team_id: player.team_id,
+          currentSeason: averages
+            ? {
+                season: currentSeason.season,
+                displaySeason: currentSeason.displaySeason,
+                averages,
+              }
+            : undefined,
+        };
+      });
+
+      setRosterStats(normalizedRoster);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load roster");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
-  }, [teamId, league]);
+  }, [league, teamId]);
 
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    if (!league || !teamId) return;
+    fetchRoster();
+  }, [fetchRoster]);
 
-  return { data, loading, error, refetch: fetchStats };
-}
+  const onRefresh = () => {
+    fetchRoster(true);
+  };
+
+  return {
+    rosterStats,
+    loading,
+    refreshingStats,
+    error,
+    onRefresh,
+  };
+};

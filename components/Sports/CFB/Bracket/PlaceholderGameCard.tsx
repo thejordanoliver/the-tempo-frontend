@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 
 export function PlaceholderGameCard() {

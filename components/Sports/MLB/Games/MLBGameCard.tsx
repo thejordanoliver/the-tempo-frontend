@@ -15,9 +15,9 @@ import {
 } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { MLBGame } from "types/mlb";
-import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
+import BasesIndicator from "../GameDetails/BasesIndicator";
 
 type Props = {
   game: MLBGame; // Your API Game shape
@@ -30,7 +30,7 @@ function MLBGameCard({ game }: Props) {
   /* ===============================
      DATE / TIME
   =============================== */
-  const timestamp = game?.date?.timestamp;
+  const timestamp = game?.timestamp;
 
   const {
     date: gameDate,
@@ -42,8 +42,8 @@ function MLBGameCard({ game }: Props) {
   /* ===============================
      BASIC GAME FIELDS FROM API
   =============================== */
-  const home = game?.teams?.home;
-  const away = game?.teams?.away;
+  const home = game?.teams.home;
+  const away = game?.teams.away;
 
   // Find matching internal teams using ESPN ID
   const homeTeam = getMLBTeam(home?.id);
@@ -54,29 +54,25 @@ function MLBGameCard({ game }: Props) {
 
   const homeLogo = isDark ? homeTeam?.logoLight : homeTeam?.logo;
   const awayLogo = isDark ? awayTeam?.logoLight : awayTeam?.logo;
-
   const homeEspnId = homeTeam?.espnID;
   const awayEspnId = awayTeam?.espnID;
 
-  const {
-    score: liveScore,
-    details,
-  } = useBaseballGameDetails(
+  const { score: liveScore, details } = useBaseballGameDetails(
     "mlb",
     String(awayEspnId),
     String(homeEspnId),
-    gameDateStr
+    gameDateStr,
   );
   const isChampionship = details?.playoffRound === "World Series";
   const styles = GameCardStyles(isDark, isChampionship);
-
+  const isSpringTraining = game.league.name === "MLB - Spring Training";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const headline = details?.headline;
   const seriesSummary = details?.seriesSummary;
   const seasonState = details?.seasonState;
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const gameStatusDetail = liveScore?.statusText ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -85,14 +81,20 @@ function MLBGameCard({ game }: Props) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
-  const period = liveScore?.period;
   const headlineText = details?.headline;
   const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-
-
+  const isPostSeason = details?.isPostseason;
+  const isTopInning = gameStatusDetail.includes("Top");
+  const outs = liveScore?.outs;
+  const bases: { first: boolean; second: boolean; third: boolean } =
+    liveScore?.bases ?? {
+      first: false,
+      second: false,
+      third: false,
+    };
   const filteredHeadline =
     headlineText && !headlineText.toLowerCase().includes("final")
       ? headline
@@ -136,16 +138,20 @@ function MLBGameCard({ game }: Props) {
 
   const renderHeadline = () => (
     <>
-      {seasonState === "post-season" ? (
+      {isPostSeason ? (
         <View style={styles.headlineContainer}>
-          {seriesSummary ? (
-            <Text style={styles.mlbHeadlineText}>{seriesSummary.summary}</Text>
-          ) : null}
+          <Text style={styles.postSeasonHeadlineText}>{headline}</Text>
+          <View style={styles.headlineDivider} />
+          <Text style={styles.postSeasonHeadlineText}>
+            {seriesSummary?.summary}
+          </Text>
         </View>
       ) : filteredHeadline ? (
         <View style={styles.headlineContainer}>
-          <Text style={styles.mlbHeadlineText}>{filteredHeadline}</Text>
+          <Text style={styles.headlineText}>{filteredHeadline}</Text>
         </View>
+      ) : isSpringTraining ? (
+        <Text style={styles.headlineText}>{game.league.name}</Text>
       ) : null}
     </>
   );
@@ -153,9 +159,20 @@ function MLBGameCard({ game }: Props) {
   const renderStatus = () => {
     if (inProgress)
       return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
-        </View>
+        <>
+          <View style={styles.infoWrapper}>
+            <Ionicons
+              name={isTopInning ? "caret-up" : "caret-down"}
+              size={14}
+              color={isDark ? Colors.white : Colors.black}
+            />
+
+            <Text style={styles.period}>{gameStatusDetail}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.clock}>Outs: {outs}</Text>
+          </View>
+          <BasesIndicator bases={bases} isDark={isDark} size={12} />
+        </>
       );
 
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
@@ -164,7 +181,7 @@ function MLBGameCard({ game }: Props) {
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfInning)
-      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+      return <Text style={styles.clock}>{gameStatusDetail}</Text>;
 
     if (isFinal)
       return (

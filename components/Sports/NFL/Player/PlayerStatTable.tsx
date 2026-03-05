@@ -1,6 +1,6 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import PlayerStatTableSkeleton from "components/Sports/NBA/Player/PlayerStatsTableSkeleton";
+import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { Colors, globalStyles } from "constants/Styles";
 import {
   PlayerSeasonStat,
@@ -156,7 +156,7 @@ export default function PlayerStatTable({ playerId }: Props) {
                 let abbr = key.toUpperCase();
                 for (const seasonData of Object.values(careerStats)) {
                   const stat = seasonData.stats[selectedGroup]?.find(
-                    (s) => s.statId.toLowerCase() === key.toLowerCase()
+                    (s) => s.statId.toLowerCase() === key.toLowerCase(),
                   );
                   if (stat?.abbreviation) {
                     abbr = stat.abbreviation;
@@ -185,7 +185,7 @@ export default function PlayerStatTable({ playerId }: Props) {
                 <View key={season} style={[styles.row, zebra, highlight]}>
                   {statKeys.map((key, i) => {
                     const stat = data.stats[selectedGroup]?.find(
-                      (s) => s.statId.toLowerCase() === key.toLowerCase()
+                      (s) => s.statId.toLowerCase() === key.toLowerCase(),
                     );
                     return (
                       <Text key={i} style={styles.cell}>
@@ -203,7 +203,7 @@ export default function PlayerStatTable({ playerId }: Props) {
                 <Text key={i} style={styles.careerCell}>
                   {safeDivide(
                     careerTotals[key] ?? 0,
-                    careerTotals["games"] || 1
+                    careerTotals["games"] || 1,
                   )}
                 </Text>
               ))}
@@ -229,7 +229,7 @@ export default function PlayerStatTable({ playerId }: Props) {
 
               for (const seasonData of Object.values(careerStats)) {
                 const stat = seasonData.stats[selectedGroup]?.find(
-                  (s) => s.statId.toLowerCase() === key.toLowerCase()
+                  (s) => s.statId.toLowerCase() === key.toLowerCase(),
                 );
                 if (stat) {
                   displayName = stat.displayName;

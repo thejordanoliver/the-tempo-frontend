@@ -6,15 +6,15 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBWeeklyGames } from "hooks/CBBHooks/useCBBWeeklyGames";
-import { usetodayYesterday as useCFBtodayYesterday } from "hooks/CFBHooks/usetodayYesterday";
+import { usetodayYesterday as useCFBtodayYesterday } from "hooks/CFBHooks/useCFBTodayYesterdayGames";
+import { useWeeklyGames } from "hooks/NBAHooks/useWeeklyGames";
 import { useNewsStore } from "hooks/newsStore";
-import { usetodayYesterday as useNFLtodayYesterday } from "hooks/NFLHooks/usetodayYesterday";
+import { usetodayYesterday as useNFLtodayYesterday } from "hooks/NFLHooks/useNFLTodayYesterdayGames";
 import { useHighlights } from "hooks/useHighlights";
 import { useNews } from "hooks/useNews";
-import { useWeeklyGames } from "hooks/useWeeklyGames";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { isLiveGame, normalizeTeam } from "utils/games";
-
+import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
+import { useMLBWeeklyGames } from "./MLBHooks/useMLBWeeklyGames";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -24,7 +24,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
 
   // ✅ Local date for filtering
   const [selectedDate, setSelectedDate] = useState(() =>
-    dayjs().startOf("day").toDate()
+    dayjs().startOf("day").toDate(),
   );
 
   // Data sources
@@ -33,6 +33,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     loading: nbaLoading,
     refreshGames,
   } = useWeeklyGames();
+  const {
+    games: weeklyMLBGames,
+    loading: mlbLoading,
+    refreshGames: refreshMLBGames,
+  } = useMLBWeeklyGames();
   const {
     games: nflGames,
     loading: nflLoading,
@@ -63,7 +68,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const { highlights, loading: highlightsLoading } = useHighlights(
     "all",
     "",
-    10
+    10,
   );
 
   const setArticles = useNewsStore((s) => s.setArticles);
@@ -80,8 +85,60 @@ export function useHomeData(selectedTab: "scores" | "news") {
         }
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
+
+  const normalizeGames = (games: any[], leagueType: string, isWomen = false) =>
+    games
+      .map((game: any) => {
+        let date: dayjs.Dayjs | null = null;
+
+        if (leagueType === "CFB" || leagueType === "NFL") {
+          const ts = game.game?.date?.timestamp;
+          if (!ts) return null;
+          date = dayjs.unix(ts).local();
+        } else {
+          const raw =
+            game.date?.start ?? game.date?.date ?? game.date ?? game.game?.date;
+          if (!raw) return null;
+          date = dayjs.utc(raw).local();
+        }
+
+        let home, away;
+
+        if (leagueType === "NBA") {
+          home = getTeamInfo(game.home?.id);
+          away = getTeamInfo(game.away?.id);
+          if (!home || !away) return null;
+        } else if (leagueType === "MLB") {
+          home = {
+            id: game.teams?.home?.id,
+            name: game.teams?.home?.name,
+            logo: game.teams?.home?.logo,
+          };
+          away = {
+            id: game.teams?.away?.id,
+            name: game.teams?.away?.name,
+            logo: game.teams?.away?.logo,
+          };
+        } else if (leagueType === "NFL" || leagueType === "CFB") {
+          home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
+          away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+        } else {
+          home = normalizeTeam(game.teams?.home, isWomen);
+          away = normalizeTeam(game.teams?.away, isWomen);
+        }
+
+        return {
+          ...game,
+          date: date.toDate(),
+          dateString: date.format("YYYY-MM-DD"),
+          time: date.format("h:mm A"),
+          home,
+          away,
+        };
+      })
+      .filter(Boolean);
 
   // 🗞 Cache latest news
   useEffect(() => {
@@ -89,194 +146,108 @@ export function useHomeData(selectedTab: "scores" | "news") {
   }, [news, setArticles]);
 
   // Helpers
-  const isFavorite = (g: any, prefix: string) => {
-    const homeId = String(g.home?.id);
-    const awayId = String(g.away?.id);
-
-    return (
-      favorites.includes(`${prefix}:${homeId}`) ||
-      favorites.includes(`${prefix}:${awayId}`)
-    );
-  };
+  const isFavoriteGame = (g: any, prefix: string) =>
+    favorites.includes(`${prefix}:${String(g.home.id)}`) ||
+    favorites.includes(`${prefix}:${String(g.away.id)}`);
 
   const sortLiveFirst = (games: any[]) =>
     [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
 
-  const limitNonFavorites = (games: any[], prefix: string, max = 5) =>
-    games.filter((g) => !isFavorite(g, prefix)).slice(0, max);
+  const limitNonFavorites = (games: any[], prefix: string, max = 8) =>
+    sortLiveFirst(games.filter((g) => !isFavoriteGame(g, prefix))).slice(
+      0,
+      max,
+    );
 
-  // 🏀 Normalize NBA
-// 🏀 Normalize NBA (CORRECT)
-const normalizedNBA = weeklyGames
-  .map((game: any) => {
-    const homeId = game.home?.id;
-    const awayId = game.away?.id;
-
-    if (!homeId || !awayId) return null;
-
-    const home = getTeamInfo(homeId);
-    const away = getTeamInfo(awayId);
-
-    if (!home || !away) return null;
-
-    const rawDate = game.date;
-    const date = dayjs(rawDate);
-
-    return {
-      ...game,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.format("h:mm A"),
-      home,
-      away,
-    };
-  })
-  .filter(Boolean);
-
-
-  // 🏈 Normalize NFL
-  const normalizedNFL = nflGames.map((game) => {
-    const dateInfo = game.game?.date;
-    let date = dayjs(); // fallback to now if missing
-
-    if (dateInfo) {
-      if (typeof dateInfo.timestamp === "number") {
-        date = dayjs.unix(dateInfo.timestamp); // ✅ convert from seconds
-      } else if (dateInfo.date) {
-        date = dayjs(dateInfo.date); // fallback to ISO string
-      }
-    }
-
-    return {
-      ...game,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.isValid() ? date.format("h:mm A") : "TBD",
-      home: {
-        ...normalizeTeam(game.teams?.home),
-        id: String(game.teams?.home?.id),
-      },
-      away: {
-        ...normalizeTeam(game.teams?.away),
-        id: String(game.teams?.away?.id),
-      },
-    };
-  });
-
-  // 🏈 Normalize CFB (local)
-  const normalizedCFB = cfbGames.map((g) => {
-    const date = dayjs(g.game?.date?.date ?? g.game?.date);
-    return {
-      ...g,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.format("h:mm A"),
-      home: { ...normalizeTeam(g.teams?.home), id: String(g.teams?.home?.id) },
-      away: { ...normalizeTeam(g.teams?.away), id: String(g.teams?.away?.id) },
-    };
-  });
-
-  const normalizedMensCBB = mensCBBGames.map((g: any) => {
-    const date = dayjs(g.date || g.dateUTC || g.dateLocal);
-    return {
-      ...g,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.format("h:mm A"),
-      home: { ...normalizeTeam(g.teams?.home), id: String(g.teams?.home?.id) },
-      away: { ...normalizeTeam(g.teams?.away), id: String(g.teams?.away?.id) },
-    };
-  });
-
-  const normalizedWomensCBB = womensCBBGames.map((g: any) => {
-    const date = dayjs(g.date || g.dateUTC || g.dateLocal);
-    return {
-      ...g,
-      date: date.toDate(),
-      dateString: date.format("YYYY-MM-DD"),
-      time: date.format("h:mm A"),
-      home: { ...normalizeTeam(g.teams?.home), id: String(g.teams?.home?.id) },
-      away: { ...normalizeTeam(g.teams?.away), id: String(g.teams?.away?.id) },
-    };
-  });
-
-  // 📅 Filter for today (local)
-  const filterByDate = (games: any[]) =>
-    games.filter((g) => dayjs(g.date).isSame(selectedDate, "day"));
-
-  // 📅 Filter for yesterday through 7 days ahead (local)
-  const filterThisWeek = (games: any[]) => {
-    const now = dayjs();
-    const start = now.subtract(1, "day").startOf("day");
-    const end = now.add(7, "day").endOf("day");
-    return games.filter((g) => {
-      const d = dayjs(g.date);
-      return d.isAfter(start) && d.isBefore(end);
-    });
-  };
-
-  const filteredNBA = filterByDate(normalizedNBA);
-  const filteredNFL = filterThisWeek(normalizedNFL);
-  const filteredCFB = filterThisWeek(normalizedCFB);
-  const filteredMensCBB = filterByDate(normalizedMensCBB);
-  const filteredWomensCBB = filterByDate(normalizedWomensCBB);
-
-  // ⭐ Favorites
-const favoriteGames = useMemo(() => {
-  if (!favorites.length) return [];
-
-  const collect = (games: any[], prefix: string) =>
-    games.filter((g) => isFavorite(g, prefix));
-
-  return [
-    ...collect(filteredNBA, "NBA"),
-    ...collect(filteredNFL, "NFL"),
-    ...collect(filteredCFB, "CFB"),
-    ...collect(filteredMensCBB, "CBB"),
-    ...collect(filteredWomensCBB, "WCBB"),
-  ];
-}, [
-  favorites,
-  filteredNBA,
-  filteredNFL,
-  filteredCFB,
-  filteredMensCBB,
-  filteredWomensCBB,
-]);
-
-
-  // 🧩 Limit sections
-  const limitedNBA = limitNonFavorites(filteredNBA, "NBA");
-  const limitedNFL = limitNonFavorites(filteredNFL, "NFL");
-  const limitedCFB = limitNonFavorites(filteredCFB, "CFB");
-  const limitedMensCBB = limitNonFavorites(filteredMensCBB, "CBB");
-  const limitedWomensCBB = limitNonFavorites(filteredWomensCBB, "WCBB");
-  // 📊 Combine all categories
-  const gamesByCategory: CombinedGamesSection[] = useMemo(
-    () =>
-      [
-        { category: "Favorites", data: sortLiveFirst(favoriteGames) },
-        { category: "NBA", data: sortLiveFirst(limitedNBA) },
-        { category: "NFL", data: sortLiveFirst(limitedNFL) },
-        { category: "College Football", data: sortLiveFirst(limitedCFB) },
-        {
-          category: "Men's College Basketball",
-          data: sortLiveFirst(limitedMensCBB),
-        },
-        {
-          category: "Women's College Basketball",
-          data: sortLiveFirst(limitedWomensCBB),
-        },
-      ].filter((s) => s.data.length > 0) as CombinedGamesSection[],
-    [
-      favoriteGames,
-      limitedNBA,
-      limitedNFL,
-      limitedCFB,
-      limitedMensCBB,
-      limitedWomensCBB,
-    ]
+  const normalizedNBA = useMemo(
+    () => normalizeGames(weeklyGames, "NBA"),
+    [weeklyGames],
   );
+
+  const normalizedMLB = useMemo(
+    () => normalizeGames(weeklyMLBGames, "MLB"),
+    [weeklyMLBGames],
+  );
+
+  const normalizedNFL = useMemo(
+    () => normalizeGames(nflGames, "NFL"),
+    [nflGames],
+  );
+
+  const normalizedCFB = useMemo(
+    () => normalizeGames(cfbGames, "CFB"),
+    [cfbGames],
+  );
+
+  const normalizedMensCBB = useMemo(
+    () => normalizeGames(mensCBBGames, "CBB", false),
+    [mensCBBGames],
+  );
+
+  const normalizedWomensCBB = useMemo(
+    () => normalizeGames(womensCBBGames, "CBB", true),
+    [womensCBBGames],
+  );
+
+  const filteredNBA = filterByDate(normalizedNBA, selectedDate);
+  const filteredNFL = filterByDate(normalizedNFL, selectedDate);
+  const filteredMLB = filterByDate(normalizedMLB, selectedDate);
+  const filteredCFB = filterByDate(normalizedCFB, selectedDate);
+  const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
+  const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
+
+  const favoriteGames = useMemo(() => {
+    const collect = (games: any[], prefix: string) =>
+      games.filter((g) => isFavoriteGame(g, prefix));
+
+    return [
+      ...collect(filteredNBA, "NBA"),
+      ...collect(filteredNFL, "NFL"),
+      ...collect(filteredMLB, "MLB"),
+      ...collect(filteredCFB, "CFB"),
+      ...collect(filteredMensCBB, "CBB"),
+      ...collect(filteredWomensCBB, "WCBB"),
+    ];
+  }, [
+    favorites,
+    filteredNBA,
+    filteredNFL,
+    filteredMLB,
+    filteredCFB,
+    filteredMensCBB,
+    filteredWomensCBB,
+  ]);
+
+  const gamesByCategory: CombinedGamesSection[] = useMemo(() => {
+    const sections: CombinedGamesSection[] = [
+      { category: "Favorites" as const, data: sortLiveFirst(favoriteGames) },
+      { category: "NBA" as const, data: limitNonFavorites(filteredNBA, "NBA") },
+      { category: "NFL" as const, data: limitNonFavorites(filteredNFL, "NFL") },
+      { category: "MLB" as const, data: limitNonFavorites(filteredMLB, "MLB") },
+      {
+        category: "College Football" as const,
+        data: limitNonFavorites(filteredCFB, "CFB"),
+      },
+      {
+        category: "Men's College Basketball" as const,
+        data: limitNonFavorites(filteredMensCBB, "CBB"),
+      },
+      {
+        category: "Women's College Basketball" as const,
+        data: limitNonFavorites(filteredWomensCBB, "WCBB"),
+      },
+    ];
+
+    return sections.filter((s) => s.data.length > 0);
+  }, [
+    favoriteGames,
+    filteredNBA,
+    filteredNFL,
+    filteredMLB,
+    filteredCFB,
+    filteredMensCBB,
+    filteredWomensCBB,
+  ]);
 
   // 📰 Merge news + highlights
   const combinedNewsAndHighlights = useMemo(() => {
@@ -293,7 +264,7 @@ const favoriteGames = useMemo(() => {
     }));
     return [...taggedNews, ...taggedHighlights].sort(
       (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     );
   }, [news, highlights]);
 
@@ -304,6 +275,7 @@ const favoriteGames = useMemo(() => {
       if (selectedTab === "scores") {
         await Promise.all([
           refreshGames(),
+          refreshMLBGames(),
           refreshNFL(),
           refreshCFB(),
           refreshMensCBB(),
@@ -329,6 +301,7 @@ const favoriteGames = useMemo(() => {
     newsError,
     loading:
       nbaLoading ||
+      mlbLoading ||
       nflLoading ||
       cfbLoading ||
       mensCBBLoading ||

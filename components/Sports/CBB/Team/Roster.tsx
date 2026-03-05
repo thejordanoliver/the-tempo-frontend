@@ -2,7 +2,7 @@
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { globalStyles } from "constants/Styles";
-import { RefreshControl, ScrollView, Text } from "react-native";
+import { RefreshControl, ScrollView, Text, useColorScheme } from "react-native";
 import { CBBPlayer } from "types/types";
 
 interface TeamPlayerListProps {
@@ -12,8 +12,7 @@ interface TeamPlayerListProps {
   refreshing: boolean;
   onRefresh: () => void;
   teamFullName: string;
-  teamColor: string;
-  isDark: boolean;
+  isWomen?: boolean;
 }
 
 export default function Roster({
@@ -23,9 +22,9 @@ export default function Roster({
   refreshing,
   onRefresh,
   teamFullName,
-  teamColor,
-  isDark,
+  isWomen,
 }: TeamPlayerListProps) {
+  const isDark = useColorScheme() === "dark";
   const global = globalStyles(isDark);
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;
@@ -41,11 +40,7 @@ export default function Roster({
         gap: 12,
       }}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor={teamColor}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       {players &&
@@ -58,13 +53,14 @@ export default function Roster({
           .map((player) => (
             <PlayerCard
               key={player.id}
+              
               id={Number(player.id)}
               name={player.fullName ?? ""}
               position={player.position}
               team={teamFullName}
               avatarUrl={player.imageUrl}
               number={player.jersey}
-              league="CBB"
+              league={isWomen ? "WCBB" : "CBB"}
             />
           ))}
     </ScrollView>

@@ -48,7 +48,7 @@ export const useLastFiveGames = (teamId: number) => {
         logo: t.logo,
         logoLight: t.logoLight,
         code: t.code,
-      })
+      }),
     );
     return map;
   }, []);
@@ -60,7 +60,7 @@ export const useLastFiveGames = (teamId: number) => {
         setError(null);
 
         const response = await axios.get<ApiResponse>(
-          `${BASE_URL}/api/gamesCFB/team/${teamId}/last-five`
+          `${BASE_URL}/api/games/cfb/team/${teamId}/last-five`,
         );
 
         const recentGames: GameResult[] = response.data.response.map((g) => {
@@ -98,7 +98,7 @@ export const useLastFiveGames = (teamId: number) => {
 
         await AsyncStorage.setItem(
           `lastFiveGames_${teamId}`,
-          JSON.stringify({ timestamp: Date.now(), data: recentGames })
+          JSON.stringify({ timestamp: Date.now(), data: recentGames }),
         );
       } catch (err) {
         console.error("Error fetching last five games", err);

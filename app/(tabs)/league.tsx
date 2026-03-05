@@ -5,29 +5,33 @@ import CombinedGamesList, {
   CombinedGamesSection,
 } from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import CustomRefreshControl from "components/CustomRefreshControl";
 import DateNavigator from "components/DateNavigator";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamInfo } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useCFBSeasonGames } from "hooks/CFBHooks/useCFBSeasonGames";
+import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
+import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
-import { useSeasonGames } from "hooks/useSeasonGames";
 import * as React from "react";
-import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import { getMLBSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function LeagueScreen() {
   const currentYear = "2025";
+  const nbaCalendarYear = getNBASeason();
+  const mlbCalendarYear = getMLBSeason();
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
@@ -36,7 +40,7 @@ export default function LeagueScreen() {
   // State
   // --------------------------------------------------
   const [selectedDate, setSelectedDate] = React.useState<Date>(
-    dayjs().startOf("day").toDate()
+    dayjs().startOf("day").toDate(),
   );
   const [favorites, setFavorites] = React.useState<string[]>([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -51,7 +55,13 @@ export default function LeagueScreen() {
     games: nbaGames,
     loading: nbaLoading,
     refreshGames: refreshNBAGames,
-  } = useSeasonGames(currentYear);
+  } = useSeasonGames(nbaCalendarYear);
+
+  const {
+    games: mlbGames,
+    loading: mlbLoading,
+    refreshGames: refreshMLBGames,
+  } = useMLBSeasonGames(mlbCalendarYear);
 
   const {
     games: mensCBBGames,
@@ -87,7 +97,7 @@ export default function LeagueScreen() {
         if (stored) setFavorites(JSON.parse(stored));
       };
       loadFavorites();
-    }, [])
+    }, []),
   );
 
   // --------------------------------------------------
@@ -157,8 +167,19 @@ export default function LeagueScreen() {
         } else if (leagueType === "NFL" || leagueType === "CFB") {
           home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
           away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+        } else if (leagueType === "MLB") {
+          home = {
+            id: game.teams?.home?.id,
+            name: game.teams?.home?.name,
+            logo: game.teams?.home?.logo,
+          };
+
+          away = {
+            id: game.teams?.away?.id,
+            name: game.teams?.away?.name,
+            logo: game.teams?.away?.logo,
+          };
         } else {
-          // CBB (men + women)
           home = normalizeTeam(game.teams?.home, isWomen);
           away = normalizeTeam(game.teams?.away, isWomen);
         }
@@ -176,23 +197,27 @@ export default function LeagueScreen() {
 
   const normalizedNBA = React.useMemo(
     () => normalizeGames(nbaGames, "NBA"),
-    [nbaGames]
+    [nbaGames],
+  );
+  const normalizedMLB = React.useMemo(
+    () => normalizeGames(mlbGames, "MLB"),
+    [mlbGames],
   );
   const normalizedNFL = React.useMemo(
     () => normalizeGames(nflGames, "NFL"),
-    [nflGames]
+    [nflGames],
   );
   const normalizedCFB = React.useMemo(
     () => normalizeGames(cfbGames, "CFB"),
-    [cfbGames]
+    [cfbGames],
   );
   const normalizedMensCBB = React.useMemo(
     () => normalizeGames(mensCBBGames, "CBB", false),
-    [mensCBBGames]
+    [mensCBBGames],
   );
   const normalizedWomensCBB = React.useMemo(
     () => normalizeGames(womensCBBGames, "CBB", true),
-    [womensCBBGames]
+    [womensCBBGames],
   );
 
   // --------------------------------------------------
@@ -200,6 +225,7 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   const filteredNBA = filterByDate(normalizedNBA, selectedDate);
   const filteredNFL = filterByDate(normalizedNFL, selectedDate);
+  const filteredMLB = filterByDate(normalizedMLB, selectedDate);
   const filteredCFB = filterByDate(normalizedCFB, selectedDate);
   const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
   const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
@@ -217,7 +243,7 @@ export default function LeagueScreen() {
   const limitNonFavorites = (games: any[], prefix: string, max = 8) =>
     sortLiveFirst(games.filter((g) => !isFavoriteGame(g, prefix))).slice(
       0,
-      max
+      max,
     );
 
   // --------------------------------------------------
@@ -230,6 +256,7 @@ export default function LeagueScreen() {
     return [
       ...collect(filteredNBA, "NBA"),
       ...collect(filteredNFL, "NFL"),
+      ...collect(filteredMLB, "MLB"),
       ...collect(filteredCFB, "CFB"),
       ...collect(filteredMensCBB, "CBB"),
       ...collect(filteredWomensCBB, "WCBB"),
@@ -238,36 +265,45 @@ export default function LeagueScreen() {
     favorites,
     filteredNBA,
     filteredNFL,
+    filteredMLB,
     filteredCFB,
     filteredMensCBB,
     filteredWomensCBB,
   ]);
 
-
   // --------------------------------------------------
   // Sections
   // --------------------------------------------------
-const gamesByCategory = React.useMemo(() => {
-  const sections: CombinedGamesSection[] = [
-    { category: "Favorites", data: sortLiveFirst(favoriteGames) },
-    { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
-    { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
-    {
-      category: "College Football",
-      data: limitNonFavorites(filteredCFB, "CFB"),
-    },
-    {
-      category: "Men's College Basketball",
-      data: limitNonFavorites(filteredMensCBB, "CBB"), // <--- OK
-    },
-    {
-      category: "Women's College Basketball",
-      data: limitNonFavorites(filteredWomensCBB, "WCBB"), // <--- OK
-    },
-  ];
+  const gamesByCategory = React.useMemo(() => {
+    const sections: CombinedGamesSection[] = [
+      { category: "Favorites", data: sortLiveFirst(favoriteGames) },
+      { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
+      { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
+      { category: "MLB", data: limitNonFavorites(filteredMLB, "MLB") },
+      {
+        category: "College Football",
+        data: limitNonFavorites(filteredCFB, "CFB"),
+      },
+      {
+        category: "Men's College Basketball",
+        data: limitNonFavorites(filteredMensCBB, "CBB"), // <--- OK
+      },
+      {
+        category: "Women's College Basketball",
+        data: limitNonFavorites(filteredWomensCBB, "WCBB"), // <--- OK
+      },
+    ];
 
-  return sections.filter((s) => s.data.length > 0);
-}, [favoriteGames, filteredNBA, filteredNFL, filteredCFB, filteredMensCBB, filteredWomensCBB]);
+    return sections.filter((s) => s.data.length > 0);
+  }, [
+    favoriteGames,
+    filteredNBA,
+    filteredNFL,
+    filteredMLB,
+    filteredCFB,
+    filteredMensCBB,
+    filteredWomensCBB,
+  ]);
 
   // --------------------------------------------------
   // Refresh
@@ -278,6 +314,7 @@ const gamesByCategory = React.useMemo(() => {
       await Promise.all([
         refreshNBAGames(),
         refreshNFLGames(),
+        refreshMLBGames(),
         refreshCFBGames(),
         refreshMensCBB(),
         refreshWomensCBB(),
@@ -294,6 +331,7 @@ const gamesByCategory = React.useMemo(() => {
     const all = [
       ...normalizedNBA,
       ...normalizedNFL,
+      ...normalizedMLB,
       ...normalizedCFB,
       ...normalizedMensCBB,
       ...normalizedWomensCBB,
@@ -305,11 +343,12 @@ const gamesByCategory = React.useMemo(() => {
       all.map((g) => [
         dayjs(g.date).format("YYYY-MM-DD"),
         { marked: true, dotColor },
-      ])
+      ]),
     );
   }, [
     normalizedNBA,
     normalizedNFL,
+    normalizedMLB,
     normalizedCFB,
     normalizedMensCBB,
     normalizedWomensCBB,
@@ -327,35 +366,30 @@ const gamesByCategory = React.useMemo(() => {
             selectedDate={selectedDate}
             onChangeDate={(d) =>
               setSelectedDate(
-                dayjs(selectedDate).add(d, "day").startOf("day").toDate()
+                dayjs(selectedDate).add(d, "day").startOf("day").toDate(),
               )
             }
             onOpenCalendar={() => setShowCalendarModal(true)}
             isDark={isDark}
           />
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
+          <CustomRefreshControl onRefresh={handleRefresh}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <CombinedGamesList
+                gamesByCategory={gamesByCategory}
+                loading={
+                  nbaLoading ||
+                  nflLoading ||
+                  mlbLoading ||
+                  cfbLoading ||
+                  mensCBBLoading ||
+                  womensCBBLoading
+                }
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
-            }
-          >
-            <CombinedGamesList
-              gamesByCategory={gamesByCategory}
-              loading={
-                nbaLoading ||
-                nflLoading ||
-                cfbLoading ||
-                mensCBBLoading ||
-                womensCBBLoading
-              }
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
+            </ScrollView>
+          </CustomRefreshControl>
         </View>
       </View>
 

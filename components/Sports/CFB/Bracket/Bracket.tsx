@@ -1,7 +1,7 @@
 // components/Bracket/Bracket.tsx
 import cfpTrophy from "assets/College_Logos/cfptrophy.webp";
 import ChampionTape from "assets/Placeholders/ChampionTape.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teamsCFB";
 import {
   Dimensions,

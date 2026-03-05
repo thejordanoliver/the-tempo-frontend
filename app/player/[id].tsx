@@ -28,7 +28,7 @@ export default function PlayerDetailScreen() {
     calculateExperience,
   } = usePlayerDetail(
     Array.isArray(id) ? id[0] : id,
-    Array.isArray(teamId) ? teamId[0] : teamId
+    Array.isArray(teamId) ? teamId[0] : teamId,
   );
 
   useLayoutEffect(() => {
@@ -73,7 +73,7 @@ export default function PlayerDetailScreen() {
         </View>
       )}
 
-      {!teamGameLoading && enrichedLastGame && player.active && (
+      {enrichedLastGame && player.active && (
         <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
           <HeadingTwo>Last Game</HeadingTwo>
           <GameCard game={enrichedLastGame} />

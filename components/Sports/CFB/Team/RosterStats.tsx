@@ -2,8 +2,8 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { players } from "constants/cfbPlayers";
-import { Colors } from "constants/Colors";
 import { players as nflPlayers } from "constants/nflPlayers";
+import { Colors } from "constants/Styles";
 import { useRouter } from "expo-router";
 import {
   StatCategory,
@@ -110,7 +110,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
     teamID?.toString(),
     category,
     viewMode,
-    league
+    league,
   );
 
   const formatDisplayName = (fullName: string, number?: string) => {
@@ -346,14 +346,14 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                   ([categoryName, statKeys]) => {
                     statKeys.forEach((statKey) => {
                       const allRows = Object.values(
-                        playerCategoryTables
+                        playerCategoryTables,
                       ).flatMap(({ rows }) => rows);
 
                       const topPlayer = allRows
                         .map((row) => {
                           const playerData = playerDataList.find(
                             (p) =>
-                              p.teamId === teamID && p.name === row.playerName
+                              p.teamId === teamID && p.name === row.playerName,
                           );
                           return {
                             ...row,
@@ -366,7 +366,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                         .sort(
                           (a, b) =>
                             Number(b.values[statKey] ?? 0) -
-                            Number(a.values[statKey] ?? 0)
+                            Number(a.values[statKey] ?? 0),
                         )[0];
 
                       if (topPlayer) {
@@ -377,13 +377,13 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                         });
                       }
                     });
-                  }
+                  },
                 );
                 // Render only one card per category (first available stat per group)
                 const uniqueByCategory: { [key: string]: boolean } = {};
                 const filteredLeaders = allTopPlayers.filter(({ statName }) => {
                   const cat = Object.keys(statKeysMap).find((k) =>
-                    statKeysMap[k].includes(statName)
+                    statKeysMap[k].includes(statName),
                   );
                   if (!cat) return false;
                   if (uniqueByCategory[cat]) return false;
@@ -395,7 +395,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                 // Helper function to format stat names
                 const formatStatName = (
                   statName: string,
-                  categoryName?: string
+                  categoryName?: string,
                 ) => {
                   if (categoryName === "passing" && statName === "yards")
                     return "Passing Yards";
@@ -409,7 +409,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                   ({ player, stat, statName }, idx) => {
                     // detect the category this stat belongs to
                     const categoryName = Object.keys(statKeysMap).find((k) =>
-                      statKeysMap[k].includes(statName)
+                      statKeysMap[k].includes(statName),
                     );
 
                     return (
@@ -422,7 +422,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                         total={filteredLeaders.length}
                       />
                     );
-                  }
+                  },
                 );
               })()}
             </ScrollView>
@@ -543,7 +543,7 @@ const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                     </View>
                   </View>
                 </View>
-              )
+              ),
             )}
           </>
         )}

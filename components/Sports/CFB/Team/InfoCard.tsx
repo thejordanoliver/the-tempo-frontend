@@ -24,9 +24,6 @@ type Props = {
   team: TeamColors;
   teamId?: string;
   teamName?: string;
-  backgroundColor?: string;
-  textColor?: string; // color for the value text
-  labelColor?: string; // color for the label text
 };
 
 export default function InfoCard({
@@ -36,9 +33,6 @@ export default function InfoCard({
   team,
   teamId,
   teamName,
-  backgroundColor,
-  textColor,
-  labelColor,
 }: Props) {
   let teamObj: TeamColors | undefined;
 
@@ -103,7 +97,7 @@ export default function InfoCard({
 export const infoCardStyles = (
   isDark: boolean,
   isConferenceChampionships: boolean,
-  teamObj: TeamColors
+  teamObj: TeamColors,
 ) =>
   StyleSheet.create({
     label: {

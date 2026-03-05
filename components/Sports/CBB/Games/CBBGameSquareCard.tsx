@@ -3,7 +3,7 @@ import { Colors } from "constants/Styles";
 import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -51,9 +51,8 @@ function CBBGameSquareCard({
   const gameDate = game?.timestamp
     ? new Date(game.timestamp * 1000)
     : game?.date
-    ? new Date(game.date)
-    : null;
-
+      ? new Date(game.date)
+      : null;
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
@@ -63,7 +62,7 @@ function CBBGameSquareCard({
     detailsLeague,
     homeEspnId?.toString(),
     awayEspnId?.toString(),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Game status ---
@@ -91,7 +90,7 @@ function CBBGameSquareCard({
   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
 
-    const isChampionship = isWomen
+  const isChampionship = isWomen
     ? headlineText === "Women's Basketball Championship - National Championship"
     : headlineText === "Men's Basketball Championship - National Championship";
 

@@ -22,7 +22,7 @@ export type ChampionSeason = {
     conference?: string;
     color?: string;
   } | null;
-  notes: string,
+  notes: string;
 };
 
 type Options = {
@@ -53,8 +53,16 @@ export function useChampions({
         league === "CFB"
           ? "/api/cfb/champion-seasons"
           : league === "NBA"
-          ? "/api/nba/champion-seasons"
-          : "/api/nfl/champion-seasons";
+            ? "/api/nba/champion-seasons"
+            : league === "MLB"
+              ? "/api/mlb/champion-seasons"
+            : league === "NHL"
+              ? "/api/nhl/champion-seasons"
+              : league === "CBB"
+                ? "/api/cbb/champion-seasons"
+                : league === "WCBB"
+                  ? "/api/wcbb/champion-seasons"
+                  : "/api/nfl/champion-seasons";
 
       const res = await axios.get(`${API_URL}${endpoint}`, {
         params: {

@@ -65,8 +65,8 @@ export const globalStyles = (isDark: boolean, lighter?: boolean) =>
       color: lighter
         ? Colors.dark.lightRed
         : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
+          ? Colors.dark.lightRed
+          : Colors.light.red,
     },
     emptyText: {
       marginTop: 20,

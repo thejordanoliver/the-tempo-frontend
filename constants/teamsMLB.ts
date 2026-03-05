@@ -1,66 +1,90 @@
 import { MLBTeam } from "types/mlb";
 
-import DiamondbacksLogo from "assets/Baseball/MLB_Logos/Diamondbacks.png";
-import DiamondbacksLogoLight from "assets/Baseball/MLB_Logos/Diamondbacks.png";
-import DodgersLogo from "assets/Baseball/MLB_Logos/Dodgers.png";
-import DodgersLogoLight from "assets/Baseball/MLB_Logos/DodgersLight.png";
-import GiantsLogo from "assets/Baseball/MLB_Logos/Giants.png";
-import GiantsLogoLight from "assets/Baseball/MLB_Logos/Giants.png";
-import PadresLogo from "assets/Baseball/MLB_Logos/Padres.png";
-import PadresLogoLight from "assets/Baseball/MLB_Logos/PadresLight.png";
-import RockiesLogo from "assets/Baseball/MLB_Logos/Rockies.png";
-import RockiesLogoLight from "assets/Baseball/MLB_Logos/RockiesLight.png";
-import CubsLogo from "assets/Baseball/MLB_Logos/Cubs.png";
-import CubsLogoLight from "assets/Baseball/MLB_Logos/Cubs.png";
-import RedsLogo from "assets/Baseball/MLB_Logos/Reds.png";
-import RedsLogoLight from "assets/Baseball/MLB_Logos/RedsLight.png";
-import BrewersLogo from "assets/Baseball/MLB_Logos/Brewers.png";
-import BrewersLogoLight from "assets/Baseball/MLB_Logos/Brewers.png";
-import CardinalsLogo from "assets/Baseball/MLB_Logos/Cardinals.png";
-import CardinalsLogoLight from "assets/Baseball/MLB_Logos/CardinalsLight.png";
-import PiratesLogo from "assets/Baseball/MLB_Logos/Pirates.png";
-import PiratesLogoLight from "assets/Baseball/MLB_Logos/Pirates.png";
+import {
+  default as AngelsLogo,
+  default as AngelsLogoLight,
+} from "assets/Baseball/MLB_Logos/Angels.png";
+import {
+  default as AstrosLogo,
+  default as AstrosLogoLight,
+} from "assets/Baseball/MLB_Logos/Astros.png";
+import AthleticsLogo from "assets/Baseball/MLB_Logos/Athletics.png";
+import AthleticsLogoLight from "assets/Baseball/MLB_Logos/AthleticsLight.png";
+import {
+  default as BlueJaysLogo,
+  default as BlueJaysLogoLight,
+} from "assets/Baseball/MLB_Logos/BlueJays.png";
 import BravesLogo from "assets/Baseball/MLB_Logos/Braves.png";
 import BravesLogoLight from "assets/Baseball/MLB_Logos/BravesLight.png";
-import MetsLogo from "assets/Baseball/MLB_Logos/Mets.png";
-import MetsLogoLight from "assets/Baseball/MLB_Logos/Mets.png";
-import PhilliesLogo from "assets/Baseball/MLB_Logos/Phillies.png";
-import PhilliesLogoLight from "assets/Baseball/MLB_Logos/PhilliesLight.png";
-import MarlinsLogo from "assets/Baseball/MLB_Logos/Marlins.png";
-import MarlinsLogoLight from "assets/Baseball/MLB_Logos/Marlins.png";
-import NationalsLogo from "assets/Baseball/MLB_Logos/Nationals.png";
-import NationalsLogoLight from "assets/Baseball/MLB_Logos/NationalsLight.png";
-import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
-import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
-import RedSoxLogo from "assets/Baseball/MLB_Logos/RedSox.png";
-import RedSoxLogoLight from "assets/Baseball/MLB_Logos/RedSox.png";
-import BlueJaysLogo from "assets/Baseball/MLB_Logos/BlueJays.png";
-import BlueJaysLogoLight from "assets/Baseball/MLB_Logos/BlueJays.png";
-import OriolesLogo from "assets/Baseball/MLB_Logos/Orioles.png";
-import OriolesLogoLight from "assets/Baseball/MLB_Logos/Orioles.png";
-import RaysLogo from "assets/Baseball/MLB_Logos/Rays.png";
-import RaysLogoLight from "assets/Baseball/MLB_Logos/RaysLight.png";
-import WhiteSoxLogo from "assets/Baseball/MLB_Logos/WhiteSox.png";
-import WhiteSoxLogoLight from "assets/Baseball/MLB_Logos/WhiteSoxLight.png";
+import {
+  default as BrewersLogo,
+  default as BrewersLogoLight,
+} from "assets/Baseball/MLB_Logos/Brewers.png";
+import CardinalsLogo from "assets/Baseball/MLB_Logos/Cardinals.png";
+import CardinalsLogoLight from "assets/Baseball/MLB_Logos/CardinalsLight.png";
+import {
+  default as CubsLogo,
+  default as CubsLogoLight,
+} from "assets/Baseball/MLB_Logos/Cubs.png";
+import {
+  default as DiamondbacksLogo,
+  default as DiamondbacksLogoLight,
+} from "assets/Baseball/MLB_Logos/Diamondbacks.png";
+import DodgersLogo from "assets/Baseball/MLB_Logos/Dodgers.png";
+import DodgersLogoLight from "assets/Baseball/MLB_Logos/DodgersLight.png";
+import {
+  default as GiantsLogo,
+  default as GiantsLogoLight,
+} from "assets/Baseball/MLB_Logos/Giants.png";
 import GuardiansLogo from "assets/Baseball/MLB_Logos/Guardians.png";
 import GuardiansLogoLight from "assets/Baseball/MLB_Logos/GuardiansLight.png";
+import {
+  default as MarinersLogo,
+  default as MarinersLogoLight,
+} from "assets/Baseball/MLB_Logos/Mariners.png";
+import {
+  default as MarlinsLogo,
+  default as MarlinsLogoLight,
+} from "assets/Baseball/MLB_Logos/Marlins.png";
+import {
+  default as MetsLogo,
+  default as MetsLogoLight,
+} from "assets/Baseball/MLB_Logos/Mets.png";
+import NationalsLogo from "assets/Baseball/MLB_Logos/Nationals.png";
+import NationalsLogoLight from "assets/Baseball/MLB_Logos/NationalsLight.png";
+import {
+  default as OriolesLogo,
+  default as OriolesLogoLight,
+} from "assets/Baseball/MLB_Logos/Orioles.png";
+import PadresLogo from "assets/Baseball/MLB_Logos/Padres.png";
+import PadresLogoLight from "assets/Baseball/MLB_Logos/PadresLight.png";
+import PhilliesLogo from "assets/Baseball/MLB_Logos/Phillies.png";
+import PhilliesLogoLight from "assets/Baseball/MLB_Logos/PhilliesLight.png";
+import {
+  default as PiratesLogo,
+  default as PiratesLogoLight,
+} from "assets/Baseball/MLB_Logos/Pirates.png";
+import RangersLogo from "assets/Baseball/MLB_Logos/Rangers.png";
+import RangersLogoLight from "assets/Baseball/MLB_Logos/RangersLight.png";
+import RaysLogo from "assets/Baseball/MLB_Logos/Rays.png";
+import RaysLogoLight from "assets/Baseball/MLB_Logos/RaysLight.png";
+import RedsLogo from "assets/Baseball/MLB_Logos/Reds.png";
+import RedsLogoLight from "assets/Baseball/MLB_Logos/RedsLight.png";
+import RedSoxLogo from "assets/Baseball/MLB_Logos/RedSox.png";
+import RedSoxLogoLight from "assets/Baseball/MLB_Logos/RedSoxLight.png";
+import RockiesLogo from "assets/Baseball/MLB_Logos/Rockies.png";
+import RockiesLogoLight from "assets/Baseball/MLB_Logos/RockiesLight.png";
+import RoyalsLogo from "assets/Baseball/MLB_Logos/Royals.png";
+import RoyalsLogoLight from "assets/Baseball/MLB_Logos/RoyalsLight.png";
 import TigersLogo from "assets/Baseball/MLB_Logos/Tigers.png";
 import TigersLogoLight from "assets/Baseball/MLB_Logos/TigersLight.png";
 import TwinsLogo from "assets/Baseball/MLB_Logos/Twins.png";
 import TwinsLogoLight from "assets/Baseball/MLB_Logos/TwinsLight.png";
-import RoyalsLogo from "assets/Baseball/MLB_Logos/Royals.png";
-import RoyalsLogoLight from "assets/Baseball/MLB_Logos/RoyalsLight.png";
-import AstrosLogo from "assets/Baseball/MLB_Logos/Astros.png";
-import AstrosLogoLight from "assets/Baseball/MLB_Logos/Astros.png";
-import AthleticsLogo from "assets/Baseball/MLB_Logos/Athletics.png";
-import AthleticsLogoLight from "assets/Baseball/MLB_Logos/AthleticsLight.png";
-import MarinersLogo from "assets/Baseball/MLB_Logos/Mariners.png";
-import MarinersLogoLight from "assets/Baseball/MLB_Logos/Mariners.png";
-import RangersLogo from "assets/Baseball/MLB_Logos/Rangers.png";
-import RangersLogoLight from "assets/Baseball/MLB_Logos/RangersLight.png";
-import AngelsLogo from "assets/Baseball/MLB_Logos/Angels.png";
-import AngelsLogoLight from "assets/Baseball/MLB_Logos/Angels.png";
-
+import WhiteSoxLogo from "assets/Baseball/MLB_Logos/WhiteSox.png";
+import WhiteSoxLogoLight from "assets/Baseball/MLB_Logos/WhiteSoxLight.png";
+import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
+import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
+import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
 export const teams: MLBTeam[] = [
   {
@@ -73,18 +97,17 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#000000",
     logo: DiamondbacksLogo,
     logoLight: DiamondbacksLogoLight,
-    firstSeason: 1998,
+    established: 1998,
     latitude: 33.4455,
     longitude: -112.0667,
-    venue: "Chase Field",
+    venueName: "Chase Field",
     venueCapacity: "48,405",
     address: "401 E Jefferson St, Phoenix, AZ 85004",
     city: "Phoenix, AZ",
-    championships: [2001],
-    isAllStar: false
+    isAllStar: false,
   },
   {
-    id: 26,
+    id: 963,
     espnID: 11,
     name: "Athletics",
     fullName: "Oakland Athletics",
@@ -93,15 +116,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#efb21e",
     logo: AthleticsLogo,
     logoLight: AthleticsLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 37.7516,
     longitude: -122.2005,
-    venue: "Oakland Coliseum",
+    venueName: "Oakland Coliseum",
     venueCapacity: "63,132",
     address: "7000 Coliseum Way, Oakland, CA 94621",
     city: "Oakland, CA",
-    championships: [1910, 1911, 1913, 1929, 1930, 1972, 1973, 1974, 1989],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 3,
@@ -112,16 +134,15 @@ export const teams: MLBTeam[] = [
     color: "#0c2340",
     secondaryColor: "#ba0c2f",
     logo: BravesLogo,
-    logoLight:BravesLogoLight,
-    firstSeason: 1876,
+    logoLight: BravesLogoLight,
+    established: 1876,
     latitude: 33.8907,
     longitude: -84.4677,
-    venue: "Truist Park",
+    venueName: "Truist Park",
     venueCapacity: "41,149",
     address: "755 Battery Ave SE, Atlanta, GA 30339",
     city: "Atlanta, GA",
-    championships: [1914, 1957, 1995, 2021],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 4,
@@ -133,15 +154,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#000000",
     logo: OriolesLogo,
     logoLight: OriolesLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 39.2839,
     longitude: -76.6217,
-    venue: "Oriole Park at Camden Yards",
+    venueName: "Oriole Park at Camden Yards",
     venueCapacity: "45,971",
     address: "333 W Camden St, Baltimore, MD 21201",
     city: "Baltimore, MD",
-    championships: [1966, 1970, 1983],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 5,
@@ -153,15 +173,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#bd3039",
     logo: RedSoxLogo,
     logoLight: RedSoxLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 42.3465,
     longitude: -71.0972,
-    venue: "Fenway Park",
+    venueName: "Fenway Park",
     venueCapacity: "37,755",
     address: "4 Jersey St, Boston, MA 02215",
     city: "Boston, MA",
-    championships: [1903, 1912, 1915, 1916, 1918, 2004, 2007, 2013, 2018],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 6,
@@ -173,15 +192,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#cc3433",
     logo: CubsLogo,
     logoLight: CubsLogoLight,
-    firstSeason: 1876,
+    established: 1876,
     latitude: 41.9484,
     longitude: -87.6553,
-    venue: "Wrigley Field",
+    venueName: "Wrigley Field",
     venueCapacity: "41,649",
     address: "1060 W Addison St, Chicago, IL 60613",
     city: "Chicago, IL",
-    championships: [1907, 1908, 2016],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 7,
@@ -193,15 +211,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#c4ced4",
     logo: WhiteSoxLogo,
     logoLight: WhiteSoxLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 41.8299,
     longitude: -87.6339,
-    venue: "Guaranteed Rate Field",
+    venueName: "Guaranteed Rate Field",
     venueCapacity: "40,615",
     address: "333 W 35th St, Chicago, IL 60616",
     city: "Chicago, IL",
-    championships: [1906, 1917, 2005],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 8,
@@ -211,17 +228,16 @@ export const teams: MLBTeam[] = [
     code: "CIN",
     color: "#c6011f",
     secondaryColor: "#ffffff",
-    logo:RedsLogo,
+    logo: RedsLogo,
     logoLight: RedsLogoLight,
-    firstSeason: 1882,
+    established: 1882,
     latitude: 39.097,
     longitude: -84.507,
-    venue: "Great American Ball Park",
+    venueName: "Great American Ball Park",
     venueCapacity: "42,319",
     address: "100 Joe Nuxhall Way, Cincinnati, OH 45202",
     city: "Cincinnati, OH",
-    championships: [1919, 1940, 1975, 1976, 1990],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 9,
@@ -231,17 +247,16 @@ export const teams: MLBTeam[] = [
     code: "CLE",
     color: "#002b5c",
     secondaryColor: "#e31937",
-    logo:GuardiansLogo,
+    logo: GuardiansLogo,
     logoLight: GuardiansLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 41.4962,
     longitude: -81.6852,
-    venue: "Progressive Field",
+    venueName: "Progressive Field",
     venueCapacity: "34,830",
     address: "2401 Ontario St, Cleveland, OH 44115",
     city: "Cleveland, OH",
-    championships: [1920, 1948],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 10,
@@ -253,15 +268,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#000000",
     logo: RockiesLogo,
     logoLight: RockiesLogoLight,
-    firstSeason: 1993,
+    established: 1993,
     latitude: 39.7559,
     longitude: -104.9942,
-    venue: "Coors Field",
+    venueName: "Coors Field",
     venueCapacity: "50,398",
     address: "2001 Blake St, Denver, CO 80205",
     city: "Denver, CO",
-    championships: [],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 12,
@@ -273,15 +287,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#ff4713",
     logo: TigersLogo,
     logoLight: TigersLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 42.3391,
     longitude: -83.0484,
-    venue: "Comerica Park",
+    venueName: "Comerica Park",
     venueCapacity: "41,083",
     address: "2100 Woodward Ave, Detroit, MI 48201",
     city: "Detroit, MI",
-    championships: [1935, 1945, 1968, 1984],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 15,
@@ -293,15 +306,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#eb6e1f",
     logo: AstrosLogo,
     logoLight: AstrosLogoLight,
-    firstSeason: 1962,
+    established: 1962,
     latitude: 29.7573,
     longitude: -95.3555,
-    venue: "Minute Maid Park",
+    venueName: "Minute Maid Park",
     venueCapacity: "41,168",
     address: "501 Crawford St, Houston, TX 77002",
     city: "Houston, TX",
-    championships: [2017, 2022],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 16,
@@ -313,15 +325,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#7ab2dd",
     logo: RoyalsLogo,
     logoLight: RoyalsLogoLight,
-    firstSeason: 1969,
+    established: 1969,
     latitude: 39.0516,
     longitude: -94.4808,
-    venue: "Kauffman Stadium",
+    venueName: "Kauffman Stadium",
     venueCapacity: "37,903",
     address: "1 Royal Way, Kansas City, MO 64129",
     city: "Kansas City, MO",
-    championships: [1985, 2015],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 17,
@@ -333,15 +344,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#c4ced4",
     logo: AngelsLogo,
     logoLight: AngelsLogoLight,
-    firstSeason: 1961,
+    established: 1961,
     latitude: 33.8003,
     longitude: -117.8827,
-    venue: "Angel Stadium",
+    venueName: "Angel Stadium",
     venueCapacity: "45,517",
     address: "2000 E Gene Autry Way, Anaheim, CA 92806",
     city: "Anaheim, CA",
-    championships: [2002],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 18,
@@ -353,15 +363,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#ffffff",
     logo: DodgersLogo,
     logoLight: DodgersLogoLight,
-    firstSeason: 1884,
+    established: 1884,
     latitude: 34.0739,
     longitude: -118.24,
-    venue: "Dodger Stadium",
+    venueName: "Dodger Stadium",
     venueCapacity: "56,000",
     address: "1000 Vin Scully Ave, Los Angeles, CA 90012",
     city: "Los Angeles, CA",
-    championships: [1955, 1959, 1963, 1965, 1981, 1988, 2020, 2025],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 19,
@@ -371,17 +380,16 @@ export const teams: MLBTeam[] = [
     code: "MIA",
     color: "#00a3e0",
     secondaryColor: "#000000",
-    logo:MarlinsLogo,
+    logo: MarlinsLogo,
     logoLight: MarlinsLogoLight,
-    firstSeason: 1993,
+    established: 1993,
     latitude: 25.7781,
     longitude: -80.2198,
-    venue: "loanDepot park",
+    venueName: "loanDepot park",
     venueCapacity: "36,742",
     address: "501 Marlins Way, Miami, FL 33125",
     city: "Miami, FL",
-    championships: [1997, 2003],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 20,
@@ -393,15 +401,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#ffc72c",
     logo: BrewersLogo,
     logoLight: BrewersLogoLight,
-    firstSeason: 1969,
+    established: 1969,
     latitude: 43.028,
     longitude: -87.9712,
-    venue: "American Family Field",
+    venueName: "American Family Field",
     venueCapacity: "41,900",
     address: "1 Brewers Way, Milwaukee, WI 53214",
     city: "Milwaukee, WI",
-    championships: [],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 22,
@@ -413,15 +420,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#e20e32",
     logo: TwinsLogo,
     logoLight: TwinsLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 44.9817,
     longitude: -93.2777,
-    venue: "Target Field",
+    venueName: "Target Field",
     venueCapacity: "38,544",
     address: "1 Twins Way, Minneapolis, MN 55403",
     city: "Minneapolis, MN",
-    championships: [1924, 1987, 1991],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 24,
@@ -433,15 +439,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#ff5910",
     logo: MetsLogo,
     logoLight: MetsLogoLight,
-    firstSeason: 1962,
+    established: 1962,
     latitude: 40.7571,
     longitude: -73.8458,
-    venue: "Citi Field",
+    venueName: "Citi Field",
     venueCapacity: "41,922",
     address: "41 Seaver Way, Queens, NY 11368",
     city: "Queens, NY",
-    championships: [1969, 1986],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 25,
@@ -453,19 +458,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#c4ced4",
     logo: YankeesLogo,
     logoLight: YankeesLogoLight,
-    firstSeason: 1901,
+    established: 1901,
     latitude: 40.8296,
     longitude: -73.9262,
-    venue: "Yankee Stadium",
+    venueName: "Yankee Stadium",
     venueCapacity: "46,537",
     address: "1 E 161st St, Bronx, NY 10451",
     city: "Bronx, NY",
-    championships: [
-      1923, 1927, 1928, 1932, 1936, 1937, 1938, 1939, 1941, 1943, 1947, 1949,
-      1950, 1951, 1952, 1953, 1956, 1958, 1961, 1962, 1977, 1978, 1996, 1998,
-      1999, 2000, 2009,
-    ],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 27,
@@ -477,15 +477,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#003278",
     logo: PhilliesLogo,
     logoLight: PhilliesLogoLight,
-    firstSeason: 1883,
+    established: 1883,
     latitude: 39.9057,
     longitude: -75.1665,
-    venue: "Citizens Bank Park",
+    venueName: "Citizens Bank Park",
     venueCapacity: "42,792",
     address: "1 Citizens Bank Way, Philadelphia, PA 19148",
     city: "Philadelphia, PA",
-    championships: [1980, 2008],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 28,
@@ -497,15 +496,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#fdb827",
     logo: PiratesLogo,
     logoLight: PiratesLogoLight,
-    firstSeason: 1882,
+    established: 1882,
     latitude: 40.4469,
     longitude: -80.0057,
-    venue: "PNC Park",
+    venueName: "PNC Park",
     venueCapacity: "38,362",
     address: "115 Federal St, Pittsburgh, PA 15212",
     city: "Pittsburgh, PA",
-    championships: [1909, 1925, 1960, 1971, 1979],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 30,
@@ -515,17 +513,16 @@ export const teams: MLBTeam[] = [
     code: "SD",
     color: "#2f241d",
     secondaryColor: "#ffc425",
-    logo:PadresLogo,
+    logo: PadresLogo,
     logoLight: PadresLogoLight,
-    firstSeason: 1969,
+    established: 1969,
     latitude: 32.7073,
     longitude: -117.1573,
-    venue: "Petco Park",
+    venueName: "Petco Park",
     venueCapacity: "40,209",
     address: "100 Park Blvd, San Diego, CA 92101",
     city: "San Diego, CA",
-    championships: [],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 31,
@@ -535,17 +532,16 @@ export const teams: MLBTeam[] = [
     code: "SF",
     color: "#000000",
     secondaryColor: "#fd5a1e",
-    logo:GiantsLogo,
+    logo: GiantsLogo,
     logoLight: GiantsLogoLight,
-    firstSeason: 1883,
+    established: 1883,
     latitude: 37.7786,
     longitude: -122.3893,
-    venue: "Oracle Park",
+    venueName: "Oracle Park",
     venueCapacity: "41,915",
     address: "24 Willie Mays Plaza, San Francisco, CA 94107",
     city: "San Francisco, CA",
-    championships: [1905, 1921, 1922, 1933, 1954, 2010, 2012, 2014],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 32,
@@ -557,15 +553,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#0c2c56",
     logo: MarinersLogo,
     logoLight: MarinersLogoLight,
-    firstSeason: 1977,
+    established: 1977,
     latitude: 47.5914,
     longitude: -122.3325,
-    venue: "T-Mobile Park",
+    venueName: "T-Mobile Park",
     venueCapacity: "47,929",
     address: "1250 1st Ave S, Seattle, WA 98134",
     city: "Seattle, WA",
-    championships: [],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 33,
@@ -577,17 +572,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#001541",
     logo: CardinalsLogo,
     logoLight: CardinalsLogoLight,
-    firstSeason: 1882,
+    established: 1882,
     latitude: 38.6226,
     longitude: -90.1928,
-    venue: "Busch Stadium",
+    venueName: "Busch Stadium",
     venueCapacity: "45,529",
     address: "700 Clark Ave, St. Louis, MO 63102",
     city: "St. Louis, MO",
-    championships: [
-      1926, 1931, 1934, 1942, 1944, 1946, 1964, 1967, 1982, 2006, 2011,
-    ],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 34,
@@ -599,15 +591,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#8fbce6",
     logo: RaysLogo,
     logoLight: RaysLogoLight,
-    firstSeason: 1998,
+    established: 1998,
     latitude: 27.7683,
     longitude: -82.6534,
-    venue: "Tropicana Field",
+    venueName: "Tropicana Field",
     venueCapacity: "25,025",
     address: "1 Tropicana Dr, St. Petersburg, FL 33705",
     city: "St. Petersburg, FL",
-    championships: [],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 35,
@@ -618,16 +609,15 @@ export const teams: MLBTeam[] = [
     color: "#003278",
     secondaryColor: "#c0111f",
     logo: RangersLogo,
-    logoLight:RangersLogoLight,
-    firstSeason: 1961,
+    logoLight: RangersLogoLight,
+    established: 1961,
     latitude: 32.7473,
     longitude: -97.0842,
-    venue: "Globe Life Field",
+    venueName: "Globe Life Field",
     venueCapacity: "40,300",
     address: "734 Stadium Dr, Arlington, TX 76011",
     city: "Arlington, TX",
-    championships: [2023],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 36,
@@ -639,15 +629,14 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#6cace5",
     logo: BlueJaysLogo,
     logoLight: BlueJaysLogoLight,
-    firstSeason: 1977,
+    established: 1977,
     latitude: 43.6415,
     longitude: -79.3894,
-    venue: "Rogers Centre",
+    venueName: "Rogers Centre",
     venueCapacity: "49,282",
     address: "1 Blue Jays Way, Toronto, ON M5V 1J1",
     city: "Toronto, Ontario",
-    championships: [1992, 1993],
-    isAllStar: false
+    isAllStar: false,
   },
   {
     id: 37,
@@ -659,30 +648,29 @@ export const teams: MLBTeam[] = [
     secondaryColor: "#11225b",
     logo: NationalsLogo,
     logoLight: NationalsLogoLight,
-    firstSeason: 1969,
+    established: 1969,
     latitude: 38.873,
     longitude: -77.0074,
-    venue: "Nationals Park",
+    venueName: "Nationals Park",
     venueCapacity: "41,339",
     address: "1500 S Capitol St SE, Washington, DC 20003",
     city: "Washington, DC",
-    championships: [2019],
-    isAllStar: false
+    isAllStar: false,
   },
 ];
 
 export const getMLBTeam = (id: number | string) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
-export const getTeamLogo = (id: number | string, isDark: boolean) => {
+export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
   const team = teams.find((t) => String(t.id) === String(id));
-  if (!team) return null;
+  if (!team) return PlaceholderLogo;
 
   // adjust based on your actual team fields
   return isDark ? team.logoLight || team.logo : team.logo;
 };
 
-export const getMLBTeamByEspn = (id: number | string) =>
+export const getMLBTeamByEspnId = (id: number | string) =>
   teams.find((t) => String(t.espnID) === String(id)) || null;
 
 export const teamsMLBById: Record<string, MLBTeam> = teams.reduce(
@@ -690,51 +678,51 @@ export const teamsMLBById: Record<string, MLBTeam> = teams.reduce(
     map[team.id] = team;
     return map;
   },
-  {} as Record<string, MLBTeam>
+  {} as Record<string, MLBTeam>,
 );
 
 export const mlbDivisionsById = {
   "AL East": [
-    5, // Boston Red Sox
-    1, // Baltimore Orioles
+    5,  // Boston Red Sox
+    4,  // Baltimore Orioles
     36, // Toronto Blue Jays
-    27, // Tampa Bay Rays
+    34, // Tampa Bay Rays
     25, // New York Yankees
   ],
   "AL Central": [
-    9, // Cleveland Guardians
+    9,  // Cleveland Guardians
     12, // Detroit Tigers
     16, // Kansas City Royals
     22, // Minnesota Twins
-    33, // Chicago White Sox
+    7,  // Chicago White Sox
   ],
   "AL West": [
-    3, // Oakland Athletics
+    26, // Oakland Athletics
     15, // Houston Astros
     17, // Los Angeles Angels
     32, // Seattle Mariners
     35, // Texas Rangers
   ],
-
   "NL East": [
+    3,  // Atlanta Braves
     19, // Miami Marlins
     24, // New York Mets
     27, // Philadelphia Phillies
     37, // Washington Nationals
-    3, // Atlanta Braves
   ],
   "NL Central": [
-    6, // Chicago Cubs
-    8, // Cincinnati Reds
+    6,  // Chicago Cubs
+    8,  // Cincinnati Reds
     20, // Milwaukee Brewers
     28, // Pittsburgh Pirates
-    22, // St. Louis Cardinals
+    33, // St. Louis Cardinals
   ],
   "NL West": [
-    2, // Arizona Diamondbacks
+    2,  // Arizona Diamondbacks
     10, // Colorado Rockies
     18, // Los Angeles Dodgers
     30, // San Diego Padres
     31, // San Francisco Giants
   ],
 };
+

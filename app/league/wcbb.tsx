@@ -3,6 +3,7 @@
 import { useNavigation } from "@react-navigation/native";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
@@ -86,7 +87,7 @@ export default function WCBBLeagueScreen() {
     React.useState<string>("Top 25");
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<
-    "scores" | "news" | "standings" | "stats" | "forum"
+    "scores" | "news" | "standings" | "stats" | "awards" | "forum"
   >("scores");
   const [refreshing, setRefreshing] = React.useState(false);
   const [showCalendarModal, setShowCalendarModal] = React.useState(false);
@@ -115,7 +116,7 @@ export default function WCBBLeagueScreen() {
   const apTop25 = useAPTop25("423");
   const top25Teams = React.useMemo(
     () => apTop25.map((t) => String(t?.id)),
-    [apTop25]
+    [apTop25],
   );
 
   /* -------------------------------
@@ -148,7 +149,7 @@ export default function WCBBLeagueScreen() {
   -------------------------------- */
   const filteredGames = React.useMemo(() => {
     const gamesForDate = seasonGames.filter((game) =>
-      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day")
+      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day"),
     );
 
     let result = gamesForDate;
@@ -192,7 +193,7 @@ export default function WCBBLeagueScreen() {
     combined.sort(
       (a, b) =>
         new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime()
+        new Date(a.publishedAt || new Date().toISOString()).getTime(),
     );
     return combined;
   }, [cbbNews, highlights]);
@@ -204,7 +205,7 @@ export default function WCBBLeagueScreen() {
     <>
       <View style={styles.container}>
         <TabBar
-          tabs={["scores", "news", "standings", "stats", "forum"]}
+          tabs={["scores", "news", "standings", "stats", "awards", "forum"]}
           selected={selectedTab}
           onTabPress={setSelectedTab}
         />
@@ -261,6 +262,7 @@ export default function WCBBLeagueScreen() {
             ))}
 
           {selectedTab === "stats" && <StatsTabContent />}
+          {selectedTab === "awards" && <AwardSeasons league="WCBB" />}
           {selectedTab === "forum" && <LeagueForum league="WCBB" />}
         </View>
       </View>

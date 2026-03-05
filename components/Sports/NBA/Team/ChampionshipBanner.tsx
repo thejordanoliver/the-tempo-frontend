@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
@@ -11,6 +11,7 @@ import { teams as cfbTeams } from "constants/teamsCFB";
 import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflTeams } from "constants/teamsNFL";
 import { LeagueType } from "types/types";
+import { nhlTeams } from "constants/teamsNHL";
 
 type Props = {
   years?: (number | string)[];
@@ -43,19 +44,19 @@ export default function ChampionshipBanner({
   teamName,
   league = "NBA",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-
   // pick team array
   const teamList =
     league === "NFL"
       ? nflTeams
       : league === "CFB"
-      ? cfbTeams
-      : league === "CBB"
-      ? cbbTeams
-      : league === "MLB"
-      ? mlbTeams
-      : nbaTeams;
+        ? cfbTeams
+        : league === "CBB"
+          ? cbbTeams
+          : league === "MLB"
+            ? mlbTeams
+          : league === "NHL"
+            ? nhlTeams
+            : nbaTeams;
 
   // find team by id FIRST
   let team =
@@ -64,7 +65,7 @@ export default function ChampionshipBanner({
 
   if (!team) {
     console.warn(
-      `ChampionshipBanner: No team found for id=${teamId}, name=${teamName}, league=${league}`
+      `ChampionshipBanner: No team found for id=${teamId}, name=${teamName}, league=${league}`,
     );
   }
 
@@ -104,12 +105,12 @@ export default function ChampionshipBanner({
         const yearShort = isNone
           ? "NONE"
           : isMany
-          ? `x${yearVal}`
-          : typeof yearVal === "number" || !isNaN(Number(yearVal))
-          ? league === "CFB"
-            ? `'${String(Number(yearVal)).slice(-2)}`
-            : `'${String(yearVal).slice(-2)}`
-          : String(yearVal);
+            ? `x${yearVal}`
+            : typeof yearVal === "number" || !isNaN(Number(yearVal))
+              ? league === "CFB"
+                ? `'${String(Number(yearVal)).slice(-2)}`
+                : `'${String(yearVal).slice(-2)}`
+              : String(yearVal);
 
         let label = `${league} CHAMPIONS`;
 
@@ -129,6 +130,10 @@ export default function ChampionshipBanner({
         // NFL always show SUPER BOWL CHAMPIONS
         if (league === "NFL" && yearVal != null) {
           label = "SUPER BOWL CHAMPIONS";
+        }
+        // NFL always show SUPER BOWL CHAMPIONS
+        if (league === "NHL" && yearVal != null) {
+          label = "STANLEY CUP CHAMPIONS";
         }
 
         return (

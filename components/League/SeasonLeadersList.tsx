@@ -1,8 +1,7 @@
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { teams } from "constants/teams"; // import your teams list
+import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { getTeamById } from "constants/teams"; // import your teams list
 import { useRouter } from "expo-router";
 import {
   FlatList,
@@ -30,13 +29,31 @@ interface SeasonLeadersListProps {
 }
 
 const STAT_DISPLAY_NAMES: Record<string, string> = {
-  points: "Points",
-  assists: "Assists",
-  rebounds: "Rebounds",
-  steals: "Steals",
-  blocks: "Blocks",
-  tpm: "Three Point",
-  ftm: "Free Throw",
+  // Counting Stats
+  PTS: "Points",
+  AST: "Assists",
+  REB: "Total Rebounds",
+  OREB: "Offensive Rebounds",
+  DREB: "Defensive Rebounds",
+  STL: "Steals",
+  BLK: "Blocks",
+  TOV: "Turnovers",
+  FGM: "Field Goals Made",
+  FGA: "Field Goals Attempted",
+  FG3M: "Three Pointers Made",
+  FG3A: "Three Pointers Attempted",
+  FTM: "Free Throws Made",
+  FTA: "Free Throws Attempted",
+
+  // Calculated Percentages (to be computed manually)
+  FG_PCT: "Field Goal %",
+  FG3_PCT: "Three Point %",
+  FT_PCT: "Free Throw %",
+
+  // Efficiency & Ratios (calculated manually)
+  EFF: "Efficiency",
+  AST_TOV: "AST/TOV Ratio",
+  STL_TOV: "STL/TOV Ratio",
 };
 
 export default function SeasonLeadersList({
@@ -47,7 +64,7 @@ export default function SeasonLeadersList({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
   const router = useRouter();
-
+  const global = globalStyles(isDark);
   if (loading) {
     return (
       <ScrollView contentContainerStyle={styles.skeletonList}>
@@ -63,7 +80,7 @@ export default function SeasonLeadersList({
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.infoText}>Failed to load stats: {error}</Text>
+        <Text style={global.errorText}>Failed to load stats</Text>
       </View>
     );
   }
@@ -71,7 +88,7 @@ export default function SeasonLeadersList({
   return (
     <FlatList
       data={Object.entries(leadersByStat).filter(
-        ([_, players]) => Array.isArray(players) && players.length > 0
+        ([_, players]) => Array.isArray(players) && players.length > 0,
       )}
       contentContainerStyle={{ paddingBottom: 100 }}
       keyExtractor={([stat]) => stat}
@@ -83,37 +100,34 @@ export default function SeasonLeadersList({
 
           <View style={styles.playersList}>
             {players!.map((player) => {
-              const statKey = `avg_${stat}` as keyof PlayerLeader;
-              const statValue = player[statKey] ?? "0";
+              const statValue = player.value ?? "0";
+              const name = player.player.short_name;
 
-              const fullName =
-                player.full_name ?? `${player.first_name} ${player.last_name}`;
               const headshotUrl =
-                player.headshot_url || "https://via.placeholder.com/40";
+                player.player.headshot_url || "https://via.placeholder.com/40";
 
-              const teamObj = teams.find(
-                (t) => t.id.toString() === player.team_id?.toString()
-              );
-              const cleanTeam = teamObj?.fullName?.replace(/"/g, "") || "";
+              const team = getTeamById(player.player.team_id);
+              const teamName = team?.name ?? "";
 
               return (
                 <TouchableOpacity
-                  key={player.player_id}
+                  key={player.player.player_id}
                   onPress={() => {
-                    if (!teamObj) return;
+                    if (!team) return;
                     router.push({
                       pathname: "/player/[id]",
                       params: {
-                        id: player.player_id.toString(),
-                        teamId: teamObj.id.toString(),
+                        id: player.player.id.toString(),
+                        teamId: team.id.toString(),
                       },
                     });
                   }}
                 >
                   <PlayerCard
-                    id={player.player_id}
-                    name={fullName}
-                    team={cleanTeam}
+                    id={player.player.player_id}
+                    rank={player.rank}
+                    name={name}
+                    team={teamName}
                     avatarUrl={headshotUrl}
                     statNumber={statValue} // ✅ NEW — shows as stat number
                   />
@@ -145,7 +159,6 @@ const getStyles = (isDark: boolean) =>
       flex: 1,
     },
     skeletonList: {
-      alignItems: "center",
       justifyContent: "center",
       paddingBottom: 100,
     },

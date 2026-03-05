@@ -1,61 +1,138 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { CBBPlayer } from "types/types";
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-// Player season stat type
+// --- Types ---
+
 export type PlayerSeasonStat = {
-  dr: number;
-  fg: string;
-  ft: string;
-  gp: number;
-  gs: number;
-  or: number;
-  pf: number;
-  to: number;
-  "3p%": number;
-  "3pt": string;
-  ast: number;
-  blk: number;
-  "fg%": number;
-  "ft%": number;
-  pts: number;
-  reb: number;
-  stl: number;
+  season: number;
+  displaySeason: string;
   team: string;
-  season: string;
+  teamId: string;
+  teamSlug: string;
+  position?: string;
+
+  averages: {
+    avgPoints: string;
+    avgAssists: string;
+    avgRebounds: string;
+    avgMinutes: string;
+    avgBlocks: string;
+    avgSteals: string;
+    avgFouls: string;
+    avgTurnovers: string;
+    avgOffensiveRebounds: string;
+    avgDefensiveRebounds: string;
+    fieldGoalPct: string;
+    freeThrowPct: string;
+    threePointFieldGoalPct: string;
+    gamesPlayed: string;
+    gamesStarted: string;
+  };
+
+  totals: {
+    points: string;
+    assists: string;
+    totalRebounds: string;
+    offensiveRebounds: string;
+    defensiveRebounds: string;
+    blocks: string;
+    steals: string;
+    turnovers: string;
+    fouls: string;
+    fieldGoalPct: string;
+    freeThrowPct: string;
+    threePointFieldGoalPct: string;
+  };
+
+  miscellaneous: Record<string, string>;
 };
 
-// Player info type
-export type PlayerInfo = {
-  id: number;
-  league: string;
-  name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  jersey_number: string | null;
-  position: string | null;
-  height: string | null;
-  weight: string | null;
-  experience_years: number | null;
-  experience_display: string | null;
-  experience_abbr: string | null;
-  team: string | null;
-  team_id: number | null;
-  headshot_url: string | null;
-  birth_place_city: string | null;
-  birth_place_state: string | null;
-  birth_place_country: string | null;
-  birth_place_display_text: string | null;
+// Flattened stats type for easier table/chart usage
+export type FlattenedSeasonStat = {
+  season: number;
+  teamId: string; // <- add this
+
+  displaySeason: string;
+  team: string;
+  position?: string;
+  gamesPlayed: number;
+  gamesStarted: number;
+  points: number;
+  assists: number;
+  rebounds: number;
+  offensiveRebounds: number;
+  defensiveRebounds: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  fouls: number;
+  fieldGoalPct: number;
+  freeThrowPct: number;
+  threePointFieldGoalPct: number;
+  avgPoints: number;
+  avgAssists: number;
+  avgRebounds: number;
+  avgOffensiveRebounds: number;
+  avgDefensiveRebounds: number;
+  avgSteals: number;
+  avgBlocks: number;
+  avgTurnovers: number;
+  avgFouls: number;
+  avgMinutes: number;
+  misc: Record<string, string>;
+};
+
+interface PlayerSeasonsResponse extends CBBPlayer {
   season_stats: PlayerSeasonStat[];
   careerStats: PlayerSeasonStat[];
-};
+}
 
 // Hook return type
-interface PlayerSeasonsResponse extends PlayerInfo {}
+interface PlayerSeasonsResponse extends CBBPlayer {}
 
-export function useCBBPlayerSeasons(playerId?: number) {
+// --- Helper to flatten stats ---
+function flattenSeasonStats(stats: PlayerSeasonStat[]): FlattenedSeasonStat[] {
+  return stats.map((s) => ({
+    season: s.season,
+    displaySeason: s.displaySeason,
+    team: s.team,
+    teamId: s.teamId, // <- add this
+    position: s.position,
+    gamesPlayed: Number(s.averages.gamesPlayed),
+    gamesStarted: Number(s.averages.gamesStarted),
+    points: Number(s.totals.points),
+    assists: Number(s.totals.assists),
+    rebounds: Number(s.totals.totalRebounds),
+    offensiveRebounds: Number(s.totals.offensiveRebounds),
+    defensiveRebounds: Number(s.totals.defensiveRebounds),
+    steals: Number(s.totals.steals),
+    blocks: Number(s.totals.blocks),
+    turnovers: Number(s.totals.turnovers),
+    fouls: Number(s.totals.fouls),
+    fieldGoalPct: Number(s.totals.fieldGoalPct),
+    freeThrowPct: Number(s.totals.freeThrowPct),
+    threePointFieldGoalPct: Number(s.totals.threePointFieldGoalPct),
+    avgPoints: Number(s.averages.avgPoints),
+    avgAssists: Number(s.averages.avgAssists),
+    avgRebounds: Number(s.averages.avgRebounds),
+    avgOffensiveRebounds: Number(s.averages.avgOffensiveRebounds),
+    avgDefensiveRebounds: Number(s.averages.avgDefensiveRebounds),
+    avgSteals: Number(s.averages.avgSteals),
+    avgBlocks: Number(s.averages.avgBlocks),
+    avgTurnovers: Number(s.averages.avgTurnovers),
+    avgFouls: Number(s.averages.avgFouls),
+    avgMinutes: Number(s.averages.avgMinutes),
+    misc: s.miscellaneous,
+  }));
+}
+
+// --- Hook ---
+export function useCBBPlayerSeasons(
+  playerId?: number,
+  isWomen: boolean = false,
+) {
   const [player, setPlayer] = useState<PlayerSeasonsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,8 +147,10 @@ export function useCBBPlayerSeasons(playerId?: number) {
       setError(null);
 
       try {
+        const league = isWomen ? "wcbb" : "cbb";
+
         const { data } = await axios.get<PlayerSeasonsResponse>(
-          `${BASE_URL}/api/players/cbb/${playerId}/seasons`
+          `${BASE_URL}/api/players/${league}/${playerId}/seasons`,
         );
 
         if (!cancelled) {
@@ -82,7 +161,7 @@ export function useCBBPlayerSeasons(playerId?: number) {
           setError(
             err?.response?.data?.error ||
               err.message ||
-              "Failed to fetch player seasons"
+              "Failed to fetch player seasons",
           );
         }
       } finally {
@@ -97,13 +176,24 @@ export function useCBBPlayerSeasons(playerId?: number) {
     return () => {
       cancelled = true;
     };
-  }, [playerId]);
+  }, [playerId, isWomen]); // 👈 important
+
+  const seasonStatsFlattened = player
+    ? flattenSeasonStats(player.season_stats)
+    : [];
+
+  const careerStatsFlattened = player
+    ? flattenSeasonStats(player.careerStats)
+    : [];
 
   return {
     player,
     careerStats: player?.careerStats ?? [],
     seasonStats: player?.season_stats ?? [],
+    seasonStatsFlattened,
+    careerStatsFlattened,
     loading,
     error,
   };
 }
+

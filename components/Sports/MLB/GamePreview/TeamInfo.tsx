@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamLogo } from "constants/teamsMLB";
+import { getMLBTeamLogo } from "constants/teamsMLB";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { MLBTeam } from "types/mlb";
 
@@ -24,118 +24,102 @@ export default function TeamInfo({
 }: TeamInfoProps) {
   const styles = teamInfoStyle;
 
+  /* ================================
+     GAME STATUS FLAGS
+  ================================= */
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isCanceled = gameStatusDescription === "Canceled";
-  const inProgress =
+
+  const isLive =
     gameStatusDescription === "In Progress" ||
     gameStatusDescription === "Halftime" ||
     gameStatusDescription === "End of Period";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
-  // --- Winner / opacity logic ---
+
+  const isInactiveGame = isDelayed || isPostponed || isCanceled;
+  const isRecordDisplay = isScheduled || isInactiveGame;
+
+  /* ================================
+     WINNER / SCORE LOGIC
+  ================================= */
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 
-  const scoreOpacity =
-    !isFinal || isScheduled || isDelayed || isPostponed
-      ? 1
-      : isWinner
-      ? 1
-      : 0.4;
+  const scoreOpacity = isFinal && !isWinner ? 0.4 : 1;
 
-  // --- Detect record vs score → dynamic font size ---
-  const isRecord = isScheduled || isDelayed || isPostponed;
-  const valueFontSize = isRecord ? 24 : 36;
+  const valueFontSize = isRecordDisplay ? 24 : 36;
 
-  // --- Value shown ---
-  const displayValue = isRecord
+  const displayValue = isRecordDisplay
     ? record ?? "-"
-    : score !== undefined
-    ? score
-    : "-";
+    : score ?? "-";
 
-  // Logos (prefer light variants at night)
-  const logo = team ? getTeamLogo(team.id, true) : undefined;
+  /* ================================
+     ASSETS
+  ================================= */
+  const logo = team ? getMLBTeamLogo(team.id, true) : undefined;
 
-  const renderTimeouts = (remaining: number) => {
-    const totalTimeouts = 7;
-    return (
-      <View style={{ flexDirection: "row", marginTop: 4 }}>
-        {Array.from({ length: totalTimeouts }).map((_, i) => (
-          <View
-            key={i}
-            style={{
-              width: 5,
-              height: 2,
-              borderRadius: 2,
-              backgroundColor: Colors.white,
-              opacity: i < remaining ? 1 : 0.3,
-              marginHorizontal: 2,
-            }}
-          />
-        ))}
-      </View>
-    );
-  };
+  const isHome = side === "home";
+  const isAway = side === "away";
 
   return (
     <View
       style={[
         styles.container,
         {
-          justifyContent: side === "home" ? "flex-end" : "flex-start",
+          justifyContent: isHome ? "flex-end" : "flex-start",
         },
       ]}
     >
-      {/* ─────────── HOME SCORE (RIGHT) ─────────── */}
-      {side === "home" && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={[
-              styles.teamValue,
-              {
-                opacity: scoreOpacity,
-                fontSize: valueFontSize, // 🔥 dynamic
-              },
-            ]}
-          >
-            {displayValue}
-          </Text>
-        </View>
+      {/* HOME SCORE */}
+      {isHome && (
+        <Score value={displayValue} opacity={scoreOpacity} fontSize={valueFontSize} />
       )}
 
-      {/* ─────────── TEAM LOGO + NAME ─────────── */}
+      {/* TEAM INFO */}
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
-
         <Text style={styles.teamName}>{teamName}</Text>
 
-        {/* Final only → show record */}
-        {!isScheduled && isFinal && record && (
+        {isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
       </View>
 
-      {/* ─────────── AWAY SCORE (LEFT) ─────────── */}
-      {side === "away" && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={[
-              styles.teamValue,
-              {
-                opacity: scoreOpacity,
-                fontSize: valueFontSize, // 🔥 dynamic
-              },
-            ]}
-          >
-            {displayValue}
-          </Text>
-        </View>
+      {/* AWAY SCORE */}
+      {isAway && (
+        <Score value={displayValue} opacity={scoreOpacity} fontSize={valueFontSize} />
       )}
     </View>
   );
 }
+
+/* ================================
+   REUSABLE SCORE COMPONENT
+================================= */
+function Score({
+  value,
+  opacity,
+  fontSize,
+}: {
+  value: string | number;
+  opacity: number;
+  fontSize: number;
+}) {
+  return (
+    <View style={teamInfoStyle.scoreWrapper}>
+      <Text
+        style={[
+          teamInfoStyle.teamValue,
+          { opacity, fontSize },
+        ]}
+      >
+        {value}
+      </Text>
+    </View>
+  );
+}
+
 
 export const teamInfoStyle = StyleSheet.create({
   container: {

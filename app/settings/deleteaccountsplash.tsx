@@ -1,11 +1,8 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme } from "react-native";
-
-
-
 
 export default function DeleteAccountSplashScreen() {
   const router = useRouter();
@@ -14,8 +11,6 @@ export default function DeleteAccountSplashScreen() {
   const screenFade = useRef(new Animated.Value(0)).current;
   const textFade = useRef(new Animated.Value(0)).current;
 
-
-  
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => <CustomHeaderTitle title="" />,

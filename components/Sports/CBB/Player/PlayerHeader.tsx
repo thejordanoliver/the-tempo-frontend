@@ -1,14 +1,10 @@
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
-import { CBBPlayer } from "types/types";
-
+import { DBPlayer } from "types/types";
 type PlayerHeaderProps = {
-  player: CBBPlayer;
+  player: DBPlayer;
   avatarUrl?: string;
   isDark: boolean;
-  teamColor?: string;
-  teamSecondaryColor?: string;
-  team_name?: string;
   isWomen?: boolean;
 };
 
@@ -17,11 +13,8 @@ export default function PlayerHeader({
   isWomen,
   avatarUrl,
   isDark,
-  teamColor,
-  teamSecondaryColor,
-  team_name,
 }: PlayerHeaderProps) {
-  const initial = player?.firstname?.[0]?.toUpperCase() || "?";
+  const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const styles = playerHeaderStyles(isDark);
 
   return (
@@ -31,7 +24,7 @@ export default function PlayerHeader({
           <Image
             source={{ uri: avatarUrl }}
             style={styles.avatar}
-            accessibilityLabel={`${player.firstname} ${player.lastname} photo`}
+            accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
           />
         ) : (
           <View style={styles.avatarPlaceholder}>
@@ -40,18 +33,18 @@ export default function PlayerHeader({
         )}
         <View style={styles.jerseyNumber}>
           <Text style={styles.jersey}>
-            {player.position?.charAt(0) ?? "N"} #{player.jersey ?? "?"}
+            {player.position?.charAt(0) ?? "N"} #{player.jersey_number ?? "?"}
           </Text>
         </View>
       </View>
 
       <View style={styles.infoContainer}>
-        <Text style={styles.name}>{player.firstname}</Text>
-        <Text style={styles.name}>{player.lastname}</Text>
+        <Text style={styles.name}>{player.first_name}</Text>
+        <Text style={styles.name}>{player.last_name}</Text>
 
         <Text style={[styles.playerInfo]}>
           <Text style={styles.playerInfoLabel}>Class: </Text>
-          {player.experience?.displayValue || "Unknown"}
+          {player.experience_display || "Unknown"}
         </Text>
 
         <Text style={[styles.playerInfo]}>
@@ -67,7 +60,7 @@ export default function PlayerHeader({
         )}
         <Text style={[styles.playerInfo]}>
           <Text style={styles.playerInfoLabel}>Birth Place: </Text>
-          {player.birthPlace?.displayText ?? "?"}
+          {player.birth_place_display_text ?? "?"}
         </Text>
       </View>
     </View>

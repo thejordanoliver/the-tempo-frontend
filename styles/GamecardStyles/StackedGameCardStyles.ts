@@ -1,10 +1,9 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const stackedGameCardStyles = (
   isDark: boolean,
-  isChampionship: boolean
+  isChampionship: boolean,
 ) =>
   StyleSheet.create({
     card: {
@@ -26,10 +25,10 @@ export const stackedGameCardStyles = (
         isChampionship && isDark
           ? Colors.lightGray
           : isChampionship
-          ? Colors.darkGray
-          : isDark
-          ? Colors.darkGray
-          : Colors.lightGray,
+            ? Colors.darkGray
+            : isDark
+              ? Colors.darkGray
+              : Colors.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
       gap: 8,
@@ -136,8 +135,8 @@ export const stackedGameCardStyles = (
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       textAlign: "center",
       position: "absolute",
       top: 4,
@@ -151,8 +150,8 @@ export const stackedGameCardStyles = (
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     statusDivider: {
       height: 14,
@@ -183,8 +182,8 @@ export const stackedGameCardStyles = (
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       textAlign: "center",
     },
 
@@ -196,5 +195,33 @@ export const stackedGameCardStyles = (
       top: 4,
       width: "100%",
       gap: 4,
+    },
+    postSeasonHeadlineContainer: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      position: "absolute",
+      flexDirection: "row",
+      width: "100%",
+      top: 4,
+      left: 8,
+      alignItems: "center",
+    },
+    postSeasonHeadlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    headlineDivider: {
+      height: 8,
+      width: 0.5,
+      backgroundColor: isChampionship
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+          ? Colors.lightGray
+          : Colors.darkGray,
+      marginHorizontal: 4,
     },
   });

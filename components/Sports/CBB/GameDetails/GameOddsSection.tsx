@@ -1,8 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import OddsSkeleton from "components/Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "components/Sports/NBA/GameDetails/OddsCard";
-import { useHistoricalOdds } from "hooks/CBBHooks/useHistoricalOdds";
-import { useUpcomingOdds } from "hooks/CBBHooks/useUpcomingOdds";
+import { useOdds } from "hooks/CBBHooks/useOdds";
 import { View } from "react-native";
 
 type GameOddsSectionProps = {
@@ -22,36 +21,20 @@ export default function GameOddsSection({
 }: GameOddsSectionProps) {
   // --- Upcoming odds ---
   const {
-    data: upcomingOdds,
-    loading: upcomingLoading,
-    error: upcomingError,
-  } = useUpcomingOdds({
+    data: odds,
+    loading: oddsLoading,
+    error: oddsError,
+  } = useOdds({
     timestamp: date,
     team1: awayCode,
     team2: homeCode,
   });
 
-  const hasUpcomingOdds =
-    !upcomingLoading && !upcomingError && upcomingOdds.length > 0;
-
-  // --- Historical odds ---
-  const {
-    data: historicalOdds,
-    loading: oddsLoading,
-    error: oddsError,
-  } = useHistoricalOdds({
-    date: gameDate,
-    team1: awayCode,
-    team2: homeCode,
-    gameId,
-    skip: hasUpcomingOdds, // ✅ don't fetch if upcoming exists
-  });
-
-  const isLoading = upcomingLoading || oddsLoading;
-  const error = upcomingError || oddsError;
+  const isLoading = oddsLoading;
+  const error = oddsError;
 
   // ✅ If both odds arrays are empty (and not loading), return null
-  if (!isLoading && !upcomingOdds?.length && !historicalOdds?.length) {
+  if (!isLoading && !odds?.length) {
     return null;
   }
 
@@ -64,7 +47,7 @@ export default function GameOddsSection({
     <View>
       <HeadingTwo>Betting Odds</HeadingTwo>
       <View>
-        {upcomingOdds.map((game) => (
+        {odds.map((game) => (
           <OddsCard key={game.id} league="cbb" game={game} error={error} />
         ))}
       </View>

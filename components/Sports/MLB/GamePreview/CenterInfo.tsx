@@ -1,107 +1,118 @@
-import { useEffect, useRef } from "react";
-import { Animated, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "constants/Styles";
+import { Text, View } from "react-native";
 import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
-import { formatQuarter } from "utils/games";
-type CenterInfoProps = {
-  isChampionship: boolean;
-  broadcastNetworks?: string;
-  inning: number;
-  time: string;
-  endOfPeriod?: boolean;
-  gameStatusDetail: string;
-  formattedDate: string;
-  isDark: boolean;
-  round?: string;
-  lighter: boolean;
-  statusText?: string;
+import BasesIndicator from "../GameDetails/BasesIndicator";
+type GameInfoProps = {
   gameStatusDescription: string;
+  gameStatusDetail: string;
+  date: string;
+  time: string;
+  inning?: string;
+  isTopInning: boolean;
+  broadcastNetworks?: string;
+  outs: number;
+  bases: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
+  };
 };
 
-export default function CenterInfo({
-  isChampionship,
+export function GameInfo({
   gameStatusDescription,
   gameStatusDetail,
-  broadcastNetworks,
-  inning,
+  date,
   time,
-  formattedDate,
-  isDark,
-  statusText,
-}: CenterInfoProps) {
-  const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
-  const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
+  broadcastNetworks,
+  isTopInning,
+  outs,
+  bases,
+}: GameInfoProps) {
   const styles = getStyles;
 
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
+  const endOfPeriod = gameStatusDescription === "End of Period";
   const isFinal = gameStatusDescription === "Final";
-  const isHalftime = gameStatusDescription === "Halftime";
+  const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
+  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
-  const isEndOfInning = gameStatusDescription === "End of Period";
-  const displayInning = formatQuarter(inning);
-
-  useEffect(() => {
-    if (isChampionship) {
-      Animated.parallel([
-        Animated.timing(lightOpacity, {
-          toValue: isDark ? 0 : 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(darkOpacity, {
-          toValue: isDark ? 1 : 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isDark, isChampionship, lightOpacity, darkOpacity]);
-
+  const isHalftime = gameStatusDescription === "Halftime";
   return (
     <View style={styles.container}>
-      {isCanceled ? (
-        <Text style={styles.finalText}>Cancelled</Text>
-      ) : isFinal ? (
+      {/* ⚾️ Scheduled */}
+      {isScheduled && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
-        </View>
-      ) : isDelayed ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
-      ) : isPostponed ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      ) : isScheduled ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formattedDate}</Text>
+          <Text style={styles.date}>{date}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.date}>{time}</Text>
         </View>
-      ) : inProgress ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{displayInning}</Text>
-        </View>
-      ) : isEndOfInning ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>End of {displayInning}</Text>
-        </View>
-      ) : (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{statusText}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
+      )}
+
+      {/* 🕒 In Play */}
+      {inProgress && (
+        <View>
+          <View style={[styles.infoWrapper, { marginBottom: 2 }]}>
+            <Ionicons
+              name={isTopInning ? "caret-up" : "caret-down"}
+              size={14}
+              color={Colors.white}
+            />
+            <Text style={styles.date}>{gameStatusDetail}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.finalText}>Outs: {outs}</Text>
+          </View>
+          <View style={{ marginTop: 2 }}>
+            <BasesIndicator bases={bases} isDark={true} />
+          </View>
         </View>
       )}
 
-      {broadcastNetworks && (
-        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+      {/* 🏁 Final */}
+      {isFinal && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{date}</Text>
+        </View>
       )}
+
+      {/* ❌ Canceled */}
+      {isCanceled && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Canceled</Text>
+        </View>
+      )}
+
+      {/* ⏸️ Postponed */}
+      {isPostponed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      )}
+      {/* ⏸️ Postponed */}
+      {isPostponed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      )}
+
+      {/* ⏸️ Delayed */}
+      {isDelayed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Delayed</Text>
+        </View>
+      )}
+
+      {/* 📺 Broadcast */}
+      {(broadcastNetworks && inProgress) ||
+        (isScheduled && (
+          <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+        ))}
     </View>
   );
 }

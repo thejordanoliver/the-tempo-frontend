@@ -27,7 +27,7 @@ export const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
         : Colors.light.red,
     },
     teamBox: {
-      borderRadius: 10,
+      borderRadius: 8,
       overflow: "hidden",
       borderColor: Colors.midTone,
       borderWidth: 1,
@@ -55,11 +55,7 @@ export const boxScoreStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomWidth: StyleSheet.hairlineWidth,
       paddingVertical: 6,
       height: PLAYER_ROW_HEIGHT,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      borderColor: Colors.midTone
     },
     cellName: {
       width: NAME_COLUMN_WIDTH,

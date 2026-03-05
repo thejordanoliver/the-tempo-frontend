@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -31,7 +31,7 @@ export default function StackedGameCardSkeleton() {
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false } // ensures a perfect continuous loop
+      { resetBeforeIteration: false }, // ensures a perfect continuous loop
     );
 
     animation.start();

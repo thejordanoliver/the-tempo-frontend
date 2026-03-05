@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-const BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
-export type PlayerLeague = "NFL" | "CFB";
+export type PlayerLeague = "NFL" | "CFB" | "MLB";
 
-export function usePlayerById(
-  playerId?: number,
-  league: PlayerLeague = "NFL"
-) {
+export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
   const [player, setPlayer] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +23,9 @@ export function usePlayerById(
         const url =
           league === "CFB"
             ? `${BASE_URL}/api/explore/players/cfb/player-id/${playerId}`
-            : `${BASE_URL}/api/explore/players/nfl/player-id/${playerId}`;
+            : league === "MLB"
+              ? `${BASE_URL}/api/explore/players/mlb/player-id/${playerId}`
+              : `${BASE_URL}/api/explore/players/nfl/player-id/${playerId}`;
 
         const res = await axios.get(url, {
           signal: controller.signal,

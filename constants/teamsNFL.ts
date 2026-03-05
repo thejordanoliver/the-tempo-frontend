@@ -1013,7 +1013,7 @@ export const getTeamInfo = (teamId: number | string) => {
   return teams.find((t) => String(t.id) === String(teamId));
 };
 
-export function getNFLTeamsLogo(id: number, isDark: boolean) {
+export function getNFLTeamLogo(id: number, isDark: boolean) {
   if (!id) return PlaceholderLogo; // fallback
 
   const searchStr = String(id).toLowerCase();

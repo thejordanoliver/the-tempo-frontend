@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
+import { Colors, Fonts } from "constants/Styles";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Modal from "react-native-modal";
-import { Fonts } from "../constants/fonts";
 
 LocaleConfig.locales["custom"] = {
   monthNames: [
@@ -83,7 +82,7 @@ export default function CalendarModal({
   const systemColorScheme = useColorScheme();
   const [isDark, setIsDark] = useState(systemColorScheme === "dark");
   const [selectedDate, setSelectedDate] = useState(
-    dayjs().tz("America/New_York").format("YYYY-MM-DD")
+    dayjs().tz("America/New_York").format("YYYY-MM-DD"),
   );
   const [calendarKey, setCalendarKey] = useState(0); // force re-render to update `initialDate`
 
@@ -161,7 +160,7 @@ export default function CalendarModal({
                     backgroundColor: "transparent",
                   },
                   text: {
-                    color: "green",
+                    color: isDark ? Colors.dark.limeGreen :  Colors.dark.limeGreen,
                     fontFamily: Fonts.OSBOLD,
                   },
                 },

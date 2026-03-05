@@ -3,7 +3,7 @@ import { Colors } from "constants/Styles";
 import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -51,9 +51,8 @@ function CBBStackedGameCard({
   const gameDate = game?.timestamp
     ? new Date(game.timestamp * 1000)
     : game?.date
-    ? new Date(game.date)
-    : null;
-
+      ? new Date(game.date)
+      : null;
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
@@ -63,7 +62,7 @@ function CBBStackedGameCard({
     detailsLeague,
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Game status ---
@@ -95,7 +94,7 @@ function CBBStackedGameCard({
     ? headlineText === "Women's Basketball Championship - National Championship"
     : headlineText === "Men's Basketball Championship - National Championship";
   const styles = stackedGameCardStyles(isDark, isChampionship);
-  
+
   const handlePress = useCallback(() => {
     router.push({
       pathname: "/game/cbb/[game]",

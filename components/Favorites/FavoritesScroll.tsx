@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Colors } from "constants/Colors";
-import { teams as mlbTeams } from "constants/teamsMLB";
+import axios from "axios";
+import { Colors } from "constants/Styles";
+import { getMLBTeamLogo, teams as mlbTeams } from "constants/teamsMLB";
+import { getNHLTeamLogo, nhlTeams } from "constants/teamsNHL";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useEffect, useState } from "react";
 import { Pressable, Text, View, useColorScheme } from "react-native";
 import DraggableFlatList, {
@@ -12,19 +15,19 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
-import { teams } from "../../constants/teams";
-import { teams as cbbteams } from "../../constants/teamsCBB";
-import { teams as cfbteams } from "../../constants/teamsCFB";
-import { teams as nflteams } from "../../constants/teamsNFL";
-
+import { getTeamLogo, teams } from "../../constants/teams";
+import { teams as cbbteams, getCBBTeamLogo } from "../../constants/teamsCBB";
+import { teams as cfbteams, getCFBTeamLogo } from "../../constants/teamsCFB";
+import { getNFLTeamLogo, teams as nflteams } from "../../constants/teamsNFL";
 type TeamWithLeague = {
   id: string | number;
   name: string;
-  logo: any;
-  logoLight?: string;
+  logo?: any;
+  logoLight?: any;
   color?: string;
   league: LeagueType;
   key: string;
+  wid?: number; // For WCBB
 };
 
 type Props = {
@@ -43,22 +46,18 @@ export default function FavoritesScroll({
   onDragEnd,
 }: Props) {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = favoritesScrollStyles(isDark);
   const [username, setUsername] = useState<string | null>(null);
-
+  const { favorites } = useFavoriteTeams();
+  // -------------------------
+  // Prepare initial teams
+  // -------------------------
   const initialTeams: TeamWithLeague[] = favoriteTeamIds
     .map((fav) => {
       const [league, id] = fav.split(":");
       let baseTeam:
-        | {
-            id: number;
-            name: string;
-            logo?: any;
-            logoLight?: string;
-            color?: string;
-          }
+        | { id: number; name: string; logo?: any; color?: string; wid?: number }
         | undefined;
 
       switch (league) {
@@ -76,113 +75,141 @@ export default function FavoritesScroll({
           break;
         case "WCBB":
           baseTeam = cbbteams.find((t) => String(t.wid) === id);
+          if (!baseTeam?.wid) return null; // Skip if wid not present
           break;
         case "MLB":
           baseTeam = mlbTeams.find((t) => String(t.id) === id);
           break;
+        case "NHL":
+          baseTeam = nhlTeams.find((t) => String(t.id) === id);
+          break;
       }
 
       if (!baseTeam) return null;
+
       return {
         ...baseTeam,
-        id:
-          league === "WCBB"
-            ? String((baseTeam as any).wid)
-            : String(baseTeam.id),
+        id: league === "WCBB" ? String(baseTeam.wid) : String(baseTeam.id),
         league: league as LeagueType,
         key: `${league}-${id}`,
+        wid: baseTeam.wid,
       } as TeamWithLeague;
     })
     .filter((t): t is TeamWithLeague => t !== null);
 
   const [data, setData] = useState<TeamWithLeague[]>(initialTeams);
 
+  // -------------------------
+  // Load username
+  // -------------------------
   useEffect(() => {
     AsyncStorage.getItem("username").then((u) => {
       if (u) setUsername(u);
     });
   }, []);
 
+  // -------------------------
+  // Update data if favorites change
+  // -------------------------
   useEffect(() => {
     setData(initialTeams);
   }, [favoriteTeamIds]);
 
+  // -------------------------
+  // Render a single team
+  // -------------------------
   const renderItem = ({
     item,
     drag,
     isActive,
-  }: RenderItemParams<TeamWithLeague>) => (
-    <Pressable
-      onLongPress={async () => {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        drag();
-      }}
-      key={item.key}
-      style={({ pressed }) => [
-        styles.teamIcon,
-        pressed && { opacity: 0.6 },
-        isActive && { opacity: 0.8, transform: [{ scale: 1.05 }] },
-      ]}
-      onPress={async () => {
-        await Haptics.selectionAsync();
+  }: RenderItemParams<TeamWithLeague>) => {
+    // Determine logo based on league
+    let logo;
+    switch (item.league) {
+      case "NFL":
+        logo = getNFLTeamLogo(Number(item.id), true);
+        break;
+      case "NBA":
+        logo = getTeamLogo(Number(item.id), true);
+        break;
+      case "CFB":
+        logo = getCFBTeamLogo(Number(item.id), true);
+        break;
+      case "CBB":
+        logo = getCBBTeamLogo(Number(item.id), true, false);
+        break;
+      case "WCBB":
+        logo = getCBBTeamLogo(Number(item.id), true, true); // Use wid for women's teams
+        break;
+      case "NHL":
+        logo = getNHLTeamLogo(Number(item.id), true);
+        break;
+      case "MLB":
+        logo = getMLBTeamLogo(Number(item.id), true);
+        break;
+      default:
+        logo = null;
+    }
 
-        if (!item.id) {
-          console.warn("⚠️ Missing team id for navigation:", item);
-          return;
-        }
-
-        const route =
-          item.league === "NFL"
-            ? "/team/nfl/[teamId]"
-            : item.league === "NBA"
-            ? "/team/[teamId]"
-            : item.league === "CFB"
-            ? "/team/cfb/[teamId]"
-            : item.league === "CBB"
-            ? "/team/cbb/[teamId]"
-            : item.league === "WCBB"
-            ? "/team/wcbb/[teamId]"
-            : "/team/mlb/[teamId]";
-
-        router.push({
-          pathname: route,
-          params: { teamId: item.id },
-        });
-      }}
-    >
-      <View
-        style={[
-          styles.logoWrapper,
-          {
-            backgroundColor: isDark
-              ? item.color || Colors.dark.itemBackground
-              : item.color || Colors.light.itemBackground,
-          },
+    return (
+      <Pressable
+        onLongPress={async () => {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          drag();
+        }}
+        key={item.key}
+        style={({ pressed }) => [
+          styles.teamIcon,
+          pressed && { opacity: 0.6 },
+          isActive && { opacity: 0.8, transform: [{ scale: 1.05 }] },
         ]}
+        onPress={async () => {
+          await Haptics.selectionAsync();
+          const routeMap: Record<LeagueType, string> = {
+            NBA: "/team/[teamId]",
+            NFL: "/team/nfl/[teamId]",
+            CFB: "/team/cfb/[teamId]",
+            CBB: "/team/cbb/[teamId]",
+            WCBB: "/team/wcbb/[teamId]",
+            MLB: "/team/mlb/[teamId]",
+            NHL: "/team/nhl/[teamId]",
+            UFC: "",
+          };
+          const route = routeMap[item.league];
+          router.push({ pathname: route as any, params: { teamId: item.id } });
+        }}
       >
-        <Image
-          source={
-            isDark && item.logoLight
-              ? item.logoLight
-              : item.logoLight || item.logo
-          }
-          style={styles.logo}
-        />
-      </View>
-      <View style={styles.teamLabelContainer}>
-        <Text style={styles.teamLabel}>{item.name}</Text>
-        {(item.league === "CFB" ||
-          item.league === "CBB" ||
-          item.league === "WCBB") && (
-          <>
-            <View style={styles.divider} />
-            <Text style={styles.teamLabel}>{item.league}</Text>
-          </>
-        )}
-      </View>
-    </Pressable>
-  );
+        <View
+          style={[
+            styles.logoWrapper,
+            {
+              backgroundColor: isDark
+                ? item.color || Colors.dark.itemBackground
+                : item.color || Colors.light.itemBackground,
+            },
+          ]}
+        >
+          <Image source={logo} style={styles.logo} />
+        </View>
 
+        <View style={styles.teamLabelContainer}>
+          <Text style={styles.teamLabel}>{item.name}</Text>
+          {(item.league === "CFB" ||
+            item.league === "CBB" ||
+            item.league === "WCBB") && (
+            <>
+              <View style={styles.divider} />
+              <Text style={styles.teamLabel}>{item.league}</Text>
+            </>
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  // -------------------------
+  // Render the list
+  // -------------------------
   return (
     <View style={styles.favoritesWrapper}>
       <DraggableFlatList
@@ -191,57 +218,47 @@ export default function FavoritesScroll({
         keyExtractor={(item) => item.key}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.favorites}
-        // 👇 Start of drag
+        activationDistance={30}
+        renderItem={renderItem}
         onDragBegin={async () => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          onDragStart?.(); // notify parent
+          onDragStart?.();
         }}
-        // 👇 Fires when the placeholder position changes during drag
         onPlaceholderIndexChange={async () => {
           await Haptics.selectionAsync();
         }}
-        // 👇 End of drag
         onDragEnd={async ({ data }) => {
           await Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Success
+            Haptics.NotificationFeedbackType.Success,
           );
-   
-
           setData(data);
-          const orderedIds = data.map((t) => `${t.league}:${t.id}`);
+
+          const orderedIds = data.map((t) =>
+            t.league === "WCBB" ? `WCBB:${t.wid}` : `${t.league}:${t.id}`,
+          );
+
           await AsyncStorage.setItem("favorites", JSON.stringify(orderedIds));
           onFavoritesChange?.(orderedIds);
-          onDragEnd?.(); // notify parent
-          const storedUsername = await AsyncStorage.getItem("username");
-          if (!storedUsername) {
-            console.warn("No username found — will sync favorites later.");
+          onDragEnd?.();
+
+          const storedUserId = await AsyncStorage.getItem("userId");
+          if (!storedUserId) {
+            console.warn("No userId found — will sync favorites later.");
             return;
           }
 
           try {
-            const res = await fetch(
-              `${BASE_URL}/api/users/${storedUsername}/favorites`,
+            await axios.patch(
+              `${BASE_URL}/api/users/id/${storedUserId}/favorites`,
               {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ favorites: orderedIds }),
-              }
+                favorites: orderedIds,
+              },
             );
-
-            if (!res.ok) {
-              console.warn(
-                "Failed to update backend favorites:",
-                await res.text()
-              );
-            } else {
-              console.log("✅ Favorites reordered and synced successfully.");
-            }
+            console.log("✅ Favorites reordered and synced successfully.");
           } catch (err) {
             console.warn("❌ Network error syncing favorites:", err);
           }
         }}
-        renderItem={renderItem}
-        activationDistance={30}
         ListFooterComponent={() => (
           <Pressable
             onPress={async () => {

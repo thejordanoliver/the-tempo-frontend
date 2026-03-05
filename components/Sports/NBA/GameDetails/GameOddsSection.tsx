@@ -1,5 +1,4 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useHistoricalOdds } from "hooks/useHistoricalOdds";
 import { useUpcomingOdds } from "hooks/useUpcomingOdds";
 import { useColorScheme, View } from "react-native";
 import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
@@ -26,18 +25,10 @@ export default function GameOddsSection({
     team2: homeCode,
   });
 
-  // --- Historical odds (fallback) ---
-  const { data: historicalOdds = [], loading: historicalLoading } =
-    useHistoricalOdds({
-      timestamp: Number(date),
-      team1: awayCode,
-      team2: homeCode,
-    });
-
-  const loading = upcomingLoading || historicalLoading;
+  const loading = upcomingLoading;
 
   // Prefer upcoming odds, fallback to historical
-  const oddsToRender = upcomingOdds.length > 0 ? upcomingOdds : historicalOdds;
+  const oddsToRender = upcomingOdds;
 
   // ❌ Nothing to show
   if (!loading && oddsToRender.length === 0) {

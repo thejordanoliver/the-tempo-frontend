@@ -1,14 +1,13 @@
+import { Colors } from "constants/Styles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
-  Dimensions,
   StyleProp,
   StyleSheet,
   useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
-import { Colors } from "constants/Colors";
 
 type GameSquareCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;
@@ -36,7 +35,7 @@ export default function GameSquareCardSkeleton({
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 
@@ -111,21 +110,19 @@ const getStyles = (isDark: boolean) =>
       width: 28,
       height: 28,
       borderRadius: 100,
-            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     nameSkeleton: {
       width: 28,
       height: 24,
       borderRadius: 6,
-            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     scoreSkeleton: {
       width: 24,
       height: 24,
       borderRadius: 6,
-            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     info: {
       justifyContent: "center",
@@ -136,7 +133,7 @@ const getStyles = (isDark: boolean) =>
       width: 36,
       height: 16,
       borderRadius: 6,
-            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
 
       marginBottom: 6,
     },
@@ -144,7 +141,6 @@ const getStyles = (isDark: boolean) =>
       width: 20,
       height: 14,
       borderRadius: 6,
-            backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

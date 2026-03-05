@@ -3,7 +3,7 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { format } from "date-fns"; // optional helper to get date string
 import { BlurView } from "expo-blur";
 import { useAuth } from "hooks/UserHooks/useAuth";
@@ -64,10 +64,10 @@ export default function LiveChatBottomSheet({
   // Listen to keyboard show/hide
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", () =>
-      setKeyboardVisible(true)
+      setKeyboardVisible(true),
     );
     const hideSub = Keyboard.addListener("keyboardDidHide", () =>
-      setKeyboardVisible(false)
+      setKeyboardVisible(false),
     );
 
     return () => {
@@ -130,10 +130,10 @@ export default function LiveChatBottomSheet({
       socketRef.current?.emit("sendMessage", { gameId, ...msg });
       setTimeout(
         () => flatListRef.current?.scrollToEnd({ animated: true }),
-        50
+        50,
       );
     },
-    [userName, userProfile, gameId]
+    [userName, userProfile, gameId],
   );
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export default function LiveChatBottomSheet({
         setMessages(JSON.parse(saved));
         setTimeout(
           () => flatListRef.current?.scrollToEnd({ animated: true }),
-          50
+          50,
         );
       }
     };

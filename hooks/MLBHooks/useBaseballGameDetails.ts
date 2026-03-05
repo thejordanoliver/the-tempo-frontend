@@ -1,34 +1,46 @@
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { GameVenue } from "hooks/NFLHooks/useFootballGameDetails";
+import { useCallback, useEffect, useRef, useState } from "react";
 /* ---------------------------------- */
 /* Types                              */
 /* ---------------------------------- */
 
 export type SeriesSummary = {
-  type: 'playoff',
-  title: string,
-  summary: string,
-  completed: boolean,
-  totalCompetitions: number,
+  type: "playoff";
+  title: string;
+  summary: string;
+  completed: boolean;
+  totalCompetitions: number;
   competitors: [
     {
-      id: string,
-      uid: string,
-      wins: number,
-      ties: number,
-      href: string,
+      id: string;
+      uid: string;
+      wins: number;
+      ties: number;
+      href: string;
     },
     {
-      id: string,
-      uid: string,
-      wins: number,
-      ties: number,
-      href: string,
-    }
-  ]
-}
-
+      id: string;
+      uid: string;
+      wins: number;
+      ties: number;
+      href: string;
+    },
+  ];
+};
+export type Predictor = {
+  header: string;
+  homeTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+  awayTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+};
 
 type TeamFouls = {
   bonusState: string | null;
@@ -62,7 +74,7 @@ export type Score = {
     team: any;
     stats: TeamStat[];
   }[];
-
+  outs: number;
   playerStats: {
     team: any;
     names: string[];
@@ -79,6 +91,11 @@ export type Score = {
   fouls: {
     home: TeamFouls;
     away: TeamFouls;
+  };
+  bases: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
   };
 };
 
@@ -103,11 +120,12 @@ export type GameDetails = {
   highlights: any[];
   neutralSite: boolean;
   headline?: string | null;
+  predictor: Predictor;
   records: {
     home: TeamRecords;
     away: TeamRecords;
   };
-   venue?: GameVenue | null;
+  venue?: GameVenue | null;
 };
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
@@ -122,7 +140,7 @@ export const useBaseballGameDetails = (
   league: string,
   homeId?: string | number | null,
   awayId?: string | number | null,
-  date?: DateParam
+  date?: DateParam,
 ) => {
   const [score, setScore] = useState<Score | undefined>();
   const [details, setDetails] = useState<GameDetails | undefined>();
@@ -158,8 +176,9 @@ export const useBaseballGameDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await axios.get(`${BASE_URL}/api/baseball/details`, { params });
-        
+        const { data } = await axios.get(`${BASE_URL}/api/baseball/details`, {
+          params,
+        });
 
         if (data?.score) {
           setScore(data.score);
@@ -175,7 +194,7 @@ export const useBaseballGameDetails = (
         if (!silent) setLoading(false);
       }
     },
-    [league, homeId, awayId, date, skipFetch]
+    [league, homeId, awayId, date, skipFetch],
   );
 
   /* ---------------------------------- */

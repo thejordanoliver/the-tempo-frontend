@@ -1,18 +1,14 @@
 // components/FavoriteTeamsList.tsx
+
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import TeamPreviewModal from "components/Sports/NBA/Team/TeamPreviewModal";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import * as Haptics from "expo-haptics";
+import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
+import { Colors, Fonts } from "constants/Styles";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import type { Team } from "types/types"; // Team type should include `league: "NBA" | "NFL" | "CFB" | "CBB"`
-import { LeagueType } from "types/types";
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import type { LeagueType, Team } from "types/types";
+
 type TeamWithLeague = Team & { league: LeagueType };
 
 type Props = {
@@ -21,114 +17,69 @@ type Props = {
   styles: any;
   itemWidth?: number;
   isCurrentUser: boolean;
-  username?: string;
 };
 
-// Accepts: require(), string URLs, { uri }, or null
+/* ---------------- LOGO HELPER ---------------- */
+
 function resolveLogo(source: any) {
   if (!source) return null;
 
-  // Already a require() number
   if (typeof source === "number") return source;
-
-  // Already { uri: string }
   if (typeof source === "object" && source.uri) return source;
-
-  // String URL
   if (typeof source === "string") return { uri: source };
 
   return null;
 }
+
+/* ---------------- TEAM HELPERS ---------------- */
+
+const getTeamId = (team: TeamWithLeague) => {
+  if (team.league === "WCBB") return (team as any).wid;
+  return team.id;
+};
+
+const getTeamRoute = (league: LeagueType) => {
+  switch (league) {
+    case "NFL":
+      return "/team/nfl/[teamId]";
+    case "NBA":
+      return "/team/[teamId]";
+    case "CFB":
+      return "/team/cfb/[teamId]";
+    case "CBB":
+      return "/team/cbb/[teamId]";
+    case "WCBB":
+      return "/team/wcbb/[teamId]";
+    case "MLB":
+      return "/team/mlb/[teamId]";
+    case "NHL":
+      return "/team/nhl/[teamId]";
+    default:
+      return "/team/[teamId]";
+  }
+};
+
+/* ---------------- COMPONENT ---------------- */
 
 const FavoriteTeamsList = ({
   favoriteTeams,
   isGridView,
   styles,
   isCurrentUser,
-  username,
 }: Props) => {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-  const [favorites, setFavorites] = useState<TeamWithLeague[]>(favoriteTeams);
-  const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
-  const alwaysLightLogoTeams = [
-    "Alabama",
-    "Arkansas",
-    "Duke",
-    "Texas",
-    "Tennessee",
-    "UCLA",
-    "Kentucky",
-    "Clemson",
-    "Nebraska",
-    "Oregon",
-    "West Virginia",
-    "Tulsa",
-    "TCU",
-    "Sam Houston",
-    "Baylor",
-    "Air Force",
-    "California",
-    "BYU",
-    "Kansas State",
-    "Indiana",
-    "Eastern Michigan",
-    "Cincinnati",
-    "Dodgers",
-    "Rangers",
-  ]; // add more teams as needed
+  const {
+    previewTeam,
+    modalVisible,
+    setModalVisible,
+    handleLongPress,
+    handleGoToTeam,
+    handleRemoveFavorite,
+  } = useFavoriteTeams();
 
-  const handleLongPress = (team: TeamWithLeague) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setPreviewTeam(team);
-    setModalVisible(true);
-  };
-
-  const handleGoToTeam = () => {
-    if (!previewTeam) return;
-    const route =
-      previewTeam.league === "NFL"
-        ? "/team/nfl/[teamId]"
-        : previewTeam.league === "NBA"
-        ? "/team/[teamId]"
-        : previewTeam.league === "CFB"
-        ? "/team/cfb/[teamId]"
-        : previewTeam.league === "CBB"
-        ? "/team/cbb/[teamId]"
-        : "/team/wcbb/[teamId]";
-    router.push({
-      pathname: route,
-      params: { teamId: previewTeam.id.toString() },
-    });
-    setModalVisible(false);
-  };
-
-  const handleRemoveFavorite = async (team: TeamWithLeague) => {
-    try {
-      const key = `${team.league}:${team.id}`;
-      const updated = favorites.filter((t) => `${t.league}:${t.id}` !== key);
-      setFavorites(updated);
-      setModalVisible(false);
-      setPreviewTeam(null);
-
-      const keysOnly = updated.map((t) => `${t.league}:${t.id}`);
-      await AsyncStorage.setItem("favorites", JSON.stringify(keysOnly));
-
-      if (username) {
-        await axios.patch(`${API_URL}/api/users/${username}/favorites`, {
-          favorites: keysOnly,
-        });
-      }
-    } catch (error) {
-      console.error("Error removing favorite:", error);
-    }
-  };
-
-  useEffect(() => {
-    setFavorites(favoriteTeams);
-  }, [favoriteTeams]);
+  /* ---------------- RENDER ---------------- */
 
   return (
     <>
@@ -138,7 +89,7 @@ const FavoriteTeamsList = ({
           team={previewTeam}
           onClose={() => setModalVisible(false)}
           onGo={handleGoToTeam}
-          onRemove={() => handleRemoveFavorite(previewTeam)}
+          onRemove={handleRemoveFavorite}
           currentUser={isCurrentUser}
         />
       )}
@@ -153,7 +104,9 @@ const FavoriteTeamsList = ({
           },
         ]}
       >
-        {favorites.map((team) => {
+        {favoriteTeams.map((team) => {
+          const id = getTeamId(team);
+
           const useSecondaryInDark = [
             "Grizzlies",
             "Suns",
@@ -171,11 +124,11 @@ const FavoriteTeamsList = ({
 
           const teamBackgroundColor = isDark
             ? useSecondaryInDark
-              ? (team as any).secondaryColor ??
+              ? ((team as any).secondaryColor ??
                 (team as any).secondary_color ??
-                Colors.midTone
-              : team.color ?? Colors.midTone
-            : team.color ?? Colors.midTone;
+                Colors.midTone)
+              : (team.color ?? Colors.midTone)
+            : (team.color ?? Colors.midTone);
 
           const split = team.fullName?.split(" ");
           const city = split?.slice(0, -1).join(" ");
@@ -193,13 +146,7 @@ const FavoriteTeamsList = ({
               ? null
               : nickname;
 
-          const rawLogo =
-            (alwaysLightLogoTeams.includes(team.name ?? team.fullName ?? "") &&
-              team.logoLight) ||
-            (isDark && team.logoLight) ||
-            team.logo ||
-            team.logoLight ||
-            null;
+          const rawLogo = team.logoLight || team.logo || null;
 
           const logoSource =
             resolveLogo(rawLogo) ??
@@ -207,7 +154,7 @@ const FavoriteTeamsList = ({
 
           return (
             <LongPressGestureHandler
-              key={`${team.league}:${team.id}`}
+              key={`${team.league}:${id}`}
               minDurationMs={300}
               onHandlerStateChange={({ nativeEvent }) => {
                 if (nativeEvent.state === State.ACTIVE) handleLongPress(team);
@@ -218,29 +165,12 @@ const FavoriteTeamsList = ({
                   pressed && { opacity: 0.6 },
                   isGridView ? { width: "32%" } : { width: "100%" },
                 ]}
-                onPress={() => {
-                  const route =
-                    team.league === "NFL"
-                      ? "/team/nfl/[teamId]"
-                      : team.league === "NBA"
-                      ? "/team/[teamId]"
-                      : team.league === "CFB"
-                      ? "/team/cfb/[teamId]"
-                      : team.league === "CBB"
-                      ? "/team/cbb/[teamId]"
-                      : team.league === "WCBB"
-                      ? "/team/wcbb/[teamId]"
-                      : "/team/mlb/[teamId]";
+                onPress={() =>
                   router.push({
-                    pathname: route,
-                    params: {
-                      teamId:
-                        team.league === "WCBB"
-                          ? String((team as any).wid)
-                          : String(team.id),
-                    },
-                  });
-                }}
+                    pathname: getTeamRoute(team.league),
+                    params: { teamId: String(id) },
+                  })
+                }
               >
                 <View
                   style={[
@@ -254,12 +184,11 @@ const FavoriteTeamsList = ({
                       marginBottom: isGridView ? 0 : 8,
                       paddingHorizontal: 12,
                       paddingVertical: isGridView ? 20 : 12,
-                      position: "relative", // ensure badge overlays correctly
+                      position: "relative",
                       overflow: "hidden",
                     },
                   ]}
                 >
-                  {/* League Tag for CFB / CBB */}
                   {(team.league === "CFB" ||
                     team.league === "CBB" ||
                     team.league === "WCBB") && (
@@ -278,8 +207,8 @@ const FavoriteTeamsList = ({
                           team.league === "CFB"
                             ? "#228B22"
                             : team.league === "CBB"
-                            ? "#1E90FF"
-                            : "#C2185B",
+                              ? "#1E90FF"
+                              : "#C2185B",
                       }}
                     >
                       <Text
@@ -312,6 +241,7 @@ const FavoriteTeamsList = ({
                       >
                         {displayName}
                       </Text>
+
                       {displayNickname && (
                         <Text
                           style={[
@@ -354,6 +284,7 @@ const FavoriteTeamsList = ({
               ]}
             >
               <Text style={styles.editText}>Edit Teams</Text>
+
               <Ionicons
                 style={styles.editIcon}
                 name="create"

@@ -1,5 +1,5 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -33,7 +33,7 @@ const PulseBlock = ({ style }: { style: any }) => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     pulse.start();
@@ -71,7 +71,7 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     pulse.start();
@@ -150,7 +150,7 @@ export default function GameLeadersSkeleton() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
-      ])
+      ]),
     );
 
     pulse.start();

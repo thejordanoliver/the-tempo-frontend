@@ -1,5 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
 import { formatCBBQuarter } from "utils/games";
@@ -77,24 +77,24 @@ export default function CBBGameWidget({
     detailsLeague,
     String(props.homeTeam.espnID),
     String(props.awayTeam.espnID),
-    props.gameDateISO
+    props.gameDateISO,
   );
 
   const homeLogo = isWomen
     ? isDark
-      ? props.homeTeam.wLogo ?? props.homeTeam.logoLight
-      : props.homeTeam.wLogo ?? props.homeTeam.logo
+      ? (props.homeTeam.wLogo ?? props.homeTeam.logoLight)
+      : (props.homeTeam.wLogo ?? props.homeTeam.logo)
     : isDark
-    ? props.homeTeam.logoLight
-    : props.homeTeam.logo;
+      ? props.homeTeam.logoLight
+      : props.homeTeam.logo;
 
   const awayLogo = isWomen
     ? isDark
-      ? props.awayTeam.wLogo ?? props.awayTeam.logoLight
-      : props.awayTeam.wLogo ?? props.awayTeam.logo
+      ? (props.awayTeam.wLogo ?? props.awayTeam.logoLight)
+      : (props.awayTeam.wLogo ?? props.awayTeam.logo)
     : isDark
-    ? props.awayTeam.logoLight
-    : props.awayTeam.logo;
+      ? props.awayTeam.logoLight
+      : props.awayTeam.logo;
 
   const clock = liveScore?.displayClock;
   const period = liveScore?.period ?? props.periods;
@@ -124,7 +124,7 @@ export default function CBBGameWidget({
     awayIsWinner,
     awayRecord,
     awayScore,
-    isDark
+    isDark,
   );
   const homeDisplay = displayeValue(
     true,
@@ -133,7 +133,7 @@ export default function CBBGameWidget({
     homeIsWinner,
     homeRecord,
     homeScore,
-    isDark
+    isDark,
   );
 
   if (loading || scoreLoading) {

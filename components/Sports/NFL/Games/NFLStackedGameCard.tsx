@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -59,7 +59,7 @@ function NFLStackedGameCard({ game }: NFLGameCardProps) {
     Number(homeEspnId),
     Number(awayEspnId),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   const {
@@ -90,16 +90,16 @@ function NFLStackedGameCard({ game }: NFLGameCardProps) {
 
   const homeScore = isFinal
     ? game.scores.home.total
-    : possession?.score?.home ?? 0;
+    : (possession?.score?.home ?? 0);
   const awayScore = isFinal
     ? game.scores.away.total
-    : possession?.score?.away ?? 0;
+    : (possession?.score?.away ?? 0);
 
   const { data: details, loading } = useFootballGameDetails(
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   // --- Team records ---
@@ -144,8 +144,8 @@ function NFLStackedGameCard({ game }: NFLGameCardProps) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const headline = headlineText ?? holidayLabel ?? "";
 

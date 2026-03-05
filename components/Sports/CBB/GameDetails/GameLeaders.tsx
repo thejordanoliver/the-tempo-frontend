@@ -3,8 +3,8 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
-import { teams } from "constants/teamsCBB";
 import { teams as SLTeams } from "constants/teams";
+import { teams } from "constants/teamsCBB";
 import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TextStyle, useColorScheme, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
@@ -80,8 +80,8 @@ function Stat({ label, value, lighter = false }: StatProps) {
           color: lighter
             ? Colors.lightGray
             : isDark
-            ? Colors.midTone
-            : Colors.midTone,
+              ? Colors.midTone
+              : Colors.midTone,
           fontFamily: Fonts.OSMEDIUM,
           fontSize: 11,
         }}
@@ -118,25 +118,21 @@ export default function GameLeaders({
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
 
   const isSummerLeague =
-  league === "nba-summer" ||
-  league === "summerleague" ||
-  league === "sl";
+    league === "nba-summer" || league === "summerleague" || league === "sl";
 
-const teamSource = isSummerLeague
-  ? SLTeams
-  : teams;
+  const teamSource = isSummerLeague ? SLTeams : teams;
 
   const textColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.white
-    : Colors.black;
+      ? Colors.white
+      : Colors.black;
 
   const subTextColor = lighter
     ? Colors.lightGray
     : isDark
-    ? Colors.midTone
-    : Colors.midTone;
+      ? Colors.midTone
+      : Colors.midTone;
 
   const topPlayers = useMemo(() => {
     if (!leaders?.length) return [];
@@ -192,7 +188,7 @@ const teamSource = isSummerLeague
               headshot_url:
                 typeof athleteSafe.headshot === "string"
                   ? athleteSafe.headshot
-                  : athleteSafe.headshot?.href ?? Placeholder,
+                  : (athleteSafe.headshot?.href ?? Placeholder),
               jersey_number: athleteSafe.jersey ?? "–",
             },
             // Game Leaders
@@ -415,39 +411,37 @@ const teamSource = isSummerLeague
         {topPlayers.map((player, idx) => {
           const p = player.localPlayer;
 
-const teamObj = teamSource.find(
-  (t) => String(t.espnID) === String(player.team?.id)
-) ?? teamSource.find(
-  (t) => String(t.espnID) === String(homeTeamId)
-) ?? teamSource.find(
-  (t) => String(t.espnID) === String(awayTeamId)
-);
+          const teamObj =
+            teamSource.find(
+              (t) => String(t.espnID) === String(player.team?.id),
+            ) ??
+            teamSource.find((t) => String(t.espnID) === String(homeTeamId)) ??
+            teamSource.find((t) => String(t.espnID) === String(awayTeamId));
 
-// Type guard for teams that have wLogo
-function hasWLogo(team: any): team is { wLogo?: string } {
-  return team && "wLogo" in team;
-}
+          // Type guard for teams that have wLogo
+          function hasWLogo(team: any): team is { wLogo?: string } {
+            return team && "wLogo" in team;
+          }
 
-const teamLogo = teamObj
-  ? isWomen
-    ? lighter
-      ? hasWLogo(teamObj)
-        ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
-        : teamObj.logoLight || teamObj.logo
-      : isDark
-      ? hasWLogo(teamObj)
-        ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
-        : teamObj.logoLight || teamObj.logo
-      : hasWLogo(teamObj)
-      ? teamObj.wLogo || teamObj.logo
-      : teamObj.logo
-    : lighter
-    ? teamObj.logoLight || teamObj.logo
-    : isDark
-    ? teamObj.logoLight || teamObj.logo
-    : teamObj.logo
-  : Placeholder;
-
+          const teamLogo = teamObj
+            ? isWomen
+              ? lighter
+                ? hasWLogo(teamObj)
+                  ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
+                  : teamObj.logoLight || teamObj.logo
+                : isDark
+                  ? hasWLogo(teamObj)
+                    ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
+                    : teamObj.logoLight || teamObj.logo
+                  : hasWLogo(teamObj)
+                    ? teamObj.wLogo || teamObj.logo
+                    : teamObj.logo
+              : lighter
+                ? teamObj.logoLight || teamObj.logo
+                : isDark
+                  ? teamObj.logoLight || teamObj.logo
+                  : teamObj.logo
+            : Placeholder;
 
           return (
             <View key={idx} style={styles.card}>

@@ -1,12 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
+import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/Styles";
-import { teamsById } from "constants/teams";
-import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
-import { teamsCFBById } from "constants/teamsCFB";
-import { teamsMLBById } from "constants/teamsMLB";
-import { teamsNFLById } from "constants/teamsNFL";
+import { getTeamLogo, teamsById } from "constants/teams";
+import {
+  getCBBTeamLogo,
+  teamsCBBById,
+  teamsWCBBById,
+} from "constants/teamsCBB";
+import {
+  getCFBTeamLogo,
+  teamsCFBById,
+} from "constants/teamsCFB";
+import {
+   getMLBTeamLogo,
+  teamsMLBById,
+} from "constants/teamsMLB";
+import { getNFLTeamLogo, teamsNFLById } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
 import { Image } from "expo-image";
-import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png"
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
@@ -20,7 +31,6 @@ type Props = {
   item: ResultItem;
   onSelect: (item: ResultItem) => void;
   onDelete?: (item: ResultItem) => void;
-  apiUrl?: string;
   query?: string;
 };
 
@@ -30,33 +40,30 @@ export default function ResultItemRow({
   item,
   onSelect,
   onDelete,
-  apiUrl = "",
   query = "",
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = exploreStyles(isDark);
+
   // -------------------------
   // TEAM
   // -------------------------
   const renderTeam = (team: TeamResult) => {
-    const localTeam =
-      team.isNFL && team.id != null
-        ? teamsNFLById[String(team.id)]
-        : team.isMLB && team.id != null
-        ? teamsMLBById[String(team.id)]
-        : team.isCFB && team.id != null
-        ? teamsCFBById[String(team.id)]
-        : team.isCBB && team.id != null
-        ? teamsCBBById[String(team.id)]
-        : team.isWCBB && team.wid != null
-        ? teamsWCBBById[String(team.wid)]
-        : team.id != null
-        ? teamsById[String(team.id)]
-        : null;
+    let localTeamLogo: string | undefined;
 
-    const logoSource = isDark
-      ? localTeam?.logoLight || localTeam?.logo
-      : localTeam?.logo;
+    if (team.isNFL && team.id != null)
+      localTeamLogo = getNFLTeamLogo(team.id, isDark);
+    else if (team.isMLB && team.id != null)
+      localTeamLogo = getMLBTeamLogo(team.id, isDark);
+    else if (team.isNHL && team.id != null)
+      localTeamLogo = getNHLTeamLogo(team.id, isDark);
+    else if (team.isCFB && team.id != null)
+      localTeamLogo = getCFBTeamLogo(team.id, isDark);
+    else if (team.isCBB && team.id != null)
+      localTeamLogo = getCBBTeamLogo(team.id, isDark);
+    else if (team.isWCBB && team.wid != null)
+      localTeamLogo = getCBBTeamLogo(team.wid, isDark, true); // WCBB uses wid
+    else if (team.id != null) localTeamLogo = getTeamLogo(team.id, isDark);
 
     return (
       <View style={styles.itemRow}>
@@ -65,17 +72,11 @@ export default function ResultItemRow({
           style={styles.itemContainer}
         >
           <View style={styles.userRow}>
-            {logoSource && (
-              <Image
-                source={logoSource}
-                style={styles.teamLogo}
-                resizeMode="contain"
-              />
+            {localTeamLogo && (
+              <Image source={localTeamLogo} style={styles.teamLogo} />
             )}
             <View>
-              <Text style={styles.name}>
-                {localTeam?.fullName || team.name}
-              </Text>
+              <Text style={styles.name}>{team.full_name || team.name}</Text>
               {team.isWCBB && <Text style={styles.tag}>WCBB</Text>}
               {team.isCBB && <Text style={styles.tag}>CBB</Text>}
               {team.isCFB && <Text style={styles.tag}>CFB</Text>}
@@ -99,25 +100,37 @@ export default function ResultItemRow({
   // PLAYER
   // -------------------------
   const renderPlayer = (player: PlayerResult) => {
-    // console.log(JSON.stringify(player, null, 2));
-    const avatarUrl = player.avatarUrl ?? player.headshot_url ?? playerPlaceholderImage;
-    const teamId = player.team_id != null ? String(player.team_id) : null;
+    const avatarUrl =
+      player.avatarUrl ?? player.headshot_url ?? playerPlaceholderImage;
+    const teamId = player.team_id ?? null;
 
+    let localTeamLogo: string | undefined;
+
+    if (teamId && player.isNFL) localTeamLogo = getNFLTeamLogo(teamId, isDark);
+    else if (teamId && player.isMLB)
+      localTeamLogo = getMLBTeamLogo(teamId, isDark);
+    else if (teamId && player.isCFB)
+      localTeamLogo = getCFBTeamLogo(teamId, isDark);
+    else if (teamId && player.isCBB)
+      localTeamLogo = getCBBTeamLogo(teamId, isDark);
+    else if (teamId && player.isWCBB)
+      localTeamLogo = getCBBTeamLogo(teamId, isDark);
+    else if (teamId && player.isNBA)
+      localTeamLogo = getTeamLogo(teamId, isDark);
     const localTeam =
       teamId && player.isNFL
         ? teamsNFLById[teamId]
         : teamId && player.isMLB
-        ? teamsMLBById[teamId]
-        : teamId && player.isCFB
-        ? teamsCFBById[teamId]
-        : teamId && player.isCBB
-        ? teamsCBBById[teamId]
-        : teamId && player.isWCBB
-        ? teamsWCBBById[teamId]
-        : teamId && player.isNBA
-        ? teamsById[teamId]
-        : null;
-
+          ? teamsMLBById[teamId]
+          : teamId && player.isCFB
+            ? teamsCFBById[teamId]
+            : teamId && player.isCBB
+              ? teamsCBBById[teamId]
+              : teamId && player.isWCBB
+                ? teamsWCBBById[teamId]
+                : teamId && player.isNBA
+                  ? teamsById[teamId]
+                  : null;
     return (
       <View style={styles.itemRow}>
         <TouchableOpacity
@@ -136,7 +149,6 @@ export default function ResultItemRow({
             </View>
           </View>
         </TouchableOpacity>
-
         {query.length === 0 && onDelete && (
           <TouchableOpacity onPress={() => onDelete(player)}>
             <Ionicons
@@ -155,12 +167,9 @@ export default function ResultItemRow({
   // -------------------------
   const renderUser = (user: UserResult) => {
     let profileImageUrl = user.profileImageUrl?.trim();
-
-    if (!profileImageUrl) {
-      profileImageUrl = "https://via.placeholder.com/150";
-    } else if (!profileImageUrl.startsWith("http")) {
+    if (!profileImageUrl) profileImageUrl = "https://via.placeholder.com/150";
+    else if (!profileImageUrl.startsWith("http"))
       profileImageUrl = `${BASE_URL}${profileImageUrl}`;
-    }
 
     return (
       <View style={styles.itemRow}>

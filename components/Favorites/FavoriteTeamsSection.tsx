@@ -4,25 +4,23 @@ import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
 import SectionHeaderWithToggle from "../SectionHeaderWithToggle";
 
 type Props = {
-  favoriteTeams: any[]; // replace with proper team type if you have one
+  favorites: any[];
   isGridView: boolean;
   fadeAnim: Animated.Value;
   toggleFavoriteTeamsView: () => void;
   styles: ReturnType<typeof profileStyles>;
   itemWidth: number;
   isCurrentUser: boolean;
-  username?: string;
 };
 
 export default function FavoriteTeamsSection({
-  favoriteTeams,
+  favorites,
   isGridView,
   fadeAnim,
   toggleFavoriteTeamsView,
   styles,
   itemWidth,
   isCurrentUser,
-  username,
 }: Props) {
   return (
     <>
@@ -35,13 +33,12 @@ export default function FavoriteTeamsSection({
 
       <Animated.View style={{ opacity: fadeAnim, flex: 1 }}>
         <FavoriteTeamsList
-          favoriteTeams={favoriteTeams}
+          favoriteTeams={favorites}
           isGridView={isGridView}
           styles={styles}
           itemWidth={itemWidth}
           key={isGridView ? "grid" : "list"}
           isCurrentUser={isCurrentUser} // ✅ enforce current user
-          username={username}
         />
       </Animated.View>
     </>

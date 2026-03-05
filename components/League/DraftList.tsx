@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import SearchBar from "components/SearchBars/AnimatedSearchBar";
 import { Dropdown } from "components/Dropdown";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import SearchBar from "components/SearchBars/AnimatedSearchBar";
+import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
 import { teams as nflteams } from "constants/teamsNFL";
 import { useDraft } from "hooks/useLeagueDraft";
@@ -15,8 +14,8 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import DraftCardSkeleton from "./DraftCardSkeleton";
 import DraftCard, { DraftPick } from "./DraftCard";
+import DraftCardSkeleton from "./DraftCardSkeleton";
 type Props = {
   year: string;
   team: string;
@@ -95,44 +94,41 @@ export default function DraftList({
   // ---------------------------
   // YEAR OPTIONS
   // ---------------------------
-const yearOptions = useMemo(() => {
-  const now = new Date();
-  const currentYear = now.getFullYear();
+  const yearOptions = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
 
-  let maxSeason: number;
+    let maxSeason: number;
 
-  if (league === "nfl") {
-    // NFL season starts Aug 1
-    const seasonHasStarted =
-      now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
-    maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
-  } else if (league === "nba") {
-    // NBA season typically starts Oct 15
-    const seasonHasStarted =
-      now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 15);
-    maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
-  } else {
-    maxSeason = currentYear;
-  }
+    if (league === "nfl") {
+      // NFL season starts Aug 1
+      const seasonHasStarted =
+        now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+      maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+    } else if (league === "nba") {
+      // NBA season typically starts Oct 15
+      const seasonHasStarted =
+        now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 15);
+      maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
+    } else {
+      maxSeason = currentYear;
+    }
 
-  const arr = [];
-  for (let y = maxSeason; y >= maxSeason - 24; y--) {
-    arr.push({ label: String(y), value: String(y) });
-  }
+    const arr = [];
+    for (let y = maxSeason; y >= maxSeason - 24; y--) {
+      arr.push({ label: String(y), value: String(y) });
+    }
 
-  return arr;
-}, [league]);
+    return arr;
+  }, [league]);
 
-
-const safeYear =
-  Number(year) > Number(yearOptions[0]?.value)
-    ? yearOptions[0].value
-    : year;
+  const safeYear =
+    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
 
   // ---------------------------
   // FETCH NBA DRAFT
   // ---------------------------
-const { draft, loading, error } = useDraft(league, Number(safeYear));
+  const { draft, loading, error } = useDraft(league, Number(safeYear));
 
   const picks = draft?.picks ?? [];
 
@@ -143,7 +139,7 @@ const { draft, loading, error } = useDraft(league, Number(safeYear));
     if (!picks.length) return [{ label: "All Rounds", value: "all" }];
 
     const uniqueRounds = Array.from(
-      new Set<number>(picks.map((p: DraftPick) => p.round))
+      new Set<number>(picks.map((p: DraftPick) => p.round)),
     ).sort((a, b) => a - b);
 
     return [
@@ -219,7 +215,9 @@ const { draft, loading, error } = useDraft(league, Number(safeYear));
         const nameMatch = p.athlete?.name?.toLowerCase().includes(s);
 
         const positionId = p.athlete?.positionId;
-        const pos = positionId ? POSITION_LOOKUP[String(positionId)] ?? "" : "";
+        const pos = positionId
+          ? (POSITION_LOOKUP[String(positionId)] ?? "")
+          : "";
         const posMatch = pos.toLowerCase().includes(s);
 
         const teamName = teamNameMap[String(p.teamId)];
@@ -234,7 +232,7 @@ const { draft, loading, error } = useDraft(league, Number(safeYear));
 
   const visiblePicks = useMemo(
     () => filteredPicks.slice(0, visibleCount),
-    [filteredPicks, visibleCount]
+    [filteredPicks, visibleCount],
   );
 
   return (

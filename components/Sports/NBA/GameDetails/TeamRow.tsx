@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamById } from "constants/teams";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
@@ -35,7 +35,7 @@ export const TeamRow = ({
   const logo =
     isDark && teamLookup?.logoLight
       ? teamLookup.logoLight
-      : teamLookup?.logo ?? team.logo;
+      : (teamLookup?.logo ?? team.logo);
 
   const code = teamLookup?.code ?? team.code;
   const record = team.record === "-" ? "" : team.record;
@@ -50,7 +50,7 @@ export const TeamRow = ({
     gameStatusDescription === "Postponed";
 
   const inProgress = ["In Progress", "Halftime", "End of Period"].includes(
-    gameStatusDescription ?? ""
+    gameStatusDescription ?? "",
   );
 
   const showRecordInsteadOfScore = isScheduled || score == null;
@@ -134,7 +134,7 @@ export const TeamRow = ({
                 : [styles.score, sizeStyles[size].score, getScoreStyle()]
             }
           >
-            {showRecordInsteadOfScore ? record : score ?? ""}
+            {showRecordInsteadOfScore ? record : (score ?? "")}
           </Text>
           {renderBonus()}
         </View>
@@ -148,7 +148,7 @@ export const TeamRow = ({
 
         <View style={styles.teamInfo}>
           <Text style={styles.teamName}>
-            {rank && <Text style={styles.rank}>{rank}</Text>}
+            {rank && <Text style={styles.rank}>{rank} </Text>}
             {code}
           </Text>
 
@@ -174,7 +174,7 @@ export const TeamRow = ({
                 : [styles.score, sizeStyles[size].score, getScoreStyle()]
             }
           >
-            {showRecordInsteadOfScore ? record : score ?? ""}
+            {showRecordInsteadOfScore ? record : (score ?? "")}
           </Text>
           {renderBonus()}
         </View>

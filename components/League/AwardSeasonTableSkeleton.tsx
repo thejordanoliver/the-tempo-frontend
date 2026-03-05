@@ -1,5 +1,5 @@
 // components/GameDetails/AwardSeasonTableSkeleton.tsx
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,

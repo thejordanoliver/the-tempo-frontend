@@ -15,10 +15,12 @@ import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
 
 export interface PlayerCardProps {
   id: number;
-  name: string;
+  name: string | undefined;
+  shortName?: string | undefined;
   position?: string | null;
   team: string;
   avatarUrl?: string | null;
+  rank?: number | null;
   number?: string | number | null;
   league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB";
   statNumber?: string | number | null;
@@ -39,13 +41,14 @@ const LEAGUE_ROUTES = {
   CFB: "/player/cfb/[id]",
   CBB: "/player/cbb/[id]",
   WCBB: "/player/cbb/[id]",
-  MLB: "/player/cbb/[id]",
+  MLB: "/player/mlb/[id]",
 } as const;
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   id,
   name,
   position,
+  rank,
   team,
   avatarUrl,
   number,
@@ -58,11 +61,25 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const teamList = LEAGUE_TEAMS[league];
 
-  // Robust team lookup (name OR fullName)
-  const teamObj =
-    teamList.find(
-      (t) => t.name === team || t.fullName === team || t.code === team
-    ) ?? null;
+const teamObj =
+  teamList.find(
+    (t) => t.name === team || t.fullName === team || t.code === team,
+  ) ?? null;
+
+// Type guard for CBB/WCBB teams
+function isCBBTeam(team: any): team is { wid: number; id: number } {
+  return team && typeof team.wid === "number";
+}
+
+// Determine the team ID to pass in the route
+let teamIdForRoute: string | undefined;
+
+if (league === "WCBB" && isCBBTeam(teamObj)) {
+  teamIdForRoute = teamObj.wid.toString();
+} else {
+  teamIdForRoute = teamObj?.id?.toString();
+}
+
 
   const initial = name?.[0]?.toUpperCase() ?? "?";
 
@@ -70,8 +87,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     statNumber != null && statNumber !== ""
       ? Number(statNumber).toLocaleString()
       : number != null && number !== ""
-      ? `#${number}`
-      : null;
+        ? `#${number}`
+        : null;
 
   const route = LEAGUE_ROUTES[league];
 
@@ -85,16 +102,19 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
           return;
         }
 
-        router.push({
-          pathname: route,
-          params: {
-            id: id.toString(),
-            teamId: teamObj.id.toString(),
-          },
-        });
+      router.push({
+  pathname: route,
+  params: {
+    id: id.toString(),
+    teamId: teamIdForRoute,
+    league,
+  },
+});
+
       }}
     >
       <View style={styles.nameContainer}>
+        {rank ? <Text style={styles.rank}>{rank}</Text> : null}
         {avatarUrl ? (
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         ) : (

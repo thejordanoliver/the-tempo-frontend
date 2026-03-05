@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/Styles";
-import { getMLBTeamByEspn } from "constants/teamsMLB";
+import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -46,8 +46,8 @@ type Props = {
   injuries: MLBTeamInjuries[];
   loading: boolean;
   error: any;
-  awayTeamAbbr?: string;
-  homeTeamAbbr?: string;
+  awayTeam?: string;
+  homeTeam?: string;
   lighter?: boolean;
 };
 
@@ -57,8 +57,8 @@ export default function MLBInjuries({
   injuries,
   loading,
   error,
-  awayTeamAbbr,
-  homeTeamAbbr,
+  awayTeam,
+  homeTeam,
   lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
@@ -68,8 +68,8 @@ export default function MLBInjuries({
   // 🟦 MLB TEAM LOOKUP (USING ESPN IDs)
   // ---------------------------------------------------------------------
   // These will match the order of tabs
-  const awayAbbr = awayTeamAbbr?.toUpperCase();
-  const homeAbbr = homeTeamAbbr?.toUpperCase();
+  const awayAbbr = awayTeam?.toUpperCase();
+  const homeAbbr = homeTeam?.toUpperCase();
 
   // ---------------------------------------------------------------------
   // 🟩 Tab Order (Away → Home → All Remaining)
@@ -206,7 +206,7 @@ export default function MLBInjuries({
             (team) => team.team.abbreviation.toUpperCase() === abbr
           );
 
-          const team = getMLBTeamByEspn(String(t?.team.id));
+          const team = getMLBTeamByEspnId(String(t?.team.id));
           const logo = team?.logoLight ?? team?.logo ?? null;
 
           const textColor = lighter

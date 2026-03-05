@@ -2,10 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import CombinedGamesList from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
-import FavoritesScrollSkeleton from "components/Favorites/FavoritesScrollSkeleton";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
+import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { useHomeData } from "hooks/useHomeData";
 import React, { useLayoutEffect, useRef } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
@@ -13,8 +13,7 @@ import PagerView from "react-native-pager-view";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = homeStyles(isDark);
   const navigation = useNavigation();
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
@@ -22,12 +21,11 @@ export default function HomeScreen() {
   const pagerRef = useRef<PagerView>(null);
 
   const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
-    "scores"
+    "scores",
   );
 
   const {
     favorites,
-    setFavorites,
     refreshing,
     handleRefresh,
     gamesByCategory,
@@ -87,7 +85,6 @@ export default function HomeScreen() {
               ) : (
                 <FavoritesScroll
                   favoriteTeamIds={favorites}
-                  onFavoritesChange={setFavorites}
                   onDragStart={() => setIsDraggingFavorites(true)}
                   onDragEnd={() => setIsDraggingFavorites(false)}
                 />

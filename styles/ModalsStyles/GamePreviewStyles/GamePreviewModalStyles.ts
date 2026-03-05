@@ -1,4 +1,4 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const gamePreviewModalStyle = (isChampionship: boolean) =>
@@ -55,9 +55,19 @@ export const gamePreviewModalStyle = (isChampionship: boolean) =>
       gap: 24,
     },
     loadingContainer: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-},
-
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    headlineContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    headlineDivider: {
+      height: 14,
+      width: 1,
+      marginHorizontal: 4,
+      backgroundColor: Colors.white,
+    },
   });

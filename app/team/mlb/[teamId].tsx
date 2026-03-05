@@ -1,33 +1,29 @@
 import { useNavigation } from "@react-navigation/native";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
+import { StandingsList } from "components/League/Standings/StandingsList";
+import MonthSelector from "components/MonthSelector";
 import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
-import TeamInfoBottomSheet from "components/Sports/MLB/Team/TeamInfoModal";
-import TeamPlayerList from "components/Sports/MLB/Team/TeamRoster";
-import { Colors } from "constants/Colors";
-import { players } from "constants/mlbPlayers";
+import Roster from "components/Sports/MLB/Team/Roster";
+import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { teams } from "constants/teamsMLB";
+import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBTeamGames } from "hooks/MLBHooks/useMLBTeamGames";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import { useTeamNews } from "hooks/useTeamNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Animated, ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
+import {
+  getGameCountByMonth,
+  getMLBSeason,
+  getMonthsToShow,
+  scrollToMonth,
+} from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: {
@@ -45,28 +41,37 @@ export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
-  const league = "MLB";
 
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
   const isDark = useColorScheme() === "dark";
-  const styles = style(isDark);
+  const styles = teamDetailStyles;
 
-  const tabs = ["schedule", "news", "roster", "stats", "forum"] as const;
+  const tabs = [
+    "schedule",
+    "news",
+    "roster",
+    "stats",
+    "standings",
+    "forum",
+  ] as const;
   const [selectedTab, setSelectedTab] =
     useState<(typeof tabs)[number]>("schedule");
 
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const pagerRef = useRef<PagerView>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const underlineX = useRef(new Animated.Value(0)).current;
+  const underlineWidth = useRef(new Animated.Value(0)).current;
+  const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
 
   const team = useMemo(
     () => (teamIdNum ? teams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum]
+    [teamIdNum],
   );
 
   const {
@@ -75,32 +80,15 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useMLBTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-  // -------------------------------
-  // MONTHS TO SHOW
-  // -------------------------------
-  const monthsToShow: MonthItem[] = rawTeamGames
-    .map((game) => {
-      const dateStr = game?.date?.utc;
-      if (!dateStr) return null;
+  const gameCountByMonth = useMemo(
+    () => getGameCountByMonth(rawTeamGames, (g) => g.date ?? null),
+    [rawTeamGames],
+  );
 
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return null;
-
-      return {
-        label: d.toLocaleString("en-US", { month: "short" }),
-        month: d.getMonth(),
-        year: d.getFullYear(),
-      };
-    })
-    .filter((m): m is MonthItem => m !== null)
-    .filter(
-      (m, i, arr) =>
-        arr.findIndex((x) => x.month === m.month && x.year === m.year) === i
-    )
-    .sort((a, b) => {
-      if (a.year !== b.year) return a.year - b.year;
-      return a.month - b.month;
-    });
+  const monthsToShow = useMemo(
+    () => getMonthsToShow(rawTeamGames, (g) => g.date ?? null),
+    [rawTeamGames],
+  );
 
   // -------------------------------
   // SELECTED MONTH
@@ -117,21 +105,8 @@ export default function TeamDetailScreen() {
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
-
-    if (scrollViewRef.current) {
-      const screenWidth = Dimensions.get("window").width;
-      const itemWidth = 70;
-      const spacing = 12;
-      const scrollToX =
-        index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
-
-      scrollViewRef.current.scrollTo({
-        x: Math.max(0, scrollToX),
-        animated: true,
-      });
-    }
+    scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
   };
-
   // -------------------------------
   // FILTER GAMES FOR MONTH
   // -------------------------------
@@ -139,56 +114,17 @@ export default function TeamDetailScreen() {
     if (!selectedDate) return rawTeamGames;
 
     return rawTeamGames.filter((game) => {
-      const dateStr = game?.date?.utc;
+      const dateStr = game?.date;
       if (!dateStr) return false;
+
       const d = new Date(dateStr);
+
       return (
         d.getFullYear() === selectedDate.getFullYear() &&
         d.getMonth() === selectedDate.getMonth()
       );
     });
   }, [rawTeamGames, selectedDate]);
-
-  // -------------------------------
-  // NEWS + HIGHLIGHTS
-  // -------------------------------
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights("mlb", team?.fullName ?? "", 5);
-
-  const {
-    articles: newsArticles,
-    loading: newsLoading,
-    error: newsError,
-    refreshNews,
-  } = useTeamNews(team?.fullName ?? "", "MLB");
-
-  const combinedNewsAndHighlights = useMemo(() => {
-    const taggedNews = newsArticles.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = teamHighlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-      duration: String(item.duration),
-    }));
-
-    const combined = [...taggedNews, ...taggedHighlights];
-
-    combined.sort((a, b) => {
-      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return bDate - aDate;
-    });
-
-    return combined;
-  }, [newsArticles, teamHighlights]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -204,26 +140,26 @@ export default function TeamDetailScreen() {
       setRefreshing(false);
     }
   };
-  // -------------------------------
-  // FAVORITES
-  // -------------------------------
+  const { toggleNotifications, isNotified } = useNotifications();
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
+  const league = "MLB";
   const favorited = team ? isFavorite(league, team.id) : false;
+  const teamKey = String(team?.id);
+  const notfied = team ? isNotified(league, teamKey) : false;
 
-  // -------------------------------
-  // HEADER
-  // -------------------------------
+  // --- Header ---
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo ? { uri: team.logo } : undefined}
-          logoLight={team?.logoLight ? { uri: team.logoLight } : undefined}
+          teamId={team?.id}
+          logo={team?.logoLight || team?.logo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team?.code}
           isFavorite={favorited}
+          isNotified={notfied} // ✅ MATCH
+          onToggleNotifications={() => toggleNotifications(league, teamKey)}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
@@ -232,7 +168,28 @@ export default function TeamDetailScreen() {
     });
   }, [navigation, isDark, team, favorited]);
 
-if (!team) {
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+
+    const index = tabs.indexOf(tab);
+    if (tabMeasurements.current[index]) {
+      Animated.parallel([
+        Animated.timing(underlineX, {
+          toValue: tabMeasurements.current[index].x,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(underlineWidth, {
+          toValue: tabMeasurements.current[index].width,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    }
+  };
+
+  if (!team) {
     return (
       <View style={styles.loadContainer}>
         <CustomActivityIndicator />
@@ -240,19 +197,15 @@ if (!team) {
     );
   }
 
-
   // -------------------------------
   // UI
   // -------------------------------
   return (
     <View style={styles.container}>
-      <TabBar
+      <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-          pagerRef.current?.setPage(tabToIndex(tab));
-        }}
+        onTabPress={handleTabPress}
       />
 
       <PagerView
@@ -265,51 +218,15 @@ if (!team) {
       >
         {/* Schedule */}
         <View key="schedule" style={{ flex: 1 }}>
-          <View style={styles.monthSelector}>
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={82}
-              decelerationRate="fast"
-              scrollEventThrottle={16}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-              }}
-            >
-              {monthsToShow.map(({ label, month, year }, index) => {
-                const isSelected =
-                  selectedDate?.getMonth() === month &&
-                  selectedDate?.getFullYear() === year;
-
-                return (
-                  <TouchableOpacity
-                    key={`${label}-${year}`}
-                    onPress={() => handleSelectMonth(month, year, index)}
-                    style={[
-                      styles.monthButton,
-                      { width: 70 },
-                      isSelected && styles.monthButtonSelected,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.monthText,
-                        isSelected && styles.monthTextSelected,
-                      ]}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </View>
+          <MonthSelector
+            months={monthsToShow}
+            selectedDate={selectedDate}
+            onSelect={(month, year, index) =>
+              handleSelectMonth(month, year, index)
+            }
+            loading={gamesLoading}
+            gameCountByMonth={gameCountByMonth}
+          />
 
           <MLBGamesList
             games={filteredGames}
@@ -317,42 +234,32 @@ if (!team) {
             refreshing={refreshing}
             onRefresh={refreshTeamGames}
           />
-
-          {/* <MLBGamesList
-            games={mockMLBGames}
-            loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            expectedCount={filteredGames.length}
-          /> */}
         </View>
 
         {/* News */}
-        <ScrollView key="news" style={{ flex: 1 }}>
-          <NewsHighlightsList
-            items={combinedNewsAndHighlights}
-            loading={newsLoading || highlightsLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-          />
-        </ScrollView>
+        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
-          <TeamPlayerList
-            players={players.filter((p) => p.teamId === String(team.espnID))}
-            loading={false}
-            error={null}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            teamFullName={team?.fullName ?? "Unknown Team"}
-            teamColor={team?.color ?? Colors.midTone}
+          <Roster
+            teamId={Number(team.id)}
+            teamFullName={team.fullName}
+            teamColor={team.color}
             isDark={isDark}
           />
         </View>
 
         {/* Stats */}
         <ScrollView key="stats" style={{ flex: 1 }} />
+
+        {/* Standings Page */}
+        <View key="standings" style={{ flex: 1, paddingHorizontal: 12 }}>
+          <StandingsList
+            year={standingsYear}
+            onYearChange={setStandingsYear}
+            league="MLB"
+          />
+        </View>
 
         {/* Forum */}
         <View key="forum" style={{ flex: 1 }}>
@@ -361,10 +268,11 @@ if (!team) {
       </PagerView>
 
       {team && (
-        <TeamInfoBottomSheet
+        <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
+          league="MLB"
         />
       )}
     </View>

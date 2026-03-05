@@ -6,21 +6,25 @@ export const STAT_CATEGORIES = [
   "blocks",
   "tpm",
   "ftm",
-] as const;export type StatCategory = typeof STAT_CATEGORIES[number];
+] as const;
+export type StatCategory = (typeof STAT_CATEGORIES)[number];
 
 export interface PlayerLeader {
-  player_id: number;
-  team_id: number;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  headshot_url?: string;
-  avg_points?: string;
-  avg_assists?: string;
-  avg_rebounds?: string;
-  avg_steals?: string;
-  avg_blocks?: string;
-  games_played: number;
-  avg_three_pointers: string;
-  avg_free_throws: string;
+  stat: string;
+  value: number;
+  player_name: string;
+  gp: number;
+  rank: number;
+  player: {
+    id: number;
+    nba_api_id: number;
+    player_id: number;
+    team_id: number;
+    first_name: string;
+    last_name: string;
+    full_name: string;
+    short_name: string;
+    headshot_url?: string;
+    position: string;
+  };
 }

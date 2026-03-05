@@ -1,10 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "components/TabBars/FixedWidthTabBar";
-import { getTeamByESPNId } from "constants/teams";
-import { getTeamByESPNId as getCBBTeamByESPNId } from "constants/teamsCBB";
-import { router } from "expo-router";
+import FixedWidthTabBar, { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
+import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getTeamByESPNId as getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
 import { useState } from "react";
 import {
   Image,
@@ -17,11 +14,9 @@ import {
   View,
 } from "react-native";
 import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
+import usePlayersByTeam from "hooks/usePlayersByTeam";
+import useCBBPlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -43,16 +38,9 @@ type Player = {
     guid: string;
     displayName: string;
     shortName: string;
-    headshot: {
-      href: string;
-      alt: string;
-    };
+    headshot: { href: string; alt: string };
     jersey: string;
-    position: {
-      name: string;
-      displayName: string;
-      abbreviation: string;
-    };
+    position: { name: string; displayName: string; abbreviation: string };
   };
   teamType: "home" | "away";
   active: boolean;
@@ -70,6 +58,7 @@ export default function PlayersOnCourt({
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = playerOnCourtStyles(isDark, lighter);
+
   const homeTeam = getTeamByESPNId(homeTeamId);
   const awayTeam = getTeamByESPNId(awayTeamId);
   const homeCBBTeam = getCBBTeamByESPNId(homeTeamId);
@@ -83,23 +72,16 @@ export default function PlayersOnCourt({
   const homeName = isNBA ? homeTeam?.fullName : homeCBBTeam?.fullName;
   const awayName = isNBA ? awayTeam?.fullName : awayCBBTeam?.fullName;
 
-  const homeLogo =
-    isDark && isWomen
-      ? homeCBBTeam?.wLogo || homeCBBTeam?.logoLight || homeCBBTeam?.logo
-      : isDark && isNBA
-      ? homeTeam?.logoLight || homeTeam?.logo
-      : isNBA
-      ? homeTeam?.logo
-      : homeCBBTeam?.logo;
-
-  const awayLogo =
-    isDark && isWomen
-      ? awayCBBTeam?.wLogo || awayCBBTeam?.logoLight || awayCBBTeam?.logo
-      : isDark && isNBA
-      ? awayTeam?.logoLight || awayTeam?.logo
-      : isNBA
-      ? awayTeam?.logo
-      : awayCBBTeam?.logo;
+  const homeLogo = isNBA
+    ? getTeamLogo(homeTeam?.id, isDark)
+    : isWomen
+      ? getCBBTeamLogo(homeCBBTeam?.id, isDark, true)
+      : getCBBTeamLogo(homeCBBTeam?.id, isDark, false);
+  const awayLogo = isNBA
+    ? getTeamLogo(awayTeam?.id, isDark)
+    : isWomen
+      ? getCBBTeamLogo(awayCBBTeam?.id, isDark, true)
+      : getCBBTeamLogo(awayCBBTeam?.id, isDark, false);
 
   const tabs = [
     { key: "away", label: awayName ?? "Away Team" },
@@ -109,9 +91,7 @@ export default function PlayersOnCourt({
 
   // Map ESPN players
   const mapESPNPlayers = (teamId: number) => {
-    const block = playerStats.find(
-      (p) => Number(p.team?.id) === Number(teamId)
-    );
+    const block = playerStats.find((p) => Number(p.team?.id) === Number(teamId));
     if (!block) return [];
 
     const internalTeamId = getTeamByESPNId(teamId)?.id;
@@ -131,42 +111,34 @@ export default function PlayersOnCourt({
   const awayPlayers = mapESPNPlayers(awayTeamId);
 
   // Render team list
-  const renderOnCourtList = (
-    players: Player[],
-    teamCode: string | undefined
-  ) => (
+  const renderOnCourtList = (players: Player[], teamCode: string | undefined) => (
     <View>
       {players
         .filter((p) => p.active)
         .map((p, index, arr) => (
           <View
             key={`${teamCode}-row-${p.athlete.id}-${index}`}
-            style={[
-              styles.tableRow,
-              index === arr.length - 1 && { borderBottomWidth: 0 },
-            ]}
+            style={[styles.tableRow, index === arr.length - 1 && { borderBottomWidth: 0 }]}
           >
             <TouchableOpacity
-              key={`${teamCode}-${index}`}
-              onPress={() =>
-                router.push(`/player/cbb/${p.athlete.id}?teamId=${p.team.id}`)
-              }
               activeOpacity={0.6}
               style={styles.playerInfo}
+              onPress={() => {
+                // Removed navigation, can optionally add a console.log
+                console.log(`Player tapped: ${p.athlete.displayName}`);
+              }}
             >
               <View style={styles.playerInfoWrapper}>
                 <View style={styles.avatarWrapper}>
                   <Image
-                    source={{ uri: p?.athlete?.headshot?.href ?? "" }}
-                    alt={p?.athlete?.headshot?.alt}
+                    source={{ uri: p.athlete.headshot?.href ?? "" }}
+                    alt={p.athlete.headshot?.alt}
                     style={styles.avatar}
                   />
                 </View>
                 <View style={styles.nameWrapper}>
                   <Text style={styles.playerName}>{p.athlete.shortName}</Text>
-                  <Text style={styles.posistion}>
-                    {p.athlete.position.abbreviation}
-                  </Text>
+                  <Text style={styles.posistion}>{p.athlete.position.abbreviation}</Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row", alignContent: "center" }}>

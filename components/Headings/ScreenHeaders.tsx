@@ -1,7 +1,7 @@
 // components/Heading.tsx
 import React from "react";
 import { StyleSheet, Text, useColorScheme } from "react-native";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 type Props = {
   children: React.ReactNode;
 };

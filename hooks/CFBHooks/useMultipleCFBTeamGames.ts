@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teamsCFBById } from "constants/teamsCFB";
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "types/cfb";
@@ -46,7 +46,7 @@ export function useMultipleCFBTeamGames(
     season = "2025",
     league = "2",
     fetchAll = false,
-  }: UseMultipleCFBTeamGamesOptions = {}
+  }: UseMultipleCFBTeamGamesOptions = {},
 ) {
   const [allGames, setAllGames] = useState<Record<string, Game[]>>({});
   const [loading, setLoading] = useState(true);
@@ -66,13 +66,13 @@ export function useMultipleCFBTeamGames(
       await Promise.all(
         teamIds.map(async (teamId) => {
           const res = await axios.get(
-            `${BASE_URL}/api/gamesCFB/team/${teamId}`,
+            `${BASE_URL}/api/games/cfb/team/${teamId}`,
             {
               params: {
                 season,
                 all: fetchAll ? 1 : 0,
               },
-            }
+            },
           );
 
           const rawGames: Game[] = res.data.response || [];
@@ -118,14 +118,14 @@ export function useMultipleCFBTeamGames(
             };
           });
           result[String(teamId)] = enrichedGames;
-        })
+        }),
       );
 
       setAllGames(result);
     } catch (err: any) {
       console.error(
         "Error fetching multiple CFB team games:",
-        err.message || err
+        err.message || err,
       );
       setError("Failed to load CFB games");
       setAllGames({});

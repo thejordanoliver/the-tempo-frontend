@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getTeamById } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useState } from "react";
 import {
   Pressable,
@@ -60,8 +60,8 @@ export default function StackedGameCard({ game }: { game: Game }) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = stackedGameCardStyles(isDark, isChampionship);
 
@@ -69,7 +69,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
     "nba",
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   const period =

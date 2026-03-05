@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teamsCBB";
-import { UpcomingGameOdds } from "hooks/CBBHooks/useUpcomingOdds";
+import { UpcomingGameOdds } from "hooks/CBBHooks/useOdds";
 import React from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -35,7 +35,7 @@ const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
   function normalizeTeamMarket(
     market: any,
     homeName: string,
-    awayName: string
+    awayName: string,
   ) {
     if (!market?.outcomes || market.outcomes.length < 2) return market;
 
@@ -58,7 +58,7 @@ const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
   const spreadsNorm = normalizeTeamMarket(
     spreads,
     game.home_team,
-    game.away_team
+    game.away_team,
   );
   const totalsNorm = totals; // totals are always Over/Under → not team based
 
@@ -78,18 +78,18 @@ const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
     textSecondary: lighter
       ? Colors.lightGray
       : isDark
-      ? Colors.lightGray
-      : Colors.darkGray,
+        ? Colors.lightGray
+        : Colors.darkGray,
     textHeader: lighter
       ? Colors.lightGray
       : isDark
-      ? Colors.lightGray
-      : Colors.darkGray,
+        ? Colors.lightGray
+        : Colors.darkGray,
     divider: lighter
       ? Colors.lightGray
       : isDark
-      ? Colors.darkGray
-      : Colors.lightGray,
+        ? Colors.darkGray
+        : Colors.lightGray,
   };
 
   const formatOutcome = (market: any, index: number, label: string) => {

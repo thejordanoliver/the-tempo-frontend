@@ -5,7 +5,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import ChampionshipBanner from "components/Sports/NBA/Team/ChampionshipBanner";
-import { Fonts } from "constants/fonts";
+import { Fonts } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { useEffect, useMemo, useRef } from "react";

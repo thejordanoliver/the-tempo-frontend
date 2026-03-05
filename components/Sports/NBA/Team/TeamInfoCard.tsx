@@ -1,16 +1,17 @@
 import InfoCard from "components/Sports/CFB/Team/InfoCard";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
 import { teams as mlbTeams } from "constants/teamsMLB";
 import { teams as nflTeams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
 import { Coach } from "hooks/useTeamCoaches";
 import { View, useColorScheme } from "react-native";
 import { CFBTeam } from "types/cfb";
 import { MLBTeam } from "types/mlb";
 import { NFLTeam } from "types/nfl";
-import { CBBTeam, LeagueType, NBATeam } from "types/types";
+import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
 type Props = {
   teamId?: string | number;
   league: LeagueType;
@@ -21,7 +22,13 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
   const isDark = useColorScheme() === "dark";
 
   // pick list
-  let teamList: NBATeam[] | CFBTeam[] | CBBTeam[] | NFLTeam[] | MLBTeam[] = [];
+  let teamList:
+    | NBATeam[]
+    | CFBTeam[]
+    | CBBTeam[]
+    | NFLTeam[]
+    | MLBTeam[]
+    | NHLTeam = [];
 
   switch (league) {
     case "NBA":
@@ -41,6 +48,9 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       break;
     case "MLB":
       teamList = mlbTeams;
+      break;
+    case "NHL":
+      teamList = nhlTeams;
       break;
   }
 
@@ -154,6 +164,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
         </View>
       );
     }
+
     case "WCBB": {
       const t = team as CBBTeam;
       return (
@@ -220,6 +231,13 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
+            label="Coach"
+            value={`${coach?.first_name} ${coach?.last_name}`}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
             label="Location"
             value={t.city}
             team={t}
@@ -228,7 +246,47 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
 
           <InfoCard
             label="Stadium"
-            value={t.venue}
+            value={t.venueName}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Established"
+            value={t.established}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+        </View>
+      );
+    }
+    
+    case "NHL": {
+      const t = team as NHLTeam;
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Coach"
+            value={`${coach?.first_name} ${coach?.last_name}`}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Location"
+            value={t.location}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+
+          <InfoCard
+            label="Arena"
+            value={t.venueName}
+            team={t}
+            backgroundColor={primaryColor}
+          />
+          <InfoCard
+            label="Established"
+            value={t.established}
             team={t}
             backgroundColor={primaryColor}
           />

@@ -1,4 +1,4 @@
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teams as CFBTeams, getTeamByESPNId } from "constants/teamsCFB";
 import {
   getTeamByESPNId as getNFLTeamByESPNId,
@@ -70,7 +70,7 @@ export default function TeamDrives({
     }
 
     const uniqueEspnIds = Array.from(
-      new Set(allDrives.map((d) => String(d?.team?.id)).filter(Boolean))
+      new Set(allDrives.map((d) => String(d?.team?.id)).filter(Boolean)),
     );
 
     uniqueEspnIds.forEach((espnID) => {
@@ -87,7 +87,7 @@ export default function TeamDrives({
   }, [allDrives, awayTeamObj, homeTeamObj]);
 
   const [selectedTeam, setSelectedTeam] = useState<string>(
-    teams[0]?.id ?? "ALL"
+    teams[0]?.id ?? "ALL",
   );
 
   useEffect(() => {
@@ -128,8 +128,8 @@ export default function TeamDrives({
             const logo = lighter
               ? team?.logoLight || team?.logo
               : isDark
-              ? team?.logoLight
-              : team?.logo;
+                ? team?.logoLight
+                : team?.logo;
             return (
               <View style={styles.tabLabel}>
                 {logo && (

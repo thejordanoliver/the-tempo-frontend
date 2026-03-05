@@ -1,5 +1,4 @@
-import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
+import { Colors, globalStyles } from "constants/Styles";
 import { useRouter } from "expo-router";
 import { AwardCategory, League, useAwardSeasons } from "hooks/useAwardSeasons";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,25 +14,8 @@ import {
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
 
-const COLUMN_WIDTH = 70;
 const NAME_COLUMN_WIDTH = "100%";
 const COLLAPSED_ROWS = 5;
-
-const STAT_HEADERS = [
-  "GP",
-  "PTS",
-  "REB",
-  "AST",
-  "STL",
-  "BLK",
-  "FG%",
-  "3P%",
-  "FT%",
-  "WS",
-  "WS/48",
-];
-
-const COY_HEADERS = ["G", "W", "L", "Win %"];
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -52,13 +34,11 @@ export function AwardSeasonsTable({
   category,
   title,
   refreshSignal,
-  lighter = false,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = awardTableStyles(isDark, lighter);
-
+  const styles = awardTableStyles(isDark);
+  const global = globalStyles(isDark);
   const router = useRouter();
-  const isSummaryAward = league === "CFB" || league === "NFL";
   const isCOY = category === "coy";
 
   const { data, loading, error, refetch } = useAwardSeasons({
@@ -72,14 +52,6 @@ export function AwardSeasonsTable({
     }
   }, [refreshSignal, refetch]);
 
-  const headers = useMemo(() => {
-    if (isSummaryAward) return ["Summary"];
-    if (isCOY) return COY_HEADERS;
-    return STAT_HEADERS;
-  }, [isSummaryAward, isCOY]);
-
-  const columnWidth = isSummaryAward ? 320 : isCOY ? 90 : COLUMN_WIDTH;
-
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -88,7 +60,7 @@ export function AwardSeasonsTable({
 
   const visibleRows = useMemo(
     () => (expanded ? data : data.slice(0, COLLAPSED_ROWS)),
-    [expanded, data]
+    [expanded, data],
   );
 
   const getRowBackground = useCallback(
@@ -98,7 +70,7 @@ export function AwardSeasonsTable({
           ? Colors.dark.itemBackground
           : Colors.light.itemBackground
         : "transparent",
-    [isDark]
+    [isDark],
   );
 
   const handlePlayerPress = useCallback(
@@ -108,12 +80,12 @@ export function AwardSeasonsTable({
         params: { id: String(playerId), teamId },
       });
     },
-    [router]
+    [router],
   );
 
   if (loading) {
     return (
-      <View style={{ marginVertical: 12 }}>
+      <View style={styles.container}>
         <AwardSeasonTableSkeleton teams={1} />
       </View>
     );
@@ -121,57 +93,51 @@ export function AwardSeasonsTable({
 
   if (error) {
     return (
-      <View style={{ marginVertical: 12 }}>
-        <Text style={styles.errorText}>Failed to load.</Text>
+      <View style={styles.container}>
+        <Text style={global.errorText}>Failed to load.</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ marginVertical: 12 }}>
+    <View style={styles.container}>
       <View style={styles.table}>
-        <View style={{ flexDirection: "row" }}>
-          {/* Name column */}
-          <View style={{ width: NAME_COLUMN_WIDTH }}>
-            <View style={styles.headerRow}>
-              <Text style={styles.headerName}>{title}</Text>
-            </View>
-
-            {visibleRows.map((row, index) => (
-              <View
-                key={row.id}
-                style={[
-                  styles.nameRow,
-                  { backgroundColor: getRowBackground(index) },
-                ]}
-              >
-                <View style={[styles.nameWrapper]}>
-                  {!isCOY && row.player_id ? (
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() =>
-                        handlePlayerPress(
-                          Number(row.player_id),
-                          Number(row.current_team?.id)
-                        )
-                      }
-                    >
-                      <Text style={styles.playerName}>{row.player_name}</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <Text style={styles.playerName}>{row.player_name}</Text>
-                  )}
-
-                  <Text style={styles.seasonText}>
-                    {row.season} ·{" "}
-                    {row.award_team?.code ?? row.team_abbr ?? row.school}
-                  </Text>
-                </View>
-              </View>
-            ))}
+        <View style={{ width: NAME_COLUMN_WIDTH }}>
+          <View style={styles.headerRow}>
+            <Text style={styles.headerName}>{title}</Text>
           </View>
-        </View>
 
+          {visibleRows.map((row, index) => (
+            <View
+              key={`${row.season}-${row.player_id ?? row.team_abbr ?? row.school}`}
+              style={[
+                styles.nameRow,
+                { backgroundColor: getRowBackground(index) },
+              ]}
+            >
+              {!isCOY && row.player_id ? (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() =>
+                    handlePlayerPress(
+                      Number(row.player_id),
+                      Number(row.current_team?.id),
+                    )
+                  }
+                >
+                  <Text style={styles.playerName}>{row.player_name}</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={styles.playerName}>{row.player_name}</Text>
+              )}
+
+              <Text style={styles.seasonText}>
+                {row.season} ·{" "}
+                {row.award_team?.code ?? row.team_abbr ?? row.school}
+              </Text>
+            </View>
+          ))}
+        </View>
         {data.length > COLLAPSED_ROWS && (
           <TouchableOpacity
             onPress={() => setExpanded((p) => !p)}

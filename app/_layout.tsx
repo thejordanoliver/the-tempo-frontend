@@ -4,6 +4,8 @@ import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
 import { NotificationProvider } from "contexts/NotificationContext";
 import { PreferencesProvider } from "contexts/PreferencesContext";
 import { useChatStore } from "store/chatStore";
+import { useRouter } from "expo-router";
+import { useAuth } from "hooks/UserHooks/useAuth";
 
 import {
   Oswald_200ExtraLight,
@@ -14,6 +16,7 @@ import {
   Oswald_700Bold,
   useFonts,
 } from "@expo-google-fonts/oswald";
+
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
   DarkTheme as NavigationDarkTheme,
@@ -75,6 +78,8 @@ export default function RootLayout() {
   const pathname = usePathname();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const router = useRouter();
+  const { user, loadingUser } = useAuth();
 
   // Load fonts
   const [fontsLoaded] = useFonts({
@@ -86,20 +91,30 @@ export default function RootLayout() {
     Oswald_700Bold,
   });
 
-  // State for animations
+  // Animation
   const opacity = useRef(new Animated.Value(1)).current;
 
-  // Chat state from Zustand
+  // Chat state
   const { isOpen, gameId, closeChat } = useChatStore();
   const [input, setInput] = useState("");
   const [sendFn, setSendFn] = useState<((msg: string) => void) | null>(null);
 
   // Tab bar visibility
   const [visibleTabBar, setVisibleTabBar] = useState(true);
-
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
-  // Update tab bar visibility + close chat if navigating away
+  // --------------------
+  // Redirect to login if user is null
+  // --------------------
+  useEffect(() => {
+    if (!loadingUser && !user) {
+      router.replace("/login");
+    }
+  }, [user, loadingUser, router]);
+
+  // --------------------
+  // Update tab bar visibility + close chat when navigating
+  // --------------------
   useEffect(() => {
     if (!pathname) return;
 
@@ -110,8 +125,10 @@ export default function RootLayout() {
     }
   }, [pathname, shouldHideTabBar, closeChat]);
 
-  // While fonts are loading
-  if (!fontsLoaded) {
+  // --------------------
+  // Show loader while fonts or user data is loading
+  // --------------------
+  if (!fontsLoaded || loadingUser) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View
@@ -131,6 +148,9 @@ export default function RootLayout() {
     );
   }
 
+  // --------------------
+  // Main render
+  // --------------------
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NotificationProvider>
@@ -161,10 +181,10 @@ export default function RootLayout() {
                     animation: isProfileScreen
                       ? "fade"
                       : isSplashScreen
-                      ? "fade"
-                      : isTabScreen
-                      ? "none"
-                      : "default",
+                        ? "fade"
+                        : isTabScreen
+                          ? "none"
+                          : "default",
                     gestureDirection: "horizontal",
                   };
                 }}

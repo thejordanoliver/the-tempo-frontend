@@ -1,33 +1,29 @@
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
-import PagerView from "react-native-pager-view";
-
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
+import Roster from "components/Sports/CBB/Team/Roster";
 import CBBRosterStats from "components/Sports/CBB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-
-import { Colors } from "constants/Colors";
-import { teams } from "constants/teamsCBB";
-import { players } from "constants/wcbbPlayers";
-
+import { getCBBTeam, getTeamInfo } from "constants/teamsCBB";
 import { useNotifications } from "contexts/NotificationContext";
+import { useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
+import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamHighlights } from "hooks/useTeamHighlights";
 import { useTeamNews } from "hooks/useTeamNews";
-
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import Roster from "components/Sports/CBB/Team/Roster";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ScrollView, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
   nativeEvent: { position: number };
@@ -36,14 +32,20 @@ type PageSelectedEvent = {
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? Number(teamId) : null;
-
-  const isDark = useColorScheme() === "dark";
-  const styles = style(isDark);
+  const team = getCBBTeam(Number(teamId), true);
+  const styles = teamDetailStyles;
 
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const teamInfo = getTeamInfo(Number(teamId), true);
+  const espnId = teamInfo?.espnID;
+  const {
+    rosterStats,
+    loading: statsLoading,
+    error: statsError,
+    refreshingStats,
+    onRefresh: refreshRosterStats,
+  } = useRosterStats("wcbb", espnId ?? 0);
   const tabs = [
     "schedule",
     "news",
@@ -61,16 +63,18 @@ export default function TeamDetailScreen() {
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
 
-  const team = useMemo(
-    () => (teamIdNum ? teams.find((t) => Number(t.wid) === teamIdNum) : null),
-    [teamIdNum]
-  );
-
   const {
     games: teamGames = [],
     loading: gamesLoading,
     refreshGames,
-  } = useCBBTeamGames(teamIdNum?.toString() ?? "", { isWomen: true });
+  } = useCBBTeamGames(team?.wid ?? "", { isWomen: true });
+
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+    refreshPlayers,
+  } = usePlayersByTeam(team?.espnID?.toString() ?? "", true);
 
   /** ---------------- MONTHS ---------------- */
 
@@ -99,7 +103,7 @@ export default function TeamDetailScreen() {
     });
 
     return Array.from(map.values()).sort(
-      (a, b) => a.year * 12 + a.month - (b.year * 12 + b.month)
+      (a, b) => a.year * 12 + a.month - (b.year * 12 + b.month),
     );
   }, [teamGames]);
 
@@ -108,7 +112,7 @@ export default function TeamDetailScreen() {
 
     const today = new Date();
     const currentMonth = monthsToShow.find(
-      (m) => m.month === today.getMonth() && m.year === today.getFullYear()
+      (m) => m.month === today.getMonth() && m.year === today.getFullYear(),
     );
 
     const start = currentMonth ?? monthsToShow[0];
@@ -116,7 +120,7 @@ export default function TeamDetailScreen() {
   }, [monthsToShow]);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    initialSelectedDate
+    initialSelectedDate,
   );
 
   useEffect(() => {
@@ -124,7 +128,7 @@ export default function TeamDetailScreen() {
 
     const today = new Date();
     const currentMonth = monthsToShow.find(
-      (m) => m.month === today.getMonth() && m.year === today.getFullYear()
+      (m) => m.month === today.getMonth() && m.year === today.getFullYear(),
     );
 
     const start = currentMonth ?? monthsToShow[0];
@@ -162,7 +166,7 @@ export default function TeamDetailScreen() {
 
   const { articles: newsArticles, loading: newsLoading } = useTeamNews(
     team?.fullName ?? "",
-    "WCBB"
+    "WCBB",
   );
 
   const combinedNewsAndHighlights = useMemo(() => {
@@ -182,7 +186,7 @@ export default function TeamDetailScreen() {
     const combined = [...taggedNews, ...taggedHighlights];
     combined.sort(
       (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
     );
     return combined;
   }, [newsArticles, teamHighlights]);
@@ -200,12 +204,12 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.wLogo || team?.logo}
+          teamId={team?.wid}
+          logo={team?.wLogo || team?.logoLight || team?.logo}
           logoLight={team?.wLogo || team?.logoLight}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team?.code}
           isFavorite={favorited}
           isNotified={notfied}
           onToggleNotifications={() => toggleNotifications(league, teamKey)}
@@ -215,7 +219,7 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [navigation, isDark, team, favorited]);
+  }, [navigation, team, favorited]);
 
   if (!team) {
     return (
@@ -282,28 +286,31 @@ export default function TeamDetailScreen() {
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
           <Roster
-            players={players.filter((p) => p.teamId === String(team.espnID))}
+            players={players}
             loading={false}
             error={null}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             teamFullName={team?.fullName ?? "Unknown Team"}
-            teamColor={team?.color ?? Colors.midTone}
-            isDark={isDark}
+            isWomen={true}
           />
         </View>
 
         {/* Stats Page */}
-        <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
+        <View key="stats" style={{ flex: 1 }}>
           {team?.espnID && team?.id && (
             <CBBRosterStats
-              espnID={Number(team.espnID)}
-              teamID={Number(team.id)}
-              league="WCBB"
+              rosterStats={rosterStats}
+              espnId={team.espnID}
+              teamId={Number(team.id)}
+              league="wcbb"
+              loading={statsLoading}
+              error={statsError}
+              refreshing={refreshingStats}
+              onRefresh={refreshRosterStats}
             />
           )}
-        </ScrollView>
-
+        </View>
         {/* Standings Page */}
         <View key="standings" style={{ flex: 1 }}>
           <CBBConferenceStandingsList

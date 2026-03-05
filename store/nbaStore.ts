@@ -1,5 +1,5 @@
+import { GameDetails } from "hooks/NBAHooks/useGameDetails";
 import { create, StateCreator } from "zustand";
-import { GameDetails } from "hooks/useGameDetails";
 export interface Score {
   home: { total: number };
   away: { total: number };
@@ -33,8 +33,6 @@ export interface Score {
   injuries?: any[];
   officials?: any[];
 }
-
-
 
 export interface NBAStore {
   chatOpen: boolean;

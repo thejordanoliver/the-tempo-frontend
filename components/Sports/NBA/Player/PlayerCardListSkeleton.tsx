@@ -1,5 +1,5 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -40,7 +40,7 @@ export default function PlayerCardSkeletonList({
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false } // keeps it perfectly continuous
+      { resetBeforeIteration: false }, // keeps it perfectly continuous
     );
 
     pulse.start();

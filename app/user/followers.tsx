@@ -3,7 +3,7 @@ import FollowersList from "components/Profile/FollowersList";
 import SearchBar from "components/SearchBars/SearchBar";
 import { globalStyles } from "constants/Styles";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useFollowers } from "hooks/useFollowers";
+import { useFollowers } from "hooks/UserHooks/useFollowers";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, useColorScheme, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
@@ -45,8 +45,10 @@ export default function FollowersScreen() {
   const handleToggleFollow = async (targetId: string) => {
     setUsers((prev) =>
       prev.map((u) =>
-        u.id.toString() === targetId ? { ...u, isFollowing: !u.isFollowing } : u
-      )
+        u.id.toString() === targetId
+          ? { ...u, isFollowing: !u.isFollowing }
+          : u,
+      ),
     );
 
     setLoadingIds((prev) => [...prev, targetId]);
@@ -59,8 +61,8 @@ export default function FollowersScreen() {
         prev.map((u) =>
           u.id.toString() === targetId
             ? { ...u, isFollowing: !u.isFollowing }
-            : u
-        )
+            : u,
+        ),
       );
     } finally {
       setLoadingIds((prev) => prev.filter((id) => id !== targetId));

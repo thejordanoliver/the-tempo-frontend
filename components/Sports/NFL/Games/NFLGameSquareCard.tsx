@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";

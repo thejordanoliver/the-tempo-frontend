@@ -5,15 +5,15 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { snapPoints } from "utils/modalUtils";
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBBLogo from "assets/College_Logos/CBB.png";
 import CFBLogo from "assets/College_Logos/CFB.png";
 import WCBBLogo from "assets/College_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
+import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import UFCLogo from "assets/MMA/UFC_Logos/UFC.png";
+import { Colors, Fonts } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
@@ -26,6 +26,7 @@ import {
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
+import { snapPoints } from "utils/modalUtils";
 
 export type SportsListModalRef = {
   present: () => void;
@@ -37,7 +38,16 @@ type SportsListModalProps = {
   onClose?: () => void; // 👈 new prop
 };
 
-const leagues: LeagueType[] = ["NBA", "NFL", "CFB", "CBB", "WCBB", "MLB"];
+const leagues: LeagueType[] = [
+  "NBA",
+  "NFL",
+  "CFB",
+  "CBB",
+  "WCBB",
+  "MLB",
+  "NHL",
+  "UFC",
+];
 const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   NBA: { label: "NBA", logo: NBALogo },
   NFL: { label: "NFL", logo: NFLLogo },
@@ -45,13 +55,15 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   CBB: { label: "Men's College Basketball", logo: CBBLogo },
   WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
   MLB: { label: "MLB", logo: MLBLogo },
+  NHL: { label: "NHL", logo: NHLLogo },
+  UFC: { label: "UFC", logo: UFCLogo },
 };
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
     const sheetRef = useMemo(
       () => ({ current: null as BottomSheetModal | null }),
-      []
+      [],
     );
 
     const colorScheme = useColorScheme();
@@ -69,8 +81,10 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       | "/league/nfl"
       | "/league/cfb"
       | "/league/cbb"
+      | "/league/wcbb"
       | "/league/mlb"
-      | "/league/wcbb";
+      | "/league/nhl"
+      | "/league/ufc";
 
     const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
@@ -80,14 +94,18 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
         league === "NBA"
           ? "/league/nba"
           : league === "NFL"
-          ? "/league/nfl"
-          : league === "CFB"
-          ? "/league/cfb"
-          : league === "CBB"
-          ? "/league/cbb"
-          : league === "WCBB"
-          ? "/league/wcbb"
-          : "/league/mlb";
+            ? "/league/nfl"
+            : league === "CFB"
+              ? "/league/cfb"
+              : league === "CBB"
+                ? "/league/cbb"
+                : league === "WCBB"
+                  ? "/league/wcbb"
+                  : league === "NHL"
+                    ? "/league/nhl"
+                    : league === "UFC"
+                      ? "/league/ufc"
+                      : "/league/mlb";
       router.push(route);
       onSelect(league);
     };
@@ -104,25 +122,14 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
             disappearsOnIndex={-1}
           />
         )}
-        handleStyle={styles.handleStyle}
-        handleIndicatorStyle={styles.handleIndicatorStyle}
-        backgroundStyle={{ backgroundColor: "transparent", overflow: "hidden" }}
+        backgroundStyle={styles.backgroundStyle}
         handleComponent={() => (
           <View style={styles.header}>
-            <View
-              style={{
-                backgroundColor: Colors.midTone,
-                width: 36,
-                height: 4,
-                borderRadius: 2,
-                zIndex: 9999,
-                marginBottom: 4,
-              }}
-            ></View>
+            <View style={styles.handleIndicatorStyle}></View>
             <Text style={styles.headerText}>Leagues</Text>
           </View>
         )}
-        onDismiss={onClose} // 👈 fires when modal is swiped down or closed
+        onDismiss={onClose}
       >
         <BlurView
           intensity={100}
@@ -137,33 +144,35 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
               const { label, logo } = leagueConfig[league];
 
               return (
-                <TouchableOpacity
-                  key={league}
-                  onPress={() => goToLeague(league)}
-                  style={styles.leagueButton}
-                  activeOpacity={0.6}
-                >
-                  <View style={styles.buttonWrapper}>
-                    <Image style={styles.leagueLogo} source={logo} />
-                    <Text style={styles.leagueText}>{label}</Text>
-                  </View>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={20}
-                    color={isDark ? Colors.white : Colors.black}
-                  />
-                </TouchableOpacity>
+                <View key={league} style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={() => goToLeague(league)}
+                    style={styles.leagueButton}
+                    activeOpacity={0.6}
+                  >
+                    <View style={styles.buttonWrapper}>
+                      <Image style={styles.leagueLogo} source={logo} />
+                      <Text style={styles.leagueText}>{label}</Text>
+                    </View>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                  </TouchableOpacity>
+                </View>
               );
             })}
           </BottomSheetScrollView>
         </BlurView>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
+    backgroundStyle: { backgroundColor: "transparent", overflow: "hidden" },
     handleStyle: {
       backgroundColor: "transparent",
       height: 40,
@@ -179,6 +188,8 @@ const getStyles = (isDark: boolean) =>
       width: 36,
       height: 4,
       borderRadius: 2,
+      zIndex: 9999,
+      marginBottom: 4,
     },
     blurContainer: {
       flex: 1,
@@ -214,6 +225,12 @@ const getStyles = (isDark: boolean) =>
     },
     leagueButton: {
       paddingVertical: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
+    buttonContainer: {
       backgroundColor: "transparent",
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,

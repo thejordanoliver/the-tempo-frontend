@@ -1,72 +1,33 @@
-import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
-import { Colors } from "constants/Colors";
-import { useLocalSearchParams } from "expo-router";
-import { useCBBPlayerStats } from "hooks/CBBHooks/useCBBPlayerStats";
-import { Text, useColorScheme, View } from "react-native";
+import { Colors } from "constants/Styles";
+import { PlayerSeasonStat } from "hooks/CBBHooks/useCBBPlayerSeasons";
+import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import CenteredHeader from "../../../Headings/CenteredHeader";
-
-type Props = {
-  playerId: number;
-  season?: string; // e.g. "2025-26"
-};
 
 const safeFixed = (val?: number | null) =>
   val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
 
-export default function SeasonStatCard({ playerId, season }: Props) {
-  const params = useLocalSearchParams<{ league?: string }>();
+type Props = {
+  seasonStats: PlayerSeasonStat[]; // array already fetched
+  isDark: boolean;
+};
 
-  const league =
-    params.league === "WCBB" || params.league === "wcbb" ? "WCBB" : "CBB";
-
-  const { data, loading, error } = useCBBPlayerStats(playerId, league);
-
-  const isDark = useColorScheme() === "dark";
+export default function SeasonStatCard({ seasonStats, isDark }: Props) {
   const styles = seasonStatCardStyles(isDark);
 
-  /* ------------------------------
-     LOADING / ERROR
-  ------------------------------ */
-  if (loading) return <SeasonStatCardSkeleton />;
-  if (error || !data)
-    return <Text style={styles.errorText}>Failed to load stats</Text>;
+const selectedSeason =
+  seasonStats && seasonStats.length > 0
+    ? [...seasonStats].sort((a, b) => b.season - a.season)[0]
+    : null;
 
-  /* ------------------------------
-     SEASON SELECTION
-  ------------------------------ */
+  const displayYear = selectedSeason?.season
+  ? `${selectedSeason.season - 1}-${String(selectedSeason.season).slice(-2)}`
+  : "N/A";
 
-  // remove Career row
-  const seasons = data.seasonTotals.filter(
-    (s) => !s.season.toLowerCase().includes("career")
-  );
-
-  if (!seasons.length) {
-    return (
-      <>
-        <CenteredHeader>Season</CenteredHeader>
-        <Text style={styles.errorText}>No stats available</Text>
-      </>
-    );
-  }
-
-  const selectedSeason =
-    (season &&
-      seasons.find((s) => s.season === season || s.season.includes(season))) ||
-    seasons[0]; // most recent season
-
-  const displayYear = selectedSeason.season;
-
-  /* ------------------------------
-     DERIVED PER-GAME STATS
-  ------------------------------ */
-
-  const gp = selectedSeason.gp ?? 0;
-
-  const ppg = gp ? safeFixed((selectedSeason.pts ?? 0) / gp) : "0.0";
-  const apg = gp ? safeFixed((selectedSeason.ast ?? 0) / gp) : "0.0";
-  const rpg = gp ? safeFixed((selectedSeason.reb ?? 0) / gp) : "0.0";
-  const fg = safeFixed(selectedSeason.fgPct);
+  const ppg = safeFixed(Number(selectedSeason?.averages?.avgPoints ?? 0));
+  const rpg = safeFixed(Number(selectedSeason?.averages?.avgRebounds ?? 0));
+  const apg = safeFixed(Number(selectedSeason?.averages?.avgAssists ?? 0));
+  const fg = safeFixed(Number(selectedSeason?.averages?.fieldGoalPct ?? 0));
 
   const statColor = isDark ? Colors.white : Colors.black;
 
@@ -79,18 +40,14 @@ export default function SeasonStatCard({ playerId, season }: Props) {
     );
   }
 
-  /* ------------------------------
-     UI
-  ------------------------------ */
   return (
     <>
       <CenteredHeader>{displayYear} Season</CenteredHeader>
-
       <View style={styles.card}>
         <View style={styles.statsRow}>
           <StatItem label="PTS" value={ppg} />
-          <StatItem label="AST" value={apg} />
           <StatItem label="REB" value={rpg} />
+          <StatItem label="AST" value={apg} />
           <StatItem label="FG%" value={fg} />
         </View>
       </View>

@@ -1,3 +1,4 @@
+import { Fonts } from "constants/Styles";
 import { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
@@ -6,11 +7,10 @@ import {
   GestureResponderEvent,
   Pressable,
   Text,
+  TextStyle,
   useColorScheme,
   ViewStyle,
-  TextStyle,
 } from "react-native";
-import { Fonts } from "constants/fonts";
 
 type Props = {
   isFollowing: boolean;
@@ -64,8 +64,8 @@ export default function FollowingButton({
       ? "#1d1d1d"
       : "#fff"
     : isDark
-    ? "#fff"
-    : "#1d1d1d";
+      ? "#fff"
+      : "#1d1d1d";
 
   const borderColor = isDark ? "#fff" : "#1d1d1d";
 

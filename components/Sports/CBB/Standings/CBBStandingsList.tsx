@@ -2,10 +2,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { StandingsSkeleton } from "components/Sports/NBA/Standings/StandingsSkeleton";
+import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teamsCBB";
+import { useRouter } from "expo-router";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useRef, useState } from "react";
 import {
   Animated,
@@ -13,10 +15,11 @@ import {
   Image,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
   league: "116" | "423"; // 116 = Men, 423 = Women
@@ -25,12 +28,13 @@ type Props = {
 export const CBBStandingsList = ({ league = "116" }: Props) => {
   const { rankings = [], loading, error } = useCBBRankings(league);
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
-
+  const router = useRouter();
+  const styles = standingsStyles(isDark);
+  const { isFavorite } = useFavoriteTeams();
+  const leagueKey = league === "116" ? "CBB" : "WCBB";
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownAnim = useRef(new Animated.Value(0)).current;
-
   const toggleDropdown = () => {
     if (dropdownVisible) {
       Animated.timing(dropdownAnim, {
@@ -75,7 +79,7 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
   const selectedPoll = rankings.find((r) =>
     pollMode === "ap"
       ? r.shortName === "AP Poll"
-      : r.shortName === "Coaches Poll"
+      : r.shortName === "Coaches Poll",
   );
 
   const filteredRankings = selectedPoll?.ranks ?? [];
@@ -90,24 +94,30 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
     index: number;
   }) => {
     const team = getTeamByESPNId(item.team?.id ?? "");
+    const teamId = team?.id;
     const teamLogo =
       isDark && league === "423"
         ? team?.wLogo || team?.logoLight || team?.logo
         : league === "423"
-        ? team?.wLogo || team?.logo
-        : isDark
-        ? team?.logoLight || team?.logo
-        : team?.logo;
+          ? team?.wLogo || team?.logo
+          : isDark
+            ? team?.logoLight || team?.logo
+            : team?.logo;
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
     const isDown = trendNum < 0;
+    const favorited = team ? isFavorite(leagueKey, team.id) : false;
 
     return (
       <View
         style={[
           styles.row,
-          { borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray },
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
         ]}
       >
         <View style={styles.rankContainer}>
@@ -115,8 +125,19 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
         </View>
 
         <View style={styles.teamInfo}>
-          {teamLogo && <Image source={teamLogo} style={styles.logo} />}
-          <Text style={styles.collegeTeamName}>{teamcode}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              if (!teamId) return;
+              router.push({
+                pathname: "/team/cbb/[teamId]",
+                params: { teamId },
+              });
+            }}
+            style={styles.teamInfoWrapper}
+          >
+            {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+            <Text style={styles.collegeTeamName}>{teamcode}</Text>
+          </TouchableOpacity>
 
           {trendNum !== 0 && !isNaN(trendNum) && (
             <View
@@ -131,11 +152,11 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
                 color={
                   isUp
                     ? isDark
-                      ? Colors.dark.limeGreen
+                      ? Colors.dark.leafGreen
                       : Colors.light.green // correct branch
                     : isDark
-                    ? Colors.dark.lightRed
-                    : Colors.light.red
+                      ? Colors.dark.lightRed
+                      : Colors.light.red
                 }
                 style={{ marginRight: 2 }}
               />
@@ -146,11 +167,11 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
                   {
                     color: isUp
                       ? isDark
-                        ? Colors.dark.limeGreen
+                        ? Colors.dark.leafGreen
                         : Colors.light.green // correct branch
                       : isDark
-                      ? Colors.dark.lightRed
-                      : Colors.light.red,
+                        ? Colors.dark.lightRed
+                        : Colors.light.red,
                   },
                 ]}
               >
@@ -163,24 +184,37 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
     );
   };
 
-  const renderRightItem = ({ item }: { item: CBBTeamRank }) => (
-    <View style={styles.row}>
-      <View style={styles.statCell}>
-        <Text style={styles.statText}>{item.recordSummary || "N/A"}</Text>
+  const renderRightItem = ({ item }: { item: CBBTeamRank }) => {
+    const team = getTeamByESPNId(item.team?.id ?? "");
+    const favorited = team ? isFavorite(leagueKey, team.id) : false;
+    return (
+      <View
+        style={[
+          styles.row,
+          favorited && {
+            backgroundColor: isDark
+              ? Colors.dark.itemBackground
+              : Colors.light.itemBackground,
+          },
+        ]}
+      >
+        <View style={styles.statCell}>
+          <Text style={styles.statText}>{item.recordSummary || "N/A"}</Text>
+        </View>
+        <View style={styles.statCell}>
+          <Text style={styles.statText}>{item.points ?? 0}</Text>
+        </View>
+        <View style={styles.statCell}>
+          <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
+        </View>
+        <View style={styles.statCell}>
+          <Text style={styles.statText}>
+            {item.team?.groups?.shortName || "N/A"}
+          </Text>
+        </View>
       </View>
-      <View style={styles.statCell}>
-        <Text style={styles.statText}>{item.points ?? 0}</Text>
-      </View>
-      <View style={styles.statCell}>
-        <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
-      </View>
-      <View style={styles.statCell}>
-        <Text style={styles.statText}>
-          {item.team?.groups?.shortName || "N/A"}
-        </Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   const renderHeader = () => (
     <View

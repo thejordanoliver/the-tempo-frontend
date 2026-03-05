@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Animated, FlatList } from "react-native";
 import type { LeagueTeam, LeagueType } from "types/types";
-import FavoriteTeamsSelectorSkeleton from "./FavoriteTeamsSelectorSkeleton";
+import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
 
 type Props = {
@@ -47,7 +47,7 @@ const FavoriteTeamsSelector = ({
         <TeamCard
           item={displayItem}
           isSelected={favorites.includes(
-            `${item.league}:${item.id.toString()}`
+            `${item.league}:${item.id.toString()}`,
           )}
           onPress={() => toggleFavorite(item.league, item.id.toString())}
           isGridView={isGridView}
@@ -55,7 +55,7 @@ const FavoriteTeamsSelector = ({
         />
       );
     },
-    [favorites, isGridView, itemWidth, toggleFavorite]
+    [favorites, isGridView, itemWidth, toggleFavorite],
   );
 
   if (loading) {

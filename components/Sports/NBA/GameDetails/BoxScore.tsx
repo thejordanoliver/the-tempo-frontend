@@ -2,6 +2,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { teamsById } from "constants/teams";
 import { router } from "expo-router";
 import { useGameLeaders } from "hooks/useGameLeaders";
+import usePlayersByTeam, { Player } from "hooks/usePlayersByTeam";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -43,11 +44,16 @@ export default function BoxScore({
   awayTeamId,
   lighter = false,
 }: Props) {
-  const { data, isLoading, isError } = useGameLeaders(
+  // Fetch game leaders/stats
+  const { data: leadersData, isLoading, isError } = useGameLeaders(
     gameId,
     homeTeamId,
     awayTeamId
   );
+
+  // Fetch full team rosters
+  const { players: homeTeamPlayers } = usePlayersByTeam(String(homeTeamId));
+  const { players: awayTeamPlayers } = usePlayersByTeam(String(awayTeamId));
 
   const isDark = useColorScheme() === "dark";
   const styles = boxScoreStyles(isDark, lighter);
@@ -63,47 +69,34 @@ export default function BoxScore({
   const homeCode = homeTeam?.code ?? "home";
   const awayCode = awayTeam?.code ?? "away";
 
-  /** Generate placeholder players if no stats exist */
-  const getPlayersForTeam = (teamType: "home" | "away") => {
-    const targetTeamId = teamType === "home" ? homeTeamId : awayTeamId;
+  /** Map leadersData for quick lookup by player_id */
+  const statsMap = leadersData?.reduce((acc: Record<number, any>, player) => {
+    if (player.localPlayer?.player_id) {
+      acc[player.localPlayer.player_id] = player;
+    }
+    return acc;
+  }, {}) ?? {};
 
-    const teamPlayers = data?.filter(
-      (p) => Number(p.team?.id) === Number(targetTeamId)
-    );
+  /** Sort players by minutes played */
+  const sortPlayersByMinutes = (players: Player[]) => {
+    return [...players].sort((a, b) => {
+      const aStats = statsMap[a.player_id] ?? {};
+      const bStats = statsMap[b.player_id] ?? {};
 
-    if (teamPlayers && teamPlayers.length > 0) return teamPlayers;
+      const aMin = typeof aStats.min === "string" && aStats.min.includes(":")
+        ? parseInt(aStats.min.split(":")[0], 10) + parseInt(aStats.min.split(":")[1], 10) / 60
+        : Number(aStats.min ?? 0);
 
-    // fallback placeholders
-    return Array.from({ length: 12 }).map((_, i) => ({
-      localPlayer: {
-        first_name: "Player",
-        last_name: `${i + 1}`,
-        player_id: i + 1,
-      },
-      teamType,
-      min: 0,
-      points: 0,
-      fgm: 0,
-      fga: 0,
-      tpm: 0,
-      tpa: 0,
-      ftm: 0,
-      fta: 0,
-      offReb: 0,
-      defReb: 0,
-      totReb: 0,
-      assists: 0,
-      steals: 0,
-      blocks: 0,
-      turnovers: 0,
-      pFouls: 0,
-      plusMinus: 0,
-      team: { id: targetTeamId },
-    }));
+      const bMin = typeof bStats.min === "string" && bStats.min.includes(":")
+        ? parseInt(bStats.min.split(":")[0], 10) + parseInt(bStats.min.split(":")[1], 10) / 60
+        : Number(bStats.min ?? 0);
+
+      return bMin - aMin; // Descending order
+    }).slice(0, 15); // Limit to 15 players
   };
 
-  const homePlayers = getPlayersForTeam("home");
-  const awayPlayers = getPlayersForTeam("away");
+  const homePlayersSorted = sortPlayersByMinutes(homeTeamPlayers);
+  const awayPlayersSorted = sortPlayersByMinutes(awayTeamPlayers);
 
   /** Initialize animation values */
   [homeCode, awayCode].forEach((code) => {
@@ -116,7 +109,7 @@ export default function BoxScore({
   useEffect(() => {
     [homeCode, awayCode].forEach((code) => {
       const isExpanded = expandedTeams[code] ?? false;
-      const players = code === homeCode ? homePlayers : awayPlayers;
+      const players = code === homeCode ? homePlayersSorted : awayPlayersSorted;
 
       Animated.timing(heightAnimMap.current[code], {
         toValue: isExpanded
@@ -126,10 +119,10 @@ export default function BoxScore({
         useNativeDriver: false,
       }).start();
     });
-  }, [expandedTeams, homePlayers.length, awayPlayers.length]);
+  }, [expandedTeams, homePlayersSorted.length, awayPlayersSorted.length]);
 
   const formatMin = (min: string | number) => {
-    if (!min) return "0.0";
+    if (!min) return "DNP";
     if (typeof min === "string" && min.includes(":")) {
       const [m, s] = min.split(":").map(Number);
       return (m + s / 60).toFixed(1);
@@ -177,10 +170,9 @@ export default function BoxScore({
 
   /** Render team box */
   const renderTeamBox = (
-    players: any[],
+    players: Player[],
     teamName: string,
     teamLogo: any,
-
     teamCode: string,
     isExpanded: boolean,
     heightAnim: Animated.Value
@@ -190,7 +182,6 @@ export default function BoxScore({
         {/* Team Header */}
         <View style={styles.teamHeader}>
           <Text style={styles.teamLabel}>{teamName}</Text>
-
           {!!teamLogo && (
             <Image
               source={teamLogo}
@@ -212,23 +203,17 @@ export default function BoxScore({
               style={{ maxHeight: heightAnim, overflow: "hidden" }}
             >
               {players.map((p, index) => {
-                const id =
-                  p.localPlayer?.player_id ??
-                  p.localPlayer?.id ??
-                  `idx-${index}`;
-
+                const id = p.player_id ?? `idx-${index}`;
                 return (
                   <View key={`${teamCode}-${id}`} style={styles.tableRow}>
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
-                        router.push(
-                          `/player/${p.localPlayer?.player_id}?teamId=${p.team?.id}`
-                        )
+                        router.push(`/player/${p.player_id}?teamId=${p.team_id}`)
                       }
                     >
                       <Text style={styles.cellName}>
-                        {p.localPlayer?.first_name} {p.localPlayer?.last_name}
+                        {p.first_name} {p.last_name}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -257,32 +242,37 @@ export default function BoxScore({
                 style={{ maxHeight: heightAnim, overflow: "hidden" }}
               >
                 {players.map((p, index) => {
-                  const id =
-                    p.localPlayer?.player_id ??
-                    p.localPlayer?.id ??
-                    `idx-${index}`;
+                  const id = p.player_id ?? `idx-${index}`;
+                  const stats = statsMap[p.player_id] ?? {};
+
+                  const fgm = stats.fgm ?? 0;
+                  const fga = stats.fga ?? 0;
+                  const tpm = stats.tpm ?? 0;
+                  const tpa = stats.tpa ?? 0;
+                  const ftm = stats.ftm ?? 0;
+                  const fta = stats.fta ?? 0;
 
                   const cols = [
-                    formatMin(p.min ?? 0),
-                    p.points ?? 0,
-                    p.fgm ?? 0,
-                    p.fga ?? 0,
-                    percent(p.fgm ?? 0, p.fga ?? 0),
-                    p.tpm ?? 0,
-                    p.tpa ?? 0,
-                    percent(p.tpm ?? 0, p.tpa ?? 0),
-                    p.ftm ?? 0,
-                    p.fta ?? 0,
-                    percent(p.ftm ?? 0, p.fta ?? 0),
-                    p.offReb ?? 0,
-                    p.defReb ?? 0,
-                    p.totReb ?? 0,
-                    p.assists ?? 0,
-                    p.steals ?? 0,
-                    p.blocks ?? 0,
-                    p.turnovers ?? 0,
-                    p.pFouls ?? 0,
-                    p.plusMinus ?? 0,
+                    formatMin(stats.min ?? 0),
+                    stats.points ?? 0,
+                    fgm,
+                    fga,
+                    percent(fgm, fga),
+                    tpm,
+                    tpa,
+                    percent(tpm, tpa),
+                    ftm,
+                    fta,
+                    percent(ftm, fta),
+                    stats.offReb ?? 0,
+                    stats.defReb ?? 0,
+                    stats.totReb ?? 0,
+                    stats.assists ?? 0,
+                    stats.steals ?? 0,
+                    stats.blocks ?? 0,
+                    stats.turnovers ?? 0,
+                    stats.pFouls ?? 0,
+                    stats.plusMinus ?? 0,
                   ];
 
                   return (
@@ -317,6 +307,7 @@ export default function BoxScore({
       </View>
     );
   };
+
   // ⏳ Loading state — render skeleton only
   if (isLoading) {
     return (
@@ -342,7 +333,7 @@ export default function BoxScore({
 
       <View style={{ marginBottom: 24 }}>
         {renderTeamBox(
-          awayPlayers,
+          awayPlayersSorted,
           awayTeam?.fullName ?? "Away Team",
           getTeamLogo(awayTeam),
           awayCode,
@@ -352,7 +343,7 @@ export default function BoxScore({
       </View>
 
       {renderTeamBox(
-        homePlayers,
+        homePlayersSorted,
         homeTeam?.fullName ?? "Home Team",
         getTeamLogo(homeTeam),
         homeCode,

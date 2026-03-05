@@ -29,6 +29,7 @@ export default function GamePreviewContent({
   resolvedVenueCapacity,
   weather,
   isDark,
+  gameStatusDescription,
 }: any) {
   return (
     <BottomSheetScrollView
@@ -70,7 +71,11 @@ export default function GamePreviewContent({
 
           <View style={{ marginBottom: 20 }}>
             {gameStats.length > 0 && (
-              <GameTeamStats stats={gameStats} lighter />
+              <GameTeamStats
+                stats={gameStats}
+                lighter={true}
+                gameStatusDescription={gameStatusDescription}
+              />
             )}
           </View>
         </>
@@ -81,21 +86,19 @@ export default function GamePreviewContent({
         awayLastGames?.games?.length > 0) && (
         <View style={{ marginBottom: 20 }}>
           <LastFiveGamesSwitcher
-            isDark={isDark}
-            lighter
             home={{
-              teamCode: home?.code,
-              teamLogo: home?.logo,
-              teamLogoLight: home?.logoLight,
-              games: homeLastGames?.games,
+              teamId: home.id,
+              teamCode: home.code,
+              games: homeLastGames.games,
             }}
             away={{
-              teamCode: away?.code,
-              teamLogo: away?.logo,
-              teamLogoLight: away?.logoLight,
-              games: awayLastGames?.games,
+              teamId: away.id,
+              teamCode: away.code,
+              games: awayLastGames.games,
             }}
             league="NBA"
+            isDark={isDark}
+            lighter
           />
         </View>
       )}

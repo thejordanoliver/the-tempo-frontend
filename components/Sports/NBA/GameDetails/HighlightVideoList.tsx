@@ -1,6 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useRef, useState } from "react";
@@ -40,6 +39,9 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   highlights,
   lighter,
 }) => {
+  if (!highlights || highlights.length === 0) {
+    return null;
+  }
   const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
@@ -64,7 +66,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       setHasPlayed((prev) => ({ ...prev, [id]: true }));
       setIsLoaded((prev) => ({ ...prev, [id]: false }));
     },
-    [playingId]
+    [playingId],
   );
 
   const handlePlaybackStatusUpdate = useCallback(
@@ -91,7 +93,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
         setHeadlineVisible((prev) => ({ ...prev, [id]: false }));
       }
     },
-    []
+    [],
   );
 
   React.useEffect(() => {
@@ -116,7 +118,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       if (viewableItems.length > 0) {
         currentIndexRef.current = viewableItems[0].index ?? 0;
       }
-    }
+    },
   ).current;
 
   const viewabilityConfig = useRef({
@@ -130,9 +132,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       if (!videoSource) {
         return (
           <View style={[styles.cardWrapper, { justifyContent: "center" }]}>
-            <Text style={{ color: Colors.white, padding: 10 }}>
-              Video unavailable
-            </Text>
+            <Text style={styles.unavailable}>Video unavailable</Text>
           </View>
         );
       }
@@ -207,31 +207,27 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       handlePlaybackStatusUpdate,
       headlineVisible,
       hasPlayed,
-    ]
+    ],
   );
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}> Highlights</HeadingTwo>
+      <HeadingTwo lighter={lighter}>Highlights</HeadingTwo>
       <View style={styles.wrapper}>
-        {!highlights || highlights.length === 0 ? (
-          <Text style={styles.empty}>No highlights available.</Text>
-        ) : (
-          <FlatList
-            ref={listRef}
-            data={highlights}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={width * 0.8 + 15}
-            decelerationRate="fast"
-            contentContainerStyle={styles.listContainer}
-            extraData={[playingId, paused]}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-          />
-        )}
+        <FlatList
+          ref={listRef}
+          data={highlights}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={width * 0.8 + 15}
+          decelerationRate="fast"
+          contentContainerStyle={styles.listContainer}
+          extraData={[playingId, paused]}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+        />
       </View>
     </View>
   );
@@ -242,7 +238,7 @@ const highlightStyles = (isDark: boolean) =>
     listContainer: {
       paddingLeft: 12,
     },
-
+    unavailable: { color: Colors.white, padding: 10 },
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,

@@ -3,15 +3,15 @@ export interface MLBTeam {
   espnID: number;
   name: string;
   fullName: string;
-  code: string;
+  code: string | undefined;
   color: string;
   secondaryColor: string;
   logo: any;
   logoLight?: any;
-  firstSeason?: number;
+  established?: number;
   latitude?: number;
   longitude?: number;
-  venue?: string;
+  venueName?: string;
   venueCapacity?: string;
   address?: string;
   city?: string;
@@ -19,28 +19,46 @@ export interface MLBTeam {
   isAllStar: boolean
 }
 
+
+
 export interface MLBScoreSide {
+  total: number;
   hits: number;
   errors: number;
   innings: Record<string, number | null>;
-  total: number;
 }
 
 export interface MLBGame {
   id: number;
-  league: any;
-  country: any;
-  date: {
-    utc: string | null;
-    time: string | null;
-    timestamp: number | null;
-    timezone: string | null;
+
+  league: {
+    id: number;
+    name: string;
+    type: string;
+    season: number;
+    logo: string;
   };
+
+  country: {
+    id: number;
+    name: string;
+    code: string;
+    flag: string;
+  };
+
+  date: string;        // ISO string
+  timestamp: number;   // Unix timestamp (seconds)
 
   status: {
     long: string;
     short: string;
     clock: string | null;
+  };
+
+  venue?: {
+    id?: number;
+    name?: string;
+    city?: string;
   };
 
   teams: {
@@ -53,7 +71,6 @@ export interface MLBGame {
     away: MLBScoreSide;
   };
 }
-
 export interface MLBPlayer {
   id: string;
   name: string;
@@ -69,3 +86,4 @@ export interface MLBPlayer {
   teamId: string;
   imageUrl: string;
 }
+

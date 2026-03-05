@@ -1,17 +1,18 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { gameTeamStatsStyles } from "components/Sports/NBA/GameDetails/GameTeamStats";
 import { Colors } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teamsCBB";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Image,
-  Pressable,
   ScrollView,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
+import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
+import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -83,21 +84,7 @@ const STAT_KEYS = [
     label: "Total Turnovers",
     type: "text",
   },
-  {
-    key: "technicalFouls",
-    label: "Technical Fouls",
-    type: "text",
-  },
-  {
-    key: "totalTechnicalFouls",
-    label: "Total Technical Fouls",
-    type: "text",
-  },
-  {
-    key: "flagrantFouls",
-    label: "Flagrant Fouls",
-    type: "text",
-  },
+
   {
     key: "turnoverPoints",
     label: "Points Off Turnovers",
@@ -160,6 +147,21 @@ const STAT_KEYS = [
     type: "percent",
   },
   {
+    key: "technicalFouls",
+    label: "Technical Fouls",
+    type: "text",
+  },
+  {
+    key: "totalTechnicalFouls",
+    label: "Total Technical Fouls",
+    type: "text",
+  },
+  {
+    key: "flagrantFouls",
+    label: "Flagrant Fouls",
+    type: "text",
+  },
+  {
     key: "avgRebounds",
     label: "Rebounds Per Game",
     type: "text",
@@ -195,14 +197,17 @@ export default function GameTeamStats({
   stats,
   gameStatusDescription,
   lighter = false,
+  league = "CBB",
 }: {
   gameStatusDescription: string;
   stats: any[];
   lighter?: boolean;
+  league: string;
 }) {
   const isDark = useColorScheme() === "dark";
   const styles = gameTeamStatsStyles(isDark, lighter);
 
+  const isWomen = "WCBB";
   const isScheduled = gameStatusDescription === "Scheduled";
 
   if (!Array.isArray(stats) || stats.length < 2) return null;
@@ -224,7 +229,7 @@ export default function GameTeamStats({
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
+    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
 
   useEffect(() => {
@@ -252,6 +257,42 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
+  const awayLogo =
+    lighter && isWomen
+      ? awayTeam?.wLogo || awayTeam?.logoLight || awayTeam?.logo
+      : lighter
+        ? awayTeam?.logoLight || awayTeam?.logo
+        : isDark && isWomen
+          ? awayTeam?.wLogo || awayTeam?.logoLight || awayTeam?.logo
+          : isWomen
+            ? awayTeam?.wLogo || awayTeam?.logo
+            : isDark
+              ? awayTeam?.logoLight || awayTeam?.logo
+              : awayTeam?.logo;
+
+  const homeLogo =
+    lighter && isWomen
+      ? homeTeam?.wLogo || homeTeam?.logoLight || homeTeam?.logo
+      : lighter
+        ? homeTeam?.logoLight || homeTeam?.logo
+        : isDark && isWomen
+          ? homeTeam?.wLogo || homeTeam?.logoLight || homeTeam?.logo
+          : isWomen
+            ? homeTeam?.wLogo || homeTeam?.logo
+            : isDark
+              ? homeTeam?.logoLight || homeTeam?.logo
+              : homeTeam?.logo;
+
+  const awayColor = lighter
+    ? awayTeam?.secondaryColor
+    : ((isDark ? awayTeam?.secondaryColor : awayTeam?.color) ??
+      (isDark ? Colors.white : Colors.black));
+
+  const homeColor = lighter
+    ? homeTeam?.secondaryColor
+    : ((isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
+      (isDark ? Colors.white : Colors.black));
+
   return (
     <View>
       <HeadingTwo lighter={lighter}>
@@ -259,30 +300,12 @@ export default function GameTeamStats({
       </HeadingTwo>
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
-          <Image
-            source={
-              lighter
-                ? awayTeam?.logoLight || awayTeam?.logo
-                : isDark
-                ? awayTeam?.logoLight || awayTeam?.logo
-                : awayTeam?.logo
-            }
-            style={styles.logo}
-          />
+          <Image source={awayLogo} style={styles.logo} />
           <Text style={styles.teamLabel}>{awayTeam?.code}</Text>
         </View>
 
         <View style={styles.teamContainer}>
-          <Image
-            source={
-              lighter
-                ? homeTeam?.logoLight || homeTeam?.logo
-                : isDark
-                ? homeTeam?.logoLight || homeTeam?.logo
-                : homeTeam?.logo
-            }
-            style={styles.logo}
-          />
+          <Image source={homeLogo} style={styles.logo} />
           <Text style={styles.teamLabel}>{homeTeam?.code}</Text>
         </View>
       </View>
@@ -321,11 +344,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(awayNum / max) * 100}%`,
-                          backgroundColor: lighter
-                            ? Colors.white
-                            : isDark
-                            ? Colors.white
-                            : Colors.black,
+                          backgroundColor: awayColor,
                         },
                       ]}
                     />
@@ -336,11 +355,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(homeNum / max) * 100}%`,
-                          backgroundColor:  lighter
-                            ? Colors.white
-                            : isDark
-                            ? Colors.white
-                            : Colors.black,
+                          backgroundColor: homeColor,
                         },
                       ]}
                     />
@@ -386,7 +401,6 @@ export default function GameTeamStats({
 
             return (
               <View key={key} style={styles.statSection}>
-                {index !== 0 && <View style={styles.dividerLine} />}
                 <Text style={styles.statLabel}>{label}</Text>
                 <View style={styles.row}>
                   <Text
@@ -403,15 +417,49 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(awayNum / max) * 100}%`,
-                          backgroundColor:  lighter
-                            ? Colors.white
-                            : isDark
-                            ? Colors.white
-                            : Colors.black,
                           opacity: isTie ? 1 : awayWins ? 1 : 0.4,
+                          borderRadius: 6, // 👈 make sure this exists
+                          overflow: "hidden",
                         },
                       ]}
-                    />
+                    >
+                      <Svg width="100%" height="100%">
+                        <Defs>
+                          <Pattern
+                            id="diagonalHatch"
+                            patternUnits="userSpaceOnUse"
+                            width="6"
+                            height="6"
+                          >
+                            <Path
+                              d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
+                              stroke={awayColor}
+                              strokeWidth={2}
+                            />
+                          </Pattern>
+                        </Defs>
+
+                        {/* Base color fill (optional but recommended) */}
+                        <Rect
+                          width="100%"
+                          height="100%"
+                          fill={
+                            lighter
+                              ? Colors.black
+                              : isDark
+                                ? Colors.black
+                                : Colors.white
+                          }
+                        />
+
+                        {/* Hatch overlay */}
+                        <Rect
+                          width="100%"
+                          height="100%"
+                          fill="url(#diagonalHatch)"
+                        />
+                      </Svg>
+                    </View>
                   </View>
                   <View style={styles.barContainerRight}>
                     <View
@@ -419,11 +467,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(homeNum / max) * 100}%`,
-                          backgroundColor:  lighter
-                            ? Colors.white
-                            : isDark
-                            ? Colors.white
-                            : Colors.black,
+                          backgroundColor: homeColor,
                           opacity: isTie ? 1 : homeWins ? 1 : 0.4,
                         },
                       ]}
@@ -443,20 +487,16 @@ export default function GameTeamStats({
           })}
         </Animated.View>
 
-        <Pressable
-          onPress={() => setExpanded((prev) => !prev)}
-          style={{
-            paddingVertical: 12,
-            justifyContent: "center",
-            alignItems: "center",
-            borderColor: Colors.midTone,
-            borderTopWidth: 1,
-          }}
-        >
-          <Text style={styles.showMoreLess}>
-            {expanded ? "Show Less" : "Show More"}
-          </Text>
-        </Pressable>
+        <View style={styles.showMoreLessContainer}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => setExpanded((prev) => !prev)}
+          >
+            <Text style={styles.showMoreLess}>
+              {expanded ? "Show Less" : "Show More"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );

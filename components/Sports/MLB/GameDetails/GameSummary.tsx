@@ -1,7 +1,6 @@
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
-import { getMLBTeamByEspn, getTeamLogo } from "constants/teamsMLB";
+import { Colors, Fonts } from "constants/Styles";
+import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 
 import { useMemo, useState } from "react";
 import {
@@ -49,14 +48,9 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
-  lighter?: boolean;
 };
 
-export default function GameSummary({
-  plays = [],
-  loading = false,
-  lighter = false,
-}: Props) {
+export default function GameSummary({ plays = [], loading = false }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
@@ -89,43 +83,43 @@ export default function GameSummary({
   /**
    * Filtering logic (now работает 100%)
    */
-const filteredPlays = useMemo(() => {
-  return normalizedPlays
-    // ✅ must have inning
-    .filter((p) => p.inning && p.inning.number)
+  const filteredPlays = useMemo(() => {
+    return (
+      normalizedPlays
+        // ✅ must have inning
+        .filter((p) => p.inning && p.inning.number)
 
-    // ✅ must have meaningful text
-    .filter(
-      (p) => typeof p.text === "string" && p.text.trim().length > 0
-    )
+        // ✅ must have meaningful text
+        .filter((p) => typeof p.text === "string" && p.text.trim().length > 0)
 
-    // ✅ inning tab logic
-    .filter((p) => {
-      if (selectedInning === "All") return true;
-      if (selectedInning === "Extras") return p.inning!.number > 9;
+        // ✅ inning tab logic
+        .filter((p) => {
+          if (selectedInning === "All") return true;
+          if (selectedInning === "Extras") return p.inning!.number > 9;
 
-      return String(p.inning!.number) === selectedInning;
-    })
+          return String(p.inning!.number) === selectedInning;
+        })
 
-    // ✅ sort by inning + half
-    .sort((a, b) => {
-      const innA = a.inning?.number ?? 0;
-      const innB = b.inning?.number ?? 0;
+        // ✅ sort by inning + half
+        .sort((a, b) => {
+          const innA = a.inning?.number ?? 0;
+          const innB = b.inning?.number ?? 0;
 
-      if (innA !== innB) return innA - innB;
+          if (innA !== innB) return innA - innB;
 
-      const halfA = a.inning?.half === "Top" ? 0 : 1;
-      const halfB = b.inning?.half === "Top" ? 0 : 1;
+          const halfA = a.inning?.half === "Top" ? 0 : 1;
+          const halfB = b.inning?.half === "Top" ? 0 : 1;
 
-      return halfA - halfB;
-    });
-}, [normalizedPlays, selectedInning]);
+          return halfA - halfB;
+        })
+    );
+  }, [normalizedPlays, selectedInning]);
 
   if (!loading && plays?.length === 0) return null;
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Game Summary</HeadingTwo>
+      <HeadingTwo>Game Summary</HeadingTwo>
       <View style={styles.wrapper}>
         <TabBar
           tabs={inningTabs}
@@ -140,11 +134,11 @@ const filteredPlays = useMemo(() => {
         >
           {filteredPlays.map((play, index) => {
             const playTeamId = play.team?.id;
-            const teamObj = getMLBTeamByEspn(playTeamId ?? 0);
+            const teamObj = getMLBTeamByEspnId(playTeamId ?? 0);
 
             let teamLogo: any = null;
             if (teamObj?.id) {
-              teamLogo = getTeamLogo(teamObj.id, isDark);
+              teamLogo = getMLBTeamLogo(teamObj.id, isDark);
             }
 
             const formatHalf = (half: "Top" | "Bottom" | undefined) => {
@@ -153,7 +147,7 @@ const filteredPlays = useMemo(() => {
             };
 
             const normalizeHalf = (
-              value?: string
+              value?: string,
             ): "Top" | "Bottom" | undefined => {
               if (!value) return undefined;
               const v = value.toLowerCase();

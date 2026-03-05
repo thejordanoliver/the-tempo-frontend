@@ -3,7 +3,7 @@ import { Colors } from "constants/Styles";
 import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -25,8 +25,7 @@ function CBBGameCard({
   game: CBBGame;
   isWomen?: boolean; // 👈 NEW
 }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
@@ -51,8 +50,8 @@ function CBBGameCard({
   const gameDate = game?.timestamp
     ? new Date(game.timestamp * 1000)
     : game?.date
-    ? new Date(game.date)
-    : null;
+      ? new Date(game.date)
+      : null;
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
@@ -62,7 +61,7 @@ function CBBGameCard({
     detailsLeague,
     String(homeEspnId),
     String(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Game status ---
@@ -76,8 +75,8 @@ function CBBGameCard({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
-  const period = liveScore?.period ?? game?.status?.long ?? "";
-  const displayClock = liveScore?.displayClock ?? game?.status?.timer ?? "0:00";
+  const period = liveScore?.period ?? game.status.long ?? "";
+  const displayClock = liveScore?.displayClock ?? game.status.timer ?? "0:00";
   const inProgress = gameStatusDescription === "In Progress";
 
   // --- Team Rankings ---
@@ -241,14 +240,7 @@ function CBBGameCard({
 
       {/* Notification Bell */}
       <Pressable
-        onPress={() => {
-          if (!canNavigate) return;
-
-          router.push({
-            pathname: "/game/cbb/[game]",
-            params: { game: JSON.stringify(game) },
-          });
-        }}
+        onPress={() => setNotifEnabled((prev) => !prev)}
         style={({ pressed }) => [
           styles.notificationBell,
           pressed && { opacity: 0.6 },

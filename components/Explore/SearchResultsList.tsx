@@ -41,6 +41,7 @@ export default function SearchResultsList({
   function getTeamLeagueKey(item: any) {
     if (item.isNFL) return "nfl";
     if (item.isMLB) return "mlb";
+    if (item.isNHL) return "nhl";
     if (item.isCFB) return "cfb";
     if (item.isCBB) return "cbb";
     if (item.isWCBB) return "wcbb";
@@ -49,7 +50,6 @@ export default function SearchResultsList({
   }
 
   const visibleData = showAll ? data : data.slice(0, 5);
-  const remainingCount = data.length - visibleData.length;
 
   const SeeAllRow = () => (
     <TouchableOpacity

@@ -2,7 +2,7 @@ import axios from "axios";
 import rateLimit from "axios-rate-limit";
 import { useEffect, useState } from "react";
 import { teams } from "../constants/teams";
-import { GameWithStatusText } from "./useTeamGames"; // import the type
+import { GameWithStatusText } from "./NBAHooks/useTeamGames"; // import the type
 
 const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_APISPORTS_KEY || "";
 const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_RAPIDAPI_HOST || "";
@@ -40,17 +40,17 @@ export function useMultipleTeamGames(teamIds: string[]) {
                   "X-RapidAPI-Key": RAPIDAPI_KEY,
                   "X-RapidAPI-Host": RAPIDAPI_HOST,
                 },
-              }
+              },
             );
 
             const rawGames = res.data.response || [];
 
             const normalizedGames = (game: any): GameWithStatusText => {
               const homeLocal = teams.find(
-                (t) => String(t.id) === String(game.teams.home.id)
+                (t) => String(t.id) === String(game.teams.home.id),
               );
               const awayLocal = teams.find(
-                (t) => String(t.id) === String(game.teams.visitors.id)
+                (t) => String(t.id) === String(game.teams.visitors.id),
               );
               const gameDate = new Date(game.date.start);
               const statusText = mapStatus(game.status);
@@ -102,7 +102,7 @@ export function useMultipleTeamGames(teamIds: string[]) {
 
             // ✅ Map raw games to array
             combined[teamId] = rawGames.map(normalizedGames);
-          })
+          }),
         );
 
         setAllGames(combined);

@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
 import { teams as cfbTeams } from "constants/teamsCFB";
@@ -38,10 +37,10 @@ export const OddsCard: React.FC<Props> = ({
     league === "cbb"
       ? cbbTeams
       : league === "nfl"
-      ? nflTeams
-      : league === "cfb"
-      ? cfbTeams
-      : nbaTeams;
+        ? nflTeams
+        : league === "cfb"
+          ? cfbTeams
+          : nbaTeams;
 
   /* -------------------- Bookmaker -------------------- */
   const bookmaker = game.bookmakers?.[0];
@@ -50,11 +49,11 @@ export const OddsCard: React.FC<Props> = ({
   const normalize = (str?: string) => str?.toLowerCase().replace(/[^a-z]/g, "");
 
   const homeTeam = teamsSource.find(
-    (t) => normalize(t.fullName) === normalize(game.home_team)
+    (t) => normalize(t.fullName) === normalize(game.home_team),
   );
 
   const awayTeam = teamsSource.find(
-    (t) => normalize(t.fullName) === normalize(game.away_team)
+    (t) => normalize(t.fullName) === normalize(game.away_team),
   );
 
   /* -------------------- Markets -------------------- */
@@ -87,7 +86,7 @@ export const OddsCard: React.FC<Props> = ({
   const formatOutcome = (
     market: typeof h2h | typeof spreads | typeof totals,
     index: number,
-    label: string
+    label: string,
   ) => {
     const outcome = market?.outcomes?.[index];
     if (!outcome) return "-";
@@ -223,8 +222,8 @@ const oddsCardStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+          ? Colors.midTone
+          : Colors.lightGray,
 
       marginVertical: 8,
     },

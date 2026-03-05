@@ -1,7 +1,7 @@
 // components/FollowersList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/Styles";
-import { User } from "hooks/useFollowers";
+import { User } from "hooks/UserHooks/useFollowers";
 import {
   FlatList,
   Image,

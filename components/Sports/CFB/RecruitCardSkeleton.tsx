@@ -1,11 +1,6 @@
+import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  StyleSheet,
-  View,
-  useColorScheme,
-} from "react-native";
-import { Colors } from "constants/Colors";
+import { Animated, StyleSheet, View, useColorScheme } from "react-native";
 
 export default function RecruitCardSkeleton() {
   const isDark = useColorScheme() === "dark";
@@ -26,7 +21,7 @@ export default function RecruitCardSkeleton() {
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 

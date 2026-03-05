@@ -31,7 +31,7 @@ export function useNFLTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/gamesNFL/team/${teamId}`, {
+      const res = await axios.get(`${BASE_URL}/api/games/nfl/team/${teamId}`, {
         params: { league, all: fetchAll ? 1 : 0, season },
       });
 

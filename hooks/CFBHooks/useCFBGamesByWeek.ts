@@ -24,7 +24,7 @@ export const useCFBGamesByWeek = ({
       // Normalize week label for API
       let weekLabel = week.label.toLowerCase().replace(/\s+/g, "");
 
-      const response = await axios.get(`${BASE_URL}/api/gamesCFB/week`, {
+      const response = await axios.get(`${BASE_URL}/api/games/cfb/week`, {
         params: {
           season: week.start.year(),
           weekLabel,

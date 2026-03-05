@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import CropEditorModal from "components/CropEditorModal";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import AlertModal from "components/Forum/AlertModal";
 import VideoEditorModal from "components/Forum/VideoEditorModal";
 import { Colors } from "constants/Styles";
 import * as Haptics from "expo-haptics";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { MediaItem, useCreatePost } from "hooks/ForumHooks/useCreatePost";
-import { useCallback, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import {
   Animated,
   Image,
@@ -22,7 +23,6 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { createPostStyles } from "styles/CreatePostStyles";
 import PostButton from "../components/Forum/PostButton";
-
 
 export default function CreatePostScreen() {
   const { teamId, league } = useLocalSearchParams<{
@@ -43,7 +43,6 @@ export default function CreatePostScreen() {
     setMedia,
     prependPost,
   } = useCreatePost(teamId, league);
-  
 
   const [videoEditorVisible, setVideoEditorVisible] = useState(false);
   const [videoToEditIndex, setVideoToEditIndex] = useState<number | null>(null);
@@ -52,10 +51,18 @@ export default function CreatePostScreen() {
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
-
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = createPostStyles(isDark);
+  const navigation = useNavigation();
+  const router = useRouter();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle title="Create Post" onBack={() => router.back()} />
+      ),
+    });
+  }, [navigation]);
 
   // Handle tapping on media (image or video)
   const onMediaPress = useCallback((item: MediaItem, index: number) => {
@@ -85,7 +92,7 @@ export default function CreatePostScreen() {
       setImageToCrop(null);
       setCroppingIndex(null);
     },
-    [croppingIndex, media, setMedia]
+    [croppingIndex, media, setMedia],
   );
 
   // Render each media item in the DraggableFlatList
@@ -143,7 +150,7 @@ export default function CreatePostScreen() {
         </Animated.View>
       );
     },
-    [mediaAnims, onMediaPress, removeMedia, styles]
+    [mediaAnims, onMediaPress, removeMedia, styles],
   );
 
   return (

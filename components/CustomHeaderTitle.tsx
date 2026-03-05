@@ -1,11 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts } from "constants/Styles";
-import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams, conferenceObjectListMap } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
+import { getNBATeam, teams as nbaTeams } from "constants/teams";
+import {
+  teams as cbbTeams,
+  conferenceObjectListMap,
+  getCBBTeam,
+} from "constants/teamsCBB";
+import { teams as cfbTeams, getCFBTeam } from "constants/teamsCFB";
+import { getMLBTeam, teams as mlbTeams } from "constants/teamsMLB";
+import { getNFLTeam, teams as nflTeams } from "constants/teamsNFL";
+import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useRef } from "react";
 import {
@@ -47,6 +52,7 @@ type CustomHeaderTitleProps = {
   onSearchToggle?: () => void;
   onAddWidget?: () => void;
   teamCode?: string;
+  teamId?: number;
   homeTeamCode?: string;
   awayTeamCode?: string;
   homeTeamId?: string | number;
@@ -56,22 +62,22 @@ type CustomHeaderTitleProps = {
   selectedConferenceName?: string;
   isPlayerScreen?: boolean;
   showBackButton?: boolean;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "Leagues";
+  league?:
+    | "NBA"
+    | "NFL"
+    | "CFB"
+    | "CBB"
+    | "WCBB"
+    | "MLB"
+    | "NHL"
+    | "UFC"
+    | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
   isNotified?: boolean;
   onOpenInfo?: () => void;
   onToggleFavorite?: () => void;
   onToggleNotifications?: () => void;
-};
-
-const leagueTeamsMap = {
-  NBA: nbaTeams,
-  NFL: nflTeams,
-  CFB: cfbTeams,
-  CBB: cbbTeams,
-  WCBB: cbbTeams,
-  MLB: mlbTeams,
 };
 
 function resolveImage(source: any): ImageSourcePropType {
@@ -94,6 +100,7 @@ const TeamBackground = ({
   insets,
   isDark,
   selectedTeam,
+  teamId,
   logo,
   teamColor,
   isTeamScreen,
@@ -102,6 +109,7 @@ const TeamBackground = ({
   insets: { top: number };
   isDark: boolean;
   selectedTeam?: any;
+  teamId?: number;
   logo?: ImageSourcePropType;
   teamColor?: string;
   isTeamScreen: boolean;
@@ -140,12 +148,7 @@ const TeamBackground = ({
         }}
       />
       {(selectedTeam?.logo || logo) && (
-        <Image
-          source={resolveImage(
-            selectedTeam?.logoLight ?? selectedTeam?.logo ?? logo
-          )}
-          style={styles.bgImage}
-        />
+        <Image source={logo} style={styles.bgImage} />
       )}
     </View>
   );
@@ -202,7 +205,7 @@ const ConferenceBackground = ({
           source={
             selectedTeam?.logoLight
               ? selectedTeam.logoLight
-              : selectedTeam?.logo ?? logo
+              : (selectedTeam?.logo ?? logo)
           }
           style={styles.bgImage}
         />
@@ -216,7 +219,7 @@ const getLogoSource = (
   {
     preferLight = false,
     isWomen = false,
-  }: { preferLight?: boolean; isWomen?: boolean } = {}
+  }: { preferLight?: boolean; isWomen?: boolean } = {},
 ) => {
   const source =
     (isWomen && team.wLogo) || (preferLight && team.logoLight) || team.logo;
@@ -264,12 +267,12 @@ const GameHeader = ({
   const homeLetters: string[] = homeTeam.code.split("");
   const awayLetterAnims: Animated.Value[] = useMemo(
     () => awayTeam.code.split("").map(() => new Animated.Value(0)),
-    [awayTeam.code]
+    [awayTeam.code],
   );
 
   const homeLetterAnims: Animated.Value[] = useMemo(
     () => homeTeam.code.split("").map(() => new Animated.Value(0)),
-    [homeTeam.code]
+    [homeTeam.code],
   );
 
   useEffect(() => {
@@ -312,8 +315,8 @@ const GameHeader = ({
                 duration: 600,
                 easing: Easing.out(Easing.cubic),
                 useNativeDriver: true,
-              })
-            )
+              }),
+            ),
           ),
           Animated.stagger(
             100,
@@ -323,8 +326,8 @@ const GameHeader = ({
                 duration: 600,
                 easing: Easing.out(Easing.cubic),
                 useNativeDriver: true,
-              })
-            )
+              }),
+            ),
           ),
         ]),
       ]),
@@ -474,6 +477,7 @@ export function CustomHeaderTitle({
   isTeamScreen = false,
   onSearchToggle,
   onAddWidget,
+  teamId,
   teamCode,
   homeTeamCode,
   awayTeamCode,
@@ -514,10 +518,13 @@ export function CustomHeaderTitle({
   };
 
   const conferenceMap: Record<string, (typeof conferenceObjectListMap)[0]> =
-    conferenceObjectListMap.reduce((acc, conf) => {
-      acc[conf.name] = conf;
-      return acc;
-    }, {} as Record<string, (typeof conferenceObjectListMap)[0]>);
+    conferenceObjectListMap.reduce(
+      (acc, conf) => {
+        acc[conf.name] = conf;
+        return acc;
+      },
+      {} as Record<string, (typeof conferenceObjectListMap)[0]>,
+    );
 
   const selectedConference = useMemo(() => {
     if (!selectedConferenceName) return null;
@@ -546,55 +553,71 @@ export function CustomHeaderTitle({
   });
 
   const selectedTeam = useMemo(() => {
-    if (league === "NFL") return nflTeams.find((t) => t.code === teamCode);
-    if (league === "CFB") return cfbTeams.find((t) => t.code === teamCode);
-    if (league === "CBB") return cbbTeams.find((t) => t.code === teamCode);
-    if (league === "MLB") return mlbTeams.find((t) => t.code === teamCode);
-    return nbaTeams.find((t) => t.code === teamCode);
+    if (!teamCode) return null;
+
+    switch (league) {
+      case "NFL":
+        return getNFLTeam(teamId ?? 0);
+      case "CFB":
+        return getCFBTeam(teamId ?? 0);
+      case "CBB":
+        return getCBBTeam(teamId ?? 0, false);
+      case "WCBB":
+        return getCBBTeam(teamId ?? 0, true);
+      case "MLB":
+        return getMLBTeam(teamId ?? 0);
+      case "NHL":
+        return getNHLTeam(teamId ?? 0);
+      case "NBA":
+      default:
+        return getNBATeam(teamId ?? 0);
+    }
   }, [teamCode, league]);
 
-const teamsForLeague =
-  league === "NFL"
-    ? nflTeams
-    : league === "CFB"
-    ? cfbTeams
-    : league === "CBB" || league === "WCBB"
-    ? cbbTeams
-    : league === "MLB"
-    ? mlbTeams
-    : nbaTeams;
+  const teamsForLeague =
+    league === "NFL"
+      ? nflTeams
+      : league === "CFB"
+        ? cfbTeams
+        : league === "CBB" || league === "WCBB"
+          ? cbbTeams
+          : league === "MLB"
+            ? mlbTeams
+            : league === "NHL"
+              ? nhlTeams
+              : nbaTeams;
 
-const homeTeam = useMemo(() => {
-  const team =
-    league === "WCBB"
-      ? teamsForLeague.find((t: any) => t.wid === homeTeamId)
-      : teamsForLeague.find((t: any) => t.id === homeTeamId);
+  const homeTeam = useMemo(() => {
+    const team =
+      league === "WCBB"
+        ? teamsForLeague.find((t: any) => t.wid === homeTeamId)
+        : teamsForLeague.find((t: any) => t.id === homeTeamId);
 
-  return (
-    team ?? {
-      id: homeTeamId,
-      code: homeTeamCode ?? "HOM",
-      color: Colors.lightGray,
-      logo: null,
-    }
-  );
-}, [homeTeamId, homeTeamCode, league]);
+    return (
+      team ?? {
+        id: homeTeamId,
+        code: homeTeamCode ?? "HOM",
+        color: Colors.lightGray,
+        logo: null,
+      }
+    );
+  }, [homeTeamId, homeTeamCode, league]);
 
-const awayTeam = useMemo(() => {
-  const team =
-    league === "WCBB"
-      ? teamsForLeague.find((t: any) => t.wid === awayTeamId)
-      : teamsForLeague.find((t: any) => t.id === awayTeamId);
+  const awayTeam = useMemo(() => {
+    const team =
+      league === "WCBB"
+        ? teamsForLeague.find((t: any) => t.wid === awayTeamId)
+        : teamsForLeague.find((t: any) => t.id === awayTeamId);
 
-  return (
-    team ?? {
-      id: awayTeamId,
-      code: awayTeamCode ?? "AWY",
-      color: Colors.midTone,
-      logo: null,
-    }
-  );
-}, [awayTeamId, awayTeamCode, league]);
+    return (
+      team ?? {
+        id: awayTeamId,
+        code: awayTeamCode ?? "AWY",
+        color: Colors.midTone,
+        logo: null,
+      }
+    );
+  }, [awayTeamId, awayTeamCode, league]);
 
   const isWomenLeague = league === "WCBB";
 
@@ -663,8 +686,8 @@ const awayTeam = useMemo(() => {
                 tabName === "Game" || selectedConference || isTeamScreen
                   ? Colors.white
                   : isDark
-                  ? Colors.white
-                  : Colors.black
+                    ? Colors.white
+                    : Colors.black
               }
             />
           </TouchableOpacity>
@@ -716,8 +739,8 @@ const awayTeam = useMemo(() => {
                     selectedConference
                       ? Colors.white
                       : isDark
-                      ? Colors.white
-                      : Colors.black
+                        ? Colors.white
+                        : Colors.black
                   }
                 />
               </Animated.View>

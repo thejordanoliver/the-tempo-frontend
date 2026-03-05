@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import { getTeamInfo, getTeamLogo } from "constants/teamsCFB";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -49,7 +48,7 @@ export default function CFBGameTeamStats({
   const styles = gameTeamStatsStyles(isDark, lighter);
   const [expanded, setExpanded] = useState(false);
   const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT)
+    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
 
   // ✅ Safe: conditional rendering AFTER hooks
@@ -255,8 +254,8 @@ const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: lighter
         ? Colors.darkGray
         : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+          ? Colors.darkGray
+          : Colors.lightGray,
     },
     statLabel: {
       fontFamily: Fonts.OSREGULAR,

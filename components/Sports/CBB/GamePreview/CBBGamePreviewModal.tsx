@@ -7,7 +7,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
@@ -42,8 +42,8 @@ export default function CBBGamePreviewModal({
   const gameDate = game?.timestamp
     ? new Date(game.timestamp * 1000)
     : game?.date
-    ? new Date(game.date)
-    : null;
+      ? new Date(game.date)
+      : null;
 
   // Championship: April 7
   const isChampionship =
@@ -54,11 +54,11 @@ export default function CBBGamePreviewModal({
   const teamIdKey = isWomen ? "wid" : "id";
 
   const home = teams.find(
-    (t) => String((t as any)[teamIdKey]) === String(game.teams.home?.id)
+    (t) => String((t as any)[teamIdKey]) === String(game.teams.home?.id),
   );
 
   const away = teams.find(
-    (t) => String((t as any)[teamIdKey]) === String(game.teams.away?.id)
+    (t) => String((t as any)[teamIdKey]) === String(game.teams.away?.id),
   );
 
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
@@ -89,7 +89,7 @@ export default function CBBGamePreviewModal({
   const { headlineText } = useCBBHeadline(
     Number(home?.espnID),
     Number(away?.espnID),
-    gameDateStr
+    gameDateStr,
   );
 
   // March Madness runs March 18 – April 7
@@ -111,7 +111,7 @@ export default function CBBGamePreviewModal({
     isWomen ? "wcbb" : "cbb",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Broadcasts ---
@@ -155,7 +155,7 @@ export default function CBBGamePreviewModal({
     .toLowerCase();
 
   const neutralMatch = Object.entries(neutralVenues).find(
-    ([key]) => key.trim().toLowerCase() === venueNameRaw
+    ([key]) => key.trim().toLowerCase() === venueNameRaw,
   );
 
   const neutralVenueData = neutralMatch ? (neutralMatch[1] as any) : null;
@@ -271,21 +271,21 @@ export default function CBBGamePreviewModal({
 
   const homeLastGames = useLastFiveGames(
     Number(game.teams.home?.id) || 0,
-    isWomen
+    isWomen,
   );
   const awayLastGames = useLastFiveGames(
     Number(game.teams.away?.id) || 0,
-    isWomen
+    isWomen,
   );
   const week = game.week;
   const round =
     week === "NCAA - Final"
       ? "NCAA Men's Basketball Championship"
       : week === "NCAA - Semi-finals"
-      ? "Final Four"
-      : week === "NCAA - Quarter-finals"
-      ? "Elite Eight"
-      : week ?? "";
+        ? "Final Four"
+        : week === "NCAA - Quarter-finals"
+          ? "Elite Eight"
+          : (week ?? "");
 
   const isLiveScoreReady = !!liveScore;
 

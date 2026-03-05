@@ -1,9 +1,8 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
 import { players as cfbPlayers } from "constants/cfbPlayers";
-import { Colors } from "constants/Colors";
 import { players as nflPlayers } from "constants/nflPlayers";
-import { globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/Styles";
 import { useFootballPlayerStats } from "hooks/NFLHooks/useFootballPlayerStats";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
@@ -28,7 +27,7 @@ export default function SeasonStatCard({
   // ✅ Fetch stats with league support
   const { aggregatedStats, loading, error } = useFootballPlayerStats(
     playerId,
-    season
+    season,
   );
 
   if (loading) return <SeasonStatCardSkeleton />;

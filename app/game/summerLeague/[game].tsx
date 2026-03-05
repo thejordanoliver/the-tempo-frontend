@@ -10,7 +10,7 @@ import GameHeader from "components/Sports/NBASummerLeague/GameDetails/GameHeader
 import { teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useGameDetails } from "hooks/useGameDetails";
+import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
@@ -63,11 +63,11 @@ export default function GameDetailsScreen() {
   const awayTeamId = Number(gameObj?.teams?.away?.id);
 
   const homeTeamData = teams.find(
-    (t) => String((t as any).summerLeagueId) === String(homeTeamId)
+    (t) => String((t as any).summerLeagueId) === String(homeTeamId),
   );
 
   const awayTeamData = teams.find(
-    (t) => String((t as any).summerLeagueId) === String(awayTeamId)
+    (t) => String((t as any).summerLeagueId) === String(awayTeamId),
   );
 
   if (!homeTeamData || !awayTeamData) {
@@ -115,7 +115,7 @@ export default function GameDetailsScreen() {
 
   const gameDateObj = useMemo(
     () => parseGameDate((gameObj as any)?.timestamp ?? (gameObj as any)?.date),
-    [gameObj]
+    [gameObj],
   );
 
   const formattedDate = gameDateObj.toLocaleDateString("en-US", {
@@ -139,7 +139,7 @@ export default function GameDetailsScreen() {
     detailsLeague,
     String(homeEspnId),
     String(awayEspnId),
-    gameDateYMD
+    gameDateYMD,
   );
 
   const isLoadingGame =
@@ -188,13 +188,13 @@ export default function GameDetailsScreen() {
         espnVenue: details?.venue,
         homeTeam: homeTeamData,
       }),
-    [details?.venue, homeTeamData]
+    [details?.venue, homeTeamData],
   );
 
   const { weather } = useWeatherForecast(
     resolvedVenue.latitude,
     resolvedVenue.longitude,
-    gameDateYMD
+    gameDateYMD,
   );
 
   /* ---------------- Status / linescore ---------------- */

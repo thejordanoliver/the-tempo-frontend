@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 import { teamsNFLById } from "constants/teamsNFL";
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "types/nfl";
@@ -26,7 +26,8 @@ type NFLStatusText =
 function mapNFLStatus(status: any): NFLStatusText {
   const short = String(status?.short ?? "").toUpperCase();
 
-  if (["Q1", "Q2", "Q3", "Q4", "OT", "BT"].includes(short)) return "In Progress";
+  if (["Q1", "Q2", "Q3", "Q4", "OT", "BT"].includes(short))
+    return "In Progress";
   if (short === "HT") return "Halftime";
   if (["FT", "AOT"].includes(short)) return "Final";
   if (short === "NS") return "Scheduled";
@@ -41,7 +42,11 @@ function mapNFLStatus(status: any): NFLStatusText {
 
 export function useMultipleNFLTeamGames(
   teamIds: (string | number)[],
-  { season = "2025", league = "1", fetchAll = false }: UseMultipleNFLTeamGamesOptions = {}
+  {
+    season = "2025",
+    league = "1",
+    fetchAll = false,
+  }: UseMultipleNFLTeamGamesOptions = {},
 ) {
   const [allGames, setAllGames] = useState<Record<string, Game[]>>({});
   const [loading, setLoading] = useState(true);
@@ -60,12 +65,15 @@ export function useMultipleNFLTeamGames(
 
       await Promise.all(
         teamIds.map(async (teamId) => {
-          const res = await axios.get(`${BASE_URL}/api/gamesNFL/team/${teamId}`, {
-            params: {
-              season,
-              all: fetchAll ? 1 : 0,
+          const res = await axios.get(
+            `${BASE_URL}/api/games/nfl/team/${teamId}`,
+            {
+              params: {
+                season,
+                all: fetchAll ? 1 : 0,
+              },
             },
-          });
+          );
 
           const rawGames: Game[] = res.data.response || [];
 
@@ -109,12 +117,15 @@ export function useMultipleNFLTeamGames(
           });
 
           result[String(teamId)] = enrichedGames;
-        })
+        }),
       );
 
       setAllGames(result);
     } catch (err: any) {
-      console.error("Error fetching multiple NFL team games:", err.message || err);
+      console.error(
+        "Error fetching multiple NFL team games:",
+        err.message || err,
+      );
       setError("Failed to load NFL games");
       setAllGames({});
     } finally {

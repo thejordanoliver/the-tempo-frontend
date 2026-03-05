@@ -33,7 +33,7 @@ export const useNFLGamesByWeek = ({
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/gamesNFL`, {
+      const res = await axios.get(`${BASE_URL}/api/games/nfl`, {
         params: { league: 1 },
       });
 

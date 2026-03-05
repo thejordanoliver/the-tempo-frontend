@@ -1,5 +1,4 @@
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -63,7 +62,7 @@ export default function SearchBar({
         autoCapitalize="none"
         editable={visible} // disable typing
         showSoftInputOnFocus={visible} // ✅ blocks keyboard entirely
-  caretHidden={!visible}   
+        caretHidden={!visible}
       />
     </Animated.View>
   );

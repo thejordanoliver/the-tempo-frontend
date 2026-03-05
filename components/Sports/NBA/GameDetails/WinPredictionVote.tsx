@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Colors } from "constants/Colors";
-import { Fonts } from "constants/fonts";
+import HeadingTwo from "components/Headings/HeadingTwo";
+import { Colors, Fonts, globalStyles } from "constants/Styles";
 import * as Haptics from "expo-haptics";
+import { castVoteApi, fetchVoteResults, PollResult } from "hooks/useGameVotes";
 import { useLiveVotes } from "hooks/useLiveVotes";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -14,12 +15,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import {
-  castVoteApi,
-  fetchVoteResults,
-  PollResult,
-} from "hooks/useGameVotes";
-import HeadingTwo from "components/Headings/HeadingTwo";
 
 type VoteTeam = {
   id: string | number;
@@ -48,7 +43,7 @@ export default function WinPredictionVote({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getStyles(isDark);
-
+  const global = globalStyles(isDark);
   const [loading, setLoading] = useState(true);
   const { votes: liveVotes, emitVote } = useLiveVotes(gameId);
   const [results, setResults] = useState<PollResult[]>([]);
@@ -125,11 +120,11 @@ export default function WinPredictionVote({
     activeVotes.reduce((sum, r) => sum + Number(r.votes), 0) || 0;
   const votesAway =
     Number(
-      activeVotes.find((r) => String(r.team_id) === String(awayTeam.id))?.votes
+      activeVotes.find((r) => String(r.team_id) === String(awayTeam.id))?.votes,
     ) || 0;
   const votesHome =
     Number(
-      activeVotes.find((r) => String(r.team_id) === String(homeTeam.id))?.votes
+      activeVotes.find((r) => String(r.team_id) === String(homeTeam.id))?.votes,
     ) || 0;
 
   const pctAway = totalVotes > 0 ? votesAway / totalVotes : 0;
@@ -212,7 +207,7 @@ export default function WinPredictionVote({
           color={isDark ? Colors.light.text : Colors.dark.text}
         />
       ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={global.errorText}>{error}</Text>
       ) : (
         <>
           <View style={styles.barContainer}>
@@ -250,7 +245,7 @@ export default function WinPredictionVote({
                               awayTeam.logo
                           : awayTeam.wLogo ||
                               awayTeam.logoLight ||
-                              awayTeam.logo
+                              awayTeam.logo,
                       )}
                       style={[
                         styles.teamLogo,
@@ -303,7 +298,7 @@ export default function WinPredictionVote({
                       source={resolveLogo(
                         colorScheme === "dark"
                           ? homeTeam.logoLight || homeTeam.logo
-                          : homeTeam.logoLight || homeTeam.logo
+                          : homeTeam.logoLight || homeTeam.logo,
                       )}
                       style={[
                         styles.teamLogo,

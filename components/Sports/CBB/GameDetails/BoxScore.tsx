@@ -79,7 +79,7 @@ export default function BoxScore({
   const global = globalStyles(isDark, lighter);
   const heightAnimMap = useRef<Record<string, Animated.Value>>({});
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
 
   const homeTeam =
@@ -132,7 +132,7 @@ export default function BoxScore({
   // ----- MAP ESPN PLAYER STATS INTO UI SHAPE -----
   const mapESPNPlayers = (teamId: number) => {
     const block = playerStats.find(
-      (p) => Number(p.team?.id) === Number(teamId)
+      (p) => Number(p.team?.id) === Number(teamId),
     );
     if (!block) return [];
 
@@ -252,7 +252,7 @@ export default function BoxScore({
     teamLogo: any,
     teamCode: string,
     isExpanded: boolean,
-    heightAnim: Animated.Value
+    heightAnim: Animated.Value,
   ) => {
     return (
       <View style={styles.teamBox}>
@@ -294,28 +294,18 @@ export default function BoxScore({
               {players.map((p, index) => (
                 <View
                   key={`${teamCode}-row-${p.localPlayer.player_id}-${index}`}
-                  style={[
-                    styles.tableRow,
-                    {
-                      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-                    },
-                  ]}
+                  style={styles.tableRow}
                 >
                   <TouchableOpacity
                     key={`${teamCode}-${index}`}
                     onPress={() =>
                       router.push(
-                        `/player/cbb/${p.localPlayer.player_id}?teamId=${p.team.id}`
+                        `/player/cbb/${p.localPlayer.player_id}?teamId=${p.team.id}`,
                       )
                     }
                     activeOpacity={0.6}
                   >
-                    <Text
-                      style={[
-                        styles.cellName,
-                        { color: isDark ? Colors.white : Colors.black },
-                      ]}
-                    >
+                    <Text style={[styles.cellName]}>
                       {p.localPlayer.first_name} {p.localPlayer.last_name}
                     </Text>
                   </TouchableOpacity>
@@ -400,6 +390,7 @@ export default function BoxScore({
         {/* EXPAND / COLLAPSE */}
         {players.length > COLLAPSED_ROWS && (
           <TouchableOpacity
+            activeOpacity={0.85}
             onPress={() => toggleExpand(teamCode)}
             style={{ padding: 10, alignItems: "center" }}
           >
@@ -441,7 +432,7 @@ export default function BoxScore({
           awayLogo,
           awayCode,
           expandedTeams[awayCode] ?? false,
-          heightAnimMap.current[awayCode]
+          heightAnimMap.current[awayCode],
         )}
       </View>
 
@@ -451,7 +442,7 @@ export default function BoxScore({
         homeLogo,
         homeCode,
         expandedTeams[homeCode] ?? false,
-        heightAnimMap.current[homeCode]
+        heightAnimMap.current[homeCode],
       )}
     </ScrollView>
   );

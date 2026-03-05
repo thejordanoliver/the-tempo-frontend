@@ -1,4 +1,4 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -25,10 +25,7 @@ type Props = {
   limit?: number; // ✅ NEW
 };
 
-export default function TopThreeTeams({
-  teams,
-  limit = 3,
-}: Props) {
+export default function TopThreeTeams({ teams, limit = 3 }: Props) {
   const isDark = useColorScheme() === "dark";
   const visibleTeams = teams.slice(0, limit);
   const styles = topThreeTeamsStyles(isDark, visibleTeams.length);
@@ -44,15 +41,12 @@ export default function TopThreeTeams({
             teamCount={visibleTeams.length}
           />
 
-          {index !== visibleTeams.length - 1 && (
-            <View style={styles.divider} />
-          )}
+          {index !== visibleTeams.length - 1 && <View style={styles.divider} />}
         </React.Fragment>
       ))}
     </View>
   );
 }
-
 
 /* -------------------------------------------------- */
 /* Individual team bubble                             */
@@ -96,10 +90,7 @@ function TeamBubble({
     <View style={styles.itemWrapper}>
       <View style={styles.teamContainer}>
         <Animated.View
-          style={[
-            styles.logoWrapper,
-            { transform: [{ scale }], opacity },
-          ]}
+          style={[styles.logoWrapper, { transform: [{ scale }], opacity }]}
         >
           {logo && (
             <Image source={logo} style={styles.logo} resizeMode="contain" />
@@ -115,7 +106,6 @@ function TeamBubble({
   );
 }
 
-
 /* -------------------------------------------------- */
 /* Styles                                             */
 /* -------------------------------------------------- */
@@ -128,7 +118,7 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
     container: {
       flexDirection: "row",
       alignItems: "center",
-      marginVertical: 12,
+      marginTop: 12,
       paddingVertical: 12,
       borderRadius: 12,
       borderWidth: 1,
@@ -139,7 +129,7 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
     },
 
     itemWrapper: {
-      flexGrow: 1,        // ✅ key change
+      flexGrow: 1, // ✅ key change
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 6,
@@ -184,11 +174,10 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
     },
 
     divider: {
-      alignSelf: "stretch",  // ✅ dynamic height
+      alignSelf: "stretch", // ✅ dynamic height
       width: StyleSheet.hairlineWidth,
       backgroundColor: isDark ? Colors.white : Colors.black,
       marginVertical: 6,
     },
   });
 };
-

@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
+import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import Roster from "components/Sports/CFB/Team/Roster";
 import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
-import { NFLStandingsList } from "components/Sports/NFL/Standings/NFLStandingsList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { teams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -19,9 +20,7 @@ import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeasonYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TabBar from "../../../components/TabBar";
-import { style } from "../../../styles/TeamStyles/TeamDetailsStyles";
-
+import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 type PageSelectedEvent = {
   nativeEvent: {
     position: number;
@@ -36,11 +35,11 @@ export default function TeamDetailScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(
-    getFootballSeasonYear().toString()
+    getFootballSeasonYear().toString(),
   );
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = style(isDark);
+  const styles = teamDetailStyles;
 
   const tabs = [
     "schedule",
@@ -60,7 +59,7 @@ export default function TeamDetailScreen() {
 
   const team = useMemo(
     () => (teamIdNum ? teams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum]
+    [teamIdNum],
   );
 
   const {
@@ -131,12 +130,11 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo ? { uri: team.logo } : undefined}
-          logoLight={team?.logoLight ? { uri: team.logoLight } : undefined}
+          teamId={team?.id}
+          logo={team?.logoLight || team?.logo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
-          teamCode={team?.code}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
@@ -156,7 +154,7 @@ export default function TeamDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <TabBar
+      <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
         onTabPress={(tab) => {
@@ -215,13 +213,16 @@ export default function TeamDetailScreen() {
             />
           )}
         </ScrollView>
-        {/* Stats Page */}
-        <ScrollView key="standings">
-          <NFLStandingsList
+
+        {/* Standings Page */}
+        <View key="standings" style={{ flex: 1, paddingHorizontal: 12 }}>
+          <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
+            league="NFL"
           />
-        </ScrollView>
+        </View>
+
         {/* Forum Page */}
         <View key="forum" style={{ flex: 1 }}>
           <TeamForum teamId={teamId as string} league="NFL" />

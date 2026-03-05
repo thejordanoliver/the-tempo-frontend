@@ -1,7 +1,7 @@
 // types/nfl.ts
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Colors } from "constants/Colors";
+import { Colors } from "constants/Styles";
 export interface NFLPlayer {
   id: number;
   name: string;

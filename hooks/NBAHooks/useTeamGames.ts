@@ -1,0 +1,56 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Game } from "types/types";
+import { getNBASeason } from "utils/dateUtils";
+
+export type GameWithStatusText = Game & {
+  statusText: string;
+  arena?: {
+    name: string;
+    city: string;
+    state: string;
+  } | null;
+  year: number;
+  month: number;
+};
+
+const API_BASE = process.env.EXPO_PUBLIC_API_URL;
+
+export function useTeamGames(teamId?: string, season = getNBASeason()) {
+  const [games, setGames] = useState<GameWithStatusText[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchGames = async () => {
+    if (!teamId) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await axios.get(
+        `${API_BASE}/api/games/nba/team/${teamId}/${season}`
+      );
+
+      setGames(res.data.games ?? []);
+    } catch (err: any) {
+      console.error("[useTeamGames] error:", err);
+      const message = err?.message || "Failed to load team games";
+      setError(new Error(message));
+      setGames([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGames();
+  }, [teamId, season]);
+
+  return {
+    games,
+    loading,
+    error,
+    refreshGames: fetchGames, // manual refresh still works
+  };
+}

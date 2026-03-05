@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { StandingsSkeleton } from "components/Sports/NBA/Standings/StandingsSkeleton";
-import { Colors } from "constants/Colors";
+import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
+import { Colors } from "constants/Styles";
 import { getTeamIdByESPN, getTeamLogoESPN } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
@@ -16,11 +16,11 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 export const CFBStandingsList = () => {
   const { rankings = [], loading, error } = useCFBRankings();
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = standingsStyles(isDark);
   const router = useRouter();
   // 🏈 Added "cfp" (Playoff Rankings)
   const [pollMode, setPollMode] = useState<"ap" | "coaches" | "cfp">("ap");
@@ -98,8 +98,8 @@ export const CFBStandingsList = () => {
                       ? Colors.dark.limeGreen
                       : Colors.light.green // correct branch
                     : isDark
-                    ? Colors.dark.lightRed
-                    : Colors.light.red
+                      ? Colors.dark.lightRed
+                      : Colors.light.red
                 }
                 style={{ marginRight: 2 }}
               />
@@ -112,8 +112,8 @@ export const CFBStandingsList = () => {
                         ? Colors.dark.limeGreen
                         : Colors.light.green // correct branch
                       : isDark
-                      ? Colors.dark.lightRed
-                      : Colors.light.red,
+                        ? Colors.dark.lightRed
+                        : Colors.light.red,
                   },
                 ]}
               >
@@ -225,8 +225,8 @@ export const CFBStandingsList = () => {
     pollMode === "ap"
       ? "AP Poll"
       : pollMode === "coaches"
-      ? "Coaches Poll"
-      : "CFP Rankings";
+        ? "Coaches Poll"
+        : "CFP Rankings";
 
   return (
     <ScrollView
