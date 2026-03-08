@@ -6,9 +6,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useMLBTeamGames(
   teamId: string | number,
-  season = "2026",
-  league = "1",
-  fetchAll = false
+  season = "2026"
 ) {
   const [games, setGames] = useState<MLBGame[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,27 +19,29 @@ export function useMLBTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/mlb/team/${teamId}`, {
-        params: { season, league, all: fetchAll ? 1 : 0 },
-      });
+      const res = await axios.get(
+        `${BASE_URL}/api/games/mlb/team/${teamId}`,
+        {
+          params: { season },
+        }
+      );
 
-      // Backend returns { teamId, season, games: [] }
       const data = res.data;
 
       const normalizedGames =
         data.games ||
-        data.response || // in case older versions
+        data.response ||
         [];
 
-
       setGames(normalizedGames);
+
     } catch (err: any) {
       console.error("Error fetching MLB team games:", err.message);
       setError("Failed to load team games");
     } finally {
       setLoading(false);
     }
-  }, [teamId, season, league, fetchAll]);
+  }, [teamId, season]);
 
   useEffect(() => {
     fetchGames();

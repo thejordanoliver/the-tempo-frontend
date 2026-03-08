@@ -48,9 +48,9 @@ function CFBGameCard({ game }: Props) {
 
   const isChampionship = Boolean(
     gameDate &&
-      gameDate.getFullYear() === 2026 &&
-      gameDate.getMonth() === 0 &&
-      gameDate.getDate() === 19
+    gameDate.getFullYear() === 2026 &&
+    gameDate.getMonth() === 0 &&
+    gameDate.getDate() === 19,
   );
 
   const styles = GameCardStyles(isDark, isChampionship);
@@ -63,7 +63,7 @@ function CFBGameCard({ game }: Props) {
   const possession = useFootballGamePossession(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   // --- Details ---
@@ -71,7 +71,7 @@ function CFBGameCard({ game }: Props) {
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
-    "cfb"
+    "cfb",
   );
   const {
     gameStatusShortDetail,
@@ -87,7 +87,7 @@ function CFBGameCard({ game }: Props) {
 
   // --- Game Staus & Info ---
   const isFinal = gameStatusDescription === "Final" || finished;
-  const isScheduled = gameStatusDescription === "Scheduled" ;
+  const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -102,10 +102,10 @@ function CFBGameCard({ game }: Props) {
   // -----------------------------------------------------
   const homeScore = isFinal
     ? game.scores.home.total
-    : possession?.score?.home ?? 0;
+    : (possession?.score?.home ?? 0);
   const awayScore = isFinal
     ? game.scores.away.total
-    : possession?.score?.away ?? 0;
+    : (possession?.score?.away ?? 0);
 
   // --- Team Rankings ---
   const homeRank = details?.homeRank;
@@ -119,7 +119,7 @@ function CFBGameCard({ game }: Props) {
   const headline = details?.headline;
   const rivalryHeadline = useMemo(
     () => getRivalryHeadline(Number(homeEspnId), Number(awayEspnId)),
-    [homeEspnId, awayEspnId]
+    [homeEspnId, awayEspnId],
   );
   const headlineText = headline || rivalryHeadline || "";
 
@@ -153,7 +153,7 @@ function CFBGameCard({ game }: Props) {
       hasPossession:
         inProgress && String(possessionTeamId) === String(awayEspnId),
     }),
-    [awayId, awayEspnId, awayRecord, possessionTeamId, isDark, inProgress]
+    [awayId, awayEspnId, awayRecord, possessionTeamId, isDark, inProgress],
   );
 
   const homeTeam = useMemo(
@@ -173,7 +173,7 @@ function CFBGameCard({ game }: Props) {
       hasPossession:
         inProgress && String(possessionTeamId) === String(homeEspnId),
     }),
-    [homeId, homeEspnId, homeRecord, possessionTeamId, isDark, inProgress]
+    [homeId, homeEspnId, homeRecord, possessionTeamId, isDark, inProgress],
   );
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -256,7 +256,7 @@ function CFBGameCard({ game }: Props) {
       );
 
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Cancelled</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;

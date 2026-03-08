@@ -1,17 +1,17 @@
 import { Colors, Fonts } from "constants/Styles";
 import { ReactNode } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import { teams, teamsById } from "../../../../constants/teams";
-import {
-  teams as teamsCFB,
-  teamsCFBById,
-} from "../../../../constants/teamsCFB";
-import {
-  teams as teamsNFL,
-  teamsNFLById,
-} from "../../../../constants/teamsNFL";
+
+import { teams } from "constants/teams";
+import { teams as cbbTeams } from "constants/teamsCBB";
+import { teams as teamsCFB } from "constants/teamsCFB";
+import { teams as mlbTeams } from "constants/teamsMLB";
+import { teams as teamsNFL } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
+
 type TeamColors = {
   id?: string | number;
+  name?: string;
   fullName?: string;
   color?: string;
   secondaryColor?: string;
@@ -26,6 +26,47 @@ type Props = {
   teamName?: string;
 };
 
+const allTeams: TeamColors[] = [
+  ...teams,
+  ...teamsNFL,
+  ...teamsCFB,
+  ...mlbTeams,
+  ...nhlTeams,
+  ...cbbTeams,
+];
+
+const findTeam = (
+  teamId?: string,
+  teamName?: string,
+  fallback?: TeamColors
+) => {
+  let teamObj: TeamColors | undefined;
+
+  if (teamId) {
+    teamObj = allTeams.find((t) => String(t.id) === String(teamId));
+  }
+
+  if (!teamObj && teamName) {
+    const clean = teamName.toLowerCase();
+    teamObj = allTeams.find(
+      (t) =>
+        t.name?.toLowerCase() === clean ||
+        t.fullName?.toLowerCase() === clean
+    );
+  }
+
+  if (!teamObj && fallback?.fullName) {
+    const clean = fallback.fullName.toLowerCase();
+    teamObj = allTeams.find(
+      (t) =>
+        t.name?.toLowerCase() === clean ||
+        t.fullName?.toLowerCase() === clean
+    );
+  }
+
+  return teamObj ?? fallback;
+};
+
 export default function InfoCard({
   label,
   value,
@@ -34,43 +75,17 @@ export default function InfoCard({
   teamId,
   teamName,
 }: Props) {
-  let teamObj: TeamColors | undefined;
+  const teamObj = findTeam(teamId, teamName, team) ?? {
+    color: Colors.midTone,
+  };
 
-  // --- ID checks ---
-  if (
-    teamId &&
-    (teamsById[teamId] || teamsNFLById[teamId] || teamsCFBById[teamId])
-  ) {
-    teamObj = teamsById[teamId] ?? teamsNFLById[teamId] ?? teamsCFBById[teamId];
-  }
-
-  // --- Name checks ---
-  if (!teamObj && teamName) {
-    const cleanName = teamName.toLowerCase();
-    teamObj =
-      teams.find((t) => t.fullName.toLowerCase() === cleanName) ??
-      teamsNFL.find((t) => t.name.toLowerCase() === cleanName) ??
-      teamsCFB.find((t) => t.name.toLowerCase() === cleanName);
-  }
-
-  // --- Provided team object fallback ---
-  if (!teamObj && team.fullName) {
-    const cleanName = team.fullName.toLowerCase();
-    teamObj =
-      teams.find((t) => t.fullName?.toLowerCase() === cleanName) ??
-      teamsNFL.find((t) => t.name?.toLowerCase() === cleanName) ??
-      teamsCFB.find((t) => t.name?.toLowerCase() === cleanName);
-  }
-
-  // Final fallback
-  if (!teamObj) teamObj = team;
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const isConferenceChampionships = label === "Conference Championships";
-  const styles = infoCardStyles(isDark, isConferenceChampionships, teamObj);
 
-  // 🧩 Format value: join arrays into a readable comma-separated string
+  const styles = infoCardStyles(isDark, teamObj);
+
   let formattedValue: string | ReactNode;
+
   if (Array.isArray(value)) {
     formattedValue = value.join(", ");
   } else {
@@ -96,8 +111,7 @@ export default function InfoCard({
 
 export const infoCardStyles = (
   isDark: boolean,
-  isConferenceChampionships: boolean,
-  teamObj: TeamColors,
+  teamObj: TeamColors
 ) =>
   StyleSheet.create({
     label: {
@@ -112,18 +126,18 @@ export const infoCardStyles = (
 
     cardContainer: {
       flexDirection: "row",
-      alignItems: isConferenceChampionships ? "flex-start" : "center",
-      backgroundColor: teamObj.color,
+      alignItems: "center",
+      backgroundColor: teamObj?.color ?? Colors.midTone,
       borderRadius: 8,
       paddingHorizontal: 16,
       paddingVertical: 12,
       marginBottom: 12,
       width: "100%",
       minHeight: 80,
-      flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
       borderColor: Colors.midTone,
       borderWidth: 1,
     },
+
     imageContainer: {
       borderRadius: 100,
       justifyContent: "center",
@@ -131,19 +145,19 @@ export const infoCardStyles = (
       marginRight: 12,
       overflow: "hidden",
     },
+
     image: {
       width: 54,
       height: 54,
-      paddingTop: 8,
       resizeMode: "contain",
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
+
     value: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
       color: Colors.white,
       flexShrink: 1,
       flex: 1,
-      flexWrap: isConferenceChampionships ? "wrap" : "nowrap",
     },
   });

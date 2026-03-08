@@ -4,10 +4,7 @@ import { MLBGame } from "types/mlb";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export function useMLBSeasonGames(
-  season: string,
-  league: string = "71"
-) {
+export function useMLBSeasonGames(season: string) {
   const [games, setGames] = useState<MLBGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,12 +14,7 @@ export function useMLBSeasonGames(
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${BASE_URL}/api/games/mlb/season/${season}`,
-        {
-          params: { league },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/games/mlb/season/${season}`);
 
       if (!res.data?.success) {
         throw new Error("API returned unsuccessful response");
@@ -33,18 +25,14 @@ export function useMLBSeasonGames(
         : [];
 
       setGames(gamesArray);
-
     } catch (err: any) {
-      console.error(
-        "Error fetching MLB season games:",
-        err?.response?.data || err?.message
-      );
+      console.error("Error fetching MLB season games:", err?.response?.data || err?.message);
       setError("Failed to load season games");
       setGames([]);
     } finally {
       setLoading(false);
     }
-  }, [season, league]);
+  }, [season]);
 
   useEffect(() => {
     fetchGames();
@@ -55,17 +43,10 @@ export function useMLBSeasonGames(
     const isLive = (game: MLBGame) => {
       const short = game.status?.short ?? "";
       const long = game.status?.long ?? "";
-
-      return (
-        short.startsWith("IN") ||
-        short === "LIVE" ||
-        long.includes("Inning")
-      );
+      return short.startsWith("IN") || short === "LIVE" || long.includes("Inning");
     };
 
-    return [...games].sort((a, b) => {
-      return Number(isLive(b)) - Number(isLive(a));
-    });
+    return [...games].sort((a, b) => Number(isLive(b)) - Number(isLive(a)));
   }, [games]);
 
   return {

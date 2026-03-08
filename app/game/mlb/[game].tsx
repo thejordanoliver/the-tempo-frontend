@@ -363,6 +363,7 @@ export default function GameDetailsScreen() {
             year={standingsYear}
             onYearChange={setStandingsYear}
             league="MLB"
+            isGameDetailScreen
           />
         </View>
       </ScrollView>

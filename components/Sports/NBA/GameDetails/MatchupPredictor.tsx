@@ -39,7 +39,6 @@ const MatchupPredictor: React.FC<Props> = ({
   const awayChance = away.chance ?? 50;
 
   const homeColor = home.color ?? Colors.midTone;
-  const awayColor = away.color ?? Colors.darkGray;
 
   const animatedHome = useRef(new Animated.Value(0)).current;
   const animatedAway = useRef(new Animated.Value(0)).current;
@@ -145,7 +144,17 @@ const MatchupPredictor: React.FC<Props> = ({
                 height="1"
                 patternTransform="rotate(20)"
               >
-                <Path d="M 0 0 L 0 4" stroke={awayColor} strokeWidth={1.5} />
+                <Path
+                  d="M 0 0 L 0 4"
+                  stroke={
+                    lighter
+                      ? Colors.white
+                      : isDark
+                        ? Colors.white
+                        : Colors.black
+                  }
+                  strokeWidth={1.5}
+                />
               </Pattern>
             </Defs>
 
@@ -154,7 +163,7 @@ const MatchupPredictor: React.FC<Props> = ({
               cx="50"
               cy="50"
               r={radius}
-              stroke={isDark ? Colors.black : Colors.white}
+              stroke={"transparent"}
               strokeWidth={strokeWidth}
               fill="none"
             />
@@ -178,7 +187,9 @@ const MatchupPredictor: React.FC<Props> = ({
             {/* Center divider */}
             <Path
               d={`M 50 ${dividerTop} L 50 ${dividerBottom}`}
-              stroke="#d1d5db"
+              stroke={
+                lighter ? Colors.white : isDark ? Colors.white : Colors.black
+              }
               strokeWidth={0.6}
               strokeDasharray="1,1"
             />
@@ -203,11 +214,21 @@ const MatchupPredictor: React.FC<Props> = ({
                   <Pattern
                     id="legendAwayPattern"
                     patternUnits="userSpaceOnUse"
-                    width="1.5"
+                    width="2.5"
                     height="1"
                     patternTransform="rotate(45)"
                   >
-                    <Path d="M 0 0 L 0 4" stroke={awayColor} strokeWidth={4} />
+                    <Path
+                      d="M 0 0 L 0 4"
+                      stroke={
+                        lighter
+                          ? Colors.white
+                          : isDark
+                            ? Colors.white
+                            : Colors.black
+                      }
+                      strokeWidth={8}
+                    />
                   </Pattern>
                 </Defs>
                 <Rect

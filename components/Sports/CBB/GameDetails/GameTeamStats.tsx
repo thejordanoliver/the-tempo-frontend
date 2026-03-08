@@ -197,12 +197,10 @@ export default function GameTeamStats({
   stats,
   gameStatusDescription,
   lighter = false,
-  league = "CBB",
 }: {
   gameStatusDescription: string;
   stats: any[];
   lighter?: boolean;
-  league: string;
 }) {
   const isDark = useColorScheme() === "dark";
   const styles = gameTeamStatsStyles(isDark, lighter);
@@ -433,24 +431,14 @@ export default function GameTeamStats({
                           >
                             <Path
                               d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
-                              stroke={awayColor}
+                              stroke={Colors.white}
                               strokeWidth={2}
                             />
                           </Pattern>
                         </Defs>
 
                         {/* Base color fill (optional but recommended) */}
-                        <Rect
-                          width="100%"
-                          height="100%"
-                          fill={
-                            lighter
-                              ? Colors.black
-                              : isDark
-                                ? Colors.black
-                                : Colors.white
-                          }
-                        />
+                        <Rect width="100%" height="100%" fill={Colors.black} />
 
                         {/* Hatch overlay */}
                         <Rect

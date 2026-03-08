@@ -22,11 +22,11 @@ import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { MLBGame } from "types/mlb";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { snapPoints } from "utils/modalUtils";
 import { getGameDate } from "utils/nflGameCardUtils";
 import MLBInjuries from "../GameDetails/MLBInjuries";
 import { GameInfo } from "./CenterInfo";
 import TeamInfo from "./TeamInfo";
-
 type Props = {
   game: MLBGame;
   visible: boolean;
@@ -151,10 +151,6 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
     resolvedVenue.longitude,
     gameDateStr,
   );
-  /* ==================================================
-     MODAL CONTROL
-  ================================================== */
-  const snapPoints = useMemo(() => ["80%", "94%"], []);
 
   useEffect(() => {
     visible ? sheetRef.current?.present() : sheetRef.current?.dismiss();
@@ -272,17 +268,13 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                       away={{
                         name: awayTeam?.code ?? "UNK",
                         logo: awayLogo,
-                        color: isDark
-                          ? awayTeam?.secondaryColor
-                          : awayTeam?.color,
+                        color: awayTeam?.color,
                         chance: awayChance,
                       }}
                       home={{
                         name: homeTeam?.code ?? "UNK",
                         logo: homeLogo,
-                        color: isDark
-                          ? homeTeam?.secondaryColor
-                          : homeTeam?.color,
+                        color: homeTeam?.color,
                         chance: homeChance,
                       }}
                       size={180}

@@ -61,7 +61,7 @@ function MLBStackedGameCard({ game }: Props) {
     "mlb",
     String(awayEspnId),
     String(homeEspnId),
-    gameDateStr
+    gameDateStr,
   );
   const isChampionship = details?.playoffRound === "World Series";
   const styles = stackedGameCardStyles(isDark, isChampionship);
@@ -170,7 +170,7 @@ function MLBStackedGameCard({ game }: Props) {
       );
 
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Cancelled</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 

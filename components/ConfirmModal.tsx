@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
@@ -61,7 +61,7 @@ export default function ConfirmModal({
       animationOut="slideOutDown"
       backdropTransitionOutTiming={200}
       backdropOpacity={0.5}
-      style={{ justifyContent: "flex-end", margin: 0 }}
+      style={styles.modalContainer}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -69,24 +69,18 @@ export default function ConfirmModal({
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: "flex-end", // 👈 keeps it bottom-aligned
-          }}
+          contentContainerStyle={styles.contentContainerStyle}
           keyboardShouldPersistTaps="handled"
         >
-          <View
-            style={{
-              paddingHorizontal: 16,
-              paddingBottom: 16,
-              width: "100%",
-              minHeight: 360,
-            }}
-          >
-            <View style={styles.container}>
+          <View style={styles.container}>
+            <View style={styles.wrapper}>
               <BlurView
                 intensity={80}
-                tint={isDark ? "dark" : "light"}
+                tint={
+                  isDark
+                    ? "systemThickMaterialDark"
+                    : "systemThickMaterialLight"
+                }
                 style={StyleSheet.absoluteFill}
               />
 
@@ -104,18 +98,20 @@ export default function ConfirmModal({
                 )}
 
                 <View style={styles.buttonRow}>
-                  <Pressable
+                  <TouchableOpacity
+                    activeOpacity={0.85}
                     onPress={onCancel}
                     style={[styles.button, styles.cancelButton]}
                   >
                     <Text style={styles.cancelText}>{cancelText}</Text>
-                  </Pressable>
-                  <Pressable
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.85}
                     onPress={onConfirm}
                     style={[styles.button, styles.confirmButton]}
                   >
                     <Text style={styles.confirmText}>{confirmText}</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -127,7 +123,18 @@ export default function ConfirmModal({
 }
 const confirmModalStyles = (isDark: boolean) =>
   StyleSheet.create({
+    modalContainer: { justifyContent: "flex-end", margin: 0 },
+    contentContainerStyle: {
+      flexGrow: 1,
+      justifyContent: "flex-end", // 👈 keeps it bottom-aligned
+    },
     container: {
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+      width: "100%",
+      minHeight: 360,
+    },
+    wrapper: {
       backgroundColor: isDark
         ? "rgba(100, 100, 100, 0.5)"
         : "rgba(255, 255, 255, 0.5)",

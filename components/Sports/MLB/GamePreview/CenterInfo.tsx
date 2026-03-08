@@ -109,10 +109,9 @@ export function GameInfo({
       )}
 
       {/* 📺 Broadcast */}
-      {(broadcastNetworks && inProgress) ||
-        (isScheduled && (
-          <Text style={styles.broadcast}>{broadcastNetworks}</Text>
-        ))}
+      {broadcastNetworks && (
+        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+      )}
     </View>
   );
 }

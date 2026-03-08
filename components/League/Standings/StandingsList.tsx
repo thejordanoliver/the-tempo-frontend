@@ -37,6 +37,7 @@ type Props = {
   year?: string;
   onYearChange?: (y: string) => void;
   league: PlayoffLeague;
+  isGameDetailScreen?: boolean;
 };
 
 export const standingLabels = [
@@ -150,7 +151,12 @@ export const leagueConferences: LeagueConferenceConfig = {
   },
 };
 
-export const StandingsList = ({ year, onYearChange, league }: Props) => {
+export const StandingsList = ({
+  year,
+  onYearChange,
+  league,
+  isGameDetailScreen,
+}: Props) => {
   const {
     standings: conferences,
     loading,
@@ -409,6 +415,9 @@ export const StandingsList = ({ year, onYearChange, league }: Props) => {
 
   return (
     <ScrollView>
+      {isGameDetailScreen && (
+        <HeadingTwo style={{ marginBottom: 0 }}>Standings</HeadingTwo>
+      )}
       <View style={{ flexDirection: "row" }}>
         <Dropdown
           options={[

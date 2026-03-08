@@ -134,7 +134,7 @@ function NHLGameSquareCard({ game }: Props) {
       );
 
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Cancelled</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 

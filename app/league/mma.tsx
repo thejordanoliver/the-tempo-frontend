@@ -2,12 +2,15 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useWeeklyFights } from "hooks/MMAHooks/useWeeklyFights";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useColorScheme, View } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+
 export default function UFCLeagueScreen() {
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
@@ -18,6 +21,8 @@ export default function UFCLeagueScreen() {
     "fights" | "news" | "standings" | "champions" | "stats" | "forum"
   >("fights");
 
+  const { fights, loading, refreshing, refreshFights, error } =
+    useWeeklyFights();
   // Header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -54,7 +59,18 @@ export default function UFCLeagueScreen() {
           selected={selectedTab}
           onTabPress={setSelectedTab}
         />
+
+        {selectedTab === "fights" && (
+          <MMAGamesList
+            games={fights}
+            loading={loading}
+            error={error}
+            refreshing={refreshing}
+            onRefresh={refreshFights}
+          />
+        )}
       </View>
+
       <SportsListModal
         ref={sportsModalRef}
         onSelect={() => {}}

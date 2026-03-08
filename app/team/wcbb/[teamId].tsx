@@ -331,7 +331,7 @@ export default function TeamDetailScreen() {
         <TeamInfoModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          teamId={team.id}
+          teamId={team.wid}
           league="WCBB"
         />
       )}

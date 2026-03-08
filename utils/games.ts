@@ -1,8 +1,8 @@
 // utils/games.ts
 import { neutralVenues } from "constants/teams";
-import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
-import { neutralStadiums } from "constants/teamsNFL";
 import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
+import { neutralStadiums } from "constants/teamsNFL";
+import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -82,10 +82,7 @@ export function filterByDate(games: any[], date: Date) {
   });
 }
 
-export const filterMLBByDate = (
-  games: any[],
-  selectedDate: Date
-) => {
+export const filterMLBByDate = (games: any[], selectedDate: Date) => {
   return games.filter((game) => {
     if (!game.date) return false;
 
@@ -98,7 +95,6 @@ export const filterMLBByDate = (
     );
   });
 };
-
 
 // ---------- ⏱️ Live Game Check ----------
 export function isLiveGame(game: any) {
@@ -182,7 +178,17 @@ export const formatMLBQuarter = (period?: number | string) => {
   return period;
 };
 
-// --- Helpers ---
+export const formatRound = (round?: number | string) => {
+  if (!round) return "";
+
+  const r = Number(round);
+  if (isNaN(r)) return "";
+
+  const rounds = ["1st", "2nd", "3rd", "4th", "5th"];
+
+  return rounds[r - 1] ?? "";
+};
+
 export const formatCBBQuarter = (
   period?: number | string,
   isWomen?: boolean,
@@ -230,10 +236,7 @@ export function resolveVenue({
   league?: string;
 }) {
   const venueNameRaw =
-    espnVenue?.fullName ??
-    espnVenue?.name ??
-    homeTeam?.venueName ??
-    "";
+    espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "";
 
   const venueName = venueNameRaw.trim();
   const leagueKey = league?.toLowerCase();
@@ -266,9 +269,7 @@ export function resolveVenue({
   // -------------------------------------------------
   if (isNeutralSite && venueName) {
     const neutralMatch = Object.keys(neutralMap).find(
-      (key) =>
-        key.toLowerCase().trim() ===
-        venueName.toLowerCase().trim()
+      (key) => key.toLowerCase().trim() === venueName.toLowerCase().trim(),
     );
 
     if (neutralMatch) {
@@ -291,35 +292,13 @@ export function resolveVenue({
   // -------------------------------------------------
   if (!isNeutralSite) {
     return {
-      name:
-        espnVenue?.fullName ??
-        espnVenue?.name ??
-        homeTeam?.venueName ??
-        "",
-      city:
-        espnVenue?.address?.city ??
-        homeTeam?.location ??
-        "",
-      address:
-        espnVenue?.address?.street ??
-        homeTeam?.address ??
-        "",
-      image:
-        espnVenue?.images?.[0]?.href ??
-        homeTeam?.venueImage ??
-        "",
-      capacity:
-        espnVenue?.capacity ??
-        homeTeam?.venueCapacity ??
-        "",
-      latitude:
-        espnVenue?.address?.latitude ??
-        homeTeam?.latitude ??
-        null,
-      longitude:
-        espnVenue?.address?.longitude ??
-        homeTeam?.longitude ??
-        null,
+      name: espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "",
+      city: espnVenue?.address?.city ?? homeTeam?.location ?? "",
+      address: espnVenue?.address?.street ?? homeTeam?.address ?? "",
+      image: espnVenue?.images?.[0]?.href ?? homeTeam?.venueImage ?? "",
+      capacity: espnVenue?.capacity ?? homeTeam?.venueCapacity ?? "",
+      latitude: espnVenue?.address?.latitude ?? homeTeam?.latitude ?? null,
+      longitude: espnVenue?.address?.longitude ?? homeTeam?.longitude ?? null,
     };
   }
 
@@ -336,5 +315,3 @@ export function resolveVenue({
     longitude: null,
   };
 }
-
-

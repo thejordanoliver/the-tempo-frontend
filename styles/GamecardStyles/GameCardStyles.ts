@@ -36,33 +36,71 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
     teamSection: {
       alignItems: "center",
       width: 60,
-      //  backgroundColor: "red"
+      
     },
     logo: {
       width: 40,
       height: 40,
       resizeMode: "contain",
     },
+
+    fighter: {
+      width: 52,
+      height: 52,
+      resizeMode: "contain",
+    },
+
+    fighterContainer: {
+      width: 40,
+      height: 40,
+      borderWidth: 1,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      overflow: "hidden",
+    },
+
+    rightFighterFlag: {
+      position: "absolute",
+      width: 20,
+      height: 20,
+      right: 4,
+      bottom: 14,
+      zIndex: 99,
+    },
+    leftFighterFlag: {
+      position: "absolute",
+      width: 20,
+      height: 20,
+      left: 4,
+      bottom: 14,
+      zIndex: 99,
+    },
+
     teamName: {
       marginTop: 4,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      width: 80,
+      width: 100,
     },
     teamScore: {
       fontSize: 28,
       fontFamily: Fonts.OSBOLD,
-      width: 48,
+      width: 60,
       textAlign: "center",
     },
     teamRecord: {
-      fontSize: 20,
+      fontSize: 18,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      width: 50,
+      width: 60,
+    },
+    winnerContainer: {
+      alignItems: "center",
+      justifyContent: "center",
     },
     info: {
       alignItems: "center",

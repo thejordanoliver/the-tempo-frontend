@@ -243,7 +243,7 @@ export type LeagueType =
   | "MLB"
   | "WCBB"
   | "NHL"
-  | "UFC";
+  | "MMA";
 
 export type LeagueTeam = Team & { league: LeagueType };
 

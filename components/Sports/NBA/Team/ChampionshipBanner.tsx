@@ -4,14 +4,17 @@ import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+
 import { Colors, Fonts } from "constants/Styles";
-import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
-import { LeagueType } from "types/types";
+
+import { getNBATeam } from "constants/teams";
+import { getCBBTeam } from "constants/teamsCBB";
+import { getCFBTeam } from "constants/teamsCFB";
+import { getMLBTeam } from "constants/teamsMLB";
+import { getNFLTeam } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+
+import { LeagueType } from "types/types";
 
 type Props = {
   years?: (number | string)[];
@@ -23,7 +26,7 @@ type Props = {
 };
 
 function isColorDark(hex: string | undefined): boolean {
-  if (!hex) return false; // default to light
+  if (!hex) return false;
 
   const cleaned = hex.replace("#", "");
 
@@ -31,10 +34,35 @@ function isColorDark(hex: string | undefined): boolean {
   const g = parseInt(cleaned.substring(2, 4), 16);
   const b = parseInt(cleaned.substring(4, 6), 16);
 
-  // Perceived luminance formula
   const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
 
-  return luminance < 140; // threshold for "dark"
+  return luminance < 140;
+}
+
+function getTeamByLeague(league: LeagueType, teamId?: string | number) {
+  if (!teamId) return undefined;
+
+  switch (league) {
+    case "NFL":
+      return getNFLTeam(teamId);
+
+    case "CFB":
+      return getCFBTeam(teamId);
+
+    case "CBB":
+      return getCBBTeam(teamId);
+    case "WCBB":
+      return getCBBTeam(teamId, true);
+
+    case "MLB":
+      return getMLBTeam(teamId);
+
+    case "NHL":
+      return nhlTeams.find((t) => String(t.id) === String(teamId));
+
+    default:
+      return getNBATeam(teamId);
+  }
 }
 
 export default function ChampionshipBanner({
@@ -44,24 +72,7 @@ export default function ChampionshipBanner({
   teamName,
   league = "NBA",
 }: Props) {
-  // pick team array
-  const teamList =
-    league === "NFL"
-      ? nflTeams
-      : league === "CFB"
-        ? cfbTeams
-        : league === "CBB"
-          ? cbbTeams
-          : league === "MLB"
-            ? mlbTeams
-          : league === "NHL"
-            ? nhlTeams
-            : nbaTeams;
-
-  // find team by id FIRST
-  let team =
-    teamList.find((t) => String(t.id) === String(teamId)) ||
-    teamList.find((t) => t.name === teamName);
+  const team = getTeamByLeague(league, teamId);
 
   if (!team) {
     console.warn(
@@ -72,12 +83,10 @@ export default function ChampionshipBanner({
   const baseYears = Array.isArray(years) ? years : [];
   let safeYears = [...baseYears];
 
-  // If currentYear exists and isn't already included, add it at the front
   if (currentYear && !safeYears.includes(currentYear)) {
     safeYears = [currentYear, ...safeYears];
   }
 
-  // format years using safeYears
   const isNone = safeYears.length === 0;
   const isMany = safeYears.length > 10;
   const bannerList = isNone ? [null] : isMany ? [safeYears.length] : safeYears;
@@ -85,12 +94,10 @@ export default function ChampionshipBanner({
   function resolveTeamLogo(team: any) {
     if (!team) return undefined;
 
-    // Always prefer logoLight if available
     const rawLogo = team.logoLight || team.logo;
 
     if (!rawLogo) return undefined;
 
-    // require() asset (non-string)
     if (typeof rawLogo !== "string") {
       return rawLogo;
     }
@@ -101,7 +108,6 @@ export default function ChampionshipBanner({
   return (
     <View style={styles.wrapper}>
       {bannerList.map((yearVal, index) => {
-        // shorten the year for display
         const yearShort = isNone
           ? "NONE"
           : isMany
@@ -114,7 +120,6 @@ export default function ChampionshipBanner({
 
         let label = `${league} CHAMPIONS`;
 
-        // CFB: coerce yearVal to number to split BCS / CFP
         if (league === "CFB" && !isMany && yearVal != null) {
           const numericYear = Number(yearVal);
           if (!isNaN(numericYear)) {
@@ -122,16 +127,14 @@ export default function ChampionshipBanner({
           }
         }
 
-        // MLB always
-        if (league === "MLB" && yearVal != null && !isNaN(Number(yearVal))) {
+        if (league === "MLB" && yearVal != null) {
           label = "WORLD SERIES CHAMPIONS";
         }
 
-        // NFL always show SUPER BOWL CHAMPIONS
         if (league === "NFL" && yearVal != null) {
           label = "SUPER BOWL CHAMPIONS";
         }
-        // NFL always show SUPER BOWL CHAMPIONS
+
         if (league === "NHL" && yearVal != null) {
           label = "STANLEY CUP CHAMPIONS";
         }
@@ -146,14 +149,17 @@ export default function ChampionshipBanner({
               ]}
               resizeMode="contain"
             />
+
             <Image
               source={isColorDark(team?.color) ? OutlineLight : Outline}
               style={styles.bannerOutline}
               resizeMode="contain"
             />
+
             <View style={styles.contentOverlay}>
               <Text style={styles.leagueLabel}>{label}</Text>
               <Text style={styles.yearText}>{yearShort}</Text>
+
               <Image
                 source={resolveTeamLogo(team) || PlaceholderLogo}
                 style={styles.teamLogo}
@@ -166,9 +172,6 @@ export default function ChampionshipBanner({
   );
 }
 
-/* ---------------------------------------------------------
-   STYLES
---------------------------------------------------------- */
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
@@ -217,6 +220,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     resizeMode: "contain",
   },
+
   leagueLabel: {
     color: Colors.white,
     fontSize: 12,

@@ -70,7 +70,7 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
     homeEspnId,
     awayEspnId,
     gameDateStr,
-    "nfl"
+    "nfl",
   );
   const {
     gameStatusShortDetail,
@@ -95,7 +95,7 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
   const endOfPeriod = gameStatusDescription === "End of Period";
   const football = isDark ? FootballLight : Football;
 
-   const isChampionship = game.game.week === "Super Bowl";
+  const isChampionship = game.game.week === "Super Bowl";
 
   const styles = gameSquareCardStyles(isDark, isChampionship);
 
@@ -104,16 +104,16 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
   // -----------------------------------------------------
   const homeScore = finished
     ? game.scores.home.total
-    : possession?.score?.home ?? 0;
+    : (possession?.score?.home ?? 0);
   const awayScore = finished
     ? game.scores.away.total
-    : possession?.score?.away ?? 0;
+    : (possession?.score?.away ?? 0);
 
   const { data: details, loading } = useFootballGameDetails(
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   // --- Team records ---
@@ -158,8 +158,8 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
   const holidayLabel = isChristmasDay
     ? "Christmas Day"
     : isNewYearsDay
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const headline = headlineText ?? holidayLabel ?? "";
 
@@ -249,7 +249,7 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
 
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Cancelled</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
@@ -260,7 +260,9 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
       return (
         <>
           <Text style={styles.finalText}>
-            <Text style={styles.finalText}>{gameStatusShortDetail || "Final"}</Text>
+            <Text style={styles.finalText}>
+              {gameStatusShortDetail || "Final"}
+            </Text>
           </Text>
           <Text style={styles.finalText}>{formattedDate}</Text>
         </>

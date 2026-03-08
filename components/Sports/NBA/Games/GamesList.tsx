@@ -153,7 +153,7 @@ export default function GamesList({
   };
 
   if (loading) {
-    const count = games.length > 0 ? games.length : expectedCount ?? 4;
+    const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
 

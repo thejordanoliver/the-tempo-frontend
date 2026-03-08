@@ -92,14 +92,14 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     {
       month: "short",
       day: "numeric",
-    }
+    },
   );
   const displayTimeStr = new Date(timestampNum * 1000).toLocaleTimeString(
     "en-us",
     {
       hour: "numeric",
       minute: "numeric",
-    }
+    },
   );
 
   const gameStatus = gameInfo.status.long;
@@ -111,7 +111,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const possession = useFootballGamePossession(
     Number(homeEspnId),
     Number(awayEspnId),
-    gameDateStr
+    gameDateStr,
   );
 
   const {
@@ -133,7 +133,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     String(awayEspnId || emptyAwayTeam.espnID),
     String(homeEspnId || emptyHomeTeam.espnID),
     gameDateStr,
-    "cfb"
+    "cfb",
   );
   const isScheduled = gameStatusDescription === "Scheduled";
   const isFinal = gameStatusDescription === "Final";
@@ -172,7 +172,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
     return (
       footballVenues.find(
-        (v) => normalizeVenueName(v.venue) === normalizedGameVenue
+        (v) => normalizeVenueName(v.venue) === normalizedGameVenue,
       ) || null
     );
   }, [venue?.name, footballVenues]);
@@ -181,7 +181,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
 
   const neutralStadiumEntry = Object.entries(neutralStadiums).find(
-    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName,
   );
 
   const isNeutralSite = !!neutralStadiumEntry;
@@ -211,7 +211,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     lat,
     lon,
     gameDateStr ?? null,
-    resolvedVenueCity
+    resolvedVenueCity,
   );
 
   const displayWeather = weather
@@ -231,7 +231,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
   const matchup = useCFBMatchup(
     away?.name ?? away.code,
-    home?.name ?? home.code
+    home?.name ?? home.code,
   );
 
   // Determine fallback rivalry name
@@ -241,7 +241,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
   // Choose headline → rivalry → empty string
   const headLine =
-    headline && headline.trim().length > 0 ? headline : rivalryHeadline ?? "";
+    headline && headline.trim().length > 0 ? headline : (rivalryHeadline ?? "");
 
   return (
     <BottomSheetModal
@@ -388,15 +388,13 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                     isDark={true}
                     lighter
                     home={{
+                      teamId: homeId,
                       teamCode: homeName,
-                      teamLogo: homeTeam.logo,
-                      teamLogoLight: homeTeam.logoLight,
                       games: homeLastGames.games,
                     }}
                     away={{
+                      teamId: awayId,
                       teamCode: awayName,
-                      teamLogo: awayTeam.logo,
-                      teamLogoLight: awayTeam.logoLight,
                       games: awayLastGames.games,
                     }}
                     league="CFB"
@@ -438,8 +436,8 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                       venue?.attendance
                         ? String(venue.attendance)
                         : venue?.capacity
-                        ? String(venue.capacity)
-                        : "N/A"
+                          ? String(venue.capacity)
+                          : "N/A"
                     }
                     loading={false}
                     error={null}

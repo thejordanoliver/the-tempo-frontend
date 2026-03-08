@@ -451,7 +451,6 @@ export default function GameDetailsScreen() {
             <GameTeamStats
               stats={teamStats}
               gameStatusDescription={gameStatusDescription}
-              league={isWomen ? "WCBB" : "CBB"}
             />
 
             {(isHalftime || inProgress || isFinal) && (

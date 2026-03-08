@@ -10,6 +10,7 @@ import { getCBBTeam } from "constants/teamsCBB";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
+import { getNHLTeam } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
 import { useChampions } from "hooks/useChampions";
 import { useTeamCoaches } from "hooks/useTeamCoaches";
@@ -18,7 +19,6 @@ import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
 import TeamInfoCard from "./TeamInfoCard";
-import { getNHLTeam } from "constants/teamsNHL";
 
 type Props = {
   visible: boolean;
@@ -62,7 +62,7 @@ export default function TeamInfoModal({
   // --------------------------------------------------
   // UNIVERSAL TEAM LOOKUP
   // --------------------------------------------------
-  const fetchedTeam = useMemo(() => {
+  const team = useMemo(() => {
     if (!teamId) return null;
     switch (league) {
       case "CBB":
@@ -84,18 +84,28 @@ export default function TeamInfoModal({
     }
   }, [teamId, league]);
 
+  function getTeamId(team: any, league: LeagueType) {
+    if (!team) return undefined;
+
+    if (league === "WCBB" && "wid" in team) {
+      return team.wid;
+    }
+
+    return team.id;
+  }
+
   // --------------------------------------------------
   // CHAMPIONSHIP NOTES / YEARS
   // --------------------------------------------------
-const teamChampionshipNotes = useMemo(() => {
-  if (!isChampionsSupported || !teamId || !champions) return [];
+  const teamChampionshipNotes = useMemo(() => {
+    if (!isChampionsSupported || !teamId || !champions) return [];
 
-  return champions
-    .filter((c) => Number(c.team?.id) === Number(teamId))
-    .map((c) => c.notes ?? c.season)
-    .filter((val) => val != null)
-    .sort((a, b) => Number(a) - Number(b));
-}, [champions, teamId, isChampionsSupported]);
+    return champions
+      .filter((c) => Number(c.team?.id) === Number(teamId))
+      .map((c) => c.notes ?? c.season)
+      .filter((val) => val != null)
+      .sort((a, b) => Number(a) - Number(b));
+  }, [champions, teamId, isChampionsSupported]);
 
   useEffect(() => {
     if (visible) sheetRef.current?.present();
@@ -145,7 +155,7 @@ const teamChampionshipNotes = useMemo(() => {
 
         <View style={{ paddingHorizontal: 12, flex: 1 }}>
           {/* TEAM NAME */}
-          {fetchedTeam?.fullName && (
+          {team?.fullName && (
             <Text
               style={[
                 styles.teamName,
@@ -155,7 +165,7 @@ const teamChampionshipNotes = useMemo(() => {
                 },
               ]}
             >
-              {fetchedTeam.fullName}
+              {team.fullName}
             </Text>
           )}
 
@@ -183,18 +193,22 @@ const teamChampionshipNotes = useMemo(() => {
               years={
                 isChampionsSupported
                   ? teamChampionshipNotes
-                  : Array.isArray((fetchedTeam as any)?.championships)
-                    ? (fetchedTeam as any).championships
+                  : Array.isArray((team as any)?.championships)
+                    ? (team as any).championships
                     : []
               }
-              logo={fetchedTeam?.logo}
-              teamName={fetchedTeam?.fullName}
-              teamId={fetchedTeam?.id}
+              logo={team?.logo}
+              teamName={team?.fullName}
+              teamId={getTeamId(team, league)}
               league={league}
             />
 
             {/* TEAM INFO CARD */}
-            <TeamInfoCard teamId={teamId} league={league} coach={coaches[0]} />
+            <TeamInfoCard
+              teamId={getTeamId(team, league)}
+              league={league}
+              coach={coaches[0]}
+            />
           </BottomSheetScrollView>
         </View>
       </View>

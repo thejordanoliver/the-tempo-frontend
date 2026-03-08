@@ -21,7 +21,7 @@ export default function NewsArticleSkeleton() {
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 

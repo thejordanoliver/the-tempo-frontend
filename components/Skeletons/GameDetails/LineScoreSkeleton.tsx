@@ -1,6 +1,7 @@
 import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import HeaderSkeleton from "../HeaderSkeleton";
 
 type Props = {
   league: "MLB" | "NBA" | "CBB" | "WCBB" | "CFB" | "NFL" | "NHL";
@@ -8,9 +9,7 @@ type Props = {
 
 export default function LineScoreSkeleton({ league }: Props) {
   const isDark = useColorScheme() === "dark";
-  const baseColor = isDark
-    ? Colors.dark.itemBackground
-    : Colors.light.itemBackground;
+  const baseColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   // Pulse animation
   const pulse = useRef(new Animated.Value(0.4)).current;
@@ -32,11 +31,24 @@ export default function LineScoreSkeleton({ league }: Props) {
     ).start();
   }, [pulse]);
 
-  // MLB = 10 innings + total
-  // Others = 5 periods + total
-  const isMLB = league === "MLB";
-  const periods = isMLB ? 10 : 5;
-  const columnsArray = Array.from({ length: periods + 1 }); // includes total
+  // Correct periods by league
+  const PERIOD_MAP: Record<Props["league"], number> = {
+    MLB: 9,
+    NBA: 4,
+    WCBB: 4,
+    CBB: 2,
+    CFB: 4,
+    NFL: 4,
+    NHL: 3,
+  };
+
+  const periods = PERIOD_MAP[league] ?? 4;
+  const columnsArray = Array.from({ length: periods + 1 }); // + total column
+
+  const borderPulse = pulse.interpolate({
+    inputRange: [0.4, 1],
+    outputRange: ["rgba(150,150,150,0.3)", "rgba(150,150,150,0.8)"],
+  });
 
   const Placeholder = () => (
     <Animated.View
@@ -45,7 +57,7 @@ export default function LineScoreSkeleton({ league }: Props) {
   );
 
   // ---------------------------------------------
-  // 🟦 Header Row (Periods/Innings)
+  // Header Row (Periods/Innings)
   // ---------------------------------------------
   const HeaderRow = () => (
     <View style={styles.headerRow}>
@@ -76,30 +88,24 @@ export default function LineScoreSkeleton({ league }: Props) {
 
   return (
     <View style={styles.container}>
-      {/* Header separator */}
-      <Animated.View
-        style={[styles.heading, { backgroundColor: baseColor, opacity: pulse }]}
-      />
-      <Animated.View
-        style={[
-          styles.headingBar,
-          { backgroundColor: baseColor, opacity: pulse },
-        ]}
-      />
+      {/* Title skeleton */}
+      <HeaderSkeleton />
 
-      {/* Header periods/innings */}
-      <HeaderRow />
+      {/* Line score box */}
+      <Animated.View style={[styles.wrapper, { borderColor: borderPulse }]}>
+        <HeaderRow />
 
-      {/* Away */}
-      <TeamRow keyPrefix="away" />
+        <TeamRow keyPrefix="away" />
 
-      {/* Divider */}
-      <Animated.View
-        style={[styles.divider, { backgroundColor: baseColor, opacity: pulse }]}
-      />
+        <Animated.View
+          style={[
+            styles.divider,
+            { backgroundColor: baseColor, opacity: pulse },
+          ]}
+        />
 
-      {/* Home */}
-      <TeamRow keyPrefix="home" />
+        <TeamRow keyPrefix="home" />
+      </Animated.View>
     </View>
   );
 }
@@ -110,43 +116,36 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  heading: {
-    height: 25,
-    width: 150,
-    borderRadius: 3,
-    marginBottom: 6,
-  },
-  headingBar: {
-    height: 2,
-    borderRadius: 3,
-    marginBottom: 4,
+  wrapper: {
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    padding: 12,
   },
 
-  // HEADER ROW
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 4,
+    paddingVertical: 4,
   },
 
-  // TEAM ROW
   row: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 4,
+    paddingVertical: 4,
   },
 
   teamCode: {
-    width: 28,
-    height: 12,
-    borderRadius: 3,
-    marginRight: 30,
+    width: 48,
+    height: 14,
+    borderRadius: 4,
+    paddingLeft: 8,
   },
 
   scoresWrapper: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
   },
 
   bar: {

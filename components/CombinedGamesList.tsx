@@ -360,7 +360,7 @@ export default function CombinedGamesList({
       return wrapper(<NFLStackedGameCard game={nflGame} />);
     }
 
-        // ✅ NFL
+    // ✅ NFL
     if (category === "MLB") {
       const mlbGame = item as MLBGame;
       if (viewMode === "list") return wrapper(<MLBGameCard game={mlbGame} />);
@@ -654,15 +654,13 @@ export default function CombinedGamesList({
             onClose={() => setModalVisible(false)}
           />
         )}
-      {modalVisible &&
-        previewGame &&
-        previewCategory === "MLB" && (
-          <MLBGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as MLBGame}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+      {modalVisible && previewGame && previewCategory === "MLB" && (
+        <MLBGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as MLBGame}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
       {modalVisible &&
         previewGame &&
         (previewCategory === "Men's College Basketball" ||

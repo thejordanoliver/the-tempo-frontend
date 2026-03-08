@@ -4,7 +4,7 @@ import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-
+import { useFavoriteTeams } from "./UserHooks/useFavoriteTeams";
 import { teams } from "constants/teams";
 import { teams as cbbteams } from "constants/teamsCBB";
 import { teams as cfbteams } from "constants/teamsCFB";

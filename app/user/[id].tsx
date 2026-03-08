@@ -96,32 +96,31 @@ export default function UserProfileScreen() {
     return <SkeletonProfileScreen isDark={isDark} />;
   }
 
-const onFollowersPress = () => {
-  if (!currentUserId || !userId) return;
+  const onFollowersPress = () => {
+    if (!currentUserId || !userId) return;
 
-  router.push({
-    pathname: "/user/followers",
-    params: {
-      type: "followers",
-      currentUserId: String(currentUserId),
-      targetUserId: String(userId), // ✅ viewed profile
-    },
-  });
-};
+    router.push({
+      pathname: "/user/followers",
+      params: {
+        type: "followers",
+        currentUserId: String(currentUserId),
+        targetUserId: String(userId), // ✅ viewed profile
+      },
+    });
+  };
 
-const onFollowingPress = () => {
-  if (!currentUserId || !userId) return;
+  const onFollowingPress = () => {
+    if (!currentUserId || !userId) return;
 
-  router.push({
-    pathname: "/user/followers",
-    params: {
-      type: "following",
-      currentUserId: String(currentUserId),
-      targetUserId: String(userId), // ✅ viewed profile
-    },
-  });
-};
-
+    router.push({
+      pathname: "/user/followers",
+      params: {
+        type: "following",
+        currentUserId: String(currentUserId),
+        targetUserId: String(userId), // ✅ viewed profile
+      },
+    });
+  };
 
   const isCurrentUser =
     currentUserId !== null && String(currentUserId) === userId;
@@ -163,14 +162,13 @@ const onFollowingPress = () => {
 
         <View style={styles.favoritesContainer}>
           <FavoriteTeamsSection
-            favoriteTeams={favoriteTeamsWithLeague}
+            favorites={favoriteTeamsWithLeague}
             isGridView={isGridView}
             fadeAnim={fadeAnim}
             toggleFavoriteTeamsView={toggleFavoriteTeamsView}
             styles={styles}
             itemWidth={itemWidth}
             isCurrentUser={isCurrentUser}
-            username={username ?? undefined}
           />
         </View>
       </ScrollView>

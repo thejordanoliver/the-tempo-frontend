@@ -24,7 +24,7 @@ type Props = {
   awayCode: string | undefined;
   lighter?: boolean;
   loading?: boolean;
-league?: "NBA" | "CBB" | "WCBB" | "MLB" | "NHL";
+  league?: "NBA" | "CBB" | "WCBB" | "MLB" | "NHL";
 };
 
 export default function LineScore({
@@ -36,7 +36,7 @@ export default function LineScore({
   league = "NBA",
 }: Props) {
   const isDark = useColorScheme() === "dark";
-
+  const styles = lineScoreStyles(isDark);
   if (loading || !linescore || !linescore.home || !linescore.away) {
     return <LineScoreSkeleton league={league} />;
   }
@@ -44,14 +44,14 @@ export default function LineScore({
   const textColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.white
-    : Colors.black;
+      ? Colors.white
+      : Colors.black;
 
   const borderColor = lighter
     ? Colors.lightGray
     : isDark
-    ? Colors.midTone
-    : Colors.lightGray;
+      ? Colors.midTone
+      : Colors.lightGray;
 
   // Convert strings | numbers to totals
   const total = (scores: ScoreValue[]) => {
@@ -76,49 +76,43 @@ export default function LineScore({
   // PERIOD LABELS
   // ------------------------------------------------------------
 
-const baseColumns =
-  league === "CBB"
-    ? 2
-    : league === "NHL"
-    ? 3
-    : 4;
+  const baseColumns = league === "CBB" ? 2 : league === "NHL" ? 3 : 4;
 
-const numColumns = Math.max(
-  baseColumns,
-  linescore.home.length,
-  linescore.away.length
-);
+  const numColumns = Math.max(
+    baseColumns,
+    linescore.home.length,
+    linescore.away.length,
+  );
 
-const getPeriodLabel = (index: number): string => {
-  // ---------------- MLB ----------------
-  if (league === "MLB") {
-    return String(index + 1);
-  }
+  const getPeriodLabel = (index: number): string => {
+    // ---------------- MLB ----------------
+    if (league === "MLB") {
+      return String(index + 1);
+    }
 
-  // ---------------- NHL ----------------
-  if (league === "NHL") {
-    if (index < 3) return `P${index + 1}`; // P1, P2, P3
-    if (index === 3) return "OT";
-    return `OT${index - 2}`; // OT2, OT3 (playoffs)
-  }
+    // ---------------- NHL ----------------
+    if (league === "NHL") {
+      if (index < 3) return `P${index + 1}`; // P1, P2, P3
+      if (index === 3) return "OT";
+      return `OT${index - 2}`; // OT2, OT3 (playoffs)
+    }
 
-  // ---------------- CBB ----------------
-  if (league === "CBB" || league === "WCBB") {
-    if (index === 0) return "1H";
-    if (index === 1) return "2H";
-    if (index === 2) return "OT";
-    return `OT${index - 1}`;
-  }
+    // ---------------- CBB ----------------
+    if (league === "CBB" || league === "WCBB") {
+      if (index === 0) return "1H";
+      if (index === 1) return "2H";
+      if (index === 2) return "OT";
+      return `OT${index - 1}`;
+    }
 
-  // ---------------- NBA ----------------
-  if (index < 4) return `Q${index + 1}`;
-  if (index === 4) return "OT";
-  return `OT${index - 3}`;
-};
-
+    // ---------------- NBA ----------------
+    if (index < 4) return `Q${index + 1}`;
+    if (index === 4) return "OT";
+    return `OT${index - 3}`;
+  };
 
   const columns = Array.from({ length: numColumns }, (_, i) =>
-    getPeriodLabel(i)
+    getPeriodLabel(i),
   );
 
   const columnStyle: ViewStyle = { flex: 1, alignItems: "center" };
@@ -134,13 +128,13 @@ const getPeriodLabel = (index: number): string => {
           <View style={styles.scoresWrapper}>
             {columns.map((label, idx) => (
               <View key={`h-${idx}`} style={columnStyle}>
-                <Text style={[styles.header, { color: textColor }]}>
+                <Text style={styles.header}>
                   {label}
                 </Text>
               </View>
             ))}
             <View style={columnStyle}>
-              <Text style={[styles.header, { color: textColor }]}>Total</Text>
+              <Text style={styles.header}>Total</Text>
             </View>
           </View>
         </View>
@@ -199,50 +193,53 @@ const getPeriodLabel = (index: number): string => {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  wrapper: {
-    borderColor: Colors.midTone,
-    borderWidth: 1,
-    borderRadius: 8,
-    overflow: "hidden",
-    padding: 12,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 4,
-  },
-  teamCode: {
-    width: 48,
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 14,
-    paddingLeft: 8,
-  },
-  scoresWrapper: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  header: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 10,
-    opacity: 0.8,
-    textAlign: "center",
-  },
-  score: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 14,
-    textAlign: "center",
-  },
-  totalScore: {
-    fontFamily: Fonts.OSMEDIUM,
-    fontSize: 14,
-    textAlign: "center",
-  },
-});
+const lineScoreStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      width: "100%",
+    },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      overflow: "hidden",
+      padding: 12,
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 4,
+    },
+    teamCode: {
+      width: 48,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+      paddingLeft: 8,
+    },
+    scoresWrapper: {
+      flex: 1,
+      flexDirection: "row",
+    },
+    header: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
+      textTransform: "uppercase",
+      width: "100%",
+    },
+    score: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      textAlign: "center",
+    },
+    totalScore: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+      textAlign: "center",
+    },
+  });

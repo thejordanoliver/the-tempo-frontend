@@ -1,17 +1,17 @@
-import InfoCard from "components/Sports/CFB/Team/InfoCard";
-import { Colors } from "constants/Styles";
-import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
+import InfoCard from "components/Sports/NBA/Team/InfoCard";
+import { getNBATeam } from "constants/teams";
+import { getCBBTeam } from "constants/teamsCBB";
+import { getCFBTeam } from "constants/teamsCFB";
+import { getMLBTeam } from "constants/teamsMLB";
+import { getNFLTeam } from "constants/teamsNFL";
+import { getNHLTeam } from "constants/teamsNHL";
 import { Coach } from "hooks/useTeamCoaches";
-import { View, useColorScheme } from "react-native";
+import { View } from "react-native";
 import { CFBTeam } from "types/cfb";
 import { MLBTeam } from "types/mlb";
 import { NFLTeam } from "types/nfl";
 import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
+
 type Props = {
   teamId?: string | number;
   league: LeagueType;
@@ -19,279 +19,158 @@ type Props = {
 };
 
 export default function TeamInfoCard({ teamId, league, coach }: Props) {
-  const isDark = useColorScheme() === "dark";
+  if (!teamId) return null;
 
-  // pick list
-  let teamList:
-    | NBATeam[]
-    | CFBTeam[]
-    | CBBTeam[]
-    | NFLTeam[]
-    | MLBTeam[]
-    | NHLTeam = [];
+  // --------------------------------------------------
+  // UNIVERSAL TEAM LOOKUP
+  // --------------------------------------------------
 
-  switch (league) {
-    case "NBA":
-      teamList = nbaTeams;
-      break;
-    case "CFB":
-      teamList = cfbTeams;
-      break;
-    case "CBB":
-      teamList = cbbTeams;
-      break;
-    case "WCBB":
-      teamList = cbbTeams;
-      break;
-    case "NFL":
-      teamList = nflTeams;
-      break;
-    case "MLB":
-      teamList = mlbTeams;
-      break;
-    case "NHL":
-      teamList = nhlTeams;
-      break;
-  }
+  const team = (() => {
+    switch (league) {
+      case "NBA":
+        return getNBATeam(teamId);
 
-  const team = teamList.find((t) => String(t.id) === String(teamId));
+      case "CFB":
+        return getCFBTeam(teamId);
+
+      case "CBB":
+        return getCBBTeam(teamId);
+
+      case "WCBB":
+        return getCBBTeam(teamId, true);
+
+      case "NFL":
+        return getNFLTeam(teamId);
+
+      case "MLB":
+        return getMLBTeam(teamId);
+
+      case "NHL":
+        return getNHLTeam(teamId);
+
+      default:
+        return null;
+    }
+  })();
+
   if (!team) return null;
 
-  const primaryColor =
-    (team as any).color ?? (isDark ? Colors.black : Colors.white);
+  
 
-  /* ---------------------------------------------------------
-    LEAGUE-SPECIFIC RENDERING
-  --------------------------------------------------------- */
+  // --------------------------------------------------
+  // LEAGUE RENDERING
+  // --------------------------------------------------
 
   switch (league) {
     case "NBA": {
       const t = team as NBATeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Arena"
-            value={t.venueName}
-            team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={t.location}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Arena" value={t.venueName} team={t} />
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
 
     case "CFB": {
       const t = team as CFBTeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={t.location}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-
-          <InfoCard
-            label="Stadium"
-            value={t.venue}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Stadium" value={t.venue} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
 
-    case "CBB": {
-      const t = team as CBBTeam;
-      return (
-        <View style={{ width: "100%" }}>
-          <InfoCard
-            label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-
-          <InfoCard
-            label="Location"
-            value={t.location}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Arena"
-            value={t.venueName}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-        </View>
-      );
-    }
-
+    case "CBB":
     case "WCBB": {
       const t = team as CBBTeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={t.location}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Arena"
-            value={t.venueName}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Arena" value={t.venueName} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
 
     case "NFL": {
       const t = team as NFLTeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={`${t.location}`}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-
-          <InfoCard
-            label="Stadium"
-            value={t.venue}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Stadium" value={t.venue} team={t} />
         </View>
       );
     }
 
     case "MLB": {
       const t = team as MLBTeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
-            label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            label="Manager"
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={t.city}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-
-          <InfoCard
-            label="Stadium"
-            value={t.venueName}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Location" value={t.city} team={t} />
+          <InfoCard label="Stadium" value={t.venueName} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
-    
+
     case "NHL": {
       const t = team as NHLTeam;
+
       return (
         <View style={{ width: "100%" }}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name} ${coach?.last_name}`}
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
             team={t}
-            backgroundColor={primaryColor}
           />
 
-          <InfoCard
-            label="Location"
-            value={t.location}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-
-          <InfoCard
-            label="Arena"
-            value={t.venueName}
-            team={t}
-            backgroundColor={primaryColor}
-          />
-          <InfoCard
-            label="Established"
-            value={t.established}
-            team={t}
-            backgroundColor={primaryColor}
-          />
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Arena" value={t.venueName} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
+
+    default:
+      return null;
   }
 }

@@ -46,7 +46,7 @@ const leagues: LeagueType[] = [
   "WCBB",
   "MLB",
   "NHL",
-  "UFC",
+  "MMA",
 ];
 const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   NBA: { label: "NBA", logo: NBALogo },
@@ -56,7 +56,7 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
   MLB: { label: "MLB", logo: MLBLogo },
   NHL: { label: "NHL", logo: NHLLogo },
-  UFC: { label: "UFC", logo: UFCLogo },
+  MMA: { label: "MMA", logo: UFCLogo },
 };
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
@@ -84,7 +84,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       | "/league/wcbb"
       | "/league/mlb"
       | "/league/nhl"
-      | "/league/ufc";
+      | "/league/mma";
 
     const goToLeague = (league: LeagueType) => {
       sheetRef.current?.dismiss();
@@ -103,8 +103,8 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                   ? "/league/wcbb"
                   : league === "NHL"
                     ? "/league/nhl"
-                    : league === "UFC"
-                      ? "/league/ufc"
+                    : league === "MMA"
+                      ? "/league/mma"
                       : "/league/mlb";
       router.push(route);
       onSelect(league);

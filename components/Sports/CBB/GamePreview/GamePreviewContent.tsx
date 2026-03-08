@@ -103,15 +103,13 @@ export default function GamePreviewContent({
             isDark={false}
             lighter
             home={{
+              teamId: home?.id,
               teamCode: home?.code ?? "",
-              teamLogo: home?.logo ?? "",
-              teamLogoLight: home?.logoLight ?? "",
               games: homeLastGames?.games ?? [],
             }}
             away={{
+              teamId: away?.id,
               teamCode: away?.code ?? "",
-              teamLogo: away?.logo ?? "",
-              teamLogoLight: away?.logoLight ?? "",
               games: awayLastGames?.games ?? [],
             }}
             league={isWomen ? "WCBB" : "CBB"}

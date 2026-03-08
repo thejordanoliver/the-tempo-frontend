@@ -167,7 +167,7 @@ export const StandingsSkeleton = () => {
   return (
     <ScrollView
       style={{ paddingTop: 16, marginTop: 12 }}
-      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
+      contentContainerStyle={{ paddingBottom: 100 }}
     >
       {/* ---------- HEADER ABOVE TABLE ---------- */}
       <Animated.View
