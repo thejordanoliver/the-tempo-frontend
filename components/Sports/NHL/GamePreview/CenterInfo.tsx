@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { formatQuarter } from "utils/games";
 import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import { formatQuarter } from "utils/games";
 type CenterInfoProps = {
   isChampionship: boolean;
   broadcastNetworks?: string;
@@ -113,4 +113,3 @@ export default function CenterInfo({
     </View>
   );
 }
-

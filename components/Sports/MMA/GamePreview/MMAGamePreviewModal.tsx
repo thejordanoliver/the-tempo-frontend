@@ -4,7 +4,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
@@ -20,6 +19,7 @@ import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 import { snapPoints } from "utils/modalUtils";
 import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
+import FighterInfo from "./FighterInfo";
 type Props = {
   game: MMAFight; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -158,7 +158,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
                 </>
               )}
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <FighterInfo
                   side="away"
                   logo={secondFighterPhoto}
                   name={secondFighterName}
@@ -179,7 +179,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
                   broadcastNetworks={broadcastText}
                   isDark={true}
                 />
-                <CompetitorInfo
+                <FighterInfo
                   side="home"
                   logo={firstFighterPhoto}
                   name={firstFighterName}

@@ -13,12 +13,12 @@ import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/Gam
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { NHLGame } from "types/nhl";
 import CenterInfo from "./CenterInfo";
+import TeamInfo from "./TeamInfo";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -107,7 +107,7 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
   const seriesSummary = details?.seriesSummary?.summary;
   const isPostseason = details?.isPostseason;
   const isLiveScoreReady = !!liveScore;
-  
+
   const renderHeadline = () => (
     <>
       {isPostseason ? (
@@ -176,8 +176,8 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
               {renderHeadline()}
 
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
-                  side={"away"}
+                <TeamInfo
+                  side="away"
                   team={away}
                   logo={awayLogo}
                   name={awayName}
@@ -199,8 +199,8 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
                   isDark={isDark}
                   lighter
                 />
-                <CompetitorInfo
-                  side={"home"}
+                <TeamInfo
+                  side="home"
                   team={home}
                   logo={homeLogo}
                   name={homeName}

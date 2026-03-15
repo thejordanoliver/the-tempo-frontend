@@ -1,11 +1,11 @@
-import { getMLBTeamLogo } from "constants/teamsMLB";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { MLBTeam } from "types/mlb";
 
 type TeamInfoProps = {
   team?: MLBTeam;
-  teamName: string;
+  logo: any;
+  name: string;
   score?: number;
   opponentScore?: number;
   record?: string;
@@ -15,7 +15,8 @@ type TeamInfoProps = {
 
 export default function TeamInfo({
   team,
-  teamName,
+  logo,
+  name,
   score,
   opponentScore,
   record,
@@ -60,10 +61,6 @@ export default function TeamInfo({
       </View>
     );
   };
-  /* ================================
-     ASSETS
-  ================================= */
-  const logo = team ? getMLBTeamLogo(team.id, true) : undefined;
 
   const isHome = side === "home";
   const isAway = side === "away";
@@ -89,7 +86,7 @@ export default function TeamInfo({
       {/* TEAM INFO */}
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
-        <Text style={styles.teamName}>{teamName}</Text>
+        <Text style={styles.teamName}>{name}</Text>
 
         {isFinal && record && <Text style={styles.teamRecord}>{record}</Text>}
       </View>

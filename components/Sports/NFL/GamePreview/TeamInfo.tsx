@@ -5,12 +5,12 @@ import { NFLTeam } from "types/nfl";
 
 type TeamInfoProps = {
   team: NFLTeam;
-  teamName: string;
+  logo: any;
+  name: string;
   rank?: number;
   score: number;
   opponentScore: number;
   record?: string;
-  isDark: boolean;
   possessionTeamId?: number | null;
   side: "home" | "away";
   timeouts?: number;
@@ -20,7 +20,8 @@ type TeamInfoProps = {
 
 export default function TeamInfo({
   team,
-  teamName,
+  logo,
+  name,
   score,
   opponentScore,
   record,
@@ -51,8 +52,6 @@ export default function TeamInfo({
 
   const hasPossession =
     gameStatusDescription && String(possessionTeamId) === String(team?.espnID);
-
-  const logo = team.logoLight || team.logo;
 
   // --------------------------------------------------------------
   // TIMEOUTS RENDERING
@@ -104,7 +103,7 @@ export default function TeamInfo({
         <Image source={logo} style={styles.teamLogo} />
         <Text style={styles.teamName}>
           {rank != null && <Text style={styles.teamRank}>{rank} </Text>}
-          {teamName}
+          {name}
         </Text>
 
         {/* Show timeouts only during live */}

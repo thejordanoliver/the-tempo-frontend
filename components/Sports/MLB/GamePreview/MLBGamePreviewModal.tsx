@@ -1,5 +1,4 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { BlurView } from "expo-blur";
@@ -18,6 +17,7 @@ import { snapPoints } from "utils/modalUtils";
 import { getGameDate } from "utils/nflGameCardUtils";
 import { GameInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
+import TeamInfo from "./TeamInfo";
 type Props = {
   game: MLBGame;
   visible: boolean;
@@ -207,7 +207,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* ================= GAME HEADER ================= */}
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <TeamInfo
                   side="away"
                   team={away}
                   logo={awayLogo}
@@ -230,7 +230,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                   bases={bases}
                 />
 
-                <CompetitorInfo
+                <TeamInfo
                   side="home"
                   team={home}
                   logo={homeLogo}

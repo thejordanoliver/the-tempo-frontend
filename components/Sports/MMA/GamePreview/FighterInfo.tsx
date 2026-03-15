@@ -4,19 +4,21 @@ import { MMAFighter } from "types/mma";
 
 type FighterInfoProps = {
   fighter?: MMAFighter;
+  logo: any;
   headshot: string;
   record?: string;
   side: "home" | "away";
-  fighterName: string;
+  name: string;
   gameStatusDescription: string;
   isWinner?: boolean;
 };
 
 export default function FighterInfo({
   fighter,
+  logo,
   headshot,
   record,
-  fighterName,
+  name,
   gameStatusDescription,
   isWinner,
   side,
@@ -28,12 +30,6 @@ export default function FighterInfo({
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const isEndOfRound = gameStatusDescription === "End of Round";
-  const inProgress = gameStatusDescription === "In Progress";
-  const inWalkouts = gameStatusDescription === "Walkouts";
-  const isIntros = gameStatusDescription === "Intros";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const isInactiveGame = isDelayed || isPostponed || isCanceled;
   const isRecordDisplay = isScheduled || isInactiveGame;
 
@@ -41,7 +37,7 @@ export default function FighterInfo({
      WINNER / SCORE LOGIC
   ================================= */
   const scoreOpacity = isFinal && !isWinner ? 0.4 : 1;
-  const valueFontSize = isRecordDisplay ? 22 : 36;
+  const valueFontSize = isRecordDisplay ? 22 : 22;
   const displayValue = isRecordDisplay ? (record ?? "-") : (record ?? "-");
 
   const ScoreText = ({
@@ -61,9 +57,6 @@ export default function FighterInfo({
       </View>
     );
   };
-
-  // --- Detect record vs score → dynamic font size ---
-  const isRecord = isScheduled || isDelayed || isPostponed;
 
   return (
     <View
@@ -86,11 +79,11 @@ export default function FighterInfo({
       {/* ─────────── Fighter LOGO + NAME ─────────── */}
       <View style={styles.fighterContainer}>
         <View style={styles.fighterImageContainer}>
-          <Image source={{ uri: headshot }} style={styles.fighter} />
+          <Image source={{ uri: logo }} style={styles.fighter} />
         </View>
 
         <Text style={styles.fighterName} numberOfLines={1} ellipsizeMode="tail">
-          {fighterName}
+          {name}
         </Text>
       </View>
 

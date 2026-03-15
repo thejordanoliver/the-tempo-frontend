@@ -1,11 +1,10 @@
 import { Colors } from "constants/Styles";
-import { getTeamLogo } from "constants/teams";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { Team } from "types/types";
 type TeamInfoProps = {
   team?: Team;
-  teamName: string;
+  name: string;
   score?: number;
   opponentScore?: number;
   record?: string;
@@ -13,11 +12,12 @@ type TeamInfoProps = {
   timeouts: number;
   bonusState: string | undefined | null;
   gameStatusDescription: string;
+  logo: any;
 };
 
 export default function TeamInfo({
   team,
-  teamName,
+  name,
   score,
   opponentScore,
   record,
@@ -25,6 +25,7 @@ export default function TeamInfo({
   side,
   timeouts,
   bonusState,
+  logo,
 }: TeamInfoProps) {
   const styles = TeamInfoStyle;
 
@@ -33,10 +34,6 @@ export default function TeamInfo({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isCanceled = gameStatusDescription === "Canceled";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "Halftime" ||
-    gameStatusDescription === "End of Period";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   // --- Winner / opacity logic ---
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
@@ -58,9 +55,6 @@ export default function TeamInfo({
     : score !== undefined
       ? score
       : "-";
-
-  // Logos (prefer light variants at night)
-  const logo = team ? getTeamLogo(team.id, true) : undefined;
 
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 7;
@@ -122,7 +116,7 @@ export default function TeamInfo({
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
 
-        <Text style={styles.teamName}>{teamName}</Text>
+        <Text style={styles.teamName}>{name}</Text>
 
         {/* Final only → show record */}
         {!isScheduled && isFinal && record && (

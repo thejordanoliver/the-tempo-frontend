@@ -1,5 +1,4 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/Styles";
 import { getCBBTeamLogo, neutralVenues, teams } from "constants/teamsCBB";
@@ -18,6 +17,7 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
+import TeamInfo from "./TeamInfo";
 
 type Props = {
   visible: boolean;
@@ -342,7 +342,7 @@ export default function CBBGamePreviewModal({
               )}
 
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <TeamInfo
                   team={away}
                   name={away?.code ?? away?.shortName ?? away?.name ?? "Away"}
                   logo={awayLogo}
@@ -369,7 +369,7 @@ export default function CBBGamePreviewModal({
                   isDark={isDark}
                 />
 
-                <CompetitorInfo
+                <TeamInfo
                   team={home}
                   name={home?.code ?? home?.shortName ?? home?.name ?? "Home"}
                   logo={homeLogo}

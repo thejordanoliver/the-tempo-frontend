@@ -4,7 +4,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
 import {
@@ -40,6 +39,7 @@ import NFLInjuries from "../GameDetails/NFLInjuries";
 import NFLSeriesHistory from "../GameDetails/NFLSeriesHistory";
 import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamScoringSummary from "../GameDetails/TeamScoringSummary";
+import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: Game;
@@ -303,7 +303,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* HEADER */}
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <TeamInfo
                   team={away}
                   logo={awayLogo}
                   name={awayName}
@@ -330,7 +330,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   redzone={isRedzone}
                 />
 
-                <CompetitorInfo
+                <TeamInfo
                   team={home}
                   logo={homeLogo}
                   name={homeName}
@@ -400,7 +400,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                     lighter
                     league="NFL"
                   />
-                  
+
                   {highlights.length > 0 && (
                     <HighlightVideoList highlights={highlights} lighter />
                   )}

@@ -3,23 +3,23 @@ import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoSty
 import { CBBTeam } from "types/types";
 type TeamInfoProps = {
   team?: CBBTeam;
-  teamName: string | undefined;
+  logo: any;
+  name: string | undefined;
   score?: number;
   opponentScore?: number;
   record: string;
   gameStatusDescription: string;
   side?: "home" | "away";
   rank?: number;
-  logo: any;
 };
 
 export default function TeamInfo({
   team,
-  teamName,
+  name,
+  logo,
   score,
   opponentScore,
   record,
-  logo,
   rank,
   gameStatusDescription,
   side,
@@ -84,7 +84,7 @@ export default function TeamInfo({
         <Image source={logo} style={styles.teamLogo} />
         <Text style={styles.teamName}>
           {showRank ? <Text style={styles.teamRank}>{rank} </Text> : null}
-          {teamName}
+          {name}
         </Text>
 
         {/* Final only → show record */}

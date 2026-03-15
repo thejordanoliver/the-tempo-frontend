@@ -4,7 +4,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import CFBSeriesHistory from "components/Sports/CFB/GameDetails/CFBSeriesHistory";
 import {
@@ -18,7 +17,6 @@ import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import {
-  getCFBTeam,
   getCFBTeamLogo,
   getRivalryHeadline,
   getTeamById,
@@ -39,6 +37,7 @@ import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "./CenterInfo";
+import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: Game;
@@ -85,8 +84,8 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const homeEspnId = homeTeam?.espnID;
   const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
   const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
-  const homeLogo = getCFBTeamLogo(homeId, true)
-  const awayLogo = getCFBTeamLogo(awayId, true)
+  const homeLogo = getCFBTeamLogo(homeId, true);
+  const awayLogo = getCFBTeamLogo(awayId, true);
   const awayName = awayTeam?.code || emptyAwayTeam.code;
   const homeName = homeTeam?.code || emptyHomeTeam.code;
   const timestampNum = Number(gameInfo.date.timestamp);
@@ -300,7 +299,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* Teams + Center Info */}
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <TeamInfo
                   team={awayTeam}
                   logo={awayLogo}
                   name={awayName}
@@ -328,7 +327,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                   redzone={isRedzone}
                 />
 
-                <CompetitorInfo
+                <TeamInfo
                   team={homeTeam}
                   logo={homeLogo}
                   name={homeName}

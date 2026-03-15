@@ -1,30 +1,27 @@
 import { Colors } from "constants/Styles";
-import { getNHLTeamLogo } from "constants/teamsNHL";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { NHLTeam } from "types/types";
 type TeamInfoProps = {
   team?: NHLTeam;
-  teamName: string;
+  logo: any;
+  name: string;
   score?: number;
   opponentScore?: number;
   record?: string;
   side: "home" | "away";
-  timeouts: number;
-  bonusState: string | undefined | null;
   gameStatusDescription: string;
 };
 
 export default function TeamInfo({
   team,
-  teamName,
+  logo,
+  name,
   score,
   opponentScore,
   record,
   gameStatusDescription,
   side,
-  timeouts,
-  bonusState,
 }: TeamInfoProps) {
   const styles = TeamInfoStyle;
 
@@ -59,8 +56,6 @@ export default function TeamInfo({
       ? score
       : "-";
 
-  const logo = team ? getNHLTeamLogo(team.id, true) : undefined;
-
   const renderTimeouts = (remaining: number) => {
     const totalTimeouts = 7;
     return (
@@ -80,14 +75,6 @@ export default function TeamInfo({
         ))}
       </View>
     );
-  };
-
-  const isBonus = bonusState === "DOUBLE";
-
-  const renderBonus = () => {
-    if (!isBonus) return null;
-
-    return <Text style={styles.bonus}>BONUS</Text>;
   };
 
   return (
@@ -113,7 +100,6 @@ export default function TeamInfo({
           >
             {displayValue}
           </Text>
-          {renderBonus()}
         </View>
       )}
 
@@ -121,13 +107,12 @@ export default function TeamInfo({
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
 
-        <Text style={styles.teamName}>{teamName}</Text>
+        <Text style={styles.teamName}>{name}</Text>
 
         {/* Final only → show record */}
         {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
-        {!dontShowDetails || (isScheduled && renderTimeouts(timeouts))}
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}
@@ -144,7 +129,6 @@ export default function TeamInfo({
           >
             {displayValue}
           </Text>
-          {renderBonus()}
         </View>
       )}
     </View>

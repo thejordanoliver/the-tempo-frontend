@@ -1,5 +1,4 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getTeamInfo, getTeamLogo, neutralVenues } from "constants/teams";
 import { BlurView } from "expo-blur";
@@ -18,6 +17,7 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
+import TeamInfo from "./TeamInfo";
 type Props = {
   visible: boolean;
   game: Game;
@@ -261,7 +261,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
               {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <CompetitorInfo
+                <TeamInfo
                   team={away}
                   logo={awayLogo}
                   name={awayName}
@@ -287,7 +287,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                   lighter
                 />
 
-                <CompetitorInfo
+                <TeamInfo
                   team={home}
                   logo={homeLogo}
                   name={homeName}
