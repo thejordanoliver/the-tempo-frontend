@@ -253,7 +253,7 @@ export default function TeamDetailScreen() {
         <ScrollView key="stats" style={{ flex: 1 }} />
 
         {/* Standings Page */}
-        <View key="standings" style={{ flex: 1, paddingHorizontal: 12 }}>
+        <View key="standings" style={{ flex: 1 }}>
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}

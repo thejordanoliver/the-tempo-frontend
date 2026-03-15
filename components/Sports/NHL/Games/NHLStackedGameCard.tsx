@@ -13,7 +13,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { NHLGame } from "types/nhl";
 import { formatNHLQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -64,7 +64,7 @@ function NHLStackedGameCard({ game }: Props) {
     gameDateStr,
   );
   const isChampionship = game.week === "Final";
-  const styles = stackedGameCardStyles(isDark, isChampionship);
+  const styles = StackedGameCardStyles(isDark, isChampionship);
 
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);

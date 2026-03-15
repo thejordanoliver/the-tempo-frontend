@@ -2,7 +2,6 @@ import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/Styles";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useState } from "react";
@@ -18,6 +17,7 @@ import { MMAFight } from "types/mma";
 import { formatRound } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
+
 export default function MMAGameCard({ game }: { game: MMAFight }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const firstFighterWinner = game.fighters.first.winner === true;
   const secondFighterWinner = game.fighters.second.winner === true;
   const wonType = getDecisionType(
-    rawWonType,
+    rawWonType ?? "",
     game.result?.score,
     firstFighterWinner,
     secondFighterWinner,
@@ -77,11 +77,10 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
   const firstFighterRecord = game.fighters?.first?.info?.record;
   const secondFighterRecord = game.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description;
-  const gameStatusDetail = details?.fight?.status.shortDetail;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isFinal = gameStatusDescription === "Final";
+  const gameStatusDescription = details?.fight?.status.description ?? game.status.long;
+  const isScheduled = gameStatusDescription === "Scheduled" || gameStatusDescription ===  "Not Started";
+  const isCanceled = gameStatusDescription === "Canceled" || gameStatusDescription ===  "Cancelled" ;
+  const isFinal = gameStatusDescription === "Final" || "Finished";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeited";
@@ -94,8 +93,7 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const period = details?.fight?.status.period;
   const displayClock = details?.fight?.status.displayClock;
   const headline = details?.event?.shortName;
-  const isMainEvent = game.is_main === true;
-  const styles = GameCardStyles(isDark, isMainEvent);
+  const styles = GameCardStyles(isDark);
 
   const isTie =
     game.fighters.first.winner === false &&
@@ -262,22 +260,7 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
         })
       }
     >
-      {isMainEvent ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
-      )}
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }

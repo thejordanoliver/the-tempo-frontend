@@ -131,7 +131,7 @@ const MatchupPredictor: React.FC<Props> = ({
 
   return (
     <View style={styles.outerContainer}>
-      <HeadingTwo lighter>Matchup Predictor</HeadingTwo>
+      <HeadingTwo lighter={lighter}>Matchup Predictor</HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={[styles.container, { width: size, height: size }]}>

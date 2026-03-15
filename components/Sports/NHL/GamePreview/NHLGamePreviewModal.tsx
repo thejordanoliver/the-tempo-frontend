@@ -4,7 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { getNHLTeam } from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useRef } from "react";
@@ -13,12 +13,12 @@ import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/Gam
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { NHLGame } from "types/nhl";
 import CenterInfo from "./CenterInfo";
-import TeamInfo from "./TeamInfo";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -32,6 +32,14 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
   const gameInfo = game;
   const home = game.teams.home;
   const away = game.teams.away;
+  const awayId = away.id;
+  const homeId = home.id;
+  const homeTeam = getNHLTeam(homeId) || emptyAwayTeam;
+  const awayTeam = getNHLTeam(awayId) || emptyHomeTeam;
+  const awayEspnId = awayTeam?.espnID;
+  const homeEspnId = homeTeam?.espnID;
+  const homeLogo = getNHLTeamLogo(homeId, true);
+  const awayLogo = getNHLTeamLogo(awayId, true);
 
   /* ===============================
      DATE / TIME
@@ -70,15 +78,8 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
     [],
   );
 
-  // Find matching internal teams using ESPN ID
-  const homeTeam = getNHLTeam(home?.id);
-  const awayTeam = getNHLTeam(away?.id);
-
   const homeName = homeTeam?.code ?? emptyHomeTeam.code ?? "";
   const awayName = awayTeam?.code ?? emptyAwayTeam.code ?? "";
-
-  const homeEspnId = homeTeam?.espnID;
-  const awayEspnId = awayTeam?.espnID;
 
   const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
   const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
@@ -89,16 +90,15 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
     String(homeEspnId),
     gameDateStr,
   );
-  
+
   const isChampionship = game.week === "Final";
   const styles = gamePreviewModalStyle(isChampionship);
-  const homeTimeouts = liveScore?.timeouts.home ?? 0;
-  const awayTimeouts = liveScore?.timeouts.away ?? 0;
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const period = liveScore?.period ?? 0;
+  const clock = liveScore?.displayClock ?? "0:00";
   const headlineText = details?.headline;
   const homeScore = liveScore?.home.total ?? game?.scores?.home ?? 0;
   const awayScore = liveScore?.away.total ?? game?.scores?.away ?? 0;
@@ -107,7 +107,7 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
   const seriesSummary = details?.seriesSummary?.summary;
   const isPostseason = details?.isPostseason;
   const isLiveScoreReady = !!liveScore;
-
+  
   const renderHeadline = () => (
     <>
       {isPostseason ? (
@@ -176,15 +176,14 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
               {renderHeadline()}
 
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
+                <CompetitorInfo
+                  side={"away"}
                   team={away}
-                  teamName={awayName}
+                  logo={awayLogo}
+                  name={awayName}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
-                  timeouts={awayTimeouts}
-                  bonusState={null}
                   gameStatusDescription={gameStatusDescription}
                 />
 
@@ -193,21 +192,21 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}
                   broadcastNetworks={broadcastText}
-                  inning={period}
+                  period={period}
+                  clock={clock}
                   time={formattedTime}
                   formattedDate={formattedDate}
                   isDark={isDark}
                   lighter
                 />
-                <TeamInfo
-                  side="home"
+                <CompetitorInfo
+                  side={"home"}
                   team={home}
-                  teamName={homeName}
+                  logo={homeLogo}
+                  name={homeName}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
-                  timeouts={homeTimeouts}
-                  bonusState={null}
                   gameStatusDescription={gameStatusDescription}
                 />
               </View>

@@ -1,25 +1,27 @@
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
-
+import { formatQuarter } from "utils/games";
 type GameInfoProps = {
-  gameStatusDescription: string;
-  gameStatusDetail: string;
   date: string;
-  time: string;
-  inning?: string;
+  time?: string;
+  period?: number | string;
+  clock?: string;
   isDark: boolean;
-  broadcastNetworks?: string;
+  playoffInfo?: string | string[];
+  broadcastNetworks: string;
+  gameStatusDescription: string;
+  gameStatusShortDescription: string;
 };
 
 export function GameInfo({
-  gameStatusDescription,
-  gameStatusDetail,
   date,
   time,
-  inning,
+  period,
+  clock,
   isDark,
-
   broadcastNetworks,
+  gameStatusDescription,
+  gameStatusShortDescription,
 }: GameInfoProps) {
   const styles = getStyles(isDark);
 
@@ -34,62 +36,68 @@ export function GameInfo({
   const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
   const isHalftime = gameStatusDescription === "Halftime";
+
   return (
-    <View style={styles.container}>
-      {/* ⚾️ Scheduled */}
-      {isScheduled && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{date}</Text>
-          <View style={styles.statusDivider} />
-          <Text style={styles.date}>{time}</Text>
-        </View>
-      )}
-
-      {/* 🕒 In Play */}
-      {inProgress && (
-        <View style={styles.infoWrapper}>
-          {inning && <Text style={styles.date}>{inning}</Text>}
-        </View>
-      )}
-
-      {/* 🏁 Final */}
+    <View>
       {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <Text style={styles.finalText}>{gameStatusShortDescription}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
 
-      {/* ❌ Canceled */}
+      {inProgress && !endOfPeriod && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{formatQuarter(period)}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{clock}</Text>
+        </View>
+      )}
+
+      {isScheduled && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{date}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time ?? "TBD"}</Text>
+        </View>
+      )}
+
+      {endOfPeriod && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>
+            End of {formatQuarter(period)}
+          </Text>
+        </View>
+      )}
+      {isHalftime && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Halftime</Text>
+        </View>
+      )}
       {isCanceled && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>Canceled</Text>
         </View>
       )}
-
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
+      {isForfeited && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
+          <Text style={styles.finalText}>Forfeited</Text>
         </View>
       )}
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Delayed */}
       {isDelayed && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>Delayed</Text>
         </View>
       )}
+      {isPostponed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      )}
 
-      {/* 📺 Broadcast */}
-      {broadcastNetworks && inProgress || isScheduled  && (
+      {/* Broadcast */}
+      {broadcastNetworks && (
         <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
       )}
     </View>

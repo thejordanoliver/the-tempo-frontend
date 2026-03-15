@@ -1,9 +1,9 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
 import GameCard from "components/Sports/NBA/Games/GameCard";
-import GameSquareCard from "components/Sports/NBA/Games/GameSquareCard";
+import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
 import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -79,7 +79,7 @@ export default function GamesList({
     if (viewMode === "grid") {
       return (
         <Wrapper>
-          <GameSquareCard game={game} />
+          <SquareGameCard game={game} />
         </Wrapper>
       );
     }
@@ -135,9 +135,9 @@ export default function GamesList({
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
-          scrollEnabled={false}
+          scrollEnabled={scrollEnabled}
           contentContainerStyle={styles.skeletonGridWrapper}
         />
       );
@@ -189,7 +189,6 @@ export default function GamesList({
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.gridListContainer}
           showsVerticalScrollIndicator={false}
           scrollEnabled={scrollEnabled}
         />

@@ -1,9 +1,9 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const stackedGameCardStyles = (
+export const StackedGameCardStyles = (
   isDark: boolean,
-  isChampionship: boolean,
+  isChampionship?: boolean,
 ) =>
   StyleSheet.create({
     card: {
@@ -46,6 +46,7 @@ export const stackedGameCardStyles = (
       alignItems: "center",
       gap: 8,
       width: 100,
+      backgroundColor: "red",
       flex: 1,
     },
     logo: { width: 24, height: 24, resizeMode: "contain" },
@@ -223,5 +224,29 @@ export const stackedGameCardStyles = (
           ? Colors.lightGray
           : Colors.darkGray,
       marginHorizontal: 4,
+    },
+    winnerContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    fighter: {
+      width: 30,
+      height: 30,
+      resizeMode: "contain",
+    },
+
+    fighterContainer: {
+      width: 25,
+      height: 25,
+      borderWidth: 1,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      overflow: "hidden",
+    },
+
+    fighterFlag: {
+      width: 20,
+      height: 20,
     },
   });

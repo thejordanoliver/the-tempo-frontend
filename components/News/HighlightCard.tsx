@@ -1,14 +1,13 @@
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import {
   Image,
-  StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import { Fonts } from "constants/Styles";
-import { BlurView } from "expo-blur";
+import { highlightCardStyles } from "styles/NewsStyles/HighlightCardStyles";
 
 type HighlightCardProps = {
   videoId: string;
@@ -35,7 +34,6 @@ export function formatDuration(seconds: number) {
 export default function HighlightCard({
   videoId,
   title,
-  publishedAt,
   thumbnail,
   channelName,
   thumbnailHeight = 300,
@@ -43,7 +41,7 @@ export default function HighlightCard({
 }: HighlightCardProps) {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, thumbnailHeight);
+  const styles = highlightCardStyles(isDark, thumbnailHeight);
 
   const handlePress = () => {
     router.push({
@@ -77,60 +75,3 @@ export default function HighlightCard({
     </TouchableOpacity>
   );
 }
-
-const getStyles = (isDark: boolean, thumbnailHeight: number) =>
-  StyleSheet.create({
-    card: {
-      flexDirection: "column",
-      backgroundColor: isDark ? "#2e2e2e" : "#eee",
-      paddingBottom: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: isDark ? "#3a3a3a" : "#e6e6e6",
-      overflow: "hidden",
-      shadowColor: "#000",
-      shadowOpacity: 0.1,
-      shadowOffset: { width: 0, height: 2 },
-      shadowRadius: 6,
-      elevation: 3,
-    },
-    thumbnail: {
-      width: "100%",
-      height: thumbnailHeight,
-      resizeMode: "cover",
-    },
-    details: {
-      paddingHorizontal: 12,
-      marginTop: 8,
-    },
-    title: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 16,
-      marginBottom: 4,
-      color: isDark ? "#fff" : "#1d1d1d",
-    },
-    date: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? "#aaa" : "#666",
-    },
-    timeContainer: {
-      position: "absolute",
-      top: 20,
-      right: 12,
-      borderRadius: 4,
-      overflow: "hidden",
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-    },
-    time: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
-      color: "#fff"
-    },
-    subtitle: {
-      flexDirection: "row",
-      gap: 8,
-      justifyContent: "space-between",
-    },
-  });

@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatRound } from "utils/games";
-
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 type CenterInfoProps = {
   isMainEvent: boolean;
   broadcastNetworks?: string;
@@ -33,7 +32,7 @@ export default function CenterInfo({
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
-  const styles = getStyles;
+  const styles = CenterInfoStyles;
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";

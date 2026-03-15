@@ -14,12 +14,12 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function GameSquareCard({ game }: { game: Game }) {
+export default function SquareGameCard({ game }: { game: Game }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
@@ -65,7 +65,7 @@ export default function GameSquareCard({ game }: { game: Game }) {
       ? "New Year's Day"
       : null;
 
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const { score: liveScore, details } = useGameDetails(
     "nba",

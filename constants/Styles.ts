@@ -68,11 +68,28 @@ export const globalStyles = (isDark: boolean, lighter?: boolean) =>
           ? Colors.dark.lightRed
           : Colors.light.red,
     },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 24,
+    },
     emptyText: {
       marginTop: 20,
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.midTone,
+    },
+    emptySubText: {
+      marginTop: 6,
+      fontSize: 14,
+      textAlign: "center",
+      fontFamily: Fonts.OSREGULAR,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
   });

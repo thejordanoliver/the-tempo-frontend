@@ -4,22 +4,18 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import MonthSelector from "components/MonthSelector";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
 import Roster from "components/Sports/NBA/Team/Roster";
 import RosterStats from "components/Sports/NBA/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { teams } from "constants/teams";
+import { getTeamById, teams } from "constants/teams";
 import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useTeamGames } from "hooks/NBAHooks/useTeamGames";
-import { useNewsStore } from "hooks/newsStore";
-import usePlayersByTeam from "hooks/usePlayersByTeam";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import { useTeamNews } from "hooks/useTeamNews";
 import { useTeamRosterStats } from "hooks/useTeamRosterStats";
 import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -48,7 +44,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = parseInt(teamIdStr);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [modalVisible, setModalVisible] = useState(false); // ✅ bottom sheet state
+  const [modalVisible, setModalVisible] = useState(false); 
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const isDark = useColorScheme() === "dark";
   const styles = teamDetailStyles;
@@ -66,15 +62,11 @@ export default function TeamDetailScreen() {
   const underlineWidth = useRef(new Animated.Value(0)).current;
   const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
   const pagerRef = useRef<PagerView>(null);
+  const team = getTeamById(teamIdNum)
 
   // map tabs to page index
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
-
-  const team = useMemo(
-    () => teams.find((t) => t.id === teamIdNum),
-    [teamIdNum],
-  );
 
   const handleRefresh = async () => {
     if (selectedTab !== "schedule") return;
@@ -95,52 +87,6 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
   } = useTeamGames(teamIdNum.toString());
-
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights("nba", team?.fullName ?? "", 5);
-
-  const {
-    articles: newsArticles,
-    loading: newsLoading,
-    error: newsError,
-    refreshNews,
-  } = useTeamNews(team?.fullName ?? "");
-
-  const combinedNewsAndHighlights = useMemo(() => {
-    const taggedNews = newsArticles.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = teamHighlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-      duration: String(item.duration), // ✅ fix type mismatch
-    }));
-
-    const combined = [...taggedNews, ...taggedHighlights];
-
-    combined.sort((a, b) => {
-      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return bDate - aDate;
-    });
-
-    return combined;
-  }, [newsArticles, teamHighlights]);
-
-  const setArticles = useNewsStore((state) => state.setArticles);
-
-  useEffect(() => {
-    if (!newsLoading && newsArticles.length > 0) {
-      setArticles(newsArticles);
-    }
-  }, [newsLoading, newsArticles, setArticles]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -362,14 +308,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}>
-          <NewsHighlightsList
-            items={combinedNewsAndHighlights}
-            loading={newsLoading || highlightsLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-          />
-        </ScrollView>
+        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -399,7 +338,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Standings Page */}
-        <View key="standings" style={{ flex: 1, paddingHorizontal: 12, }}>
+        <View key="standings" style={{ flex: 1 }}>
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}

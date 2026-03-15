@@ -1,60 +1,37 @@
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import FloatingChatButton from "components/FloatingButton";
-import { useNavigation } from "expo-router";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
+import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
-import React, { useRef } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import { useChatStore } from "store/chatStore";
-import { MMAFight } from "types/mma";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
-/* ------------------------------------------------------------------ */
-/* Screen                                                             */
-/* ------------------------------------------------------------------ */
+import { useScrollFade } from "hooks/useScrollFade";
+import React, { useLayoutEffect } from "react";
+import { Animated, ScrollView, useColorScheme, View } from "react-native";
 
-export default function GameDetailsScreen({ game }: { game: MMAFight }) {
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { emptyFighter, MMAFight } from "types/mma";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
+
+export default function GameDetailsScreen() {
+  const { game } = useLocalSearchParams();
+  const styles = gameDetailsScreenStyles;
+  const parsedGame: MMAFight | null = game
+    ? (JSON.parse(game as string) as MMAFight)
+    : null;
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
-
-  const { openChat, isOpen: isChatOpen } = useChatStore();
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleScrollStart = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleScrollEnd = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      Animated.timing(opacityAnim, {
-        toValue: isChatOpen ? 0 : 1,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }, 1000);
-  };
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
     const d = new Date(date);
     return isNaN(d.getTime()) ? new Date() : d;
   };
 
-  const gameDate = safeDate(game.date);
+  const gameDate = safeDate(parsedGame?.date);
   const gameDateStr = gameDate.toISOString();
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
@@ -68,68 +45,93 @@ export default function GameDetailsScreen({ game }: { game: MMAFight }) {
       hour12: true,
     }) || "";
 
-  const firstFighterId = game.fighters.first.id;
-  const secondFighterId = game.fighters.second.id;
+   
+
+  const firstFighter = parsedGame?.fighters?.first.info ?? emptyFighter;
+  const secondFighter = parsedGame?.fighters?.second.info ?? emptyFighter;
+
+  const firstFighterId = parsedGame?.fighters?.first.id;
+  const secondFighterId = parsedGame?.fighters?.second.id;
 
   const firstFighterName =
-    game.fighters?.first?.info?.short_name ?? game.fighters.first.name;
+    parsedGame?.fighters?.first?.info?.short_name ??
+    parsedGame?.fighters?.first.name ??
+    "";
   const secondFighterName =
-    game.fighters?.second?.info?.short_name ?? game.fighters.second.name;
+    parsedGame?.fighters?.second?.info?.short_name ??
+    parsedGame?.fighters?.second.name ??
+    "";
+  const firstFighterLastName =
+    parsedGame?.fighters?.first?.info?.last_name ?? "";
+  const secondFighterLastName =
+    parsedGame?.fighters?.second?.info?.last_name ?? "";
+  parsedGame?.fighters?.first?.logo ?? placeholderImage;
 
-  const firstFighterPhoto =
-    game.fighters?.first?.info?.images[2]?.href ??
-    game.fighters.first.logo ??
-    placeholderImage;
-  const secondFighterPhoto =
-    game.fighters?.second?.info?.images[2]?.href ??
-    game.fighters.second.logo ??
-    placeholderImage;
+  const homeLogo = parsedGame?.fighters.first.info.flag_url;
+  const awayLogo = parsedGame?.fighters.second.info.flag_url;
 
-  const firstFighterEspnId = game.fighters?.first?.info?.espn_id;
-  const secondFighterEspnId = game.fighters?.second?.info?.espn_id;
+  const firstFighterEspnId = parsedGame?.fighters?.first?.info?.espn_id;
+  const secondFighterEspnId = parsedGame?.fighters?.second?.info?.espn_id;
 
-  const { details, loading: isLoadingGame } = useMMADetails(
+  const { details, loading: isLoading } = useMMADetails(
     "ufc",
     firstFighterEspnId,
     secondFighterEspnId,
     gameDateStr,
   );
+// console.log(details?.fight?.fightDetails[0].type.text)
+  useLayoutEffect(() => {
+    if (isLoading || !details) {
+      navigation.setOptions({
+        header: () => null,
+      });
+      return;
+    }
 
-  const firstFighterRecord = details?.fight?.fighters.first.record;
-  const secondFighterRecord = details?.fight?.fighters.second.record;
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          tabName="Game"
+          onBack={goBack}
+          homeTeamId={firstFighterId}
+          awayTeamId={secondFighterId}
+          homeTeamCode={firstFighterLastName}
+          awayTeamCode={secondFighterLastName}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          league="MMA"
+        />
+      ),
+    });
+  }, [navigation, isLoading, details, firstFighterName, secondFighterName]);
 
+  const rawWonType = parsedGame?.result?.wonType;
+  const firstFighterWinner = parsedGame?.fighters?.first?.winner === true;
+  const secondFighterWinner = parsedGame?.fighters?.second?.winner === true;
+  const wonType = getDecisionType(
+    rawWonType ?? "",
+    parsedGame?.result?.score,
+    firstFighterWinner,
+    secondFighterWinner,
+  );
+  const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
+  const firstFighterRecord = parsedGame?.fighters?.first?.info?.record;
+  const secondFighterRecord = parsedGame?.fighters?.second?.info?.record;
   const gameStatusDescription = details?.fight?.status.description;
-  const gameStatusDetail = details?.fight?.status.shortDetail;
-  const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const isEndOfRound = gameStatusDescription === "End of Round";
-  const inProgress = gameStatusDescription === "In Progress";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
-  
-  // --- Broadcasts ---
   const broadcasts = details?.fight?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-  const isIntros = game.status.long === "Intros";
-  const isPreFight = game.status.long === "Pre-fight";
-  const isWalkingOut = game.status.long === "Walkouts";
-  const period = details?.fight?.rounds;
-  const displayClock = details?.fight?.rounds;
-  const headline = details?.event?.shortName;
+  const period = details?.fight?.status.period ?? 0;
+  const displayClock = details?.fight?.status.displayClock ?? "";
+  const headline = details?.event?.shortName ?? "";
+  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  // console.log(parsedGame?.id)
 
-  const isMainEvent = game.is_main === true;
-
-  const firstFighterWinner = game.fighters.first.winner === true;
-  const secondFighterWinner = game.fighters.second.winner === true;
-  const isTie =
-    game.fighters.first.winner === false &&
-    game.fighters.second.winner === false;
-  if (isLoadingGame) {
+  if (isLoading || !details) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.loadingContainer}>
         <CustomActivityIndicator />
       </View>
     );
@@ -146,32 +148,28 @@ export default function GameDetailsScreen({ game }: { game: MMAFight }) {
         onScrollEndDrag={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
+        <GameHeader
+          headlineText={headline}
+          firstFighter={firstFighter}
+          secondFighter={secondFighter}
+          firstFighterRecord={firstFighterRecord}
+          secondFighterRecord={secondFighterRecord}
+          displayClock={displayClock}
+          period={period}
+          isDark={isDark}
+          formattedDate={formattedDate}
+          time={formattedTime}
+          networkString={broadcastText}
+          gameStatusDescription={gameStatusDescription}
+          gameStatusDetail={resultText}
+          firstFighterIsWinner={firstFighterWinner}
+          secondFighterIsWinner={secondFighterWinner}
+        />
         {!dontShowDetails && <View style={{ gap: 20, marginTop: 20 }}></View>}
       </ScrollView>
-
-      <Animated.View
-        style={{
-          opacity: opacityAnim,
-          position: "absolute",
-          bottom: 100,
-          left: 0,
-          right: 0,
-        }}
-        pointerEvents={isChatOpen ? "none" : "auto"}
-      >
-        <FloatingChatButton
-          gameId={`${firstFighterId}-${secondFighterId}`}
-          openChat={openChat}
-        />
+      <Animated.View style={{ opacity: opacityAnim }}>
+        <MemoizedFloatingChatButton gameId={String(parsedGame?.id)} />
       </Animated.View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-});

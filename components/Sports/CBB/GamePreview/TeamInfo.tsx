@@ -1,18 +1,16 @@
-import { Colors, Fonts } from "constants/Styles";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { CBBTeam } from "types/types";
-
 type TeamInfoProps = {
   team?: CBBTeam;
   teamName: string | undefined;
   score?: number;
   opponentScore?: number;
   record: string;
-  lighter: boolean;
   gameStatusDescription: string;
-  isWomen?: boolean;
   side?: "home" | "away";
   rank?: number;
+  logo: any;
 };
 
 export default function TeamInfo({
@@ -21,13 +19,12 @@ export default function TeamInfo({
   score,
   opponentScore,
   record,
-  lighter,
+  logo,
   rank,
-  isWomen,
   gameStatusDescription,
   side,
 }: TeamInfoProps) {
-  const styles = teamInfoStyle;
+  const styles = TeamInfoStyle;
 
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -47,22 +44,14 @@ export default function TeamInfo({
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled || isDelayed || isPostponed;
-  const valueFontSize = isRecord ? 24 : 36;
-
+  const valueFontSize = isRecord ? 22 : 36;
+  const showRank = rank !== undefined && rank !== null;
   // --- Value shown ---
   const displayValue = isRecord
-    ? record ?? "-"
+    ? (record ?? "-")
     : score !== undefined
-    ? score
-    : "-";
-
-  // Logos (prefer light variants at night)
-  const logo = isWomen
-    ? team?.wLogo || team?.logoLight || team?.logo
-    : lighter
-    ? team?.logoLight || team?.logo
-    : team?.logo;
-  const showRank = typeof rank === "number" && rank > 0;
+      ? score
+      : "-";
 
   return (
     <View
@@ -123,55 +112,3 @@ export default function TeamInfo({
     </View>
   );
 }
-
-export const teamInfoStyle = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  teamContainer: {
-    alignItems: "center",
-    gap: 4,
-  },
-
-  teamName: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-  },
-
-  teamLogo: {
-    width: 65,
-    height: 65,
-    resizeMode: "contain",
-  },
-
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    minWidth: 50,
-  },
-
-  possessionIcon: {
-    position: "absolute",
-    bottom: -20,
-    width: 26,
-    height: 26,
-    resizeMode: "contain",
-  },
-
-  teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-    opacity: 0.7,
-  },
-
-  teamValue: {
-    fontFamily: Fonts.OSBOLD,
-    color: Colors.white,
-  },
-  teamRank: { fontSize: 10, color: Colors.lightGray },
-});

@@ -1,21 +1,21 @@
 import { Fonts, Colors } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const getStyles = 
+export const CenterInfoStyles = 
   StyleSheet.create({
     container: {
       justifyContent: "center",
       alignItems: "center",
     },
     date: {
-      fontSize: 16,
+      fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
     },
     time: {
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
-      fontSize: 16,
+      fontSize: 14,
     },
     period: {
       fontFamily: Fonts.OSMEDIUM,

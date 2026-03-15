@@ -5,7 +5,6 @@ import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
@@ -13,6 +12,7 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Styles";
 import { getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
@@ -23,31 +23,18 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
-import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
-
-  return (
-    <SeasonLeadersList
-      loading={loading}
-      error={error}
-      categories={categories}
-      league={"CBB"}
-    />
-  );
-}
 type NewsItem = {
   id: string;
   title: string;
@@ -70,9 +57,7 @@ type CombinedItem =
 
 export default function CBBLeagueScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
@@ -83,31 +68,15 @@ export default function CBBLeagueScreen() {
     loading: cbbloading,
     refreshCBBGames,
   } = useCBBSeasonGames();
-
-  const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "awards" | "forum"
-  >("scores");
+  const pagerRef = useRef<PagerView>(null);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CBB");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "awards",
-    "forum",
-  ] as const;
-
-  // --- News & Highlights ---
-  const { news: cbbNews, loading: cfbLoading } = useLeagueNews("CBB");
-  const { highlights } = useHighlights("cbb", "", 10);
-
-  // --- AP Top 25 from rankings ---
   const apTop25 = useAPTop25("116");
-
   const top25Teams = apTop25.map((t) => String(t?.id));
+  const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
 
   // --- Load favorites ---
   useFocusEffect(
@@ -124,7 +93,6 @@ export default function CBBLeagueScreen() {
     }, []),
   );
 
-  // --- Header with rotating chevron ---
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -160,7 +128,6 @@ export default function CBBLeagueScreen() {
     });
   };
 
-  // --- Calendar marked dates ---
   const markDates = (gamesArray: any[]) =>
     gamesArray.reduce((acc, game) => {
       const d = dayjs.utc(game).local();
@@ -202,76 +169,51 @@ export default function CBBLeagueScreen() {
     return result;
   }, [seasonGames, selectedDate, selectedConference, top25Teams]);
 
-  // --- Combine news + highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = cbbNews.map((item) => ({
-      ...item,
-      itemType: "news",
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight",
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort(
-      (a, b) =>
-        new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime(),
-    );
-    return combined;
-  }, [cbbNews, highlights]);
-
   return (
     <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
+
       <View style={styles.container}>
-        <TabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <ScrollView key="scores">
+            <DateNavigator
+              selectedDate={selectedDate}
+              onChangeDate={changeDateByDays}
+              onOpenCalendar={() => setShowCalendarModal(true)}
+              isDark={isDark}
+            />
 
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <DateNavigator
-                selectedDate={selectedDate}
-                onChangeDate={changeDateByDays}
-                onOpenCalendar={() => setShowCalendarModal(true)}
-                isDark={isDark}
-              />
+            <CBBGamesList
+              games={filteredGames}
+              loading={cbbloading}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              scrollEnabled={false}
+            />
+          </ScrollView>
 
-              <CBBGamesList
-                games={filteredGames}
-                loading={cbbloading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={false}
-              />
-            </>
-          )}
+          {/* NEWS */}
+          <ScrollView key="news" />
 
-          {selectedTab === "news" && (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={cfbLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
-          )}
-
-          {selectedTab === "standings" && (
+          {/* STANDINGS */}
+          <ScrollView key="standings">
             <>
               {selectedConference === "Top 25" || !selectedConference ? (
                 <CBBStandingsList league="116" />
@@ -281,11 +223,28 @@ export default function CBBLeagueScreen() {
                 />
               )}
             </>
-          )}
-          {selectedTab === "awards" && <AwardSeasons league="CBB" />}
-          {selectedTab === "stats" && <StatsTabContent />}
-          {selectedTab === "forum" && <LeagueForum league="CBB" />}
-        </View>
+          </ScrollView>
+
+          {/* STATS */}
+          <View key="stats">
+            <SeasonLeadersList
+              loading={loading}
+              error={error}
+              categories={categories}
+              league={"CBB"}
+            />
+          </View>
+
+          {/* AWARDS */}
+          <ScrollView key="awards">
+            <AwardSeasons league="CBB" />
+          </ScrollView>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league="CBB" />
+          </View>
+        </PagerView>
       </View>
 
       <CalendarModal

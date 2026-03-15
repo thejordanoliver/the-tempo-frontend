@@ -1,6 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/Styles";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { MMAFighter } from "types/mma";
 
 type FighterInfoProps = {
@@ -22,7 +21,7 @@ export default function FighterInfo({
   isWinner,
   side,
 }: FighterInfoProps) {
-  const styles = teamInfoStyle;
+  const styles = TeamInfoStyle;
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -35,58 +34,36 @@ export default function FighterInfo({
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const isInactiveGame = isDelayed || isPostponed || isCanceled;
+  const isRecordDisplay = isScheduled || isInactiveGame;
 
-  const scoreOpacity =
-    !isFinal || isScheduled || isDelayed || isPostponed
-      ? 1
-      : isWinner
-        ? 1
-        : 0.4;
+  /* ================================
+     WINNER / SCORE LOGIC
+  ================================= */
+  const scoreOpacity = isFinal && !isWinner ? 0.4 : 1;
+  const valueFontSize = isRecordDisplay ? 22 : 36;
+  const displayValue = isRecordDisplay ? (record ?? "-") : (record ?? "-");
 
   const ScoreText = ({
-    record,
-    winner,
+    value,
+    opacity,
+    fontSize,
   }: {
-    record: string | undefined;
-    winner: boolean | undefined;
+    value: string | number;
+    opacity: number;
+    fontSize: number;
   }) => {
-    const showRecord =
-      isScheduled ||
-      inWalkouts ||
-      isCanceled ||
-      isPostponed ||
-      isDelayed ||
-      isForfeited;
+    const styles = TeamInfoStyle;
 
-    const opacity = isFinal && winner === false ? 0.5 : 1;
-    if (showRecord) {
-      return <Text style={styles.teamRecord}>{record}</Text>;
-    }
-
-    if (winner) {
-      return (
-        <View style={styles.winnerContainer}>
-          <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>
-
-          <Ionicons
-            size={20}
-            name="caret-up"
-            color={Colors.white}
-            style={{ position: "absolute", bottom: -20 }}
-          />
-        </View>
-      );
-    }
-
-    return <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>;
+    return (
+      <View style={styles.scoreWrapper}>
+        <Text style={[styles.teamValue, { opacity, fontSize }]}>{value}</Text>
+      </View>
+    );
   };
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled || isDelayed || isPostponed;
-  const valueFontSize = isRecord ? 24 : 36;
-
-  // --- Value shown ---
-  const displayValue = isRecord ? (record ?? "-") : "-";
 
   return (
     <View
@@ -97,12 +74,13 @@ export default function FighterInfo({
         },
       ]}
     >
-      {/* ─────────── HOME SCORE (RIGHT) ─────────── */}
+      {/* HOME SCORE */}
       {side === "home" && (
-        <View style={styles.scoreWrapper}>
-          {/* Second Fighter Score / Record */}
-          <ScoreText record={record ?? "0-0"} winner={isWinner} />
-        </View>
+        <ScoreText
+          value={displayValue}
+          opacity={scoreOpacity}
+          fontSize={valueFontSize}
+        />
       )}
 
       {/* ─────────── Fighter LOGO + NAME ─────────── */}
@@ -111,82 +89,19 @@ export default function FighterInfo({
           <Image source={{ uri: headshot }} style={styles.fighter} />
         </View>
 
-        <Text style={styles.fighterName}>{fighterName}</Text>
+        <Text style={styles.fighterName} numberOfLines={1} ellipsizeMode="tail">
+          {fighterName}
+        </Text>
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}
       {side === "away" && (
-        <View style={styles.scoreWrapper}>
-          <ScoreText record={record ?? "0-0"} winner={isWinner} />
-        </View>
+        <ScoreText
+          value={displayValue}
+          opacity={scoreOpacity}
+          fontSize={valueFontSize}
+        />
       )}
     </View>
   );
 }
-
-export const teamInfoStyle = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  fighterContainer: {
-    alignItems: "center",
-    gap: 4,
-    width: 100,
-  },
-
-  fighter: {
-    width: 60,
-    height: 60,
-  },
-
-  fighterImageContainer: {
-    width: 60,
-    height: 60,
-    paddingTop: 2,
-    borderWidth: 1,
-    alignItems: "center",
-    borderRadius: 100,
-    borderColor: Colors.lightGray,
-    overflow: "hidden",
-  },
-
-  fighterName: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-  },
-
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    minWidth: 50,
-  },
-
-  winnerContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  possessionIcon: {
-    position: "absolute",
-    bottom: -20,
-    width: 26,
-    height: 26,
-    resizeMode: "contain",
-  },
-
-  teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-    opacity: 0.7,
-  },
-
-  teamValue: {
-    fontFamily: Fonts.OSBOLD,
-    color: Colors.white,
-  },
-});

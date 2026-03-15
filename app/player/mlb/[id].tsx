@@ -1,3 +1,4 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MLB/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/MLB/Player/PlayerStatTable";
@@ -5,12 +6,8 @@ import { teams } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  useColorScheme,
-  View,
-} from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
+import { calculateAge } from "utils/dateUtils";
 
 export default function PlayerDetailScreen() {
   /* -------------------------
@@ -43,28 +40,6 @@ export default function PlayerDetailScreen() {
     loading: playerLoading,
     error: playerError,
   } = usePlayerById(playerId, "MLB");
-
-  /* -------------------------
-     Helpers
-  ------------------------- */
-  const calculateAge = (date?: string | null) => {
-    if (!date) return null;
-
-    const birthDate = new Date(date);
-    const today = new Date();
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
 
   const calculateExperience = (debutDateString?: string) => {
     if (!debutDateString) return null;
@@ -116,7 +91,7 @@ export default function PlayerDetailScreen() {
   if (playerLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -124,8 +99,6 @@ export default function PlayerDetailScreen() {
   if (playerError || !player) {
     return null;
   }
-
-  // console.log(JSON.stringify(player, null, 2))
 
   /* -------------------------
      Render

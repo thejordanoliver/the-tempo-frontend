@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 type CenterInfoProps = {
   isChampionship: boolean;
   broadcastNetworks?: string;
-  inning: number;
+  period: number;
   time: string;
+  clock?: string | null;
   endOfPeriod?: boolean;
   gameStatusDetail: string;
   formattedDate: string;
@@ -22,7 +23,8 @@ export default function CenterInfo({
   gameStatusDescription,
   gameStatusDetail,
   broadcastNetworks,
-  inning,
+  period,
+  clock,
   time,
   formattedDate,
   isDark,
@@ -30,7 +32,7 @@ export default function CenterInfo({
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
-  const styles = getStyles;
+  const styles = CenterInfoStyles;
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
@@ -39,8 +41,8 @@ export default function CenterInfo({
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  const isEndOfInning = gameStatusDescription === "End of Period";
-  const displayInning = formatQuarter(inning);
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
+  const displayPeriod = formatQuarter(period);
 
   useEffect(() => {
     if (isChampionship) {
@@ -85,11 +87,17 @@ export default function CenterInfo({
         </View>
       ) : inProgress ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{displayInning}</Text>
+          <Text style={styles.period}>{displayPeriod}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{clock}</Text>
         </View>
-      ) : isEndOfInning ? (
+      ) : isHalftime ? (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>End of {displayInning}</Text>
+          <Text style={styles.finalText}>Halftime</Text>
+        </View>
+      ) : isEndOfPeriod ? (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>End of {displayPeriod}</Text>
         </View>
       ) : (
         <View style={styles.infoWrapper}>
@@ -105,3 +113,4 @@ export default function CenterInfo({
     </View>
   );
 }
+

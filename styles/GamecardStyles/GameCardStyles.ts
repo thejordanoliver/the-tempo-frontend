@@ -36,7 +36,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
     teamSection: {
       alignItems: "center",
       width: 60,
-      
     },
     logo: {
       width: 40,
@@ -76,7 +75,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       bottom: 14,
       zIndex: 99,
     },
-
     teamName: {
       marginTop: 4,
       fontFamily: Fonts.OSREGULAR,
@@ -96,7 +94,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      width: 60,
+      width: 80,
     },
     winnerContainer: {
       alignItems: "center",
@@ -105,7 +103,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 120,
+      width: 100,
     },
     infoWrapper: {
       flexDirection: "row",
@@ -122,11 +120,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
-    },
-    time: {
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontSize: 12,
     },
     finalText: {
       fontFamily: Fonts.OSREGULAR,
@@ -146,18 +139,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       fontSize: 10,
       textAlign: "center",
     },
-    seriesStatus: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSEXTRALIGHT,
-      fontSize: 10,
-      textAlign: "center",
-      maxWidth: 180,
-    },
-    seriesDivider: {
-      height: 8,
-      width: 0.5,
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
-    },
+
     statusDivider: {
       height: 14,
       width: 1,

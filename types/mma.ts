@@ -1,40 +1,51 @@
-export type MMAFight = {
-  id: number;
+import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
+
+export interface MMAEvent {
+  slug: string;
   date: string;
-  time: string;
   timestamp: number;
   timezone: string;
-  slug: string;
+  mainCard: MMAFight[];
+  prelims: MMAFight[];
+}
+
+export type MMAFight = {
+  id: number;
+  date: string | null;
+  time: string | null;
+  timestamp: number;
+  timezone: string | null;
+  slug: string | null;
   is_main: boolean;
-  category: string;
+  category: string | null;
 
   status: {
-    long: string;
-    short: string;
+    long: string | null;
+    short: string | null;
   };
 
   fighters: {
     first: {
       id: number;
-      name: string;
-      logo: string;
+      name: string | null;
+      logo: string | null;
       winner: boolean | null;
       info: MMAFighter;
     };
     second: {
       id: number;
-      name: string;
-      logo: string;
+      name: string | null;
+      logo: string | null;
       winner: boolean | null;
       info: MMAFighter;
     };
   };
 
   result: {
-    wonType: string;
+    wonType: string | null;
     round: number;
-    minute: string;
-    koType: string;
+    minute: string | null;
+    koType: string | null;
     target: string | null;
     subType: string | null;
     score: string[];
@@ -74,4 +85,48 @@ export type MMAFighter = {
   losses: number | null;
   draws: number | null;
   no_contests: number | null;
+  color: string | null;
+  alternate_color: string | null;
+};
+
+export const emptyFighter: MMAFighter = {
+  id: 0,
+  espn_id: null,
+  first_name: "Unknown",
+  last_name: "Fighter",
+  full_name: "Unknown Fighter",
+  short_name: "UNK",
+  nickname: null,
+  weight: null,
+  height: null,
+  reach: null,
+  stance: null,
+  weight_class: null,
+  team_id: null,
+  team_name: null,
+  gender: null,
+  date_of_birth: null,
+  citizenship: null,
+  country_code: null,
+  flag_url: null,
+  active: false,
+  slug: null,
+
+  images: [
+    {
+      rel: ["player", "default"],
+      href: placeholderImage,
+    },
+  ],
+
+  created_at: new Date(),
+  updated_at: new Date(),
+
+  record: "0-0-0",
+  wins: 0,
+  losses: 0,
+  draws: 0,
+  no_contests: 0,
+  color: null,
+  alternate_color: null,
 };

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
-import { getTeamBySummerId } from "constants/teams";
+import { getTeamById } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -18,7 +18,7 @@ import { SummerGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
+export default function SLStackedGameCard({ game }: { game: SummerGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
@@ -26,11 +26,11 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
   const homeId = Number(game.teams.home?.id);
   const awayId = Number(game.teams.away?.id);
 
-  const home = getTeamBySummerId(homeId);
-  const away = getTeamBySummerId(awayId);
+  const home = getTeamById(homeId);
+  const away = getTeamById(awayId);
 
-  const homeName = home?.name || game.teams.home?.name;
-  const awayName = away?.name || game.teams.away?.name;
+  const homeName = home?.name;
+  const awayName = away?.name;
 
   const homeLogo = isDark ? home?.logoLight || home?.logo : home?.logo;
   const awayLogo = isDark ? away?.logoLight || away?.logo : away?.logo;
@@ -62,26 +62,21 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
 
   const styles = GameCardStyles(isDark, isChampionship);
 
-  const league = game.league.id;
-  const isVegas = league === 17;
-
   const { score: liveScore, details } = useGameDetails(
-    isVegas ? "summerVegas" : "summerUtah",
+    "nba",
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
   );
-  const isFinished = game.status.long === "Game Finished";
-  const status = isFinished ? "Final" : game.status.long;
 
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
-  const homeScore = liveScore?.home.total ?? game.scores.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? game.scores.away.total ?? 0;
+  const homeScore = liveScore?.home.total;
+  const awayScore = liveScore?.away.total;
 
   const gameStatusDescription = liveScore?.gameStatusDescription;
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? status;
-  const isFinal = gameStatusDescription === "Final" || isFinished;
+  const gameStatusDetail = liveScore?.gameStatusDetail;
+  const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -111,7 +106,7 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
       minute: "2-digit",
       hour12: true,
     }) || "";
-  JSON.stringify(game);
+
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -245,7 +240,7 @@ export default function SummerGameSquareCard({ game }: { game: SummerGame }) {
       activeOpacity={0.85}
       onPress={() =>
         router.push({
-          pathname: "/game/summerLeague/[game]",
+          pathname: "/game/[game]",
           params: { game: JSON.stringify(game) },
         })
       }

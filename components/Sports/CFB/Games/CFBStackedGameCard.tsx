@@ -16,7 +16,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
 import { formatQuarter } from "utils/games";
 type Props = {
@@ -52,7 +52,7 @@ function CFBStackedGameCard({ game }: Props) {
     gameDate.getDate() === 19,
   );
 
-  const styles = stackedGameCardStyles(isDark, isChampionship);
+  const styles = StackedGameCardStyles(isDark, isChampionship);
 
   const status = game.game.status;
   const finished =

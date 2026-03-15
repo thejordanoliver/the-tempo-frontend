@@ -8,7 +8,15 @@ const STAT_COL_WIDTH = 70;
 
 export const standingsStyles = (isDark: boolean) =>
   StyleSheet.create({
-   
+    contentContainer: {
+      paddingBottom: 100,
+      paddingHorizontal: 12,
+    },
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+    },
     center: {
       flex: 1,
       justifyContent: "center",
@@ -17,22 +25,31 @@ export const standingsStyles = (isDark: boolean) =>
 
     header: {
       flexDirection: "row",
-      justifyContent: "flex-start",
-      marginBottom: 0,
+      padding: 12,
       alignItems: "center",
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     heading: {
-      fontSize: 24,
+      fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
-      paddingBottom: 4,
-      marginBottom: 12,
       color: isDark ? Colors.dark.white : Colors.light.black,
+    },
+    dropdownRow: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      marginBottom: 12,
+    },
+    statsHeaderRow: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      paddingVertical: 10,
+      height: ROW_HEIGHT,
+      alignItems: "center",
     },
     row: {
       flexDirection: "row",
-      borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       paddingVertical: 10,
       height: ROW_HEIGHT,

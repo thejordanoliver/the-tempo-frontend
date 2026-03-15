@@ -16,7 +16,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, Game } from "types/nfl";
 import { formatQuarter } from "utils/games";
 import { getGameDate } from "utils/nflGameCardUtils";
@@ -86,7 +86,7 @@ function NFLStackedGameCard({ game }: NFLGameCardProps) {
 
   const isChampionship = game.game.week === "Super Bowl";
 
-  const styles = stackedGameCardStyles(isDark, isChampionship);
+  const styles = StackedGameCardStyles(isDark, isChampionship);
 
   const homeScore = isFinal
     ? game.scores.home.total

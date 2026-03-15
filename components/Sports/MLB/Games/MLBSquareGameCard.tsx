@@ -11,7 +11,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { MLBGame } from "types/mlb";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -22,14 +22,14 @@ type Props = {
   isDark?: boolean;
 };
 
-function MLBGameSquareCard({ game }: Props) {
+function MLBSquareGameCard({ game }: Props) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 
   /* ===============================
        DATE / TIME
     =============================== */
-  const timestamp = game?.date?.timestamp;
+  const timestamp = game?.timestamp;
 
   const {
     date: gameDate,
@@ -64,7 +64,7 @@ function MLBGameSquareCard({ game }: Props) {
     gameDateStr,
   );
   const isChampionship = details?.playoffRound === "World Series";
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -87,27 +87,6 @@ function MLBGameSquareCard({ game }: Props) {
   const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-
-  /* ===============================
-     WIN/LOSS STYLE
-  =============================== */
-  const getTeamStyle = (isHome: boolean) => {
-    if (!isFinal)
-      return { color: isDark ? Colors.white : Colors.black, opacity: 1 };
-
-    const winnerIsHome = homeScore > awayScore;
-    const winner = isHome ? winnerIsHome : !winnerIsHome;
-
-    return {
-      color: isDark ? Colors.white : Colors.black,
-      opacity: winner ? 1 : 0.5,
-    };
-  };
-
-  const filteredHeadline =
-    headlineText && !headlineText.toLowerCase().includes("final")
-      ? headline
-      : null;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -238,4 +217,4 @@ function MLBGameSquareCard({ game }: Props) {
   );
 }
 
-export default memo(MLBGameSquareCard);
+export default memo(MLBSquareGameCard);

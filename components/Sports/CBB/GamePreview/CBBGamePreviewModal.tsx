@@ -1,11 +1,11 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/Styles";
-import { neutralVenues, teams } from "constants/teamsCBB";
+import { getCBBTeamLogo, neutralVenues, teams } from "constants/teamsCBB";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCBBHeadline } from "hooks/CBBHooks/useGameHeadline";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useGameStatistics } from "hooks/useGameStatistics";
@@ -18,7 +18,6 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   visible: boolean;
@@ -65,7 +64,8 @@ export default function CBBGamePreviewModal({
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
-
+  const homeLogo = getCBBTeamLogo(home?.id, true, isWomen);
+  const awayLogo = getCBBTeamLogo(away?.id, true, isWomen);
   useEffect(() => {
     if (!sheetRef.current) return;
     if (visible) requestAnimationFrame(() => sheetRef.current?.present());
@@ -85,12 +85,6 @@ export default function CBBGamePreviewModal({
 
   const gameDateISO = gameDate ? gameDate.toISOString() : "";
   const gameDateStr = gameDateISO ? gameDateISO.split("T")[0] : "";
-
-  const { headlineText } = useCBBHeadline(
-    Number(home?.espnID),
-    Number(away?.espnID),
-    gameDateStr,
-  );
 
   // March Madness runs March 18 – April 7
   const isMarchMadness =
@@ -131,24 +125,14 @@ export default function CBBGamePreviewModal({
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const displayClock = liveScore?.displayClock;
   const teamStats = liveScore?.teamStats;
-
-  const plays = liveScore?.plays ?? [];
+  const headline = details?.headline;
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
   const venue = details?.venue; // optional
-  const neutralSite = details?.neutralSite; // optional
   const leaders = liveScore?.leaders ?? [];
-  const playerStats = liveScore?.playerStats ?? [];
-  const lastPlay = liveScore?.plays?.length
-    ? liveScore.plays[liveScore.plays.length - 1]
-    : undefined;
 
   const venueNameRaw = (venue?.name ?? (home as any)?.venueName ?? "")
     .trim()
@@ -349,23 +333,25 @@ export default function CBBGamePreviewModal({
             </View>
           ) : (
             <>
-              {headlineText && (
-                <Text style={styles.headlineText}>{headlineText}</Text>
+              {headline && (
+                <>
+                  {headline && (
+                    <Text style={styles.headlineText}>{headline}</Text>
+                  )}
+                </>
               )}
+
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
+                <CompetitorInfo
                   team={away}
-                  teamName={
-                    away?.code ?? away?.shortName ?? away?.name ?? "Away"
-                  }
+                  name={away?.code ?? away?.shortName ?? away?.name ?? "Away"}
+                  logo={awayLogo}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
                   gameStatusDescription={gameStatusDescription}
                   side="away"
                   rank={awayRank}
-                  isWomen={isWomen}
-                  lighter
                 />
 
                 <CenterInfo
@@ -383,17 +369,16 @@ export default function CBBGamePreviewModal({
                   isDark={isDark}
                 />
 
-                <TeamInfo
+                <CompetitorInfo
                   team={home}
-                  teamName={home?.code}
+                  name={home?.code ?? home?.shortName ?? home?.name ?? "Home"}
+                  logo={homeLogo}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
                   gameStatusDescription={gameStatusDescription}
                   side="home"
                   rank={homeRank}
-                  isWomen={isWomen}
-                  lighter
                 />
               </View>
 

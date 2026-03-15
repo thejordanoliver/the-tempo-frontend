@@ -1,10 +1,10 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import NFLGamePreviewModal from "components/Sports/NFL/GamePreview/NFLGamePreviewModal";
 import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
-import NFLGameSquareCard from "components/Sports/NFL/Games/NFLGameSquareCard";
+import NFLSquareGameCard from "components/Sports/NFL/Games/NFLSquareGameCard";
 import NFLStackedGameCard from "components/Sports/NFL/Games/NFLStackedGameCard";
 import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -88,14 +88,14 @@ export default function NFLGamesList({
     }
 
     const preseasonGames = paginatedGames.filter(
-      (game) => game?.game.stage === "Pre Season"
+      (game) => game?.game.stage === "Pre Season",
     );
     const postseasonGames = paginatedGames.filter(
-      (game) => game?.game.stage === "Post Season"
+      (game) => game?.game.stage === "Post Season",
     );
 
     const regularSeasonGames = paginatedGames.filter(
-      (game) => game?.game.stage === "Regular Season"
+      (game) => game?.game.stage === "Regular Season",
     );
 
     const builtSections: NFLGameSection[] = [];
@@ -130,23 +130,23 @@ export default function NFLGamesList({
     }));
   }, [sections]);
 
-const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
-  return (
-    <View style={styles.gridRow}>
-      {item.map((game, index) => {
-        if (!game) {
-          return <View key={`empty-${index}`} style={styles.gridItem} />;
-        }
+  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+    return (
+      <View style={styles.gridRow}>
+        {item.map((game, index) => {
+          if (!game) {
+            return <View key={`empty-${index}`} style={styles.gridItem} />;
+          }
 
-        return (
-          <View key={game.game.id} style={styles.gridItem}>
-            <NFLGameSquareCard game={game} />
-          </View>
-        );
-      })}
-    </View>
-  );
-};
+          return (
+            <View key={game.game.id} style={styles.gridItem}>
+              <NFLSquareGameCard game={game} />
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
 
   const loadMore = () => {
     if (paginatedGames.length >= games.length) return;
@@ -195,14 +195,14 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
       return wrapper(
         <View>
           <NFLGameCard game={game} />
-        </View>
+        </View>,
       );
     if (viewMode === "grid")
-      return wrapper(<NFLGameSquareCard game={game} />, index);
+      return wrapper(<NFLSquareGameCard game={game} />, index);
     return wrapper(
       <View>
         <NFLStackedGameCard game={game} />
-      </View>
+      </View>,
     );
   };
   const renderSkeletons = (count: number) => {
@@ -249,7 +249,7 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}
@@ -272,14 +272,20 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
       <View>
         {sections.map((section) => {
           const count =
-            section.data.length > 0 ? section.data.length : expectedCount ?? 4;
+            section.data.length > 0
+              ? section.data.length
+              : (expectedCount ?? 4);
 
           return (
             <View
               key={`skel-section-${section.title}`}
               style={{ marginBottom: 16 }}
             >
-              {showHeaders && <HeadingTwo style={{marginHorizontal: 12}}>{section.title}</HeadingTwo>}
+              {showHeaders && (
+                <HeadingTwo style={{ marginHorizontal: 12 }}>
+                  {section.title}
+                </HeadingTwo>
+              )}
               {renderSkeletons(count)}
             </View>
           );
@@ -290,7 +296,7 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
 
   if (loading) {
     const totalSkeletonCount =
-      games.length > 0 ? games.length : expectedCount ?? 4;
+      games.length > 0 ? games.length : (expectedCount ?? 4);
     return (
       <View>
         {sections.map((section) => (

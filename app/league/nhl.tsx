@@ -17,6 +17,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
@@ -38,18 +39,11 @@ export default function MLBLeagueScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const styles = getScoresStyles(isDark);
-
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-
-  // --- State ---
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
-
-  const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
-  >("scores");
-
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NHL");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -164,16 +158,6 @@ export default function MLBLeagueScreen() {
       {} as Record<string, { marked: boolean; dotColor: string }>,
     );
 
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ] as const;
-
   return (
     <>
       <View style={styles.container}>
@@ -226,13 +210,11 @@ export default function MLBLeagueScreen() {
           )}
 
           {selectedTab === "standings" && (
-            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
-              <StandingsList
-                year={standingsYear}
-                onYearChange={setStandingsYear}
-                league="NHL"
-              />
-            </View>
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league="NHL"
+            />
           )}
           {selectedTab === "stats" && ""}
           {selectedTab === "awards" && <AwardSeasons league="NHL" />}

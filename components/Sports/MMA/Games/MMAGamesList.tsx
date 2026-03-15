@@ -1,9 +1,6 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import GameSquareCard from "components/Sports/NBA/Games/GameSquareCard";
-import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
@@ -14,9 +11,9 @@ import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import MMAGameCard from "./MMAGameCard";
 
 import { MMAFight } from "types/mma";
-import MMAGameSquareCard from "./MMAGameSquareCard";
-import MMAStackedGameCard from "./MMAStackedGameCard";
 import MMAGamePreviewModal from "../GamePreview/MMAGamePreviewModal";
+import MMASquareGameCard from "./MMASquareGameCard";
+import MMAStackedGameCard from "./MMAStackedGameCard";
 
 type GamesListProps = {
   games: MMAFight[];
@@ -83,7 +80,7 @@ export default function MMAGamesList({
     if (viewMode === "grid") {
       return (
         <Wrapper>
-          <MMAGameSquareCard game={game} />
+          <MMASquareGameCard game={game} />
         </Wrapper>
       );
     }
@@ -139,7 +136,7 @@ export default function MMAGamesList({
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}

@@ -21,7 +21,7 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { createPostStyles } from "styles/CreatePostStyles";
+import { createPostStyles } from "styles/ForumStyles/CreatePostStyles";
 import PostButton from "../components/Forum/PostButton";
 
 export default function CreatePostScreen() {

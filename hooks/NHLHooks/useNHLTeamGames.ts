@@ -6,8 +6,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useNHLTeamGames(
   teamId: string | number,
-  season = "2024",
-  league = "1",
+
   fetchAll = false,
 ) {
   const [games, setGames] = useState<NHLGame[]>([]);
@@ -21,11 +20,9 @@ export function useNHLTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/nhl/team/${teamId}`, {
-        params: { season, league, all: fetchAll ? 1 : 0 },
-      });
+      const res = await axios.get(`${BASE_URL}/api/games/nhl/team/${teamId}`);
 
-      // Backend returns { teamId, season, games: [] }
+
       const data = res.data;
 
       const normalizedGames = data;
@@ -37,7 +34,7 @@ export function useNHLTeamGames(
     } finally {
       setLoading(false);
     }
-  }, [teamId, season, league, fetchAll]);
+  }, [teamId, fetchAll]);
 
   useEffect(() => {
     fetchGames();

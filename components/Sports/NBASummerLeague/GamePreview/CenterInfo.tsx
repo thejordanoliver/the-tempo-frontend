@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import { Animated, Text, View } from "react-native";
-import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
 type CenterInfoProps = {
   isChampionship: boolean;
@@ -32,7 +31,7 @@ export default function CenterInfo({
 }: CenterInfoProps) {
   const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
   const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
-  const styles = getStyles;
+  const styles = CenterInfoStyles;
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";

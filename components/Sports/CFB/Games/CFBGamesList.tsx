@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -20,7 +20,7 @@ import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListS
 import { Game } from "types/cfb";
 import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
 import CFBGameCard from "./CFBGameCard";
-import CFBGameSquareCard from "./CFBGameSquareCard";
+import CFBSquareGameCard from "./CFBSquareGameCard";
 import CFBStackedGameCard from "./CFBStackedGameCard";
 type Props = {
   games: Game[];
@@ -89,11 +89,11 @@ export default function CFBGamesList({
     }
 
     const postseasonGames = paginatedGames.filter(
-      (game) => game?.game.week === "Bowls"
+      (game) => game?.game.week === "Bowls",
     );
 
     const regularSeasonGames = paginatedGames.filter(
-      (game) => game?.game.week !== "Bowls"
+      (game) => game?.game.week !== "Bowls",
     );
 
     const builtSections: CFBGameSection[] = [];
@@ -122,24 +122,23 @@ export default function CFBGamesList({
     }));
   }, [sections]);
 
-const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
-  return (
-    <View style={styles.gridRow}>
-      {item.map((game, index) => {
-        if (!game) {
-          return <View key={`empty-${index}`} style={styles.gridItem} />;
-        }
+  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+    return (
+      <View style={styles.gridRow}>
+        {item.map((game, index) => {
+          if (!game) {
+            return <View key={`empty-${index}`} style={styles.gridItem} />;
+          }
 
-        return (
-          <View key={game.game.id} style={styles.gridItem}>
-            <CFBGameSquareCard game={game} />
-          </View>
-        );
-      })}
-    </View>
-  );
-};
-
+          return (
+            <View key={game.game.id} style={styles.gridItem}>
+              <CFBSquareGameCard game={game} />
+            </View>
+          );
+        })}
+      </View>
+    );
+  };
 
   const loadMore = () => {
     if (paginatedGames.length >= games.length) return;
@@ -190,15 +189,15 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
       return wrapper(
         <View>
           <CFBGameCard game={game} />
-        </View>
+        </View>,
       );
     if (viewMode === "grid")
-      return wrapper(<CFBGameSquareCard game={game} />, index);
+      return wrapper(<CFBSquareGameCard game={game} />, index);
 
     return wrapper(
       <View>
         <CFBStackedGameCard game={game} />
-      </View>
+      </View>,
     );
   };
 
@@ -246,7 +245,7 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}
@@ -267,14 +266,20 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
       <View>
         {sections.map((section) => {
           const count =
-            section.data.length > 0 ? section.data.length : expectedCount ?? 4;
+            section.data.length > 0
+              ? section.data.length
+              : (expectedCount ?? 4);
 
           return (
             <View
               key={`skel-section-${section.title}`}
               style={{ marginBottom: 16 }}
             >
-              {showHeaders && <HeadingTwo style={{marginHorizontal: 12}}>{section.title}</HeadingTwo>}
+              {showHeaders && (
+                <HeadingTwo style={{ marginHorizontal: 12 }}>
+                  {section.title}
+                </HeadingTwo>
+              )}
               {renderSkeletons(count)}
             </View>
           );
@@ -282,7 +287,6 @@ const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
       </View>
     );
   }
-
 
   if (error) return <Text style={global.errorText}>Error: {error}</Text>;
 

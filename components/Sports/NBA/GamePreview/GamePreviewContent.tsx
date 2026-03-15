@@ -2,9 +2,9 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLeaders, GameLocation } from "components/Sports/NBA/GameDetails";
 import BoxScore from "components/Sports/NBA/GameDetails/BoxScore";
 import GameTeamStats from "components/Sports/NBA/GameDetails/GameTeamStats";
-import GameUniforms from "components/Sports/NBA/GameDetails/GameUniforms";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import LineScore from "components/Sports/NBA/GameDetails/LineScore";
+import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
 import React from "react";
@@ -14,12 +14,15 @@ export default function GamePreviewContent({
   game,
   home,
   away,
+  homeChance,
+  awayChance,
   lineScore,
   homeLastGames,
   awayLastGames,
   gameStats,
   officials,
   injuries,
+  teamPlayersMap,
   detailsLoading,
   detailsError,
   resolvedVenueImage,
@@ -36,6 +39,27 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
+      {/* Matchup Predictor */}
+      {gameStatusDescription === "Scheduled" && (
+        <View style={{ marginBottom: 20 }}>
+          <MatchupPredictor
+            home={{
+              name: home.code,
+              logo: home.logoLight || home.logo,
+              color: home.secondaryColor,
+              chance: homeChance,
+            }}
+            away={{
+              name: away.code,
+              logo: away.logoLight || away.logo,
+              color: away.secondaryColor,
+              chance: awayChance,
+            }}
+            size={180}
+            lighter={true}
+          />
+        </View>
+      )}
       {/* Line Score */}
       {lineScore && (
         <View style={{ marginBottom: 20 }}>
@@ -48,7 +72,7 @@ export default function GamePreviewContent({
         </View>
       )}
 
-      {/* Game Stats */}
+      {/* Game Leaders */}
       {game?.id && gameStats?.length > 0 && (
         <>
           <View style={{ marginBottom: 20 }}>
@@ -60,6 +84,7 @@ export default function GamePreviewContent({
             />
           </View>
 
+          {/* Box Score */}
           <View style={{ marginBottom: 20 }}>
             <BoxScore
               gameId={game.id.toString()}
@@ -69,6 +94,7 @@ export default function GamePreviewContent({
             />
           </View>
 
+          {/* Team Stats */}
           <View style={{ marginBottom: 20 }}>
             {gameStats.length > 0 && (
               <GameTeamStats
@@ -104,18 +130,16 @@ export default function GamePreviewContent({
       )}
 
       {/* Injuries */}
-
       <View style={{ marginBottom: 20 }}>
-        <TeamInjuries injuries={injuries} lighter />
+        <TeamInjuries
+          injuries={injuries}
+          loading={detailsLoading}
+          lighter={true}
+          teamPlayersMap={teamPlayersMap}
+        />
       </View>
 
-      {/* Uniforms */}
-      {home?.id && away?.id && (
-        <View style={{ marginBottom: 20 }}>
-          <GameUniforms homeTeamId={home.id} awayTeamId={away.id} lighter />
-        </View>
-      )}
-
+      {/* Officials */}
       <View style={{ marginBottom: 20 }}>
         <Officials
           officials={officials ?? []}

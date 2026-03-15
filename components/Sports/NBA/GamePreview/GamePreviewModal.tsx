@@ -1,9 +1,11 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getTeamInfo, neutralVenues } from "constants/teams";
+import { getTeamInfo, getTeamLogo, neutralVenues } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
@@ -16,7 +18,6 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 type Props = {
   visible: boolean;
   game: Game;
@@ -66,8 +67,14 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeId = Number(home?.id) || 0;
   const awayId = Number(away?.id) || 0;
 
+  const homeEspnId = Number(home?.espnID) || 0;
+  const awayEspnId = Number(away?.espnID) || 0;
+
   const homeName = home?.code ?? home?.name ?? emptyHomeTeam.code;
   const awayName = away?.code ?? home?.name ?? emptyAwayTeam.code;
+
+  const homeLogo = getTeamLogo(homeId, true);
+  const awayLogo = getTeamLogo(awayId, true);
 
   const homeColor = home?.color ?? emptyHomeTeam.color ?? "";
   const awayColor = away?.color ?? emptyAwayTeam.color ?? "";
@@ -103,6 +110,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     new Date(game.date).toISOString().split("T")[0],
   );
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const homeTimeouts = liveScore?.timeouts.home ?? 0;
   const awayTimeouts = liveScore?.timeouts.away ?? 0;
@@ -111,24 +119,18 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeBonus = fouls?.home?.bonusState;
   const injuries = details?.injuries ?? [];
   const officials = details?.officials ?? [];
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
   const headline = headlineText || holidayLabel;
-
-  // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-
-  // --- Broadcasts ---
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) ?? 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -142,6 +144,13 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         }
       : undefined;
 
+  const homeTeamPlayersData = usePlayersByTeam(String(homeId));
+  const awayTeamPlayersData = usePlayersByTeam(String(awayId));
+
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
   // --- Venue memoization ---
   const {
     resolvedVenueImage,
@@ -252,9 +261,10 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
               {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
+                <CompetitorInfo
                   team={away}
-                  teamName={awayName}
+                  logo={awayLogo}
+                  name={awayName}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
@@ -277,9 +287,10 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                   lighter
                 />
 
-                <TeamInfo
+                <CompetitorInfo
                   team={home}
-                  teamName={homeName}
+                  logo={homeLogo}
+                  name={homeName}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
@@ -293,14 +304,18 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  gameStatusDescription={gameStatusDescription}
                   game={game}
                   home={home}
                   away={away}
+                  homeChance={homeChance}
+                  awayChance={awayChance}
                   lineScore={lineScore}
                   gameStats={gameStats}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   injuries={injuries}
+                  teamPlayersMap={teamPlayersMap}
                   officials={officials}
                   resolvedVenueImage={resolvedVenueImage}
                   resolvedVenueName={resolvedVenueName}

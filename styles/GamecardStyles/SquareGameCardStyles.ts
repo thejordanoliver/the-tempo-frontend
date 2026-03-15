@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const gameSquareCardStyles = (
+export const SquareGameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
 ) =>
@@ -175,5 +175,33 @@ export const gameSquareCardStyles = (
       position: "absolute",
       top: 8,
       right: 4,
+    },
+    winnerContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    fighter: {
+      width: 30,
+      height: 30,
+      resizeMode: "contain",
+    },
+
+    fighterContainer: {
+      width: 25,
+      height: 25,
+      borderWidth: 1,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      overflow: "hidden",
+    },
+
+    fighterFlagContainer: {
+      width: 40,
+    },
+    
+    fighterFlag: {
+      width: 20,
+      height: 20,
     },
   });

@@ -3,13 +3,7 @@ import FixedWidthTabBar, {
   getLabelStyle,
 } from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamById } from "constants/teams";
-import useDbPlayersByTeam from "hooks/usePlayersByTeam";
-import {
-  PlayerStat,
-  usePlayersInFoulTrouble,
-} from "hooks/usePlayersInFoulTrouble";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -18,100 +12,84 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { CBBTeam, Team } from "types/types";
 
-type Props = {
-  gameId: number | string;
-  home?: Team | CBBTeam;
-  away?: Team | CBBTeam;
-  lighter?: boolean;
+type Player = {
+  id: string;
+  teamId: string;
+  name: string;
+  jersey: string;
+  fouls: number;
+  avatarUrl?: string;
 };
 
+type Props = {
+  homeId: string;
+  awayId: string;
+  homeCode: string;
+  awayCode: string;
+  homeLogo?: any;
+  awayLogo?: any;
+  homePlayers: Player[];
+  awayPlayers: Player[];
+  lighter?: boolean;
+  league: "NBA" | "CBB" | "WCBB";
+};
 export default function PlayersInFoulTrouble({
-  gameId,
-  home,
-  away,
+  homeId,
+  awayId,
+  homeCode,
+  awayCode,
+  homeLogo,
+  awayLogo,
+  homePlayers,
+  awayPlayers,
   lighter = false,
+  league = "NBA",
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = foulTroubleStyles(isDark, lighter);
 
-  const { players, loading, error } = usePlayersInFoulTrouble({ gameId });
-
-  const homeId = home?.id;
-  const awayId = away?.id;
-
-  const homeTeam = getTeamById(homeId);
-  const awayTeam = getTeamById(awayId);
-
-  const homePlayers = useDbPlayersByTeam(homeId ? String(homeId) : "");
-  const awayPlayers = useDbPlayersByTeam(awayId ? String(awayId) : "");
-
-  const dbPlayersByTeam = {
-    [String(homeId)]: homePlayers.players,
-    [String(awayId)]: awayPlayers.players,
-  };
-
-  const tabs = [
-    away && {
-      id: String(awayTeam?.id),
-      label: awayTeam?.code,
-      logo: awayTeam?.logo,
-      logoLight: awayTeam?.logoLight,
-    },
-    home && {
-      id: String(homeTeam?.id),
-      label: homeTeam?.code,
-      logo: homeTeam?.logo,
-      logoLight: homeTeam?.logoLight,
-    },
-  ].filter(Boolean) as {
-    id: string;
-    label: string;
-    logo?: any;
-    logoLight?: any;
-  }[];
-
-  const [selectedTeamId, setSelectedTeamId] = useState(
-    awayId ? String(awayId) : tabs[0]?.id || ""
+  const tabs = useMemo(
+    () => [
+      { id: awayId, label: awayCode, logo: awayLogo },
+      { id: homeId, label: homeCode, logo: homeLogo },
+    ],
+    [homeId, awayId, homeCode, awayCode, homeLogo, awayLogo],
   );
 
-  const renderRow = ({ item, index }: { item: PlayerStat; index: number }) => {
-    const dbPlayer = dbPlayersByTeam[item.team.id]?.find(
-      (p) => p.player_id === item.player.id
-    );
+  const tabIds = tabs.map((t) => t.id);
+  const [selectedTeamId, setSelectedTeamId] = useState(tabIds[0] ?? "");
+  const players = useMemo(
+    () => [...homePlayers, ...awayPlayers],
+    [homePlayers, awayPlayers],
+  );
+  const filteredPlayers = useMemo(() => {
+    return players
+      .filter((p: Player) => !selectedTeamId || p.teamId === selectedTeamId)
+      .sort((a: Player, b: Player) => b.fouls - a.fouls);
+  }, [players, selectedTeamId]);
 
-    const headshotUrl = dbPlayer?.avatarUrl;
-    const name = `${dbPlayer?.first_name} ${dbPlayer?.last_name}`;
-
-    const isLast = index === players.length - 1;
-    const isFouledOut = item.pFouls === 6;
-
-    function fouledOut(isFouledOut: boolean, fouls: number) {
-      if (isFouledOut) {
-        return "Fouled Out";
-      } else {
-        return fouls;
-      }
-    }
+  const renderRow = ({ item, index }: { item: Player; index: number }) => {
+    const isLast = index === filteredPlayers.length - 1;
+    const isFouledOut = league === "NBA" ? item.fouls >= 6 : item.fouls >= 5;
 
     return (
       <View style={[styles.playerRow, isLast && { borderBottomWidth: 0 }]}>
         <View style={styles.left}>
           <View style={styles.avatarWrapper}>
-            {headshotUrl && (
-              <Image source={{ uri: headshotUrl }} style={styles.avatar} />
+            {item.avatarUrl && (
+              <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
             )}
           </View>
-          <Text style={styles.name}>{name}</Text>
+          <View style={styles.playerInfo}>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.jersey}>#{item.jersey}</Text>
+          </View>
         </View>
 
-        <View style={styles.right}>
-          <Text style={styles.value}>
-            {fouledOut(isFouledOut, item.pFouls)}
-          </Text>
-        </View>
+        <Text style={styles.value}>
+          {isFouledOut ? "Fouled Out" : item.fouls}
+        </Text>
       </View>
     );
   };
@@ -119,9 +97,10 @@ export default function PlayersInFoulTrouble({
   return (
     <View style={styles.constainer}>
       <HeadingTwo>In Foul Trouble</HeadingTwo>
+
       <View style={styles.wrapper}>
         <FixedWidthTabBar
-          tabs={tabs.map((t) => t.id)} // 👈 IDs, not names
+          tabs={tabIds}
           selected={selectedTeamId}
           onTabPress={setSelectedTeamId}
           lighter={lighter}
@@ -133,13 +112,7 @@ export default function PlayersInFoulTrouble({
               <View style={styles.tabLabel}>
                 {tab.logo && (
                   <Image
-                    source={
-                      lighter
-                        ? tab.logoLight || tab.logo
-                        : isDark
-                        ? tab.logoLight || tab.logo
-                        : tab.logo
-                    }
+                    source={tab.logo}
                     style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
                     resizeMode="contain"
                   />
@@ -156,22 +129,13 @@ export default function PlayersInFoulTrouble({
             );
           }}
         />
+
         <FlatList
-          data={
-            selectedTeamId
-              ? players
-                  .filter((p) => String(p.team.id) === selectedTeamId)
-                  .sort((a, b) => b.pFouls - a.pFouls) // ✅ sort by most fouls first
-              : [...players].sort((a, b) => b.pFouls - a.pFouls)
-          }
-          keyExtractor={(item) => item.player.id.toString()}
+          data={filteredPlayers}
+          keyExtractor={(item) => item.id}
           renderItem={renderRow}
           scrollEnabled={false}
-          ListEmptyComponent={
-            <View>
-              <Text style={styles.emptyText}>No Players</Text>
-            </View>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>No Players</Text>}
         />
       </View>
     </View>
@@ -197,29 +161,34 @@ const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+          ? Colors.midTone
+          : Colors.lightGray,
     },
-    left: { flexDirection: "row", alignItems: "center", gap: 8 },
-    right: {},
+    left: { flexDirection: "row", alignItems: "center", flex: 1 },
     avatar: {
-      width: 50,
-      height: 50,
+      width: 52,
+      height: 52,
     },
     avatarWrapper: {
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       borderRadius: 100,
-      paddingTop: 8,
+      paddingTop: 10,
       overflow: "hidden",
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
       borderColor: lighter
-        ? Colors.dark.white
+        ? Colors.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.white
+          : Colors.black,
+    },
+
+    playerInfo: {
+      flexDirection: "row",
+      alignItems: "baseline",
+      
     },
     name: {
       fontSize: 14,
@@ -227,8 +196,19 @@ const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
+      marginLeft: 8,
+    },
+    jersey: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      marginLeft: 4,
+      color: lighter
+        ? Colors.lightGray
+        : isDark
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     value: {
       fontSize: 16,
@@ -236,18 +216,15 @@ const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.lightRed
         : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
+          ? Colors.dark.lightRed
+          : Colors.light.red,
     },
     tabLabel: {
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
     },
-    logo: {
-      width: 28,
-      height: 28,
-    },
+    logo: { width: 28, height: 28 },
     emptyText: {
       fontSize: 16,
       color: Colors.midTone,

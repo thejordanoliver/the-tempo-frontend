@@ -1,8 +1,8 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors } from "constants/Styles";
 import { getTeamLogo } from "constants/teams";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { Team } from "types/types";
-
 type TeamInfoProps = {
   team?: Team;
   teamName: string;
@@ -26,7 +26,7 @@ export default function TeamInfo({
   timeouts,
   bonusState,
 }: TeamInfoProps) {
-  const styles = teamInfoStyle;
+  const styles = TeamInfoStyle;
 
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -50,7 +50,7 @@ export default function TeamInfo({
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled || isDelayed || isPostponed;
-  const valueFontSize = isRecord ? 24 : 36;
+  const valueFontSize = isRecord ? 22 : 36;
 
   // --- Value shown ---
   const displayValue = isRecord
@@ -88,22 +88,7 @@ export default function TeamInfo({
   const renderBonus = () => {
     if (!isBonus) return null;
 
-    return (
-      <Text
-        style={{
-          marginTop: 2,
-          position: "absolute",
-          bottom: -10,
-          fontSize: 8,
-          fontFamily: Fonts.OSMEDIUM,
-          letterSpacing: 0.5,
-          color: Colors.white,
-          textAlign: "center",
-        }}
-      >
-        BONUS
-      </Text>
-    );
+    return <Text style={styles.bonus}>BONUS</Text>;
   };
 
   return (
@@ -166,54 +151,3 @@ export default function TeamInfo({
     </View>
   );
 }
-
-export const teamInfoStyle = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  teamContainer: {
-    alignItems: "center",
-    gap: 4,
-  },
-
-  teamName: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-  },
-
-  teamLogo: {
-    width: 65,
-    height: 65,
-    resizeMode: "contain",
-  },
-
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    minWidth: 50,
-  },
-
-  possessionIcon: {
-    position: "absolute",
-    bottom: -20,
-    width: 26,
-    height: 26,
-    resizeMode: "contain",
-  },
-
-  teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-    opacity: 0.7,
-  },
-
-  teamValue: {
-    fontFamily: Fonts.OSBOLD,
-    color: Colors.white,
-  },
-});

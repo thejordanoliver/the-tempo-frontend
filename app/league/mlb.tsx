@@ -15,23 +15,23 @@ import { Colors } from "constants/Styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
-  Animated,
   RefreshControl,
   ScrollView,
   View,
   useColorScheme,
 } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getMLBSeason, getMLBStandingsSeason } from "utils/dateUtils";
 import { filterMLBByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -43,15 +43,19 @@ export default function MLBLeagueScreen() {
   } = useMLBSeasonGames(getMLBSeason().toString());
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
+  const pagerRef = useRef<PagerView>(null);
+
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
+
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
+
   const { categories, loading, error } = useSeasonLeaders(2025, "MLB");
-  // --- State ---
+
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
@@ -60,15 +64,19 @@ export default function MLBLeagueScreen() {
     "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
   >("scores");
 
-  const underlineX = useRef(new Animated.Value(0)).current;
-  const underlineWidth = useRef(new Animated.Value(0)).current;
-  const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
-  const router = useRouter();
-
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Load favorites
+  const tabs = [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ] as const;
+
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -83,7 +91,6 @@ export default function MLBLeagueScreen() {
     }, []),
   );
 
-  // Header
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -107,14 +114,14 @@ export default function MLBLeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshGames()]);
+      await refreshGames();
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
       setRefreshing(false);
     }
   };
-  // --- Change Date (now local) ---
+
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
       dayjs(prev).add(days, "day").startOf("day").toDate(),
@@ -142,56 +149,37 @@ export default function MLBLeagueScreen() {
       {} as Record<string, { marked: boolean; dotColor: string }>,
     );
 
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ] as const;
-
   return (
     <>
       <View style={styles.container}>
         <MainScrollTabBar
           tabs={tabs}
           selected={selectedTab}
-          onTabPress={setSelectedTab}
+          onTabPress={(tab) => {
+            setSelectedTab(tab);
+            const index = tabs.indexOf(tab);
+            pagerRef.current?.setPage(index);
+          }}
         />
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <DateNavigator
-                selectedDate={selectedDate}
-                onChangeDate={changeDateByDays}
-                onOpenCalendar={() => setShowCalendarModal(true)}
-                isDark={isDark}
-              />
 
-              <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              >
-                {filteredSeasonGames.length > 0 ? (
-                  <MLBGamesList
-                    games={filteredSeasonGames} // <-- filtered by selectedDate
-                    loading={liveLoading}
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                    scrollEnabled={false}
-                  />
-                ) : null}
-              </ScrollView>
-            </>
-          )}
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <View key="scores" style={styles.contentArea}>
+            <DateNavigator
+              selectedDate={selectedDate}
+              onChangeDate={changeDateByDays}
+              onOpenCalendar={() => setShowCalendarModal(true)}
+              isDark={isDark}
+            />
 
-          {selectedTab === "news" && (
             <ScrollView
               refreshControl={
                 <RefreshControl
@@ -199,29 +187,63 @@ export default function MLBLeagueScreen() {
                   onRefresh={handleRefresh}
                 />
               }
-            ></ScrollView>
-          )}
+            >
+              {filteredSeasonGames.length > 0 && (
+                <MLBGamesList
+                  games={filteredSeasonGames}
+                  loading={liveLoading}
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  scrollEnabled={false}
+                />
+              )}
+            </ScrollView>
+          </View>
 
-          {selectedTab === "standings" && (
-            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
-              <StandingsList
-                year={standingsYear}
-                onYearChange={setStandingsYear}
-                league="MLB"
-              />
-            </View>
-          )}
-          {selectedTab === "stats" && (
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            />
+          </View>
+
+          {/* STANDINGS */}
+          <View key="standings" style={styles.contentArea}>
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league="MLB"
+            />
+          </View>
+
+          {/* STATS */}
+          <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList
               loading={loading}
               error={error}
               categories={categories}
               league={"MLB"}
             />
-          )}
-          {selectedTab === "awards" && <AwardSeasons league="MLB" />}
-          {selectedTab === "forum" && <LeagueForum league="MLB" />}
-        </View>
+          </View>
+
+          {/* DRAFT */}
+          <View key="draft" style={styles.contentArea} />
+
+          {/* AWARDS */}
+          <View key="awards" style={styles.contentArea}>
+            <AwardSeasons league="MLB" />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum" style={styles.contentArea}>
+            <LeagueForum league="MLB" />
+          </View>
+        </PagerView>
       </View>
 
       <CalendarModal

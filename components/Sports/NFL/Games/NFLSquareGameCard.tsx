@@ -17,7 +17,7 @@ import { Colors } from "constants/Styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, Game } from "types/nfl";
 import { formatQuarter } from "utils/games";
 import { getGameDate } from "utils/nflGameCardUtils";
@@ -26,7 +26,7 @@ type NFLGameCardProps = {
   game: Game;
 };
 
-function NFLGameSquareCard({ game }: NFLGameCardProps) {
+function NFLSquareGameCard({ game }: NFLGameCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
@@ -97,7 +97,7 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
 
   const isChampionship = game.game.week === "Super Bowl";
 
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   // -----------------------------------------------------
   // SCORE
@@ -365,4 +365,4 @@ function NFLGameSquareCard({ game }: NFLGameCardProps) {
   );
 }
 
-export default memo(NFLGameSquareCard);
+export default memo(NFLSquareGameCard);

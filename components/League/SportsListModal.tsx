@@ -12,7 +12,7 @@ import WCBBLogo from "assets/College_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
-import UFCLogo from "assets/MMA/UFC_Logos/UFC.png";
+import MMALogo from "assets/MMA/MMA_Logos/MMA.png";
 import { Colors, Fonts } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -56,7 +56,7 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
   MLB: { label: "MLB", logo: MLBLogo },
   NHL: { label: "NHL", logo: NHLLogo },
-  MMA: { label: "MMA", logo: UFCLogo },
+  MMA: { label: "MMA", logo: MMALogo },
 };
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(

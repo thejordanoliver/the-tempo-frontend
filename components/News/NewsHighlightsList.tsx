@@ -2,10 +2,10 @@
 import { globalStyles } from "constants/Styles";
 import React from "react";
 import { FlatList, Text, useColorScheme, View } from "react-native";
-import { newsHighlightsListStyles } from "styles/newsHighlightsListStyles";
+import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";
+import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import HighlightCard from "./HighlightCard";
 import NewsCard from "./NewsCard";
-import NewsCardSkeleton from "./NewsCardSkeleton";
 type NewsItem = {
   id: string;
   title: string;
@@ -43,8 +43,7 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
   onRefresh,
   error,
 }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = newsHighlightsListStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -68,9 +67,8 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
       }
       refreshing={refreshing}
       onRefresh={onRefresh}
-      scrollEnabled={false} // ✅ Disable scrolling
+      scrollEnabled={false}
       contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
       renderItem={({ item }) =>
         item.itemType === "news" ? (
           <NewsCard

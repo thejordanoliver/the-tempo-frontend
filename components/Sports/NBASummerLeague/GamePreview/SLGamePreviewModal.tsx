@@ -23,7 +23,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function GamePreviewModal({ visible, game, onClose }: Props) {
+export default function SummerLeagueGamePreviewModal({ visible, game, onClose }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);

@@ -4,6 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import CFBSeriesHistory from "components/Sports/CFB/GameDetails/CFBSeriesHistory";
 import {
@@ -17,6 +18,8 @@ import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import {
+  getCFBTeam,
+  getCFBTeamLogo,
   getRivalryHeadline,
   getTeamById,
   neutralStadiums,
@@ -36,7 +39,6 @@ import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "./CenterInfo";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: Game;
@@ -83,6 +85,8 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const homeEspnId = homeTeam?.espnID;
   const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
   const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
+  const homeLogo = getCFBTeamLogo(homeId, true)
+  const awayLogo = getCFBTeamLogo(awayId, true)
   const awayName = awayTeam?.code || emptyAwayTeam.code;
   const homeName = homeTeam?.code || emptyHomeTeam.code;
   const timestampNum = Number(gameInfo.date.timestamp);
@@ -136,7 +140,6 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     "cfb",
   );
   const isScheduled = gameStatusDescription === "Scheduled";
-  const isFinal = gameStatusDescription === "Final";
   const possessionTeam = possessionTeamId ? possessionTeamId : null;
   const officials = data?.officials ?? [];
   const currentDrives = data?.currentDrives;
@@ -297,19 +300,18 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* Teams + Center Info */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
+                <CompetitorInfo
                   team={awayTeam}
-                  teamName={awayName}
+                  logo={awayLogo}
+                  name={awayName}
                   rank={awayRank}
                   score={displayAwayScore}
                   opponentScore={displayHomeScore}
                   record={awayRecord}
-                  isDark={isDark}
                   gameStatusDescription={gameStatusDescription || gameStatus}
                   possessionTeamId={possessionTeam}
                   side="away"
                   timeouts={awayTimeouts}
-                  lighter
                 />
 
                 <CenterInfo
@@ -326,19 +328,18 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                   redzone={isRedzone}
                 />
 
-                <TeamInfo
+                <CompetitorInfo
                   team={homeTeam}
-                  teamName={homeName}
+                  logo={homeLogo}
+                  name={homeName}
                   rank={homeRank}
                   score={displayHomeScore}
                   opponentScore={displayAwayScore}
                   record={homeRecord}
-                  isDark={isDark}
                   gameStatusDescription={gameStatusDescription || gameStatus}
                   possessionTeamId={possessionTeam}
                   side="home"
                   timeouts={homeTimeouts}
-                  lighter
                 />
               </View>
 

@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import BasesIndicator from "../GameDetails/BasesIndicator";
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 type GameInfoProps = {
   gameStatusDescription: string;
   gameStatusDetail: string;
@@ -29,7 +29,7 @@ export function GameInfo({
   outs,
   bases,
 }: GameInfoProps) {
-  const styles = getStyles;
+  const styles = CenterInfoStyles;
 
   const inProgress =
     gameStatusDescription === "In Progress" ||

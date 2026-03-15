@@ -1,130 +1,211 @@
-import React from "react";
-import { View, StyleSheet, useColorScheme } from "react-native";
-import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
-import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "constants/Styles";
+import React, { useEffect, useRef } from "react";
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
+import HeaderSkeleton from "../HeaderSkeleton";
 
-export const TeamInjuriesSkeleton = () => {
+type Props = {
+  rows?: number;
+  lighter?: boolean;
+};
+
+export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const shimmerColor = isDark ? "#444" : "#e0e0e0";
-  const backgroundColor = isDark ? "#1e1e1e" : "#fff";
+  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const borderPulse = useRef(new Animated.Value(0.3)).current;
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0.3,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
 
+    const border = Animated.loop(
+      Animated.sequence([
+        Animated.timing(borderPulse, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+        Animated.timing(borderPulse, {
+          toValue: 0.3,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+      ]),
+    );
+
+    pulse.start();
+    border.start();
+
+    return () => {
+      pulse.stop();
+      border.stop();
+    };
+  }, []);
+
+  const styles = skeletonStyles(isDark);
+  const borderBottomColor = borderPulse.interpolate({
+    inputRange: [0.3, 1],
+    outputRange: [
+      isDark ? Colors.darkGray : Colors.midTone,
+      isDark ? Colors.lightGray : Colors.midTone,
+    ],
+  });
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      {/* Heading */}
-      <ShimmerPlaceHolder
-        shimmerColors={[shimmerColor, "#999", shimmerColor]}
-        LinearGradient={LinearGradient}
-        style={styles.heading}
-      />
+    <View>
+      <HeaderSkeleton />
 
-      {/* Tab Bar Skeleton */}
-      <View style={styles.tabRow}>
-        {[...Array(2)].map((_, i) => (
-          <View key={`tab-${i}`} style={styles.tabItem}>
-            <ShimmerPlaceHolder
-              shimmerColors={[shimmerColor, "#999", shimmerColor]}
-              LinearGradient={LinearGradient}
-              style={styles.tabLogo}
-            />
-            <ShimmerPlaceHolder
-              shimmerColors={[shimmerColor, "#999", shimmerColor]}
-              LinearGradient={LinearGradient}
-              style={styles.tabCode}
-            />
-          </View>
-        ))}
-      </View>
-
-      {/* Injury List Skeleton */}
-      <View style={styles.injuryList}>
-        {[...Array(3)].map((_, i) => (
-          <View key={`injury-${i}`} style={styles.injuryRow}>
-            {/* Player avatar circle */}
-            <ShimmerPlaceHolder
-              shimmerColors={[shimmerColor, "#999", shimmerColor]}
-              LinearGradient={LinearGradient}
-              style={styles.avatar}
-            />
-            <View style={{ flex: 1 }}>
-              {/* Player name */}
-              <ShimmerPlaceHolder
-                shimmerColors={[shimmerColor, "#999", shimmerColor]}
-                LinearGradient={LinearGradient}
-                style={styles.playerName}
+      <View style={styles.wrapper}>
+        {/* Tabs Skeleton */}
+        <View style={styles.tabContainer}>
+          {[0, 1].map((idx) => (
+            <View key={idx} style={styles.tabItem}>
+              <Animated.View
+                style={[
+                  styles.teamLogo,
+                  styles.skeleton,
+                  { opacity: pulseAnim },
+                ]}
               />
-              {/* Status / Note */}
-              <ShimmerPlaceHolder
-                shimmerColors={[shimmerColor, "#999", shimmerColor]}
-                LinearGradient={LinearGradient}
-                style={styles.playerNote}
+
+              <Animated.View
+                style={[
+                  styles.teamName,
+                  styles.skeleton,
+                  { opacity: pulseAnim },
+                ]}
               />
             </View>
-          </View>
+          ))}
+        </View>
+
+        {/* Player Rows */}
+        {Array.from({ length: rows }).map((_, i) => (
+          <Animated.View
+            key={i}
+            style={[
+              styles.row,
+              i !== rows - 1 && {
+                borderBottomWidth: StyleSheet.hairlineWidth,
+                borderBottomColor,
+              },
+            ]}
+          >
+            <Animated.View
+              style={[styles.avatar, styles.skeleton, { opacity: pulseAnim }]}
+            />
+
+            <View style={styles.textContainer}>
+              <Animated.View
+                style={[styles.name, styles.skeleton, { opacity: pulseAnim }]}
+              />
+
+              <Animated.View
+                style={[styles.detail, styles.skeleton, { opacity: pulseAnim }]}
+              />
+
+              <Animated.View
+                style={[styles.status, styles.skeleton, { opacity: pulseAnim }]}
+              />
+            </View>
+          </Animated.View>
         ))}
       </View>
     </View>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  heading: {
-    width: 120,
-    height: 18,
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-  tabRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  tabItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 8,
-  },
-  tabLogo: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-  },
-  tabCode: {
-    width: 28,
-    height: 14,
-    borderRadius: 4,
-    marginLeft: 6,
-  },
-  injuryList: {
-    marginTop: 8,
-  },
-  injuryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    gap: 8,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 12,
-  },
-  playerName: {
-    width: "60%",
-    height: 14,
-    borderRadius: 4,
-    marginBottom: 6,
-  },
-  playerNote: {
-    width: "40%",
-    height: 12,
-    borderRadius: 4,
-  },
-});
+const skeletonStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 12,
+    },
 
-export default TeamInjuriesSkeleton;
+    skeleton: {
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+
+    tabContainer: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingHorizontal: 12,
+    },
+
+    tabItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+
+    teamLogo: {
+      width: 28,
+      height: 28,
+      borderRadius: 100,
+    },
+
+    teamName: {
+      width: 70,
+      height: 20,
+      borderRadius: 6,
+    },
+
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      height: 80,
+      paddingHorizontal: 12,
+    },
+
+    avatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+    },
+
+    textContainer: {
+      marginLeft: 10,
+      flex: 1,
+      justifyContent: "center",
+      gap: 6,
+    },
+
+    name: {
+      height: 14,
+      width: "35%",
+      borderRadius: 4,
+    },
+
+    detail: {
+      height: 12,
+      width: "20%",
+      borderRadius: 4,
+    },
+
+    status: {
+      height: 10,
+      width: "25%",
+      borderRadius: 4,
+    },
+  });

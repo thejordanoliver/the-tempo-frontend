@@ -31,63 +31,22 @@ import { useFootballVenues } from "hooks/CFBHooks/useFootballVenues";
 import { useLastFiveGames } from "hooks/CFBHooks/useLastFiveGames";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
+import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import { useChatStore } from "store/chatStore";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { CFBGame, emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { formatGameDateTime, parseGameDate } from "utils/CFBUtils/cfbGameUtils";
 
 export default function CFBGameDetailsScreen() {
+  const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
   const [parsedGame, setParsedGame] = useState<CFBGame | null>(null);
-  const [loading, setLoading] = useState(true); // NEW
-  const { openChat, isOpen: isChatOpen } = useChatStore();
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const isScrollingRef = useRef(false);
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // NEW: Lazy load toggle
-  const [showDetails, setShowDetails] = useState(false);
-  useEffect(() => {
-    const timeout = setTimeout(() => setShowDetails(true), 300); // load after 300ms
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const handleScrollStart = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    isScrollingRef.current = true;
-
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleScrollEnd = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      isScrollingRef.current = false;
-
-      Animated.timing(opacityAnim, {
-        toValue: isChatOpen ? 0 : 1,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }, 1000);
-  };
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
 
   useEffect(() => {
     if (!params?.game) return;
@@ -415,7 +374,7 @@ export default function CFBGameDetailsScreen() {
 
         {/* Lazy-loaded Section */}
         {showDetails && hasValidTeams && (
-          <View style={{ gap: 20, marginTop: 20 }}>
+          <View style={styles.innerContainer}>
             {gameStatusDescription !== "Final" && (
               <WinPredictionVote
                 gameId={gameInfo?.id ?? ""}
@@ -565,11 +524,3 @@ export default function CFBGameDetailsScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-});

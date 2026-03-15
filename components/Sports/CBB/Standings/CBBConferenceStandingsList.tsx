@@ -1,4 +1,3 @@
-import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import {
@@ -140,7 +139,15 @@ export const CBBConferenceStandingsList = ({
   })();
 
   // --- Render Functions ---
-  const renderLeftItem = ({ item }: { item: any }) => {
+  const renderLeftItem = ({
+    item,
+    index,
+    isLastRow,
+  }: {
+    item: any;
+    index: number;
+    isLastRow: boolean;
+  }) => {
     const team = getTeamByESPNId(item.teamId);
     const teamId = women ? team?.wid : team?.id;
     const teamLogo = getCBBTeamLogo(teamId, isDark, women);
@@ -163,6 +170,10 @@ export const CBBConferenceStandingsList = ({
       <View
         style={[
           styles.row,
+          !isLastRow && {
+            borderBottomWidth: 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          },
           favorited && {
             backgroundColor: isDark
               ? Colors.dark.itemBackground
@@ -173,6 +184,7 @@ export const CBBConferenceStandingsList = ({
         <View style={styles.rankContainer}>
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
+
         <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
@@ -180,23 +192,27 @@ export const CBBConferenceStandingsList = ({
       </View>
     );
   };
+
   const renderRightItem = ({
     item,
+    isLastRow,
     showDivision,
   }: {
     item: any;
+    isLastRow: boolean;
     showDivision: boolean;
   }) => {
     const team = getTeamByESPNId(item.teamId);
     const teamId = women ? team?.wid : team?.id;
     const favorited = team ? isFavorite(league, String(teamId)) : false;
-    // Determine streak display and color
+
     let streakText = "-";
-    let streakColor = item.streak.startsWith("W")
+
+    let streakColor = item.streak?.startsWith("W")
       ? isDark
         ? Colors.dark.leafGreen
         : Colors.light.green
-      : item.streak.startsWith("L")
+      : item.streak?.startsWith("L")
         ? isDark
           ? Colors.dark.lightRed
           : Colors.light.red
@@ -206,12 +222,10 @@ export const CBBConferenceStandingsList = ({
 
     if (item.streak != null && item.streak !== "-") {
       const streakValue = Number(item.streak);
+
       if (!isNaN(streakValue)) {
-        if (streakValue > 0) {
-          streakText = `W${streakValue}`;
-        } else if (streakValue < 0) {
-          streakText = `L${Math.abs(streakValue)}`;
-        }
+        if (streakValue > 0) streakText = `W${streakValue}`;
+        else if (streakValue < 0) streakText = `L${Math.abs(streakValue)}`;
       } else if (typeof item.streak === "string") {
         streakText = item.streak;
       }
@@ -221,6 +235,10 @@ export const CBBConferenceStandingsList = ({
       <View
         style={[
           styles.row,
+          !isLastRow && {
+            borderBottomWidth: 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          },
           favorited && {
             backgroundColor: isDark
               ? Colors.dark.itemBackground
@@ -231,6 +249,7 @@ export const CBBConferenceStandingsList = ({
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.overall}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.confOverall}</Text>
         </View>
@@ -244,23 +263,29 @@ export const CBBConferenceStandingsList = ({
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.homeOverall}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.awayOverall}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.gamesBehind}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={[styles.statText, { color: streakColor }]}>
             {streakText}
           </Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.vsAPTop25}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.pointsFor}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.pointsAgainst}</Text>
         </View>
@@ -303,9 +328,11 @@ export const CBBConferenceStandingsList = ({
   function ConferenceSection({
     title,
     data,
+    isLast,
   }: {
     title: string;
     data: typeof safeStandings;
+    isLast: boolean;
   }) {
     const divisions = data.reduce(
       (acc, team) => {
@@ -321,9 +348,10 @@ export const CBBConferenceStandingsList = ({
 
     // ✅ only marginTop 12 on the header container (already what you're doing)
     return (
-      <View style={{ marginTop: 12 }}>
-        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
-
+      <View style={[styles.wrapper, { marginBottom: isLast ? 0 : 12 }]}>
+        <View style={styles.header}>
+          <Text style={styles.heading}>{title}</Text>
+        </View>
         {Object.keys(divisions).map((div) => (
           <View key={div}>
             {Object.keys(divisions).length > 1 && (
@@ -334,7 +362,13 @@ export const CBBConferenceStandingsList = ({
               <FlatList
                 data={divisions[div]}
                 keyExtractor={(item) => item.teamId}
-                renderItem={renderLeftItem}
+                renderItem={({ item, index }) =>
+                  renderLeftItem({
+                    item,
+                    index,
+                    isLastRow: index === divisions[div].length - 1,
+                  })
+                }
                 scrollEnabled={false}
                 ListHeaderComponent={renderHeader}
                 stickyHeaderIndices={[0]}
@@ -347,8 +381,12 @@ export const CBBConferenceStandingsList = ({
                 <FlatList
                   data={divisions[div]}
                   keyExtractor={(item) => item.teamId}
-                  renderItem={({ item }) =>
-                    renderRightItem({ item, showDivision: hasDivisions })
+                  renderItem={({ item, index }) =>
+                    renderRightItem({
+                      item,
+                      showDivision: hasDivisions,
+                      isLastRow: index === divisions[div].length - 1,
+                    })
                   }
                   scrollEnabled={false}
                   ListHeaderComponent={renderStatsHeader(hasDivisions)}
@@ -367,12 +405,19 @@ export const CBBConferenceStandingsList = ({
       contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
     >
       {conferences.length > 0 ? (
-        conferences.map((conf) => {
+        conferences.map((conf, index) => {
           const data = (grouped[conf] ?? [])
             .slice()
             .sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
 
-          return <ConferenceSection key={conf} title={conf} data={data} />;
+          return (
+            <ConferenceSection
+              key={conf}
+              title={conf}
+              data={data}
+              isLast={index === conferences.length - 1}
+            />
+          );
         })
       ) : (
         <View style={{ alignItems: "center", marginTop: 40 }}>

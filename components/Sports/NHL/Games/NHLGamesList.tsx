@@ -1,5 +1,5 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { Colors, Fonts } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -17,7 +17,7 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { NHLGame } from "types/nhl";
 import NHLGamePreviewModal from "../GamePreview/NHLGamePreviewModal";
 import NHLGameCard from "./NHLGameCard";
-import NHLGameSquareCard from "./NHLGameSquareCard";
+import NHLSquareGameCard from "./NHLGameSquareCard";
 import NHLStackedGameCard from "./NHLStackedGameCard";
 
 type GamesListProps = {
@@ -90,7 +90,7 @@ export default function NHLGamesList({
         </View>,
       );
     if (viewMode === "grid")
-      return wrapper(<NHLGameSquareCard game={game} />, index);
+      return wrapper(<NHLSquareGameCard game={game} />, index);
     return wrapper(
       <View style={{ marginBottom: 12 }}>
         <NHLStackedGameCard game={game} />
@@ -127,7 +127,7 @@ export default function NHLGamesList({
               marginRight: index % 2 === 0 ? 4 : 0,
               marginBottom: 12,
             };
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}

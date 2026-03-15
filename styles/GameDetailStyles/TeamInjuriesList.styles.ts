@@ -1,8 +1,14 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     container: {},
+    wrapper: {
+      borderColor: Colors.midTone,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 12,
+    },
     injuryItem: {
       flexDirection: "row",
       padding: 12,
@@ -11,8 +17,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomColor: lighter
         ? Colors.midTone
         : isDark
-        ? Colors.midTone
-        : Colors.midTone,
+          ? Colors.midTone
+          : Colors.midTone,
     },
     avatar: {
       width: 50,
@@ -30,17 +36,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
-    },
-
-    headshot: {
-      width: 50,
-      height: 50,
-      borderRadius: 100,
-      paddingTop: 4,
-      marginRight: 8,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
 
     name: {
@@ -49,8 +46,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.text
         : isDark
-        ? Colors.dark.text
-        : Colors.light.text,
+          ? Colors.dark.text
+          : Colors.light.text,
     },
     playerHeader: {
       flexDirection: "row",
@@ -62,8 +59,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.midTone
-        : Colors.midTone,
+          ? Colors.midTone
+          : Colors.midTone,
     },
     jersey: {
       fontSize: 12,
@@ -71,8 +68,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       marginLeft: 4,
     },
 
@@ -87,8 +84,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.lightRed
         : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
+          ? Colors.dark.lightRed
+          : Colors.light.red,
     },
 
     row: { flexDirection: "row", alignItems: "center" },
@@ -112,8 +109,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     detail: {
       fontSize: 13,
@@ -133,8 +130,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
       textAlign: "center",
       marginVertical: 8,
     },
@@ -145,8 +142,8 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: lighter
         ? Colors.midTone
         : isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+          ? Colors.midTone
+          : Colors.lightGray,
       marginHorizontal: 4,
     },
     tabLabel: {
@@ -157,11 +154,5 @@ export const teamInjuryStyles = (isDark: boolean, lighter: boolean) =>
     logo: {
       width: 28,
       height: 28,
-    },
-    wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
-      paddingTop: 12,
     },
   });

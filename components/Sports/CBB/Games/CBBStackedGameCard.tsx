@@ -13,7 +13,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { CBBGame } from "types/types";
 import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -93,7 +93,7 @@ function CBBStackedGameCard({
   const isChampionship = isWomen
     ? headlineText === "Women's Basketball Championship - National Championship"
     : headlineText === "Men's Basketball Championship - National Championship";
-  const styles = stackedGameCardStyles(isDark, isChampionship);
+  const styles = StackedGameCardStyles(isDark, isChampionship);
 
   const handlePress = useCallback(() => {
     router.push({

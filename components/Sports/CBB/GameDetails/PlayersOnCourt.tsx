@@ -1,7 +1,12 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar, { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
+import FixedWidthTabBar, {
+  getLabelStyle,
+} from "components/TabBars/FixedWidthTabBar";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
-import { getTeamByESPNId as getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import {
+  getTeamByESPNId as getCBBTeamByESPNId,
+  getCBBTeamLogo,
+} from "constants/teamsCBB";
 import { useState } from "react";
 import {
   Image,
@@ -14,9 +19,10 @@ import {
   View,
 } from "react-native";
 import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
-import usePlayersByTeam from "hooks/usePlayersByTeam";
-import useCBBPlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -91,7 +97,9 @@ export default function PlayersOnCourt({
 
   // Map ESPN players
   const mapESPNPlayers = (teamId: number) => {
-    const block = playerStats.find((p) => Number(p.team?.id) === Number(teamId));
+    const block = playerStats.find(
+      (p) => Number(p.team?.id) === Number(teamId),
+    );
     if (!block) return [];
 
     const internalTeamId = getTeamByESPNId(teamId)?.id;
@@ -111,14 +119,20 @@ export default function PlayersOnCourt({
   const awayPlayers = mapESPNPlayers(awayTeamId);
 
   // Render team list
-  const renderOnCourtList = (players: Player[], teamCode: string | undefined) => (
+  const renderOnCourtList = (
+    players: Player[],
+    teamCode: string | undefined,
+  ) => (
     <View>
       {players
         .filter((p) => p.active)
         .map((p, index, arr) => (
           <View
             key={`${teamCode}-row-${p.athlete.id}-${index}`}
-            style={[styles.tableRow, index === arr.length - 1 && { borderBottomWidth: 0 }]}
+            style={[
+              styles.tableRow,
+              index === arr.length - 1 && { borderBottomWidth: 0 },
+            ]}
           >
             <TouchableOpacity
               activeOpacity={0.6}
@@ -138,7 +152,9 @@ export default function PlayersOnCourt({
                 </View>
                 <View style={styles.nameWrapper}>
                   <Text style={styles.playerName}>{p.athlete.shortName}</Text>
-                  <Text style={styles.posistion}>{p.athlete.position.abbreviation}</Text>
+                  <Text style={styles.posistion}>
+                    {p.athlete.position.abbreviation}
+                  </Text>
                 </View>
               </View>
               <View style={{ flexDirection: "row", alignContent: "center" }}>

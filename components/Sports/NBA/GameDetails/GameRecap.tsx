@@ -3,8 +3,8 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import GameRecapSkeleton from "components/Skeletons/GameDetails/GameRecapSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teams";
+import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameRecap } from "hooks/useGameRecap";
-import usePlayersByTeam from "hooks/usePlayersByTeam";
 import React from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 

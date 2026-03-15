@@ -1,58 +1,58 @@
-import { SeriesSummary } from "hooks/MLBHooks/useBaseballGameDetails";
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { NHLTeam } from "types/types";
+import { Team } from "types/types";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  home: NHLTeam;
-  away: NHLTeam;
-  isPostSeason: boolean;
-  seriesSummary: string;
-  rankHome?: string;
-  rankAway?: string;
+  home: Team;
+  away: Team;
+  rankHome?: number;
+  rankAway?: number;
   homeScore: number;
   awayScore: number;
-  inning?: string;
+  homeBonusState?: string | null;
+  awayBonusState?: string | null;
+  homeTimeouts?: number;
+  awayTimeouts?: number;
+  period?: number;
+  displayClock?: string;
   isDark: boolean;
   formattedDate?: string;
   headlineText?: string | null;
   time?: string;
   networkString?: string;
-  refreshTick?: number;
-  homeBonusState?: string | null;
-  awayBonusState?: string | null;
-  homeTimeouts?: number;
-  awayTimeouts?: number;
+  seriesSummary?: string;
   homeRecord?: string;
   awayRecord?: string;
-  gameStatusDescription: string;
+  halftime?: boolean;
   gameStatusDetail: string;
+  gameStatusDescription: string;
 };
 
 export default function GameHeader({
   headlineText,
   home,
   away,
-  isPostSeason,
-  seriesSummary,
   rankHome,
   rankAway,
   homeScore,
+  homeBonusState,
+  awayBonusState,
   awayScore,
-  gameStatusDetail,
-  gameStatusDescription,
-  inning,
+  homeTimeouts = 0,
+  awayTimeouts = 0,
+  period,
+  displayClock,
   isDark,
   formattedDate = "",
   time = "",
   networkString = "",
-  homeTimeouts = 0,
-  awayTimeouts = 0,
-  refreshTick = 0,
   homeRecord,
   awayRecord,
+  halftime,
+  gameStatusDetail,
+  gameStatusDescription,
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 
@@ -61,36 +61,20 @@ export default function GameHeader({
   const homeIsWinner =
     gameStatusDescription === "Final" && (homeScore ?? 0) > (awayScore ?? 0);
 
-function renderHeadline(
-  seriesSummary: string | undefined,
-  headline?: string | null,
-) {
-  if (isPostSeason) {
-    return (
-      <View style={styles.seriesContainer}>
-        <Text style={styles.seriesText}>{headline}</Text>
-        <View style={styles.divider} />
-        <Text style={styles.seriesText}>{seriesSummary}</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.headlineContainer}>
-      <Text style={styles.headlineText}>{headline}</Text>
-    </View>
-  );
-}
-
-
   return (
     <View style={styles.container}>
-   {renderHeadline(seriesSummary, headlineText)}
+      {headlineText ? (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headlineText} numberOfLines={2}>
+            {headlineText}
+          </Text>
+        </View>
+      ) : null}
 
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
-          key={`away-${refreshTick}`}
+          key={`away`}
           team={{
             id: away.id,
             code: away.code,
@@ -100,33 +84,30 @@ function renderHeadline(
               isDark && away.logoLight
                 ? away.logoLight
                 : away.logo ||
-                  require("assets/Placeholders/teamPlaceholder.png"),
+                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
           }}
           isDark={isDark}
-          rank={rankAway}
           score={awayScore}
           isWinner={awayIsWinner}
           timeouts={awayTimeouts}
           gameStatusDescription={gameStatusDescription}
         />
 
-        <View>
-          {/* Game Info */}
-          <GameInfo
-            key={`gameinfo-${refreshTick}`}
-            gameStatusDescription={gameStatusDescription}
-            gameStatusDetail={gameStatusDetail}
-            date={formattedDate || new Date().toISOString()}
-            time={time}
-            inning={inning}
-            isDark={isDark}
-            broadcastNetworks={networkString}
-          />
-        </View>
+        {/* Game Info */}
+        <GameInfo
+          date={formattedDate || new Date().toISOString()}
+          time={time}
+          clock={displayClock}
+          period={period}
+          isDark={isDark}
+          broadcastNetworks={networkString}
+          gameStatusShortDescription={gameStatusDetail}
+          gameStatusDescription={gameStatusDescription}
+        />
 
         {/* Home Team Row */}
         <TeamRow
-          key={`home-${refreshTick}`}
+          key={`home`}
           team={{
             id: home.id,
             code: home.code,
@@ -136,14 +117,12 @@ function renderHeadline(
               isDark && home.logoLight
                 ? home.logoLight
                 : home.logo ||
-                  require("assets/Placeholders/teamPlaceholder.png"),
+                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
           }}
           isDark={isDark}
-          rank={rankHome}
           isHome
           score={homeScore}
           isWinner={homeIsWinner}
-          timeouts={homeTimeouts}
           gameStatusDescription={gameStatusDescription}
         />
       </View>

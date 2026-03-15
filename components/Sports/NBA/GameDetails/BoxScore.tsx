@@ -1,8 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { teamsById } from "constants/teams";
 import { router } from "expo-router";
+import usePlayersByTeam, { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameLeaders } from "hooks/useGameLeaders";
-import usePlayersByTeam, { Player } from "hooks/usePlayersByTeam";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -45,11 +45,11 @@ export default function BoxScore({
   lighter = false,
 }: Props) {
   // Fetch game leaders/stats
-  const { data: leadersData, isLoading, isError } = useGameLeaders(
-    gameId,
-    homeTeamId,
-    awayTeamId
-  );
+  const {
+    data: leadersData,
+    isLoading,
+    isError,
+  } = useGameLeaders(gameId, homeTeamId, awayTeamId);
 
   // Fetch full team rosters
   const { players: homeTeamPlayers } = usePlayersByTeam(String(homeTeamId));
@@ -70,29 +70,36 @@ export default function BoxScore({
   const awayCode = awayTeam?.code ?? "away";
 
   /** Map leadersData for quick lookup by player_id */
-  const statsMap = leadersData?.reduce((acc: Record<number, any>, player) => {
-    if (player.localPlayer?.player_id) {
-      acc[player.localPlayer.player_id] = player;
-    }
-    return acc;
-  }, {}) ?? {};
+  const statsMap =
+    leadersData?.reduce((acc: Record<number, any>, player) => {
+      if (player.localPlayer?.player_id) {
+        acc[player.localPlayer.player_id] = player;
+      }
+      return acc;
+    }, {}) ?? {};
 
   /** Sort players by minutes played */
   const sortPlayersByMinutes = (players: Player[]) => {
-    return [...players].sort((a, b) => {
-      const aStats = statsMap[a.player_id] ?? {};
-      const bStats = statsMap[b.player_id] ?? {};
+    return [...players]
+      .sort((a, b) => {
+        const aStats = statsMap[a.player_id] ?? {};
+        const bStats = statsMap[b.player_id] ?? {};
 
-      const aMin = typeof aStats.min === "string" && aStats.min.includes(":")
-        ? parseInt(aStats.min.split(":")[0], 10) + parseInt(aStats.min.split(":")[1], 10) / 60
-        : Number(aStats.min ?? 0);
+        const aMin =
+          typeof aStats.min === "string" && aStats.min.includes(":")
+            ? parseInt(aStats.min.split(":")[0], 10) +
+              parseInt(aStats.min.split(":")[1], 10) / 60
+            : Number(aStats.min ?? 0);
 
-      const bMin = typeof bStats.min === "string" && bStats.min.includes(":")
-        ? parseInt(bStats.min.split(":")[0], 10) + parseInt(bStats.min.split(":")[1], 10) / 60
-        : Number(bStats.min ?? 0);
+        const bMin =
+          typeof bStats.min === "string" && bStats.min.includes(":")
+            ? parseInt(bStats.min.split(":")[0], 10) +
+              parseInt(bStats.min.split(":")[1], 10) / 60
+            : Number(bStats.min ?? 0);
 
-      return bMin - aMin; // Descending order
-    }).slice(0, 15); // Limit to 15 players
+        return bMin - aMin; // Descending order
+      })
+      .slice(0, 15); // Limit to 15 players
   };
 
   const homePlayersSorted = sortPlayersByMinutes(homeTeamPlayers);
@@ -165,7 +172,7 @@ export default function BoxScore({
 
   const getTeamLogo = (team: typeof homeTeam | typeof awayTeam) => {
     if (!team) return "";
-    return isDark ? team.logoLight ?? team.logo ?? "" : team.logo ?? "";
+    return isDark ? (team.logoLight ?? team.logo ?? "") : (team.logo ?? "");
   };
 
   /** Render team box */
@@ -175,7 +182,7 @@ export default function BoxScore({
     teamLogo: any,
     teamCode: string,
     isExpanded: boolean,
-    heightAnim: Animated.Value
+    heightAnim: Animated.Value,
   ) => {
     return (
       <View style={styles.teamBox}>
@@ -209,12 +216,12 @@ export default function BoxScore({
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() =>
-                        router.push(`/player/${p.player_id}?teamId=${p.team_id}`)
+                        router.push(
+                          `/player/${p.player_id}?teamId=${p.team_id}`,
+                        )
                       }
                     >
-                      <Text style={styles.cellName}>
-                        {p.first_name} {p.last_name}
-                      </Text>
+                      <Text style={styles.cellName}>{p.short_name}</Text>
                     </TouchableOpacity>
                   </View>
                 );
@@ -338,7 +345,7 @@ export default function BoxScore({
           getTeamLogo(awayTeam),
           awayCode,
           expandedTeams[awayCode] ?? false,
-          heightAnimMap.current[awayCode]
+          heightAnimMap.current[awayCode],
         )}
       </View>
 
@@ -348,7 +355,7 @@ export default function BoxScore({
         getTeamLogo(homeTeam),
         homeCode,
         expandedTeams[homeCode] ?? false,
-        heightAnimMap.current[homeCode]
+        heightAnimMap.current[homeCode],
       )}
     </ScrollView>
   );

@@ -1,6 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { StandingsList } from "components/League/Standings/StandingsList";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/MLB/GameDetails/GameHeader";
 import GameSummary from "components/Sports/MLB/GameDetails/GameSummary";
@@ -12,41 +11,29 @@ import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
-import { getMLBTeam } from "constants/teamsMLB";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "hooks/MLBHooks/useLastFiveGames";
+import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import { useChatStore } from "store/chatStore";
-import { getMLBStandingsSeason } from "utils/dateUtils";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
 export default function GameDetailsScreen() {
+  const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
-  const { isOpen: isChatOpen } = useChatStore();
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [standingsYear, setStandingsYear] = useState(
-    getMLBStandingsSeason().toString(),
-  );
-  // -----------------------------------------------------
-  // 🟦 Stabilize parsedGame (critical fix)
-  // -----------------------------------------------------
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
+
   const parsedGame = useMemo(() => {
     try {
       return typeof game === "string" ? JSON.parse(game) : null;
@@ -57,14 +44,7 @@ export default function GameDetailsScreen() {
 
   if (!parsedGame?.id) return null;
 
-  // -----------------------------------------------------
-  // 🟩 Extract via parsed object
-  // -----------------------------------------------------
   const { home, away, timestamp } = parsedGame;
-
-  // -----------------------------------------------------
-  // 🟧 Stable gameDate object
-  // -----------------------------------------------------
 
   const {
     date: gameDate,
@@ -84,8 +64,8 @@ export default function GameDetailsScreen() {
   const awayTeam = getMLBTeam(awayId);
   const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
-  const homeLogo = isDark ? homeTeam?.logoLight : homeTeam?.logo;
-  const awayLogo = isDark ? awayTeam?.logoLight : awayTeam?.logo;
+  const homeLogo = getMLBTeamLogo(homeId, isDark);
+  const awayLogo = getMLBTeamLogo(awayId, isDark);
 
   if (!homeTeam || !awayTeam) return null;
 
@@ -185,6 +165,8 @@ export default function GameDetailsScreen() {
           onBack={goBack}
           homeTeamId={homeId}
           awayTeamId={awayId}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
           isNeutralSite={neutralSite}
@@ -198,31 +180,6 @@ export default function GameDetailsScreen() {
     return () => clearTimeout(timeout);
   }, []);
 
-  // -----------------------------------------------------
-  // 🎬 Scroll Fade Animations
-  // -----------------------------------------------------
-  const handleScrollStart = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleScrollEnd = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-
-    scrollTimeout.current = setTimeout(() => {
-      Animated.timing(opacityAnim, {
-        toValue: isChatOpen ? 0 : 1,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }, 1000);
-  };
   if (isLoading || !liveScore) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -267,7 +224,7 @@ export default function GameDetailsScreen() {
 
         {!isFinal && <LastPlay lastPlay={lastPlay} />}
 
-        <View style={{ gap: 20, marginTop: 20 }}>
+        <View style={styles.innerContainer}>
           {!isFinal && (
             <WinPredictionVote
               gameId={parsedGame.id}
@@ -299,7 +256,7 @@ export default function GameDetailsScreen() {
             />
           )}
 
-          {isScheduled && (
+          {isScheduled && homeChance != 0 && awayChance != 0 && (
             <MatchupPredictor
               away={{
                 name: awayTeam.code ?? "UNK",
@@ -358,13 +315,6 @@ export default function GameDetailsScreen() {
             loading={false}
             error={null}
           />
-
-          <StandingsList
-            year={standingsYear}
-            onYearChange={setStandingsYear}
-            league="MLB"
-            isGameDetailScreen
-          />
         </View>
       </ScrollView>
 
@@ -374,11 +324,3 @@ export default function GameDetailsScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-});

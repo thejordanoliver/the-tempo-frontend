@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 // ✅ Import fallback image
-import { newsCardStyles } from "styles/NewsCardStyles";
+import { newsCardStyles } from "styles/NewsStyles/NewsCardStyles";
 import FallbackImage from "../../assets/Logos/ThumbnailFallback.png";
 
 type NewsCardProps = {
@@ -34,7 +34,7 @@ export default function NewsCard({
 
   const [imageError, setImageError] = useState(false);
   const displaySource =
-    typeof source === "string" ? source : source?.name ?? "Unknown Source";
+    typeof source === "string" ? source : (source?.name ?? "Unknown Source");
 
   const handlePress = () => {
     router.push({

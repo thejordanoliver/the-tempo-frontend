@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors, Fonts } from "constants/Styles";
-import { teamsById } from "constants/teams";
+import { getTeamById, getTeamLogo } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
 import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
@@ -82,21 +82,9 @@ export default function GameLeaders({
   // Add this check:
   if (!topPlayers.length) return null;
 
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-      ? Colors.white
-      : Colors.black;
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-      ? Colors.midTone
-      : Colors.midTone;
-
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <HeadingTwo lighter>Game Leaders</HeadingTwo>
         <GameLeadersSkeleton />
       </View>
     );
@@ -112,21 +100,19 @@ export default function GameLeaders({
           lighter={lighter} // <-- forward the prop here
           renderLabel={(tab, isSelected) => (
             <Text
-              style={{
-                fontFamily: Fonts.OSMEDIUM,
-                fontSize: 16,
-                color: isSelected ? textColor : subTextColor,
-              }}
+              style={getLabelStyle(isDark, isSelected, lighter, {
+                opacity: isSelected ? 1 : 0.5,
+              })}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab.toUpperCase()}
             </Text>
           )}
         />
 
         {topPlayers.map((player, idx) => {
           const p = player.localPlayer;
-          const team = teamsById[player.team.id];
-
+          const team = getTeamById(player.team.id);
+          const logo = getTeamLogo(team?.id, isDark);
           return (
             <View key={idx} style={styles.card}>
               <View style={styles.avatarWrapper}>
@@ -236,13 +222,7 @@ export default function GameLeaders({
               </View>
 
               <Image
-                source={
-                  lighter
-                    ? team.logoLight || team.logo
-                    : isDark
-                      ? team.logoLight || team.logo
-                      : team.logo
-                }
+                source={lighter ? team?.logoLight || team?.logo : logo}
                 style={styles.teamLogo}
                 resizeMode="contain"
               />

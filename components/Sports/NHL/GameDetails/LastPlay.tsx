@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Styles";
 import players from "constants/players";
-import useDbPlayersByTeam, { Player } from "hooks/usePlayersByTeam";
+import useDbPlayersByTeam, { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import {
   Image,

@@ -7,7 +7,6 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
@@ -19,10 +18,11 @@ import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNFLGamesByWeek } from "hooks/NFLHooks/useNFLGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getFootballSeasonYear } from "utils/dateUtils";
 import {
@@ -65,9 +65,6 @@ export default function NFLLeagueScreen() {
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
-  const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
-  >("scores");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(
@@ -83,20 +80,8 @@ export default function NFLLeagueScreen() {
   const [draftRound, setDraftRound] = useState("all");
   const [weeks, setWeeks] = useState<NFLWeekFromGames[]>([]);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ] as const;
-
-  // --- Fetch News & Highlights ---
-  const { news: nflNews, loading: newsLoading } = useLeagueNews("NFL");
-  const { highlights } = useHighlights("nfl", "", 10);
+  const pagerRef = useRef<PagerView>(null);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NFL");
 
   const selectedWeek = weeks[selectedWeekIndex] ?? null;
 
@@ -169,97 +154,52 @@ export default function NFLLeagueScreen() {
     }
   };
 
-  // --- Sort games: live games first, then by date ---
-  const sortedGames = React.useMemo(() => {
-    if (!nflGames) return [];
 
-    return [...nflGames].sort((a, b) => {
-      const aStatus = a?.game?.status?.long?.toLowerCase?.() || "";
-      const bStatus = b?.game?.status?.long?.toLowerCase?.() || "";
-
-      const liveStatuses = [
-        "not started",
-        "final",
-        "finished",
-        "postponed",
-        "canceled",
-      ];
-      const aIsLive = !liveStatuses.includes(aStatus);
-      const bIsLive = !liveStatuses.includes(bStatus);
-
-      if (aIsLive && !bIsLive) return -1;
-      if (!aIsLive && bIsLive) return 1;
-
-      const aTime = a?.game?.date.timestamp ?? 0;
-      const bTime = b?.game?.date.timestamp ?? 0;
-      return aTime - bTime;
-    });
-  }, [nflGames]);
-
-  // --- Combine news + highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = nflNews.map((item) => ({
-      ...item,
-      itemType: "news",
-      // ensure publishedAt is always defined
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight",
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort(
-      (a, b) =>
-        new Date(a.publishedAt || new Date().toISOString()).getTime() -
-        new Date(b.publishedAt || new Date().toISOString()).getTime(),
-    );
-    return combined;
-  }, [nflNews, highlights]);
 
   return (
     <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
       <View style={styles.container}>
-        <MainScrollTabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <View key="scores" style={styles.contentArea}>
+            <WeekSelector
+              weeks={weeks}
+              selectedWeekIndex={selectedWeekIndex}
+              onSelectWeek={setSelectedWeekIndex}
+              monthTextStyle={styles.monthText}
+              monthTextSelectedStyle={styles.monthTextSelected}
+            />
 
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <WeekSelector
-                weeks={weeks}
-                selectedWeekIndex={selectedWeekIndex}
-                onSelectWeek={setSelectedWeekIndex}
-                monthTextStyle={styles.monthText}
-                monthTextSelectedStyle={styles.monthTextSelected}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <NFLGamesList
+                games={nflGames}
+                loading={nflLoading}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={false}
               />
+            </ScrollView>
+          </View>
 
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              >
-                <NFLGamesList
-                  games={sortedGames}
-                  loading={nflLoading}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  scrollEnabled={false}
-                />
-              </ScrollView>
-            </>
-          )}
-
-          {selectedTab === "news" && (
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               refreshControl={
@@ -268,35 +208,30 @@ export default function NFLLeagueScreen() {
                   onRefresh={handleRefresh}
                 />
               }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={newsLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
-          )}
+            ></ScrollView>
+          </View>
 
-          {selectedTab === "standings" && (
-            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
-              <StandingsList
-                year={standingsYear}
-                onYearChange={setStandingsYear}
-                league="NFL"
-              />
-            </View>
-          )}
-          {selectedTab === "stats" && (
+          {/* STANDINGS */}
+          <View key="standings" style={styles.contentArea}>
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league="NFL"
+            />
+          </View>
+
+          {/* STATS */}
+          <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList
               loading={loading}
               error={error}
               categories={categories}
               league={"NFL"}
             />
-          )}
+          </View>
 
-          {selectedTab === "draft" && (
+          {/* DRAFT */}
+          <View key="draft" style={styles.contentArea}>
             <DraftList
               year={draftYear}
               team={draftTeam}
@@ -306,10 +241,18 @@ export default function NFLLeagueScreen() {
               onRoundChange={setDraftRound}
               league="nfl"
             />
-          )}
-          {selectedTab === "awards" && <AwardSeasons league="NFL" />}
-          {selectedTab === "forum" && <LeagueForum league="NFL" />}
-        </View>
+          </View>
+
+          {/* AWARDS */}
+          <View key="awards" style={styles.contentArea}>
+            <AwardSeasons league="NFL" />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum" style={styles.contentArea}>
+            <LeagueForum league="NFL" />
+          </View>
+        </PagerView>
       </View>
 
       <SportsListModal

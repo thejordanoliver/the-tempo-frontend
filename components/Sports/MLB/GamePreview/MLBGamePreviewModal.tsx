@@ -1,14 +1,6 @@
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
-import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
-import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,9 +16,8 @@ import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import { getGameDate } from "utils/nflGameCardUtils";
-import MLBInjuries from "../GameDetails/MLBInjuries";
 import { GameInfo } from "./CenterInfo";
-import TeamInfo from "./TeamInfo";
+import GamePreviewContent from "./GamePreviewContent";
 type Props = {
   game: MLBGame;
   visible: boolean;
@@ -116,6 +107,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const highlights = details?.highlights ?? [];
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+
   const isTopInning = gameStatusDetail.includes("Top");
   const outs = liveScore?.outs;
   const bases: { first: boolean; second: boolean; third: boolean } =
@@ -146,7 +138,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
     [venue, homeTeam, neutralSite],
   );
 
-  const { weather } = useWeatherForecast(
+  const { weather, weatherLoading, weatherError } = useWeatherForecast(
     resolvedVenue.latitude,
     resolvedVenue.longitude,
     gameDateStr,
@@ -215,10 +207,11 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* ================= GAME HEADER ================= */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
+                <CompetitorInfo
                   side="away"
                   team={away}
-                  teamName={awayName}
+                  logo={awayLogo}
+                  name={awayName}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
@@ -237,10 +230,11 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                   bases={bases}
                 />
 
-                <TeamInfo
+                <CompetitorInfo
                   side="home"
                   team={home}
-                  teamName={homeName}
+                  logo={homeLogo}
+                  name={homeName}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
@@ -248,92 +242,31 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                 />
               </View>
 
-              {/* BODY */}
-              <BottomSheetScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainerStyle}
-              >
-                <View style={styles.bottomSheetScrollViewWrapper}>
-                  {!isScheduled && (
-                    <LineScore
-                      linescore={lineScore}
-                      homeCode={homeTeam?.code}
-                      awayCode={awayTeam?.code}
-                      league="MLB"
-                      lighter
-                    />
-                  )}
-                  {isScheduled && (
-                    <MatchupPredictor
-                      away={{
-                        name: awayTeam?.code ?? "UNK",
-                        logo: awayLogo,
-                        color: awayTeam?.color,
-                        chance: awayChance,
-                      }}
-                      home={{
-                        name: homeTeam?.code ?? "UNK",
-                        logo: homeLogo,
-                        color: homeTeam?.color,
-                        chance: homeChance,
-                      }}
-                      size={180}
-                      lighter
-                    />
-                  )}
-
-                  <LastFiveGames
-                    isDark={isDark}
-                    away={{
-                      teamId: awayTeam?.id,
-                      teamCode: awayTeam?.code,
-                      games: awayLastGames?.games,
-                    }}
-                    home={{
-                      teamId: homeTeam?.id,
-                      teamCode: homeTeam?.code,
-                      games: homeLastGames?.games,
-                    }}
-                    league="MLB"
-                    lighter
-                  />
-
-                  <HighlightVideoList highlights={highlights} lighter />
-
-                  <MLBInjuries
-                    injuries={injuries}
-                    loading={false}
-                    error={null}
-                    awayTeam={awayTeam?.code}
-                    homeTeam={homeTeam?.code}
-                    lighter
-                  />
-
-                  <Officials
-                    officials={officials ?? []}
-                    loading={false}
-                    error={null}
-                    lighter
-                  />
-
-                  <GameLocation
-                    venueImage={resolvedVenue.image}
-                    venueName={resolvedVenue.name}
-                    location={
-                      resolvedVenue.city
-                        ? `${resolvedVenue.city}`
-                        : resolvedVenue.name
-                    }
-                    address={resolvedVenue.address}
-                    venueCapacity={String(resolvedVenue.capacity ?? "")}
-                    venueAttendance={undefined}
-                    weather={weather}
-                    loading={false}
-                    error={null}
-                    lighter
-                  />
-                </View>
-              </BottomSheetScrollView>
+              {/* --- Scrollable Content --- */}
+              {!dontShowDetails && (
+                <GamePreviewContent
+                  gameStatusDescription={gameStatusDescription}
+                  game={game}
+                  home={homeTeam}
+                  away={awayTeam}
+                  homeChance={homeChance}
+                  awayChance={awayChance}
+                  lineScore={lineScore}
+                  homeLastGames={homeLastGames}
+                  awayLastGames={awayLastGames}
+                  injuries={injuries}
+                  officials={officials}
+                  resolvedVenueImage={resolvedVenue.image}
+                  resolvedVenueName={resolvedVenue.name}
+                  resolvedVenueCity={resolvedVenue.city}
+                  resolvedVenueAddress={resolvedVenue.address}
+                  resolvedVenueCapacity={resolvedVenue.capacity}
+                  weather={weather}
+                  weatherLoading={weatherLoading}
+                  weatherError={weatherError}
+                  isDark={isDark}
+                />
+              )}
             </>
           )}
         </BlurView>

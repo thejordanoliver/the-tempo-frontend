@@ -8,15 +8,8 @@ import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 
 /* --- React & React Native --- */
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Animated, ScrollView, useColorScheme, View } from "react-native";
 
 /* --- UI Components --- */
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -39,7 +32,6 @@ import NFLSeriesHistory from "components/Sports/NFL/GameDetails/NFLSeriesHistory
 import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
-
 /* --- Hooks --- */
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
@@ -49,74 +41,33 @@ import { useNFLTeamStats } from "hooks/NFLHooks/useNFLTeamStats";
 import { useWeatherForecast } from "hooks/useWeather";
 
 /* --- Constants & Types --- */
-import { getTeamInfo, neutralStadiums } from "constants/teamsNFL";
+import {
+  getNFLTeamLogo,
+  getTeamInfo,
+  neutralStadiums,
+} from "constants/teamsNFL";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, NFLGame } from "types/nfl";
 
 /* --- Utils & Stores --- */
-import { StandingsList } from "components/League/Standings/StandingsList";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import { useChatStore } from "store/chatStore";
+import { useScrollFade } from "hooks/useScrollFade";
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { transformNFLSeriesGames } from "utils/NFLUtils/transformSeriesGame";
-import { getFootballSeasonYear, getHolidayLabel } from "utils/dateUtils";
+import { getHolidayLabel } from "utils/dateUtils";
 
 export default function NFLGameDetailsScreen() {
-  /* -------------------------------------------------- */
-  /* Basic Setup                                       */
-  /* -------------------------------------------------- */
-
+  const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams();
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
- const [standingsYear, setStandingsYear] = useState(
-    getFootballSeasonYear().toString(),
-  );
-  /* -------------------------------------------------- */
-  /* UI State & Animation                              */
-  /* -------------------------------------------------- */
-
-  const [showDetails, setShowDetails] = useState(false);
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
 
   /* -------------------------------------------------- */
   /* Parsed Game Data                                  */
   /* -------------------------------------------------- */
 
   const [parsedGame, setParsedGame] = useState<NFLGame | null>(null);
-
-  /* -------------------------------------------------- */
-  /* Chat State                                        */
-  /* -------------------------------------------------- */
-
-  const { isOpen: isChatOpen } = useChatStore();
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setShowDetails(true), 300); // load after 300ms
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleScrollStart = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleScrollEnd = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      Animated.timing(opacityAnim, {
-        toValue: isChatOpen ? 0 : 1,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }, 1000);
-  };
 
   useEffect(() => {
     if (!params?.game) return;
@@ -161,12 +112,11 @@ export default function NFLGameDetailsScreen() {
   const awayId = away?.id;
   const homeId = home?.id;
 
-  const homeTeamId = home?.id;
-  const awayTeamId = away?.id;
-
   const homeTeam = getTeamInfo(String(home?.id ?? "")) ?? emptyNFLHomeTeam;
   const awayTeam = getTeamInfo(String(away?.id ?? "")) ?? emptyNFLAwayTeam;
 
+  const homeLogo = getNFLTeamLogo(homeId ?? 0, true);
+  const awayLogo = getNFLTeamLogo(awayId ?? 0, true);
   const homeCode = homeTeam.code;
   const awayCode = awayTeam.code;
 
@@ -270,10 +220,12 @@ export default function NFLGameDetailsScreen() {
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
-          homeTeamId={homeTeamId}
-          awayTeamId={awayTeamId}
+          homeTeamId={homeId}
+          awayTeamId={awayId}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           isNeutralSite={neutralSite}
           league="NFL"
         />
@@ -503,15 +455,13 @@ export default function NFLGameDetailsScreen() {
               <LastFiveGamesSwitcher
                 isDark={isDark}
                 home={{
+                  teamId: homeId,
                   teamCode: homeTeam.code,
-                  teamLogo: homeTeam.logo,
-                  
                   games: homeLastGames.games,
                 }}
                 away={{
+                  teamId: awayId,
                   teamCode: awayTeam.code,
-                  teamLogo: awayTeam.logo,
-                  
                   games: awayLastGames.games,
                 }}
                 league="NFL"
@@ -574,12 +524,6 @@ export default function NFLGameDetailsScreen() {
               grass={venue?.grass ?? undefined}
               weather={displayWeather}
             />
-
-            <StandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
-              league="NFL"
-            />
           </View>
         )}
       </ScrollView>
@@ -589,11 +533,3 @@ export default function NFLGameDetailsScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-});

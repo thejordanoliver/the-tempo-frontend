@@ -31,6 +31,9 @@ import { PlayoffLeague, StatusLegend } from "./StatusLegend";
 type SectionType = {
   title: string;
   data: StandingsTeam[];
+  isFirst?: boolean;
+  isDivision?: boolean;
+  isLast?: boolean; // new
 };
 
 type Props = {
@@ -224,9 +227,11 @@ export const StandingsList = ({
   const renderLeftItem = ({
     item,
     index,
+    data,
   }: {
     item: StandingsTeam;
     index: number;
+    data: StandingsTeam[];
   }) => {
     const team =
       league === "NBA"
@@ -236,15 +241,31 @@ export const StandingsList = ({
           : league === "MLB"
             ? getMLBTeamByEspnId(item.teamId)
             : getNHLTeamByESPNId(Number(item.teamId));
+
+    const route =
+      league === "NBA"
+        ? "/team/[teamId]"
+        : league === "NFL"
+          ? "/team/nfl/[teamId]"
+          : league === "MLB"
+            ? "/team/mlb/[teamId]"
+            : "/team/nhl/[teamId]";
+
     const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
     const teamCode = team?.code;
 
     const favorited = team ? isFavorite(league, team.id) : false;
 
+    const isLastRow = index === data.length - 1;
+
     return (
       <View
         style={[
           styles.row,
+          !isLastRow && {
+            borderBottomWidth: 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          },
           favorited && {
             backgroundColor: isDark
               ? Colors.dark.itemBackground
@@ -260,7 +281,7 @@ export const StandingsList = ({
           style={styles.teamInfo}
           onPress={() =>
             router.push({
-              pathname: "/team/[teamId]",
+              pathname: route,
               params: { teamId: String(team?.id) },
             })
           }
@@ -275,17 +296,26 @@ export const StandingsList = ({
 
   const renderRightItem =
     (activeColumns: string[]) =>
-    ({ item }: { item: StandingsTeam }) => {
+    ({
+      item,
+      index,
+      data,
+    }: {
+      item: StandingsTeam;
+      index: number;
+      data: StandingsTeam[];
+    }) => {
       const team =
         league === "NBA"
           ? getTeamByESPNId(Number(item.teamId))
           : league === "NFL"
             ? getNFLTeamByESPNId(Number(item.teamId))
             : league === "MLB"
-              ? getMLBTeamByEspnId(Number(item.teamId))
+              ? getMLBTeamByEspnId(item.teamId)
               : getNHLTeamByESPNId(Number(item.teamId));
 
       const favorited = team ? isFavorite(league, team.id) : false;
+      const isLastRow = index === data.length - 1;
 
       const winStreak = item.streak?.startsWith("W");
       const streakColor = winStreak
@@ -295,19 +325,15 @@ export const StandingsList = ({
         : isDark
           ? Colors.dark.lightRed
           : Colors.light.red;
-      const formatNumber = (value: any) => {
-        if (value === null || value === undefined) return value;
-
-        const num = Number(value);
-        if (isNaN(num)) return value;
-
-        return num.toLocaleString("en-US");
-      };
 
       return (
         <View
           style={[
             styles.row,
+            !isLastRow && {
+              borderBottomWidth: 1,
+              borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+            },
             favorited && {
               backgroundColor: isDark
                 ? Colors.dark.itemBackground
@@ -319,24 +345,16 @@ export const StandingsList = ({
             const key = columnKeyMap[label];
             let value = item[key];
 
-            if (label === "W-L") {
+            if (label === "W-L")
               value = `${item.wins ?? 0}-${item.losses ?? 0}`;
-            }
-            if (key === "winPercent" && value !== null && value !== undefined) {
+            if (key === "winPercent" && value != null)
               value = `${(Number(value) * 100).toFixed(1)}%`;
-            }
-            if (label === "PPG" && value !== null && value !== undefined) {
+            if ((label === "PPG" || label === "OPP PPG") && value != null)
               value = `${Number(value).toFixed(1)}`;
-            }
-            if (label === "OPP PPG" && value !== null && value !== undefined) {
-              value = `${Number(value).toFixed(1)}`;
-            }
 
-            // Add commas to large numbers
             const numericValue = Number(value);
-            if (!isNaN(numericValue) && numericValue >= 1000) {
+            if (!isNaN(numericValue) && numericValue >= 1000)
               value = numericValue.toLocaleString("en-US");
-            }
 
             return (
               <View key={label} style={styles.statCell}>
@@ -356,7 +374,7 @@ export const StandingsList = ({
     };
 
   const renderHeader = () => (
-    <View style={styles.row}>
+    <View style={styles.statsHeaderRow}>
       <View style={styles.rankContainer}>
         <Text style={styles.rankText}>#</Text>
       </View>
@@ -367,7 +385,7 @@ export const StandingsList = ({
   );
 
   const renderStatsHeader = (activeColumns: string[]) => (
-    <View style={styles.row}>
+    <View style={styles.statsHeaderRow}>
       {activeColumns.map((label) => (
         <View key={label} style={styles.statCell}>
           <Text style={styles.statText}>{label}</Text>
@@ -376,22 +394,35 @@ export const StandingsList = ({
     </View>
   );
 
-  function Section({ title, data }: SectionType) {
+  function Section({
+    title,
+    data,
+    isFirst,
+    isLast,
+  }: {
+    title: string;
+    data: StandingsTeam[];
+    isFirst?: boolean;
+    isLast?: boolean;
+  }) {
     const activeColumns = getActiveColumns(data);
 
     return (
-      <View style={{ marginTop: 20 }}>
-        <HeadingTwo style={styles.header}>{title}</HeadingTwo>
+      <View style={[styles.wrapper, { marginBottom: isLast ? 0 : 12 }]}>
+        <View style={styles.header}>
+          <Text style={styles.heading}>{title}</Text>
+        </View>
 
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}
             keyExtractor={(item) => item.teamId}
-            renderItem={renderLeftItem}
+            renderItem={(props) => renderLeftItem({ ...props, data })}
             scrollEnabled={false}
             ListHeaderComponent={renderHeader}
             stickyHeaderIndices={[0]}
           />
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -400,7 +431,9 @@ export const StandingsList = ({
             <FlatList
               data={data}
               keyExtractor={(item) => String(item.teamId)}
-              renderItem={renderRightItem(activeColumns)}
+              renderItem={(props) =>
+                renderRightItem(activeColumns)({ ...props, data })
+              }
               scrollEnabled={false}
               ListHeaderComponent={() => renderStatsHeader(activeColumns)}
               stickyHeaderIndices={[0]}
@@ -414,11 +447,10 @@ export const StandingsList = ({
   const conferenceConfig = leagueConferences[league].conferences;
 
   return (
-    <ScrollView>
-      {isGameDetailScreen && (
-        <HeadingTwo style={{ marginBottom: 0 }}>Standings</HeadingTwo>
-      )}
-      <View style={{ flexDirection: "row" }}>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      {isGameDetailScreen && <HeadingTwo>Standings</HeadingTwo>}
+
+      <View style={styles.dropdownRow}>
         <Dropdown
           options={[
             { label: "Conference", value: "conference" },
@@ -427,8 +459,6 @@ export const StandingsList = ({
           selectedValue={sortMode}
           onSelect={(value) => setSortMode(value as any)}
           isDark={isDark}
-          absolute
-          style={{ right: 100 }}
         />
 
         {onYearChange && (
@@ -437,37 +467,42 @@ export const StandingsList = ({
             selectedValue={safeYear ?? ""}
             onSelect={onYearChange}
             isDark={isDark}
-            absolute
-            style={{ right: 0 }}
+            style={{ marginLeft: 10 }}
           />
         )}
       </View>
-      {sortMode === "conference" ? (
-        <>
-          {Object.values(conferenceConfig).map((conf) => {
-            const data =
-              conferences?.find(
-                (c) =>
-                  c.abbreviation === conf.abbreviation || c.name === conf.name,
-              )?.standings || [];
+      {sortMode === "conference"
+        ? Object.values(conferenceConfig)
+            .map((conf) => {
+              const data =
+                conferences?.find(
+                  (c) =>
+                    c.abbreviation === conf.abbreviation ||
+                    c.name === conf.name,
+                )?.standings || [];
 
-            // Don’t render empty sections
-            if (!data.length) return null;
-
-            return (
-              <Section key={conf.abbreviation} title={conf.name} data={data} />
-            );
-          })}
-        </>
-      ) : (
-        divisionStandings.map((section) => (
-          <Section
-            key={section.title}
-            title={section.title}
-            data={section.data}
-          />
-        ))
-      )}
+              return data.length ? { title: conf.name, data } : null;
+            })
+            .filter(Boolean)
+            .map((section, index, arr) => (
+              <Section
+                key={section!.title}
+                title={section!.title}
+                data={section!.data}
+                isFirst={index === 0} // ✅ only first section gets the dropdown
+                isLast={index === arr.length - 1}
+              />
+            ))
+        : // Division mode
+          divisionStandings.map((section, index) => (
+            <Section
+              key={section.title}
+              title={section.title}
+              data={section.data}
+              isFirst={index === 0} // ✅ only first division shows dropdown
+              isLast={index === divisionStandings.length - 1}
+            />
+          ))}
       <StatusLegend league={league} />
     </ScrollView>
   );

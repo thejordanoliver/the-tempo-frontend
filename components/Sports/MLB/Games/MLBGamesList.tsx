@@ -1,5 +1,5 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { Colors, Fonts } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -17,7 +17,7 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { MLBGame } from "types/mlb";
 import MLBGamePreviewModal from "../GamePreview/MLBGamePreviewModal";
 import MLBGameCard from "./MLBGameCard";
-import MLBGameSquareCard from "./MLBGameSquareCard";
+import MLBSquareGameCard from "./MLBSquareGameCard";
 import MLBStackedGameCard from "./MLBStackedGameCard";
 type GamesListProps = {
   games: MLBGame[];
@@ -86,14 +86,14 @@ export default function MLBGamesList({
       return wrapper(
         <View style={{ marginBottom: 12 }}>
           <MLBGameCard game={game} />
-        </View>
+        </View>,
       );
     if (viewMode === "grid")
-      return wrapper(<MLBGameSquareCard game={game} />, index);
+      return wrapper(<MLBSquareGameCard game={game} />, index);
     return wrapper(
       <View style={{ marginBottom: 12 }}>
         <MLBStackedGameCard game={game} />
-      </View>
+      </View>,
     );
   };
 
@@ -126,7 +126,7 @@ export default function MLBGamesList({
               marginRight: index % 2 === 0 ? 4 : 0,
               marginBottom: 12,
             };
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}
@@ -144,7 +144,7 @@ export default function MLBGamesList({
   };
 
   if (loading) {
-    const count = games.length > 0 ? games.length : expectedCount ?? 4;
+    const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
 

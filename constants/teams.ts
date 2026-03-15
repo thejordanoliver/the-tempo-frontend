@@ -1,5 +1,4 @@
-import { NBATeam } from "types/types";
-import { Venue } from "types/types";
+import { NBATeam, Venue } from "types/types";
 
 // Logos
 import SixersLogo from "../assets/Logos/76ers.png";
@@ -939,6 +938,7 @@ export const getNBATeam = (id: number | string) =>
 export function getTeamLogo(
   idOrNicknameOrCode: number | string | undefined,
   isDark: boolean,
+  lighter?: boolean,
 ) {
   if (!idOrNicknameOrCode) return PlaceholderLogo;
 
@@ -952,7 +952,11 @@ export function getTeamLogo(
 
   if (!team) return PlaceholderLogo;
 
-  return isDark ? team.logoLight || team.logo : team.logo;
+  return lighter
+    ? team.logoLight || team.logo
+    : isDark
+      ? team.logoLight || team.logo
+      : team.logo;
 }
 
 export const teamsById: Record<string, NBATeam> = teams.reduce(
@@ -962,8 +966,6 @@ export const teamsById: Record<string, NBATeam> = teams.reduce(
   },
   {} as Record<string, NBATeam>,
 );
-
-
 
 export const neutralVenues: Record<string, Venue> = {
   /* ---------------- International / Neutral ---------------- */

@@ -1,8 +1,26 @@
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+type FoulTroublePlayer = {
+  id: string;
+  name: string;
+  shortName: string
+  jersey: string;
+  position: string;
+  fouls: number;
+  starter: boolean;
 
+  /** DB fields */
+  avatar?: string | null;
+  team_id?: number | null;
 
+  /** ESPN fallback */
+  team: any;
+};
+type FoulTroubleTeam = {
+  team: any;
+  players: FoulTroublePlayer[];
+};
 type TeamFouls = {
   bonusState: string | null;
   foulsToGive: number;
@@ -18,19 +36,28 @@ type TeamStat = {
 export type Score = {
   home: { total: number };
   away: { total: number };
+
   periodScores?: { period: number; home: number; away: number }[];
+
   homeTeam: string;
   awayTeam: string;
+
   status: "canceled" | "scheduled" | "in_play" | "final";
+
   gameStatusDescription: string;
   gameStatusDetail: string;
+
   statusText?: string;
   displayClock?: string;
   period?: number;
+
   lastUpdated?: number;
+
   boxScore: any | null;
+
   plays: any[];
   lastPlay: string;
+
   teamStats: {
     team: any;
     stats: TeamStat[];
@@ -45,14 +72,19 @@ export type Score = {
   }[];
 
   leaders: any[];
+
   timeouts: {
     home: number | null;
     away: number | null;
   };
+
   fouls: {
     home: TeamFouls;
     away: TeamFouls;
   };
+
+  /** ✅ NEW */
+  foulTrouble?: FoulTroubleTeam[];
 };
 
 export type TeamRecords = {

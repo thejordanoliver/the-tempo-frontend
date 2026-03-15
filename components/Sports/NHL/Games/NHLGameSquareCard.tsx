@@ -13,7 +13,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { NHLGame } from "types/nhl";
 import { formatNHLQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -23,7 +23,7 @@ type Props = {
   game: NHLGame; // Your API Game shape
 };
 
-function NHLGameSquareCard({ game }: Props) {
+function NHLSquareGameCard({ game }: Props) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
@@ -65,7 +65,7 @@ function NHLGameSquareCard({ game }: Props) {
     gameDateStr,
   );
   const isChampionship = game.week === "Final";
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -274,4 +274,4 @@ function NHLGameSquareCard({ game }: Props) {
   );
 }
 
-export default memo(NHLGameSquareCard);
+export default memo(NHLSquareGameCard);

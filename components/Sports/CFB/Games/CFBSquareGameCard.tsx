@@ -16,14 +16,14 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
 import { formatQuarter } from "utils/games";
 type Props = {
   game: Game;
 };
 
-function CFBGameSquareCard({ game }: Props) {
+function CFBSquareGameCard({ game }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
@@ -52,7 +52,7 @@ function CFBGameSquareCard({ game }: Props) {
     gameDate.getDate() === 19,
   );
 
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const status = game.game.status;
   const finished =
@@ -373,4 +373,4 @@ function CFBGameSquareCard({ game }: Props) {
   );
 }
 
-export default memo(CFBGameSquareCard);
+export default memo(CFBSquareGameCard);

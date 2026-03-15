@@ -1,12 +1,11 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FloatingChatButton from "components/FloatingButton";
+import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameHeader from "components/Sports/CBB/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
 import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
-import PlayersInFoulTrouble from "components/Sports/CBB/GameDetails/PlayersInFoulTrouble";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
@@ -14,28 +13,23 @@ import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightV
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
+import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import { getCBBTeamLogo, teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
+import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
-import React, { useLayoutEffect, useMemo, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
-import { useChatStore } from "store/chatStore";
+import React, { useLayoutEffect, useMemo } from "react";
+import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { CBBGame } from "types/types";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
@@ -46,41 +40,13 @@ function parseGameDate(raw: any) {
   return new Date(raw);
 }
 
-/* ------------------------------------------------------------------ */
-/* Screen                                                             */
-/* ------------------------------------------------------------------ */
-
 export default function GameDetailsScreen() {
+  const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  const { openChat, isOpen: isChatOpen } = useChatStore();
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
-  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleScrollStart = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleScrollEnd = () => {
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      Animated.timing(opacityAnim, {
-        toValue: isChatOpen ? 0 : 1,
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    }, 1000);
-  };
+  const isDark = useColorScheme() === "dark";
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
 
   /* ---------------- Parse Game ---------------- */
 
@@ -154,9 +120,14 @@ export default function GameDetailsScreen() {
 
   const homeLogo = getCBBTeamLogo(homeTeamId, isDark, isWomen);
   const awayLogo = getCBBTeamLogo(awayTeamId, isDark, isWomen);
+  const homeHeaderLogo = getCBBTeamLogo(homeTeamId, true, isWomen);
+  const awayHeaderLogo = getCBBTeamLogo(awayTeamId, true, isWomen);
 
   const homeEspnId = homeTeamData.espnID ?? 0;
   const awayEspnId = awayTeamData.espnID ?? 0;
+
+  const homePlayers = usePlayersByTeam(String(homeEspnId), isWomen);
+  const awayPlayers = usePlayersByTeam(String(awayEspnId), isWomen);
 
   /* ---------------- Date ---------------- */
 
@@ -213,7 +184,6 @@ export default function GameDetailsScreen() {
   const headlineText = details?.headline;
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const venue = details?.venue;
   const neutralSite = details?.neutralSite;
   const leaders = liveScore?.leaders ?? [];
   const playerStats = liveScore?.playerStats ?? [];
@@ -227,6 +197,29 @@ export default function GameDetailsScreen() {
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
 
+  const homeFoulPlayers =
+    liveScore?.foulTrouble
+      ?.find((t) => String(t.team?.id) === String(homeEspnId))
+      ?.players?.map((p) => ({
+        id: p.id,
+        teamId: String(homeEspnId),
+        name: p.shortName,
+        jersey: p.jersey,
+        fouls: p.fouls,
+        avatarUrl: p.avatar ?? "",
+      })) ?? [];
+
+  const awayFoulPlayers =
+    liveScore?.foulTrouble
+      ?.find((t) => String(t.team?.id) === String(awayEspnId))
+      ?.players?.map((p) => ({
+        id: p.id,
+        teamId: String(awayEspnId),
+        name: p.shortName,
+        jersey: p.jersey,
+        fouls: p.fouls,
+        avatarUrl: p.avatar ?? "",
+      })) ?? [];
   /* ---------------- Hooks ---------------- */
 
   // Pass `isWomen` flag to useLastFiveGames
@@ -245,7 +238,7 @@ export default function GameDetailsScreen() {
     [details?.venue, homeTeamData, neutralSite],
   );
 
-  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+  const { weather } = useWeatherForecast(
     resolvedVenue.latitude,
     resolvedVenue.longitude,
     gameDateYMD,
@@ -281,6 +274,8 @@ export default function GameDetailsScreen() {
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
+          homeLogo={homeHeaderLogo}
+          awayLogo={awayHeaderLogo}
           homeTeamId={isWomen ? (homeTeamData as any).wid : homeTeamData.id}
           awayTeamId={isWomen ? (awayTeamData as any).wid : awayTeamData.id}
           homeTeamCode={homeTeamData.code}
@@ -365,7 +360,7 @@ export default function GameDetailsScreen() {
         />
 
         {!dontShowDetails && (
-          <View style={{ gap: 20, marginTop: 20 }}>
+          <View style={styles.innerContainer}>
             {!isFinal && !isScheduled && (
               <LastPlay
                 lastPlay={lastPlay}
@@ -421,11 +416,17 @@ export default function GameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
-            {(isHalftime || inProgress) && (
+            {isHalftime && inProgress && (
               <PlayersInFoulTrouble
-                gameId={gameObj.id}
-                away={awayTeamData}
-                home={homeTeamData}
+                homeId={String(homeEspnId)}
+                homeCode={homeTeamData.code ?? ""}
+                homeLogo={homeLogo}
+                awayId={String(awayEspnId)}
+                awayCode={awayTeamData.code ?? ""}
+                awayLogo={awayLogo}
+                homePlayers={homeFoulPlayers}
+                awayPlayers={awayFoulPlayers}
+                league={isWomen ? "WCBB" : "CBB"}
               />
             )}
 
@@ -510,29 +511,9 @@ export default function GameDetailsScreen() {
         )}
       </ScrollView>
 
-      <Animated.View
-        style={{
-          opacity: opacityAnim,
-          position: "absolute",
-          bottom: 100,
-          left: 0,
-          right: 0,
-        }}
-        pointerEvents={isChatOpen ? "none" : "auto"}
-      >
-        <FloatingChatButton
-          gameId={`${homeTeamId}-${awayTeamId}`}
-          openChat={openChat}
-        />
+      <Animated.View style={{ opacity: opacityAnim }}>
+        <MemoizedFloatingChatButton gameId={String(gameObj.id)} />
       </Animated.View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-});

@@ -48,7 +48,7 @@ export const rosterStatsStyles = (isDark: boolean) =>
       minHeight: 40,
       paddingHorizontal: 8,
     },
-    tableCell: { paddingVertical: 8, paddingLeft: 4, fontSize: 14 },
+    tableCell: { paddingVertical: 8, paddingLeft: 8, fontSize: 14 },
     playerName: {
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,

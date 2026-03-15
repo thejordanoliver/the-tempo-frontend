@@ -2,7 +2,6 @@
 
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
 
 export type CenterInfoProps = {
@@ -69,7 +68,7 @@ export function CenterInfo({
   const inProgress = gameStatusDescription === "In Progress";
   const isOvertime = gameStatusShortDetail?.includes("OT");
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const styles = getStyles;
+  const styles = CenterInfoStyles;
   const displayPeriod = formatQuarter(period);
 
   return (

@@ -11,6 +11,7 @@ import { teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
@@ -35,8 +36,9 @@ function parseGameDate(raw: any) {
 export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
+  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
+    useScrollFade();
 
   /* ---------------- Parse Game ---------------- */
 
@@ -174,9 +176,6 @@ export default function GameDetailsScreen() {
   const lastPlay = liveScore?.lastPlay ?? "";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-  // console.log(JSON.stringify(gameObj,null ,2))
-  // console.log(venue)
-
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
 
@@ -231,6 +230,8 @@ export default function GameDetailsScreen() {
           awayTeamId={awayTeamData.id}
           homeTeamCode={homeTeamData.code}
           awayTeamCode={awayTeamData.code}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           isNeutralSite={!!neutralSite}
           league={"NBA"}
         />

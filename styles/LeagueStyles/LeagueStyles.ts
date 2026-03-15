@@ -5,7 +5,6 @@ export const getScoresStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: 16,
     },
     contentArea: {
       flex: 1,
@@ -14,7 +13,6 @@ export const getScoresStyles = (isDark: boolean) =>
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      marginVertical: 8,
     },
     monthText: {
       fontFamily: Fonts.OSREGULAR,
@@ -23,6 +21,16 @@ export const getScoresStyles = (isDark: boolean) =>
     },
     monthTextSelected: {
       fontSize: 16,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    eventText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    eventTextSelected: {
+      fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },

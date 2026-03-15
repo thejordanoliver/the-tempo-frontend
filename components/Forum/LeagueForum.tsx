@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useLeagueForum } from "hooks/useLeagueForum";
+import { useLeagueForum } from "hooks/ForumHooks/useLeagueForum";
 import { useCallback, useEffect } from "react";
 import {
   FlatList,

@@ -1,7 +1,7 @@
-import { getNFLTeamsLogo } from "constants/teamsNFL";
+import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
+import { getNFLTeamLogo } from "constants/teamsNFL";
 import { useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -100,12 +100,7 @@ export default function NFLInjuries({
   /* -------------------------------------------------- */
 
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="small" />
-        <Text style={styles.loadingText}>Loading injuries...</Text>
-      </View>
-    );
+    return <TeamInjuriesSkeleton />;
   }
 
   if (error) {
@@ -193,7 +188,7 @@ export default function NFLInjuries({
             }, [selected, tabs, awayTeamId, homeTeamId]);
 
             const logo = selectedTeamId
-              ? getNFLTeamsLogo(Number(selectedTeamId), lighter || isDark)
+              ? getNFLTeamLogo(Number(selectedTeamId), lighter || isDark)
               : null;
             return (
               <View

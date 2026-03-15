@@ -15,6 +15,8 @@ import { useNews } from "hooks/useNews";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 import { useMLBWeeklyGames } from "./MLBHooks/useMLBWeeklyGames";
+import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
+import { useNHLWeeklyGames } from "./NHLHooks/useNHLWeeklyGames";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -39,6 +41,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshGames: refreshMLBGames,
   } = useMLBWeeklyGames();
   const {
+    games: weeklyNHLGames,
+    loading: nhlLoading,
+    refreshGames: refreshNHLGames,
+  } = useNHLWeeklyGames();
+  const {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFL,
@@ -59,6 +66,14 @@ export function useHomeData(selectedTab: "scores" | "news") {
     cbbLoading: womensCBBLoading,
     refresh: refreshWomensCBB,
   } = useCBBWeeklyGames({ isWomen: true });
+
+  const {
+    fights,
+    loading: loadingFights,
+    error: errorFights,
+    refreshFights,
+  } = useWeeklyFights();
+
   const {
     news,
     loading: newsLoading,
@@ -121,6 +136,17 @@ export function useHomeData(selectedTab: "scores" | "news") {
             name: game.teams?.away?.name,
             logo: game.teams?.away?.logo,
           };
+        } else if (leagueType === "NHL") {
+          home = {
+            id: game.teams?.home?.id,
+            name: game.teams?.home?.name,
+            logo: game.teams?.home?.logo,
+          };
+          away = {
+            id: game.teams?.away?.id,
+            name: game.teams?.away?.name,
+            logo: game.teams?.away?.logo,
+          };
         } else if (leagueType === "NFL" || leagueType === "CFB") {
           home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
           away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
@@ -146,14 +172,21 @@ export function useHomeData(selectedTab: "scores" | "news") {
   }, [news, setArticles]);
 
   // Helpers
-  const isFavoriteGame = (g: any, prefix: string) =>
-    favorites.includes(`${prefix}:${String(g.home.id)}`) ||
-    favorites.includes(`${prefix}:${String(g.away.id)}`);
+  const isFavoriteGame = (g: any, prefix: string) => {
+    const homeId = g?.home?.id;
+    const awayId = g?.away?.id;
 
+    if (!homeId && !awayId) return false;
+
+    return (
+      (homeId && favorites.includes(`${prefix}:${String(homeId)}`)) ||
+      (awayId && favorites.includes(`${prefix}:${String(awayId)}`))
+    );
+  };
   const sortLiveFirst = (games: any[]) =>
     [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
 
-  const limitNonFavorites = (games: any[], prefix: string, max = 8) =>
+  const limitNonFavorites = (games: any[], prefix: string, max = 5) =>
     sortLiveFirst(games.filter((g) => !isFavoriteGame(g, prefix))).slice(
       0,
       max,
@@ -167,6 +200,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const normalizedMLB = useMemo(
     () => normalizeGames(weeklyMLBGames, "MLB"),
     [weeklyMLBGames],
+  );
+  const normalizedNHL = useMemo(
+    () => normalizeGames(weeklyNHLGames, "NHL"),
+    [weeklyNHLGames],
   );
 
   const normalizedNFL = useMemo(
@@ -192,6 +229,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const filteredNBA = filterByDate(normalizedNBA, selectedDate);
   const filteredNFL = filterByDate(normalizedNFL, selectedDate);
   const filteredMLB = filterByDate(normalizedMLB, selectedDate);
+  const filteredNHL = filterByDate(normalizedNHL, selectedDate);
   const filteredCFB = filterByDate(normalizedCFB, selectedDate);
   const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
   const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
@@ -204,6 +242,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       ...collect(filteredNBA, "NBA"),
       ...collect(filteredNFL, "NFL"),
       ...collect(filteredMLB, "MLB"),
+      ...collect(filteredNHL, "NHL"),
       ...collect(filteredCFB, "CFB"),
       ...collect(filteredMensCBB, "CBB"),
       ...collect(filteredWomensCBB, "WCBB"),
@@ -224,6 +263,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       { category: "NBA" as const, data: limitNonFavorites(filteredNBA, "NBA") },
       { category: "NFL" as const, data: limitNonFavorites(filteredNFL, "NFL") },
       { category: "MLB" as const, data: limitNonFavorites(filteredMLB, "MLB") },
+      { category: "NHL" as const, data: limitNonFavorites(filteredNHL, "NHL") },
       {
         category: "College Football" as const,
         data: limitNonFavorites(filteredCFB, "CFB"),
@@ -236,6 +276,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
         category: "Women's College Basketball" as const,
         data: limitNonFavorites(filteredWomensCBB, "WCBB"),
       },
+      { category: "MMA" as const, data: fights.slice(0, 5) },
     ];
 
     return sections.filter((s) => s.data.length > 0);
@@ -244,9 +285,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredNBA,
     filteredNFL,
     filteredMLB,
+    filteredNHL,
     filteredCFB,
     filteredMensCBB,
     filteredWomensCBB,
+    fights,
   ]);
 
   // 📰 Merge news + highlights
@@ -276,6 +319,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
         await Promise.all([
           refreshGames(),
           refreshMLBGames(),
+          refreshNHLGames(),
           refreshNFL(),
           refreshCFB(),
           refreshMensCBB(),
@@ -302,6 +346,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     loading:
       nbaLoading ||
       mlbLoading ||
+      nhlLoading ||
       nflLoading ||
       cfbLoading ||
       mensCBBLoading ||

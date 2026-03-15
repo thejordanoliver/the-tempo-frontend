@@ -29,11 +29,7 @@ export default function PlayerHeader({
   player,
   avatarUrl,
   isDark,
-  teamColor,
-  teamSecondaryColor,
   calculateAge,
-  calculateExperience,
-  team_name,
 }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const styles = playerHeaderStyles(isDark);
@@ -45,12 +41,6 @@ export default function PlayerHeader({
         day: "numeric",
       })} (${calculateAge(player.birth_date) ?? "?"} years old)`
     : "Unknown";
-
-  const playerExperience = player.debut_year
-    ? `${calculateExperience(String(player.debut_year)) ?? "?"}`
-    : "Unknown";
-
-
 
   return (
     <View style={styles.playerHeader}>

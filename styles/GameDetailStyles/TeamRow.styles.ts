@@ -5,12 +5,20 @@ import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 export type SizeType = "small" | "medium" | "large";
 
 export type TeamRowTeam = {
-  id?: string | number; // NFL
-  espnID?: string | number; // CFB
+  id?: string | number;
+  espnID?: string | number;
   logo: any;
-  code?: string; // NFL
-  shortName?: string; // CFB
-  name?: string; // CFB
+  code?: string;
+  shortName?: string;
+  name?: string;
+  record?: string;
+};
+export type FighterRow = {
+  id?: string | number;
+  espnID?: string | number;
+  headshot: any;
+  shortName?: string;
+  name?: string;
   record?: string;
 };
 
@@ -57,6 +65,17 @@ export type BasketballTeamRowProps = {
   gameStatusDescription?: string;
 };
 
+export type MMAProps = {
+  fighter: FighterRow;
+  size?: SizeType;
+  rank?: string;
+  isDark: boolean;
+  isFirstFighter?: boolean;
+  isWinner?: boolean;
+  hideRecord?: boolean;
+  gameStatusDescription?: string;
+};
+
 export type MLBProps = {
   team: TeamRowTeam;
   size?: SizeType;
@@ -87,6 +106,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
   StyleSheet.create<{
     row: ViewStyle;
     teamInfoContainer: ViewStyle;
+    headshotContainer: ViewStyle;
     teamInfo: ViewStyle;
     nameRow: ViewStyle;
     teamName: TextStyle;
@@ -112,6 +132,13 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     teamInfo: {
       justifyContent: "center",
     },
+    headshotContainer: {
+      borderWidth: 1,
+      borderRadius: 100,
+      overflow: "hidden",
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
     nameRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -127,17 +154,16 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       color: Colors.lightGray,
     },
-
     record: {
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       color: isTie
         ? isDark
-          ? Colors.dark.white
-          : Colors.light.black
+          ? Colors.white
+          : Colors.black
         : isDark
-          ? Colors.dark.white
-          : Colors.light.black,
+          ? Colors.white
+          : Colors.black,
     },
     score: {
       fontFamily: Fonts.OSBOLD,

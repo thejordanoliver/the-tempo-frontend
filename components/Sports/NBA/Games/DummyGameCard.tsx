@@ -12,7 +12,7 @@ import {
 import { Game } from "types/types";
 import GamePreviewModal from "../GamePreview/GamePreviewModal";
 import GameCard from "./GameCard";
-import GameSquareCard from "./GameSquareCard";
+import SquareGameCard from "./SquareGameCard";
 
 type DummyGameCardProps = {
   isDark?: boolean;
@@ -151,7 +151,7 @@ export default function DummyGameCard() {
       {viewMode === "list" ? (
         <GameCard game={game} />
       ) : (
-        <GameSquareCard game={game} />
+        <SquareGameCard game={game} />
       )}
     </View>
     // {/* </LongPressGestureHandler> */}

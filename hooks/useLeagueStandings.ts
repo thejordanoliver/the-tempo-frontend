@@ -25,6 +25,7 @@ export type StandingsTeam = {
   gamesBehind?: number | null;
   streak: string;
 
+  rank: number
   // Split records
   overallRecord?: string | null;
   homeRecord?: string | null;

@@ -13,20 +13,19 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { gameSquareCardStyles } from "styles/GamecardStyles/GameSquareCardStyles";
+import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { CBBGame } from "types/types";
 import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-function CBBGameSquareCard({
+function CBBSquareGameCard({
   game,
   isWomen = false,
 }: {
   game: CBBGame;
   isWomen?: boolean; // 👈 NEW
 }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);
 
@@ -94,7 +93,7 @@ function CBBGameSquareCard({
     ? headlineText === "Women's Basketball Championship - National Championship"
     : headlineText === "Men's Basketball Championship - National Championship";
 
-  const styles = gameSquareCardStyles(isDark, isChampionship);
+  const styles = SquareGameCardStyles(isDark, isChampionship);
 
   const handlePress = useCallback(() => {
     router.push({
@@ -290,4 +289,4 @@ function CBBGameSquareCard({
     </TouchableOpacity>
   );
 }
-export default memo(CBBGameSquareCard);
+export default memo(CBBSquareGameCard);

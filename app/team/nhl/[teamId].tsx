@@ -66,7 +66,6 @@ export default function TeamDetailScreen() {
     refreshGames: refreshTeamGames,
   } = useNHLTeamGames(teamIdNum ? teamIdNum.toString() : "");
 
-  // For MLB
   const gameCountByMonth = useMemo(
     () => getGameCountByMonth(rawTeamGames, (g) => g.date ?? null),
     [rawTeamGames],
@@ -224,7 +223,7 @@ export default function TeamDetailScreen() {
         <ScrollView key="stats" style={{ flex: 1 }}></ScrollView>
 
         {/* Standings */}
-        <View key="standings" style={{ flex: 1, paddingHorizontal: 12 }}>
+        <View key="standings" style={{ flex: 1 }}>
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
@@ -234,7 +233,7 @@ export default function TeamDetailScreen() {
 
         {/* Forum */}
         <View key="forum" style={{ flex: 1 }}>
-          <TeamForum teamId={teamId as string} league="MLB" />
+          <TeamForum teamId={teamId as string} league="NHL" />
         </View>
       </PagerView>
 

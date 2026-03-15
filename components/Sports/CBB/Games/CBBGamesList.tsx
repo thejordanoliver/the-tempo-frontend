@@ -1,6 +1,7 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
+import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
+import { globalStyles } from "constants/Styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useMemo, useState } from "react";
@@ -17,9 +18,8 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import CBBGamePreviewModal from "../GamePreview/CBBGamePreviewModal";
 import CBBGameCard from "./CBBGameCard";
-import CBBGameSquareCard from "./CBBGameSquareCard";
+import CBBSquareGameCard from "./CBBSquareGameCard";
 import CBBStackedGameCard from "./CBBStackedGameCard";
-import { globalStyles } from "constants/Styles";
 
 type Props = {
   games: any[];
@@ -108,7 +108,7 @@ export default function CBBGamesList({
     if (viewMode === "grid") {
       return (
         <Wrapper>
-          <CBBGameSquareCard game={game} isWomen={isWomenGame(game)} />
+          <CBBSquareGameCard game={game} isWomen={isWomenGame(game)} />
         </Wrapper>
       );
     }
@@ -166,7 +166,7 @@ export default function CBBGamesList({
               marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
-            return <GameSquareCardSkeleton key={item._id} style={itemStyle} />;
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
           contentContainerStyle={styles.skeletonGridWrapper}
@@ -183,11 +183,10 @@ export default function CBBGamesList({
     );
   };
 
-
   /* ----------------------------- LOADING ------------------------------ */
 
   if (loading) {
-    const count = games.length > 0 ? games.length : expectedCount ?? 4;
+    const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
 
@@ -243,9 +242,7 @@ export default function CBBGamesList({
       ) : (
         <SectionList
           sections={sections as SectionListData<any, CBBGameSection>[]}
-          keyExtractor={(item, index) =>
-            `${item?.game?.id ?? "game"}-${index}`
-          }
+          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}

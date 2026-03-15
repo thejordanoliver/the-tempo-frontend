@@ -1,35 +1,39 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import LeagueForum from "components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import EventSelector from "components/Sports/MMA/EventSelector";
 import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useWeeklyFights } from "hooks/MMAHooks/useWeeklyFights";
+import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useColorScheme, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-
 export default function UFCLeagueScreen() {
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
   const navigation = useNavigation();
+  const [selectedEventIndex, setSelectedEventIndex] = useState(0);
+
+  const { events, loading, refreshing, refreshFights, error } =
+    useSeasonFights();
+  const selectedEvent = events[selectedEventIndex];
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<
-    "fights" | "news" | "standings" | "champions" | "stats" | "forum"
-  >("fights");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MMA");
+  const pagerRef = useRef<PagerView>(null);
 
-  const { fights, loading, refreshing, refreshFights, error } =
-    useWeeklyFights();
-  // Header
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="UFC"
+          league="MMA"
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -42,33 +46,57 @@ export default function UFCLeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  const tabs = [
-    "fights",
-    "news",
-    "champions",
-    "standings",
-    "stats",
-    "forum",
-  ] as const;
-
   return (
     <>
-      <View style={styles.container}>
-        <MainScrollTabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
 
-        {selectedTab === "fights" && (
-          <MMAGamesList
-            games={fights}
-            loading={loading}
-            error={error}
-            refreshing={refreshing}
-            onRefresh={refreshFights}
-          />
-        )}
+      <View style={styles.container}>
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <View key="fights">
+            <>
+              <EventSelector
+                events={events}
+                selectedEventIndex={selectedEventIndex}
+                onSelectEvent={setSelectedEventIndex}
+                textStyle={styles.eventText}
+                textSelectedStyle={styles.eventTextSelected}
+              />
+
+              <MMAGamesList
+                games={[
+                  ...(selectedEvent?.mainCard ?? []),
+                  ...(selectedEvent?.prelims ?? []),
+                ]}
+                loading={loading}
+                error={error}
+                refreshing={refreshing}
+                onRefresh={refreshFights}
+              />
+            </>
+          </View>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league="MMA" />
+          </View>
+        </PagerView>
       </View>
 
       <SportsListModal

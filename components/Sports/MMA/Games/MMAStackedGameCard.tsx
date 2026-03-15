@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/Styles";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useState } from "react";
@@ -12,10 +12,11 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MMAFight } from "types/mma";
 import { formatRound } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
 export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
   const isDark = useColorScheme() === "dark";
@@ -42,30 +43,42 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
       hour12: true,
     }) || "";
 
-  const firstFighterId = game.fighters.first.id;
-  const secondFighterId = game.fighters.second.id;
+  const firstFighterName =
+    game.fighters?.first?.info?.full_name ?? game.fighters.first.name;
+  const secondFighterName =
+    game.fighters?.second?.info?.full_name ?? game.fighters.second.name;
 
-  const firstFighterName = game.fighters.first.name;
-  const secondFighterName = game.fighters.second.name;
+  const firstFighterPhoto =
+    game.fighters?.first?.info?.images[0]?.href ?? placeholderImage;
+  const secondFighterPhoto =
+    game.fighters?.second?.info?.images[0]?.href ?? placeholderImage;
+  const firstFighterFlag = game.fighters?.first?.info?.flag_url ?? "";
+  const secondFighterFlag = game.fighters?.second?.info?.flag_url ?? "";
 
-  const firstFighterPhoto = game.fighters.first.info.images[0]?.href ?? "";
-  const secondFighterPhoto = game.fighters.second.info.images[0]?.href ?? "";
+  const firstFighterEspnId = game.fighters?.first?.info?.espn_id;
+  const secondFighterEspnId = game.fighters?.second?.info?.espn_id;
 
-  const firstFighterEspnId = game.fighters.first.info.espn_id;
-  const secondFighterEspnId = game.fighters.second.info.espn_id;
-
-  const { details, score } = useMMADetails(
+  const { details } = useMMADetails(
     "ufc",
     firstFighterEspnId,
     secondFighterEspnId,
     gameDateStr,
   );
 
-  const firstFighterRecord = details?.records?.home?.overall;
-  const secondFighterRecord = details?.records?.away?.overall;
-
-  const gameStatusDescription = score?.gameStatusDescription;
-  const gameStatusDetail = score?.gameStatusDetail;
+  const rawWonType = game.result?.wonType;
+  const firstFighterWinner = game.fighters.first.winner === true;
+  const secondFighterWinner = game.fighters.second.winner === true;
+  const wonType = getDecisionType(
+    rawWonType ?? "",
+    game.result?.score,
+    firstFighterWinner,
+    secondFighterWinner,
+  );
+  const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
+  const firstFighterRecord = game.fighters?.first?.info?.record;
+  const secondFighterRecord = game.fighters?.second?.info?.record;
+  const gameStatusDescription = details?.fight?.status.description;
+  const gameStatusDetail = details?.fight?.status.shortDetail;
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
@@ -74,53 +87,55 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
   const isForfeited = gameStatusDescription === "Forfeited";
   const isEndOfRound = gameStatusDescription === "End of Round";
   const inProgress = gameStatusDescription === "In Progress";
-
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
+  const inWalkouts = gameStatusDescription === "Walkouts";
+  const isIntros = gameStatusDescription === "Intros";
+  const broadcasts = details?.fight?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-  const isIntros = game.status.long === "Intros";
-  const isPreFight = game.status.long === "Pre-fight";
-  const isWalkingOut = game.status.long === "Walkouts";
-  const period = score?.period;
-  const displayClock = score?.displayClock;
-  const headline = null;
+  const period = details?.fight?.status.period;
+  const displayClock = details?.fight?.status.displayClock;
+  const headline = details?.event?.shortName;
+  const styles = StackedGameCardStyles(isDark);
 
-  const isMainEvent = game.is_main === true;
-  const styles = GameCardStyles(isDark, isMainEvent);
-
-  const firstFighterWinner = game.fighters.first.winner === true;
-  const secondFighterWinner = game.fighters.second.winner === true;
   const isTie =
     game.fighters.first.winner === false &&
     game.fighters.second.winner === false;
 
-  const winnerStyle = (teamWins: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
-  });
-
   const ScoreText = ({
-    score,
     record,
-    teamWins,
+    winner,
   }: {
-    score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    winner: boolean | undefined;
   }) => {
-    const showRecord = isScheduled || isCanceled || isPostponed;
+    const showRecord =
+      isScheduled ||
+      inWalkouts ||
+      isCanceled ||
+      isPostponed ||
+      isDelayed ||
+      isForfeited;
 
-    return (
-      <Text
-        style={
-          showRecord
-            ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
-        }
-      >
-        {showRecord ? record : score}
-      </Text>
-    );
+    const opacity = isFinal && winner === false ? 0.5 : 1;
+    if (showRecord) {
+      return <Text style={styles.teamRecord}>{record}</Text>;
+    }
+
+    if (winner) {
+      return (
+        <View style={styles.winnerContainer}>
+          <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>
+
+          <Ionicons
+            size={20}
+            name="caret-up"
+            color={isDark ? Colors.white : Colors.black}
+            style={{ position: "absolute", bottom: -20 }}
+          />
+        </View>
+      );
+    }
+
+    return <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>;
   };
 
   const renderStatus = () => {
@@ -133,8 +148,9 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
         </View>
       );
 
+    if (inWalkouts) return <Text style={styles.finalText}>Walkouts</Text>;
+    if (isIntros) return <Text style={styles.finalText}>Intros</Text>;
     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-
     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
@@ -145,7 +161,7 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <Text style={styles.finalText}>{resultText}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
@@ -162,25 +178,56 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
 
   const renderCardContent = () => (
     <>
-      {/* Second Fighter */}
-      <View style={styles.teamSection}>
-        <Image
-          source={{ uri: secondFighterPhoto }}
-          style={styles.logo}
-          accessibilityLabel={`${secondFighterName} headshot`}
-        />
-        <Text style={styles.teamName}>{secondFighterName}</Text>
+      <View style={styles.cardWrapper}>
+        {/* Second Fighter */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <View style={styles.fighterContainer}>
+              <Image
+                source={{ uri: secondFighterPhoto }}
+                style={styles.fighter}
+                accessibilityLabel={`${secondFighterName} headshot`}
+              />
+            </View>
+
+            <Text style={styles.teamName}>{secondFighterName}</Text>
+            <Image
+              source={{ uri: secondFighterFlag }}
+              style={styles.fighterFlag}
+              accessibilityLabel={`${secondFighterName} flag`}
+            />
+          </View>
+          {/* Second Fighter Score / Record */}
+          <ScoreText
+            record={secondFighterRecord ?? "0-0"}
+            winner={secondFighterWinner}
+          />
+        </View>
+
+        {/* First Fighter */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <View style={styles.fighterContainer}>
+              <Image
+                source={{ uri: firstFighterPhoto }}
+                style={styles.fighter}
+                accessibilityLabel={`${firstFighterName} flag`}
+              />
+            </View>
+            <Text style={styles.teamName}>{firstFighterName}</Text>
+            <Image
+              source={{ uri: firstFighterFlag }}
+              style={styles.fighterFlag}
+              accessibilityLabel={`${secondFighterName} headshot`}
+            />
+          </View>
+          {/* First Fighter Score / Record */}
+          <ScoreText
+            record={firstFighterRecord ?? "0-0"}
+            winner={firstFighterWinner}
+          />
+        </View>
       </View>
-      {/* Second Fighter Score / Record */}
-      <ScoreText
-        score={0}
-        record={secondFighterRecord ?? "0-0"}
-        teamWins={secondFighterWinner}
-      />
-
-      {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
-
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
@@ -188,23 +235,8 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
-
-      {/* First Fighter Score / Record */}
-      <ScoreText
-        score={0}
-        record={firstFighterRecord ?? "0-0"}
-        teamWins={firstFighterWinner}
-      />
-
-      {/* First Fighter */}
-      <View style={styles.teamSection}>
-        <Image
-          source={{ uri: firstFighterPhoto }}
-          style={styles.logo}
-          accessibilityLabel={`${firstFighterName} headshot`}
-        />
-        <Text style={styles.teamName}>{firstFighterName}</Text>
-      </View>
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headline}</Text>
 
       {/* Notification Bell */}
       <Pressable
@@ -228,27 +260,12 @@ export default function MMAStackedGameCard({ game }: { game: MMAFight }) {
       activeOpacity={0.85}
       onPress={() =>
         router.push({
-          pathname: "/game/[game]",
+          pathname: "/game/mma/[game]",
           params: { game: JSON.stringify(game) },
         })
       }
     >
-      {isMainEvent ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
-      )}
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }

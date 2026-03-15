@@ -33,6 +33,13 @@ export type PeriodScore = {
   away: number | null;
 };
 
+export type FightDetails = {
+  type: {
+    id: string;
+    text: string;
+  };
+};
+
 export type MMAFight = {
   fightId: string;
   category: string;
@@ -54,7 +61,7 @@ export type MMAFight = {
     first: MMAFighter;
     second: MMAFighter;
   };
-
+  fightDetails: FightDetails[];
   status: {
     period: number;
     displayClock: string;
@@ -188,13 +195,11 @@ export const useMMADetails = (
             fighters: {
               first: {
                 ...data.fight.fighters.first,
-                linescores:
-                  data.fight.fighters.first?.linescores ?? null,
+                linescores: data.fight.fighters.first?.linescores ?? null,
               },
               second: {
                 ...data.fight.fighters.second,
-                linescores:
-                  data.fight.fighters.second?.linescores ?? null,
+                linescores: data.fight.fighters.second?.linescores ?? null,
               },
             },
           };

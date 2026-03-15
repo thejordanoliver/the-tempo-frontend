@@ -14,6 +14,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { PlayerLeader } from "types/stats";
 import HeadingTwo from "../Headings/HeadingTwo";
+
 interface SeasonLeadersListProps {
   leadersByStat: Partial<{
     points: PlayerLeader[];
@@ -90,13 +91,13 @@ export default function SeasonLeadersList({
       data={Object.entries(leadersByStat).filter(
         ([_, players]) => Array.isArray(players) && players.length > 0,
       )}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={styles.contentContainerStyle}
+      showsVerticalScrollIndicator={false}
+      scrollEnabled={false}
       keyExtractor={([stat]) => stat}
       renderItem={({ item: [stat, players] }) => (
-        <View style={styles.categoryContainer}>
-          <HeadingTwo style={{ marginBottom: 12 }}>
-            {STAT_DISPLAY_NAMES[stat] || stat} Leaders
-          </HeadingTwo>
+        <View>
+          <HeadingTwo>{STAT_DISPLAY_NAMES[stat] || stat} Leaders</HeadingTwo>
 
           <View style={styles.playersList}>
             {players!.map((player) => {
@@ -143,12 +144,11 @@ export default function SeasonLeadersList({
 
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
-    categoryContainer: {
+    contentContainerStyle: {
+      paddingBottom: 100,
+      gap: 12,
       paddingHorizontal: 12,
-      paddingTop: 6,
-      paddingBottom: 12,
     },
-
     playersList: {
       gap: 12,
     },

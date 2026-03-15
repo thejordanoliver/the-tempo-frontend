@@ -1,6 +1,6 @@
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors, Fonts } from "constants/Styles";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 import { NFLTeam } from "types/nfl";
 
 type TeamInfoProps = {
@@ -30,7 +30,7 @@ export default function TeamInfo({
   side,
   timeouts,
 }: TeamInfoProps) {
-  const styles = teamInfoStyle;
+  const styles = TeamInfoStyle;
 
   // --------------------------------------------------------------
   // GAME STATE
@@ -46,8 +46,8 @@ export default function TeamInfo({
   const scoreOpacity = !isFinal ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
 
   const isRecord = isScheduled;
-  const valueFontSize = isRecord ? 24 : 36;
-  const displayValue = isScheduled ? record ?? "-" : score ?? "-";
+  const valueFontSize = isRecord ? 22 : 36;
+  const displayValue = isScheduled ? (record ?? "-") : (score ?? "-");
 
   const hasPossession =
     gameStatusDescription && String(possessionTeamId) === String(team?.espnID);
@@ -133,75 +133,3 @@ export default function TeamInfo({
     </View>
   );
 }
-
-// --------------------------------------------------------------
-// STYLES
-// --------------------------------------------------------------
-export const teamInfoStyle = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  teamContainer: {
-    alignItems: "center",
-    gap: 4,
-  },
-
-  teamName: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-  },
-
-  teamLogo: {
-    width: 65,
-    height: 65,
-    resizeMode: "contain",
-  },
-
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    minWidth: 50,
-  },
-
-  possessionIcon: {
-    position: "absolute",
-    bottom: -20,
-    width: 26,
-    height: 26,
-    resizeMode: "contain",
-  },
-
-  teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-    opacity: 0.7,
-  },
-
-  teamValue: {
-    fontFamily: Fonts.OSBOLD,
-    color: Colors.white,
-  },
-
-  teamRank: {
-    fontSize: 10,
-    color: Colors.lightGray,
-  },
-
-  timeoutsWrapper: {
-    flexDirection: "row",
-    marginTop: 4,
-  },
-
-  timeoutBar: {
-    width: 8,
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: Colors.white,
-    marginHorizontal: 2,
-  },
-});

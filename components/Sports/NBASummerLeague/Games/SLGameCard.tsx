@@ -18,7 +18,7 @@ import { SummerGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function GameCard({ game }: { game: SummerGame }) {
+export default function SLGameCard({ game }: { game: SummerGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const [notifEnabled, setNotifEnabled] = useState(false);

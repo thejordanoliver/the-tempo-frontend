@@ -4,6 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CompetitorInfo from "components/CompetitorInfo";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
 import {
@@ -13,7 +14,11 @@ import {
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LineScore from "components/Sports/NBA/GameDetails/LineScore";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import { getTeamInfo, neutralStadiums } from "constants/teamsNFL";
+import {
+  getNFLTeamLogo,
+  getTeamInfo,
+  neutralStadiums,
+} from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFootballVenues } from "hooks/CFBHooks/useFootballVenues";
@@ -35,7 +40,6 @@ import NFLInjuries from "../GameDetails/NFLInjuries";
 import NFLSeriesHistory from "../GameDetails/NFLSeriesHistory";
 import NFLTeamDrives from "../GameDetails/TeamDrives";
 import TeamScoringSummary from "../GameDetails/TeamScoringSummary";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: Game;
@@ -70,8 +74,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const holidayLabel = isChristmas
     ? "Christmas Day"
     : isNewYear
-    ? "New Year's Day"
-    : null;
+      ? "New Year's Day"
+      : null;
 
   const styles = gamePreviewModalStyle(isChampionship);
 
@@ -84,6 +88,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const homeEspnId = game.teams.home.espnID;
   const awayColor = away?.color ?? emptyAwayTeam.color;
   const homeColor = home?.color ?? emptyHomeTeam.color;
+  const homeLogo = getNFLTeamLogo(homeId, true);
+  const awayLogo = getNFLTeamLogo(awayId, true);
   const awayName = away.code || emptyAwayTeam.code;
   const homeName = home.code || emptyHomeTeam.code;
   const timestampNum = Number(gameInfo.date.timestamp);
@@ -94,14 +100,14 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     {
       month: "short",
       day: "numeric",
-    }
+    },
   );
   const displayTimeStr = new Date(timestampNum * 1000).toLocaleTimeString(
     "en-us",
     {
       hour: "numeric",
       minute: "numeric",
-    }
+    },
   );
 
   // --- Possession & Score ---
@@ -109,7 +115,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     Number(homeEspnId),
     Number(awayEspnId),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
 
   const {
@@ -134,7 +140,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     String(awayEspnId || emptyAwayTeam.espnID),
     String(homeEspnId || emptyHomeTeam.espnID),
     gameDateStr,
-    "nfl"
+    "nfl",
   );
   const possessionTeam = possessionTeamId ? possessionTeamId : null;
   const officials = data?.officials ?? [];
@@ -175,7 +181,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
     return (
       footballVenues.find(
-        (v) => normalizeVenueName(v.venue) === normalizedGameVenue
+        (v) => normalizeVenueName(v.venue) === normalizedGameVenue,
       ) || null
     );
   }, [venue?.name, footballVenues]);
@@ -184,7 +190,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
 
   const neutralStadiumEntry = Object.entries(neutralStadiums).find(
-    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName
+    ([stadiumName]) => stadiumName.trim().toLowerCase() === normalizedVenueName,
   );
 
   const isNeutralSite = !!neutralStadiumEntry;
@@ -214,7 +220,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
     lat,
     lon,
     gameDateStr ?? null,
-    resolvedVenueCity
+    resolvedVenueCity,
   );
 
   const displayWeather = weather
@@ -297,13 +303,13 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
 
               {/* HEADER */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
+                <CompetitorInfo
                   team={away}
-                  teamName={awayName}
+                  logo={awayLogo}
+                  name={awayName}
                   score={displayAwayScore}
                   opponentScore={displayHomeScore}
                   record={awayRecord}
-                  isDark={isDark}
                   possessionTeamId={possessionTeam}
                   gameStatusDescription={gameStatusDescription ?? gameStatus}
                   side="away"
@@ -324,13 +330,13 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   redzone={isRedzone}
                 />
 
-                <TeamInfo
+                <CompetitorInfo
                   team={home}
-                  teamName={homeName}
+                  logo={homeLogo}
+                  name={homeName}
                   score={displayHomeScore}
                   opponentScore={displayAwayScore}
                   record={homeRecord}
-                  isDark={isDark}
                   possessionTeamId={possessionTeam}
                   gameStatusDescription={gameStatusDescription ?? gameStatus}
                   side="home"
@@ -382,20 +388,19 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   <LastFiveGamesSwitcher
                     isDark={isDark}
                     home={{
-                      teamCode: homeName,
-                      teamLogo: home.logo,
-                      teamLogoLight: home.logoLight,
+                      teamId: homeId,
+                      teamCode: home.code,
                       games: homeLastGames.games,
                     }}
                     away={{
-                      teamCode: awayName,
-                      teamLogo: away.logo,
-                      teamLogoLight: away.logoLight,
+                      teamId: awayId,
+                      teamCode: away.code,
                       games: awayLastGames.games,
                     }}
-                    league="NFL"
                     lighter
+                    league="NFL"
                   />
+                  
                   {highlights.length > 0 && (
                     <HighlightVideoList highlights={highlights} lighter />
                   )}
@@ -455,8 +460,8 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                       venue?.attendance
                         ? String(venue.attendance)
                         : venue?.capacity
-                        ? String(venue.capacity)
-                        : "N/A"
+                          ? String(venue.capacity)
+                          : "N/A"
                     }
                     loading={false}
                     error={null}

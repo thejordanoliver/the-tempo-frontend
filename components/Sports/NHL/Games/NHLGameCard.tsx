@@ -77,6 +77,7 @@ function NHLGameCard({ game }: Props) {
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
+  const isHalftime = gameStatusDescription === "Halftime";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
@@ -88,7 +89,7 @@ function NHLGameCard({ game }: Props) {
   const awayScore = liveScore?.away?.total ?? game?.scores?.away ?? 0;
   const homeRecord = details?.records?.home?.overall ?? "0-0";
   const awayRecord = details?.records?.away?.overall ?? "0-0";
-
+const clock = liveScore?.displayClock
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -125,41 +126,42 @@ function NHLGameCard({ game }: Props) {
     );
   };
 
-  const renderStatus = () => {
-    if (inProgress)
-      return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatNHLQuarter(period)}</Text>
-        </View>
-      );
-
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-
-    if (endOfPeriod)
-      return (
-        <Text style={styles.clock}>End of {formatNHLQuarter(period)}</Text>
-      );
-
-    if (isFinal)
-      return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
-        </View>
-      );
-
-    return (
-      <View style={styles.infoWrapper}>
-        <Text style={styles.date}>{formattedDate}</Text>
-        <View style={styles.statusDivider} />
-        <Text style={styles.date}>{formattedTime}</Text>
-      </View>
-    );
-  };
+   const renderStatus = () => {
+     if (inProgress)
+       return (
+         <View style={styles.infoWrapper}>
+           <Text style={styles.period}>{formatNHLQuarter(period)}</Text>
+           <View style={styles.statusDivider} />
+           <Text style={styles.clock}>{clock}</Text>
+         </View>
+       );
+ 
+     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
+     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
+     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
+     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+ 
+     if (endOfPeriod)
+       return <Text style={styles.clock}>End of {formatNHLQuarter(period)}</Text>;
+ 
+     if (isFinal)
+       return (
+         <View style={styles.infoWrapper}>
+           <Text style={styles.finalText}>{gameStatusDetail}</Text>
+           <View style={styles.finalStatusDivider} />
+           <Text style={styles.finalText}>{formattedDate}</Text>
+         </View>
+       );
+ 
+     return (
+       <View style={styles.infoWrapper}>
+         <Text style={styles.date}>{formattedDate}</Text>
+         <View style={styles.statusDivider} />
+         <Text style={styles.date}>{formattedTime}</Text>
+       </View>
+     );
+   };
 
   const renderHeadline = () => {
     if (isPostseason) {

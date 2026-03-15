@@ -1,6 +1,12 @@
 import { Colors } from "constants/Styles";
 import { useEffect, useRef } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 
 const ROWS = 16;
 const ROW_HEIGHT = 60;
@@ -27,226 +33,278 @@ export const StandingsSkeleton = () => {
         }),
       ]),
     );
+
     animation.start();
     return () => animation.stop();
   }, []);
 
   const StatBar = () => (
     <Animated.View
-      style={{
-        width: 40,
-        height: 14,
-        borderRadius: 4,
-        backgroundColor: bg,
-        opacity: pulse,
-      }}
+      style={[styles.statBar, { backgroundColor: bg, opacity: pulse }]}
     />
   );
 
-  /** Left fixed team row */
-  const TeamColumnRow = () => (
+  const ConferenceHeader = () => (
     <Animated.View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        height: ROW_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        opacity: pulse,
-        paddingHorizontal: 12,
-      }}
+      style={[
+        styles.conferenceHeader,
+        {
+          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          opacity: pulse,
+        },
+      ]}
     >
-      <Animated.View
-        style={{
-          width: RANK_WIDTH,
-          height: RANK_WIDTH,
-          backgroundColor: bg,
-          borderRadius: 4,
-        }}
-      />
-
-      <View
-        style={{ flexDirection: "row", alignItems: "center", marginLeft: 8 }}
-      >
-        <Animated.View
-          style={{
-            width: 28,
-            height: 28,
-            backgroundColor: bg,
-            borderRadius: 14,
-          }}
-        />
-        <Animated.View
-          style={{
-            width: 60,
-            height: 14,
-            backgroundColor: bg,
-            marginLeft: 8,
-            borderRadius: 4,
-          }}
-        />
-      </View>
+      <View style={[styles.conferenceBar, { backgroundColor: bg }]} />
     </Animated.View>
   );
 
-  /** LEFT fixed header */
+  const TeamColumnRow = ({ index }: { index: number }) => {
+    const isLastRow = index === ROWS - 1;
+
+    return (
+      <Animated.View
+        style={[
+          styles.teamRow,
+          {
+            borderBottomWidth: isLastRow ? 0 : 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+            opacity: pulse,
+          },
+        ]}
+      >
+        <Animated.View style={[styles.rankBox, { backgroundColor: bg }]} />
+
+        <View style={styles.teamInfo}>
+          <Animated.View style={[styles.teamLogo, { backgroundColor: bg }]} />
+          <Animated.View style={[styles.teamName, { backgroundColor: bg }]} />
+        </View>
+      </Animated.View>
+    );
+  };
+
   const TeamColumnHeader = () => (
     <Animated.View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        height: ROW_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        opacity: pulse,
-        paddingHorizontal: 12,
-      }}
+      style={[
+        styles.teamHeader,
+        {
+          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          opacity: pulse,
+        },
+      ]}
     >
-      <Animated.View
-        style={{
-          width: RANK_WIDTH,
-          height: RANK_WIDTH,
-          backgroundColor: bg,
-          borderRadius: 4,
-        }}
-      />
-      <Animated.View
-        style={{
-          width: 60,
-          height: 14,
-          backgroundColor: bg,
-          marginLeft: 12,
-          borderRadius: 4,
-        }}
-      />
+      <Animated.View style={[styles.rankBox, { backgroundColor: bg }]} />
+      <Animated.View style={[styles.teamHeaderText, { backgroundColor: bg }]} />
     </Animated.View>
   );
 
-  /** Scrollable stat header */
+  const StatRow = ({ index }: { index: number }) => {
+    const isLastRow = index === ROWS - 1;
+
+    return (
+      <Animated.View
+        style={[
+          styles.statRow,
+          {
+            borderBottomWidth: isLastRow ? 0 : 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+            opacity: pulse,
+          },
+        ]}
+      >
+        {[1, 2, 3, 4, 5].map((n) => (
+          <View key={n} style={styles.statItem}>
+            <StatBar />
+          </View>
+        ))}
+      </Animated.View>
+    );
+  };
+
   const StatHeader = () => (
     <Animated.View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        height: ROW_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        paddingLeft: 16,
-        opacity: pulse,
-      }}
+      style={[
+        styles.statHeader,
+        {
+          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          opacity: pulse,
+        },
+      ]}
     >
       {[1, 2, 3, 4, 5].map((n) => (
-        <View key={n} style={{ marginRight: 20 }}>
+        <View key={n} style={styles.statItem}>
           <StatBar />
         </View>
       ))}
     </Animated.View>
   );
 
-  /** One row of scrollable stats */
-  const StatRow = () => (
-    <Animated.View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        height: ROW_HEIGHT,
-        borderBottomWidth: 1,
-        borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        paddingLeft: 16,
-        opacity: pulse,
-      }}
+  const TableSkeleton = () => (
+    <View
+      style={[
+        styles.tableWrapper,
+        {
+          borderColor: isDark ? Colors.darkGray : Colors.midTone,
+        },
+      ]}
     >
-      {[1, 2, 3, 4, 5].map((n) => (
-        <View key={n} style={{ marginRight: 20 }}>
-          <StatBar />
+      {/* Conference Header INSIDE wrapper */}
+      <ConferenceHeader />
+
+      <View style={styles.tableRow}>
+        <View style={styles.teamColumn}>
+          <TeamColumnHeader />
+          {Array.from({ length: ROWS }).map((_, i) => (
+            <TeamColumnRow key={i} index={i} />
+          ))}
         </View>
-      ))}
-    </Animated.View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View>
+            <StatHeader />
+            {Array.from({ length: ROWS }).map((_, i) => (
+              <StatRow key={i} index={i} />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </View>
   );
 
   return (
-    <ScrollView
-      style={{ paddingTop: 16, marginTop: 12 }}
-      contentContainerStyle={{ paddingBottom: 100 }}
-    >
-      {/* ---------- HEADER ABOVE TABLE ---------- */}
-      <Animated.View
-        style={{
-          opacity: pulse,
-          paddingBottom: 12,
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        }}
-      >
-        <View
-          style={{
-            width: 120,
-            height: 22,
-            borderRadius: 4,
-            backgroundColor: bg,
-          }}
-        />
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Animated.View style={[styles.filterRow, { opacity: pulse }]}>
+        <View style={[styles.filterLarge, { backgroundColor: bg }]} />
+        <View style={[styles.filterSmall, { backgroundColor: bg }]} />
       </Animated.View>
 
-      {/* ---------- TABLE ---------- */}
-      <View style={{ flexDirection: "row" }}>
-        {/* LEFT FIXED COLUMN */}
-        <View style={{ width: 180 }}>
-          <TeamColumnHeader />
-          {Array.from({ length: ROWS }).map((_, i) => (
-            <TeamColumnRow key={i} />
-          ))}
-        </View>
-
-        {/* RIGHT SCROLLABLE COLUMN */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View>
-            <StatHeader />
-            {Array.from({ length: ROWS }).map((_, i) => (
-              <StatRow key={i} />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-
-      {/* ---------- HEADER ABOVE TABLE ---------- */}
-      <Animated.View
-        style={{
-          opacity: pulse,
-          paddingVertical: 12,
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        }}
-      >
-        <View
-          style={{
-            width: 120,
-            height: 22,
-            borderRadius: 4,
-            backgroundColor: bg,
-          }}
-        />
-      </Animated.View>
-      {/* ---------- TABLE ---------- */}
-      <View style={{ flexDirection: "row" }}>
-        {/* LEFT FIXED COLUMN */}
-        <View style={{ width: 180 }}>
-          <TeamColumnHeader />
-          {Array.from({ length: ROWS }).map((_, i) => (
-            <TeamColumnRow key={i} />
-          ))}
-        </View>
-
-        {/* RIGHT SCROLLABLE COLUMN */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View>
-            <StatHeader />
-            {Array.from({ length: ROWS }).map((_, i) => (
-              <StatRow key={i} />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
+      <TableSkeleton />
+      <TableSkeleton />
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { paddingHorizontal: 12 },
+
+  content: {
+    paddingBottom: 100,
+  },
+
+  filterRow: {
+    marginBottom: 12,
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "flex-end",
+  },
+
+  filterLarge: {
+    width: 120,
+    height: 32,
+    borderRadius: 8,
+  },
+
+  filterSmall: {
+    width: 100,
+    height: 32,
+    borderRadius: 8,
+  },
+
+  tableWrapper: {
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+
+  conferenceHeader: {
+    padding: 12,
+    justifyContent: "center",
+    borderBottomWidth: 1,
+  },
+
+  conferenceBar: {
+    width: 180,
+    height: 20,
+    borderRadius: 4,
+  },
+
+  tableRow: {
+    flexDirection: "row",
+  },
+
+  teamColumn: {
+    width: 180,
+  },
+
+  teamHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: ROW_HEIGHT,
+    borderBottomWidth: 1,
+    paddingHorizontal: 12,
+  },
+
+  teamRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: ROW_HEIGHT,
+    paddingHorizontal: 12,
+  },
+
+  rankBox: {
+    width: RANK_WIDTH,
+    height: RANK_WIDTH,
+    borderRadius: 4,
+  },
+
+  teamInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 8,
+  },
+
+  teamLogo: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+  },
+
+  teamName: {
+    width: 60,
+    height: 14,
+    marginLeft: 8,
+    borderRadius: 4,
+  },
+
+  teamHeaderText: {
+    width: 60,
+    height: 14,
+    marginLeft: 12,
+    borderRadius: 4,
+  },
+
+  statHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: ROW_HEIGHT,
+    borderBottomWidth: 1,
+    paddingLeft: 16,
+  },
+
+  statRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: ROW_HEIGHT,
+    paddingLeft: 16,
+  },
+
+  statItem: {
+    marginRight: 20,
+  },
+
+  statBar: {
+    width: 40,
+    height: 14,
+    borderRadius: 4,
+  },
+});

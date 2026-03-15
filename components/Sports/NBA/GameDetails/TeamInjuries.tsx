@@ -1,8 +1,11 @@
+// TeamInjuries.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
+import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
 import FixedWidthTabBar, {
   getLabelStyle,
 } from "components/TabBars/FixedWidthTabBar";
-import { getTeamByESPNId } from "constants/teams";
+import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import { Image, Text, useColorScheme, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
@@ -32,27 +35,29 @@ export type TeamInjury = {
 };
 
 type Props = {
-  injuries: any[];
+  injuries: TeamInjury[];
   lighter?: boolean;
-  loading?: boolean; // ✅ add this here too
+  loading?: boolean;
+  teamPlayersMap?: Record<string, Player[]>; // ✅ add this
 };
 
-export default function TeamInjuries({ injuries, lighter = false }: Props) {
+export default function TeamInjuries({
+  injuries,
+  loading,
+  lighter = false,
+  teamPlayersMap = {},
+}: Props) {
   const isDark = useColorScheme() === "dark";
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const styles = teamInjuryStyles(isDark, lighter);
-  // Reorder so away team is first
+
   const reorderedInjuries =
-    injuries?.length === 2 ? [injuries[1], injuries[0]] : injuries ?? [];
+    injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);
 
+  // Generate tabs for the tab bar
   const tabs = reorderedInjuries.map((inj) => {
-    const team = getTeamByESPNId(inj.team.id);
-
     return {
-      id: String(inj.team.id), // ✅ normalized
-      label: inj.team.abbreviation,
-      logo: team?.logo,
-      logoLight: team?.logoLight,
+      id: String(inj.team.id),
     };
   });
 
@@ -63,10 +68,13 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
   }, [tabs]);
 
   const currentInjuries = reorderedInjuries.find(
-    (t) => String(t.team.id) === selectedTeamId
+    (t) => String(t.team.id) === selectedTeamId,
   );
 
-  // ✅ Now safe to bail out
+  if (loading) {
+    return <TeamInjuriesSkeleton />;
+  }
+
   if (!injuries || injuries.length === 0 || !currentInjuries) {
     return null;
   }
@@ -79,25 +87,22 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar
-          tabs={tabs.map((t) => t.id)} // 👈 IDs, not names
+          tabs={tabs.map((t) => t.id)}
           selected={selectedTeamId}
           onTabPress={setSelectedTeamId}
           lighter={lighter}
           renderLabel={(tabId, isSelected) => {
             const tab = tabs.find((t) => t.id === tabId);
             if (!tab) return null;
+            const team = getTeamByESPNId(tab.id);
+            const teamCode = team?.code;
+            const logo = getTeamLogo(Number(team?.id), isDark);
 
             return (
               <View style={styles.tabLabel}>
-                {tab.logo && (
+                {logo && (
                   <Image
-                    source={
-                      lighter
-                        ? tab.logoLight || tab.logo
-                        : isDark
-                        ? tab.logoLight || tab.logo
-                        : tab.logo
-                    }
+                    source={logo}
                     style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
                     resizeMode="contain"
                   />
@@ -108,14 +113,19 @@ export default function TeamInjuries({ injuries, lighter = false }: Props) {
                     opacity: isSelected ? 1 : 0.5,
                   })}
                 >
-                  {tab.label}
+                  {teamCode}
                 </Text>
               </View>
             );
           }}
         />
 
-        <TeamInjuriesList injuries={[currentInjuries]} lighter={lighter} />
+        {/* ✅ Pass teamPlayersMap down to the list */}
+        <TeamInjuriesList
+          injuries={[currentInjuries]}
+          teamPlayersMap={teamPlayersMap}
+          lighter={lighter}
+        />
       </View>
     </View>
   );

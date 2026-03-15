@@ -1,10 +1,11 @@
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
+import { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { teams as SLTeams } from "constants/teams";
-import { teams } from "constants/teamsCBB";
+import { getCBBTeamLogo, teams } from "constants/teamsCBB";
 import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TextStyle, useColorScheme, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
@@ -121,18 +122,6 @@ export default function GameLeaders({
     league === "nba-summer" || league === "summerleague" || league === "sl";
 
   const teamSource = isSummerLeague ? SLTeams : teams;
-
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-      ? Colors.white
-      : Colors.black;
-
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-      ? Colors.midTone
-      : Colors.midTone;
 
   const topPlayers = useMemo(() => {
     if (!leaders?.length) return [];
@@ -396,13 +385,11 @@ export default function GameLeaders({
 
             return (
               <Text
-                style={{
-                  fontFamily: Fonts.OSMEDIUM,
-                  fontSize: 14,
-                  color: isSelected ? textColor : subTextColor,
-                }}
+                style={getLabelStyle(isDark, isSelected, lighter, {
+                  opacity: isSelected ? 1 : 0.5,
+                })}
               >
-                {getLabel(tab)}
+                {getLabel(tab).toUpperCase()}
               </Text>
             );
           }}
@@ -418,30 +405,11 @@ export default function GameLeaders({
             teamSource.find((t) => String(t.espnID) === String(homeTeamId)) ??
             teamSource.find((t) => String(t.espnID) === String(awayTeamId));
 
-          // Type guard for teams that have wLogo
-          function hasWLogo(team: any): team is { wLogo?: string } {
-            return team && "wLogo" in team;
-          }
-
-          const teamLogo = teamObj
-            ? isWomen
-              ? lighter
-                ? hasWLogo(teamObj)
-                  ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
-                  : teamObj.logoLight || teamObj.logo
-                : isDark
-                  ? hasWLogo(teamObj)
-                    ? teamObj.wLogo || teamObj.logoLight || teamObj.logo
-                    : teamObj.logoLight || teamObj.logo
-                  : hasWLogo(teamObj)
-                    ? teamObj.wLogo || teamObj.logo
-                    : teamObj.logo
-              : lighter
-                ? teamObj.logoLight || teamObj.logo
-                : isDark
-                  ? teamObj.logoLight || teamObj.logo
-                  : teamObj.logo
-            : Placeholder;
+          const teamLogo = getCBBTeamLogo(
+            teamObj?.id,
+            lighter ? lighter : isDark,
+            isWomen,
+          );
 
           return (
             <View key={idx} style={styles.card}>

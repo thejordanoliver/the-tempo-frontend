@@ -2,7 +2,7 @@ import { Colors, Fonts } from "constants/Styles";
 import { getTeamLogo } from "constants/teams";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Team } from "types/types";
-
+import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 type TeamInfoProps = {
   team?: Team;
   teamName: string;
@@ -26,7 +26,7 @@ export default function TeamInfo({
   timeouts,
   bonusState,
 }: TeamInfoProps) {
-  const styles = teamInfoStyle;
+  const styles = TeamInfoStyle;
 
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -50,7 +50,7 @@ export default function TeamInfo({
 
   // --- Detect record vs score → dynamic font size ---
   const isRecord = isScheduled || isDelayed || isPostponed;
-  const valueFontSize = isRecord ? 24 : 36;
+  const valueFontSize = isRecord ? 22 : 36;
 
   // --- Value shown ---
   const displayValue = isRecord
@@ -167,53 +167,3 @@ export default function TeamInfo({
   );
 }
 
-export const teamInfoStyle = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-
-  teamContainer: {
-    alignItems: "center",
-    gap: 4,
-  },
-
-  teamName: {
-    fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-  },
-
-  teamLogo: {
-    width: 65,
-    height: 65,
-    resizeMode: "contain",
-  },
-
-  scoreWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    minWidth: 50,
-  },
-
-  possessionIcon: {
-    position: "absolute",
-    bottom: -20,
-    width: 26,
-    height: 26,
-    resizeMode: "contain",
-  },
-
-  teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
-    color: Colors.white,
-    opacity: 0.7,
-  },
-
-  teamValue: {
-    fontFamily: Fonts.OSBOLD,
-    color: Colors.white,
-  },
-});

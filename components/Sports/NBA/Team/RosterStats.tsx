@@ -31,7 +31,7 @@ export default function RosterStats({
   const global = globalStyles(isDark);
 
   const [viewMode, setViewMode] = useState<"Player Stats" | "Team Stats">(
-    "Player Stats"
+    "Player Stats",
   );
 
   if (!rosterStats?.length && !teamStats) return null;
@@ -59,7 +59,7 @@ export default function RosterStats({
               p.first_name.toLowerCase() ===
                 stat.name.split(" ")[0].toLowerCase() &&
               p.last_name.toLowerCase() ===
-                stat.name.split(" ").slice(1).join(" ").toLowerCase()
+                stat.name.split(" ").slice(1).join(" ").toLowerCase(),
           );
         }
 
@@ -101,7 +101,7 @@ export default function RosterStats({
       label: "Points",
       stat: "totalPoints",
       player: [...mergedRoster].sort(
-        (a, b) => b.totalPoints / b.gamesPlayed - a.totalPoints / a.gamesPlayed
+        (a, b) => b.totalPoints / b.gamesPlayed - a.totalPoints / a.gamesPlayed,
       )[0],
     },
     {
@@ -109,7 +109,7 @@ export default function RosterStats({
       stat: "totalRebounds",
       player: [...mergedRoster].sort(
         (a, b) =>
-          b.totalRebounds / b.gamesPlayed - a.totalRebounds / a.gamesPlayed
+          b.totalRebounds / b.gamesPlayed - a.totalRebounds / a.gamesPlayed,
       )[0],
     },
     {
@@ -117,21 +117,21 @@ export default function RosterStats({
       stat: "totalAssists",
       player: [...mergedRoster].sort(
         (a, b) =>
-          b.totalAssists / b.gamesPlayed - a.totalAssists / a.gamesPlayed
+          b.totalAssists / b.gamesPlayed - a.totalAssists / a.gamesPlayed,
       )[0],
     },
     {
       label: "Blocks",
       stat: "totalBlocks",
       player: [...mergedRoster].sort(
-        (a, b) => b.totalBlocks / b.gamesPlayed - a.totalBlocks / a.gamesPlayed
+        (a, b) => b.totalBlocks / b.gamesPlayed - a.totalBlocks / a.gamesPlayed,
       )[0],
     },
     {
       label: "Steals",
       stat: "totalSteals",
       player: [...mergedRoster].sort(
-        (a, b) => b.totalSteals / b.gamesPlayed - a.totalSteals / a.gamesPlayed
+        (a, b) => b.totalSteals / b.gamesPlayed - a.totalSteals / a.gamesPlayed,
       )[0],
     },
   ];
@@ -386,13 +386,16 @@ export default function RosterStats({
                 {/* Player names */}
                 {mergedRoster.map((p, idx) => (
                   <View
-                    key={p.playerId} // ✅ move key here
+                    key={p.playerId}
                     style={[
                       styles.tableRow,
                       idx % 2 === 1 && {
                         backgroundColor: isDark
                           ? Colors.dark.itemBackground
                           : Colors.light.itemBackground,
+                      },
+                      idx === mergedRoster.length - 1 && {
+                        borderBottomWidth: 0,
                       },
                     ]}
                   >
@@ -469,6 +472,9 @@ export default function RosterStats({
                           backgroundColor: isDark
                             ? Colors.dark.itemBackground
                             : Colors.light.itemBackground,
+                        },
+                        idx === mergedRoster.length - 1 && {
+                          borderBottomWidth: 0,
                         },
                       ]}
                     >

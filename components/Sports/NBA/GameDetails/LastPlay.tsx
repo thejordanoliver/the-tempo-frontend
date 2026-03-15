@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Styles";
 import { getTeamByESPNId } from "constants/teams";
-import useDbPlayersByTeam from "hooks/usePlayersByTeam";
+import useDbPlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import {
   Image,
@@ -107,7 +107,7 @@ export default function LastPlay({
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
     if (currentPlay.scoringPlay === true)
-      return isDark ? Colors.dark.limeGreen: Colors.light.green;
+      return isDark ? Colors.dark.limeGreen : Colors.light.green;
     if (lower.includes("foul"))
       return isDark ? Colors.dark.lightRed : Colors.light.red;
     if (lower.includes("violation"))

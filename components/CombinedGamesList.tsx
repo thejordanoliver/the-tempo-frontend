@@ -30,39 +30,52 @@ import CFBGamePreviewModal from "./Sports/CFB/GamePreview/CFBGamePreviewModal";
 import NFLGamePreviewModal from "./Sports/NFL/GamePreview/NFLGamePreviewModal";
 // ✅ Shared skeletons
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import GameSquareCardSkeleton from "components/Skeletons/GameCards/GameSquareCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
+import SquareGameCardSkeleton from "./Skeletons/GameCards/SquareGameCardSkeleton";
 
 // ✅ NFL cards
 import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
-import NFLGameSquareCard from "components/Sports/NFL/Games/NFLGameSquareCard";
 import NFLStackedGameCard from "components/Sports/NFL/Games/NFLStackedGameCard";
+import NFLSquareGameCard from "./Sports/NFL/Games/NFLSquareGameCard";
 
 // ✅ CFB cards
 import CFBGameCard from "components/Sports/CFB/Games/CFBGameCard";
-import CFBGameSquareCard from "components/Sports/CFB/Games/CFBGameSquareCard";
+import CFBSquareGameCard from "./Sports/CFB/Games/CFBSquareGameCard";
 import CFBStackedGameCard from "./Sports/CFB/Games/CFBStackedGameCard";
 
 // ✅ NBA cards
 import GameCard from "components/Sports/NBA/Games/GameCard";
-import GameSquareCard from "components/Sports/NBA/Games/GameSquareCard";
+import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
 import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 
 // ✅ MLB cards
 import MLBGameCard from "./Sports/MLB/Games/MLBGameCard";
-import MLBGameSquareCard from "./Sports/MLB/Games/MLBGameSquareCard";
+import MLBSquareGameCard from "./Sports/MLB/Games/MLBSquareGameCard";
 import MLBStackedGameCard from "./Sports/MLB/Games/MLBStackedGameCard";
+
+// ✅ NHL cards
+import NHLGameCard from "./Sports/NHL/Games/NHLGameCard";
+import NHLGameSquareCard from "./Sports/NHL/Games/NHLGameSquareCard";
 
 // ✅ CBB cards
 import CBBStackedGameCard from "components/Sports/CBB/Games/CBBStackedGameCard";
 import CBBGameCard from "./Sports/CBB/Games/CBBGameCard";
-import CBBGameSquareCard from "./Sports/CBB/Games/CBBGameSquareCard";
+import CBBSquareGameCard from "./Sports/CBB/Games/CBBSquareGameCard";
 
 // ✅ Summer League cards
-import SummerGameSquareCard from "components/Sports/NBASummerLeague/Games/SummerGameSquareCard";
-import SummerGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueGameCard";
-import SummerStackedGameCard from "components/Sports/NBASummerLeague/Games/SummerLeagueStackedGameCard";
+import SummerStackedGameCard from "components/Sports/NBASummerLeague/Games/SLeagueStackedGameCard";
+import SummerGameCard from "components/Sports/NBASummerLeague/Games/SLGameCard";
+import SummerSquareGameCard from "components/Sports/NBASummerLeague/Games/SLSquareGameCard";
 import MLBGamePreviewModal from "./Sports/MLB/GamePreview/MLBGamePreviewModal";
+
+// ✅ MMA cards
+import { MMAFight } from "types/mma";
+import { NHLGame } from "types/nhl";
+import MMAGamePreviewModal from "./Sports/MMA/GamePreview/MMAGamePreviewModal";
+import MMAGameCard from "./Sports/MMA/Games/MMAGameCard";
+import MMASquareGameCard from "./Sports/MMA/Games/MMASquareGameCard";
+import MMAStackedGameCard from "./Sports/MMA/Games/MMAStackedGameCard";
+import NHLGamePreviewModal from "./Sports/NHL/GamePreview/NHLGamePreviewModal";
 
 const NCAA_FOOTBALL_LEAGUE_ID = 2;
 const NCAA_MENS_BASKETBALL_LEAGUE_ID = 116;
@@ -73,9 +86,11 @@ type SportsCategory =
   | "NFL"
   | "NBA"
   | "MLB"
+  | "NHL"
   | "Men's College Basketball"
   | "Women's College Basketball"
   | "NBA Summer League"
+  | "MMA"
   | "Favorites";
 
 export type CombinedGamesSection =
@@ -84,8 +99,10 @@ export type CombinedGamesSection =
   | { category: "Women's College Basketball"; data: CBBGame[] }
   | { category: "NFL"; data: NFLGameType[] }
   | { category: "MLB"; data: MLBGame[] }
+  | { category: "NHL"; data: NHLGame[] }
   | { category: "NBA"; data: NBAGameType[] }
   | { category: "NBA Summer League"; data: SummerGame[] }
+  | { category: "MMA"; data: MMAFight[] }
   | { category: "Favorites"; data: CombinedGame[] };
 
 type CombinedGame =
@@ -94,6 +111,8 @@ type CombinedGame =
   | NBAGameType
   | CBBGameType
   | MLBGame
+  | NHLGame
+  | MMAFight
   | SummerGame;
 
 type CombinedGamesListProps = {
@@ -137,90 +156,12 @@ const getCategoryForFavorites = (item: CombinedGame): SportsCategory => {
   if (league.name === "NFL") return "NFL";
 
   if (league.name === "MLB") return "MLB";
+  if (league.name === "NHL") return "NHL";
   if (league.name === "MLB - Spring Training") return "MLB";
   if (league.name === "NBA Summer League") return "NBA Summer League";
+  if (league.name === "MMA") return "MMA";
 
   return "NBA";
-};
-
-const liveStatuses = [
-  "In Progress",
-  "LIVE",
-  "Live",
-  "Playing",
-  "1Q",
-  "2Q",
-  "3Q",
-  "4Q",
-  "1H",
-  "2H",
-  "Q1",
-  "Q2",
-  "Q3",
-  "Q4",
-  "H1",
-  "H2",
-  "HT",
-  "OT",
-  "AOT",
-  "ET",
-  "2OT",
-  "3OT",
-  "OT1",
-  "OT2",
-  "Mid",
-  "End",
-  "1st",
-  "2nd",
-  "3rd",
-  "4th",
-  "OT1",
-  "OT2",
-  "OT3",
-  "Suspended",
-  "Delayed",
-  "In Play",
-];
-
-const hasGameProperty = (
-  game: CombinedGame,
-): game is CFBGameType | NFLGameType => {
-  return "game" in game && typeof game.game === "object";
-};
-
-const getGameStatus = (game: CombinedGame): string => {
-  if (hasGameProperty(game)) {
-    return String(game.game?.status?.short ?? game.game?.status ?? "");
-  } else {
-    return String((game as NBAGameType | SummerGame)?.status ?? "");
-  }
-};
-
-export const isLiveGame = (game: CombinedGame): boolean => {
-  const status = getGameStatus(game);
-  return liveStatuses.some(
-    (live) => status?.toString()?.toUpperCase() === live.toUpperCase(),
-  );
-};
-
-const getGameTimestamp = (game: CombinedGame): number => {
-  if (hasGameProperty(game)) {
-    return game.game?.date?.timestamp
-      ? game.game.date.timestamp * 1000
-      : new Date(game.game?.date?.date ?? "").getTime();
-  } else {
-    return new Date((game as NBAGameType | SummerGame)?.date ?? "").getTime();
-  }
-};
-
-const sortByLiveFirst = (games: CombinedGame[]): CombinedGame[] => {
-  const sorted = [...games].sort((a, b) => {
-    const aLive = isLiveGame(a) ? 1 : 0;
-    const bLive = isLiveGame(b) ? 1 : 0;
-    if (aLive !== bLive) return bLive - aLive;
-    return getGameTimestamp(a) - getGameTimestamp(b);
-  });
-  return sorted;
 };
 
 export default function CombinedGamesList({
@@ -356,17 +297,33 @@ export default function CombinedGamesList({
       const nflGame = transformNFLGame(item as NFLGameExtended);
       if (viewMode === "list") return wrapper(<NFLGameCard game={nflGame} />);
       if (viewMode === "grid")
-        return wrapper(<NFLGameSquareCard game={nflGame} />, index);
+        return wrapper(<NFLSquareGameCard game={nflGame} />, index);
       return wrapper(<NFLStackedGameCard game={nflGame} />);
     }
 
-    // ✅ NFL
+    // ✅ MLB
     if (category === "MLB") {
       const mlbGame = item as MLBGame;
       if (viewMode === "list") return wrapper(<MLBGameCard game={mlbGame} />);
       if (viewMode === "grid")
-        return wrapper(<MLBGameSquareCard game={mlbGame} />, index);
+        return wrapper(<MLBSquareGameCard game={mlbGame} />, index);
       return wrapper(<MLBStackedGameCard game={mlbGame} />);
+    }
+    // ✅ NHL
+    if (category === "NHL") {
+      const nhlGame = item as NHLGame;
+      if (viewMode === "list") return wrapper(<NHLGameCard game={nhlGame} />);
+      if (viewMode === "grid")
+        return wrapper(<NHLGameSquareCard game={nhlGame} />, index);
+      return wrapper(<NHLGameSquareCard game={nhlGame} />);
+    }
+    // ✅ MMA
+    if (category === "MMA") {
+      const mmaFight = item as MMAFight;
+      if (viewMode === "list") return wrapper(<MMAGameCard game={mmaFight} />);
+      if (viewMode === "grid")
+        return wrapper(<MMASquareGameCard game={mmaFight} />, index);
+      return wrapper(<MMAStackedGameCard game={mmaFight} />);
     }
 
     // ✅ College Football
@@ -374,7 +331,7 @@ export default function CombinedGamesList({
       const cfbGame = transformCFBGame(item as CFBGameExtended);
       if (viewMode === "list") return wrapper(<CFBGameCard game={cfbGame} />);
       if (viewMode === "grid")
-        return wrapper(<CFBGameSquareCard game={cfbGame} />, index);
+        return wrapper(<CFBSquareGameCard game={cfbGame} />, index);
       return wrapper(<CFBStackedGameCard game={cfbGame} />);
     }
 
@@ -383,7 +340,7 @@ export default function CombinedGamesList({
       const nbaGame = item as NBAGameType;
       if (viewMode === "list") return wrapper(<GameCard game={nbaGame} />);
       if (viewMode === "grid")
-        return wrapper(<GameSquareCard game={nbaGame} />, index);
+        return wrapper(<SquareGameCard game={nbaGame} />, index);
       return wrapper(<StackedGameCard game={nbaGame} />);
     }
 
@@ -394,7 +351,7 @@ export default function CombinedGamesList({
         return wrapper(<CBBGameCard game={cbbGame} isWomen={false} />);
       if (viewMode === "grid")
         return wrapper(
-          <CBBGameSquareCard game={cbbGame} isWomen={false} />,
+          <CBBSquareGameCard game={cbbGame} isWomen={false} />,
           index,
         );
       return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={false} />);
@@ -407,7 +364,7 @@ export default function CombinedGamesList({
         return wrapper(<CBBGameCard game={cbbGame} isWomen={true} />);
       if (viewMode === "grid")
         return wrapper(
-          <CBBGameSquareCard game={cbbGame} isWomen={true} />,
+          <CBBSquareGameCard game={cbbGame} isWomen={true} />,
           index,
         );
       return wrapper(<CBBStackedGameCard game={cbbGame} isWomen={true} />);
@@ -418,7 +375,7 @@ export default function CombinedGamesList({
       const slGame = item as SummerGame;
       if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} />);
       if (viewMode === "grid")
-        return wrapper(<SummerGameSquareCard game={slGame} />, index);
+        return wrapper(<SummerSquareGameCard game={slGame} />, index);
       return wrapper(<SummerStackedGameCard game={slGame} />);
     }
 
@@ -464,7 +421,7 @@ export default function CombinedGamesList({
                   },
                 ]}
               >
-                {!isPlaceholder && <GameSquareCardSkeleton />}
+                {!isPlaceholder && <SquareGameCardSkeleton />}
               </View>
             );
           }}
@@ -501,12 +458,6 @@ export default function CombinedGamesList({
     );
   }
 
-  const sortedSections = gamesByCategory.map((section) => ({
-    ...section,
-    data: sortByLiveFirst(section.data as CombinedGame[]),
-  }));
-
-  // Inside CombinedGamesList, before renderItem/renderSectionFooter
   const getCategoryAndValidatedGame = (
     item: CombinedGame,
     sectionCategory: SportsCategory,
@@ -523,6 +474,8 @@ export default function CombinedGamesList({
       case "College Football":
       case "NFL":
       case "MLB":
+      case "NHL":
+      case "MMA":
       case "Men's College Basketball":
       case "Women's College Basketball":
         return { category, game: item };
@@ -535,38 +488,13 @@ export default function CombinedGamesList({
     <>
       <SectionList
         sections={
-          sortedSections.filter(
+          gamesByCategory.filter(
             (section) => section.data.length > 0,
           ) as SectionListData<CombinedGame, CombinedGamesSection>[]
         }
         keyExtractor={(item) => getItemId(item)}
         renderItem={({ item, section, index }) => {
           if (viewMode === "grid") return null;
-
-          // Narrow the type safely
-          const getCategoryAndValidatedGame = (
-            item: CombinedGame,
-            sectionCategory: SportsCategory,
-          ) => {
-            const category =
-              sectionCategory === "Favorites"
-                ? getCategoryForFavorites(item)
-                : sectionCategory;
-
-            // Only allow valid combinations for renderGameCard
-            switch (category) {
-              case "NBA":
-              case "NBA Summer League":
-              case "College Football":
-              case "NFL":
-              case "MLB":
-              case "Men's College Basketball":
-              case "Women's College Basketball":
-                return { category, game: item };
-              default:
-                return null;
-            }
-          };
 
           const validated = getCategoryAndValidatedGame(item, section.category);
           if (!validated) return null;
@@ -581,12 +509,16 @@ export default function CombinedGamesList({
         renderSectionHeader={({ section }) => {
           if (!showHeaders) return null;
 
-          const multipleSections =
-            sortedSections.filter((s) => s.data.length > 0).length > 1;
-          const isFirstSection =
-            sortedSections.findIndex((s) => s.category === section.category) ===
-            0;
+          const visibleSections = gamesByCategory.filter(
+            (s) => s.data.length > 0,
+          );
 
+          const multipleSections = visibleSections.length > 1;
+
+          const isFirstSection =
+            visibleSections.findIndex(
+              (s) => s.category === section.category,
+            ) === 0;
           return (
             <View
               style={{
@@ -661,6 +593,13 @@ export default function CombinedGamesList({
           onClose={() => setModalVisible(false)}
         />
       )}
+      {modalVisible && previewGame && previewCategory === "NHL" && (
+        <NHLGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as NHLGame}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
       {modalVisible &&
         previewGame &&
         (previewCategory === "Men's College Basketball" ||
@@ -677,6 +616,13 @@ export default function CombinedGamesList({
         <GamePreviewModal
           visible={modalVisible}
           game={previewGame as NBAGameType}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
+      {modalVisible && previewGame && previewCategory === "MMA" && (
+        <MMAGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as MMAFight}
           onClose={() => setModalVisible(false)}
         />
       )}

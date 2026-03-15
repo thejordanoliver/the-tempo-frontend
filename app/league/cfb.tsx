@@ -2,8 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import { Bracket } from "components/Sports/CFB/Bracket/Bracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
@@ -20,12 +18,12 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
-import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { CFBGame } from "types/cfb";
 import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
@@ -35,7 +33,6 @@ import {
   getCurrentWeekIndex,
 } from "utils/CFBUtils/cfbWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { useHighlights } from "../../hooks/useHighlights";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -75,10 +72,8 @@ type CombinedItem =
 
 export default function CFBeagueScreen() {
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
-
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
     useState<string>("Top 25");
@@ -88,35 +83,10 @@ export default function CFBeagueScreen() {
   );
   const [recruitYear, setRecruitYear] = useState(dayjs().year().toString());
   const [recruitTeam, setRecruitTeam] = useState("all");
-
-  const [selectedTab, setSelectedTab] = useState<
-    | "scores"
-    | "news"
-    | "standings"
-    | "stats"
-    | "awards"
-    | "recruting"
-    | "bracket"
-    | "forum"
-  >("scores");
+  const pagerRef = useRef<PagerView>(null);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CFB");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "awards",
-    "bracket",
-    "recruting",
-    "forum",
-  ] as const;
-
-  // --- News & Highlights ---
-  const { news: cfbNews, loading: cfbLoading } = useLeagueNews("CFB");
-  const { highlights } = useHighlights("cfb", "", 10);
-  const { data, loading, error, refresh } = useCFPBracket();
 
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
@@ -191,27 +161,6 @@ export default function CFBeagueScreen() {
     }
   };
 
-  // --- Combine news + highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = cfbNews.map((item) => ({
-      ...item,
-      itemType: "news",
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight",
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort(
-      (a, b) =>
-        new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime(),
-    );
-    return combined;
-  }, [cfbNews, highlights]);
-
   const isValidBowlStage = (game: CFBGame) => {
     const stage = game?.game?.stage;
     return (
@@ -257,67 +206,63 @@ export default function CFBeagueScreen() {
       top25Teams,
     });
   }, [cfbgames, selectedConference, top25Teams, selectedWeek]);
-
   return (
     <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
       <View style={styles.container}>
-        <MainScrollTabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <View key="scores" style={styles.contentArea}>
+            <WeekSelector
+              weeks={weeks}
+              selectedWeekIndex={selectedWeekIndex}
+              onSelectWeek={setSelectedWeekIndex}
+              monthTextStyle={styles.monthText}
+              monthTextSelectedStyle={styles.monthTextSelected}
+            />
 
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <WeekSelector
-                weeks={weeks}
-                selectedWeekIndex={selectedWeekIndex}
-                onSelectWeek={setSelectedWeekIndex}
-                monthTextStyle={styles.monthText}
-                monthTextSelectedStyle={styles.monthTextSelected}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <CFBGamesList
+                games={filteredGames}
+                loading={cfbloading}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={false}
               />
+            </ScrollView>
+          </View>
 
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              >
-                <CFBGamesList
-                  games={filteredGames}
-                  loading={cfbloading}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  scrollEnabled={false}
-                />
-              </ScrollView>
-            </>
-          )}
-
-          {selectedTab === "news" && (
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                 />
               }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={cfbLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
-          )}
-          {selectedTab === "standings" && (
+            ></ScrollView>
+          </View>
+
+          {/* STANDINGS */}
+          <View key="standings" style={styles.contentArea}>
             <>
               {selectedConference === "Top 25" || !selectedConference ? (
                 <CFBStandingsList />
@@ -327,14 +272,14 @@ export default function CFBeagueScreen() {
                 />
               )}
             </>
-          )}
+          </View>
 
-          {selectedTab === "stats" && <StatsTabContent />}
-          {selectedTab === "awards" && <AwardSeasons league="CFB" />}
+          {/* STATS */}
+          <View key="stats" style={styles.contentArea}>
+            <StatsTabContent />
+          </View>
 
-          {selectedTab === "bracket" && data && <Bracket data={data} />}
-
-          {selectedTab === "recruting" && (
+          <View key="recruits" style={styles.contentArea}>
             <RecruitsList
               year={recruitYear}
               team={recruitTeam}
@@ -343,9 +288,18 @@ export default function CFBeagueScreen() {
               onTeamChange={setRecruitTeam}
               onViewChange={setRecruitView}
             />
-          )}
-          {selectedTab === "forum" && <LeagueForum league="CFB" />}
-        </View>
+          </View>
+
+          {/* AWARDS */}
+          <View key="awards" style={styles.contentArea}>
+            <AwardSeasons league="CFB" />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum" style={styles.contentArea}>
+            <LeagueForum league="CFB" />
+          </View>
+        </PagerView>
       </View>
 
       <ConferenceListModal

@@ -4,9 +4,8 @@ import { StyleSheet } from "react-native";
 export const newsHighlightsListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 12,
       gap: 12,
-      paddingBottom: 100,
+      paddingHorizontal: 12,
     },
     emptyText: {
       fontFamily: Fonts.OSLIGHT,

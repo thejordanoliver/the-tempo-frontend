@@ -10,9 +10,8 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
-import SummerGamesList from "components/Sports/NBASummerLeague/Games/SummerGamesList";
+import SLGamesList from "components/Sports/NBASummerLeague/Games/SLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Styles";
 import dayjs from "dayjs";
@@ -21,16 +20,17 @@ import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { ScrollView, View, useColorScheme } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { useHighlights } from "../../hooks/useHighlights";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -44,7 +44,6 @@ export default function NBALeagueScreen() {
     refreshGames: refreshGames,
   } = useSeasonGames(currentYear);
 
-  // --- NBA Summer League Games ---
   const {
     games: summerGames,
     loading: loadingSummer,
@@ -52,19 +51,17 @@ export default function NBALeagueScreen() {
     refreshSummerGames,
   } = useNBASLGames({ season: currentYear.toString() });
 
-  const { news, loading: newsLoading, refreshNews } = useLeagueNews("NBA");
-  const { highlights, loading: highlightsLoading } = useHighlights(
-    "nba",
-    "",
-    10,
+  // Filter both sets by selectedDate
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [selectedDate, setSelectedDate] = React.useState<Date>(
+    dayjs().startOf("day").toDate(),
   );
-
+  const filteredSeasonGames = filterByDate(games, selectedDate);
+  const filteredSummerGames = filterByDate(summerGames, selectedDate);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
   const [draftYear, setDraftYear] = useState(dayjs().year().toString());
   const [standingsYear, setStandingsYear] = useState(
@@ -72,22 +69,12 @@ export default function NBALeagueScreen() {
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-
-  const [showCalendarModal, setShowCalendarModal] = useState(false);
-
-  // --- State ---
-  const [selectedDate, setSelectedDate] = React.useState<Date>(
-    dayjs().startOf("day").toDate(),
-  );
-
-  const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
-  >("scores");
-
+  const { leaders, loading, error } = useSeasonLeaders();
+  const pagerRef = useRef<PagerView>(null);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NBA");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Load favorites
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -102,7 +89,6 @@ export default function NBALeagueScreen() {
     }, []),
   );
 
-  // Header
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -121,39 +107,10 @@ export default function NBALeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ] as const;
-
-  // --- Helper to sort live games on top ---
-  const sortLiveGamesFirst = (gamesArray: any[]) =>
-    [...gamesArray].sort((a, b) => {
-      const aStatus = a.status?.long?.toLowerCase() || "";
-      const bStatus = b.status?.long?.toLowerCase() || "";
-
-      if (aStatus === "in play" && bStatus !== "in play") return -1;
-      if (aStatus !== "in play" && bStatus === "in play") return 1;
-
-      // Otherwise, sort by date/time
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
-
-  // Filter both sets by selectedDate
-  const filteredSeasonGames = sortLiveGamesFirst(
-    filterByDate(games, selectedDate),
-  );
-  const filteredSummerGames = filterByDate(summerGames, selectedDate);
-
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshGames(), refreshSummerGames(), refreshNews()]);
+      await Promise.all([refreshGames(), refreshSummerGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -161,39 +118,12 @@ export default function NBALeagueScreen() {
     }
   };
 
-  // --- Change Date (now local) ---
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
       dayjs(prev).add(days, "day").startOf("day").toDate(),
     );
   };
 
-  // Combine news + highlights
-  const combinedNewsAndHighlights = React.useMemo(() => {
-    const taggedNews = news.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      // convert numeric duration to string
-      duration: String(item.duration),
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    return [...taggedNews, ...taggedHighlights].sort(
-      (a, b) =>
-        new Date(b.publishedAt ?? 0).getTime() -
-        new Date(a.publishedAt ?? 0).getTime(),
-    );
-  }, [news, highlights]);
-
-  const { leaders, loading, error } = useSeasonLeaders();
-
-  // Helper to mark games on calendar
   const markDates = (gamesArray: any[]) =>
     gamesArray.reduce(
       (acc, game) => {
@@ -212,87 +142,78 @@ export default function NBALeagueScreen() {
 
   return (
     <>
-      <View style={styles.container}>
-        <MainScrollTabBar
-          tabs={tabs}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <DateNavigator
-                selectedDate={selectedDate}
-                onChangeDate={changeDateByDays}
-                onOpenCalendar={() => setShowCalendarModal(true)}
-                isDark={isDark}
-              />
-              <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                  />
-                }
-              >
-                {filteredSummerGames.length > 0 ? (
-                  <SummerGamesList
-                    games={filteredSummerGames}
-                    loading={loadingSummer}
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                    scrollEnabled={false}
-                  />
-                ) : (
-                  <GamesList
-                    games={filteredSeasonGames}
-                    error={errorGames}
-                    loading={loadingGames}
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                    scrollEnabled={false}
-                  />
-                )}
-              </ScrollView>
-            </>
-          )}
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
 
-          {selectedTab === "news" && (
-            <ScrollView
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={newsLoading || highlightsLoading}
+      <View style={styles.container}>
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <ScrollView key="scores">
+            <DateNavigator
+              selectedDate={selectedDate}
+              onChangeDate={changeDateByDays}
+              onOpenCalendar={() => setShowCalendarModal(true)}
+              isDark={isDark}
+            />
+
+            {filteredSummerGames.length > 0 ? (
+              <SLGamesList
+                games={filteredSummerGames}
+                loading={loadingSummer}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
+                scrollEnabled={false}
               />
-            </ScrollView>
-          )}
+            ) : (
+              <GamesList
+                games={filteredSeasonGames}
+                error={errorGames}
+                loading={loadingGames}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={false}
+              />
+            )}
+          </ScrollView>
 
-          {selectedTab === "standings" && (
-            <View style={{ paddingHorizontal: 12, paddingBottom: 100 }}>
-              <StandingsList
-                year={standingsYear}
-                onYearChange={setStandingsYear}
-                league="NBA"
-              />
-            </View>
-          )}
-          {selectedTab === "stats" && (
+          {/* NEWS */}
+          <ScrollView key="news" />
+
+          {/* STANDINGS */}
+          <ScrollView key="standings">
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league="NBA"
+            />
+          </ScrollView>
+
+          {/* STATS */}
+          <ScrollView key="stats">
             <SeasonLeadersList
               leadersByStat={leaders}
               loading={loading}
               error={error}
             />
-          )}
-          {selectedTab === "draft" && (
+          </ScrollView>
+
+          {/* DRAFT */}
+          <View key="draft">
             <DraftList
               year={draftYear}
               team={draftTeam}
@@ -302,10 +223,18 @@ export default function NBALeagueScreen() {
               onRoundChange={setDraftRound}
               league="nba"
             />
-          )}
-          {selectedTab === "awards" && <AwardSeasons league="NBA" />}
-          {selectedTab === "forum" && <LeagueForum league="NBA" />}
-        </View>
+          </View>
+
+          {/* AWARDS */}
+          <ScrollView key="awards">
+            <AwardSeasons league="NBA" />
+          </ScrollView>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league="NBA" />
+          </View>
+        </PagerView>
       </View>
 
       <CalendarModal

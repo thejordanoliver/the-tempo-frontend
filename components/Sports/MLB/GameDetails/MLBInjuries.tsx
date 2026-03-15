@@ -1,8 +1,8 @@
-import { Colors, Fonts } from "constants/Styles";
-import { getMLBTeamByEspnId } from "constants/teamsMLB";
+import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
+import { getLabelStyle } from "components/TabBars/ScrollableTabBar";
+import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -103,12 +103,7 @@ export default function MLBInjuries({
   // 🛑 Loading / Error States
   // ---------------------------------------------------------------------
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="small" />
-        <Text style={styles.loadingText}>Loading injuries...</Text>
-      </View>
-    );
+    return <TeamInjuriesSkeleton />;
   }
 
   if (error) {
@@ -122,7 +117,7 @@ export default function MLBInjuries({
   if (!injuries || injuries.length === 0) return null;
 
   const teamData = injuries.find(
-    (t) => t.team.abbreviation.toUpperCase() === selected
+    (t) => t.team.abbreviation.toUpperCase() === selected,
   );
 
   // ---------------------------------------------------------------------
@@ -194,74 +189,59 @@ export default function MLBInjuries({
   return (
     <View style={styles.container}>
       <HeadingTwo lighter={lighter}>Injury Report</HeadingTwo>
- <View style={styles.wrapper}>
-      {/* TAB BAR */}
-      <FixedWidthTabBar
-        tabs={orderedTabs}
-        selected={selected}
-        lighter={lighter}
-        onTabPress={setSelectedTeam}
-        renderLabel={(abbr, isSelected) => {
-          const t = injuries.find(
-            (team) => team.team.abbreviation.toUpperCase() === abbr
-          );
+      <View style={styles.wrapper}>
+        {/* TAB BAR */}
+        <FixedWidthTabBar
+          tabs={orderedTabs}
+          selected={selected}
+          lighter={lighter}
+          onTabPress={setSelectedTeam}
+          renderLabel={(abbr, isSelected) => {
+            const t = injuries.find(
+              (team) => team.team.abbreviation.toUpperCase() === abbr,
+            );
 
-          const team = getMLBTeamByEspnId(String(t?.team.id));
-          const logo = team?.logoLight ?? team?.logo ?? null;
+            const team = getMLBTeamByEspnId(String(t?.team.id));
+            const teamCode = team?.code;
+            const logo = lighter
+              ? getMLBTeamLogo(team?.id ?? "", true)
+              : getMLBTeamLogo(team?.id ?? "", isDark);
 
-          const textColor = lighter
-            ? Colors.white
-            : isSelected
-            ? isDark
-              ? Colors.white
-              : Colors.black
-            : isDark
-            ? Colors.midTone
-            : Colors.midTone;
-
-          return (
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
-            >
-              {logo && (
-                <Image
-                  source={logo}
-                  style={{
-                    width: 28,
-                    height: 28,
+            return (
+              <View style={styles.tabLabel}>
+                {logo && (
+                  <Image
+                    source={logo}
+                    style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
+                    resizeMode="contain"
+                  />
+                )}
+                <Text
+                  style={getLabelStyle(isDark, isSelected, lighter, {
                     opacity: isSelected ? 1 : 0.5,
-                  }}
-                  resizeMode="contain"
-                />
-              )}
-              <Text
-                style={{
-                  color: textColor,
-                  opacity: isSelected ? 1 : 0.5,
-                  fontFamily: Fonts.OSMEDIUM,
-                }}
-              >
-                {abbr}
-              </Text>
-            </View>
-          );
-        }}
-      />
-
-      {/* INJURY LIST */}
-      {teamData && teamData.injuries.length > 0 ? (
-        <FlatList
-          data={teamData.injuries}
-          renderItem={renderInjury}
-          keyExtractor={(inj) => inj.athlete.id}
-          scrollEnabled={false}
-          contentContainerStyle={{ paddingVertical: 8 }}
+                  })}
+                >
+                  {teamCode}
+                </Text>
+              </View>
+            );
+          }}
         />
-      ) : (
-        <Text style={styles.errorText}>
-          No injuries reported for this team.
-        </Text>
-      )}
+
+        {/* INJURY LIST */}
+        {teamData && teamData.injuries.length > 0 ? (
+          <FlatList
+            data={teamData.injuries}
+            renderItem={renderInjury}
+            keyExtractor={(inj) => inj.athlete.id}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingVertical: 8 }}
+          />
+        ) : (
+          <Text style={styles.errorText}>
+            No injuries reported for this team.
+          </Text>
+        )}
       </View>
     </View>
   );

@@ -13,6 +13,7 @@ import {
   Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { LeagueType } from "types/types";
@@ -51,13 +52,12 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     editPost,
   } = useTeamForumPosts({ teamId, league });
 
-  // TeamForum.tsx
   useEffect(() => {
     if (currentUserId != null) {
       setUser(String(currentUserId)); // store setter
     }
   }, [currentUserId]);
-  // Stable callbacks
+
   const showAlert = useCallback((config: AlertConfig) => {
     setAlertConfig(config);
   }, []);
@@ -182,6 +182,19 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={() => (
+          <View style={global.emptyContainer}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={48}
+              color={Colors.midTone}
+            />
+            <Text style={global.emptyText}>It's Quiet Here</Text>
+            <Text style={global.emptySubText}>
+              No posts yet. Be the first to start the conversation.
+            </Text>
+          </View>
+        )}
       />
 
       {/* Floating Create Post Button */}
@@ -221,7 +234,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
 
 export function forumStyles(isDark: boolean) {
   return StyleSheet.create({
-    container: { paddingBottom: 100 },
+    container: { paddingBottom: 130, flexGrow: 1 },
     floatingButton: {
       position: "absolute",
       bottom: 100,

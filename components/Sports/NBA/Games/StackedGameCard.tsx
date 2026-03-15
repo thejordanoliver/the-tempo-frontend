@@ -13,10 +13,11 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+
 export default function StackedGameCard({ game }: { game: Game }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -63,7 +64,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
       ? "New Year's Day"
       : null;
 
-  const styles = stackedGameCardStyles(isDark, isChampionship);
+  const styles = StackedGameCardStyles(isDark, isChampionship);
 
   const { score: liveScore, details } = useGameDetails(
     "nba",
@@ -224,8 +225,8 @@ export default function StackedGameCard({ game }: { game: Game }) {
             teamWins={homeWins}
           />
         </View>
-        {/* Notification Bell */}
       </View>
+      
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
@@ -233,6 +234,8 @@ export default function StackedGameCard({ game }: { game: Game }) {
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
+
+      {/* Notification Bell */}
       <Pressable
         onPress={() => setNotifEnabled((prev) => !prev)}
         style={({ pressed }) => [

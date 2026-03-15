@@ -10,8 +10,10 @@ import {
 import { teams as cfbTeams, getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam, teams as mlbTeams } from "constants/teamsMLB";
 import { getNFLTeam, teams as nflTeams } from "constants/teamsNFL";
+
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
+import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
@@ -44,8 +46,10 @@ type CustomHeaderTitleProps = {
   setModalVisible?: (v: boolean) => void;
   onToggleLayout?: () => void;
   isGrid?: boolean;
-  logo?: ImageSourcePropType;
-  logoLight?: ImageSourcePropType;
+  logo?: any;
+  logoLight?: any;
+  homeLogo?: any;
+  awayLogo?: any;
   teamColor?: string;
   isTeamScreen?: boolean;
   transparentColor?: string;
@@ -70,7 +74,7 @@ type CustomHeaderTitleProps = {
     | "WCBB"
     | "MLB"
     | "NHL"
-    | "UFC"
+    | "MMA"
     | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
@@ -80,19 +84,19 @@ type CustomHeaderTitleProps = {
   onToggleNotifications?: () => void;
 };
 
-function resolveImage(source: any): ImageSourcePropType {
-  if (!source) return undefined as any;
+function resolveImage(source: any): ImageSourcePropType | undefined {
+  if (!source) return undefined;
 
-  // Already a require() image (number)
+  // require("image.png")
   if (typeof source === "number") return source;
 
-  // Already { uri: string }
+  // already { uri }
   if (typeof source === "object" && source.uri) return source;
 
-  // Convert string → URI
+  // plain URL string
   if (typeof source === "string") return { uri: source };
 
-  return undefined as any;
+  return undefined;
 }
 
 // ---------- SUBCOMPONENTS ----------
@@ -148,7 +152,7 @@ const TeamBackground = ({
         }}
       />
       {(selectedTeam?.logo || logo) && (
-        <Image source={logo} style={styles.bgImage} />
+       <Image source={resolveImage(logo)} style={styles.bgImage} />
       )}
     </View>
   );
@@ -214,39 +218,26 @@ const ConferenceBackground = ({
   );
 };
 
-const getLogoSource = (
-  team: any,
-  {
-    preferLight = false,
-    isWomen = false,
-  }: { preferLight?: boolean; isWomen?: boolean } = {},
-) => {
-  const source =
-    (isWomen && team.wLogo) || (preferLight && team.logoLight) || team.logo;
-
-  if (!source) {
-    return require("assets/Placeholders/teamPlaceholder.png");
-  }
-
-  // URL string
-  if (typeof source === "string") {
-    return { uri: source };
-  }
-
-  // Module require / number
-  return source;
-};
-
 const GameHeader = ({
   tabName,
   homeTeam,
   awayTeam,
+  homeLogo,
+  awayLogo,
   isNeutralSite,
   isWomen,
+  firstFighterId,
+  secondFighterId,
+  league,
 }: {
   tabName?: string;
   homeTeam: any;
   awayTeam: any;
+  homeLogo: any;
+  awayLogo: any;
+  firstFighterId?: number;
+  secondFighterId?: number;
+  league?: string;
   isNeutralSite: boolean;
   isWomen: boolean;
 }) => {
@@ -255,26 +246,42 @@ const GameHeader = ({
   const homeColor = homeTeam?.color || Colors.lightGray;
   const awayColor = awayTeam?.color || Colors.midTone;
   const dividerText = isNeutralSite ? "vs" : "@";
+  const isMMA = league === "MMA";
+  const { fighter: firstFighter } = useMMAFighter(firstFighterId ?? 0);
+  const { fighter: secondFighter } = useMMAFighter(secondFighterId ?? 0);
 
+  const awayName = secondFighter?.nickname || secondFighter?.nickname || "AWY";
+  const homeName = firstFighter?.nickname || firstFighter?.nickname || "HOM";
   // --- Main animations ---
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
+  const getFlagSource = (url?: string) => {
+    if (!url) {
+      return require("assets/Placeholders/teamPlaceholder.png");
+    }
 
+    return { uri: url };
+  };
   // --- Letter-level animations ---
-  const awayLetters: string[] = awayTeam.code.split("");
-  const homeLetters: string[] = homeTeam.code.split("");
+  const awayLetters: string[] = isMMA
+    ? awayName.split("")
+    : (awayTeam.code ?? "AWY").split("");
+
+  const homeLetters: string[] = isMMA
+    ? homeName.split("")
+    : (homeTeam.code ?? "HOM").split("");
+
   const awayLetterAnims: Animated.Value[] = useMemo(
-    () => awayTeam.code.split("").map(() => new Animated.Value(0)),
-    [awayTeam.code],
+    () => awayLetters.map(() => new Animated.Value(0)),
+    [awayLetters.join("")],
   );
 
   const homeLetterAnims: Animated.Value[] = useMemo(
-    () => homeTeam.code.split("").map(() => new Animated.Value(0)),
-    [homeTeam.code],
+    () => homeLetters.map(() => new Animated.Value(0)),
+    [homeLetters.join("")],
   );
-
   useEffect(() => {
     Animated.sequence([
       Animated.parallel([
@@ -358,15 +365,7 @@ const GameHeader = ({
             { transform: [{ scale: scaleAway }] },
           ]}
         >
-          <Image
-            source={getLogoSource(awayTeam, {
-              preferLight: true,
-              isWomen,
-            })}
-            style={styles.bgLogo}
-            resizeMode="contain"
-          />
-
+          <Image source={awayLogo} style={styles.bgLogo} resizeMode="contain" />
           <View style={{ flexDirection: "row" }}>
             {awayLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -417,14 +416,7 @@ const GameHeader = ({
             { transform: [{ scale: scaleHome }] },
           ]}
         >
-          <Image
-            source={getLogoSource(homeTeam, {
-              preferLight: true,
-              isWomen,
-            })}
-            style={styles.bgLogo}
-            resizeMode="contain"
-          />
+          <Image source={homeLogo} style={styles.bgLogo} resizeMode="contain" />
 
           <View style={{ flexDirection: "row" }}>
             {homeLetters.map((char: string, i: number) => (
@@ -483,6 +475,8 @@ export function CustomHeaderTitle({
   awayTeamCode,
   homeTeamId,
   awayTeamId,
+  homeLogo,
+  awayLogo,
   isFavorite,
   isNotified,
   selectedConferenceName,
@@ -498,8 +492,7 @@ export function CustomHeaderTitle({
   logo,
   logoLight,
 }: CustomHeaderTitleProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const insets = useSafeAreaInsets();
   const styles = customHeaderStyles;
   const modalToMapKey: Record<string, string> = {
@@ -709,6 +702,8 @@ export function CustomHeaderTitle({
             tabName={tabName}
             homeTeam={homeTeam}
             awayTeam={awayTeam}
+            homeLogo={homeLogo}
+            awayLogo={awayLogo}
             isNeutralSite={isNeutralSite}
             isWomen={isWomenLeague}
           />

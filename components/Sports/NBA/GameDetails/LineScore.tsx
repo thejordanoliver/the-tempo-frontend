@@ -128,13 +128,13 @@ export default function LineScore({
           <View style={styles.scoresWrapper}>
             {columns.map((label, idx) => (
               <View key={`h-${idx}`} style={columnStyle}>
-                <Text style={styles.header}>
+               <Text style={[styles.header, { color: textColor }]}>
                   {label}
                 </Text>
               </View>
             ))}
             <View style={columnStyle}>
-              <Text style={styles.header}>Total</Text>
+               <Text style={[styles.header, { color: textColor }]}>Total</Text>
             </View>
           </View>
         </View>

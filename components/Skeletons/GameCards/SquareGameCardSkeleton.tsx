@@ -9,13 +9,13 @@ import {
   ViewStyle,
 } from "react-native";
 
-type GameSquareCardSkeletonProps = {
+type SquareGameCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-export default function GameSquareCardSkeleton({
+export default function SquareGameCardSkeleton({
   style,
-}: GameSquareCardSkeletonProps) {
+}: SquareGameCardSkeletonProps) {
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
