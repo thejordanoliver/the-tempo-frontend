@@ -5,7 +5,6 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useState } from "react";
 import {
   Pressable,
   Text,
@@ -23,7 +22,6 @@ export default function SquareGameCard({ game }: { game: Game }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const homeTeam = game.home;
   const awayTeam = game.away;

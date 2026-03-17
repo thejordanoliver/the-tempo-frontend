@@ -4,10 +4,9 @@ import { getMLBTeam } from "constants/teamsMLB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
-import { memo, useState } from "react";
+import { memo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -26,7 +25,7 @@ type Props = {
 function MLBGameCard({ game }: Props) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
+
   /* ===============================
      DATE / TIME
   =============================== */
@@ -238,21 +237,6 @@ function MLBGameCard({ game }: Props) {
         />
         <Text style={styles.teamName}>{homeName}</Text>
       </View>
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

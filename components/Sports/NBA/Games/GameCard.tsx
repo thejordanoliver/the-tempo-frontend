@@ -1,18 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { getTeamById } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useState } from "react";
-import {
-  Pressable,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
@@ -21,7 +13,6 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 export default function GameCard({ game }: { game: Game }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
@@ -220,21 +211,6 @@ export default function GameCard({ game }: { game: Game }) {
         />
         <Text style={styles.teamName}>{homeName}</Text>
       </View>
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

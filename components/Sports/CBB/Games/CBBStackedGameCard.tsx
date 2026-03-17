@@ -4,7 +4,7 @@ import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import {
   Image,
   Pressable,
@@ -28,7 +28,6 @@ function CBBStackedGameCard({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const detailsLeague = isWomen ? "wcbb" : "cbb";
 

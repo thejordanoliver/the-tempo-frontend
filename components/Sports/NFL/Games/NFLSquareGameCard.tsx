@@ -4,7 +4,7 @@ import FootballLight from "assets/icons8/FootballLight.png";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import {
   Pressable,
   Text,
@@ -30,7 +30,6 @@ function NFLSquareGameCard({ game }: NFLGameCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   // -----------------------------------------------------
   // TEAM + DATE

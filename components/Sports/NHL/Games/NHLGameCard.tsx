@@ -1,13 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { getNHLTeam } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
-import { memo, useState } from "react";
+import { memo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -26,7 +24,7 @@ type Props = {
 function NHLGameCard({ game }: Props) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
+
   /* ===============================
      DATE / TIME
   =============================== */
@@ -89,7 +87,7 @@ function NHLGameCard({ game }: Props) {
   const awayScore = liveScore?.away?.total ?? game?.scores?.away ?? 0;
   const homeRecord = details?.records?.home?.overall ?? "0-0";
   const awayRecord = details?.records?.away?.overall ?? "0-0";
-const clock = liveScore?.displayClock
+  const clock = liveScore?.displayClock;
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -126,42 +124,44 @@ const clock = liveScore?.displayClock
     );
   };
 
-   const renderStatus = () => {
-     if (inProgress)
-       return (
-         <View style={styles.infoWrapper}>
-           <Text style={styles.period}>{formatNHLQuarter(period)}</Text>
-           <View style={styles.statusDivider} />
-           <Text style={styles.clock}>{clock}</Text>
-         </View>
-       );
- 
-     if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
- 
-     if (endOfPeriod)
-       return <Text style={styles.clock}>End of {formatNHLQuarter(period)}</Text>;
- 
-     if (isFinal)
-       return (
-         <View style={styles.infoWrapper}>
-           <Text style={styles.finalText}>{gameStatusDetail}</Text>
-           <View style={styles.finalStatusDivider} />
-           <Text style={styles.finalText}>{formattedDate}</Text>
-         </View>
-       );
- 
-     return (
-       <View style={styles.infoWrapper}>
-         <Text style={styles.date}>{formattedDate}</Text>
-         <View style={styles.statusDivider} />
-         <Text style={styles.date}>{formattedTime}</Text>
-       </View>
-     );
-   };
+  const renderStatus = () => {
+    if (inProgress)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{formatNHLQuarter(period)}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{clock}</Text>
+        </View>
+      );
+
+    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
+    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
+    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+
+    if (endOfPeriod)
+      return (
+        <Text style={styles.clock}>End of {formatNHLQuarter(period)}</Text>
+      );
+
+    if (isFinal)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      );
+
+    return (
+      <View style={styles.infoWrapper}>
+        <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.date}>{formattedTime}</Text>
+      </View>
+    );
+  };
 
   const renderHeadline = () => {
     if (isPostseason) {
@@ -216,21 +216,6 @@ const clock = liveScore?.displayClock
         />
         <Text style={styles.teamName}>{homeName}</Text>
       </View>
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

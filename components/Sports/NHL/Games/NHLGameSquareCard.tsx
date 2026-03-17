@@ -1,13 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { getNHLTeam } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
-import { memo, useState } from "react";
+import { memo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -26,7 +24,7 @@ type Props = {
 function NHLSquareGameCard({ game }: Props) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
+
   /* ===============================
      DATE / TIME
   =============================== */
@@ -224,20 +222,6 @@ function NHLSquareGameCard({ game }: Props) {
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

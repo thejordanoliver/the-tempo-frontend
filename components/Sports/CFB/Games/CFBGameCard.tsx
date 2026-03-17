@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Styles";
@@ -7,10 +6,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -28,7 +26,6 @@ function CFBGameCard({ game }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   // --- Team Id's ---
   const homeId = game?.teams?.home?.id;
@@ -324,21 +321,6 @@ function CFBGameCard({ game }: Props) {
           {homeTeam.name}
         </Text>
       </View>
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

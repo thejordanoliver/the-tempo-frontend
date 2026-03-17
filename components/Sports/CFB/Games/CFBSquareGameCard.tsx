@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import {
   Image,
   Pressable,
@@ -27,7 +27,6 @@ function CFBSquareGameCard({ game }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   // --- Team Id's ---
   const homeId = game?.teams?.home?.id;

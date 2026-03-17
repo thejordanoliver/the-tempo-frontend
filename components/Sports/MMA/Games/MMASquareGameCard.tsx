@@ -4,14 +4,7 @@ import { Colors } from "constants/Styles";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
-import { useState } from "react";
-import {
-  Pressable,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { MMAFight } from "types/mma";
 import { formatRound } from "utils/games";
@@ -21,7 +14,6 @@ import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 export default function MMAGameCard({ game }: { game: MMAFight }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -230,21 +222,6 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
       </View>
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headline}</Text>
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 
