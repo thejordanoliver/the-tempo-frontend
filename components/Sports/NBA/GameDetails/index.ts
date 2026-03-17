@@ -11,3 +11,4 @@ export { default as PredictionBar } from "./PredictionBar";
 export { default as TeamInjuriesList } from "./TeamInjuries";
 export { TeamRow } from "./TeamRow";
 export { default as Weather } from "./Weather";
+

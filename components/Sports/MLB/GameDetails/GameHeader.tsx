@@ -28,7 +28,7 @@ type Props = {
   gameStatusDescription: string;
   gameStatusDetail: string;
   league?: "mlb" | "cbb"; // ✅ new addition
-    bases: {
+  bases: {
     first: boolean;
     second: boolean;
     third: boolean;
@@ -57,7 +57,7 @@ export default function GameHeader({
   awayRecord,
   league = "mlb", // ✅ default league
   outs,
-  bases
+  bases,
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 
@@ -115,22 +115,19 @@ export default function GameHeader({
           league={league}
         />
 
-        <View>
-          {/* Game Info */}
-          <GameInfo
-            key={`gameinfo-${refreshTick}`}
-            gameStatusDescription={gameStatusDescription}
-            gameStatusDetail={gameStatusDetail}
-            date={formattedDate || new Date().toISOString()}
-            time={time}
-            inning={inning}
-            isDark={isDark}
-            broadcastNetworks={networkString}
-            isTopInning={isTopInning}
-            outs={outs ?? 0}
-            bases={bases}
-          />
-        </View>
+        <GameInfo
+          key={`gameinfo-${refreshTick}`}
+          gameStatusDescription={gameStatusDescription}
+          gameStatusDetail={gameStatusDetail}
+          date={formattedDate || new Date().toISOString()}
+          time={time}
+          inning={inning}
+          isDark={isDark}
+          broadcast={networkString}
+          isTopInning={isTopInning}
+          outs={outs ?? 0}
+          bases={bases}
+        />
 
         {/* Home Team Row */}
         <TeamRow

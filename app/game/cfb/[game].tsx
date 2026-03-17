@@ -336,7 +336,7 @@ export default function CFBGameDetailsScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
+        contentContainerStyle={styles.container}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}

@@ -16,7 +16,7 @@ import {
 import GameLocationSkeleton from "../../../Skeletons/GameDetails/GameLocationSkeleton";
 
 type Props = {
-  weather: WeatherData | null;
+  weather?: WeatherData | null;
   venueImage?: any;
   venueName?: string;
   location?: string;
@@ -144,6 +144,10 @@ const GameLocation: React.FC<Props> = ({
               )}
             </View>
 
+       
+            {weather?.tempFahrenheit !== null &&
+              weather?.tempFahrenheit !== undefined &&
+              !isNaN(Number(weather?.tempFahrenheit)) && (
             <View style={styles.addressContainer}>
               <Ionicons
                 name={getWeatherIcon(desc)}
@@ -157,7 +161,7 @@ const GameLocation: React.FC<Props> = ({
                   : "--"}
               </Text>
             </View>
-
+  )}
             <View style={styles.addressContainer}>
               <Ionicons name="person" size={20} color={styles.icon.color} />
               <Text style={styles.subText}>

@@ -1,6 +1,6 @@
 // utils/CBBUtils/cbbGameUtils.ts
 
-import { getTeamInfo } from "constants/teamsCBB";
+import { getTeamByESPNId, getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -73,14 +73,7 @@ type RawVenue = {
 };
 
 function normalizeVenueName(v?: RawVenue, fallback?: string) {
-  return (
-    v?.fullName ??
-    v?.name ??
-    fallback ??
-    ""
-  )
-    .trim()
-    .toLowerCase();
+  return (v?.fullName ?? v?.name ?? fallback ?? "").trim().toLowerCase();
 }
 
 export function formatVenueAddress(address: any) {
@@ -104,7 +97,7 @@ export function resolveVenue({
   const venueName = normalizeVenueName(venue, homeTeamData?.venueName);
 
   const neutralEntry = Object.entries(neutralVenues).find(([key]) =>
-    venueName.includes(key.toLowerCase())
+    venueName.includes(key.toLowerCase()),
   );
 
   // Base venue (ESPN → team fallback)
@@ -112,18 +105,9 @@ export function resolveVenue({
     isNeutral: false,
     name: venue?.fullName ?? venue?.name ?? homeTeamData?.venueName ?? "",
     image: venue?.images?.[0]?.href ?? homeTeamData?.venueImage ?? "",
-    city:
-      venue?.city ??
-      homeTeamData?.city ??
-      homeTeamData?.location ??
-      "",
-    address: formatVenueAddress(
-      venue?.address ?? homeTeamData?.address
-    ),
-    capacity:
-      venue?.capacity ??
-      homeTeamData?.venueCapacity ??
-      "",
+    city: venue?.city ?? homeTeamData?.city ?? homeTeamData?.location ?? "",
+    address: formatVenueAddress(venue?.address ?? homeTeamData?.address),
+    capacity: venue?.capacity ?? homeTeamData?.venueCapacity ?? "",
     latitude: venue?.latitude ?? homeTeamData?.latitude ?? null,
     longitude: venue?.longitude ?? homeTeamData?.longitude ?? null,
   };
@@ -147,7 +131,6 @@ export function resolveVenue({
 
   return resolved;
 }
-
 
 export function getGameStatus(raw?: string): GameStatus {
   if (!raw) return "Scheduled";
@@ -216,23 +199,19 @@ export function buildLineScore(scores: any) {
   };
 }
 
-
 export const resolveConferenceTeamNameToESPN = (
-  name: string
+  name: string,
 ): string | null => {
   const normalized = name.toLowerCase().trim();
 
   const team = teams.find(
     (t) =>
       t.fullName?.toLowerCase() === normalized ||
-      t.name?.toLowerCase() === normalized
+      t.name?.toLowerCase() === normalized,
   );
 
   return team?.espnID ? String(team.espnID) : null;
 };
-
-
-
 
 /* =====================================================
    MAIN FILTER FUNCTION
@@ -259,67 +238,48 @@ export function filterCBBGames({
   });
 
   return uniqueGames.filter((game) => {
-   const home = getTeamInfo(String(game.teams.home.id));
-     const away = getTeamInfo(String(game.teams.away.id));
-     const homeESPN = home?.espnID;
-     const awayESPN = away?.espnID;
+    const home = getTeamInfo(Number(game.teams.home.id));
+    const away = getTeamInfo(Number(game.teams.away.id));
+    const homeESPN = home?.espnID;
+    const awayESPN = away?.espnID;
 
     if (!homeESPN && !awayESPN) return false;
 
     // --- TOP 25 ---
     if (selectedConference === "Top 25") {
-       return (
-      (homeESPN && top25Teams.includes(String(homeESPN))) ||
-      (awayESPN && top25Teams.includes(String(awayESPN)))
-    );
+      return (
+        (homeESPN && top25Teams.includes(String(homeESPN))) ||
+        (awayESPN && top25Teams.includes(String(awayESPN)))
+      );
     }
 
     // --- CONFERENCE ---
     if (selectedConference) {
       const mapKey = modalToMapKey[selectedConference] || selectedConference;
 
-      const conference = conferenceObjectListMap.find(
-        (c) => c.name === mapKey
-      );
+      const conference = conferenceObjectListMap.find((c) => c.name === mapKey);
 
       if (!conference) return false;
 
-      const conferenceESPNIds = conference.teams
-    
-        .filter(Boolean) as string[];
+      const conferenceESPNIds = conference.teams.filter(Boolean) as string[];
 
-     return (
-      (homeESPN && conferenceESPNIds.includes(String(homeESPN))) ||
-      (awayESPN && conferenceESPNIds.includes(String(awayESPN)))
-    );
+      return (
+        (homeESPN && conferenceESPNIds.includes(String(homeESPN))) ||
+        (awayESPN && conferenceESPNIds.includes(String(awayESPN)))
+      );
     }
 
     return true;
   });
 }
 
-/* =====================================================
-   AP RANKINGS → TEAMS CONSTANT RESOLUTION
-===================================================== */
-
-export const resolveRankingToTeam = (rankingTeam: any) => {
-  if (!rankingTeam) return null;
-
-  const espnId = String(rankingTeam.id);
-
-  const team = teams.find(
-    (t) => String(t.espnID) === espnId
-  );
-
-  return team ?? null;
-};
 
 
 /* =====================================================
    AP TOP 25 (LEAGUE-AWARE)
 ===================================================== */
 
-export function useAPTop25(league: "116" | "423" = "116") {
+export function useAPTop25(league: "CBB" | "WCBB") {
   const { rankings } = useCBBRankings(league);
 
   return useMemo(() => {
@@ -329,12 +289,12 @@ export function useAPTop25(league: "116" | "423" = "116") {
     return apPoll.ranks
       .slice(0, 25)
       .map((r) => {
-        const team = resolveRankingToTeam(r.team);
+        const team = getTeamByESPNId(r.team?.id ?? 0);
 
         if (!team) return null;
 
         return {
-          id: String(team.espnID),          // ✅ canonical ESPN ID
+          id: String(team.espnID), // ✅ canonical ESPN ID
           name: team.fullName || team.name, // ✅ consistent naming
           rank: r.current,
           code: team.code,

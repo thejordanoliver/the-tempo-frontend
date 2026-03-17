@@ -44,8 +44,8 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
     },
 
     fighter: {
-      width: 52,
-      height: 52,
+      width: 40,
+      height: 40,
       resizeMode: "contain",
     },
 

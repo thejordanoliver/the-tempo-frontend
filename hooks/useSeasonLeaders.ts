@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { PlayerLeader, StatCategory } from "types/stats";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -13,15 +13,7 @@ interface ApiResponse {
   leaderboards: LeadersByStat;
 }
 
-interface UseSeasonLeadersOptions {
-  limit?: number;
-  baseUrl?: string;
-}
-
-export function useSeasonLeaders({
-  limit = 5,
-  baseUrl = API_URL,
-}: UseSeasonLeadersOptions = {}) {
+export function useSeasonLeaders() {
   const [leaders, setLeaders] = useState<LeadersByStat>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,10 +27,7 @@ export function useSeasonLeaders({
 
       try {
         const { data } = await axios.get<ApiResponse>(
-          `${baseUrl}/api/season-leaders/nba/leaders`,
-          {
-            params: { limit }, // only send limit now
-          }
+          `${API_URL}/api/season-leaders/nba/leaders`,
         );
 
         if (!isCancelled) {
@@ -64,7 +53,7 @@ export function useSeasonLeaders({
     return () => {
       isCancelled = true;
     };
-  }, [limit, baseUrl]);
+  }, []);
 
   return { leaders, loading, error };
 }

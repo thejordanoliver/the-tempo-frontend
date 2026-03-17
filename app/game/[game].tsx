@@ -13,6 +13,7 @@ import {
 import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
 import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
+import HeadToHeadGames from "components/Sports/NBA/GameDetails/HeadToHead/HeadToHeadGames";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
@@ -190,6 +191,7 @@ export default function GameDetailsScreen() {
         espnVenue: details?.venue,
         homeTeam: homeTeam,
         isNeutralSite: neutralSite,
+        league: "NBA",
       }),
     [details?.venue, homeTeam, neutralSite],
   );
@@ -414,6 +416,12 @@ export default function GameDetailsScreen() {
               <GameTeamStats
                 stats={teamStats}
                 gameStatusDescription={gameStatusDescription}
+              />
+
+              <HeadToHeadGames
+                awayTeamId={awayTeamId}
+                homeTeamId={homeTeamId}
+                isDark={isDark}
               />
               <LastFiveGamesSwitcher
                 isDark={isDark}

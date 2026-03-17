@@ -1,5 +1,5 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/Styles";
 import {
   conferenceListMap,
   getCBBTeamLogo,
@@ -91,6 +91,7 @@ export const CBBConferenceStandingsList = ({
   const teamConference = getTeamConference(teamName);
   const league = women ? "WCBB" : "CBB";
   const { isFavorite } = useFavoriteTeams();
+
   if (loading) {
     return (
       <View style={styles.center}>
@@ -294,18 +295,17 @@ export const CBBConferenceStandingsList = ({
   };
 
   const renderHeader = () => (
-    <View style={styles.row}>
+    <View style={styles.statsHeaderRow}>
       <View style={styles.rankContainer}>
-        <Text style={[styles.rankText, { fontFamily: Fonts.OSSEMIBOLD }]}>
-          #
-        </Text>
+        <Text style={styles.rankText}>#</Text>
       </View>
-      <Text style={styles.teamHeaderText}>Team</Text>
+      <View>
+        <Text style={styles.teamHeaderText}>Team</Text>
+      </View>
     </View>
   );
-
   const renderStatsHeader = (showDivision: boolean) => (
-    <View style={styles.row}>
+    <View style={styles.statsHeaderRow}>
       {[
         "Overall",
         "Conference",
@@ -346,7 +346,6 @@ export const CBBConferenceStandingsList = ({
 
     const hasDivisions = Object.keys(divisions).length > 1;
 
-    // ✅ only marginTop 12 on the header container (already what you're doing)
     return (
       <View style={[styles.wrapper, { marginBottom: isLast ? 0 : 12 }]}>
         <View style={styles.header}>

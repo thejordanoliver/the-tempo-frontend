@@ -191,13 +191,18 @@ export const StandingsList = ({
 
   if (loading)
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.center}>
         <StandingsSkeleton />
       </View>
     );
 
-  if (error) return <Text style={global.errorText}>{error}</Text>;
-
+  if (error)
+    return (
+      <View style={styles.center}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
+    
   // --- Group by division ---
   const divisions: Record<string, StandingsTeam[]> = {};
   conferences?.forEach((conf) => {

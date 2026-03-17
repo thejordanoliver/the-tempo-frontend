@@ -19,7 +19,6 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
@@ -34,26 +33,6 @@ import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
-
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
 
 export default function CBBLeagueScreen() {
   const navigation = useNavigation();
@@ -74,7 +53,7 @@ export default function CBBLeagueScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const apTop25 = useAPTop25("116");
+  const apTop25 = useAPTop25("CBB");
   const top25Teams = apTop25.map((t) => String(t?.id));
   const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
 
@@ -192,7 +171,7 @@ export default function CBBLeagueScreen() {
           }}
         >
           {/* SCORES */}
-          <ScrollView key="scores">
+          <View key="scores">
             <DateNavigator
               selectedDate={selectedDate}
               onChangeDate={changeDateByDays}
@@ -205,25 +184,23 @@ export default function CBBLeagueScreen() {
               loading={cbbloading}
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              scrollEnabled={false}
             />
-          </ScrollView>
+          </View>
 
           {/* NEWS */}
           <ScrollView key="news" />
 
+          {/* RANKINGS */}
+          <View key="rankings">
+            <CBBStandingsList league="CBB" />
+          </View>
+
           {/* STANDINGS */}
-          <ScrollView key="standings">
-            <>
-              {selectedConference === "Top 25" || !selectedConference ? (
-                <CBBStandingsList league="116" />
-              ) : (
-                <CBBConferenceStandingsList
-                  selectedConference={selectedConference}
-                />
-              )}
-            </>
-          </ScrollView>
+          <View key="standings">
+            <CBBConferenceStandingsList
+              selectedConference={selectedConference}
+            />
+          </View>
 
           {/* STATS */}
           <View key="stats">
@@ -234,6 +211,9 @@ export default function CBBLeagueScreen() {
               league={"CBB"}
             />
           </View>
+
+          {/* Bracket */}
+          <View key="bracket"></View>
 
           {/* AWARDS */}
           <ScrollView key="awards">

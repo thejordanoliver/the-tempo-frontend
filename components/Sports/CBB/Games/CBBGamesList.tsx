@@ -168,7 +168,7 @@ export default function CBBGamesList({
 
             return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
-          scrollEnabled={false}
+          scrollEnabled={scrollEnabled}
           contentContainerStyle={styles.skeletonGridWrapper}
         />
       );
@@ -249,6 +249,7 @@ export default function CBBGamesList({
           stickySectionHeadersEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={styles.contentContainer}
+          scrollEnabled={scrollEnabled}
         />
       )}
 

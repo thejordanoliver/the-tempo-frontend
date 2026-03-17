@@ -19,8 +19,6 @@ export const standingsStyles = (isDark: boolean) =>
     },
     center: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
     },
 
     header: {
@@ -34,6 +32,15 @@ export const standingsStyles = (isDark: boolean) =>
       fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.dark.white : Colors.light.black,
+    },
+    droppedHeading: {
+      fontSize: 20,
+      paddingBottom: 4,
+      marginBottom: 4,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.dark.white : Colors.light.black,
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     dropdownRow: {
       flexDirection: "row",
@@ -113,7 +120,7 @@ export const standingsStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 16,
       marginTop: 4,
-      marginLeft: 4,
+      paddingHorizontal: 12,
     },
     teamHeaderText: {
       fontFamily: Fonts.OSSEMIBOLD,

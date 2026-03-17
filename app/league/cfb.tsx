@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
+import { Bracket } from "components/Sports/CFB/Bracket/Bracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
@@ -18,6 +19,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
+import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -37,39 +39,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2025, "CFB");
-
-  return (
-    <SeasonLeadersList
-      loading={loading}
-      error={error}
-      categories={categories}
-      league={"CFB"}
-    />
-  );
-}
-
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
 export default function CFBeagueScreen() {
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
@@ -87,13 +56,14 @@ export default function CFBeagueScreen() {
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CFB");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const { data: bracketData } = useCFPBracket();
   // --- Week handling ---
   const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(
     getCurrentWeekIndex(weeks),
   );
   const selectedWeek = weeks[selectedWeekIndex];
+  const { categories, loading, error } = useSeasonLeaders(2025, "CFB");
 
   // --- AP Top 25 from rankings ---
   const apTop25 = useAPTop25();
@@ -206,6 +176,7 @@ export default function CFBeagueScreen() {
       top25Teams,
     });
   }, [cfbgames, selectedConference, top25Teams, selectedWeek]);
+
   return (
     <>
       <MainScrollTabBar
@@ -261,22 +232,30 @@ export default function CFBeagueScreen() {
             ></ScrollView>
           </View>
 
+          {/* RANKINGS */}
+          <View key="rankings" style={styles.contentArea}>
+            <CFBStandingsList />
+          </View>
+
           {/* STANDINGS */}
           <View key="standings" style={styles.contentArea}>
-            <>
-              {selectedConference === "Top 25" || !selectedConference ? (
-                <CFBStandingsList />
-              ) : (
-                <CFBConferenceStandingsList
-                  selectedConference={selectedConference}
-                />
-              )}
-            </>
+            <CFBConferenceStandingsList
+              selectedConference={selectedConference}
+            />
           </View>
 
           {/* STATS */}
           <View key="stats" style={styles.contentArea}>
-            <StatsTabContent />
+            <SeasonLeadersList
+              loading={loading}
+              error={error}
+              categories={categories}
+              league={"CFB"}
+            />
+          </View>
+
+          <View key="playoffs" style={styles.contentArea}>
+            {bracketData && <Bracket data={bracketData} />}
           </View>
 
           <View key="recruits" style={styles.contentArea}>

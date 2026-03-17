@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
-import { formatQuarter } from "utils/games";
+import { formatNHLQuarter, formatQuarter } from "utils/games";
 type GameInfoProps = {
   date: string;
   time?: string;
@@ -49,7 +49,7 @@ export function GameInfo({
 
       {inProgress && !endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatQuarter(period)}</Text>
+          <Text style={styles.date}>{formatNHLQuarter(period)}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>

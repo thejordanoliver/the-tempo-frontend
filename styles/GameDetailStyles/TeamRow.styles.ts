@@ -173,7 +173,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     preGameRecord: {
       fontFamily: Fonts.OSBOLD,
       textAlign: "center",
-      marginHorizontal: 16,
+      marginHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
     },
     scoreWrapper: {
@@ -213,7 +213,7 @@ export const sizeStyles = {
   },
   medium: {
     score: { fontSize: 36, width: 60 },
-    preGameRecord: { fontSize: 24, width: 60 },
+    preGameRecord: { fontSize: 20, width: 80 },
     logo: { width: 50, height: 50 },
     teamName: { fontSize: 12 },
     record: { fontSize: 12 },

@@ -12,7 +12,7 @@ type GameInfoProps = {
   inning?: string;
   isDark: boolean;
   isTopInning: boolean;
-  broadcastNetworks?: string;
+  broadcast?: string;
   outs: number;
   bases: {
     first: boolean;
@@ -27,27 +27,26 @@ export function GameInfo({
   date,
   time,
   isDark,
-  broadcastNetworks,
+  broadcast,
   isTopInning,
   outs,
   bases,
 }: GameInfoProps) {
   const styles = getStyles(isDark);
 
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period";
-  const endOfPeriod = gameStatusDescription === "End of Period";
-  const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
+  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
-  const isHalftime = gameStatusDescription === "Halftime";
+
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Inning";
+
   return (
     <View style={styles.container}>
-      {/* ⚾️ Scheduled */}
+      {/* ⚾ Scheduled */}
       {isScheduled && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date}</Text>
@@ -56,7 +55,7 @@ export function GameInfo({
         </View>
       )}
 
-      {/* 🕒 In Play */}
+      {/* 🕒 In Progress */}
       {inProgress && (
         <View>
           <View style={[styles.infoWrapper, { marginBottom: 2 }]}>
@@ -65,10 +64,14 @@ export function GameInfo({
               size={14}
               color={isDark ? Colors.white : Colors.black}
             />
+
             <Text style={styles.date}>{gameStatusDetail}</Text>
+
             <View style={styles.statusDivider} />
+
             <Text style={styles.finalText}>Outs: {outs}</Text>
           </View>
+
           <View style={{ marginTop: 2 }}>
             <BasesIndicator bases={bases} isDark={isDark} />
           </View>
@@ -97,12 +100,6 @@ export function GameInfo({
           <Text style={styles.finalText}>Postponed</Text>
         </View>
       )}
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
 
       {/* ⏸️ Delayed */}
       {isDelayed && (
@@ -112,10 +109,9 @@ export function GameInfo({
       )}
 
       {/* 📺 Broadcast */}
-      {(broadcastNetworks && inProgress) ||
-        (isScheduled && (
-          <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
-        ))}
+      {broadcast && (inProgress || isScheduled) && (
+        <Text style={styles.broadcasts}>{broadcast}</Text>
+      )}
     </View>
   );
 }

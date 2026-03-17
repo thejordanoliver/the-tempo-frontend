@@ -262,10 +262,7 @@ export default function GameTeamStats({
     ? homeTeam?.logoLight || homeTeam?.logo
     : homeTeam?.logo;
 
-  const awayColor = lighter
-    ? awayTeam?.secondaryColor
-    : ((isDark ? awayTeam?.secondaryColor : awayTeam?.color) ??
-      (isDark ? Colors.white : Colors.black));
+  const awayColor = isDark ? Colors.white : Colors.black
 
   const homeColor = lighter
     ? homeTeam?.secondaryColor

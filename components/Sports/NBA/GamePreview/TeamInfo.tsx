@@ -30,6 +30,9 @@ export default function TeamInfo({
   const styles = TeamInfoStyle;
 
   const isFinal = gameStatusDescription === "Final";
+  const inProgress = gameStatusDescription === "In Progress";
+
+  const isHalftime = gameStatusDescription === "Halftime";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -122,7 +125,7 @@ export default function TeamInfo({
         {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
-        {!dontShowDetails || (isScheduled && renderTimeouts(timeouts))}
+        {(inProgress || isHalftime) && renderTimeouts(timeouts)}
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}

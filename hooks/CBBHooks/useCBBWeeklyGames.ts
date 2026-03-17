@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
-import dayjs from "dayjs";
 import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
+import dayjs from "dayjs";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBTeam } from "types/types";
 export type CBBGame = {
   id: number;
@@ -33,6 +33,7 @@ type UseCBBWeeklyGamesOptions = {
   timezone?: string;
   isWomen?: boolean;
 };
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useCBBWeeklyGames({
   timezone = "America/New_York",
@@ -48,8 +49,12 @@ export function useCBBWeeklyGames({
 
   const enrichTeams = useCallback(
     (game: any) => {
-      const homeKey = isWomen ? Number(game.teams.home.wid) : Number(game.teams.home.id);
-      const awayKey = isWomen ? Number(game.teams.away.wid) : Number(game.teams.away.id);
+      const homeKey = isWomen
+        ? Number(game.teams.home.wid)
+        : Number(game.teams.home.id);
+      const awayKey = isWomen
+        ? Number(game.teams.away.wid)
+        : Number(game.teams.away.id);
 
       const homeTeam = teamsMap[homeKey] || game.teams.home;
       const awayTeam = teamsMap[awayKey] || game.teams.away;
@@ -62,7 +67,7 @@ export function useCBBWeeklyGames({
         },
       };
     },
-    [teamsMap, isWomen]
+    [teamsMap, isWomen],
   );
 
   const refreshCBBGames = useCallback(async () => {
@@ -70,12 +75,9 @@ export function useCBBWeeklyGames({
     setError(null);
 
     try {
-      const res = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000"}/api/games/cbb/weekly`,
-        {
-          params: { timezone, league },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/games/cbb/weekly`, {
+        params: { timezone, league },
+      });
 
       const data: CBBGame[] = res.data?.response || [];
       const enrichedData = data.map(enrichTeams);
@@ -95,12 +97,15 @@ export function useCBBWeeklyGames({
   }, [refreshCBBGames]);
 
   const isLiveGame = useCallback(
-    (game: CBBGame) => !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
-    []
+    (game: CBBGame) =>
+      !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
+    [],
   );
 
   const sortedGames = useMemo(() => {
-    return [...cbbGames].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)));
+    return [...cbbGames].sort(
+      (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)),
+    );
   }, [cbbGames, isLiveGame]);
 
   return {

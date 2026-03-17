@@ -405,7 +405,7 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     teamName: {
       position: "absolute",
       flexWrap: "nowrap",
-      color: "#fff",
+      color: Colors.white,
       fontFamily: Fonts.OSBOLD,
       fontSize: 24,
       flexShrink: 1,

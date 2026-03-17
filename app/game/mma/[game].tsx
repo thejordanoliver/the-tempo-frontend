@@ -3,6 +3,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
+import { GameLocation } from "components/Sports/NBA/GameDetails";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
@@ -45,8 +46,6 @@ export default function GameDetailsScreen() {
       hour12: true,
     }) || "";
 
-   
-
   const firstFighter = parsedGame?.fighters?.first.info ?? emptyFighter;
   const secondFighter = parsedGame?.fighters?.second.info ?? emptyFighter;
 
@@ -79,7 +78,7 @@ export default function GameDetailsScreen() {
     secondFighterEspnId,
     gameDateStr,
   );
-// console.log(details?.fight?.fightDetails[0].type.text)
+  // console.log(details?.fight?.fightDetails[0].type.text)
   useLayoutEffect(() => {
     if (isLoading || !details) {
       navigation.setOptions({
@@ -126,8 +125,9 @@ export default function GameDetailsScreen() {
   const period = details?.fight?.status.period ?? 0;
   const displayClock = details?.fight?.status.displayClock ?? "";
   const headline = details?.event?.shortName ?? "";
+  const address = details?.fight?.venue.address.address1;
+  const venueName = details?.fight?.venue.fullName;
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
-  // console.log(parsedGame?.id)
 
   if (isLoading || !details) {
     return (
@@ -142,7 +142,7 @@ export default function GameDetailsScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
+        contentContainerStyle={styles.container}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
@@ -165,7 +165,21 @@ export default function GameDetailsScreen() {
           firstFighterIsWinner={firstFighterWinner}
           secondFighterIsWinner={secondFighterWinner}
         />
-        {!dontShowDetails && <View style={{ gap: 20, marginTop: 20 }}></View>}
+        {!dontShowDetails && (
+          <View style={{ gap: 20, marginTop: 20 }}>
+            <GameLocation
+              venueImage={null}
+              venueName={venueName}
+              location={undefined}
+              address={address}
+              venueCapacity={""}
+              venueAttendance={undefined}
+              weather={null}
+              loading={false}
+              error={null}
+            />
+          </View>
+        )}
       </ScrollView>
       <Animated.View style={{ opacity: opacityAnim }}>
         <MemoizedFloatingChatButton gameId={String(parsedGame?.id)} />

@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
@@ -12,6 +11,7 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
+import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getTeamInfo } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -21,14 +21,13 @@ import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueNews } from "hooks/useLeagueNews";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import TabBar from "../../components/TabBar";
-import { useHighlights } from "../../hooks/useHighlights";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -82,16 +81,15 @@ export default function WCBBLeagueScreen() {
   const styles = getScoresStyles(isDark);
 
   const conferenceModalRef = React.useRef<ConferenceListModalRef>(null);
-
+  const pagerRef = React.useRef<PagerView>(null);
   const [selectedConference, setSelectedConference] =
     React.useState<string>("Top 25");
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState<
-    "scores" | "news" | "standings" | "stats" | "awards" | "forum"
-  >("scores");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("WCBB");
   const [refreshing, setRefreshing] = React.useState(false);
   const [showCalendarModal, setShowCalendarModal] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+  const { categories, loading, error } = useSeasonLeaders(2026, "WCBB");
 
   const {
     games: seasonGames,
@@ -99,6 +97,13 @@ export default function WCBBLeagueScreen() {
     refreshCBBGames,
   } = useCBBSeasonGames({ isWomen: true });
 
+  const changeDateByDays = (days: number) => {
+    setSelectedDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + days);
+      return newDate;
+    });
+  };
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -113,17 +118,11 @@ export default function WCBBLeagueScreen() {
   /* -------------------------------
      WOMEN’S AP TOP 25 (FIXED)
   -------------------------------- */
-  const apTop25 = useAPTop25("423");
+  const apTop25 = useAPTop25("WCBB");
   const top25Teams = React.useMemo(
     () => apTop25.map((t) => String(t?.id)),
     [apTop25],
   );
-
-  /* -------------------------------
-     NEWS / HIGHLIGHTS
-  -------------------------------- */
-  const { news: cbbNews, loading: cfbLoading } = useLeagueNews("WCBB");
-  const { highlights } = useHighlights("wcbb", "", 10);
 
   /* -------------------------------
      HEADER
@@ -177,94 +176,87 @@ export default function WCBBLeagueScreen() {
     return result;
   }, [seasonGames, selectedDate, selectedConference, top25Teams]);
 
-  // --- Combine news + highlights ---
-  const combinedNewsAndHighlights: CombinedItem[] = React.useMemo(() => {
-    const taggedNews: CombinedItem[] = cbbNews.map((item) => ({
-      ...item,
-      itemType: "news",
-      publishedAt: item.publishedAt ?? item.date ?? new Date().toISOString(),
-    }));
-    const taggedHighlights: CombinedItem[] = highlights.map((item) => ({
-      ...item,
-      itemType: "highlight",
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-    const combined = [...taggedNews, ...taggedHighlights];
-    combined.sort(
-      (a, b) =>
-        new Date(b.publishedAt || new Date().toISOString()).getTime() -
-        new Date(a.publishedAt || new Date().toISOString()).getTime(),
-    );
-    return combined;
-  }, [cbbNews, highlights]);
-
   /* -------------------------------
      RENDER
   -------------------------------- */
   return (
     <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={(tab) => {
+          setSelectedTab(tab);
+          const index = tabs.indexOf(tab);
+          pagerRef.current?.setPage(index);
+        }}
+      />
+
       <View style={styles.container}>
-        <TabBar
-          tabs={["scores", "news", "standings", "stats", "awards", "forum"]}
-          selected={selectedTab}
-          onTabPress={setSelectedTab}
-        />
+        <PagerView
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
+            setSelectedTab(tabs[index]);
+          }}
+        >
+          {/* SCORES */}
+          <View key="scores">
+            <DateNavigator
+              selectedDate={selectedDate}
+              onChangeDate={changeDateByDays}
+              onOpenCalendar={() => setShowCalendarModal(true)}
+              isDark={isDark}
+            />
 
-        <View style={styles.contentArea}>
-          {selectedTab === "scores" && (
-            <>
-              <DateNavigator
-                selectedDate={selectedDate}
-                onChangeDate={(d) =>
-                  setSelectedDate(dayjs(selectedDate).add(d, "day").toDate())
-                }
-                onOpenCalendar={() => setShowCalendarModal(true)}
-                isDark={isDark}
-              />
+            <CBBGamesList
+              games={filteredGames}
+              loading={cbbloading}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+            />
+          </View>
 
-              <CBBGamesList
-                games={filteredGames}
-                loading={cbbloading}
-                refreshing={refreshing}
-                onRefresh={refreshCBBGames}
-                scrollEnabled={false}
-                isWomen
-              />
-            </>
-          )}
+          {/* NEWS */}
+          <ScrollView key="news" />
 
-          {selectedTab === "news" && (
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={refreshCBBGames}
-                />
-              }
-            >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={cfbLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
-          )}
+          {/* Rankings */}
+          <View key="rankings">
+            <CBBStandingsList league="WCBB" />
+          </View>
+          {/* STANDINGS */}
+          <View key="standings">
+            <CBBConferenceStandingsList
+              selectedConference={selectedConference}
+            />
+          </View>
 
-          {selectedTab === "standings" &&
-            (selectedConference === "Top 25" ? (
-              <CBBStandingsList league="423" />
-            ) : (
-              <CBBConferenceStandingsList
-                selectedConference={selectedConference}
-                women
-              />
-            ))}
+          {/* STATS */}
+          <View key="stats">
+            <SeasonLeadersList
+              loading={loading}
+              error={error}
+              categories={categories}
+              league={"WCBB"}
+            />
+          </View>
 
-          {selectedTab === "stats" && <StatsTabContent />}
-          {selectedTab === "awards" && <AwardSeasons league="WCBB" />}
-          {selectedTab === "forum" && <LeagueForum league="WCBB" />}
-        </View>
+          {/* Bracket */}
+          <View key="bracket">
+       
+          </View>
+
+          {/* AWARDS */}
+          <ScrollView key="awards">
+            <AwardSeasons league="WCBB" />
+          </ScrollView>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league="WCBB" />
+          </View>
+        </PagerView>
       </View>
 
       <ConferenceListModal

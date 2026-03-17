@@ -12,10 +12,10 @@ export const awardTableStyles = (isDark: boolean) =>
     },
     container: { marginVertical: 12 },
     table: {
+      overflow: "hidden",
+      borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      overflow: "hidden",
-      borderColor: isDark ? Colors.white : Colors.black,
     },
 
     errorText: {
@@ -31,8 +31,7 @@ export const awardTableStyles = (isDark: boolean) =>
       height: ROW_HEIGHT,
       alignItems: "center",
       borderBottomWidth: 1,
-      borderColor: Colors.lightGray,
-      backgroundColor: Colors.darkGray + "20",
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     headerName: {

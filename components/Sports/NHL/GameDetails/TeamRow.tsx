@@ -44,7 +44,7 @@ export const TeamRow = ({
   // Routing
   // -----------------------------------------------------
   const handleTeamPress = () => {
-    if (team.id) router.push(`/team/mlb/${team.id}`);
+    if (team.id) router.push(`/team/nhl/${team.id}`);
   };
 
   // -----------------------------------------------------

@@ -77,10 +77,11 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
   const firstFighterRecord = game.fighters?.first?.info?.record;
   const secondFighterRecord = game.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description ?? game.status.long;
-  const isScheduled = gameStatusDescription === "Scheduled" || gameStatusDescription ===  "Not Started";
-  const isCanceled = gameStatusDescription === "Canceled" || gameStatusDescription ===  "Cancelled" ;
-  const isFinal = gameStatusDescription === "Final" || "Finished";
+
+  const gameStatusDescription = details?.fight?.status.description;
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeited";
@@ -88,6 +89,7 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const inProgress = gameStatusDescription === "In Progress";
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
+
   const broadcasts = details?.fight?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const period = details?.fight?.status.period;

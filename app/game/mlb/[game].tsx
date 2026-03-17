@@ -103,8 +103,8 @@ export default function GameDetailsScreen() {
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
   const playerStats = liveScore?.playerStats ?? [];
-  const homeScore = liveScore?.home.total ?? parsedGame.scores.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? parsedGame.scores.away.total ?? 0;
+  const homeScore = liveScore?.home?.total ?? parsedGame?.scores?.home?.total ?? 0;
+  const awayScore = liveScore?.away?.total ?? parsedGame?.scores?.away?.total ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const period = liveScore?.period;
@@ -194,7 +194,7 @@ export default function GameDetailsScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
+        contentContainerStyle={styles.container}
         stickyHeaderIndices={[0]}
         onScrollBeginDrag={handleScrollStart}
         onScrollEndDrag={handleScrollEnd}
@@ -222,9 +222,10 @@ export default function GameDetailsScreen() {
           bases={bases}
         />
 
-        {!isFinal && <LastPlay lastPlay={lastPlay} />}
 
         <View style={styles.innerContainer}>
+        {!isFinal && <LastPlay lastPlay={lastPlay} />}
+        
           {!isFinal && (
             <WinPredictionVote
               gameId={parsedGame.id}

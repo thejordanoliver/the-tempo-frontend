@@ -1,3 +1,4 @@
+import { Colors } from "constants/Styles";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -17,13 +18,11 @@ export const FighterRow = ({
   const router = useRouter();
   const styles = teamRowStyles(isDark);
 
-  const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
 
   const record = fighter.record === "-" ? "" : fighter.record;
-  const isInvalidRecord = record === "-";
-  const displayRecord = isInvalidRecord ? "" : record;
+  const displayRecord = record ?? "0-0";
   const route = "/player/mma/[id]";
   // -----------------------------------------------------
   // Routing
@@ -38,6 +37,32 @@ export const FighterRow = ({
       });
   };
 
+
+    /* -----------------------------------------------------
+     * Styles
+     * --------------------------------------------------- */
+    const getScoreStyle = () => {
+      if (isWinner == false && isFinal) {
+        return { color: Colors.midTone, opacity: 0.5 };
+      }
+  
+      if (inProgress) {
+        return { color: isDark ? Colors.white : Colors.black };
+      }
+  
+      if (isFinal) {
+        return {
+          color: isWinner
+            ? isDark
+              ? Colors.dark.white
+              : Colors.light.black
+            : Colors.midTone,
+        };
+      }
+  
+      return { color: Colors.white };
+    };
+
   // -----------------------------------------------------
   // RENDER
   // -----------------------------------------------------
@@ -45,7 +70,15 @@ export const FighterRow = ({
     <View style={styles.row}>
       {/* Home Score */}
       {isFirstFighter && (
-        <Text style={styles.preGameRecord}>{displayRecord}</Text>
+        <Text
+          style={[
+            styles.preGameRecord,
+            [styles.preGameRecord, sizeStyles[size].preGameRecord],
+            getScoreStyle()
+          ]}
+        >
+          {displayRecord}
+        </Text>
       )}
 
       {/* Team Info */}
@@ -66,7 +99,15 @@ export const FighterRow = ({
 
       {/* Away Score */}
       {!isFirstFighter && (
-        <Text style={styles.preGameRecord}>{displayRecord}</Text>
+        <Text
+          style={[
+            styles.preGameRecord,
+            [styles.preGameRecord, sizeStyles[size].preGameRecord],
+            getScoreStyle()
+          ]}
+        >
+          {displayRecord}
+        </Text>
       )}
     </View>
   );

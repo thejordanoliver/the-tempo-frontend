@@ -1,3 +1,4 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import OfferList from "components/Sports/CFB/Recruiting/OfferLists";
 import PredictionRing from "components/Sports/CFB/Recruiting/PredictionRing";
@@ -56,7 +57,7 @@ export default function RecruitDetailScreen(props: FootballRecruit) {
     });
   }, [navigation, isDark, player?.committed_team_id]);
 
-  if (loading) return null;
+  if (loading) return <CustomActivityIndicator/>;
   if (!player) return null;
 
   return (

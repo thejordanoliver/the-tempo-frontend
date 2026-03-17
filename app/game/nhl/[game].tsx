@@ -9,12 +9,12 @@ import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVo
 import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
 import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
 import NHLInjuries from "components/Sports/NHL/GameDetails/NHLInjuries";
+import ShotChart from "components/Sports/NHL/GameDetails/ShotChart";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
-import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
@@ -42,29 +42,6 @@ export default function GameDetailsScreen() {
 
   const { home, away } = parsedGame;
 
-  const date = useMemo(() => {
-    const d = parsedGame?.date;
-
-    if (!d) return null;
-
-    // Best source → timestamp (API-Sports is always correct)
-    if (typeof d.timestamp === "number") {
-      return new Date(d.timestamp * 1000);
-    }
-
-    // Next best → utc string
-    if (typeof d.utc === "string") {
-      return new Date(d.utc);
-    }
-
-    // Fallback → date.time + date.timezone (rarely needed)
-    if (typeof d.time === "string") {
-      return new Date(`${d.time} ${d.timezone}`);
-    }
-
-    return null;
-  }, [parsedGame]);
-
   const timestamp = parsedGame?.timestamp;
 
   const {
@@ -73,9 +50,6 @@ export default function GameDetailsScreen() {
     formattedDate,
     formattedTime,
   } = getGameDate(timestamp);
-  const gameDateObj = useMemo(() => {
-    return date ?? new Date();
-  }, [date]);
 
   const homeId = home?.id ?? parsedGame?.teams?.home?.id;
   const awayId = away?.id ?? parsedGame?.teams?.away?.id;
@@ -87,8 +61,8 @@ export default function GameDetailsScreen() {
   const awayTeamId = awayTeam?.id;
   const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
-  const homeLogo = getNHLTeamLogo(home.id, isDark);
-  const awayLogo = getNHLTeamLogo(away.id, isDark);
+  const homeLogo = getNHLTeamLogo(home?.id, isDark);
+  const awayLogo = getNHLTeamLogo(away?.id, isDark);
   const homeEspnId = homeTeam?.espnID;
   const awayEspnId = awayTeam?.espnID;
 
@@ -113,19 +87,19 @@ export default function GameDetailsScreen() {
   const plays = liveScore?.plays;
   const lastPlay = liveScore?.lastPlay;
   const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
-  const isPostSeason = details?.isPostseason ?? false;
   const seriesSummary = details?.seriesSummary?.summary;
+  const period = liveScore?.period;
   const clock = liveScore?.displayClock ?? "0:00";
-  const homeScore = liveScore?.home.total ?? parsedGame.scores.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? parsedGame.scores.away.total ?? 0;
+  const homeScore =
+    liveScore?.home?.total ?? parsedGame?.scores?.home?.total ?? 0;
+  const awayScore =
+    liveScore?.away?.total ?? parsedGame?.scores?.away?.total ?? 0;
   const homeRecord = details?.records?.home.overall ?? "0-0";
   const awayRecord = details?.records?.away.overall ?? "0-0";
   const homeTimeouts = liveScore?.timeouts.home ?? 0;
@@ -151,12 +125,6 @@ export default function GameDetailsScreen() {
         league: "NHL",
       }),
     [venue, homeTeam, neutralSite],
-  );
-
-  const { weather } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateStr,
   );
 
   useLayoutEffect(() => {
@@ -201,7 +169,7 @@ export default function GameDetailsScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
+        contentContainerStyle={styles.container}
         stickyHeaderIndices={[0]}
         onScrollBeginDrag={handleScrollStart}
         onScrollEndDrag={handleScrollEnd}
@@ -215,6 +183,7 @@ export default function GameDetailsScreen() {
           homeScore={homeScore}
           awayScore={awayScore}
           isDark={isDark}
+          period={period}
           displayClock={clock}
           formattedDate={formattedDate}
           time={formattedTime}
@@ -227,7 +196,7 @@ export default function GameDetailsScreen() {
           gameStatusDetail={gameStatusDetail}
         />
 
-        <View style={{ gap: 20, marginTop: 20 }}>
+        <View style={styles.innerContainer}>
           {!dontShowDetails && (
             <>
               {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
@@ -254,12 +223,22 @@ export default function GameDetailsScreen() {
                 />
               )}
 
-              <LineScore
-                linescore={lineScore}
-                homeCode={homeTeam.code}
-                awayCode={awayTeam.code}
-                league="NHL"
-              />
+              {lineScore && (
+                <LineScore
+                  linescore={lineScore}
+                  homeCode={homeCode}
+                  awayCode={awayCode}
+                  league="NHL"
+                />
+              )}
+
+              {!isScheduled && (
+                <ShotChart
+                  plays={plays}
+                  homeTeamId={String(homeEspnId)}
+                  awayTeamId={String(awayEspnId)}
+                />
+              )}
 
               <GameSummary plays={plays ?? []} />
 
@@ -289,7 +268,6 @@ export default function GameDetailsScreen() {
                 address={resolvedVenue.address}
                 venueCapacity={String(resolvedVenue.capacity ?? "")}
                 venueAttendance={undefined}
-                weather={weather}
                 loading={false}
                 error={null}
               />

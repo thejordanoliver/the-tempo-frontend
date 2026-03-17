@@ -17,6 +17,7 @@ export default function PlayerDetailScreen() {
   const { fighter, loading, error } = useMMAFighter(id ?? 0);
   const flag = fighter?.flag_url;
   const color = fighter?.color ?? fighter?.alternate_color ?? "";
+  console.log(JSON.stringify(fighter, null, 2))
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (

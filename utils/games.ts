@@ -295,7 +295,7 @@ export function resolveVenue({
       name: espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "",
       city: espnVenue?.address?.city ?? homeTeam?.location ?? "",
       address: espnVenue?.address?.street ?? homeTeam?.address ?? "",
-      image: espnVenue?.images?.[0]?.href ?? homeTeam?.venueImage ?? "",
+      image: homeTeam?.venueImage ?? espnVenue?.images?.[0]?.href ?? "",
       capacity: espnVenue?.capacity ?? homeTeam?.venueCapacity ?? "",
       latitude: espnVenue?.address?.latitude ?? homeTeam?.latitude ?? null,
       longitude: espnVenue?.address?.longitude ?? homeTeam?.longitude ?? null,
@@ -315,3 +315,5 @@ export function resolveVenue({
     longitude: null,
   };
 }
+
+

@@ -1,18 +1,17 @@
 // components/CBBStandingsList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
-import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamByESPNId } from "constants/teamsCBB";
+import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
-  Animated,
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -22,46 +21,27 @@ import {
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
-  league: "116" | "423"; // 116 = Men, 423 = Women
+  league: "CBB" | "WCBB";
+  isWomen?: boolean;
 };
 
-export const CBBStandingsList = ({ league = "116" }: Props) => {
-  const { rankings = [], loading, error } = useCBBRankings(league);
+export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
+  const { rankings, loading, error, refresh } = useCBBRankings(league);
+
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
   const { isFavorite } = useFavoriteTeams();
-  const leagueKey = league === "116" ? "CBB" : "WCBB";
+  const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownAnim = useRef(new Animated.Value(0)).current;
-  const toggleDropdown = () => {
-    if (dropdownVisible) {
-      Animated.timing(dropdownAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => setDropdownVisible(false));
-    } else {
-      setDropdownVisible(true);
-      Animated.timing(dropdownAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      await refresh();
+    } finally {
+      setRefreshing(false);
     }
   };
-
-  const onSelectPollMode = (mode: "ap" | "coaches") => {
-    setPollMode(mode);
-    toggleDropdown();
-  };
-
-  const dropdownTranslateY = dropdownAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 0],
-  });
-
   if (loading)
     return (
       <View style={{ flex: 1 }}>
@@ -72,7 +52,7 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
   if (error)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "red" }}>{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     );
 
@@ -93,26 +73,23 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
     item: CBBTeamRank;
     index: number;
   }) => {
+    const isLastRow = index === filteredRankings.length - 1;
     const team = getTeamByESPNId(item.team?.id ?? "");
     const teamId = team?.id;
-    const teamLogo =
-      isDark && league === "423"
-        ? team?.wLogo || team?.logoLight || team?.logo
-        : league === "423"
-          ? team?.wLogo || team?.logo
-          : isDark
-            ? team?.logoLight || team?.logo
-            : team?.logo;
+    const teamLogo = getCBBTeamLogo(teamId, isDark, isWomen);
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
-    const isDown = trendNum < 0;
-    const favorited = team ? isFavorite(leagueKey, team.id) : false;
+    const favorited = team ? isFavorite(league, team.id) : false;
 
     return (
       <View
         style={[
           styles.row,
+          !isLastRow && {
+            borderBottomWidth: 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          },
           favorited && {
             backgroundColor: isDark
               ? Colors.dark.itemBackground
@@ -184,13 +161,24 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
     );
   };
 
-  const renderRightItem = ({ item }: { item: CBBTeamRank }) => {
+  const renderRightItem = ({
+    item,
+    index,
+  }: {
+    item: CBBTeamRank;
+    index: number;
+  }) => {
+    const isLastRow = index === filteredRankings.length - 1;
     const team = getTeamByESPNId(item.team?.id ?? "");
-    const favorited = team ? isFavorite(leagueKey, team.id) : false;
+    const favorited = team ? isFavorite(league, team.id) : false;
     return (
       <View
         style={[
           styles.row,
+          !isLastRow && {
+            borderBottomWidth: 1,
+            borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+          },
           favorited && {
             backgroundColor: isDark
               ? Colors.dark.itemBackground
@@ -316,27 +304,12 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
   function Section({ title, data }: { title: string; data: CBBTeamRank[] }) {
     return (
       <>
-        <View style={{ marginTop: 24 }}>
-          <HeadingTwo style={{ marginBottom: 0 }}>{title}</HeadingTwo>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <FlatList
-            data={data}
-            keyExtractor={(item, index) =>
-              item.team?.id
-                ? String(item.team.id)
-                : `fallback-${index}-${item.date}`
-            }
-            renderItem={renderLeftItem}
-            scrollEnabled={false}
-            ListHeaderComponent={renderHeader}
-            stickyHeaderIndices={[0]}
-          />
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ width: 220 }}
-          >
+        <View style={styles.wrapper}>
+          <View style={styles.header}>
+            <Text style={styles.heading}>{title}</Text>
+          </View>
+
+          <View style={{ flexDirection: "row" }}>
             <FlatList
               data={data}
               keyExtractor={(item, index) =>
@@ -344,12 +317,30 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
                   ? String(item.team.id)
                   : `fallback-${index}-${item.date}`
               }
-              renderItem={renderRightItem}
+              renderItem={renderLeftItem}
               scrollEnabled={false}
-              ListHeaderComponent={renderStatsHeader}
+              ListHeaderComponent={renderHeader}
               stickyHeaderIndices={[0]}
             />
-          </ScrollView>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ width: 220 }}
+            >
+              <FlatList
+                data={data}
+                keyExtractor={(item, index) =>
+                  item.team?.id
+                    ? String(item.team.id)
+                    : `fallback-${index}-${item.date}`
+                }
+                renderItem={renderRightItem}
+                scrollEnabled={false}
+                ListHeaderComponent={renderStatsHeader}
+                stickyHeaderIndices={[0]}
+              />
+            </ScrollView>
+          </View>
         </View>
       </>
     );
@@ -357,21 +348,22 @@ export const CBBStandingsList = ({ league = "116" }: Props) => {
 
   return (
     <ScrollView
-      style={{}}
-      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
+      contentContainerStyle={styles.contentContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     >
-      {/* --- Dropdown Header --- */}
-      <Dropdown
-        options={[
-          { label: "AP Poll", value: "ap" },
-          { label: "Coaches Poll", value: "coaches" },
-        ]}
-        selectedValue={pollMode}
-        onSelect={(value) => setPollMode(value as "ap" | "coaches")}
-        isDark={isDark}
-        absolute
-      />
-
+      <View style={styles.dropdownRow}>
+        <Dropdown
+          options={[
+            { label: "AP Poll", value: "ap" },
+            { label: "Coaches Poll", value: "coaches" },
+          ]}
+          selectedValue={pollMode}
+          onSelect={(value) => setPollMode(value as "ap" | "coaches")}
+          isDark={isDark}
+        />
+      </View>
       {/* --- Rankings Section --- */}
       <Section
         title={pollMode === "ap" ? "AP Poll" : "Coaches Poll"}
