@@ -46,7 +46,6 @@ export const StackedGameCardStyles = (
       alignItems: "center",
       gap: 8,
       width: 100,
-      backgroundColor: "red",
       flex: 1,
     },
     logo: { width: 24, height: 24, resizeMode: "contain" },

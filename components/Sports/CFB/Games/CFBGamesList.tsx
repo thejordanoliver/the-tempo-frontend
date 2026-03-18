@@ -52,7 +52,7 @@ export default function CFBGamesList({
 }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = footballGamesListStyle(isDark);
+  const styles = footballGamesListStyle;
   const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
   const PAGE_SIZE = 20;

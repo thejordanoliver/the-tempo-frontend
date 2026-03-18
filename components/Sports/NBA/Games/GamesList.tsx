@@ -37,7 +37,7 @@ export default function GamesList({
 }: GamesListProps) {
   const { viewMode } = usePreferences();
   const isDark = useColorScheme() === "dark";
-  const styles = gameListStyles(isDark);
+  const styles = gameListStyles;
   const global = globalStyles(isDark);
 
   const [previewGame, setPreviewGame] = useState<Game | null>(null);
@@ -190,6 +190,7 @@ export default function GamesList({
           refreshing={refreshing}
           onRefresh={onRefresh}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.gridListContainer}
           scrollEnabled={scrollEnabled}
         />
 

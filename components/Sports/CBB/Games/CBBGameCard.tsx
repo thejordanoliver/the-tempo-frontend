@@ -207,9 +207,10 @@ function CBBGameCard({
       </View>
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-      {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
-
+   {/* headlineText */}
+      <View style={styles.headlineContainer}>
+        <Text style={[styles.headlineText]}>{headlineText}</Text>
+      </View>
       {/* Center Info */}
       <View style={styles.info}>
         {renderStatus()}

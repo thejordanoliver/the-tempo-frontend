@@ -53,7 +53,7 @@ export default function CBBGamesList({
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const { viewMode } = usePreferences();
-  const styles = gameListStyles(isDark);
+  const styles = gameListStyles;
   const global = globalStyles(isDark);
 
   const [previewGame, setPreviewGame] = useState<any | null>(null);

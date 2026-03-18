@@ -22,7 +22,7 @@ export default function GameCardSkeleton() {
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -59,58 +59,79 @@ export default function GameCardSkeleton() {
   );
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
+const getStyles = (isDark: boolean) => {
+  const skeletonColor = isDark ? Colors.darkGray : Colors.lightGray;
+
+  return StyleSheet.create({
+    /* =========================
+       🧱 CARD LAYOUT (match real)
+    ========================= */
     card: {
       flexDirection: "row",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      paddingVertical: 18,
-      paddingHorizontal: 12,
+      padding: 14, // ✅ match real card
       alignItems: "center",
-      justifyContent: "space-evenly",
+      justifyContent: "space-between",
     },
+
+    /* =========================
+       🏀 TEAM SECTION
+    ========================= */
     teamSection: {
       alignItems: "center",
-      width: 80,
+      width: 60,
     },
+
     logoSkeleton: {
       width: 40,
       height: 40,
       borderRadius: 100,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      marginBottom: 4,
+      backgroundColor: skeletonColor,
     },
+
     nameSkeleton: {
-      width: 40,
+      width: 60, // ✅ closer to real teamName width feel
       height: 12,
       borderRadius: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: skeletonColor,
+      marginTop: 6, // ✅ match spacing from logo → name
     },
+
+    /* =========================
+       🔢 SCORE
+    ========================= */
     scoreSkeleton: {
-      width: 40,
-      height: 20,
+      width: 50,
+      height: 28, // ✅ match large score feel
       borderRadius: 6,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: skeletonColor,
     },
+
+    /* =========================
+       📊 CENTER INFO
+    ========================= */
     info: {
       alignItems: "center",
       justifyContent: "center",
       width: 120,
     },
-    broadcastSkeleton: {
-      width: 40,
-      height: 12,
-      borderRadius: 6,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
+
     timeSkeleton: {
-      width: 80,
-      height: 12,
-      marginVertical: 6,
+      width: 70,
+      height: 14,
       borderRadius: 6,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: skeletonColor,
+      marginBottom: 6,
+    },
+
+    broadcastSkeleton: {
+      width: 50,
+      height: 10,
+      borderRadius: 6,
+      backgroundColor: skeletonColor,
     },
   });
+};

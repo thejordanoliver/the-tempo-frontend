@@ -3,9 +3,7 @@ import { StyleSheet } from "react-native";
 
 export const seasonStatCardStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {
-      paddingHorizontal: 12,
-    },
+  
     card: {
       borderRadius: 8,
       padding: 16,

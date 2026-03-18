@@ -64,7 +64,7 @@ export default function PlayerDetailScreen() {
       />
 
       {player.active && (
-        <View style={{ marginTop: 24 }}>
+        <View style={{ paddingHorizontal: 12,marginTop: 24 }}>
           <SeasonStatCard
             playerId={player.player_id}
             teamColor={teamObj?.secondaryColor}

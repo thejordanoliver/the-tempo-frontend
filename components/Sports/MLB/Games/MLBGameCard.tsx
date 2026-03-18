@@ -135,26 +135,6 @@ function MLBGameCard({ game }: Props) {
     );
   };
 
-  const renderHeadline = () => (
-    <>
-      {isPostSeason ? (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.postSeasonHeadlineText}>{headline}</Text>
-          <View style={styles.headlineDivider} />
-          <Text style={styles.postSeasonHeadlineText}>
-            {seriesSummary?.summary}
-          </Text>
-        </View>
-      ) : filteredHeadline ? (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText}>{filteredHeadline}</Text>
-        </View>
-      ) : isSpringTraining ? (
-        <Text style={styles.headlineText}>{game.league.name}</Text>
-      ) : null}
-    </>
-  );
-
   const renderStatus = () => {
     if (inProgress)
       return (
@@ -168,7 +148,7 @@ function MLBGameCard({ game }: Props) {
 
             <Text style={styles.period}>{gameStatusDetail}</Text>
             <View style={styles.statusDivider} />
-            <Text style={styles.clock}>Outs: {outs}</Text>
+            <Text style={styles.outs}>Outs: {outs}</Text>
           </View>
           <BasesIndicator bases={bases} isDark={isDark} size={8} />
         </>
@@ -214,8 +194,11 @@ function MLBGameCard({ game }: Props) {
       {/* Away Score / Record */}
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-      {/* headlineText */}
-      {renderHeadline()}
+  {/* headlineText */}
+      <View style={styles.headlineContainer}>
+        <Text style={[styles.headlineText]}>{headline}</Text>
+      </View>
+
 
       {/* Game Info */}
       <View style={styles.info}>

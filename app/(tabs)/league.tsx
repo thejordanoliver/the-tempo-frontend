@@ -11,7 +11,6 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { Colors } from "constants/Styles";
-import { getTeamInfo } from "constants/teams";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -141,28 +140,10 @@ export default function LeagueScreen() {
         let home, away;
 
         if (leagueType === "NBA") {
-          // Pass only the minimum fields needed to map to your constants
-          const homeData = {
-            id: game.teams?.home?.id ?? game.home?.id,
-            espnID: game.teams?.home?.espnID ?? game.home?.espnID,
-            name: game.teams?.home?.name ?? game.home?.name,
-            code: game.teams?.home?.code ?? game.home?.code,
-          };
-
-          const awayData = {
-            id: game.teams?.visitors?.id ?? game.away?.id,
-            espnID: game.teams?.visitors?.espnID ?? game.away?.espnID,
-            name: game.teams?.visitors?.name ?? game.away?.name,
-            code: game.teams?.visitors?.code ?? game.away?.code,
-          };
-
-          home = getTeamInfo(homeData.id) || {
-            ...homeData,
-            id: String(homeData.id),
-          };
-          away = getTeamInfo(awayData.id) || {
-            ...awayData,
-            id: String(awayData.id),
+          home = { ...game.home, id: String(game.home?.id) };
+          away = {
+            ...game.away,
+            id: String(game.away?.id),
           };
         } else if (leagueType === "NFL" || leagueType === "CFB") {
           home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
@@ -171,13 +152,11 @@ export default function LeagueScreen() {
           home = {
             id: game.teams?.home?.id,
             name: game.teams?.home?.name,
-            logo: game.teams?.home?.logo,
           };
 
           away = {
             id: game.teams?.away?.id,
             name: game.teams?.away?.name,
-            logo: game.teams?.away?.logo,
           };
         } else {
           home = normalizeTeam(game.teams?.home, isWomen);

@@ -8,6 +8,7 @@ import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
 import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
@@ -15,7 +16,6 @@ import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import { getCBBTeamLogo, teams } from "constants/teamsCBB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -379,7 +379,7 @@ export default function GameDetailsScreen() {
             )}
 
             {!isFinal && (
-              <WinPredictionVote
+              <FanPredictionVote
                 gameId={`${homeTeamId}-${awayTeamId}`}
                 awayTeam={voteAwayTeam as any}
                 homeTeam={voteHomeTeam as any}

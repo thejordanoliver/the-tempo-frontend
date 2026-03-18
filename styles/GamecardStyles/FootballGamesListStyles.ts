@@ -1,37 +1,37 @@
 import { StyleSheet } from "react-native";
-export const footballGamesListStyle = (isDark: boolean) =>
-  StyleSheet.create({
-    /* ---------- Containers ---------- */
 
-    contentContainer: {
-      paddingHorizontal: 12,
-      paddingBottom: 100,
-    },
+export const footballGamesListStyle = StyleSheet.create({
+  /* ---------- Containers ---------- */
 
-    gridListContainer: {
-      paddingHorizontal: 12,
-      paddingBottom: 100,
-    },
+  contentContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 100,
+  },
 
-    skeletonWrapper: {
-      paddingHorizontal: 12,
-      paddingVertical: 4,
-      gap: 12,
-    },
+  gridListContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 100,
+  },
 
-    skeletonGridWrapper: {
-      gap: 12,
-    },
+  skeletonWrapper: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    gap: 12,
+  },
 
-    /* ---------- Grid ---------- */
+  skeletonGridWrapper: {
+    gap: 12,
+  },
 
-    gridRow: {
-      flexDirection: "row",
-      gap: 12, // 🔑 single source of truth
-      marginBottom: 12,
-    },
+  /* ---------- Grid ---------- */
 
-    gridItem: {
-      flex: 1,
-    },
-  });
+  gridRow: {
+    flexDirection: "row",
+    gap: 12, // 🔑 single source of truth
+    marginBottom: 12,
+  },
+
+  gridItem: {
+    flex: 1,
+  },
+});

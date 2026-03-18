@@ -17,10 +17,10 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 
 /* --- Game Detail Components --- */
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 
 /* --- NFL Components --- */
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
@@ -362,7 +362,7 @@ export default function NFLGameDetailsScreen() {
             {gameStatusDescription !== "Final" &&
               homeTeam !== emptyNFLHomeTeam &&
               awayTeam !== emptyNFLAwayTeam && (
-                <WinPredictionVote
+                <FanPredictionVote
                   gameId={gameInfo?.id ?? ""}
                   awayTeam={{
                     id: awayTeam.id,

@@ -3,9 +3,9 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
 import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
 import NHLInjuries from "components/Sports/NHL/GameDetails/NHLInjuries";
@@ -202,11 +202,10 @@ export default function GameDetailsScreen() {
               {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
 
               {!isFinal && (
-                <WinPredictionVote
+                <FanPredictionVote
                   gameId={parsedGame.id}
                   awayTeam={{
                     id: awayTeam.id,
-                    name: awayTeam.name,
                     code: awayTeam.code,
                     logo: awayTeam.logo,
                     logoLight: awayTeam.logoLight,
@@ -214,7 +213,6 @@ export default function GameDetailsScreen() {
                   }}
                   homeTeam={{
                     id: homeTeam.id,
-                    name: homeTeam.name,
                     code: homeTeam.code,
                     logo: homeTeam.logo,
                     logoLight: homeTeam.logoLight,

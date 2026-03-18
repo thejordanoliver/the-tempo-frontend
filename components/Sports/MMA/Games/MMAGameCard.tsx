@@ -86,7 +86,7 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const broadcastText = getBroadcastDisplay(broadcasts);
   const period = details?.fight?.status.period;
   const displayClock = details?.fight?.status.displayClock;
-  const headline = details?.event?.shortName;
+  const headlineText = details?.event?.shortName;
   const styles = GameCardStyles(isDark);
 
   const isTie =
@@ -194,7 +194,9 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
         winner={secondFighterWinner}
       />
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <View style={styles.headlineContainer}>
+        <Text style={[styles.headlineText]}>{headlineText}</Text>
+      </View>
 
       {/* Game Info */}
       <View style={styles.info}>

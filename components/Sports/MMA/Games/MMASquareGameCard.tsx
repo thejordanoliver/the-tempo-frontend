@@ -35,8 +35,8 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
       hour12: true,
     }) || "";
 
-  const firstFighterName = game.fighters?.first?.info?.last_name.slice(0, 4);
-  const secondFighterName = game.fighters?.second?.info?.last_name.slice(0, 4);
+  const firstFighterName = game.fighters?.first?.info?.last_name;
+  const secondFighterName = game.fighters?.second?.info?.last_name;
 
   const firstFighterPhoto =
     game.fighters?.first?.info?.images[0]?.href ?? placeholderImage;
@@ -183,13 +183,11 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
 
             <Text style={styles.teamName}>{secondFighterName}</Text>
           </View>
-          <View style={styles.fighterFlagContainer}>
-            <Image
-              source={{ uri: secondFighterFlag }}
-              style={styles.fighterFlag}
-              accessibilityLabel={`${secondFighterName} flag`}
-            />
-          </View>
+          <Image
+            source={{ uri: secondFighterFlag }}
+            style={styles.fighterFlag}
+            accessibilityLabel={`${secondFighterName} flag`}
+          />
         </View>
 
         {/* First Fighter */}
@@ -204,13 +202,11 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
             </View>
             <Text style={styles.teamName}>{firstFighterName}</Text>
           </View>
-          <View style={styles.fighterFlagContainer}>
-            <Image
-              source={{ uri: firstFighterFlag }}
-              style={styles.fighterFlag}
-              accessibilityLabel={`${firstFighterName} flag`}
-            />
-          </View>
+          <Image
+            source={{ uri: firstFighterFlag }}
+            style={styles.fighterFlag}
+            accessibilityLabel={`${firstFighterName} flag`}
+          />
         </View>
       </View>
       {/* Game Info */}

@@ -10,6 +10,7 @@ import {
   LastFiveGamesSwitcher,
   LineScore,
 } from "components/Sports/NBA/GameDetails";
+import WinPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
 import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
@@ -21,8 +22,7 @@ import Officials from "components/Sports/NBA/GameDetails/Officials";
 import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
-import { getTeamById, getTeamLogo, teams } from "constants/teams";
+import { getTeamById, getTeamLogo } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -84,16 +84,6 @@ export default function GameDetailsScreen() {
       hour12: true,
     }) || "";
 
-  const homeTeamData = teams.find(
-    (t) =>
-      t.name === home.name || t.code === home.name || t.fullName === home.name,
-  );
-  const awayTeamData = teams.find(
-    (t) =>
-      t.name === away.name || t.code === away.name || t.fullName === away.name,
-  );
-  if (!homeTeamData || !awayTeamData) return null;
-
   const homeTeam = getTeamById(home.id);
   const awayTeam = getTeamById(away.id);
 
@@ -110,11 +100,14 @@ export default function GameDetailsScreen() {
     gameDate,
   );
 
-  const awayCode = useMemo(() => awayTeamData.code, [awayTeamData.code]);
-  const homeCode = useMemo(() => homeTeamData.code, [homeTeamData.code]);
+  const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
 
   const homeLogo = getTeamLogo(home.id, isDark);
   const awayLogo = getTeamLogo(away.id, isDark);
+
+  const headerHomeLogo = getTeamLogo(home.id, true);
+  const headerAwayLogo = getTeamLogo(away.id, true);
 
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
@@ -204,7 +197,7 @@ export default function GameDetailsScreen() {
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
-    if (isLoading || !liveScore || !homeTeamData || !awayTeamData) {
+    if (isLoading || !liveScore || !homeTeam || !awayTeam) {
       navigation.setOptions({
         header: () => null,
       });
@@ -221,8 +214,8 @@ export default function GameDetailsScreen() {
           awayTeamId={awayTeamId}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
+          homeLogo={headerHomeLogo}
+          awayLogo={headerAwayLogo}
           isNeutralSite={neutralSite}
           league="NBA"
         />
@@ -308,20 +301,18 @@ export default function GameDetailsScreen() {
                 <WinPredictionVote
                   gameId={gameId}
                   awayTeam={{
-                    id: awayTeamData.id,
-                    name: awayTeamData.name || awayTeamData.code,
-                    code: awayTeamData.code || awayTeamData.code,
-                    logo: awayTeamData.logo,
-                    logoLight: awayTeamData.logoLight,
-                    color: awayTeamData.color,
+                    id: awayTeamId,
+                    code: awayCode,
+                    logo: awayTeam?.logo,
+                    logoLight: awayTeam?.logoLight,
+                    color: awayTeam?.color,
                   }}
                   homeTeam={{
-                    id: homeTeamData.id,
-                    name: homeTeamData.name || homeTeamData.code,
-                    code: homeTeamData.code || homeTeamData.code,
-                    logo: homeTeamData.logo,
-                    logoLight: homeTeamData.logoLight,
-                    color: homeTeamData.color,
+                    id: homeTeamId,
+                    code: homeCode,
+                    logo: homeTeam?.logo,
+                    logoLight: homeTeam?.logoLight,
+                    color: homeTeam?.color,
                   }}
                 />
               )}
@@ -329,15 +320,13 @@ export default function GameDetailsScreen() {
               {isScheduled && (
                 <MatchupPredictor
                   home={{
-                    name: homeTeamData.code,
+                    name: homeCode,
                     logo: homeLogo,
-                    color: isDark
-                      ? homeTeamData.secondaryColor
-                      : homeTeamData.color,
                     chance: homeChance,
+                    color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
                   }}
                   away={{
-                    name: awayTeamData.code,
+                    name: awayCode,
                     logo: awayLogo,
                     chance: awayChance,
                   }}
@@ -357,8 +346,8 @@ export default function GameDetailsScreen() {
               {lineScore && (
                 <LineScore
                   linescore={lineScore}
-                  homeCode={homeTeamData.code}
-                  awayCode={awayTeamData.code}
+                  homeCode={homeCode}
+                  awayCode={awayCode}
                 />
               )}
 
@@ -371,10 +360,10 @@ export default function GameDetailsScreen() {
               {isHalftime && inProgress && (
                 <PlayersInFoulTrouble
                   homeId={String(homeEspnId)}
-                  homeCode={homeTeamData.code ?? ""}
+                  homeCode={homeCode}
                   homeLogo={homeLogo}
                   awayId={String(awayEspnId)}
-                  awayCode={awayTeamData.code ?? ""}
+                  awayCode={awayCode}
                   awayLogo={awayLogo}
                   homePlayers={homeFoulPlayers}
                   awayPlayers={awayFoulPlayers}
@@ -423,16 +412,17 @@ export default function GameDetailsScreen() {
                 homeTeamId={homeTeamId}
                 isDark={isDark}
               />
+
               <LastFiveGamesSwitcher
                 isDark={isDark}
                 home={{
                   teamId: homeTeamId,
-                  teamCode: homeTeamData.code,
+                  teamCode: homeCode,
                   games: homeLastGames.games,
                 }}
                 away={{
                   teamId: awayTeamId,
-                  teamCode: awayTeamData.code,
+                  teamCode: awayCode,
                   games: awayLastGames.games,
                 }}
                 league="NBA"

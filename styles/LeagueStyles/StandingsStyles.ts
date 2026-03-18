@@ -133,6 +133,12 @@ export const standingsStyles = (isDark: boolean) =>
       alignItems: "center",
       paddingHorizontal: 5,
     },
+    headerText: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 12,
+      textAlign: "center",
+    },
     statText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,

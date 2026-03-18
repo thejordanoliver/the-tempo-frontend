@@ -16,6 +16,7 @@ import { MLBGame } from "types/mlb";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
+import BasesIndicator from "../GameDetails/BasesIndicator";
 
 type Props = {
   game: MLBGame; // Your API Game shape
@@ -72,7 +73,7 @@ function MLBSquareGameCard({ game }: Props) {
   const seriesSummary = details?.seriesSummary;
   const seasonState = details?.seasonState;
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const gameStatusDetail = liveScore?.statusText ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -82,7 +83,14 @@ function MLBSquareGameCard({ game }: Props) {
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
   const period = liveScore?.period;
-  const headlineText = details?.headline;
+  const isTopInning = gameStatusDetail.includes("Top");
+  const outs = liveScore?.outs;
+  const bases: { first: boolean; second: boolean; third: boolean } =
+    liveScore?.bases ?? {
+      first: false,
+      second: false,
+      third: false,
+    };
   const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
@@ -128,7 +136,9 @@ function MLBSquareGameCard({ game }: Props) {
     if (inProgress)
       return (
         <View>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{gameStatusDetail}</Text>
+          <BasesIndicator bases={bases} isDark={isDark} size={8} />
+          <Text style={styles.outs}>Outs: {outs}</Text>
         </View>
       );
 
@@ -212,6 +222,9 @@ function MLBSquareGameCard({ game }: Props) {
 
         {/* Game Info */}
         <View style={styles.info}>{renderStatus()}</View>
+        {!isFinal && broadcastText && (
+          <Text style={styles.broadcast}>{broadcastText}</Text>
+        )}
       </View>
     </TouchableOpacity>
   );

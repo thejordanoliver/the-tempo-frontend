@@ -232,18 +232,18 @@ export default function CFBeagueScreen() {
             ></ScrollView>
           </View>
 
-          {/* RANKINGS */}
-          <View key="rankings" style={styles.contentArea}>
-            <CFBStandingsList />
-          </View>
-
           {/* STANDINGS */}
-          <View key="standings" style={styles.contentArea}>
-            <CFBConferenceStandingsList
-              selectedConference={selectedConference}
-            />
+          <View key="standings">
+            <>
+              {selectedConference === "Top 25" || !selectedConference ? (
+                <CFBStandingsList />
+              ) : (
+                <CFBConferenceStandingsList
+                  selectedConference={selectedConference}
+                />
+              )}
+            </>
           </View>
-
           {/* STATS */}
           <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList

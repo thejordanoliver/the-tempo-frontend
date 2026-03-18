@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +6,6 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -242,28 +240,6 @@ function CBBSquareGameCard({
       {!isFinal && broadcastText && (
         <Text style={styles.broadcast}>{broadcastText}</Text>
       )}
-
-      {/* Notification Bell */}
-      <Pressable
-        onPress={() => {
-          if (!canNavigate) return;
-
-          router.push({
-            pathname: "/game/cbb/[game]",
-            params: { game: JSON.stringify(game) },
-          });
-        }}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

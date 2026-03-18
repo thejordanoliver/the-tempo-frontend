@@ -1,17 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { memo, useMemo } from "react";
-import {
-  Pressable,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 
 import { Colors } from "constants/Styles";
 import { getNFLTeam } from "constants/teamsNFL";
@@ -321,16 +314,6 @@ function NFLSquareGameCard({ game }: NFLGameCardProps) {
         <Text style={styles.broadcast}>{broadcast}</Text>
       )}
       <Text style={styles.headlineText}>{headline}</Text>
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={styles.notificationBell}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

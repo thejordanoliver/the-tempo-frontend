@@ -935,29 +935,18 @@ export const getTeamBySummerId = (id?: number | string) =>
 export const getNBATeam = (id: number | string) =>
   teams.find((t) => String(t.id) === String(id)) || null;
 
-export function getTeamLogo(
-  idOrNicknameOrCode: number | string | undefined,
-  isDark: boolean,
-  lighter?: boolean,
-) {
-  if (!idOrNicknameOrCode) return PlaceholderLogo;
+export function getTeamLogo(id: number | string | undefined, isDark: boolean) {
+  if (!id) return PlaceholderLogo;
 
-  const searchStr = String(idOrNicknameOrCode).toLowerCase();
+  const team = teams.find((t) => String(t.id) === String(id));
 
-  const team = teams.find((t) => {
-    const idMatch = String(t.id).toLowerCase() === searchStr;
-
-    return idMatch;
-  });
-
-  if (!team) return PlaceholderLogo;
-
-  return lighter
-    ? team.logoLight || team.logo
-    : isDark
+  return team
+    ? isDark
       ? team.logoLight || team.logo
-      : team.logo;
+      : team.logo
+    : PlaceholderLogo;
 }
+
 
 export const teamsById: Record<string, NBATeam> = teams.reduce(
   (map, team) => {

@@ -30,6 +30,7 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import CustomRefreshControl from "components/CustomRefreshControl";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -163,7 +164,7 @@ export default function NBALeagueScreen() {
           }}
         >
           {/* SCORES */}
-          <ScrollView key="scores">
+          <View key="scores">
             <DateNavigator
               selectedDate={selectedDate}
               onChangeDate={changeDateByDays}
@@ -171,25 +172,27 @@ export default function NBALeagueScreen() {
               isDark={isDark}
             />
 
+
             {filteredSummerGames.length > 0 ? (
               <SLGamesList
-                games={filteredSummerGames}
-                loading={loadingSummer}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={false}
+              games={filteredSummerGames}
+              loading={loadingSummer}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              scrollEnabled={true}
               />
             ) : (
               <GamesList
-                games={filteredSeasonGames}
-                error={errorGames}
-                loading={loadingGames}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={false}
+              games={filteredSeasonGames}
+              error={errorGames}
+              loading={loadingGames}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              scrollEnabled={true}
               />
             )}
-          </ScrollView>
+        
+          </View>
 
           {/* NEWS */}
           <ScrollView key="news" />

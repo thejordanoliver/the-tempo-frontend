@@ -3,7 +3,7 @@ import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCar
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { FlatList, useColorScheme, View, ViewStyle } from "react-native";
+import { FlatList, View, ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import type { SummerGame } from "../../../../types/types";
@@ -13,7 +13,7 @@ import SLSquareGameCard from "./SLSquareGameCard";
 type Props = {
   games: SummerGame[];
   loading: boolean;
-  refreshing: boolean;
+  refreshing?: boolean;
   onRefresh: () => void;
   expectedCount?: number;
   scrollEnabled?: boolean; // new prop
@@ -27,8 +27,7 @@ const SLGamesList: React.FC<Props> = ({
   expectedCount,
   scrollEnabled = true, // default to true
 }) => {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameListStyles(isDark);
+  const styles = gameListStyles;
   const [previewGame, setPreviewGame] = useState<SummerGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const { viewMode } = usePreferences();

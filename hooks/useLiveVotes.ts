@@ -6,7 +6,7 @@ import { PollResult } from "./useGameVotes";
 export function useLiveVotes(gameId: string) {
   const [votes, setVotes] = useState<PollResult[]>([]);
   const socketRef = useRef<Socket | null>(null);
-
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   useEffect(() => {
     let socket: Socket | null = null;
     let mounted = true;
@@ -25,7 +25,7 @@ export function useLiveVotes(gameId: string) {
       if (!mounted || !token)
         return console.warn("⚠️ No token found for socket connection");
 
-      socket = io(`${process.env.EXPO_PUBLIC_API_URL}/votes`, {
+      socket = io(`${API_URL}/votes`, {
         transports: ["websocket"],
         auth: { token },
       });

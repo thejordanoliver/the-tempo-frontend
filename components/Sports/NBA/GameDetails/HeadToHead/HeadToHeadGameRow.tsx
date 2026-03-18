@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, View } from "react-native";
 import { formatQuarter } from "utils/games";
-import { headToHeadStyles } from "./HeadToHeadGames";
+import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
 
 type Props = {
   game: any;

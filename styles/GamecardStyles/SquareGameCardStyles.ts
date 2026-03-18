@@ -30,19 +30,21 @@ export const SquareGameCardStyles = (
               : Colors.lightGray,
       borderRightWidth: 0.5,
       gap: 8,
+      width: 120,
     },
     teamSection: {
       flexDirection: "row",
-      justifyContent: "flex-start",
+      justifyContent: "space-between",
       alignItems: "center",
       gap: 4,
-      paddingRight: 12,
+      paddingRight: 8,
+      width: "100%",
     },
     teamWrapper: {
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
-      width: 60,
+
     },
     logo: { width: 20, height: 20, resizeMode: "contain" },
     footballPossesion: {
@@ -52,7 +54,7 @@ export const SquareGameCardStyles = (
     },
     teamName: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     rank: {
@@ -65,12 +67,10 @@ export const SquareGameCardStyles = (
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
       color: Colors.midTone,
-      width: 40,
     },
     teamRecord: {
-      width: 40,
-      fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
       textAlign: "right",
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
@@ -100,6 +100,12 @@ export const SquareGameCardStyles = (
     },
     clock: {
       fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
+    },
+    outs: {
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
@@ -196,10 +202,8 @@ export const SquareGameCardStyles = (
       overflow: "hidden",
     },
 
-    fighterFlagContainer: {
-      width: 40,
-    },
-    
+  
+
     fighterFlag: {
       width: 20,
       height: 20,

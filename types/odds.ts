@@ -44,8 +44,8 @@ export type UseEventOddsParams = {
 export type GameOddsSectionProps = {
   date: string; // ISO date-time string
   gameDate: string; // YYYY-MM-DD
-  homeCode: string;
-  awayCode: string;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
   homeId: number | undefined;
   awayId: number | undefined;
   neutralSite?: boolean;

@@ -173,8 +173,7 @@ export default function CombinedGamesList({
   day,
   showHeaders = true,
 }: CombinedGamesListProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const { viewMode } = usePreferences();
   const styles = combinedGameListStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);

@@ -163,22 +163,6 @@ function NHLGameCard({ game }: Props) {
     );
   };
 
-  const renderHeadline = () => {
-    if (isPostseason) {
-      return (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.postSeasonHeadlineText}>{headlineText}</Text>
-          <View style={styles.headlineDivider} />
-          <Text style={styles.postSeasonHeadlineText}>{seriesSummary}</Text>
-        </View>
-      );
-    }
-
-    if (!isPostseason) {
-      return <Text style={styles.headlineText}>{headlineText}</Text>;
-    }
-  };
-
   const renderCardContent = () => (
     <>
       {/* Away Team */}
@@ -194,7 +178,9 @@ function NHLGameCard({ game }: Props) {
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
       {/* headlineText */}
-      {renderHeadline()}
+      <View style={styles.headlineContainer}>
+        <Text style={[styles.headlineText]}>{headlineText}</Text>
+      </View>
 
       {/* Game Info */}
       <View style={styles.info}>

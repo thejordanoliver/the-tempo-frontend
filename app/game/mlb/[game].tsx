@@ -6,11 +6,11 @@ import GameSummary from "components/Sports/MLB/GameDetails/GameSummary";
 import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import MLBInjuries from "components/Sports/MLB/GameDetails/MLBInjuries";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -103,8 +103,10 @@ export default function GameDetailsScreen() {
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
   const playerStats = liveScore?.playerStats ?? [];
-  const homeScore = liveScore?.home?.total ?? parsedGame?.scores?.home?.total ?? 0;
-  const awayScore = liveScore?.away?.total ?? parsedGame?.scores?.away?.total ?? 0;
+  const homeScore =
+    liveScore?.home?.total ?? parsedGame?.scores?.home?.total ?? 0;
+  const awayScore =
+    liveScore?.away?.total ?? parsedGame?.scores?.away?.total ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const period = liveScore?.period;
@@ -222,16 +224,14 @@ export default function GameDetailsScreen() {
           bases={bases}
         />
 
-
         <View style={styles.innerContainer}>
-        {!isFinal && <LastPlay lastPlay={lastPlay} />}
-        
+          {!isFinal && <LastPlay lastPlay={lastPlay} />}
+
           {!isFinal && (
-            <WinPredictionVote
+            <FanPredictionVote
               gameId={parsedGame.id}
               awayTeam={{
                 id: awayTeam.id,
-                name: awayTeam.name,
                 code: awayTeam.code,
                 logo: awayTeam.logo,
                 logoLight: awayTeam.logoLight,
@@ -239,7 +239,6 @@ export default function GameDetailsScreen() {
               }}
               homeTeam={{
                 id: homeTeam.id,
-                name: homeTeam.name,
                 code: homeTeam.code,
                 logo: homeTeam.logo,
                 logoLight: homeTeam.logoLight,

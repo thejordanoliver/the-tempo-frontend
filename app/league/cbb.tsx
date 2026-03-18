@@ -190,16 +190,17 @@ export default function CBBLeagueScreen() {
           {/* NEWS */}
           <ScrollView key="news" />
 
-          {/* RANKINGS */}
-          <View key="rankings">
-            <CBBStandingsList league="CBB" />
-          </View>
-
           {/* STANDINGS */}
           <View key="standings">
-            <CBBConferenceStandingsList
-              selectedConference={selectedConference}
-            />
+            <>
+              {selectedConference === "Top 25" || !selectedConference ? (
+                <CBBStandingsList league="CBB" />
+              ) : (
+                <CBBConferenceStandingsList
+                  selectedConference={selectedConference}
+                />
+              )}
+            </>
           </View>
 
           {/* STATS */}

@@ -17,7 +17,6 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
@@ -33,50 +32,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-/* =====================================================
-   STATS TAB
-===================================================== */
-
-function StatsTabContent() {
-  const { categories, loading, error } = useSeasonLeaders(2025, "WCBB");
-
-  return (
-    <SeasonLeadersList
-      loading={loading}
-      error={error}
-      categories={categories}
-      league="WCBB"
-    />
-  );
-}
-
-/* =====================================================
-   SCREEN
-===================================================== */
-
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
-
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
-
 export default function WCBBLeagueScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
 
@@ -221,15 +178,17 @@ export default function WCBBLeagueScreen() {
           {/* NEWS */}
           <ScrollView key="news" />
 
-          {/* Rankings */}
-          <View key="rankings">
-            <CBBStandingsList league="WCBB" />
-          </View>
           {/* STANDINGS */}
           <View key="standings">
-            <CBBConferenceStandingsList
-              selectedConference={selectedConference}
-            />
+            <>
+              {selectedConference === "Top 25" || !selectedConference ? (
+                <CBBStandingsList league="CBB" />
+              ) : (
+                <CBBConferenceStandingsList
+                  selectedConference={selectedConference}
+                />
+              )}
+            </>
           </View>
 
           {/* STATS */}
@@ -243,9 +202,7 @@ export default function WCBBLeagueScreen() {
           </View>
 
           {/* Bracket */}
-          <View key="bracket">
-       
-          </View>
+          <View key="bracket"></View>
 
           {/* AWARDS */}
           <ScrollView key="awards">

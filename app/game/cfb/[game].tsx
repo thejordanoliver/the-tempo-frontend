@@ -11,9 +11,9 @@ import {
   LastFiveGamesSwitcher,
   LineScore,
 } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/WinPredictionVote";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
@@ -376,11 +376,11 @@ export default function CFBGameDetailsScreen() {
         {showDetails && hasValidTeams && (
           <View style={styles.innerContainer}>
             {gameStatusDescription !== "Final" && (
-              <WinPredictionVote
+              <FanPredictionVote
                 gameId={gameInfo?.id ?? ""}
                 awayTeam={{
                   id: awayTeam.id,
-                  name: awayTeam.name ?? awayTeam.code,
+
                   code: awayTeam.code ?? awayTeam.code,
                   logo: awayTeam.logo,
                   logoLight: awayTeam.logoLight,
@@ -388,7 +388,7 @@ export default function CFBGameDetailsScreen() {
                 }}
                 homeTeam={{
                   id: homeTeam.id,
-                  name: homeTeam.name ?? homeTeam.code,
+
                   code: homeTeam.code ?? homeTeam.code,
                   logo: homeTeam.logo,
                   logoLight: homeTeam.logoLight,

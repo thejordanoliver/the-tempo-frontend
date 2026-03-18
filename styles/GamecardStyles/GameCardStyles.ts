@@ -1,46 +1,104 @@
-// GameCard.styles.ts
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
-  StyleSheet.create({
+export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
+
+  const headlineColor = isChampionship
+    ? isDark
+      ? Colors.white
+      : Colors.black
+    : subTextColor;
+
+  return StyleSheet.create({
+    /* =========================
+       🧱 LAYOUT
+    ========================= */
     card: {
       flexDirection: "row",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      paddingVertical: 14,
-      paddingHorizontal: 20,
+      padding: 14,
       alignItems: "center",
-      justifyContent: "space-evenly",
+      justifyContent: "space-between",
     },
-    awayPossession: {
-      width: 24,
-      height: 24,
-      resizeMode: "contain",
-      position: "absolute",
-      bottom: -20,
+
+    info: {
+      alignItems: "center",
+      justifyContent: "center",
     },
-    homePossession: {
-      width: 24,
-      height: 24,
-      resizeMode: "contain",
-      position: "absolute",
-      bottom: -20,
+
+    infoWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
     },
-    rank: {
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+
+    winnerContainer: {
+      alignItems: "center",
+      justifyContent: "center",
     },
+
+    /* =========================
+       🏀 TEAM
+    ========================= */
     teamSection: {
       alignItems: "center",
       width: 60,
     },
+
     logo: {
       width: 40,
       height: 40,
       resizeMode: "contain",
+    },
+
+    teamName: {
+      marginTop: 4,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: textColor,
+      textAlign: "center",
+      width: 100,
+    },
+
+    rank: {
+      fontSize: 10,
+      color: subTextColor,
+    },
+
+    teamScore: {
+      fontSize: 28,
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+      width: 72,
+    },
+
+    teamRecord: {
+      fontSize: 18,
+      fontFamily: Fonts.OSBOLD,
+      color: textColor,
+      textAlign: "center",
+      width: 72,
+    },
+
+    /* =========================
+       🥊 FIGHTERS
+    ========================= */
+    fighterContainer: {
+      width: 40,
+      height: 40,
+      borderWidth: 1,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor,
+      overflow: "hidden",
     },
 
     fighter: {
@@ -49,14 +107,13 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       resizeMode: "contain",
     },
 
-    fighterContainer: {
-      width: 40,
-      height: 40,
-      borderWidth: 1,
-      alignItems: "center",
-      borderRadius: 100,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      overflow: "hidden",
+    leftFighterFlag: {
+      position: "absolute",
+      width: 20,
+      height: 20,
+      left: 4,
+      bottom: 14,
+      zIndex: 99,
     },
 
     rightFighterFlag: {
@@ -67,75 +124,53 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
       bottom: 14,
       zIndex: 99,
     },
-    leftFighterFlag: {
-      position: "absolute",
-      width: 20,
-      height: 20,
-      left: 4,
-      bottom: 14,
-      zIndex: 99,
-    },
-    teamName: {
-      marginTop: 4,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-      width: 100,
-    },
-    teamScore: {
-      fontSize: 28,
-      fontFamily: Fonts.OSBOLD,
-      width: 60,
-      textAlign: "center",
-    },
-    teamRecord: {
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-      width: 80,
-    },
-    winnerContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    info: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 100,
-    },
-    infoWrapper: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 4,
-    },
+
+    /* =========================
+       🏈 GAME STATE / STATUS
+    ========================= */
     date: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       fontSize: 14,
     },
+
     period: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       fontSize: 14,
     },
+
     finalText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
     },
+
     clock: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
     },
+
+    outs: {
+      fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    downDistance: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 10,
+      color: subTextColor,
+      textAlign: "center",
+    },
+
     broadcast: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: subTextColor,
       fontSize: 10,
       textAlign: "center",
     },
@@ -143,71 +178,58 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) =>
     statusDivider: {
       height: 14,
       width: 1,
-      backgroundColor: isDark ? Colors.dark.text : Colors.light.text,
+      backgroundColor: textColor,
     },
+
     finalStatusDivider: {
       height: 14,
       width: 1,
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+      backgroundColor: accentRed,
     },
-    downDistance: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
+
+    /* =========================
+       📰 HEADLINES
+    ========================= */
+    headlineContainer: {
+      position: "absolute",
+      top: 4,
+      left: 0,
+      right: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 10,
     },
+
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 8,
-      color: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-      textAlign: "center",
-      position: "absolute",
-      top: 4,
-      width: "100%",
-    },
-    postSeasonHeadlineText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
+      color: headlineColor,
       textAlign: "center",
     },
 
     headlineDivider: {
       height: 8,
       width: 1,
-      backgroundColor: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-    },
-    headlineContainer: {
-      flexDirection: "row",
-      alignItems: "center", // ← ensures vertical centering
-      justifyContent: "center", // ← centers entire group horizontally
-      position: "absolute",
-      top: 4,
-      width: "100%",
-      gap: 4,
+      backgroundColor: headlineColor,
     },
 
-    notificationBell: {
+    /* =========================
+       ⚾ POSSESSION / EXTRAS
+    ========================= */
+    awayPossession: {
+      width: 24,
+      height: 24,
+      resizeMode: "contain",
       position: "absolute",
-      top: 8,
-      right: 4,
+      bottom: -20,
+    },
+
+    homePossession: {
+      width: 24,
+      height: 24,
+      resizeMode: "contain",
+      position: "absolute",
+      bottom: -20,
     },
   });
+};

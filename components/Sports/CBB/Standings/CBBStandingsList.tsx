@@ -225,29 +225,10 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   );
 
   const renderStatsHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          flexDirection: "row",
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-        },
-      ]}
-    >
+    <View style={styles.statsHeaderRow}>
       {["Record", "Points", "1st Votes", "Conference"].map((label) => (
         <View key={label} style={styles.statCell}>
-          <Text
-            style={[
-              styles.statText,
-              {
-                fontFamily: Fonts.OSSEMIBOLD,
-                color: isDark ? Colors.white : Colors.black,
-              },
-            ]}
-          >
-            {label}
-          </Text>
+          <Text style={styles.headerText}>{label}</Text>
         </View>
       ))}
     </View>

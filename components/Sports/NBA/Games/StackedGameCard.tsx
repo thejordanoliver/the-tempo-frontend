@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamById } from "constants/teams";
+import { getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -15,23 +15,21 @@ export default function StackedGameCard({ game }: { game: Game }) {
   const isDark = colorScheme === "dark";
   const router = useRouter();
 
+ const homeId = Number(game.home?.id);
+  const awayId = Number(game.away?.id);
+
   const homeTeam = game.home;
   const awayTeam = game.away;
 
-  const homeId = Number(game.home?.id);
-  const awayId = Number(game.away?.id);
+  const homeName = game.home?.fullName;
+  const awayName = game.away?.fullName;
 
-  const home = getTeamById(homeId);
-  const away = getTeamById(awayId);
+  const homeLogo = getTeamLogo(homeId, isDark);
+  const awayLogo = getTeamLogo(awayId, isDark);
 
-  const homeName = home?.fullName;
-  const awayName = away?.fullName;
+  const homeEspnId = game.home?.espnID ?? 0;
+  const awayEspnId = game.away?.espnID ?? 0;
 
-  const homeLogo = isDark ? home?.logoLight || home?.logo : home?.logo;
-  const awayLogo = isDark ? away?.logoLight || away?.logo : away?.logo;
-
-  const homeEspnId = home?.espnID ?? 0;
-  const awayEspnId = away?.espnID ?? 0;
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -205,7 +203,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
             <Image
               source={homeLogo}
               style={styles.logo}
-              accessibilityLabel={`${homeName} logo`}
+              accessibilityLabel={`${homeTeam.name} logo`}
             />
             <Text style={styles.teamName}>{homeName}</Text>
           </View>

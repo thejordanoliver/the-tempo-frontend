@@ -61,7 +61,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       <CenteredHeader>{displaySeason} Season</CenteredHeader>
 
       <View style={styles.card}>

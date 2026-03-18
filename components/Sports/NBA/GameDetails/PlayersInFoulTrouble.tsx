@@ -25,8 +25,8 @@ type Player = {
 type Props = {
   homeId: string;
   awayId: string;
-  homeCode: string;
-  awayCode: string;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
   homeLogo?: any;
   awayLogo?: any;
   homePlayers: Player[];

@@ -52,7 +52,7 @@ export default function NFLGamesList({
   scrollEnabled,
 }: Props) {
   const isDark = useColorScheme() === "dark";
-  const styles = footballGamesListStyle(isDark);
+  const styles = footballGamesListStyle;
   const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
   const [previewGame, setPreviewGame] = useState<any | null>(null);

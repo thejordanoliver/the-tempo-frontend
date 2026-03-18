@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Styles";
@@ -9,13 +8,7 @@ import { useRouter } from "expo-router";
 import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
 import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
 import { memo, useMemo } from "react";
-import {
-  Pressable,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam, Game } from "types/nfl";
 import { formatQuarter } from "utils/games";
@@ -292,16 +285,6 @@ function NFLStackedGameCard({ game }: NFLGameCardProps) {
         )}
       </View>
       <Text style={styles.headlineText}>{headline}</Text>
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={styles.notificationBell}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

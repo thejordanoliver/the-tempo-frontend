@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Styles";
@@ -10,7 +9,6 @@ import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesi
 import { memo, useMemo } from "react";
 import {
   Image,
-  Pressable,
   Text,
   TouchableOpacity,
   useColorScheme,
@@ -329,16 +327,6 @@ function CFBSquareGameCard({ game }: Props) {
         <Text style={styles.broadcast}>{broadcast}</Text>
       )}
       <Text style={styles.headlineText}>{headline}</Text>
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={styles.notificationBell}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
     </>
   );
 

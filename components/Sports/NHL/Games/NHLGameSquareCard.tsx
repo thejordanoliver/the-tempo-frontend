@@ -216,12 +216,10 @@ function NHLSquareGameCard({ game }: Props) {
       {renderHeadline()}
 
       {/* Game Info */}
-      <View style={styles.info}>
-        {renderStatus()}
-        {!isFinal && broadcastText && (
-          <Text style={styles.broadcast}>{broadcastText}</Text>
-        )}
-      </View>
+      <View style={styles.info}>{renderStatus()}</View>
+      {!isFinal && broadcastText && (
+        <Text style={styles.broadcast}>{broadcastText}</Text>
+      )}
     </>
   );
 

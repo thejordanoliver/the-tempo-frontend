@@ -67,6 +67,7 @@ const statSeasonCardSkeleton = (isDark: boolean) =>
     },
     title: {
       alignItems: "center",
+      marginBottom: 12,
     },
     statHeader: {
       flexDirection: "row",

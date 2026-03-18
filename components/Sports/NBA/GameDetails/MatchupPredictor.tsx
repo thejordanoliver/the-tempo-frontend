@@ -12,7 +12,7 @@ import {
 import Svg, { Circle, Defs, Path, Pattern, Rect } from "react-native-svg";
 
 interface MinimalTeam {
-  name: string;
+  name: string | undefined;
   logo: any;
   color?: string;
 }

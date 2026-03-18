@@ -1,12 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
-import { getTeamById } from "constants/teams";
+import { getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import {
-  Pressable,
   Text,
   TextStyle,
   TouchableOpacity,
@@ -23,23 +21,20 @@ export default function SquareGameCard({ game }: { game: Game }) {
   const isDark = colorScheme === "dark";
   const router = useRouter();
 
-  const homeTeam = game.home;
-  const awayTeam = game.away;
-
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
 
-  const home = getTeamById(homeId);
-  const away = getTeamById(awayId);
+  const homeTeam = game.home;
+  const awayTeam = game.away;
 
-  const homeName = home?.code;
-  const awayName = away?.code;
+  const homeName = game.home?.code;
+  const awayName = game.away?.code;
 
-  const homeLogo = isDark ? home?.logoLight || home?.logo : home?.logo;
-  const awayLogo = isDark ? away?.logoLight || away?.logo : away?.logo;
+  const homeLogo = getTeamLogo(homeId, isDark);
+  const awayLogo = getTeamLogo(awayId, isDark);
 
-  const homeEspnId = home?.espnID ?? 0;
-  const awayEspnId = away?.espnID ?? 0;
+  const homeEspnId = game.home?.espnID ?? 0;
+  const awayEspnId = game.away?.espnID ?? 0;
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -211,7 +206,7 @@ export default function SquareGameCard({ game }: { game: Game }) {
             <Image
               source={homeLogo}
               style={styles.logo}
-              accessibilityLabel={`${homeName} logo`}
+              accessibilityLabel={`${homeTeam.name} logo`}
             />
             <Text style={styles.teamName}>{homeName}</Text>
           </View>
@@ -222,23 +217,10 @@ export default function SquareGameCard({ game }: { game: Game }) {
             showRecord={isScheduled || isDelayed || isPostponed || isCanceled}
           />
         </View>
-        {/* Notification Bell */}
       </View>
       {/* Game Info */}
       <View style={styles.info}>{renderStatus()}</View>
-      <Pressable
-        onPress={() => setNotifEnabled((prev) => !prev)}
-        style={({ pressed }) => [
-          styles.notificationBell,
-          pressed && { opacity: 0.6 },
-        ]}
-      >
-        <Ionicons
-          name={notifEnabled ? "notifications" : "notifications-outline"}
-          size={20}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </Pressable>
+
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headline}</Text>
       {!isFinal && broadcastText && (
