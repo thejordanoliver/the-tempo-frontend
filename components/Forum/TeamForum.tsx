@@ -2,8 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/Styles";
 import { useFocusEffect, useRouter } from "expo-router";
-import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
-import { useTeamForumPosts } from "hooks/useTeamForumPosts";
+import { useTeamForum } from "hooks/ForumHooks/useTeamForum";
 import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
@@ -15,7 +14,6 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { useLikesStore } from "store/useLikesStore";
 import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import AlertModal from "./AlertModal";
@@ -24,39 +22,43 @@ import PostItemSkeleton from "./PostItemSkeleton";
 
 interface TeamForumProps {
   teamId: string;
-  league?: LeagueType; // extendable if more leagues later
+  league?: LeagueType;
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+// Removed localhost fallback — won't resolve on a physical device
+import { BASE_URL } from "utils/apiClient";
+
+// AlertConfig defined locally since it's only used here
+interface AlertConfig {
+  title?: string;
+  message?: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm?: () => void;
+}
 
 export default function TeamForum({ teamId, league }: TeamForumProps) {
   const setGlobalImage = useImagePreviewStore((state) => state.setImages);
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = useColorScheme() === "dark";
   const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
+
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const { likes, setLike, setUser, toggleLike } = useLikesStore();
 
   const {
     posts,
     loading,
     refreshing,
     error,
-    token,
+    // token removed — PostItem authenticates via apiClient
     currentUserId,
+    fetchPosts,
     refresh,
     loadMore,
     deletePost,
     editPost,
-  } = useTeamForumPosts({ teamId, league });
-
-  useEffect(() => {
-    if (currentUserId != null) {
-      setUser(String(currentUserId)); // store setter
-    }
-  }, [currentUserId]);
+  } = useTeamForum(teamId, league);
 
   const showAlert = useCallback((config: AlertConfig) => {
     setAlertConfig(config);
@@ -106,31 +108,11 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     [editPost, showAlert],
   );
 
-  const handleImagePress = useCallback(
-    (imgUri: string) => {
-      setGlobalImage([], 0);
-      setGlobalImage([imgUri], 0);
-    },
-    [setGlobalImage],
-  );
-
-  const renderSkeletons = useCallback(
-    (count = 5) => (
-      <>
-        {Array.from({ length: count }).map((_, i) => (
-          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
-        ))}
-      </>
-    ),
-    [],
-  );
-
-  const onRefresh = useCallback(() => refresh(), [refresh]);
-
+  // Refetch on screen focus — consistent with LeagueForum
   useFocusEffect(
     useCallback(() => {
-      refresh();
-    }, [refresh]),
+      fetchPosts(1);
+    }, [fetchPosts]),
   );
 
   // Cleanup on unmount
@@ -143,9 +125,12 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
   if (loading)
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {renderSkeletons()}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+        ))}
       </ScrollView>
     );
+
   if (error) return <Text style={global.errorText}>{error}</Text>;
 
   const renderPostItem = useCallback(
@@ -153,34 +138,31 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
       <PostItem
         item={item}
         isDark={isDark}
-        token={token}
         currentUserId={currentUserId}
         deletePost={handleDeletePost}
         editPost={handleEditPost}
         BASE_URL={BASE_URL}
-        onImagePress={handleImagePress}
+        onImagePress={(imgUri) => {
+          setGlobalImage([], 0);
+          setGlobalImage([imgUri], 0);
+        }}
       />
     ),
-    [
-      isDark,
-      token,
-      currentUserId,
-      handleDeletePost,
-      handleEditPost,
-      handleImagePress,
-    ],
+    [isDark, currentUserId, handleDeletePost, handleEditPost, setGlobalImage],
+    // token removed from deps — no longer passed or needed
   );
 
   return (
     <>
       <FlatList
         data={posts}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.container}
         renderItem={renderPostItem}
         onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
         ListEmptyComponent={() => (
           <View style={global.emptyContainer}>

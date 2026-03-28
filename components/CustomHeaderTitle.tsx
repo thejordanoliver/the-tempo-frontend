@@ -3,13 +3,13 @@ import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts } from "constants/Styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
 import {
-  teams as cbbTeams,
+  cbbTeams,
   conferenceObjectListMap,
   getCBBTeam,
 } from "constants/teamsCBB";
-import { teams as cfbTeams, getCFBTeam } from "constants/teamsCFB";
-import { getMLBTeam, teams as mlbTeams } from "constants/teamsMLB";
-import { getNFLTeam, teams as nflTeams } from "constants/teamsNFL";
+import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
+import { getMLBTeam, mlbTeams } from "constants/teamsMLB";
+import { getNFLTeam, nflTeams } from "constants/teamsNFL";
 
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
@@ -61,6 +61,8 @@ type CustomHeaderTitleProps = {
   awayTeamCode?: string;
   homeTeamId?: string | number;
   awayTeamId?: string | number;
+  firstFighterId?: number;
+  secondFighterId?: number;
   teamCoach?: string;
   teamHistory?: string;
   selectedConferenceName?: string;
@@ -152,7 +154,7 @@ const TeamBackground = ({
         }}
       />
       {(selectedTeam?.logo || logo) && (
-       <Image source={resolveImage(logo)} style={styles.bgImage} />
+        <Image source={resolveImage(logo)} style={styles.bgImage} />
       )}
     </View>
   );
@@ -225,7 +227,6 @@ const GameHeader = ({
   homeLogo,
   awayLogo,
   isNeutralSite,
-  isWomen,
   firstFighterId,
   secondFighterId,
   league,
@@ -243,27 +244,27 @@ const GameHeader = ({
 }) => {
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
   const styles = customHeaderStyles;
-  const homeColor = homeTeam?.color || Colors.lightGray;
-  const awayColor = awayTeam?.color || Colors.midTone;
-  const dividerText = isNeutralSite ? "vs" : "@";
   const isMMA = league === "MMA";
+
+  const dividerText = isNeutralSite ? "vs" : "@";
   const { fighter: firstFighter } = useMMAFighter(firstFighterId ?? 0);
   const { fighter: secondFighter } = useMMAFighter(secondFighterId ?? 0);
+  const homeColor = isMMA
+    ? (firstFighter?.color ?? Colors.lightGray)
+    : (homeTeam?.color ?? Colors.lightGray);
 
-  const awayName = secondFighter?.nickname || secondFighter?.nickname || "AWY";
-  const homeName = firstFighter?.nickname || firstFighter?.nickname || "HOM";
+  const awayColor = isMMA
+    ? (secondFighter?.color ?? Colors.midTone)
+    : (awayTeam?.color ?? Colors.midTone);
+
+  const awayName = secondFighter?.last_name || "UNK";
+  const homeName = firstFighter?.last_name || "UNK";
   // --- Main animations ---
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
-  const getFlagSource = (url?: string) => {
-    if (!url) {
-      return require("assets/Placeholders/teamPlaceholder.png");
-    }
 
-    return { uri: url };
-  };
   // --- Letter-level animations ---
   const awayLetters: string[] = isMMA
     ? awayName.split("")
@@ -339,7 +340,7 @@ const GameHeader = ({
         ]),
       ]),
     ]).start();
-  }, [awayTeam.code, homeTeam.code]);
+  }, [awayTeam.code, homeTeam.code, firstFighter?.color, secondFighter?.color]);
 
   return (
     <Animated.View
@@ -365,7 +366,11 @@ const GameHeader = ({
             { transform: [{ scale: scaleAway }] },
           ]}
         >
-          <Image source={awayLogo} style={styles.bgLogo} resizeMode="contain" />
+          <Image
+            source={typeof awayLogo === "string" ? { uri: awayLogo } : awayLogo}
+            style={styles.bgLogo}
+            resizeMode="contain"
+          />
           <View style={{ flexDirection: "row" }}>
             {awayLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -416,8 +421,11 @@ const GameHeader = ({
             { transform: [{ scale: scaleHome }] },
           ]}
         >
-          <Image source={homeLogo} style={styles.bgLogo} resizeMode="contain" />
-
+          <Image
+            source={typeof homeLogo === "string" ? { uri: homeLogo } : homeLogo}
+            style={styles.bgLogo}
+            resizeMode="contain"
+          />
           <View style={{ flexDirection: "row" }}>
             {homeLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -477,11 +485,14 @@ export function CustomHeaderTitle({
   awayTeamId,
   homeLogo,
   awayLogo,
+  firstFighterId,
+  secondFighterId,
   isFavorite,
   isNotified,
   selectedConferenceName,
   onToggleFavorite,
   onToggleNotifications,
+
   isPlayerScreen,
   showBackButton = true,
   isNeutralSite = false,
@@ -706,6 +717,9 @@ export function CustomHeaderTitle({
             awayLogo={awayLogo}
             isNeutralSite={isNeutralSite}
             isWomen={isWomenLeague}
+            firstFighterId={firstFighterId}
+            secondFighterId={secondFighterId}
+            league={league}
           />
         ) : tabName === "League" ? (
           <View

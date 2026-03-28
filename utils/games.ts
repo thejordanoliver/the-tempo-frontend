@@ -1,5 +1,6 @@
 // utils/games.ts
 import { neutralVenues } from "constants/teams";
+import { neutralVenues as cbbNeutralVenues } from "constants/teamsCBB";
 import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
 import { neutralStadiums } from "constants/teamsNFL";
 import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
@@ -17,6 +18,29 @@ export type TeamLike = {
   logo?: any;
   fullName: string;
 };
+
+type VenueSource = {
+  venue?: string | null;
+  name?: string | null;
+  city?: string | null;
+  address?: string | null;
+  venueCapacity?: number | string | null;
+  venue_capacity?: number | string | null;
+  venueImage?: string | null;
+  venue_image?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
+
+type ResolveVenueParams = {
+  venue?: any;
+  homeTeam?: any;
+  matchedVenue?: VenueSource | null;
+  neutralSite?: boolean;
+  neutralStadiums: Record<string, any>;
+};
+
+
 
 // ---------- 🧩 Team Helpers ----------
 export const hasIdAndName = (team: any): team is TeamLike =>
@@ -235,10 +259,6 @@ export function resolveVenue({
   isNeutralSite?: boolean;
   league?: string;
 }) {
-  const venueNameRaw =
-    espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "";
-
-  const venueName = venueNameRaw.trim();
   const leagueKey = league?.toLowerCase();
 
   // -------------------------------------------------
@@ -256,13 +276,50 @@ export function resolveVenue({
     case "cfb":
       neutralMap = cfbNeutralStadiums;
       break;
+    case "cbb":
+    case "wcbb":
+      neutralMap = cbbNeutralVenues;
+      break;
     case "mlb":
-      neutralMap = neutralVenues; // adjust if you add mlbNeutralVenues
+      neutralMap = neutralVenues;
       break;
     case "nba":
     default:
       neutralMap = neutralVenues;
+      break;
   }
+
+  // -------------------------------------------------
+  // Normalize ESPN venue (handles CBB + NBA differences)
+  // -------------------------------------------------
+  const venueNameRaw =
+    espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "";
+
+  const venueName = venueNameRaw.trim();
+
+  const normalizedCity =
+    espnVenue?.address?.city && espnVenue?.address?.state
+      ? `${espnVenue.address.city}, ${espnVenue.address.state}`
+      : (homeTeam?.location ?? "");
+
+  const normalizedAddress =
+    homeTeam?.address ??
+    espnVenue?.address?.street ??
+    espnVenue?.address?.city ??
+    "";
+
+  const normalizedImage =
+    homeTeam?.venueImage ?? espnVenue?.images?.[0]?.href ?? "";
+
+  const normalizedCapacity =
+    espnVenue?.capacity ?? homeTeam?.venueCapacity ?? "";
+
+  // ⚠️ ESPN CBB DOES NOT PROVIDE LAT/LNG
+  const normalizedLat =
+    espnVenue?.address?.latitude ?? homeTeam?.latitude ?? null;
+
+  const normalizedLng =
+    espnVenue?.address?.longitude ?? homeTeam?.longitude ?? null;
 
   // -------------------------------------------------
   // 1️⃣ Neutral site handling
@@ -276,34 +333,34 @@ export function resolveVenue({
       const neutralVenue = neutralMap[neutralMatch];
 
       return {
-        name: neutralVenue.name ?? "",
-        city: neutralVenue.city ?? "",
-        address: neutralVenue.address ?? "",
-        image: neutralVenue.venueImage ?? "",
-        capacity: neutralVenue.venueCapacity ?? "",
-        latitude: neutralVenue.latitude ?? null,
-        longitude: neutralVenue.longitude ?? null,
+        name: neutralVenue.name ?? venueName,
+        city: neutralVenue.city ?? normalizedCity,
+        address: neutralVenue.address ?? normalizedAddress,
+        image: neutralVenue.venueImage ?? normalizedImage,
+        capacity: neutralVenue.venueCapacity ?? normalizedCapacity,
+        latitude: neutralVenue.latitude ?? normalizedLat,
+        longitude: neutralVenue.longitude ?? normalizedLng,
       };
     }
   }
 
   // -------------------------------------------------
-  // 2️⃣ Non-neutral → Prefer ESPN, fallback to homeTeam
+  // 2️⃣ Standard venue (ESPN → fallback to team)
   // -------------------------------------------------
-  if (!isNeutralSite) {
+  if (venueName || homeTeam) {
     return {
-      name: espnVenue?.fullName ?? espnVenue?.name ?? homeTeam?.venueName ?? "",
-      city: espnVenue?.address?.city ?? homeTeam?.location ?? "",
-      address: espnVenue?.address?.street ?? homeTeam?.address ?? "",
-      image: homeTeam?.venueImage ?? espnVenue?.images?.[0]?.href ?? "",
-      capacity: espnVenue?.capacity ?? homeTeam?.venueCapacity ?? "",
-      latitude: espnVenue?.address?.latitude ?? homeTeam?.latitude ?? null,
-      longitude: espnVenue?.address?.longitude ?? homeTeam?.longitude ?? null,
+      name: venueName,
+      city: normalizedCity,
+      address: normalizedAddress,
+      image: normalizedImage,
+      capacity: normalizedCapacity,
+      latitude: normalizedLat,
+      longitude: normalizedLng,
     };
   }
 
   // -------------------------------------------------
-  // 3️⃣ Final fallback
+  // 3️⃣ Final fallback (safe empty object)
   // -------------------------------------------------
   return {
     name: "",
@@ -317,3 +374,94 @@ export function resolveVenue({
 }
 
 
+export const normalizeVenueName = (name?: string | null) =>
+  name
+    ?.toLowerCase()
+    .replace(/stadium|field|arena|center|centre/g, "")
+    .replace(/[^a-z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim() ?? "";
+
+export const findMatchedVenue = (
+  venueName: string | undefined,
+  venues: VenueSource[]
+) => {
+  if (!venueName) return null;
+
+  const normalized = normalizeVenueName(venueName);
+
+  return (
+    venues.find((v) => normalizeVenueName(v.venue) === normalized) ?? null
+  );
+};
+
+export const resolveFootballVenue = ({
+  venue,
+  homeTeam,
+  matchedVenue,
+  neutralSite,
+  neutralStadiums,
+}: ResolveVenueParams) => {
+  const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
+
+  const neutralEntry = Object.entries(neutralStadiums).find(
+    ([name]) => name.trim().toLowerCase() === normalizedVenueName
+  );
+
+  const neutralData = neutralEntry ? neutralEntry[1] : null;
+  const neutralName = neutralEntry ? neutralEntry[0] : null;
+
+  let resolved = {
+    name:
+      matchedVenue?.venue ??
+      venue?.name ??
+      homeTeam?.venue ??
+      "Unknown Stadium",
+
+    city:
+      matchedVenue?.city ??
+      homeTeam?.city ??
+      "Unknown City",
+
+    address:
+      matchedVenue?.address ??
+      homeTeam?.address ??
+      "",
+
+    capacity:
+      matchedVenue?.venue_capacity ??
+      homeTeam?.venueCapacity?.toString() ??
+      "",
+
+    image:
+      matchedVenue?.venue_image ??
+      venue?.image ??
+      homeTeam?.venueImage ??
+      null,
+
+    lat:
+      matchedVenue?.latitude ??
+      homeTeam?.latitude ??
+      null,
+
+    lon:
+      matchedVenue?.longitude ??
+      homeTeam?.longitude ??
+      null,
+  };
+
+  if (neutralSite && neutralData) {
+    resolved = {
+      name: neutralName ?? resolved.name,
+      city: neutralData.city ?? resolved.city,
+      address: neutralData.address ?? resolved.address,
+      capacity:
+        neutralData.venueCapacity?.toString() ?? resolved.capacity,
+      image: neutralData.venueImage ?? resolved.image,
+      lat: neutralData.latitude ?? resolved.lat,
+      lon: neutralData.longitude ?? resolved.lon,
+    };
+  }
+
+  return resolved;
+};

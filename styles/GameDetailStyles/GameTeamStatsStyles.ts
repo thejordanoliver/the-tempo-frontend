@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 const ROW_HEIGHT = 80;
 
-export const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
+export const gameTeamStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderLeftWidth: 1,
@@ -38,7 +38,7 @@ export const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
     teamLabel: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     statSection: {
       height: ROW_HEIGHT,
@@ -51,7 +51,7 @@ export const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       textAlign: "center",
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     row: {
       flexDirection: "row",
@@ -81,7 +81,7 @@ export const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 14,
       textAlign: "center",
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     showMoreLessContainer: {
       paddingVertical: 12,
@@ -92,7 +92,7 @@ export const gameTeamStatsStyles = (isDark: boolean, lighter: boolean) =>
       width: "100%",
     },
     showMoreLess: {
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 14,
     },

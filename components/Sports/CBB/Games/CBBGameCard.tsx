@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -31,14 +31,14 @@ function CBBGameCard({
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
 
-  const home = getTeamInfo(homeId, isWomen);
-  const away = getTeamInfo(awayId, isWomen);
+  const home = getCBBTeam(homeId, isWomen);
+  const away = getCBBTeam(awayId, isWomen);
 
   const homeName = home?.shortName ?? home?.name ?? game?.teams?.home.name;
   const awayName = away?.shortName ?? away?.name ?? game?.teams?.away.name;
 
-  const homeLogo = getTeamLogo(homeId, isDark);
-  const awayLogo = getTeamLogo(awayId, isDark);
+  const homeLogo = getCBBTeamLogo(homeId, isDark, isWomen);
+  const awayLogo = getCBBTeamLogo(awayId, isDark, isWomen);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
@@ -207,7 +207,7 @@ function CBBGameCard({
       </View>
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-   {/* headlineText */}
+      {/* headlineText */}
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headlineText}</Text>
       </View>
@@ -221,7 +221,6 @@ function CBBGameCard({
 
       {/* Home Team */}
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
-
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}

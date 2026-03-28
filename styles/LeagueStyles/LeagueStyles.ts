@@ -16,11 +16,13 @@ export const getScoresStyles = (isDark: boolean) =>
     },
     monthText: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
+      fontSize: 14,
+      textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     monthTextSelected: {
-      fontSize: 16,
+      fontSize: 14,
+      textAlign: "center",
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },

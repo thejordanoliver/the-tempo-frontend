@@ -97,14 +97,14 @@ export default function PlayerStatTable({ playerId }: Props) {
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Career Stats</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
       <Dropdown
         options={statGroups.map((g) => ({ label: g, value: g }))}
         selectedValue={selectedGroup}
         onSelect={setSelectedGroup}
         isDark={isDark}
-        absolute
+        style={{position: "absolute", right: 0, top: 18}}
       />
 
       {/* Stats Table */}

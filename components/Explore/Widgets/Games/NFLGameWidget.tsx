@@ -1,12 +1,14 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
-import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
+import { getNFLTeam } from "constants/teamsNFL";
+
+import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { Team } from "types/nfl";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
 import displayeValue from "utils/widgetUtils";
 
 export type FootballGameWidgetProps = {
@@ -16,22 +18,8 @@ export type FootballGameWidgetProps = {
   time: string;
   gameDateISO: string;
 
-  homeTeam: {
-    id: number;
-    espnID: number;
-    name: string;
-    code: string;
-    logo: any;
-    logoLight: any;
-  };
-  awayTeam: {
-    id: number;
-    espnID: number;
-    name: string;
-    code: string;
-    logo: any;
-    logoLight: any;
-  };
+  homeTeam: Team;
+  awayTeam: Team;
   homeScore: number;
   awayScore: number;
   status?: string;
@@ -70,59 +58,50 @@ export default function NFLGameWidget({
   });
   const gameDateStr = props.gameDateISO;
 
-  // -------------------------
-  // Live game hooks
-  // -------------------------
-  const possession = useFootballGamePossession(
-    props.homeTeam.espnID,
-    props.awayTeam.espnID,
-    gameDateStr,
-    "nfl"
-  );
-  const { data: details } = useFootballGameDetails(
-    String(props.homeTeam.espnID),
-    String(props.awayTeam.espnID),
-    gameDateStr,
-    "nfl"
-  );
+  const homeTeam = getNFLTeam(props?.homeTeam?.id);
+  const awayTeam = getNFLTeam(props?.awayTeam?.id);
+  const homeEspnId = homeTeam?.espnID;
+  const awayEspnId = awayTeam?.espnID;
+  const awayName = awayTeam?.code;
+  const homeName = homeTeam?.code;
+  const {
+    details,
+    score,
+    loading: gameDetailsLoading,
+  } = useGameDetails("nfl", homeEspnId, awayEspnId, gameDateStr);
 
-  // -------------------------
-  // Team records and broadcast
-  // -------------------------
-  const homeRecord = details?.homeRecords.total?.summary ?? "0-0";
-  const awayRecord = details?.awayRecords.total?.summary ?? "0-0";
-  const broadcast = getBroadcastDisplay(details?.broadcasts);
+  const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const endOfPeriod = gameStatusDescription === "End of Period";
+  const displayClock = score?.displayClock;
+  const period = score?.period;
+  const redzone = score?.possession.isRedZone;
+  const isRedzone = redzone;
+  const headlineText = details?.headline;
+  const broadcast = details?.broadcast ?? "";
+  const downDistanceText = score?.possession.downDistanceText;
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = headlineText ?? holidayLabel ?? "";
+  const possessionTeamId = score?.possession.teamId;
+  const homeRecord = details?.records.home.total.summary;
+  const awayRecord = details?.records.away.total.summary;
+  const homeScore = score?.home.total ?? 0;
+  const awayScore = score?.away.total ?? 0;
+  const football = isDark ? FootballLight : Football;
 
-  // -------------------------
-  // Game status flags
-  // -------------------------
-  const status = possession.gameStatusDescription;
-  const isScheduled = status === "Scheduled";
-  const isFinal = status === "Final";
-  const inProgress = status === "In Progress" || status === "End of Period";
-  const isHalftime = status === "Halftime";
-  const endOfPeriod = status === "End of Period";
-
-  // -------------------------
-  // Possession info
-  // -------------------------
-  const possessingTeamId = possession.possessionTeamId;
   const homeHasPossession =
-    possessingTeamId != null &&
-    String(possessingTeamId) === String(props.homeTeam.espnID);
+    inProgress && possessionTeamId === props.homeTeam.espnID;
   const awayHasPossession =
-    possessingTeamId != null &&
-    String(possessingTeamId) === String(props.awayTeam.espnID);
+    inProgress && possessionTeamId === props.awayTeam.espnID;
 
-  // -------------------------
-  // Scores & winner determination
-  // -------------------------
-  const homeScore = isFinal
-    ? props.homeScore ?? 0
-    : possession.score?.home ?? 0;
-  const awayScore = isFinal
-    ? props.awayScore ?? 0
-    : possession.score?.away ?? 0;
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
 
@@ -136,7 +115,7 @@ export default function NFLGameWidget({
     homeIsWinner,
     homeRecord,
     homeScore,
-    isDark
+    isDark,
   );
   const awayDisplay = displayeValue(
     false,
@@ -145,16 +124,16 @@ export default function NFLGameWidget({
     awayIsWinner,
     awayRecord,
     awayScore,
-    isDark
+    isDark,
   );
 
   // -------------------------
   // Loading state
   // -------------------------
-  if (loading && possession.loading) {
+  if (!details) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -174,7 +153,7 @@ export default function NFLGameWidget({
               style={styles.teamLogo}
               source={isDark ? props.awayTeam.logoLight : props.awayTeam.logo}
             />
-            <Text style={styles.teamName}>{props.awayTeam.code}</Text>
+            <Text style={styles.teamName}>{awayName}</Text>
           </View>
           <View style={styles.scorePossession}>
             {awayDisplay}
@@ -201,31 +180,23 @@ export default function NFLGameWidget({
 
           {isFinal && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>
-                {possession.gameStatusShortDetail}
-              </Text>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
           )}
 
           {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText}>
-              End of {formatQuarter(possession.period ?? "")}
-            </Text>
+            <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
           )}
 
           {inProgress && !isHalftime && !endOfPeriod && (
             <>
               <View style={styles.infoWrapper}>
-                <Text style={styles.period}>
-                  {formatQuarter(possession.period ?? "")}
-                </Text>
+                <Text style={styles.period}>{formatQuarter(period ?? "")}</Text>
                 <View style={styles.divider} />
-                <Text style={styles.finalText}>{possession.displayClock}</Text>
+                <Text style={styles.finalText}>{displayClock}</Text>
               </View>
-              {possession.downDistanceText && (
-                <Text style={styles.downAndDistance}>
-                  {possession.downDistanceText}
-                </Text>
+              {downDistanceText && (
+                <Text style={styles.downAndDistance}>{downDistanceText}</Text>
               )}
             </>
           )}
@@ -255,7 +226,7 @@ export default function NFLGameWidget({
               style={styles.teamLogo}
               source={isDark ? props.homeTeam.logoLight : props.homeTeam.logo}
             />
-            <Text style={styles.teamName}>{props.homeTeam.code}</Text>
+            <Text style={styles.teamName}>{homeName}</Text>
           </View>
         </View>
       </View>

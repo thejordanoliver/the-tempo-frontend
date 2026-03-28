@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /** ------------------- TYPES ------------------- */
 export interface SeasonAverages {
@@ -29,9 +29,9 @@ export interface Player {
   };
 }
 
-type League = "cbb" | "wcbb";
+type League = "CBB" | "WCBB";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /** ------------------- HOOK ------------------- */
 export const useRosterStats = (league: League, teamId: number) => {
@@ -40,67 +40,70 @@ export const useRosterStats = (league: League, teamId: number) => {
   const [refreshingStats, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRoster = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
+  const fetchRoster = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+
+        setError(null);
+
+        const response = await axios.get(
+          `${BASE_URL}/api/players/${league}/roster/${teamId}`,
+        );
+
+        const normalizedRoster: Player[] = response.data.map((player: any) => {
+          const seasons = player.seasonStats || player.season_stats || [];
+
+          const currentSeason =
+            seasons.length > 0
+              ? seasons.reduce((latest: any, season: any) =>
+                  season.season > latest.season ? season : latest,
+                )
+              : null;
+
+          const averages: SeasonAverages | undefined = currentSeason
+            ? (Object.fromEntries(
+                Object.entries(currentSeason.averages || {}).map(
+                  ([key, value]) => [key, Number(value) || 0],
+                ),
+              ) as SeasonAverages)
+            : undefined;
+
+          return {
+            id: player.id,
+            name: player.name,
+            first_name: player.first_name,
+            last_name: player.last_name,
+            jersey_number: player.jersey_number,
+            position: player.position,
+            headshot_url: player.headshot_url,
+            team: player.team,
+            team_id: player.team_id,
+            currentSeason: averages
+              ? {
+                  season: currentSeason.season,
+                  displaySeason: currentSeason.displaySeason,
+                  averages,
+                }
+              : undefined,
+          };
+        });
+
+        setRosterStats(normalizedRoster);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load roster");
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-
-      setError(null);
-
-      const response = await axios.get(
-        `${BASE_URL}/api/players/${league}/roster/${teamId}`
-      );
-
-      const normalizedRoster: Player[] = response.data.map((player: any) => {
-        const seasons = player.seasonStats || player.season_stats || [];
-
-        const currentSeason =
-          seasons.length > 0
-            ? seasons.reduce((latest: any, season: any) =>
-                season.season > latest.season ? season : latest
-              )
-            : null;
-
-        const averages: SeasonAverages | undefined = currentSeason
-          ? (Object.fromEntries(
-              Object.entries(currentSeason.averages || {}).map(
-                ([key, value]) => [key, Number(value) || 0]
-              )
-            ) as SeasonAverages)
-          : undefined;
-
-        return {
-          id: player.id,
-          name: player.name,
-          first_name: player.first_name,
-          last_name: player.last_name,
-          jersey_number: player.jersey_number,
-          position: player.position,
-          headshot_url: player.headshot_url,
-          team: player.team,
-          team_id: player.team_id,
-          currentSeason: averages
-            ? {
-                season: currentSeason.season,
-                displaySeason: currentSeason.displaySeason,
-                averages,
-              }
-            : undefined,
-        };
-      });
-
-      setRosterStats(normalizedRoster);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load roster");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [league, teamId]);
+    },
+    [league, teamId],
+  );
 
   useEffect(() => {
     if (!league || !teamId) return;

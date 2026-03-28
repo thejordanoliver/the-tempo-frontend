@@ -1,82 +1,59 @@
-// components/TabBars/FixedWidthTabBar.tsx
-import { Colors, Fonts } from "constants/Styles";
-import React, { useEffect, useRef, useState } from "react";
+import { Colors } from "constants/Styles";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
   Pressable,
-  StyleSheet,
   Text,
-  TextStyle,
   View,
-  useColorScheme,
 } from "react-native";
-
-export type TabItem = {
-  id: string | number;
-  label?: string;
-  logo?: any; // Image source
-};
+import { fixedWidthTabBarStyles } from "styles/TabBarStyles/FixedWidthTabBarStyles";
 
 export interface FixedWidthTabBarProps {
   tabs: readonly string[];
   selected: string;
   onTabPress: (tab: string) => void;
-  renderLabel?: (tab: string, isSelected: boolean) => React.ReactNode;
-  lighter?: boolean;
+  renderLabel?: (
+    tab: string,
+    isSelected: boolean,
+    defaultStyles: {
+      tab: any;
+      tabSelected: any;
+    }
+  ) => React.ReactNode;
+  isDark: boolean;
 }
-
-// 🔑 exported helper so you can reuse it in NFLTeamDrives
-export const getLabelStyle = (
-  isDark: boolean,
-  isSelected: boolean,
-  lighter?: boolean,
-  extra?: TextStyle
-): TextStyle => ({
-  fontSize: 16,
-  color: isSelected
-    ? lighter
-      ? Colors.white
-      : isDark
-      ? Colors.white
-      : Colors.black
-    : lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.midTone,
-  fontFamily: Fonts.OSMEDIUM,
-  opacity: isSelected ? 1 : 0.5, // ← move opacity here
-  ...extra,
-});
 
 export default function FixedWidthTabBar({
   tabs,
   selected,
   onTabPress,
   renderLabel,
-  lighter = false,
+  isDark,
 }: FixedWidthTabBarProps) {
-  const isDark = useColorScheme() === "dark";
-
   const underlineX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
+  const styles = fixedWidthTabBarStyles(isDark);
 
-  const safeTabs = (tabs ?? []).filter(
-    (t): t is string => typeof t === "string" && t.trim().length > 0
-  );
-
-  const orderedTabs = safeTabs;
+  // ✅ Memoized tabs (prevents unnecessary re-renders)
+  const orderedTabs = useMemo(() => {
+    return (tabs ?? []).filter(
+      (t): t is string => typeof t === "string" && t.trim().length > 0
+    );
+  }, [tabs]);
 
   const tabWidth = containerWidth / (orderedTabs.length || 1);
 
+  // ✅ Smooth + safe animation
   useEffect(() => {
+    if (!tabWidth) return;
+
     const index = orderedTabs.indexOf(selected);
     if (index >= 0) {
       Animated.timing(underlineX, {
         toValue: index * tabWidth,
         duration: 200,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start();
     }
   }, [selected, tabWidth, orderedTabs]);
@@ -89,7 +66,6 @@ export default function FixedWidthTabBar({
     <View onLayout={handleLayout} style={styles.tabContainer}>
       <View style={styles.tabs}>
         {orderedTabs.map((tab) => {
-          if (!tab || typeof tab !== "string") return null;
           const isSelected = selected === tab;
 
           return (
@@ -98,17 +74,20 @@ export default function FixedWidthTabBar({
               onPress={() => onTabPress(tab)}
               style={[
                 styles.tabPressable,
-                { width: `${100 / orderedTabs.length}%` },
+                { width: tabWidth }, // ✅ precise width (no % issues)
               ]}
             >
               {renderLabel ? (
-                renderLabel(tab, isSelected)
+                renderLabel(tab, isSelected, {
+                  tab: styles.tab,
+                  tabSelected: styles.tabSelected,
+                })
               ) : (
                 <Text
-                  style={{
-                    ...getLabelStyle(isDark, isSelected, lighter),
-                    opacity: isSelected ? 1 : 0.5, // ✅ add opacity here
-                  }}
+                  style={[
+                    styles.tab,
+                    isSelected && styles.tabSelected,
+                  ]}
                 >
                   {tab.toUpperCase()}
                 </Text>
@@ -124,11 +103,7 @@ export default function FixedWidthTabBar({
             styles.underline,
             {
               width: tabWidth,
-              backgroundColor: lighter
-                ? Colors.white
-                : isDark
-                ? Colors.white
-                : Colors.black,
+              backgroundColor: isDark ? Colors.white : Colors.black,
               transform: [{ translateX: underlineX }],
             },
           ]}
@@ -137,24 +112,3 @@ export default function FixedWidthTabBar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabContainer: {
-    position: "relative",
-    width: "100%",
-  },
-  tabs: {
-    flexDirection: "row",
-  },
-  tabPressable: {
-    alignItems: "center",
-    paddingBottom: 10,
-  },
-  underline: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    height: 2,
-    borderRadius: 50,
-  },
-});

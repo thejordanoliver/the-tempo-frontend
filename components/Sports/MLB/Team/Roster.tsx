@@ -21,8 +21,10 @@ export default function Roster({
   const global = globalStyles(isDark);
 
   // ✅ Fetch players from hook
-  const { players, loading, error, refreshing, refetch } =
-    useTeamPlayers(teamId, "MLB");
+  const { players, loading, error, refreshing, refetch } = useTeamPlayers(
+    teamId,
+    "MLB",
+  );
 
   // -------------------------
   // Group players by position
@@ -91,7 +93,7 @@ export default function Roster({
 
         return (
           <View key={groupName}>
-            <HeadingTwo>{groupName}</HeadingTwo>
+            <HeadingTwo isDark={isDark}>{groupName}</HeadingTwo>
 
             {sortByJersey(groupPlayers).map((player) => (
               <View key={player.id} style={{ marginBottom: 12 }}>
@@ -102,6 +104,7 @@ export default function Roster({
                   team={teamFullName}
                   avatarUrl={player.avatarUrl}
                   number={player.jersey_number}
+                  teamId={player.team_id}
                   league="MLB"
                 />
               </View>

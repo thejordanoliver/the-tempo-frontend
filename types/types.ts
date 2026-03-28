@@ -1,7 +1,6 @@
 // types.ts
 import { AwardCategory } from "hooks/useAwardSeasons";
 import { ImageSourcePropType } from "react-native";
-import { NFLTeam } from "./nfl";
 
 // types/types.ts (backend User)
 export type BackendUser = {
@@ -43,31 +42,46 @@ export type Follow = {
 
 export type PlayerStats = {
   playerId: number;
-  name: string;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  short_name: string;
+  team_id: number;
+  position: string;
+  jersey_number: string;
   headshot_url?: string;
-  gamesPlayed: number;
-  minutesPlayed: number;
-  totalPoints: number;
-  totalRebounds: number;
-  totalAssists: number;
-  totalSteals: number;
-  totalBlocks: number;
-  totalTurnovers: number;
-  totalFouls: number;
-  totalFGM: number;
-  totalFGA: number;
-  totalFGP: number;
-  total3PM: number;
-  total3PA: number;
-  total3PP: number;
-  totalFTM: number;
-  totalFTA: number;
-  totalFTP: number;
-  totalOffReb: number;
-  totalDefReb: number;
-  plusMinus: number;
+  active: boolean;
+  team: string;
+  pos: string | null;
+  latestSeason: {
+    season: string;
+    g: number;
+    gs: number | null;
+    mpg: number;
+    fg: number;
+    fga: number;
+    fg_pct: string;
+    three_p: number;
+    three_pa: number;
+    three_pct: string;
+    two_p: number;
+    two_pa: number;
+    two_pct: string;
+    efg_pct: string;
+    ft: number;
+    fta: number;
+    ft_pct: string;
+    orb: number;
+    drb: number;
+    trb: number;
+    ast: number;
+    stl: number;
+    blk: number;
+    tov: number;
+    pf: number;
+    pts: number;
+  } | null;
 };
-
 export type TeamStats = {
   gamesPlayed: number;
   pointsPerGame: number;
@@ -83,18 +97,6 @@ export type TeamStats = {
   totalPoints: number;
   totalRebounds: number;
   totalAssists: number;
-};
-
-export type PlayerInfo = {
-  player_id: number;
-  short_name: string;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  jersey_number: string;
-  position: string | null;
-  headshot_url?: string;
-  active?: boolean;
 };
 
 export interface CBBPlayer {
@@ -135,7 +137,6 @@ export interface CBBPlayer {
 
 export type RosterStatsProps = {
   rosterStats: PlayerStats[];
-  players: PlayerInfo[];
   teamId: string;
   teamStats?: TeamStats | null;
   loading?: boolean;
@@ -311,8 +312,16 @@ export type CBBGame = {
 
   // ✅ Use shared CBBTeam type here
   teams: {
-    home: CBBTeam;
-    away: CBBTeam;
+    home: {
+      id: number;
+      name: string;
+      logo: string;
+    };
+    away: {
+      id: number;
+      name: string;
+      logo: string;
+    };
   };
 
   scores: {
@@ -506,51 +515,6 @@ export type DBPlayer = {
   birth_place_display_text: string;
 };
 
-export type APIGame = {
-  id: number;
-  date: { start: string };
-  status: {
-    long: string;
-    short: string;
-    clock?: string;
-  };
-  periods: {
-    current: number;
-    total: number;
-    endOfPeriod: boolean;
-  };
-  teams: {
-    home: {
-      id: number;
-      name: string;
-      logo: string;
-      logoLight: any;
-    };
-    visitors: {
-      id: number;
-      name: string;
-      logo: string;
-      logoLight: any;
-    };
-  };
-  scores: {
-    home: {
-      points: number | null;
-      win?: number;
-      loss?: number;
-      series?: { win: number; loss: number };
-      linescore?: string[];
-    };
-    visitors: {
-      points: number | null;
-      win?: number;
-      loss?: number;
-      series?: { win: number; loss: number };
-      linescore?: string[];
-    };
-  };
-};
-
 export type TeamRecord = {
   wins: number;
   losses: number;
@@ -652,8 +616,8 @@ export type AwardSeason = {
   coach?: string;
   stats: AwardStats | null;
   school: string;
-  award_team?: NBATeam | NFLTeam;
-  current_team?: NBATeam | NFLTeam;
+  award_team?: NBATeam | Team;
+  current_team?: NBATeam | Team;
   current_team_id?: number | null;
   created_at: string;
 };

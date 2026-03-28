@@ -4,7 +4,7 @@ import OfferList from "components/Sports/CFB/Recruiting/OfferLists";
 import PredictionRing from "components/Sports/CFB/Recruiting/PredictionRing";
 import RecruitHeader from "components/Sports/CFB/Recruiting/RecruitHeader";
 import StarRating from "components/Sports/CFB/Recruiting/StarRating";
-import { getTeamById } from "constants/teamsCFB";
+import { getCFBTeam } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFootballRecruit } from "hooks/CFBHooks/useFootballRecruit";
 import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
@@ -23,8 +23,8 @@ export default function RecruitDetailScreen(props: FootballRecruit) {
   const { data: player, loading, error } = useFootballRecruit(playerId);
 
   // console.log(JSON.stringify(player, null, 2));
-  const team = getTeamById(player?.committed_team_id);
-  const predictedTeam = getTeamById(player?.predicted_team_id);
+  const team = getCFBTeam(player?.committed_team_id);
+  const predictedTeam = getCFBTeam(player?.predicted_team_id);
   const isTeamAvailable = !!team;
   const teamColor = team?.color;
   const teamPredictedColor = isDark
@@ -37,7 +37,7 @@ export default function RecruitDetailScreen(props: FootballRecruit) {
   useLayoutEffect(() => {
     if (!player) return;
 
-    const team = getTeamById(player.committed_team_id);
+    const team = getCFBTeam(player.committed_team_id);
     const isTeamAvailable = !!team;
 
     navigation.setOptions({
@@ -57,7 +57,7 @@ export default function RecruitDetailScreen(props: FootballRecruit) {
     });
   }, [navigation, isDark, player?.committed_team_id]);
 
-  if (loading) return <CustomActivityIndicator/>;
+  if (loading) return <CustomActivityIndicator isDark={isDark} />;
   if (!player) return null;
 
   return (

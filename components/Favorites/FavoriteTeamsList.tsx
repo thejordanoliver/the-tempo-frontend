@@ -8,6 +8,7 @@ import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import type { LeagueType, Team } from "types/types";
+import { getTeamRoute } from "utils/teams";
 
 type TeamWithLeague = Team & { league: LeagueType };
 
@@ -36,27 +37,6 @@ function resolveLogo(source: any) {
 const getTeamId = (team: TeamWithLeague) => {
   if (team.league === "WCBB") return (team as any).wid;
   return team.id;
-};
-
-const getTeamRoute = (league: LeagueType) => {
-  switch (league) {
-    case "NFL":
-      return "/team/nfl/[teamId]";
-    case "NBA":
-      return "/team/[teamId]";
-    case "CFB":
-      return "/team/cfb/[teamId]";
-    case "CBB":
-      return "/team/cbb/[teamId]";
-    case "WCBB":
-      return "/team/wcbb/[teamId]";
-    case "MLB":
-      return "/team/mlb/[teamId]";
-    case "NHL":
-      return "/team/nhl/[teamId]";
-    default:
-      return "/team/[teamId]";
-  }
 };
 
 /* ---------------- COMPONENT ---------------- */

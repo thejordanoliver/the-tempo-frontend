@@ -1,6 +1,7 @@
-// constants/teams.ts
+// constants/cfbTeams.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { CFBTeam, Conference, Venue } from "types/cfb";
+import { Conference, Venue } from "types/cfb";
+import { Team } from "types/nfl";
 
 //Conference Logos
 import MountainWestConference from "assets/College_Logos/MWC.png";
@@ -269,6 +270,7 @@ import MaristLogo from "../assets/College_Logos/Marist.png";
 import McNeeseLogo from "../assets/College_Logos/McNeese.png";
 import MemphisLogo from "../assets/College_Logos/Memphis.png";
 import MercerLogo from "../assets/College_Logos/Mercer.png";
+import MercyhurstLogo from "../assets/College_Logos/Mercyhurst.png";
 import MerrimackLogo from "../assets/College_Logos/Merrimack.png";
 import MississippiValleyStateLogo from "../assets/College_Logos/MississippiValleyState.png";
 import MissouriStateLogo from "../assets/College_Logos/MissouriState.png";
@@ -282,6 +284,7 @@ import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
 import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
 import NewberryLogo from "../assets/College_Logos/Newberry.png";
 import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
+import NewHavenLogo from "../assets/College_Logos/NewHaven.png";
 import NewMexicoLogo from "../assets/College_Logos/NewMexico.png";
 import NewMexicoStateLogo from "../assets/College_Logos/NewMexicoState.png";
 import NicholsLogo from "../assets/College_Logos/Nichols.png";
@@ -377,7 +380,7 @@ import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
-export const teams: CFBTeam[] = [
+export const cfbTeams: Team[] = [
   {
     id: 241,
     espnID: 2000,
@@ -1141,6 +1144,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2cvffza92wr1ydm402p",
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
+    shortName: "C Connecticut",
     code: "CCSU",
     color: "#1B49A2",
     secondaryColor: "#d1d5d8",
@@ -1849,6 +1853,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2dme1p95mxskbztcm68",
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
+    shortName: "E Washington",
     code: "EWU",
     color: "#a10022",
     secondaryColor: "#abb4bc",
@@ -5078,7 +5083,7 @@ export const teams: CFBTeam[] = [
   },
 
   {
-    id: 68,
+    id: 884,
     espnID: 2598,
     oddsID: "par_01hqmkr2j1e5ztpspp1qdatg87",
     name: "Saint Francis",
@@ -5267,6 +5272,7 @@ export const teams: CFBTeam[] = [
     oddsID: "par_01hqmkr2hqffgvyyk1ecjqxgyp",
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
+    shortName: "SC State",
     code: "SCST",
     color: "#7d1315",
     secondaryColor: "#104897",
@@ -6560,7 +6566,6 @@ export const teams: CFBTeam[] = [
     longitude: -80.2531,
     venueImage: null,
   },
-
   {
     id: 205,
     espnID: 264,
@@ -6582,7 +6587,6 @@ export const teams: CFBTeam[] = [
     longitude: -122.3016,
     venueImage: null,
   },
-
   {
     id: 201,
     espnID: 265,
@@ -6604,7 +6608,6 @@ export const teams: CFBTeam[] = [
     longitude: -117.1634,
     venueImage: null,
   },
-
   {
     id: 227,
     espnID: 2692,
@@ -6630,7 +6633,6 @@ export const teams: CFBTeam[] = [
   {
     id: 592,
     espnID: 2695,
-
     name: "West Alabama",
     fullName: "West Alabama Tigers",
     code: "WES",
@@ -6674,7 +6676,6 @@ export const teams: CFBTeam[] = [
   {
     id: 373,
     espnID: 2699,
-
     name: "West Liberty",
     fullName: "West Liberty Hilltoppers",
     code: "WLIBST",
@@ -6934,7 +6935,48 @@ export const teams: CFBTeam[] = [
     longitude: -72.9479,
     venueImage: null,
   },
-
+  {
+    id: 482,
+    espnID: 2441,
+    name: "New Haven",
+    fullName: "New Haven Chargers",
+    shortName: "New Haven",
+    code: "NHVN",
+    color: "#041e42",
+    secondaryColor: "#ffc425",
+    logo: NewHavenLogo,
+    location: "West Haven, CT",
+    city: "West Haven",
+    venue: "Ralph F. DellaCamera Stadium",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347223/stadiums/football/cfb_482_Ralph_F_DellaCamera_Stadium.png",
+    address: "300 Boston Post Rd, West Haven, CT 06516",
+    venueCapacity: "5,000",
+    established: 1920,
+    latitude: 41.2896,
+    longitude: -72.9612,
+  },
+  {
+    id: 381,
+    espnID: 2385,
+    name: "Mercyhurst",
+    fullName: "Mercyhurst Lakers",
+    shortName: "Mercyhurst",
+    code: "MERC",
+    color: "#07594D",
+    secondaryColor: "#182752",
+    logo: MercyhurstLogo,
+    location: "Erie, PA",
+    city: "Erie",
+    venue: "Saxon Stadium",
+    address: "501 E 38th St, Erie, PA 16546",
+    venueCapacity: "4,000",
+    established: 1926,
+    latitude: 42.1129,
+    longitude: -80.0866,
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347640/stadiums/football/cfb_381_Saxon_Stadium.webp",
+  },
   {
     id: 238,
     espnID: 2754,
@@ -6963,73 +7005,73 @@ export const CFB_RIVALRIES = [
   // -------------------------------
   // ACC
   // -------------------------------
-  { rivalryName: "Clean, Old-Fashioned Hate", teams: [59, 61] }, // Georgia Tech vs Georgia
-  { rivalryName: "Sunshine Showdown", teams: [52, 57] }, // Florida State vs Florida
-  { rivalryName: "South's Oldest Rivalry", teams: [153, 258] }, // UNC vs Virginia
-  { rivalryName: "Commonwealth Cup", teams: [258, 259] }, // Virginia vs Virginia Tech
-  { rivalryName: "Textile Bowl", teams: [228, 152] }, // Clemson vs NC State
-  { rivalryName: "Battle for the Victory Bell", teams: [150, 153] }, // Duke vs UNC
+  { rivalryName: "Clean, Old-Fashioned Hate", cfbTeams: [59, 61] }, // Georgia Tech vs Georgia
+  { rivalryName: "Sunshine Showdown", cfbTeams: [52, 57] }, // Florida State vs Florida
+  { rivalryName: "South's Oldest Rivalry", cfbTeams: [153, 258] }, // UNC vs Virginia
+  { rivalryName: "Commonwealth Cup", cfbTeams: [258, 259] }, // Virginia vs Virginia Tech
+  { rivalryName: "Textile Bowl", cfbTeams: [228, 152] }, // Clemson vs NC State
+  { rivalryName: "Battle for the Victory Bell", cfbTeams: [150, 153] }, // Duke vs UNC
 
   // -------------------------------
   // SEC
   // -------------------------------
-  { rivalryName: "Iron Bowl", teams: [2, 333] }, // Auburn vs Alabama
-  { rivalryName: "Deep South's Oldest Rivalry", teams: [333, 61] }, // Alabama vs Georgia
-  { rivalryName: "Egg Bowl", teams: [145, 344] }, // Ole Miss vs Mississippi State
-  { rivalryName: "Third Saturday in October", teams: [333, 2633] }, // Alabama vs Tennessee
-  { rivalryName: "World's Largest Outdoor Cocktail Party", teams: [61, 57] }, // Georgia vs Florida
-  { rivalryName: "Red River Rivalry", teams: [251, 201] }, // Oklahoma vs Texas
-  { rivalryName: "Battle for the Golden Boot", teams: [99, 74] }, // LSU vs Arkansas
-  { rivalryName: "Battle Line Rivalry", teams: [74, 142] }, // Arkansas vs Missouri
-  { rivalryName: "Magnolia Bowl", teams: [99, 145] }, // LSU vs Ole Miss
-  { rivalryName: "Lone Star Showdown", teams: [245, 251] }, // Texas vs Texas A&M
+  { rivalryName: "Iron Bowl", cfbTeams: [2, 333] }, // Auburn vs Alabama
+  { rivalryName: "Deep South's Oldest Rivalry", cfbTeams: [333, 61] }, // Alabama vs Georgia
+  { rivalryName: "Egg Bowl", cfbTeams: [145, 344] }, // Ole Miss vs Mississippi State
+  { rivalryName: "Third Saturday in October", cfbTeams: [333, 2633] }, // Alabama vs Tennessee
+  { rivalryName: "World's Largest Outdoor Cocktail Party", cfbTeams: [61, 57] }, // Georgia vs Florida
+  { rivalryName: "Red River Rivalry", cfbTeams: [251, 201] }, // Oklahoma vs Texas
+  { rivalryName: "Battle for the Golden Boot", cfbTeams: [99, 74] }, // LSU vs Arkansas
+  { rivalryName: "Battle Line Rivalry", cfbTeams: [74, 142] }, // Arkansas vs Missouri
+  { rivalryName: "Magnolia Bowl", cfbTeams: [99, 145] }, // LSU vs Ole Miss
+  { rivalryName: "Lone Star Showdown", cfbTeams: [245, 251] }, // Texas vs Texas A&M
 
   // -------------------------------
   // Big Ten
   // -------------------------------
-  { rivalryName: "The Game", teams: [130, 194] }, // Michigan vs Ohio State
-  { rivalryName: "Paul Bunyan Trophy", teams: [130, 193] }, // Michigan vs Michigan State
-  { rivalryName: "Paul Bunyan's Axe", teams: [275, 2750] }, // Wisconsin vs Minnesota
-  { rivalryName: "Heroes Trophy", teams: [66, 1586] }, // Nebraska vs Iowa
-  { rivalryName: "Old Oaken Bucket", teams: [2509, 84] }, // Purdue vs Indiana
-  { rivalryName: "Floyd of Rosedale", teams: [66, 2750] }, // Iowa vs Minnesota
-  { rivalryName: "Illibuck", teams: [127, 77] }, // Ohio State vs Illinois
-  { rivalryName: "Land of Lincoln Trophy", teams: [77, 163] }, // Illinois vs Northwestern
+  { rivalryName: "The Game", cfbTeams: [130, 194] }, // Michigan vs Ohio State
+  { rivalryName: "Paul Bunyan Trophy", cfbTeams: [130, 193] }, // Michigan vs Michigan State
+  { rivalryName: "Paul Bunyan's Axe", cfbTeams: [275, 2750] }, // Wisconsin vs Minnesota
+  { rivalryName: "Heroes Trophy", cfbTeams: [66, 1586] }, // Nebraska vs Iowa
+  { rivalryName: "Old Oaken Bucket", cfbTeams: [2509, 84] }, // Purdue vs Indiana
+  { rivalryName: "Floyd of Rosedale", cfbTeams: [66, 2750] }, // Iowa vs Minnesota
+  { rivalryName: "Illibuck", cfbTeams: [127, 77] }, // Ohio State vs Illinois
+  { rivalryName: "Land of Lincoln Trophy", cfbTeams: [77, 163] }, // Illinois vs Northwestern
 
   // -------------------------------
   // Big 12
   // -------------------------------
-  { rivalryName: "Bedlam", teams: [201, 197] }, // Oklahoma vs Oklahoma State
-  { rivalryName: "Sunflower Showdown", teams: [2306, 2305] }, // Kansas vs Kansas State
-  { rivalryName: "Farmageddon", teams: [66, 2305] }, // Iowa State vs Kansas State
+  { rivalryName: "Bedlam", cfbTeams: [201, 197] }, // Oklahoma vs Oklahoma State
+  { rivalryName: "Sunflower Showdown", cfbTeams: [2306, 2305] }, // Kansas vs Kansas State
+  { rivalryName: "Farmageddon", cfbTeams: [66, 2305] }, // Iowa State vs Kansas State
 
   // -------------------------------
   // Pac-12 / Remaining
   // -------------------------------
-  { rivalryName: "Civil War", teams: [204, 213] }, // Oregon vs Oregon State
-  { rivalryName: "Apple Cup", teams: [264, 265] }, // Washington vs Washington State
-  { rivalryName: "Victory Bell", teams: [26, 30] }, // UCLA vs USC
-  { rivalryName: "Territorial Cup", teams: [9, 12] }, // Arizona vs Arizona State
-  { rivalryName: "Big Game", teams: [25, 24] }, // Cal vs Stanford
+  { rivalryName: "Civil War", cfbTeams: [204, 213] }, // Oregon vs Oregon State
+  { rivalryName: "Apple Cup", cfbTeams: [264, 265] }, // Washington vs Washington State
+  { rivalryName: "Victory Bell", cfbTeams: [26, 30] }, // UCLA vs USC
+  { rivalryName: "Territorial Cup", cfbTeams: [9, 12] }, // Arizona vs Arizona State
+  { rivalryName: "Big Game", cfbTeams: [25, 24] }, // Cal vs Stanford
 
   // -------------------------------
   // Mountain West / AAC / Other FBS
   // -------------------------------
-  { rivalryName: "Battle for the Fremont Cannon", teams: [2439, 2440] }, // UNLV vs Nevada
-  { rivalryName: "Battle of I-25", teams: [167, 166] }, // New Mexico vs New Mexico State
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 2426] }, // Army vs Navy
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [349, 2005] }, // Army vs Air Force
-  { rivalryName: "Commander-in-Chief's Trophy", teams: [2005, 2426] }, // Air Force vs Navy
-  { rivalryName: "Battle for the Golden Pineapple", teams: [62, 2439] }, // Hawaii vs UNLV
-  { rivalryName: "Hawaii Bowl Rivalry", teams: [62, 278] }, // Hawaii vs Fresno State
+  { rivalryName: "Battle for the Fremont Cannon", cfbTeams: [2439, 2440] }, // UNLV vs Nevada
+  { rivalryName: "Battle of I-25", cfbTeams: [167, 166] }, // New Mexico vs New Mexico State
+  { rivalryName: "Commander-in-Chief's Trophy", cfbTeams: [349, 2426] }, // Army vs Navy
+  { rivalryName: "Commander-in-Chief's Trophy", cfbTeams: [349, 2005] }, // Army vs Air Force
+  { rivalryName: "Commander-in-Chief's Trophy", cfbTeams: [2005, 2426] }, // Air Force vs Navy
+  { rivalryName: "Battle for the Golden Pineapple", cfbTeams: [62, 2439] }, // Hawaii vs UNLV
+  { rivalryName: "Hawaii Bowl Rivalry", cfbTeams: [62, 278] }, // Hawaii vs Fresno State
 
   // -------------------------------
   // Independents
   // -------------------------------
-  { rivalryName: "Holy War", teams: [252, 254] }, // BYU vs Utah
-  { rivalryName: "Notre Dame–USC", teams: [87, 30] }, // ND vs USC
-  { rivalryName: "Notre Dame–Stanford", teams: [87, 24] }, // ND vs Stanford
-  { rivalryName: "Catholics vs Convicts", teams: [87, 2390] }, // Notre Dame vs Miami
+  { rivalryName: "Holy War", cfbTeams: [252, 254] }, // BYU vs Utah
+  { rivalryName: "Notre Dame–USC", cfbTeams: [87, 30] }, // ND vs USC
+  { rivalryName: "Notre Dame–Stanford", cfbTeams: [87, 24] }, // ND vs Stanford
+  { rivalryName: "Catholics vs Convicts", cfbTeams: [87, 2390] }, // Notre Dame vs Miami
 ];
 
 export const conferenceListMap: Record<string, string[]> = {
@@ -7200,7 +7242,7 @@ export const conferenceListMap: Record<string, string[]> = {
   ],
 };
 
-// Conference teams
+// Conference Teams
 export const conferenceObjectListMap: Conference[] = [
   {
     name: "AAC",
@@ -7740,125 +7782,79 @@ export const modalToMapKey: Record<string, string> = {
   "FBS Independents": "FBS Independents",
 };
 
-export const getTeamInfo = (teamId: number | string) => {
-  if (teamId == null) return undefined;
-  return teams.find((t) => String(t.id) === String(teamId));
-};
-
 export const getCFBTeam = (id: string | number) =>
-  teams.find((t) => String(t.id) === String(id)) || null;
+  cfbTeams.find((t) => String(t.id) === String(id));
 
 export function getCFBTeamLogo(
-  idOrAbbr: number | string,
+  id: number | string,
   isDark: boolean,
-  lighter: boolean = false
+  lighter: boolean = false,
 ) {
-  const key = String(idOrAbbr).toLowerCase();
+  const key = String(id).toLowerCase();
 
-  const team = teams.find(
-    (t) =>
-      String(t.id) === String(idOrAbbr) ||
-      t.code?.toLowerCase() === key ||
-      t.abbreviation?.toLowerCase() === key ||
-      t.name?.toLowerCase() === key ||
-      t.fullName?.toLowerCase() === key
-  );
+  const team = cfbTeams.find((t) => String(t.id) === String(id));
 
   if (!team) return PlaceholderLogo;
 
   return lighter
     ? team.logoLight || team.logo
     : isDark
-    ? team.logoLight || team.logo
-    : team.logo;
+      ? team.logoLight || team.logo
+      : team.logo;
 }
 
-export function getTeamLightoiLogo(idOrAbbr: number | string) {
-  const key = String(idOrAbbr).toLowerCase();
-
-  const team = teams.find(
-    (t) =>
-      String(t.id) === String(idOrAbbr) ||
-      t.code?.toLowerCase() === key ||
-      t.abbreviation?.toLowerCase() === key ||
-      t.name?.toLowerCase() === key ||
-      t.fullName?.toLowerCase() === key
-  );
-
-  if (!team) return PlaceholderLogo;
-
-  // ✅ ALWAYS prefer logoLight, fallback to logo
-  return team.logoLight || team.logo;
-}
-
-export function getTeamLogoESPN(idOrAbbr: number | string, isDark: boolean) {
-  const idOrAbbrLower = String(idOrAbbr).toLowerCase();
-
-  const team = teams.find(
-    (t) =>
-      String(t.espnID) === String(idOrAbbr) ||
-      t.code?.toLowerCase() === idOrAbbrLower ||
-      t.abbreviation?.toLowerCase() === idOrAbbrLower
-  );
-
-  if (!team) return PlaceholderLogo; // fallback
-
-  return isDark ? team.logoLight || team.logo : team.logo;
-}
-
-export const getTeamById = (id?: number | string) =>
-  teams.find((t) => String(t.id) === String(id));
-
-export const getTeamName = (teamId: number | string, fallback?: string) => {
-  const team = getTeamInfo(teamId);
-  return team?.name || fallback || "Unknown Team";
-};
-
-export const getTeamCode = (teamId: number | string, fallback?: string) => {
-  const team = getTeamInfo(teamId);
-  return team?.code || fallback || "UKNW";
-};
-
-export const getTeamCodeESPN = (teamId: number | string, fallback?: string) => {
-  const team = getTeamInfo(teamId);
-  const teamESPN = teams.find((t) => String(t.espnID) === String(teamId));
-  return teamESPN?.code || fallback || "UKNW";
-};
-
-// returns the internal numeric ID
-export const getTeamIdByESPN = (espnId?: number): number | undefined => {
-  if (!espnId) return undefined;
-  const team = teams.find((t) => t.espnID === espnId);
-  // convert to number in case it's a string
-  return team?.id ? Number(team.id) : undefined;
-};
-
-export function getCFBTeamAbbreviation(
-  teamId: string,
-  fallback?: string
-): string | null {
-  const team = getTeamInfo(teamId);
-  return team?.code || fallback || "UKNW";
-}
-
-export const teamsCFBById: Record<string, CFBTeam> = teams.reduce(
+export const teamsCFBById: Record<string, Team> = cfbTeams.reduce(
   (map, team) => {
     map[team.id] = team;
     return map;
   },
-  {} as Record<string, CFBTeam>
+  {} as Record<string, Team>,
 );
 
 export const getTeamByESPNId = (espnId: number | string) => {
-  return teams.find((t) => t.espnID?.toString() === espnId?.toString());
+  return cfbTeams.find((t) => t.espnID.toString() === espnId.toString())!;
 };
 
 export function getRivalryHeadline(homeId?: number, awayId?: number) {
   if (!homeId || !awayId) return null;
 
   const match = CFB_RIVALRIES.find(
-    (r) => r.teams.includes(Number(homeId)) && r.teams.includes(Number(awayId))
+    (r) =>
+      r.cfbTeams.includes(Number(homeId)) &&
+      r.cfbTeams.includes(Number(awayId)),
   );
 
   return match?.rivalryName || null;
+}
+
+const normalize = (s?: unknown) => {
+  if (typeof s !== "string") return "";
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+};
+export function getNeutralStadium(venueName?: string, isNeutralSite?: boolean) {
+  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
+  if (!isNeutralSite) return null;
+
+  if (!venueName) return null;
+
+  const normalizedInput = normalize(venueName);
+
+  // 1. Exact match (fast path)
+  if (neutralStadiums[venueName]) {
+    return neutralStadiums[venueName];
+  }
+
+  // 2. Fuzzy match
+  for (const key of Object.keys(neutralStadiums)) {
+    const normalizedKey = normalize(key);
+
+    if (
+      normalizedInput.includes(normalizedKey) ||
+      normalizedKey.includes(normalizedInput)
+    ) {
+      return neutralStadiums[key];
+    }
+  }
+
+  return null;
 }

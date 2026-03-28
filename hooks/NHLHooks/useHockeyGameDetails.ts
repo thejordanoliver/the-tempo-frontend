@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GameVenue } from "hooks/NFLHooks/useFootballGameDetails";
+import { Predictor } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ---------------------------------- */
@@ -100,13 +100,14 @@ export type GameDetails = {
     home: TeamRecords;
     away: TeamRecords;
   };
+  predictor: Predictor;
 
   venue?: Venue | null;
 };
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* Hook                               */

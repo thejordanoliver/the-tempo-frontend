@@ -7,7 +7,7 @@ export interface Coach {
   first_name: string;
   last_name: string;
   experience: string | null;
-  teamId: number | undefined,
+  teamId: number | undefined;
   role: string;
   season: number;
   is_active: boolean;
@@ -19,11 +19,11 @@ interface UseTeamCoachesResult {
   error: string | null;
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useTeamCoaches(
   teamId: number,
-  league: string
+  league: string,
 ): UseTeamCoachesResult {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);

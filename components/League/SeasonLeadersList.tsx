@@ -1,7 +1,7 @@
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
-import { getTeamById } from "constants/teams"; // import your teams list
+import { getNBATeam } from "constants/teams"; // import your teams list
 import { useRouter } from "expo-router";
 import {
   FlatList,
@@ -97,7 +97,9 @@ export default function SeasonLeadersList({
       keyExtractor={([stat]) => stat}
       renderItem={({ item: [stat, players] }) => (
         <View>
-          <HeadingTwo>{STAT_DISPLAY_NAMES[stat] || stat} Leaders</HeadingTwo>
+          <HeadingTwo isDark={isDark}>
+            {STAT_DISPLAY_NAMES[stat] || stat} Leaders
+          </HeadingTwo>
 
           <View style={styles.playersList}>
             {players!.map((player) => {
@@ -107,7 +109,7 @@ export default function SeasonLeadersList({
               const headshotUrl =
                 player.player.headshot_url || "https://via.placeholder.com/40";
 
-              const team = getTeamById(player.player.team_id);
+              const team = getNBATeam(player.player.team_id);
               const teamName = team?.name ?? "";
 
               return (
@@ -126,6 +128,7 @@ export default function SeasonLeadersList({
                 >
                   <PlayerCard
                     id={player.player.player_id}
+                    teamId={player.player.team_id}
                     rank={player.rank}
                     name={name}
                     team={teamName}

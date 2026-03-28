@@ -1,6 +1,5 @@
 // app/league/cbb.tsx
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
@@ -14,17 +13,18 @@ import ConferenceListModal, {
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/Styles";
-import { getTeamInfo } from "constants/teamsCBB";
+import { getCBBTeam } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
+import { useCBBTournamentGames } from "hooks/CBBHooks/useCBBTournamentGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
@@ -47,6 +47,7 @@ export default function CBBLeagueScreen() {
     loading: cbbloading,
     refreshCBBGames,
   } = useCBBSeasonGames();
+  const tournamentFilter = useCBBTournamentGames();
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CBB");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -56,21 +57,6 @@ export default function CBBLeagueScreen() {
   const apTop25 = useAPTop25("CBB");
   const top25Teams = apTop25.map((t) => String(t?.id));
   const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
-
-  // --- Load favorites ---
-  useFocusEffect(
-    useCallback(() => {
-      const loadFavorites = async () => {
-        try {
-          const stored = await AsyncStorage.getItem("favorites");
-          if (stored) setFavorites(JSON.parse(stored));
-        } catch (error) {
-          console.warn("Failed to load favorites:", error);
-        }
-      };
-      loadFavorites();
-    }, []),
-  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -127,8 +113,8 @@ export default function CBBLeagueScreen() {
 
     if (selectedConference === "Top 25") {
       result = gamesForDate.filter((game) => {
-        const home = getTeamInfo(game.teams.home.id);
-        const away = getTeamInfo(game.teams.away.id);
+        const home = getCBBTeam(game?.teams?.home?.id, false);
+        const away = getCBBTeam(game?.teams?.away?.id, false);
         const homeESPN = home?.espnID;
         const awayESPN = away?.espnID;
 
@@ -136,6 +122,18 @@ export default function CBBLeagueScreen() {
           (homeESPN && top25Teams.includes(String(homeESPN))) ||
           (awayESPN && top25Teams.includes(String(awayESPN)))
         );
+      });
+    }
+    if (selectedConference === "NCAA Tournament") {
+      result = gamesForDate.filter((game) => {
+        const home = getCBBTeam(game?.teams?.home?.id, false);
+        const away = getCBBTeam(game?.teams?.away?.id, false);
+        const homeESPN = home?.espnID;
+        const awayESPN = away?.espnID;
+        const seasonStage =
+          tournamentFilter?.games[0]?.competitions[0]?.tournamentId === 22;
+
+        return (seasonStage && homeESPN) || (seasonStage && awayESPN);
       });
     } else if (selectedConference) {
       result = filterCBBGames({
@@ -158,6 +156,7 @@ export default function CBBLeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
 
       <View style={styles.container}>
@@ -193,7 +192,9 @@ export default function CBBLeagueScreen() {
           {/* STANDINGS */}
           <View key="standings">
             <>
-              {selectedConference === "Top 25" || !selectedConference ? (
+              {selectedConference === "Top 25" ||
+              selectedConference === "NCAA Tournament" ||
+              !selectedConference ? (
                 <CBBStandingsList league="CBB" />
               ) : (
                 <CBBConferenceStandingsList
@@ -210,6 +211,7 @@ export default function CBBLeagueScreen() {
               error={error}
               categories={categories}
               league={"CBB"}
+              isDark={isDark}
             />
           </View>
 

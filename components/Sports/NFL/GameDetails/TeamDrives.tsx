@@ -1,26 +1,24 @@
 import { Colors } from "constants/Styles";
-import { teams as CFBTeams, getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import {
   getTeamByESPNId as getNFLTeamByESPNId,
-  teams as NFLTeams,
+  getNFLTeamLogo,
 } from "constants/teamsNFL";
+import { PlayObject } from "hooks/NFLHooks/useGameDetails";
 import { useEffect, useMemo, useState } from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import { LeagueType } from "types/types";
+import { Image, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "../../../TabBars/FixedWidthTabBar";
-import DrivesList, { Drive } from "./DrivesList";
+import FixedWidthTabBar from "../../../TabBars/FixedWidthTabBar";
+import DrivesList from "./DrivesList";
 type Props = {
-  previousDrives?: Drive[] | null;
-  currentDrives?: Drive[] | null;
+  previousDrives?: PlayObject[] | null;
+  currentDrives?: PlayObject[] | null;
   loading?: boolean;
   error?: string | null;
-  awayTeamId?: number;
-  homeTeamId?: number;
-  lighter?: boolean;
-  league?: LeagueType;
+  awayTeamId: number;
+  homeTeamId: number;
+  isDark: boolean;
+  league?: "NFL" | "CFB";
 };
 
 export default function TeamDrives({
@@ -30,121 +28,118 @@ export default function TeamDrives({
   error = null,
   awayTeamId,
   homeTeamId,
-  lighter = false,
+  isDark,
   league = "NFL",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const styles = TeamDrivesStyles;
+
+  const normalizeESPNId = (id?: number | string | null): string | null => {
+    if (id === null || id === undefined) return null;
+    return String(id);
+  };
 
   const prev = Array.isArray(previousDrives) ? previousDrives : [];
   const curr = Array.isArray(currentDrives) ? currentDrives : [];
+
   const allDrives = useMemo(() => [...curr, ...prev], [curr, prev]);
 
-  // Pick correct constants list
-  const TEAM_LIST = league === "CFB" ? CFBTeams : NFLTeams;
-
-  // Convert internal team ID → internal team object
-  const getTeamById = (id?: number | string | null) => {
-    if (!id) return null;
-    return TEAM_LIST.find((t) => Number(t.espnID) === Number(id)) ?? null;
-  };
-
-  const awayTeamObj = getTeamById(awayTeamId);
-  const homeTeamObj = getTeamById(homeTeamId);
+  /* ------------------------------- */
+  /* Build tabs like scoring summary */
+  /* ------------------------------- */
 
   const teams = useMemo(() => {
-    const tabs: { id: string; code: string }[] = [{ id: "ALL", code: "ALL" }];
+    const tabs: string[] = ["ALL"];
 
-    if (awayTeamObj) {
-      tabs.push({
-        id: String(awayTeamObj.espnID), // <-- ESPN ID
-        code: awayTeamObj.code ?? String(awayTeamObj.espnID),
-      });
-    }
+    const away = normalizeESPNId(awayTeamId);
+    const home = normalizeESPNId(homeTeamId);
 
-    if (homeTeamObj && homeTeamObj.espnID !== awayTeamObj?.espnID) {
-      tabs.push({
-        id: String(homeTeamObj.espnID), // <-- ESPN ID
-        code: homeTeamObj.code ?? String(homeTeamObj.espnID),
-      });
-    }
+    if (away) tabs.push(away);
+    if (home && home !== away) tabs.push(home);
 
-    const uniqueEspnIds = Array.from(
-      new Set(allDrives.map((d) => String(d?.team?.id)).filter(Boolean)),
+    const uniqueIds = Array.from(
+      new Set(
+        allDrives
+          ?.map((d) => normalizeESPNId(d.team?.id))
+          .filter((id): id is string => !!id),
+      ),
     );
 
-    uniqueEspnIds.forEach((espnID) => {
-      const t = getTeamById(espnID);
-      if (t && !tabs.find((tab) => tab.id === String(t.espnID))) {
-        tabs.push({
-          id: String(t.espnID), // <-- ESPN ID
-          code: t.code ?? String(t.espnID),
-        });
+    uniqueIds.forEach((id) => {
+      if (!tabs.includes(id)) {
+        tabs.push(id);
       }
     });
 
     return tabs;
-  }, [allDrives, awayTeamObj, homeTeamObj]);
+  }, [allDrives, awayTeamId, homeTeamId]);
 
-  const [selectedTeam, setSelectedTeam] = useState<string>(
-    teams[0]?.id ?? "ALL",
-  );
+  const [selectedTeam, setSelectedTeam] = useState<string>(teams[0] ?? "");
 
   useEffect(() => {
-    if (!teams.find((t) => t.id === selectedTeam)) {
-      setSelectedTeam(teams[0]?.id ?? "ALL");
+    if (!teams.includes(selectedTeam)) {
+      setSelectedTeam(teams[0] ?? "");
     }
   }, [teams, selectedTeam]);
 
-  // ⭐ Filter drives by team ID
+  /* ------------------------------- */
+  /* Filter drives like scoring plays */
+  /* ------------------------------- */
+
   const teamDrives = useMemo(() => {
     if (selectedTeam === "ALL") return allDrives;
 
-    return allDrives.filter((d) => String(d?.team?.id) === selectedTeam);
+    return allDrives.filter(
+      (d) => normalizeESPNId(d.team?.id) === selectedTeam,
+    );
   }, [allDrives, selectedTeam]);
 
   if (!loading && allDrives.length === 0) return null;
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Drives</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Drives</HeadingTwo>
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar
-          tabs={teams.map((t) => t.id)} // IDs are tabs
+          tabs={teams}
           selected={selectedTeam}
           onTabPress={setSelectedTeam}
-          lighter={lighter}
-          renderLabel={(id, isSelected) => {
-            const tabTeam = teams.find((t) => t.id === id);
+          isDark={isDark}
+          renderLabel={(id, isSelected, tabStyles) => {
+            if (id === "ALL") {
+              return (
+                <Text
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
+                >
+                  ALL
+                </Text>
+              );
+            }
 
-            const code = tabTeam?.code ?? "ALL";
-            const teamId = tabTeam?.id ?? "ALL";
             const team =
-              league === "CFB"
-                ? getTeamByESPNId(teamId)
-                : getNFLTeamByESPNId(teamId);
+              league === "CFB" ? getTeamByESPNId(id) : getNFLTeamByESPNId(id);
 
-            const logo = lighter
-              ? team?.logoLight || team?.logo
-              : isDark
-                ? team?.logoLight
-                : team?.logo;
+            const teamId = team?.id ?? 0;
+            const teamCode = team?.code;
+
+            const logo =
+              league === "CFB"
+                ? getCFBTeamLogo(teamId, isDark)
+                : getNFLTeamLogo(teamId, isDark);
+
             return (
               <View style={styles.tabLabel}>
                 {logo && (
                   <Image
                     source={logo}
-                    style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
-                    resizeMode="contain"
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
+
                 <Text
-                  style={getLabelStyle(isDark, isSelected, lighter, {
-                    opacity: isSelected ? 1 : 0.5,
-                  })}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
-                  {code}
+                  {teamCode}
                 </Text>
               </View>
             );
@@ -156,7 +151,7 @@ export default function TeamDrives({
           currentDrives={teamDrives}
           loading={loading}
           error={error}
-          lighter={lighter}
+          isDark={isDark}
           league={league}
         />
       </View>
@@ -164,25 +159,25 @@ export default function TeamDrives({
   );
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      marginTop: 10,
-    },
-    wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
-      overflow: "hidden",
-      paddingTop: 12,
-    },
-    tabLabel: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
-    },
-    logo: {
-      width: 28,
-      height: 28,
-    },
-  });
+const TeamDrivesStyles = StyleSheet.create({
+  container: {
+    marginTop: 10,
+  },
+  wrapper: {
+    borderColor: Colors.midTone,
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+    paddingTop: 12,
+  },
+  tabLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  tabLogo: {
+    width: 28,
+    height: 28,
+    resizeMode: "contain",
+  },
+});

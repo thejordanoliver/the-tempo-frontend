@@ -1,12 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Colors } from "constants/Styles";
-import { teamsById } from "constants/teams";
-import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SummerGame } from "types/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 // Cache expiry (6 hours)
 const CACHE_DURATION = 1000 * 60 * 60 * 6;
@@ -18,7 +15,6 @@ type UseNBASLGamesOptions = {
 };
 
 export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
-  // 🔑 cache per season
   const CACHE_KEY = `summer_league_games_cache_${season}`;
 
   const [games, setGames] = useState<SummerGame[]>([]);
@@ -64,44 +60,28 @@ export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
   );
 
   // ------------------------------
-  // Fetch season games (single call)
+  // Fetch season games
   // ------------------------------
   const fetchSeasonGames = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // 1️⃣ Cache first
       const cached = await loadCachedGames();
-      if (cached && cached.length > 0) {
+      if (cached?.length) {
         setGames(cached);
         setLoading(false);
         return;
       }
 
-      // 2️⃣ Fetch combined season games
       const res = await axios.get(`${BASE_URL}/api/games/nba-summer`, {
         params: { season },
       });
 
-      const response = res.data.response || [];
+      const response: SummerGame[] = res.data.response || [];
 
-      // 3️⃣ Normalize + dedupe by game ID (safety)
-      const normalizedGames = Object.values(
-        normalizeSummerGames(response).reduce(
-          (acc, game) => {
-            const leagueId = game.league?.id ?? "unknown";
-            const key = `${leagueId}-${game.id}`;
-
-            acc[key] = game;
-            return acc;
-          },
-          {} as Record<string, SummerGame>,
-        ),
-      );
-
-      setGames(normalizedGames);
-      saveCache(normalizedGames);
+      setGames(response);
+      saveCache(response);
     } catch (err: any) {
       console.error("Error fetching Summer League season games:", err.message);
       setError("Failed to load Summer League season games");
@@ -156,71 +136,4 @@ export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
     error,
     refreshSummerGames,
   };
-}
-
-// --------------------------------------------------
-// Normalize API games
-// --------------------------------------------------
-function normalizeSummerGames(data: any[]): SummerGame[] {
-  const teamsMap = teamsById;
-
-  return data
-    .map((g) => {
-      const date = g.date ? dayjs(g.date).toISOString() : null;
-
-      const homeKey = Number(g.teams?.home?.id);
-      const awayKey = Number(g.teams?.away?.id);
-
-      const homeTeamData = teamsMap[homeKey] || {};
-      const awayTeamData = teamsMap[awayKey] || {};
-
-      return {
-        id: g.id,
-        date: date ?? "",
-        time: g.time || "",
-        timestamp: g.timestamp ?? null,
-        timezone: g.timezone ?? "America/New_York",
-
-        stage: g.stage ?? null,
-        week: g.week ?? null,
-        venue: g.venue ?? g.arena?.name ?? null,
-
-        status: g.status || { long: "", short: "", timer: null },
-        league: g.league,
-
-        teams: {
-          home: {
-            ...g.teams?.home,
-            id: g.teams?.home?.id,
-            summerLeagueId: g.teams?.home?.summerLeagueId,
-            name: homeTeamData.name || g.teams?.home?.name,
-            fullName: homeTeamData.fullName || g.teams?.home?.fullName,
-            logo: homeTeamData.logo || "",
-            color: homeTeamData.color || Colors.midTone,
-            secondaryColor: homeTeamData.secondaryColor || Colors.midTone,
-            location: homeTeamData.location,
-            venueName: homeTeamData.venueName,
-          },
-          away: {
-            ...g.teams?.away,
-            id: g.teams?.away?.id,
-            summerLeagueId: g.teams?.away?.summerLeagueId,
-            name: awayTeamData.name || g.teams?.away?.name,
-            fullName: awayTeamData.fullName || g.teams?.away?.fullName,
-            logo: awayTeamData.logo || "",
-            color: awayTeamData.color || Colors.midTone,
-            secondaryColor: awayTeamData.secondaryColor || Colors.midTone,
-            location: awayTeamData.location,
-            venueName: awayTeamData.venueName,
-          },
-        },
-
-        scores: g.scores || { home: {}, away: {} },
-        arena: g.arena ?? null,
-        officials: g.officials ?? [],
-        nugget: g.nugget ?? null,
-        period: g.periods?.current ?? 0,
-      };
-    })
-    .filter((g) => g.date);
 }

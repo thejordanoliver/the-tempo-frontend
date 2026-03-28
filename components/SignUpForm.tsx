@@ -4,11 +4,10 @@ import { Colors } from "constants/Styles";
 import { teams } from "constants/teams";
 import {
   conferenceListMap as cbbConferenceListMap,
-  teams as cbbTeams,
+  cbbTeams,
 } from "constants/teamsCBB";
-import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
-import { teams as mlbteams } from "constants/teamsMLB";
-import { teams as nflteams } from "constants/teamsNFL";
+import { cfbTeams, conferenceListMap } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
 import { nhlTeams } from "constants/teamsNHL";
 import { useEffect, useRef, useState } from "react";
 
@@ -28,6 +27,7 @@ import {
 import { formStyles } from "styles/FormStyles";
 import type { LeagueTeam, LeagueType } from "types/types";
 import SearchBar from "./SearchBars/SearchBar";
+import { nflTeams } from "constants/teamsNFL";
 
 type SignupData = {
   fullName: string;
@@ -122,10 +122,10 @@ export default function SignUpForm({
   // Then map and filter nulls:
   const allTeamsRaw = [
     ...teams.map((t) => normalizeTeam(t, "NBA")).filter(Boolean),
-    ...nflteams.map((t) => normalizeTeam(t, "NFL")).filter(Boolean),
+    ...nflTeams.map((t) => normalizeTeam(t, "NFL")).filter(Boolean),
     ...nhlTeams.map((t) => normalizeTeam(t, "NHL")).filter(Boolean),
-    ...mlbteams.map((t) => normalizeTeam(t, "MLB")).filter(Boolean),
-    ...cfbteams
+    ...mlbTeams.map((t) => normalizeTeam(t, "MLB")).filter(Boolean),
+    ...cfbTeams
       .filter((t) => {
         const fbsTeamNames = Object.values(conferenceListMap)
           .flat()
@@ -419,15 +419,7 @@ export default function SignUpForm({
         })()}
       </View>
 
-      {/* PROGRESS BAR */}
-      <View style={styles.progressBarBackground}>
-        <Animated.View
-          style={{
-            ...styles.progressBarFill,
-            width: progressInterpolate,
-          }}
-        />
-      </View>
+      
       {/* NEXT / SIGN UP BUTTON */}
       <Pressable
         onPress={async () => {

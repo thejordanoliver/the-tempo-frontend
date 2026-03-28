@@ -4,6 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import React, {
   forwardRef,
@@ -20,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
+import { snapPoints } from "utils/modalUtils";
 
 export type ConferenceListModalRef = {
   present: () => void;
@@ -30,10 +32,28 @@ type Props = {
   onSelect: (conference: string | null) => void;
   onOpen?: () => void;
   onClose?: () => void;
-  league?: string; // ✅ Added
+  league?: string;
 };
 
-const baseConferences = [
+// 🔥 Base conference sets
+const CBB_CONFERENCES = [
+  "All Conferences",
+  "NCAA Tournament",
+  "Top 25",
+  "SEC",
+  "Big Ten",
+  "Big 12",
+  "ACC",
+  "Pac-12",
+  "AAC",
+  "MWC",
+  "Sun Belt",
+  "CUSA",
+  "MAC",
+  "Atlantic 10",
+  "FBS Independents",
+];
+const CFB_CONFERENCES = [
   "All Conferences",
   "Top 25",
   "SEC",
@@ -52,24 +72,23 @@ const baseConferences = [
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
   ({ onSelect, onOpen, onClose, league }, ref) => {
     const [selected, setSelected] = useState<string | null>(null);
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === "dark";
+    const isDark = useColorScheme() === "dark";
     const styles = conferenceListModalStyles(isDark);
 
-    // ✅ Conditionally add A10 for CBB
-    const conferences = useMemo(() => {
-      return league === "cbb"
-        ? [...baseConferences.slice(0, 12), "Atlantic 10", ...baseConferences.slice(12)]
-        : baseConferences;
-    }, [league]);
-
-    const snapPoints = useMemo(() => ["80%", "90%"], []);
     const modalRef = useRef<BottomSheetModal>(null);
 
     useImperativeHandle(ref, () => ({
       present: () => modalRef.current?.present(),
       close: () => modalRef.current?.close(),
     }));
+
+    // 🔥 Pick conferences based on league
+    const conferences = useMemo(() => {
+      if (league?.toLowerCase() === "cbb") {
+        return CBB_CONFERENCES;
+      }
+      return CFB_CONFERENCES;
+    }, [league]);
 
     return (
       <BottomSheetModal
@@ -87,12 +106,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             disappearsOnIndex={-1}
           />
         )}
-        backgroundStyle={{
-          backgroundColor: "transparent",
-          overflow: "hidden",
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-        }}
+        backgroundStyle={styles.backgroundStyle}
         handleComponent={() => (
           <View style={styles.header}>
             <View style={styles.handleIndicatorStyle} />
@@ -100,32 +114,24 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
           </View>
         )}
       >
-        <View
-          style={{
-            flex: 1,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            overflow: "hidden",
-          }}
-        >
+        <View style={styles.container}>
           <BlurView
             intensity={80}
             tint="systemThinMaterial"
             style={StyleSheet.absoluteFill}
           />
+
           <BottomSheetScrollView
-            contentContainerStyle={{ padding: 16, paddingTop: 60 }}
+            contentContainerStyle={styles.contentContainerStyle}
           >
             {conferences.map((conf) => {
-              const isSelected =
-                selected === conf || (conf === "All Conferences" && !selected);
-
               return (
                 <TouchableOpacity
                   key={conf}
                   onPress={() => {
                     const selectedValue =
                       conf === "All Conferences" ? null : conf;
+
                     setSelected(selectedValue);
                     onSelect(selectedValue);
                     modalRef.current?.close();
@@ -134,10 +140,11 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                   style={styles.leagueButton}
                 >
                   <Text style={styles.leagueText}>{conf}</Text>
+
                   <Ionicons
                     name="chevron-forward"
                     size={20}
-                    color={isDark ? "#fff" : "#1d1d1d"}
+                    color={isDark ? Colors.white : Colors.black}
                   />
                 </TouchableOpacity>
               );
@@ -146,7 +153,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         </View>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 export default ConferenceListModal;

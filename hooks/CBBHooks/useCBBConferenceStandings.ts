@@ -19,13 +19,15 @@ export type CBBTeamStanding = {
   pointsAgainst?: number | null;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+import { BASE_URL } from "utils/apiClient";
 
 interface UseCBBConferenceStandingsOptions {
   women?: boolean;
 }
 
-export function useCBBConferenceStandings({ women = false }: UseCBBConferenceStandingsOptions = {}) {
+export function useCBBConferenceStandings({
+  women = false,
+}: UseCBBConferenceStandingsOptions = {}) {
   const [standings, setStandings] = useState<CBBTeamStanding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

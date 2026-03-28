@@ -12,7 +12,6 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  useColorScheme,
 } from "react-native";
 
 export interface TabBarProps<T extends string> {
@@ -21,29 +20,23 @@ export interface TabBarProps<T extends string> {
   onTabPress: (tab: T) => void;
   renderLabel?: (tab: T, isSelected: boolean) => React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  lighter?: boolean;
+  isDark?: boolean;
 }
 
 export default function MainScrollTabBar<T extends string>({
   tabs,
-  lighter,
+  isDark,
   selected,
   onTabPress,
   renderLabel,
   style,
 }: TabBarProps<T>) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
-
   const textMeasurements = useRef<{ width: number }[]>([]);
   const pressableMeasurements = useRef<{ x: number; width: number }[]>([]);
   const isInitialized = useRef(false);
-
   const scrollRef = useRef<ScrollView>(null);
-
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     textMeasurements.current[index] = { width };
@@ -132,7 +125,7 @@ export default function MainScrollTabBar<T extends string>({
     transform: [{ translateX: underlineX }],
     height: 2,
     borderRadius: 100,
-    backgroundColor: lighter
+    backgroundColor: isDark
       ? Colors.white
       : isDark
         ? Colors.white

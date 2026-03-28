@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MLBGame } from "types/mlb";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useMLBWeeklyGames() {
   const [games, setGames] = useState<MLBGame[]>([]);
@@ -15,8 +15,7 @@ export function useMLBWeeklyGames() {
       setError(null);
 
       const res = await axios.get(`${BASE_URL}/api/games/mlb/weekly`);
-      
-     
+
       const gamesArray: MLBGame[] = Array.isArray(res.data?.games)
         ? res.data.games
         : [];
@@ -35,23 +34,22 @@ export function useMLBWeeklyGames() {
     fetchGames();
   }, [fetchGames]);
 
-const sortedGames = useMemo(() => {
-  const isLive = (game: MLBGame) => {
-    const short = game.status?.short ?? "";
-    const long = game.status?.long ?? "";
+  const sortedGames = useMemo(() => {
+    const isLive = (game: MLBGame) => {
+      const short = game.status?.short ?? "";
+      const long = game.status?.long ?? "";
 
-    return (
-      short.startsWith("IN") ||          // IN1, IN8, etc.
-      short === "LIVE" ||
-      long.includes("Inning")
-    );
-  };
+      return (
+        short.startsWith("IN") || // IN1, IN8, etc.
+        short === "LIVE" ||
+        long.includes("Inning")
+      );
+    };
 
-  return [...games].sort((a, b) => {
-    return Number(isLive(b)) - Number(isLive(a));
-  });
-}, [games]);
-
+    return [...games].sort((a, b) => {
+      return Number(isLive(b)) - Number(isLive(a));
+    });
+  }, [games]);
 
   return {
     games: sortedGames,

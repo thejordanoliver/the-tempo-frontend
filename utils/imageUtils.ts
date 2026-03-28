@@ -1,5 +1,5 @@
 // utils/imageUtils.ts
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { BASE_URL } from "utils/apiClient";
 
 export function parseImageUrl(url: string | null | undefined): string | null {
   if (!url || url === "null") return null;

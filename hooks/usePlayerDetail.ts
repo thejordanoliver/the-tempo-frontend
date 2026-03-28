@@ -1,9 +1,10 @@
 import axios from "axios";
 import { getTeamInfo, teams } from "constants/teams";
 import { useLastTeamGame } from "hooks/NBAHooks/useLastTeamGame";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform } from "react-native";
-import type { DBPlayer, Game } from "types/types";
+import type { DBPlayer } from "types/types";
+import { getNBASeason } from "utils/dateUtils";
 
 type TeamWithRecord = (typeof teams)[number] & { record?: string };
 
@@ -37,7 +38,10 @@ export function usePlayerDetail(playerId?: string, teamId?: string) {
     | TeamWithRecord
     | undefined;
 
-  const { lastGame, loading: teamGameLoading } = useLastTeamGame(teamNumericId);
+  const { lastGame, loading: teamGameLoading } = useLastTeamGame(
+    teamNumericId,
+    getNBASeason(),
+  );
 
   /* ---------------- Fetch player ---------------- */
   useEffect(() => {
@@ -63,29 +67,6 @@ export function usePlayerDetail(playerId?: string, teamId?: string) {
 
     fetchPlayer();
   }, [parsedPlayerId]);
-
-  /* ---------------- Enriched game ---------------- */
-  const enrichedLastGame: Game | null = useMemo(() => {
-    if (!lastGame) return null;
-
-    const awayTeamObj = teams.find((t) => t.id === lastGame.away.id) as
-      | TeamWithRecord
-      | undefined;
-
-    return {
-      ...lastGame,
-      home: {
-        ...lastGame.home,
-        logo: teamObj?.logo || "",
-        record: teamObj?.record || "",
-      },
-      away: {
-        ...lastGame.away,
-        logo: awayTeamObj?.logo || "",
-        record: awayTeamObj?.record || "",
-      },
-    };
-  }, [lastGame, teamObj]);
 
   /* ---------------- Helpers ---------------- */
   const calculateAge = (birthDate?: string) => {
@@ -113,7 +94,7 @@ export function usePlayerDetail(playerId?: string, teamId?: string) {
     error,
     team,
     teamObj,
-    enrichedLastGame,
+    lastGame,
     teamGameLoading,
     calculateAge,
     calculateExperience,

@@ -65,7 +65,6 @@ export default function CommentThreadScreen() {
 
   const {
     BASE_URL,
-    token,
     currentUserId,
     post,
     comments,
@@ -94,7 +93,7 @@ export default function CommentThreadScreen() {
 
   if (!postId) {
     return (
-      <View style={styles.centerContainer}>
+      <View style={global.emptyContainer}>
         <Text style={global.errorText}>Invalid post ID</Text>
       </View>
     );
@@ -102,8 +101,8 @@ export default function CommentThreadScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centerContainer}>
-        <CustomActivityIndicator />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -134,7 +133,6 @@ export default function CommentThreadScreen() {
             <PostItem
               item={post}
               isDark={isDark}
-              token={token}
               currentUserId={currentUserId}
               deletePost={deletePost}
               editPost={() => {}}

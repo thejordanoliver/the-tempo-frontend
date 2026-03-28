@@ -2,7 +2,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MLB/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/MLB/Player/PlayerStatTable";
-import { teams } from "constants/teamsMLB";
+import { mlbTeams } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
@@ -30,7 +30,7 @@ export default function PlayerDetailScreen() {
     .replace(/"/g, "")
     .trim();
 
-  const teamObj = teams.find((t) => String(t.id) === sanitizedTeamId);
+  const teamObj = mlbTeams.find((t) => String(t.id) === sanitizedTeamId);
 
   /* -------------------------
      Fetch Player
@@ -91,7 +91,7 @@ export default function PlayerDetailScreen() {
   if (playerLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }

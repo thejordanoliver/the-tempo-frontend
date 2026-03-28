@@ -16,7 +16,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useNFLGamesByWeek } from "hooks/NFLHooks/useNFLGamesByWeek";
+import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -25,13 +25,7 @@ import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getFootballSeasonYear } from "utils/dateUtils";
-import {
-  generateWeeksFromGames,
-  getCurrentWeekIndexFromGames,
-  NFLWeekFromGames,
-} from "utils/nflWeeks";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { useHighlights } from "../../hooks/useHighlights";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -78,35 +72,62 @@ export default function NFLLeagueScreen() {
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-  const [weeks, setWeeks] = useState<NFLWeekFromGames[]>([]);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NFL");
 
-  const selectedWeek = weeks[selectedWeekIndex] ?? null;
-
   const {
-    games: nflGames,
-    loading: nflLoading,
-    refresh: refreshNFLGames,
-  } = useNFLGamesByWeek({
-    selectedWeek,
+    weeks,
+    loading: gamesLoading,
+    refetch,
+  } = useFootballGamesByWeek(getFootballSeasonYear(), 1);
+  const weekLabels = Object.keys(weeks);
+
+  // ✅ Map weeks to array of objects for WeekSelector
+  const weekArray = weekLabels.map((label) => ({
+    label, // week name
+    stage: weeks[label][0]?.game?.stage || "Unknown", // stage (Pre Season / Regular / Playoffs)
+  }));
+
+  const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
+  const selectedWeekGames = weeks[selectedWeekLabel] || [];
+
+ React.useEffect(() => {
+  if (!weekLabels.length) return;
+
+  const now = dayjs();
+
+  let liveIndex: number | null = null;
+  let upcomingIndex: number | null = null;
+  let pastIndex: number | null = null;
+
+  weekLabels.forEach((label, index) => {
+    const games = weeks[label];
+    if (!games?.length) return;
+
+    const gameDate = dayjs(games[0]?.game?.date?.timestamp);
+
+    // 🟢 LIVE (same week as today)
+    if (gameDate.isSame(now, "week")) {
+      liveIndex = index;
+    }
+
+    // 🔵 UPCOMING (first future week)
+    if (gameDate.isAfter(now) && upcomingIndex === null) {
+      upcomingIndex = index;
+    }
+
+    // ⚫ PAST (keep updating → last past week wins)
+    if (gameDate.isBefore(now)) {
+      pastIndex = index;
+    }
   });
 
-  // --- Generate weeks dynamically once games load ---
-  React.useEffect(() => {
-    if (!nflGames || nflGames.length === 0) return;
+  const finalIndex =
+    liveIndex ?? upcomingIndex ?? pastIndex ?? 0;
 
-    // Only generate weeks if we haven't done it yet
-    if (weeks.length === 0) {
-      const generatedWeeks = generateWeeksFromGames(nflGames);
-      setWeeks(generatedWeeks);
-
-      // Set current week on first load
-      const currentWeekIndex = getCurrentWeekIndexFromGames(generatedWeeks);
-      setSelectedWeekIndex(currentWeekIndex);
-    }
-  }, [nflGames, weeks.length]);
+  setSelectedWeekIndex(finalIndex);
+}, [weeks]);
 
   // --- Load favorites from AsyncStorage ---
   useFocusEffect(
@@ -146,15 +167,13 @@ export default function NFLLeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await refreshNFLGames();
+      await refetch();
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
       setRefreshing(false);
     }
   };
-
-
 
   return (
     <>
@@ -166,7 +185,9 @@ export default function NFLLeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
+
       <View style={styles.container}>
         <PagerView
           ref={pagerRef}
@@ -180,17 +201,16 @@ export default function NFLLeagueScreen() {
           {/* SCORES */}
           <View key="scores" style={styles.contentArea}>
             <WeekSelector
-              weeks={weeks}
+              weeks={weekArray}
               selectedWeekIndex={selectedWeekIndex}
               onSelectWeek={setSelectedWeekIndex}
-              monthTextStyle={styles.monthText}
-              monthTextSelectedStyle={styles.monthTextSelected}
+              isDark={isDark}
+              loading={gamesLoading}
             />
-
             <ScrollView showsVerticalScrollIndicator={false}>
               <NFLGamesList
-                games={nflGames}
-                loading={nflLoading}
+                games={selectedWeekGames}
+                loading={gamesLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 scrollEnabled={false}
@@ -227,6 +247,7 @@ export default function NFLLeagueScreen() {
               error={error}
               categories={categories}
               league={"NFL"}
+              isDark={isDark}
             />
           </View>
 

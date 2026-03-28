@@ -1,21 +1,29 @@
+import { Colors, Fonts } from "constants/Styles";
 import React from "react";
-import { Pressable, StyleSheet, Text, useColorScheme, ViewStyle, StyleProp } from "react-native";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  Text,
+  ViewStyle,
+} from "react-native";
 
 type SaveButtonProps = {
   onPress: () => void;
   disabled?: boolean;
   title?: string;
-  style?: StyleProp<ViewStyle>; // <-- added
+  style?: StyleProp<ViewStyle>;
+  isDark: boolean;
 };
 
 export default function Button({
   onPress,
   disabled,
   title = "Save",
-  style, // <-- added
+  style,
+  isDark,
 }: SaveButtonProps) {
-  const isDark = useColorScheme() === "dark";
-
+  const styles = buttonStyles(isDark);
   return (
     <Pressable
       onPress={onPress}
@@ -23,14 +31,17 @@ export default function Button({
       style={({ pressed }) => [
         styles.saveButton,
         {
-          backgroundColor: isDark ? "#fff" : "#000",
+          backgroundColor: isDark ? Colors.white : Colors.black,
           opacity: pressed || disabled ? 0.7 : 1,
         },
         style, // <-- apply custom styles here
       ]}
     >
       <Text
-        style={[styles.saveButtonText, { color: isDark ? "#000" : "#fff" }]}
+        style={[
+          styles.saveButtonText,
+          { color: isDark ? Colors.black : Colors.white },
+        ]}
       >
         {title}
       </Text>
@@ -38,15 +49,17 @@ export default function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  saveButton: {
-    marginVertical: 24,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontFamily: "Oswald_500Medium",
-  },
-});
+const buttonStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    saveButton: {
+      marginVertical: 24,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    saveButtonText: {
+      fontSize: 16,
+      color: isDark ? Colors.black : Colors.white,
+      fontFamily: Fonts.OSMEDIUM,
+    },
+  });

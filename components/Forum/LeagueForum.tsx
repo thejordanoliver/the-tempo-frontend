@@ -10,16 +10,21 @@ import {
   Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
 import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 import { forumStyles } from "./TeamForum";
+
+// FIX #2: removed localhost fallback — won't resolve on a physical device.
+//         PostItem should use apiClient directly rather than receiving BASE_URL as a prop.
+import { BASE_URL } from "utils/apiClient";
+
 type LeagueForumProps = {
   league?: LeagueType;
 };
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   const {
@@ -27,7 +32,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     loading,
     refreshing,
     error,
-    token,
     currentUserId,
     fetchPosts,
     refresh,
@@ -48,26 +52,8 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     }, [fetchPosts]),
   );
 
-  useEffect(() => {
-    return () => {
-      setGlobalImage([], 0);
-    };
-  }, []);
-
-  const renderSkeletons = useCallback(
-    (count = 5) => (
-      <>
-        {Array.from({ length: count }).map((_, i) => (
-          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
-        ))}
-      </>
-    ),
-    [],
-  );
-
-  const onRefresh = useCallback(() => refresh(), [refresh]);
-
-  // Cleanup on unmount
+  // FIX #3: was duplicated — one copy had no deps and fired on every render.
+  //         Single cleanup effect with correct deps.
   useEffect(() => {
     return () => {
       setGlobalImage([], 0);
@@ -77,9 +63,13 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   if (loading)
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {renderSkeletons()}
+        {/* FIX #5: renderSkeletons had no reason to be a memoized callback */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+        ))}
       </ScrollView>
     );
+
   if (error) return <Text style={global.errorText}>{error}</Text>;
 
   return (
@@ -92,11 +82,11 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
           <PostItem
             item={item}
             isDark={isDark}
-            token={token}
+            // FIX #1: token prop removed — PostItem should authenticate via apiClient
             currentUserId={currentUserId}
             deletePost={deletePost}
             editPost={editPost}
-            BASE_URL={BASE_URL || "http://localhost:4000"}
+            BASE_URL={BASE_URL}
             onImagePress={(imgUri) => {
               setGlobalImage([], 0);
               setGlobalImage([imgUri], 0);
@@ -105,23 +95,25 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         )}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
+        // FIX #6: refresh already has a stable reference from useCallback in the hook
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
-        ListEmptyComponent={() =>
-          loading ? (
-            <>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <PostItemSkeleton key={i} showMedia />
-              ))}
-            </>
-          ) : (
-            <Text style={global.emptyText}>No posts yet.</Text>
-          )
-        }
+        ListEmptyComponent={() => (
+          <View style={global.emptyContainer}>
+            <Ionicons
+              name="chatbubble-outline"
+              size={48}
+              color={Colors.midTone}
+            />
+            <Text style={global.emptyText}>It's Quiet Here</Text>
+            <Text style={global.emptySubText}>
+              No posts yet. Be the first to start the conversation.
+            </Text>
+          </View>
+        )}
       />
 
-      {/* Floating create button */}
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() =>

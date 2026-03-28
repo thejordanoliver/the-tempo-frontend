@@ -1,13 +1,12 @@
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
-import { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { teams as SLTeams } from "constants/teams";
-import { getCBBTeamLogo, teams } from "constants/teamsCBB";
+import { cbbTeams, getCBBTeamLogo } from "constants/teamsCBB";
 import { useEffect, useMemo, useState } from "react";
-import { Image, Text, TextStyle, useColorScheme, View } from "react-native";
+import { Image, Text, TextStyle, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 type StatLabels = {
   key: Category;
@@ -56,7 +55,7 @@ type Props = {
   leaders: any[];
   awayTeamId: number;
   homeTeamId: number;
-  lighter?: boolean;
+  isDark: boolean;
   loading?: boolean;
   error?: boolean;
   league?: string;
@@ -67,22 +66,17 @@ type StatProps = {
   label: string;
   value: string | number;
   sub: TextStyle;
-  lighter?: boolean;
+  isDark: boolean;
 };
 
-function Stat({ label, value, lighter = false }: StatProps) {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameLeadersStyles(isDark, lighter);
+function Stat({ label, value, isDark }: StatProps) {
+  const styles = gameLeadersStyles(isDark);
 
   return (
     <View style={{ marginRight: 12 }}>
       <Text
         style={{
-          color: lighter
-            ? Colors.lightGray
-            : isDark
-              ? Colors.midTone
-              : Colors.midTone,
+          color: isDark ? Colors.midTone : Colors.midTone,
           fontFamily: Fonts.OSMEDIUM,
           fontSize: 11,
         }}
@@ -98,30 +92,29 @@ export default function GameLeaders({
   leaders,
   awayTeamId,
   homeTeamId,
-  lighter = false,
+  isDark,
   loading = false,
   error = false,
   league,
   gameStatusDescription,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
-  const styles = gameLeadersStyles(isDark, lighter);
-  const global = globalStyles(isDark, lighter);
+  const styles = gameLeadersStyles(isDark);
+  const global = globalStyles(isDark);
   const isScheduled = gameStatusDescription === "Scheduled";
   useEffect(() => {
     setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
   }, [isScheduled]);
 
   const getLabel = (key: Category) =>
-    STAT_KEYS.find((s) => s.key === key)?.label ?? key;
+    STAT_KEYS.find((s) => s.key === key)?.label.toUpperCase() ?? key;
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
 
   const isSummerLeague =
     league === "nba-summer" || league === "summerleague" || league === "sl";
 
-  const teamSource = isSummerLeague ? SLTeams : teams;
+  const teamSource = isSummerLeague ? SLTeams : cbbTeams;
 
   const topPlayers = useMemo(() => {
     if (!leaders?.length) return [];
@@ -223,19 +216,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="PTS"
               value={player.points}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="FG"
               value={player.fieldGoals}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="FT"
               value={player.freeThrows}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -247,19 +240,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="AST"
               value={player.assists}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="TO"
               value={player.turnovers}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="AST/TO"
               value={player.assistTurnoverRatio}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -271,19 +264,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="REB"
               value={player.totReb}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="DREB"
               value={player.defensiveRebounds}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="OREB"
               value={player.offensiveRebounds}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -295,19 +288,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="PTS"
               value={player.avgPoints}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="FT%"
               value={player.freeThrowPct}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="FG%"
               value={player.fieldGoalPct}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -319,19 +312,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="AST"
               value={player.avgAssists}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="TO"
               value={player.avgTurnovers}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="MIN"
               value={player.avgMinutes}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -343,19 +336,19 @@ export default function GameLeaders({
               sub={styles.statText}
               label="REB"
               value={player.avgRebounds}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="DREB"
               value={player.avgDefensiveRebounds}
-              lighter={lighter}
+              isDark={isDark}
             />
             <Stat
               sub={styles.statText}
               label="OREB"
               value={player.avgOffensiveRebounds}
-              lighter={lighter}
+              isDark={isDark}
             />
           </>
         );
@@ -370,31 +363,32 @@ export default function GameLeaders({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>
+      <HeadingTwo isDark={isDark}>
         {isScheduled ? "Season Leaders" : "Game Leaders"}
       </HeadingTwo>
 
       <View style={styles.wrapper}>
         <MainScrollTabBar
-          tabs={tabs}
+          tabs={tabs} // ✅ just pass the array
           selected={selectedCategory}
           onTabPress={setSelectedCategory}
-          lighter={lighter}
-          renderLabel={(tab) => {
-            const isSelected = tab === selectedCategory;
-
-            return (
-              <Text
-                style={getLabelStyle(isDark, isSelected, lighter, {
-                  opacity: isSelected ? 1 : 0.5,
-                })}
-              >
-                {getLabel(tab).toUpperCase()}
-              </Text>
-            );
-          }}
+          isDark={isDark}
+          renderLabel={(tab, isSelected) => (
+            <Text
+              style={{
+                fontSize: 18,
+                color: isSelected
+                  ? isDark
+                    ? Colors.white
+                    : Colors.black
+                  : Colors.midTone,
+                fontFamily: Fonts.OSREGULAR,
+              }}
+            >
+              {getLabel(tab)}
+            </Text>
+          )}
         />
-
         {topPlayers.map((player, idx) => {
           const p = player.localPlayer;
 
@@ -405,11 +399,7 @@ export default function GameLeaders({
             teamSource.find((t) => String(t.espnID) === String(homeTeamId)) ??
             teamSource.find((t) => String(t.espnID) === String(awayTeamId));
 
-          const teamLogo = getCBBTeamLogo(
-            teamObj?.id,
-            lighter ? lighter : isDark,
-            isWomen,
-          );
+          const teamLogo = getCBBTeamLogo(teamObj?.id, isDark, isWomen);
 
           return (
             <View key={idx} style={styles.card}>

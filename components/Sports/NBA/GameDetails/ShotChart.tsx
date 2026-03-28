@@ -4,7 +4,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
 import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
-import { teams as cbbteams } from "constants/teamsCBB";
+import { cbbTeams } from "constants/teamsCBB";
 import React, { useState } from "react";
 import {
   Image,
@@ -61,15 +61,15 @@ export default function ShotChart({
   const isCBB = league === "CBB" || league === "WCBB";
   const isWomen = league === "WCBB";
 
-  const teamArray = isCBB ? cbbteams : teams;
+  const teamArray = isCBB ? cbbTeams : teams;
 
-  const homeTeam = isCBB
-    ? cbbteams.find((t) => t.espnID?.toString() === homeTeamId?.toString())
-    : teams.find((t) => t.espnID?.toString() === homeTeamId?.toString());
+  const homeTeam = teamArray.find(
+    (t) => t.espnID?.toString() === homeTeamId?.toString(),
+  );
 
-  const awayTeam = isCBB
-    ? cbbteams.find((t) => t.espnID?.toString() === awayTeamId?.toString())
-    : teams.find((t) => t.espnID?.toString() === awayTeamId?.toString());
+  const awayTeam = teamArray.find(
+    (t) => t.espnID?.toString() === awayTeamId?.toString(),
+  );
 
   const getLogo = (team?: typeof homeTeam, isDark?: boolean) => {
     if (!team) return undefined;
@@ -194,7 +194,7 @@ export default function ShotChart({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Shot Chart</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Shot Chart</HeadingTwo>
       <View style={styles.wrapper}>
         {/* TabBar for quarters */}
         <TabBar

@@ -1,8 +1,14 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
 export const conferenceListModalStyles = (isDark: boolean) =>
   StyleSheet.create({
+    backgroundStyle: {
+      backgroundColor: "transparent",
+      overflow: "hidden",
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
     handleStyle: {
       backgroundColor: "transparent",
       height: 40,
@@ -41,6 +47,13 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 18,
     },
+    container: {
+      flex: 1,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      overflow: "hidden",
+    },
+    contentContainerStyle: { padding: 16, paddingTop: 60 },
     leagueButton: {
       paddingVertical: 12,
       backgroundColor: "transparent",

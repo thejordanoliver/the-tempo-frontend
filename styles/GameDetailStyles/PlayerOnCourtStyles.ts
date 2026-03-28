@@ -1,14 +1,14 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const playerOnCourtStyles = (isDark: boolean, lighter: boolean) =>
+export const playerOnCourtStyles = (isDark: boolean) =>
   StyleSheet.create({
     loading: {
       textAlign: "center",
       padding: 20,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     tabLabel: {
       flexDirection: "row",
@@ -39,18 +39,14 @@ export const playerOnCourtStyles = (isDark: boolean, lighter: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
-      borderColor: lighter
-        ? Colors.white
-        : isDark
-        ? Colors.white
-        : Colors.black,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     teamLabel: {
       fontSize: 20,
       fontFamily: Fonts.OSBOLD,
       marginVertical: 10,
       marginRight: 5,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     tableRow: {
       flexDirection: "row",
@@ -73,18 +69,18 @@ export const playerOnCourtStyles = (isDark: boolean, lighter: boolean) =>
       marginLeft: 8,
       fontFamily: Fonts.OSBOLD,
       fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     jersey: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     posistion: {
       marginLeft: 4,
       fontFamily: Fonts.OSBOLD,
       fontSize: 12,
-      color: lighter ? Colors.white : isDark ? Colors.midTone : Colors.black,
+      color: isDark ? Colors.midTone : Colors.black,
     },
     teamLogo: { width: 28, height: 28, resizeMode: "contain" },
     teamHeader: {

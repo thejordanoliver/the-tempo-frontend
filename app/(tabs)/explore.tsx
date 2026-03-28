@@ -55,7 +55,7 @@ export default function ExplorePage() {
     (item) => {
       if (selectedTab === "All") return true;
       return item.type === tabToTypeMap[selectedTab];
-    }
+    },
   );
 
   const handleSelectItem = (item: ResultItem) => {
@@ -175,7 +175,7 @@ export default function ExplorePage() {
           query={query}
           onSeeAll={() => setShowAll(true)}
           showAll={showAll}
-          isSearching={isSearching} 
+          isSearching={isSearching}
         />
       )}
     </View>

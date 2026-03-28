@@ -1,16 +1,16 @@
 // ./CFB/GamePreview/CenterInfo.tsx
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
-
 export type CenterInfoProps = {
-  date: string;
+  date: string | undefined;
   week: string;
-  time: string;
-  period?: string;
+  time: string | undefined;
+  period?: number;
   clock?: string | null;
   isDark: boolean;
-  downAndDistance: string | undefined;
+  downAndDistance: string | null| undefined;
   broadcast?: string;
   gameStatusDescription: string | undefined;
   gameStatusShortDetail: string | undefined;

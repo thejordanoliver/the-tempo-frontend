@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const gamePreviewModalStyle = (isChampionship: boolean) =>
+export const gamePreviewModalStyle = (isChampionship?: boolean) =>
   StyleSheet.create({
     handleStyle: {
       backgroundColor: "transparent",

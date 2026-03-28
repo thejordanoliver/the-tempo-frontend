@@ -4,14 +4,7 @@ import TabBar from "components/TabBar";
 import { Colors, Fonts } from "constants/Styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
 import React, { useState } from "react";
-import {
-  Image,
-  LayoutChangeEvent,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 interface Play {
@@ -32,6 +25,7 @@ interface ShotChartProps {
   homeTeamId?: string;
   awayTeamId?: string;
   neutralSite?: boolean;
+  isDark: boolean;
 }
 
 export default function ShotChart({
@@ -39,8 +33,8 @@ export default function ShotChart({
   homeTeamId,
   awayTeamId,
   neutralSite = false,
+  isDark,
 }: ShotChartProps) {
-  const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
   const RINK_LENGTH = 200;
@@ -139,13 +133,14 @@ export default function ShotChart({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Shot Chart</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Shot Chart</HeadingTwo>
 
       <View style={styles.wrapper}>
         <TabBar
           tabs={TABS}
           selected={selectedQuarter}
           onTabPress={(tab) => setSelectedQuarter(tab as any)}
+          isDark={isDark}
         />
 
         <View style={styles.chartWrapper} onLayout={onLayout}>
@@ -155,18 +150,21 @@ export default function ShotChart({
             resizeMode="stretch"
           />
 
-          {!neutralSite && courtLogo && layout.width > 0 && layout.height > 0 && (
-            <Image
-              source={courtLogo}
-              style={{
-                position: "absolute",
-                width: 40,
-                height: 40,
-                left: layout.width / 2 - 20,
-                top: layout.height / 2 - 20,
-              }}
-            />
-          )}
+          {!neutralSite &&
+            courtLogo &&
+            layout.width > 0 &&
+            layout.height > 0 && (
+              <Image
+                source={courtLogo}
+                style={{
+                  position: "absolute",
+                  width: 40,
+                  height: 40,
+                  left: layout.width / 2 - 20,
+                  top: layout.height / 2 - 20,
+                }}
+              />
+            )}
 
           <Svg
             width="100%"

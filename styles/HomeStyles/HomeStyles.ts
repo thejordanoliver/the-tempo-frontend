@@ -2,11 +2,11 @@
 import { Fonts, Colors } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const homeStyles = (isDark: boolean) =>
+export const homeStyles = (isDark: boolean, inset: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: 16,
+   
     },
 
     tabBarWrapper: {

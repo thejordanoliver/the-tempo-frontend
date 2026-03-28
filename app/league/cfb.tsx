@@ -10,16 +10,16 @@ import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
 import RecruitsList from "components/Sports/CFB/Recruiting/RecruitsList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsList";
-import WeekSelector from "components/Sports/CFB/WeekSelector";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
+import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCFBGamesByWeek } from "hooks/CFBHooks/useCFBGamesByWeek";
 import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
+import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -27,13 +27,8 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { CFBGame } from "types/cfb";
-import { filterCFBGames, useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
-import {
-  CFBWeek,
-  generateCFBWeeks,
-  getCurrentWeekIndex,
-} from "utils/CFBUtils/cfbWeeks";
+import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
+import { getFootballSeasonYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -57,37 +52,70 @@ export default function CFBeagueScreen() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const { data: bracketData } = useCFPBracket();
-  // --- Week handling ---
-  const weeks: CFBWeek[] = React.useMemo(() => generateCFBWeeks(), []);
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(
-    getCurrentWeekIndex(weeks),
-  );
-  const selectedWeek = weeks[selectedWeekIndex];
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const { categories, loading, error } = useSeasonLeaders(2025, "CFB");
-
-  // --- AP Top 25 from rankings ---
   const apTop25 = useAPTop25();
-
   const top25Teams = React.useMemo(() => {
     return apTop25.map((t) => t.name);
   }, [apTop25]);
-
-  const selectedWeekForAPI = React.useMemo(() => {
-    // If user selects Championship, use Bowls API week
-    if (selectedWeek.label.toLowerCase() === "championship") {
-      const bowlsWeek = weeks.find((w) => w.label.toLowerCase() === "bowls");
-      return bowlsWeek ?? selectedWeek;
-    }
-    return selectedWeek;
-  }, [selectedWeek, weeks]);
-
   const {
-    games: cfbgames,
-    loading: cfbloading,
-    refresh: refreshcfbgames,
-  } = useCFBGamesByWeek({ week: selectedWeekForAPI, weeks });
+    weeks,
+    loading: gamesLoading,
+    refetch: refetchGames,
+  } = useFootballGamesByWeek(getFootballSeasonYear(), 2);
+  const weekLabels = Object.keys(weeks);
+  const weekArray = weekLabels.map((label) => ({
+    label,
+    stage: weeks[label][0]?.game?.stage || "Unknown",
+  }));
+  const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
+  const selectedWeekGamesRaw = weeks[selectedWeekLabel] || [];
+  const selectedWeekGames = React.useMemo(() => {
+    let filtered = selectedWeekGamesRaw;
 
-  // --- Load favorites ---
+    // ----------------------------------
+    // FILTER
+    // ----------------------------------
+    if (selectedConference === "Top 25") {
+      filtered = filtered.filter((g) => {
+        const home = g.teams?.home?.name;
+        const away = g.teams?.away?.name;
+
+        return top25Teams.includes(home) || top25Teams.includes(away);
+      });
+    } else if (selectedConference && selectedConference !== "All") {
+      filtered = filtered.filter((g) => {
+        const homeConf = g.teams?.home?.conference;
+        const awayConf = g.teams?.away?.conference;
+
+        return (
+          homeConf === selectedConference || awayConf === selectedConference
+        );
+      });
+    }
+
+    // ----------------------------------
+    // SORT (by conference → then time)
+    // ----------------------------------
+    return filtered.sort((a, b) => {
+      const confA =
+        a.teams?.home?.conference || a.teams?.away?.conference || "";
+      const confB =
+        b.teams?.home?.conference || b.teams?.away?.conference || "";
+
+      // 1. Sort by conference name
+      if (confA !== confB) {
+        return confA.localeCompare(confB);
+      }
+
+      // 2. Sort by game time
+      const timeA = a.game?.date?.timestamp || 0;
+      const timeB = b.game?.date?.timestamp || 0;
+
+      return timeA - timeB;
+    });
+  }, [selectedWeekGamesRaw, selectedConference, top25Teams]);
+
   useFocusEffect(
     useCallback(() => {
       const loadFavorites = async () => {
@@ -102,7 +130,6 @@ export default function CFBeagueScreen() {
     }, []),
   );
 
-  // --- Header with rotating chevron ---
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -119,63 +146,16 @@ export default function CFBeagueScreen() {
     });
   }, [navigation, selectedConference, isDropdownOpen]);
 
-  // --- Refresh handler ---
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshcfbgames()]);
+      await Promise.all([refetchGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
       setRefreshing(false);
     }
   };
-
-  const isValidBowlStage = (game: CFBGame) => {
-    const stage = game?.game?.stage;
-    return (
-      typeof stage === "string" &&
-      (stage.startsWith("FBS") || stage.startsWith("FCS (Division I-A)"))
-    );
-  };
-
-  // --- Filter games by selected conference ---
-  const filteredGames = React.useMemo(() => {
-    // 🔒 Always filter by valid stage first
-    const stageFilteredGames = cfbgames.filter(isValidBowlStage);
-
-    const weekLabel = selectedWeek.label.toLowerCase();
-
-    // 🏆 Bowl / Championship logic
-    if (weekLabel.includes("bowl") || weekLabel.includes("championship")) {
-      if (weekLabel.includes("championship")) {
-        // Championship week: show only the final game
-        return stageFilteredGames.length
-          ? [stageFilteredGames[stageFilteredGames.length - 1]]
-          : [];
-      }
-
-      // Bowls week: exclude championship game
-      if (stageFilteredGames.length > 0) {
-        const sorted = [...stageFilteredGames].sort(
-          (a, b) =>
-            new Date(a.game?.date?.date ?? 0).getTime() -
-            new Date(b.game?.date?.date ?? 0).getTime(),
-        );
-
-        return sorted.slice(0, -1);
-      }
-
-      return stageFilteredGames;
-    }
-
-    // 📅 Regular weeks: conference / Top 25 filtering
-    return filterCFBGames({
-      games: stageFilteredGames,
-      selectedConference,
-      top25Teams,
-    });
-  }, [cfbgames, selectedConference, top25Teams, selectedWeek]);
 
   return (
     <>
@@ -187,7 +167,9 @@ export default function CFBeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
+
       <View style={styles.container}>
         <PagerView
           ref={pagerRef}
@@ -201,17 +183,17 @@ export default function CFBeagueScreen() {
           {/* SCORES */}
           <View key="scores" style={styles.contentArea}>
             <WeekSelector
-              weeks={weeks}
+              weeks={weekArray}
               selectedWeekIndex={selectedWeekIndex}
               onSelectWeek={setSelectedWeekIndex}
-              monthTextStyle={styles.monthText}
-              monthTextSelectedStyle={styles.monthTextSelected}
+              isDark={isDark}
+              loading={gamesLoading}
             />
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <CFBGamesList
-                games={filteredGames}
-                loading={cfbloading}
+                games={selectedWeekGames}
+                loading={gamesLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 scrollEnabled={false}
@@ -251,6 +233,7 @@ export default function CFBeagueScreen() {
               error={error}
               categories={categories}
               league={"CFB"}
+              isDark={isDark}
             />
           </View>
 

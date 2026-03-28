@@ -1,6 +1,6 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamLogoESPN } from "constants/teamsCFB";
+import { getCFBTeamLogo } from "constants/teamsCFB";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { BracketGame, BracketTeam } from "types/cfb";
 
@@ -54,6 +54,7 @@ export function GameCard({
       : null;
 
   const renderTeamRow = (team: BracketTeam, dimmed = false) => {
+    const teamLogo = getCFBTeamLogo(team.id, isDark);
     const recordScore = showScore ? (
       <Text style={styles.score}>{team.score}</Text>
     ) : (
@@ -64,10 +65,7 @@ export function GameCard({
       <View style={[styles.teamRow, dimmed && { opacity: 0.5 }]}>
         <View style={styles.teamWrapper}>
           {team.seed && <Text style={styles.seed}>{team.seed}</Text>}
-          <Image
-            source={getTeamLogoESPN(team.espnID ?? "0", isDark)}
-            style={styles.logo}
-          />
+          <Image source={teamLogo} style={styles.logo} />
           <View>
             <Text style={styles.name}>{team.code}</Text>
           </View>

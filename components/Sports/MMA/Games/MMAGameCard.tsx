@@ -81,7 +81,6 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const inProgress = gameStatusDescription === "In Progress";
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
-
   const broadcasts = details?.fight?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const period = details?.fight?.status.period;

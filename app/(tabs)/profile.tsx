@@ -1,5 +1,4 @@
 // profile.tsx
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -10,10 +9,10 @@ import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { teams } from "constants/teams";
-import { teams as cbbteams } from "constants/teamsCBB";
-import { teams as cfbteams } from "constants/teamsCFB";
-import { teams as mlbteams } from "constants/teamsMLB";
-import { teams as nflteams } from "constants/teamsNFL";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
@@ -40,18 +39,23 @@ export default function ProfileScreen() {
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
 
-  const { deleteAccount } = useAuth();
+  // FIX #12: use logout from useAuth so server token is invalidated and
+  //          in-memory user/token state is cleared. Was calling AsyncStorage.clear() directly.
+  // FIX #7:  use deleteAccount from useAuth instead of re-implementing inline.
+  const { logout, deleteAccount } = useAuth();
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = profileStyles(isDark);
   const { favorites } = useFavoriteTeams();
+
   // Local UI state
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [password, setPassword] = useState("");
+  // FIX: removed `password` state — deleteAccount no longer requires a password.
+  //      The backend authenticates via the Bearer token in the Authorization header.
 
   // Profile hook
   const {
@@ -93,25 +97,22 @@ export default function ProfileScreen() {
 
   /** Delete account handler */
   const confirmDeleteAccount = async () => {
-    if (!password.trim()) {
-      alert("Please enter your password.");
-      return;
-    }
+    // FIX: removed password check — no longer needed
     try {
-      await deleteAccount(password);
+      await deleteAccount();
       setShowDeleteModal(false);
-      setPassword("");
       router.replace("/settings/deleteaccountsplash");
     } catch {
-      alert("Failed to delete account. Check your password and try again.");
+      alert("Failed to delete account. Please try again.");
     }
   };
 
   /** Sign out handler */
+  // FIX #12: delegate entirely to useAuth.logout — it calls the backend,
+  //          clears AsyncStorage, resets in-memory state, and redirects.
   const signOut = async () => {
     try {
-      await AsyncStorage.clear();
-      router.replace("/login");
+      await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
     } finally {
@@ -182,11 +183,11 @@ export default function ProfileScreen() {
       const [league, id] = fav.split(":");
       let team;
       if (league === "NBA") team = teams.find((t) => String(t.id) === id);
-      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
-      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
-      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id);
-      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id);
-      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id);
+      if (league === "NFL") team = nflTeams.find((t) => String(t.id) === id);
+      if (league === "CFB") team = cfbTeams.find((t) => String(t.id) === id);
+      if (league === "CBB") team = cbbTeams.find((t) => String(t.id) === id);
+      if (league === "WCBB") team = cbbTeams.find((t) => String(t.wid) === id);
+      if (league === "MLB") team = mlbTeams.find((t) => String(t.id) === id);
       if (league === "NHL") team = nhlTeams.find((t) => String(t.id) === id);
       if (!team) return null;
       return { ...team, league: league as any };
@@ -195,9 +196,9 @@ export default function ProfileScreen() {
 
   if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
 
+
   const onFollowersPress = () => {
     if (!currentUserId) return;
-
     router.push({
       pathname: "/user/followers",
       params: {
@@ -210,7 +211,6 @@ export default function ProfileScreen() {
 
   const onFollowingPress = () => {
     if (!currentUserId) return;
-
     router.push({
       pathname: "/user/followers",
       params: {
@@ -220,6 +220,7 @@ export default function ProfileScreen() {
       },
     });
   };
+
   return (
     <>
       <ScrollView

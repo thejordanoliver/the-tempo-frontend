@@ -1,24 +1,12 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
-export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
-  const baseTextColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
+export const lastFiveGameStyles = (isDark: boolean) => {
+  const baseTextColor = isDark ? Colors.white : Colors.black;
 
   return {
     colors: {
-      win: lighter
-        ? Colors.dark.leafGreen
-        : isDark
-        ? Colors.dark.leafGreen
-        : Colors.light.green,
-      loss: lighter
-        ? Colors.dark.lightRed
-        : isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red,
+      win: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      loss: isDark ? Colors.dark.lightRed : Colors.light.red,
       text: baseTextColor,
     },
     ...StyleSheet.create({
@@ -50,21 +38,13 @@ export const lastFiveGameStyles = (isDark: boolean, lighter: boolean) => {
         color: baseTextColor,
       },
       tabTextUnselected: {
-        color: lighter
-          ? Colors.midTone
-          : isDark
-          ? Colors.midTone
-          : Colors.midTone,
+        color: isDark ? Colors.midTone : Colors.midTone,
       },
       row: {
         flexDirection: "row",
         justifyContent: "space-between",
         paddingVertical: 12,
-        borderBottomColor: lighter
-          ? Colors.lightGray
-          : isDark
-          ? Colors.darkGray
-          : Colors.lightGray,
+        borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       },
       headerRow: {
         flexDirection: "row",

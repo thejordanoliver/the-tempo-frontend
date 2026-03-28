@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useState } from "react";
 
 // --- Team Rank type ---
 export type CFBTeamRank = {
@@ -40,7 +40,7 @@ export type CFBRankPoll = {
   droppedOut: CFBTeamRank[];
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+import { BASE_URL } from "utils/apiClient";
 const CACHE_KEY = "cfb_rankings_cache_v1";
 const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -54,9 +54,8 @@ export const useCFBRankings = () => {
     try {
       await AsyncStorage.setItem(
         CACHE_KEY,
-        JSON.stringify({ timestamp: Date.now(), data })
+        JSON.stringify({ timestamp: Date.now(), data }),
       );
-  
     } catch (err) {
       console.warn("⚠️ Failed to cache CFB rankings:", err);
     }
@@ -89,8 +88,8 @@ export const useCFBRankings = () => {
           type === "ap"
             ? "AP Poll"
             : type === "coaches"
-            ? "Coaches Poll"
-            : "CFP Rankings",
+              ? "Coaches Poll"
+              : "CFP Rankings",
         ranks: [],
         droppedOut: [],
       };
@@ -100,24 +99,25 @@ export const useCFBRankings = () => {
     return {
       type,
       shortName:
-        raw.shortName || nested.shortName ||
+        raw.shortName ||
+        nested.shortName ||
         (type === "ap"
           ? "AP Poll"
           : type === "coaches"
-          ? "Coaches Poll"
-          : "CFP Rankings"),
+            ? "Coaches Poll"
+            : "CFP Rankings"),
       ranks:
         (Array.isArray(raw.ranks)
           ? raw.ranks
           : Array.isArray(nested.ranks)
-          ? nested.ranks
-          : []) || [],
+            ? nested.ranks
+            : []) || [],
       droppedOut:
         (Array.isArray(raw.droppedOut)
           ? raw.droppedOut
           : Array.isArray(nested.droppedOut)
-          ? nested.droppedOut
-          : []) || [],
+            ? nested.droppedOut
+            : []) || [],
     };
   };
 
@@ -125,7 +125,8 @@ export const useCFBRankings = () => {
   const fetchLatest = async () => {
     try {
       const res = await fetch(`${BASE_URL}/api/cfb-rankings`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to fetch rankings`);
+      if (!res.ok)
+        throw new Error(`HTTP ${res.status}: Failed to fetch rankings`);
 
       const data = await res.json();
       const raw = data.rankings || {};
@@ -142,8 +143,6 @@ export const useCFBRankings = () => {
 
       setRankings(polls);
       await saveCache(polls);
-
-
     } catch (err: any) {
       console.error("❌ Fetch latest rankings failed:", err);
       setError(err.message || "Failed to fetch rankings");

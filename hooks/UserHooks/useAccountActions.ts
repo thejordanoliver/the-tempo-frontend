@@ -19,7 +19,7 @@ export function useAccountActions() {
   const confirmDeleteAccount = async (password: string) => {
     if (!password.trim()) throw new Error("Password required");
     try {
-      await deleteAccount(password);
+      await deleteAccount();
       router.replace("/settings/deleteaccountsplash");
     } catch (err) {
       throw new Error("Failed to delete account. Check password.");

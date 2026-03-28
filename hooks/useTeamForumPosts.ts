@@ -4,8 +4,7 @@ import { useAuth } from "hooks/UserHooks/useAuth"; // adjust path if needed
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
-
+import { BASE_URL } from "utils/apiClient";
 interface UseTeamForumPostsParams {
   teamId: string;
   league?: LeagueType;
@@ -50,13 +49,13 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
           {
             params: { page: pageNumber, limit: 10 },
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         const { posts: newPosts, pagination } = res.data;
 
         setPosts((prev) =>
-          pageNumber === 1 ? newPosts : [...prev, ...newPosts]
+          pageNumber === 1 ? newPosts : [...prev, ...newPosts],
         );
         setPage(pagination.page);
         setTotalPages(pagination.totalPages);
@@ -65,7 +64,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
         setError(
           err.response?.data?.error ||
             err.message ||
-            "Failed to load forum posts"
+            "Failed to load forum posts",
         );
       } finally {
         setLoading(false);
@@ -73,7 +72,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
         isFetchingRef.current = false;
       }
     },
-    [teamId, league, token]
+    [teamId, league, token],
   );
 
   // 🔄 Fetch posts when token is ready or team/league changes
@@ -107,7 +106,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     },
-    [token]
+    [token],
   );
 
   // ✏️ Edit post
@@ -118,14 +117,14 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       const res = await axios.put(
         `${BASE_URL}/api/forum/posts/${postId}`,
         { text },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       setPosts((prev) =>
-        prev.map((p) => (p.id === postId ? res.data.post : p))
+        prev.map((p) => (p.id === postId ? res.data.post : p)),
       );
     },
-    [token]
+    [token],
   );
 
   return {

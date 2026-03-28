@@ -1,6 +1,6 @@
 // components/CFB/TeamRankCard.tsx
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamLogoESPN } from "constants/teamsCFB";
+import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import {
@@ -53,10 +53,9 @@ export default function TeamRankCard({ item, index }: Props) {
   }, []);
 
   const teamId = item?.teamInfo?.id ?? null;
-  const logo = teamId ? getTeamLogoESPN(teamId, isDark) : null;
+  const team = getTeamByESPNId(teamId);
+  const logo = teamId ? getCFBTeamLogo(team.id, isDark) : null;
 
-  const displayName =
-    item.team === "Southeastern Louisiana" ? "SE Louisiana" : item.team;
 
   return (
     <View style={styles.cardWrapper}>

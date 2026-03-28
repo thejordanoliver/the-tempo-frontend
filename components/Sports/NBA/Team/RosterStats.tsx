@@ -14,11 +14,10 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
-import { PlayerInfo, PlayerStats, RosterStatsProps } from "types/types";
+import { PlayerStats, RosterStatsProps } from "types/types";
 
 export default function RosterStats({
   rosterStats,
-  players,
   teamId,
   teamStats,
   loading,
@@ -34,157 +33,76 @@ export default function RosterStats({
     "Player Stats",
   );
 
-  if (!rosterStats?.length && !teamStats) return null;
+  const activeRoster = useMemo(
+    () =>
+      (rosterStats ?? []).filter(
+        (p) => p.latestSeason !== null && p.latestSeason!.g > 0,
+      ),
+    [rosterStats],
+  );
 
-  const getPG = (val: number, gp: number) =>
-    gp ? (val / gp).toFixed(1) : "0.0";
+  if (!activeRoster.length && !teamStats) return null;
 
-  const playersMap = useMemo(() => {
-    const map = new Map<number, PlayerInfo>();
-    players.forEach((p) => {
-      if (typeof p.player_id === "number") map.set(p.player_id, p);
-    });
-    return map;
-  }, [players]);
-
-  const mergedRoster = useMemo(() => {
-    return rosterStats
-      ?.map((stat) => {
-        const key = Number(stat.playerId);
-        let player = playersMap.get(key);
-
-        if (!player) {
-          player = players.find(
-            (p) =>
-              p.first_name.toLowerCase() ===
-                stat.name.split(" ")[0].toLowerCase() &&
-              p.last_name.toLowerCase() ===
-                stat.name.split(" ").slice(1).join(" ").toLowerCase(),
-          );
-        }
-
-        if (!player || stat.gamesPlayed === 0) return null;
-
-        return {
-          ...stat,
-          first_name: player.first_name,
-          last_name: player.last_name,
-          full_name: player.full_name,
-          short_name: player.short_name,
-          jersey_number: player.jersey_number,
-          headshot_url: player.headshot_url,
-        };
-      })
-      .filter(Boolean) as (PlayerStats & PlayerInfo)[];
-  }, [rosterStats, players, playersMap]);
-
-  if (!mergedRoster?.length && !teamStats) return null;
-
-  const formatDisplayName = (name: string, jersey: string) => {
-    return (
-      <Text style={styles.playerName}>
-        {name} <Text style={styles.number}>#{jersey}</Text>
-      </Text>
-    );
-  };
-  const formatCardName = (short_name: string, jersey: string) => {
-    return (
-      <Text style={styles.cardName}>
-        {short_name} <Text style={styles.number}>#{jersey}</Text>
-      </Text>
-    );
-  };
-
-  // Leader Cards
   const statLeaders = [
-    {
-      label: "Points",
-      stat: "totalPoints",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalPoints / b.gamesPlayed - a.totalPoints / a.gamesPlayed,
-      )[0],
-    },
-    {
-      label: "Rebounds",
-      stat: "totalRebounds",
-      player: [...mergedRoster].sort(
-        (a, b) =>
-          b.totalRebounds / b.gamesPlayed - a.totalRebounds / a.gamesPlayed,
-      )[0],
-    },
-    {
-      label: "Assists",
-      stat: "totalAssists",
-      player: [...mergedRoster].sort(
-        (a, b) =>
-          b.totalAssists / b.gamesPlayed - a.totalAssists / a.gamesPlayed,
-      )[0],
-    },
-    {
-      label: "Blocks",
-      stat: "totalBlocks",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalBlocks / b.gamesPlayed - a.totalBlocks / a.gamesPlayed,
-      )[0],
-    },
-    {
-      label: "Steals",
-      stat: "totalSteals",
-      player: [...mergedRoster].sort(
-        (a, b) => b.totalSteals / b.gamesPlayed - a.totalSteals / a.gamesPlayed,
-      )[0],
-    },
-  ];
+    { label: "Points", key: "pts" as const },
+    { label: "Rebounds", key: "trb" as const },
+    { label: "Assists", key: "ast" as const },
+    { label: "Blocks", key: "blk" as const },
+    { label: "Steals", key: "stl" as const },
+  ].map((item) => ({
+    ...item,
+    player: [...activeRoster].sort(
+      (a, b) =>
+        (b.latestSeason![item.key] as number) -
+        (a.latestSeason![item.key] as number),
+    )[0],
+  }));
+
   const LeaderCard = ({
     player,
-    statName,
-    label, // <-- add this,
+    label,
+    statKey,
     index,
     total,
   }: {
-    player: PlayerStats & PlayerInfo;
-    statName: keyof PlayerStats;
-    label: string; // <-- add
-
+    player: PlayerStats;
+    label: string;
+    statKey: keyof NonNullable<PlayerStats["latestSeason"]>;
     index: number;
     total: number;
-  }) => {
-    return (
-      <View style={styles.cardWrapper}>
-        <View style={styles.cardContainer}>
-          <Text style={styles.cardLabel}>{label}</Text>
-
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={() =>
-              router.push(`/player/${player.playerId}?teamId=${teamId}`)
-            }
-          >
-            <View style={styles.statCard}>
-              <Image
-                source={{
-                  uri: player.headshot_url ?? "https://via.placeholder.com/60",
-                }}
-                style={styles.avatar}
-              />
-              <View style={styles.nameValue}>
-                <Text style={styles.cardName}>
-                  {formatCardName(player.short_name, player.jersey_number)}
-                </Text>
-                <Text style={styles.cardValue}>
-                  {getPG(player[statName] as number, player.gamesPlayed)}
-                </Text>
-              </View>
+  }) => (
+    <View style={styles.cardWrapper}>
+      <View style={styles.cardContainer}>
+        <Text style={styles.cardLabel}>{label}</Text>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={() =>
+            router.push(`/player/${player.playerId}?teamId=${teamId}`)
+          }
+        >
+          <View style={styles.statCard}>
+            <Image
+              source={{
+                uri: player.headshot_url ?? "https://via.placeholder.com/60",
+              }}
+              style={styles.avatar}
+            />
+            <View style={styles.nameValue}>
+              <Text style={styles.cardName}>
+                {player.short_name}{" "}
+                <Text style={styles.number}>#{player.jersey_number}</Text>
+              </Text>
+              <Text style={styles.cardValue}>
+                {player.latestSeason![statKey]}
+              </Text>
             </View>
-          </TouchableOpacity>
-        </View>
-
-        {index < total - 1 && <View style={styles.divider} />}
+          </View>
+        </TouchableOpacity>
       </View>
-    );
-  };
+      {index < total - 1 && <View style={styles.divider} />}
+    </View>
+  );
 
-  // Render Team Stats in a CFB-like table (Averages + Totals)
   const renderTeamStats = () => {
     if (!teamStats) return null;
 
@@ -232,66 +150,41 @@ export default function RosterStats({
       },
     ];
 
+    const renderTable = (rows: { label: string; value: any }[]) => (
+      <View style={styles.table}>
+        {rows.map((item, idx) => (
+          <View
+            key={item.label}
+            style={[
+              styles.teamTableRow,
+              idx % 2 === 1 && {
+                backgroundColor: isDark
+                  ? Colors.dark.itemBackground
+                  : Colors.light.itemBackground,
+              },
+              idx === rows.length - 1 && { borderBottomWidth: 0 },
+            ]}
+          >
+            <Text style={[styles.tableCell, styles.headerText]}>
+              {item.label}
+            </Text>
+            <Text style={[styles.tableCell, styles.statValue]}>
+              {item.value}
+            </Text>
+          </View>
+        ))}
+      </View>
+    );
+
     return (
       <View style={{ gap: 20 }}>
-        {/* Averages Table */}
         <View>
           <Text style={styles.categoryTitle}>Per-Game Averages</Text>
-
-          <View style={styles.table}>
-            {displayAverages.map((item, idx) => (
-              <View
-                key={item.label}
-                style={[
-                  styles.teamTableRow,
-                  idx % 2 === 1 && {
-                    backgroundColor: isDark
-                      ? Colors.dark.itemBackground
-                      : Colors.light.itemBackground,
-                  },
-                  idx === displayAverages.length - 1 && {
-                    borderBottomWidth: 0,
-                  }, // ← remove border on LAST row
-                ]}
-              >
-                <Text style={[styles.tableCell, styles.headerText]}>
-                  {item.label}
-                </Text>
-                <Text style={[styles.tableCell, styles.statValue]}>
-                  {item.value}
-                </Text>
-              </View>
-            ))}
-          </View>
+          {renderTable(displayAverages)}
         </View>
-
-        {/* Totals Table */}
         <View>
           <Text style={styles.categoryTitle}>Team Totals</Text>
-
-          <View style={styles.table}>
-            {displayTotals.map((item, idx) => (
-              <View
-                key={item.label}
-                style={[
-                  styles.teamTableRow,
-                  idx % 2 === 1 && {
-                    backgroundColor: isDark
-                      ? Colors.dark.itemBackground
-                      : Colors.light.itemBackground,
-                  },
-                  idx === displayTotals.length - 1 && { borderBottomWidth: 0 }, // ← same here
-                ]}
-              >
-                <Text style={[styles.tableCell, styles.headerText]}>
-                  {item.label}
-                </Text>
-                <Text style={[styles.tableCell, styles.statValue]}>
-                  {item.value}
-                </Text>
-              </View>
-            ))}
-          </View>
+          {renderTable(displayTotals)}
         </View>
       </View>
     );
@@ -299,14 +192,27 @@ export default function RosterStats({
 
   if (loading)
     return (
-      <View style={styles.container}>
-        <CustomActivityIndicator />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   if (error) return <Text style={global.errorText}>{error.name}</Text>;
-
-  if (rosterStats.length === 0)
+  if (!rosterStats?.length)
     return <Text style={global.emptyText}>No player stats available.</Text>;
+
+  const rowBg = (idx: number) =>
+    idx % 2 === 1
+      ? {
+          backgroundColor: isDark
+            ? Colors.dark.itemBackground
+            : Colors.light.itemBackground,
+        }
+      : {};
+  const headerBg = {
+    backgroundColor: isDark
+      ? Colors.dark.itemBackground
+      : Colors.light.itemBackground,
+  };
 
   return (
     <ScrollView
@@ -316,7 +222,7 @@ export default function RosterStats({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <HeadingTwo>{viewMode}</HeadingTwo>
+      <HeadingTwo isDark={isDark}>{viewMode}</HeadingTwo>
 
       <Dropdown
         options={[
@@ -334,23 +240,24 @@ export default function RosterStats({
       <View>
         {viewMode === "Player Stats" ? (
           <>
+            {/* Leader Cards */}
             <ScrollView
               horizontal
-              nestedScrollEnabled={false} // 🔥 important
+              nestedScrollEnabled={false}
               showsHorizontalScrollIndicator={false}
               style={{ marginBottom: 16 }}
-              snapToInterval={276} // width of card (260) + margin (16)
+              snapToInterval={276}
               decelerationRate="fast"
               snapToAlignment="start"
             >
               {statLeaders
-                .filter((item) => item.player) // <-- ignore undefined
+                .filter((item) => item.player)
                 .map((item, idx) => (
                   <LeaderCard
-                    key={item.stat}
-                    player={item.player!} // non-null assertion
+                    key={item.label}
+                    player={item.player!}
                     label={item.label}
-                    statName={item.stat as keyof PlayerStats}
+                    statKey={item.key}
                     index={idx}
                     total={statLeaders.length}
                   />
@@ -361,17 +268,7 @@ export default function RosterStats({
             <View style={styles.tableWrapper}>
               {/* Fixed name column */}
               <View style={styles.fixedColumnContainer}>
-                {/* Header for name column */}
-                <View
-                  style={[
-                    styles.tableRow,
-                    {
-                      backgroundColor: isDark
-                        ? Colors.dark.itemBackground
-                        : Colors.light.itemBackground,
-                    },
-                  ]}
-                >
+                <View style={[styles.tableRow, headerBg]}>
                   <Text
                     style={[
                       styles.tableCell,
@@ -382,19 +279,13 @@ export default function RosterStats({
                     Player
                   </Text>
                 </View>
-
-                {/* Player names */}
-                {mergedRoster.map((p, idx) => (
+                {activeRoster.map((p, idx) => (
                   <View
                     key={p.playerId}
                     style={[
                       styles.tableRow,
-                      idx % 2 === 1 && {
-                        backgroundColor: isDark
-                          ? Colors.dark.itemBackground
-                          : Colors.light.itemBackground,
-                      },
-                      idx === mergedRoster.length - 1 && {
+                      rowBg(idx),
+                      idx === activeRoster.length - 1 && {
                         borderBottomWidth: 0,
                       },
                     ]}
@@ -404,8 +295,15 @@ export default function RosterStats({
                         router.push(`/player/${p.playerId}?teamId=${teamId}`)
                       }
                     >
-                      <Text style={[styles.tableCell, { width: 140 }]}>
-                        {formatDisplayName(p.short_name, p.jersey_number)}
+                      <Text
+                        style={[
+                          styles.tableCell,
+                          styles.playerName,
+                          { width: 140 },
+                        ]}
+                      >
+                        {p.short_name}{" "}
+                        <Text style={styles.number}>#{p.jersey_number}</Text>
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -415,17 +313,8 @@ export default function RosterStats({
               {/* Scrollable stats */}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View>
-                  {/* Header for stats columns */}
-                  <View
-                    style={[
-                      styles.tableRow,
-                      {
-                        backgroundColor: isDark
-                          ? Colors.dark.itemBackground
-                          : Colors.light.itemBackground,
-                      },
-                    ]}
-                  >
+                  {/* Header */}
+                  <View style={[styles.tableRow, headerBg]}>
                     {[
                       "GP",
                       "MIN",
@@ -448,7 +337,7 @@ export default function RosterStats({
                       "TO",
                       "PF",
                       "+/-",
-                    ].map((header, i) => (
+                    ].map((h, i) => (
                       <Text
                         key={i}
                         style={[
@@ -457,71 +346,63 @@ export default function RosterStats({
                           { width: 80 },
                         ]}
                       >
-                        {header}
+                        {h}
                       </Text>
                     ))}
                   </View>
 
-                  {/* Stats rows */}
-                  {mergedRoster.map((p, idx) => (
-                    <View
-                      key={p.playerId}
-                      style={[
-                        styles.tableRow,
-                        idx % 2 === 1 && {
-                          backgroundColor: isDark
-                            ? Colors.dark.itemBackground
-                            : Colors.light.itemBackground,
-                        },
-                        idx === mergedRoster.length - 1 && {
-                          borderBottomWidth: 0,
-                        },
-                      ]}
-                    >
-                      {[
-                        p.gamesPlayed,
-                        (p.minutesPlayed / p.gamesPlayed).toFixed(1),
-                        getPG(p.totalPoints, p.gamesPlayed),
-                        getPG(p.totalFGM, p.gamesPlayed),
-                        getPG(p.totalFGA, p.gamesPlayed),
-                        p.totalFGA
-                          ? ((p.totalFGM / p.totalFGA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.total3PM, p.gamesPlayed),
-                        getPG(p.total3PA, p.gamesPlayed),
-                        p.total3PA
-                          ? ((p.total3PM / p.total3PA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.totalFTM, p.gamesPlayed),
-                        getPG(p.totalFTA, p.gamesPlayed),
-                        p.totalFTA
-                          ? ((p.totalFTM / p.totalFTA) * 100).toFixed(1) + "%"
-                          : "0.0%",
-                        getPG(p.totalOffReb, p.gamesPlayed),
-                        getPG(p.totalDefReb, p.gamesPlayed),
-                        getPG(p.totalRebounds, p.gamesPlayed),
-                        getPG(p.totalAssists, p.gamesPlayed),
-                        getPG(p.totalSteals, p.gamesPlayed),
-                        getPG(p.totalBlocks, p.gamesPlayed),
-                        getPG(p.totalTurnovers, p.gamesPlayed),
-                        getPG(p.totalFouls, p.gamesPlayed),
-                        p.plusMinus
-                          ? (p.plusMinus / p.gamesPlayed).toFixed(1)
-                          : "0.0",
-                      ].map((val, i) => (
-                        <Text
-                          key={i}
-                          style={[
-                            styles.tableCell,
-                            styles.statValue,
-                            { width: 80 },
-                          ]}
-                        >
-                          {val}
-                        </Text>
-                      ))}
-                    </View>
-                  ))}
+                  {/* Rows */}
+                  {activeRoster.map((p, idx) => {
+                    const s = p.latestSeason!;
+                    const cells = [
+                      s.g,
+                      s.mpg,
+                      s.pts,
+                      s.fg,
+                      s.fga,
+                      `${s.fg_pct}%`,
+                      s.three_p,
+                      s.three_pa,
+                      `${s.three_pct}%`,
+                      s.ft,
+                      s.fta,
+                      `${s.ft_pct}%`,
+                      s.orb,
+                      s.drb,
+                      s.trb,
+                      s.ast,
+                      s.stl,
+                      s.blk,
+                      s.tov,
+                      s.pf,
+                      "—",
+                    ];
+                    return (
+                      <View
+                        key={p.playerId}
+                        style={[
+                          styles.tableRow,
+                          rowBg(idx),
+                          idx === activeRoster.length - 1 && {
+                            borderBottomWidth: 0,
+                          },
+                        ]}
+                      >
+                        {cells.map((val, i) => (
+                          <Text
+                            key={i}
+                            style={[
+                              styles.tableCell,
+                              styles.statValue,
+                              { width: 80 },
+                            ]}
+                          >
+                            {val}
+                          </Text>
+                        ))}
+                      </View>
+                    );
+                  })}
                 </View>
               </ScrollView>
             </View>

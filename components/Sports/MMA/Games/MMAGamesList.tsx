@@ -38,7 +38,7 @@ export default function MMAGamesList({
 }: GamesListProps) {
   const { viewMode } = usePreferences();
   const isDark = useColorScheme() === "dark";
-  const styles = gameListStyles(isDark);
+  const styles = gameListStyles;
   const global = globalStyles(isDark);
 
   const [previewGame, setPreviewGame] = useState<MMAFight | null>(null);

@@ -1,5 +1,4 @@
-import { NBATeam, Venue } from "types/types";
-
+import { NBATeam } from "types/types";
 // Logos
 import SixersLogo from "../assets/Logos/76ers.png";
 import SixersLogoLight from "../assets/Logos/76ersLight.png";
@@ -926,8 +925,6 @@ export const getTeamInfo = (teamId: number | string) => {
 export const getTeamByESPNId = (espnId: number | string) => {
   return teams.find((t) => t.espnID?.toString() === espnId?.toString());
 };
-export const getTeamById = (id?: number | string) =>
-  teams.find((t) => String(t.id) === String(id));
 
 export const getTeamBySummerId = (id?: number | string) =>
   teams.find((t) => String(t.summerLeagueId) === String(id));
@@ -947,7 +944,6 @@ export function getTeamLogo(id: number | string | undefined, isDark: boolean) {
     : PlaceholderLogo;
 }
 
-
 export const teamsById: Record<string, NBATeam> = teams.reduce(
   (map, team) => {
     map[team.id] = team;
@@ -955,161 +951,6 @@ export const teamsById: Record<string, NBATeam> = teams.reduce(
   },
   {} as Record<string, NBATeam>,
 );
-
-export const neutralVenues: Record<string, Venue> = {
-  /* ---------------- International / Neutral ---------------- */
-
-  "Etihad Arena": {
-    name: "Etihad Arena",
-    address:
-      "FJ63+4PQ - Yas St - Yas Island - YS2 - Abu Dhabi - United Arab Emirates",
-    latitude: 24.4539,
-    longitude: 54.3773,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680251/arenas/basketball/etihad.avif",
-  },
-
-  "Stan Sheriff Center": {
-    name: "Stan Sheriff Center",
-    address: "1355 Lower Campus Rd, Honolulu, HI 96822",
-    latitude: 21.3099,
-    longitude: -157.8581,
-    venueCapacity: "10,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/stan-sheriff-center.jpg",
-  },
-
-  "Accor Arena": {
-    name: "Accor Arena",
-    address: "8 Bd de Bercy, 75012 Paris, France",
-    latitude: 48.8575,
-    longitude: 2.3514,
-    venueCapacity: "20,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/accor.jpg",
-  },
-
-  "Arena CDMX": {
-    name: "Arena CDMX",
-    city: "Mexico City",
-    address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco",
-    latitude: 19.4977,
-    longitude: -99.1751,
-    venueCapacity: "22,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cdmx.jpg",
-  },
-
-  "Uber Arena": {
-    name: "Uber Arena",
-    city: "Berlin",
-    address: "Mercedes-Platz 1, 10243 Berlin, Germany",
-    latitude: 52.5062,
-    longitude: 13.4434,
-    venueCapacity: "17,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/uber.jpg",
-  },
-
-  "The O2": {
-    name: "The O2 Arena",
-    city: "London",
-    address: "Peninsula Square, London SE10 0DX, United Kingdom",
-    latitude: 51.503,
-    longitude: 0.0032,
-    venueCapacity: "20,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680191/arenas/basketball/the-o2.webp",
-  },
-
-  /* ---------------- NBA SUMMER LEAGUE ---------------- */
-
-  "Thomas & Mack Center": {
-    name: "Thomas & Mack Center",
-    city: "Las Vegas",
-    address: "4505 S Maryland Pkwy, Las Vegas, NV 89154",
-    latitude: 36.1057,
-    longitude: -115.1426,
-    venueCapacity: "17,923",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680183/arenas/basketball/vegas-summer-league.jpg",
-  },
-
-  "Cox Pavilion": {
-    name: "Cox Pavilion",
-    city: "Las Vegas",
-    address: "4505 S Maryland Pkwy, Las Vegas, NV 89154",
-    latitude: 36.1054,
-    longitude: -115.1433,
-    venueCapacity: "3,286",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1767000000/arenas/basketball/cox-pavilion.jpg",
-  },
-
-  "Jon M. Huntsman Center": {
-    name: "Jon M. Huntsman Center",
-    city: "Salt Lake City",
-    address: "1825 E South Campus Dr, Salt Lake City, UT 84112",
-    latitude: 40.7625,
-    longitude: -111.8508,
-    venueCapacity: "15,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1769869282/basketball/arenas/huntsman-center.jpg",
-  },
-
-  /* ---------------- Other US Neutral ---------------- */
-
-  "Acrisure Arena": {
-    name: "Acrisure Arena",
-    address: "75702 Varner Rd, Palm Desert, CA 92211",
-    latitude: 33.7222,
-    longitude: -116.3745,
-    venueCapacity: "20,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/acrisure.jpg",
-  },
-
-  "Coliseo de Puerto Rico": {
-    name: "Coliseo de Puerto Rico",
-    address: "500 Av. Arterial B, San Juan, 00918, Puerto Rico",
-    latitude: 18.4655,
-    longitude: -66.1057,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/coliseode-puerto-rico.jpg",
-  },
-
-  "Pechanga Arena": {
-    name: "Pechanga Arena",
-    address: "3500 Sports Arena Blvd, San Diego, CA 92110",
-    latitude: 32.7468,
-    longitude: -117.1882,
-    venueCapacity: "16,100",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pechanga.jpg",
-  },
-
-  "North Charleston Coliseum": {
-    name: "North Charleston Coliseum",
-    address: "5001 Coliseum Dr, North Charleston, SC 29418",
-    latitude: 32.8655,
-    longitude: -80.0224,
-    venueCapacity: "13,295",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/north-charleston-coliseum.jpg",
-  },
-
-  "Legacy Arena at BJCC": {
-    name: "Legacy Arena at BJCC",
-    address: "1001 19th St N, Birmingham, AL 35234",
-    latitude: 33.5207,
-    longitude: -86.8025,
-    venueCapacity: "17,654",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/legacy.jpg",
-  },
-};
 
 export const nbaDivisionsById = {
   Atlantic: [

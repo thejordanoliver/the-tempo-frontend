@@ -1,16 +1,37 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getRivalryHeadline } from "constants/teamsCFB";
-import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
-import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+
+import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { Team } from "types/nfl";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import displayeValue from "utils/widgetUtils";
-import { FootballGameWidgetProps } from "./NFLGameWidget";
 
-export default function CFBGameWidget({
+export type FootballGameWidgetProps = {
+  league: "NFL" | "CFB";
+  id: number;
+  date: string;
+  time: string;
+  gameDateISO: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  homeScore: number;
+  awayScore: number;
+  status?: string;
+  halftime?: boolean;
+  clock?: string | null;
+  periods: number;
+  leaders?: any[];
+  height?: number;
+  width?: number;
+  loading: boolean;
+};
+
+export default function NFLGameWidget({
   height = 150,
   width = 150,
   loading,
@@ -26,65 +47,65 @@ export default function CFBGameWidget({
   // Game date/time formatting
   // -------------------------
   const gameDate = new Date(props.gameDateISO);
-  const localDate = gameDate.toLocaleString(undefined, { month: "short", day: "numeric" });
-  const localTime = gameDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
+  const localDate = gameDate.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+  const localTime = gameDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   const gameDateStr = props.gameDateISO;
+  const homeTeam = getCFBTeam(props?.homeTeam?.id);
+  const awayTeam = getCFBTeam(props?.awayTeam?.id);
+  const awayLogo = getCFBTeamLogo(props?.awayTeam?.id, isDark);
+  const homeLogo = getCFBTeamLogo(props?.homeTeam?.id, isDark);
+  const awayName = awayTeam?.code
+  const homeName = homeTeam?.code
+  const homeEspnId = homeTeam?.espnID;
+  const awayEspnId = awayTeam?.espnID;
 
-  // -------------------------
-  // Team IDs
-  // -------------------------
-  const homeEspnId = props.homeTeam?.espnID;
-  const awayEspnId = props.awayTeam?.espnID;
+  const {
+    details,
+    score,
+    loading: gameDetailsLoading,
+  } = useGameDetails("cfb", homeEspnId, awayEspnId, gameDateStr);
 
-  // -------------------------
-  // Live game data hooks
-  // -------------------------
-  const possession = useFootballGamePossession(homeEspnId, awayEspnId, gameDateStr);
-  const { data: details } = useFootballGameDetails(
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-    "cfb"
-  );
+  const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const endOfPeriod = gameStatusDescription === "End of Period";
 
-  // -------------------------
-  // Headline and broadcast
-  // -------------------------
-  const headlineText = details?.headline ?? getRivalryHeadline(homeEspnId, awayEspnId);
-  const broadcast = details?.broadcasts;
+  const displayClock = score?.displayClock;
+  const period = score?.period;
+  const redzone = score?.possession.isRedZone;
+  const isRedzone = redzone;
+  const headlineText = details?.headline;
+  const broadcast = details?.broadcast ?? "";
+  const downDistanceText = score?.possession.downDistanceText;
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = headlineText ?? holidayLabel ?? "";
+  const possessionTeamId = score?.possession.teamId;
+  const homeRecord = details?.records.home.total.summary;
+  const awayRecord = details?.records.away.total.summary;
+  const homeScore = score?.home.total ?? 0;
+  const awayScore = score?.away.total ?? 0;
+  const football = isDark ? FootballLight : Football;
 
-  // -------------------------
-  // Game status flags
-  // -------------------------
-  const status = possession.gameStatusDescription;
-  const isScheduled = status === "Scheduled";
-  const isFinal = status === "Final";
-  const inProgress = status === "In Progress" || status === "End of Period";
-  const isHalftime = status === "Halftime";
-  const endOfPeriod = status === "End of Period";
-
-  // -------------------------
-  // Possession info
-  // -------------------------
-  const possessingTeamId = possession.possessionTeamId;
-  const homeHasPossession = possessingTeamId != null && String(possessingTeamId) === String(homeEspnId);
-  const awayHasPossession = possessingTeamId != null && String(possessingTeamId) === String(awayEspnId);
-
-  // -------------------------
-  // Scores & winner determination
-  // -------------------------
-  const homeScore = isFinal ? props.homeScore ?? 0 : possession.score?.home ?? 0;
-  const awayScore = isFinal ? props.awayScore ?? 0 : possession.score?.away ?? 0;
+  const homeHasPossession =
+    inProgress && possessionTeamId === props.homeTeam.espnID;
+  const awayHasPossession =
+    inProgress && possessionTeamId === props.awayTeam.espnID;
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
-
-  // -------------------------
-  // Team records
-  // -------------------------
-  const homeRecord = details?.homeRecords.total?.summary;
-  const awayRecord = details?.awayRecords.total?.summary;
 
   // -------------------------
   // Display components for scores
@@ -96,9 +117,8 @@ export default function CFBGameWidget({
     homeIsWinner,
     homeRecord,
     homeScore,
-    isDark
+    isDark,
   );
-
   const awayDisplay = displayeValue(
     false,
     isScheduled,
@@ -106,16 +126,16 @@ export default function CFBGameWidget({
     awayIsWinner,
     awayRecord,
     awayScore,
-    isDark
+    isDark,
   );
 
   // -------------------------
   // Loading state
   // -------------------------
-  if (loading && possession.loading) {
+  if (!details) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -125,29 +145,22 @@ export default function CFBGameWidget({
   // -------------------------
   return (
     <View style={styles.container}>
-      {/* Headline */}
-      {headlineText && (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headline}>{headlineText}</Text>
-        </View>
-      )}
-
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
         {/* ---------------------- */}
         <View style={styles.awaySection}>
           <View style={styles.teamWrapper}>
-            <Image
-              style={styles.teamLogo}
-              source={isDark ? props.awayTeam.logoLight : props.awayTeam.logo}
-            />
-            <Text style={styles.teamName}>{props.awayTeam.code}</Text>
+            <Image style={styles.teamLogo} source={awayLogo} />
+            <Text style={styles.teamName}>{awayName}</Text>
           </View>
           <View style={styles.scorePossession}>
             {awayDisplay}
             {awayHasPossession && (
-              <Image style={styles.awayPossession} source={isDark ? FootballLight : Football} />
+              <Image
+                style={styles.awayPossession}
+                source={isDark ? FootballLight : Football}
+              />
             )}
           </View>
         </View>
@@ -166,26 +179,30 @@ export default function CFBGameWidget({
 
           {isFinal && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>{possession.gameStatusShortDetail}</Text>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
           )}
 
           {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText}>End of {formatQuarter(possession.period ?? "")}</Text>
+            <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
           )}
 
           {inProgress && !isHalftime && !endOfPeriod && (
             <>
               <View style={styles.infoWrapper}>
-                <Text style={styles.period}>{formatQuarter(possession.period ?? "")}</Text>
+                <Text style={styles.period}>{formatQuarter(period ?? "")}</Text>
                 <View style={styles.divider} />
-                <Text style={styles.finalText}>{possession.displayClock}</Text>
+                <Text style={styles.finalText}>{displayClock}</Text>
               </View>
-              <Text style={styles.downAndDistance}>{possession.downDistanceText}</Text>
+              {downDistanceText && (
+                <Text style={styles.downAndDistance}>{downDistanceText}</Text>
+              )}
             </>
           )}
 
-          {inProgress && isHalftime && <Text style={styles.finalText}>Halftime</Text>}
+          {inProgress && isHalftime && (
+            <Text style={styles.finalText}>Halftime</Text>
+          )}
 
           {broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
         </View>
@@ -197,15 +214,15 @@ export default function CFBGameWidget({
           <View style={styles.scorePossession}>
             {homeDisplay}
             {homeHasPossession && (
-              <Image style={styles.homePossession} source={isDark ? FootballLight : Football} />
+              <Image
+                style={styles.homePossession}
+                source={isDark ? FootballLight : Football}
+              />
             )}
           </View>
           <View style={styles.teamWrapper}>
-            <Image
-              style={styles.teamLogo}
-              source={isDark ? props.homeTeam.logoLight : props.homeTeam.logo}
-            />
-            <Text style={styles.teamName}>{props.homeTeam.code}</Text>
+            <Image style={styles.teamLogo} source={homeLogo} />
+            <Text style={styles.teamName}>{homeName}</Text>
           </View>
         </View>
       </View>

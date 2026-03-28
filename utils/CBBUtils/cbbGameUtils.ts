@@ -1,18 +1,18 @@
 // utils/CBBUtils/cbbGameUtils.ts
 
-import { getTeamByESPNId, getTeamInfo } from "constants/teamsCBB";
+import {
+  cbbTeams,
+  conferenceObjectListMap,
+  getCBBTeam,
+  getTeamByESPNId,
+  modalToMapKey,
+} from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useMemo } from "react";
-
-import {
-  conferenceObjectListMap,
-  modalToMapKey,
-  teams,
-} from "constants/teamsCBB";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useMemo } from "react";
 import { CBBGame } from "types/types";
 
 dayjs.extend(utc);
@@ -204,7 +204,7 @@ export const resolveConferenceTeamNameToESPN = (
 ): string | null => {
   const normalized = name.toLowerCase().trim();
 
-  const team = teams.find(
+  const team = cbbTeams.find(
     (t) =>
       t.fullName?.toLowerCase() === normalized ||
       t.name?.toLowerCase() === normalized,
@@ -238,8 +238,8 @@ export function filterCBBGames({
   });
 
   return uniqueGames.filter((game) => {
-    const home = getTeamInfo(Number(game.teams.home.id));
-    const away = getTeamInfo(Number(game.teams.away.id));
+    const home = getCBBTeam(Number(game.teams.home.id));
+    const away = getCBBTeam(Number(game.teams.away.id));
     const homeESPN = home?.espnID;
     const awayESPN = away?.espnID;
 
@@ -272,8 +272,6 @@ export function filterCBBGames({
     return true;
   });
 }
-
-
 
 /* =====================================================
    AP TOP 25 (LEAGUE-AWARE)

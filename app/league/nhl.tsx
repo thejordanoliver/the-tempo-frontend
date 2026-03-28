@@ -21,6 +21,7 @@ import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { NHLGame } from "types/nhl";
 import { getNHLSeason } from "utils/dateUtils";
@@ -43,6 +44,7 @@ export default function MLBLeagueScreen() {
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+  const pagerRef = React.useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NHL");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -164,7 +166,12 @@ export default function MLBLeagueScreen() {
         <MainScrollTabBar
           tabs={tabs}
           selected={selectedTab}
-          onTabPress={setSelectedTab}
+          onTabPress={(tab) => {
+            setSelectedTab(tab);
+            const index = tabs.indexOf(tab);
+            pagerRef.current?.setPage(index);
+          }}
+          isDark={isDark}
         />
 
         <View style={styles.contentArea}>

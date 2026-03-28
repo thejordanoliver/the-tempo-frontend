@@ -58,7 +58,7 @@ export default function AccountDetailsScreen() {
     if (newPassword === currentPassword) {
       Alert.alert(
         "Error",
-        "New password cannot be the same as current password."
+        "New password cannot be the same as current password.",
       );
       return;
     }
@@ -123,7 +123,7 @@ export default function AccountDetailsScreen() {
     "en-US",
     {
       dateStyle: "long",
-    }
+    },
   );
 
   return (
@@ -136,18 +136,18 @@ export default function AccountDetailsScreen() {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <HeadingTwo>Full Name</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Full Name</HeadingTwo>
         <Text style={styles.text}>{userData.fullName}</Text>
 
-        <HeadingTwo>Username</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Username</HeadingTwo>
         <Text style={styles.text}>{userData.username}</Text>
 
-        <HeadingTwo>Email</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Email</HeadingTwo>
         <Text style={styles.text}>{userData.email}</Text>
 
         {/* Password Section */}
 
-        <HeadingTwo>Password</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Password</HeadingTwo>
         <Text style={styles.text}>••••••••</Text>
 
         {/* Change Password Inputs */}
@@ -180,6 +180,7 @@ export default function AccountDetailsScreen() {
           onPress={handleChangePassword}
           disabled={isChangingPassword}
           title="Change Password"
+          isDark={isDark}
         />
 
         <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>

@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useCallback, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { BASE_URL } from "utils/apiClient";
 
 /**
  * Normalize image URLs (Cloudinary or server URLs)

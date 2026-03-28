@@ -1,14 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { teams } from "constants/teamsMLB";
-import { useEffect, useMemo, useState } from "react";
-
-type ApiResponse = {
-  teamId: string;
-  results: number;
-  games: any[];
-};
-
+import { useEffect, useState } from "react";
+import { getMLBSeason } from "utils/dateUtils";
 type GameResult = {
   id: number;
   date: string;
@@ -25,33 +18,12 @@ type GameResult = {
   opponentLogoLight?: any;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export const useLastFiveGames = (teamId: number) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  const fallbackLogo = require("assets/Placeholders/teamPlaceholder.png");
-
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "2-digit",
-    });
-
-  const teamsMap = useMemo(() => {
-    const map = new Map<number, { logo: any; logoLight?: any; code: string }>();
-    teams.forEach((t) =>
-      map.set(Number(t.id), {
-        logo: t.logo,
-        logoLight: t.logoLight,
-        code: t.code,
-      })
-    );
-    return map;
-  }, []);
 
   useEffect(() => {
     const fetchLastGames = async () => {
@@ -59,46 +31,18 @@ export const useLastFiveGames = (teamId: number) => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get<ApiResponse>(
-          `${BASE_URL}/api/games/mlb/team/${teamId}/last-five`
+        const response = await axios.get(
+          `${BASE_URL}/api/games/mlb/last-five/${teamId}/${getMLBSeason()}`,
         );
-const recentGames: GameResult[] = response.data.games.map((g) => {
-  const isHome = g.teams.home.id === teamId;
-  const homeScore = g.scores.home.total ?? 0;
-  const awayScore = g.scores.away.total ?? 0;
 
-  const won =
-    (isHome && homeScore > awayScore) ||
-    (!isHome && awayScore > homeScore);
-
-  const opponentId = isHome ? g.teams.away.id : g.teams.home.id;
-
-  const teamData = teamsMap.get(teamId);
-  const opponentData = teamsMap.get(opponentId);
-
-  return {
-    id: g.id, // ✅ FIXED
-    date: formatDate(g.date), // ✅ FIXED
-    homeTeam: g.teams.home.name,
-    awayTeam: g.teams.away.name,
-    homeScore,
-    awayScore,
-    isHome,
-    won,
-    teamLogo: teamData?.logo || fallbackLogo,
-    opponentId,
-    opponent: opponentData?.code || "UNK",
-    opponentLogo: opponentData?.logo || fallbackLogo,
-    opponentLogoLight: opponentData?.logoLight,
-  };
-});
-
-
-        setGames(recentGames);
+        setGames(response.data.games);
 
         await AsyncStorage.setItem(
           `lastFiveGames_${teamId}`,
-          JSON.stringify({ timestamp: Date.now(), data: recentGames })
+          JSON.stringify({
+            timestamp: Date.now(),
+            data: response.data.games,
+          }),
         );
       } catch (err) {
         console.error("Error fetching last five games", err);
@@ -109,7 +53,6 @@ const recentGames: GameResult[] = response.data.games.map((g) => {
     };
 
     if (teamId) fetchLastGames();
-  }, [teamId, teamsMap]);
-
+  }, [teamId]);
   return { games, loading, error };
 };

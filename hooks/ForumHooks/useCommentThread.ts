@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
-import { getAccessToken } from "utils/authStorage";
+import { getRefreshToken } from "utils/authStorage";
 import { Post } from "components/Forum/PostItem";
 
 const BASE_URL =
@@ -39,7 +39,7 @@ export function useCommentThread(postId: string | null) {
 
   useEffect(() => {
     const loadToken = async () => {
-      const stored = await getAccessToken();
+      const stored = await getRefreshToken();
       if (!stored) return;
 
       setToken(stored);

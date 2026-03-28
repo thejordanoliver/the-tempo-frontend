@@ -4,7 +4,6 @@ import {
   conferenceListMap,
   getCBBTeamLogo,
   getTeamByESPNId,
-  teams,
 } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
@@ -155,15 +154,8 @@ export const CBBConferenceStandingsList = ({
     const teamCode = team?.code;
     const favorited = team ? isFavorite(league, String(teamId)) : false;
 
-    const espnToInternal: Record<string, number> = {};
-    teams.forEach((t) => {
-      if (t.espnID) espnToInternal[String(t.espnID)] = Number(t.id);
-    });
-
     const handleTeamPress = () => {
       if (!item.teamId) return;
-      const internalId = espnToInternal[item.teamId];
-      if (!internalId) return;
       router.push(`/team/cbb/${teamId}`);
     };
 

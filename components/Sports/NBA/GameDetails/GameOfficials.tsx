@@ -21,7 +21,7 @@ export default function GameOfficials({ officials, lighter }: Props) {
   // Filter out invalid or empty officials
   const validOfficials =
     officials?.filter(
-      (o) => o && (o.fullName || o.displayName || o.position?.displayName)
+      (o) => o && (o.fullName || o.displayName || o.position?.displayName),
     ) ?? [];
 
   if (validOfficials.length === 0) return null;
@@ -37,7 +37,7 @@ export default function GameOfficials({ officials, lighter }: Props) {
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Game Officials</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Officials</HeadingTwo>
       <View style={styles.row}>
         {validOfficials.map((official, index) => {
           const name = official.fullName || official.displayName || "Unknown";
@@ -78,8 +78,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: lighter
         ? "rgba(255,255,255,0.1)"
         : isDark
-        ? "#2e2e2e"
-        : "#eee",
+          ? "#2e2e2e"
+          : "#eee",
       elevation: 2,
       alignItems: "center",
       marginBottom: 12,
@@ -91,8 +91,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       backgroundColor: lighter
         ? "rgba(255,255,255,0.3)"
         : isDark
-        ? "#555"
-        : "#aaa",
+          ? "#555"
+          : "#aaa",
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 8,

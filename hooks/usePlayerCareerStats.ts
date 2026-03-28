@@ -26,7 +26,7 @@ export type PlayerStat = {
   pts: number;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function usePlayerCareerStats(playerId: number) {
   const [stats, setStats] = useState<PlayerStat[]>([]);

@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -20,21 +20,20 @@ export default function SquareGameCard({ game }: { game: Game }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
+  const homeId = game.home?.id;
+  const awayId = game.away?.id;
 
-  const homeId = Number(game.home?.id);
-  const awayId = Number(game.away?.id);
+  const home = getNBATeam(homeId);
+  const away = getNBATeam(awayId);
 
-  const homeTeam = game.home;
-  const awayTeam = game.away;
-
-  const homeName = game.home?.code;
-  const awayName = game.away?.code;
+  const homeName = home?.code;
+  const awayName = away?.code;
 
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);
 
-  const homeEspnId = game.home?.espnID ?? 0;
-  const awayEspnId = game.away?.espnID ?? 0;
+  const homeEspnId = home?.espnID ?? 0;
+  const awayEspnId = away?.espnID ?? 0;
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -188,7 +187,7 @@ export default function SquareGameCard({ game }: { game: Game }) {
             <Image
               source={awayLogo}
               style={styles.logo}
-              accessibilityLabel={`${awayTeam.name} logo`}
+              accessibilityLabel={`${awayName} logo`}
             />
             <Text style={styles.teamName}>{awayName}</Text>
           </View>
@@ -206,7 +205,7 @@ export default function SquareGameCard({ game }: { game: Game }) {
             <Image
               source={homeLogo}
               style={styles.logo}
-              accessibilityLabel={`${homeTeam.name} logo`}
+              accessibilityLabel={`${homeName} logo`}
             />
             <Text style={styles.teamName}>{homeName}</Text>
           </View>

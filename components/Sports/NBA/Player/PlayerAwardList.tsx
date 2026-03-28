@@ -48,19 +48,16 @@ export default function PlayerAwardList(player: Props) {
   });
 
   return (
-    <View style={styles.container}>
-      <HeadingTwo>Awards</HeadingTwo>
+    <View>
+      <HeadingTwo isDark={isDark}>Awards</HeadingTwo>
       <View style={styles.wrapper}>{playerAwards}</View>
     </View>
   );
 }
 
-
 export const playerAwardListStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {
-      paddingHorizontal: 12,
-    },
+ 
     wrapper: {
       borderRadius: 8,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,

@@ -1,121 +1,52 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
 import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
-import Roster from "components/Sports/CFB/Team/Roster";
-import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
+import { Roster } from "components/Sports/CFB/Team/Roster";
+import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { conferenceListMap, teams } from "constants/teamsCFB";
-import { useNotifications } from "contexts/NotificationContext";
+import { getCFBTeam } from "constants/teamsCFB";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCFBTeamGames } from "hooks/CFBHooks/useCFBTeamGames";
+import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
+import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import { useTeamNews } from "hooks/useTeamNews";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
+import { ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-type PageSelectedEvent = {
-  nativeEvent: {
-    position: number;
-  };
-};
-
-function getTeamConference(teamName?: string): string | null {
-  if (!teamName) return null;
-
-  for (const [conference, teams] of Object.entries(conferenceListMap)) {
-    if (teams.includes(teamName)) {
-      return conference;
-    }
-  }
-
-  return null;
-}
 
 export default function TeamDetailScreen() {
+  const isDark = useColorScheme() === "dark";
+  const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
+  const team = getCFBTeam(Number(teamIdNum));
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const styles = teamDetailStyles;
-
-  const tabs = [
-    "schedule",
-    "news",
-    "roster",
-    "stats",
-    "standings",
-    "forum",
-  ] as const;
-  const [selectedTab, setSelectedTab] =
-    useState<(typeof tabs)[number]>("schedule");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("CFB");
   const rosterRef = useRef<{ refresh: () => void }>(null);
-
   const pagerRef = useRef<PagerView>(null);
-
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
-
-  const team = useMemo(
-    () => (teamIdNum ? teams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum],
-  );
+  const handlePageChange = (index: number) => {
+    setSelectedTab(indexToTab(index));
+  };
 
   const {
     games: teamGames,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useCFBTeamGames(teamIdNum ?? 0);
-
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights("cfb", team?.fullName ?? "", 5);
-
-  const {
-    articles: newsArticles,
-    loading: newsLoading,
-    error: newsError,
-    refreshNews,
-  } = useTeamNews(team?.fullName ?? "", "CFB");
-
-  const combinedNewsAndHighlights = useMemo(() => {
-    const taggedNews = newsArticles.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = teamHighlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-      duration: String(item.duration), // ✅ fix type mismatch
-    }));
-
-    const combined = [...taggedNews, ...taggedHighlights];
-
-    combined.sort((a, b) => {
-      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return bDate - aDate;
-    });
-
-    return combined;
-  }, [newsArticles, teamHighlights]);
+  } = useFootballTeamGames(teamIdNum ?? 0, "2025", 2);
 
   // --- Refresh handler ---
   const handleRefresh = async () => {
@@ -133,12 +64,9 @@ export default function TeamDetailScreen() {
     }
   };
 
-  const { toggleNotifications, isNotified } = useNotifications();
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const league = "CFB";
   const favorited = team ? isFavorite(league, team.id) : false;
-  const teamKey = String(team?.id);
-  const notfied = team ? isNotified(league, teamKey) : false;
 
   // --- Header ---
   useLayoutEffect(() => {
@@ -151,20 +79,18 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          isNotified={notfied} // ✅ MATCH
-          onToggleNotifications={() => toggleNotifications(league, teamKey)}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, isDark, team, favorited]);
+  }, [navigation, team, favorited]);
 
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -174,20 +100,15 @@ export default function TeamDetailScreen() {
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-          pagerRef.current?.setPage(tabToIndex(tab));
-        }}
+        onTabPress={handleTabPress}
+        isDark={isDark}
       />
 
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
-        initialPage={tabToIndex(selectedTab)}
-        onPageSelected={(e: PageSelectedEvent) => {
-          const index = e.nativeEvent.position;
-          setSelectedTab(indexToTab(index));
-        }}
+        initialPage={0}
+        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
@@ -196,19 +117,13 @@ export default function TeamDetailScreen() {
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            error={gamesError}
             showHeaders={true}
           />
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}>
-          <NewsHighlightsList
-            items={combinedNewsAndHighlights}
-            loading={newsLoading || highlightsLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-          />
-        </ScrollView>
+        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -226,7 +141,7 @@ export default function TeamDetailScreen() {
             <FootballRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
-              league="cfb"
+              league="CFB"
             />
           )}
         </ScrollView>

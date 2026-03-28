@@ -77,15 +77,13 @@ function NHLStackedGameCard({ game }: Props) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const seriesSummary = details?.seriesSummary?.summary;
-  const isPostseason = details?.isPostseason;
   const period = liveScore?.period;
   const headlineText = details?.headline;
   const homeScore = liveScore?.home?.total ?? game?.scores?.home ?? 0;
   const awayScore = liveScore?.away?.total ?? game?.scores?.away ?? 0;
   const homeRecord = details?.records?.home?.overall ?? "0-0";
   const awayRecord = details?.records?.away?.overall ?? "0-0";
-
+  const displayClock = liveScore?.displayClock;
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -127,6 +125,8 @@ function NHLStackedGameCard({ game }: Props) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{formatNHLQuarter(period)}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{displayClock}</Text>
         </View>
       );
 
@@ -156,22 +156,6 @@ function NHLStackedGameCard({ game }: Props) {
         <Text style={styles.date}>{formattedTime}</Text>
       </View>
     );
-  };
-
-  const renderHeadline = () => {
-    if (isPostseason) {
-      return (
-        <View style={styles.postSeasonHeadlineContainer}>
-          <Text style={styles.postSeasonHeadlineText}>{headlineText}</Text>
-          <View style={styles.headlineDivider} />
-          <Text style={styles.postSeasonHeadlineText}>{seriesSummary}</Text>
-        </View>
-      );
-    }
-
-    if (!isPostseason) {
-      return <Text style={styles.headlineText}>{headlineText}</Text>;
-    }
   };
 
   const renderCardContent = () => (
@@ -214,8 +198,6 @@ function NHLStackedGameCard({ game }: Props) {
         </View>
       </View>
 
-      {/* headlineText */}
-      {renderHeadline()}
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
@@ -223,6 +205,9 @@ function NHLStackedGameCard({ game }: Props) {
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
+
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headlineText}</Text>
     </>
   );
 

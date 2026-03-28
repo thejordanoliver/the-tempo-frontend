@@ -8,23 +8,23 @@ export const CenterInfoStyles =
       alignItems: "center",
     },
     date: {
-      fontSize: 14,
+      fontSize: 18,
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
     },
     time: {
       fontFamily: Fonts.OSREGULAR,
       color: Colors.dark.white,
-      fontSize: 14,
+      fontSize: 18,
     },
     period: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 20,
+      fontSize: 18,
       color: Colors.dark.white,
     },
     clock: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 20,
+      fontSize: 18,
       color: Colors.dark.white,
       textAlign: "center",
     },
@@ -37,7 +37,7 @@ export const CenterInfoStyles =
     },
     finalText: {
       fontFamily: Fonts.OSMEDIUM,
-      fontSize: 16,
+      fontSize: 18,
       color: Colors.dark.lightRed,
       textAlign: "center",
     },
@@ -90,13 +90,13 @@ export const CenterInfoStyles =
       gap: 4,
     },
     statusDivider: {
-      height: 20,
+      height: 18,
       width: 1,
       alignSelf: "center",
       backgroundColor: Colors.dark.white,
     },
     finalStatusDivider: {
-      height: 20,
+      height: 18,
       width: 1,
       backgroundColor: Colors.dark.lightRed,
     },

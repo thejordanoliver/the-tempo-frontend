@@ -5,7 +5,6 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors } from "constants/Styles";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
@@ -37,14 +36,18 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const { fighter: firstFighter } = useMMAFighter(firstFighterId);
   const { fighter: secondFighter } = useMMAFighter(secondFighterId);
 
-  const firstFighterName = game.fighters.first.info.short_name ?? "";
-  const secondFighterName = game.fighters.second.info.short_name ?? "";
+  const firstFighterName = game.fighters.first.info.last_name ?? "";
+  const secondFighterName = game.fighters.second.info.last_name ?? "";
 
   const firstFighterPhoto = game.fighters.first.info.images[0]?.href ?? "";
   const secondFighterPhoto = game.fighters.second.info.images[0]?.href ?? "";
 
   const firstFighterEspnId = game.fighters.first.info.espn_id;
   const secondFighterEspnId = game.fighters.second.info.espn_id;
+
+  const firstFighterColor = game.fighters.first.info.color ?? "";
+  const secondFighterColor = game.fighters.second.info.color ?? "";
+
   /* ===============================
      DATE / TIME
   =============================== */
@@ -121,10 +124,10 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
             isMainEvent
               ? ["#DFBD69", "#CDA765"]
               : [
-                  Colors.darkGray,
-                  Colors.darkGray,
-                  Colors.darkGray,
-                  Colors.darkGray,
+                  secondFighterColor,
+                  secondFighterColor,
+                  firstFighterColor,
+                  firstFighterColor,
                 ]
           }
           locations={isMainEvent ? undefined : [0, 0.4, 0.6, 1]}
@@ -146,7 +149,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>

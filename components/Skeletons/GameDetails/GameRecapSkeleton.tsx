@@ -29,7 +29,7 @@ export default function GameRecapSkeleton() {
 
   return (
     <View>
-      <HeadingTwo>Game Recap</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Recap</HeadingTwo>
 
       <View style={styles.wrapper}>
         {/* Player of the Game */}

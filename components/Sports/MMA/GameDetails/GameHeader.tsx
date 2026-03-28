@@ -53,7 +53,7 @@ export default function GameHeader({
           key={`secondFighter-${refreshTick}`}
           fighter={{
             id: secondFighter?.id,
-            name: secondFighter?.short_name ?? "",
+            name: secondFighter?.last_name ?? "",
             record: secondFighterRecord,
             headshot: secondFighter?.images[0]?.href,
           }}
@@ -83,7 +83,7 @@ export default function GameHeader({
           key={`firstFighter-${refreshTick}`}
           fighter={{
             id: firstFighter?.id,
-            name: firstFighter?.short_name ?? "",
+            name: firstFighter?.last_name ?? "",
             record: firstFighterRecord,
             headshot: firstFighter?.images[0]?.href,
           }}

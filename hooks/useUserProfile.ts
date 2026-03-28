@@ -1,17 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
+import { teams } from "constants/teams";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-import { useFavoriteTeams } from "./UserHooks/useFavoriteTeams";
-import { teams } from "constants/teams";
-import { teams as cbbteams } from "constants/teamsCBB";
-import { teams as cfbteams } from "constants/teamsCFB";
-import { teams as mlbteams } from "constants/teamsMLB";
-import { teams as nflteams } from "constants/teamsNFL";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { BASE_URL } from "utils/apiClient";
 
 /**
  * Normalize image URLs (Cloudinary or server URLs)
@@ -114,7 +113,7 @@ export function useUserProfile(userId?: string) {
       fetchUserData,
       openModal,
       clearRestore,
-    ])
+    ]),
   );
 
   // Toggle follow/unfollow with optimistic update
@@ -151,11 +150,11 @@ export function useUserProfile(userId?: string) {
       const [league, id] = fav.split(":");
       let team;
       if (league === "NBA") team = teams.find((t) => String(t.id) === id);
-      if (league === "NFL") team = nflteams.find((t) => String(t.id) === id);
-      if (league === "CFB") team = cfbteams.find((t) => String(t.id) === id);
-      if (league === "CBB") team = cbbteams.find((t) => String(t.id) === id);
-      if (league === "WCBB") team = cbbteams.find((t) => String(t.wid) === id);
-      if (league === "MLB") team = mlbteams.find((t) => String(t.id) === id);
+      if (league === "NFL") team = nflTeams.find((t) => String(t.id) === id);
+      if (league === "CFB") team = cfbTeams.find((t) => String(t.id) === id);
+      if (league === "CBB") team = cbbTeams.find((t) => String(t.id) === id);
+      if (league === "WCBB") team = cbbTeams.find((t) => String(t.wid) === id);
+      if (league === "MLB") team = mlbTeams.find((t) => String(t.id) === id);
       return team ? { ...team, league } : null;
     })
     .filter(Boolean);

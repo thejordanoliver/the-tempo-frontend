@@ -1,22 +1,26 @@
+import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors, Fonts } from "constants/Styles";
-import { getTeamInfo, getTeamLogo, teams as nbaTeams } from "constants/teams";
+import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
 import {
-  teams as cbbTeams,
-  getTeamInfo as getCBBTeamInfo,
+  cbbTeams,
+  getCBBTeam,
   getTeamLogo as getCBBTeamLogo,
 } from "constants/teamsCBB";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Animated,
+  Easing,
   Image,
+  LayoutAnimation,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
+  UIManager,
   View,
 } from "react-native";
 import { CBBTeam, LeagueType, NBATeam } from "types/types";
-import HeadingTwo from "components/Headings/HeadingTwo";
 
 type AnyTeam = NBATeam | CBBTeam;
 
@@ -37,20 +41,65 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
-  lighter?: boolean;
+  isDark: boolean;
   league?: LeagueType;
-  awayTeamId?: string;
-  homeTeamId?: string;
 };
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
+
+// Animated row
+function AnimatedPlayRow({
+  children,
+  style,
+  isLatest,
+}: {
+  children: React.ReactNode;
+  style: object;
+  isLatest: boolean;
+}) {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (!isLatest) return;
+
+    translateX.setValue(-200);
+    opacity.setValue(0);
+
+    Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isLatest]);
+
+  return (
+    <Animated.View style={[style, { transform: [{ translateX }], opacity }]}>
+      {children}
+    </Animated.View>
+  );
+}
 
 export default function GameSummary({
   plays = [],
   loading = false,
-  lighter = false,
+  isDark,
   league = "NBA",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const styles = gameSummaryStyles(isDark);
+  const global = globalStyles(isDark);
 
   const periodMap: Record<string, string> = {
     1: "1st",
@@ -75,6 +124,15 @@ export default function GameSummary({
       ? { "1st Half": [1], "2nd Half": [2] }
       : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
 
+  // Call configureNext during render (before commit) so existing rows animate
+  // downward when a new play is prepended. useEffect fires too late — by then
+  // the layout has already jumped without animation.
+  const prevPlaysLengthRef = useRef(plays.length);
+  if (plays.length !== prevPlaysLengthRef.current) {
+    prevPlaysLengthRef.current = plays.length;
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }
+
   const teamPlays = useMemo(() => {
     return plays
       ?.filter((sp) => sp.period)
@@ -88,73 +146,80 @@ export default function GameSummary({
       .sort((a, b) => {
         const periodA = a.period?.number ?? 0;
         const periodB = b.period?.number ?? 0;
-        if (periodA !== periodB) return periodA - periodB;
 
-        const parseClock = (clock: string) => {
+        if (periodA !== periodB) return periodB - periodA;
+
+        const parseClock = (clock?: string) => {
           if (!clock) return 0;
-          const parts = clock.split(":").map(Number);
-          return parts.length === 2 ? parts[0] * 60 + parts[1] : parts[0] ?? 0;
+          const [min = 0, sec = 0] = clock.split(":").map(Number);
+          return min * 60 + sec;
         };
-        return (
-          parseClock(b.clock?.displayValue ?? "00:00") -
-          parseClock(a.clock?.displayValue ?? "00:00")
-        );
+
+        const timeA = parseClock(a.clock?.displayValue);
+        const timeB = parseClock(b.clock?.displayValue);
+
+        return timeA - timeB;
       });
   }, [plays, selectedQuarter]);
 
   if (!loading && plays?.length === 0) return null;
 
+  const latestPlayId = teamPlays?.[0]?.id;
+
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Game Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Summary</HeadingTwo>
+
       <View style={styles.wrapper}>
         <TabBar
           tabs={quarterTabs}
           selected={selectedQuarter}
           onTabPress={(tab) => setSelectedQuarter(tab as any)}
+          isDark={isDark}
         />
+
         <ScrollView
           style={styles.listContainer}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          {teamPlays?.map((play, index) => {
+          {teamPlays?.map((play) => {
             const playTeamId = play.team?.id;
+
             const allTeams: AnyTeam[] =
               league === "CBB" || league === "WCBB"
                 ? (cbbTeams as CBBTeam[])
                 : (nbaTeams as NBATeam[]);
 
             const teamObj = allTeams.find(
-              (team) => String(team.espnID) === playTeamId
+              (team) => String(team.espnID) === playTeamId,
             );
 
             const showLogo =
               !!playTeamId &&
               play.text &&
-              !play.text.toLowerCase().includes("start of game") &&
               !play.text.toLowerCase().includes("start of") &&
               !play.text.toLowerCase().includes("end of");
 
-            const team = getTeamInfo(teamObj?.id ?? 0);
-            const cbbTeam = getCBBTeamInfo(teamObj?.id ?? 0);
-            const wcbbTeam = getCBBTeamInfo(teamObj?.id ?? 0);
-
-            const nbaLogo = getTeamLogo(team?.id, isDark);
-            const cbbLogo = getCBBTeamLogo(
-              league === "WCBB" ? wcbbTeam?.wid : cbbTeam?.id,
-              isDark
-            );
+            const team = getNBATeam(teamObj?.id ?? 0);
+            const cbbTeam = getCBBTeam(teamObj?.id ?? 0);
 
             const teamLogo =
-              league === "CBB"
-                ? cbbLogo
-                : league === "WCBB"
-                ? cbbLogo
-                : nbaLogo;
+              league === "NBA"
+                ? getTeamLogo(team?.id, isDark)
+                : getCBBTeamLogo(
+                    league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id,
+                    isDark,
+                  );
+
+            const isLatest = play.id === latestPlayId;
 
             return (
-              <View key={index} style={styles.playRow}>
+              <AnimatedPlayRow
+                key={play.id}
+                style={styles.playRow}
+                isLatest={isLatest}
+              >
                 <Text style={styles.periodText}>
                   {periodMap[String(play.period?.number)] ?? "-"}
                   <Text style={styles.clockText}>
@@ -163,23 +228,23 @@ export default function GameSummary({
                   </Text>
                 </Text>
 
-                {showLogo && teamLogo ? (
+                {showLogo && teamLogo && (
                   <Image source={teamLogo} style={styles.logo} />
-                ) : null}
+                )}
 
                 <View style={{ flex: 1 }}>
                   <Text style={styles.playDesc}>{play.text}</Text>
                 </View>
 
                 <Text style={styles.clockText}>
-                  {play.awayScore ?? ""}-{play.homeScore}
+                  {play.awayScore}-{play.homeScore}
                 </Text>
-              </View>
+              </AnimatedPlayRow>
             );
           })}
 
           {teamPlays?.length === 0 && (
-            <Text style={styles.empty}>No plays available</Text>
+            <Text style={global.emptyText}>No plays available</Text>
           )}
         </ScrollView>
       </View>
@@ -213,12 +278,6 @@ const gameSummaryStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       width: 45,
       textAlign: "right",
-    },
-    empty: {
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     wrapper: {
       borderColor: Colors.midTone,

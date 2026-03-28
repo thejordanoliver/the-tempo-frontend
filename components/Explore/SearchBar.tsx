@@ -96,6 +96,7 @@ export default function SearchBar({
           selected={selectedTab}
           onTabPress={onTabPress}
           style={{ marginBottom: 16 }}
+          isDark={isDark}
         />
       )}
     </View>

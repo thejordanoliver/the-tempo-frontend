@@ -1,7 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors } from "constants/Styles";
-import { getCBBTeamLogo, neutralVenues, teams } from "constants/teamsCBB";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,6 +12,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { CBBGame } from "types/types";
+import { formatCBBQuarter, resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
@@ -35,6 +35,12 @@ export default function CBBGamePreviewModal({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
+  useEffect(() => {
+    if (!sheetRef.current) return;
+    if (visible) requestAnimationFrame(() => sheetRef.current?.present());
+    else requestAnimationFrame(() => sheetRef.current?.dismiss());
+  }, [visible]);
+
   if (!game) return null;
 
   // --- Date ---
@@ -44,33 +50,30 @@ export default function CBBGamePreviewModal({
       ? new Date(game.date)
       : null;
 
-  // Championship: April 7
-  const isChampionship =
-    gameDate?.getMonth() === 3 && gameDate?.getDate() === 7;
+  const week = game.week;
+  const round =
+    week === "NCAA - Final"
+      ? "NCAA Men's Basketball Championship"
+      : week === "NCAA - Semi-finals"
+        ? "Final Four"
+        : week === "NCAA - Quarter-finals"
+          ? "Elite Eight"
+          : (week ?? "");
 
+  const isChampionship = week === "NCAA - Final";
+  const isFinalFour = week === "NCAA - Semi-finals";
   const styles = gamePreviewModalStyle(isChampionship);
 
-  const teamIdKey = isWomen ? "wid" : "id";
-
-  const home = teams.find(
-    (t) => String((t as any)[teamIdKey]) === String(game.teams.home?.id),
-  );
-
-  const away = teams.find(
-    (t) => String((t as any)[teamIdKey]) === String(game.teams.away?.id),
-  );
-
-  const { data: gameStats } = useGameStatistics(game?.id ?? 0);
+  const home = getCBBTeam(game.teams.home.id ?? "", isWomen);
+  const away = getCBBTeam(game.teams.away.id ?? "", isWomen);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
   const homeLogo = getCBBTeamLogo(home?.id, true, isWomen);
   const awayLogo = getCBBTeamLogo(away?.id, true, isWomen);
-  useEffect(() => {
-    if (!sheetRef.current) return;
-    if (visible) requestAnimationFrame(() => sheetRef.current?.present());
-    else requestAnimationFrame(() => sheetRef.current?.dismiss());
-  }, [visible]);
+  const homeColor = home?.color ?? "";
+  const awayColor = away?.color ?? "";
+  const { data: gameStats } = useGameStatistics(game?.id ?? 0);
 
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -88,38 +91,18 @@ export default function CBBGamePreviewModal({
 
   // March Madness runs March 18 – April 7
   const isMarchMadness =
-    (gameDate?.getMonth() === 2 && gameDate?.getDate() >= 18) || // March (2)
-    (gameDate?.getMonth() === 3 && gameDate?.getDate() <= 7); // April (3)
+    (gameDate?.getMonth() === 2 && gameDate?.getDate() >= 18) ||
+    (gameDate?.getMonth() === 3 && gameDate?.getDate() <= 7);
 
-  // Final Four: April 5–7
-  const isFinalFour =
-    gameDate?.getMonth() === 3 &&
-    gameDate?.getDate() >= 5 &&
-    gameDate?.getDate() <= 7;
-
-  const {
-    score: liveScore,
-    details,
-    loading: liveScoreLoading,
-  } = useGameDetails(
+  const { score: liveScore, details } = useGameDetails(
     isWomen ? "wcbb" : "cbb",
     homeEspnId?.toString(),
     awayEspnId?.toString(),
     gameDateStr,
   );
 
-  // --- Broadcasts ---
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-
-  // --- Period scores / line score ---
-  const lineScore = liveScore?.periodScores?.length
-    ? {
-        home: liveScore.periodScores.map((p) => p.home.toString()),
-        away: liveScore.periodScores.map((p) => p.away.toString()),
-      }
-    : undefined;
-
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -133,125 +116,37 @@ export default function CBBGamePreviewModal({
   const officials = details?.officials ?? [];
   const venue = details?.venue; // optional
   const leaders = liveScore?.leaders ?? [];
-
-  const venueNameRaw = (venue?.name ?? (home as any)?.venueName ?? "")
-    .trim()
-    .toLowerCase();
-
-  const neutralMatch = Object.entries(neutralVenues).find(
-    ([key]) => key.trim().toLowerCase() === venueNameRaw,
-  );
-
-  const neutralVenueData = neutralMatch ? (neutralMatch[1] as any) : null;
-
-  const lat = neutralVenueData?.latitude ?? home?.latitude ?? null;
-  const lon = neutralVenueData?.longitude ?? home?.longitude ?? null;
-
-  // --- Team Rankings ---
-  const homeRank = details?.homeRank;
-  const awayRank = details?.awayRank;
-
-  // Team records
+  const neutralSite = details?.neutralSite;
+  const league = isWomen ? "WCBB" : "CBB";
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-
+  const homeRank = details?.homeRank;
+  const awayRank = details?.awayRank;
   const homeScore = liveScore?.home?.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away?.total ?? game.scores?.away?.total ?? 0;
-  const { weather } = useWeatherForecast(lat, lon, gameDateStr);
+  const playerStats = liveScore?.playerStats ?? [];
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
+  const resolvedVenue = useMemo(
+    () =>
+      resolveVenue({
+        espnVenue: venue,
+        homeTeam: home,
+        isNeutralSite: neutralSite,
+        league,
+      }),
+    [details?.venue, home, neutralSite, league],
+  );
 
-  const {
-    homeColor,
-    awayColor,
-    resolvedVenueImage,
-    resolvedVenueName,
-    resolvedVenueCity,
-    resolvedVenueAddress,
-    resolvedVenueCapacity,
-  } = useMemo(() => {
-    // Base venue = HOME TEAM (default for home games)
-    let resolvedVenue: {
-      image?: string;
-      name?: string;
-      city?: string;
-      address?: string;
-      capacity?: number | string;
-    } = {
-      image: home?.venueImage,
-      name: home?.venueName,
-      city: home?.location,
-      address: home?.address,
-      capacity: home?.venueCapacity,
-    };
-
-    // Use ESPN venue object if available
-    if (venue) {
-      resolvedVenue = {
-        ...resolvedVenue,
-        image: venue.images?.[0]?.href ?? resolvedVenue.image,
-        name: venue.fullName ?? venue.name ?? resolvedVenue.name,
-        city: venue.address?.city ?? resolvedVenue.city,
-        address: venue.address?.street ?? resolvedVenue.address,
-        capacity: venue.capacity ?? resolvedVenue.capacity,
-      };
-    }
-
-    // Neutral site override (Final Four, Championship, etc.)
-    if (neutralVenueData) {
-      resolvedVenue = {
-        image: neutralVenueData.venueImage ?? resolvedVenue.image,
-        name: neutralVenueData.name ?? resolvedVenue.name,
-        city: neutralVenueData.city ?? resolvedVenue.city,
-        address: neutralVenueData.address ?? resolvedVenue.address,
-        capacity: neutralVenueData.venueCapacity ?? resolvedVenue.capacity,
-      };
-    }
-
-    // Normalize capacity → number
-    const normalizedCapacity = (() => {
-      const raw = resolvedVenue.capacity;
-      if (raw == null) return undefined;
-      const num = typeof raw === "string" ? Number(raw.replace(/,/g, "")) : raw;
-      return Number.isFinite(num) ? num : undefined;
-    })();
-
-    const getTeamColor = (team?: (typeof teams)[number]) =>
-      team?.color ?? Colors.darkGray;
-
-    return {
-      homeColor: getTeamColor(home),
-      awayColor: getTeamColor(away),
-      resolvedVenueImage: resolvedVenue.image,
-      resolvedVenueName: resolvedVenue.name,
-      resolvedVenueCity: resolvedVenue.city,
-      resolvedVenueAddress: resolvedVenue.address,
-      resolvedVenueCapacity: normalizedCapacity,
-    };
-  }, [home, away, venue, neutralVenueData]);
-
-  const homeColorTransparent = homeColor + "80"; // CC ≈ 80% opacity
-  const awayColorTransparent = awayColor + "80"; // CC ≈ 80% opacity
-
-  function formatCBBPeriod(period: number, isWomen: boolean): string {
-    if (!period || period <= 0) return "";
-
-    // ---------------- WOMEN (4 quarters) ----------------
-    if (isWomen) {
-      if (period === 1) return "1st";
-      if (period === 2) return "2nd";
-      if (period === 3) return "3rd";
-      if (period === 4) return "4th";
-
-      const ot = period - 4;
-      return ot === 1 ? "OT" : `${ot}OT`;
-    }
-
-    // ---------------- MEN (2 halves) ----------------
-    if (period === 1) return "1st";
-    if (period === 2) return "2nd";
-
-    const ot = period - 2;
-    return ot === 1 ? "OT" : `${ot}OT`;
-  }
+  const { weather } = useWeatherForecast(
+    resolvedVenue.latitude,
+    resolvedVenue.longitude,
+    gameDateStr,
+  );
 
   const homeLastGames = useLastFiveGames(
     Number(game.teams.home?.id) || 0,
@@ -261,15 +156,6 @@ export default function CBBGamePreviewModal({
     Number(game.teams.away?.id) || 0,
     isWomen,
   );
-  const week = game.week;
-  const round =
-    week === "NCAA - Final"
-      ? "NCAA Men's Basketball Championship"
-      : week === "NCAA - Semi-finals"
-        ? "Final Four"
-        : week === "NCAA - Quarter-finals"
-          ? "Elite Eight"
-          : (week ?? "");
 
   const isLiveScoreReady = !!liveScore;
 
@@ -329,7 +215,7 @@ export default function CBBGamePreviewModal({
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>
@@ -344,7 +230,7 @@ export default function CBBGamePreviewModal({
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
                   team={away}
-                  name={away?.code ?? away?.shortName ?? away?.name ?? "Away"}
+                  name={away?.code}
                   logo={awayLogo}
                   score={awayScore}
                   opponentScore={homeScore}
@@ -363,7 +249,7 @@ export default function CBBGamePreviewModal({
                   gameStatusDetail={gameStatusDetail}
                   broadcastNetworks={broadcastText}
                   clock={displayClock}
-                  period={formatCBBPeriod(Number(liveScore?.period), isWomen)}
+                  period={formatCBBQuarter(Number(liveScore?.period), isWomen)}
                   formattedDate={formattedDate}
                   formattedTime={formattedTime}
                   isDark={isDark}
@@ -371,7 +257,7 @@ export default function CBBGamePreviewModal({
 
                 <TeamInfo
                   team={home}
-                  name={home?.code ?? home?.shortName ?? home?.name ?? "Home"}
+                  name={home?.code}
                   logo={homeLogo}
                   score={homeScore}
                   opponentScore={awayScore}
@@ -389,20 +275,18 @@ export default function CBBGamePreviewModal({
                   home={home}
                   away={away}
                   lineScore={lineScore}
-                  gameStats={gameStats}
                   teamStats={teamStats}
+                  playerStats={playerStats}
                   leaders={leaders}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   officials={officials}
                   isDark={isDark}
-                  gameDateISO={gameDateISO} // 👈 NEW
-                  gameDateStr={gameDateStr} // 👈 stays
-                  resolvedVenueImage={resolvedVenueImage}
-                  resolvedVenueName={resolvedVenueName}
-                  resolvedVenueCity={resolvedVenueCity}
-                  resolvedVenueAddress={resolvedVenueAddress}
-                  resolvedVenueCapacity={resolvedVenueCapacity}
+                  resolvedVenueImage={resolvedVenue.image}
+                  resolvedVenueName={resolvedVenue.name}
+                  resolvedVenueCity={resolvedVenue.city}
+                  resolvedVenueAddress={resolvedVenue.address}
+                  resolvedVenueCapacity={resolvedVenue.capacity}
                   weather={weather}
                   highlights={highlights}
                   gameStatusDescription={gameStatusDescription}

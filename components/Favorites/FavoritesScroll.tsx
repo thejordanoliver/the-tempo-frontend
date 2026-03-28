@@ -1,13 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import { Colors } from "constants/Styles";
-import { getMLBTeamLogo, teams as mlbTeams } from "constants/teamsMLB";
+import { getMLBTeamLogo, mlbTeams } from "constants/teamsMLB";
 import { getNHLTeamLogo, nhlTeams } from "constants/teamsNHL";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useEffect, useState } from "react";
 import { Pressable, Text, View, useColorScheme } from "react-native";
 import DraggableFlatList, {
@@ -16,9 +16,9 @@ import DraggableFlatList, {
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
 import { getTeamLogo, teams } from "../../constants/teams";
-import { teams as cbbteams, getCBBTeamLogo } from "../../constants/teamsCBB";
-import { teams as cfbteams, getCFBTeamLogo } from "../../constants/teamsCFB";
-import { getNFLTeamLogo, teams as nflteams } from "../../constants/teamsNFL";
+import { cbbTeams, getCBBTeamLogo } from "../../constants/teamsCBB";
+import { cfbTeams, getCFBTeamLogo } from "../../constants/teamsCFB";
+import { getNFLTeamLogo, nflTeams } from "../../constants/teamsNFL";
 type TeamWithLeague = {
   id: string | number;
   name: string;
@@ -27,7 +27,7 @@ type TeamWithLeague = {
   color?: string;
   league: LeagueType;
   key: string;
-  wid?: number; // For WCBB
+  wid?: number;
 };
 
 type Props = {
@@ -35,21 +35,23 @@ type Props = {
   onFavoritesChange?: (ids: string[]) => void;
   onDragStart?: () => void;
   onDragEnd?: () => void;
+  loading?: boolean;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export default function FavoritesScroll({
   favoriteTeamIds,
   onFavoritesChange,
   onDragStart,
   onDragEnd,
+  loading,
 }: Props) {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = favoritesScrollStyles(isDark);
   const [username, setUsername] = useState<string | null>(null);
-  const { favorites } = useFavoriteTeams();
+
   // -------------------------
   // Prepare initial teams
   // -------------------------
@@ -65,16 +67,16 @@ export default function FavoritesScroll({
           baseTeam = teams.find((t) => String(t.id) === id);
           break;
         case "NFL":
-          baseTeam = nflteams.find((t) => String(t.id) === id);
+          baseTeam = nflTeams.find((t) => String(t.id) === id);
           break;
         case "CFB":
-          baseTeam = cfbteams.find((t) => String(t.id) === id);
+          baseTeam = cfbTeams.find((t) => String(t.id) === id);
           break;
         case "CBB":
-          baseTeam = cbbteams.find((t) => String(t.id) === id);
+          baseTeam = cbbTeams.find((t) => String(t.id) === id);
           break;
         case "WCBB":
-          baseTeam = cbbteams.find((t) => String(t.wid) === id);
+          baseTeam = cbbTeams.find((t) => String(t.wid) === id);
           if (!baseTeam?.wid) return null; // Skip if wid not present
           break;
         case "MLB":
@@ -173,7 +175,7 @@ export default function FavoritesScroll({
             WCBB: "/team/wcbb/[teamId]",
             MLB: "/team/mlb/[teamId]",
             NHL: "/team/nhl/[teamId]",
-            UFC: "",
+            MMA: "/player/mma/[id]",
           };
           const route = routeMap[item.league];
           router.push({ pathname: route as any, params: { teamId: item.id } });
@@ -206,6 +208,8 @@ export default function FavoritesScroll({
       </Pressable>
     );
   };
+
+  if (loading) return <FavoritesScrollSkeleton />;
 
   // -------------------------
   // Render the list

@@ -1,12 +1,12 @@
 import { Colors } from "constants/Styles";
-import { getTeamById } from "constants/teams";
+import { getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { SummerGame } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -17,14 +17,14 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
   const homeId = Number(game.teams.home?.id);
   const awayId = Number(game.teams.away?.id);
 
-  const home = getTeamById(homeId);
-  const away = getTeamById(awayId);
+  const home = getTeamBySummerId(homeId);
+  const away = getTeamBySummerId(awayId);
 
   const homeName = home?.name;
   const awayName = away?.name;
 
-  const homeLogo = isDark ? home?.logoLight || home?.logo : home?.logo;
-  const awayLogo = isDark ? away?.logoLight || away?.logo : away?.logo;
+  const homeLogo = getTeamLogo(home?.id, isDark);
+  const awayLogo = getTeamLogo(away?.id, isDark);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
@@ -38,23 +38,14 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-  const isChampionship =
-    gameDate.getMonth() === 5 &&
-    gameDate.getDate() >= 5 &&
-    gameDate.getDate() <= 22;
-  const isChristmasDay =
-    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
-  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
+  const holidayLabel = getHolidayLabel(gameDate);
+  const styles = StackedGameCardStyles(isDark);
 
-  const styles = GameCardStyles(isDark, isChampionship);
+  const isLasVegas = game.league.id === 17;
+  const detailsLeague = isLasVegas ? "summerVegas" : "summerUtah";
 
   const { score: liveScore, details } = useGameDetails(
-    "nba",
+    detailsLeague,
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
@@ -62,12 +53,14 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
 
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
-  const homeScore = liveScore?.home.total;
-  const awayScore = liveScore?.away.total;
-
+  const homeScore = liveScore?.home.total ?? game.scores.away.total ?? 0;
+  const awayScore = liveScore?.away.total ?? game.scores.away.total ?? 0;
   const gameStatusDescription = liveScore?.gameStatusDescription;
   const gameStatusDetail = liveScore?.gameStatusDetail;
-  const isFinal = gameStatusDescription === "Final";
+  const isFinal =
+    gameStatusDescription != null
+      ? gameStatusDescription === "Final"
+      : game.status.short === "FT";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -78,12 +71,8 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
   const endOfPeriod = gameStatusDescription === "End of Period";
   const headlineText = details?.headline;
   const headline = headlineText || holidayLabel;
-
-  // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-
-  // --- Broadcasts ---
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
 
@@ -173,18 +162,44 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
 
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
-      <View style={styles.teamSection}>
-        <Image
-          source={awayLogo}
-          style={styles.logo}
-          accessibilityLabel={`${awayName} logo`}
-        />
-        <Text style={styles.teamName}>{awayName}</Text>
-      </View>
-      {/* Away Score / Record */}
-      <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
+      <View style={styles.cardWrapper}>
+        {/* Away Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={awayLogo}
+              style={styles.logo}
+              accessibilityLabel={`${awayName} logo`}
+            />
+            <Text style={styles.teamName}>{awayName}</Text>
+          </View>
+          {/* Away Score / Record */}
+          <ScoreText
+            score={awayScore}
+            record={awayRecord}
+            teamWins={awayWins}
+          />
+        </View>
 
+        {/* Home Team */}
+        <View style={styles.teamSection}>
+          <View style={styles.teamWrapper}>
+            <Image
+              source={homeLogo}
+              style={styles.logo}
+              accessibilityLabel={`${homeName} logo`}
+            />
+            <Text style={styles.teamName}>{homeName}</Text>
+          </View>
+
+          {/* Home Score / Record */}
+          <ScoreText
+            score={homeScore}
+            record={homeRecord}
+            teamWins={homeWins}
+          />
+        </View>
+      </View>
       {/* headlineText */}
       <Text style={[styles.headlineText]}>{headline}</Text>
 
@@ -194,19 +209,6 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
         {!isFinal && broadcastText && (
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
-      </View>
-
-      {/* Home Score / Record */}
-      <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
-
-      {/* Home Team */}
-      <View style={styles.teamSection}>
-        <Image
-          source={homeLogo}
-          style={styles.logo}
-          accessibilityLabel={`${homeName} logo`}
-        />
-        <Text style={styles.teamName}>{homeName}</Text>
       </View>
     </>
   );
@@ -221,22 +223,7 @@ export default function SLStackedGameCard({ game }: { game: SummerGame }) {
         })
       }
     >
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
-      )}
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }

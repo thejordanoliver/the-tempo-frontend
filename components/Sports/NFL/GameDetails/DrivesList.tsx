@@ -1,34 +1,21 @@
 import { Colors } from "constants/Styles";
-import { getTeamByESPNId } from "constants/teamsCFB";
-import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
-import { FlatList, Image, Text, useColorScheme, View } from "react-native";
+import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import {
+  getTeamByESPNId as getNFLTeamByESPNId,
+  getNFLTeamLogo,
+} from "constants/teamsNFL";
+import { PlayObject } from "hooks/NFLHooks/useGameDetails";
+import { FlatList, Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
-import { LeagueType } from "types/types";
-
-export type Drive = {
-  id: string;
-  description: string;
-  result: string;
-  shortDisplayResult: string;
-  displayResult: string;
-  offensivePlays: number;
-  yards: number;
-  team: {
-    id?: number;
-    displayName: string;
-    shortDisplayName: string;
-    abbreviation: string;
-  };
-};
 
 type Props = {
-  previousDrives?: Drive[] | null;
-  currentDrives?: Drive[] | null;
+  previousDrives?: PlayObject[] | null;
+  currentDrives?: PlayObject[] | null;
   loading?: boolean;
   error?: string | null;
-  lighter?: boolean;
-  league?: LeagueType;
+  isDark: boolean;
+  league?: "NFL" | "CFB";
 };
 
 export default function DrivesList({
@@ -36,10 +23,9 @@ export default function DrivesList({
   currentDrives,
   loading,
   error,
-  lighter = false,
+  isDark,
   league = "NFL",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
   // Normalize
@@ -63,22 +49,10 @@ export default function DrivesList({
   if (drives.length === 0)
     return <Text style={styles.emptyText}>No drives available</Text>;
 
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.darkGray;
+  const textColor = isDark ? Colors.white : Colors.black;
+  const subTextColor = isDark ? Colors.midTone : Colors.darkGray;
 
-  const borderColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.lightGray;
+  const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
   return (
     <View>
@@ -89,18 +63,17 @@ export default function DrivesList({
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item, index }) => {
+            const isNFL = league === "NFL";
             const teamId = item.team?.id ?? "ALL";
+           
             const team =
               league === "CFB"
                 ? getTeamByESPNId(teamId)
                 : getNFLTeamByESPNId(teamId);
             const isLast = index === drives.length - 1;
-
-            const logo = lighter
-              ? team?.logoLight || team?.logo
-              : isDark
-              ? team?.logoLight || team?.logo
-              : team?.logo;
+            const logo = isNFL
+              ? getNFLTeamLogo(team?.id ?? 0, isDark)
+              : getCFBTeamLogo(Number(team?.id), isDark);
 
             const resultUpper = (item.result ?? "").toUpperCase();
             let resultColor = subTextColor;
@@ -112,26 +85,14 @@ export default function DrivesList({
               resultUpper.includes("BLOCKED PUNT TD") ||
               resultUpper.includes("DOWNS")
             ) {
-              resultColor = lighter
-                ? Colors.dark.lightRed
-                : isDark
-                ? Colors.dark.lightRed
-                : Colors.light.red;
+              resultColor = isDark ? Colors.dark.lightRed : Colors.light.red;
             } else if (
               resultUpper.includes("TD") ||
               resultUpper.includes("FG")
             ) {
-              resultColor = lighter
-                ? Colors.dark.leafGreen
-                : isDark
-                ? Colors.dark.leafGreen
-                : Colors.light.green;
+              resultColor = isDark ? Colors.dark.leafGreen : Colors.light.green;
             } else if (resultUpper.includes("PUNT")) {
-              resultColor = lighter
-                ? Colors.dark.yellow
-                : isDark
-                ? Colors.dark.yellow
-                : Colors.light.yellow;
+              resultColor = isDark ? Colors.dark.yellow : Colors.light.yellow;
             }
 
             return (
@@ -150,17 +111,10 @@ export default function DrivesList({
                       resizeMode="contain"
                     />
                   )}
-
-                  <Text style={[styles.driveTeam, { color: textColor }]}>
-                    {item.team?.shortDisplayName ?? "Unknown"}
-                  </Text>
+                  <Text style={styles.driveTeam}>{team?.code}</Text>
                 </View>
 
-                <Text
-                  style={[styles.driveDescription, { color: subTextColor }]}
-                >
-                  {item.description}
-                </Text>
+                <Text style={styles.driveDescription}>{item.description}</Text>
 
                 <Text style={[styles.driveDetail, { color: resultColor }]}>
                   Result: {item.displayResult ?? "N/A"}

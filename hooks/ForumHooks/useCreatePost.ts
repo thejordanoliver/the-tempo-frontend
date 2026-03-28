@@ -4,6 +4,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BASE_URL } from "utils/apiClient";
+
 import {
   Animated,
   Easing,
@@ -29,8 +31,6 @@ export interface AlertConfig {
   onConfirm?: () => void;
   onCancel?: () => void;
 }
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 if (
   Platform.OS === "android" &&
@@ -75,8 +75,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     setPosts((prev) => [post, ...prev]);
   }, []);
 
-
-    const pickMedia = useCallback(async () => {
+  const pickMedia = useCallback(async () => {
     if (media.length >= 8) {
       showAlert({
         title: "Limit reached",
@@ -116,7 +115,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
             }
           }
           return { id, uri: asset.uri, type: "image" };
-        })
+        }),
       );
 
       setMedia((prev) => [...prev, ...selected]);
@@ -171,7 +170,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
         removingRef.current.delete(id);
       });
     },
-    [media, mediaAnims]
+    [media, mediaAnims],
   );
   const createPost = useCallback(async () => {
     if (!token) {
@@ -218,7 +217,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
             idx,
             startMs: item.trimStartMs ?? 0,
             endMs: item.trimEndMs ?? null,
-          })
+          }),
         );
       }
     });
@@ -285,4 +284,3 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     posts, // optional: local post list
   };
 }
-

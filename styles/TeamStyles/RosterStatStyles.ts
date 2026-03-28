@@ -2,6 +2,7 @@ import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 export const rosterStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
+    center: { alignItems: "center", justifyContent: "center" },
     container: {
       justifyContent: "center",
       alignItems: "center",
@@ -23,6 +24,7 @@ export const rosterStatsStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
+      overflow: "hidden", // 🔑 REQUIRED for clipping rows
     },
     tableWrapper: {
       flexDirection: "row",

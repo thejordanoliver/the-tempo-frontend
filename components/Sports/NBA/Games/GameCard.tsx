@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamById, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -10,21 +10,22 @@ import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
+
 export default function GameCard({ game }: { game: Game }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 
-  const homeId = Number(game.home?.id);
-  const awayId = Number(game.away?.id);
+  const homeId = game.home?.id;
+  const awayId = game.away?.id;
 
-  const home = getTeamById(homeId);
-  const away = getTeamById(awayId);
+  const home = getNBATeam(homeId);
+  const away = getNBATeam(awayId);
 
   const homeName = home?.name;
   const awayName = away?.name;
 
-  const homeLogo = getTeamLogo(homeId, isDark)
-  const awayLogo = getTeamLogo(awayId, isDark)
+  const homeLogo = getTeamLogo(homeId, isDark);
+  const awayLogo = getTeamLogo(awayId, isDark);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
@@ -190,8 +191,7 @@ export default function GameCard({ game }: { game: Game }) {
 
       {/* headlineText */}
       <View style={styles.headlineContainer}>
-
-      <Text style={[styles.headlineText]}>{headline}</Text>
+        <Text style={[styles.headlineText]}>{headline}</Text>
       </View>
 
       {/* Game Info */}

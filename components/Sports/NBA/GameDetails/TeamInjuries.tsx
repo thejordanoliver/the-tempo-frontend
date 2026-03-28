@@ -1,13 +1,11 @@
 // TeamInjuries.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "components/TabBars/FixedWidthTabBar";
+import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
-import { Image, Text, useColorScheme, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import TeamInjuriesList from "./TeamInjuriesList";
 
@@ -36,7 +34,7 @@ export type TeamInjury = {
 
 type Props = {
   injuries: TeamInjury[];
-  lighter?: boolean;
+  isDark: boolean;
   loading?: boolean;
   teamPlayersMap?: Record<string, Player[]>; // ✅ add this
 };
@@ -44,12 +42,11 @@ type Props = {
 export default function TeamInjuries({
   injuries,
   loading,
-  lighter = false,
+  isDark,
   teamPlayersMap = {},
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
-  const styles = teamInjuryStyles(isDark, lighter);
+  const styles = teamInjuryStyles(isDark);
 
   const reorderedInjuries =
     injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);
@@ -81,7 +78,7 @@ export default function TeamInjuries({
 
   return (
     <View>
-      <HeadingTwo style={{ marginBottom: 12 }} lighter={lighter}>
+      <HeadingTwo style={{ marginBottom: 12 }} isDark={isDark}>
         Injury Report
       </HeadingTwo>
 
@@ -90,11 +87,9 @@ export default function TeamInjuries({
           tabs={tabs.map((t) => t.id)}
           selected={selectedTeamId}
           onTabPress={setSelectedTeamId}
-          lighter={lighter}
-          renderLabel={(tabId, isSelected) => {
-            const tab = tabs.find((t) => t.id === tabId);
-            if (!tab) return null;
-            const team = getTeamByESPNId(tab.id);
+          isDark={isDark}
+          renderLabel={(tabId, isSelected, tabStyles) => {
+            const team = getTeamByESPNId(tabId);
             const teamCode = team?.code;
             const logo = getTeamLogo(Number(team?.id), isDark);
 
@@ -103,15 +98,12 @@ export default function TeamInjuries({
                 {logo && (
                   <Image
                     source={logo}
-                    style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
-                    resizeMode="contain"
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
 
                 <Text
-                  style={getLabelStyle(isDark, isSelected, lighter, {
-                    opacity: isSelected ? 1 : 0.5,
-                  })}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
                   {teamCode}
                 </Text>
@@ -120,11 +112,10 @@ export default function TeamInjuries({
           }}
         />
 
-        {/* ✅ Pass teamPlayersMap down to the list */}
         <TeamInjuriesList
           injuries={[currentInjuries]}
           teamPlayersMap={teamPlayersMap}
-          lighter={lighter}
+          isDark={isDark}
         />
       </View>
     </View>

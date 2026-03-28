@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamById } from "constants/teamsCFB";
+import { getCFBTeam } from "constants/teamsCFB";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Animated, {
@@ -37,7 +37,7 @@ type Props = {
   /** Optional title */
   title?: string;
   prediction?: string;
-  teamId?: number;
+  teamId: number;
 };
 
 /* ---------------- Constants ---------------- */
@@ -85,7 +85,7 @@ export default function PredictionRing({
   const animatedProgress = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
 
-  const team = getTeamById(teamId);
+  const team = getCFBTeam(teamId);
   const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
 
   const ringColor =
@@ -129,7 +129,7 @@ export default function PredictionRing({
 
   return (
     <View style={styles.container}>
-      {title && <HeadingTwo>{title}</HeadingTwo>}
+      {title && <HeadingTwo isDark={isDark}>{title}</HeadingTwo>}
 
       <View style={styles.ringWrapper}>
         <Svg width={clampedSize} height={clampedSize}>

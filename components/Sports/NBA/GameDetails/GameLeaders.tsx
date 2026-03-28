@@ -1,10 +1,9 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { getLabelStyle } from "components/TabBars/FixedWidthTabBar";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getTeamById, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameLeaders } from "hooks/useGameLeaders";
 import { useMemo, useState } from "react";
-import { Dimensions, Image, Text, useColorScheme, View } from "react-native";
+import { Dimensions, Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 import GameLeadersSkeleton from "../../../Skeletons/GameDetails/GameLeadersSkeleton";
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -16,26 +15,22 @@ type Props = {
   gameId: string;
   awayTeamId: number;
   homeTeamId: number;
-  lighter?: boolean; // new prop to force lighter colors
+  isDark: boolean; // new prop to force lighter colors
 };
 
 export default function GameLeaders({
   gameId,
   awayTeamId,
   homeTeamId,
-  lighter = false,
+  isDark,
 }: Props) {
   const { data, isLoading, isError } = useGameLeaders(
     gameId,
     awayTeamId,
     homeTeamId,
   );
-
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
-  const tabWidth = SCREEN_WIDTH / STAT_CATEGORIES.length;
-  const styles = gameLeadersStyles(isDark, lighter);
+  const styles = gameLeadersStyles(isDark);
 
   // Memoized top players
   const CATEGORY_FIELD_MAP = {
@@ -91,27 +86,18 @@ export default function GameLeaders({
   }
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
       <View style={styles.wrapper}>
         <MainScrollTabBar
           tabs={STAT_CATEGORIES}
           selected={selectedCategory}
           onTabPress={setSelectedCategory}
-          lighter={lighter} // <-- forward the prop here
-          renderLabel={(tab, isSelected) => (
-            <Text
-              style={getLabelStyle(isDark, isSelected, lighter, {
-                opacity: isSelected ? 1 : 0.5,
-              })}
-            >
-              {tab.toUpperCase()}
-            </Text>
-          )}
+          isDark={isDark}
         />
 
         {topPlayers.map((player, idx) => {
           const p = player.localPlayer;
-          const team = getTeamById(player.team.id);
+          const team = getNBATeam(player.team.id);
           const logo = getTeamLogo(team?.id, isDark);
           return (
             <View key={idx} style={styles.card}>
@@ -222,7 +208,7 @@ export default function GameLeaders({
               </View>
 
               <Image
-                source={lighter ? team?.logoLight || team?.logo : logo}
+                source={isDark ? team?.logoLight || team?.logo : logo}
                 style={styles.teamLogo}
                 resizeMode="contain"
               />

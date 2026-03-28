@@ -1,14 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Defs, Path, Pattern, Rect } from "react-native-svg";
 
 interface MinimalTeam {
@@ -21,17 +14,16 @@ interface Props {
   home: MinimalTeam & { chance?: number };
   away: MinimalTeam & { chance?: number };
   size?: number;
-  lighter?: boolean;
+  isDark: boolean;
 }
 
 const MatchupPredictor: React.FC<Props> = ({
   home,
   away,
   size = 184,
-  lighter = false,
+  isDark,
 }) => {
-  const isDark = useColorScheme() === "dark";
-  const styles = mathupPredictorStyles(isDark, lighter);
+  const styles = mathupPredictorStyles(isDark);
   const strokeWidth = 10;
   const radius = 44.8;
 
@@ -131,7 +123,7 @@ const MatchupPredictor: React.FC<Props> = ({
 
   return (
     <View style={styles.outerContainer}>
-      <HeadingTwo lighter={lighter}>Matchup Predictor</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Matchup Predictor</HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={[styles.container, { width: size, height: size }]}>
@@ -146,13 +138,7 @@ const MatchupPredictor: React.FC<Props> = ({
               >
                 <Path
                   d="M 0 0 L 0 4"
-                  stroke={
-                    lighter
-                      ? Colors.white
-                      : isDark
-                        ? Colors.white
-                        : Colors.black
-                  }
+                  stroke={isDark ? Colors.white : Colors.black}
                   strokeWidth={1.5}
                 />
               </Pattern>
@@ -187,9 +173,7 @@ const MatchupPredictor: React.FC<Props> = ({
             {/* Center divider */}
             <Path
               d={`M 50 ${dividerTop} L 50 ${dividerBottom}`}
-              stroke={
-                lighter ? Colors.white : isDark ? Colors.white : Colors.black
-              }
+              stroke={isDark ? Colors.white : Colors.black}
               strokeWidth={0.6}
               strokeDasharray="1,1"
             />
@@ -220,13 +204,7 @@ const MatchupPredictor: React.FC<Props> = ({
                   >
                     <Path
                       d="M 0 0 L 0 4"
-                      stroke={
-                        lighter
-                          ? Colors.white
-                          : isDark
-                            ? Colors.white
-                            : Colors.black
-                      }
+                      stroke={isDark ? Colors.white : Colors.black}
                       strokeWidth={8}
                     />
                   </Pattern>
@@ -261,7 +239,7 @@ const MatchupPredictor: React.FC<Props> = ({
   );
 };
 
-const mathupPredictorStyles = (isDark: boolean, lighter: boolean) =>
+const mathupPredictorStyles = (isDark: boolean) =>
   StyleSheet.create({
     outerContainer: {
       flex: 1,
@@ -297,7 +275,7 @@ const mathupPredictorStyles = (isDark: boolean, lighter: boolean) =>
     chanceText: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 20,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
       marginTop: 4,
     },
@@ -325,7 +303,7 @@ const mathupPredictorStyles = (isDark: boolean, lighter: boolean) =>
     legendText: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 16,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
   });
 

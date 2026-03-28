@@ -23,7 +23,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      padding: 14,
+      padding: 12,
       alignItems: "center",
       justifyContent: "space-between",
     },
@@ -31,6 +31,8 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     info: {
       alignItems: "center",
       justifyContent: "center",
+      width: 100,
+    
     },
 
     infoWrapper: {
@@ -50,7 +52,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     ========================= */
     teamSection: {
       alignItems: "center",
-      width: 60,
+      width: 70,
     },
 
     logo: {
@@ -65,7 +67,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       fontSize: 12,
       color: textColor,
       textAlign: "center",
-      width: 100,
+        width: 100,
     },
 
     rank: {
@@ -96,14 +98,15 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       height: 40,
       borderWidth: 1,
       alignItems: "center",
+
       borderRadius: 100,
       borderColor,
       overflow: "hidden",
     },
 
     fighter: {
-      width: 40,
-      height: 40,
+      width: 48,
+      height: 48,
       resizeMode: "contain",
     },
 

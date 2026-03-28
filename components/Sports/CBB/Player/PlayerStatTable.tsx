@@ -86,14 +86,14 @@ export default function PlayerStatTable({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Career Stats</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
       <Dropdown
         isDark={isDark}
         options={STAT_OPTIONS}
         selectedValue={statView}
         onSelect={(v) => setStatView(v as StatView)}
-        absolute
+        style={styles.dropdown}
       />
 
       <View style={styles.tableWrapper}>
@@ -172,7 +172,9 @@ export default function PlayerStatTable({
                     {renderStat(s.blocks, s.gamesPlayed)}
                   </Text>
                   <Text style={styles.cell}>{safe(s.fieldGoalPct)}</Text>
-                  <Text style={styles.cell}>{safe(s.threePointFieldGoalPct)}</Text>
+                  <Text style={styles.cell}>
+                    {safe(s.threePointFieldGoalPct)}
+                  </Text>
                   <Text style={styles.cell}>{safe(s.freeThrowPct)}</Text>
                   <Text style={styles.cell}>
                     {renderStat(s.turnovers, s.gamesPlayed)}
@@ -184,7 +186,7 @@ export default function PlayerStatTable({
               );
             })}
 
-             {/* Career Row */}
+            {/* Career Row */}
             {careerStatsFlattened.length > 0 &&
               (() => {
                 const totalGP = careerStatsFlattened.reduce(

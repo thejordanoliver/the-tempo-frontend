@@ -46,7 +46,7 @@ interface Props {
   rosterStats: Player[];
   espnId: number;
   teamId: number;
-  league: "cbb" | "wcbb";
+  league: "CBB" | "WCBB";
   loading: boolean;
   error: string | null;
   refreshing: boolean;
@@ -81,7 +81,7 @@ const CBBRosterStats: React.FC<Props> = ({
   if (loading) {
     return (
       <View style={styles.container}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -224,7 +224,7 @@ const CBBRosterStats: React.FC<Props> = ({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <HeadingTwo>{viewMode}</HeadingTwo>
+      <HeadingTwo isDark={isDark}>{viewMode}</HeadingTwo>
 
       <Dropdown
         options={[

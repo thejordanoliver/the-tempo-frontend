@@ -1,13 +1,7 @@
 // components/GameDetails/BoxScoreSkeleton.tsx
 import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const COLUMN_WIDTH = 50;
 const NAME_COLUMN_WIDTH = 160;
@@ -16,18 +10,17 @@ const ROWS = 5;
 const STAT_COLUMNS = 10; // visual approximation
 
 type Props = {
-  lighter?: boolean;
+  isDark: boolean;
   teams?: number;
   showTeamHeader?: boolean; // ✅ NEW
 };
 
 export default function BoxScoreSkeleton({
-  lighter = false,
+  isDark,
   teams = 2,
   showTeamHeader = true, // ✅ default ON
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, lighter);
+  const styles = getStyles(isDark);
 
   // Shared pulse animation
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -45,7 +38,7 @@ export default function BoxScoreSkeleton({
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -63,54 +56,53 @@ export default function BoxScoreSkeleton({
         </View>
       )}
 
-    {/* Table */}
-<View style={{ flexDirection: "row" }}>
-  {/* Player names */}
-  <View style={{ width: NAME_COLUMN_WIDTH }}>
-    <View style={styles.headerRow}>
-      <Skeleton style={styles.headerCellWide} />
-    </View>
+      {/* Table */}
+      <View style={{ flexDirection: "row" }}>
+        {/* Player names */}
+        <View style={{ width: NAME_COLUMN_WIDTH }}>
+          <View style={styles.headerRow}>
+            <Skeleton style={styles.headerCellWide} />
+          </View>
 
-    {Array.from({ length: ROWS }).map((_, i) => (
-      <View key={`name-${key}-${i}`} style={styles.row}>
-        <Skeleton style={styles.playerName} />
-      </View>
-    ))}
-  </View>
-
-  {/* Stats */}
-  <View style={{ flex: 1 }}>
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      <View>
-        <View style={styles.headerRow}>
-          {Array.from({ length: STAT_COLUMNS }).map((_, i) => (
-            <Skeleton
-              key={`header-${key}-${i}`}
-              style={styles.headerCell}
-            />
+          {Array.from({ length: ROWS }).map((_, i) => (
+            <View key={`name-${key}-${i}`} style={styles.row}>
+              <Skeleton style={styles.playerName} />
+            </View>
           ))}
         </View>
 
-        {Array.from({ length: ROWS }).map((_, r) => (
-          <View key={`row-${key}-${r}`} style={styles.row}>
-            {Array.from({ length: STAT_COLUMNS }).map((_, c) => (
-              <Skeleton
-                key={`cell-${key}-${r}-${c}`}
-                style={styles.statCell}
-              />
-            ))}
-          </View>
-        ))}
+        {/* Stats */}
+        <View style={{ flex: 1 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View>
+              <View style={styles.headerRow}>
+                {Array.from({ length: STAT_COLUMNS }).map((_, i) => (
+                  <Skeleton
+                    key={`header-${key}-${i}`}
+                    style={styles.headerCell}
+                  />
+                ))}
+              </View>
+
+              {Array.from({ length: ROWS }).map((_, r) => (
+                <View key={`row-${key}-${r}`} style={styles.row}>
+                  {Array.from({ length: STAT_COLUMNS }).map((_, c) => (
+                    <Skeleton
+                      key={`cell-${key}-${r}-${c}`}
+                      style={styles.statCell}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
       </View>
-    </ScrollView>
-  </View>
-</View>
 
-{/* ✅ FULL-WIDTH BUTTON */}
-<View style={styles.button}>
-  <Skeleton style={styles.buttonSkeleton} />
-</View>
-
+      {/* ✅ FULL-WIDTH BUTTON */}
+      <View style={styles.button}>
+        <Skeleton style={styles.buttonSkeleton} />
+      </View>
     </View>
   );
 
@@ -129,7 +121,7 @@ export default function BoxScoreSkeleton({
 /* Styles                                                                      */
 /* -------------------------------------------------------------------------- */
 
-const getStyles = (isDark: boolean, lighter: boolean) =>
+const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {},
 
@@ -168,11 +160,7 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       height: ROW_HEIGHT,
       alignItems: "center",
       borderBottomWidth: 1,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       paddingHorizontal: 6,
     },
 
@@ -196,33 +184,25 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       height: ROW_HEIGHT,
       alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       paddingHorizontal: 6,
     },
-  button: {
-  flexDirection: "row",
-  height: ROW_HEIGHT,
-  alignItems: "center",
-  justifyContent: "center",
-  borderBottomWidth: StyleSheet.hairlineWidth,
-  borderColor: lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.lightGray
-    : Colors.darkGray,
-  paddingHorizontal: 12,
-},
+    button: {
+      flexDirection: "row",
+      height: ROW_HEIGHT,
+      alignItems: "center",
+      justifyContent: "center",
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      paddingHorizontal: 12,
+    },
 
-buttonSkeleton: {
-  width: "30%",
-  height: 16,
-  borderRadius: 8,
-  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-},
+    buttonSkeleton: {
+      width: "30%",
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
 
     playerName: {
       width: NAME_COLUMN_WIDTH - 24,

@@ -1,23 +1,29 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import HeadToHeadSkeleton from "components/Skeletons/GameDetails/HeadToHeadSkeleton";
 import { globalStyles } from "constants/Styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import { BlurView } from "expo-blur";
 import {
   HeadToHead,
   useHeadToHeadGames,
 } from "hooks/NBAHooks/useHeadToHeadGames";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
 import { getNBASeason } from "utils/dateUtils";
 import HeadToHeadGameRow from "./HeadToHeadGameRow";
 type Props = {
   homeTeamId: number;
   awayTeamId: number;
+  homeTeamColor: string | undefined;
+  awayTeamColor: string | undefined;
   isDark: boolean;
 };
 
 export default function HeadToHeadGames({
   homeTeamId,
   awayTeamId,
+  homeTeamColor,
+  awayTeamColor,
   isDark,
 }: Props) {
   const styles = headToHeadStyles(isDark);
@@ -41,7 +47,7 @@ export default function HeadToHeadGames({
     Number(getNBASeason()),
   );
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) return <HeadToHeadSkeleton />;
   if (error) return <Text style={global.errorText}>Error loading games</Text>;
 
   if (!data)
@@ -53,14 +59,18 @@ export default function HeadToHeadGames({
 
   const { series, games } = data as HeadToHead;
 
-  const awayWins = series[String(awayTeamId)] ?? 0;
-  const homeWins = series[String(homeTeamId)] ?? 0;
+  const isAwayTeam1 = series.team1 === awayTeamId;
+
+  const awayWins = isAwayTeam1 ? series.team1Wins : series.team2Wins;
+  const homeWins = isAwayTeam1 ? series.team2Wins : series.team1Wins;
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Series Matchup</HeadingTwo>
-
+      <HeadingTwo isDark={isDark}>Series Matchup</HeadingTwo>
       <View style={styles.wrapper}>
+       
+
+   
         <Text style={styles.seriesText}>
           {awayTeamCode} {awayWins} - {homeWins} {homeTeamCode}
         </Text>

@@ -1,19 +1,25 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Game } from "types/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export interface HeadToHead {
   success: boolean;
-  series: Record<string, number> & { totalGames: number };
+  series: {
+    team1: number;
+    team2: number;
+    team1Wins: number;
+    team2Wins: number;
+    totalGames: number;
+  };
   games: Game[];
 }
 
 export function useHeadToHeadGames(
   team1: number,
   team2: number,
-  season: number
+  season: number,
 ) {
   const [data, setData] = useState<HeadToHead | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +34,7 @@ export function useHeadToHeadGames(
     const fetchGames = async () => {
       try {
         const res = await axios.get(
-          `${BASE_URL}/api/games/nba/matchups/${team1}/${team2}/${season}`
+          `${BASE_URL}/api/games/nba/matchups/${team1}/${team2}/${season}`,
         );
 
         // Return the raw API object

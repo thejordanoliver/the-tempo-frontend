@@ -10,7 +10,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import GameLocationSkeleton from "../../../Skeletons/GameDetails/GameLocationSkeleton";
@@ -23,9 +22,9 @@ type Props = {
   loading: boolean;
   error: string | null;
   address?: string;
-  venueCapacity: string;
-  venueAttendance?: number | string;
-  lighter?: boolean;
+  venueCapacity: string | null | undefined;
+  venueAttendance?: number | string | null;
+  isDark: boolean;
   surface?: "football" | "default";
   grass?: boolean; // <-- new prop
 };
@@ -40,12 +39,11 @@ const GameLocation: React.FC<Props> = ({
   venueAttendance,
   loading,
   error,
-  lighter = false,
+  isDark = false,
   surface = "default",
   grass,
 }) => {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameLocationStyles(isDark, lighter);
+  const styles = gameLocationStyles(isDark);
   const desc = weather?.main.toLowerCase();
 
   const getWeatherIcon = (desc?: string) => {
@@ -67,9 +65,7 @@ const GameLocation: React.FC<Props> = ({
   // Early return if values are missing or marked "Unknown"
   if (
     !venueName ||
-    !location ||
     venueName.trim() === "" ||
-    location.trim() === "" ||
     venueName === "Unknown" ||
     location === "Unknown"
   ) {
@@ -106,13 +102,13 @@ const GameLocation: React.FC<Props> = ({
             }
           },
         },
-      ]
+      ],
     );
   };
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Location</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Location</HeadingTwo>
 
       {loading && !error ? (
         <GameLocationSkeleton />
@@ -144,24 +140,23 @@ const GameLocation: React.FC<Props> = ({
               )}
             </View>
 
-       
             {weather?.tempFahrenheit !== null &&
               weather?.tempFahrenheit !== undefined &&
               !isNaN(Number(weather?.tempFahrenheit)) && (
-            <View style={styles.addressContainer}>
-              <Ionicons
-                name={getWeatherIcon(desc)}
-                size={20}
-                color={styles.icon.color}
-              />
-              <Text style={styles.subText}>
-                Temperature:{" "}
-                {weather?.tempFahrenheit != null
-                  ? `${weather.tempFahrenheit.toFixed(0)}°F`
-                  : "--"}
-              </Text>
-            </View>
-  )}
+                <View style={styles.addressContainer}>
+                  <Ionicons
+                    name={getWeatherIcon(desc)}
+                    size={20}
+                    color={styles.icon.color}
+                  />
+                  <Text style={styles.subText}>
+                    Temperature:{" "}
+                    {weather?.tempFahrenheit != null
+                      ? `${weather.tempFahrenheit.toFixed(0)}°F`
+                      : "--"}
+                  </Text>
+                </View>
+              )}
             <View style={styles.addressContainer}>
               <Ionicons name="person" size={20} color={styles.icon.color} />
               <Text style={styles.subText}>
@@ -197,7 +192,7 @@ const GameLocation: React.FC<Props> = ({
   );
 };
 
-const gameLocationStyles = (isDark: boolean, lighter: boolean) =>
+const gameLocationStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {},
     wrapper: {
@@ -210,25 +205,25 @@ const gameLocationStyles = (isDark: boolean, lighter: boolean) =>
     text: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 20,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     subText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 16,
       opacity: 0.5,
       marginLeft: 8,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     venueTitle: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 24,
       paddingTop: 12,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     icon: {
       width: 54,
       height: 54,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     textContainer: {
       flexDirection: "row",

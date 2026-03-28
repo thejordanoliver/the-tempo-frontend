@@ -89,7 +89,6 @@ export default function GameHeader({
           isDark={isDark}
           score={awayScore}
           isWinner={awayIsWinner}
-          timeouts={awayTimeouts}
           gameStatusDescription={gameStatusDescription}
         />
 

@@ -1,19 +1,17 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import type { Game } from "types/types";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { Game } from "types/types";
+import { BASE_URL } from "utils/apiClient";
 
 export function useLastTeamGame(
   teamId: string | number,
-  season: string | number = "2025"
+  season: string | number,
 ) {
-  const [lastGame, setLastGame] = useState<Game | null>(null);
+  const [lastGame, setLastGame] = useState<Game | null>(null); // raw response
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Simple in-memory cache to avoid duplicate requests
-  const cacheRef = useRef<Map<string, Game | null>>(new Map());
+  const cacheRef = useRef<Map<string, any | null>>(new Map());
 
   const fetchLastGame = async () => {
     if (!teamId) return;
@@ -22,22 +20,22 @@ export function useLastTeamGame(
     setError(null);
 
     const cacheKey = `${teamId}-${season}`;
+
+    // Return cached result if available
     if (cacheRef.current.has(cacheKey)) {
-      setLastGame(cacheRef.current.get(cacheKey)!);
+      setLastGame(cacheRef.current.get(cacheKey));
       setLoading(false);
       return;
     }
 
     try {
-      const res = await axios.get<{ success: boolean; game: Game | null }>(
-        `${BASE_URL}/api/games/nba/last/${teamId}/${season}`
+      const res = await axios.get(
+        `${BASE_URL}/api/games/nba/last/${teamId}/${season}`,
       );
+      const raw = res.data?.game ?? null;
 
-      const game = res.data.game ?? null;
-
-      // Cache and set state
-      cacheRef.current.set(cacheKey, game);
-      setLastGame(game);
+      cacheRef.current.set(cacheKey, raw);
+      setLastGame(raw);
     } catch (err: any) {
       console.error("Error fetching last team game:", err);
       setError(err.message || "Failed to fetch last game");

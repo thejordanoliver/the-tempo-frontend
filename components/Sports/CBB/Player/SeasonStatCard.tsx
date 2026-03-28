@@ -15,14 +15,14 @@ type Props = {
 export default function SeasonStatCard({ seasonStats, isDark }: Props) {
   const styles = seasonStatCardStyles(isDark);
 
-const selectedSeason =
-  seasonStats && seasonStats.length > 0
-    ? [...seasonStats].sort((a, b) => b.season - a.season)[0]
-    : null;
+  const selectedSeason =
+    seasonStats && seasonStats.length > 0
+      ? [...seasonStats].sort((a, b) => b.season - a.season)[0]
+      : null;
 
   const displayYear = selectedSeason?.season
-  ? `${selectedSeason.season - 1}-${String(selectedSeason.season).slice(-2)}`
-  : "N/A";
+    ? `${selectedSeason.season - 1}-${String(selectedSeason.season).slice(-2)}`
+    : "N/A";
 
   const ppg = safeFixed(Number(selectedSeason?.averages?.avgPoints ?? 0));
   const rpg = safeFixed(Number(selectedSeason?.averages?.avgRebounds ?? 0));
@@ -41,8 +41,8 @@ const selectedSeason =
   }
 
   return (
-    <>
-      <CenteredHeader>{displayYear} Season</CenteredHeader>
+    <View>
+      <CenteredHeader isDark={isDark}>{displayYear} Season</CenteredHeader>
       <View style={styles.card}>
         <View style={styles.statsRow}>
           <StatItem label="PTS" value={ppg} />
@@ -51,6 +51,6 @@ const selectedSeason =
           <StatItem label="FG%" value={fg} />
         </View>
       </View>
-    </>
+    </View>
   );
 }

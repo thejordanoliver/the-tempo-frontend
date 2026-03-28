@@ -20,12 +20,7 @@ import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getMLBSeason, getMLBStandingsSeason } from "utils/dateUtils";
@@ -160,6 +155,7 @@ export default function MLBLeagueScreen() {
             const index = tabs.indexOf(tab);
             pagerRef.current?.setPage(index);
           }}
+          isDark={isDark}
         />
 
         <PagerView
@@ -228,6 +224,7 @@ export default function MLBLeagueScreen() {
               error={error}
               categories={categories}
               league={"MLB"}
+              isDark={isDark}
             />
           </View>
 

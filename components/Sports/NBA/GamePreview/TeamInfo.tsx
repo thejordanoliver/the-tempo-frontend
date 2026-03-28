@@ -4,7 +4,7 @@ import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoSty
 import { Team } from "types/types";
 type TeamInfoProps = {
   team?: Team;
-  name: string;
+  name: string | undefined;
   score?: number;
   opponentScore?: number;
   record?: string;

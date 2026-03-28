@@ -1,26 +1,21 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
+import LatestGame from "components/Sports/NFL/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
 import { globalStyles } from "constants/Styles";
-import { getTeamInfo } from "constants/teamsNFL";
+import { getNFLTeam } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
-
-import { useLayoutEffect, useMemo } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useLayoutEffect } from "react";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { getFootballSeasonYear } from "utils/dateUtils";
 
 export default function NFLPlayerDetailScreen() {
+  const styles = playerScreenStyles;
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
@@ -37,20 +32,26 @@ export default function NFLPlayerDetailScreen() {
   } = usePlayerById(playerId, "NFL");
 
   /* ---------------- Team info ---------------- */
-  const teamObj = player?.team_id ? getTeamInfo(player.team_id) : null;
+  const teamObj = player?.team_id ? getNFLTeam(player.team_id) : null;
   const isTeamAvailable = !!teamObj;
   const fullName = player?.name ?? "Player";
 
   /* ---------------- Last game ---------------- */
-  const numericTeamId = teamObj?.id ?? 0;
   const {
     lastGame,
     loading: lastGameLoading,
     error: lastGameError,
-  } = useLastTeamGame(numericTeamId);
+  } = useLastTeamGame(player?.team_id ?? 0, getFootballSeasonYear());
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
+    if (!player) {
+      navigation.setOptions({
+        header: () => null,
+      });
+      return;
+    }
+
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
@@ -76,38 +77,22 @@ export default function NFLPlayerDetailScreen() {
     });
   }, [navigation, fullName, teamObj, isTeamAvailable, isDark]);
 
-  /* ---------------- Loading / error ---------------- */
-  if (playerLoading) {
+  if (playerLoading || !player)
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
-  }
-
-  if (playerError || !player) {
+  if (playerError || !player)
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Text style={{ textAlign: "center" }}>Player not found</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{playerError}</Text>
       </View>
     );
-  }
-
-  /* ---------------- Seasons for stats ---------------- */
-  const seasons = useMemo(() => {
-    if (!player.experience || !player.age) return [];
-
-    const currentYear = new Date().getFullYear();
-    const startYear = currentYear - player.experience + 1;
-
-    return Array.from({ length: player.experience }, (_, i) =>
-      (startYear + i).toString()
-    );
-  }, [player]);
 
   /* ---------------- Render ---------------- */
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       {/* Player Header */}
       <PlayerHeader
         player={player}
@@ -119,33 +104,21 @@ export default function NFLPlayerDetailScreen() {
         isCollegePlayer={false}
       />
 
-      {/* Season Stats */}
-      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-        <SeasonStatCard
-          playerId={player.player_id}
-          teamColor={teamObj?.secondaryColor}
-          teamColorDark={teamObj?.secondaryColor}
-          league="NFL"
-        />
-      </View>
+      <SeasonStatCard
+        playerId={player.player_id}
+        teamColor={teamObj?.secondaryColor}
+        teamColorDark={teamObj?.secondaryColor}
+        league="NFL"
+      />
 
-      {/* Last Game */}
-      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-        <HeadingTwo>Last Game</HeadingTwo>
+      <LatestGame
+        game={lastGame}
+        loading={lastGameLoading}
+        isDark={isDark}
+        league="NFL"
+      />
 
-        {lastGameLoading && <GameCardSkeleton />}
-
-        {lastGameError && (
-          <Text style={global.errorText}>Error loading last game</Text>
-        )}
-
-        {lastGame && !lastGameLoading && <NFLGameCard game={lastGame} />}
-      </View>
-
-      {/* Career Stats */}
-      <View style={{ marginTop: 24 }}>
-        <PlayerStatTable playerId={player.player_id} />
-      </View>
+      <PlayerStatTable playerId={player.player_id} />
     </ScrollView>
   );
 }

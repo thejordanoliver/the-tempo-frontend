@@ -9,26 +9,20 @@ import Roster from "components/Sports/NBA/Team/Roster";
 import RosterStats from "components/Sports/NBA/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getTeamById, teams } from "constants/teams";
-import { useNotifications } from "contexts/NotificationContext";
+import { getNBATeam } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useTeamGames } from "hooks/NBAHooks/useTeamGames";
+import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useTeamRosterStats } from "hooks/useTeamRosterStats";
 import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  Dimensions,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Dimensions, ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { PlayerInfo, User } from "types/types";
+import { User } from "types/types";
 import {
   getGameCountByMonth,
   getMonthsToShow,
@@ -37,55 +31,34 @@ import {
 } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
+  const isDark = useColorScheme() === "dark";
+  const styles = teamDetailStyles;
   const navigation = useNavigation();
-  const [refreshing, setRefreshing] = useState(false);
-  const [scheduleRefreshing, setScheduleRefreshing] = useState(false);
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = parseInt(teamIdStr);
+  const [refreshing, setRefreshing] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
-  const isDark = useColorScheme() === "dark";
-  const styles = teamDetailStyles;
-  const tabs = [
-    "schedule",
-    "news",
-    "roster",
-    "stats",
-    "standings",
-    "forum",
-  ] as const;
-  const [selectedTab, setSelectedTab] =
-    useState<(typeof tabs)[number]>("schedule");
-  const underlineX = useRef(new Animated.Value(0)).current;
-  const underlineWidth = useRef(new Animated.Value(0)).current;
-  const tabMeasurements = useRef<{ x: number; width: number }[]>([]);
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("NBA");
   const pagerRef = useRef<PagerView>(null);
-  const team = getTeamById(teamIdNum)
-
-  // map tabs to page index
+  const team = getNBATeam(teamIdNum);
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
-
-  const handleRefresh = async () => {
-    if (selectedTab !== "schedule") return;
-
-    setRefreshing(true);
-    setScheduleRefreshing(true);
-
-    try {
-      await new Promise((r) => setTimeout(r, 300));
-    } finally {
-      setScheduleRefreshing(false);
-      setRefreshing(false);
-    }
+  const handlePageChange = (index: number) => {
+    setSelectedTab(indexToTab(index));
   };
 
   const {
     games: teamGames,
     loading: gamesLoading,
     error: gamesError,
+    refreshGames: refreshTeamGames,
   } = useTeamGames(teamIdNum.toString());
 
   useEffect(() => {
@@ -104,7 +77,7 @@ export default function TeamDetailScreen() {
   }, []);
 
   const {
-    rosterStats,
+    teamRoster,
     refreshingStats,
     loading: rosterStatsLoading,
     error: rosterStatsError,
@@ -197,25 +170,9 @@ export default function TeamDetailScreen() {
     });
   }, [selectedDate, teamGames]);
 
-  const playersForRosterStats: PlayerInfo[] = players.map((p) => {
-    return {
-      player_id: p.player_id,
-      first_name: p.first_name,
-      last_name: p.last_name,
-      full_name: p.full_name,
-      short_name: p.short_name,
-      position: p.position,
-      jersey_number: p.jersey_number,
-      headshot_url: p.avatarUrl ?? undefined,
-    };
-  });
-
-  const { toggleNotifications, isNotified } = useNotifications();
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const league = "NBA";
   const favorited = team ? isFavorite(league, team.id) : false;
-  const teamKey = String(team?.id);
-  const notfied = team ? isNotified(league, teamKey) : false;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -228,43 +185,24 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          isNotified={notfied}
-          onToggleNotifications={() => toggleNotifications(league, teamKey)}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, team, favorited, notfied]); // ✅ ADD THIS
-
-  const handleTabPress = (tab: (typeof tabs)[number]) => {
-    setSelectedTab(tab);
-    pagerRef.current?.setPage(tabToIndex(tab));
-
-    const index = tabs.indexOf(tab);
-    if (tabMeasurements.current[index]) {
-      Animated.parallel([
-        Animated.timing(underlineX, {
-          toValue: tabMeasurements.current[index].x,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-        Animated.timing(underlineWidth, {
-          toValue: tabMeasurements.current[index].width,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    }
-  };
+  }, [navigation, team, favorited]);
 
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
+  }
+
+  function handleRefresh(): void {
+    throw new Error("Function not implemented.");
   }
 
   return (
@@ -273,15 +211,14 @@ export default function TeamDetailScreen() {
         tabs={tabs}
         selected={selectedTab}
         onTabPress={handleTabPress}
+        isDark={isDark}
       />
+
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
         initialPage={tabToIndex(selectedTab)}
-        onPageSelected={(e) => {
-          const index = e.nativeEvent.position;
-          setSelectedTab(indexToTab(index));
-        }}
+        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
@@ -301,8 +238,8 @@ export default function TeamDetailScreen() {
             games={filteredGames}
             loading={gamesLoading}
             error={gamesError}
-            refreshing={scheduleRefreshing}
-            onRefresh={handleRefresh}
+            refreshing={refreshing}
+            onRefresh={refreshTeamGames}
             expectedCount={filteredGames.length}
           />
         </View>
@@ -326,8 +263,7 @@ export default function TeamDetailScreen() {
         {/* Stats Page */}
         <View key="stats" style={{ flex: 1 }}>
           <RosterStats
-            rosterStats={rosterStats}
-            players={playersForRosterStats}
+            rosterStats={teamRoster}
             teamId={teamId as string}
             teamStats={teamStats}
             loading={rosterStatsLoading || teamStatsLoading}

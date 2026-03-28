@@ -1,37 +1,24 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-const KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY;
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useFootballTeamStats(gameId: string | number) {
-  const [stats, setStats] = useState<any[] | null>(null);
+  const [stats, setStats] = useState<any[]>([]); // always an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Convert gameId to number safely
-    const numericGameId = typeof gameId === "string" ? parseInt(gameId, 10) : gameId;
+    const id = typeof gameId === "string" ? parseInt(gameId, 10) : gameId;
 
-    if (!numericGameId || numericGameId <= 0) {
-      setStats(null);
-      setLoading(false);
-      return;
-    }
-
-    const fetchData = async () => {
+    const fetchStats = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const response = await axios.get(
-          "https://api-american-football.p.rapidapi.com/games/statistics/teams",
-          {
-            params: { id: numericGameId },
-            headers: {
-              "x-rapidapi-key": KEY,
-              "x-rapidapi-host": "api-american-football.p.rapidapi.com",
-            },
-          }
-        );
-        setStats(response.data.response || []);
+        const { data } = await axios.get(`${BASE_URL}/api/football/details/team/statistics`, {
+          params: { gameId: id },
+        });
+        setStats(data.games || []); // now always an array
       } catch (err: any) {
         setError(err.message || "Failed to fetch team stats");
       } finally {
@@ -39,7 +26,7 @@ export function useFootballTeamStats(gameId: string | number) {
       }
     };
 
-    fetchData();
+    fetchStats();
   }, [gameId]);
 
   return { stats, loading, error };

@@ -1,5 +1,5 @@
 import axios, { CancelTokenSource } from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface Bookmaker {
   key: string;
@@ -23,7 +23,7 @@ export interface GameOdds {
   bookmakers: Bookmaker[];
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 // Simple cache
 const cache: Record<string, GameOdds[]> = {};

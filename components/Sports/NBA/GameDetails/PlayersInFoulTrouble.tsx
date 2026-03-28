@@ -1,17 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "components/TabBars/FixedWidthTabBar";
+import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/Styles";
 import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 type Player = {
   id: string;
@@ -31,7 +22,7 @@ type Props = {
   awayLogo?: any;
   homePlayers: Player[];
   awayPlayers: Player[];
-  lighter?: boolean;
+  isDark: boolean;
   league: "NBA" | "CBB" | "WCBB";
 };
 export default function PlayersInFoulTrouble({
@@ -43,11 +34,10 @@ export default function PlayersInFoulTrouble({
   awayLogo,
   homePlayers,
   awayPlayers,
-  lighter = false,
+  isDark,
   league = "NBA",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = foulTroubleStyles(isDark, lighter);
+  const styles = foulTroubleStyles(isDark);
 
   const tabs = useMemo(
     () => [
@@ -96,38 +86,34 @@ export default function PlayersInFoulTrouble({
 
   return (
     <View style={styles.constainer}>
-      <HeadingTwo>In Foul Trouble</HeadingTwo>
+      <HeadingTwo isDark={isDark}>In Foul Trouble</HeadingTwo>
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabIds}
           selected={selectedTeamId}
           onTabPress={setSelectedTeamId}
-          lighter={lighter}
-          renderLabel={(tabId, isSelected) => {
-            const tab = tabs.find((t) => t.id === tabId);
-            if (!tab) return null;
-
+          renderLabel={(tabKey, isSelected, tabStyles) => {
+            const teamLogo = tabKey === "home" ? homeLogo : awayLogo;
+            const teamCode = tabKey === "home" ? homeCode : awayCode;
             return (
               <View style={styles.tabLabel}>
-                {tab.logo && (
+                {teamLogo && (
                   <Image
-                    source={tab.logo}
-                    style={[styles.logo, { opacity: isSelected ? 1 : 0.5 }]}
-                    resizeMode="contain"
+                    source={teamLogo}
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
 
                 <Text
-                  style={getLabelStyle(isDark, isSelected, lighter, {
-                    opacity: isSelected ? 1 : 0.5,
-                  })}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
-                  {tab.label}
+                  {teamCode}
                 </Text>
               </View>
             );
           }}
+          isDark={isDark}
         />
 
         <FlatList
@@ -142,7 +128,7 @@ export default function PlayersInFoulTrouble({
   );
 }
 
-const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
+const foulTroubleStyles = (isDark: boolean) =>
   StyleSheet.create({
     constainer: {},
     wrapper: {
@@ -158,11 +144,7 @@ const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
       justifyContent: "space-between",
       alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.midTone
-          : Colors.lightGray,
+      borderColor: isDark ? Colors.midTone : Colors.lightGray,
     },
     left: { flexDirection: "row", alignItems: "center", flex: 1 },
     avatar: {
@@ -178,53 +160,40 @@ const foulTroubleStyles = (isDark: boolean, lighter: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
-      borderColor: lighter
-        ? Colors.white
-        : isDark
-          ? Colors.white
-          : Colors.black,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
 
     playerInfo: {
       flexDirection: "row",
       alignItems: "baseline",
-      
     },
     name: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
-      color: lighter
-        ? Colors.dark.white
-        : isDark
-          ? Colors.dark.white
-          : Colors.light.black,
+      color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: 8,
     },
     jersey: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       marginLeft: 4,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     value: {
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
-      color: lighter
-        ? Colors.dark.lightRed
-        : isDark
-          ? Colors.dark.lightRed
-          : Colors.light.red,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     tabLabel: {
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
     },
-    logo: { width: 28, height: 28 },
+    tabLogo: {
+      width: 28,
+      height: 28,
+      resizeMode: "contain",
+    },
     emptyText: {
       fontSize: 16,
       color: Colors.midTone,

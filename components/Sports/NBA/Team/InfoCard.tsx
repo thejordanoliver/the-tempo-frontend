@@ -3,10 +3,10 @@ import { ReactNode } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 
 import { teams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as teamsCFB } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as teamsNFL } from "constants/teamsNFL";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 
 type TeamColors = {
@@ -28,8 +28,8 @@ type Props = {
 
 const allTeams: TeamColors[] = [
   ...teams,
-  ...teamsNFL,
-  ...teamsCFB,
+  ...nflTeams,
+  ...cfbTeams,
   ...mlbTeams,
   ...nhlTeams,
   ...cbbTeams,

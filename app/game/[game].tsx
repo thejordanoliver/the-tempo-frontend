@@ -1,39 +1,40 @@
 import MemoizedFloatingChatButton from "components//MemoizedFloatingChatButton";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import {
-  BoxScore,
   GameLeaders,
   GameLocation,
   GameTeamStats,
   LastFiveGamesSwitcher,
   LineScore,
 } from "components/Sports/NBA/GameDetails";
-import WinPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
 import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import HeadToHeadGames from "components/Sports/NBA/GameDetails/HeadToHead/HeadToHeadGames";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
-import { getTeamById, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useLastFiveGames } from "hooks/NBAHooks/useLastFiveGames";
 import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
-import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { Game } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -42,7 +43,6 @@ export default function GameDetailsScreen() {
   const { game } = useLocalSearchParams();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(true);
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
 
@@ -84,8 +84,8 @@ export default function GameDetailsScreen() {
       hour12: true,
     }) || "";
 
-  const homeTeam = getTeamById(home.id);
-  const awayTeam = getTeamById(away.id);
+  const homeTeam = getNBATeam(home.id);
+  const awayTeam = getNBATeam(away.id);
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
@@ -112,6 +112,17 @@ export default function GameDetailsScreen() {
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
 
+  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isFinal = gameStatusDescription === "Final";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const period = liveScore?.period;
+  const displayClock = liveScore?.displayClock;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const fouls = liveScore?.fouls;
@@ -124,28 +135,26 @@ export default function GameDetailsScreen() {
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
   const lastPlay = liveScore?.lastPlay;
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-  const displayClock = liveScore?.displayClock;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
   const playerStats = liveScore?.playerStats ?? [];
   const teamStats = liveScore?.teamStats ?? [];
   const homeScore = liveScore?.home.total ?? 0;
   const awayScore = liveScore?.away.total ?? 0;
-  const period = liveScore?.period;
   const neutralSite = details?.neutralSite;
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) ?? 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
+  const holidayLabel = getHolidayLabel(gameDateObj);
+  const headline = headlineText ?? holidayLabel ?? "";
+  const isGameLoading = !details || !liveScore;
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
   const homeFoulPlayers =
     liveScore?.foulTrouble
       ?.find((t) => String(t.team?.id) === String(homeEspnId))
@@ -197,7 +206,7 @@ export default function GameDetailsScreen() {
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
-    if (isLoading || !liveScore || !homeTeam || !awayTeam) {
+    if (isGameLoading || !details || !homeTeam || !awayTeam) {
       navigation.setOptions({
         header: () => null,
       });
@@ -221,40 +230,16 @@ export default function GameDetailsScreen() {
         />
       ),
     });
-  }, [navigation, isLoading, liveScore, homeCode, awayCode]);
+  }, [navigation, isGameLoading, details, homeCode, awayCode]);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => setIsLoading(false), 400);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const isChristmasDay =
-    gameDateObj.getMonth() === 11 && gameDateObj.getDate() === 25;
-  const isNewYearsDay =
-    gameDateObj.getMonth() === 0 && gameDateObj.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
-
-  const headline = headlineText ?? holidayLabel ?? "";
-
-  const lineScore = liveScore?.periodScores?.length
-    ? {
-        home: liveScore.periodScores.map((p) => p.home.toString()),
-        away: liveScore.periodScores.map((p) => p.away.toString()),
-      }
-    : undefined;
-
-  if (isLoading || !liveScore) {
+  if (isGameLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
-
+  if (!parsedGame || !homeTeam || !awayTeam) return <View />;
   return (
     <>
       <ScrollView
@@ -268,8 +253,10 @@ export default function GameDetailsScreen() {
           headlineText={headline}
           homeScore={homeScore}
           awayScore={awayScore}
-          home={home}
-          away={away}
+          home={homeTeam}
+          away={awayTeam}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
           homeBonusState={homeBonus}
@@ -298,20 +285,18 @@ export default function GameDetailsScreen() {
               )}
 
               {!isFinal && (
-                <WinPredictionVote
+                <FanPredictionVote
                   gameId={gameId}
                   awayTeam={{
                     id: awayTeamId,
                     code: awayCode,
-                    logo: awayTeam?.logo,
-                    logoLight: awayTeam?.logoLight,
+                    logo: headerAwayLogo,
                     color: awayTeam?.color,
                   }}
                   homeTeam={{
                     id: homeTeamId,
                     code: homeCode,
-                    logo: homeTeam?.logo,
-                    logoLight: homeTeam?.logoLight,
+                    logo: headerHomeLogo,
                     color: homeTeam?.color,
                   }}
                 />
@@ -331,6 +316,7 @@ export default function GameDetailsScreen() {
                     chance: awayChance,
                   }}
                   size={180}
+                  isDark={isDark}
                 />
               )}
 
@@ -348,6 +334,7 @@ export default function GameDetailsScreen() {
                   linescore={lineScore}
                   homeCode={homeCode}
                   awayCode={awayCode}
+                  isDark={isDark}
                 />
               )}
 
@@ -355,6 +342,7 @@ export default function GameDetailsScreen() {
                 gameId={gameId.toString()}
                 awayTeamId={awayTeamId}
                 homeTeamId={homeTeamId}
+                isDark={isDark}
               />
 
               {isHalftime && inProgress && (
@@ -368,16 +356,20 @@ export default function GameDetailsScreen() {
                   homePlayers={homeFoulPlayers}
                   awayPlayers={awayFoulPlayers}
                   league={"NBA"}
+                  isDark={isDark}
                 />
               )}
 
-              {!isScheduled && (
+              {(isHalftime || inProgress || isFinal) && (
                 <BoxScore
-                  gameId={gameId.toString()}
-                  homeTeamId={homeTeamId}
-                  awayTeamId={awayTeamId}
+                  playerStats={playerStats}
+                  awayTeamId={Number(awayEspnId)}
+                  homeTeamId={Number(homeEspnId)}
+                  isDark={isDark}
+                  league={"NBA"}
                 />
               )}
+
               {!isScheduled && (
                 <ShotChart
                   plays={plays}
@@ -392,24 +384,23 @@ export default function GameDetailsScreen() {
                   homeTeamId={Number(homeEspnId)}
                   awayTeamId={Number(awayEspnId)}
                   league={"NBA"}
+                  isDark={isDark}
                 />
               )}
               {!isScheduled && (
-                <GameSummary
-                  plays={plays ?? []}
-                  homeTeamId={String(homeEspnId)}
-                  awayTeamId={String(awayEspnId)}
-                  league="NBA"
-                />
+                <GameSummary plays={plays ?? []} league="NBA" isDark={isDark} />
               )}
               <GameTeamStats
                 stats={teamStats}
                 gameStatusDescription={gameStatusDescription}
+                isDark={isDark}
               />
 
               <HeadToHeadGames
                 awayTeamId={awayTeamId}
                 homeTeamId={homeTeamId}
+                homeTeamColor={homeTeam?.color}
+                awayTeamColor={awayTeam?.color}
                 isDark={isDark}
               />
 
@@ -430,18 +421,19 @@ export default function GameDetailsScreen() {
 
               <TeamInjuries
                 injuries={injuries}
-                lighter={false}
                 teamPlayersMap={teamPlayersMap}
+                isDark={isDark}
               />
 
               {highlights.length > 0 && (
-                <HighlightVideoList highlights={highlights} />
+                <HighlightVideoList highlights={highlights} isDark={isDark} />
               )}
 
               <Officials
                 officials={officials ?? []}
                 loading={false}
                 error={null}
+                isDark={isDark}
               />
 
               <GameLocation
@@ -453,6 +445,7 @@ export default function GameDetailsScreen() {
                 weather={weather}
                 loading={weatherLoading}
                 error={weatherError}
+                isDark={isDark}
               />
             </>
           )}

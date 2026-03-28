@@ -1,20 +1,20 @@
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { CFBTeam } from "types/cfb";
+import { Team } from "types/nfl";
+
 type TeamInfoProps = {
-  team: CFBTeam;
+  team: Team;
   logo: any;
   name: string;
-  rank?: number;
+  rank?: number | null;
   score: number;
   opponentScore: number;
   record?: string;
   possessionTeamId?: number | null;
   side: "home" | "away";
   timeouts?: number;
-  lighter?: boolean;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function TeamInfo({

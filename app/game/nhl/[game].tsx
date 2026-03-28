@@ -4,7 +4,7 @@ import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
 import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
@@ -18,55 +18,54 @@ import { useScrollFade } from "hooks/useScrollFade";
 import { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { NHLGame } from "types/nhl";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
-  const { game } = useLocalSearchParams();
+  const { game } = useLocalSearchParams<{ game: string }>();
   const isDark = useColorScheme() === "dark";
   const navigation = useNavigation();
-  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
-    useScrollFade();
+  const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const parsedGame = useMemo(() => {
+  // Parse game safely before hooks that depend on it
+  let parsedGame: NHLGame | null = null;
+  if (typeof game === "string") {
     try {
-      return typeof game === "string" ? JSON.parse(game) : null;
-    } catch {
-      return null;
+      parsedGame = JSON.parse(game) as NHLGame;
+    } catch (e) {
+      console.warn("Failed to parse game:", game);
     }
-  }, [game]);
+  }
 
-  if (!parsedGame?.id) return null;
-
-  const { home, away } = parsedGame;
-
-  const timestamp = parsedGame?.timestamp;
+  const teams = parsedGame?.teams;
+  const gameId = parsedGame?.id ?? null;
+  const timestamp = parsedGame?.timestamp ?? "";
 
   const {
-    date: gameDate,
     iso: gameDateStr,
     formattedDate,
     formattedTime,
-  } = getGameDate(timestamp);
+  } = getGameDate(Number(timestamp));
 
-  const homeId = home?.id ?? parsedGame?.teams?.home?.id;
-  const awayId = away?.id ?? parsedGame?.teams?.away?.id;
+  const homeTeam = getNHLTeam(teams?.home?.id ?? 0) ?? null;
+  const awayTeam = getNHLTeam(teams?.away?.id ?? 0) ?? null;
 
-  if (!homeId || !awayId) return null;
-  const homeTeam = getNHLTeam(homeId);
-  const awayTeam = getNHLTeam(awayId);
-  const homeTeamId = homeTeam?.id;
-  const awayTeamId = awayTeam?.id;
-  const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
-  const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
-  const homeLogo = getNHLTeamLogo(home?.id, isDark);
-  const awayLogo = getNHLTeamLogo(away?.id, isDark);
+  const homeTeamId = homeTeam?.id ?? 0;
+  const awayTeamId = awayTeam?.id ?? 0;
   const homeEspnId = homeTeam?.espnID;
   const awayEspnId = awayTeam?.espnID;
 
-  if (!homeTeam || !awayTeam) return null;
+  const homeLogo = getNHLTeamLogo(homeTeamId, isDark);
+  const awayLogo = getNHLTeamLogo(awayTeamId, isDark);
+  const headerHomeLogo = getNHLTeamLogo(homeTeamId, true);
+  const headerAwayLogo = getNHLTeamLogo(awayTeamId, true);
+
+  // ✅ All hooks before any early returns
+  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
 
   const {
     score: liveScore,
@@ -74,14 +73,61 @@ export default function GameDetailsScreen() {
     loading,
   } = useHockeyDetails(
     "nhl",
-    String(awayEspnId),
-    String(homeEspnId),
+    String(awayEspnId ?? ""),
+    String(homeEspnId ?? ""),
     gameDateStr,
   );
 
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
+  const venue = details?.venue;
   const neutralSite = details?.neutralSite;
+
+  const resolvedVenue = useMemo(
+    () =>
+      resolveVenue({
+        espnVenue: venue,
+        homeTeam,
+        isNeutralSite: neutralSite,
+        league: "NHL",
+      }),
+    [venue, homeTeam, neutralSite],
+  );
+
+  useLayoutEffect(() => {
+    if (!liveScore || !homeTeam || !awayTeam) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          tabName="Game"
+          onBack={goBack}
+          homeTeamId={homeTeamId}
+          awayTeamId={awayTeamId}
+          homeTeamCode={homeCode}
+          awayTeamCode={awayCode}
+          homeLogo={headerHomeLogo}
+          awayLogo={headerAwayLogo}
+          isNeutralSite={neutralSite}
+          league="NHL"
+        />
+      ),
+    });
+  }, [navigation, liveScore, homeCode, awayCode, neutralSite]);
+
+  // ✅ Early returns AFTER all hooks
+  if (!parsedGame?.id || !homeTeam || !awayTeam) return null;
+
+  if (loading || !liveScore) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomActivityIndicator isDark={isDark} />
+      </View>
+    );
+  }
+
+  // Derived values (no hooks below this point)
+  const broadcastText = getBroadcastDisplay(details?.broadcasts);
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const plays = liveScore?.plays;
@@ -95,19 +141,16 @@ export default function GameDetailsScreen() {
   const headlineText = details?.headline;
   const seriesSummary = details?.seriesSummary?.summary;
   const period = liveScore?.period;
-  const clock = liveScore?.displayClock ?? "0:00";
-  const homeScore =
-    liveScore?.home?.total ?? parsedGame?.scores?.home?.total ?? 0;
-  const awayScore =
-    liveScore?.away?.total ?? parsedGame?.scores?.away?.total ?? 0;
+  const displayClock = liveScore?.displayClock ?? "0:00";
+  const homeScore = liveScore?.home?.total ?? parsedGame?.scores?.home ?? 0;
+  const awayScore = liveScore?.away?.total ?? parsedGame?.scores?.away ?? 0;
   const homeRecord = details?.records?.home.overall ?? "0-0";
   const awayRecord = details?.records?.away.overall ?? "0-0";
-  const homeTimeouts = liveScore?.timeouts.home ?? 0;
-  const awayTimeouts = liveScore?.timeouts.away ?? 0;
+  const homeTimeouts = liveScore?.timeouts?.home ?? 0;
+  const awayTimeouts = liveScore?.timeouts?.away ?? 0;
   const officials = details?.officials ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
-  const venue = details?.venue;
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -116,56 +159,6 @@ export default function GameDetailsScreen() {
       }
     : undefined;
 
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: venue,
-        homeTeam: homeTeam,
-        isNeutralSite: neutralSite,
-        league: "NHL",
-      }),
-    [venue, homeTeam, neutralSite],
-  );
-
-  useLayoutEffect(() => {
-    // Hide header while loading or missing live data
-    if (loading || !liveScore || !homeTeam || !awayTeam) {
-      navigation.setOptions({
-        header: () => null,
-      });
-      return;
-    }
-
-    // Show header once everything is ready
-    navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          tabName="Game"
-          onBack={goBack}
-          homeTeamId={homeTeamId}
-          awayTeamId={awayTeamId}
-          homeTeamCode={homeCode}
-          awayTeamCode={awayCode}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          isNeutralSite={neutralSite}
-          league="NHL"
-        />
-      ),
-    });
-  }, [navigation, loading, liveScore, homeCode, awayCode, neutralSite]);
-
-  if (loading || !liveScore) {
-    return (
-      <View style={styles.loadingContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
-
-  // -----------------------------------------------------
-  // 🧱 UI Render
-  // -----------------------------------------------------
   return (
     <>
       <ScrollView
@@ -184,7 +177,7 @@ export default function GameDetailsScreen() {
           awayScore={awayScore}
           isDark={isDark}
           period={period}
-          displayClock={clock}
+          displayClock={displayClock}
           formattedDate={formattedDate}
           time={formattedTime}
           networkString={broadcastText}
@@ -203,19 +196,17 @@ export default function GameDetailsScreen() {
 
               {!isFinal && (
                 <FanPredictionVote
-                  gameId={parsedGame.id}
+                  gameId={String(gameId)}
                   awayTeam={{
-                    id: awayTeam.id,
-                    code: awayTeam.code,
-                    logo: awayTeam.logo,
-                    logoLight: awayTeam.logoLight,
+                    id: awayTeamId,
+                    code: awayCode,
+                    logo: headerAwayLogo,
                     color: awayTeam.color,
                   }}
                   homeTeam={{
-                    id: homeTeam.id,
-                    code: homeTeam.code,
-                    logo: homeTeam.logo,
-                    logoLight: homeTeam.logoLight,
+                    id: homeTeamId,
+                    code: homeCode,
+                    logo: headerHomeLogo,
                     color: homeTeam.color,
                   }}
                 />
@@ -227,6 +218,7 @@ export default function GameDetailsScreen() {
                   homeCode={homeCode}
                   awayCode={awayCode}
                   league="NHL"
+                  isDark={isDark}
                 />
               )}
 
@@ -235,39 +227,39 @@ export default function GameDetailsScreen() {
                   plays={plays}
                   homeTeamId={String(homeEspnId)}
                   awayTeamId={String(awayEspnId)}
+                  isDark={isDark}
                 />
               )}
 
-              <GameSummary plays={plays ?? []} />
-
-              <HighlightVideoList highlights={highlights} />
+              <GameSummary plays={plays ?? []} isDark={isDark} />
+              <HighlightVideoList highlights={highlights} isDark={isDark} />
 
               <NHLInjuries
                 injuries={injuries}
                 loading={loading}
                 error={null}
-                awayTeamAbbr={awayTeam.code}
-                homeTeamAbbr={homeTeam.code}
+                homeTeamId={String(homeEspnId)}
+                awayTeamId={String(awayEspnId)}
+                isDark={isDark}
               />
 
               <Officials
-                officials={officials ?? []}
+                officials={officials}
                 loading={loading}
                 error={null}
+                isDark={isDark}
               />
+
               <GameLocation
                 venueImage={resolvedVenue.image}
                 venueName={resolvedVenue.name}
-                location={
-                  resolvedVenue.city
-                    ? `${resolvedVenue.city}`
-                    : resolvedVenue.name
-                }
+                location={resolvedVenue.city ?? resolvedVenue.name}
                 address={resolvedVenue.address}
                 venueCapacity={String(resolvedVenue.capacity ?? "")}
                 venueAttendance={undefined}
                 loading={false}
                 error={null}
+                isDark={isDark}
               />
             </>
           )}
@@ -275,7 +267,7 @@ export default function GameDetailsScreen() {
       </ScrollView>
 
       <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton gameId={parsedGame.id} />
+        <MemoizedFloatingChatButton gameId={String(gameId)} />
       </Animated.View>
     </>
   );

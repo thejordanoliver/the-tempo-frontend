@@ -4,14 +4,13 @@ import { getTeamInfo, getTeamLogo, neutralVenues } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useLastFiveGames } from "hooks/NBAHooks/useLastFiveGames";
 import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameStatistics } from "hooks/useGameStatistics";
-import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
@@ -70,14 +69,14 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeEspnId = Number(home?.espnID) || 0;
   const awayEspnId = Number(away?.espnID) || 0;
 
-  const homeName = home?.code ?? home?.name ?? emptyHomeTeam.code;
-  const awayName = away?.code ?? home?.name ?? emptyAwayTeam.code;
+  const homeName = home?.code ?? home?.name;
+  const awayName = away?.code ?? home?.name;
 
   const homeLogo = getTeamLogo(homeId, true);
   const awayLogo = getTeamLogo(awayId, true);
 
-  const homeColor = home?.color ?? emptyHomeTeam.color ?? "";
-  const awayColor = away?.color ?? emptyAwayTeam.color ?? "";
+  const homeColor = home?.color ?? "";
+  const awayColor = away?.color ?? "";
 
   // --- Team stats, weather, details ---
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
@@ -110,7 +109,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     new Date(game.date).toISOString().split("T")[0],
   );
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const homeTimeouts = liveScore?.timeouts.home ?? 0;
   const awayTimeouts = liveScore?.timeouts.away ?? 0;
@@ -118,6 +116,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const awayBonus = fouls?.away?.bonusState;
   const homeBonus = fouls?.home?.bonusState;
   const injuries = details?.injuries ?? [];
+  const playerStats = liveScore?.playerStats ?? [];
   const officials = details?.officials ?? [];
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -247,7 +246,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>
@@ -312,6 +311,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                   awayChance={awayChance}
                   lineScore={lineScore}
                   gameStats={gameStats}
+                  playerStats={playerStats}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   injuries={injuries}

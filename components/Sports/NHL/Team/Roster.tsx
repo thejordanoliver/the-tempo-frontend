@@ -1,15 +1,10 @@
 // components/TeamPlayerList.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { NHLPlayer } from "types/nhl";
-import { globalStyles } from "constants/Styles";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
+import { globalStyles } from "constants/Styles";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
+import { NHLPlayer } from "types/nhl";
 
 interface RosterProps {
   players: NHLPlayer[];
@@ -64,38 +59,28 @@ export default function Roster({
 
   const sortByJersey = (list: NHLPlayer[]) =>
     [...list].sort(
-      (a, b) =>
-        parseInt(a.jersey ?? "0", 10) -
-        parseInt(b.jersey ?? "0", 10)
+      (a, b) => parseInt(a.jersey ?? "0", 10) - parseInt(b.jersey ?? "0", 10),
     );
 
   // Logical NHL order
   const positionOrder = ["C", "LW", "RW", "D", "LD", "RD", "G"];
 
-  const sortedPositions = Object.keys(positionGroups).sort(
-    (a, b) => {
-      const indexA = positionOrder.indexOf(a);
-      const indexB = positionOrder.indexOf(b);
+  const sortedPositions = Object.keys(positionGroups).sort((a, b) => {
+    const indexA = positionOrder.indexOf(a);
+    const indexB = positionOrder.indexOf(b);
 
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
 
-      return indexA - indexB;
-    }
-  );
+    return indexA - indexB;
+  });
 
-  if (loading)
-    return <PlayerCardSkeletonList count={15} showHeader={false} />;
+  if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;
 
-  if (error)
-    return <Text style={global.errorText}>{error}</Text>;
+  if (error) return <Text style={global.errorText}>{error}</Text>;
 
   if (players.length === 0)
-    return (
-      <Text style={global.emptyText}>
-        No players found.
-      </Text>
-    );
+    return <Text style={global.emptyText}>No players found.</Text>;
 
   return (
     <ScrollView
@@ -115,22 +100,21 @@ export default function Roster({
       {sortedPositions.map((position) => {
         const groupPlayers = positionGroups[position];
 
-        const fullPositionName =
-          positionNameMap[position] ?? position;
+        const fullPositionName = positionNameMap[position] ?? position;
 
         return (
           <View key={position}>
-            <HeadingTwo>{fullPositionName}</HeadingTwo>
+            <HeadingTwo isDark={isDark}>{fullPositionName}</HeadingTwo>
 
             {sortByJersey(groupPlayers).map((player) => (
-              <View
-                key={player.id}
-                style={{ marginBottom: 12 }}
-              >
+              <View key={player.id} style={{ marginBottom: 12 }}>
                 <PlayerCard
                   id={Number(player.id)}
                   name={player.name ?? ""}
-                  position={positionNameMap[player.position?.toUpperCase() ?? ""] ?? player.position}
+                  position={
+                    positionNameMap[player.position?.toUpperCase() ?? ""] ??
+                    player.position
+                  }
                   team={teamFullName}
                   avatarUrl={player.imageUrl}
                   number={player.jersey}

@@ -1,6 +1,5 @@
 import { Colors, Fonts } from "constants/Styles";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
-import { getTeamLogo } from "constants/teams";
 import Animated, {
   SlideInDown,
   SlideOutUp,
@@ -84,7 +83,6 @@ export default function PlayerItem({
               <Text style={styles.jerseyNumber}>#{props.jerseyNumber}</Text>
             </View>
             <Text style={styles.code}>{props.team.code}</Text>
-            
           </View>
         </View>
 

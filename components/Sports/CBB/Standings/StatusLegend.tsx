@@ -34,7 +34,7 @@ export const StatusLegend = () => {
 
   return (
     <View style={styles.legendContainer}>
-      <HeadingTwo>Status Legend</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Status Legend</HeadingTwo>
       <View style={styles.legendItemsContainer}>
         {Object.entries(statusCodeToLabel).map(([code, label]) => (
           <View key={code} style={styles.legendItem}>

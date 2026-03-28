@@ -1,21 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
-import CombinedGamesList from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
+import CombinedGamesList from "components/League/CombinedGamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
-import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import TabBar from "components/TabBar";
 import { Colors } from "constants/Styles";
 import { useHomeData } from "hooks/useHomeData";
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
   const isDark = useColorScheme() === "dark";
-  const styles = homeStyles(isDark);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const styles = homeStyles(isDark, insets.top);
+
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
 
   const pagerRef = useRef<PagerView>(null);
@@ -34,13 +36,14 @@ export default function HomeScreen() {
     loading,
   } = useHomeData(selectedTab);
 
-  useLayoutEffect(() => {
+  // --------------------------------------------------
+  // Header
+  // --------------------------------------------------
+  React.useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle title="Home" tabName="Home" isTeamScreen={false} />
-      ),
+      header: () => <CustomHeaderTitle tabName="Home" />,
     });
-  }, [navigation, isDark]);
+  }, [navigation]);
 
   const handleTabPress = (tab: "scores" | "news") => {
     setSelectedTab(tab);
@@ -55,6 +58,7 @@ export default function HomeScreen() {
             tabs={["scores", "news"]}
             selected={selectedTab}
             onTabPress={handleTabPress}
+            isDark={isDark}
           />
         </View>
 
@@ -80,15 +84,12 @@ export default function HomeScreen() {
                 />
               }
             >
-              {loading ? (
-                <FavoritesScrollSkeleton />
-              ) : (
-                <FavoritesScroll
-                  favoriteTeamIds={favorites}
-                  onDragStart={() => setIsDraggingFavorites(true)}
-                  onDragEnd={() => setIsDraggingFavorites(false)}
-                />
-              )}
+              <FavoritesScroll
+                favoriteTeamIds={favorites}
+                loading={loading}
+                onDragStart={() => setIsDraggingFavorites(true)}
+                onDragEnd={() => setIsDraggingFavorites(false)}
+              />
 
               <CombinedGamesList
                 gamesByCategory={gamesByCategory}

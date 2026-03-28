@@ -2,19 +2,17 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import Roster from "components/Sports/CFB/Team/Roster";
-import FootballRosterStats from "components/Sports/CFB/Team/RosterStats";
+import { Roster } from "components/Sports/CFB/Team/Roster";
+import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { teams } from "constants/teamsNFL";
+import { nflTeams } from "constants/teamsNFL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useNFLTeamGames } from "hooks/NFLHooks/useNFLTeamGames";
+import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
+import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useTeamHighlights } from "hooks/useTeamHighlights";
-import { useTeamNews } from "hooks/useTeamNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -28,6 +26,8 @@ type PageSelectedEvent = {
 };
 
 export default function TeamDetailScreen() {
+  const isDark = useColorScheme() === "dark";
+  const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
@@ -37,74 +37,30 @@ export default function TeamDetailScreen() {
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeasonYear().toString(),
   );
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const styles = teamDetailStyles;
-
-  const tabs = [
-    "schedule",
-    "news",
-    "roster",
-    "stats",
-    "standings",
-    "forum",
-  ] as const;
-  const [selectedTab, setSelectedTab] =
-    useState<(typeof tabs)[number]>("schedule");
   const rosterRef = useRef<{ refresh: () => void }>(null);
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("NFL");
   const pagerRef = useRef<PagerView>(null);
-
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
+  const handlePageChange = (index: number) => {
+    setSelectedTab(indexToTab(index));
+  };
 
   const team = useMemo(
-    () => (teamIdNum ? teams.find((t) => Number(t.id) === teamIdNum) : null),
+    () => (teamIdNum ? nflTeams.find((t) => Number(t.id) === teamIdNum) : null),
     [teamIdNum],
   );
 
   const {
-    games: rawTeamGames,
+    games: teamGames,
     loading: gamesLoading,
+    error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useNFLTeamGames(teamIdNum);
-
-  const {
-    highlights: teamHighlights,
-    loading: highlightsLoading,
-    error: highlightsError,
-  } = useTeamHighlights("nfl", team?.fullName ?? "", 5);
-
-  const {
-    articles: newsArticles,
-    loading: newsLoading,
-    error: newsError,
-    refreshNews,
-  } = useTeamNews(team?.fullName ?? "", "NFL");
-
-  const combinedNewsAndHighlights = useMemo(() => {
-    const taggedNews = newsArticles.map((item) => ({
-      ...item,
-      itemType: "news" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-    }));
-
-    const taggedHighlights = teamHighlights.map((item) => ({
-      ...item,
-      itemType: "highlight" as const,
-      publishedAt: item.publishedAt ?? new Date().toISOString(),
-      duration: String(item.duration), // ✅ fix type mismatch
-    }));
-
-    const combined = [...taggedNews, ...taggedHighlights];
-
-    combined.sort((a, b) => {
-      const aDate = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bDate = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return bDate - aDate;
-    });
-
-    return combined;
-  }, [newsArticles, teamHighlights]);
+  } = useFootballTeamGames(teamIdNum ?? 0, "2022", 2);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -147,7 +103,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -157,25 +113,20 @@ export default function TeamDetailScreen() {
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-          pagerRef.current?.setPage(tabToIndex(tab));
-        }}
+        onTabPress={handleTabPress}
+        isDark={isDark}
       />
 
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
-        initialPage={tabToIndex(selectedTab)}
-        onPageSelected={(e: PageSelectedEvent) => {
-          const index = e.nativeEvent.position;
-          setSelectedTab(indexToTab(index));
-        }}
+        initialPage={0}
+        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
         <View key="schedule" style={{ flex: 1 }}>
           <NFLGamesList
-            games={rawTeamGames}
+            games={teamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
@@ -184,14 +135,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}>
-          <NewsHighlightsList
-            items={combinedNewsAndHighlights}
-            loading={newsLoading || highlightsLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-          />
-        </ScrollView>
+        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
 
         {/* Roster Page */}
         <View key="roster" style={{ flex: 1 }}>
@@ -209,7 +153,6 @@ export default function TeamDetailScreen() {
             <FootballRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
-              league="nfl"
             />
           )}
         </ScrollView>

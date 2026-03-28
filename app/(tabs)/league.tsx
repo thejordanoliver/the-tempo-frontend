@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
-import CombinedGamesList, {
-  CombinedGamesSection,
-} from "components/CombinedGamesList";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import CustomRefreshControl from "components/CustomRefreshControl";
 import DateNavigator from "components/DateNavigator";
+import CombinedGamesList, {
+  CombinedGamesSection,
+} from "components/League/CombinedGamesList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -15,20 +15,22 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
-import { useCFBSeasonGames } from "hooks/CFBHooks/useCFBSeasonGames";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
-import { useNFLSeasonGames } from "hooks/NFLHooks/useNFLSeasonGames";
+import { useFootballSeasonGames } from "hooks/NFLHooks/useFootballSeasonGames";
 import * as React from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getMLBSeason, getNBASeason } from "utils/dateUtils";
+import {
+  getFootballSeasonYear,
+  getMLBSeason,
+  getNBASeason,
+} from "utils/dateUtils";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function LeagueScreen() {
-  const currentYear = "2025";
   const nbaCalendarYear = getNBASeason();
   const mlbCalendarYear = getMLBSeason();
   const navigation = useNavigation();
@@ -78,13 +80,13 @@ export default function LeagueScreen() {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFLGames,
-  } = useNFLSeasonGames(currentYear, "1");
+  } = useFootballSeasonGames(getFootballSeasonYear(), 1);
 
   const {
     games: cfbGames,
     loading: cfbLoading,
     refetch: refreshCFBGames,
-  } = useCFBSeasonGames(currentYear, "2");
+  } = useFootballSeasonGames(getFootballSeasonYear(), 2);
 
   // --------------------------------------------------
   // Load Favorites

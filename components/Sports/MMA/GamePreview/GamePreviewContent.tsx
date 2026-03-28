@@ -1,6 +1,6 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 
 import React from "react";
 import { View } from "react-native";
@@ -28,7 +28,7 @@ export default function GamePreviewContent({
       contentContainerStyle={styles.contentContainerStyle}
     >
       <View style={styles.bottomSheetScrollViewWrapper}>
-        <HighlightVideoList highlights={highlights} lighter />
+        <HighlightVideoList highlights={highlights} isDark />
 
         <GameLocation
           venueImage={resolvedVenueImage}
@@ -40,7 +40,7 @@ export default function GamePreviewContent({
           weather={weather}
           loading={false}
           error={null}
-          lighter
+          isDark
         />
       </View>
     </BottomSheetScrollView>

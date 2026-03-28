@@ -1,10 +1,10 @@
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NFLTeam } from "types/nfl";
+import { Team } from "types/nfl";
 
 type TeamInfoProps = {
-  team: NFLTeam;
+  team: Team;
   logo: any;
   name: string;
   rank?: number;
@@ -14,8 +14,7 @@ type TeamInfoProps = {
   possessionTeamId?: number | null;
   side: "home" | "away";
   timeouts?: number;
-  lighter?: boolean;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function TeamInfo({

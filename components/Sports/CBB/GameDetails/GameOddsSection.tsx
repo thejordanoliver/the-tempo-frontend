@@ -45,7 +45,7 @@ export default function GameOddsSection({
 
   return (
     <View>
-      <HeadingTwo>Betting Odds</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Betting Odds</HeadingTwo>
       <View>
         {odds.map((game) => (
           <OddsCard key={game.id} league="cbb" game={game} error={error} />

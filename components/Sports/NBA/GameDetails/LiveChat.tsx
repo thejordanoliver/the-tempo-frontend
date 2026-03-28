@@ -3,6 +3,7 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import userPlaceholderImage from "assets/Placeholders/userPlaceholder.png";
 import { Fonts } from "constants/Styles";
 import { format } from "date-fns"; // optional helper to get date string
 import { BlurView } from "expo-blur";
@@ -18,11 +19,10 @@ import {
   View,
 } from "react-native";
 import { io, Socket } from "socket.io-client";
+import { BASE_URL } from "utils/apiClient";
 import ChatMessage from "./ChatMessage";
-
 const SOCKET_URL =
   process.env.EXPO_PUBLIC_SOCKET_URL || "http://localhost:4000";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 
 interface Message {
   user: string;
@@ -50,7 +50,7 @@ export default function LiveChatBottomSheet({
   const bottomSheetRef = useRef<BottomSheet>(null);
   const isDark = useColorScheme() === "dark";
   const userName = user?.username ?? "Anonymous";
-  const userProfile = user?.profile_image;
+  const userProfile = user?.profile_image ?? userPlaceholderImage;
   const [userCount, setUserCount] = useState(0);
   const [sheetHeight, setSheetHeight] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);

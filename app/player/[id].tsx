@@ -1,17 +1,21 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import GameCard from "components/Sports/NBA/Games/GameCard";
+import LatestGame from "components/Sports/NBA/Player/LatestGame";
 import PlayerAwardList from "components/Sports/NBA/Player/PlayerAwardList";
 import PlayerHeader from "components/Sports/NBA/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NBA/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
+import { globalStyles } from "constants/Styles";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { usePlayerDetail } from "hooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
+  const styles = playerScreenStyles;
   const isDark = useColorScheme() === "dark";
+  const global = globalStyles(isDark);
   const { id, teamId } = useLocalSearchParams();
   const router = useRouter();
   const navigation = useNavigation();
@@ -22,7 +26,7 @@ export default function PlayerDetailScreen() {
     error,
     team,
     teamObj,
-    enrichedLastGame,
+    lastGame,
     teamGameLoading,
     calculateAge,
     calculateExperience,
@@ -35,8 +39,7 @@ export default function PlayerDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logo}
-          logoLight={team?.logoLight}
+          logo={team?.logoLight || team?.logo}
           teamColor={team?.color}
           teamCode={team?.code}
           isTeamScreen={!!teamObj}
@@ -47,11 +50,21 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamObj, isDark]);
 
-  if (loading) return null;
-  if (error || !player) return null;
+  if (loading)
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
+      </View>
+    );
+  if (error || !player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         player={player}
         avatarUrl={player.headshot_url}
@@ -64,29 +77,18 @@ export default function PlayerDetailScreen() {
       />
 
       {player.active && (
-        <View style={{ paddingHorizontal: 12,marginTop: 24 }}>
-          <SeasonStatCard
-            playerId={player.player_id}
-            teamColor={teamObj?.secondaryColor}
-            teamColorDark={teamObj?.secondaryColor}
-          />
-        </View>
+        <SeasonStatCard
+          playerId={player.player_id}
+          teamColor={teamObj?.secondaryColor}
+          teamColorDark={teamObj?.secondaryColor}
+        />
       )}
 
-      {enrichedLastGame && player.active && (
-        <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-          <HeadingTwo>Last Game</HeadingTwo>
-          <GameCard game={enrichedLastGame} />
-        </View>
-      )}
+      <LatestGame game={lastGame} loading={teamGameLoading} isDark={isDark} />
 
-      <View style={{ marginTop: 24 }}>
-        <PlayerStatTable playerId={player.player_id} />
-      </View>
+      <PlayerStatTable playerId={player.player_id} />
 
-      <View style={{ marginTop: 24 }}>
-        <PlayerAwardList player={player} />
-      </View>
+      <PlayerAwardList player={player} />
     </ScrollView>
   );
 }

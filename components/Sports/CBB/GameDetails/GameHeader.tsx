@@ -1,14 +1,13 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet, Text, View } from "react-native";
+import { CBBTeam } from "types/types";
 import { formatCBBQuarter } from "utils/games";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  homeTeamData: any;
-  awayTeamData: any;
-  home: { name: string; record?: string };
-  away: { name: string; record?: string };
+  home: CBBTeam | undefined;
+  away: CBBTeam | undefined;
   rankHome: number | undefined | null;
   rankAway: number | undefined | null;
   homeScore: number;
@@ -35,8 +34,6 @@ type Props = {
 };
 
 export default function GameHeader({
-  homeTeamData,
-  awayTeamData,
   homeLogo,
   awayLogo,
   headlineText,
@@ -83,10 +80,10 @@ export default function GameHeader({
         <TeamRow
           key={`away-${refreshTick}`}
           team={{
-            id: !isWomen ? awayTeamData.id : undefined,
-            wid: isWomen ? awayTeamData.wid : undefined,
-            code: awayTeamData.code,
-            name: away.name,
+            id: !isWomen ? away?.id : undefined,
+            wid: isWomen ? away?.wid : undefined,
+            code: away?.code,
+            name: away?.name,
             record: awayRecord,
             logo:
               awayLogo || require("assets/Placeholders/teamPlaceholder.png"),
@@ -117,10 +114,10 @@ export default function GameHeader({
         <TeamRow
           key={`home-${refreshTick}`}
           team={{
-            id: !isWomen ? homeTeamData.id : undefined,
-            wid: isWomen ? homeTeamData.wid : undefined,
-            code: homeTeamData.code,
-            name: home.name,
+            id: !isWomen ? home?.id : undefined,
+            wid: isWomen ? home?.wid : undefined,
+            code: home?.code,
+            name: home?.name,
             record: homeRecord,
             logo:
               homeLogo || require("assets/Placeholders/teamPlaceholder.png"),

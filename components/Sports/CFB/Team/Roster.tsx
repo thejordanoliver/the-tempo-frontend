@@ -1,11 +1,10 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import { Colors, Fonts } from "constants/Styles";
-
+import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
+import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
-  ActivityIndicator,
   RefreshControl,
   SectionList,
   StyleSheet,
@@ -41,7 +40,7 @@ const POSITION_ORDER = [
   "LS",
 ];
 
-const Roster = forwardRef(({ teamId, teamName, league }: RosterProps, ref) => {
+export const Roster = forwardRef(({ teamId, teamName, league }: RosterProps, ref) => {
   const {
     players: teamPlayers,
     loading,
@@ -83,27 +82,34 @@ const Roster = forwardRef(({ teamId, teamName, league }: RosterProps, ref) => {
 
   const isDark = useColorScheme() === "dark";
   const styles = rosterStyles(isDark);
+  const global = globalStyles(isDark);
 
   if (loading && !refreshing) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator />
+      <View style={styles.loadingContainer}>
+        <PlayerCardSkeletonList count={75} />
       </View>
     );
   }
 
   if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
   }
 
   if (!teamPlayers || teamPlayers.length === 0) {
-    return <Text style={styles.errorText}>No players found.</Text>;
+    return <Text style={global.emptyText}>No players found.</Text>;
   }
 
   return (
     <SectionList
       sections={sections}
-      keyExtractor={(item) => item.player_id.toString()}
+      keyExtractor={(item, index) =>
+        item.player_id ? String(item.player_id) : `player-${index}`
+      }
       contentContainerStyle={styles.listContent}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       stickySectionHeadersEnabled={false}
@@ -116,7 +122,7 @@ const Roster = forwardRef(({ teamId, teamName, league }: RosterProps, ref) => {
       }
       renderItem={({ item }) => (
         <PlayerCard
-          id={item.player_id}
+          id={item.player_id ?? 0}
           name={item.name}
           position={item.position ?? ""}
           avatarUrl={item.avatarUrl ?? undefined}
@@ -126,22 +132,21 @@ const Roster = forwardRef(({ teamId, teamName, league }: RosterProps, ref) => {
         />
       )}
       renderSectionHeader={({ section: { title } }) => (
-        <HeadingTwo>{title}</HeadingTwo>
+        <HeadingTwo isDark={isDark}>{title}</HeadingTwo>
       )}
       renderSectionFooter={() => <View style={{ height: 12 }} />}
     />
   );
 });
 
-const rosterStyles = (isDark: boolean) =>
+export const rosterStyles = (isDark: boolean) =>
   StyleSheet.create({
     listContent: {
       paddingBottom: 100,
       paddingHorizontal: 12,
     },
-    center: {
-      marginTop: 40,
-      alignItems: "center",
+    loadingContainer: {
+      paddingBottom: 100,
     },
     errorText: {
       fontFamily: Fonts.OSREGULAR,
@@ -152,4 +157,4 @@ const rosterStyles = (isDark: boolean) =>
     },
   });
 
-export default Roster;
+

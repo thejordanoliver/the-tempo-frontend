@@ -1,18 +1,15 @@
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
-import { NFLTeam } from "types/nfl";
 import { formatQuarter } from "utils/games";
 
 type NFLGameCenterInfoProps = {
   date: string;
   time: string;
-  period?: string;
+  period?: number;
   clock?: string;
-  downAndDistance?: string;
+  downAndDistance?: string | null;
   isDark: boolean;
-  homeTeam: NFLTeam;
-  awayTeam: NFLTeam;
   broadcast?: string;
   headlineText?: string;
   gameStatusDescription?: string;
@@ -62,7 +59,7 @@ export function NFLGameCenterInfo({
                 styles.downAndDistance,
                 isRedzone && {
                   color: isDark ? Colors.dark.lightRed : Colors.light.red,
-                }, // or any red you want
+                },
               ]}
             >
               {afterAt}

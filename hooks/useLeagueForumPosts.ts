@@ -4,8 +4,7 @@ import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook p
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
-
+import { BASE_URL } from "utils/apiClient";
 interface useLeagueForumPostsParams {
   teamId: string;
   league?: LeagueType;
@@ -48,7 +47,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
         const { posts: newPosts, pagination } = res.data;
 
         setPosts((prev) =>
-          pageNumber === 1 ? newPosts : [...prev, ...newPosts]
+          pageNumber === 1 ? newPosts : [...prev, ...newPosts],
         );
 
         setPage(pagination.page);
@@ -57,7 +56,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
         setError(
           err.response?.data?.error ||
             err.message ||
-            "Failed to load forum posts"
+            "Failed to load forum posts",
         );
       } finally {
         setLoading(false);
@@ -65,7 +64,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
         isFetchingRef.current = false;
       }
     },
-    [league, token]
+    [league, token],
   );
 
   // 🔁 Initial load
@@ -96,7 +95,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     },
-    [token]
+    [token],
   );
 
   // ✏️ Edit post
@@ -109,14 +108,14 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
         { text },
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       setPosts((prev) =>
-        prev.map((p) => (p.id === postId ? res.data.post : p))
+        prev.map((p) => (p.id === postId ? res.data.post : p)),
       );
     },
-    [token]
+    [token],
   );
 
   return {

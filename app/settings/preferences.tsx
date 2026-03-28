@@ -1,13 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
+import { getStyles } from "app/settings/index";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import {getStyles} from "app/settings/index"
 import { usePreferences } from "contexts/PreferencesContext";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect } from "react";
 import { Pressable, Text, useColorScheme, View } from "react-native";
-
 
 const PreferencesScreen = () => {
   const { viewMode, setViewMode } = usePreferences();
@@ -24,7 +23,7 @@ const PreferencesScreen = () => {
 
   return (
     <View style={{ padding: 12 }}>
-      <HeadingTwo>Gamecard Layout</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Gamecard Layout</HeadingTwo>
       <View>
         <Pressable
           onPress={() => setViewMode("list")}

@@ -3,15 +3,16 @@ import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
+  Keyboard,
   Pressable,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   useColorScheme,
   View,
-} from "react-native";
+} from "react-native"; // FIX #9: merged into a single import block
 import { formStyles } from "styles/FormStyles";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 type SignInFormProps = {
   username: string;
@@ -28,7 +29,16 @@ export default function SignInForm({ ...props }: SignInFormProps) {
   const styles = formStyles(isDark);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
+  // FIX #10: guard against firing on mount — only animate when showPassword
+  //          actually changes after the component is first rendered.
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     Animated.spring(scaleAnim, {
       toValue: 1.2,
       friction: 3,
@@ -45,40 +55,40 @@ export default function SignInForm({ ...props }: SignInFormProps) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.formContainer}>
-      <View style={styles.formWrapper}>
-        <TextInput
-          placeholder="Username"
-          value={props.username}
-          onChangeText={props.onUsernameChange}
-          style={styles.input}
-          placeholderTextColor={Colors.midTone}
-          autoCapitalize="none"
-        />
-
-        <View style={styles.passwordInput}>
+        <View style={styles.formWrapper}>
           <TextInput
-            placeholder="Password"
-            value={props.password}
-            onChangeText={props.onPasswordChange}
-            secureTextEntry={!props.showPassword}
-            style={styles.passwordText}
+            placeholder="Username"
+            value={props.username}
+            onChangeText={props.onUsernameChange}
+            style={styles.input}
             placeholderTextColor={Colors.midTone}
+            autoCapitalize="none"
           />
-          <Pressable
-            onPress={props.onToggleShowPassword}
-            accessibilityLabel={
-              props.showPassword ? "Hide password" : "Show password"
-            }
-          >
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <Ionicons
-                name={props.showPassword ? "eye-off" : "eye"}
-                size={20}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </Animated.View>
-          </Pressable>
-        </View>
+
+          <View style={styles.passwordInput}>
+            <TextInput
+              placeholder="Password"
+              value={props.password}
+              onChangeText={props.onPasswordChange}
+              secureTextEntry={!props.showPassword}
+              style={styles.passwordText}
+              placeholderTextColor={Colors.midTone}
+            />
+            <Pressable
+              onPress={props.onToggleShowPassword}
+              accessibilityLabel={
+                props.showPassword ? "Hide password" : "Show password"
+              }
+            >
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <Ionicons
+                  name={props.showPassword ? "eye-off" : "eye"}
+                  size={20}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              </Animated.View>
+            </Pressable>
+          </View>
         </View>
 
         <TouchableOpacity

@@ -68,14 +68,14 @@ const NFLSeriesHistory: React.FC<Props> = ({
   const leadingTeamLogo = isTied
     ? null
     : team1Wins > team2Wins
-    ? pickLogo(
-        team1Logo?.default || team1Logo,
-        team1Logo?.light || team1LogoLight
-      )
-    : pickLogo(
-        team2Logo?.default || team2Logo,
-        team2Logo?.light || team2LogoLight
-      );
+      ? pickLogo(
+          team1Logo?.default || team1Logo,
+          team1Logo?.light || team1LogoLight,
+        )
+      : pickLogo(
+          team2Logo?.default || team2Logo,
+          team2Logo?.light || team2LogoLight,
+        );
 
   const recentGames = useMemo(() => {
     const today = new Date();
@@ -84,7 +84,7 @@ const NFLSeriesHistory: React.FC<Props> = ({
     const todayLocal = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
 
     return [...standardizedGames]
@@ -98,7 +98,7 @@ const NFLSeriesHistory: React.FC<Props> = ({
       })
       .sort(
         (a, b) =>
-          new Date(b.date || "").getTime() - new Date(a.date || "").getTime()
+          new Date(b.date || "").getTime() - new Date(a.date || "").getTime(),
       )
       .slice(0, 5);
   }, [standardizedGames]);
@@ -158,7 +158,7 @@ const NFLSeriesHistory: React.FC<Props> = ({
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Series History</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Series History</HeadingTwo>
       <View style={styles.wrapper}>
         {/* HEADER */}
         <View style={styles.headerRow}>
@@ -289,8 +289,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     recordText: {
       fontFamily: Fonts.OSBOLD,
@@ -298,8 +298,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     divider: {
       width: 1.5,
@@ -316,8 +316,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
       paddingHorizontal: 12,
     },
     gameRow: {
@@ -329,8 +329,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       borderBottomColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+          ? Colors.darkGray
+          : Colors.lightGray,
       paddingHorizontal: 12,
     },
     gameRowLeft: {
@@ -350,8 +350,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     gameScore: {
       fontFamily: Fonts.OSMEDIUM,
@@ -360,8 +360,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameScoreDash: {
       marginHorizontal: 2,
@@ -371,16 +371,16 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.dark.white
         : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+          ? Colors.dark.white
+          : Colors.light.black,
     },
     gameScoreLoser: {
       fontFamily: Fonts.OSMEDIUM,
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     gameLocation: {
       fontFamily: Fonts.OSBOLD,
@@ -388,8 +388,8 @@ const seriesHistoryStyles = (isDark: boolean, lighter: boolean) =>
       color: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
     streakEmoji: {
       marginLeft: 6,

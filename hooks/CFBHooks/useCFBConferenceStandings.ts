@@ -19,8 +19,7 @@ export type CFBTeamStanding = {
   pointsAgainst?: number | null;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
-
+import { BASE_URL } from "utils/apiClient";
 export function useCFBConferenceStandings() {
   const [standings, setStandings] = useState<CFBTeamStanding[]>([]);
   const [loading, setLoading] = useState(true);

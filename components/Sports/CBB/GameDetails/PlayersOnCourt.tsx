@@ -1,7 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "components/TabBars/FixedWidthTabBar";
+import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import {
   getTeamByESPNId as getCBBTeamByESPNId,
@@ -15,7 +13,6 @@ import {
   Text,
   TouchableOpacity,
   UIManager,
-  useColorScheme,
   View,
 } from "react-native";
 import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
@@ -33,7 +30,7 @@ type Props = {
   teamStats?: any[];
   isLoading?: boolean;
   isError?: boolean;
-  lighter?: boolean;
+  isDark: boolean;
   league: "NBA" | "CBB" | "WCBB";
 };
 
@@ -59,11 +56,10 @@ export default function PlayersOnCourt({
   playerStats,
   isLoading = false,
   isError = false,
-  lighter = false,
+  isDark,
   league,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = playerOnCourtStyles(isDark, lighter);
+  const styles = playerOnCourtStyles(isDark);
 
   const homeTeam = getTeamByESPNId(homeTeamId);
   const awayTeam = getTeamByESPNId(awayTeamId);
@@ -168,24 +164,25 @@ export default function PlayersOnCourt({
 
   return (
     <ScrollView>
-      <HeadingTwo>On The Court</HeadingTwo>
+      <HeadingTwo isDark={isDark}>On The Court</HeadingTwo>
       <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabs.map((t) => t.key)}
           selected={selectedTab}
-          renderLabel={(tabKey, isSelected) => {
+          renderLabel={(tabKey, isSelected, tabStyles) => {
             const teamLogo = tabKey === "home" ? homeLogo : awayLogo;
             const teamCode = tabKey === "home" ? homeCode : awayCode;
             return (
               <View style={styles.tabLabel}>
-                <Image
-                  source={teamLogo}
-                  style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                />
+                {teamLogo && (
+                  <Image
+                    source={teamLogo}
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
+                  />
+                )}
+
                 <Text
-                  style={getLabelStyle(isDark, isSelected, lighter, {
-                    opacity: isSelected ? 1 : 0.5,
-                  })}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
                   {teamCode}
                 </Text>
@@ -193,7 +190,7 @@ export default function PlayersOnCourt({
             );
           }}
           onTabPress={(tabKey) => setSelectedTab(tabKey as "home" | "away")}
-          lighter={lighter}
+          isDark={isDark}
         />
 
         {!isLoading && !isError && (

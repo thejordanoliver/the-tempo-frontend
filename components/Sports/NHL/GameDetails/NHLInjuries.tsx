@@ -1,20 +1,13 @@
-import { Colors, Fonts, globalStyles } from "constants/Styles";
-import { getNHLTeamByEspnId } from "constants/teamsNHL";
-import { useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
+import { globalStyles } from "constants/Styles";
+import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
+import { useEffect, useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import FixedWidthTabBar from "../../../TabBars/FixedWidthTabBar";
 
-export interface MLBInjury {
+export interface Injury {
   status: string;
   date?: string;
   athlete: {
@@ -32,23 +25,23 @@ export interface MLBInjury {
   };
 }
 
-export interface MLBTeamInjuries {
+export interface TeamInjuries {
   team: {
     id: string;
     displayName: string;
     abbreviation: string;
     logo?: string;
   };
-  injuries: MLBInjury[];
+  injuries: Injury[];
 }
 
 type Props = {
-  injuries: MLBTeamInjuries[];
+  injuries: TeamInjuries[];
   loading: boolean;
   error: any;
-  awayTeamAbbr?: string;
-  homeTeamAbbr?: string;
-  lighter?: boolean;
+  awayTeamId?: string;
+  homeTeamId?: string;
+  isDark: boolean;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
@@ -57,59 +50,42 @@ export default function NHLInjuries({
   injuries,
   loading,
   error,
-  awayTeamAbbr,
-  homeTeamAbbr,
-  lighter = false,
+  awayTeamId,
+  homeTeamId,
+  isDark,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = teamInjuryStyles(isDark, lighter);
+  const styles = teamInjuryStyles(isDark);
   const global = globalStyles(isDark);
-  // ---------------------------------------------------------------------
-  // 🟦 MLB TEAM LOOKUP (USING ESPN IDs)
-  // ---------------------------------------------------------------------
-  // These will match the order of tabs
-  const awayAbbr = awayTeamAbbr?.toUpperCase();
-  const homeAbbr = homeTeamAbbr?.toUpperCase();
 
-  // ---------------------------------------------------------------------
-  // 🟩 Tab Order (Away → Home → All Remaining)
-  // ---------------------------------------------------------------------
-  const orderedTabs = useMemo(() => {
-    if (!injuries || injuries.length === 0) return [];
-
-    const allAbbrs = injuries.map((t) => t.team.abbreviation.toUpperCase());
-    const tabs: string[] = [];
-
-    if (awayAbbr && allAbbrs.includes(awayAbbr)) tabs.push(awayAbbr);
-    if (homeAbbr && allAbbrs.includes(homeAbbr) && homeAbbr !== awayAbbr)
-      tabs.push(homeAbbr);
-
-    allAbbrs.forEach((a) => {
-      if (!tabs.includes(a)) tabs.push(a);
-    });
-
-    return tabs;
-  }, [injuries, awayAbbr, homeAbbr]);
-
-  const [selectedTeam, setSelectedTeam] = useState<string>(() => {
-    if (awayAbbr && orderedTabs.includes(awayAbbr)) return awayAbbr;
-    if (homeAbbr && orderedTabs.includes(homeAbbr)) return homeAbbr;
-    return orderedTabs[0] || "";
-  });
-
-  const selected = selectedTeam || orderedTabs[0];
-
-  // ---------------------------------------------------------------------
-  // 🛑 Loading / Error States
-  // ---------------------------------------------------------------------
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="small" />
-        <Text style={styles.loadingText}>Loading injuries...</Text>
-      </View>
+  // Away is always left (index 0), home always right (index 1).
+  // Mirror the TeamInjuries pattern: reorder by known away/home IDs upfront.
+  const reorderedInjuries = (() => {
+    if (!injuries?.length) return [];
+    const away = injuries.find((t) => t.team.id === awayTeamId);
+    const home = injuries.find((t) => t.team.id === homeTeamId);
+    const rest = injuries.filter(
+      (t) => t.team.id !== awayTeamId && t.team.id !== homeTeamId,
     );
-  }
+    return [...(away ? [away] : []), ...(home ? [home] : []), ...rest];
+  })();
+
+  const tabs = reorderedInjuries.map((t) => t.team.id);
+
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("");
+
+  // Select the first tab (away) whenever tabs change.
+  useEffect(() => {
+    if (tabs.length) setSelectedTeamId(tabs[0]);
+  }, [awayTeamId, homeTeamId]);
+
+  const currentTeam = reorderedInjuries.find(
+    (t) => t.team.id === selectedTeamId,
+  );
+
+  // ------------------------------------------------------------------
+  // Loading / Error / Empty
+  // ------------------------------------------------------------------
+  if (loading) return <TeamInjuriesSkeleton />;
 
   if (error) {
     return (
@@ -119,24 +95,13 @@ export default function NHLInjuries({
     );
   }
 
-  if (!injuries || injuries.length === 0) return null;
+  if (!injuries?.length || !currentTeam) return null;
 
-  const teamData = injuries.find(
-    (t) => t.team.abbreviation.toUpperCase() === selected,
-  );
-
-  // ---------------------------------------------------------------------
-  // 🟨 Render a Single Injury Item
-  // ---------------------------------------------------------------------
-  const renderInjury = ({
-    item,
-    index,
-  }: {
-    item: MLBInjury;
-    index: number;
-  }) => {
+  // ------------------------------------------------------------------
+  // Render injury row
+  // ------------------------------------------------------------------
+  const renderInjury = ({ item, index }: { item: Injury; index: number }) => {
     const player = item.athlete;
-
     const avatarUrl = player.headshot?.href || DEFAULT_HEADSHOT;
 
     return (
@@ -145,7 +110,7 @@ export default function NHLInjuries({
           styles.injuryItem,
           {
             borderBottomWidth:
-              index === (teamData?.injuries.length ?? 0) - 1
+              index === (currentTeam.injuries.length ?? 0) - 1
                 ? 0
                 : StyleSheet.hairlineWidth,
           },
@@ -160,7 +125,7 @@ export default function NHLInjuries({
         <View style={{ flex: 1 }}>
           <View style={styles.infoSection}>
             <View style={styles.playerHeader}>
-              <Text style={styles.name}>{player.displayName}</Text>
+              <Text style={styles.name}>{player.shortName}</Text>
               <Text style={styles.jersey}>
                 {player?.position?.abbreviation ?? "—"}{" "}
                 {player?.jersey ? `#${player.jersey}` : ""}
@@ -188,70 +153,44 @@ export default function NHLInjuries({
     );
   };
 
-  // ---------------------------------------------------------------------
-  // 🟥 Render Component
-  // ---------------------------------------------------------------------
+  // ------------------------------------------------------------------
+  // Render
+  // ------------------------------------------------------------------
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Injury Report</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
+
       <View style={styles.wrapper}>
-        {/* TAB BAR */}
         <FixedWidthTabBar
-          tabs={orderedTabs}
-          selected={selected}
-          lighter={lighter}
-          onTabPress={setSelectedTeam}
-          renderLabel={(abbr, isSelected) => {
-            const t = injuries.find(
-              (team) => team.team.abbreviation.toUpperCase() === abbr,
-            );
-
-            const team = getNHLTeamByEspnId(String(t?.team.id));
-            const logo = team?.logoLight ?? team?.logo ?? null;
-
-            const textColor = lighter
-              ? Colors.white
-              : isSelected
-                ? isDark
-                  ? Colors.white
-                  : Colors.black
-                : isDark
-                  ? Colors.midTone
-                  : Colors.midTone;
+          tabs={tabs}
+          selected={selectedTeamId}
+          isDark={isDark}
+          onTabPress={setSelectedTeamId}
+          renderLabel={(teamId, isSelected, tabStyles) => {
+            const team = getNHLTeamByEspnId(teamId);
+            const logo = getNHLTeamLogo(Number(team?.id), isDark);
 
             return (
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
-              >
+              <View style={styles.tabLabel}>
                 {logo && (
                   <Image
                     source={logo}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      opacity: isSelected ? 1 : 0.5,
-                    }}
-                    resizeMode="contain"
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
                 <Text
-                  style={{
-                    color: textColor,
-                    opacity: isSelected ? 1 : 0.5,
-                    fontFamily: Fonts.OSMEDIUM,
-                  }}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
-                  {abbr}
+                  {team?.code}
                 </Text>
               </View>
             );
           }}
         />
 
-        {/* INJURY LIST */}
-        {teamData && teamData.injuries.length > 0 ? (
+        {currentTeam.injuries.length > 0 ? (
           <FlatList
-            data={teamData.injuries}
+            data={currentTeam.injuries}
             renderItem={renderInjury}
             keyExtractor={(inj) => inj.athlete.id}
             scrollEnabled={false}

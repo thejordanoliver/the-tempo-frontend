@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/Styles";
 import { StyleSheet } from "react-native";
 
-export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
+export const gameLeadersStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { overflow: "hidden" },
     center: { alignItems: "center", justifyContent: "center", padding: 16 },
@@ -10,17 +10,13 @@ export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
       borderWidth: 1,
       borderRadius: 8,
     },
-  
+
     card: {
       flexDirection: "row",
       alignItems: "center",
       padding: 12,
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.midTone,
+      borderColor: isDark ? Colors.midTone : Colors.midTone,
     },
     avatar: {
       width: 52,
@@ -35,21 +31,13 @@ export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
-      borderColor: lighter
-        ? Colors.white
-        : isDark
-        ? Colors.white
-        : Colors.black,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     jersey: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
       marginLeft: 4,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     nameRow: {
       flexDirection: "row",
@@ -59,7 +47,7 @@ export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
     playerName: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 14,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     statRow: {
       flexDirection: "row",
@@ -71,16 +59,12 @@ export const gameLeadersStyles = (isDark: boolean, lighter: boolean) =>
     statLabel: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 10,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.midTone,
+      color: isDark ? Colors.midTone : Colors.midTone,
     },
     statText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
     },
     teamLogo: { position: "absolute", top: 8, right: 8, width: 28, height: 28 },
   });

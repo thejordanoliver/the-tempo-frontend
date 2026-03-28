@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 type League = "nba" | "nfl";
 
@@ -18,7 +18,7 @@ export function useDraft(league: League, year: number | string | undefined) {
       setError(null);
 
       const { data } = await axios.get(
-        `${BASE_URL}/api/draft/${league}/${year}`
+        `${BASE_URL}/api/draft/${league}/${year}`,
       );
 
       setDraft(data);

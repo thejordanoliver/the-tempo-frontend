@@ -1,6 +1,6 @@
 import { useHighlights } from "./useHighlights";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /**
  * Main hook for fetching highlights by league and team
@@ -9,9 +9,9 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
  * @param maxResults max number of results (default 30)
  */
 export function useTeamHighlights(
-  league: "nba" | "nfl" | "cfb" | "cbb" | "wcbb" | "mlb" |  "all" = "nba",
+  league: "nba" | "nfl" | "cfb" | "cbb" | "wcbb" | "mlb" | "all" = "nba",
   teamName?: string,
-  maxResults = 30
+  maxResults = 30,
 ) {
   const normalizedLeague = league.toLowerCase();
 

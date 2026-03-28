@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export const useCFBPortalPlayers = (year: number) => {
   const [data, setData] = useState<any[]>([]);
@@ -17,15 +17,15 @@ export const useCFBPortalPlayers = (year: number) => {
 
       try {
         const res = await axios.get(`${BASE_URL}/api/cfbd/portal`, {
-          params: { year },   // ⭐ ONLY year
+          params: { year }, // ⭐ ONLY year
         });
 
-        setData(res.data);    // Expect array like [{ team, rank, points }]
+        setData(res.data); // Expect array like [{ team, rank, points }]
       } catch (err: any) {
         setError(
           err?.response?.data?.error ||
             err.message ||
-            "Failed to load transfer portal"
+            "Failed to load transfer portal",
         );
       } finally {
         setLoading(false);

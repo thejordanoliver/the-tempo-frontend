@@ -23,7 +23,7 @@ export interface GameOdds {
   bookmakers: Bookmaker[];
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 interface UseOddsOptions {
   timestamp?: string | number;

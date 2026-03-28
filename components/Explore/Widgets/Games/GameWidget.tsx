@@ -1,118 +1,105 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { globalStyles } from "constants/Styles";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { Game } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
 import displayeValue from "utils/widgetUtils";
 
-export type GameWidgetProps = {
-  league: "NBA";
-  id: number;
-  date: string;
-  time: string;
-  gameDateISO: string;
-
-  homeTeam: {
-    id: number;
-    espnID: string;
-    name: string;
-    code: string;
-    logo: any;
-    logoLight: any;
-  };
-  awayTeam: {
-    id: number;
-    espnID: string;
-    name: string;
-    code: string;
-    logo: any;
-    logoLight: any;
-  };
-  homeScore: number;
-  awayScore: number;
-  status?: string;
-  halftime?: boolean;
-  clock?: string | null;
-  periods: number;
-  leaders?: any[];
+type GameWidgetProps = {
+  game: Game;
   height?: number;
   width?: number;
-  loading: boolean;
+  loading?: boolean;
 };
 
 export default function GameWidget({
+  game,
   height = 150,
   width = 150,
-  loading,
-  ...props
+  loading = false,
 }: GameWidgetProps) {
-  // -------------------------
-  // Appearance & styles
-  // -------------------------
   const isDark = useColorScheme() === "dark";
   const styles = gameWidgetStyles(isDark, height, width);
+  const global = globalStyles(isDark);
+  const homeId = Number(game?.home?.id);
+  const awayId = Number(game?.away?.id);
 
-  // -------------------------
-  // Game date/time formatting
-  // -------------------------
-  const gameDate = new Date(props.gameDateISO);
-  const localDate = gameDate.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
-  const localTime = gameDate.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const home = getNBATeam(homeId);
+  const away = getNBATeam(awayId);
 
-  const gameDateStr = props.gameDateISO;
+  const homeName = home?.code;
+  const awayName = away?.code;
 
-  // -------------------------
-  // Live game data
-  // -------------------------
-  const {
-    score: liveScore,
-    details,
-    loading: scoreLoading,
-  } = useGameDetails(
+  const homeLogo = getTeamLogo(homeId, isDark);
+  const awayLogo = getTeamLogo(awayId, isDark);
+
+  const homeEspnId = home?.espnID ?? 0;
+  const awayEspnId = away?.espnID ?? 0;
+
+  const safeDate = (date?: string | null) => {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
+  const gameDate = safeDate(game?.date);
+  const gameDateStr = gameDate.toISOString();
+  const holidayLabel = getHolidayLabel(gameDate);
+
+  const { score: liveScore, details } = useGameDetails(
     "nba",
-    props.homeTeam.espnID,
-    props.awayTeam.espnID,
+    String(homeEspnId),
+    String(awayEspnId),
     gameDateStr,
   );
 
-  const clock = liveScore?.displayClock ?? props.clock;
-  const period = liveScore?.period ?? props.periods;
-  const gameStatusDescription =
-    liveScore?.gameStatusDescription ?? props.status;
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? props.status;
+  const period = liveScore?.period;
+  const displayClock = liveScore?.displayClock;
+  const homeScore = liveScore?.home.total;
+  const awayScore = liveScore?.away.total;
 
-  // -------------------------
-  // Game status flags
-  // -------------------------
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const gameStatusDescription = liveScore?.gameStatusDescription;
+  const gameStatusDetail = liveScore?.gameStatusDetail;
   const isFinal = gameStatusDescription === "Final";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
-
-  // -------------------------
-  // Scores & winner
-  // -------------------------
-  const homeScore = isFinal ? props.homeScore : (liveScore?.home?.total ?? 0);
-  const awayScore = isFinal ? props.awayScore : (liveScore?.away?.total ?? 0);
-
-  const homeIsWinner = isFinal && homeScore > awayScore;
-  const awayIsWinner = isFinal && awayScore > homeScore;
-
-  // -------------------------
+  const headlineText = details?.headline;
+  const headline = headlineText || holidayLabel;
+  const isLoading = !liveScore;
   // Team records
-  // -------------------------
-
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
+
+  // --- Broadcasts ---
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
+
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  const formattedTime =
+    gameDate?.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
+
+  // -----------------------------------------------------
+  // SCORE TEXT COMPONENT
+  // -----------------------------------------------------
+  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
+  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
 
   // -------------------------
   // Display components for scores
@@ -121,7 +108,7 @@ export default function GameWidget({
     true,
     isScheduled,
     isFinal,
-    homeIsWinner,
+    homeWins,
     homeRecord,
     homeScore,
     isDark,
@@ -130,7 +117,7 @@ export default function GameWidget({
     false,
     isScheduled,
     isFinal,
-    awayIsWinner,
+    awayWins,
     awayRecord,
     awayScore,
     isDark,
@@ -139,10 +126,10 @@ export default function GameWidget({
   // -------------------------
   // Loading state
   // -------------------------
-  if (loading || scoreLoading) {
+  if (loading || isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomActivityIndicator />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -158,11 +145,8 @@ export default function GameWidget({
         {/* ---------------------- */}
         <View style={styles.awaySection}>
           <View style={styles.teamWrapper}>
-            <Image
-              style={styles.teamLogo}
-              source={isDark ? props.awayTeam.logoLight : props.awayTeam.logo}
-            />
-            <Text style={styles.teamName}>{props.awayTeam.code}</Text>
+            <Image style={styles.teamLogo} source={awayLogo} />
+            <Text style={styles.teamName}>{awayName}</Text>
           </View>
           {awayDisplay}
         </View>
@@ -173,13 +157,26 @@ export default function GameWidget({
         <View style={styles.gameInfo}>
           {isScheduled && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime}>{localDate}</Text>
+              <Text style={styles.dateTime}>{formattedDate}</Text>
               <View style={styles.divider} />
-              <Text style={styles.dateTime}>{localTime}</Text>
+              <Text style={styles.dateTime}>{formattedTime}</Text>
             </View>
           )}
 
           {isFinal && <Text style={styles.finalText}>{gameStatusDetail}</Text>}
+
+          {isPostponed && (
+            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+          )}
+          {isCanceled && (
+            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+          )}
+          {isDelayed && (
+            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+          )}
+          {isForfeited && (
+            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+          )}
 
           {inProgress && !isHalftime && endOfPeriod && (
             <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
@@ -189,11 +186,14 @@ export default function GameWidget({
             <View style={styles.infoWrapper}>
               <Text style={styles.period}>{formatQuarter(period)}</Text>
               <View style={styles.divider} />
-              {clock && <Text style={styles.clock}>{clock}</Text>}
+              {displayClock && <Text style={styles.clock}>{displayClock}</Text>}
             </View>
           )}
 
           {isHalftime && <Text style={styles.finalText}>Halftime</Text>}
+          {broadcastText && (
+            <Text style={styles.broadcast}>{broadcastText}</Text>
+          )}
         </View>
 
         {/* ---------------------- */}
@@ -202,11 +202,8 @@ export default function GameWidget({
         <View style={styles.homeSection}>
           {homeDisplay}
           <View style={styles.teamWrapper}>
-            <Image
-              style={styles.teamLogo}
-              source={isDark ? props.homeTeam.logoLight : props.homeTeam.logo}
-            />
-            <Text style={styles.teamName}>{props.homeTeam.code}</Text>
+            <Image style={styles.teamLogo} source={homeLogo} />
+            <Text style={styles.teamName}>{homeName}</Text>
           </View>
         </View>
       </View>

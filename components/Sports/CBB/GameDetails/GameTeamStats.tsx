@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Styles";
-import { getTeamByESPNId } from "constants/teamsCBB";
+import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
@@ -196,16 +195,17 @@ const STAT_KEYS = [
 export default function GameTeamStats({
   stats,
   gameStatusDescription,
-  lighter = false,
+  isDark,
+  league,
 }: {
   gameStatusDescription: string;
   stats: any[];
-  lighter?: boolean;
+  isDark: boolean;
+  league: "WCBB" | "CBB";
 }) {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameTeamStatsStyles(isDark, lighter);
+  const styles = gameTeamStatsStyles(isDark);
 
-  const isWomen = "WCBB";
+  const isWomen = league === "WCBB";
   const isScheduled = gameStatusDescription === "Scheduled";
 
   if (!Array.isArray(stats) || stats.length < 2) return null;
@@ -255,45 +255,29 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayLogo =
-    lighter && isWomen
-      ? awayTeam?.wLogo || awayTeam?.logoLight || awayTeam?.logo
-      : lighter
-        ? awayTeam?.logoLight || awayTeam?.logo
-        : isDark && isWomen
-          ? awayTeam?.wLogo || awayTeam?.logoLight || awayTeam?.logo
-          : isWomen
-            ? awayTeam?.wLogo || awayTeam?.logo
-            : isDark
-              ? awayTeam?.logoLight || awayTeam?.logo
-              : awayTeam?.logo;
+  const awayLogo = getCBBTeamLogo(
+    isWomen ? awayTeam?.wid : awayTeam?.id,
+    isDark,
+    isWomen,
+  );
 
-  const homeLogo =
-    lighter && isWomen
-      ? homeTeam?.wLogo || homeTeam?.logoLight || homeTeam?.logo
-      : lighter
-        ? homeTeam?.logoLight || homeTeam?.logo
-        : isDark && isWomen
-          ? homeTeam?.wLogo || homeTeam?.logoLight || homeTeam?.logo
-          : isWomen
-            ? homeTeam?.wLogo || homeTeam?.logo
-            : isDark
-              ? homeTeam?.logoLight || homeTeam?.logo
-              : homeTeam?.logo;
+  const homeLogo = getCBBTeamLogo(
+    isWomen ? homeTeam?.wid : homeTeam?.id,
+    isDark,
+    isWomen,
+  );
 
-  const awayColor = lighter
-    ? awayTeam?.secondaryColor
-    : ((isDark ? awayTeam?.secondaryColor : awayTeam?.color) ??
-      (isDark ? Colors.white : Colors.black));
+  const awayColor =
+    (isDark ? awayTeam?.secondaryColor : awayTeam?.color) ??
+    (isDark ? Colors.white : Colors.black);
 
-  const homeColor = lighter
-    ? homeTeam?.secondaryColor
-    : ((isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
-      (isDark ? Colors.white : Colors.black));
+  const homeColor =
+    (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
+    (isDark ? Colors.white : Colors.black);
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>
+      <HeadingTwo isDark={isDark}>
         {isScheduled ? "Team Stats" : "Game Stats"}
       </HeadingTwo>
       <View style={styles.logosRow}>

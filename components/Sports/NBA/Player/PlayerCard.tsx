@@ -1,8 +1,8 @@
 import { teams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbteams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { useRouter } from "expo-router";
 import {
   Image,
@@ -18,7 +18,8 @@ export interface PlayerCardProps {
   name: string | undefined;
   shortName?: string | undefined;
   position?: string | null;
-  team: string;
+  team: string | null;
+  teamId?: number | string | undefined;
   avatarUrl?: string | null;
   rank?: number | null;
   number?: string | number | null;
@@ -32,7 +33,7 @@ const LEAGUE_TEAMS = {
   CFB: cfbTeams,
   CBB: cbbTeams,
   WCBB: cbbTeams,
-  MLB: mlbteams,
+  MLB: mlbTeams,
 };
 
 const LEAGUE_ROUTES = {
@@ -47,9 +48,9 @@ const LEAGUE_ROUTES = {
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   id,
   name,
-  position,
   rank,
   team,
+  teamId,
   avatarUrl,
   number,
   statNumber,
@@ -61,24 +62,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const teamList = LEAGUE_TEAMS[league];
 
-const teamObj =
-  teamList.find(
-    (t) => t.name === team || t.fullName === team || t.code === team,
-  ) ?? null;
-
-// Type guard for CBB/WCBB teams
-function isCBBTeam(team: any): team is { wid: number; id: number } {
-  return team && typeof team.wid === "number";
-}
-
-// Determine the team ID to pass in the route
-let teamIdForRoute: string | undefined;
-
-if (league === "WCBB" && isCBBTeam(teamObj)) {
-  teamIdForRoute = teamObj.wid.toString();
-} else {
-  teamIdForRoute = teamObj?.id?.toString();
-}
+  const teamObj =
+    teamList.find(
+      (t) => t.name === team || t.fullName === team || t.code === team,
+    ) ?? null;
 
 
   const initial = name?.[0]?.toUpperCase() ?? "?";
@@ -102,15 +89,14 @@ if (league === "WCBB" && isCBBTeam(teamObj)) {
           return;
         }
 
-      router.push({
-  pathname: route,
-  params: {
-    id: id.toString(),
-    teamId: teamIdForRoute,
-    league,
-  },
-});
-
+        router.push({
+          pathname: route,
+          params: {
+            id: id.toString(),
+            teamId: teamId,
+            league,
+          },
+        });
       }}
     >
       <View style={styles.nameContainer}>

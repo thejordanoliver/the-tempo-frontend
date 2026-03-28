@@ -1,10 +1,27 @@
 import axios from "axios";
+import { Venue } from "hooks/NFLHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
-
+export type Athlete = {
+  athlete: {
+    id: string;
+    playerId: number;
+    displayName: string;
+    teamId: number;
+    shortName?: string;
+    jersey?: string;
+    position?: { abbreviation?: string };
+    headshot?: { href?: string; alt?: string };
+  };
+  stats: string[];
+  starter?: boolean;
+  didNotPlay?: boolean;
+  reason?: string;
+  ejected?: boolean;
+};
 type FoulTroublePlayer = {
   id: string;
   name: string;
-  shortName: string
+  shortName: string;
   jersey: string;
   position: string;
   fouls: number;
@@ -68,7 +85,7 @@ export type Score = {
     names: string[];
     keys: string[];
     labels: string[];
-    athletes: any[];
+    athletes: Athlete[];
   }[];
 
   leaders: any[];
@@ -116,7 +133,8 @@ export type GameDetails = {
   injuries: any[];
   highlights: any[];
   neutralSite: boolean;
-  venue: any | null;
+  venue: Venue | null;
+  attendance: number | null;
   headline?: string | null;
   predictor: Predictor;
   records: {
@@ -127,7 +145,7 @@ export type GameDetails = {
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* Hook                               */

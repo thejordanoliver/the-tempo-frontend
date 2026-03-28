@@ -1,15 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-import { CombinedGamesSection } from "components/CombinedGamesList";
-import { getTeamInfo } from "constants/teams";
+import { CombinedGamesSection } from "components/League/CombinedGamesList";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBWeeklyGames } from "hooks/CBBHooks/useCBBWeeklyGames";
-import { usetodayYesterday as useCFBtodayYesterday } from "hooks/CFBHooks/useCFBTodayYesterdayGames";
 import { useWeeklyGames } from "hooks/NBAHooks/useWeeklyGames";
 import { useNewsStore } from "hooks/newsStore";
-import { usetodayYesterday as useNFLtodayYesterday } from "hooks/NFLHooks/useNFLTodayYesterdayGames";
+import { useFootballWeeklyGames } from "hooks/NFLHooks/useFootballWeeklyGames";
 import { useHighlights } from "hooks/useHighlights";
 import { useNews } from "hooks/useNews";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -49,12 +47,13 @@ export function useHomeData(selectedTab: "scores" | "news") {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFL,
-  } = useNFLtodayYesterday();
+  } = useFootballWeeklyGames(1);
   const {
     games: cfbGames,
     loading: cfbLoading,
     refetch: refreshCFB,
-  } = useCFBtodayYesterday();
+  } = useFootballWeeklyGames(2);
+
   const {
     cbbGames: mensCBBGames,
     cbbLoading: mensCBBLoading,
@@ -103,6 +102,9 @@ export function useHomeData(selectedTab: "scores" | "news") {
     }, []),
   );
 
+  // --------------------------------------------------
+  // Normalize games
+  // --------------------------------------------------
   const normalizeGames = (games: any[], leagueType: string, isWomen = false) =>
     games
       .map((game: any) => {
@@ -122,34 +124,24 @@ export function useHomeData(selectedTab: "scores" | "news") {
         let home, away;
 
         if (leagueType === "NBA") {
-          home = getTeamInfo(game.home?.id);
-          away = getTeamInfo(game.away?.id);
-          if (!home || !away) return null;
-        } else if (leagueType === "MLB") {
-          home = {
-            id: game.teams?.home?.id,
-            name: game.teams?.home?.name,
-            logo: game.teams?.home?.logo,
-          };
+          home = { ...game.home, id: String(game.home?.id) };
           away = {
-            id: game.teams?.away?.id,
-            name: game.teams?.away?.name,
-            logo: game.teams?.away?.logo,
-          };
-        } else if (leagueType === "NHL") {
-          home = {
-            id: game.teams?.home?.id,
-            name: game.teams?.home?.name,
-            logo: game.teams?.home?.logo,
-          };
-          away = {
-            id: game.teams?.away?.id,
-            name: game.teams?.away?.name,
-            logo: game.teams?.away?.logo,
+            ...game.away,
+            id: String(game.away?.id),
           };
         } else if (leagueType === "NFL" || leagueType === "CFB") {
           home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
           away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+        } else if (leagueType === "MLB") {
+          home = {
+            id: game.teams?.home?.id,
+            name: game.teams?.home?.name,
+          };
+
+          away = {
+            id: game.teams?.away?.id,
+            name: game.teams?.away?.name,
+          };
         } else {
           home = normalizeTeam(game.teams?.home, isWomen);
           away = normalizeTeam(game.teams?.away, isWomen);

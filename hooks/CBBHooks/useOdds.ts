@@ -23,7 +23,7 @@ export interface UpcomingGameOdds {
   bookmakers: Bookmaker[];
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 interface useOddsOptions {
   timestamp?: string | number; // ISO string or epoch
@@ -33,11 +33,7 @@ interface useOddsOptions {
 
 const cache: Record<string, UpcomingGameOdds[]> = {};
 
-export const useOdds = ({
-  timestamp,
-  team1,
-  team2,
-}: useOddsOptions) => {
+export const useOdds = ({ timestamp, team1, team2 }: useOddsOptions) => {
   const [data, setData] = useState<UpcomingGameOdds[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

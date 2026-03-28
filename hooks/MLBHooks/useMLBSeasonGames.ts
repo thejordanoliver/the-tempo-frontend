@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MLBGame } from "types/mlb";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useMLBSeasonGames(season: string) {
   const [games, setGames] = useState<MLBGame[]>([]);
@@ -26,7 +26,10 @@ export function useMLBSeasonGames(season: string) {
 
       setGames(gamesArray);
     } catch (err: any) {
-      console.error("Error fetching MLB season games:", err?.response?.data || err?.message);
+      console.error(
+        "Error fetching MLB season games:",
+        err?.response?.data || err?.message,
+      );
       setError("Failed to load season games");
       setGames([]);
     } finally {
@@ -43,7 +46,9 @@ export function useMLBSeasonGames(season: string) {
     const isLive = (game: MLBGame) => {
       const short = game.status?.short ?? "";
       const long = game.status?.long ?? "";
-      return short.startsWith("IN") || short === "LIVE" || long.includes("Inning");
+      return (
+        short.startsWith("IN") || short === "LIVE" || long.includes("Inning")
+      );
     };
 
     return [...games].sort((a, b) => Number(isLive(b)) - Number(isLive(a)));

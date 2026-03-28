@@ -9,7 +9,9 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useCBBPlayerSeasons } from "hooks/CBBHooks/useCBBPlayerSeasons";
 import { usePlayerDetail } from "hooks/CBBHooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+
 export default function PlayerDetailScreen() {
   const params = useLocalSearchParams<{
     id?: string;
@@ -23,13 +25,10 @@ export default function PlayerDetailScreen() {
   // -------------------------
   // Params
   // -------------------------
-  const playerId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const playerId = params.id;
+  const teamIdParam = params.teamId;
 
-  const teamIdParam = Array.isArray(params.teamId)
-    ? params.teamId[0]
-    : params.teamId;
-
-  const league = params.league?.toLowerCase() === "wcbb" ? "WCBB" : "CBB";
+  const league = params.league === "WCBB" ? "WCBB" : "CBB";
   const isWomen = league === "WCBB";
 
   // -------------------------
@@ -46,8 +45,8 @@ export default function PlayerDetailScreen() {
     careerStatsFlattened,
     loading: statsLoading,
     error: statsError,
-  } = useCBBPlayerSeasons(playerId, isWomen);
-
+  } = useCBBPlayerSeasons(Number(playerId), isWomen);
+  const styles = playerScreenStyles;
   const numericTeamId = Number(teamIdParam);
   const team = getCBBTeam(numericTeamId, isWomen);
 
@@ -60,7 +59,7 @@ export default function PlayerDetailScreen() {
         <CustomHeaderTitle
           teamId={numericTeamId}
           logo={getCBBTeamLogo(numericTeamId, true, isWomen)}
-          teamColor={team?.color ?? "#1D428A"}
+          teamColor={team?.color}
           onBack={() => navigation.goBack()}
           teamCode={team?.code}
           isTeamScreen
@@ -74,7 +73,7 @@ export default function PlayerDetailScreen() {
   if (loading || error || !player) return null;
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         player={player}
         avatarUrl={player.headshot_url} // ✅ DB uses avatarUrl not imageUrl
@@ -83,24 +82,22 @@ export default function PlayerDetailScreen() {
       />
 
       {!loading && !error && (
-        <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-          <SeasonStatCard seasonStats={seasonStats} isDark={isDark} />
-        </View>
+        <SeasonStatCard seasonStats={seasonStats} isDark={isDark} />
       )}
+
       {enrichedLastGame && (
-        <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-          <HeadingTwo>Last Game</HeadingTwo>
+        <View>
+          <HeadingTwo isDark={isDark}>Last Game</HeadingTwo>
           <CBBGameCard game={enrichedLastGame} isWomen={isWomen} />
         </View>
       )}
 
-      <View style={{ marginTop: 24 }}>
-        <PlayerStatTable
-          seasonStatsFlattened={seasonStatsFlattened}
-          careerStatsFlattened={careerStatsFlattened}
-          isDark={isDark}
-        />
-      </View>
+      <PlayerStatTable
+        seasonStatsFlattened={seasonStatsFlattened}
+        careerStatsFlattened={careerStatsFlattened}
+        isDark={isDark}
+      />
     </ScrollView>
   );
 }
+

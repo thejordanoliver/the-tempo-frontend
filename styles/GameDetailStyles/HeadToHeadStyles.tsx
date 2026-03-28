@@ -1,6 +1,5 @@
-import { StyleSheet } from "react-native";
 import { Colors, Fonts } from "constants/Styles";
-
+import { StyleSheet } from "react-native";
 
 export const headToHeadStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -126,5 +125,13 @@ export const headToHeadStyles = (isDark: boolean) =>
       height: 14,
       width: 1,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    circle: {
+      position: "absolute",
+      width: 160,
+      height: 160,
+      borderRadius: 999,
+      opacity: 0.25,
+      zIndex: 0,
     },
   });

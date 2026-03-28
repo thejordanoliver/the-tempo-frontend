@@ -69,6 +69,7 @@ export const lastPlayStyles = (isDark: boolean) =>
     playText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
+      flex: 1,
     },
     playTextWithAthletes: {
       marginTop: 8,

@@ -16,9 +16,9 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import RecruitCardSkeleton from "../RecruitCardSkeleton";
+import RecruitCardSkeleton from "../../../Skeletons/RecruitCardSkeleton";
+import TeamRankCardSkeleton from "../../../Skeletons/TeamRankCardSkeleton";
 import TeamRankCard from "../TeamRankCard";
-import TeamRankCardSkeleton from "../TeamRankCardSkeleton";
 import RecruitCard from "./RecruitCard";
 type Props = {
   year: string;

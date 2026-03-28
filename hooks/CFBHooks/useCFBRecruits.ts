@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export const useCFBRecruits = (year: number, team?: string) => {
   const [data, setData] = useState<any[]>([]);
@@ -28,7 +28,7 @@ export const useCFBRecruits = (year: number, team?: string) => {
         setError(
           err?.response?.data?.error ||
             err.message ||
-            "Failed to load recruits"
+            "Failed to load recruits",
         );
       } finally {
         setLoading(false);

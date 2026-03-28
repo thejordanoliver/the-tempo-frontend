@@ -1,4 +1,5 @@
-import { NFLTeam, Venue } from "types/nfl";
+import { Venue } from "types/types";
+
 //Logos
 import NinersLogo from "assets/Football/NFL_Logos/49ers.png";
 import AFCLogo from "assets/Football/NFL_Logos/AFC.png";
@@ -38,11 +39,10 @@ import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-export const teams: NFLTeam[] = [
+export const nflTeams = [
   {
     id: 1,
     espnID: 13,
-    oddsID: "par_01hqmkr1y9fkaaeekn9w035jft",
     fullName: "Las Vegas Raiders",
     code: "LV",
     city: "Las Vegas",
@@ -67,7 +67,6 @@ export const teams: NFLTeam[] = [
   {
     id: 2,
     espnID: 30,
-    oddsID: "par_01hqmkr1y7e2r9kcn2qe0dt1d5",
     fullName: "Jacksonville Jaguars",
     code: "JAX",
     city: "Jacksonville",
@@ -79,7 +78,6 @@ export const teams: NFLTeam[] = [
     established: 1995,
     logo: JaguarsLogo,
     logoLight: JaguarsLogo,
-
     name: "Jaguars",
     color: "#101820",
     secondaryColor: "#d7a22a",
@@ -93,7 +91,6 @@ export const teams: NFLTeam[] = [
   {
     id: 3,
     espnID: 17,
-    oddsID: "par_01hqmkr1yeffz9y9spwv8bx3na",
     fullName: "New England Patriots",
     code: "NE",
     city: "Foxborough",
@@ -118,7 +115,6 @@ export const teams: NFLTeam[] = [
   {
     id: 4,
     espnID: 19,
-    oddsID: "par_01hqmkr1ygfzrv5sqe2v97c43e",
     fullName: "New York Giants",
     code: "NYG",
     city: "New York",
@@ -143,7 +139,6 @@ export const teams: NFLTeam[] = [
   {
     id: 5,
     espnID: 33,
-    oddsID: "par_01hqmkr1xvev9rf557fy09k2cx",
     fullName: "Baltimore Ravens",
     code: "BAL",
     city: "Baltimore",
@@ -169,7 +164,6 @@ export const teams: NFLTeam[] = [
     id: 6,
     espnID: 10,
     fullName: "Tennessee Titans",
-    oddsID: "par_01hqmkr1yqexebpc06vyfwxqqm",
     code: "TEN",
     city: "Nashville",
     location: "Nashville, TN",
@@ -193,7 +187,6 @@ export const teams: NFLTeam[] = [
   {
     id: 7,
     espnID: 8,
-    oddsID: "par_01hqmkr1y3fex9sq94dgg1107y",
     fullName: "Detroit Lions",
     code: "DET",
     city: "Detroit",
@@ -220,7 +213,6 @@ export const teams: NFLTeam[] = [
     id: 8,
     espnID: 1,
     fullName: "Atlanta Falcons",
-    oddsID: "par_01hqmkr1xtexkbhkq7ct921rne",
     code: "ATL",
     city: "Atlanta",
     location: "Atlanta, GA",
@@ -244,7 +236,6 @@ export const teams: NFLTeam[] = [
   {
     id: 9,
     espnID: 5,
-    oddsID: "par_01hqmkr1y0ez5bem3gdncd8a0d",
     fullName: "Cleveland Browns",
     code: "CLE",
     city: "Cleveland",
@@ -269,7 +260,6 @@ export const teams: NFLTeam[] = [
   {
     id: 10,
     espnID: 4,
-    oddsID: "par_01hqmkr1xze7xbceshy9tka512",
     fullName: "Cincinnati Bengals",
     code: "CIN",
     city: "Cincinnati",
@@ -294,7 +284,6 @@ export const teams: NFLTeam[] = [
   {
     id: 11,
     espnID: 22,
-    oddsID: "par_01hqmkr1xsfxmrj5pdq0f23asx",
     fullName: "Arizona Cardinals",
     code: "ARI",
     city: "Glendale",
@@ -319,7 +308,6 @@ export const teams: NFLTeam[] = [
   {
     id: 12,
     espnID: 21,
-    oddsID: "par_01hqmkr1yjedgakx37g743855e",
     fullName: "Philadelphia Eagles",
     code: "PHI",
     city: "Philadelphia",
@@ -344,7 +332,6 @@ export const teams: NFLTeam[] = [
   {
     id: 13,
     espnID: 20,
-    oddsID: "par_01hqmkr1yhe4sb3y0wfzga67tf",
     fullName: "New York Jets",
     code: "NYJ",
     city: "New York",
@@ -369,7 +356,6 @@ export const teams: NFLTeam[] = [
   {
     id: 14,
     espnID: 25,
-    oddsID: "par_01hqmkr1ymfv0a8kfg96ha10ag",
     fullName: "San Francisco 49ers",
     code: "SF",
     city: "San Francisco",
@@ -394,7 +380,6 @@ export const teams: NFLTeam[] = [
   {
     id: 15,
     espnID: 9,
-    oddsID: "par_01hqmkr1y4ez38hyananses4hq",
 
     fullName: "Green Bay Packers",
     code: "GB",
@@ -421,7 +406,6 @@ export const teams: NFLTeam[] = [
   {
     id: 16,
     espnID: 3,
-    oddsID: "par_01hqmkr1xye20ahvp8fr2bvt74",
     fullName: "Chicago Bears",
     code: "CHI",
     city: "Chicago",
@@ -447,7 +431,6 @@ export const teams: NFLTeam[] = [
     id: 17,
     espnID: 12,
     fullName: "Kansas City Chiefs",
-    oddsID: "par_01hqmkr1y8e9gt2q2rhmv196pv",
     code: "KC",
     city: "Kansas City",
     location: "Kansas City, MO",
@@ -471,7 +454,6 @@ export const teams: NFLTeam[] = [
   {
     id: 18,
     espnID: 28,
-    oddsID: "par_01hqmkr1yrfsvbjjasn01a7xz4",
     fullName: "Washington Commanders",
     code: "WSH",
     city: "Washington",
@@ -496,7 +478,6 @@ export const teams: NFLTeam[] = [
   {
     id: 19,
     espnID: 29,
-    oddsID: "par_01hqmkr1xxf2ebbqzb95qzxxxm",
     fullName: "Carolina Panthers",
     code: "CAR",
     city: "Charlotte",
@@ -521,7 +502,6 @@ export const teams: NFLTeam[] = [
   {
     id: 20,
     espnID: 2,
-    oddsID: "par_01hqmkr1xwe6prjwr3j4gpqwx8",
     fullName: "Buffalo Bills",
     code: "BUF",
     city: "Buffalo",
@@ -546,7 +526,6 @@ export const teams: NFLTeam[] = [
   {
     id: 21,
     espnID: 11,
-    oddsID: "par_01hqmkr1y6f10rxbf8y2y2xthh",
     fullName: "Indianapolis Colts",
     code: "IND",
     city: "Indianapolis",
@@ -571,7 +550,6 @@ export const teams: NFLTeam[] = [
   {
     id: 22,
     espnID: 23,
-    oddsID: "par_01hqmkr1yker5bwcznt0b1jpj1",
     fullName: "Pittsburgh Steelers",
     code: "PIT",
     city: "Pittsburgh",
@@ -596,7 +574,6 @@ export const teams: NFLTeam[] = [
   {
     id: 23,
     espnID: 26,
-    oddsID: "par_01hqmkr1ynfwaa91y9zvagkavd",
     fullName: "Seattle Seahawks",
     code: "SEA",
     city: "Seattle",
@@ -622,7 +599,6 @@ export const teams: NFLTeam[] = [
     id: 24,
     espnID: 27,
     fullName: "Tampa Bay Buccaneers",
-    oddsID: "par_01hqmkr1ypeszan8sq8dh7rqbg",
     code: "TB",
     city: "Tampa",
     location: "Tampa, FL",
@@ -647,7 +623,6 @@ export const teams: NFLTeam[] = [
     id: 25,
     espnID: 15,
     fullName: "Miami Dolphins",
-    oddsID: "par_01hqmkr1ycf7dsbr1997gz03y9",
     code: "MIA",
     city: "Miami",
     location: "Miami, FL",
@@ -671,7 +646,6 @@ export const teams: NFLTeam[] = [
   {
     id: 26,
     espnID: 34,
-    oddsID: "par_01hqmkr1y5f63reha26n71p2jx",
     fullName: "Houston Texans",
     code: "HOU",
     city: "Houston",
@@ -696,7 +670,6 @@ export const teams: NFLTeam[] = [
   {
     id: 27,
     espnID: 18,
-    oddsID: "par_01hqmkr1yfe62tp0rvy8bn2jyc",
     fullName: "New Orleans Saints",
     code: "NO",
     city: "New Orleans",
@@ -721,7 +694,6 @@ export const teams: NFLTeam[] = [
   {
     id: 28,
     espnID: 7,
-    oddsID: "par_01hqmkr1y2e15tjsz9afcsj7da",
     fullName: "Denver Broncos",
     code: "DEN",
     city: "Denver",
@@ -746,7 +718,6 @@ export const teams: NFLTeam[] = [
   {
     id: 29,
     espnID: 6,
-    oddsID: "par_01hqmkr1y1esas88pmaxe87by4",
     fullName: "Dallas Cowboys",
     code: "DAL",
     city: "Dallas",
@@ -771,7 +742,6 @@ export const teams: NFLTeam[] = [
   {
     id: 30,
     espnID: 24,
-    oddsID: "par_01hqmkr1yafvas6wtv3jfs9f7a",
     fullName: "Los Angeles Chargers",
     code: "LAC",
     city: "Los Angeles",
@@ -796,7 +766,6 @@ export const teams: NFLTeam[] = [
   {
     id: 31,
     espnID: 14,
-    oddsID: "par_01hqmkr1ybfmfb8mhz10drfe21",
     fullName: "Los Angeles Rams",
     code: "LAR",
     city: "Los Angeles",
@@ -822,7 +791,6 @@ export const teams: NFLTeam[] = [
     id: 32,
     espnID: 16,
     fullName: "Minnesota Vikings",
-    oddsID: "par_01hqmkr1ydf6vrfmd5f07caj88",
     code: "MIN",
     city: "Minneapolis",
     location: "Minneapolis, MN",
@@ -858,7 +826,6 @@ export const teams: NFLTeam[] = [
     name: "AFC",
     color: "#D71920", // AFC red
     secondaryColor: "#002A5C",
-    oddsID: "",
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
@@ -880,7 +847,6 @@ export const teams: NFLTeam[] = [
     name: "NFC",
     color: "#013369", // NFC blue
     secondaryColor: "#A5ACAF",
-    oddsID: "",
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
@@ -888,7 +854,7 @@ export const teams: NFLTeam[] = [
     coach: "null",
     isAllStar: true,
   },
-] as const;
+];
 
 export const neutralStadiums: Record<string, Venue> = {
   "Corinthians Arena": {
@@ -1005,20 +971,47 @@ export const neutralStadiums: Record<string, Venue> = {
   },
 };
 
-export const getNFLTeam = (id: number | string) =>
-  teams.find((t) => String(t.id) === String(id)) || null;
-
-export const getTeamInfo = (teamId: number | string) => {
-  if (teamId == null) return undefined;
-  return teams.find((t) => String(t.id) === String(teamId));
+const normalize = (s?: unknown) => {
+  if (typeof s !== "string") return "";
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 };
+export function getNeutralStadium(venueName?: string, isNeutralSite?: boolean) {
+  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
+  if (!isNeutralSite) return null;
+
+  if (!venueName) return null;
+
+  const normalizedInput = normalize(venueName);
+
+  // 1. Exact match (fast path)
+  if (neutralStadiums[venueName]) {
+    return neutralStadiums[venueName];
+  }
+
+  // 2. Fuzzy match
+  for (const key of Object.keys(neutralStadiums)) {
+    const normalizedKey = normalize(key);
+
+    if (
+      normalizedInput.includes(normalizedKey) ||
+      normalizedKey.includes(normalizedInput)
+    ) {
+      return neutralStadiums[key];
+    }
+  }
+
+  return null;
+}
+
+export const getNFLTeam = (id: number | string) =>
+  nflTeams.find((t) => String(t.id) === String(id));
 
 export function getNFLTeamLogo(id: number, isDark: boolean) {
   if (!id) return PlaceholderLogo; // fallback
 
   const searchStr = String(id).toLowerCase();
 
-  const team = teams.find((t) => {
+  const team = nflTeams.find((t) => {
     return (
       t.id === Number(id) || // match by ID
       (t.name && t.name.toLowerCase() === searchStr) || // match by name
@@ -1032,96 +1025,5 @@ export function getNFLTeamLogo(id: number, isDark: boolean) {
 }
 
 export const getTeamByESPNId = (espnId: number | string) => {
-  return teams.find((t) => t.espnID?.toString() === espnId?.toString());
-};
-
-export function getTeamLogoESPN(
-  id: number | string | undefined,
-  isDark: boolean
-) {
-  if (!id) return PlaceholderLogo; // fallback
-
-  const team = teams.find((t) => {
-    return Number(t.espnID) === Number(id);
-  });
-
-  if (!team) return PlaceholderLogo;
-
-  return isDark ? team.logoLight || team.logo : team.logo;
-}
-
-export const getTeamName = (teamId: string | number): string | null => {
-  const team = getTeamInfo(teamId);
-  return team?.name || null;
-};
-
-export function getTeamCode(teamId: string, fallback?: string): string | null {
-  const team = getTeamInfo(teamId);
-  return team?.code || fallback || "UKNW";
-}
-
-export const teamsNFLById: Record<string, NFLTeam> = teams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, NFLTeam>
-);
-
-export const nflDivisionsById = {
-  " AFC East": [
-    "2", // Bills
-    "15", // Dolphins
-    "17", // Patriots
-    "20", // Jets
-  ],
-
-  "AFC North": [
-    "33", // Ravens
-    "4", // Bengals
-    "5", // Browns
-    "23", // Steelers
-  ],
-
-  "AFC South": [
-    "34", // Texans
-    "11", // Colts
-    "30", // Jaguars
-    "10", // Titans
-  ],
-
-  "AFC West": [
-    "7", // Broncos
-    "12", // Chiefs
-    "13", // Raiders
-    "24", // Chargers
-  ],
-
-  "NFC East": [
-    "6", // Cowboys
-    "19", // Giants
-    "21", // Eagles
-    "28", // Commanders
-  ],
-
-  "NFC North": [
-    "3", // Bears
-    "8", // Lions
-    "9", // Packers
-    "16", // Vikings
-  ],
-
-  "NFC South": [
-    "1", // Falcons
-    "29", // Panthers
-    "18", // Saints
-    "27", // Buccaneers
-  ],
-
-  "NFC West": [
-    "22", // Cardinals
-    "14", // Rams
-    "25", // 49ers
-    "26", // Seahawks
-  ],
+  return nflTeams.find((t) => t.espnID?.toString() === espnId?.toString());
 };

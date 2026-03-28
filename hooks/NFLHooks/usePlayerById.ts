@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+import { BASE_URL } from "utils/apiClient";
 
 export type PlayerLeague = "NFL" | "CFB" | "MLB";
 

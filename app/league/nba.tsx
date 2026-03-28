@@ -30,7 +30,6 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import CustomRefreshControl from "components/CustomRefreshControl";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -151,6 +150,7 @@ export default function NBALeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
 
       <View style={styles.container}>
@@ -172,26 +172,24 @@ export default function NBALeagueScreen() {
               isDark={isDark}
             />
 
-
             {filteredSummerGames.length > 0 ? (
               <SLGamesList
-              games={filteredSummerGames}
-              loading={loadingSummer}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              scrollEnabled={true}
+                games={filteredSummerGames}
+                loading={loadingSummer}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={true}
               />
             ) : (
               <GamesList
-              games={filteredSeasonGames}
-              error={errorGames}
-              loading={loadingGames}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              scrollEnabled={true}
+                games={filteredSeasonGames}
+                error={errorGames}
+                loading={loadingGames}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                scrollEnabled={true}
               />
             )}
-        
           </View>
 
           {/* NEWS */}

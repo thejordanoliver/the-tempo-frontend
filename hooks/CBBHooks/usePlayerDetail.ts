@@ -1,21 +1,10 @@
 import axios from "axios";
-import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
+import { getCBBTeam } from "constants/teamsCBB";
+import { useEffect, useState } from "react";
+import type { DBPlayer } from "types/types";
 import { useLastTeamGame } from "./useLastTeamGame";
-import { useEffect, useMemo, useState } from "react";
-import { Platform } from "react-native";
-import type { CBBGame, DBPlayer, Game } from "types/types";
 
-const BASE_API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-function getApiBaseUrl() {
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
-
-  if (Platform.OS === "android") {
-    return "http://10.0.2.2:4000"; // Android emulator fix
-  }
-
-  return BASE_API_URL;
-}
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function usePlayerDetail(
   playerId?: string,
@@ -28,24 +17,20 @@ export function usePlayerDetail(
     .trim();
   const teamNumericId = Number(sanitizedTeamId);
 
-  const API_URL = getApiBaseUrl();
-
   const leaguePath = isWomen ? "wcbb" : "cbb";
-  const teamsSource = isWomen ? teamsWCBBById : teamsCBBById;
 
   const [player, setPlayer] = useState<DBPlayer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const team = teamsSource[teamNumericId];
+  const team = getCBBTeam(teamNumericId, isWomen);
 
   const teamObj = team ? { ...team } : undefined;
 
-const { lastGame, loading: teamGameLoading } = useLastTeamGame({
-  teamId: teamNumericId,
-  isWomen,
-});
-
+  const { lastGame, loading: teamGameLoading } = useLastTeamGame({
+    teamId: teamNumericId,
+    isWomen,
+  });
 
   /* ---------------- Fetch player ---------------- */
   useEffect(() => {
@@ -74,7 +59,7 @@ const { lastGame, loading: teamGameLoading } = useLastTeamGame({
   }, [parsedPlayerId, leaguePath]);
 
   /* ---------------- Enriched game ---------------- */
-const enrichedLastGame = lastGame
+  const enrichedLastGame = lastGame;
 
   return {
     player,

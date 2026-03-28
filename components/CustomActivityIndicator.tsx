@@ -1,30 +1,23 @@
 import { Colors } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 
 interface Props {
   size?: number;
   thickness?: number;
-  lighter?: boolean;
+  isDark: boolean;
 }
 
 export default function CustomActivityIndicator({
   size = 48,
   thickness = 4,
-  lighter,
+  isDark,
 }: Props) {
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  const isDark = useColorScheme() === "dark";
 
-  const gradientStart = lighter ? Colors.white : Colors.white;
-  const gradientEnd = lighter ? "transparent" : "transparent";
+  const gradientStart = isDark ? Colors.white : Colors.white;
+  const gradientEnd = isDark ? "transparent" : "transparent";
 
   useEffect(() => {
     Animated.loop(
@@ -33,7 +26,7 @@ export default function CustomActivityIndicator({
         duration: 1000,
         easing: Easing.linear,
         useNativeDriver: true,
-      })
+      }),
     ).start();
   }, []);
 

@@ -1,14 +1,13 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamInfo as getCFBTeamInfo } from "constants/teamsCFB";
-import { getTeamInfo as getNFLTeamInfo } from "constants/teamsNFL";
-import { Athlete, PlayObject } from "hooks/NFLHooks/useNFLGamePossession";
+import { getCFBTeam } from "constants/teamsCFB";
+import { getNFLTeam } from "constants/teamsNFL";
+import { Athlete, PlayObject } from "hooks/NFLHooks/useGameDetails";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Image,
   LayoutChangeEvent,
-  StyleSheet,
   Text,
   useColorScheme,
   View,
@@ -19,7 +18,7 @@ import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {
   lastPlay?: string | PlayObject;
-  possessionTeamId?: number;
+  possessionTeamId?: number | null;
   homeTeamId: number;
   awayTeamId: number;
   league?: LeagueType;
@@ -30,7 +29,6 @@ type PlayByPlayFieldProps = {
 const normalizeYardLine = (yard: number, isHomeOffense: boolean) => {
   return isHomeOffense ? yard : 100 - yard;
 };
-
 
 const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   lastPlay,
@@ -57,7 +55,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     team: "home" | "away";
     text: string;
   } | null>(null);
-  
 
   const textColor = isDark ? Colors.white : Colors.black;
 
@@ -75,8 +72,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const isStringPlay = typeof currentPlay === "string";
 
   // League helpers
-  const getTeamInfo =
-    league === "NFL" ? getNFLTeamInfo : getCFBTeamInfo || getNFLTeamInfo;
+  const getTeamInfo = league === "NFL" ? getNFLTeam : getCFBTeam;
 
   const homeTeam = getTeamInfo(homeTeamId) ?? emptyNFLHomeTeam;
   const awayTeam = getTeamInfo(awayTeamId) ?? emptyNFLAwayTeam;
@@ -94,7 +90,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     ? awayTeam.logoLight || awayTeam.logo
     : awayTeam.logo;
 
-    
   // Endzone glow pulse
   useEffect(() => {
     if (highlightEndzone) {
@@ -110,7 +105,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
             duration: 1000,
             useNativeDriver: false,
           }),
-        ])
+        ]),
       );
       loop.start();
       return () => loop.stop();
@@ -127,35 +122,29 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   };
 
   const firstDownAnim = useRef(
-    new Animated.Value(firstDownYardLine || 50)
+    new Animated.Value(firstDownYardLine || 50),
   ).current;
 
-  const isHomeOffense =
-  Number(possessionTeamId) === Number(homeEspnID);
-useEffect(() => {
-  if (firstDownYardLine == null) return;
+  const isHomeOffense = Number(possessionTeamId) === Number(homeEspnID);
+  useEffect(() => {
+    if (firstDownYardLine == null) return;
 
-  const normalized = normalizeYardLine(
-    firstDownYardLine,
-    isHomeOffense
-  );
+    const normalized = normalizeYardLine(firstDownYardLine, isHomeOffense);
 
-  Animated.timing(firstDownAnim, {
-    toValue: normalized,
-    duration: 400,
-    useNativeDriver: false,
-  }).start();
-}, [firstDownYardLine, isHomeOffense]);
-
+    Animated.timing(firstDownAnim, {
+      toValue: normalized,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  }, [firstDownYardLine, isHomeOffense]);
 
   // Animate ball marker + detect scores
   useEffect(() => {
     if (typeof lastPlay !== "object") return;
 
     const play = lastPlay as PlayObject;
-  const raw = computePercent(play);
-const targetPercent = normalizeYardLine(raw, isHomeOffense);
-
+    const raw = computePercent(play);
+    const targetPercent = normalizeYardLine(raw, isHomeOffense);
 
     Animated.spring(playAnim, {
       toValue: targetPercent,
@@ -174,7 +163,7 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
       (play as any).sequence ??
       (play.start as any)?.playId ??
       Math.random();
-    const playResult = play.drive?.result?.toUpperCase();
+    const playResult = play.result?.toUpperCase();
 
     if (
       lastAnimatedRef.playId === playId &&
@@ -184,7 +173,7 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
     (PlayByPlayField as any)._lastAnimatedRef = { playId, result: playResult };
 
     const scoringEspnId =
-      play.start?.team?.id ?? play.team?.id ?? possessionTeamId ?? null;
+      play.team?.id ?? play.team?.id ?? possessionTeamId ?? null;
     let endzone: "home" | "away" | null = null;
     let scoreText: string | null = null;
 
@@ -197,16 +186,16 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
         scoringIdNum === homeIdNum
           ? "home"
           : scoringIdNum === awayIdNum
-          ? "away"
-          : null;
+            ? "away"
+            : null;
       scoreText = "TOUCHDOWN";
     } else if (playResult === "FG" || playResult === "FIELD GOAL") {
       endzone =
         scoringIdNum === homeIdNum
           ? "home"
           : scoringIdNum === awayIdNum
-          ? "away"
-          : null;
+            ? "away"
+            : null;
       scoreText = "FIELD GOAL IS GOOD";
     }
 
@@ -252,7 +241,7 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
 
   return (
     <View>
-      <HeadingTwo>Play By Play</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
 
       {isStringPlay && currentPlay && (
         <View style={{ marginVertical: 12 }} onLayout={onLayout}>
@@ -305,11 +294,11 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
               {currentPlay.text}
             </Text>
 
-            {currentPlay.drive?.description && (
+            {currentPlay?.description && (
               <Text style={styles.driveDescription}>
-                Drive: {currentPlay.drive.description}
-                {currentPlay.drive.timeElapsed?.displayValue
-                  ? ` (${currentPlay.drive.timeElapsed.displayValue})`
+                Drive: {currentPlay.description}
+                {currentPlay.timeElapsed?.displayValue
+                  ? ` (${currentPlay.timeElapsed.displayValue})`
                   : ""}
               </Text>
             )}
@@ -368,8 +357,8 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
                             ? Colors.dark.itemBackground
                             : Colors.light.itemBackground
                           : isDark
-                          ? Colors.black
-                          : Colors.white,
+                            ? Colors.black
+                            : Colors.white,
                     },
                   ]}
                 />
@@ -523,5 +512,3 @@ const targetPercent = normalizeYardLine(raw, isHomeOffense);
 };
 
 export default PlayByPlayField;
-
-

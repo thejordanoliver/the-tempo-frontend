@@ -7,7 +7,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useMemo } from "react";
-import type { Game } from "types/cfb";
+import type { Game } from "types/nfl";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

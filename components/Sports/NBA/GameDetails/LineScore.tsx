@@ -1,12 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/Styles";
-import {
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  ViewStyle,
-} from "react-native";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
 
 // Allow MLB numbers + NBA/CBB strings
@@ -22,36 +16,27 @@ type Props = {
     | undefined;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  lighter?: boolean;
+  isDark: boolean;
   loading?: boolean;
-  league?: "NBA" | "CBB" | "WCBB" | "MLB" | "NHL";
+  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL";
 };
 
 export default function LineScore({
   linescore,
   homeCode,
   awayCode,
-  lighter,
+  isDark,
   loading,
   league = "NBA",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const styles = lineScoreStyles(isDark);
+
   if (loading || !linescore || !linescore.home || !linescore.away) {
     return <LineScoreSkeleton league={league} />;
   }
 
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-      ? Colors.white
-      : Colors.black;
-
-  const borderColor = lighter
-    ? Colors.lightGray
-    : isDark
-      ? Colors.midTone
-      : Colors.lightGray;
+  const textColor = isDark ? Colors.white : Colors.black;
+  const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
   // Convert strings | numbers to totals
   const total = (scores: ScoreValue[]) => {
@@ -92,17 +77,29 @@ export default function LineScore({
 
     // ---------------- NHL ----------------
     if (league === "NHL") {
-      if (index < 3) return `P${index + 1}`; // P1, P2, P3
+      if (index < 3) return `P${index + 1}`;
       if (index === 3) return "OT";
-      return `OT${index - 2}`; // OT2, OT3 (playoffs)
+      return `OT${index - 2}`;
     }
 
     // ---------------- CBB ----------------
-    if (league === "CBB" || league === "WCBB") {
+    if (league === "CBB") {
       if (index === 0) return "1H";
       if (index === 1) return "2H";
       if (index === 2) return "OT";
       return `OT${index - 1}`;
+    }
+    // ---------------- NFL ----------------
+    if (league === "NFL") {
+      if (index < 4) return `Q${index + 1}`;
+      if (index === 4) return "OT";
+      return `OT${index - 3}`;
+    }
+    // ---------------- CFB ----------------
+    if (league === "CFB") {
+      if (index < 4) return `Q${index + 1}`;
+      if (index === 4) return "OT";
+      return `OT${index - 3}`;
     }
 
     // ---------------- NBA ----------------
@@ -119,7 +116,7 @@ export default function LineScore({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Score Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Score Summary</HeadingTwo>
       <View style={styles.wrapper}>
         {/* Header */}
         <View style={styles.headerRow}>
@@ -128,13 +125,13 @@ export default function LineScore({
           <View style={styles.scoresWrapper}>
             {columns.map((label, idx) => (
               <View key={`h-${idx}`} style={columnStyle}>
-               <Text style={[styles.header, { color: textColor }]}>
+                <Text style={[styles.header, { color: textColor }]}>
                   {label}
                 </Text>
               </View>
             ))}
             <View style={columnStyle}>
-               <Text style={[styles.header, { color: textColor }]}>Total</Text>
+              <Text style={[styles.header, { color: textColor }]}>Total</Text>
             </View>
           </View>
         </View>

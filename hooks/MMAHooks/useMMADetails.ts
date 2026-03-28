@@ -109,7 +109,7 @@ type DateParam =
       timestamp?: number;
     };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /* -------------------------------------------------- */
 /* HOOK                                               */

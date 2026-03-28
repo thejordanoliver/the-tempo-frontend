@@ -71,8 +71,10 @@ export const TeamRow = ({
     return { color: Colors.midTone };
   };
 
-  const renderTimeouts = (remaining: number) => {
+  const renderTimeouts = (remaining: number | null) => {
     const totalTimeouts = 3;
+    const safeRemaining = remaining ?? 0; // 👈 fix
+
     return (
       <View style={{ flexDirection: "row" }}>
         {Array.from({ length: totalTimeouts }).map((_, i) => (
@@ -83,7 +85,7 @@ export const TeamRow = ({
               height: 2,
               borderRadius: 4,
               backgroundColor: isDark ? Colors.white : Colors.black,
-              opacity: i < remaining ? 1 : 0.5,
+              opacity: i < safeRemaining ? 1 : 0.5,
               marginHorizontal: 2,
             }}
           />
@@ -91,14 +93,13 @@ export const TeamRow = ({
       </View>
     );
   };
-
   const displayScore = isScheduled
-    ? team.record ?? "0-0"
+    ? (team.record ?? "0-0")
     : score != null
-    ? score
-    : inProgress
-    ? "..."
-    : team.record ?? "0-0";
+      ? score
+      : inProgress
+        ? "..."
+        : (team.record ?? "0-0");
 
   return (
     <View style={styles.row}>
@@ -136,7 +137,7 @@ export const TeamRow = ({
             {league === "cfb" ? (
               <Text style={styles.teamName}>
                 {rank && <Text style={styles.rank}>{rank} </Text>}
-                {team.shortName || team.name}
+                {team.code}
               </Text>
             ) : (
               <Text style={styles.teamName}>{team.code}</Text>

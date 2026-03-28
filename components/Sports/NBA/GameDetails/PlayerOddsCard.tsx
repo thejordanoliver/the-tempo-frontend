@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamInfo } from "constants/teamsNFL";
+import { getNFLTeam } from "constants/teamsNFL";
 import { NFLEventOdds, PlayerOutcome } from "hooks/NFLHooks/useNFLEventOdds";
 import React from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
@@ -14,8 +14,8 @@ export const PlayerOddsCard: React.FC<Props> = ({ game }) => {
 
   const bookmaker = game.bookmakers?.[0];
   const market = bookmaker?.markets?.find((m) => m.key === "player_pass_tds");
-  const home = getTeamInfo(game.home_team_id ?? "");
-  const away = getTeamInfo(game.away_team_id ?? "");
+  const home = getNFLTeam(game.home_team_id ?? "");
+  const away = getNFLTeam(game.away_team_id ?? "");
 
   const homeLogo = isDark ? home?.logoLight : home?.logo;
   const awayLogo = isDark ? away?.logoLight : away?.logo;

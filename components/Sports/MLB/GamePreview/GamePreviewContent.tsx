@@ -1,7 +1,6 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
-import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LineScore from "components/Sports/NBA/GameDetails/LineScore";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
@@ -18,6 +17,7 @@ export default function GamePreviewContent({
   lineScore,
   homeLastGames,
   awayLastGames,
+  teamPlayersMap,
   officials,
   injuries,
   detailsLoading,
@@ -47,7 +47,7 @@ export default function GamePreviewContent({
             homeCode={home?.code}
             awayCode={away?.code}
             league="MLB"
-            lighter={true}
+            isDark
           />
         )}
 
@@ -68,42 +68,24 @@ export default function GamePreviewContent({
                 chance: homeChance,
               }}
               size={180}
-              lighter
+              isDark
             />
           )}
 
-        <LastFiveGames
-          away={{
-            teamId: away?.id,
-            teamCode: away?.code,
-            games: awayLastGames?.games,
-          }}
-          home={{
-            teamId: home?.id,
-            teamCode: home?.code,
-            games: homeLastGames?.games,
-          }}
-          league="MLB"
-          isDark={isDark}
-          lighter
-        />
-
-        <HighlightVideoList highlights={highlights} lighter />
+        <HighlightVideoList highlights={highlights} isDark />
 
         <MLBInjuries
           injuries={injuries}
           loading={detailsLoading}
-          error={detailsError}
-          awayTeam={away?.code}
-          homeTeam={home?.code}
-          lighter
+          isDark
+          teamPlayersMap={teamPlayersMap}
         />
 
         <Officials
           officials={officials ?? []}
           loading={false}
           error={null}
-          lighter
+          isDark
         />
 
         <GameLocation
@@ -116,7 +98,7 @@ export default function GamePreviewContent({
           weather={weather}
           loading={false}
           error={null}
-          lighter
+          isDark
         />
       </View>
     </BottomSheetScrollView>

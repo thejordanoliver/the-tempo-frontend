@@ -1,20 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import type { LeagueType, Team } from "types/types";
+import { BASE_URL } from "utils/apiClient";
 
 export type TeamWithLeague = Team & { league: LeagueType };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL!;
 const STORAGE_KEY = "favorites";
 
 export function useFavoriteTeams() {
@@ -72,7 +72,6 @@ export function useFavoriteTeams() {
       const storedFavorites = await AsyncStorage.getItem(STORAGE_KEY);
 
       setUserId(storedUserId ? Number(storedUserId) : null);
-
       if (storedFavorites) {
         const parsed = JSON.parse(storedFavorites);
         setFavorites(Array.isArray(parsed) ? parsed : []);

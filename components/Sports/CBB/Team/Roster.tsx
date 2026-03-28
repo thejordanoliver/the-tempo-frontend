@@ -11,7 +11,8 @@ interface TeamPlayerListProps {
   error?: string | null;
   refreshing: boolean;
   onRefresh: () => void;
-  teamFullName: string;
+  teamFullName: string | null;
+  teamId: string | number | undefined;
   isWomen?: boolean;
 }
 
@@ -22,6 +23,7 @@ export default function Roster({
   refreshing,
   onRefresh,
   teamFullName,
+  teamId,
   isWomen,
 }: TeamPlayerListProps) {
   const isDark = useColorScheme() === "dark";
@@ -53,11 +55,11 @@ export default function Roster({
           .map((player) => (
             <PlayerCard
               key={player.id}
-              
               id={Number(player.id)}
               name={player.fullName ?? ""}
               position={player.position}
               team={teamFullName}
+              teamId={teamId}
               avatarUrl={player.imageUrl}
               number={player.jersey}
               league={isWomen ? "WCBB" : "CBB"}

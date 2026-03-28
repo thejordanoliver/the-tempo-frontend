@@ -8,7 +8,7 @@ interface useMMAFighterReturn {
   error: string | null;
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 /**
  * Custom hook to fetch a MMA fighter by API Sports ID
  * @param fighterId - API Sports ID of the fighter

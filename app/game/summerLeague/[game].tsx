@@ -3,7 +3,7 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NBASummerLeague/GameDetails/GameHeader";
@@ -11,14 +11,13 @@ import { teams } from "constants/teams";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
-import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
+import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { SummerGame } from "types/types";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
@@ -34,11 +33,10 @@ function parseGameDate(raw: any) {
 /* ------------------------------------------------------------------ */
 
 export default function GameDetailsScreen() {
+  const styles = gameDetailsScreenStyles;
+  const isDark = useColorScheme() === "dark";
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
-  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
-    useScrollFade();
 
   /* ---------------- Parse Game ---------------- */
 
@@ -56,7 +54,6 @@ export default function GameDetailsScreen() {
   /* ---------------- League ---------------- */
 
   const isLasVegas = gameObj.league.name === "NBA - Las Vegas Summer League";
-
   const isUtah = gameObj.league.name === "NBA Salt Lake City Summer League";
 
   /* ---------------- Teams ---------------- */
@@ -248,7 +245,7 @@ export default function GameDetailsScreen() {
   if (isLoadingGame) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -294,7 +291,7 @@ export default function GameDetailsScreen() {
               linescore={lineScore}
               homeCode={homeTeamData.code ?? ""}
               awayCode={awayTeamData.code ?? ""}
-              league={isLasVegas ? "WCBB" : "CBB"} // ✅ FIX
+              isDark={isDark}
             />
           )}
 
@@ -304,6 +301,7 @@ export default function GameDetailsScreen() {
             homeTeamId={Number(homeEspnId)}
             league={"summerleague"}
             gameStatusDescription={gameStatusDescription}
+            isDark={isDark}
           />
 
           <BoxScore
@@ -311,12 +309,18 @@ export default function GameDetailsScreen() {
             homeTeamId={Number(homeEspnId)}
             awayTeamId={Number(awayEspnId)}
             league={"SL"}
+            isDark={isDark}
           />
 
           {highlights.length > 0 && (
-            <HighlightVideoList highlights={highlights} />
+            <HighlightVideoList highlights={highlights} isDark={isDark} />
           )}
-          <Officials officials={officials ?? []} loading={false} error={null} />
+          <Officials
+            officials={officials ?? []}
+            loading={false}
+            error={null}
+            isDark={isDark}
+          />
 
           <GameLocation
             venueImage={resolvedVenue.image}
@@ -327,18 +331,10 @@ export default function GameDetailsScreen() {
             weather={weather}
             loading={false}
             error={null}
+            isDark={isDark}
           />
         </View>
       )}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 0,
-    paddingHorizontal: 12,
-    paddingBottom: 60,
-  },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-});

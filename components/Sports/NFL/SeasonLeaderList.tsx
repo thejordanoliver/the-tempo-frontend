@@ -1,15 +1,15 @@
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbTeams } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflTeams } from "constants/teamsNFL";
+import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
+import { Leader } from "hooks/NFLHooks/useSeasonLeaders";
 import { useEffect, useRef } from "react";
-import { FlatList, Text, useColorScheme, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
 import HeadingTwo from "../../Headings/HeadingTwo";
-import { Leader } from "hooks/NFLHooks/useSeasonLeaders";
 
 interface Category {
   categoryName: string;
@@ -23,15 +23,16 @@ interface SeasonLeadersListProps {
   error?: string | null;
   categories?: Category[];
   league: "NFL" | "CFB" | "MLB" | "CBB" | "WCBB";
+  isDark: boolean;
 }
 
 export default function SeasonLeadersList({
   loading,
   error,
   league,
+  isDark,
   categories = [],
 }: SeasonLeadersListProps) {
-  const isDark = useColorScheme() === "dark";
   const styles = leadersListStyles(isDark);
   const cacheRef = useRef<
     Partial<Record<SeasonLeadersListProps["league"], Category[]>>
@@ -85,7 +86,7 @@ export default function SeasonLeadersList({
 
         return (
           <View style={styles.categoryContainer}>
-            <HeadingTwo style={{ marginBottom: 12 }}>
+            <HeadingTwo isDark={isDark} style={{ marginBottom: 12 }}>
               {item.categoryName} Leaders
             </HeadingTwo>
 
@@ -106,6 +107,7 @@ export default function SeasonLeadersList({
                     avatarUrl={player.headshot}
                     statNumber={isMLB ? player.value : player.displayValue}
                     league={league}
+                    teamId={teamObj?.id}
                   />
                 );
               })}

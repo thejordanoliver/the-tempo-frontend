@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export interface FootballVenues {
   id: number;
@@ -35,9 +35,7 @@ export const useFootballVenues = () => {
         setError(null);
       } catch (err: any) {
         if (!mounted) return;
-        setError(
-          err.response?.data?.error || "Failed to fetch CFB venues"
-        );
+        setError(err.response?.data?.error || "Failed to fetch CFB venues");
       } finally {
         if (mounted) setLoading(false);
       }

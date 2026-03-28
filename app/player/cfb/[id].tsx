@@ -1,45 +1,38 @@
 // app/player/cfb/[id].tsx
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import CFBGameCard from "components/Sports/CFB/Games/CFBGameCard";
+import PlayerStatTable from "components/Sports/CFB/Player/PlayerStatTable";
+import LatestGame from "components/Sports/NFL/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
-import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
-import { getTeamInfo } from "constants/teamsCFB";
+import { globalStyles } from "constants/Styles";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useFootballPlayerStats } from "hooks/CFBHooks/useFootballPlayerStats";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
-import { useLayoutEffect, useMemo } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useLayoutEffect } from "react";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+import { getFootballSeasonYear } from "utils/dateUtils";
 
 export default function CFBPlayerDetailScreen() {
+  const styles = playerScreenStyles;
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const global = globalStyles(isDark);
-  /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
 
   /* ---------------- Fetch player ---------------- */
-  const {
-    player,
-    loading: playerLoading,
-    error: playerError,
-  } = usePlayerById(playerId, "CFB");
+  const { player, loading, error } = usePlayerById(playerId, "CFB");
 
   const fullName = player?.name ?? "Player";
 
   /* ---------------- Team info ---------------- */
-  const teamObj = player?.team_id ? getTeamInfo(player.team_id) : null;
+  const teamObj = player?.team_id ? getCFBTeam(player.team_id) : null;
+  const teamLogo = getCFBTeamLogo(teamObj?.id ?? 0, true);
   const isTeamAvailable = !!teamObj;
 
   /* ---------------- Last game ---------------- */
@@ -47,67 +40,51 @@ export default function CFBPlayerDetailScreen() {
     lastGame,
     loading: lastGameLoading,
     error: lastGameError,
-  } = useLastTeamGame(player?.team_id ?? 0, "2");
+  } = useLastTeamGame(player?.team_id ?? 0, getFootballSeasonYear());
+
+  const {
+    data: seasons,
+    loading: seasonsLoading,
+    error: seasonsError,
+  } = useFootballPlayerStats(playerId);
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          playerName={fullName}
-          logo={
-            isTeamAvailable
-              ? teamObj?.logo
-              : require("assets/College_Logos/NCAA.png")
-          }
-          logoLight={
-            teamObj?.logoLight
-              ? { uri: teamObj.logoLight }
-              : require("assets/College_Logos/NCAA.png")
-          }
-          teamColor={teamObj?.color ?? "#1D428A"}
-          onBack={() => router.back()}
-          isTeamScreen={!!teamObj}
-          teamCode={teamObj?.code}
-          isPlayerScreen
-          league="CFB"
-        />
-      ),
+      header: () => {
+        if (loading) return null;
+
+        return (
+          <CustomHeaderTitle
+            playerName={fullName}
+            logo={teamLogo}
+            teamColor={teamObj?.color ?? "#1D428A"}
+            onBack={() => router.back()}
+            isTeamScreen={!!teamObj}
+            teamCode={teamObj?.code}
+            isPlayerScreen
+            league="CFB"
+          />
+        );
+      },
     });
-  }, [navigation, fullName, teamObj, isTeamAvailable, isDark]);
-
-  /* ---------------- Loading / error ---------------- */
-  if (playerLoading) {
+  }, [navigation, fullName, teamObj, isTeamAvailable, isDark, loading]);
+  if (loading)
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <CustomActivityIndicator />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
-  }
-
-  if (playerError || !player) {
+  if (error || !player)
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Text style={global.errorText}>Player not found</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
-  }
-
-  /* ---------------- Seasons (CFB career) ---------------- */
-  const seasons = useMemo(() => {
-    if (!player.experience_years) return [];
-
-    const currentYear = new Date().getFullYear();
-    const startYear = currentYear - player.experience_years + 1;
-
-    return Array.from({ length: player.experience_years }, (_, i) =>
-      (startYear + i).toString(),
-    );
-  }, [player.experience_years]);
 
   /* ---------------- Render ---------------- */
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       {/* Player Header */}
       <PlayerHeader
         player={player}
@@ -118,42 +95,21 @@ export default function CFBPlayerDetailScreen() {
         isCollegePlayer
       />
 
-      {/* Season Stats */}
-      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-        <SeasonStatCard
-          playerId={player.player_id}
-          teamColor={teamObj?.secondaryColor}
-          teamColorDark={teamObj?.secondaryColor}
-          league="CFB"
-        />
-      </View>
+      <SeasonStatCard
+        playerId={player.player_id}
+        teamColor={teamObj?.secondaryColor}
+        teamColorDark={teamObj?.secondaryColor}
+        league="CFB"
+      />
 
-      {/* Last Game */}
-      <View style={{ paddingHorizontal: 12, marginTop: 24 }}>
-        <HeadingTwo>Last Game</HeadingTwo>
+      <LatestGame
+        game={lastGame}
+        loading={lastGameLoading}
+        isDark={isDark}
+        league="CFB"
+      />
 
-        {lastGameLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
-
-        {lastGameError && (
-          <Text
-            style={{
-              color: isDark ? Colors.dark.lightRed : Colors.light.red,
-              textAlign: "center",
-              marginVertical: 20,
-              fontFamily: Fonts.OSREGULAR,
-            }}
-          >
-            Error loading last game
-          </Text>
-        )}
-
-        {lastGame && !lastGameLoading && <CFBGameCard game={lastGame} />}
-      </View>
-
-      {/* Career Stats */}
-      <View style={{ marginTop: 24 }}>
-        <PlayerStatTable playerId={player.player_id} seasons={seasons} />
-      </View>
+      <PlayerStatTable playerId={playerId} />
     </ScrollView>
   );
 }

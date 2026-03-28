@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { CBBGame } from "types/types";
+import { getCBBSeason } from "utils/dateUtils";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
@@ -14,7 +15,7 @@ type UseLastTeamGameOptions = {
 
 export function useLastTeamGame({
   teamId,
-  season = "2025-2026",
+  season = getCBBSeason(),
   isWomen = false,
 }: {
   teamId?: number;

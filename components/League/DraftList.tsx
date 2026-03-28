@@ -3,7 +3,6 @@ import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
 import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
-import { teams as nflteams } from "constants/teamsNFL";
 import { useDraft } from "hooks/useLeagueDraft";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -16,6 +15,7 @@ import {
 } from "react-native";
 import DraftCard, { DraftPick } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
+import { nflTeams } from "constants/teamsNFL";
 type Props = {
   year: string;
   team: string;
@@ -152,7 +152,7 @@ export default function DraftList({
   }, [picks]);
 
   // Choose correct team list based on league
-  const TEAM_LIST = league === "nba" ? teams : nflteams;
+  const TEAM_LIST = league === "nba" ? teams : nflTeams;
 
   // -------------------------------------------
   // TEAM OPTIONS — league-dependent

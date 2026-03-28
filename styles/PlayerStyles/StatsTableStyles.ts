@@ -5,30 +5,29 @@ export const statsTableStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       paddingTop: 24,
-      paddingHorizontal: 12,
     },
-headerRowContainer: {
-  flexDirection: "row",
-  justifyContent: "space-between", // Heading left, dropdowns right
-  alignItems: "center",
-  marginHorizontal: 12,
-  borderBottomWidth: 1,
-  borderBottomColor: "#ccc", // same as table
-  paddingBottom: 4,
-  marginBottom: 8,
-},
+    headerRowContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between", // Heading left, dropdowns right
+      alignItems: "center",
+      marginHorizontal: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ccc", // same as table
+      paddingBottom: 4,
+      marginBottom: 8,
+    },
 
-dropdownContainer: {
-  flexDirection: "row",
-  alignItems: "center",
-},
+    dropdownContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-heading: {
-  fontWeight: "bold",
-},
-dropdownWrapper: {
-  marginLeft: 8, // spacing between dropdowns
-},
+    heading: {
+      fontWeight: "bold",
+    },
+    dropdown: {
+      position: "absolute", right: 0, top: 18
+    },
     tableWrapper: {
       flexDirection: "row",
       borderRadius: 8,

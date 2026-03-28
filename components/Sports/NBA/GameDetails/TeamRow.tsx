@@ -1,5 +1,4 @@
 import { Colors } from "constants/Styles";
-import { getTeamById } from "constants/teams";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -30,14 +29,9 @@ export const TeamRow = ({
   /* -----------------------------------------------------
    * Team Resolution
    * --------------------------------------------------- */
-  const teamLookup = getTeamById(team.id);
 
-  const logo =
-    isDark && teamLookup?.logoLight
-      ? teamLookup.logoLight
-      : (teamLookup?.logo ?? team.logo);
-
-  const code = teamLookup?.code ?? team.code;
+  const logo = team.logo;
+  const code = team.code;
   const record = team.record === "-" ? "" : team.record;
 
   /* -----------------------------------------------------

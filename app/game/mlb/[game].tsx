@@ -7,7 +7,7 @@ import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import MLBInjuries from "components/Sports/MLB/GameDetails/MLBInjuries";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/HighlightVideoList";
+import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
@@ -16,6 +16,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "hooks/MLBHooks/useLastFiveGames";
+import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
@@ -62,10 +63,16 @@ export default function GameDetailsScreen() {
 
   const homeTeam = getMLBTeam(homeId);
   const awayTeam = getMLBTeam(awayId);
+  const homeTeamId = homeTeam?.id ?? 0;
+  const awayTeamId = awayTeam?.id ?? 0;
   const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
   const homeLogo = getMLBTeamLogo(homeId, isDark);
   const awayLogo = getMLBTeamLogo(awayId, isDark);
+  const headerHomeLogo = getMLBTeamLogo(home.id, true);
+  const headerAwayLogo = getMLBTeamLogo(away.id, true);
+  const homeEspnId = awayTeam?.espnID;
+  const awayEspnId = awayTeam?.espnID;
 
   if (!homeTeam || !awayTeam) return null;
 
@@ -80,8 +87,8 @@ export default function GameDetailsScreen() {
     gameDateStr,
   );
 
-  const homeLastGames = useLastFiveGames(homeId);
-  const awayLastGames = useLastFiveGames(awayId);
+  const homeLastGames = useLastFiveGames(homeTeamId);
+  const awayLastGames = useLastFiveGames(awayTeamId);
 
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -125,13 +132,19 @@ export default function GameDetailsScreen() {
       second: false,
       third: false,
     };
-
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+  const homeTeamPlayersData = usePlayersByTeam(String(homeId));
+  const awayTeamPlayersData = usePlayersByTeam(String(awayId));
+
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
 
   const resolvedVenue = useMemo(
     () =>
@@ -167,8 +180,8 @@ export default function GameDetailsScreen() {
           onBack={goBack}
           homeTeamId={homeId}
           awayTeamId={awayId}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
+          homeLogo={headerHomeLogo}
+          awayLogo={headerAwayLogo}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
           isNeutralSite={neutralSite}
@@ -184,8 +197,8 @@ export default function GameDetailsScreen() {
 
   if (isLoading || !liveScore) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <CustomActivityIndicator />
+      <View style={styles.loadingContainer}>
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -253,6 +266,7 @@ export default function GameDetailsScreen() {
               homeCode={homeTeam.code}
               awayCode={awayTeam.code}
               league="MLB"
+              isDark={isDark}
             />
           )}
 
@@ -271,36 +285,41 @@ export default function GameDetailsScreen() {
                 chance: homeChance,
               }}
               size={180}
+              isDark={isDark}
             />
           )}
           <GameSummary plays={plays ?? []} />
 
           <LastFiveGames
             isDark={isDark}
-            away={{
-              teamId: awayTeam.id,
-              teamCode: awayTeam.code,
-              games: awayLastGames.games,
-            }}
             home={{
-              teamId: homeTeam.id,
-              teamCode: homeTeam.code,
+              teamId: homeTeamId,
+              teamCode: homeCode,
               games: homeLastGames.games,
+            }}
+            away={{
+              teamId: awayTeamId,
+              teamCode: awayCode,
+              games: awayLastGames.games,
             }}
             league="MLB"
           />
 
-          <HighlightVideoList highlights={highlights} />
+          <HighlightVideoList highlights={highlights} isDark={isDark} />
 
           <MLBInjuries
             injuries={injuries}
             loading={false}
-            error={null}
-            awayTeam={awayTeam.code}
-            homeTeam={homeTeam.code}
+            isDark={isDark}
+            teamPlayersMap={teamPlayersMap}
           />
 
-          <Officials officials={officials ?? []} loading={false} error={null} />
+          <Officials
+            officials={officials ?? []}
+            isDark={isDark}
+            loading={false}
+            error={null}
+          />
 
           <GameLocation
             venueImage={resolvedVenue.image}
@@ -312,6 +331,7 @@ export default function GameDetailsScreen() {
             venueCapacity={String(resolvedVenue.capacity ?? "")}
             venueAttendance={undefined}
             weather={weather}
+            isDark={isDark}
             loading={false}
             error={null}
           />

@@ -1,24 +1,21 @@
 // components/Heading.tsx
-import { Colors } from "constants/Styles";
-import { Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/Styles";
 import React from "react";
-import { StyleSheet, Text, TextStyle, useColorScheme } from "react-native";
+import { StyleSheet, Text, TextStyle } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  lighter?: boolean; // optional lighter color scheme
+  isDark: boolean; // optional lighter color scheme
   style?: TextStyle | TextStyle[]; // ✅ new prop
 };
 
-const HeadingTwo: React.FC<Props> = ({ children, lighter = false, style }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const styles = headerStyles(isDark, lighter);
+const HeadingTwo: React.FC<Props> = ({ children, isDark, style }) => {
+  const styles = headerStyles(isDark);
 
   return <Text style={[styles.heading, style]}>{children}</Text>; // ✅ merge styles
 };
 
-const headerStyles = (isDark: boolean, lighter: boolean) =>
+const headerStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
       fontSize: 24,
@@ -26,16 +23,8 @@ const headerStyles = (isDark: boolean, lighter: boolean) =>
       paddingBottom: 4,
       marginBottom: 12,
       borderBottomWidth: 1,
-      color: lighter
-        ? Colors.dark.white
-        : isDark
-        ? Colors.dark.white
-        : Colors.light.black,
-      borderBottomColor: lighter
-        ? Colors.midTone
-        : isDark
-        ? Colors.midTone
-        : Colors.midTone,
+      color: isDark ? Colors.dark.white : Colors.light.black,
+      borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
     },
   });
 

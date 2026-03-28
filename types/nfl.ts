@@ -19,18 +19,19 @@ export interface NFLPlayer {
   teamId: number;
 }
 
-export type NFLTeam = {
+export type Team = {
   id: number;
   espnID: number;
-  oddsID: string;
+  oddsID?: string;
   name: string;
+  shortName?: string;
   fullName: string;
   code: string;
   city: string;
   location: string;
   address?: string;
-  coach: string;
-  coachImage?: string;
+  coach?: string;
+  conference?: string;
   owner?: string;
   venue: string;
   established: number;
@@ -43,10 +44,7 @@ export type NFLTeam = {
   venueImage: any;
   venueCapacity: string;
   championships?: number[];
-  conferenceChampionships?: {
-    Titles?: number[]; // or number[]
-  };
-  isAllStar: boolean;
+  isAllStar?: boolean;
 };
 
 export type NFLGame = {
@@ -58,9 +56,28 @@ export type NFLGame = {
     status: { short: string; long: string; timer?: string };
     venue?: { name: string; city: string };
   };
+  league: {
+    id: number;
+    name: string;
+    season: string;
+    logo: string;
+    country: {
+      name: string;
+      code: string;
+      flag: string;
+    };
+  };
   teams: {
-    home: NFLTeam;
-    away: NFLTeam;
+    home: {
+      id: number;
+      name: string;
+      logo: string;
+    };
+    away: {
+      id: number;
+      name: string;
+      logo: string;
+    };
   };
   scores: {
     home?: {
@@ -127,8 +144,8 @@ export type Game = {
     logo: string;
   };
   teams: {
-    home: NFLTeam;
-    away: NFLTeam;
+    home: Team;
+    away: Team;
   };
   scores: {
     home: {
@@ -181,7 +198,7 @@ export interface RawNFLGame {
   };
 }
 
-export const emptyTeam: NFLTeam = {
+export const emptyTeam: Team = {
   id: 0,
   espnID: 0,
   oddsID: "0",
@@ -190,8 +207,7 @@ export const emptyTeam: NFLTeam = {
   code: "UNK",
   city: "Unknown",
   location: "Unknown",
-  coach: "Unknown",
-  coachImage: "",
+  conference: "Unknown",
   owner: "Unknown",
   venue: "Unknown",
   address: "Unknown",
@@ -208,7 +224,7 @@ export const emptyTeam: NFLTeam = {
 };
 
 // fallback for cards
-export const emptyNFLAwayTeam: NFLTeam = {
+export const emptyNFLAwayTeam: Team = {
   id: 0,
   espnID: -2,
   oddsID: "0",
@@ -219,7 +235,7 @@ export const emptyNFLAwayTeam: NFLTeam = {
   code: "TBD",
   city: "Unknown",
   location: "Unknown",
-  coach: "Unknown",
+  conference: "Unknown",
   owner: "Unknown",
   venue: "Unknown",
   established: 0,
@@ -232,7 +248,7 @@ export const emptyNFLAwayTeam: NFLTeam = {
   isAllStar: false,
 };
 
-export const emptyNFLHomeTeam: NFLTeam = {
+export const emptyNFLHomeTeam: Team = {
   id: 0,
   espnID: -1,
   oddsID: "0",
@@ -243,7 +259,7 @@ export const emptyNFLHomeTeam: NFLTeam = {
   code: "TBD",
   city: "Unknown",
   location: "Unknown",
-  coach: "Unknown",
+  conference: "Unknown",
   owner: "Unknown",
   venue: "Unknown",
   established: 0,

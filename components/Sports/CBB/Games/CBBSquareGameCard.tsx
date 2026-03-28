@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
+import { getCBBTeamLogo, getCBBTeam } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -31,14 +31,14 @@ function CBBSquareGameCard({
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
 
-  const home = getTeamInfo(homeId, isWomen);
-  const away = getTeamInfo(awayId, isWomen);
+  const home = getCBBTeam(homeId, isWomen);
+  const away = getCBBTeam(awayId, isWomen);
 
   const homeName = home?.code ?? game?.teams?.home.name;
   const awayName = away?.code ?? game?.teams?.away.name;
 
-  const homeLogo = getTeamLogo(homeId, isDark);
-  const awayLogo = getTeamLogo(awayId, isDark);
+  const homeLogo = getCBBTeamLogo(homeId, isDark, isWomen);
+  const awayLogo = getCBBTeamLogo(awayId, isDark, isWomen);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
@@ -52,7 +52,7 @@ function CBBSquareGameCard({
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
 
-  const canNavigate = getTeamInfo(homeId) && getTeamInfo(awayId);
+  const canNavigate = getCBBTeam(homeId) && getCBBTeam(awayId);
 
   const { score: liveScore, details } = useGameDetails(
     detailsLeague,

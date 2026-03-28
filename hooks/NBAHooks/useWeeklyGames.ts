@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Game } from "types/types";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useWeeklyGames() {
   const [games, setGames] = useState<Game[]>([]);
@@ -34,7 +34,7 @@ export function useWeeklyGames() {
   const sortedGames = useMemo(() => {
     return [...games].sort(
       (a, b) =>
-        Number(b.status.long === "Live") - Number(a.status.long === "Live")
+        Number(b.status.long === "Live") - Number(a.status.long === "Live"),
     );
   }, [games]);
 

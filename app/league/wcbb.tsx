@@ -12,7 +12,7 @@ import ConferenceListModal, {
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getTeamInfo } from "constants/teamsCBB";
+import { getCBBTeam } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -36,7 +36,6 @@ export default function WCBBLeagueScreen() {
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
-
   const conferenceModalRef = React.useRef<ConferenceListModalRef>(null);
   const pagerRef = React.useRef<PagerView>(null);
   const [selectedConference, setSelectedConference] =
@@ -112,8 +111,8 @@ export default function WCBBLeagueScreen() {
 
     if (selectedConference === "Top 25") {
       result = gamesForDate.filter((game) => {
-        const home = getTeamInfo(game.teams.home.id, true);
-        const away = getTeamInfo(game.teams.away.id, true);
+        const home = getCBBTeam(game.teams.home.id, true);
+        const away = getCBBTeam(game.teams.away.id, true);
         const homeESPN = home?.espnID;
         const awayESPN = away?.espnID;
 
@@ -146,6 +145,7 @@ export default function WCBBLeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
 
       <View style={styles.container}>
@@ -198,6 +198,7 @@ export default function WCBBLeagueScreen() {
               error={error}
               categories={categories}
               league={"WCBB"}
+              isDark={isDark}
             />
           </View>
 

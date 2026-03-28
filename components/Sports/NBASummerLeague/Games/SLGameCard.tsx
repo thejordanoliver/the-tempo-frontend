@@ -1,12 +1,12 @@
 import { Colors } from "constants/Styles";
 import { getTeamBySummerId } from "constants/teams";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { SummerGame } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -38,24 +38,10 @@ export default function SLGameCard({ game }: { game: SummerGame }) {
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-  const isChampionship =
-    gameDate.getMonth() === 5 &&
-    gameDate.getDate() >= 5 &&
-    gameDate.getDate() <= 22;
-  const isChristmasDay =
-    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
-  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
-
-  const styles = GameCardStyles(isDark, isChampionship);
-
+  const holidayLabel = getHolidayLabel(gameDate);
+  const styles = GameCardStyles(isDark);
   const league = game.league.id;
   const isVegas = league === 17;
-
   const { score: liveScore, details } = useGameDetails(
     isVegas ? "summerVegas" : "summerUtah",
     String(homeEspnId),
@@ -221,27 +207,12 @@ export default function SLGameCard({ game }: { game: SummerGame }) {
       activeOpacity={0.85}
       onPress={() =>
         router.push({
-          pathname: "/game/summerLeague/[game]",
+          pathname: "/game/[game]",
           params: { game: JSON.stringify(game) },
         })
       }
     >
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
-      )}
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }

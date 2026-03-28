@@ -42,7 +42,7 @@ export default function GameOddsSection({
 
   return (
     <View>
-      <HeadingTwo>Betting Odds</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Betting Odds</HeadingTwo>
 
       <View style={styles.wrapper}>
         {oddsToRender.map((game) => (

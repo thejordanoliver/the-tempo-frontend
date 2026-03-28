@@ -1,23 +1,21 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
+import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { getGameDate } from "utils/nflGameCardUtils";
-
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
-import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { NHLGame } from "types/nhl";
+import { resolveVenue } from "utils/games";
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { snapPoints } from "utils/modalUtils";
+import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
+import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
@@ -34,8 +32,8 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
   const away = game.teams.away;
   const awayId = away.id;
   const homeId = home.id;
-  const homeTeam = getNHLTeam(homeId) || emptyAwayTeam;
-  const awayTeam = getNHLTeam(awayId) || emptyHomeTeam;
+  const homeTeam = getNHLTeam(homeId);
+  const awayTeam = getNHLTeam(awayId);
   const awayEspnId = awayTeam?.espnID;
   const homeEspnId = homeTeam?.espnID;
   const homeLogo = getNHLTeamLogo(homeId, true);
@@ -58,73 +56,77 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
     ""
   ).toUpperCase();
 
-  // Snap points
-  const snapPoints = useMemo(() => ["80%", "94%"], []);
-
   // Modal open/close
   useEffect(() => {
     if (visible) sheetRef.current?.present();
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  // Colors for CFBGameCenterInfo
-  const colorsRecord = useMemo(
-    () => ({
-      text: "",
-      record: "",
-      score: "",
-      winnerScore: "",
-    }),
-    [],
-  );
+  const homeName = homeTeam?.code ?? "";
+  const awayName = awayTeam?.code ?? "";
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
 
-  const homeName = homeTeam?.code ?? emptyHomeTeam.code ?? "";
-  const awayName = awayTeam?.code ?? emptyAwayTeam.code ?? "";
-
-  const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
-  const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
-
-  const { score: liveScore, details } = useHockeyDetails(
+  const {
+    score: liveScore,
+    details,
+    loading,
+  } = useHockeyDetails(
     "nhl",
-    String(awayEspnId),
     String(homeEspnId),
+    String(awayEspnId),
     gameDateStr,
   );
-
   const isChampionship = game.week === "Final";
   const styles = gamePreviewModalStyle(isChampionship);
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
+  const neutralSite = details?.neutralSite;
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const headlineText = details?.headline;
+  const isLiveScoreReady = !liveScore;
   const period = liveScore?.period ?? 0;
   const clock = liveScore?.displayClock ?? "0:00";
-  const headlineText = details?.headline;
-  const homeScore = liveScore?.home.total ?? game?.scores?.home ?? 0;
-  const awayScore = liveScore?.away.total ?? game?.scores?.away ?? 0;
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-  const seriesSummary = details?.seriesSummary?.summary;
-  const isPostseason = details?.isPostseason;
-  const isLiveScoreReady = !!liveScore;
+  const homeScore = liveScore?.home?.total ?? game?.scores?.home ?? 0;
+  const awayScore = liveScore?.away?.total ?? game?.scores?.away ?? 0;
+  const homeRecord = details?.records?.home.overall ?? "0-0";
+  const awayRecord = details?.records?.away.overall ?? "0-0";
+  const officials = details?.officials ?? [];
+  const plays = liveScore?.plays;
+  const injuries = details?.injuries ?? [];
+  const highlights = details?.highlights ?? [];
+  const venue = details?.venue;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) ?? 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
 
-  const renderHeadline = () => (
-    <>
-      {isPostseason ? (
-        <View>
-          {seriesSummary ? (
-            <View style={styles.headlineContainer}>
-              <Text style={styles.headlineText}>{headlineText}</Text>
-              <Text style={styles.headlineDivider} />
-              <Text style={styles.headlineText}>{seriesSummary}</Text>
-            </View>
-          ) : null}
-        </View>
-      ) : headlineText ? (
-        <Text style={styles.headlineText}>{headlineText}</Text>
-      ) : null}
-    </>
+  const resolvedVenue = useMemo(
+    () =>
+      resolveVenue({
+        espnVenue: venue,
+        homeTeam: homeTeam,
+        isNeutralSite: neutralSite,
+        league: "NHL",
+      }),
+    [venue, homeTeam, neutralSite],
   );
+
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    resolvedVenue.latitude,
+    resolvedVenue.longitude,
+    gameDateStr,
+  );
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -167,13 +169,19 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          {!isLiveScoreReady ? (
+          {isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>
-              {renderHeadline()}
+              {headlineText && (
+                <>
+                  {headlineText && (
+                    <Text style={styles.headlineText}>{headlineText}</Text>
+                  )}
+                </>
+              )}
 
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
@@ -211,13 +219,31 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
                 />
               </View>
 
-              <BottomSheetScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.bottomSheetScrollViewContainer}
-                style={{ flex: 1 }}
-              >
-                <View style={{ gap: 20 }}></View>
-              </BottomSheetScrollView>
+              {/* --- Scrollable Content --- */}
+              {!dontShowDetails && (
+                <GamePreviewContent
+                  gameStatusDescription={gameStatusDescription}
+                  game={game}
+                  away={awayTeam}
+                  home={homeTeam}
+                  homeChance={homeChance}
+                  awayChance={awayChance}
+                  lineScore={lineScore}
+                  injuries={injuries}
+                  highlights={highlights}
+                  officials={officials}
+                  plays={plays}
+                  resolvedVenueImage={resolvedVenue.image}
+                  resolvedVenueName={resolvedVenue.name}
+                  resolvedVenueCity={resolvedVenue.city}
+                  resolvedVenueAddress={resolvedVenue.address}
+                  resolvedVenueCapacity={resolvedVenue.capacity}
+                  weather={weather}
+                  weatherLoading={weatherLoading}
+                  weatherError={weatherError}
+                  isDark={isDark}
+                />
+              )}
             </>
           )}
         </BlurView>

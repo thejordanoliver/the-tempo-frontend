@@ -1,6 +1,9 @@
 import { Colors } from "constants/Styles";
-import { EXPANDED_HEIGHT_THRESHOLD, LEADER_LABELS } from "constants/widgetLeaders";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  EXPANDED_HEIGHT_THRESHOLD,
+  LEADER_LABELS,
+} from "constants/widgetLeaders";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -16,25 +19,27 @@ import {
   useColorScheme,
 } from "react-native";
 import { PlayerLeader } from "types/playerLeader";
+import { Game } from "types/types";
 import { getTopLeaders } from "utils/widgetUtils";
-import CBBGameWidget, { CBBGameWidgetProps } from "./Games/CBBGameWidget";
-import CFBGameWidget from "./Games/CFBGameWidget";
-import GameWidget, { GameWidgetProps } from "./Games/GameWidget";
-import NFLGameWidget, { FootballGameWidgetProps } from "./Games/NFLGameWidget";
+import GameWidget from "./Games/GameWidget";
 import PlayerLeadersSlide from "./Players/PlayerLeadersSlide";
 
+// Outside component — never changes
+const ENABLE_AUTO_SLIDE = false;
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 export type WidgetSlide =
-  | { type: "NBA"; data: GameWidgetProps }
-  | { type: "NFL"; data: FootballGameWidgetProps }
-  | { type: "CFB"; data: FootballGameWidgetProps }
-  | { type: "CBB" | "WCBB"; data: CBBGameWidgetProps }
+  | { type: "NBA"; data: Game }
   | {
       type: "leaders";
       gameId: number;
-      stat: {
-        name: string;
-        players: PlayerLeader[]; // max 2 (one per team)
-      };
+      stat: { name: string; players: PlayerLeader[] };
     };
 
 type WidgetSliderProps = {
@@ -44,21 +49,19 @@ type WidgetSliderProps = {
   initialWidth?: number;
 };
 
-// Enable LayoutAnimation on Android
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
 export default function WidgetSlider({
   games,
   leadersMap = {},
-  initialHeight = 150,
-  initialWidth = 200,
+  initialHeight = 100,
+  initialWidth = 100,
 }: WidgetSliderProps) {
   const isDark = useColorScheme() === "dark";
-  const styles = sliderStyles(isDark);
 
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  // Read once — these don't change during the component's lifetime
+  const { width: screenWidth, height: screenHeight } = useMemo(
+    () => Dimensions.get("window"),
+    [],
+  );
   const aspectRatio = initialWidth / initialHeight;
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -67,93 +70,101 @@ export default function WidgetSlider({
 
   const [slideHeight, setSlideHeight] = useState(initialHeight);
   const [slideWidth, setSlideWidth] = useState(initialWidth);
-  const slideHeightRef = useRef(initialHeight);
 
+  // Single source of truth for height — avoids stale state in callbacks
+  const slideHeightRef = useRef(initialHeight);
+  const slideWidthRef = useRef(initialWidth);
+
+  // Keep a ref in sync with currentIndex so panResponder can read it without
+  // being recreated (fixes the stale-closure bug on lockedIndex assignment)
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentIndexRef = useRef(0);
+
   const showPlayers = slideHeight >= 300;
   const isExpanded = slideHeight >= EXPANDED_HEIGHT_THRESHOLD;
-
-  // Lock index during resizing to prevent jump
   const isResizing = useRef(false);
   const lockedIndex = useRef(0);
 
-  // Update slide height with ref
-  const setHeight = (height: number) => {
+  const setDimensions = useCallback((height: number, width: number) => {
     slideHeightRef.current = height;
+    slideWidthRef.current = width;
     setSlideHeight(height);
-  };
+    setSlideWidth(width);
+  }, []);
 
-  // Layout animation for expand/collapse
+  // Keep currentIndexRef in sync
+  useEffect(() => {
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
+
+  // Layout animation only fires when expand/collapse threshold is crossed
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [isExpanded]);
 
-  // -------------------------------
-  // Flatten games + leader slides
-  // -------------------------------
+  // -----------------------------------------------------------------------
+  // Slides — only recompute when inputs change, not on every height tick
+  // -----------------------------------------------------------------------
   const slides = useMemo<WidgetSlide[]>(() => {
     const result: WidgetSlide[] = [];
 
     games.forEach((game) => {
       if (!("data" in game)) return;
-
-      result.push(game); // Game slide
+      result.push(game);
 
       const leaders = leadersMap[game.data.id];
       if (!leaders?.length) return;
 
-      // Group leaders by stat
-      const grouped = leaders.reduce<Record<string, PlayerLeader[]>>((acc, player) => {
-        const statName = player.leaderStat?.name;
-        if (!statName) return acc;
-        (acc[statName] ??= []).push(player);
-        return acc;
-      }, {});
+      const grouped = leaders.reduce<Record<string, PlayerLeader[]>>(
+        (acc, player) => {
+          const statName = player.leaderStat?.name;
+          if (!statName) return acc;
+          (acc[statName] ??= []).push(player);
+          return acc;
+        },
+        {},
+      );
 
       Object.entries(grouped).forEach(([statName, statPlayers]) => {
         const topPlayers = getTopLeaders(statPlayers, isExpanded);
-        if (!topPlayers.length) return;
-
-        result.push({
-          type: "leaders",
-          gameId: game.data.id,
-          stat: {
-            name: statName,
-            players: topPlayers,
-          },
-        });
+        if (topPlayers.length) {
+          result.push({
+            type: "leaders",
+            gameId: game.data.id,
+            stat: { name: statName, players: topPlayers },
+          });
+        }
       });
     });
 
     return result;
   }, [games, leadersMap, isExpanded]);
 
-
-    const enableAutoSlide = false; // toggle this to true when ready
-
-  // -----------------------
-  // Auto-slide every 15s with smooth looping
-  // -----------------------
+  // -----------------------------------------------------------------------
+  // Auto-slide
+  // -----------------------------------------------------------------------
   useEffect(() => {
-    if (!enableAutoSlide || slides.length <= 1 || !flatListRef.current) return;
+    if (!ENABLE_AUTO_SLIDE || slides.length <= 1 || !flatListRef.current)
+      return;
 
     const interval = setInterval(() => {
-      let nextIndex = currentIndex + 1;
+      const nextIndex = currentIndexRef.current + 1;
       const from = currentOffset.current;
-
-      // If at the last slide, loop smoothly back to top
-      const to = nextIndex < slides.length ? nextIndex * slideHeight : 0; // loop to top
+      // Use ref so the animation always uses the current height
+      const to =
+        nextIndex < slides.length ? nextIndex * slideHeightRef.current : 0;
 
       let start: number | null = null;
-      const duration = 600; // ms
+      const duration = 600;
 
       const animate = (timestamp: number) => {
         if (!start) start = timestamp;
         const progress = Math.min((timestamp - start) / duration, 1);
-        const eased = progress * progress; // ease-in quad
-        const offset = from + (to - from) * eased;
-
-        flatListRef.current?.scrollToOffset({ offset, animated: false });
+        const eased = progress * progress;
+        flatListRef.current?.scrollToOffset({
+          offset: from + (to - from) * eased,
+          animated: false,
+        });
 
         if (progress < 1) {
           requestAnimationFrame(animate);
@@ -167,45 +178,48 @@ export default function WidgetSlider({
     }, 15000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, slides.length, slideHeight]);
+  }, [slides.length]); // currentIndex removed — read from ref instead
 
-  
-
-  // -------------------------------
-  // Handle scroll events
-  // -------------------------------
-  const onScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    {
-      useNativeDriver: false,
-      listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        if (isResizing.current) return; // ignore scroll during resize
-
-        const offsetY = event.nativeEvent.contentOffset.y;
-        currentOffset.current = offsetY;
-        const index = Math.round(offsetY / slideHeight);
-        setCurrentIndex(index);
-      },
-    }
+  // -----------------------------------------------------------------------
+  // Scroll handler — uses ref for height to avoid stale closure
+  // -----------------------------------------------------------------------
+  const onScroll = useMemo(
+    () =>
+      Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        {
+          useNativeDriver: false,
+          listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+            if (isResizing.current) return;
+            const offsetY = event.nativeEvent.contentOffset.y;
+            currentOffset.current = offsetY;
+            // Use ref — not stale even though this closure is created once
+            const index = Math.round(offsetY / slideHeightRef.current);
+            setCurrentIndex(index);
+          },
+        },
+      ),
+    // scrollY is a stable ref value — safe to omit from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
-  // -------------------------------
-  // Snap to current slide
-  // -------------------------------
-  const snapToCurrentSlide = () => {
+  // -----------------------------------------------------------------------
+  // Snap helper
+  // -----------------------------------------------------------------------
+  const snapToCurrentSlide = useCallback(() => {
     if (!flatListRef.current) return;
-
     requestAnimationFrame(() => {
       flatListRef.current?.scrollToOffset({
         offset: lockedIndex.current * slideHeightRef.current,
         animated: true,
       });
     });
-  };
+  }, []);
 
-  // -------------------------------
-  // PanResponder for resizing
-  // -------------------------------
+  // -----------------------------------------------------------------------
+  // PanResponder — reads all mutable state from refs, never recreated
+  // -----------------------------------------------------------------------
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -213,78 +227,71 @@ export default function WidgetSlider({
 
       onPanResponderGrant: () => {
         isResizing.current = true;
-        lockedIndex.current = currentIndex; // lock index at start
+        // Read from ref — fixes the stale-closure bug where this was always 0
+        lockedIndex.current = currentIndexRef.current;
       },
 
-      onPanResponderMove: (_, gestureState) => {
-        const minHeight = 100;
-        const maxHeight = screenHeight;
-        const minWidth = screenWidth * 0.48;
-        const maxWidth = screenWidth;
+      onPanResponderMove: (_, { dy }) => {
+        const minH = initialHeight;
+        const maxH = screenHeight;
+        const minW = initialWidth;
+        const maxW = screenWidth;
 
-        let newHeight = slideHeightRef.current + gestureState.dy;
-        let newWidth = newHeight * aspectRatio;
+        let newH = slideHeightRef.current + dy;
+        let newW = newH * aspectRatio;
 
-        // Clamp values
-        if (newWidth > maxWidth) {
-          newWidth = maxWidth;
-          newHeight = newWidth / aspectRatio;
-        }
-        if (newWidth < minWidth) {
-          newWidth = minWidth;
-          newHeight = newWidth / aspectRatio;
-        }
-        if (newHeight > maxHeight) {
-          newHeight = maxHeight;
-          newWidth = newHeight * aspectRatio;
-        }
-        if (newHeight < minHeight) {
-          newHeight = minHeight;
-          newWidth = newHeight / aspectRatio;
-        }
+        if (newW > maxW) { newW = maxW; newH = newW / aspectRatio; }
+        if (newW < minW) { newW = minW; newH = newW / aspectRatio; }
+        if (newH > maxH) { newH = maxH; newW = newH * aspectRatio; }
+        if (newH < minH) { newH = minH; newW = newH * aspectRatio; } // was / aspectRatio
 
-        setHeight(newHeight);
-        setSlideWidth(newWidth);
+        slideHeightRef.current = newH;
+        slideWidthRef.current = newW;
+        setSlideHeight(newH);
+        setSlideWidth(newW);
       },
 
       onPanResponderRelease: () => {
         isResizing.current = false;
         snapToCurrentSlide();
       },
-
       onPanResponderTerminate: () => {
         isResizing.current = false;
         snapToCurrentSlide();
       },
-    })
+    }),
   ).current;
 
-  // -------------------------------
-  // Progress bar animation
-  // -------------------------------
+  // -----------------------------------------------------------------------
+  // Progress bar
+  // -----------------------------------------------------------------------
   const progressOpacity = useRef(new Animated.Value(0)).current;
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const progressHeight = scrollY.interpolate({
-    inputRange: [0, (slides.length - 1) * slideHeight],
-    outputRange: ["0%", "100%"],
-    extrapolate: "clamp",
-  });
+  // Memoized so it isn't recreated on every render
+  const progressHeight = useMemo(
+    () =>
+      scrollY.interpolate({
+        inputRange: [0, Math.max((slides.length - 1) * slideHeight, 1)],
+        outputRange: ["0%", "100%"],
+        extrapolate: "clamp",
+      }),
+    [slides.length, slideHeight, scrollY],
+  );
 
-  const showProgress = () => {
+  const showProgress = useCallback(() => {
     if (hideTimeout.current) {
       clearTimeout(hideTimeout.current);
       hideTimeout.current = null;
     }
-
     Animated.timing(progressOpacity, {
       toValue: 1,
       duration: 150,
       useNativeDriver: true,
     }).start();
-  };
+  }, [progressOpacity]);
 
-  const hideProgress = () => {
+  const hideProgress = useCallback(() => {
     hideTimeout.current = setTimeout(() => {
       Animated.timing(progressOpacity, {
         toValue: 0,
@@ -292,16 +299,71 @@ export default function WidgetSlider({
         useNativeDriver: true,
       }).start();
     }, 400);
-  };
+  }, [progressOpacity]);
 
-  const scaleX = progressOpacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.95], // shrink slightly when progress appears
-  });
+  const scaleX = useMemo(
+    () =>
+      progressOpacity.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0.95],
+      }),
+    [progressOpacity],
+  );
 
-  // -------------------------------
+  // -----------------------------------------------------------------------
+  // FlatList item layout — stable callback
+  // -----------------------------------------------------------------------
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => ({
+      length: slideHeight,
+      offset: slideHeight * index,
+      index,
+    }),
+    [slideHeight],
+  );
+
+  const keyExtractor = useCallback((_: unknown, index: number) => String(index), []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: WidgetSlide }) => {
+      switch (item.type) {
+        case "NBA":
+          return (
+            <View style={{ height: slideHeight }}>
+              <GameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+              />
+            </View>
+          );
+        case "leaders": {
+          const leaderLabel = LEADER_LABELS[item.stat.name] ?? item.stat.name;
+          return (
+            <PlayerLeadersSlide
+              header={leaderLabel}
+              players={item.stat.players}
+              slideWidth={slideWidth}
+              slideHeight={slideHeight}
+              visible={showPlayers}
+            />
+          );
+        }
+        default:
+          return null;
+      }
+    },
+    [slideHeight, slideWidth, showPlayers],
+  );
+
+  // -----------------------------------------------------------------------
+  // Styles — memoized, not recreated every render
+  // -----------------------------------------------------------------------
+  const styles = useMemo(() => sliderStyles(isDark), [isDark]);
+
+  // -----------------------------------------------------------------------
   // Render
-  // -------------------------------
+  // -----------------------------------------------------------------------
   return (
     <Animated.View
       style={{
@@ -315,85 +377,35 @@ export default function WidgetSlider({
         <FlatList
           ref={flatListRef}
           data={slides}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={keyExtractor}
           pagingEnabled
           snapToInterval={slideHeight}
           decelerationRate="fast"
           showsVerticalScrollIndicator={false}
-          getItemLayout={(_, index) => ({
-            length: slideHeight,
-            offset: slideHeight * index,
-            index,
-          })}
+          getItemLayout={getItemLayout}
           onScrollBeginDrag={showProgress}
           onMomentumScrollBegin={showProgress}
           onMomentumScrollEnd={hideProgress}
           onScrollEndDrag={hideProgress}
           onScroll={onScroll}
           scrollEventThrottle={16}
-          renderItem={({ item }) => {
-            switch (item.type) {
-              case "NBA":
-                return (
-                  <View style={{ height: slideHeight }}>
-                    <GameWidget {...item.data} height={slideHeight} />
-                  </View>
-                );
-              case "NFL":
-                return (
-                  <View style={{ height: slideHeight }}>
-                    <NFLGameWidget {...item.data} height={slideHeight} />
-                  </View>
-                );
-              case "CFB":
-                return (
-                  <View style={{ height: slideHeight }}>
-                    <CFBGameWidget {...item.data} height={slideHeight} />
-                  </View>
-                );
-              case "CBB":
-                return (
-                  <View style={{ height: slideHeight }}>
-                    <CBBGameWidget {...item.data} height={slideHeight} isWomen={false} />
-                  </View>
-                );
-              case "WCBB":
-                return (
-                  <View style={{ height: slideHeight }}>
-                    <CBBGameWidget {...item.data} height={slideHeight} isWomen={true} />
-                  </View>
-                );
-              case "leaders": {
-                const statName = item.stat.name;
-                const leaderLabel = LEADER_LABELS[statName] ?? statName;
-                return (
-                  <PlayerLeadersSlide
-                    header={leaderLabel}
-                    players={item.stat.players}
-                    slideWidth={slideWidth}
-                    slideHeight={slideHeight}
-                    visible={showPlayers}
-                  />
-                );
-              }
-              default:
-                return null;
-            }
-          }}
+          renderItem={renderItem}
         />
         <View style={styles.resizeHandle} {...panResponder.panHandlers} />
       </View>
 
-      <Animated.View style={[styles.progressContainer, { opacity: progressOpacity }]}>
+      <Animated.View
+        style={[styles.progressContainer, { opacity: progressOpacity }]}
+      >
         <Animated.View style={[styles.progressBar, { height: progressHeight }]} />
       </Animated.View>
     </Animated.View>
   );
 }
 
-// -------------------------------
+// -----------------------------------------------------------------------
 // Styles
-// -------------------------------
+// -----------------------------------------------------------------------
 const sliderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
@@ -401,7 +413,9 @@ const sliderStyles = (isDark: boolean) =>
       flexDirection: "row",
       borderColor: Colors.midTone,
       borderWidth: 1,
-      backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       position: "relative",
       overflow: "hidden",
       padding: 4,

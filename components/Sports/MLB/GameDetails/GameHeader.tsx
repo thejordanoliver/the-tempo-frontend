@@ -27,7 +27,7 @@ type Props = {
   awayRecord?: string;
   gameStatusDescription: string;
   gameStatusDetail: string;
-  league?: "mlb" | "cbb"; // ✅ new addition
+  league?: "mlb"
   bases: {
     first: boolean;
     second: boolean;

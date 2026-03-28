@@ -4,12 +4,11 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
-import { useLastFiveGames } from "hooks/MLBHooks/useLastFiveGames";
+import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
 import { MLBGame } from "types/mlb";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -43,15 +42,19 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
 
   /* ==================================================
      INTERNAL TEAM MAPPING
-  ================================================== */
-  const homeTeam = getMLBTeam(home?.id);
-  const awayTeam = getMLBTeam(away?.id);
+     ================================================== */
 
-  const homeName = homeTeam?.code ?? emptyHomeTeam.code ?? "";
-  const awayName = awayTeam?.code ?? emptyAwayTeam.code ?? "";
+  const homeId = home?.id;
+  const awayId = away?.id;
 
-  const homeColor = homeTeam?.color ?? emptyHomeTeam.color ?? "";
-  const awayColor = awayTeam?.color ?? emptyAwayTeam.color ?? "";
+  const homeTeam = getMLBTeam(homeId);
+  const awayTeam = getMLBTeam(awayId);
+
+  const homeName = homeTeam?.code ?? "";
+  const awayName = awayTeam?.code ?? "";
+
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
 
   const homeEspnId = homeTeam?.espnID;
   const awayEspnId = awayTeam?.espnID;
@@ -117,8 +120,13 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
       third: false,
     };
 
-  const homeLastGames = useLastFiveGames(home.id);
-  const awayLastGames = useLastFiveGames(away.id);
+  const homeTeamPlayersData = usePlayersByTeam(String(homeId));
+  const awayTeamPlayersData = usePlayersByTeam(String(awayId));
+
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
 
   const lineScore = liveScore?.periodScores?.length
     ? {
@@ -196,7 +204,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>
@@ -252,10 +260,9 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                   homeChance={homeChance}
                   awayChance={awayChance}
                   lineScore={lineScore}
-                  homeLastGames={homeLastGames}
-                  awayLastGames={awayLastGames}
                   injuries={injuries}
                   officials={officials}
+                  teamPlayersMap={teamPlayersMap}
                   resolvedVenueImage={resolvedVenue.image}
                   resolvedVenueName={resolvedVenue.name}
                   resolvedVenueCity={resolvedVenue.city}

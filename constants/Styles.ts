@@ -55,18 +55,14 @@ export const Fonts = {
   OSBOLD: "Oswald_700Bold",
 };
 
-export const globalStyles = (isDark: boolean, lighter?: boolean) =>
+export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
     errorText: {
       marginTop: 20,
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,
-      color: lighter
-        ? Colors.dark.lightRed
-        : isDark
-          ? Colors.dark.lightRed
-          : Colors.light.red,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyContainer: {
       flex: 1,
@@ -86,10 +82,6 @@ export const globalStyles = (isDark: boolean, lighter?: boolean) =>
       fontSize: 14,
       textAlign: "center",
       fontFamily: Fonts.OSREGULAR,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

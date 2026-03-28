@@ -1,6 +1,5 @@
 // components/Forum/PostItem.tsx
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
 import { Colors, Fonts } from "constants/Styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { BlurView } from "expo-blur";
@@ -17,7 +16,9 @@ import {
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
-import { getAccessToken } from "utils/authStorage";
+// FIX #1 + #3: use apiClient — handles auth header and token refresh automatically.
+//              Removed manual getAccessToken import from utils/authStorage.
+import { apiClient } from "utils/apiClient";
 import AlertModal from "./AlertModal";
 import PostImages, { MediaItem } from "./PostImages";
 
@@ -40,7 +41,7 @@ export interface Post {
 interface PostItemProps {
   item: Post;
   isDark: boolean;
-  token: string | null;
+  // FIX #2: removed `token` prop — no longer needed since apiClient manages auth
   currentUserId: number | null;
   deletePost: (postId: string) => void;
   editPost: (postId: string, newText: string) => void;
@@ -52,7 +53,6 @@ interface PostItemProps {
 export const PostItem = memo(function PostItem({
   item,
   isDark,
-  token,
   currentUserId,
   deletePost,
   editPost,
@@ -70,54 +70,34 @@ export const PostItem = memo(function PostItem({
   const router = useRouter();
   const styles = postItemStyles(isDark);
 
-  const profileImageUri = item.profile_image
-    ? item.profile_image.startsWith("http")
-      ? item.profile_image
-      : `${BASE_URL}${item.profile_image}`
-    : null;
+  // FIX #4: simplified image URL resolution — all media is now on Cloudinary
+  //         and starts with "https://". The old path-mangling logic was dead
+  //         code that could corrupt URLs if a non-Cloudinary value slipped through.
+  const resolveMediaUrl = (url: string | null | undefined): string | null => {
+    if (!url) return null;
+    if (url.startsWith("http")) return url;
+    // Fallback for any legacy server-relative paths still in the DB
+    return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+  };
 
-  const IMG_BASE_URL = `${BASE_URL}/uploads/forum-images/`;
-
-  const postImages = (item.images ?? []).map((img) => {
-    if (img.startsWith("http")) return img;
-    if (img.startsWith("/uploads/forum-images/")) {
-      return `${IMG_BASE_URL}${img.split("/uploads/forum-images/")[1]}`;
-    }
-    return `${IMG_BASE_URL}${img}`;
-  });
-
-  const postVideos = (item.videos ?? []).map((vid) => {
-    if (vid.startsWith("http")) return vid;
-    if (vid.startsWith("/uploads/forum-images/")) {
-      return `${IMG_BASE_URL}${vid.split("/uploads/forum-images/")[1]}`;
-    }
-    return `${IMG_BASE_URL}${vid}`;
-  });
-
-  const postVideoThumbnails = (item.video_thumbnails ?? []).map((thumb) => {
-    if (!thumb) return null;
-    if (thumb.startsWith("http")) return thumb;
-    if (thumb.startsWith("/uploads/forum-images/")) {
-      return `${IMG_BASE_URL}${thumb.split("/uploads/forum-images/")[1]}`;
-    }
-    return `${IMG_BASE_URL}${thumb}`;
-  });
+  const profileImageUri = resolveMediaUrl(item.profile_image);
 
   const media: MediaItem[] = [
-    ...postImages.map((uri, index) => ({
+    ...(item.images ?? []).map((uri, index) => ({
       id: `img-${item.id}-${index}`,
       type: "image" as const,
-      uri,
+      uri: resolveMediaUrl(uri) ?? uri,
     })),
-    ...postVideos.map((uri, index) => ({
+    ...(item.videos ?? []).map((uri, index) => ({
       id: `vid-${item.id}-${index}`,
       type: "video" as const,
-      uri,
-      thumbnailUri: postVideoThumbnails?.[index] ?? undefined,
+      uri: resolveMediaUrl(uri) ?? uri,
+      thumbnailUri:
+        resolveMediaUrl(item.video_thumbnails?.[index] ?? null) ?? undefined,
     })),
   ];
 
-  // Initialize store only once on mount
+  // Initialize like state in the store once on mount
   useEffect(() => {
     if (!likes[item.id]) {
       setLike(item.id, item.liked_by_current_user, item.likes);
@@ -126,33 +106,23 @@ export const PostItem = memo(function PostItem({
   }, []);
 
   const likeState = useLikesStore((state) => state.likes[item.id]);
-
-  // fallback values if not yet initialized
   const liked = likeState?.liked ?? item.liked_by_current_user;
   const likeCount = likeState?.count ?? item.likes;
 
+  // FIX #1: replaced manual token fetch + axios with apiClient
   const toggleLikePress = async () => {
-    let authToken = token ?? (await getAccessToken());
-
-    if (!authToken) {
-      alert("You must be logged in to like posts.");
-      return;
-    }
-
     // Optimistic UI update
     toggleLike(item.id);
 
     try {
-      await axios.patch(
-        `${BASE_URL}/api/forum/post/${item.id}/like`,
-        { like: !liked },
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
+      await apiClient.patch(`/api/forum/post/${item.id}/like`, {
+        like: !liked,
+      });
     } catch (err: any) {
-      // rollback on failure
+      // Rollback on failure
       toggleLike(item.id);
       alert(
-        err.response?.data?.error || err.message || "Failed to toggle like"
+        err.response?.data?.error ?? err.message ?? "Failed to toggle like",
       );
     }
   };
@@ -204,8 +174,8 @@ export const PostItem = memo(function PostItem({
         ? Colors.dark.lightRed
         : Colors.light.red
       : isDark
-      ? Colors.white
-      : Colors.black,
+        ? Colors.white
+        : Colors.black,
     fontFamily: Fonts.OSREGULAR,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -317,7 +287,7 @@ export const PostItem = memo(function PostItem({
           />
         ) : (
           <View style={styles.postTextWrapper}>
-            <Text style={styles.postText}>{item.text}</Text>
+            {item.text && <Text style={styles.postText}>{item.text}</Text>}
             {media.length > 0 && <PostImages media={media} item={item} />}
           </View>
         )}

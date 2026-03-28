@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { BASE_URL } from "utils/apiClient";
 
 type AggregatedStats = Record<string, number>;
 
-const RAPIDAPI_KEY = process.env.EXPO_PUBLIC_RAPIDAPI_KEY || "";
-const RAPIDAPI_HOST = process.env.EXPO_PUBLIC_FOOTBALL_RAPIDAPI_HOST || "";
-
-export function useFootballPlayerStats(playerId: number, season = "2025") {
-  const [aggregatedStats, setAggregatedStats] = useState<AggregatedStats | null>(null);
+export function useFootballPlayerStats(playerId: number) {
+  const [aggregatedStats, setAggregatedStats] =
+    useState<AggregatedStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!playerId) return;
@@ -19,41 +18,28 @@ export function useFootballPlayerStats(playerId: number, season = "2025") {
       setError(null);
 
       try {
-        const response = await axios.get(`https://${RAPIDAPI_HOST}/players/statistics`, {
-          params: { id: playerId.toString(), season },
-          headers: {
-            "x-rapidapi-key": RAPIDAPI_KEY,
-            "x-rapidapi-host": RAPIDAPI_HOST,
-          },
-        });
+        // ✅ Call your backend endpoint
+        const response = await axios.get(
+          `${BASE_URL}/api/players/football/${playerId}/stats`,
+        );
 
-        const playerData = response.data.response?.[0];
-        if (!playerData) throw new Error("No player stats found");
+        const data = response.data;
 
-        const totals: AggregatedStats = {};
+        if (!data || !data.aggregatedStats) {
+          throw new Error("No player stats found");
+        }
 
-        // Loop through teams (usually 1)
-        playerData.teams.forEach((teamData: any) => {
-          teamData.groups.forEach((group: any) => {
-            group.statistics.forEach((stat: any) => {
-              const statName = stat.name;
-              const value = parseFloat(String(stat.value).replace(/,/g, "")) || 0;
-              if (!totals[statName]) totals[statName] = 0;
-              totals[statName] += value;
-            });
-          });
-        });
-
-        setAggregatedStats(totals);
+        setAggregatedStats(data.aggregatedStats);
       } catch (err: any) {
-        setError(err);
+        console.error("❌ Error fetching football stats:", err.message || err);
+        setError(err.message || "Failed to fetch football stats");
       } finally {
         setLoading(false);
       }
     };
 
     fetchStats();
-  }, [playerId, season]);
+  }, [playerId]);
 
   return { aggregatedStats, loading, error };
 }

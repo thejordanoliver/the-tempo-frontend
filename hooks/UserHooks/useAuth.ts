@@ -1,9 +1,10 @@
 // hooks/useAuth.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { apiClient, saveTokens } from "utils/apiClient";
+import { BASE_URL } from "utils/apiClient";
 
 interface User {
   id: number;
@@ -15,191 +16,194 @@ interface User {
   favorites?: string[];
 }
 
+// ─── Image normalization ──────────────────────────────────────────────────────
+
+const normalizeImage = (value?: string | null): string | null => {
+  if (!value || value === "null" || value === "undefined") return null;
+  return value;
+};
+
 export function useAuth() {
   const router = useRouter();
 
-  // 🔹 User/token state
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  // 🔹 Loading states
-  const [loadingUser, setLoadingUser] = useState(true); // loading from AsyncStorage
-  const [loadingAction, setLoadingAction] = useState(false); // login/signup/delete
-  const normalizeImage = (value?: string | null) => {
-    if (!value || value === "null") return null;
-    return value;
-  };
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingAction, setLoadingAction] = useState(false);
 
-  
-// console.log(JSON.stringify(user, null, 2))
-  // 🔹 Load user & token from AsyncStorage
-useEffect(() => {
-  const loadUser = async () => {
-    try {
-      // 🔹 Purge broken images first
-      await purgeBrokenImages();
+  // ─── Load persisted session on mount ───────────────────────────────────────
 
-      const values = await AsyncStorage.multiGet([
-        "token",
-        "accessToken",
-        "userId",
-        "username",
-        "fullName",
-        "bio",
-        "profileImage",
-        "bannerImage",
-        "favorites",
-      ]);
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const values = await AsyncStorage.multiGet([
+          "accessToken",
+          "userId",
+          "username",
+          "fullName",
+          "bio",
+          "profileImage",
+          "bannerImage",
+          "favorites",
+        ]);
 
-      const userData: Record<string, string | null> = Object.fromEntries(values);
-      const storedToken = userData.token ?? userData.accessToken;
-      if (storedToken) setToken(storedToken);
+        const stored: Record<string, string | null> =
+          Object.fromEntries(values);
 
-      if (userData.userId && userData.username) {
-        setUser({
-          id: parseInt(userData.userId, 10),
-          username: userData.username,
-          full_name: userData.fullName ?? "",
-          bio: userData.bio ?? "",
-          profile_image: normalizeImage(userData.profileImage),
-          banner_image: normalizeImage(userData.bannerImage),
-          favorites: userData.favorites ? JSON.parse(userData.favorites) : [],
-        });
+        if (stored.accessToken) {
+          setToken(stored.accessToken);
+        }
+
+        if (stored.userId && stored.username) {
+          setUser({
+            id: parseInt(stored.userId, 10),
+            username: stored.username,
+            full_name: stored.fullName ?? "",
+            bio: stored.bio ?? "",
+            profile_image: normalizeImage(stored.profileImage),
+            banner_image: normalizeImage(stored.bannerImage),
+            favorites: stored.favorites ? JSON.parse(stored.favorites) : [],
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load user from storage:", err);
+      } finally {
+        setLoadingUser(false);
       }
-    } catch (err) {
-      console.error("Failed to load user:", err);
-    } finally {
-      setLoadingUser(false);
-    }
+    };
+
+    loadUser();
+  }, []);
+
+  // ─── Shared post-auth handler ───────────────────────────────────────────────
+
+  const handleAuthSuccess = async (
+    accessToken: string,
+    refreshToken: string,
+    user: User,
+  ) => {
+    setToken(accessToken);
+    setUser(user);
+
+    await saveTokens(accessToken, refreshToken);
+
+    await AsyncStorage.multiSet([
+      ["userId", user.id.toString()],
+      ["username", user.username],
+      ["fullName", user.full_name ?? ""],
+      ["bio", user.bio ?? ""],
+      ["profileImage", normalizeImage(user.profile_image) ?? ""],
+      ["bannerImage", normalizeImage(user.banner_image) ?? ""],
+      ["favorites", JSON.stringify(user.favorites ?? [])],
+    ]);
   };
 
-  // Function that removes broken image keys
-  const purgeBrokenImages = async () => {
-    const keys = ["profileImage", "bannerImage"];
-    for (const key of keys) {
-      const value = await AsyncStorage.getItem(key);
-      if (!value || value === "null" || value === "undefined") {
-        await AsyncStorage.removeItem(key);
-      }
-    }
-  };
+  // ─── Login ─────────────────────────────────────────────────────────────────
 
-  loadUser();
-}, []);
-
-
-  // 🔹 Helper: store everything consistently
-  const handleAuthSuccess = async (token: string, user: User) => {
-    try {
-      setToken(token);
-      setUser(user);
-
-      await AsyncStorage.multiSet([
-        ["token", token],
-        ["userId", user.id.toString()],
-        ["username", user.username],
-        ["fullName", user.full_name ?? ""],
-        ["bio", user.bio ?? ""],
-        ["profileImage", user.profile_image ?? ""],
-        ["bannerImage", user.banner_image ?? ""],
-        ["favorites", JSON.stringify(user.favorites ?? [])],
-      ]);
-    } catch (err) {
-      console.error("Failed to save auth data:", err);
-    }
-  };
-
-  // 🔹 Login
   const login = async (username: string, password: string) => {
+    setLoadingAction(true);
     try {
-      setLoadingAction(true);
-      const res = await fetch(`${BASE_URL}/api/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await axios.post<{
+        accessToken: string;
+        refreshToken: string;
+        user: User;
+      }>(`${BASE_URL}/api/login`, { username, password });
 
-      if (!res.ok) throw new Error("Invalid login");
-
-      const { token, user } = await res.json();
-      await handleAuthSuccess(token, user);
+      await handleAuthSuccess(
+        res.data.accessToken,
+        res.data.refreshToken,
+        res.data.user,
+      );
       router.replace("/(tabs)/profile");
-    } catch (err) {
-      console.error("Login error:", err);
-      throw err;
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ?? err.message ?? "Invalid credentials";
+      console.error("Login error:", message);
+      throw new Error(message);
     } finally {
       setLoadingAction(false);
     }
   };
 
-  // 🔹 Signup
+  // ─── Signup ────────────────────────────────────────────────────────────────
+
   const signup = async (formData: FormData) => {
+    setLoadingAction(true);
     try {
-      setLoadingAction(true);
-      const res = await fetch(`${BASE_URL}/api/signup`, {
-        method: "POST",
-        body: formData,
+      const res = await axios.post<{
+        accessToken: string;
+        refreshToken: string;
+        user: User;
+      }>(`${BASE_URL}/api/signup`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (!res.ok) throw new Error("Signup failed");
-
-      const { token, user } = await res.json();
-      await handleAuthSuccess(token, user);
+      await handleAuthSuccess(
+        res.data.accessToken,
+        res.data.refreshToken,
+        res.data.user,
+      );
       router.replace("/(tabs)/profile");
-    } catch (err) {
-      console.error("Signup error:", err);
-      throw err;
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ?? err.message ?? "Signup failed";
+      console.error("Signup error:", message);
+      throw new Error(message);
     } finally {
       setLoadingAction(false);
     }
   };
 
-  // 🔹 Logout
+  // ─── Logout ────────────────────────────────────────────────────────────────
+
   const logout = async () => {
     try {
+      const stored = await AsyncStorage.multiGet(["refreshToken"]);
+      const refreshToken = Object.fromEntries(stored).refreshToken;
+
+      if (refreshToken) {
+        // Best-effort — local cleanup always runs regardless of server response
+        await axios
+          .post(`${BASE_URL}/api/logout`, { refreshToken })
+          .catch(() => {});
+      }
+
       if (user?.id) {
         await AsyncStorage.removeItem(`@view_mode_preference_${user.id}`);
       }
-
+    } catch (err) {
+      console.warn("Logout error:", err);
+    } finally {
       await AsyncStorage.clear();
       setUser(null);
       setToken(null);
       router.replace("/login");
-    } catch (err) {
-      console.warn("Logout error:", err);
     }
   };
 
-  // 🔹 Delete account
-  const deleteAccount = async (password: string) => {
+  // ─── Delete account ────────────────────────────────────────────────────────
+
+  const deleteAccount = async () => {
     try {
-      const username = await AsyncStorage.getItem("username");
-      if (!username) throw new Error("No user found");
-
-      const res = await fetch(`${BASE_URL}/api/delete-account`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(errText || "Failed to delete account");
-      }
+      // apiClient attaches the Bearer token automatically via its request interceptor
+      await apiClient.delete("/api/delete-account");
 
       await AsyncStorage.clear();
       setUser(null);
       setToken(null);
       router.replace("/login");
-    } catch (err) {
-      console.error("Delete error:", err);
-      throw err;
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ?? err.message ?? "Failed to delete account";
+      console.error("Delete account error:", message);
+      throw new Error(message);
     }
   };
 
   return {
     user,
     token,
-    loadingUser, // ← now explicitly exposed
+    loadingUser,
     loading: loadingAction,
     login,
     signup,

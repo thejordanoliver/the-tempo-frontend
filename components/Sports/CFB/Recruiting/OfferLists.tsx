@@ -41,7 +41,7 @@ export default function OfferList({ recruit, isDark }: Props) {
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Offers</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Offers</HeadingTwo>
       <View style={styles.wrapper}>
         <View style={styles.itemContainer}>
           <Text style={styles.headerText}>School</Text>
@@ -57,7 +57,8 @@ export default function OfferList({ recruit, isDark }: Props) {
             data={visibleOffers}
             keyExtractor={(item, index) => item.school + index}
             renderItem={({ item, index }) => {
-              const isSigned = item.status === "Signed" || item.status === "Enrolled";
+              const isSigned =
+                item.status === "Signed" || item.status === "Enrolled";
               const hasOffer = item.hasOffer;
               const isAlt = index % 2 === 1;
               const zebra = isAlt

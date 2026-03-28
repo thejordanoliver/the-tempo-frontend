@@ -1,6 +1,7 @@
 // hooks/NFLHooks/useNFLGameLeaders.ts
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "utils/apiClient";
 
 export type PlayerStat = {
   name: string;
@@ -16,7 +17,7 @@ export interface Player {
   image?: string | null;
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+
 
 export function useFootballGameLeaders(gameId?: string, teamId?: string) {
   const [leaders, setLeaders] = useState<Player[]>([]);

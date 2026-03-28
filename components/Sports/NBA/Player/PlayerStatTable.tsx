@@ -4,7 +4,6 @@ import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkelet
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
-
 import { globalStyles } from "constants/Styles";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 
@@ -139,13 +138,13 @@ export default function PlayerStatTable({ playerId }: Props) {
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Career Stats</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
       <Dropdown
         isDark={isDark}
         options={STAT_OPTIONS}
         selectedValue={statView}
         onSelect={(value) => setStatView(value as StatView)}
-        absolute
+        style={styles.dropdown}
       />
 
       <View style={styles.tableWrapper}>

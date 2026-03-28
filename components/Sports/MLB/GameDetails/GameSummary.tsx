@@ -119,7 +119,7 @@ export default function GameSummary({ plays = [], loading = false }: Props) {
 
   return (
     <View>
-      <HeadingTwo>Game Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Summary</HeadingTwo>
       <View style={styles.wrapper}>
         <TabBar
           tabs={inningTabs}

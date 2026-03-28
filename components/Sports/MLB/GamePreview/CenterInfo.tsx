@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/Styles";
 import { Text, View } from "react-native";
-import BasesIndicator from "../GameDetails/BasesIndicator";
 import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import BasesIndicator from "../GameDetails/BasesIndicator";
+
 type GameInfoProps = {
   gameStatusDescription: string;
   gameStatusDetail: string;

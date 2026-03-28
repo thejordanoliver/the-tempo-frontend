@@ -86,7 +86,7 @@ import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
 import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
-export const teams: MLBTeam[] = [
+export const mlbTeams: MLBTeam[] = [
   {
     id: 2,
     espnID: 29,
@@ -104,6 +104,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "48,405",
     address: "401 E Jefferson St, Phoenix, AZ 85004",
     city: "Phoenix, AZ",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/diamondbacks.jpg",
     isAllStar: false,
   },
   {
@@ -123,6 +125,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "63,132",
     address: "7000 Coliseum Way, Oakland, CA 94621",
     city: "Oakland, CA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/athletics.jpg",
     isAllStar: false,
   },
   {
@@ -142,6 +146,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,149",
     address: "755 Battery Ave SE, Atlanta, GA 30339",
     city: "Atlanta, GA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
     isAllStar: false,
   },
   {
@@ -161,6 +167,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "45,971",
     address: "333 W Camden St, Baltimore, MD 21201",
     city: "Baltimore, MD",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
     isAllStar: false,
   },
   {
@@ -180,6 +188,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "37,755",
     address: "4 Jersey St, Boston, MA 02215",
     city: "Boston, MA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/redsox.jpg",
     isAllStar: false,
   },
   {
@@ -199,6 +209,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,649",
     address: "1060 W Addison St, Chicago, IL 60613",
     city: "Chicago, IL",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cubs.jpg",
     isAllStar: false,
   },
   {
@@ -218,6 +230,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "40,615",
     address: "333 W 35th St, Chicago, IL 60616",
     city: "Chicago, IL",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/whitesox.jpg",
     isAllStar: false,
   },
   {
@@ -237,6 +251,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "42,319",
     address: "100 Joe Nuxhall Way, Cincinnati, OH 45202",
     city: "Cincinnati, OH",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/reds.jpg",
     isAllStar: false,
   },
   {
@@ -256,6 +272,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "34,830",
     address: "2401 Ontario St, Cleveland, OH 44115",
     city: "Cleveland, OH",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/guardians.jpg",
     isAllStar: false,
   },
   {
@@ -275,6 +293,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "50,398",
     address: "2001 Blake St, Denver, CO 80205",
     city: "Denver, CO",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rockies.jpg",
     isAllStar: false,
   },
   {
@@ -294,6 +314,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,083",
     address: "2100 Woodward Ave, Detroit, MI 48201",
     city: "Detroit, MI",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/tigers.jpg",
     isAllStar: false,
   },
   {
@@ -313,6 +335,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,168",
     address: "501 Crawford St, Houston, TX 77002",
     city: "Houston, TX",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/astros.jpg",
     isAllStar: false,
   },
   {
@@ -332,6 +356,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "37,903",
     address: "1 Royal Way, Kansas City, MO 64129",
     city: "Kansas City, MO",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/royals.jpg",
     isAllStar: false,
   },
   {
@@ -351,6 +377,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "45,517",
     address: "2000 E Gene Autry Way, Anaheim, CA 92806",
     city: "Anaheim, CA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/angels.jpg",
     isAllStar: false,
   },
   {
@@ -370,6 +398,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "56,000",
     address: "1000 Vin Scully Ave, Los Angeles, CA 90012",
     city: "Los Angeles, CA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/dodgers.jpg",
     isAllStar: false,
   },
   {
@@ -389,6 +419,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "36,742",
     address: "501 Marlins Way, Miami, FL 33125",
     city: "Miami, FL",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/marlins.jpg",
     isAllStar: false,
   },
   {
@@ -408,6 +440,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,900",
     address: "1 Brewers Way, Milwaukee, WI 53214",
     city: "Milwaukee, WI",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/brewers.jpg",
     isAllStar: false,
   },
   {
@@ -427,6 +461,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "38,544",
     address: "1 Twins Way, Minneapolis, MN 55403",
     city: "Minneapolis, MN",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/twins.jpg",
     isAllStar: false,
   },
   {
@@ -446,6 +482,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,922",
     address: "41 Seaver Way, Queens, NY 11368",
     city: "Queens, NY",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mets.jpg",
     isAllStar: false,
   },
   {
@@ -465,6 +503,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "46,537",
     address: "1 E 161st St, Bronx, NY 10451",
     city: "Bronx, NY",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/yankees.jpg",
     isAllStar: false,
   },
   {
@@ -484,6 +524,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "42,792",
     address: "1 Citizens Bank Way, Philadelphia, PA 19148",
     city: "Philadelphia, PA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/phillies.jpg",
     isAllStar: false,
   },
   {
@@ -503,6 +545,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "38,362",
     address: "115 Federal St, Pittsburgh, PA 15212",
     city: "Pittsburgh, PA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/pirates.jpg",
     isAllStar: false,
   },
   {
@@ -522,6 +566,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "40,209",
     address: "100 Park Blvd, San Diego, CA 92101",
     city: "San Diego, CA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/padres.jpg",
     isAllStar: false,
   },
   {
@@ -541,6 +587,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,915",
     address: "24 Willie Mays Plaza, San Francisco, CA 94107",
     city: "San Francisco, CA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/giants.jpg",
     isAllStar: false,
   },
   {
@@ -560,6 +608,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "47,929",
     address: "1250 1st Ave S, Seattle, WA 98134",
     city: "Seattle, WA",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mariners.jpg",
     isAllStar: false,
   },
   {
@@ -579,6 +629,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "45,529",
     address: "700 Clark Ave, St. Louis, MO 63102",
     city: "St. Louis, MO",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cardinals.jpg",
     isAllStar: false,
   },
   {
@@ -598,6 +650,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "25,025",
     address: "1 Tropicana Dr, St. Petersburg, FL 33705",
     city: "St. Petersburg, FL",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rays.jpg",
     isAllStar: false,
   },
   {
@@ -617,6 +671,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "40,300",
     address: "734 Stadium Dr, Arlington, TX 76011",
     city: "Arlington, TX",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rangers.jpg",
     isAllStar: false,
   },
   {
@@ -636,6 +692,8 @@ export const teams: MLBTeam[] = [
     venueCapacity: "49,282",
     address: "1 Blue Jays Way, Toronto, ON M5V 1J1",
     city: "Toronto, Ontario",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/bluejays.jpg",
     isAllStar: false,
   },
   {
@@ -655,15 +713,17 @@ export const teams: MLBTeam[] = [
     venueCapacity: "41,339",
     address: "1500 S Capitol St SE, Washington, DC 20003",
     city: "Washington, DC",
+        venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/nationals.jpg",
     isAllStar: false,
   },
 ];
 
 export const getMLBTeam = (id: number | string) =>
-  teams.find((t) => String(t.id) === String(id)) || null;
+  mlbTeams.find((t) => String(t.id) === String(id)) || null;
 
 export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
-  const team = teams.find((t) => String(t.id) === String(id));
+  const team = mlbTeams.find((t) => String(t.id) === String(id));
   if (!team) return PlaceholderLogo;
 
   // adjust based on your actual team fields
@@ -671,58 +731,5 @@ export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
 };
 
 export const getMLBTeamByEspnId = (id: number | string) =>
-  teams.find((t) => String(t.espnID) === String(id)) || null;
-
-export const teamsMLBById: Record<string, MLBTeam> = teams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, MLBTeam>,
-);
-
-export const mlbDivisionsById = {
-  "AL East": [
-    5,  // Boston Red Sox
-    4,  // Baltimore Orioles
-    36, // Toronto Blue Jays
-    34, // Tampa Bay Rays
-    25, // New York Yankees
-  ],
-  "AL Central": [
-    9,  // Cleveland Guardians
-    12, // Detroit Tigers
-    16, // Kansas City Royals
-    22, // Minnesota Twins
-    7,  // Chicago White Sox
-  ],
-  "AL West": [
-    26, // Oakland Athletics
-    15, // Houston Astros
-    17, // Los Angeles Angels
-    32, // Seattle Mariners
-    35, // Texas Rangers
-  ],
-  "NL East": [
-    3,  // Atlanta Braves
-    19, // Miami Marlins
-    24, // New York Mets
-    27, // Philadelphia Phillies
-    37, // Washington Nationals
-  ],
-  "NL Central": [
-    6,  // Chicago Cubs
-    8,  // Cincinnati Reds
-    20, // Milwaukee Brewers
-    28, // Pittsburgh Pirates
-    33, // St. Louis Cardinals
-  ],
-  "NL West": [
-    2,  // Arizona Diamondbacks
-    10, // Colorado Rockies
-    18, // Los Angeles Dodgers
-    30, // San Diego Padres
-    31, // San Francisco Giants
-  ],
-};
+  mlbTeams.find((t) => String(t.espnID) === String(id)) || null;
 

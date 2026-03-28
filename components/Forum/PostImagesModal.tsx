@@ -22,9 +22,9 @@ import {
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
+import { BASE_URL } from "utils/apiClient";
 import { getAccessToken } from "utils/authStorage";
 import { MediaItem } from "./PostImages";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 

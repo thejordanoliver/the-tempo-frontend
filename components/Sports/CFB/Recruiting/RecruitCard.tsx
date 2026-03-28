@@ -27,13 +27,8 @@ export default function RecruitCard({ recruit, index }: Props) {
   const styles = getStyles(isDark);
   const router = useRouter();
 
-  /** Logo priority:
-   *  1. Signed / Committed → projected_school
-   *  2. Prediction → predicted_school
-   */
-  const logoTeam = recruit.projected_school || recruit.predicted_school || null;
-
-  const logo = logoTeam ? getCFBTeamLogo(logoTeam, isDark) : null;
+  const teamId = recruit.projected_team_id;
+  const logo = teamId ? getCFBTeamLogo(teamId, isDark) : null;
 
   /** Animations */
   const slideX = useRef(new Animated.Value(70)).current;

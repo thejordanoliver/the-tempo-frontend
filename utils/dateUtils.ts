@@ -8,7 +8,6 @@ import { Dimensions, ScrollView } from "react-native";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-
 export const isTodayOrTomorrow = (dateString: string) => {
   const gameDate = new Date(dateString);
   const now = new Date();
@@ -36,6 +35,25 @@ export function getNBASeason(): string {
 
   // Jan–Sep belongs to previous season
   return String(year - 1);
+}
+
+export function getCBBSeason(): string {
+  const today = dayjs();
+  const year = today.year();
+  const month = today.month() + 1; // 1–12
+
+  let startYear: number;
+  let endYear: number;
+
+  if (month >= 10) {
+    startYear = year;
+    endYear = year + 1;
+  } else {
+    startYear = year - 1;
+    endYear = year;
+  }
+
+  return `${startYear}-${endYear}`;
 }
 
 export function getNBACalendarSeason(): string {
@@ -95,7 +113,6 @@ export function getMLBStandingsSeason(date: Date = new Date()): string {
   // March and later → use current year
   return String(year);
 }
-
 
 export function getNHLSeason(date: Date = new Date()): string {
   const year = date.getFullYear();
@@ -175,22 +192,21 @@ export const scrollToMonth = (
   });
 };
 
+export const calculateAge = (date?: string | null) => {
+  if (!date) return null;
 
- export const calculateAge = (date?: string | null) => {
-    if (!date) return null;
+  const birthDate = new Date(date);
+  const today = new Date();
 
-    const birthDate = new Date(date);
-    const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
 
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
+  return age;
+};

@@ -1,21 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/Styles";
-import { getTeamLogo, teamsById } from "constants/teams";
-import {
-  getCBBTeamLogo,
-  teamsCBBById,
-  teamsWCBBById,
-} from "constants/teamsCBB";
-import {
-  getCFBTeamLogo,
-  teamsCFBById,
-} from "constants/teamsCFB";
-import {
-   getMLBTeamLogo,
-  teamsMLBById,
-} from "constants/teamsMLB";
-import { getNFLTeamLogo, teamsNFLById } from "constants/teamsNFL";
+import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
@@ -34,7 +24,7 @@ type Props = {
   query?: string;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export default function ResultItemRow({
   item,
@@ -119,17 +109,17 @@ export default function ResultItemRow({
       localTeamLogo = getTeamLogo(teamId, isDark);
     const localTeam =
       teamId && player.isNFL
-        ? teamsNFLById[teamId]
+        ? getNFLTeam(teamId)
         : teamId && player.isMLB
-          ? teamsMLBById[teamId]
+          ? getMLBTeam(teamId)
           : teamId && player.isCFB
-            ? teamsCFBById[teamId]
+            ? getCFBTeam(teamId)
             : teamId && player.isCBB
-              ? teamsCBBById[teamId]
+              ? getCBBTeam(teamId)
               : teamId && player.isWCBB
-                ? teamsWCBBById[teamId]
+                ? getCBBTeam(teamId, true)
                 : teamId && player.isNBA
-                  ? teamsById[teamId]
+                  ? getNBATeam(teamId)
                   : null;
     return (
       <View style={styles.itemRow}>

@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/Styles";
-import { teams } from "constants/teamsCBB";
+import { cbbTeams } from "constants/teamsCBB";
 import { UpcomingGameOdds } from "hooks/CBBHooks/useOdds";
 import React from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
@@ -19,8 +19,8 @@ const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
   // ------------------------------------------------------
   const bookmaker = game.bookmakers?.[0];
 
-  const homeTeam = teams.find((t) => t.fullName === game.home_team);
-  const awayTeam = teams.find((t) => t.fullName === game.away_team);
+  const homeTeam = cbbTeams.find((t) => t.fullName === game.home_team);
+  const awayTeam = cbbTeams.find((t) => t.fullName === game.away_team);
 
   const getMarket = (key: string) =>
     bookmaker?.markets?.find((m) => m.key === key);
@@ -107,7 +107,7 @@ const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
 
   return (
     <>
-      <HeadingTwo lighter={lighter}>Betting Odds</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Betting Odds</HeadingTwo>
       <View style={styles.container}>
         {/* Header Row */}
         <View style={styles.headerRow}>

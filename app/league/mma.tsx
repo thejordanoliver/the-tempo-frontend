@@ -56,6 +56,7 @@ export default function UFCLeagueScreen() {
           const index = tabs.indexOf(tab);
           pagerRef.current?.setPage(index);
         }}
+        isDark={isDark}
       />
 
       <View style={styles.container}>

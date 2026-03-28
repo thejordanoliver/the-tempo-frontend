@@ -7,9 +7,9 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
-import { CFBTeam } from "types/cfb";
+
 import { MLBTeam } from "types/mlb";
-import { NFLTeam } from "types/nfl";
+import { Team } from "types/nfl";
 import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
 
 type Props = {
@@ -81,7 +81,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "CFB": {
-      const t = team as CFBTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -118,7 +118,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "NFL": {
-      const t = team as NFLTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>

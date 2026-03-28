@@ -3,16 +3,13 @@ import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
-import {
-  getTeamCode as getCFBCode,
-  getTeamLogo as getCFBLogo,
-} from "constants/teamsCFB";
-import { getTeamCode as getNFLCode, getNFLTeamsLogo } from "constants/teamsNFL";
+import { Colors, globalStyles } from "constants/Styles";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
 import { useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
 import { useMemo, useState } from "react";
-import { Image, Text, useColorScheme, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const CATEGORIES = [
@@ -31,7 +28,7 @@ type Props = {
   homeTeamId: string;
   awayTeamId: string;
   league: "NFL" | "CFB";
-  lighter?: boolean;
+  isDark: boolean;
 };
 
 type PlayerStat = { name: string; value: string | number | null };
@@ -57,18 +54,20 @@ const findRosterPlayer = (roster: any[], id: number, name: string) => {
 
   return (
     roster.find(
-      (p) => p.player_id === id || normalize(p.name) === normalize(name)
+      (p) => p.player_id === id || normalize(p.name) === normalize(name),
     ) ?? null
   );
 };
 
 const normalizePlayers = (
   raw: any[],
-  teamId: string,
+  teamId: number,
   roster: any[],
-  league: "NFL" | "CFB"
+  league: "NFL" | "CFB",
 ): DisplayPlayer[] => {
-  const teamCode = league === "NFL" ? getNFLCode(teamId) : getCFBCode(teamId);
+  const team = league === "NFL" ? getNFLTeam(teamId) : getCFBTeam(teamId);
+
+  const teamCode = team?.code ?? "UNK";
 
   return raw.map((p) => {
     const id = Number(p.id);
@@ -82,14 +81,13 @@ const normalizePlayers = (
       id,
       name: p.name,
       image,
-      teamCode: teamCode ?? "UNK",
-      teamId: Number(teamId), // add this
-      group: p.group,
-      statistics: p.stats ?? [],
+      teamCode,
+      teamId: Number(teamId),
+      group: p.group as Category,
+      statistics: (p.stats ?? []) as PlayerStat[],
     };
   });
 };
-
 /* ----------------------------- */
 /* Stat Config                   */
 /* ----------------------------- */
@@ -136,11 +134,10 @@ export default function GameLeaders({
   homeTeamId,
   awayTeamId,
   league,
-  lighter = false,
+  isDark,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameLeadersStyles(isDark, lighter);
-  const global = globalStyles(isDark, lighter);
+  const styles = gameLeadersStyles(isDark);
+  const global = globalStyles(isDark);
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
 
@@ -161,34 +158,34 @@ export default function GameLeaders({
   const { players: awayRoster } = useTeamPlayers(awayTeamId, league);
 
   const home = useMemo(
-    () => normalizePlayers(rawHome ?? [], homeTeamId, homeRoster, league),
-    [rawHome, homeRoster, league]
+    () =>
+      normalizePlayers(rawHome ?? [], Number(homeTeamId), homeRoster, league),
+    [rawHome, homeRoster, league],
   );
 
   const away = useMemo(
-    () => normalizePlayers(rawAway ?? [], awayTeamId, awayRoster, league),
-    [rawAway, awayRoster, league]
+    () =>
+      normalizePlayers(rawAway ?? [], Number(awayTeamId), awayRoster, league),
+    [rawAway, awayRoster, league],
   );
 
-  const textColor = lighter
-    ? Colors.white
-    : isDark
-    ? Colors.white
-    : Colors.black;
-  const subTextColor = lighter
-    ? Colors.lightGray
-    : isDark
-    ? Colors.midTone
-    : Colors.midTone;
+  const textColor = isDark ? Colors.white : Colors.black;
+  const subTextColor = isDark ? Colors.midTone : Colors.midTone;
 
   const leadersByCategory = useMemo(() => {
-    return CATEGORIES.reduce((acc, cat) => {
-      acc[cat] = {
-        home: home.find((p) => p.group === cat) ?? null,
-        away: away.find((p) => p.group === cat) ?? null,
-      };
-      return acc;
-    }, {} as Record<Category, { home: DisplayPlayer | null; away: DisplayPlayer | null }>);
+    return CATEGORIES.reduce(
+      (acc, cat) => {
+        acc[cat] = {
+          home: home.find((p) => p.group === cat) ?? null,
+          away: away.find((p) => p.group === cat) ?? null,
+        };
+        return acc;
+      },
+      {} as Record<
+        Category,
+        { home: DisplayPlayer | null; away: DisplayPlayer | null }
+      >,
+    );
   }, [home, away]);
 
   if (loadingHome || loadingAway) return <GameLeadersSkeleton />;
@@ -200,24 +197,13 @@ export default function GameLeaders({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Game Leaders</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
       <View style={styles.wrapper}>
         <MainScrollTabBar
           tabs={CATEGORIES}
           selected={selectedCategory}
           onTabPress={setSelectedCategory}
-          lighter={lighter} // <-- forward the prop here
-          renderLabel={(tab, isSelected) => (
-            <Text
-              style={{
-                fontFamily: Fonts.OSMEDIUM,
-                fontSize: 16,
-                color: isSelected ? textColor : subTextColor,
-              }}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </Text>
-          )}
+          isDark={isDark}
         />
 
         {[awayP, homeP].map((p, i) => {
@@ -225,12 +211,14 @@ export default function GameLeaders({
 
           const logo =
             league === "NFL"
-              ? getNFLTeamsLogo(p.teamId, isDark || lighter)
-              : getCFBLogo(p.teamId, isDark || lighter);
+              ? getNFLTeamLogo(p.teamId, isDark)
+              : getCFBTeamLogo(p.teamId, isDark);
 
           const stats = STAT_KEYS[selectedCategory]
             .map((k) =>
-              p.statistics.find((s) => s.name.toLowerCase() === k.toLowerCase())
+              p.statistics.find(
+                (s) => s.name.toLowerCase() === k.toLowerCase(),
+              ),
             )
             .filter(Boolean) as PlayerStat[];
 

@@ -5,8 +5,10 @@ import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  home: Team;
-  away: Team;
+  home: Team | null;
+  away: Team | null;
+  awayLogo: any;
+  homeLogo: any;
   rankHome?: number;
   rankAway?: number;
   homeScore: number;
@@ -35,6 +37,8 @@ export default function GameHeader({
   headlineText,
   home,
   away,
+  awayLogo,
+  homeLogo,
   rankHome,
   rankAway,
   homeScore,
@@ -78,15 +82,11 @@ export default function GameHeader({
         <TeamRow
           key={`away`}
           team={{
-            id: away.id,
-            code: away.code,
-            name: away.name,
+            id: away?.id,
+            code: away?.code,
+            name: away?.name,
             record: awayRecord,
-            logo:
-              isDark && away.logoLight
-                ? away.logoLight
-                : away.logo ||
-                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
+            logo: awayLogo,
           }}
           isDark={isDark}
           bonusState={awayBonusState}
@@ -113,15 +113,11 @@ export default function GameHeader({
         <TeamRow
           key={`home`}
           team={{
-            id: home.id,
-            code: home.code,
-            name: home.name,
+            id: home?.id,
+            code: home?.code,
+            name: home?.name,
             record: homeRecord,
-            logo:
-              isDark && home.logoLight
-                ? home.logoLight
-                : home.logo ||
-                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
+            logo: homeLogo,
           }}
           isDark={isDark}
           rank={rankHome}

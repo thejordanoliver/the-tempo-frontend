@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export type PlayerSeasonStat = {
   value: string | null;
@@ -58,7 +58,7 @@ export function useNFLPlayerSeasons(playerId?: number) {
 
       try {
         const { data } = await axios.get<PlayerSeasonsResponse>(
-          `${BASE_URL}/api/players/nfl/${playerId}/seasons`
+          `${BASE_URL}/api/players/nfl/${playerId}/seasons`,
         );
 
         if (!cancelled) {
@@ -69,7 +69,7 @@ export function useNFLPlayerSeasons(playerId?: number) {
           setError(
             err?.response?.data?.error ||
               err.message ||
-              "Failed to fetch player seasons"
+              "Failed to fetch player seasons",
           );
         }
       } finally {

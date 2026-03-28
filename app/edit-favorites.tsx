@@ -4,10 +4,10 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Colors, Fonts } from "constants/Styles";
 import { teams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
-import { teams as cfbteams, conferenceListMap } from "constants/teamsCFB";
-import { teams as mlbTeams } from "constants/teamsMLB";
-import { teams as nflteams } from "constants/teamsNFL";
+import { cbbTeams } from "constants/teamsCBB";
+import { cfbTeams, conferenceListMap } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { useRouter } from "expo-router";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
@@ -27,10 +27,10 @@ export const leagueMap: Record<string, LeagueType> = {};
 [...teams].forEach((t) => {
   leagueMap[t.id.toString()] = "NBA";
 });
-[...nflteams].forEach((t) => {
+[...nflTeams].forEach((t) => {
   leagueMap[t.id.toString()] = "NFL";
 });
-[...cfbteams].forEach((t) => {
+[...cfbTeams].forEach((t) => {
   leagueMap[t.id.toString()] = "CFB";
 });
 [...cbbTeams].forEach((t) => {
@@ -112,7 +112,7 @@ export default function EditFavoritesScreen() {
               ),
 
             // NFL
-            ...nflteams
+            ...nflTeams
               .filter((t) => !t.isAllStar)
               .map(
                 (t) =>
@@ -142,7 +142,7 @@ export default function EditFavoritesScreen() {
               ),
 
             // CFB (still respects FBS logic)
-            ...cfbteams
+            ...cfbTeams
               .filter((t) => !t.isAllStar)
               .filter((t) => {
                 const fbsTeamNames = Object.values(conferenceListMap)
@@ -195,7 +195,7 @@ export default function EditFavoritesScreen() {
         />
       </Animated.View>
 
-      <Button onPress={handleSave} style={styles.saveButton} />
+      <Button onPress={handleSave} style={styles.saveButton} isDark={isDark} />
     </View>
   );
 }

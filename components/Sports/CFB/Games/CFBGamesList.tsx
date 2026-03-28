@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
-import { Game } from "types/cfb";
+import { Game } from "types/nfl";
 import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
 import CFBGameCard from "./CFBGameCard";
 import CFBSquareGameCard from "./CFBSquareGameCard";
@@ -276,7 +276,7 @@ export default function CFBGamesList({
               style={{ marginBottom: 16 }}
             >
               {showHeaders && (
-                <HeadingTwo style={{ marginHorizontal: 12 }}>
+                <HeadingTwo isDark={isDark} style={{ marginHorizontal: 12 }}>
                   {section.title}
                 </HeadingTwo>
               )}
@@ -298,7 +298,9 @@ export default function CFBGamesList({
           keyExtractor={(item, index) => `row-${index}`}
           renderItem={renderGridRow}
           renderSectionHeader={({ section }) =>
-            showHeaders ? <HeadingTwo>{section.title}</HeadingTwo> : null
+            showHeaders ? (
+              <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+            ) : null
           }
           stickySectionHeadersEnabled={false}
           refreshing={refreshing}
@@ -327,7 +329,7 @@ export default function CFBGamesList({
               <View
                 style={[section.title === "Postseason" && { marginTop: 12 }]}
               >
-                <HeadingTwo>{section.title}</HeadingTwo>
+                <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
               </View>
             ) : null
           }

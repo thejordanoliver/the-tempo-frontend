@@ -1,8 +1,10 @@
 import axios from "axios";
-import { teamsCBBById, teamsWCBBById } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBTeam } from "types/types";
+import { BASE_URL } from "utils/apiClient";
+import { getCBBSeason } from "utils/dateUtils";
+
 export type CBBGame = {
   id: number;
   date: string;
@@ -26,49 +28,25 @@ export type CBBGame = {
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
-
 const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
 type UseCBBWeeklyGamesOptions = {
+  season?: string;
   timezone?: string;
   isWomen?: boolean;
 };
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useCBBWeeklyGames({
-  timezone = "America/New_York",
+  season = getCBBSeason(),
+  timezone,
   isWomen = false,
 }: UseCBBWeeklyGamesOptions = {}) {
   const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
-  const teamsMap = isWomen ? teamsWCBBById : teamsCBBById;
 
   const [cbbGames, setGames] = useState<CBBGame[]>([]);
   const [cbbLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
-
-  const enrichTeams = useCallback(
-    (game: any) => {
-      const homeKey = isWomen
-        ? Number(game.teams.home.wid)
-        : Number(game.teams.home.id);
-      const awayKey = isWomen
-        ? Number(game.teams.away.wid)
-        : Number(game.teams.away.id);
-
-      const homeTeam = teamsMap[homeKey] || game.teams.home;
-      const awayTeam = teamsMap[awayKey] || game.teams.away;
-
-      return {
-        ...game,
-        teams: {
-          home: { ...game.teams.home, ...homeTeam },
-          away: { ...game.teams.away, ...awayTeam },
-        },
-      };
-    },
-    [teamsMap, isWomen],
-  );
 
   const refreshCBBGames = useCallback(async () => {
     setLoading(true);
@@ -76,13 +54,11 @@ export function useCBBWeeklyGames({
 
     try {
       const res = await axios.get(`${BASE_URL}/api/games/cbb/weekly`, {
-        params: { timezone, league },
+        params: { season, timezone, league },
       });
 
       const data: CBBGame[] = res.data?.response || [];
-      const enrichedData = data.map(enrichTeams);
-
-      setGames(enrichedData);
+      setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
       console.error("Error fetching CBB weekly games:", err.message);
@@ -90,7 +66,7 @@ export function useCBBWeeklyGames({
     } finally {
       setLoading(false);
     }
-  }, [timezone, league, enrichTeams]);
+  }, [season, timezone, league]);
 
   useEffect(() => {
     refreshCBBGames();

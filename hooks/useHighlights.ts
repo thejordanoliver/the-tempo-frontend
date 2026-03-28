@@ -12,7 +12,7 @@ type Highlight = {
   duration: number;
 };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /* ----------------------------- */
 /* HTML & Text Utilities          */
@@ -43,21 +43,95 @@ function capitalize(word: string) {
 /* ----------------------------- */
 
 const ACRONYMS = new Set([
-  "NBA", "NFL", "MLB", "NHL", "CFB", "WNBA", "FIBA", "USA", "NCAA",
-  "MVP", "DPOY", "ROY", "MIP", "6MOY", "FMVP", "ASG", "HOF", "COY",
-  "3PT", "FG", "FT", "FTA", "PTS", "AST", "REB", "STL", "BLK",
-  "PG", "SG", "SF", "PF", "C", "GOAT", "OT", "B2B", "FTW", "HOF",
-  "LAL", "BOS", "NYK", "CHI", "DAL", "MIA", "PHX", "GSW", "LAC",
+  "NBA",
+  "NFL",
+  "MLB",
+  "NHL",
+  "CFB",
+  "WNBA",
+  "FIBA",
+  "USA",
+  "NCAA",
+  "MVP",
+  "DPOY",
+  "ROY",
+  "MIP",
+  "6MOY",
+  "FMVP",
+  "ASG",
+  "HOF",
+  "COY",
+  "3PT",
+  "FG",
+  "FT",
+  "FTA",
+  "PTS",
+  "AST",
+  "REB",
+  "STL",
+  "BLK",
+  "PG",
+  "SG",
+  "SF",
+  "PF",
+  "C",
+  "GOAT",
+  "OT",
+  "B2B",
+  "FTW",
+  "HOF",
+  "LAL",
+  "BOS",
+  "NYK",
+  "CHI",
+  "DAL",
+  "MIA",
+  "PHX",
+  "GSW",
+  "LAC",
 ]);
 
 const PROPER_NOUNS = new Set([
-  "Lakers", "Celtics", "Warriors", "Nuggets", "Clippers", "Suns",
-  "Cowboys", "Chiefs", "Packers", "Steelers", "49ers", "Eagles",
-  "Yankees", "Dodgers", "Cubs", "Red Sox", "Braves", "Astros",
-  "Rangers", "Cardinals", "Mets", "Mariners", "Orioles", "Twins",
-  "Rangers", "Panthers", "Penguins", "Bruins", "Blackhawks", "Avalanche",
-  "United", "Barcelona", "Arsenal", "Liverpool", "Chelsea", "PSG", "Bayern",
-  "Real Madrid", "Manchester City", "Manchester United",
+  "Lakers",
+  "Celtics",
+  "Warriors",
+  "Nuggets",
+  "Clippers",
+  "Suns",
+  "Cowboys",
+  "Chiefs",
+  "Packers",
+  "Steelers",
+  "49ers",
+  "Eagles",
+  "Yankees",
+  "Dodgers",
+  "Cubs",
+  "Red Sox",
+  "Braves",
+  "Astros",
+  "Rangers",
+  "Cardinals",
+  "Mets",
+  "Mariners",
+  "Orioles",
+  "Twins",
+  "Rangers",
+  "Panthers",
+  "Penguins",
+  "Bruins",
+  "Blackhawks",
+  "Avalanche",
+  "United",
+  "Barcelona",
+  "Arsenal",
+  "Liverpool",
+  "Chelsea",
+  "PSG",
+  "Bayern",
+  "Real Madrid",
+  "Manchester City",
+  "Manchester United",
 ]);
 
 /**
@@ -71,7 +145,8 @@ function toSentenceCasePreserveAcronyms(str: string): string {
     if (ACRONYMS.has(upper)) return upper;
 
     // Check for two-word proper nouns
-    const twoWord = i < arr.length - 1 ? `${capitalize(word)} ${capitalize(arr[i + 1])}` : "";
+    const twoWord =
+      i < arr.length - 1 ? `${capitalize(word)} ${capitalize(arr[i + 1])}` : "";
     if (PROPER_NOUNS.has(twoWord)) {
       arr[i + 1] = ""; // skip next word
       return twoWord;
@@ -98,7 +173,7 @@ function toSentenceCasePreserveAcronyms(str: string): string {
 export function useHighlights(
   sport: string = "nba",
   query: string = "",
-  maxResults: number = 10
+  maxResults: number = 10,
 ) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [loading, setLoading] = useState(false);
@@ -122,9 +197,12 @@ export function useHighlights(
         }
 
         // Fetch from API
-        const response = await axios.get<Highlight[]>(`${BASE_URL}/api/highlights`, {
-          params: { sport, query, maxResults },
-        });
+        const response = await axios.get<Highlight[]>(
+          `${BASE_URL}/api/highlights`,
+          {
+            params: { sport, query, maxResults },
+          },
+        );
 
         const data = response.data;
 
@@ -133,7 +211,9 @@ export function useHighlights(
           .filter((item) => !/tickets|playstation/i.test(item.title))
           .map((item) => ({
             ...item,
-            title: toSentenceCasePreserveAcronyms(decodeHTMLEntities(item.title)),
+            title: toSentenceCasePreserveAcronyms(
+              decodeHTMLEntities(item.title),
+            ),
             channelName: item.channelName || "Unknown",
           }));
 

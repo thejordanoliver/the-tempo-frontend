@@ -10,7 +10,6 @@ import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
-
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { emptyFighter, MMAFight } from "types/mma";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -62,6 +61,8 @@ export default function GameDetailsScreen() {
     "";
   const firstFighterLastName =
     parsedGame?.fighters?.first?.info?.last_name ?? "";
+
+    
   const secondFighterLastName =
     parsedGame?.fighters?.second?.info?.last_name ?? "";
   parsedGame?.fighters?.first?.logo ?? placeholderImage;
@@ -98,7 +99,10 @@ export default function GameDetailsScreen() {
           awayTeamCode={secondFighterLastName}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
-          league="MMA"
+          isNeutralSite
+          league={"MMA"}
+          firstFighterId={firstFighterId}
+          secondFighterId={secondFighterId}
         />
       ),
     });
@@ -125,14 +129,14 @@ export default function GameDetailsScreen() {
   const period = details?.fight?.status.period ?? 0;
   const displayClock = details?.fight?.status.displayClock ?? "";
   const headline = details?.event?.shortName ?? "";
-  const address = details?.fight?.venue.address.address1;
+  const address = `${details?.fight?.venue.address.address1} ${details?.fight?.venue.address.city}, ${details?.fight?.venue.address.state} ${details?.fight?.venue.address.country}`;
   const venueName = details?.fight?.venue.fullName;
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
 
   if (isLoading || !details) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -166,7 +170,7 @@ export default function GameDetailsScreen() {
           secondFighterIsWinner={secondFighterWinner}
         />
         {!dontShowDetails && (
-          <View style={{ gap: 20, marginTop: 20 }}>
+          <View style={styles.innerContainer}>
             <GameLocation
               venueImage={null}
               venueName={venueName}
@@ -177,6 +181,7 @@ export default function GameDetailsScreen() {
               weather={null}
               loading={false}
               error={null}
+              isDark={isDark}
             />
           </View>
         )}

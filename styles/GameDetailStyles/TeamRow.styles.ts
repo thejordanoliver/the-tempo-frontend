@@ -32,14 +32,14 @@ export type FootballTeamRowProps = {
   isWinner?: boolean;
   gameStatusDescription?: string;
   size?: SizeType; // sizes for font scaling
-  possessionTeamId?: string | number;
-  timeouts?: number;
+  possessionTeamId?: string | number | null;
+  timeouts?: number | null;
   opponentScore?: number | null;
 };
 
 export type BasketballTeamRowProps = {
   team: {
-    name: string;
+    name: string | undefined;
     record: string | undefined;
     logo: any;
     code?: string;

@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { BASE_URL } from "utils/apiClient";
 
 function parseImageUrl(url: string | null | undefined): string | null {
   if (!url || url === "null") return null;
@@ -59,7 +59,7 @@ export function useAccountDetails() {
 
   const changePassword = async (
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ) => {
     if (!userData?.id) throw new Error("User not loaded");
 
@@ -75,13 +75,11 @@ export function useAccountDetails() {
         },
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
     } catch (err: any) {
       const message =
-        err.response?.data?.error ||
-        err.message ||
-        "Failed to update password";
+        err.response?.data?.error || err.message || "Failed to update password";
       setError(message);
       throw new Error(message);
     } finally {

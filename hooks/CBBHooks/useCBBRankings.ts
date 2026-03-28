@@ -42,7 +42,7 @@ export type CBBRankPoll = {
    CONFIG
 ===================================================== */
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+import { BASE_URL } from "utils/apiClient";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 
 /* =====================================================

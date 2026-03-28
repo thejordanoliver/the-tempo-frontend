@@ -151,7 +151,7 @@ export default function LastPlay({
 
   return (
     <View style={styles.container} onLayout={onLayout}>
-      <HeadingTwo>Last Play</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Last Play</HeadingTwo>
       <View style={styles.wrapper}>
         <View style={styles.row}>
           {firstAthlete && (

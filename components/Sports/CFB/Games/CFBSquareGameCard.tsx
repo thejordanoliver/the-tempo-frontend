@@ -1,187 +1,101 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/Styles";
-import { getRivalryHeadline, getTeamInfo } from "constants/teamsCFB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useFootballGameDetails } from "hooks/NFLHooks/useFootballGameDetails";
-import { useFootballGamePossession } from "hooks/NFLHooks/useFootballGamePossesion";
-import { memo, useMemo } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
+import { memo } from "react";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { emptyAwayTeam, emptyHomeTeam, Game } from "types/cfb";
+import { Game } from "types/nfl";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
-type Props = {
+import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getGameDate } from "utils/nflGameCardUtils";
+
+type GameCardProps = {
   game: Game;
 };
 
-function CFBSquareGameCard({ game }: Props) {
+function CFBSquareGameCard({ game }: GameCardProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
 
-  // --- Team Id's ---
-  const homeId = game?.teams?.home?.id;
-  const awayId = game?.teams?.away?.id;
+  // -----------------------------------------------------
+  // TEAM + DATE
+  // -----------------------------------------------------
+  const homeId = game?.teams?.home?.id ?? 0;
+  const awayId = game?.teams?.away?.id ?? 0;
 
-  const home = getTeamInfo(awayId);
-  const away = getTeamInfo(homeId);
+  const home = getCFBTeam(homeId);
+  const away = getCFBTeam(awayId);
 
-  const awayEspnId = away?.espnID;
+  const homeName = home?.code || home?.name;
+  const awayName = away?.code || away?.name;
+
+  const homeLogo = getCFBTeamLogo(homeId, isDark);
+  const awayLogo = getCFBTeamLogo(awayId, isDark);
+
   const homeEspnId = home?.espnID;
-
-  // --- Date & Championship detection ---
-  const gameDate = game?.game?.date?.timestamp
-    ? new Date(game.game.date.timestamp * 1000)
-    : null;
-  const gameDateStr = gameDate?.toISOString();
-
-  const isChampionship = Boolean(
-    gameDate &&
-    gameDate.getFullYear() === 2026 &&
-    gameDate.getMonth() === 0 &&
-    gameDate.getDate() === 19,
-  );
-
-  const styles = SquareGameCardStyles(isDark, isChampionship);
-
-  const status = game.game.status;
-  const finished =
-    status.long === "Finished" || status.long === "After Over Time";
-  const notStarted = status.long === "Not Started";
-
-  // --- Possession & Score ---
-  const possession = useFootballGamePossession(
-    Number(homeEspnId),
-    Number(awayEspnId),
-    gameDateStr,
-  );
-
-  // --- Details ---
-  const { data: details, loading } = useFootballGameDetails(
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-    "cfb",
-  );
+  const awayEspnId = away?.espnID;
 
   const {
-    gameStatusShortDetail,
-    gameStatusDescription,
-    period,
-    shortDownDistanceText,
-    possessionText,
-    possessionTeamId,
-    displayClock,
-    redzone: isRedzone,
-  } = possession;
+    date: gameDate,
+    iso: gameDateStr,
+    formattedDate,
+    formattedTime,
+  } = getGameDate(game?.game?.date?.timestamp);
 
-  // --- Game Staus & Info ---
-  const isFinal = gameStatusDescription === "Final" || finished;
-  const isScheduled = notStarted || gameStatusDescription === "Scheduled";
+  const { details, score } = useGameDetails(
+    "cfb",
+    homeEspnId,
+    awayEspnId,
+    gameDateStr,
+  );
+
+  const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isForfeited = gameStatusDescription === "Forfeit";
+  const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
+  const displayClock = score?.displayClock;
+  const period = score?.period;
+  const redzone = score?.possession.isRedZone;
+  const isRedzone = redzone;
+  const headlineText = details?.headline;
+  const broadcast = details?.broadcast ?? "";
+  const downDistanceText = score?.possession.downDistanceText;
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = headlineText ?? holidayLabel ?? "";
+  const possessionTeamId = score?.possession.teamId;
+  const homeRecord = details?.records.home.total.summary;
+  const awayRecord = details?.records.away.total.summary;
+  const homeScore = score?.home.total ?? 0;
+  const awayScore = score?.away.total ?? 0;
   const football = isDark ? FootballLight : Football;
-
-  // -----------------------------------------------------
-  // SCORE
-  // -----------------------------------------------------
-  const homeScore = isFinal
-    ? game.scores.home.total
-    : (possession?.score?.home ?? 0);
-  const awayScore = isFinal
-    ? game.scores.away.total
-    : (possession?.score?.away ?? 0);
-
-  // --- Team records ---
-  const homeRecord = details?.homeRecords.total.summary;
-  const awayRecord = details?.awayRecords.total.summary;
-
-  // --- Team Rankings ---
+  const isChampionship = game.game.week === "Super Bowl";
+  const styles = SquareGameCardStyles(isDark, isChampionship);
   const homeRank = details?.homeRank;
   const awayRank = details?.awayRank;
-
-  // --- Headline & Broadcast ---
-  const broadcast = details?.broadcast;
-  const headline = details?.headline;
-  const rivalryHeadline = useMemo(
-    () => getRivalryHeadline(Number(homeEspnId), Number(awayEspnId)),
-    [homeEspnId, awayEspnId],
-  );
-  const headlineText = headline || rivalryHeadline || "";
-
-  // --- Time & Date Display ---
-  const formattedDate =
-    gameDate?.toLocaleDateString("en-US", { month: "short", day: "numeric" }) ||
-    "";
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
-
-  // --- Memoized team objects ---
-  const awayTeam = useMemo(
-    () => ({
-      ...emptyAwayTeam,
-      id: awayId ?? emptyAwayTeam.id,
-      espnID: awayEspnId ?? emptyAwayTeam.espnID,
-      name: away?.code ?? emptyAwayTeam.code,
-      logo: isDark
-        ? away?.logoLight || away?.logo || emptyAwayTeam.logo
-        : away?.logo || emptyAwayTeam.logo,
-      record: awayRecord ?? "0-0",
-      hasPossession:
-        inProgress && String(possessionTeamId) === String(awayEspnId),
-    }),
-    [awayId, awayEspnId, awayRecord, possessionTeamId, isDark, inProgress],
-  );
-
-  const homeTeam = useMemo(
-    () => ({
-      ...emptyHomeTeam,
-      id: homeId ?? emptyHomeTeam.id,
-      espnID: homeEspnId ?? emptyHomeTeam.espnID,
-      name: home?.code || emptyHomeTeam.fullName,
-      logo: isDark
-        ? home?.logoLight || home?.logo || emptyHomeTeam.logo
-        : home?.logo || emptyHomeTeam.logo,
-      record: homeRecord ?? "0-0",
-      hasPossession:
-        inProgress && String(possessionTeamId) === String(homeEspnId),
-    }),
-    [homeId, homeEspnId, homeRecord, possessionTeamId, isDark, inProgress],
-  );
-
-  const homeTeamName = homeTeam.name;
-  const awayTeamName = awayTeam.name;
-
-  const homeTeamLogo = isDark
-    ? homeTeam.logoLight || homeTeam.logo
-    : homeTeam.logo;
-  const awayTeamLogo = isDark
-    ? awayTeam.logoLight || awayTeam.logo
-    : awayTeam.logo;
-
+  const homeHasPossession = inProgress && possessionTeamId === home?.espnID;
+  const awayHasPossession = inProgress && possessionTeamId === away?.espnID;
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = homeScore > awayScore;
+  const awayWins = awayScore > homeScore;
+  const isTie = awayScore === homeScore;
 
   const winnerStyle = (teamWins: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
@@ -193,7 +107,7 @@ function CFBSquareGameCard({ game }: Props) {
     record,
     teamWins,
   }: {
-    score: number | null;
+    score: number;
     record: string | undefined;
     teamWins: boolean;
   }) => {
@@ -213,47 +127,35 @@ function CFBSquareGameCard({ game }: Props) {
   };
 
   const renderDownAndDistance = () => {
-    if (!possessionText) return null;
-
+    if (!downDistanceText) return null;
+    const [beforeAt, afterAt] = downDistanceText.split(" at ");
     return (
-      <>
-        <Text
-          style={[
-            styles.downDistance,
-            isRedzone && {
-              color: isDark ? Colors.dark.lightRed : Colors.light.red,
-            },
-          ]}
-        >
-          {shortDownDistanceText}
-        </Text>
-        <Text
-          style={[
-            styles.downDistance,
-            isRedzone && {
-              color: isDark ? Colors.dark.lightRed : Colors.light.red,
-            },
-          ]}
-        >
-          {possessionText}
-        </Text>
-      </>
+      <Text style={styles.downDistance}>
+        {beforeAt}
+        {afterAt && (
+          <>
+            {" at "}
+            <Text
+              style={[
+                styles.downDistance,
+                isRedzone && {
+                  color: isDark ? Colors.dark.lightRed : Colors.light.red,
+                },
+              ]}
+            >
+              {afterAt}
+            </Text>
+          </>
+        )}
+      </Text>
     );
   };
 
   const renderStatus = () => {
-    if (isScheduled)
-      return (
-        <View>
-          <Text style={styles.date}>{formattedDate}</Text>
-          <Text style={styles.date}>{formattedTime}</Text>
-        </View>
-      );
-
     if (inProgress)
       return (
         <View>
-          <Text style={styles.date}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{formatQuarter(period)}</Text>
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
       );
@@ -265,68 +167,87 @@ function CFBSquareGameCard({ game }: Props) {
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfPeriod)
-      return <Text style={styles.clock}>{gameStatusShortDetail}</Text>;
+      return <Text style={styles.clock}>{gameStatusDetail}</Text>;
 
     if (isFinal)
       return (
         <View>
-          <Text style={styles.finalText}>
-            {gameStatusShortDetail || "Final"}
-          </Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
+
+    return (
+      <View>
+        <Text style={styles.date}>{formattedDate}</Text>
+        <Text style={styles.date}>{formattedTime}</Text>
+      </View>
+    );
   };
 
   const renderCardContent = () => (
     <>
       <View style={styles.cardWrapper}>
-        {/* AWAY */}
+        {/* Away Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Image source={awayTeamLogo} style={styles.logo} />
+            <Image
+              source={awayLogo}
+              style={[styles.logo]}
+              accessibilityLabel={`${awayName} logo`}
+            />
             <Text style={styles.teamName}>
               {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
-              {awayTeamName}
+              {awayName}
             </Text>
-            {inProgress && awayTeam.hasPossession && (
+            {inProgress && homeHasPossession && (
               <Image source={football} style={styles.footballPossesion} />
             )}
           </View>
           <ScoreText
             score={awayScore}
-            record={awayTeam.record}
+            record={awayRecord}
             teamWins={awayWins}
           />
         </View>
 
-        {/* HOME */}
+        {/* Home Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Image source={homeTeamLogo} style={styles.logo} />
+            <Image
+              source={homeLogo}
+              style={[styles.logo]}
+              accessibilityLabel={`${homeName} logo`}
+            />
             <Text style={styles.teamName}>
               {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
-              {homeTeamName}
+              {homeName}
             </Text>
-            {inProgress && homeTeam.hasPossession && (
+            {inProgress && homeHasPossession && (
               <Image source={football} style={styles.footballPossesion} />
             )}
           </View>
+
           <ScoreText
             score={homeScore}
-            record={homeTeam.record}
+            record={homeRecord}
             teamWins={homeWins}
           />
         </View>
       </View>
+
+      {/* headlineText */}
+      <Text style={[styles.headlineText]}>{headlineText}</Text>
+
+      {/* Center Info */}
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}
       </View>
-      {!isFinal && broadcast && (
-        <Text style={styles.broadcast}>{broadcast}</Text>
+
+      {!isFinal && broadcastText && (
+        <Text style={styles.broadcast}>{broadcastText}</Text>
       )}
-      <Text style={styles.headlineText}>{headline}</Text>
     </>
   );
 
@@ -345,7 +266,7 @@ function CFBSquareGameCard({ game }: Props) {
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
+              : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

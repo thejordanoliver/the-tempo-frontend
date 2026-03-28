@@ -9,7 +9,6 @@ import Roster from "components/Sports/NHL/Team/Roster";
 import { players } from "constants/nhlPlayers";
 import { Colors } from "constants/Styles";
 import { nhlTeams } from "constants/teamsNHL";
-import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useNHLTeamGames } from "hooks/NHLHooks/useNHLTeamGames";
@@ -124,12 +123,10 @@ export default function TeamDetailScreen() {
       setRefreshing(false);
     }
   };
-  const { toggleNotifications, isNotified } = useNotifications();
+
   const { toggleFavorite, isFavorite } = useFavoriteTeams();
   const league = "NHL";
   const favorited = team ? isFavorite(league, team.id) : false;
-  const teamKey = String(team?.id);
-  const notfied = team ? isNotified(league, teamKey) : false;
 
   // --- Header ---
   useLayoutEffect(() => {
@@ -142,8 +139,6 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          isNotified={notfied} // ✅ MATCH
-          onToggleNotifications={() => toggleNotifications(league, teamKey)}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
@@ -155,7 +150,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
+        <CustomActivityIndicator isDark={isDark} />
       </View>
     );
   }
@@ -172,6 +167,7 @@ export default function TeamDetailScreen() {
           setSelectedTab(tab);
           pagerRef.current?.setPage(tabToIndex(tab));
         }}
+        isDark
       />
 
       <PagerView

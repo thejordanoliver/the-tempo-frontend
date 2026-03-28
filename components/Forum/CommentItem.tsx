@@ -2,10 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import AlertModal from "components/Forum/AlertModal";
 import { Colors } from "constants/Styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { useRouter } from "expo-router";
 import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
-import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -15,7 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated, {
   Easing,
   interpolate,
@@ -24,8 +23,6 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from "react-native-reanimated";
-
-import { useRouter } from "expo-router";
 import { commentItemStyles } from "styles/ForumStyles/CommentItemStyles";
 import { Post } from "./PostItem";
 
@@ -62,7 +59,7 @@ const RightActions = ({
     const translateX = interpolate(
       dragX.value,
       [-ACTION_WIDTH, 0],
-      [0, ACTION_WIDTH]
+      [0, ACTION_WIDTH],
     );
 
     return {
@@ -95,7 +92,7 @@ export const CommentItem = ({
   currentUserId,
   editComment,
   deleteComment,
-  isLast
+  isLast,
 }: CommentItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.text);
@@ -123,7 +120,7 @@ export const CommentItem = ({
       {
         duration: 140,
         easing: Easing.inOut(Easing.ease),
-      }
+      },
     );
   }, [textExpanded, fullHeight]);
 
@@ -166,7 +163,7 @@ export const CommentItem = ({
   /* ---------------- Swipe actions (ReanimatedSwipeable) ---------------- */
   const renderRightActions = (
     progress: SharedValue<number>,
-    dragX: SharedValue<number>
+    dragX: SharedValue<number>,
   ) => {
     if (!isAuthor || isEditing) return null;
 
@@ -196,13 +193,7 @@ export const CommentItem = ({
 
   /* ---------------- Render ---------------- */
   return (
-<View
-  style={[
-    styles.container,
-    isLast && { borderBottomWidth: 0 },
-  ]}
->
-
+    <View style={[styles.container, isLast && { borderBottomWidth: 0 }]}>
       <Swipeable
         ref={swipeRef}
         enabled={!isEditing}

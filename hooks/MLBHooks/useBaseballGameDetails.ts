@@ -130,7 +130,7 @@ export type GameDetails = {
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* Hook                               */

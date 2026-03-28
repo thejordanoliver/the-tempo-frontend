@@ -3,15 +3,7 @@ import TabBar from "components/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/Styles";
 import { getNHLTeam } from "constants/teamsNHL";
 import { useMemo, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
-
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 interface Play {
   id: string;
   team?: { id: string };
@@ -25,7 +17,7 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
-  lighter?: boolean;
+  isDark: boolean;
 };
 
 const quarterTabs = ["All", "1st", "2nd", "3rd", "OT"] as const;
@@ -33,11 +25,11 @@ const quarterTabs = ["All", "1st", "2nd", "3rd", "OT"] as const;
 export default function GameSummary({
   plays = [],
   loading = false,
-  lighter = false,
+  isDark,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   const styles = gameSummaryStyles(isDark);
   const global = globalStyles(isDark);
+
   const [selectedPeriod, setSelectedPeriod] =
     useState<(typeof quarterTabs)[number]>("All");
 
@@ -86,7 +78,7 @@ export default function GameSummary({
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Game Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Summary</HeadingTwo>
 
       <View style={styles.wrapper}>
         <TabBar
@@ -95,6 +87,7 @@ export default function GameSummary({
           onTabPress={(tab) =>
             setSelectedPeriod(tab as (typeof quarterTabs)[number])
           }
+          isDark
         />
 
         <ScrollView
@@ -164,14 +157,8 @@ const gameSummaryStyles = (isDark: boolean) =>
     clockText: {
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      width: 55,
+      width: 45,
       textAlign: "right",
-    },
-    empty: {
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     wrapper: {
       borderColor: Colors.midTone,

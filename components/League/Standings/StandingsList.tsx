@@ -202,7 +202,7 @@ export const StandingsList = ({
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
-    
+
   // --- Group by division ---
   const divisions: Record<string, StandingsTeam[]> = {};
   conferences?.forEach((conf) => {
@@ -453,7 +453,7 @@ export const StandingsList = ({
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
-      {isGameDetailScreen && <HeadingTwo>Standings</HeadingTwo>}
+      {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
         <Dropdown

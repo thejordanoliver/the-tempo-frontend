@@ -11,12 +11,6 @@ export const seasonStatCardStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
-    title: {
-      fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
-      marginBottom: 12,
-      textAlign: "center",
-    },
     statsRow: {
       flexDirection: "row",
       justifyContent: "space-around",

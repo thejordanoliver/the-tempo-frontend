@@ -64,7 +64,7 @@ export default function PredictionBar({
 
   return (
     <View>
-      <HeadingTwo>Win Predictor</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Win Predictor</HeadingTwo>
       <View
         style={[styles.wrapper, { backgroundColor: isDark ? "#333" : "#eee" }]}
       >

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useNFLMatchup(
   team1: string | number,
@@ -9,7 +9,7 @@ export function useNFLMatchup(
   options?: {
     year?: string | number;
     week?: string | number;
-  }
+  },
 ) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);

@@ -1,7 +1,7 @@
-// constants/teams.ts
+// constants/teamsCBB.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { CBBTeam, Conference } from "types/types";
-
+import { neutralVenues } from "./neutralVenues";
 export type Venue = {
   name: string;
   city?: string;
@@ -303,6 +303,7 @@ import FresnoStLogo from "../assets/College_Logos/FresnoState.png";
 import FtLauderdaleLogo from "../assets/College_Logos/FtLauderdale.png";
 import Furman from "../assets/College_Logos/Furman.png";
 import GardnerWebbLogo from "../assets/College_Logos/Gardner-Webb.png";
+import GenevaLogo from "../assets/College_Logos/Geneva.png";
 import GeorgeMasonLogo from "../assets/College_Logos/GeorgeMason.png";
 import GeorgeWashingtonLogo from "../assets/College_Logos/GeorgeWashington.png";
 import GeorgianCourtLogo from "../assets/College_Logos/GeorgianCourt.png";
@@ -429,6 +430,8 @@ import PacificLogo from "../assets/College_Logos/Pacific.png";
 import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
 import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
 import PiedmontLogo from "../assets/College_Logos/Piedmont.png";
+import PittGreensburgLogo from "../assets/College_Logos/PittGreensburg.png";
+import PittGreensburgLogoLight from "../assets/College_Logos/PittGreensburgLight.png";
 import PortlandLogo from "../assets/College_Logos/Portland.png";
 import PortlandStateLogo from "../assets/College_Logos/PortlandState.png";
 import PrairieViewAMLogo from "../assets/College_Logos/PrairieViewA&M.png";
@@ -570,11 +573,8 @@ import XavierLogo from "../assets/College_Logos/Xavier.png";
 import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import GenevaLogo from "../assets/College_Logos/Geneva.png";
-import PittGreensburgLogo from "../assets/College_Logos/PittGreensburg.png";
-import PittGreensburgLogoLight from "../assets/College_Logos/PittGreensburgLight.png";
 
-export const teams: CBBTeam[] = [
+export const cbbTeams: CBBTeam[] = [
   {
     id: 1504,
     wid: 7114,
@@ -1071,7 +1071,7 @@ export const teams: CBBTeam[] = [
   {
     id: 2375,
     wid: 6806,
-    espnID: 108942,
+    espnID: 128256,
     name: "Carolina University",
     fullName: "Carolina University Bruins",
     shortName: "Carolina U",
@@ -2216,6 +2216,7 @@ export const teams: CBBTeam[] = [
     wid: 7010,
     espnID: 127,
     name: "Michigan State",
+    shortName: "Michigan St.",
     fullName: "Michigan State Spartans",
     code: "MSU",
     color: "#18453b",
@@ -5727,7 +5728,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 2373,
-    espnID: 2582,
+    espnID: 2075,
     name: "Bowie State",
     fullName: "Bowie State Bulldogs",
     code: "BOWE",
@@ -7560,7 +7561,7 @@ export const teams: CBBTeam[] = [
     espnID: 2504,
     name: "Prairie View A&M",
     fullName: "Prairie View A&M Panthers",
-    shortName: "Prairie View",
+    shortName: "PV A&M",
     code: "PV",
     color: "#4d0960",
     secondaryColor: "#000000",
@@ -7595,7 +7596,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 3239,
-    espnID: 2504,
+    espnID: 3107,
     name: "East-West University",
     fullName: "East-West University Phantoms",
     shortName: "East West",
@@ -7867,7 +7868,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 5787,
-    espnID: 2511,
+    espnID: 2355,
     name: "Lynchburg",
     fullName: "Lynchburg Hornets",
     shortName: "Lynchburg",
@@ -8532,7 +8533,7 @@ export const teams: CBBTeam[] = [
   },
   {
     id: 7564,
-    espnID: 2752,
+    espnID: 2018,
     name: "Allegheny",
     fullName: "Allegheny Gators",
     shortName: "Allegheny",
@@ -8864,225 +8865,45 @@ export const teams: CBBTeam[] = [
     longitude: -73.9496,
   },
   {
-  id: 5837,
-  espnID: 126821,
-  name: "Pittsburgh Greensburg",
-  fullName: "Pittsburgh Greensburg Bobcats",
-  shortName: "Pitt Greensburg",
-  code: "UPG",
-  color: "#003594",
-  secondaryColor: "#FFB81C",
-  logo: PittGreensburgLogo,
-  logoLight: PittGreensburgLogoLight,
-  location: "Greensburg, PA",
-  city: "Greensburg",
-  venueName: "Chambers Hall Gymnasium",
-  address: "150 Finoli Dr, Greensburg, PA 15601",
-  venueCapacity: "1,200",
-  established: 1963,
-  latitude: 40.2759,
-  longitude: -79.5316,
-},
-{
-  id: 1923,
-  espnID: 2242,
-  name: "Geneva",
-  fullName: "Geneva College Golden Tornadoes",
-  shortName: "Geneva",
-  code: "GEN",
-  color: "#862633",
-  secondaryColor: "#FFFFFF",
-  logo: GenevaLogo,
-  location: "Beaver Falls, PA",
-  city: "Beaver Falls",
-  venueName: "Metheny Fieldhouse",
-  address: "3200 College Ave, Beaver Falls, PA 15010",
-  venueCapacity: "1,800",
-  established: 1848,
-  latitude: 40.7683,
-  longitude: -80.3225,
-},
+    id: 5837,
+    espnID: 126821,
+    name: "Pittsburgh Greensburg",
+    fullName: "Pittsburgh Greensburg Bobcats",
+    shortName: "Pitt Greensburg",
+    code: "UPG",
+    color: "#003594",
+    secondaryColor: "#FFB81C",
+    logo: PittGreensburgLogo,
+    logoLight: PittGreensburgLogoLight,
+    location: "Greensburg, PA",
+    city: "Greensburg",
+    venueName: "Chambers Hall Gymnasium",
+    address: "150 Finoli Dr, Greensburg, PA 15601",
+    venueCapacity: "1,200",
+    established: 1963,
+    latitude: 40.2759,
+    longitude: -79.5316,
+  },
+  {
+    id: 1923,
+    espnID: 2242,
+    name: "Geneva",
+    fullName: "Geneva College Golden Tornadoes",
+    shortName: "Geneva",
+    code: "GEN",
+    color: "#862633",
+    secondaryColor: "#FFFFFF",
+    logo: GenevaLogo,
+    location: "Beaver Falls, PA",
+    city: "Beaver Falls",
+    venueName: "Metheny Fieldhouse",
+    address: "3200 College Ave, Beaver Falls, PA 15010",
+    venueCapacity: "1,800",
+    established: 1848,
+    latitude: 40.7683,
+    longitude: -80.3225,
+  },
 ];
-
-export const neutralVenues: Record<string, Venue> = {
-  "Simmons Bank Arena": {
-    name: "Simmons Bank Arena",
-    address: "1 Simmons Bank Arena Drive, North Little Rock, AR 72114",
-    latitude: 34.76,
-    longitude: -92.26,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/simmons-bank.webp",
-  },
-  "T-Mobile Center": {
-    name: "T-Mobile Center",
-    address: "1 1407 Grand Blvd, Kansas City, MO 64106",
-    latitude: 39.0975,
-    longitude: -94.5802,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/t-mobile-center.webp",
-  },
-  "Stan Sheriff Center": {
-    name: "Stan Sheriff Center",
-    address: "1355 Lower Campus Rd, Honolulu, HI 96822",
-    latitude: 21.3099,
-    longitude: 157.8581,
-    venueCapacity: "10,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/stan-sheriff-center.webp",
-  },
-  "Accor Arena": {
-    name: "Accor Arenar",
-    address: "8 Bd de Bercy, 75012 Paris, France",
-    latitude: 48.8575,
-    longitude: 2.3514,
-    venueCapacity: "20,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/accor.webp",
-  },
-  "Acrisure Arena": {
-    name: "Acrisure Arena",
-    address: " 75702 Varner Rd, Palm Desert, CA 92211",
-    latitude: 33.7222,
-    longitude: -116.3745,
-    venueCapacity: "20,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/acrisure.webp",
-  },
-  "Coliseo de Puerto Rico": {
-    name: "Coliseo de Puerto Rico",
-    address: "500 Av. Arterial B, San Juan, 00918, Puerto Rico",
-    latitude: 18.4655,
-    longitude: -66.1057,
-    venueCapacity: "18,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/coliseode-puerto-rico.webp",
-  },
-  "Pechanga Arena": {
-    name: "Pechanga Arena",
-    address: "3500 Sports Arena Blvd, San Diego, CA 92110",
-    latitude: 32.7468,
-    longitude: -117.1882,
-    venueCapacity: "16,100",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/pechanga.webp",
-  },
-  "North Charleston Coliseum": {
-    name: "North Charleston Coliseum",
-    address: "5001 Coliseum Dr, North Charleston, SC 29418",
-    latitude: 32.8655,
-    longitude: -80.0224,
-    venueCapacity: "13,295",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/north-charleston-coliseum.webp",
-  },
-  "Legacy Arena at BJCC": {
-    name: "Legacy Arena at BJCC",
-    address: "1001 19th St N, Birmingham, AL 35234",
-    latitude: 33.5207,
-    longitude: -86.8025,
-    venueCapacity: "17,654",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/legacy.webp",
-  },
-  "Arena CDMX": {
-    name: "Arena CDMX",
-    city: "Mexico City",
-    address: "Av. de las Granjas 800, Santa Barbara, Azcapotzalco",
-    latitude: 19.4977,
-    longitude: -99.1751,
-    venueCapacity: "22,300",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/cdmx.webp",
-  },
-  "Madison Square Garden": {
-    name: "Madison Square Garden",
-    city: "New York",
-    address: "4 Pennsylvania Plaza, New York, NY 10001",
-    latitude: 40.7128,
-    longitude: -74.006,
-    venueCapacity: "19,812",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/knicks.webp",
-  },
-  "Rocket Arena": {
-    name: "Rocket Arena",
-    city: "Cleveland",
-    address: "1 Center Court, Cleveland, OH 44115",
-    latitude: 41.4966,
-    longitude: -81.688,
-    venueCapacity: "19,432",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680234/arenas/basketball/cavaliers.webp",
-  },
-  "Jenny Craig Pavilion": {
-    name: "Jenny Craig Pavilion",
-    city: "San Diego",
-    address: "5998 Alcala Park, San Diego, CA 92110",
-    latitude: 32.7713,
-    longitude: -117.1927,
-    venueCapacity: "5,100",
-    venueImage: {
-      uri: "https://sdcatholic.org/wp-content/uploads/2025/01/Screen-Shot-2025-01-07-at-16.39.31.webp",
-    },
-  },
-  "Veterans Memorial Arena": {
-    name: "VyStar Veterans Memorial Arena",
-    city: "Jacksonville",
-    address: "300 A Philip Randolph Blvd, Jacksonville, FL 32202",
-    latitude: 30.3257,
-    longitude: -81.6376,
-    venueCapacity: "15,000",
-    venueImage: {
-      uri: "https://thevendry.com/cdn-cgi/image/width=1920,quality=75,fit=contain,metadata=none,format=auto/https%3A%2F%2Fs3.us-east-1.amazonaws.com%2Fuploads.thevendry.co%2F24984%2F1703180227462_2022-01-06.jpg",
-    },
-  },
-  "Mohegan Sun Arena": {
-    name: "Mohegan Sun Arena",
-    city: "Uncasville",
-    address: "1 Mohegan Sun Blvd, Uncasville, CT 06382",
-    latitude: 41.4871,
-    longitude: -72.086,
-    venueCapacity: "10,000",
-    venueImage: {
-      uri: "https://assets.simpleviewinc.com/simpleview/image/upload/c_limit,h_1200,q_75,w_1200/v1/clients/asm-wilkes-barre/Mohegan_Sun_Arena_at_Casey_Plaza_4e069b48-8f23-4324-a819-a3235795d42a.jpg",
-    },
-  },
-  "United Center": {
-    name: "United Center",
-    city: "Chicago",
-    address: "1901 W Madison St, Chicago, IL 60612",
-    latitude: 41.8807,
-    longitude: -87.6742,
-    venueCapacity: "20,917",
-    venueImage: {
-      uri: "https://upload.wikimedia.org/wikipedia/commons/2/22/United_Center_1.jpg",
-    },
-  },
-  "Footprint Center": {
-    name: "Footprint Center",
-    city: "Phoenix",
-    address: "201 E Jefferson St, Phoenix, AZ 85004",
-    latitude: 33.4455,
-    longitude: -112.0713,
-    venueCapacity: "18,058",
-    venueImage: {
-      uri: "https://upload.wikimedia.org/wikipedia/commons/5/54/Footprint_Center_2022.jpg",
-    },
-  },
-  "Amerant Bank Arena": {
-    name: "Amerant Bank Arena",
-    city: "Sunrise",
-    address: "1 Panther Pkwy, Sunrise, FL 33323",
-    latitude: 26.1585,
-    longitude: -80.3256,
-    venueCapacity: "19,250",
-    venueImage: {
-      uri: "https://amerant-newsroom-prod-wp-media.s3.amazonaws.com/wp-content/uploads/2023/09/Amerant-Bank-Arena-Edited-scaled.jpg",
-    },
-  },
-};
 
 export const conferenceListMap: Record<string, string[]> = {
   "American Athletic Conference (AAC)": [
@@ -9570,7 +9391,7 @@ export const modalToMapKey: Record<string, string> = {
 const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
   if (id == null) return undefined;
 
-  return teams.find(
+  return cbbTeams.find(
     (t) =>
       isWomen
         ? String(t.wid) === String(id) // 👈 WCBB
@@ -9578,29 +9399,8 @@ const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
   );
 };
 
-export const getTeamInfo = (teamId: number, isWomen = false) => {
-  return resolveCBBTeam(teamId, isWomen);
-};
-
 export const getCBBTeam = (id: string | number, isWomen = false) =>
-  resolveCBBTeam(id, isWomen) || null;
-
-export const teamsCBBById: Record<string, CBBTeam> = teams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, CBBTeam>,
-);
-export const teamsWCBBById: Record<string, CBBTeam> = teams.reduce(
-  (map, team) => {
-    if (team.wid != null) {
-      map[String(team.wid)] = team;
-    }
-    return map;
-  },
-  {} as Record<string, CBBTeam>,
-);
+  resolveCBBTeam(id, isWomen) || null || undefined;
 
 export const getTeamByESPNId = (id: number | string): CBBTeam | null => {
   if (!id) return null;
@@ -9613,7 +9413,7 @@ export const getTeamByESPNId = (id: number | string): CBBTeam | null => {
   }
 
   // Otherwise, search the array
-  const team = teams.find((t) => String(t.espnID) === searchStr);
+  const team = cbbTeams.find((t) => String(t.espnID) === searchStr);
 
   return team || null;
 };
@@ -9622,12 +9422,12 @@ export const getTeamLogo = (id?: number | string, isDark = false) => {
   if (!id) return PlaceholderLogo;
 
   // Try MEN first
-  let team = teams.find((t) => String(t.id) === String(id));
+  let team = cbbTeams.find((t) => String(t.id) === String(id));
 
   // Fallback to WOMEN
   let isWomen = false;
   if (!team) {
-    team = teams.find((t) => String(t.wid) === String(id));
+    team = cbbTeams.find((t) => String(t.wid) === String(id));
     isWomen = !!team;
   }
 
@@ -9653,11 +9453,11 @@ export const getCBBTeamLogo = (
   if (!id) return PlaceholderLogo;
 
   // Try men's id first
-  let team = teams.find((t) => String(t.id) === String(id));
+  let team = cbbTeams.find((t) => String(t.id) === String(id));
 
   // If not found, try women's id
   if (!team) {
-    team = teams.find((t) => String(t.wid) === String(id));
+    team = cbbTeams.find((t) => String(t.wid) === String(id));
     if (team) isWomen = true;
   }
 
@@ -9672,24 +9472,39 @@ export const getCBBTeamLogo = (
   return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
 
-export const teamsCBById: Record<string, CBBTeam> = teams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, CBBTeam>,
-);
-
-export const teamMapByID = Object.fromEntries(teams.map((t) => [t.id, t]));
 export const teamMapByESPNID = Object.fromEntries(
-  teams.map((t) => [t.espnID, t]),
+  cbbTeams.map((t) => [t.espnID, t]),
 );
 
-export function mapToInternalCBBTeam(apiTeam: any) {
-  if (!apiTeam) return {};
+const normalize = (s?: unknown) => {
+  if (typeof s !== "string") return "";
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+};
 
-  // Try to find matching internal team
-  const team = teams.find((t) => t.id === apiTeam.id) || null;
+export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
+  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
+  if (!isNeutralSite) return null;
 
-  if (team) return team;
+  if (!venueName) return null;
+
+  const normalizedInput = normalize(venueName);
+
+  // 1. Exact match (fast path)
+  if (neutralVenues[venueName]) {
+    return neutralVenues[venueName];
+  }
+
+  // 2. Fuzzy match
+  for (const key of Object.keys(neutralVenues)) {
+    const normalizedKey = normalize(key);
+
+    if (
+      normalizedInput.includes(normalizedKey) ||
+      normalizedKey.includes(normalizedInput)
+    ) {
+      return neutralVenues[key];
+    }
+  }
+
+  return null;
 }

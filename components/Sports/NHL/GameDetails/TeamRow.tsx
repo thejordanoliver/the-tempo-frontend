@@ -1,5 +1,4 @@
 import { Colors } from "constants/Styles";
-import { getNHLTeam } from "constants/teamsNHL";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -11,7 +10,6 @@ import {
 export const TeamRow = ({
   team,
   rank,
-  timeouts,
   isDark,
   isHome = false,
   score,
@@ -23,17 +21,10 @@ export const TeamRow = ({
   const styles = teamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
   const isFinal = gameStatusDescription === "Final";
-
-  // -----------------------------------------------------
-  // Get main team data
-  // -----------------------------------------------------
-  const teamObj = getNHLTeam(team.id ?? 0);
-  const logo =
-    isDark && teamObj?.logoLight
-      ? teamObj.logoLight
-      : (teamObj?.logo ?? team.logo);
 
   const code = team.code;
   const record = team.record === "-" ? "" : team.record;
@@ -77,31 +68,6 @@ export const TeamRow = ({
     return { color: Colors.midTone };
   };
 
-  /* -----------------------------------------------------
-   * Render Helpers
-   * --------------------------------------------------- */
-  const renderTimeouts = (remaining: number) => {
-    const total = 7;
-
-    return (
-      <View style={{ flexDirection: "row", marginTop: 4 }}>
-        {Array.from({ length: total }).map((_, i) => (
-          <View
-            key={i}
-            style={{
-              width: 4,
-              height: 2,
-              borderRadius: 4,
-              backgroundColor: isDark ? Colors.white : Colors.black,
-              opacity: i < remaining ? 1 : 0.5,
-              marginHorizontal: 2,
-            }}
-          />
-        ))}
-      </View>
-    );
-  };
-
   // -----------------------------------------------------
   // RENDER
   // -----------------------------------------------------
@@ -123,23 +89,17 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={logo} style={sizeStyles[size].logo} />
+          <Image source={team.logo} style={sizeStyles[size].logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
-           <Text style={styles.teamName}>
+          <Text style={styles.teamName}>
             {rank && <Text style={styles.rank}>{rank} </Text>}
             {code}
           </Text>
 
-
           {!showRecordInsteadOfScore && !inProgress && (
             <Text style={styles.record}>{team.record}</Text>
-          )}
-          {inProgress && timeouts != null && (
-            <View style={{ alignItems: "center" }}>
-              {renderTimeouts(timeouts)}
-            </View>
           )}
         </View>
       </View>

@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { MMAEvent } from "types/mma";
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useSeasonFights() {
   const [events, setEvents] = useState<MMAEvent[]>([]);
@@ -22,7 +21,7 @@ export function useSeasonFights() {
       setError(null);
 
       const res = await axios.get(
-        `${API_BASE}/api/fights/mma/season/${currentSeason}`,
+        `${BASE_URL}/api/fights/mma/season/${currentSeason}`,
       );
 
       const rawEvents: MMAEvent[] = res.data?.events ?? [];

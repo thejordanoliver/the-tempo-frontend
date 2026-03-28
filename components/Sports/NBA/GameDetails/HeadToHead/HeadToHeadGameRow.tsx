@@ -50,15 +50,7 @@ export default function HeadToHeadGameRow({
     gameDateStr,
   );
 
-  // --- Corrected score mapping ---
-  const getTeamScore = (teamId: number) => {
-    if (game.teams.home.id === teamId) return game.scores?.home?.points ?? 0;
-    if (game.teams.visitors.id === teamId) return game.scores?.visitors?.points ?? 0;
-    return 0;
-  };
 
-  const homeScore = getTeamScore(homeTeamId);
-  const awayScore = getTeamScore(awayTeamId);
 
   const homeRecord = details?.records.home.overall ?? "";
   const awayRecord = details?.records.away.overall ?? "";
@@ -82,6 +74,15 @@ export default function HeadToHeadGameRow({
   const formattedDate = gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const formattedTime = gameDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) || "";
 
+    // --- Corrected score mapping ---
+  const getTeamScore = (teamId: number) => {
+    if (game.teams.home.id === teamId) return liveScore?.home?.total ?? 0;
+    if (game.teams.visitors.id === teamId) return liveScore?.away?.total ?? 0;
+    return 0;
+  };
+
+  const homeScore = getTeamScore(homeTeamId);
+  const awayScore = getTeamScore(awayTeamId);
   const homeWon = homeScore > awayScore;
   const awayWon = awayScore > homeScore;
   const isTie = homeScore === awayScore;
@@ -143,6 +144,7 @@ export default function HeadToHeadGameRow({
 
   return (
     <View style={[styles.gameCard, isLast && styles.lastGameCard]}>
+      
       {/* Away Team */}
       <View style={styles.teamRow}>
         <View style={styles.teamInfo}>

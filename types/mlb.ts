@@ -13,13 +13,12 @@ export interface MLBTeam {
   longitude?: number;
   venueName?: string;
   venueCapacity?: string;
+  venueImage?: string;
   address?: string;
   city?: string;
   championships?: number[];
-  isAllStar: boolean
+  isAllStar: boolean;
 }
-
-
 
 export interface MLBScoreSide {
   total: number;
@@ -46,8 +45,8 @@ export interface MLBGame {
     flag: string;
   };
 
-  date: string;        // ISO string
-  timestamp: number;   // Unix timestamp (seconds)
+  date: string; // ISO string
+  timestamp: number; // Unix timestamp (seconds)
 
   status: {
     long: string;
@@ -86,4 +85,3 @@ export interface MLBPlayer {
   teamId: string;
   imageUrl: string;
 }
-

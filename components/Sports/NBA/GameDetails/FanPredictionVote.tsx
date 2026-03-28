@@ -9,9 +9,9 @@ import {
   Animated,
   Easing,
   LayoutChangeEvent,
-  Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
@@ -19,9 +19,7 @@ import {
 type VoteTeam = {
   id: string | number;
   code?: string;
-  wLogo?: any;
   logo: any;
-  logoLight: any;
   color?: string;
   secondaryColor?: string;
 };
@@ -51,13 +49,10 @@ export default function FanPredictionVote({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [barWidth, setBarWidth] = useState(0);
-  // Only flips true once real results are in state — keeps bars at 50/50
-  // until the API response arrives, preventing 0.5 → 0 → real flicker.
   const [resultsRevealed, setResultsRevealed] = useState(false);
 
   const LOGO_SIZE = 64;
 
-  // Animated values
   const animPctAway = useRef(new Animated.Value(0.5)).current;
   const animPctHome = useRef(new Animated.Value(0.5)).current;
   const animOpacityAway = useRef(new Animated.Value(1)).current;
@@ -67,7 +62,6 @@ export default function FanPredictionVote({
   const animTranslateAway = useRef(new Animated.Value(0)).current;
   const animTranslateHome = useRef(new Animated.Value(0)).current;
 
-  // Fetch user vote only (on mount)
   const fetchUserVoteOnly = useCallback(async () => {
     try {
       setLoading(true);
@@ -75,14 +69,13 @@ export default function FanPredictionVote({
       const data = await fetchVoteResults(gameId);
       setUserVote(data.userVote);
     } catch (err: any) {
-      console.warn("❌ Vote fetch error", err);
+      console.warn("Vote fetch error", err);
       setError(err.message || "Error loading vote");
     } finally {
       setLoading(false);
     }
   }, [gameId]);
 
-  // Fetch results if user already voted in a previous session
   const fetchResultsIfVoted = useCallback(async () => {
     if (!userVote) return;
     try {
@@ -92,7 +85,7 @@ export default function FanPredictionVote({
       setResults(data.votes);
       setResultsRevealed(true);
     } catch (err: any) {
-      console.warn("❌ Vote fetch error", err);
+      console.warn("Vote fetch error", err);
       setError(err.message || "Error loading vote results");
     } finally {
       setLoading(false);
@@ -115,22 +108,19 @@ export default function FanPredictionVote({
       await castVoteApi(String(gameId), String(teamId));
       setUserVote(teamId);
       if (onVoteCast) onVoteCast(teamId);
-      // Direct fetch — avoids stale userVote closure in fetchResultsIfVoted.
-      // setResultsRevealed only after data is in state so bars hold at 50/50.
       const data = await fetchVoteResults(gameId);
       setResults(data.votes);
       setResultsRevealed(true);
       const userId = await AsyncStorage.getItem("userId");
       emitVote(teamId, userId || "anonymous");
     } catch (err: any) {
-      console.warn("❌ Vote error", err);
+      console.warn("Vote error", err);
       setError(err.message || "Error submitting vote");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Active votes — prefer live socket votes once revealed
   const activeVotes = liveVotes.length > 0 ? liveVotes : results;
   const totalVotes =
     activeVotes.reduce((sum, r) => sum + Number(r.votes), 0) || 0;
@@ -146,7 +136,6 @@ export default function FanPredictionVote({
   const pctAway = totalVotes > 0 ? votesAway / totalVotes : 0;
   const pctHome = totalVotes > 0 ? votesHome / totalVotes : 0;
 
-  // Hold at 50/50 until resultsRevealed — then switch to real values
   const displayPctAway = resultsRevealed ? pctAway : 0.5;
   const displayPctHome = resultsRevealed ? pctHome : 0.5;
 
@@ -154,38 +143,17 @@ export default function FanPredictionVote({
     const isAwayVoted = resultsRevealed && userVote === awayTeam.id;
     const isHomeVoted = resultsRevealed && userVote === homeTeam.id;
 
-    /**
-     * SELECTED logo → always slides to container center.
-     *
-     * NON-SELECTED logo:
-     *   - If it has votes (> 0%) → stays in its own bar center (offset 0), visible
-     *   - If it has 0% (selected team at 100%) → ejects fully off screen, fades to 0
-     *
-     * Translation math for centering the selected logo:
-     *   Away bar center = pctAway * barWidth / 2
-     *   Container center = barWidth / 2
-     *   → translate right by: barWidth * pctHome / 2
-     *
-     *   Home bar center = pctAway * barWidth + pctHome * barWidth / 2
-     *   Container center = barWidth / 2
-     *   → translate left by: barWidth * pctAway / 2 (negative)
-     */
     let awayOffset = 0;
     let homeOffset = 0;
 
     if (isAwayVoted) {
-      // Selected away → center it
       awayOffset = (barWidth * displayPctHome) / 2;
-      // Non-selected home → eject right only if it has 0 votes
       homeOffset = displayPctHome === 0 ? barWidth : 0;
     } else if (isHomeVoted) {
-      // Selected home → center it
       homeOffset = -(barWidth * displayPctAway) / 2;
-      // Non-selected away → eject left only if it has 0 votes
       awayOffset = displayPctAway === 0 ? -barWidth : 0;
     }
 
-    // Non-selected is hidden only when it has 0% (other team at 100%)
     const awayOpacity =
       !resultsRevealed || isAwayVoted || displayPctAway > 0 ? 1 : 0;
     const homeOpacity =
@@ -252,14 +220,14 @@ export default function FanPredictionVote({
   if (error)
     return (
       <View>
-        <HeadingTwo>Fan Prediction Vote</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
 
   return (
     <View style={styles.container}>
-      <HeadingTwo>Fan Prediction Vote</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
 
       <View
         style={styles.barContainer}
@@ -280,12 +248,11 @@ export default function FanPredictionVote({
                 },
               ]}
             >
-              <Pressable
-                onPress={() =>
-                  !submitting && !userVote && castVote(awayTeam.id)
-                }
+              <TouchableOpacity
+                onPress={() => castVote(awayTeam.id)}
+                disabled={!!userVote || submitting}
+                activeOpacity={userVote ? 1 : 0.7}
                 style={{ alignItems: "center", justifyContent: "center" }}
-                pointerEvents={userVote ? "none" : "auto"}
               >
                 <Animated.View
                   style={{
@@ -299,11 +266,7 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={resolveLogo(
-                      colorScheme === "dark"
-                        ? awayTeam.wLogo || awayTeam.logoLight || awayTeam.logo
-                        : awayTeam.wLogo || awayTeam.logoLight || awayTeam.logo,
-                    )}
+                    source={awayTeam.logo}
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />
@@ -315,7 +278,7 @@ export default function FanPredictionVote({
                     {awayTeam.code}
                   </Text>
                 </Animated.View>
-              </Pressable>
+              </TouchableOpacity>
             </Animated.View>
           </Animated.View>
 
@@ -331,12 +294,11 @@ export default function FanPredictionVote({
                 },
               ]}
             >
-              <Pressable
-                onPress={() =>
-                  !submitting && !userVote && castVote(homeTeam.id)
-                }
+              <TouchableOpacity
+                onPress={() => castVote(homeTeam.id)}
+                disabled={!!userVote || submitting}
+                activeOpacity={userVote ? 1 : 0.7}
                 style={{ alignItems: "center", justifyContent: "center" }}
-                pointerEvents={userVote ? "none" : "auto"}
               >
                 <Animated.View
                   style={{
@@ -350,11 +312,7 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={resolveLogo(
-                      colorScheme === "dark"
-                        ? homeTeam.logoLight || homeTeam.logo
-                        : homeTeam.logoLight || homeTeam.logo,
-                    )}
+                    source={homeTeam.logo}
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />
@@ -366,13 +324,13 @@ export default function FanPredictionVote({
                     {homeTeam.code}
                   </Text>
                 </Animated.View>
-              </Pressable>
+              </TouchableOpacity>
             </Animated.View>
           </Animated.View>
         </View>
       </View>
 
-      {/* Percent labels — show 50/50 until revealed */}
+      {/* Percent labels */}
       <View style={styles.percentRow}>
         <Text style={styles.percentText}>
           {formatPercentage(displayPctAway)}

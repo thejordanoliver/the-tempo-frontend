@@ -24,7 +24,7 @@ export default function PlayerLeadersSlide({
   const styles = playersSlide(isDark);
   return (
     <View style={[styles.container, { height: slideHeight }]}>
-      <HeadingTwo style={styles.header}>{header}</HeadingTwo>
+      <HeadingTwo isDark={isDark} style={styles.header}>{header}</HeadingTwo>
 
       {/* This view clips rows without removing them */}
       <View style={{ height: listHeight, overflow: "hidden" }}>

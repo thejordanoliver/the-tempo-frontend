@@ -1,30 +1,21 @@
+import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/Styles";
-import { getTeamByESPNId } from "constants/teamsCFB";
-import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
+import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import {
+  getTeamByESPNId as getNFLTeamByESPNId,
+  getNFLTeamLogo,
+} from "constants/teamsNFL";
+import { ScoringPlays } from "hooks/NFLHooks/useGameDetails";
 import { useEffect, useMemo, useState } from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
 import HeadingTwo from "../../../Headings/HeadingTwo";
-import FixedWidthTabBar, {
-  getLabelStyle,
-} from "../../../TabBars/FixedWidthTabBar";
-
-type ScoringPlay = {
-  type?: { text?: string };
-  team?: { abbreviation?: string; id?: number };
-  period?: { number?: number };
-  clock?: { displayValue?: string };
-  text?: string;
-  awayScore: number;
-  homeScore: number;
-};
-
 type Props = {
-  scoringPlays?: ScoringPlay[] | null;
+  scoringPlays?: ScoringPlays | null;
   loading?: boolean;
-  awayTeamId?: number; // ✅ Now team ID
-  homeTeamId?: number; // ✅ Now team ID
-  lighter?: boolean;
+  awayTeamId?: number;
+  homeTeamId?: number;
+  isDark: boolean;
   league?: LeagueType;
 };
 
@@ -33,11 +24,10 @@ export default function TeamScoringSummary({
   loading = false,
   awayTeamId,
   homeTeamId,
-  lighter = false,
+  isDark,
   league = "NFL",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, lighter);
+  const styles = TeamScoringSummaryStyles(isDark);
 
   const normalizeESPNId = (id?: number | string | null): string | null => {
     if (id === null || id === undefined) return null;
@@ -58,8 +48,8 @@ export default function TeamScoringSummary({
       new Set(
         scoringPlays
           ?.map((sp) => normalizeESPNId(sp.team?.id))
-          .filter((id): id is string => !!id)
-      )
+          .filter((id): id is string => !!id),
+      ),
     );
 
     uniqueIds.forEach((id) => {
@@ -84,7 +74,7 @@ export default function TeamScoringSummary({
     if (selectedTeam === "ALL") return scoringPlays;
 
     return scoringPlays?.filter(
-      (sp) => normalizeESPNId(sp.team?.id) === selectedTeam
+      (sp) => normalizeESPNId(sp.team?.id) === selectedTeam,
     );
   }, [scoringPlays, selectedTeam]);
 
@@ -101,19 +91,21 @@ export default function TeamScoringSummary({
 
   return (
     <View style={styles.container}>
-      <HeadingTwo lighter={lighter}>Scoring Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={teams}
           selected={selectedTeam}
           onTabPress={setSelectedTeam}
-          lighter={lighter}
-          renderLabel={(id, isSelected) => {
+          isDark={isDark}
+          renderLabel={(id, isSelected, tabStyles) => {
             // ALL tab
             if (id === "ALL") {
               return (
-                <Text style={getLabelStyle(isDark, isSelected, lighter)}>
+                <Text
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
+                >
                   ALL
                 </Text>
               );
@@ -122,29 +114,26 @@ export default function TeamScoringSummary({
             // team tab
             const team =
               league === "CFB" ? getTeamByESPNId(id) : getNFLTeamByESPNId(id);
-            const logo = lighter
-              ? team?.logoLight || team?.logo
-              : isDark
-              ? team?.logoLight
-              : team?.logo;
-            const selectedOpacity = isSelected ? 1 : 0.5;
+            const teamId = team?.id ?? 0;
+            const teamCode = team?.code;
+            const logo =
+              league === "CFB"
+                ? getCFBTeamLogo(teamId, isDark)
+                : getNFLTeamLogo(teamId, isDark);
 
             return (
               <View style={styles.tabLabel}>
                 {logo && (
                   <Image
                     source={logo}
-                    style={[styles.logo, { opacity: selectedOpacity }]}
-                    resizeMode="contain"
+                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
+
                 <Text
-                  style={{
-                    ...getLabelStyle(isDark, isSelected, lighter),
-                    opacity: selectedOpacity,
-                  }}
+                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
-                  {team?.code ?? id}
+                  {teamCode}
                 </Text>
               </View>
             );
@@ -181,15 +170,11 @@ export default function TeamScoringSummary({
   );
 }
 
-const getStyles = (isDark: boolean, lighter: boolean) =>
+const TeamScoringSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { marginTop: 10 },
     wrapper: {
-      borderColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+      borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderWidth: 1,
       borderRadius: 8,
       overflow: "hidden",
@@ -204,29 +189,21 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       gap: 10,
       padding: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+      borderBottomColor: isDark ? Colors.midTone : Colors.lightGray,
     },
     periodText: {
       fontFamily: Fonts.OSBOLD,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       width: 60,
     },
     playDesc: {
       fontFamily: Fonts.OSREGULAR,
-      color: lighter ? Colors.white : isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
     },
     clockText: {
       fontFamily: Fonts.OSREGULAR,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.darkGray,
+      color: isDark ? Colors.midTone : Colors.darkGray,
       width: 45,
       textAlign: "right",
     },
@@ -234,10 +211,11 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       padding: 20,
-      color: lighter
-        ? Colors.lightGray
-        : isDark
-        ? Colors.midTone
-        : Colors.darkGray,
+      color: isDark ? Colors.midTone : Colors.darkGray,
+    },
+    tabLogo: {
+      width: 28,
+      height: 28,
+      resizeMode: "contain",
     },
   });

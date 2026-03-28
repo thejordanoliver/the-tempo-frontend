@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/Styles";
-import { getTeamByESPNId } from "constants/teams";
+import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
@@ -196,14 +195,13 @@ const STAT_KEYS = [
 export default function GameTeamStats({
   stats,
   gameStatusDescription,
-  lighter = false,
+  isDark,
 }: {
   gameStatusDescription: string;
   stats: any[];
-  lighter?: boolean;
+  isDark: boolean;
 }) {
-  const isDark = useColorScheme() === "dark";
-  const styles = gameTeamStatsStyles(isDark, lighter);
+  const styles = gameTeamStatsStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
 
@@ -254,24 +252,17 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayLogo = isDark
-    ? awayTeam?.logoLight || awayTeam?.logo
-    : awayTeam?.logo;
+  const awayLogo = getTeamLogo(awayTeam?.id, isDark)
+  const homeLogo = getTeamLogo(homeTeam?.id, isDark)
+  const awayColor = isDark ? Colors.white : Colors.black;
 
-  const homeLogo = isDark
-    ? homeTeam?.logoLight || homeTeam?.logo
-    : homeTeam?.logo;
-
-  const awayColor = isDark ? Colors.white : Colors.black
-
-  const homeColor = lighter
-    ? homeTeam?.secondaryColor
-    : ((isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
-      (isDark ? Colors.white : Colors.black));
+  const homeColor =
+    (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
+    (isDark ? Colors.white : Colors.black);
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>
+      <HeadingTwo isDark={isDark}>
         {isScheduled ? "Team Stats" : "Game Stats"}
       </HeadingTwo>
       <View style={styles.logosRow}>
@@ -419,13 +410,7 @@ export default function GameTeamStats({
                         <Rect
                           width="100%"
                           height="100%"
-                          fill={
-                            lighter
-                              ? Colors.black
-                              : isDark
-                                ? Colors.black
-                                : Colors.white
-                          }
+                          fill={isDark ? Colors.black : Colors.white}
                         />
 
                         {/* Hatch overlay */}

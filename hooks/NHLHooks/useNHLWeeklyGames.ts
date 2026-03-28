@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NHLGame } from "types/nhl";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 export function useNHLWeeklyGames() {
   const [games, setGames] = useState<NHLGame[]>([]);

@@ -1,10 +1,10 @@
 // components/WeekSelector.tsx
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
-import React, { useEffect, useRef, useState } from "react";
+import { Colors, Fonts } from "constants/Styles";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Dimensions,
-  LayoutChangeEvent,
   ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -19,112 +19,77 @@ type Props = {
   weeks: NFLWeek[];
   selectedWeekIndex?: number;
   onSelectWeek: (index: number) => void;
-  monthTextStyle: any;
-  monthTextSelectedStyle: any;
   loading?: boolean;
+  isDark: boolean;
 };
-const ITEM_WIDTH = 100;
+
+const ITEM_WIDTH = 80;
 const SPACING = 12;
+
+const LABEL_OVERRIDES: Record<string, string> = {
+  "Conference Championships": "Conf Champ",
+  "Divisional Round": "Div Round",
+  "Hall of Fame Weekend": "HOF Week",
+  "Pre Season Week 1": "Pre Week 1",
+  "Pre Season Week 2": "Pre Week 2",
+  "Pre Season Week 3": "Pre Week 3",
+};
+
 export default function WeekSelector({
   weeks,
   selectedWeekIndex = 0,
   onSelectWeek,
-  monthTextStyle,
-  monthTextSelectedStyle,
   loading,
+  isDark,
 }: Props) {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollView>(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemWidth = 60; // width of each week button
-  const spacing = 8; // space between buttons
+  const styles = useMemo(() => WeekSelectorStyles(isDark), [isDark]);
 
-  const contentWidth = weeks.length * ITEM_WIDTH + (weeks.length - 1) * SPACING;
-  const screenWidth = Dimensions.get("window").width;
-  const needsScroll = contentWidth > screenWidth;
-  
-  const indexToOffset = (
-    index: number,
-    itemWidth: number,
-    spacing: number,
-    containerWidth: number
-  ) => {
-    const centerOffset =
-      index * (itemWidth + spacing) + itemWidth / 2 - containerWidth / 2;
-
-    const maxOffset = Math.max(0, contentWidth - containerWidth);
-
-    return Math.max(0, Math.min(centerOffset, maxOffset));
-  };
-
-  const onLayoutContainer = (event: LayoutChangeEvent) => {
-    setContainerWidth(event.nativeEvent.layout.width);
-  };
-
-  // 🔥 Auto-scroll to closest week on mount
+  // Auto-scroll to selected week
   useEffect(() => {
-    if (scrollViewRef.current && containerWidth > 0 && weeks.length > 0) {
-      const closestIndex = Math.min(
-        Math.max(selectedWeekIndex, 0),
-        weeks.length - 1
-      );
+    if (!scrollRef.current || containerWidth === 0 || weeks.length === 0)
+      return;
 
-      const targetX = indexToOffset(
-        closestIndex,
-        itemWidth,
-        spacing,
-        containerWidth
-      );
+    const targetX =
+      selectedWeekIndex * (ITEM_WIDTH + SPACING) -
+      containerWidth / 2 +
+      ITEM_WIDTH / 2;
 
-      scrollViewRef.current.scrollTo({ x: targetX, animated: true });
-    }
-  }, [containerWidth, weeks, selectedWeekIndex]);
+    scrollRef.current.scrollTo({ x: targetX, animated: true });
+  }, [selectedWeekIndex, containerWidth, weeks]);
 
   if (loading) return <WeekSelectorSkeleton />;
 
   return (
     <View
-      style={{ flexDirection: "row", marginVertical: 8 }}
-      onLayout={onLayoutContainer}
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+      style={{ marginVertical: 8 }}
     >
       <ScrollView
         horizontal
-        ref={scrollViewRef}
+        ref={scrollRef}
         snapToInterval={ITEM_WIDTH + SPACING}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={
-          needsScroll
-            ? {
-                paddingHorizontal: SPACING / 2,
-              }
-            : {
-                width: screenWidth, // 🔥 THIS IS THE KEY
-                alignItems: "center", // center items horizontally
-                justifyContent: "space-around",
-              }
-        }
+        contentContainerStyle={styles.contentContainerStyle}
       >
         {weeks.map((week, index) => {
           const isSelected = index === selectedWeekIndex;
-          const weekLabel =
-            week.label === "Hall of Fame Weekend" ? "HOF Weekend" : week.label;
+          const label = LABEL_OVERRIDES[week.label] ?? week.label;
+
           return (
             <TouchableOpacity
               key={`${week.stage}-${week.label}`}
               onPress={() => onSelectWeek(index)}
-              style={{
-                marginRight: spacing,
-                paddingVertical: 6,
-                paddingHorizontal: 8,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              style={styles.label}
             >
               <Text
-                style={isSelected ? monthTextSelectedStyle : monthTextStyle}
+                style={isSelected ? styles.monthTextSelected : styles.monthText}
+                numberOfLines={1}
               >
-                {weekLabel}
+                {label}
               </Text>
             </TouchableOpacity>
           );
@@ -133,3 +98,29 @@ export default function WeekSelector({
     </View>
   );
 }
+
+const WeekSelectorStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    contentContainerStyle: {
+      paddingHorizontal: SPACING,
+      alignItems: "center",
+    },
+    monthText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 16,
+      textAlign: "center",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    monthTextSelected: {
+      fontSize: 16,
+      textAlign: "center",
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    label: {
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+    },
+  });

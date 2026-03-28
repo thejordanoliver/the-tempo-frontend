@@ -1,5 +1,5 @@
 import { Colors } from "constants/Styles";
-import { getTeamInfo, getTeamLogo } from "constants/teamsCBB";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -32,14 +32,14 @@ function CBBStackedGameCard({
   const homeId = game?.teams?.home?.id;
   const awayId = game?.teams?.away?.id;
 
-  const home = getTeamInfo(homeId, isWomen);
-  const away = getTeamInfo(awayId, isWomen);
+  const home = getCBBTeam(homeId, isWomen);
+  const away = getCBBTeam(awayId, isWomen);
 
   const homeName = home?.fullName ?? home?.name ?? game?.teams?.home.name;
   const awayName = away?.fullName ?? away?.name ?? game?.teams?.away.name;
 
-  const homeLogo = getTeamLogo(homeId, isDark);
-  const awayLogo = getTeamLogo(awayId, isDark);
+  const homeLogo = getCBBTeamLogo(homeId, isDark, isWomen);
+  const awayLogo = getCBBTeamLogo(awayId, isDark, isWomen);
 
   const homeEspnId = home?.espnID ?? 0;
   const awayEspnId = away?.espnID ?? 0;
@@ -52,8 +52,6 @@ function CBBStackedGameCard({
       : null;
 
   const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
-
-  const canNavigate = homeId && awayId;
 
   const { score: liveScore, details } = useGameDetails(
     detailsLeague,
@@ -76,16 +74,15 @@ function CBBStackedGameCard({
   const period = liveScore?.period ?? game.status.long ?? "";
   const displayClock = liveScore?.displayClock ?? game.status.timer ?? "0:00";
   const inProgress = gameStatusDescription === "In Progress";
-
-  // --- Team Rankings ---
   const homeRank = details?.homeRank;
   const awayRank = details?.awayRank;
-
   const headlineText = details?.headline;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
+  const broadcasts = details?.broadcasts;
+  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const isChampionship = isWomen
     ? headlineText === "Women's Basketball Championship - National Championship"
@@ -98,10 +95,6 @@ function CBBStackedGameCard({
       params: { game: JSON.stringify(game) },
     });
   }, [router, game]);
-
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
 
   const { formattedDate, formattedTime } = useMemo(() => {
     if (!gameDate) return { formattedDate: "", formattedTime: "" };

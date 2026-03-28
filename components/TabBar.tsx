@@ -2,7 +2,6 @@ import { Colors, Fonts } from "constants/Styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
-  Easing,
   LayoutChangeEvent,
   Pressable,
   StyleProp,
@@ -11,7 +10,6 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  useColorScheme,
 } from "react-native";
 
 export interface TabBarProps<T extends string> {
@@ -20,6 +18,7 @@ export interface TabBarProps<T extends string> {
   onTabPress: (tab: T) => void;
   renderLabel?: (tab: T, isSelected: boolean) => React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  isDark: boolean;
 }
 
 export default function TabBar<T extends string>({
@@ -28,10 +27,8 @@ export default function TabBar<T extends string>({
   onTabPress,
   renderLabel,
   style,
+  isDark,
 }: TabBarProps<T>) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
   // Animated values
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
@@ -69,22 +66,20 @@ export default function TabBar<T extends string>({
     ]).start();
   };
 
-  const onTextLayout =
-    (index: number) => (event: LayoutChangeEvent) => {
-      textMeasurements.current[index] = {
-        width: event.nativeEvent.layout.width,
-      };
-      checkInitialization();
+  const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
+    textMeasurements.current[index] = {
+      width: event.nativeEvent.layout.width,
     };
+    checkInitialization();
+  };
 
-  const onPressableLayout =
-    (index: number) => (event: LayoutChangeEvent) => {
-      pressableMeasurements.current[index] = {
-        x: event.nativeEvent.layout.x,
-        width: event.nativeEvent.layout.width,
-      };
-      checkInitialization();
+  const onPressableLayout = (index: number) => (event: LayoutChangeEvent) => {
+    pressableMeasurements.current[index] = {
+      x: event.nativeEvent.layout.x,
+      width: event.nativeEvent.layout.width,
     };
+    checkInitialization();
+  };
 
   const checkInitialization = () => {
     if (initialized.current) return;
@@ -136,7 +131,9 @@ export default function TabBar<T extends string>({
             accessibilityLabel={`Switch to ${tab} tab`}
           >
             <View onLayout={onTextLayout(index)}>
-              {renderLabel ? renderLabel(tab, isSelected) : (
+              {renderLabel ? (
+                renderLabel(tab, isSelected)
+              ) : (
                 <Text style={defaultLabelStyle(tab, isSelected)}>
                   {tab.toUpperCase()}
                 </Text>

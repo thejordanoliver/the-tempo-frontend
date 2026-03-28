@@ -1,31 +1,31 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { LeagueType } from "types/types";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 /**
  * Generic team type for any league
  */
 export type StandingsTeam = {
   // Basic identifiers
-  id: string;                  // internal or generated id
-  teamId: string;              // ESPN team id
-  name: string;                // Full team name
-  abbreviation: string;        // Team abbreviation
-  conference: string;          // e.g., "Eastern" | "Western" | "AFC" | "NFC"
-  division: string;            // Division name
+  id: string; // internal or generated id
+  teamId: string; // ESPN team id
+  name: string; // Full team name
+  abbreviation: string; // Team abbreviation
+  conference: string; // e.g., "Eastern" | "Western" | "AFC" | "NFC"
+  division: string; // Division name
 
   // Record
   wins: number;
   losses: number;
   ties: number;
-  otLosses?: number | null;    // For NHL OT losses
+  otLosses?: number | null; // For NHL OT losses
   winPercent: number;
   gamesAhead?: number | null;
   gamesBehind?: number | null;
   streak: string;
 
-  rank: number
+  rank: number;
   // Split records
   overallRecord?: string | null;
   homeRecord?: string | null;
@@ -48,10 +48,9 @@ export type StandingsTeam = {
   leagueWinPercent?: number | null;
 
   // Playoff info
-  clincher?: string | null;    // e.g., "X", "Y", "E", etc.
+  clincher?: string | null; // e.g., "X", "Y", "E", etc.
   playoffSeed?: number | null;
 };
-
 
 /**
  * Conference or division grouping

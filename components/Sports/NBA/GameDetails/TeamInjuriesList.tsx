@@ -1,14 +1,14 @@
 // TeamInjuriesList.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Player } from "hooks/NBAHooks/usePlayersByTeam";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import { TeamInjury } from "./TeamInjuries";
-import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 
 type Props = {
   injuries: TeamInjury[];
   teamPlayersMap: Record<string, Player[]>;
-  lighter: boolean;
+  isDark: boolean;
 };
 
 const DEFAULT_HEADSHOT = playerPlaceholder;
@@ -16,12 +16,11 @@ const DEFAULT_HEADSHOT = playerPlaceholder;
 export default function TeamInjuriesList({
   injuries,
   teamPlayersMap,
-  lighter,
+  isDark,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
   if (!injuries?.length) return null;
 
-  const styles = teamInjuryStyles(isDark, lighter);
+  const styles = teamInjuryStyles(isDark);
 
   return (
     <View style={styles.container}>
@@ -35,7 +34,9 @@ export default function TeamInjuriesList({
               const espnId = inj.athlete.id; // ESPN ID from injury feed
 
               // Find matching DB player by espn_id
-              const dbPlayer = teamPlayers.find((p) => p.espn_id === Number(espnId));
+              const dbPlayer = teamPlayers.find(
+                (p) => p.espn_id === Number(espnId),
+              );
 
               const avatarUrl = dbPlayer?.avatarUrl || DEFAULT_HEADSHOT;
               const playerName = dbPlayer?.short_name || inj.athlete.fullName;
@@ -77,7 +78,8 @@ export default function TeamInjuriesList({
                   {inj.details?.returnDate && (
                     <View>
                       <Text style={styles.status}>
-                        Return: {new Date(inj.details.returnDate).toLocaleDateString()}
+                        Return:{" "}
+                        {new Date(inj.details.returnDate).toLocaleDateString()}
                       </Text>
                     </View>
                   )}

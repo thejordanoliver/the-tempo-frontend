@@ -64,6 +64,7 @@ export default function Roster({
               team={teamFullName}
               avatarUrl={player.avatarUrl}
               number={player.jersey_number}
+              teamId={player.team_id}
             />
           ))}
     </ScrollView>

@@ -282,7 +282,7 @@ export default function NFLGamesList({
               style={{ marginBottom: 16 }}
             >
               {showHeaders && (
-                <HeadingTwo style={{ marginHorizontal: 12 }}>
+                <HeadingTwo isDark={isDark} style={{ marginHorizontal: 12 }}>
                   {section.title}
                 </HeadingTwo>
               )}
@@ -301,7 +301,9 @@ export default function NFLGamesList({
       <View>
         {sections.map((section) => (
           <View key={`skel-section-${section.title}`}>
-            {showHeaders && <HeadingTwo>{section.title}</HeadingTwo>}
+            {showHeaders && (
+              <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+            )}
             {renderSkeletons(section.data.length || totalSkeletonCount)}
           </View>
         ))}
@@ -319,7 +321,9 @@ export default function NFLGamesList({
           keyExtractor={(item, index) => `row-${index}`}
           renderItem={renderGridRow}
           renderSectionHeader={({ section }) =>
-            showHeaders ? <HeadingTwo>{section.title}</HeadingTwo> : null
+            showHeaders ? (
+              <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+            ) : null
           }
           stickySectionHeadersEnabled={false}
           refreshing={refreshing}
@@ -351,7 +355,7 @@ export default function NFLGamesList({
                     section.title === "Regular Season") && { marginTop: 12 },
                 ]}
               >
-                <HeadingTwo>{section.title}</HeadingTwo>
+                <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
               </View>
             ) : null
           }

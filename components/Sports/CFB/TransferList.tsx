@@ -3,7 +3,7 @@ import { Colors, Fonts } from "constants/Styles";
 import { useCFBPortalPlayers } from "hooks/CFBHooks/useCFBPortalPlayers";
 import React, { useEffect, useMemo, useRef } from "react";
 import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
-import RecruitCardSkeleton from "./RecruitCardSkeleton";
+import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";
 import TransferPlayerCard from "./TransferCard";
 
 type Props = {

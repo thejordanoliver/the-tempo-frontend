@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CBBPlayer } from "types/types";
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 
 // --- Types ---
 
@@ -196,4 +196,3 @@ export function useCBBPlayerSeasons(
     error,
   };
 }
-

@@ -1,17 +1,16 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-const BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:4000";
-
+import { BASE_URL } from "utils/apiClient";
 export type TeamPlayer = {
   id: number;
-  player_id: number;
+  player_id?: number;
   espn_id?: number | null;
 
   name: string;
   first_name?: string | null;
   last_name?: string | null;
+  full_name?: string | null;
   short_name?: string | null;
 
   position?: string | null;
@@ -23,15 +22,35 @@ export type TeamPlayer = {
 
   experience_display?: string | null;
   experience_abbr?: string | null;
+  experience_years?: number | null;
+
   birth_display?: string | null;
 
   active: boolean;
-  affiliation: "NFL" | "CFB" | "MLB";
+  affiliation: "NFL" | "MLB" | "NBA" | "CBB" | "WCBB";
 };
+
+function getLeagueRoute(league: string) {
+  switch (league) {
+    case "NFL":
+      return "nfl/players";
+    case "CFB":
+      return "cfb/players";
+    case "MLB":
+      return "mlb/players";
+    case "CBB":
+      return "cbb/players";
+    case "WCBB":
+      return "wcbb/players";
+    case "NBA":
+    default:
+      return "players"; // NBA has no prefix
+  }
+}
 
 export function useTeamPlayers(
   teamId?: number | string,
-  league?: "NFL" | "CFB" | "MLB"
+  league?: "NFL" | "CFB" | "MLB" | "NBA" | "CBB" | "WCBB",
 ) {
   const [players, setPlayers] = useState<TeamPlayer[]>([]);
   const [loading, setLoading] = useState(false);
@@ -42,15 +61,37 @@ export function useTeamPlayers(
     async (isRefresh = false) => {
       if (!teamId || !league) return;
 
-      const url = `${BASE_URL}/api/explore/players/${league}/team/${teamId}`;
+      const route = getLeagueRoute(league);
+      const url = `${BASE_URL}/api/${route}/team/${teamId}`;
 
       try {
         isRefresh ? setRefreshing(true) : setLoading(true);
         setError(null);
-        
+
         const res = await axios.get(url);
-        setPlayers(res.data.players ?? []);
-        
+
+        const normalized: TeamPlayer[] = (res.data.players ?? []).map(
+          (p: any) => ({
+            ...p,
+
+            // ✅ Normalize name across all leagues
+            name:
+              p.name ||
+              p.full_name ||
+              `${p.first_name ?? ""} ${p.last_name ?? ""}`.trim(),
+
+            // ✅ Normalize avatar
+            avatarUrl: p.avatarUrl || p.headshot || p.headshot_url || null,
+
+            // ✅ Ensure affiliation exists
+            affiliation: p.affiliation || league,
+
+            // ✅ Ensure active flag exists
+            active: typeof p.active === "boolean" ? p.active : true,
+          }),
+        );
+
+        setPlayers(normalized);
       } catch (err) {
         console.error("❌ useTeamPlayers error:", err);
         setError("Failed to load team players");
@@ -59,7 +100,7 @@ export function useTeamPlayers(
         setRefreshing(false);
       }
     },
-    [teamId, league]
+    [teamId, league],
   );
 
   useEffect(() => {

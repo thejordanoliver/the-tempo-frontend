@@ -77,17 +77,15 @@ export default function LastPlay({ lastPlay }: LastPlayProps) {
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
-        <HeadingTwo>Last Play</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Last Play</HeadingTwo>
         <Text style={styles.simpleText}>{normalizeText(currentPlay)}</Text>
       </View>
     );
   }
 
-  
-
   return (
     <View style={styles.container} onLayout={onLayout}>
-      <HeadingTwo>Last Play</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Last Play</HeadingTwo>
 
       <View style={styles.wrapper}>
         <View style={styles.statusContainer}>

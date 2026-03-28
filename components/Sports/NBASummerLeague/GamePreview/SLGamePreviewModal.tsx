@@ -4,8 +4,8 @@ import { getTeamInfo, neutralVenues } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useLastFiveGames } from "hooks/NBAHooks/useLastFiveGames";
 import { useGameStatistics } from "hooks/useGameStatistics";
-import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
@@ -23,7 +23,11 @@ type Props = {
   onClose: () => void;
 };
 
-export default function SummerLeagueGamePreviewModal({ visible, game, onClose }: Props) {
+export default function SummerLeagueGamePreviewModal({
+  visible,
+  game,
+  onClose,
+}: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);

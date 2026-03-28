@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { teamsById } from "constants/teams";
+import { getNBATeam } from "constants/teams";
 import { router } from "expo-router";
 import usePlayersByTeam, { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameLeaders } from "hooks/useGameLeaders";
@@ -12,14 +12,12 @@ import {
   Text,
   TouchableOpacity,
   UIManager,
-  useColorScheme,
   View,
 } from "react-native";
 import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
 import BoxScoreSkeleton from "../../../Skeletons/GameDetails/BoxScoreSkeleton";
 
 const COLUMN_WIDTH = 50;
-const NAME_COLUMN_WIDTH = 160;
 const PLAYER_ROW_HEIGHT = 36;
 const COLLAPSED_ROWS = 5;
 const COLLAPSED_HEIGHT = PLAYER_ROW_HEIGHT * COLLAPSED_ROWS;
@@ -35,16 +33,17 @@ type Props = {
   gameId: string;
   homeTeamId: number;
   awayTeamId: number;
-  lighter?: boolean;
+  isDark: boolean;
 };
 
 export default function BoxScore({
   gameId,
   homeTeamId,
   awayTeamId,
-  lighter = false,
+  isDark,
 }: Props) {
-  // Fetch game leaders/stats
+  const styles = boxScoreStyles(isDark);
+
   const {
     data: leadersData,
     isLoading,
@@ -55,17 +54,14 @@ export default function BoxScore({
   const { players: homeTeamPlayers } = usePlayersByTeam(String(homeTeamId));
   const { players: awayTeamPlayers } = usePlayersByTeam(String(awayTeamId));
 
-  const isDark = useColorScheme() === "dark";
-  const styles = boxScoreStyles(isDark, lighter);
-
   const [expandedTeams, setExpandedTeams] = useState<{
     [teamCode: string]: boolean;
   }>({});
 
   const heightAnimMap = useRef<{ [teamCode: string]: Animated.Value }>({});
 
-  const homeTeam = teamsById[homeTeamId];
-  const awayTeam = teamsById[awayTeamId];
+  const homeTeam = getNBATeam(homeTeamId);
+  const awayTeam = getNBATeam(awayTeamId);
   const homeCode = homeTeam?.code ?? "home";
   const awayCode = awayTeam?.code ?? "away";
 
@@ -185,7 +181,7 @@ export default function BoxScore({
     heightAnim: Animated.Value,
   ) => {
     return (
-      <View style={styles.teamBox}>
+      <View style={styles.teamContainer}>
         {/* Team Header */}
         <View style={styles.teamHeader}>
           <Text style={styles.teamLabel}>{teamName}</Text>
@@ -200,8 +196,7 @@ export default function BoxScore({
 
         {/* Table */}
         <View style={{ flexDirection: "row", width: "100%" }}>
-          {/* Player names */}
-          <View style={{ width: NAME_COLUMN_WIDTH }}>
+          <View style={styles.playerNameColumn}>
             <View style={styles.tableHeader}>
               <Text style={styles.cellName}>Player</Text>
             </View>
@@ -319,8 +314,8 @@ export default function BoxScore({
   if (isLoading) {
     return (
       <ScrollView>
-        <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
-        <BoxScoreSkeleton lighter={lighter} />
+        <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
+        <BoxScoreSkeleton isDark={isDark} />
       </ScrollView>
     );
   }
@@ -328,7 +323,7 @@ export default function BoxScore({
   if (isError) {
     return (
       <ScrollView>
-        <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
         <Text style={styles.error}>Failed to load box score.</Text>
       </ScrollView>
     );
@@ -336,7 +331,7 @@ export default function BoxScore({
 
   return (
     <ScrollView>
-      <HeadingTwo lighter={lighter}>Box Score</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
       <View style={{ marginBottom: 24 }}>
         {renderTeamBox(
