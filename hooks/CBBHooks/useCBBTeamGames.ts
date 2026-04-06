@@ -22,7 +22,7 @@ export function useCBBTeamGames(
     setError(null);
 
     try {
-      const res = await apiClient.get(`/api/games/wbb/team/${teamId}`, {
+      const res = await apiClient.get(`/api/games/cbb/team/${teamId}`, {
         params: {
           season,
         },
@@ -32,7 +32,7 @@ export function useCBBTeamGames(
 
       setGames(rawGames);
     } catch (err: any) {
-      console.error("Error fetching WNBA team games:", err.message);
+      console.error("Error fetching CBB team games:", err.message);
       setError("Failed to load team games");
     } finally {
       setLoading(false);
