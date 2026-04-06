@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useRef, useState } from "react";
@@ -180,8 +181,15 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
                 source={{ uri: item.thumbnail }}
                 style={styles.thumbnail}
               />
-              <View style={styles.playButtonOverlay}>
-                <Text style={styles.playButtonText}>▶</Text>
+              <View
+                style={{
+                  ...StyleSheet.absoluteFillObject,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0,0,0,0.3)",
+                }}
+              >
+                <Ionicons name="play-circle" size={64} color="white" />
               </View>
             </Pressable>
           )}
@@ -212,7 +220,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Highlights</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Highlights</HeadingTwo>
       <View style={styles.wrapper}>
         <FlatList
           ref={listRef}

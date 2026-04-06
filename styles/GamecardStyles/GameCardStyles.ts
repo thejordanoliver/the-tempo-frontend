@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
@@ -32,7 +32,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       alignItems: "center",
       justifyContent: "center",
       width: 100,
-    
     },
 
     infoWrapper: {
@@ -67,7 +66,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       fontSize: 12,
       color: textColor,
       textAlign: "center",
-        width: 100,
+      width: 100,
     },
 
     rank: {

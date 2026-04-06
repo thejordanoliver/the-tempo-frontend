@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { cbbTeams } from "constants/teamsCBB";
 import { UpcomingGameOdds } from "hooks/CBBHooks/useOdds";
 import React from "react";

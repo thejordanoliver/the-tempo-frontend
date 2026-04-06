@@ -1,4 +1,4 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const getStyles = (isDark: boolean) =>
@@ -73,7 +73,7 @@ export const getStyles = (isDark: boolean) =>
       width: 1,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
-       headlineContainer: {
+    headlineContainer: {
       paddingHorizontal: 12,
       paddingTop: 10,
       alignItems: "center",

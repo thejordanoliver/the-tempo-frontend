@@ -1,8 +1,9 @@
 export const LEAGUE_TABS = {
   NBA: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
+  WNBA: ["scores", "news", "standings", "forum"],
   NFL: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
-  MLB: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
-  NHL: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
+  MLB: ["scores", "news", "standings", "stats", "awards", "forum"],
+  NHL: ["scores", "news", "standings", "stats", "awards", "forum"],
   CFB: [
     "scores",
     "news",
@@ -15,11 +16,12 @@ export const LEAGUE_TABS = {
   ],
   CBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
   WCBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
-  MMA: ["fights", "news", "standings", "champions", "stats", "forum"],
+  MMA: ["fights", "news", "champions", "forum"],
 } as const;
 
 export const TEAM_TABS = {
   NBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  WNBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
   NFL: ["schedule", "news", "roster", "stats", "standings", "forum"],
   MLB: ["schedule", "news", "roster", "stats", "standings", "forum"],
   NHL: ["schedule", "news", "roster", "stats", "standings", "forum"],
@@ -33,4 +35,3 @@ export type Team = keyof typeof TEAM_TABS;
 
 export type LeagueTab<L extends League> = (typeof LEAGUE_TABS)[L][number];
 export type TeamTab<T extends Team> = (typeof TEAM_TABS)[T][number];
-

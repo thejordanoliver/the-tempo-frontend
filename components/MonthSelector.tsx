@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { useEffect, useRef } from "react";
 import {
   Dimensions,
@@ -51,7 +51,7 @@ export default function MonthSelector({
     const index = months.findIndex(
       (m) =>
         m.month === selectedDate.getMonth() &&
-        m.year === selectedDate.getFullYear()
+        m.year === selectedDate.getFullYear(),
     );
 
     if (index === -1 || !scrollRef.current) return;

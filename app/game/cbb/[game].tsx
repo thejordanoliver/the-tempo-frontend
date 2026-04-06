@@ -206,7 +206,6 @@ export default function GameDetailsScreen() {
     ? (neutralVenue?.longitude ?? 0)
     : (homeTeam?.longitude ?? 0);
   const venueAttendance = details?.attendance || null;
-
   const { weather } = useWeatherForecast(venueLat, venueLon, gameDateISO);
 
   /* ---------------- Status / linescore ---------------- */

@@ -1,5 +1,5 @@
 // components/GameDetails/BoxScoreSkeleton.tsx
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 

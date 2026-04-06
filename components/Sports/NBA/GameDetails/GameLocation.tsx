@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { WeatherData } from "hooks/useWeather";
 import {
   Alert,

@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getMLBTeam } from "constants/teamsMLB";
 import { useRouter } from "expo-router";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";

@@ -1,6 +1,5 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-
 
 // ---------- STYLES ----------
 export const customHeaderStyles = StyleSheet.create({

@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import {
   BasketballTeamRowProps,
@@ -82,7 +82,7 @@ export const TeamRow = ({
                   ]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
           </Text>
         </View>
       )}
@@ -121,7 +121,7 @@ export const TeamRow = ({
                   ]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
           </Text>
         </View>
       )}

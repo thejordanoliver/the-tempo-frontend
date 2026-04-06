@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import {
   getTeamByESPNId as getNFLTeamByESPNId,
@@ -65,7 +65,7 @@ export default function DrivesList({
           renderItem={({ item, index }) => {
             const isNFL = league === "NFL";
             const teamId = item.team?.id ?? "ALL";
-           
+
             const team =
               league === "CFB"
                 ? getTeamByESPNId(teamId)

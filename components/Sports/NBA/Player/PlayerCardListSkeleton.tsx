@@ -1,5 +1,5 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,

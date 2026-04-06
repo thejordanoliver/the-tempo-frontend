@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -20,8 +20,7 @@ export default function MonthSelectorSkeleton({
   const styles = getStyles(isDark);
 
   const screenWidth = Dimensions.get("window").width;
-  const contentWidth =
-    itemCount * ITEM_WIDTH + (itemCount - 1) * SPACING;
+  const contentWidth = itemCount * ITEM_WIDTH + (itemCount - 1) * SPACING;
 
   const needsScroll = contentWidth > screenWidth;
 
@@ -41,7 +40,7 @@ export default function MonthSelectorSkeleton({
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -62,10 +61,7 @@ export default function MonthSelectorSkeleton({
       {Array.from({ length: itemCount }).map((_, i) => (
         <View
           key={i}
-          style={[
-            styles.buttonContainer,
-            { marginHorizontal: SPACING / 2 },
-          ]}
+          style={[styles.buttonContainer, { marginHorizontal: SPACING / 2 }]}
         >
           <SkeletonBlock style={styles.month} />
           <SkeletonBlock style={styles.gameCount} />

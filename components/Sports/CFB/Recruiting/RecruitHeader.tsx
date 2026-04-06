@@ -1,6 +1,8 @@
+import { Colors } from "constants/styles";
 import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
 import { Image, Text, View } from "react-native";
 import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
+
 type Props = {
   player: FootballRecruit;
   avatarUrl?: string;
@@ -11,53 +13,88 @@ type Props = {
   isCollegePlayer?: boolean;
 };
 
-export default function RecruitHeader({ player, avatarUrl, isDark }: Props) {
+export default function RecruitHeader({
+  player,
+  avatarUrl,
+  isDark,
+  teamColor,
+  team_name,
+  age,
+}: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
-
-  const styles = recruitHeaderStyles(isDark);
+  const accent = isDark ? Colors.white : Colors.black;
+  const styles = recruitHeaderStyles(isDark, accent);
 
   return (
-    <View style={styles.playerHeader}>
-      <View style={styles.avatarContainer}>
-        {avatarUrl ? (
-          <Image
-            source={{ uri: avatarUrl }}
-            style={styles.avatar}
-            accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
-          />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.initial}>{initial}</Text>
-          </View>
-        )}
-        <View style={styles.jerseyNumber}>
-          <Text style={styles.jersey}>{player.position ?? "N"}</Text>
+    <View style={styles.container}>
+      {/* Avatar overlapping banner */}
+      <View style={styles.avatarWrapper}>
+        <View style={styles.avatarRing}>
+          {avatarUrl ? (
+            <Image
+              source={{ uri: avatarUrl }}
+              style={styles.avatar}
+              accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
+            />
+          ) : (
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.initial}>{initial}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Position badge below avatar */}
+        <View style={styles.positionBadge}>
+          <Text style={styles.positionText}>{player.position ?? "?"}</Text>
         </View>
       </View>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{player.first_name}</Text>
-        <Text style={styles.name}>{player.last_name}</Text>
-
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>School: </Text>
-          {player.high_school}
+      {/* Name block */}
+      <View style={styles.nameContainer}>
+        <Text style={styles.firstName}>
+          {player.first_name?.toUpperCase()} {player.last_name?.toUpperCase()}
         </Text>
+      </View>
 
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>Hometown: </Text>
-          {player.hometown}
-        </Text>
+      {/* Stats row */}
+      <View style={styles.statsRow}>
+        <View style={styles.statChip}>
+          <Text style={styles.statValue}>{player.height ?? "—"}</Text>
+          <Text style={styles.statLabel}>HEIGHT</Text>
+        </View>
 
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>Height: </Text>
-          {player.height ?? "?"}
-        </Text>
+        <View style={styles.statDivider} />
 
-        <Text style={[styles.playerInfo]}>
-          <Text style={styles.playerInfoLabel}>Weight: </Text>
-          {player.weight ?? "?"} lbs
-        </Text>
+        <View style={styles.statChip}>
+          <Text style={styles.statValue}>{player.weight ?? "—"}</Text>
+          <Text style={styles.statLabel}>LBS</Text>
+        </View>
+
+        {age != null && (
+          <>
+            <View style={styles.statDivider} />
+            <View style={styles.statChip}>
+              <Text style={styles.statValue}>{age}</Text>
+              <Text style={styles.statLabel}>AGE</Text>
+            </View>
+          </>
+        )}
+      </View>
+
+      {/* Info grid */}
+      <View style={styles.infoGrid}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>SCHOOL</Text>
+          <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+            {player.high_school}
+          </Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>HOMETOWN</Text>
+          <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+            {player.hometown}
+          </Text>
+        </View>
       </View>
     </View>
   );

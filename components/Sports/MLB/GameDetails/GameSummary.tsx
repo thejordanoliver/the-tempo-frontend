@@ -1,5 +1,5 @@
 import TabBar from "components/TabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 
 import { useMemo, useState } from "react";

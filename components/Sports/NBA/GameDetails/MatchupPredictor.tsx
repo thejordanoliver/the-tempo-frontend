@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Defs, Path, Pattern, Rect } from "react-native-svg";

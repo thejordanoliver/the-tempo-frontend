@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 
 type Props = {

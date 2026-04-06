@@ -1,6 +1,6 @@
 // ./CFB/GamePreview/CenterInfo.tsx
 
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { formatQuarter } from "utils/games";
 

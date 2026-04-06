@@ -64,7 +64,7 @@ import StarsLogo from "../assets/Hockey/NHL_Logos/Stars.png";
 import StarsLogoLight from "../assets/Hockey/NHL_Logos/StarsLight.png";
 import WildLogo from "../assets/Hockey/NHL_Logos/Wild.png";
 import WildLogoLight from "../assets/Hockey/NHL_Logos/WildLight.png";
-
+import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 export const nhlTeams = [
   {
     id: 670,
@@ -839,9 +839,9 @@ export const nhlTeams = [
 export const getNHLTeam = (id: number | string) =>
   nhlTeams.find((t) => String(t.id) === String(id)) || null;
 
-export const getNHLTeamLogo = (id: number | string, isDark: boolean) => {
+export const getNHLTeamLogo = (id: number | string | undefined, isDark: boolean) => {
   const team = nhlTeams.find((t) => String(t.id) === String(id));
-  if (!team) return null;
+  if (!team) return PlaceholderLogo;
 
   // adjust based on your actual team fields
   return isDark ? team.logoLight || team.logo : team.logo;

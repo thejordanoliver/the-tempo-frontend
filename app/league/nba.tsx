@@ -10,21 +10,23 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import NewsList from "components/News/NewsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
 import SLGamesList from "components/Sports/NBASummerLeague/Games/SLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
@@ -74,6 +76,11 @@ export default function NBALeagueScreen() {
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NBA");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "NBA");
 
   useFocusEffect(
     useCallback(() => {
@@ -193,7 +200,27 @@ export default function NBALeagueScreen() {
           </View>
 
           {/* NEWS */}
-          <ScrollView key="news" />
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
+          </View>
 
           {/* STANDINGS */}
           <ScrollView key="standings">

@@ -1,13 +1,12 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import HeadToHeadSkeleton from "components/Skeletons/GameDetails/HeadToHeadSkeleton";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
-import { BlurView } from "expo-blur";
 import {
   HeadToHead,
   useHeadToHeadGames,
 } from "hooks/NBAHooks/useHeadToHeadGames";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
 import { getNBASeason } from "utils/dateUtils";
 import HeadToHeadGameRow from "./HeadToHeadGameRow";
@@ -68,9 +67,6 @@ export default function HeadToHeadGames({
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Series Matchup</HeadingTwo>
       <View style={styles.wrapper}>
-       
-
-   
         <Text style={styles.seriesText}>
           {awayTeamCode} {awayWins} - {homeWins} {homeTeamCode}
         </Text>

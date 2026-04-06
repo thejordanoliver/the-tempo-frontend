@@ -5,6 +5,28 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /* MMA TYPES                                          */
 /* -------------------------------------------------- */
 
+export type Venue = {
+  id: string;
+  fullName: string;
+  address: {
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  grass: boolean;
+  images: [
+    {
+      href: string;
+      rel: ["full", "day"];
+    },
+    {
+      href: string;
+      rel: ["full", "day", "interior"];
+    },
+  ];
+};
+
 export type LineScoreRound = {
   round: number;
   score: number;
@@ -45,18 +67,7 @@ export type MMAFight = {
   category: string;
   date: string;
 
-  venue: {
-    id: string;
-    fullName: string;
-    address: {
-      city: string;
-      state: string;
-      address1: string;
-      country: string;
-    };
-    indoor: boolean;
-  };
-
+  venue: Venue | null;
   fighters: {
     first: MMAFighter;
     second: MMAFighter;

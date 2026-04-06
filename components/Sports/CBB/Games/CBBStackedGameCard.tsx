@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";

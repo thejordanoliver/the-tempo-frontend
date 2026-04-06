@@ -1,6 +1,6 @@
 import HeadingWithDropdowns from "components/Headings/HeadingWithDropdowns";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import {
   CareerTotals,
@@ -137,10 +137,10 @@ export default function PlayerStatTable({ playerId }: Props) {
             stats.catcherStolenBasesAllowed || 0,
           );
           acc.catcherCaughtStealing += Number(stats.catcherCaughtStealing || 0);
-acc.hitsAllowed += Number(stats.hits || 0);
-acc.runsAllowed += Number(stats.runs || 0);
-acc.earnedRuns += Number(stats.earnedRuns || 0);
-acc.war += Number(stats.WAR || 0);
+          acc.hitsAllowed += Number(stats.hits || 0);
+          acc.runsAllowed += Number(stats.runs || 0);
+          acc.earnedRuns += Number(stats.earnedRuns || 0);
+          acc.war += Number(stats.WAR || 0);
           // For percentages/advanced stats — calculate after reduce instead
         }
 
@@ -178,7 +178,6 @@ acc.war += Number(stats.WAR || 0);
         catcherCaughtStealingPct: 0,
         catcherERA: 0,
         defWARBR: 0,
-        
       },
     );
   }, [filteredSeasons, statType]);
@@ -207,24 +206,21 @@ acc.war += Number(stats.WAR || 0);
         ).toFixed(3)
       : "-";
 
+  const careerWinPct =
+    careerTotals.w + careerTotals.l > 0
+      ? (careerTotals.w / (careerTotals.w + careerTotals.l)).toFixed(3)
+      : "-";
 
-      const careerWinPct =
-  careerTotals.w + careerTotals.l > 0
-    ? (careerTotals.w / (careerTotals.w + careerTotals.l)).toFixed(3)
-    : "-";
+  const careerKBB =
+    careerTotals.bb > 0 ? (careerTotals.so / careerTotals.bb).toFixed(2) : "-";
 
-const careerKBB =
-  careerTotals.bb > 0
-    ? (careerTotals.so / careerTotals.bb).toFixed(2)
-    : "-";
-
-const careerWHIP =
-  careerTotals.ip > 0
-    ? (
-        (careerTotals.hitsAllowed + careerTotals.bb) /
-        careerTotals.ip
-      ).toFixed(2)
-    : "-";
+  const careerWHIP =
+    careerTotals.ip > 0
+      ? (
+          (careerTotals.hitsAllowed + careerTotals.bb) /
+          careerTotals.ip
+        ).toFixed(2)
+      : "-";
   const renderStat = (val?: string | number, g?: number) =>
     statView === "totals" ? val : perGame(val, g);
 
@@ -487,23 +483,29 @@ const careerWHIP =
                 </>
               )}
 
-           {statType === "pitching" && (
-  <>
-    <Text style={styles.careerCell}>{careerTotals.w}</Text>
-    <Text style={styles.careerCell}>{careerTotals.l}</Text>
-    <Text style={styles.careerCell}>{careerWinPct}</Text>
-    <Text style={styles.careerCell}>{careerTotals.war}</Text>
-    <Text style={styles.careerCell}>{careerERA}</Text>
-    <Text style={styles.careerCell}>{careerWHIP}</Text>
-    <Text style={styles.careerCell}>{careerTotals.ip}</Text>
-    <Text style={styles.careerCell}>{careerTotals.so}</Text>
-    <Text style={styles.careerCell}>{careerTotals.bb}</Text>
-    <Text style={styles.careerCell}>{careerKBB}</Text>
-    <Text style={styles.careerCell}>{careerTotals.hitsAllowed}</Text>
-    <Text style={styles.careerCell}>{careerTotals.runsAllowed}</Text>
-    <Text style={styles.careerCell}>{careerTotals.earnedRuns}</Text>
-  </>
-)}
+              {statType === "pitching" && (
+                <>
+                  <Text style={styles.careerCell}>{careerTotals.w}</Text>
+                  <Text style={styles.careerCell}>{careerTotals.l}</Text>
+                  <Text style={styles.careerCell}>{careerWinPct}</Text>
+                  <Text style={styles.careerCell}>{careerTotals.war}</Text>
+                  <Text style={styles.careerCell}>{careerERA}</Text>
+                  <Text style={styles.careerCell}>{careerWHIP}</Text>
+                  <Text style={styles.careerCell}>{careerTotals.ip}</Text>
+                  <Text style={styles.careerCell}>{careerTotals.so}</Text>
+                  <Text style={styles.careerCell}>{careerTotals.bb}</Text>
+                  <Text style={styles.careerCell}>{careerKBB}</Text>
+                  <Text style={styles.careerCell}>
+                    {careerTotals.hitsAllowed}
+                  </Text>
+                  <Text style={styles.careerCell}>
+                    {careerTotals.runsAllowed}
+                  </Text>
+                  <Text style={styles.careerCell}>
+                    {careerTotals.earnedRuns}
+                  </Text>
+                </>
+              )}
 
               {statType === "fielding" && (
                 <>

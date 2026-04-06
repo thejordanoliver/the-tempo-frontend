@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -252,8 +252,8 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayLogo = getTeamLogo(awayTeam?.id, isDark)
-  const homeLogo = getTeamLogo(homeTeam?.id, isDark)
+  const awayLogo = getTeamLogo(awayTeam?.id, isDark);
+  const homeLogo = getTeamLogo(homeTeam?.id, isDark);
   const awayColor = isDark ? Colors.white : Colors.black;
 
   const homeColor =

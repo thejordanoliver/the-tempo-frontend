@@ -1,4 +1,4 @@
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Message {
@@ -47,9 +47,7 @@ export default function ChatMessage({
           <Image source={{ uri: profileUri }} style={styles.image} />
         ) : (
           <View style={[styles.image, styles.placeholder]}>
-            <Text style={{ color: "#fff" }}>
-              {item.user[0].toUpperCase()}
-            </Text>
+            <Text style={{ color: "#fff" }}>{item.user[0].toUpperCase()}</Text>
           </View>
         )}
         <Text style={[styles.user, { color: isDark ? "#fff" : "#000" }]}>
@@ -64,20 +62,10 @@ export default function ChatMessage({
           { backgroundColor: isDark ? "#444" : "#eee" },
         ]}
       >
-        <Text
-          style={[
-            styles.message,
-            { color: isDark ? "#ccc" : "#333" },
-          ]}
-        >
+        <Text style={[styles.message, { color: isDark ? "#ccc" : "#333" }]}>
           {item.message}
         </Text>
-        <Text
-          style={[
-            styles.time,
-            { color: isDark ? "#888" : "#666" },
-          ]}
-        >
+        <Text style={[styles.time, { color: isDark ? "#888" : "#666" }]}>
           {time}
         </Text>
       </View>

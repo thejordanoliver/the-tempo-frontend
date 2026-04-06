@@ -175,7 +175,7 @@ export type NBATeam = {
   id: number;
   espnID: number;
   summerLeagueId?: number;
-  oddsID: string;
+  oddsID?: string;
   name: string;
   fullName: string;
   logo?: any;
@@ -198,7 +198,7 @@ export type NBATeam = {
   venueImage: any;
   venueCapacity: string;
   conference?: string;
-  uniforms: {
+  uniforms?: {
     home: any;
     away: any;
   };
@@ -238,6 +238,7 @@ export type Arena = {
 
 export type LeagueType =
   | "NBA"
+  | "WNBA"
   | "NFL"
   | "CFB"
   | "CBB"
@@ -373,8 +374,6 @@ export type CBBTeam = {
   logoLight?: any;
   color?: string;
   secondaryColor?: string;
-  championships?: number[];
-  conference_championships?: string[]; // or number[]
   venueName?: string; // ✅ Add this
   isAllStar?: boolean;
 };

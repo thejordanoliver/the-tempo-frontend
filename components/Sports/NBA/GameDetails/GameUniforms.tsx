@@ -1,9 +1,9 @@
 // components/GameDetails/GameUniforms.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
+import { teams } from "constants/teams";
 import { Image } from "expo-image";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-import { teams } from "constants/teams";
 type GameUniforms = {
   homeTeamId: number;
   awayTeamId: number;
@@ -31,8 +31,8 @@ export default function GameUniforms({
               color: lighter
                 ? Colors.white
                 : isDark
-                ? Colors.white
-                : Colors.black,
+                  ? Colors.white
+                  : Colors.black,
             },
           ]}
         >
@@ -45,8 +45,8 @@ export default function GameUniforms({
   const textColor = lighter
     ? Colors.white
     : isDark
-    ? Colors.white
-    : Colors.black;
+      ? Colors.white
+      : Colors.black;
 
   return (
     <>

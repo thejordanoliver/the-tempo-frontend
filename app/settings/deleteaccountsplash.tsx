@@ -1,5 +1,5 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme } from "react-native";

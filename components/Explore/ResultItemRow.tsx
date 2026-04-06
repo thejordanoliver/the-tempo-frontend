@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -121,6 +121,7 @@ export default function ResultItemRow({
                 : teamId && player.isNBA
                   ? getNBATeam(teamId)
                   : null;
+
     return (
       <View style={styles.itemRow}>
         <TouchableOpacity
@@ -133,9 +134,11 @@ export default function ResultItemRow({
             </View>
             <View>
               <Text style={styles.name}>{player.name}</Text>
-              <Text style={styles.playerTeam}>
-                {localTeam?.fullName || "Free Agent"}
-              </Text>
+              {localTeam?.fullName && (
+                <Text style={styles.playerTeam}>
+                  {localTeam?.fullName || "Free Agent"}
+                </Text>
+              )}
             </View>
           </View>
         </TouchableOpacity>

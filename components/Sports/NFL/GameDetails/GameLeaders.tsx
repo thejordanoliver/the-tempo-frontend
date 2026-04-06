@@ -3,7 +3,7 @@ import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";

@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
+import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
@@ -19,10 +20,11 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
@@ -70,7 +72,11 @@ export default function WCBBLeagueScreen() {
       setRefreshing(false);
     }
   };
-
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "WCBB");
   /* -------------------------------
      WOMEN’S AP TOP 25 (FIXED)
   -------------------------------- */
@@ -176,7 +182,27 @@ export default function WCBBLeagueScreen() {
           </View>
 
           {/* NEWS */}
-          <ScrollView key="news" />
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
+          </View>
 
           {/* STANDINGS */}
           <View key="standings">

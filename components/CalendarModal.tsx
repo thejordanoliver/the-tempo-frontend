@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
@@ -160,7 +160,9 @@ export default function CalendarModal({
                     backgroundColor: "transparent",
                   },
                   text: {
-                    color: isDark ? Colors.dark.limeGreen :  Colors.dark.limeGreen,
+                    color: isDark
+                      ? Colors.dark.limeGreen
+                      : Colors.dark.limeGreen,
                     fontFamily: Fonts.OSBOLD,
                   },
                 },

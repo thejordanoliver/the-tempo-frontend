@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export function postItemStyles(isDark: boolean) {
@@ -141,6 +141,57 @@ export function postItemStyles(isDark: boolean) {
       padding: 10,
       flexDirection: "row",
       alignItems: "center",
+    },
+
+    //Poll Block
+    pollContainer: {
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      padding: 14,
+      marginTop: 10,
+    },
+
+    pollQuestion: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 15,
+      marginBottom: 12,
+    },
+    optionWrapper: {
+      borderRadius: 8,
+      overflow: "hidden",
+      borderWidth: 1,
+    },
+    optionFill: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      bottom: 0,
+      borderRadius: 8,
+    },
+    optionLabelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+    },
+    optionContent: { flexDirection: "row", alignItems: "center", gap: 6 },
+    optionText: {
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 14,
+    },
+    percentageText: {
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 13,
+    },
+    footerText: {
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      marginTop: 4,
     },
   });
 }

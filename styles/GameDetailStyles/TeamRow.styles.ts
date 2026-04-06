@@ -1,5 +1,5 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";

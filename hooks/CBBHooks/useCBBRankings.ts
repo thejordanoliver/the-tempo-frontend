@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CBBTeam } from "types/types";
-
+import { apiClient } from "utils/apiClient";
 /* =====================================================
    TYPES
 ===================================================== */
@@ -42,7 +42,6 @@ export type CBBRankPoll = {
    CONFIG
 ===================================================== */
 
-import { BASE_URL } from "utils/apiClient";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 
 /* =====================================================
@@ -95,11 +94,11 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
 
   const fetchLatest = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/cbb-rankings?league=${league}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await apiClient.get(`/api/standings/cbb/rankings`, {
+        params: { league },
+      });
 
-      const data = await res.json();
-      const polls: CBBRankPoll[] = data.rankings || [];
+      const polls: CBBRankPoll[] = res.data.rankings || [];
 
       setRankings(polls);
 
@@ -107,7 +106,15 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
       await AsyncStorage.setItem(LAST_REFRESH_KEY, Date.now().toString());
     } catch (err: any) {
       console.error("❌ Fetch CBB rankings failed:", err);
-      setError(err.message || "Failed to fetch rankings");
+
+      // Axios-specific error handling
+      const message =
+        err.response?.data?.error ||
+        err.response?.statusText ||
+        err.message ||
+        "Failed to fetch rankings";
+
+      setError(message);
     }
   };
 

@@ -1,51 +1,35 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
-import { Colors, globalStyles } from "constants/Styles";
-import { useFootballPlayer } from "hooks/NFLHooks/useFootballPlayer";
-import { useFootballPlayerStats } from "hooks/NFLHooks/useFootballPlayerStats";
+import { globalStyles } from "constants/styles";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { getFootballSeasonYear } from "utils/dateUtils";
 
 type Props = {
-  playerId: number;
+  player: any;
   teamColor?: string;
   teamColorDark?: string;
   season?: string;
-  league?: "NFL" | "CFB";
+  aggregatedStats?: Record<string, number> | null;
+  loading?: boolean;
+  error?: string | null;
 };
 
 export default function SeasonStatCard({
-  playerId,
-  season,
-  league = "NFL",
+  player,
+  aggregatedStats,
+  loading,
+  error,
 }: Props) {
   const isDark = useColorScheme() === "dark";
   const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
 
-  // ✅ Fetch player + stats
-  const { player, loading: playerLoading } = useFootballPlayer(
-    playerId,
-    league,
-  );
-
-  const {
-    aggregatedStats,
-    loading: statsLoading,
-    error,
-  } = useFootballPlayerStats(playerId);
-
-  const loading = playerLoading || statsLoading;
-
   if (loading) return <SeasonStatCardSkeleton />;
-  if (error || !aggregatedStats || !player)
-    return <Text style={global.errorText}>Failed to load stats</Text>;
+  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
 
   const displayYear = getFootballSeasonYear().toString();
   const position = player?.position || "";
-
-  const statColor = isDark ? Colors.white : Colors.black;
 
   const formatValue = (val: number | string) => {
     const num = Number(val);
@@ -62,8 +46,8 @@ export default function SeasonStatCard({
   }) {
     return (
       <View style={styles.statItem}>
-        <Text style={styles.statLabel}>{label}</Text>
         <Text style={styles.statValue}>{formatValue(value)}</Text>
+        <Text style={styles.statLabel}>{label}</Text>
       </View>
     );
   }
@@ -82,15 +66,15 @@ export default function SeasonStatCard({
   const completions = findStat("completions");
   const attempts = findStat("passing attempts");
   const cmpAtt = `${completions}/${attempts}`;
-  const passingYards = findStat("passing yards");
+  const passingYards = findStat("yards");
   const passingTDs = findStat("passing touchdowns");
   const interceptions = findStat("interceptions");
 
   // --- RUSHING ---
   const rushingAttempts = findStat("rushing attempts");
-  const rushingYards = findStat("rushing yards");
+  const rushingYards = findStat("yards");
+  const avgYds = findStat("yards per rush avg");
   const rushingTDs = findStat("rushing touchdowns");
-  const fumbles = findStat("fumbles");
 
   // --- RECEIVING ---
   const receptions = findStat("receptions");
@@ -141,8 +125,8 @@ export default function SeasonStatCard({
             <>
               <StatItem label="RUSH ATT" value={rushingAttempts} />
               <StatItem label="RUSH YDS" value={rushingYards} />
+              <StatItem label="AVG/YDS" value={avgYds} />
               <StatItem label="RUSH TD" value={rushingTDs} />
-              <StatItem label="FUMB" value={fumbles} />
             </>
           )}
 

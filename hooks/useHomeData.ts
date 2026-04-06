@@ -218,7 +218,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [womensCBBGames],
   );
 
-  const filteredNBA = filterByDate(normalizedNBA, selectedDate);
+  const filteredNBA = weeklyGames;
   const filteredNFL = filterByDate(normalizedNFL, selectedDate);
   const filteredMLB = filterByDate(normalizedMLB, selectedDate);
   const filteredNHL = filterByDate(normalizedNHL, selectedDate);
@@ -343,6 +343,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       cfbLoading ||
       mensCBBLoading ||
       womensCBBLoading ||
+      loadingFights||
       newsLoading ||
       highlightsLoading,
   };

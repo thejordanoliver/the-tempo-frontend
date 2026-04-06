@@ -1,6 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getTeamInfo, neutralVenues } from "constants/teams";
+import { neutralVenues } from "constants/neutralVenues";
+import { getNBATeam } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -10,7 +11,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { emptyAwayTeam, emptyHomeTeam } from "types/cfb";
+
 import { Game } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
@@ -64,17 +65,17 @@ export default function SummerLeagueGamePreviewModal({
   if (!game) return null;
 
   // --- Fetch playoff info ---
-  const home = getTeamInfo(game.home?.id);
-  const away = getTeamInfo(game.away?.id);
+  const home = getNBATeam(game.home?.id);
+  const away = getNBATeam(game.away?.id);
 
   const homeId = Number(home?.id) || 0;
   const awayId = Number(away?.id) || 0;
 
-  const homeName = home?.code ?? home?.name ?? emptyHomeTeam.code;
-  const awayName = away?.code ?? home?.name ?? emptyAwayTeam.code;
+  const homeName = home?.code ?? home?.name ?? "";
+  const awayName = away?.code ?? home?.name ?? "";
 
-  const homeColor = home?.color ?? emptyHomeTeam.color ?? "";
-  const awayColor = away?.color ?? emptyAwayTeam.color ?? "";
+  const homeColor = home?.color ?? "";
+  const awayColor = away?.color ?? "";
 
   // --- Team stats, weather, details ---
   const { data: gameStats } = useGameStatistics(game?.id ?? 0);
@@ -242,7 +243,7 @@ export default function SummerLeagueGamePreviewModal({
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator lighter />
+              <CustomActivityIndicator isDark />
             </View>
           ) : (
             <>

@@ -1,6 +1,6 @@
 // components/SignupSteps.tsx
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { teams } from "constants/teams";
 import {
   conferenceListMap as cbbConferenceListMap,
@@ -24,10 +24,10 @@ import {
   View,
 } from "react-native";
 
+import { nflTeams } from "constants/teamsNFL";
 import { formStyles } from "styles/FormStyles";
 import type { LeagueTeam, LeagueType } from "types/types";
 import SearchBar from "./SearchBars/SearchBar";
-import { nflTeams } from "constants/teamsNFL";
 
 type SignupData = {
   fullName: string;
@@ -419,7 +419,6 @@ export default function SignUpForm({
         })()}
       </View>
 
-      
       {/* NEXT / SIGN UP BUTTON */}
       <Pressable
         onPress={async () => {

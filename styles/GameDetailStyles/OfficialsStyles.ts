@@ -1,8 +1,7 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-
-  export const officialsStyles = (isDark: boolean) =>
+export const officialsStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       borderColor: Colors.midTone,
@@ -15,9 +14,7 @@ import { StyleSheet } from "react-native";
       flexDirection: "row",
       alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor:  isDark
-        ? Colors.darkGray
-        : Colors.lightGray,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     nameContainer: {
       marginLeft: 8,
@@ -31,9 +28,7 @@ import { StyleSheet } from "react-native";
       justifyContent: "center",
       alignItems: "center",
       borderWidth: 0.5,
-      borderColor: isDark
-        ? Colors.dark.white
-        : Colors.light.black,
+      borderColor: isDark ? Colors.dark.white : Colors.light.black,
     },
     initials: {
       color: isDark ? Colors.white : Colors.black,

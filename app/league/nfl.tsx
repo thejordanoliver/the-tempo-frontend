@@ -7,6 +7,7 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import NewsList from "components/News/NewsList";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
@@ -16,6 +17,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
@@ -58,7 +60,11 @@ export default function NFLLeagueScreen() {
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "NFL");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(
@@ -69,6 +75,7 @@ export default function NFLLeagueScreen() {
   );
   const { categories, loading, error } = useSeasonLeaders(
     getFootballSeasonYear(),
+    "NFL",
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
@@ -92,42 +99,41 @@ export default function NFLLeagueScreen() {
   const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
   const selectedWeekGames = weeks[selectedWeekLabel] || [];
 
- React.useEffect(() => {
-  if (!weekLabels.length) return;
+  React.useEffect(() => {
+    if (!weekLabels.length) return;
 
-  const now = dayjs();
+    const now = dayjs();
 
-  let liveIndex: number | null = null;
-  let upcomingIndex: number | null = null;
-  let pastIndex: number | null = null;
+    let liveIndex: number | null = null;
+    let upcomingIndex: number | null = null;
+    let pastIndex: number | null = null;
 
-  weekLabels.forEach((label, index) => {
-    const games = weeks[label];
-    if (!games?.length) return;
+    weekLabels.forEach((label, index) => {
+      const games = weeks[label];
+      if (!games?.length) return;
 
-    const gameDate = dayjs(games[0]?.game?.date?.timestamp);
+      const gameDate = dayjs(games[0]?.game?.date?.timestamp);
 
-    // 🟢 LIVE (same week as today)
-    if (gameDate.isSame(now, "week")) {
-      liveIndex = index;
-    }
+      // 🟢 LIVE (same week as today)
+      if (gameDate.isSame(now, "week")) {
+        liveIndex = index;
+      }
 
-    // 🔵 UPCOMING (first future week)
-    if (gameDate.isAfter(now) && upcomingIndex === null) {
-      upcomingIndex = index;
-    }
+      // 🔵 UPCOMING (first future week)
+      if (gameDate.isAfter(now) && upcomingIndex === null) {
+        upcomingIndex = index;
+      }
 
-    // ⚫ PAST (keep updating → last past week wins)
-    if (gameDate.isBefore(now)) {
-      pastIndex = index;
-    }
-  });
+      // ⚫ PAST (keep updating → last past week wins)
+      if (gameDate.isBefore(now)) {
+        pastIndex = index;
+      }
+    });
 
-  const finalIndex =
-    liveIndex ?? upcomingIndex ?? pastIndex ?? 0;
+    const finalIndex = liveIndex ?? upcomingIndex ?? pastIndex ?? 0;
 
-  setSelectedWeekIndex(finalIndex);
-}, [weeks]);
+    setSelectedWeekIndex(finalIndex);
+  }, [weeks]);
 
   // --- Load favorites from AsyncStorage ---
   useFocusEffect(
@@ -222,13 +228,23 @@ export default function NFLLeagueScreen() {
           <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                 />
               }
-            ></ScrollView>
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
           </View>
 
           {/* STANDINGS */}

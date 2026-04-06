@@ -1,4 +1,4 @@
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { useEffect, useRef } from "react";
 import {
   ActivityIndicator,

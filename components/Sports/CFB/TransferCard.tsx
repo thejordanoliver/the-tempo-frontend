@@ -1,6 +1,6 @@
 // components/CFB/RecruitCard.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";

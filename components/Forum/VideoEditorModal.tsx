@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Slider from "@react-native-community/slider";
 import { AVPlaybackStatusSuccess, ResizeMode, Video } from "expo-av";
 import * as VideoThumbnails from "expo-video-thumbnails";
@@ -15,7 +14,7 @@ import {
   useColorScheme,
 } from "react-native";
 
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 
 type Props = {
   visible: boolean;
@@ -43,7 +42,6 @@ export default function VideoEditorModal({
   const isDark = useColorScheme() === "dark";
   const styles = getStyles(isDark);
 
-  const sheetRef = useRef<BottomSheetModal>(null);
   const videoRef = useRef<Video>(null);
   const [videoReady, setVideoReady] = useState(false);
 
@@ -54,17 +52,7 @@ export default function VideoEditorModal({
   const [thumbnailUri, setThumbnailUri] = useState<string | null>(
     initialThumbnailUri ?? null,
   );
-
-  // --- Present / dismiss ---
-  useEffect(() => {
-    if (!sheetRef.current) return;
-
-    if (visible) {
-      requestAnimationFrame(() => sheetRef.current?.present());
-    } else {
-      requestAnimationFrame(() => sheetRef.current?.dismiss());
-    }
-  }, [visible]);
+  const [thumbnailChanged, setThumbnailChanged] = useState(false);
 
   // --- Reset state when opening ---
   useEffect(() => {
@@ -74,6 +62,7 @@ export default function VideoEditorModal({
     setTrimEndMs(initialTrimEndMs ?? 0);
     setThumbTimeMs(initialTrimStartMs);
     setThumbnailUri(initialThumbnailUri ?? null);
+    setThumbnailChanged(false); // ✅ reset
   }, [visible, videoUri]);
 
   const maxEnd = useMemo(() => (durationMs > 0 ? durationMs : 1), [durationMs]);
@@ -95,6 +84,7 @@ export default function VideoEditorModal({
       });
 
       setThumbnailUri(uri);
+      setThumbnailChanged(true); // ✅ mark as user-selected
     } catch (e) {
       console.warn("Thumbnail capture failed", e);
       Alert.alert(
@@ -234,7 +224,7 @@ export default function VideoEditorModal({
           </TouchableOpacity>
 
           <Text style={styles.note}>
-            {thumbnailUri
+            {thumbnailChanged
               ? "Thumbnail selected ✅"
               : "Pick a frame for your thumbnail"}
           </Text>

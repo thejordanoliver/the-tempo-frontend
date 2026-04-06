@@ -7,6 +7,7 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
@@ -37,6 +38,8 @@ export default function LastFiveGames({ isDark, home, away, league }: Props) {
     switch (league) {
       case "NBA":
         return getNBATeam(teamId);
+      case "WNBA":
+        return getWNBATeam(teamId);
       case "NFL":
         return getNFLTeam(teamId);
       case "NHL":
@@ -60,6 +63,8 @@ export default function LastFiveGames({ isDark, home, away, league }: Props) {
     switch (league) {
       case "NBA":
         return getTeamLogo(teamId, isDark);
+      case "WNBA":
+        return getWNBATeamLogo(teamId, isDark);
       case "NFL":
         return getNFLTeamLogo(teamId, isDark);
       case "NHL":

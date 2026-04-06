@@ -1,9 +1,21 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
-import { getNHLTeam } from "constants/teamsNHL";
-import { useMemo, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Colors, Fonts, globalStyles } from "constants/styles";
+import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Animated,
+  Easing,
+  Image,
+  LayoutAnimation,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  UIManager,
+  View,
+} from "react-native";
+
 interface Play {
   id: string;
   team?: { id: string };
@@ -20,7 +32,55 @@ type Props = {
   isDark: boolean;
 };
 
-const quarterTabs = ["All", "1st", "2nd", "3rd", "OT"] as const;
+// Enable LayoutAnimation on Android
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
+
+// Animated row
+function AnimatedPlayRow({
+  children,
+  style,
+  isLatest,
+}: {
+  children: React.ReactNode;
+  style: object;
+  isLatest: boolean;
+}) {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (!isLatest) return;
+
+    translateX.setValue(-200);
+    opacity.setValue(0);
+
+    Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 350,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isLatest]);
+
+  return (
+    <Animated.View style={[style, { transform: [{ translateX }], opacity }]}>
+      {children}
+    </Animated.View>
+  );
+}
+
+// NHL quarter/period tabs
+const periodTabs = ["All", "1st", "2nd", "3rd", "OT"] as const;
 
 export default function GameSummary({
   plays = [],
@@ -31,7 +91,14 @@ export default function GameSummary({
   const global = globalStyles(isDark);
 
   const [selectedPeriod, setSelectedPeriod] =
-    useState<(typeof quarterTabs)[number]>("All");
+    useState<(typeof periodTabs)[number]>("All");
+
+  // Animate new plays
+  const prevPlaysLengthRef = useRef(plays.length);
+  if (plays.length !== prevPlaysLengthRef.current) {
+    prevPlaysLengthRef.current = plays.length;
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  }
 
   /* ---------------- FILTER + SORT ---------------- */
   const filteredPlays = useMemo(() => {
@@ -40,41 +107,35 @@ export default function GameSummary({
     if (selectedPeriod !== "All") {
       const periodNumber =
         selectedPeriod === "OT"
-          ? 4
-          : Number(
-              selectedPeriod
-                .replace("st", "")
-                .replace("nd", "")
-                .replace("rd", ""),
-            );
+          ? 4 // OT period number, adjust if needed
+          : Number(selectedPeriod.replace(/\D/g, ""));
 
       filtered = filtered.filter((p) => p.period?.number === periodNumber);
     }
 
-    return filtered.sort((a, b) => {
-      const periodA = a.period?.number ?? 0;
-      const periodB = b.period?.number ?? 0;
+    return filtered
+      .sort((a, b) => {
+        const periodA = a.period?.number ?? 0;
+        const periodB = b.period?.number ?? 0;
 
-      // Sort by period ascending
-      if (periodA !== periodB) return periodA - periodB;
+        if (periodA !== periodB) return periodB - periodA;
 
-      const parseClock = (clock?: string) => {
-        if (!clock) return 0;
-        const [min, sec] = clock.split(":").map(Number);
-        return min * 60 + sec;
-      };
+        const parseClock = (clock?: string) => {
+          if (!clock) return 0;
+          const [min = 0, sec = 0] = clock.split(":").map(Number);
+          return min * 60 + sec;
+        };
 
-      const timeA = parseClock(a.clock?.displayValue);
-      const timeB = parseClock(b.clock?.displayValue);
+        const timeA = parseClock(a.clock?.displayValue);
+        const timeB = parseClock(b.clock?.displayValue);
 
-      // Hockey clock counts DOWN.
-      // Bigger clock time = earlier in period.
-      // So we reverse it to get true chronological order.
-      return timeA - timeB;
-    });
+        return timeA - timeB;
+      })
+      .reverse(); // latest play on top
   }, [plays, selectedPeriod]);
 
   if (!loading && plays?.length === 0) return null;
+  const latestPlayId = filteredPlays?.[0]?.id;
 
   return (
     <View>
@@ -82,12 +143,12 @@ export default function GameSummary({
 
       <View style={styles.wrapper}>
         <TabBar
-          tabs={quarterTabs}
+          tabs={periodTabs}
           selected={selectedPeriod}
           onTabPress={(tab) =>
-            setSelectedPeriod(tab as (typeof quarterTabs)[number])
+            setSelectedPeriod(tab as (typeof periodTabs)[number])
           }
-          isDark
+          isDark={isDark}
         />
 
         <ScrollView
@@ -95,12 +156,24 @@ export default function GameSummary({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          {filteredPlays?.map((play, index) => {
-            const team = getNHLTeam(Number(play.team?.id));
-            const teamLogo = isDark ? team?.logoLight : team?.logo;
+          {filteredPlays?.map((play) => {
+            const team = getNHLTeamByEspnId(Number(play.team?.id));
+            const teamLogo = getNHLTeamLogo(team?.id, isDark);
+
+            const showLogo =
+              !!team?.espnID &&
+              play.text &&
+              !play.text.toLowerCase().includes("start of") &&
+              !play.text.toLowerCase().includes("end of");
+
+            const isLatest = play.id === latestPlayId;
 
             return (
-              <View key={index} style={styles.playRow}>
+              <AnimatedPlayRow
+                key={play.id}
+                style={styles.playRow}
+                isLatest={isLatest}
+              >
                 <Text style={styles.periodText}>
                   P{play.period?.number}
                   <Text style={styles.clockText}>
@@ -109,7 +182,9 @@ export default function GameSummary({
                   </Text>
                 </Text>
 
-                {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+                {showLogo && teamLogo && (
+                  <Image source={teamLogo} style={styles.logo} />
+                )}
 
                 <View style={{ flex: 1 }}>
                   <Text style={styles.playDesc}>{play.text}</Text>
@@ -118,7 +193,7 @@ export default function GameSummary({
                 <Text style={styles.clockText}>
                   {play.awayScore}-{play.homeScore}
                 </Text>
-              </View>
+              </AnimatedPlayRow>
             );
           })}
 
@@ -132,7 +207,6 @@ export default function GameSummary({
 }
 
 /* ---------------- STYLES ---------------- */
-
 const gameSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     logo: { width: 26, height: 26, marginRight: 8 },

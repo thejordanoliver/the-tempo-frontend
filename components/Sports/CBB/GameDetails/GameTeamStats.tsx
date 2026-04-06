@@ -1,6 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -12,6 +13,7 @@ import {
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
+import { CBBTeam } from "types/types";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -201,10 +203,11 @@ export default function GameTeamStats({
   gameStatusDescription: string;
   stats: any[];
   isDark: boolean;
-  league: "WCBB" | "CBB";
+  league: "WNBA" | "WCBB" | "CBB";
 }) {
   const styles = gameTeamStatsStyles(isDark);
 
+  const isWNBA = league === "WNBA";
   const isWomen = league === "WCBB";
   const isScheduled = gameStatusDescription === "Scheduled";
 
@@ -240,8 +243,12 @@ export default function GameTeamStats({
     }).start();
   }, [expanded, fullHeight]);
 
-  const awayTeam = getTeamByESPNId(away.team.id);
-  const homeTeam = getTeamByESPNId(home.team.id);
+  const awayTeam = isWNBA
+    ? getWNBATeamByESPNId(away.team.id)
+    : getTeamByESPNId(away.team.id);
+  const homeTeam = isWNBA
+    ? getWNBATeamByESPNId(home.team.id)
+    : getTeamByESPNId(home.team.id);
 
   const extractNumber = (value?: string) => {
     if (!value) return 0;
@@ -255,18 +262,21 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayLogo = getCBBTeamLogo(
-    isWomen ? awayTeam?.wid : awayTeam?.id,
-    isDark,
-    isWomen,
-  );
+  const awayLogo = isWNBA
+    ? getWNBATeamLogo(awayTeam?.id, isDark)
+    : getCBBTeamLogo(
+        isWomen ? (awayTeam as CBBTeam)?.wid : awayTeam?.id,
+        isDark,
+        isWomen,
+      );
 
-  const homeLogo = getCBBTeamLogo(
-    isWomen ? homeTeam?.wid : homeTeam?.id,
-    isDark,
-    isWomen,
-  );
-
+  const homeLogo = isWNBA
+    ? getWNBATeamLogo(homeTeam?.id, isDark)
+    : getCBBTeamLogo(
+        isWomen ? (homeTeam as CBBTeam)?.wid : homeTeam?.id,
+        isDark,
+        isWomen,
+      );
   const awayColor =
     (isDark ? awayTeam?.secondaryColor : awayTeam?.color) ??
     (isDark ? Colors.white : Colors.black);

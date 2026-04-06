@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 import BasesIndicator from "./BasesIndicator";

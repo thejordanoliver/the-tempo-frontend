@@ -9,7 +9,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useCBBPlayerSeasons } from "hooks/CBBHooks/useCBBPlayerSeasons";
 import { usePlayerDetail } from "hooks/CBBHooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
-import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
@@ -27,6 +27,7 @@ export default function PlayerDetailScreen() {
   // -------------------------
   const playerId = params.id;
   const teamIdParam = params.teamId;
+  // console.log(params);
 
   const league = params.league === "WCBB" ? "WCBB" : "CBB";
   const isWomen = league === "WCBB";
@@ -49,6 +50,7 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const numericTeamId = Number(teamIdParam);
   const team = getCBBTeam(numericTeamId, isWomen);
+  const teamLogo = getCBBTeamLogo(numericTeamId, true, isWomen);
 
   // -------------------------
   // Header
@@ -58,7 +60,7 @@ export default function PlayerDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           teamId={numericTeamId}
-          logo={getCBBTeamLogo(numericTeamId, true, isWomen)}
+          logo={teamLogo}
           teamColor={team?.color}
           onBack={() => navigation.goBack()}
           teamCode={team?.code}
@@ -100,4 +102,3 @@ export default function PlayerDetailScreen() {
     </ScrollView>
   );
 }
-

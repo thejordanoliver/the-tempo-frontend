@@ -1,11 +1,12 @@
 // ...
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -91,9 +92,11 @@ function TeamCard({
             ? getMLBTeamLogo(item.id, isDark || isSelected)
             : item.league === "NBA"
               ? getTeamLogo(item.id, isDark || isSelected)
-              : item.league === "NFL"
-                ? getNFLTeamLogo(item.id, isDark || isSelected)
-                : getNHLTeamLogo(item.id, isDark || isSelected);
+              : item.league === "WNBA"
+                ? getWNBATeamLogo(item.id, isDark || isSelected)
+                : item.league === "NFL"
+                  ? getNFLTeamLogo(item.id, isDark || isSelected)
+                  : getNHLTeamLogo(item.id, isDark || isSelected);
 
   const logoSize = isGridView ? 50 : 40;
 

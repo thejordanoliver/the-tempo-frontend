@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 const clamp = (value: number, min: number, max: number) =>
@@ -22,15 +22,15 @@ export const gameWidgetStyles = (
 
   // Logo scales with the shorter of the two so it never overflows horizontally,
   // but the envelope is wider to allow filling vertical space.
-  const logo    = clamp(Math.min(w * 0.18, h * 0.22), 36, 110);
+  const logo = clamp(Math.min(w * 0.18, h * 0.22), 36, 110);
   const scoreFz = clamp(unit * 5.5, 20, 60);
-  const recordFz= clamp(unit * 3.2, 18, 32);
-  const nameFz  = clamp(unit * 2.4, 10, 24);
-  const rankFz  = clamp(unit * 1.8,  9, 18);
-  const infoFz  = clamp(unit * 2.8, 11, 28);
-  const metaFz  = clamp(unit * 1.8,  14, 18);
-  const gap     = clamp(w * 0.04, 8, 28);
-  const divH    = clamp(unit * 3.5, 14, 44);
+  const recordFz = clamp(unit * 3.2, 18, 32);
+  const nameFz = clamp(unit * 2.4, 10, 24);
+  const rankFz = clamp(unit * 1.8, 9, 18);
+  const infoFz = clamp(unit * 2.8, 11, 28);
+  const metaFz = clamp(unit * 1.8, 14, 18);
+  const gap = clamp(w * 0.04, 8, 28);
+  const divH = clamp(unit * 3.5, 14, 44);
 
   // Vertical padding scales with height so content isn't a tiny island on tall
   // widgets — a larger h fraction gives natural breathing room at the edges.

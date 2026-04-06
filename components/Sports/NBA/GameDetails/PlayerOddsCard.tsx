@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { NFLEventOdds, PlayerOutcome } from "hooks/NFLHooks/useNFLEventOdds";
 import React from "react";

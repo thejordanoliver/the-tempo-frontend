@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { Game } from "types/types";
+import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";
-
 export type GameWithStatusText = Game & {
   statusText: string;
   arena?: {
@@ -28,9 +27,7 @@ export function useTeamGames(teamId?: string, season = getNBASeason()) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${API_BASE}/api/games/nba/team/${teamId}/${season}`
-      );
+      const res = await apiClient.get(`api/games/nba/team/${teamId}/${season}`);
 
       setGames(res.data.games ?? []);
     } catch (err: any) {

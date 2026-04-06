@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
+import { nflTeams } from "constants/teamsNFL";
 import { useDraft } from "hooks/useLeagueDraft";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,7 +16,6 @@ import {
 } from "react-native";
 import DraftCard, { DraftPick } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
-import { nflTeams } from "constants/teamsNFL";
 type Props = {
   year: string;
   team: string;

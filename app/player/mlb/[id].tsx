@@ -2,30 +2,27 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MLB/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/MLB/Player/PlayerStatTable";
+import { globalStyles } from "constants/styles";
 import { mlbTeams } from "constants/teamsMLB";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
-import { calculateAge } from "utils/dateUtils";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
-  /* -------------------------
-     Params
-  ------------------------- */
+  const isDark = useColorScheme() === "dark";
+  const styles = playerScreenStyles;
+  const global = globalStyles(isDark);
   const { id, teamId } = useLocalSearchParams<{
     id?: string;
     teamId?: string;
   }>();
 
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
 
   const playerId = Number(id);
 
-  /* -------------------------
-     Team Lookup
-  ------------------------- */
   const sanitizedTeamId = String(teamId ?? "")
     .replace(/"/g, "")
     .trim();
@@ -40,27 +37,6 @@ export default function PlayerDetailScreen() {
     loading: playerLoading,
     error: playerError,
   } = usePlayerById(playerId, "MLB");
-
-  const calculateExperience = (debutDateString?: string) => {
-    if (!debutDateString) return null;
-
-    const debutDate = new Date(debutDateString);
-    const today = new Date();
-
-    let years = today.getFullYear() - debutDate.getFullYear();
-    const monthDiff = today.getMonth() - debutDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < debutDate.getDate())
-    ) {
-      years--;
-    }
-
-    return years >= 0 ? years : 0;
-  };
-
-  const avatarUrl = player?.headshot;
 
   /* -------------------------
      Header
@@ -85,35 +61,28 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamObj]);
 
-  /* -------------------------
-     Loading / Error States
-  ------------------------- */
-  if (playerLoading) {
+  if (playerLoading || !player)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={global.emptyContainer}>
         <CustomActivityIndicator isDark={isDark} />
       </View>
     );
-  }
 
-  if (playerError || !player) {
-    return null;
-  }
-
+  if (playerError || !player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{playerError}</Text>
+      </View>
+    );
   /* -------------------------
      Render
   ------------------------- */
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         player={player}
-        avatarUrl={avatarUrl}
+        avatarUrl={player?.headshot}
         isDark={isDark}
-        teamColor={teamObj?.color}
-        teamSecondaryColor={teamObj?.secondaryColor}
-        team_name={teamObj?.name}
-        calculateAge={calculateAge}
-        calculateExperience={calculateExperience}
       />
 
       <View style={{ marginTop: 24 }}>

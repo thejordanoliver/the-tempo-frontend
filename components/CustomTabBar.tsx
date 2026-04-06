@@ -1,8 +1,7 @@
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
   StyleSheet,
@@ -55,7 +54,7 @@ function getActiveTab(pathname: string): string | null {
   if (TAB_ROUTE_PARENTS[pathname]) return TAB_ROUTE_PARENTS[pathname];
 
   const keys = Object.keys(TAB_ROUTE_PARENTS).sort(
-    (a, b) => b.length - a.length
+    (a, b) => b.length - a.length,
   );
   for (const key of keys) {
     if (pathname.startsWith(key)) {

@@ -7,7 +7,7 @@ import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
 import Roster from "components/Sports/NHL/Team/Roster";
 import { players } from "constants/nhlPlayers";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { nhlTeams } from "constants/teamsNHL";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";

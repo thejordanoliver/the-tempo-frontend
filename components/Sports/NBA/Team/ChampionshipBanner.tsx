@@ -5,7 +5,7 @@ import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";

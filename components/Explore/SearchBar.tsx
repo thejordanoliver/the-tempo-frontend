@@ -1,16 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
 import TabBar from "components/TabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
+  Pressable,
   StyleSheet,
   TextInput,
   useColorScheme,
   View,
-  Pressable,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 type Props = {
   value: string;
@@ -83,7 +83,10 @@ export default function SearchBar({
             onBlur={onBlur}
           />
           {value.length > 0 && (
-            <Pressable onPress={() => onChangeText("")} style={styles.clearButton}>
+            <Pressable
+              onPress={() => onChangeText("")}
+              style={styles.clearButton}
+            >
               <Ionicons name="close-circle" size={20} color={Colors.midTone} />
             </Pressable>
           )}

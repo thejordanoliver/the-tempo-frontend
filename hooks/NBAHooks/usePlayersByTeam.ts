@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { apiClient } from "utils/apiClient";
 
 export interface Player {
   id: number;
@@ -23,24 +22,10 @@ interface PlayersResponse {
   players: Partial<Player>[]; // API might return incomplete objects
 }
 
-function getApiBaseUrl() {
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
-
-  if (Platform.OS === "android") {
-    // Android emulator localhost workaround
-    return "http://10.0.2.2:4000";
-  }
-
-  // iOS simulator or web fallback
-  return "http://192.168.1.90:4000";
-}
-
 export default function usePlayersByTeam(teamId: string) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const API_URL = getApiBaseUrl();
 
   const refreshPlayers = useCallback(async () => {
     if (!teamId) {
@@ -52,8 +37,8 @@ export default function usePlayersByTeam(teamId: string) {
 
     setLoading(true);
     try {
-      const res = await axios.get<PlayersResponse>(
-        `${API_URL}/api/players/team/${teamId}`
+      const res = await apiClient.get<PlayersResponse>(
+        `api/players/team/${teamId}`,
       );
 
       const mappedPlayers: Player[] = (res.data.players || []).map((p) => ({
@@ -81,7 +66,7 @@ export default function usePlayersByTeam(teamId: string) {
     } finally {
       setLoading(false);
     }
-  }, [teamId, API_URL]);
+  }, [teamId]);
 
   // ✅ Always run effect, but skip fetching if teamId is empty
   useEffect(() => {

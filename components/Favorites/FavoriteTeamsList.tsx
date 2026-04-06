@@ -2,7 +2,7 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { useRouter } from "expo-router";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { Image, Pressable, Text, useColorScheme, View } from "react-native";

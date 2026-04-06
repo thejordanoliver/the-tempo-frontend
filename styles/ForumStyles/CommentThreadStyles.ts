@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Fonts, Colors } from "constants/Styles";
 
 export const commentThreadStyles = (isDark: boolean) =>
   StyleSheet.create({

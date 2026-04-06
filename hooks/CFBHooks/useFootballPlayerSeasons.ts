@@ -28,7 +28,10 @@ type PlayerSeasonsResponse = {
   careerStats: Record<string, any>;
 };
 
-export function useCFBPlayerSeasons(playerId: number) {
+export function useFootballPlayerSeasons(
+  playerId: number,
+  league: "CFB" | "NFL" = "CFB",
+) {
   const [data, setData] = useState<Season[]>([]);
   const [player, setPlayer] = useState<{
     name: string;
@@ -45,7 +48,7 @@ export function useCFBPlayerSeasons(playerId: number) {
         setLoading(true);
 
         const res = await axios.get<PlayerSeasonsResponse>(
-          `${API_URL}/api/players/cfb/${playerId}/seasons`,
+          `${API_URL}/api/players/${league.toLowerCase()}/${playerId}/seasons`,
         );
 
         const json = res.data;
@@ -58,7 +61,7 @@ export function useCFBPlayerSeasons(playerId: number) {
 
         // transform seasons
         const seasons: Season[] = Object.entries(json.careerStats || {}).map(
-          ([year, seasonData]: any) => {
+          ([year, seasonData]: [string, any]) => {
             const categories =
               seasonData?.team?.categories?.filter(
                 (cat: Category) => cat?.stats?.length > 0,
@@ -80,11 +83,11 @@ export function useCFBPlayerSeasons(playerId: number) {
     };
 
     fetchSeasons();
-  }, [playerId]);
+  }, [playerId, league]);
 
   return {
-    data, // cleaned seasons
-    player, // name + position
+    data,
+    player,
     loading,
     error,
   };

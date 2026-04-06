@@ -26,10 +26,19 @@ const FavoriteTeamsSelector = ({
   loading = false,
 }: Props) => {
   const filteredTeams = useMemo(() => {
-    const query = search.toLowerCase();
+    const query = search.toLowerCase().trim();
+    if (!query) return teams;
+
     return teams.filter((team) => {
-      const name = team.fullName || team.name || team.displayName || "";
-      return name.toLowerCase().includes(query);
+      const name = (team.fullName || team.name || team.displayName || "").toLowerCase();
+      const league = team.league.toLowerCase();
+      const searchTerms = ((team as any).searchTerms ?? "").toLowerCase();
+
+      return (
+        name.includes(query) ||
+        league.includes(query) ||
+        searchTerms.includes(query)
+      );
     });
   }, [teams, search]);
 
@@ -46,9 +55,7 @@ const FavoriteTeamsSelector = ({
       return (
         <TeamCard
           item={displayItem}
-          isSelected={favorites.includes(
-            `${item.league}:${item.id.toString()}`,
-          )}
+          isSelected={favorites.includes(`${item.league}:${item.id.toString()}`)}
           onPress={() => toggleFavorite(item.league, item.id.toString())}
           isGridView={isGridView}
           itemWidth={itemWidth}
@@ -76,7 +83,7 @@ const FavoriteTeamsSelector = ({
         numColumns={isGridView ? 3 : 1}
         contentContainerStyle={{
           flexGrow: 1,
-          alignItems: isGridView ? "center" : "stretch", // ⭐ Fix for list mode
+          alignItems: isGridView ? "center" : "stretch",
           paddingBottom: 20,
         }}
         columnWrapperStyle={

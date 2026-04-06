@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { StyleSheet } from "react-native";
 export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({

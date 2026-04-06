@@ -1,9 +1,8 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const seasonStatCardStyles = (isDark: boolean) =>
   StyleSheet.create({
-  
     card: {
       borderRadius: 8,
       padding: 16,

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import FollowButton from "components/Profile/FollowButton";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Pressable, Text, View } from "react-native";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 

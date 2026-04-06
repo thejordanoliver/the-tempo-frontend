@@ -2,7 +2,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { TeamPlayer, useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 interface TeamPlayerListProps {

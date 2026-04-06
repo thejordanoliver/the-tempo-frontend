@@ -8,16 +8,19 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import NewsList from "components/News/NewsList";
 import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
+import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
@@ -36,7 +39,11 @@ export default function MLBLeagueScreen() {
     loading: liveLoading,
     refreshGames,
   } = useMLBSeasonGames(getMLBSeason().toString());
-
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "MLB");
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
 
@@ -55,22 +62,9 @@ export default function MLBLeagueScreen() {
     dayjs().startOf("day").toDate(),
   );
 
-  const [selectedTab, setSelectedTab] = useState<
-    "scores" | "news" | "standings" | "stats" | "draft" | "awards" | "forum"
-  >("scores");
-
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MLB");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
-  const tabs = [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "draft",
-    "awards",
-    "forum",
-  ] as const;
 
   useFocusEffect(
     useCallback(() => {
@@ -199,13 +193,24 @@ export default function MLBLeagueScreen() {
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
             <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                 />
               }
-            />
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
           </View>
 
           {/* STANDINGS */}
@@ -227,9 +232,6 @@ export default function MLBLeagueScreen() {
               isDark={isDark}
             />
           </View>
-
-          {/* DRAFT */}
-          <View key="draft" style={styles.contentArea} />
 
           {/* AWARDS */}
           <View key="awards" style={styles.contentArea}>

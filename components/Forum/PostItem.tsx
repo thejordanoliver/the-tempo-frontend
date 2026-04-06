@@ -1,6 +1,6 @@
 // components/Forum/PostItem.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -16,10 +16,9 @@ import {
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
-// FIX #1 + #3: use apiClient — handles auth header and token refresh automatically.
-//              Removed manual getAccessToken import from utils/authStorage.
 import { apiClient } from "utils/apiClient";
 import AlertModal from "./AlertModal";
+import PollBlock from "./PollBlock";
 import PostImages, { MediaItem } from "./PostImages";
 
 export interface Post {
@@ -41,7 +40,6 @@ export interface Post {
 interface PostItemProps {
   item: Post;
   isDark: boolean;
-  // FIX #2: removed `token` prop — no longer needed since apiClient manages auth
   currentUserId: number | null;
   deletePost: (postId: string) => void;
   editPost: (postId: string, newText: string) => void;
@@ -70,17 +68,13 @@ export const PostItem = memo(function PostItem({
   const router = useRouter();
   const styles = postItemStyles(isDark);
 
-  // FIX #4: simplified image URL resolution — all media is now on Cloudinary
-  //         and starts with "https://". The old path-mangling logic was dead
-  //         code that could corrupt URLs if a non-Cloudinary value slipped through.
   const resolveMediaUrl = (url: string | null | undefined): string | null => {
     if (!url) return null;
     if (url.startsWith("http")) return url;
-    // Fallback for any legacy server-relative paths still in the DB
     return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
   };
 
-  const profileImageUri = resolveMediaUrl(item.profile_image);
+  const profileImageUri = item.profile_image;
 
   const media: MediaItem[] = [
     ...(item.images ?? []).map((uri, index) => ({
@@ -97,29 +91,23 @@ export const PostItem = memo(function PostItem({
     })),
   ];
 
-  // Initialize like state in the store once on mount
   useEffect(() => {
     if (!likes[item.id]) {
       setLike(item.id, item.liked_by_current_user, item.likes);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const likeState = useLikesStore((state) => state.likes[item.id]);
   const liked = likeState?.liked ?? item.liked_by_current_user;
   const likeCount = likeState?.count ?? item.likes;
 
-  // FIX #1: replaced manual token fetch + axios with apiClient
   const toggleLikePress = async () => {
-    // Optimistic UI update
     toggleLike(item.id);
-
     try {
       await apiClient.patch(`/api/forum/post/${item.id}/like`, {
         like: !liked,
       });
     } catch (err: any) {
-      // Rollback on failure
       toggleLike(item.id);
       alert(
         err.response?.data?.error ?? err.message ?? "Failed to toggle like",
@@ -289,6 +277,8 @@ export const PostItem = memo(function PostItem({
           <View style={styles.postTextWrapper}>
             {item.text && <Text style={styles.postText}>{item.text}</Text>}
             {media.length > 0 && <PostImages media={media} item={item} />}
+            {/* Poll — rendered below media if present */}
+            <PollBlock postId={item.id} isDark={isDark} />
           </View>
         )}
 

@@ -1,7 +1,7 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {

@@ -4,7 +4,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import ChampionshipBanner from "components/Sports/NBA/Team/ChampionshipBanner";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
 import { getCFBTeam } from "constants/teamsCFB";

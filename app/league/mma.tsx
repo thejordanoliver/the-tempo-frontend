@@ -3,15 +3,17 @@ import LeagueForum from "components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import NewsList from "components/News/NewsList";
 import EventSelector from "components/Sports/MMA/EventSelector";
 import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
-import { useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 export default function UFCLeagueScreen() {
@@ -20,13 +22,34 @@ export default function UFCLeagueScreen() {
   const navigation = useNavigation();
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
 
-  const { events, loading, refreshing, refreshFights, error } =
-    useSeasonFights();
+  const {
+    events,
+    loading,
+    refreshing: refreshingFights,
+    refreshFights,
+    error,
+  } = useSeasonFights();
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "MMA");
   const selectedEvent = events[selectedEventIndex];
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MMA");
   const pagerRef = useRef<PagerView>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+    } catch (error) {
+      console.warn("Failed to refresh:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -87,10 +110,33 @@ export default function UFCLeagueScreen() {
                 ]}
                 loading={loading}
                 error={error}
-                refreshing={refreshing}
+                refreshing={refreshingFights}
                 onRefresh={refreshFights}
               />
             </>
+          </View>
+
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
           </View>
 
           {/* FORUM */}

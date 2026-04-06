@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef, useState } from "react";

@@ -1,7 +1,7 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FollowersList from "components/Profile/FollowersList";
 import SearchBar from "components/SearchBars/SearchBar";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFollowers } from "hooks/UserHooks/useFollowers";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";

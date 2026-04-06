@@ -1,6 +1,6 @@
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import {
   FlatList,
   Text,
@@ -61,7 +61,7 @@ export default function SearchResultsList({
     </TouchableOpacity>
   );
 
- if (isSearching)
+  if (isSearching)
     return (
       <View>
         {Array.from({ length: 4 }).map((_, idx) => (
@@ -90,8 +90,8 @@ export default function SearchResultsList({
               item.id != null
                 ? String(item.id)
                 : item.wid != null
-                ? String(item.wid)
-                : `idx-${index}`;
+                  ? String(item.wid)
+                  : `idx-${index}`;
 
             return `team-${league}-${teamKey}`;
           }

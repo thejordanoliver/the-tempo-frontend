@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { teams as nbaTeams } from "constants/teams";
 import { teams as cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";

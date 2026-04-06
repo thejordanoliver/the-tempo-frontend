@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getNHLTeam } from "constants/teamsNHL";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";

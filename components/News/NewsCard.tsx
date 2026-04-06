@@ -9,7 +9,6 @@ import {
 } from "react-native";
 // ✅ Import fallback image
 import { newsCardStyles } from "styles/NewsStyles/NewsCardStyles";
-import FallbackImage from "../../assets/Logos/ThumbnailFallback.png";
 
 type NewsCardProps = {
   id: string;
@@ -47,7 +46,9 @@ export default function NewsCard({
     <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
       <View style={styles.card}>
         <Image
-          source={imageError || !thumbnail ? FallbackImage : { uri: thumbnail }}
+          source={
+            imageError || !thumbnail ? { uri: "" } : { uri: thumbnail }
+          }
           onError={() => setImageError(true)}
           style={styles.thumbnail}
         />

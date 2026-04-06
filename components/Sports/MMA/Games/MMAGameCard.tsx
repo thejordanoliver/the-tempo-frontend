@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
@@ -70,9 +70,12 @@ export default function MMAGameCard({ game }: { game: MMAFight }) {
   const firstFighterRecord = game.fighters?.first?.info?.record;
   const secondFighterRecord = game.fighters?.second?.info?.record;
 
-  const gameStatusDescription = details?.fight?.status.description;
+  const gameStatusDescription =
+    details?.fight?.status.description ?? game.status.long;
   const isScheduled = gameStatusDescription === "Scheduled";
-  const isCanceled = gameStatusDescription === "Canceled";
+  const isCanceled =
+    gameStatusDescription === "Canceled" ||
+    gameStatusDescription === "Cancelled";
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";

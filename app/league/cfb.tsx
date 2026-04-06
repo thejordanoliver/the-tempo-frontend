@@ -19,6 +19,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
@@ -30,6 +31,7 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getFootballSeasonYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import NewsList from "components/News/NewsList";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -53,7 +55,15 @@ export default function CFBeagueScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const { data: bracketData } = useCFPBracket();
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-  const { categories, loading, error } = useSeasonLeaders(2025, "CFB");
+  const { categories, loading, error } = useSeasonLeaders(
+    getFootballSeasonYear(),
+    "CFB",
+  );
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "CFB");
   const apTop25 = useAPTop25();
   const top25Teams = React.useMemo(() => {
     return apTop25.map((t) => t.name);
@@ -85,8 +95,8 @@ export default function CFBeagueScreen() {
       });
     } else if (selectedConference && selectedConference !== "All") {
       filtered = filtered.filter((g) => {
-        const homeConf = g.teams?.home?.conference;
-        const awayConf = g.teams?.away?.conference;
+        const homeConf = g.teams?.home?.conferenceShortName;
+        const awayConf = g.teams?.away?.conferenceShortName;
 
         return (
           homeConf === selectedConference || awayConf === selectedConference
@@ -201,19 +211,28 @@ export default function CFBeagueScreen() {
             </ScrollView>
           </View>
 
-          {/* NEWS */}
-          <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            ></ScrollView>
-          </View>
-
+        {/* NEWS */}
+                <View key="news" style={styles.contentArea}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                      />
+                    }
+                  >
+                    <NewsList
+                      items={articles}
+                      isDark={isDark}
+                      loading={newsLoading}
+                      error={newsError}
+                      refreshing
+                      onRefresh={handleRefresh}
+                    />
+                  </ScrollView>
+                </View>
           {/* STANDINGS */}
           <View key="standings">
             <>

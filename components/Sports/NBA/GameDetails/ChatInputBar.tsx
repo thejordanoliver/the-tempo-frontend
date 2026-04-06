@@ -1,26 +1,30 @@
+import { Ionicons } from "@expo/vector-icons";
+import { Fonts } from "constants/styles";
+import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  useColorScheme,
+  Animated,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
-  Animated,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Fonts } from "constants/Styles";
-import { BlurView } from "expo-blur";
 
-export default function ChatInputBar({ value, onChange, onSend }: { 
-  value: string; 
-  onChange: (t: string) => void; 
-  onSend: () => void; 
+export default function ChatInputBar({
+  value,
+  onChange,
+  onSend,
+}: {
+  value: string;
+  onChange: (t: string) => void;
+  onSend: () => void;
 }) {
   const isDark = useColorScheme() === "dark";
-  
+
   const translateY = useRef(new Animated.Value(0)).current; // slide up/down
   const paddingBottom = useRef(new Animated.Value(30)).current; // animated padding
 
@@ -76,16 +80,16 @@ export default function ChatInputBar({ value, onChange, onSend }: {
             style={StyleSheet.absoluteFill}
           />
           <View style={styles.inputContainer}>
-           <TextInput
-  style={styles.input}
-  placeholder="Type your message..."
-  placeholderTextColor={isDark ? "#aaa" : "#555"}
-  value={value}
-  onChangeText={onChange}
-  onSubmitEditing={onSend}
-  returnKeyType="send"
-  blurOnSubmit={false} // <-- prevents keyboard from closing
-/>
+            <TextInput
+              style={styles.input}
+              placeholder="Type your message..."
+              placeholderTextColor={isDark ? "#aaa" : "#555"}
+              value={value}
+              onChangeText={onChange}
+              onSubmitEditing={onSend}
+              returnKeyType="send"
+              blurOnSubmit={false} // <-- prevents keyboard from closing
+            />
 
             <TouchableOpacity onPress={onSend}>
               <Ionicons

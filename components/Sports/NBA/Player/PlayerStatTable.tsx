@@ -1,11 +1,11 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
+import { globalStyles } from "constants/styles";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
-import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
-import { globalStyles } from "constants/Styles";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
   playerId: number;

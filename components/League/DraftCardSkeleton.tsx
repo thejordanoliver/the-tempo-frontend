@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View, useColorScheme } from "react-native";
 
@@ -21,7 +21,7 @@ export default function DraftCardSkeleton() {
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 
@@ -47,8 +47,8 @@ export default function DraftCardSkeleton() {
 
 const styles = StyleSheet.create({
   container: {
-  padding: 12,
-      gap: 4,
+    padding: 12,
+    gap: 4,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(150,150,150,0.2)",
   },

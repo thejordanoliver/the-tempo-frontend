@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getMLBTeam } from "constants/teamsMLB";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
@@ -33,7 +33,7 @@ export const TeamRow = ({
   const logo =
     isDark && teamObj?.logoLight
       ? teamObj.logoLight
-      : teamObj?.logo ?? team.logo;
+      : (teamObj?.logo ?? team.logo);
 
   const code = team.code;
   const record = team.record === "-" ? "" : team.record;
@@ -91,7 +91,7 @@ export const TeamRow = ({
               : [styles.score, sizeStyles[size].score, getScoreStyle()]
           }
         >
-          {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+          {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
         </Text>
       )}
 
@@ -125,7 +125,7 @@ export const TeamRow = ({
                 : [styles.score, sizeStyles[size].score, getScoreStyle()]
             }
           >
-            {showRecordInsteadOfScore ? record : score ?? ""}
+            {showRecordInsteadOfScore ? record : (score ?? "")}
           </Text>
         </View>
       )}

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getMLBTeam } from "constants/teamsMLB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -194,11 +194,10 @@ function MLBGameCard({ game }: Props) {
       {/* Away Score / Record */}
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-  {/* headlineText */}
+      {/* headlineText */}
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headline}</Text>
       </View>
-
 
       {/* Game Info */}
       <View style={styles.info}>

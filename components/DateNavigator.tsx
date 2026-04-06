@@ -1,10 +1,10 @@
 // components/DateNavigator.tsx
-import React from "react";
-import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
+import { Colors, Fonts } from "constants/styles";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { Fonts, Colors } from "constants/Styles";
+import utc from "dayjs/plugin/utc";
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -32,16 +32,23 @@ export default function DateNavigator({
       >
         <Image
           source={require("../assets/icons8/back.png")}
-          style={{ width: 20, height: 20, tintColor: isDark ? Colors.black : Colors.white }}
+          style={{
+            width: 20,
+            height: 20,
+            tintColor: isDark ? Colors.black : Colors.white,
+          }}
         />
       </TouchableOpacity>
 
- <TouchableOpacity onPress={onOpenCalendar} style={styles.dateNavButton} activeOpacity={0.7}>
-  <Text style={styles.dateNavText}>
-    {dayjs(selectedDate).tz("America/New_York").format("MMM D")}
-  </Text>
-</TouchableOpacity>
-
+      <TouchableOpacity
+        onPress={onOpenCalendar}
+        style={styles.dateNavButton}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.dateNavText}>
+          {dayjs(selectedDate).tz("America/New_York").format("MMM D")}
+        </Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => onChangeDate(1)}
@@ -50,7 +57,11 @@ export default function DateNavigator({
       >
         <Image
           source={require("../assets/icons8/forward.png")}
-          style={{ width: 20, height: 20, tintColor: isDark ? Colors.black : Colors.white }}
+          style={{
+            width: 20,
+            height: 20,
+            tintColor: isDark ? Colors.black : Colors.white,
+          }}
         />
       </TouchableOpacity>
     </View>

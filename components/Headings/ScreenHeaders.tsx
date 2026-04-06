@@ -1,7 +1,7 @@
 // components/Heading.tsx
+import { Fonts } from "constants/styles";
 import React from "react";
 import { StyleSheet, Text, useColorScheme } from "react-native";
-import { Fonts } from "constants/Styles";
 type Props = {
   children: React.ReactNode;
 };
@@ -26,11 +26,9 @@ const ScreenHeader: React.FC<Props> = ({ children }) => {
 
 const styles = StyleSheet.create({
   heading: {
-
     fontSize: 24,
     fontFamily: Fonts.OSMEDIUM,
-    textAlign: "center"
-
+    textAlign: "center",
   },
 });
 

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useLeagueForum } from "hooks/ForumHooks/useLeagueForum";
 import { useCallback, useEffect } from "react";
@@ -13,14 +13,11 @@ import {
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
+import { BASE_URL } from "utils/apiClient";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 import { forumStyles } from "./TeamForum";
-
-// FIX #2: removed localhost fallback — won't resolve on a physical device.
-//         PostItem should use apiClient directly rather than receiving BASE_URL as a prop.
-import { BASE_URL } from "utils/apiClient";
 
 type LeagueForumProps = {
   league?: LeagueType;
@@ -52,8 +49,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     }, [fetchPosts]),
   );
 
-  // FIX #3: was duplicated — one copy had no deps and fired on every render.
-  //         Single cleanup effect with correct deps.
   useEffect(() => {
     return () => {
       setGlobalImage([], 0);
@@ -63,7 +58,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
   if (loading)
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {/* FIX #5: renderSkeletons had no reason to be a memoized callback */}
         {Array.from({ length: 5 }).map((_, i) => (
           <PostItemSkeleton key={`skeleton-${i}`} showMedia />
         ))}
@@ -82,7 +76,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
           <PostItem
             item={item}
             isDark={isDark}
-            // FIX #1: token prop removed — PostItem should authenticate via apiClient
             currentUserId={currentUserId}
             deletePost={deletePost}
             editPost={editPost}
@@ -95,7 +88,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         )}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        // FIX #6: refresh already has a stable reference from useCallback in the hook
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }

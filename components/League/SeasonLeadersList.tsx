@@ -1,6 +1,6 @@
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam } from "constants/teams"; // import your teams list
 import { useRouter } from "expo-router";
 import {

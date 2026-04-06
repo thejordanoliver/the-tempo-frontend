@@ -1,6 +1,6 @@
 // components/NBA/DraftCard.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { LinearGradient } from "expo-linear-gradient";

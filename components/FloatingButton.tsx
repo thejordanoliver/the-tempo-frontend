@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
 
 export default function FloatingChatButton({

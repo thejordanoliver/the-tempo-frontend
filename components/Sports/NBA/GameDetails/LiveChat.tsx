@@ -4,7 +4,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userPlaceholderImage from "assets/Placeholders/userPlaceholder.png";
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import { format } from "date-fns"; // optional helper to get date string
 import { BlurView } from "expo-blur";
 import { useAuth } from "hooks/UserHooks/useAuth";

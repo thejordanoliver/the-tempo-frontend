@@ -3,7 +3,7 @@ import { Text, View, useColorScheme } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StatusBadge, statusConfigs } from "./StatusBadge";
 
-export type PlayoffLeague = "MLB" | "NFL" | "NBA" | "NHL";
+export type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
 
 interface StatusLegendProps {
   league: PlayoffLeague;
@@ -21,7 +21,7 @@ export const StatusLegend = ({ league }: StatusLegendProps) => {
 
   return (
     <View style={styles.legendContainer}>
-      <HeadingTwo style={{ marginBottom: 10 }}>
+      <HeadingTwo isDark={isDark} style={{ marginBottom: 10 }}>
         Status Legend
       </HeadingTwo>
 
@@ -29,9 +29,7 @@ export const StatusLegend = ({ league }: StatusLegendProps) => {
         {codes.map((code) => (
           <View key={code} style={styles.legendItem}>
             <StatusBadge code={code} league={league} />
-            <Text style={styles.statusText}>
-              {config.labels[code]}
-            </Text>
+            <Text style={styles.statusText}>{config.labels[code]}</Text>
           </View>
         ))}
       </View>

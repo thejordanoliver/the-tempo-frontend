@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
-import { getCFBTeam } from "constants/teamsCFB";
+import { Colors, Fonts } from "constants/styles";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Animated, {
@@ -86,7 +86,7 @@ export default function PredictionRing({
   const [displayValue, setDisplayValue] = useState(0);
 
   const team = getCFBTeam(teamId);
-  const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
+  const teamLogo = getCFBTeamLogo(teamId, isDark);
 
   const ringColor =
     progress >= 70 && isDark

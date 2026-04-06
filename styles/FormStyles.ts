@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const formStyles = (isDark: boolean) =>
@@ -20,7 +20,6 @@ export const formStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       gap: 12,
-      
     },
 
     signInInput: {

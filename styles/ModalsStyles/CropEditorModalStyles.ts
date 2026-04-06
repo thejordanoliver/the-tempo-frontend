@@ -1,11 +1,11 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const cropEditorModalStyles = (
   isDark: boolean,
   isProfile: boolean,
   cropWidth: number,
-  cropHeight: number
+  cropHeight: number,
 ) =>
   StyleSheet.create({
     container: {
@@ -37,7 +37,6 @@ export const cropEditorModalStyles = (
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      
     },
     loadingContainer: {
       alignItems: "center",
@@ -53,7 +52,6 @@ export const cropEditorModalStyles = (
       borderWidth: 2,
       overflow: "hidden",
       backgroundColor: Colors.black,
-      
     },
     imageContainer: {
       width: cropWidth,

@@ -1,5 +1,5 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
@@ -62,7 +62,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
 
   return (
     <View>
-      <CenteredHeader>{displaySeason} Season</CenteredHeader>
+      <CenteredHeader isDark={isDark}>{displaySeason} Season</CenteredHeader>
 
       <View style={styles.card}>
         <View style={styles.statsRow}>

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
 import useDbPlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { useCFBTeamRecruits } from "hooks/CFBHooks/useCFBTeamRecruits";
 import {
   FootballRecruit,

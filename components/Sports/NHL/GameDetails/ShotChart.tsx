@@ -1,7 +1,7 @@
 import RinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
 import React, { useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";

@@ -1,9 +1,9 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Image } from "expo-image";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, View } from "react-native";
-import { formatQuarter } from "utils/games";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
+import { formatQuarter } from "utils/games";
 
 type Props = {
   game: any;
@@ -30,7 +30,7 @@ export default function HeadToHeadGameRow({
   homeTeamCode,
   awayTeamCode,
   isDark,
-   isLast = false, // default false
+  isLast = false, // default false
 }: Props) {
   const styles = headToHeadStyles(isDark);
 
@@ -49,8 +49,6 @@ export default function HeadToHeadGameRow({
     awayTeamEspnId,
     gameDateStr,
   );
-
-
 
   const homeRecord = details?.records.home.overall ?? "";
   const awayRecord = details?.records.away.overall ?? "";
@@ -71,10 +69,18 @@ export default function HeadToHeadGameRow({
   const period = liveScore?.period ?? Number(game.periods?.current ?? 0);
   const displayClock = liveScore?.displayClock;
 
-  const formattedDate = gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  const formattedTime = gameDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }) || "";
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  const formattedTime =
+    gameDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
 
-    // --- Corrected score mapping ---
+  // --- Corrected score mapping ---
   const getTeamScore = (teamId: number) => {
     if (game.teams.home.id === teamId) return liveScore?.home?.total ?? 0;
     if (game.teams.visitors.id === teamId) return liveScore?.away?.total ?? 0;
@@ -103,7 +109,13 @@ export default function HeadToHeadGameRow({
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
     return (
-      <Text style={showRecord ? styles.teamRecord : [styles.teamScore, winnerStyle(teamWins)]}>
+      <Text
+        style={
+          showRecord
+            ? styles.teamRecord
+            : [styles.teamScore, winnerStyle(teamWins)]
+        }
+      >
         {showRecord ? record : score}
       </Text>
     );
@@ -123,7 +135,8 @@ export default function HeadToHeadGameRow({
     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-    if (endOfPeriod) return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+    if (endOfPeriod)
+      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
@@ -144,7 +157,6 @@ export default function HeadToHeadGameRow({
 
   return (
     <View style={[styles.gameCard, isLast && styles.lastGameCard]}>
-      
       {/* Away Team */}
       <View style={styles.teamRow}>
         <View style={styles.teamInfo}>

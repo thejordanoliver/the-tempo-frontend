@@ -10,7 +10,7 @@ import CombinedGamesList, {
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";

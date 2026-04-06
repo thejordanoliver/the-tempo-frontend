@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";

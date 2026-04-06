@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { castVoteApi, fetchVoteResults, PollResult } from "hooks/useGameVotes";
 import { useLiveVotes } from "hooks/useLiveVotes";

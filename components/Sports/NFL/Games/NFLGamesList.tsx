@@ -6,7 +6,7 @@ import NFLGamePreviewModal from "components/Sports/NFL/GamePreview/NFLGamePrevie
 import NFLGameCard from "components/Sports/NFL/Games/NFLGameCard";
 import NFLSquareGameCard from "components/Sports/NFL/Games/NFLSquareGameCard";
 import NFLStackedGameCard from "components/Sports/NFL/Games/NFLStackedGameCard";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useMemo, useState } from "react";

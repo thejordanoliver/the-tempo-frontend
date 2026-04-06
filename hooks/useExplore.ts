@@ -2,8 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import { BASE_URL } from "utils/apiClient";
 const RECENT_SEARCHES_KEY = "recentSearches";
 
 export function useExplore() {
@@ -111,7 +110,7 @@ export function useExplore() {
         players: PlayerResult[];
         teams: TeamResult[];
         users: UserResult[];
-      }>(`${API_URL}/api/explore/search`, { params: { query: searchQuery } });
+      }>(`${BASE_URL}/api/explore/search`, { params: { query: searchQuery } });
 
       const q = searchQuery.toLowerCase();
 

@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
 import Animated, {
   SlideInDown,

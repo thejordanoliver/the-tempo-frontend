@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -35,7 +35,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           useNativeDriver: true,
         }),
       ]),
-      { resetBeforeIteration: false }
+      { resetBeforeIteration: false },
     );
 
     pulse.start();

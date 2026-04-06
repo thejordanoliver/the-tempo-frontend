@@ -1,4 +1,4 @@
-import { Fonts } from "constants/Styles";
+import { Fonts } from "constants/styles";
 import React from "react";
 import { Pressable, StyleSheet, Text, useColorScheme } from "react-native";
 

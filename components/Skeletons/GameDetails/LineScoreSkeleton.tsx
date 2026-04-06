@@ -1,10 +1,10 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
 type Props = {
-  league: "MLB" | "NBA" | "CBB" | "WCBB" | "CFB" | "NFL" | "NHL";
+  league: "MLB" | "NBA" | "WNBA" |  "CBB" | "WCBB" | "CFB" | "NFL" | "NHL";
 };
 
 export default function LineScoreSkeleton({ league }: Props) {
@@ -35,6 +35,7 @@ export default function LineScoreSkeleton({ league }: Props) {
   const PERIOD_MAP: Record<Props["league"], number> = {
     MLB: 9,
     NBA: 4,
+    WNBA: 4,
     WCBB: 4,
     CBB: 2,
     CFB: 4,

@@ -4,11 +4,13 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useLayoutEffect } from "react";
 import { ScrollView, useColorScheme } from "react-native";
+import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 import { emptyFighter } from "types/mma";
 import { calculateAge } from "utils/dateUtils";
 
 export default function PlayerDetailScreen() {
   const isDark = useColorScheme() === "dark";
+  const styles = playerScreenStyles
   const navigation = useNavigation();
   const { id } = useLocalSearchParams<{
     id?: string;
@@ -17,7 +19,7 @@ export default function PlayerDetailScreen() {
   const { fighter, loading, error } = useMMAFighter(id ?? 0);
   const flag = fighter?.flag_url;
   const color = fighter?.color ?? fighter?.alternate_color ?? "";
-  console.log(JSON.stringify(fighter, null, 2))
+  // console.log(JSON.stringify(fighter, null, 2))
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -34,7 +36,7 @@ export default function PlayerDetailScreen() {
   }, [navigation, flag]);
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         fighter={fighter ?? emptyFighter}
         isDark={isDark}

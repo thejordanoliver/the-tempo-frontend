@@ -5,9 +5,9 @@ import PlayerAwardList from "components/Sports/NBA/Player/PlayerAwardList";
 import PlayerHeader from "components/Sports/NBA/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NBA/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { usePlayerDetail } from "hooks/usePlayerDetail";
+import { usePlayerDetail } from "hooks/NBAHooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
@@ -72,8 +72,6 @@ export default function PlayerDetailScreen() {
         teamColor={teamObj?.color}
         teamSecondaryColor={teamObj?.secondaryColor}
         team_name={teamObj?.name}
-        calculateAge={calculateAge}
-        calculateExperience={calculateExperience}
       />
 
       {player.active && (

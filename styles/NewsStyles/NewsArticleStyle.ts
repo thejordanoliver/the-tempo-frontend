@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const getStyles = (isDark: boolean) =>
@@ -16,14 +16,38 @@ export const getStyles = (isDark: boolean) =>
     image: {
       width: "100%",
       height: 240,
-      borderRadius: 12,
+      borderRadius: 8,
+      marginBottom: 8,
+    },
+    descriptionContainer: {
+      borderBottomColor: isDark ? Colors.white : Colors.black,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       marginBottom: 12,
+      paddingBottom: 8,
+    },
+    publishContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: 8,
+    },
+    timeContainer: {
+      flexDirection: "row",
+      gap: 4,
+      marginBottom: 8,
+    },
+    description: {
+      fontSize: 14,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     source: {
-      fontStyle: "italic",
-      fontFamily: Fonts.OSMEDIUM,
+      marginTop: 8,
+      fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginBottom: 8,
+    },
+    date: {
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     content: {
       fontSize: 16,

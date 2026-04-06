@@ -2,13 +2,14 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams, conferenceListMap } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
 import { useRouter } from "expo-router";
 import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useLayoutEffect } from "react";
@@ -20,12 +21,14 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
-import type { LeagueType, Team } from "types/types";
+import type { LeagueType } from "types/types";
 
-// Create a lookup map at the top of your component
 export const leagueMap: Record<string, LeagueType> = {};
 [...teams].forEach((t) => {
   leagueMap[t.id.toString()] = "NBA";
+});
+[...wnbaTeams].forEach((t) => {
+  leagueMap[t.id.toString()] = "WNBA";
 });
 [...nflTeams].forEach((t) => {
   leagueMap[t.id.toString()] = "NFL";
@@ -91,7 +94,7 @@ export default function EditFavoritesScreen() {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Search teams..."
+        placeholder="Search teams or leagues..."
         placeholderTextColor={isDark ? Colors.darkGray : Colors.lightGray}
         value={search}
         onChangeText={setSearch}
@@ -104,44 +107,54 @@ export default function EditFavoritesScreen() {
             // NBA
             ...teams
               .filter((t) => !t.isAllStar)
-              .map(
-                (t) =>
-                  ({ ...t, league: "NBA", id: t.id }) as Team & {
-                    league: "NBA";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "NBA" as const,
+                id: t.id,
+                searchTerms: `${t.name} ${t.fullName} NBA basketball`,
+              })),
+
+            // WNBA
+            ...wnbaTeams
+              .filter((t) => !t.isAllStar)
+              .map((t) => ({
+                ...t,
+                league: "WNBA" as const,
+                id: t.id,
+                searchTerms: `${t.name} ${t.fullName} WNBA women's basketball`,
+              })),
 
             // NFL
             ...nflTeams
               .filter((t) => !t.isAllStar)
-              .map(
-                (t) =>
-                  ({ ...t, league: "NFL", id: t.id }) as Team & {
-                    league: "NFL";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "NFL" as const,
+                id: t.id,
+                searchTerms: `${t.name} ${t.fullName} NFL football`,
+              })),
 
             // MLB
             ...mlbTeams
               .filter((t) => !t.isAllStar)
-              .map(
-                (t) =>
-                  ({ ...t, league: "MLB", id: t.id }) as Team & {
-                    league: "MLB";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "MLB" as const,
+                id: t.id,
+                searchTerms: `${t.name} ${t.fullName} MLB baseball`,
+              })),
 
             // NHL
             ...nhlTeams
               .filter((t) => !t.isAllStar)
-              .map(
-                (t) =>
-                  ({ ...t, league: "NHL", id: t.id }) as Team & {
-                    league: "NHL";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "NHL" as const,
+                id: t.id,
+                searchTerms: `${t.name} ${t.fullName} NHL hockey`,
+              })),
 
-            // CFB (still respects FBS logic)
+            // CFB
             ...cfbTeams
               .filter((t) => !t.isAllStar)
               .filter((t) => {
@@ -149,40 +162,41 @@ export default function EditFavoritesScreen() {
                   .flat()
                   .map((n) => n.toLowerCase());
                 const name = (t.fullName || t.name || "").toLowerCase();
-
                 return (
                   fbsTeamNames.length === 0 ||
                   fbsTeamNames.some((n) => n.includes(name) || name.includes(n))
                 );
               })
-              .map(
-                (t) =>
-                  ({ ...t, league: "CFB", id: t.id }) as Team & {
-                    league: "CFB";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "CFB" as const,
+                id: t.id,
+                isAllStar: t.isAllStar ?? false, // ✅ narrow undefined to boolean
+                searchTerms: `${t.name} ${t.fullName} CFB college football NCAA`,
+              })),
 
             // CBB
             ...cbbTeams
               .filter((t) => !t.isAllStar)
-              .map(
-                (t) =>
-                  ({ ...t, league: "CBB", id: t.id }) as Team & {
-                    league: "CBB";
-                  },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "CBB" as const,
+                id: t.id,
+                isAllStar: t.isAllStar ?? false, // ✅ narrow undefined to boolean
+                searchTerms: `${t.name} ${t.fullName} CBB college basketball NCAA`,
+              })),
 
             // WCBB
             ...cbbTeams
               .filter((t) => !t.isAllStar && t.wid != null)
-              .map(
-                (t) =>
-                  ({
-                    ...t,
-                    league: "WCBB",
-                    id: t.wid,
-                  }) as Team & { league: "WCBB" },
-              ),
+              .map((t) => ({
+                ...t,
+                league: "WCBB" as const,
+                id: t.wid!, // ✅ non-null assertion — safe because filter guarantees wid != null
+                isAllStar: t.isAllStar ?? false,
+                conference_championships: undefined,
+                searchTerms: `${t.name} ${t.fullName} WCBB women's college basketball NCAA`,
+              })),
           ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
           favorites={favorites}
           toggleFavorite={(league: LeagueType, id: string) =>

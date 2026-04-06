@@ -6,7 +6,7 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import AlertModal from "components/Forum/AlertModal";
 import { CommentItem } from "components/Forum/CommentItem";
 import { Post, PostItem } from "components/Forum/PostItem";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";

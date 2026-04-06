@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { DBPlayer } from "types/types";
 
@@ -57,7 +57,6 @@ export default function PlayerAwardList(player: Props) {
 
 export const playerAwardListStyles = (isDark: boolean) =>
   StyleSheet.create({
- 
     wrapper: {
       borderRadius: 8,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,

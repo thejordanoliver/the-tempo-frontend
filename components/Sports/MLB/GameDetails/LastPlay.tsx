@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useEffect, useState } from "react";
 import { LayoutChangeEvent, Text, View, useColorScheme } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";

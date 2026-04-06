@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { Animated, StyleSheet } from "react-native";
 const BANNER_HEIGHT = 120;
 const PROFILE_PIC_SIZE = 120;
@@ -6,7 +6,7 @@ const PROFILE_PIC_SIZE = 120;
 export const profileStyles = (
   isDark: boolean,
   isFollowing?: boolean,
-  opacityAnim?: Animated.Value
+  opacityAnim?: Animated.Value,
 ) => {
   return StyleSheet.create({
     container: {
@@ -94,15 +94,15 @@ export const profileStyles = (
           ? Colors.white
           : Colors.black
         : isDark
-        ? Colors.black
-        : Colors.white,
+          ? Colors.black
+          : Colors.white,
       borderColor: isFollowing
         ? isDark
           ? Colors.black
           : Colors.black
         : isDark
-        ? Colors.white
-        : Colors.black,
+          ? Colors.white
+          : Colors.black,
       borderWidth: 1,
       borderRadius: 10,
       paddingVertical: 10,
@@ -117,8 +117,8 @@ export const profileStyles = (
           ? Colors.black
           : Colors.white
         : isDark
-        ? Colors.white
-        : Colors.black,
+          ? Colors.white
+          : Colors.black,
       fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
     },

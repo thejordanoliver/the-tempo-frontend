@@ -1,27 +1,19 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { CBBGame } from "types/types";
+import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
 
-import { BASE_URL } from "utils/apiClient";
-
-const MEN_CBB_LEAGUE = "116";
-const WOMEN_CBB_LEAGUE = "423";
-
-type UseCBBTeamGamesOptions = {
+type UseTeamGamesOptions = {
   season?: string;
-  isWomen?: boolean;
 };
 
 export function useCBBTeamGames(
   teamId: string | number,
-  { season = getCBBSeason(), isWomen = false }: UseCBBTeamGamesOptions = {},
+  { season = getCBBSeason() }: UseTeamGamesOptions = {},
 ) {
   const [games, setGames] = useState<CBBGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
 
   const fetchGames = useCallback(async () => {
     if (!teamId) return;
@@ -30,24 +22,22 @@ export function useCBBTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/cbb/team/${teamId}`, {
+      const res = await apiClient.get(`/api/games/wbb/team/${teamId}`, {
         params: {
           season,
-          league,
         },
       });
 
       const rawGames: CBBGame[] = res.data.response || [];
 
-      // ✅ Just return raw API response
       setGames(rawGames);
     } catch (err: any) {
-      console.error("Error fetching CBB team games:", err.message);
+      console.error("Error fetching WNBA team games:", err.message);
       setError("Failed to load team games");
     } finally {
       setLoading(false);
     }
-  }, [teamId, season, league]);
+  }, [teamId, season]);
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);

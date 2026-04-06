@@ -917,11 +917,6 @@ export const teams: NBATeam[] = [
   },
 ];
 
-export const getTeamInfo = (teamId: number | string) => {
-  if (teamId == null) return undefined;
-  return teams.find((t) => String(t.id) === String(teamId));
-};
-
 export const getTeamByESPNId = (espnId: number | string) => {
   return teams.find((t) => t.espnID?.toString() === espnId?.toString());
 };
@@ -929,9 +924,10 @@ export const getTeamByESPNId = (espnId: number | string) => {
 export const getTeamBySummerId = (id?: number | string) =>
   teams.find((t) => String(t.summerLeagueId) === String(id));
 
-export const getNBATeam = (id: number | string) =>
-  teams.find((t) => String(t.id) === String(id)) || null;
-
+export const getNBATeam = (id: number | string) => {
+  if (id == null) return undefined;
+  return teams.find((t) => String(t.id) === String(id));
+};
 export function getTeamLogo(id: number | string | undefined, isDark: boolean) {
   if (!id) return PlaceholderLogo;
 

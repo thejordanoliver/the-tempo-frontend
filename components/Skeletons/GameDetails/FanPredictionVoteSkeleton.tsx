@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -31,7 +31,7 @@ export default function FanPredictionVoteSkeleton() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
-      ])
+      ]),
     );
 
     pulse.start();
@@ -76,7 +76,7 @@ export default function FanPredictionVoteSkeleton() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
-      ])
+      ]),
     );
 
     loop.start();

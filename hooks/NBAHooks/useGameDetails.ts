@@ -1,6 +1,6 @@
-import axios from "axios";
 import { Venue } from "hooks/NFLHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { apiClient } from "utils/apiClient";
 export type Athlete = {
   athlete: {
     id: string;
@@ -145,8 +145,6 @@ export type GameDetails = {
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-import { BASE_URL } from "utils/apiClient";
-
 /* ---------------------------------- */
 /* Hook                               */
 /* ---------------------------------- */
@@ -191,7 +189,7 @@ export const useGameDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await axios.get(`${BASE_URL}/api/details`, { params });
+        const { data } = await apiClient.get(`/api/details`, { params });
 
         if (data?.score) {
           setScore(data.score);

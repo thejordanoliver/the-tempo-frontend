@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View } from "react-native";
 import { formatQuarter } from "utils/games";
 import { GameInfo } from "./GameInfo";

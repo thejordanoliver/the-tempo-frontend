@@ -1,8 +1,6 @@
-import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Game } from "types/types";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export function useWeeklyGames() {
   const [games, setGames] = useState<Game[]>([]);
@@ -14,7 +12,10 @@ export function useWeeklyGames() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/games/nba/weekly`);
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const res = await apiClient.get(`api/games/nba/weekly`, {
+        params: { tz },
+      });
 
       setGames(res.data.games ?? []);
     } catch (err) {
@@ -30,13 +31,5 @@ export function useWeeklyGames() {
     refreshGames();
   }, []);
 
-  // Live games first
-  const sortedGames = useMemo(() => {
-    return [...games].sort(
-      (a, b) =>
-        Number(b.status.long === "Live") - Number(a.status.long === "Live"),
-    );
-  }, [games]);
-
-  return { games: sortedGames, loading, error, refreshGames };
+  return { games, loading, error, refreshGames };
 }

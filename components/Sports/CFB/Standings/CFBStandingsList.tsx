@@ -2,7 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";

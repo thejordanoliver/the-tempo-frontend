@@ -1,5 +1,5 @@
 // components/Forum/CustomModal.tsx
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -11,7 +11,6 @@ export type AlertConfig = {
   cancelText?: string;
   onConfirm?: () => void;
 };
-
 
 export interface CustomModalProps {
   visible: boolean;

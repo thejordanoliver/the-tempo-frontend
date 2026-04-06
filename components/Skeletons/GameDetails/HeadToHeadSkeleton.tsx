@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
@@ -22,7 +22,7 @@ export default function HeadToHeadSkeleton() {
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, []);
 
@@ -30,18 +30,17 @@ export default function HeadToHeadSkeleton() {
     <Animated.View style={[style, { opacity: pulseAnim }]} />
   );
 
-    const borderBottomColor = pulseAnim.interpolate({
-      inputRange: [0.3, 1],
-      outputRange: [
-        isDark ? Colors.darkGray : Colors.midTone,
-        isDark ? Colors.lightGray : Colors.midTone,
-      ],
-    });
+  const borderBottomColor = pulseAnim.interpolate({
+    inputRange: [0.3, 1],
+    outputRange: [
+      isDark ? Colors.darkGray : Colors.midTone,
+      isDark ? Colors.lightGray : Colors.midTone,
+    ],
+  });
 
   return (
     <View style={styles.container}>
-
-        <HeaderSkeleton/>
+      <HeaderSkeleton />
       {/* Series Score */}
       <Block style={styles.seriesSkeleton} />
 

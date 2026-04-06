@@ -1,5 +1,5 @@
-import { Colors } from "constants/Styles";
-import { getCBBTeamLogo, getCBBTeam } from "constants/teamsCBB";
+import { Colors } from "constants/styles";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";

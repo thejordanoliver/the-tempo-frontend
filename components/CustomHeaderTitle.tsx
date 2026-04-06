@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
 import {
   cbbTeams,
@@ -12,6 +12,7 @@ import { getMLBTeam, mlbTeams } from "constants/teamsMLB";
 import { getNFLTeam, nflTeams } from "constants/teamsNFL";
 
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
+import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { LinearGradient } from "expo-linear-gradient";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useEffect, useMemo, useRef } from "react";
@@ -70,6 +71,7 @@ type CustomHeaderTitleProps = {
   showBackButton?: boolean;
   league?:
     | "NBA"
+    | "WNBA"
     | "NFL"
     | "CFB"
     | "CBB"
@@ -249,13 +251,9 @@ const GameHeader = ({
   const dividerText = isNeutralSite ? "vs" : "@";
   const { fighter: firstFighter } = useMMAFighter(firstFighterId ?? 0);
   const { fighter: secondFighter } = useMMAFighter(secondFighterId ?? 0);
-  const homeColor = isMMA
-    ? (firstFighter?.color ?? Colors.lightGray)
-    : (homeTeam?.color ?? Colors.lightGray);
+  const homeColor = homeTeam?.color ?? Colors.lightGray;
 
-  const awayColor = isMMA
-    ? (secondFighter?.color ?? Colors.midTone)
-    : (awayTeam?.color ?? Colors.midTone);
+  const awayColor = awayTeam?.color ?? Colors.midTone;
 
   const awayName = secondFighter?.last_name || "UNK";
   const homeName = firstFighter?.last_name || "UNK";
@@ -492,7 +490,6 @@ export function CustomHeaderTitle({
   selectedConferenceName,
   onToggleFavorite,
   onToggleNotifications,
-
   isPlayerScreen,
   showBackButton = true,
   isNeutralSite = false,
@@ -505,7 +502,7 @@ export function CustomHeaderTitle({
 }: CustomHeaderTitleProps) {
   const isDark = useColorScheme() === "dark";
   const insets = useSafeAreaInsets();
-  const styles = customHeaderStyles;
+
   const modalToMapKey: Record<string, string> = {
     SEC: "SEC",
     "Big Ten": "Big Ten",
@@ -541,7 +538,6 @@ export function CustomHeaderTitle({
   const primaryColor =
     selectedConference?.color?.primary ||
     (isDark ? Colors.black : Colors.white);
-  const secondaryColor = selectedConference?.color?.secondary || primaryColor;
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -560,6 +556,8 @@ export function CustomHeaderTitle({
     if (!teamCode) return null;
 
     switch (league) {
+      case "WNBA":
+        return getWNBATeam(teamId ?? 0);
       case "NFL":
         return getNFLTeam(teamId ?? 0);
       case "CFB":
@@ -589,6 +587,8 @@ export function CustomHeaderTitle({
             ? mlbTeams
             : league === "NHL"
               ? nhlTeams
+            : league === "WNBA"
+              ? wnbaTeams
               : nbaTeams;
 
   const homeTeam = useMemo(() => {

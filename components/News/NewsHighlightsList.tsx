@@ -1,5 +1,5 @@
 // components/NewsHighlightsList.tsx
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import React from "react";
 import { FlatList, Text, useColorScheme, View } from "react-native";
 import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";

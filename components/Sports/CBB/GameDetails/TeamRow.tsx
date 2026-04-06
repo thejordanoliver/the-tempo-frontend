@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -97,7 +97,7 @@ export const TeamRow = ({
                   ]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
           </Text>
         </View>
       )}
@@ -138,7 +138,7 @@ export const TeamRow = ({
                   ]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : score ?? ""}
+            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
           </Text>
         </View>
       )}

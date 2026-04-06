@@ -1,4 +1,3 @@
-import FallbackImage from "assets/Logos/ThumbnailFallback.png";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -68,7 +67,7 @@ export default function NewsArticleScreen() {
           {thumbnail && (
             <Image
               source={
-                imageError || !thumbnail ? FallbackImage : { uri: thumbnail }
+                imageError || !thumbnail ? { uri: "" } : { uri: thumbnail }
               }
               onError={() => setImageError(true)}
               style={styles.image}

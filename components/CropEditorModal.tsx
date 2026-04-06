@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import * as ImageManipulator from "expo-image-manipulator";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -67,8 +67,14 @@ export default function CropEditorModal({
   // --------------------------------------------------------------------------
   // State
   // --------------------------------------------------------------------------
-  const [imageSize, setImageSize] = useState<{ width: number; height: number } | null>(null);
-  const [displayedImageSize, setDisplayedImageSize] = useState({ width: 0, height: 0 });
+  const [imageSize, setImageSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  const [displayedImageSize, setDisplayedImageSize] = useState({
+    width: 0,
+    height: 0,
+  });
 
   // --------------------------------------------------------------------------
   // Refs
@@ -106,7 +112,12 @@ export default function CropEditorModal({
     cropHeight = (cropWidth * POST_HEIGHT) / POST_WIDTH;
   }
 
-  const styles = cropEditorModalStyles(isDark, isProfile, cropWidth, cropHeight);
+  const styles = cropEditorModalStyles(
+    isDark,
+    isProfile,
+    cropWidth,
+    cropHeight,
+  );
 
   // --------------------------------------------------------------------------
   // Load image size
@@ -116,7 +127,7 @@ export default function CropEditorModal({
     Image.getSize(
       imageUri,
       (width, height) => setImageSize({ width, height }),
-      () => Alert.alert("Error", "Could not load image")
+      () => Alert.alert("Error", "Could not load image"),
     );
   }, [imageUri]);
 
@@ -150,8 +161,10 @@ export default function CropEditorModal({
     if (!displayedImageSize.width) return MIN_SCALE;
 
     const rot = rotation.current;
-    const baseWidth = rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
-    const baseHeight = rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
+    const baseWidth =
+      rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
+    const baseHeight =
+      rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
 
     return Math.max(cropWidth / baseWidth, cropHeight / baseHeight);
   }, [displayedImageSize, cropWidth, cropHeight]);
@@ -182,8 +195,10 @@ export default function CropEditorModal({
     (x: number, y: number, scale: number): Coordinate => {
       const rot = rotation.current;
 
-      const baseWidth = rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
-      const baseHeight = rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
+      const baseWidth =
+        rot % 180 === 0 ? displayedImageSize.width : displayedImageSize.height;
+      const baseHeight =
+        rot % 180 === 0 ? displayedImageSize.height : displayedImageSize.width;
 
       const scaledWidth = baseWidth * scale;
       const scaledHeight = baseHeight * scale;
@@ -196,7 +211,7 @@ export default function CropEditorModal({
         y: Math.min(maxY, Math.max(-maxY, y)),
       };
     },
-    [displayedImageSize, cropWidth, cropHeight]
+    [displayedImageSize, cropWidth, cropHeight],
   );
 
   // --------------------------------------------------------------------------
@@ -243,13 +258,13 @@ export default function CropEditorModal({
 
             const nextScale = Math.min(
               MAX_SCALE,
-              Math.max(minScale, lastScale.current * scaleRatio)
+              Math.max(minScale, lastScale.current * scaleRatio),
             );
 
             const clamped = clampOffset(
               currentOffset.current.x,
               currentOffset.current.y,
-              nextScale
+              nextScale,
             );
 
             currentScale.current = nextScale;
@@ -265,7 +280,7 @@ export default function CropEditorModal({
           lastScale.current = currentScale.current;
         },
       }),
-    [clampOffset, minScale]
+    [clampOffset, minScale],
   );
 
   // --------------------------------------------------------------------------
@@ -277,7 +292,7 @@ export default function CropEditorModal({
     const clamped = clampOffset(
       currentOffset.current.x,
       currentOffset.current.y,
-      currentScale.current
+      currentScale.current,
     );
 
     currentOffset.current = clamped;
@@ -310,7 +325,8 @@ export default function CropEditorModal({
     const rotatedW = rot % 180 === 0 ? imgW : imgH;
     const rotatedH = rot % 180 === 0 ? imgH : imgW;
 
-    const displayToOriginalScale = rotatedW / (displayedImageSize.width * scale);
+    const displayToOriginalScale =
+      rotatedW / (displayedImageSize.width * scale);
 
     const originX =
       rotatedW / 2 -
@@ -345,7 +361,15 @@ export default function CropEditorModal({
     });
 
     onCrop(result.uri);
-  }, [imageSize, displayedImageSize, cropWidth, cropHeight, isPost, imageUri, onCrop]);
+  }, [
+    imageSize,
+    displayedImageSize,
+    cropWidth,
+    cropHeight,
+    isPost,
+    imageUri,
+    onCrop,
+  ]);
 
   // --------------------------------------------------------------------------
   // Render
@@ -356,13 +380,21 @@ export default function CropEditorModal({
         <View style={styles.wrapper}>
           <View style={styles.header}>
             <Pressable onPress={onCancel}>
-              <Ionicons name="close" size={28} color={isDark ? Colors.white : Colors.black} />
+              <Ionicons
+                name="close"
+                size={28}
+                color={isDark ? Colors.white : Colors.black}
+              />
             </Pressable>
 
             <Text style={styles.headerTitle}>Crop</Text>
 
             <Pressable onPress={rotate90}>
-              <Ionicons name="refresh" size={24} color={isDark ? Colors.white : Colors.black} />
+              <Ionicons
+                name="refresh"
+                size={24}
+                color={isDark ? Colors.white : Colors.black}
+              />
             </Pressable>
 
             <TouchableOpacity onPress={handleCrop}>
@@ -391,7 +423,10 @@ export default function CropEditorModal({
               >
                 <Image
                   source={{ uri: imageUri }}
-                  style={{ width: displayedImageSize.width, height: displayedImageSize.height }}
+                  style={{
+                    width: displayedImageSize.width,
+                    height: displayedImageSize.height,
+                  }}
                 />
               </Animated.View>
             </View>

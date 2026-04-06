@@ -1,5 +1,5 @@
 // components/Forum/PostItemSkeleton.tsx
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 

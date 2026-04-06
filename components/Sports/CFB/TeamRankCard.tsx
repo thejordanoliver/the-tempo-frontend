@@ -1,5 +1,5 @@
 // components/CFB/TeamRankCard.tsx
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -55,7 +55,6 @@ export default function TeamRankCard({ item, index }: Props) {
   const teamId = item?.teamInfo?.id ?? null;
   const team = getTeamByESPNId(teamId);
   const logo = teamId ? getCFBTeamLogo(team.id, isDark) : null;
-
 
   return (
     <View style={styles.cardWrapper}>

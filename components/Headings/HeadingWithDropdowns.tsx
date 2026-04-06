@@ -1,5 +1,5 @@
 import { Dropdown } from "components/Dropdown";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import HeadingTwo from "./Heading";

@@ -5,7 +5,7 @@ import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal
 import GameCard from "components/Sports/NBA/Games/GameCard";
 import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
 import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";

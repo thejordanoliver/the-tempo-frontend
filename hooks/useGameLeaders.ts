@@ -1,13 +1,11 @@
 // hooks/useGameLeaders.ts
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-  const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
+import { apiClient } from "utils/apiClient";
 
 export function useGameLeaders(
   gameId: string,
   homeTeamId: number,
-  awayTeamId: number
+  awayTeamId: number,
 ) {
   const [data, setData] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,9 +19,9 @@ export function useGameLeaders(
       setError(null);
 
       try {
-        const url = `${API_URL}/api/player-stats/${gameId}`;
+        const url = `/api/player-stats/${gameId}`;
 
-        const res = await axios.get(url);
+        const res = await apiClient.get(url);
 
         if (isMounted) {
           // Add teamType based on team IDs
@@ -33,8 +31,8 @@ export function useGameLeaders(
               player.team.id === homeTeamId
                 ? "home"
                 : player.team.id === awayTeamId
-                ? "away"
-                : undefined,
+                  ? "away"
+                  : undefined,
           }));
           setData(playersWithTeamType);
         }

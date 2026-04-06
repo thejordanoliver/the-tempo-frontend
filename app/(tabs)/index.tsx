@@ -4,7 +4,7 @@ import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import CombinedGamesList from "components/League/CombinedGamesList";
 import NewsHighlightsList from "components/News/NewsHighlightsList";
 import TabBar from "components/TabBar";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useHomeData } from "hooks/useHomeData";
 import React, { useRef } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";

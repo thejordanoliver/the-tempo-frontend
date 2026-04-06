@@ -1,6 +1,6 @@
 // components/Forum/TeamForum.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTeamForum } from "hooks/ForumHooks/useTeamForum";
 import { useCallback, useEffect, useState } from "react";

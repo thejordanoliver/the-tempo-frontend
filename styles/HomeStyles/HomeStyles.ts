@@ -1,12 +1,11 @@
 // HomeScreen.styles.ts
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const homeStyles = (isDark: boolean, inset: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-   
     },
 
     tabBarWrapper: {

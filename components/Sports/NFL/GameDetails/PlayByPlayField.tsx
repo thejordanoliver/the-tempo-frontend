@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { Athlete, PlayObject } from "hooks/NFLHooks/useGameDetails";

@@ -1,12 +1,13 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
 import {
   cbbTeams,
   getCBBTeam,
   getTeamLogo as getCBBTeamLogo,
 } from "constants/teamsCBB";
+import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -26,6 +27,7 @@ type AnyTeam = NBATeam | CBBTeam;
 
 interface Play {
   id: string;
+  sequenceNumber: number;
   shootingPlay: boolean;
   coordinate: { x: number; y: number };
   pointsAttempted?: number;
@@ -144,22 +146,12 @@ export default function GameSummary({
           : sp.period?.number === periods;
       })
       .sort((a, b) => {
-        const periodA = a.period?.number ?? 0;
-        const periodB = b.period?.number ?? 0;
-
-        if (periodA !== periodB) return periodB - periodA;
-
-        const parseClock = (clock?: string) => {
-          if (!clock) return 0;
-          const [min = 0, sec = 0] = clock.split(":").map(Number);
-          return min * 60 + sec;
-        };
-
-        const timeA = parseClock(a.clock?.displayValue);
-        const timeB = parseClock(b.clock?.displayValue);
-
-        return timeA - timeB;
-      });
+        // Sort by sequenceNumber ascending
+        const seqA = Number(a.sequenceNumber ?? 0);
+        const seqB = Number(b.sequenceNumber ?? 0);
+        return seqA - seqB;
+      })
+      .reverse(); // latest play on top
   }, [plays, selectedQuarter]);
 
   if (!loading && plays?.length === 0) return null;
@@ -189,7 +181,9 @@ export default function GameSummary({
             const allTeams: AnyTeam[] =
               league === "CBB" || league === "WCBB"
                 ? (cbbTeams as CBBTeam[])
-                : (nbaTeams as NBATeam[]);
+                : league === "WNBA"
+                  ? wnbaTeams
+                  : (nbaTeams as NBATeam[]);
 
             const teamObj = allTeams.find(
               (team) => String(team.espnID) === playTeamId,
@@ -201,16 +195,21 @@ export default function GameSummary({
               !play.text.toLowerCase().includes("start of") &&
               !play.text.toLowerCase().includes("end of");
 
-            const team = getNBATeam(teamObj?.id ?? 0);
+            const team =
+              league === "WNBA"
+                ? getWNBATeam(teamObj?.id ?? 0)
+                : getNBATeam(teamObj?.id ?? 0);
             const cbbTeam = getCBBTeam(teamObj?.id ?? 0);
 
             const teamLogo =
               league === "NBA"
                 ? getTeamLogo(team?.id, isDark)
-                : getCBBTeamLogo(
-                    league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id,
-                    isDark,
-                  );
+                : league === "WNBA"
+                  ? getWNBATeamLogo(team?.id, isDark)
+                  : getCBBTeamLogo(
+                      league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id,
+                      isDark,
+                    );
 
             const isLatest = play.id === latestPlayId;
 

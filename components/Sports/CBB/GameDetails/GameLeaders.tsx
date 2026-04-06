@@ -2,12 +2,14 @@ import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { teams as SLTeams } from "constants/teams";
 import { cbbTeams, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { useEffect, useMemo, useState } from "react";
 import { Image, Text, TextStyle, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+
 type StatLabels = {
   key: Category;
   label: string;
@@ -22,31 +24,14 @@ const SEASON_CATEGORIES = [
 ] as const;
 
 const STAT_KEYS: StatLabels[] = [
-  {
-    key: "points",
-    label: "Points",
-  },
-  {
-    key: "assists",
-    label: "Assists",
-  },
-  {
-    key: "rebounds",
-    label: "Rebounds",
-  },
-  {
-    key: "pointsPerGame",
-    label: "Points",
-  },
-  {
-    key: "assistsPerGame",
-    label: "Assists",
-  },
-  {
-    key: "reboundsPerGame",
-    label: "Rebounds",
-  },
+  { key: "points", label: "Points" },
+  { key: "assists", label: "Assists" },
+  { key: "rebounds", label: "Rebounds" },
+  { key: "pointsPerGame", label: "Points" },
+  { key: "assistsPerGame", label: "Assists" },
+  { key: "reboundsPerGame", label: "Rebounds" },
 ];
+
 type Category =
   | (typeof GAME_CATEGORIES)[number]
   | (typeof SEASON_CATEGORIES)[number];
@@ -76,7 +61,7 @@ function Stat({ label, value, isDark }: StatProps) {
     <View style={{ marginRight: 12 }}>
       <Text
         style={{
-          color: isDark ? Colors.midTone : Colors.midTone,
+          color: Colors.midTone,
           fontFamily: Fonts.OSMEDIUM,
           fontSize: 11,
         }}
@@ -101,7 +86,12 @@ export default function GameLeaders({
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
+
   const isScheduled = gameStatusDescription === "Scheduled";
+  const isInProgress =
+    gameStatusDescription !== "Scheduled" &&
+    gameStatusDescription !== "Finished";
+
   useEffect(() => {
     setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
   }, [isScheduled]);
@@ -113,11 +103,28 @@ export default function GameLeaders({
 
   const isSummerLeague =
     league === "nba-summer" || league === "summerleague" || league === "sl";
+  const isWNBA = league === "wnba";
 
-  const teamSource = isSummerLeague ? SLTeams : cbbTeams;
+  const teamSource = isWNBA ? wnbaTeams : isSummerLeague ? SLTeams : cbbTeams;
+  const isWomen = league === "wcbb";
 
+  // -----------------------------
+  // PREP TOP PLAYERS OR PLACEHOLDERS
+  // -----------------------------
   const topPlayers = useMemo(() => {
-    if (!leaders?.length) return [];
+    const makePlaceholder = (teamId: number) => ({
+      category: selectedCategory,
+      team: { id: teamId },
+      isPlaceholder: true,
+    });
+
+    // No data and game not in progress — hide section entirely
+    if (!leaders?.length && !isInProgress) return [];
+
+    // Game in progress but no stats yet — show 2 placeholder rows
+    if (isInProgress && leaders?.length === 0) {
+      return [makePlaceholder(homeTeamId), makePlaceholder(awayTeamId)];
+    }
 
     const flat: any[] = [];
 
@@ -138,7 +145,6 @@ export default function GameLeaders({
         (statGroup.leaders ?? []).forEach((entry: any) => {
           const athlete = entry?.athlete;
 
-          // ✅ SAFE ATHLETE FALLBACK
           const athleteSafe =
             athlete && athlete.id && athlete.fullName
               ? athlete
@@ -161,7 +167,7 @@ export default function GameLeaders({
           flat.push({
             category,
             team: { id: teamId },
-
+            isPlaceholder: false,
             localPlayer: {
               id: athleteSafe.id,
               first_name: athleteSafe.fullName.split(" ")[0] ?? "Unknown",
@@ -173,7 +179,6 @@ export default function GameLeaders({
                   : (athleteSafe.headshot?.href ?? Placeholder),
               jersey_number: athleteSafe.jersey ?? "–",
             },
-            // Game Leaders
             points: getStat("points"),
             totReb: getStat("rebounds"),
             assists: getStat("assists"),
@@ -184,17 +189,12 @@ export default function GameLeaders({
             assistTurnoverRatio: getStatDisplay("assistTurnoverRatio"),
             defensiveRebounds: getStatDisplay("defensiveRebounds"),
             offensiveRebounds: getStatDisplay("offensiveRebounds"),
-
-            // Season Leaders
-
             avgPoints: getStatDisplay("avgPoints"),
             fieldGoalPct: getStatDisplay("fieldGoalPct"),
             freeThrowPct: getStatDisplay("freeThrowPct"),
-
             avgRebounds: getStatDisplay("avgRebounds"),
             avgDefensiveRebounds: getStatDisplay("avgDefensiveRebounds"),
             avgOffensiveRebounds: getStatDisplay("avgOffensiveRebounds"),
-
             avgAssists: getStatDisplay("avgAssists"),
             avgMinutes: getStatDisplay("avgMinutes"),
             avgTurnovers: getStatDisplay("avgTurnovers"),
@@ -203,160 +203,172 @@ export default function GameLeaders({
       });
     });
 
-    return flat.filter((p) => p.category === selectedCategory);
-  }, [leaders, selectedCategory]);
-  const isWomen = league === "wcbb";
+    // --- KEY FIX: always guarantee one row per team ---
+    const filtered = flat.filter((p) => p.category === selectedCategory);
 
+    const homePlayer = filtered.find(
+      (p) => String(p.team?.id) === String(homeTeamId),
+    );
+    const awayPlayer = filtered.find(
+      (p) => String(p.team?.id) === String(awayTeamId),
+    );
+
+    return [
+      homePlayer ?? makePlaceholder(homeTeamId),
+      awayPlayer ?? makePlaceholder(awayTeamId),
+    ];
+  }, [
+    leaders,
+    selectedCategory,
+    isScheduled,
+    isInProgress,
+    homeTeamId,
+    awayTeamId,
+  ]);
+
+  // -----------------------------
+  // RENDER STATS OR PLACEHOLDER
+  // -----------------------------
   const renderStats = (player: any) => {
+    if (player.isPlaceholder) {
+      return (
+        <>
+          <Stat label="PTS" value="–" isDark={isDark} sub={{}} />
+          <Stat label="AST" value="–" isDark={isDark} sub={{}} />
+          <Stat label="REB" value="–" isDark={isDark} sub={{}} />
+        </>
+      );
+    }
+
     switch (selectedCategory) {
       case "points":
         return (
           <>
+            <Stat label="PTS" value={player.points} isDark={isDark} sub={{}} />
             <Stat
-              sub={styles.statText}
-              label="PTS"
-              value={player.points}
-              isDark={isDark}
-            />
-            <Stat
-              sub={styles.statText}
               label="FG"
               value={player.fieldGoals}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="FT"
               value={player.freeThrows}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       case "assists":
         return (
           <>
+            <Stat label="AST" value={player.assists} isDark={isDark} sub={{}} />
             <Stat
-              sub={styles.statText}
-              label="AST"
-              value={player.assists}
-              isDark={isDark}
-            />
-            <Stat
-              sub={styles.statText}
               label="TO"
               value={player.turnovers}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="AST/TO"
               value={player.assistTurnoverRatio}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       case "rebounds":
         return (
           <>
+            <Stat label="REB" value={player.totReb} isDark={isDark} sub={{}} />
             <Stat
-              sub={styles.statText}
-              label="REB"
-              value={player.totReb}
-              isDark={isDark}
-            />
-            <Stat
-              sub={styles.statText}
               label="DREB"
               value={player.defensiveRebounds}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="OREB"
               value={player.offensiveRebounds}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       case "pointsPerGame":
         return (
           <>
             <Stat
-              sub={styles.statText}
               label="PTS"
               value={player.avgPoints}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="FT%"
               value={player.freeThrowPct}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="FG%"
               value={player.fieldGoalPct}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       case "assistsPerGame":
         return (
           <>
             <Stat
-              sub={styles.statText}
               label="AST"
               value={player.avgAssists}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="TO"
               value={player.avgTurnovers}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="MIN"
               value={player.avgMinutes}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       case "reboundsPerGame":
         return (
           <>
             <Stat
-              sub={styles.statText}
               label="REB"
               value={player.avgRebounds}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="DREB"
               value={player.avgDefensiveRebounds}
               isDark={isDark}
+              sub={{}}
             />
             <Stat
-              sub={styles.statText}
               label="OREB"
               value={player.avgOffensiveRebounds}
               isDark={isDark}
+              sub={{}}
             />
           </>
         );
-
       default:
         return null;
     }
   };
+
   if (error)
     return <Text style={global.errorText}>Failed to load leaders</Text>;
   if (loading) return <GameLeadersSkeleton />;
@@ -369,7 +381,7 @@ export default function GameLeaders({
 
       <View style={styles.wrapper}>
         <MainScrollTabBar
-          tabs={tabs} // ✅ just pass the array
+          tabs={tabs}
           selected={selectedCategory}
           onTabPress={setSelectedCategory}
           isDark={isDark}
@@ -389,8 +401,14 @@ export default function GameLeaders({
             </Text>
           )}
         />
+
         {topPlayers.map((player, idx) => {
-          const p = player.localPlayer;
+          const p = player.localPlayer || {
+            first_name: "Unknown",
+            last_name: "Player",
+            headshot_url: Placeholder,
+            jersey_number: "–",
+          };
 
           const teamObj =
             teamSource.find(
@@ -399,7 +417,10 @@ export default function GameLeaders({
             teamSource.find((t) => String(t.espnID) === String(homeTeamId)) ??
             teamSource.find((t) => String(t.espnID) === String(awayTeamId));
 
-          const teamLogo = getCBBTeamLogo(teamObj?.id, isDark, isWomen);
+          const teamLogo =
+            league === "wnba"
+              ? getWNBATeamLogo(teamObj?.id, isDark)
+              : getCBBTeamLogo(teamObj?.id, isDark, isWomen);
 
           return (
             <View key={idx} style={styles.card}>

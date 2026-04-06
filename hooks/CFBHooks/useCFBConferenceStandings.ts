@@ -1,5 +1,6 @@
 // hooks/CFBHooks/useCFBConferenceStandings.ts
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export type CFBTeamStanding = {
   teamId: string;
@@ -19,7 +20,6 @@ export type CFBTeamStanding = {
   pointsAgainst?: number | null;
 };
 
-import { BASE_URL } from "utils/apiClient";
 export function useCFBConferenceStandings() {
   const [standings, setStandings] = useState<CFBTeamStanding[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,17 +29,18 @@ export function useCFBConferenceStandings() {
     const fetchStandings = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        const res = await fetch(`${BASE_URL}/api/cfb-standings`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
+        const res = await apiClient.get(`/api/standings/cfb/conference`);
 
         const parsed: CFBTeamStanding[] = [];
 
-        for (const conf of json.conferences || []) {
+        for (const conf of res.data.conferences || []) {
           const confName = conf.name || "Unknown";
+
           for (const div of conf.divisions || []) {
             const divName = div.name || null;
+
             for (const team of div.teams || []) {
               parsed.push({
                 teamId: team.teamId,
@@ -65,7 +66,7 @@ export function useCFBConferenceStandings() {
         setStandings(parsed);
       } catch (err: any) {
         console.error("Error fetching standings:", err);
-        setError("Failed to load standings");
+        setError(err.response?.data?.message || "Failed to load standings");
       } finally {
         setLoading(false);
       }

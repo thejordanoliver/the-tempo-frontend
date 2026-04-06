@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { PollData } from "components/Forum/PollEditorModal";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
@@ -50,7 +51,8 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     Record<string, { opacity: Animated.Value }>
   >({});
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const [posts, setPosts] = useState<any[]>([]); // Optional: local list of posts
+  const [posts, setPosts] = useState<any[]>([]);
+  const [poll, setPoll] = useState<PollData | null>(null); // ✅ poll state
   const router = useRouter();
   const removingRef = useRef(new Set<string>());
 
@@ -172,6 +174,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     },
     [media, mediaAnims],
   );
+
   const createPost = useCallback(async () => {
     if (!token) {
       showAlert({
@@ -194,6 +197,18 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     const formData = new FormData();
     formData.append("text", newPostText);
     formData.append("league", league);
+
+    // ✅ Append poll if present
+    if (poll) {
+      formData.append(
+        "poll",
+        JSON.stringify({
+          question: poll.question,
+          options: poll.options.map((o) => o.text),
+          allowsMultiple: poll.allowsMultiple,
+        }),
+      );
+    }
 
     media.forEach((item, idx) => {
       const filename = item.uri.split("/").pop()!;
@@ -233,8 +248,9 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
         },
       });
 
-      const newPost = res.data.post; // ✅ Return the newly created post
-      prependPost(newPost); // update local list immediately
+      const newPost = res.data.post;
+      prependPost(newPost);
+      setPoll(null); // ✅ clear poll after successful post
 
       showAlert({
         title: "Success",
@@ -243,7 +259,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
         onConfirm: () => router.back(),
       });
 
-      return newPost; // ✅ Return post so screen can also use it
+      return newPost;
     } catch (err: any) {
       let errorMessage = "Please try again later.";
       if (err.response?.status === 413)
@@ -264,7 +280,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     } finally {
       setLoading(false);
     }
-  }, [media, newPostText, token, teamId, league, prependPost]);
+  }, [media, newPostText, token, teamId, league, poll, prependPost]); // ✅ poll in deps
 
   return {
     newPostText,
@@ -275,12 +291,14 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     pickMedia,
     removeMedia,
     createPost,
-    prependPost, // ✅ added here
+    prependPost,
     alertConfig,
     showAlert,
     closeAlert,
     setMedia,
     setMediaAnims,
-    posts, // optional: local post list
+    posts,
+    poll,    // ✅
+    setPoll, // ✅
   };
 }

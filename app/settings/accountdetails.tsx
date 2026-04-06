@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useLayoutEffect, useState } from "react";

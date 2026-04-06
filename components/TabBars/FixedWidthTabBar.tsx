@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -19,7 +19,7 @@ export interface FixedWidthTabBarProps {
     defaultStyles: {
       tab: any;
       tabSelected: any;
-    }
+    },
   ) => React.ReactNode;
   isDark: boolean;
 }
@@ -38,7 +38,7 @@ export default function FixedWidthTabBar({
   // ✅ Memoized tabs (prevents unnecessary re-renders)
   const orderedTabs = useMemo(() => {
     return (tabs ?? []).filter(
-      (t): t is string => typeof t === "string" && t.trim().length > 0
+      (t): t is string => typeof t === "string" && t.trim().length > 0,
     );
   }, [tabs]);
 
@@ -83,12 +83,7 @@ export default function FixedWidthTabBar({
                   tabSelected: styles.tabSelected,
                 })
               ) : (
-                <Text
-                  style={[
-                    styles.tab,
-                    isSelected && styles.tabSelected,
-                  ]}
-                >
+                <Text style={[styles.tab, isSelected && styles.tabSelected]}>
                   {tab.toUpperCase()}
                 </Text>
               )}

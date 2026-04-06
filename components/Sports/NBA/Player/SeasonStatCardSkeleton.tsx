@@ -1,5 +1,5 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View, useColorScheme } from "react-native";
 export default function SeasonStatCardSkeleton() {

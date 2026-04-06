@@ -1,10 +1,12 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamByESPNId, getTeamLogo } from "constants/teams";
 import {
   getTeamByESPNId as getCBBTeamByESPNId,
   getCBBTeamLogo,
 } from "constants/teamsCBB";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Image,
@@ -31,15 +33,17 @@ type Props = {
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
-  league: "NBA" | "CBB" | "WCBB";
+  league: "NBA" | "WNBA" | "CBB" | "WCBB";
 };
 
 type Player = {
   athlete: {
     id: string;
+    playerId: number;
     uid: string;
     guid: string;
     displayName: string;
+    teamId: number;
     shortName: string;
     headshot: { href: string; alt: string };
     jersey: string;
@@ -60,30 +64,47 @@ export default function PlayersOnCourt({
   league,
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
+  const router = useRouter();
+  const isWomen = league === "WCBB";
+  const isNBA = league === "NBA";
+  const isWNBA = league === "WNBA";
 
-  const homeTeam = getTeamByESPNId(homeTeamId);
-  const awayTeam = getTeamByESPNId(awayTeamId);
+  const homeTeam = isWNBA
+    ? getWNBATeamByESPNId(homeTeamId)
+    : getTeamByESPNId(homeTeamId);
+  const awayTeam = isWNBA
+    ? getWNBATeamByESPNId(awayTeamId)
+    : getTeamByESPNId(awayTeamId);
   const homeCBBTeam = getCBBTeamByESPNId(homeTeamId);
   const awayCBBTeam = getCBBTeamByESPNId(awayTeamId);
 
-  const isWomen = league === "WCBB";
-  const isNBA = league === "NBA";
-
-  const homeCode = isNBA ? homeTeam?.code : homeCBBTeam?.code;
-  const awayCode = isNBA ? awayTeam?.code : awayCBBTeam?.code;
+  const homeCode = isNBA
+    ? homeTeam?.code
+    : isWNBA
+      ? homeTeam?.code
+      : homeCBBTeam?.code;
+  const awayCode = isNBA
+    ? awayTeam?.code
+    : isWNBA
+      ? awayTeam?.code
+      : awayCBBTeam?.code;
   const homeName = isNBA ? homeTeam?.fullName : homeCBBTeam?.fullName;
   const awayName = isNBA ? awayTeam?.fullName : awayCBBTeam?.fullName;
 
   const homeLogo = isNBA
     ? getTeamLogo(homeTeam?.id, isDark)
-    : isWomen
-      ? getCBBTeamLogo(homeCBBTeam?.id, isDark, true)
-      : getCBBTeamLogo(homeCBBTeam?.id, isDark, false);
+    : isWNBA
+      ? getWNBATeamLogo(homeTeam?.id, isDark)
+      : isWomen
+        ? getCBBTeamLogo(homeCBBTeam?.id, isDark, true)
+        : getCBBTeamLogo(homeCBBTeam?.id, isDark, false);
   const awayLogo = isNBA
     ? getTeamLogo(awayTeam?.id, isDark)
-    : isWomen
-      ? getCBBTeamLogo(awayCBBTeam?.id, isDark, true)
-      : getCBBTeamLogo(awayCBBTeam?.id, isDark, false);
+    : isWNBA
+      ? getWNBATeamLogo(awayTeam?.id, isDark)
+      : isWomen
+        ? getCBBTeamLogo(awayCBBTeam?.id, isDark, true)
+        : getCBBTeamLogo(awayCBBTeam?.id, isDark, false);
 
   const tabs = [
     { key: "away", label: awayName ?? "Away Team" },
@@ -122,43 +143,57 @@ export default function PlayersOnCourt({
     <View>
       {players
         .filter((p) => p.active)
-        .map((p, index, arr) => (
-          <View
-            key={`${teamCode}-row-${p.athlete.id}-${index}`}
-            style={[
-              styles.tableRow,
-              index === arr.length - 1 && { borderBottomWidth: 0 },
-            ]}
-          >
-            <TouchableOpacity
-              activeOpacity={0.6}
-              style={styles.playerInfo}
-              onPress={() => {
-                // Removed navigation, can optionally add a console.log
-                console.log(`Player tapped: ${p.athlete.displayName}`);
-              }}
+        .map((p, index, arr) => {
+          const nbaTeam = getNBATeam(p.team.id);
+          const collegeTeam = getCBBTeamByESPNId(p.athlete.teamId);
+          const nbaTeamId = nbaTeam?.id;
+          const collegeTeamId = isWomen ? collegeTeam?.wid : collegeTeam?.id;
+          return (
+            <View
+              key={`${teamCode}-row-${p.athlete.id}-${index}`}
+              style={[
+                styles.tableRow,
+                index === arr.length - 1 && { borderBottomWidth: 0 },
+              ]}
             >
-              <View style={styles.playerInfoWrapper}>
-                <View style={styles.avatarWrapper}>
-                  <Image
-                    source={{ uri: p.athlete.headshot?.href ?? "" }}
-                    alt={p.athlete.headshot?.alt}
-                    style={styles.avatar}
-                  />
+              <TouchableOpacity
+                activeOpacity={0.6}
+                style={styles.playerInfo}
+                onPress={() => {
+                  if (p.athlete.playerId || p.athlete.id) {
+                    router.push({
+                      pathname: isNBA ? `/player/[id]` : `/player/cbb/[id]`,
+                      params: {
+                        id: isNBA ? p.athlete.playerId : p.athlete.id,
+                        teamId: isNBA ? nbaTeamId : collegeTeamId, // <-- pass team ID here
+                        league,
+                      },
+                    });
+                  }
+                }}
+              >
+                <View style={styles.playerInfoWrapper}>
+                  <View style={styles.avatarWrapper}>
+                    <Image
+                      source={{ uri: p.athlete.headshot?.href ?? "" }}
+                      alt={p.athlete.headshot?.alt}
+                      style={styles.avatar}
+                    />
+                  </View>
+                  <View style={styles.nameWrapper}>
+                    <Text style={styles.playerName}>{p.athlete.shortName}</Text>
+                    <Text style={styles.posistion}>
+                      {p.athlete.position.abbreviation}
+                    </Text>
+                  </View>
                 </View>
-                <View style={styles.nameWrapper}>
-                  <Text style={styles.playerName}>{p.athlete.shortName}</Text>
-                  <Text style={styles.posistion}>
-                    {p.athlete.position.abbreviation}
-                  </Text>
+                <View style={{ flexDirection: "row", alignContent: "center" }}>
+                  <Text style={styles.jersey}>#{p.athlete.jersey}</Text>
                 </View>
-              </View>
-              <View style={{ flexDirection: "row", alignContent: "center" }}>
-                <Text style={styles.jersey}>#{p.athlete.jersey}</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        ))}
+              </TouchableOpacity>
+            </View>
+          );
+        })}
     </View>
   );
 

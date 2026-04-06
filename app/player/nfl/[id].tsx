@@ -3,10 +3,10 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LatestGame from "components/Sports/NFL/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
-import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { getNFLTeam } from "constants/teamsNFL";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useFootballPlayerSeasons } from "hooks/CFBHooks/useFootballPlayerSeasons";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
@@ -16,10 +16,10 @@ import { getFootballSeasonYear } from "utils/dateUtils";
 
 export default function NFLPlayerDetailScreen() {
   const styles = playerScreenStyles;
-  const navigation = useNavigation();
-  const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const global = globalStyles(isDark);
+  const navigation = useNavigation();
+  const router = useRouter();
   /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
@@ -42,6 +42,12 @@ export default function NFLPlayerDetailScreen() {
     loading: lastGameLoading,
     error: lastGameError,
   } = useLastTeamGame(player?.team_id ?? 0, getFootballSeasonYear());
+
+  const {
+    data: seasons,
+    loading: seasonsLoading,
+    error: seasonsError,
+  } = useFootballPlayerSeasons(playerId, "NFL");
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -104,13 +110,6 @@ export default function NFLPlayerDetailScreen() {
         isCollegePlayer={false}
       />
 
-      <SeasonStatCard
-        playerId={player.player_id}
-        teamColor={teamObj?.secondaryColor}
-        teamColorDark={teamObj?.secondaryColor}
-        league="NFL"
-      />
-
       <LatestGame
         game={lastGame}
         loading={lastGameLoading}
@@ -118,7 +117,12 @@ export default function NFLPlayerDetailScreen() {
         league="NFL"
       />
 
-      <PlayerStatTable playerId={player.player_id} />
+      <PlayerStatTable
+        data={seasons || []}
+        loading={seasonsLoading}
+        error={seasonsError}
+        position={player.position}
+      />
     </ScrollView>
   );
 }

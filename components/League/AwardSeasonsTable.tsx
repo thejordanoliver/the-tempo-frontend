@@ -1,4 +1,4 @@
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { useRouter } from "expo-router";
 import { AwardCategory, League, useAwardSeasons } from "hooks/useAwardSeasons";
 import { useCallback, useEffect, useMemo, useState } from "react";

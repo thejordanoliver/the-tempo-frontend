@@ -1,5 +1,5 @@
 // components/NewsArticleSkeleton.tsx
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, useColorScheme, View } from "react-native";
 export default function NewsArticleSkeleton() {
@@ -43,7 +43,7 @@ export default function NewsArticleSkeleton() {
   );
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* Title placeholders */}
       <PulseBlock style={styles.title} />
       <PulseBlock style={styles.titleRowTwo} />
@@ -63,6 +63,7 @@ export default function NewsArticleSkeleton() {
 }
 
 const styles = StyleSheet.create({
+  container: { paddingHorizontal: 12 },
   block: {
     borderRadius: 8,
     marginBottom: 12,

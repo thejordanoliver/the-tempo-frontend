@@ -3,9 +3,9 @@ import ChatInputBar from "components/Sports/NBA/GameDetails/ChatInputBar";
 import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
 import { NotificationProvider } from "contexts/NotificationContext";
 import { PreferencesProvider } from "contexts/PreferencesContext";
-import { useChatStore } from "store/chatStore";
 import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
+import { useChatStore } from "store/chatStore";
 
 import {
   Oswald_200ExtraLight,
@@ -23,7 +23,7 @@ import {
   DefaultTheme as NavigationLightTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";

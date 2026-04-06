@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
 
@@ -18,7 +18,7 @@ type Props = {
   awayCode: string | undefined;
   isDark: boolean;
   loading?: boolean;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL";
+  league?: "NBA" | "WNBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL";
 };
 
 export default function LineScore({

@@ -1,10 +1,7 @@
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
-import { getTeamInfo } from "constants/teams";
+import { useEffect, useRef, useState } from "react";
 import { Game } from "types/types";
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL;
+import { apiClient } from "utils/apiClient";
 
 export function useSeasonGames(season: string) {
   const [games, setGames] = useState<Game[]>([]);
@@ -15,8 +12,8 @@ export function useSeasonGames(season: string) {
 
   const normalizeGames = (rawGames: any[]): Game[] => {
     return rawGames.map((game) => {
-      const home = getTeamInfo(game.teams?.home.id);
-      const away = getTeamInfo(game.teams?.visitors.id);
+      const home = game.teams?.home;
+      const away = game.teams?.visitors;
 
       const rawDate = game.date?.start ?? game.date;
       const date = dayjs(rawDate);
@@ -32,6 +29,25 @@ export function useSeasonGames(season: string) {
     });
   };
 
+  // New helper: sort so "In Play" first, then Scheduled, then Final
+  const sortGamesByLive = (gamesArray: Game[]) => {
+    return [...gamesArray].sort((a, b) => {
+      const statusOrder: Record<string, number> = {
+        "In Play": 0,
+        Scheduled: 1,
+        Final: 2,
+      };
+
+      const aStatus = statusOrder[a.status?.long] ?? 3;
+      const bStatus = statusOrder[b.status?.long] ?? 3;
+
+      if (aStatus !== bStatus) return aStatus - bStatus;
+
+      // If same status, sort by date ascending
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
+  };
+
   const refreshGames = async () => {
     try {
       setLoading(true);
@@ -42,13 +58,16 @@ export function useSeasonGames(season: string) {
         return;
       }
 
-      const res = await axios.get(`${API_BASE}/api/games/nba/season/${season}`);
+      const res = await apiClient.get(`api/games/nba/season/${season}`);
       const seasonGames = res.data?.games ?? [];
 
       const normalized = normalizeGames(seasonGames);
 
-      cacheRef.current.set(season, normalized);
-      setGames(normalized);
+      // Sort live games first
+      const sorted = sortGamesByLive(normalized);
+
+      cacheRef.current.set(season, sorted);
+      setGames(sorted);
     } catch (err: any) {
       console.error("[useSeasonGames] error:", err);
       const message = err?.message || "Failed to load season games";

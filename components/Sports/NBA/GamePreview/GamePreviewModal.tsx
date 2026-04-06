@@ -1,6 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getTeamInfo, getTeamLogo, neutralVenues } from "constants/teams";
+import { neutralVenues } from "constants/neutralVenues";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -60,8 +61,8 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   if (!game) return null;
 
   // --- Fetch playoff info ---
-  const home = getTeamInfo(game.home?.id);
-  const away = getTeamInfo(game.away?.id);
+  const home = getNBATeam(game.home?.id);
+  const away = getNBATeam(game.away?.id);
 
   const homeId = Number(home?.id) || 0;
   const awayId = Number(away?.id) || 0;

@@ -1,5 +1,5 @@
 // components/Roster.tsx
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import React from "react";
 import { RefreshControl, ScrollView, Text, useColorScheme } from "react-native";

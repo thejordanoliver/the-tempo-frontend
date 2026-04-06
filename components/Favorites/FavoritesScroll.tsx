@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getMLBTeamLogo, mlbTeams } from "constants/teamsMLB";
 import { getNHLTeamLogo, nhlTeams } from "constants/teamsNHL";
 import * as Haptics from "expo-haptics";

@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
-// --- Team Rank type ---
+/* ----------------------------- Types ----------------------------- */
+
 export type CFBTeamRank = {
   current: number;
   previous: number;
@@ -32,7 +34,6 @@ export type CFBTeamRank = {
   lastUpdated: string;
 };
 
-// --- Poll type containing multiple team ranks ---
 export type CFBRankPoll = {
   type: "ap" | "coaches" | "cfp";
   shortName: string;
@@ -40,16 +41,20 @@ export type CFBRankPoll = {
   droppedOut: CFBTeamRank[];
 };
 
-import { BASE_URL } from "utils/apiClient";
+/* ----------------------------- Config ----------------------------- */
+
 const CACHE_KEY = "cfb_rankings_cache_v1";
 const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+
+/* ----------------------------- Hook ----------------------------- */
 
 export const useCFBRankings = () => {
   const [rankings, setRankings] = useState<CFBRankPoll[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Cache helpers ---
+  /* ---------------- Cache Helpers ---------------- */
+
   const saveCache = async (data: CFBRankPoll[]) => {
     try {
       await AsyncStorage.setItem(
@@ -69,17 +74,18 @@ export const useCFBRankings = () => {
       const { timestamp, data } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_TTL) {
         return data;
-      } else {
-        console.log("⚠️ Cache expired — will refetch");
-        return null;
       }
+
+      console.log("⚠️ Cache expired — will refetch");
+      return null;
     } catch (err) {
       console.warn("⚠️ Failed to read CFB cache:", err);
       return null;
     }
   };
 
-  // --- Unified parser for any backend shape ---
+  /* ---------------- Normalize ---------------- */
+
   const normalizePoll = (raw: any, type: CFBRankPoll["type"]): CFBRankPoll => {
     if (!raw) {
       return {
@@ -88,14 +94,15 @@ export const useCFBRankings = () => {
           type === "ap"
             ? "AP Poll"
             : type === "coaches"
-              ? "Coaches Poll"
-              : "CFP Rankings",
+            ? "Coaches Poll"
+            : "CFP Rankings",
         ranks: [],
         droppedOut: [],
       };
     }
 
     const nested = raw.polls?.[0] || {};
+
     return {
       type,
       shortName:
@@ -104,32 +111,30 @@ export const useCFBRankings = () => {
         (type === "ap"
           ? "AP Poll"
           : type === "coaches"
-            ? "Coaches Poll"
-            : "CFP Rankings"),
+          ? "Coaches Poll"
+          : "CFP Rankings"),
       ranks:
         (Array.isArray(raw.ranks)
           ? raw.ranks
           : Array.isArray(nested.ranks)
-            ? nested.ranks
-            : []) || [],
+          ? nested.ranks
+          : []) || [],
       droppedOut:
         (Array.isArray(raw.droppedOut)
           ? raw.droppedOut
           : Array.isArray(nested.droppedOut)
-            ? nested.droppedOut
-            : []) || [],
+          ? nested.droppedOut
+          : []) || [],
     };
   };
 
-  // --- Fetch and parse latest data ---
+  /* ---------------- Fetch Latest ---------------- */
+
   const fetchLatest = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/cfb-rankings`);
-      if (!res.ok)
-        throw new Error(`HTTP ${res.status}: Failed to fetch rankings`);
+      const res = await apiClient.get("/api/standings/cfb/rankings");
 
-      const data = await res.json();
-      const raw = data.rankings || {};
+      const raw = res.data.rankings || {};
 
       const apData = raw.ap || raw.associatedPress || raw.apTop25;
       const coachesData = raw.coaches || raw.coachesPoll;
@@ -149,14 +154,14 @@ export const useCFBRankings = () => {
     }
   };
 
-  // --- Silent background refresh ---
+  /* ---------------- Background Refresh ---------------- */
+
   const fetchLatestInBackground = async () => {
     try {
-      const res = await fetch(`${BASE_URL}/api/cfb-rankings`);
-      if (!res.ok) return;
+      const res = await apiClient.get("/api/cfb-rankings");
 
-      const data = await res.json();
-      const raw = data.rankings || {};
+      const raw = res.data.rankings || {};
+
       const apData = raw.ap || raw.associatedPress || raw.apTop25;
       const coachesData = raw.coaches || raw.coachesPoll;
       const cfpData = raw.cfp || raw.playoff || raw.cfpRankings;
@@ -174,18 +179,24 @@ export const useCFBRankings = () => {
     }
   };
 
+  /* ---------------- Main Fetch ---------------- */
+
   const fetchRankings = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       const cached = await loadCache();
+
       if (cached) {
         setRankings(cached);
         setLoading(false);
+
+        // 🔥 refresh silently
         fetchLatestInBackground();
         return;
       }
+
       await fetchLatest();
     } catch (err: any) {
       console.error("❌ useCFBRankings error:", err);
@@ -199,5 +210,10 @@ export const useCFBRankings = () => {
     fetchRankings();
   }, [fetchRankings]);
 
-  return { rankings, loading, error, refresh: fetchLatest };
+  return {
+    rankings,
+    loading,
+    error,
+    refresh: fetchLatest,
+  };
 };

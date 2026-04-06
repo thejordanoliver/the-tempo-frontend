@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -14,8 +14,11 @@ export default function StarRating({ recruit, isDark }: Props) {
 
   return (
     <View style={styles.container}>
-      <CenteredHeader>Player Rating</CenteredHeader>
+      <CenteredHeader isDark={isDark}>Player Rating</CenteredHeader>
       <View style={styles.card}>
+        <View style={styles.scoreRow}>
+          <Text style={styles.score}>{recruit.score}</Text>
+        </View>
         <View style={styles.starRow}>
           {[...Array(5)].map((_, i) => {
             const filled = i < recruit.stars;
@@ -37,9 +40,6 @@ export default function StarRating({ recruit, isDark }: Props) {
               />
             );
           })}
-        </View>
-        <View style={styles.scoreRow}>
-          <Text style={styles.score}>{recruit.score}</Text>
         </View>
       </View>
     </View>
@@ -74,7 +74,7 @@ const starRatingStyles = (isDark: boolean) =>
 
     score: {
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

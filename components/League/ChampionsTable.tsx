@@ -1,7 +1,7 @@
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
-import {  getCFBTeamLogo } from "constants/teamsCFB";
+import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { useChampions } from "hooks/useChampions";

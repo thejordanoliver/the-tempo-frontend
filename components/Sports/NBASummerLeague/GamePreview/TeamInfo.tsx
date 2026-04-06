@@ -1,8 +1,8 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
-import { Image, StyleSheet, Text, View } from "react-native";
-import { Team } from "types/types";
+import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
+import { Team } from "types/types";
 type TeamInfoProps = {
   team?: Team;
   teamName: string;
@@ -166,4 +166,3 @@ export default function TeamInfo({
     </View>
   );
 }
-

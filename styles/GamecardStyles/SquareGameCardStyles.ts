@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const SquareGameCardStyles = (
@@ -44,7 +44,6 @@ export const SquareGameCardStyles = (
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
-
     },
     logo: { width: 20, height: 20, resizeMode: "contain" },
     footballPossesion: {
@@ -201,8 +200,6 @@ export const SquareGameCardStyles = (
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       overflow: "hidden",
     },
-
-  
 
     fighterFlag: {
       width: 20,

@@ -1,8 +1,7 @@
+import { Fonts } from "constants/styles";
 import React from "react";
-import { View, Text, TextInput, StyleSheet, useColorScheme } from "react-native";
-import { Colors, Fonts } from "constants/Styles";
+import { StyleSheet, TextInput, useColorScheme, View } from "react-native";
 type LabeledInputProps = {
-
   value: string;
   onChangeText: (text: string) => void;
   multiline?: boolean;
@@ -27,7 +26,6 @@ export default function TextInputComponent({
 
   return (
     <View style={[styles.container, containerStyle]}>
-    
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -50,9 +48,7 @@ export default function TextInputComponent({
 }
 
 const styles = StyleSheet.create({
-  container: {
-  
-  },
+  container: {},
 
   input: {
     padding: 20,

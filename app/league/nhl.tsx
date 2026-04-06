@@ -8,14 +8,16 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import NewsList from "components/News/NewsList";
 import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getNHLTeam } from "constants/teamsNHL";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -48,6 +50,11 @@ export default function MLBLeagueScreen() {
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NHL");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "NHL");
 
   // Load favorites
   useFocusEffect(
@@ -205,16 +212,28 @@ export default function MLBLeagueScreen() {
             </>
           )}
 
-          {selectedTab === "news" && (
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
             <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                 />
               }
-            ></ScrollView>
-          )}
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
+          </View>
 
           {selectedTab === "standings" && (
             <StandingsList

@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 
 // utils/color.ts
 export function getContrastingTextColor(
@@ -7,7 +7,7 @@ export function getContrastingTextColor(
     lightText?: string;
     darkText?: string;
     threshold?: number;
-  }
+  },
 ): string {
   const {
     lightText = Colors.white,
@@ -47,9 +47,7 @@ export function getContrastingTextColor(
   };
 
   const luminance =
-    0.2126 * toLinear(r) +
-    0.7152 * toLinear(g) +
-    0.0722 * toLinear(b);
+    0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
 
   const contrastWithWhite = 1.05 / (luminance + 0.05);
   const contrastWithBlack = (luminance + 0.05) / 0.05;

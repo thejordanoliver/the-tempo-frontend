@@ -1,10 +1,12 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import {
+  getNBATeam,
   getTeamByESPNId as getNBATeamByESPNId,
   getTeamLogo,
 } from "constants/teams";
 import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { router } from "expo-router";
 import { Athlete } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -45,7 +47,7 @@ type Props = {
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
-  league: "NBA" | "CBB" | "WCBB" | "SL";
+  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
 };
 
 export default function BoxScore({
@@ -68,8 +70,8 @@ export default function BoxScore({
     (index: number) =>
       index % 2 === 1
         ? isDark
-          ? Colors.dark.itemBackground
-          : Colors.light.itemBackground
+          ? Colors.transparentDarkGray
+          : Colors.transparentLightGray
         : "transparent",
     [isDark],
   );
@@ -111,11 +113,15 @@ export default function BoxScore({
   const homeTeam =
     league === "NBA" || league === "SL"
       ? getNBATeamByESPNId(homeTeamId)
-      : getTeamByESPNId(homeTeamId);
+      : league === "WNBA"
+        ? getWNBATeamByESPNId(homeTeamId)
+        : getTeamByESPNId(homeTeamId);
   const awayTeam =
     league === "NBA" || league === "SL"
       ? getNBATeamByESPNId(awayTeamId)
-      : getTeamByESPNId(awayTeamId);
+      : league === "WNBA"
+        ? getWNBATeamByESPNId(awayTeamId)
+        : getTeamByESPNId(awayTeamId);
 
   const homeCode = homeTeam?.code ?? "home";
   const awayCode = awayTeam?.code ?? "away";
@@ -125,14 +131,18 @@ export default function BoxScore({
       ? getCBBTeamLogo(homeTeam?.id, isDark, league === "WCBB")
       : league === "NBA" || league === "SL"
         ? getTeamLogo(homeTeam?.id, isDark)
-        : null;
+        : league === "WNBA"
+          ? getWNBATeamLogo(homeTeam?.id, isDark)
+          : null;
 
   const awayLogo =
     league === "CBB" || league === "WCBB"
       ? getCBBTeamLogo(awayTeam?.id, isDark, league === "WCBB")
       : league === "NBA" || league === "SL"
         ? getTeamLogo(awayTeam?.id, isDark)
-        : null;
+        : league === "WNBA"
+          ? getWNBATeamLogo(awayTeam?.id, isDark)
+          : null;
 
   // Initialize animated heights
   [homeCode, awayCode].forEach((code) => {
@@ -204,19 +214,20 @@ export default function BoxScore({
               }}
             >
               {visiblePlayers.map((p: Athlete, index) => {
-                const espnTeamId = p.athlete.teamId;
+                const teamId = p.athlete.teamId;
                 const team =
                   league === "NBA" || league === "SL"
-                    ? getNBATeamByESPNId(espnTeamId)
-                    : getTeamByESPNId(espnTeamId);
+                    ? getNBATeam(teamId)
+                    : getTeamByESPNId(teamId);
                 const id =
                   league === "NBA"
                     ? p.athlete.playerId
                     : (p.athlete.id ?? `idx-${index}`);
-                const leagueRoute =
-                  league === "CBB" ? "cbb" : league === "WCBB" ? "cbb" : "";
 
-                const teamId = team?.id;
+                const isNBA = league === "NBA" || league === "SL";
+
+                const playerId = isNBA ? p.athlete.playerId : p.athlete.id;
+
                 return (
                   <View
                     key={`${teamCode}-${id}`} // ✅ FIX key here too
@@ -227,11 +238,29 @@ export default function BoxScore({
                   >
                     <TouchableOpacity
                       key={p.athlete.id}
-                      onPress={() =>
-                        router.push(
-                          `/player/${leagueRoute}/${id}?teamId=${teamId}`,
-                        )
-                      }
+                      onPress={() => {
+                        // Determine league route only if not NBA
+                        const leagueRoute = !isNBA
+                          ? league === "CBB" || league === "WCBB"
+                            ? "cbb"
+                            : undefined
+                          : undefined;
+
+                        if (playerId && teamId) {
+                          router.push({
+                            pathname: isNBA
+                              ? `/player/[id]`
+                              : leagueRoute
+                                ? `/player/${leagueRoute}/[id]`
+                                : `/player/[id]`, // fallback
+                            params: {
+                              id: playerId,
+                              teamId: teamId,
+                              league,
+                            },
+                          });
+                        }
+                      }}
                     >
                       <Text style={styles.cellName}>{p.athlete.shortName}</Text>
                     </TouchableOpacity>
@@ -276,7 +305,6 @@ export default function BoxScore({
                         style={[
                           styles.didNotPlayerRow,
                           {
-                            backgroundColor: getRowBackground(index),
                             minWidth: labels.length * COLUMN_WIDTH,
                           },
                         ]}

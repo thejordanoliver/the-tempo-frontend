@@ -1,17 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { teams as nbaTeams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import type { LeagueType, Team } from "types/types";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export type TeamWithLeague = Team & { league: LeagueType };
 
@@ -45,6 +45,7 @@ export function useFavoriteTeams() {
   const allTeams = useMemo(
     () => [
       ...nbaTeams,
+      ...wnbaTeams,
       ...nflTeams,
       ...cfbTeams,
       ...cbbTeams,
@@ -149,9 +150,9 @@ export function useFavoriteTeams() {
     );
 
     try {
-      const url = `${BASE_URL}/api/users/id/${userId}/favorites`;
+      const url = `/api/users/id/${userId}/favorites`;
 
-      const res = await axios.patch(url, {
+      const res = await apiClient.patch(url, {
         favorites: normalizedFavorites,
       });
 
@@ -227,7 +228,7 @@ export function useFavoriteTeams() {
 
       if (userId) {
         try {
-          await axios.patch(`${BASE_URL}/api/users/id/${userId}/favorites`, {
+          await apiClient.patch(`/api/users/id/${userId}/favorites`, {
             favorites: updatedFavorites,
           });
         } catch (err: any) {

@@ -1,6 +1,6 @@
 // components/WeekSelector.tsx
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScrollView,

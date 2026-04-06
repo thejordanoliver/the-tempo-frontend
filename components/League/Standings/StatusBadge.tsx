@@ -1,11 +1,11 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Text, View, useColorScheme } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 /**
  * Only leagues that use playoff status codes
  */
-type PlayoffLeague = "MLB" | "NFL" | "NBA" | "NHL";
+type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
 
 type StatusConfig = {
   colors: Record<string, string>;
@@ -47,6 +47,26 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
   },
 
   NBA: {
+    colors: {
+      "*": "#4caf50", // Clinched Conference
+      z: "#4caf50", // Clinched Division
+      y: "#ff9800", // Clinched Division
+      x: "#2196f3", // Clinched Playoff Berth
+      xp: "#2196f3", // Clinched Playoff - Won Play-In
+      pb: "#ff9800", // Clinched Play-in Berth
+      e: "#f44336", // Eliminated From Playoff
+    },
+    labels: {
+      "*": "Clinched Best League Record",
+      z: "Clinched Conference",
+      y: "Clinched Division",
+      x: "Clinched playoff Berth",
+      xp: "Clinched Playoff - Won Play-In",
+      pb: "Clinched Play-in Berth",
+      e: "Eliminated From Playoff",
+    },
+  },
+  WNBA: {
     colors: {
       "*": "#4caf50", // Clinched Conference
       z: "#4caf50", // Clinched Division

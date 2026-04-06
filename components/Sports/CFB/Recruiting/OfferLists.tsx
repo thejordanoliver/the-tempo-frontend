@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts, globalStyles } from "constants/Styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
 import { useEffect, useMemo, useState } from "react";
 import {

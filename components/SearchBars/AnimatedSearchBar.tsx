@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,

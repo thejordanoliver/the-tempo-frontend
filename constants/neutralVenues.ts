@@ -1,5 +1,37 @@
 import { Venue } from "types/types";
 
+const normalize = (s?: unknown) => {
+  if (typeof s !== "string") return "";
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+};
+export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
+  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
+  if (!isNeutralSite) return null;
+
+  if (!venueName) return null;
+
+  const normalizedInput = normalize(venueName);
+
+  // 1. Exact match (fast path)
+  if (neutralVenues[venueName]) {
+    return neutralVenues[venueName];
+  }
+
+  // 2. Fuzzy match
+  for (const key of Object.keys(neutralVenues)) {
+    const normalizedKey = normalize(key);
+
+    if (
+      normalizedInput.includes(normalizedKey) ||
+      normalizedKey.includes(normalizedInput)
+    ) {
+      return neutralVenues[key];
+    }
+  }
+
+  return null;
+}
+
 export const neutralVenues: Record<string, Venue> = {
   "Etihad Arena": {
     name: "Etihad Arena",
@@ -311,6 +343,16 @@ export const neutralVenues: Record<string, Venue> = {
     venueCapacity: "17,608",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/kings.jpg",
+  },
+  "Meta Apex": {
+    name: "Meta Apex",
+    city: "Las Vegas",
+    address: "3200 S Las Vegas Blvd, Las Vegas, NV 89109",
+    latitude: 36.1028,
+    longitude: -115.1713,
+    venueCapacity: "20,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680000/arenas/mma/meta-apex.jpg",
   },
 };
 

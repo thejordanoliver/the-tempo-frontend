@@ -1,5 +1,6 @@
 // hooks/CBBHooks/useCBBConferenceStandings.ts
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export type CBBTeamStanding = {
   teamId: string;
@@ -19,8 +20,6 @@ export type CBBTeamStanding = {
   pointsAgainst?: number | null;
 };
 
-import { BASE_URL } from "utils/apiClient";
-
 interface UseCBBConferenceStandingsOptions {
   women?: boolean;
 }
@@ -36,17 +35,22 @@ export function useCBBConferenceStandings({
     const fetchStandings = async () => {
       try {
         setLoading(true);
-        const url = `${BASE_URL}/api/cbb-standings${women ? "?women=true" : ""}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
+        setError(null);
+
+        const res = await apiClient.get(`/api/standings/cbb/conference`, {
+          params: { women: women || undefined },
+        });
+
+        const json = res.data;
 
         const parsed: CBBTeamStanding[] = [];
 
         for (const conf of json.conferences || []) {
           const confName = conf.name || "Unknown";
+
           for (const div of conf.divisions || []) {
             const divName = div.name || null;
+
             for (const team of div.teams || []) {
               parsed.push({
                 teamId: String(team.teamId),
@@ -72,7 +76,7 @@ export function useCBBConferenceStandings({
         setStandings(parsed);
       } catch (err: any) {
         console.error("Error fetching standings:", err);
-        setError("Failed to load standings");
+        setError(err?.message || "Failed to load standings");
       } finally {
         setLoading(false);
       }

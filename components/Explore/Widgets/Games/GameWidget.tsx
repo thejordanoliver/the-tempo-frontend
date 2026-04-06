@@ -1,5 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { globalStyles } from "constants/Styles";
+import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";

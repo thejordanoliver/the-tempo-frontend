@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import AlertModal from "components/Forum/AlertModal";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { AlertConfig } from "hooks/ForumHooks/useCreatePost";

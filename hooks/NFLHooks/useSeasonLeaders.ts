@@ -1,14 +1,13 @@
-import axios from "axios";
+import { MonthNumbers } from "node_modules/@types/luxon";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL;
+import { apiClient } from "utils/apiClient";
 
 /* ----------------------------- Types ----------------------------- */
 
 export interface Leader {
+  playerId: MonthNumbers
   value: number;
   rank: number;
-  playerId?: number; // ✅ LOCAL DB ID
   displayValue: string;
   athleteId: string | number;
   name: string;
@@ -19,9 +18,7 @@ export interface Leader {
   teamName?: string;
   teamAbbrev?: string;
   teamLogo?: string;
-
-  /** 🔥 NFL only */
-  id?: number;
+  espnId?: string | number;
 }
 
 export interface LeaderCategory {
@@ -37,13 +34,6 @@ interface SeasonLeaderResult {
   error: string | null;
   refresh: () => void;
 }
-
-/* ----------------------- Helpers ------------------------ */
-
-const matchRosterPlayer = (roster: any[], athleteId: string | number) => {
-  const id = Number(athleteId);
-  return roster.find((p) => Number(p.espn_id) === id) ?? null;
-};
 
 /* ----------------------------- Hook ------------------------------ */
 
@@ -72,74 +62,16 @@ export function useSeasonLeaders(
       try {
         const leaguePath = league.toLowerCase();
 
-        /* ✅ CORRECT ENDPOINT */
-        const leadersRes = await axios.get(
-          `${API_BASE}/api/season-leaders/${leaguePath}/leaders`,
+        const res = await apiClient.get(
+          `api/season-leaders/${leaguePath}/leaders`,
           { params: { season } },
         );
 
-        const rawCategories: LeaderCategory[] =
-          leadersRes.data.categories ?? [];
+        const rawCategories: LeaderCategory[] = res.data.categories ?? [];
 
-        /* 🚫 NON-NFL: return immediately */
-        if (league !== "NFL") {
-          cacheRef.current[cacheKey] = rawCategories;
-          setCategories(rawCategories);
-          return;
-        }
-
-        /* ✅ NFL ONLY: roster enrichment */
-        const teamIds = Array.from(
-          new Set(
-            rawCategories.flatMap((cat) =>
-              cat.leaders
-                .map((l) => l.teamId)
-                .filter(Boolean)
-                .map(String),
-            ),
-          ),
-        );
-
-        const rosterResponses = await Promise.all(
-          teamIds.map(async (teamId) => {
-            const res = await axios.get(
-              `${API_BASE}/api/nfl/players/team/${teamId}`,
-            );
-            return {
-              teamId,
-              players: res.data.players ?? [],
-            };
-          }),
-        );
-
-        const rosterMap: Record<string, any[]> = Object.fromEntries(
-          rosterResponses.map((r) => [r.teamId, r.players]),
-        );
-
-        const enrichedCategories = rawCategories.map((cat) => ({
-          ...cat,
-          leaders: cat.leaders.map((leader) => {
-            const roster =
-              leader.teamId != null ? rosterMap[String(leader.teamId)] : null;
-
-            if (!roster) return leader;
-
-            const matched = matchRosterPlayer(roster, leader.athleteId);
-
-            if (!matched) return leader;
-
-            return {
-              ...leader,
-              playerId: matched.id,
-              name: matched.name,
-              position: matched.position ?? leader.position,
-              headshot: matched.avatarUrl ?? leader.headshot,
-            };
-          }),
-        }));
-
-        cacheRef.current[cacheKey] = enrichedCategories;
-        setCategories(enrichedCategories);
+        // ✅ No enrichment — just cache + return
+        cacheRef.current[cacheKey] = rawCategories;
+        setCategories(rawCategories);
       } catch (err: any) {
         console.error(`❌ [${league}] Season Leaders Error:`, err);
         setError(err.message || "Failed to fetch leaders");

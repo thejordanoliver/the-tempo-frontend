@@ -1,5 +1,5 @@
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import {
   getTeamByESPNId as getNFLTeamByESPNId,

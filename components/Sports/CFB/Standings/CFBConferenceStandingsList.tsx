@@ -1,5 +1,5 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import {
   conferenceListMap,
   getCFBTeamLogo,

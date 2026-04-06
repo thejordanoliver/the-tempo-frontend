@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Fonts, Colors } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
 import React, { useRef, useState } from "react";
 import {
@@ -24,7 +24,7 @@ type DropdownProps = {
   isDark: boolean;
   width?: number;
   style?: ViewStyle;
-  absolute?: boolean;   // ✅ NEW
+  absolute?: boolean; // ✅ NEW
 };
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -34,7 +34,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   isDark,
   width = 180,
   style,
-  absolute = false,  // default off
+  absolute = false, // default off
 }) => {
   const [visible, setVisible] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
@@ -80,7 +80,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               zIndex: 999,
               alignItems: "flex-end",
             }
-          : { alignItems: "flex-end" },   // 🔥 Normal flow
+          : { alignItems: "flex-end" }, // 🔥 Normal flow
         style,
       ]}
     >
@@ -99,7 +99,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       >
         <Text
           style={{
-            color: isDark ? Colors.white :  Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontFamily: Fonts.OSMEDIUM,
             marginRight: 8,
           }}
@@ -167,8 +167,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
                           ? "#0af"
                           : "#06f"
                         : isDark
-                        ? Colors.white
-                        : Colors.black,
+                          ? Colors.white
+                          : Colors.black,
                   }}
                 >
                   {opt.label}

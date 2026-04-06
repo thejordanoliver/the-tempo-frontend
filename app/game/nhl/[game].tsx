@@ -15,6 +15,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
+import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
@@ -90,6 +91,11 @@ export default function GameDetailsScreen() {
         league: "NHL",
       }),
     [venue, homeTeam, neutralSite],
+  );
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    resolvedVenue.latitude,
+    resolvedVenue.longitude,
+    gameDateStr,
   );
 
   useLayoutEffect(() => {
@@ -257,8 +263,9 @@ export default function GameDetailsScreen() {
                 address={resolvedVenue.address}
                 venueCapacity={String(resolvedVenue.capacity ?? "")}
                 venueAttendance={undefined}
-                loading={false}
-                error={null}
+                loading={weatherLoading}
+                weather={weather}
+                error={weatherError}
                 isDark={isDark}
               />
             </>

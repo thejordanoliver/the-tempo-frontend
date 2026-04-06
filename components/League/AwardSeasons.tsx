@@ -1,6 +1,6 @@
 import { Dropdown } from "components/Dropdown";
 import ChampionsTable from "components/League/ChampionsTable";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";

@@ -12,8 +12,9 @@ import WCBBLogo from "assets/College_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
+import WNBALogo from "assets/Logos/WNBA/WNBA.png";
 import MMALogo from "assets/MMA/MMA_Logos/MMA.png";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
@@ -40,6 +41,7 @@ type SportsListModalProps = {
 
 const leagues: LeagueType[] = [
   "NBA",
+  "WNBA",
   "NFL",
   "CFB",
   "CBB",
@@ -50,6 +52,7 @@ const leagues: LeagueType[] = [
 ];
 const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   NBA: { label: "NBA", logo: NBALogo },
+  WNBA: { label: "WNBA", logo: WNBALogo },
   NFL: { label: "NFL", logo: NFLLogo },
   CFB: { label: "College Football", logo: CFBLogo },
   CBB: { label: "Men's College Basketball", logo: CBBLogo },
@@ -78,6 +81,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
     const styles = getStyles(isDark);
     type LeagueRoute =
       | "/league/nba"
+      | "/league/wnba"
       | "/league/nfl"
       | "/league/cfb"
       | "/league/cbb"
@@ -93,19 +97,21 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       const route: LeagueRoute =
         league === "NBA"
           ? "/league/nba"
-          : league === "NFL"
-            ? "/league/nfl"
-            : league === "CFB"
-              ? "/league/cfb"
-              : league === "CBB"
-                ? "/league/cbb"
-                : league === "WCBB"
-                  ? "/league/wcbb"
-                  : league === "NHL"
-                    ? "/league/nhl"
-                    : league === "MMA"
-                      ? "/league/mma"
-                      : "/league/mlb";
+          : league === "WNBA"
+            ? "/league/wnba"
+            : league === "NFL"
+              ? "/league/nfl"
+              : league === "CFB"
+                ? "/league/cfb"
+                : league === "CBB"
+                  ? "/league/cbb"
+                  : league === "WCBB"
+                    ? "/league/wcbb"
+                    : league === "NHL"
+                      ? "/league/nhl"
+                      : league === "MMA"
+                        ? "/league/mma"
+                        : "/league/mlb";
       router.push(route);
       onSelect(league);
     };

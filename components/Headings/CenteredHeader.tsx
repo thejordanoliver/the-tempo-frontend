@@ -1,5 +1,5 @@
 // components/Heading.tsx
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React from "react";
 import { StyleSheet, Text, TextStyle } from "react-native";
 
@@ -23,7 +23,7 @@ const headerStyles = (isDark: boolean) =>
       paddingBottom: 4,
       marginBottom: 12,
       borderBottomWidth: 1,
-      textAlign:"center",
+      textAlign: "center",
       color: isDark ? Colors.dark.white : Colors.light.black,
       borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
     },

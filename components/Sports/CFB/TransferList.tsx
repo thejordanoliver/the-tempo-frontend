@@ -1,5 +1,5 @@
 import { Dropdown } from "components/Dropdown";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { useCFBPortalPlayers } from "hooks/CFBHooks/useCFBPortalPlayers";
 import React, { useEffect, useMemo, useRef } from "react";
 import { FlatList, StyleSheet, useColorScheme, View } from "react-native";

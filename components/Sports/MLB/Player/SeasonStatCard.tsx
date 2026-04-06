@@ -1,5 +1,5 @@
 import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useLocalSearchParams } from "expo-router";
 import { useCBBPlayerSeasons } from "hooks/CBBHooks/useCBBPlayerSeasons";
 import { Text, useColorScheme, View } from "react-native";

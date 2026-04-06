@@ -1,21 +1,19 @@
 // app/player/cfb/[id].tsx
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import PlayerStatTable from "components/Sports/CFB/Player/PlayerStatTable";
 import LatestGame from "components/Sports/NFL/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
-import SeasonStatCard from "components/Sports/NFL/Player/SeasonStatCard";
-import { globalStyles } from "constants/Styles";
+import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
+import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useFootballPlayerStats } from "hooks/CFBHooks/useFootballPlayerStats";
+import { useFootballPlayerSeasons } from "hooks/CFBHooks/useFootballPlayerSeasons";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 import { getFootballSeasonYear } from "utils/dateUtils";
-
 export default function CFBPlayerDetailScreen() {
   const styles = playerScreenStyles;
   const navigation = useNavigation();
@@ -46,7 +44,7 @@ export default function CFBPlayerDetailScreen() {
     data: seasons,
     loading: seasonsLoading,
     error: seasonsError,
-  } = useFootballPlayerStats(playerId);
+  } = useFootballPlayerSeasons(playerId, "CFB");
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -95,13 +93,6 @@ export default function CFBPlayerDetailScreen() {
         isCollegePlayer
       />
 
-      <SeasonStatCard
-        playerId={player.player_id}
-        teamColor={teamObj?.secondaryColor}
-        teamColorDark={teamObj?.secondaryColor}
-        league="CFB"
-      />
-
       <LatestGame
         game={lastGame}
         loading={lastGameLoading}
@@ -109,7 +100,11 @@ export default function CFBPlayerDetailScreen() {
         league="CFB"
       />
 
-      <PlayerStatTable playerId={playerId} />
+      <PlayerStatTable
+        data={seasons || []}
+        loading={seasonsLoading}
+        error={seasonsError}
+      />
     </ScrollView>
   );
 }

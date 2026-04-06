@@ -37,6 +37,20 @@ export function getNBASeason(): string {
   return String(year - 1);
 }
 
+export function getWNBASeason(): string {
+  const today = dayjs();
+  const year = today.year();
+  const month = today.month() + 1; // 1–12
+
+  // WNBA season runs May–October, season year matches calendar year
+  if (month >= 5) {
+    return String(year);
+  }
+
+  // Jan–Apr belongs to previous season
+  return String(year - 1);
+}
+
 export function getCBBSeason(): string {
   const today = dayjs();
   const year = today.year();
@@ -192,21 +206,22 @@ export const scrollToMonth = (
   });
 };
 
-export const calculateAge = (date?: string | null) => {
-  if (!date) return null;
+/* ---------------- Helpers ---------------- */
+export const calculateAge = (birthDate?: string) => {
+  if (!birthDate) return null;
+  const d = new Date(birthDate);
+  if (isNaN(d.getTime())) return null;
 
-  const birthDate = new Date(date);
   const today = new Date();
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthDate.getDate())
-  ) {
-    age--;
-  }
-
+  let age = today.getFullYear() - d.getFullYear();
+  const m = today.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
   return age;
+};
+
+export const calculateExperience = (draftYear?: number | string) => {
+  if (!draftYear) return null;
+  const year = typeof draftYear === "string" ? Number(draftYear) : draftYear;
+  if (isNaN(year)) return null;
+  return new Date().getFullYear() - year;
 };

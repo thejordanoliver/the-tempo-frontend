@@ -1,6 +1,6 @@
 // components/Players/PlayerLeadersSlide.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useMemo } from "react";
 import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
 import Animated, { SlideInDown, SlideOutUp } from "react-native-reanimated";
@@ -24,7 +24,9 @@ export default function PlayerLeadersSlide({
   const styles = playersSlide(isDark);
   return (
     <View style={[styles.container, { height: slideHeight }]}>
-      <HeadingTwo isDark={isDark} style={styles.header}>{header}</HeadingTwo>
+      <HeadingTwo isDark={isDark} style={styles.header}>
+        {header}
+      </HeadingTwo>
 
       {/* This view clips rows without removing them */}
       <View style={{ height: listHeight, overflow: "hidden" }}>
@@ -37,7 +39,7 @@ export default function PlayerLeadersSlide({
             const distanceFromCutoff = index - (visibleCount - 1);
             const opacity = Math.max(
               0,
-              Math.min(1, 1 - distanceFromCutoff * 0.6)
+              Math.min(1, 1 - distanceFromCutoff * 0.6),
             );
             return (
               <Animated.View

@@ -4,61 +4,61 @@ import OfferList from "components/Sports/CFB/Recruiting/OfferLists";
 import PredictionRing from "components/Sports/CFB/Recruiting/PredictionRing";
 import RecruitHeader from "components/Sports/CFB/Recruiting/RecruitHeader";
 import StarRating from "components/Sports/CFB/Recruiting/StarRating";
-import { getCFBTeam } from "constants/teamsCFB";
+import { globalStyles } from "constants/styles";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFootballRecruit } from "hooks/CFBHooks/useFootballRecruit";
-import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme } from "react-native";
+import { ScrollView, Text, useColorScheme, View } from "react-native";
 
-export default function RecruitDetailScreen(props: FootballRecruit) {
+export default function RecruitDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
+  const global = globalStyles(isDark);
   /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
 
   /** FETCH DATA */
   const { data: player, loading, error } = useFootballRecruit(playerId);
-
-  // console.log(JSON.stringify(player, null, 2));
-  const team = getCFBTeam(player?.committed_team_id);
-  const predictedTeam = getCFBTeam(player?.predicted_team_id);
-  const isTeamAvailable = !!team;
-  const teamColor = team?.color;
-  const teamPredictedColor = isDark
-    ? team?.secondaryColor || predictedTeam?.secondaryColor
-    : team?.color || predictedTeam?.color;
-  const teamLogo = team?.logo;
-  const teamLogoLight = team?.logoLight;
+  const teamId = player?.committed_team_id;
+  const team = getCFBTeam(teamId);
+  const teamLogo = getCFBTeamLogo(teamId, isDark);
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
-    if (!player) return;
-
-    const team = getCFBTeam(player.committed_team_id);
-    const isTeamAvailable = !!team;
-
     navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          logo={
-            isTeamAvailable
-              ? team?.logoLight || team?.logo
-              : require("assets/College_Logos/NCAA.png")
-          }
-          teamColor={team?.color ?? "#1D428A"}
-          onBack={() => router.back()}
-          isTeamScreen={true}
-          isPlayerScreen
-        />
-      ),
-    });
-  }, [navigation, isDark, player?.committed_team_id]);
+      header: () => {
+        if (loading) return null;
 
-  if (loading) return <CustomActivityIndicator isDark={isDark} />;
-  if (!player) return null;
+        return (
+          <CustomHeaderTitle
+            logo={teamLogo}
+            teamColor={team?.color ?? "#1D428A"}
+            onBack={() => router.back()}
+            isTeamScreen={!!team}
+            teamCode={team?.code}
+            isPlayerScreen
+            league="CFB"
+          />
+        );
+      },
+    });
+  }, [navigation, player?.committed_team_id, isDark, loading]);
+
+  if (loading)
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator isDark={isDark} />
+      </View>
+    );
+  if (error || !player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
 
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>

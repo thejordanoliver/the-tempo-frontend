@@ -4,7 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import React, {
   forwardRef,

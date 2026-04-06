@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
@@ -37,31 +37,30 @@ export const FighterRow = ({
       });
   };
 
+  /* -----------------------------------------------------
+   * Styles
+   * --------------------------------------------------- */
+  const getScoreStyle = () => {
+    if (isWinner == false && isFinal) {
+      return { color: Colors.midTone, opacity: 0.5 };
+    }
 
-    /* -----------------------------------------------------
-     * Styles
-     * --------------------------------------------------- */
-    const getScoreStyle = () => {
-      if (isWinner == false && isFinal) {
-        return { color: Colors.midTone, opacity: 0.5 };
-      }
-  
-      if (inProgress) {
-        return { color: isDark ? Colors.white : Colors.black };
-      }
-  
-      if (isFinal) {
-        return {
-          color: isWinner
-            ? isDark
-              ? Colors.dark.white
-              : Colors.light.black
-            : Colors.midTone,
-        };
-      }
-  
-      return { color: Colors.white };
-    };
+    if (inProgress) {
+      return { color: isDark ? Colors.white : Colors.black };
+    }
+
+    if (isFinal) {
+      return {
+        color: isWinner
+          ? isDark
+            ? Colors.dark.white
+            : Colors.light.black
+          : Colors.midTone,
+      };
+    }
+
+    return { color: isDark ? Colors.white : Colors.black };
+  };
 
   // -----------------------------------------------------
   // RENDER
@@ -74,7 +73,7 @@ export const FighterRow = ({
           style={[
             styles.preGameRecord,
             [styles.preGameRecord, sizeStyles[size].preGameRecord],
-            getScoreStyle()
+            getScoreStyle(),
           ]}
         >
           {displayRecord}
@@ -103,7 +102,7 @@ export const FighterRow = ({
           style={[
             styles.preGameRecord,
             [styles.preGameRecord, sizeStyles[size].preGameRecord],
-            getScoreStyle()
+            getScoreStyle(),
           ]}
         >
           {displayRecord}

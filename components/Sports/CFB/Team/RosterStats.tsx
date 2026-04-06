@@ -1,7 +1,7 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import {
   StatCategory,
   useFootballRosterStats,
@@ -163,7 +163,7 @@ export const FootballRosterStats: React.FC<CFBRosterStatsProps> = ({
                       },
                     ]}
                   >
-                          <Text style={[styles.tableCell, styles.headerText]}>
+                    <Text style={[styles.tableCell, styles.headerText]}>
                       {stat.displayName}
                     </Text>
                     <Text style={[styles.tableCell, styles.statValue]}>

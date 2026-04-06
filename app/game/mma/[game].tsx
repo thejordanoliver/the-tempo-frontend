@@ -4,10 +4,12 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useScrollFade } from "hooks/useScrollFade";
+import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
@@ -62,13 +64,9 @@ export default function GameDetailsScreen() {
   const firstFighterLastName =
     parsedGame?.fighters?.first?.info?.last_name ?? "";
 
-    
   const secondFighterLastName =
     parsedGame?.fighters?.second?.info?.last_name ?? "";
   parsedGame?.fighters?.first?.logo ?? placeholderImage;
-
-  const homeLogo = parsedGame?.fighters.first.info.flag_url;
-  const awayLogo = parsedGame?.fighters.second.info.flag_url;
 
   const firstFighterEspnId = parsedGame?.fighters?.first?.info?.espn_id;
   const secondFighterEspnId = parsedGame?.fighters?.second?.info?.espn_id;
@@ -97,12 +95,10 @@ export default function GameDetailsScreen() {
           awayTeamId={secondFighterId}
           homeTeamCode={firstFighterLastName}
           awayTeamCode={secondFighterLastName}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          isNeutralSite
-          league={"MMA"}
           firstFighterId={firstFighterId}
           secondFighterId={secondFighterId}
+          isNeutralSite
+          league={"MMA"}
         />
       ),
     });
@@ -129,8 +125,23 @@ export default function GameDetailsScreen() {
   const period = details?.fight?.status.period ?? 0;
   const displayClock = details?.fight?.status.displayClock ?? "";
   const headline = details?.event?.shortName ?? "";
-  const address = `${details?.fight?.venue.address.address1} ${details?.fight?.venue.address.city}, ${details?.fight?.venue.address.state} ${details?.fight?.venue.address.country}`;
-  const venueName = details?.fight?.venue.fullName;
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, true);
+  const venueName = baseVenue?.fullName;
+  const venueAddress = neutralVenue?.address;
+  const venueCapacity = neutralVenue?.venueCapacity;
+  const venueImage = neutralVenue?.venueImage
+    ? neutralVenue?.venueImage
+    : null;
+  const venueLocation = neutralVenue?.city;
+  const venueLat = neutralVenue?.latitude ?? 0;
+  const venueLon = neutralVenue?.longitude ?? 0;
+  const { weather, weatherLoading, weatherError } = useWeatherForecast(
+    venueLat,
+    venueLon,
+    gameDateStr,
+  );
+
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
 
   if (isLoading || !details) {
@@ -172,15 +183,14 @@ export default function GameDetailsScreen() {
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
             <GameLocation
-              venueImage={null}
+              venueImage={venueImage}
               venueName={venueName}
-              location={undefined}
-              address={address}
-              venueCapacity={""}
-              venueAttendance={undefined}
-              weather={null}
-              loading={false}
-              error={null}
+              location={venueLocation}
+              address={venueAddress}
+              venueCapacity={venueCapacity}
+              weather={weather}
+              loading={weatherLoading}
+              error={weatherError}
               isDark={isDark}
             />
           </View>

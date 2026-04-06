@@ -4,6 +4,7 @@ import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
+import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
@@ -12,7 +13,7 @@ import ConferenceListModal, {
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getCBBTeam } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -21,11 +22,12 @@ import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useCBBTournamentGames } from "hooks/CBBHooks/useCBBTournamentGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
@@ -48,6 +50,11 @@ export default function CBBLeagueScreen() {
     refreshCBBGames,
   } = useCBBSeasonGames();
   const tournamentFilter = useCBBTournamentGames();
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, "CBB");
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CBB");
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -187,7 +194,27 @@ export default function CBBLeagueScreen() {
           </View>
 
           {/* NEWS */}
-          <ScrollView key="news" />
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
+          </View>
 
           {/* STANDINGS */}
           <View key="standings">

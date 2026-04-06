@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { ReactNode } from "react";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
 
@@ -38,7 +38,7 @@ const allTeams: TeamColors[] = [
 const findTeam = (
   teamId?: string,
   teamName?: string,
-  fallback?: TeamColors
+  fallback?: TeamColors,
 ) => {
   let teamObj: TeamColors | undefined;
 
@@ -50,8 +50,7 @@ const findTeam = (
     const clean = teamName.toLowerCase();
     teamObj = allTeams.find(
       (t) =>
-        t.name?.toLowerCase() === clean ||
-        t.fullName?.toLowerCase() === clean
+        t.name?.toLowerCase() === clean || t.fullName?.toLowerCase() === clean,
     );
   }
 
@@ -59,8 +58,7 @@ const findTeam = (
     const clean = fallback.fullName.toLowerCase();
     teamObj = allTeams.find(
       (t) =>
-        t.name?.toLowerCase() === clean ||
-        t.fullName?.toLowerCase() === clean
+        t.name?.toLowerCase() === clean || t.fullName?.toLowerCase() === clean,
     );
   }
 
@@ -109,10 +107,7 @@ export default function InfoCard({
   );
 }
 
-export const infoCardStyles = (
-  isDark: boolean,
-  teamObj: TeamColors
-) =>
+export const infoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
   StyleSheet.create({
     label: {
       color: isDark ? Colors.white : Colors.black,

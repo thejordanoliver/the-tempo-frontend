@@ -2,8 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import CropEditorModal from "components/CropEditorModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import AlertModal from "components/Forum/AlertModal";
+import PollEditorModal, { PollData } from "components/Forum/PollEditorModal";
 import VideoEditorModal from "components/Forum/VideoEditorModal";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { MediaItem, useCreatePost } from "hooks/ForumHooks/useCreatePost";
@@ -39,9 +40,12 @@ export default function CreatePostScreen() {
     removeMedia,
     createPost,
     alertConfig,
+    showAlert,
     closeAlert,
     setMedia,
     prependPost,
+    poll,
+    setPoll,
   } = useCreatePost(teamId, league);
 
   const [videoEditorVisible, setVideoEditorVisible] = useState(false);
@@ -51,6 +55,7 @@ export default function CreatePostScreen() {
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
+  const [pollEditorVisible, setPollEditorVisible] = useState(false);
   const isDark = useColorScheme() === "dark";
   const styles = createPostStyles(isDark);
   const navigation = useNavigation();
@@ -64,7 +69,6 @@ export default function CreatePostScreen() {
     });
   }, [navigation]);
 
-  // Handle tapping on media (image or video)
   const onMediaPress = useCallback((item: MediaItem, index: number) => {
     if (item.type === "image") {
       setImageToCrop(item.uri);
@@ -76,7 +80,6 @@ export default function CreatePostScreen() {
     }
   }, []);
 
-  // Called when image cropping is completed
   const onCropComplete = useCallback(
     (croppedUri: string) => {
       if (croppingIndex !== null) {
@@ -95,7 +98,6 @@ export default function CreatePostScreen() {
     [croppingIndex, media, setMedia],
   );
 
-  // Render each media item in the DraggableFlatList
   const renderMediaItem = useCallback(
     ({ item, drag, isActive, getIndex }: RenderItemParams<MediaItem>) => {
       const anim = mediaAnims[item.id];
@@ -125,9 +127,7 @@ export default function CreatePostScreen() {
             ) : item.thumbnailUri ? (
               <Image
                 source={{
-                  uri: `${item.thumbnailUri}?v=${
-                    item.trimStartMs ?? Date.now()
-                  }`,
+                  uri: `${item.thumbnailUri}?v=${item.trimStartMs ?? Date.now()}`,
                 }}
                 style={styles.thumnailPreview}
               />
@@ -153,41 +153,129 @@ export default function CreatePostScreen() {
     [mediaAnims, onMediaPress, removeMedia, styles],
   );
 
+  const handleAddPollPress = useCallback(() => {
+    if (newPostText || media.length > 0) {
+      showAlert({
+        title: "Switch to Poll?",
+        message: "This will remove your text and media content.",
+        confirmText: "Continue",
+        cancelText: "Cancel",
+        onConfirm: () => {
+          closeAlert(); // <-- Close the alert first
+          setNewPostText("");
+          setMedia([]);
+          setPollEditorVisible(true);
+        },
+      });
+    } else {
+      setPollEditorVisible(true);
+    }
+  }, [
+    newPostText,
+    media,
+    setNewPostText,
+    setMedia,
+    setPollEditorVisible,
+    showAlert,
+    closeAlert,
+  ]);
+
   return (
     <ScrollView
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
-      style={styles.container}
     >
       <View style={styles.textContainer}>
-        <TextInput
-          style={styles.textInput}
-          multiline
-          placeholder="What's on your mind?"
-          placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
-          value={newPostText}
-          onChangeText={setNewPostText}
-          editable={!loading}
-          accessibilityLabel="Post text input"
-          accessibilityHint="Enter your post content here"
-        />
+        {!poll && (
+          <TextInput
+            style={styles.textInput}
+            multiline
+            placeholder="What's on your mind?"
+            placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
+            value={newPostText}
+            onChangeText={setNewPostText}
+            editable={!loading}
+            accessibilityLabel="Post text input"
+            accessibilityHint="Enter your post content here"
+          />
+        )}
 
+        {poll && (
+          <View style={styles.pollCardContainer}>
+            <Text style={styles.pollQuestion}>{poll.question}</Text>
+            {poll.options.map((opt, i) => (
+              <View
+                key={opt.id}
+                style={[
+                  styles.optionRow,
+                  { marginBottom: i < poll.options.length - 1 ? 6 : 0 },
+                ]}
+              >
+                <Text style={styles.pollOptionsText}>{opt.text}</Text>
+              </View>
+            ))}
+            <View style={styles.metaContainer}>
+              <TouchableOpacity
+                onPress={() => setPoll(null)}
+                hitSlop={8}
+                style={styles.pollRemoveContainer}
+              >
+                <Ionicons
+                  name="close-circle-outline"
+                  size={16}
+                  color={Colors.midTone}
+                />
+                <Text style={styles.pollRemoveButton}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {!poll && (
+          <View style={styles.postOptionsContainer}>
+            <TouchableOpacity
+              onPress={pickMedia}
+              disabled={loading}
+              style={styles.postOptionsWrapper}
+              accessibilityLabel={`Add media. ${media.length} of 8 items selected`}
+              accessibilityRole="button"
+            >
+              <View style={styles.postOptionsInnerWrapper}>
+                <Ionicons
+                  name="image-outline"
+                  size={30}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+                <Text style={styles.addMediaText}>
+                  Add Images/Videos ({media.length}/8)
+                </Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={28}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Poll Button */}
         <View style={styles.postOptionsContainer}>
           <TouchableOpacity
-            onPress={pickMedia}
+            onPress={handleAddPollPress}
             disabled={loading}
             style={styles.postOptionsWrapper}
-            accessibilityLabel={`Add media. ${media.length} of 8 items selected`}
+            accessibilityLabel={poll ? "Edit Poll" : "Add Poll"}
             accessibilityRole="button"
           >
             <View style={styles.postOptionsInnerWrapper}>
               <Ionicons
-                name="image-outline"
+                name="stats-chart-outline"
                 size={30}
                 color={isDark ? Colors.white : Colors.black}
               />
               <Text style={styles.addMediaText}>
-                Add Images/Videos ({media.length}/8)
+                {poll ? "Edit Poll" : "Add Poll"}
               </Text>
             </View>
             <Ionicons
@@ -198,29 +286,31 @@ export default function CreatePostScreen() {
           </TouchableOpacity>
         </View>
 
-        <DraggableFlatList
-          horizontal
-          data={media}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ overflow: "visible" }}
-          style={{ overflow: "visible" }}
-          activationDistance={20}
-          scrollEnabled={!isActiveDrag}
-          onScrollBeginDrag={() => setIsScrolling(true)}
-          onScrollEndDrag={() => setIsScrolling(false)}
-          onMomentumScrollEnd={() => setIsScrolling(false)}
-          onDragBegin={() => {
-            setIsScrolling(false);
-            setIsActiveDrag(true);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          }}
-          onDragEnd={({ data }) => {
-            setMedia(data);
-            setIsActiveDrag(false);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-          renderItem={renderMediaItem}
-        />
+        {!poll && (
+          <DraggableFlatList
+            horizontal
+            data={media}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ overflow: "visible" }}
+            style={{ overflow: "visible" }}
+            activationDistance={20}
+            scrollEnabled={!isActiveDrag}
+            onScrollBeginDrag={() => setIsScrolling(true)}
+            onScrollEndDrag={() => setIsScrolling(false)}
+            onMomentumScrollEnd={() => setIsScrolling(false)}
+            onDragBegin={() => {
+              setIsScrolling(false);
+              setIsActiveDrag(true);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            }}
+            onDragEnd={({ data }) => {
+              setMedia(data);
+              setIsActiveDrag(false);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            renderItem={renderMediaItem}
+          />
+        )}
 
         <PostButton
           onPress={createPost}
@@ -229,6 +319,7 @@ export default function CreatePostScreen() {
         />
       </View>
 
+      {/* Crop Editor */}
       {imageToCrop && (
         <CropEditorModal
           visible={cropModalVisible}
@@ -240,6 +331,7 @@ export default function CreatePostScreen() {
         />
       )}
 
+      {/* Video Editor */}
       {videoToEditIndex !== null &&
         media[videoToEditIndex]?.type === "video" && (
           <VideoEditorModal
@@ -267,6 +359,18 @@ export default function CreatePostScreen() {
           />
         )}
 
+      {/* Poll Editor */}
+      <PollEditorModal
+        visible={pollEditorVisible}
+        initial={poll}
+        onClose={() => setPollEditorVisible(false)}
+        onSave={(data: PollData) => {
+          setPoll(data);
+          setPollEditorVisible(false);
+        }}
+      />
+
+      {/* Alert Modal */}
       <AlertModal
         visible={!!alertConfig}
         isDark={isDark}

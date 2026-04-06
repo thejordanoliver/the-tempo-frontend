@@ -1,6 +1,5 @@
 // utils/games.ts
-import { neutralVenues } from "constants/teams";
-import { neutralVenues as cbbNeutralVenues } from "constants/teamsCBB";
+import { neutralVenues } from "constants/neutralVenues";
 import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
 import { neutralStadiums } from "constants/teamsNFL";
 import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
@@ -39,8 +38,6 @@ type ResolveVenueParams = {
   neutralSite?: boolean;
   neutralStadiums: Record<string, any>;
 };
-
-
 
 // ---------- 🧩 Team Helpers ----------
 export const hasIdAndName = (team: any): team is TeamLike =>
@@ -278,7 +275,7 @@ export function resolveVenue({
       break;
     case "cbb":
     case "wcbb":
-      neutralMap = cbbNeutralVenues;
+      neutralMap = neutralVenues;
       break;
     case "mlb":
       neutralMap = neutralVenues;
@@ -373,7 +370,6 @@ export function resolveVenue({
   };
 }
 
-
 export const normalizeVenueName = (name?: string | null) =>
   name
     ?.toLowerCase()
@@ -384,15 +380,13 @@ export const normalizeVenueName = (name?: string | null) =>
 
 export const findMatchedVenue = (
   venueName: string | undefined,
-  venues: VenueSource[]
+  venues: VenueSource[],
 ) => {
   if (!venueName) return null;
 
   const normalized = normalizeVenueName(venueName);
 
-  return (
-    venues.find((v) => normalizeVenueName(v.venue) === normalized) ?? null
-  );
+  return venues.find((v) => normalizeVenueName(v.venue) === normalized) ?? null;
 };
 
 export const resolveFootballVenue = ({
@@ -405,7 +399,7 @@ export const resolveFootballVenue = ({
   const normalizedVenueName = venue?.name?.trim().toLowerCase() ?? "";
 
   const neutralEntry = Object.entries(neutralStadiums).find(
-    ([name]) => name.trim().toLowerCase() === normalizedVenueName
+    ([name]) => name.trim().toLowerCase() === normalizedVenueName,
   );
 
   const neutralData = neutralEntry ? neutralEntry[1] : null;
@@ -418,36 +412,19 @@ export const resolveFootballVenue = ({
       homeTeam?.venue ??
       "Unknown Stadium",
 
-    city:
-      matchedVenue?.city ??
-      homeTeam?.city ??
-      "Unknown City",
+    city: matchedVenue?.city ?? homeTeam?.city ?? "Unknown City",
 
-    address:
-      matchedVenue?.address ??
-      homeTeam?.address ??
-      "",
+    address: matchedVenue?.address ?? homeTeam?.address ?? "",
 
     capacity:
-      matchedVenue?.venue_capacity ??
-      homeTeam?.venueCapacity?.toString() ??
-      "",
+      matchedVenue?.venue_capacity ?? homeTeam?.venueCapacity?.toString() ?? "",
 
     image:
-      matchedVenue?.venue_image ??
-      venue?.image ??
-      homeTeam?.venueImage ??
-      null,
+      matchedVenue?.venue_image ?? venue?.image ?? homeTeam?.venueImage ?? null,
 
-    lat:
-      matchedVenue?.latitude ??
-      homeTeam?.latitude ??
-      null,
+    lat: matchedVenue?.latitude ?? homeTeam?.latitude ?? null,
 
-    lon:
-      matchedVenue?.longitude ??
-      homeTeam?.longitude ??
-      null,
+    lon: matchedVenue?.longitude ?? homeTeam?.longitude ?? null,
   };
 
   if (neutralSite && neutralData) {
@@ -455,8 +432,7 @@ export const resolveFootballVenue = ({
       name: neutralName ?? resolved.name,
       city: neutralData.city ?? resolved.city,
       address: neutralData.address ?? resolved.address,
-      capacity:
-        neutralData.venueCapacity?.toString() ?? resolved.capacity,
+      capacity: neutralData.venueCapacity?.toString() ?? resolved.capacity,
       image: neutralData.venueImage ?? resolved.image,
       lat: neutralData.latitude ?? resolved.lat,
       lon: neutralData.longitude ?? resolved.lon,

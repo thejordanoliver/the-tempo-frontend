@@ -1,5 +1,5 @@
 // GameCard.styles.ts
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 export const newsCardStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -22,6 +22,10 @@ export const newsCardStyles = (isDark: boolean) =>
     details: {
       paddingHorizontal: 12,
       marginTop: 8,
+    },
+    timeContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
     },
     title: {
       fontFamily: Fonts.OSBOLD,

@@ -1,5 +1,5 @@
 // components/Subheading.tsx
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React from "react";
 import { StyleSheet, Text, useColorScheme } from "react-native";
 type Props = {

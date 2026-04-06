@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Colors, Fonts } from "constants/Styles";
 export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
   StyleSheet.create({
     card: {

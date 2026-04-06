@@ -1,7 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
-
 type GameResult = {
   id: number;
   date: string;
@@ -38,15 +37,12 @@ export const useLastFiveGames = (teamId: number, isWomens = false) => {
 
         const league = isWomens ? 423 : 116;
 
-        const res = await axios.get(
-          `${API_URL}/api/games/cbb/last-five/${teamId}`,
-          {
-            params: {
-              league,
-              season: getCBBSeason(),
-            },
-          }
-        );
+        const res = await apiClient.get(`/api/games/cbb/last-five/${teamId}`, {
+          params: {
+            league,
+            season: getCBBSeason(),
+          },
+        });
 
         setGames(res.data.games || []);
       } catch (err) {

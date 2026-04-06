@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import {
   EXPANDED_HEIGHT_THRESHOLD,
   LEADER_LABELS,
@@ -185,20 +185,17 @@ export default function WidgetSlider({
   // -----------------------------------------------------------------------
   const onScroll = useMemo(
     () =>
-      Animated.event(
-        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        {
-          useNativeDriver: false,
-          listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-            if (isResizing.current) return;
-            const offsetY = event.nativeEvent.contentOffset.y;
-            currentOffset.current = offsetY;
-            // Use ref — not stale even though this closure is created once
-            const index = Math.round(offsetY / slideHeightRef.current);
-            setCurrentIndex(index);
-          },
+      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+        useNativeDriver: false,
+        listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+          if (isResizing.current) return;
+          const offsetY = event.nativeEvent.contentOffset.y;
+          currentOffset.current = offsetY;
+          // Use ref — not stale even though this closure is created once
+          const index = Math.round(offsetY / slideHeightRef.current);
+          setCurrentIndex(index);
         },
-      ),
+      }),
     // scrollY is a stable ref value — safe to omit from deps
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -240,10 +237,22 @@ export default function WidgetSlider({
         let newH = slideHeightRef.current + dy;
         let newW = newH * aspectRatio;
 
-        if (newW > maxW) { newW = maxW; newH = newW / aspectRatio; }
-        if (newW < minW) { newW = minW; newH = newW / aspectRatio; }
-        if (newH > maxH) { newH = maxH; newW = newH * aspectRatio; }
-        if (newH < minH) { newH = minH; newW = newH * aspectRatio; } // was / aspectRatio
+        if (newW > maxW) {
+          newW = maxW;
+          newH = newW / aspectRatio;
+        }
+        if (newW < minW) {
+          newW = minW;
+          newH = newW / aspectRatio;
+        }
+        if (newH > maxH) {
+          newH = maxH;
+          newW = newH * aspectRatio;
+        }
+        if (newH < minH) {
+          newH = minH;
+          newW = newH * aspectRatio;
+        } // was / aspectRatio
 
         slideHeightRef.current = newH;
         slideWidthRef.current = newW;
@@ -322,7 +331,10 @@ export default function WidgetSlider({
     [slideHeight],
   );
 
-  const keyExtractor = useCallback((_: unknown, index: number) => String(index), []);
+  const keyExtractor = useCallback(
+    (_: unknown, index: number) => String(index),
+    [],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: WidgetSlide }) => {
@@ -397,7 +409,9 @@ export default function WidgetSlider({
       <Animated.View
         style={[styles.progressContainer, { opacity: progressOpacity }]}
       >
-        <Animated.View style={[styles.progressBar, { height: progressHeight }]} />
+        <Animated.View
+          style={[styles.progressBar, { height: progressHeight }]}
+        />
       </Animated.View>
     </Animated.View>
   );

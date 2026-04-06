@@ -15,6 +15,7 @@ export const Colors = {
     red: "#cc0000",
     green: "#177901ff",
     yellow: "#dcb000ff",
+    blue: "#007AFF",
     black: "#1d1d1d",
     background: "#fff",
     tint: tintColorLight,
@@ -29,6 +30,7 @@ export const Colors = {
     limeGreen: "#2fff00ff",
     leafGreen: "#4CAF50",
     yellow: "#facc15",
+    blue: "#007AFF",
     itemBackground: "#2e2e2e",
     white: "#fff",
     background: "#1d1d1d",
@@ -43,6 +45,8 @@ export const Colors = {
   black: "#1d1d1d",
   midTone: "#888",
   lightGray: "#aaa",
+  transparentLightGray: "#aaaaaa88",
+  transparentDarkGray: "#55555588",
   darkGray: "#555",
 };
 

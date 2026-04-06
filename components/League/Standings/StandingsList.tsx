@@ -2,8 +2,9 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, globalStyles } from "constants/Styles";
+import { Colors, globalStyles } from "constants/styles";
 import { getTeamByESPNId, nbaDivisionsById } from "constants/teams";
+import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId as getNHLTeamByESPNId } from "constants/teamsNHL";
@@ -140,6 +141,18 @@ export const leagueConferences: LeagueConferenceConfig = {
       },
     },
   },
+  WNBA: {
+    conferences: {
+      conferenceA: {
+        name: "Eastern Conference",
+        abbreviation: "East",
+      },
+      conferenceB: {
+        name: "Western Conference",
+        abbreviation: "West",
+      },
+    },
+  },
   NHL: {
     conferences: {
       conferenceA: {
@@ -240,7 +253,9 @@ export const StandingsList = ({
   }) => {
     const team =
       league === "NBA"
-        ? getTeamByESPNId(Number(item.teamId))
+        ? getTeamByESPNId(Number(item.teamId)) :
+      league === "WNBA"
+        ? getWNBATeamByESPNId(Number(item.teamId))
         : league === "NFL"
           ? getNFLTeamByESPNId(Number(item.teamId))
           : league === "MLB"

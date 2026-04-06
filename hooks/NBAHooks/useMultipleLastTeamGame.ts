@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Game } from "types/types";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 type RawGamesMap = Record<string, Game | null>; // now typed
 
@@ -33,8 +32,8 @@ export function useMultipleLastTeamGame(
             return [teamId, cached ?? null] as const; // <-- ensure null instead of undefined
           }
 
-          const res = await axios.get<{ game?: Game }>(
-            `${BASE_URL}/api/games/nba/last/${teamId}/${season}`,
+          const res = await apiClient.get<{ game?: Game }>(
+            `api/games/nba/last/${teamId}/${season}`,
           );
 
           const game: Game | null = res.data?.game ?? null;

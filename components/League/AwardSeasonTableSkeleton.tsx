@@ -1,5 +1,5 @@
 // components/GameDetails/AwardSeasonTableSkeleton.tsx
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -43,7 +43,7 @@ export default function AwardSeasonTableSkeleton({
           duration: 700,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -98,9 +98,7 @@ export default function AwardSeasonTableSkeleton({
   return (
     <ScrollView>
       {Array.from({ length: teams }).map((_, i) => (
-        <View key={`team-skeleton-${i}`}>
-          {renderTeam(i)}
-        </View>
+        <View key={`team-skeleton-${i}`}>{renderTeam(i)}</View>
       ))}
     </ScrollView>
   );
@@ -127,8 +125,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       paddingHorizontal: 6,
     },
 
@@ -156,8 +154,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
       paddingHorizontal: 6,
     },
 
@@ -169,8 +167,8 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
       borderColor: lighter
         ? Colors.lightGray
         : isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+          ? Colors.lightGray
+          : Colors.darkGray,
     },
 
     buttonSkeleton: {

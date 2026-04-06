@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import React, { useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
@@ -23,7 +23,7 @@ type Props = {
   homePlayers: Player[];
   awayPlayers: Player[];
   isDark: boolean;
-  league: "NBA" | "CBB" | "WCBB";
+  league: "NBA" | "WNBA" | "CBB" | "WCBB";
 };
 export default function PlayersInFoulTrouble({
   homeId,

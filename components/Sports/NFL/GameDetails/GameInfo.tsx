@@ -1,4 +1,4 @@
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";

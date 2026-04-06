@@ -1,5 +1,5 @@
 import AwardSeasonTableSkeleton from "components/League/AwardSeasonTableSkeleton";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { useAwardSchools } from "hooks/CFBHooks/useAwardSchools";

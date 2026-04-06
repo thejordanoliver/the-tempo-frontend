@@ -2,9 +2,10 @@ import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBar";
-import { Colors, Fonts } from "constants/Styles";
+import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
+import { wnbaTeams } from "constants/teamsWNBA";
 import React, { useState } from "react";
 import {
   Image,
@@ -36,7 +37,7 @@ interface ShotChartProps {
   plays?: Play[];
   homeTeamId?: string;
   awayTeamId?: string;
-  league?: "NBA" | "CBB" | "WCBB";
+  league?: "NBA" | "WNBA" | "CBB" | "WCBB";
   neutralSite?: boolean;
 }
 
@@ -60,8 +61,9 @@ export default function ShotChart({
 
   const isCBB = league === "CBB" || league === "WCBB";
   const isWomen = league === "WCBB";
+  const isWNBA = league === "WNBA";
 
-  const teamArray = isCBB ? cbbTeams : teams;
+  const teamArray = isWNBA ? wnbaTeams : isCBB ? cbbTeams : teams;
 
   const homeTeam = teamArray.find(
     (t) => t.espnID?.toString() === homeTeamId?.toString(),
@@ -201,6 +203,7 @@ export default function ShotChart({
           tabs={TABS}
           selected={selectedQuarter}
           onTabPress={(tab) => setSelectedQuarter(tab as any)}
+          isDark={isDark}
         />
 
         <View style={styles.chartWrapper} onLayout={onLayout}>

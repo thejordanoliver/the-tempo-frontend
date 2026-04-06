@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Colors, Fonts } from "constants/Styles";
 // Styles
 export const playByPlayFieldStyles = (isDark: boolean) =>
   StyleSheet.create({

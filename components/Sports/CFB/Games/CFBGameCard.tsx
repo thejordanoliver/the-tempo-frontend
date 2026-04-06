@@ -1,6 +1,6 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/Styles";
+import { Colors } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
