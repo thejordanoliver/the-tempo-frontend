@@ -124,7 +124,7 @@ export default function TeamDetailScreen() {
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
-        <View key="schedule" style={{ flex: 1 }}>
+        <View key="schedule" style={styles.contentArea}>
           <NFLGamesList
             games={teamGames}
             loading={gamesLoading}
@@ -135,10 +135,10 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
+        <ScrollView key="news" style={styles.contentArea}></ScrollView>
 
         {/* Roster Page */}
-        <View key="roster" style={{ flex: 1 }}>
+        <View key="roster" style={styles.contentArea}>
           <Roster
             ref={rosterRef}
             teamId={String(team.id)}
@@ -158,7 +158,7 @@ export default function TeamDetailScreen() {
         </ScrollView>
 
         {/* Standings Page */}
-        <View key="standings" style={{ flex: 1 }}>
+        <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
@@ -167,7 +167,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Forum Page */}
-        <View key="forum" style={{ flex: 1 }}>
+        <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league="NFL" />
         </View>
       </PagerView>

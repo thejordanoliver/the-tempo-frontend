@@ -38,7 +38,7 @@ import {
   getNFLTeam,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 
 /* --- Utils & Stores --- */
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";

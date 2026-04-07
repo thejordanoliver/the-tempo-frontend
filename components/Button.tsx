@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
-import React from "react";
+import React, { ReactNode } from "react";
 import {
   Pressable,
   StyleProp,
@@ -8,58 +8,63 @@ import {
   ViewStyle,
 } from "react-native";
 
-type SaveButtonProps = {
+type ButtonProps = {
   onPress: () => void;
   disabled?: boolean;
-  title?: string;
   style?: StyleProp<ViewStyle>;
   isDark: boolean;
+  children?: ReactNode | string; // ✅ accept string or ReactNode
 };
 
 export default function Button({
   onPress,
   disabled,
-  title = "Save",
   style,
   isDark,
-}: SaveButtonProps) {
+  children,
+}: ButtonProps) {
   const styles = buttonStyles(isDark);
+
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
       style={({ pressed }) => [
-        styles.saveButton,
+        styles.button,
         {
-          backgroundColor: isDark ? Colors.white : Colors.black,
           opacity: pressed || disabled ? 0.7 : 1,
         },
-        style, // <-- apply custom styles here
+        style,
       ]}
     >
-      <Text
-        style={[
-          styles.saveButtonText,
-          { color: isDark ? Colors.black : Colors.white },
-        ]}
-      >
-        {title}
-      </Text>
+      {children ? (
+        React.Children.map(children, (child) =>
+          typeof child === "string" ? (
+            <Text style={styles.buttonText}>{child}</Text>
+          ) : (
+            child
+          ),
+        )
+      ) : (
+        <Text style={styles.buttonText}>Save</Text>
+      )}
     </Pressable>
   );
 }
 
 const buttonStyles = (isDark: boolean) =>
   StyleSheet.create({
-    saveButton: {
-      marginVertical: 24,
-      padding: 16,
+    button: {
+      padding: 12,
       borderRadius: 8,
+      flexDirection: "row",
+      justifyContent: "center",
       alignItems: "center",
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
-    saveButtonText: {
-      fontSize: 16,
+    buttonText: {
       color: isDark ? Colors.black : Colors.white,
+      fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
     },
   });

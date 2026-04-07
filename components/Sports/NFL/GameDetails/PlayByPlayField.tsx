@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
-import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/nfl";
+import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/football";
 import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {

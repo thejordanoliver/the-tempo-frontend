@@ -4,6 +4,9 @@ export const teamDetailStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
+     contentArea: {
+      flex: 1,
+    },
   loadContainer: {
     flex: 1,
     justifyContent: "center",

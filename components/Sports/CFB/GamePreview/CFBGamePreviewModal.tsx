@@ -17,12 +17,13 @@ import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { findMatchedVenue, resolveFootballVenue } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { Colors } from "constants/styles";
 
 type Props = {
   game: Game;
@@ -145,8 +146,8 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     : undefined;
 
   const matchedVenue = useMemo(() => {
-    return findMatchedVenue(venue?.name, footballVenues);
-  }, [venue?.name, footballVenues]);
+    return findMatchedVenue(venue?.fullName, footballVenues);
+  }, [venue?.fullName, footballVenues]);
 
   const resolvedVenue = useMemo(() => {
     return resolveFootballVenue({
@@ -190,7 +191,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
         <LinearGradient
           colors={
             isChampionship
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold]
               : [awayColor, awayColor, homeColor, homeColor]
           }
           locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
@@ -280,7 +281,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                   venueCity={resolvedVenue.city}
                   venueAddress={resolvedVenue.address}
                   venueCapacity={resolvedVenue.capacity}
-                  venueAttendance={venue.attendance}
+                  venueAttendance={venue?.attendance}
                   weather={weather}
                   highlights={highlights}
                   gameStatusDescription={gameStatusDescription}

@@ -1,7 +1,7 @@
 import { SeriesSummary } from "hooks/MLBHooks/useBaseballGameDetails";
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { MLBTeam } from "types/mlb";
+import { MLBTeam } from "types/baseball";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
@@ -27,7 +27,7 @@ type Props = {
   awayRecord?: string;
   gameStatusDescription: string;
   gameStatusDetail: string;
-  league?: "mlb"
+  league?: "mlb";
   bases: {
     first: boolean;
     second: boolean;

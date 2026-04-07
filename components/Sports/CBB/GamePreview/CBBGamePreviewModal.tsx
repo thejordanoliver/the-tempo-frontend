@@ -18,6 +18,7 @@ import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { Colors } from "constants/styles";
 
 type Props = {
   visible: boolean;
@@ -192,7 +193,7 @@ export default function CBBGamePreviewModal({
         <LinearGradient
           colors={
             isChampionship
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold,]
               : [awayColor, awayColor, homeColor, homeColor]
           }
           locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}

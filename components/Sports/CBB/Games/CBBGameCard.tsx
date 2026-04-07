@@ -84,10 +84,18 @@ function CBBGameCard({
   const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
   const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
 
-  const isChampionship = isWomen
-    ? headlineText === "Women's Basketball Championship - National Championship"
-    : headlineText === "Men's Basketball Championship - National Championship";
+  const week = game.week;
+  const round =
+    week === "NCAA - Final"
+      ? "NCAA Men's Basketball Championship"
+      : week === "NCAA - Semi-finals"
+        ? "Final Four"
+        : week === "NCAA - Quarter-finals"
+          ? "Elite Eight"
+          : (week ?? "");
 
+  const isChampionship = week === "NCAA - Final";
+  const isFinalFour = week === "NCAA - Semi-finals";
   const styles = GameCardStyles(isDark, isChampionship);
 
   const handlePress = useCallback(() => {
@@ -241,8 +249,8 @@ function CBBGameCard({
         <LinearGradient
           colors={
             isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
+              ? [Colors.dark.gold, Colors.dark.gold]
+              : ([Colors.light.gold, Colors.light.gold] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

@@ -9,7 +9,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { MLBGame } from "types/mlb";
+import { MLBGame } from "types/baseball";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
@@ -17,6 +17,7 @@ import { getGameDate } from "utils/nflGameCardUtils";
 import { GameInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { Colors } from "constants/styles";
 type Props = {
   game: MLBGame;
   visible: boolean;
@@ -181,7 +182,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
         <LinearGradient
           colors={
             isChampionship
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold]
               : [awayColor, awayColor, homeColor, homeColor]
           }
           locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}

@@ -8,7 +8,7 @@ import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import React from "react";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 
 type GamePreviewContentProps = {
   game: Game;

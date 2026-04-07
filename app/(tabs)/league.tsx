@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import CustomRefreshControl from "components/CustomRefreshControl";
@@ -11,6 +10,7 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { Colors } from "constants/styles";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -19,6 +19,7 @@ import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useFootballSeasonGames } from "hooks/NFLHooks/useFootballSeasonGames";
 import * as React from "react";
+import { useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import {
@@ -40,13 +41,13 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   // State
   // --------------------------------------------------
-  const [selectedDate, setSelectedDate] = React.useState<Date>(
+  const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
-  const [favorites, setFavorites] = React.useState<string[]>([]);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [showCalendarModal, setShowCalendarModal] = React.useState(false);
-  const [leagueModalVisible, setLeagueModalVisible] = React.useState(false);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const sportsModalRef = React.useRef<SportsListModalRef>(null);
 
   // --------------------------------------------------
@@ -88,18 +89,7 @@ export default function LeagueScreen() {
     refetch: refreshCFBGames,
   } = useFootballSeasonGames(getFootballSeasonYear(), 2);
 
-  // --------------------------------------------------
-  // Load Favorites
-  // --------------------------------------------------
-  useFocusEffect(
-    React.useCallback(() => {
-      const loadFavorites = async () => {
-        const stored = await AsyncStorage.getItem("favorites");
-        if (stored) setFavorites(JSON.parse(stored));
-      };
-      loadFavorites();
-    }, []),
-  );
+  const { favorites } = useFavoriteTeamsContext();
 
   // --------------------------------------------------
   // Header

@@ -7,7 +7,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useMemo } from "react";
-import type { Game } from "types/nfl";
+import type { Game } from "types/football";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -28,8 +28,8 @@ export function parseCFBGameParam(param: any) {
       typeof param === "string"
         ? JSON.parse(param)
         : Array.isArray(param)
-        ? JSON.parse(param[0])
-        : null;
+          ? JSON.parse(param[0])
+          : null;
 
     if (!game?.game?.id) {
       return {
@@ -84,7 +84,6 @@ export function formatGameDateTime(date: Date | null) {
   };
 }
 
-
 // --- MAIN FILTER FUNCTION ---
 export function filterCFBGames({
   games,
@@ -137,10 +136,13 @@ export function filterCFBGames({
     // --- Conference filter ---
     if (selectedConference) {
       const conferenceMap: Record<string, (typeof conferenceObjectListMap)[0]> =
-        Object.values(conferenceObjectListMap).reduce((acc, conf) => {
-          acc[conf.name] = conf;
-          return acc;
-        }, {} as Record<string, (typeof conferenceObjectListMap)[0]>);
+        Object.values(conferenceObjectListMap).reduce(
+          (acc, conf) => {
+            acc[conf.name] = conf;
+            return acc;
+          },
+          {} as Record<string, (typeof conferenceObjectListMap)[0]>,
+        );
 
       const mapKey = modalToMapKey[selectedConference] || selectedConference;
       const conferenceTeams = conferenceMap[mapKey]?.teams || [];
@@ -234,7 +236,7 @@ export const normalizeTeamName = (name?: string) =>
 // --- Helper: Get rank by team name ---
 export const getTeamRankFromAPById = (
   teamId: number | string,
-  apTop25: any[]
+  apTop25: any[],
 ) => {
   if (!teamId || !apTop25?.length) return null;
   const entry = apTop25.find((t) => String(t.id) === String(teamId));
@@ -242,7 +244,7 @@ export const getTeamRankFromAPById = (
 };
 export const getTeamRankFromCFPById = (
   teamId: number | string,
-  cfpTop25: any[]
+  cfpTop25: any[],
 ) => {
   if (!teamId || !cfpTop25?.length) return null;
   const entry = cfpTop25.find((t) => String(t.id) === String(teamId));

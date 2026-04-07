@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
 import DraftList from "components/League/DraftList";
@@ -22,7 +21,7 @@ import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
@@ -65,7 +64,6 @@ export default function NFLLeagueScreen() {
     loading: newsLoading,
     error: newsError,
   } = useLeaguesNews(10, "NFL");
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(
     getFootballSeasonYear().toString(),
@@ -134,21 +132,6 @@ export default function NFLLeagueScreen() {
 
     setSelectedWeekIndex(finalIndex);
   }, [weeks]);
-
-  // --- Load favorites from AsyncStorage ---
-  useFocusEffect(
-    useCallback(() => {
-      const loadFavorites = async () => {
-        try {
-          const stored = await AsyncStorage.getItem("favorites");
-          if (stored) setFavorites(JSON.parse(stored));
-        } catch (error) {
-          console.warn("Failed to load favorites:", error);
-        }
-      };
-      loadFavorites();
-    }, []),
-  );
 
   // --- Header ---
   useLayoutEffect(() => {

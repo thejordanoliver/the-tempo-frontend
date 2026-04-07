@@ -354,6 +354,17 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680000/arenas/mma/meta-apex.jpg",
   },
+  "Lucas Oil Stadium": {
+    name: "Lucas Oil Stadium",
+    city: "Indianapolis",
+    address: "500 S Capitol Ave, Indianapolis, IN 46225",
+    latitude: 39.7601,
+    longitude: -86.1639,
+    venueCapacity: "67,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
+  },
+
 };
 
 export const neutralStadiums: Record<string, Venue> = {

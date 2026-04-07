@@ -17,6 +17,7 @@ import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { Colors } from "constants/styles";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -149,7 +150,7 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
         <LinearGradient
           colors={
             isChampionship
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold]
               : [awayColor, awayColor, homeColor, homeColor]
           }
           locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}

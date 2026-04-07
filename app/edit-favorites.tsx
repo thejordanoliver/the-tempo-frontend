@@ -2,25 +2,25 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
-import { cfbTeams, conferenceListMap } from "constants/teamsCFB";
+import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { wnbaTeams } from "constants/teamsWNBA";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useRouter } from "expo-router";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useLayoutEffect } from "react";
 import {
   Animated,
-  StyleSheet,
   TextInput,
   View,
   useColorScheme,
   useWindowDimensions,
 } from "react-native";
+import { editFavoritesStyles } from "styles/EditFavoriteStyles";
 import type { LeagueType } from "types/types";
 
 export const leagueMap: Record<string, LeagueType> = {};
@@ -57,7 +57,7 @@ export default function EditFavoritesScreen() {
     fadeAnim,
     saveFavorites,
     isLoading,
-  } = useFavoriteTeams();
+  } = useFavoriteTeamsContext();
 
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
@@ -70,7 +70,7 @@ export default function EditFavoritesScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark, isGridView);
+  const styles = editFavoritesStyles(isDark, isGridView);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -106,95 +106,94 @@ export default function EditFavoritesScreen() {
           teams={[
             // NBA
             ...teams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "NBA" as const,
                 id: t.id,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} NBA basketball`,
               })),
 
             // WNBA
             ...wnbaTeams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "WNBA" as const,
                 id: t.id,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} WNBA women's basketball`,
               })),
 
             // NFL
             ...nflTeams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "NFL" as const,
                 id: t.id,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} NFL football`,
               })),
 
             // MLB
             ...mlbTeams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "MLB" as const,
                 id: t.id,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} MLB baseball`,
               })),
 
             // NHL
             ...nhlTeams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "NHL" as const,
                 id: t.id,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} NHL hockey`,
               })),
 
             // CFB
             ...cfbTeams
-              .filter((t) => !t.isAllStar)
-              .filter((t) => {
-                const fbsTeamNames = Object.values(conferenceListMap)
-                  .flat()
-                  .map((n) => n.toLowerCase());
-                const name = (t.fullName || t.name || "").toLowerCase();
-                return (
-                  fbsTeamNames.length === 0 ||
-                  fbsTeamNames.some((n) => n.includes(name) || name.includes(n))
-                );
-              })
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "CFB" as const,
                 id: t.id,
                 isAllStar: t.isAllStar ?? false, // ✅ narrow undefined to boolean
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} CFB college football NCAA`,
               })),
 
             // CBB
             ...cbbTeams
-              .filter((t) => !t.isAllStar)
+              .filter((t) => !t.isAllStar && t.isActive !== false) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "CBB" as const,
                 id: t.id,
                 isAllStar: t.isAllStar ?? false, // ✅ narrow undefined to boolean
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} CBB college basketball NCAA`,
               })),
 
             // WCBB
             ...cbbTeams
-              .filter((t) => !t.isAllStar && t.wid != null)
+              .filter(
+                (t) => !t.isAllStar && t.wid != null && t.isActive !== false,
+              ) // ✅ filter out inactive teams
               .map((t) => ({
                 ...t,
                 league: "WCBB" as const,
                 id: t.wid!, // ✅ non-null assertion — safe because filter guarantees wid != null
                 isAllStar: t.isAllStar ?? false,
-                conference_championships: undefined,
+                isActive: t.isActive ?? false,
                 searchTerms: `${t.name} ${t.fullName} WCBB women's college basketball NCAA`,
               })),
           ].sort((a, b) => a.name.localeCompare(b.fullName ?? ""))}
@@ -208,42 +207,9 @@ export default function EditFavoritesScreen() {
           itemWidth={itemWidth}
         />
       </Animated.View>
-
-      <Button onPress={handleSave} style={styles.saveButton} isDark={isDark} />
+      <View style={styles.buttonContainer}>
+        <Button onPress={handleSave} isDark={isDark} />
+      </View>
     </View>
   );
 }
-
-const getStyles = (isDark: boolean, isGridView: boolean) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 12,
-      alignItems: isGridView ? "center" : "stretch",
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSLIGHT,
-      width: "100%",
-    },
-    saveButton: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      padding: 16,
-      borderRadius: 8,
-      alignItems: "center",
-      marginTop: 16,
-      marginBottom: 20,
-      width: "96%",
-    },
-    saveText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
-    },
-  });

@@ -122,7 +122,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
         <LinearGradient
           colors={
             isMainEvent
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold]
               : [
                   secondFighterColor,
                   secondFighterColor,

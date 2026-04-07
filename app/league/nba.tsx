@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
@@ -25,7 +24,7 @@ import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
@@ -74,27 +73,12 @@ export default function NBALeagueScreen() {
   const { leaders, loading, error } = useSeasonLeaders();
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NBA");
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const {
     articles,
     loading: newsLoading,
     error: newsError,
   } = useLeaguesNews(10, "NBA");
-
-  useFocusEffect(
-    useCallback(() => {
-      const loadFavorites = async () => {
-        try {
-          const stored = await AsyncStorage.getItem("favorites");
-          if (stored) setFavorites(JSON.parse(stored));
-        } catch (error) {
-          console.warn("Failed to load favorites:", error);
-        }
-      };
-      loadFavorites();
-    }, []),
-  );
 
   useLayoutEffect(() => {
     navigation.setOptions({

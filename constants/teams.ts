@@ -125,6 +125,7 @@ export const teams: NBATeam[] = [
       away: HawksAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 2,
@@ -152,6 +153,7 @@ export const teams: NBATeam[] = [
       away: CelticsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 4,
@@ -179,6 +181,7 @@ export const teams: NBATeam[] = [
       away: NetsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 5,
@@ -206,6 +209,7 @@ export const teams: NBATeam[] = [
       away: HornetsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 6,
@@ -233,6 +237,7 @@ export const teams: NBATeam[] = [
       away: BullsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 7,
@@ -260,6 +265,7 @@ export const teams: NBATeam[] = [
       away: CavsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 8,
@@ -287,6 +293,7 @@ export const teams: NBATeam[] = [
       away: MavsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 9,
@@ -314,6 +321,7 @@ export const teams: NBATeam[] = [
       away: NuggetsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 10,
@@ -341,6 +349,7 @@ export const teams: NBATeam[] = [
       away: PistonsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 11,
@@ -368,6 +377,7 @@ export const teams: NBATeam[] = [
       away: WarriorsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 14,
@@ -396,6 +406,7 @@ export const teams: NBATeam[] = [
       away: RocketsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 15,
@@ -423,6 +434,7 @@ export const teams: NBATeam[] = [
       away: PacersAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 16,
@@ -450,6 +462,7 @@ export const teams: NBATeam[] = [
       away: ClippersAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 17,
@@ -477,6 +490,7 @@ export const teams: NBATeam[] = [
       away: LakersAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 19,
@@ -504,6 +518,7 @@ export const teams: NBATeam[] = [
       away: GrizzliesAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 20,
@@ -531,6 +546,7 @@ export const teams: NBATeam[] = [
       away: HeatAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 21,
@@ -558,6 +574,7 @@ export const teams: NBATeam[] = [
       away: BucksAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 22,
@@ -585,6 +602,7 @@ export const teams: NBATeam[] = [
       away: TimberwolvesAway,
     },
     isAllStar: false,
+    isActive: true,
   },
 
   {
@@ -613,6 +631,7 @@ export const teams: NBATeam[] = [
       away: PelicansAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 24,
@@ -640,6 +659,7 @@ export const teams: NBATeam[] = [
       away: KnicksAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 25,
@@ -667,6 +687,7 @@ export const teams: NBATeam[] = [
       away: ThunderAway,
     },
     isAllStar: false,
+    isActive: true,
   },
 
   {
@@ -695,6 +716,7 @@ export const teams: NBATeam[] = [
       away: MagicAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 27,
@@ -723,6 +745,7 @@ export const teams: NBATeam[] = [
       away: SixersAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 28,
@@ -750,6 +773,7 @@ export const teams: NBATeam[] = [
       away: SunsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 29,
@@ -777,6 +801,7 @@ export const teams: NBATeam[] = [
       away: TrailBlazersAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 30,
@@ -804,6 +829,7 @@ export const teams: NBATeam[] = [
       away: KingsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 31,
@@ -831,6 +857,7 @@ export const teams: NBATeam[] = [
       away: SpursAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 38,
@@ -859,6 +886,7 @@ export const teams: NBATeam[] = [
       away: RaptorsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 40,
@@ -887,6 +915,7 @@ export const teams: NBATeam[] = [
       away: JazzAway,
     },
     isAllStar: false,
+    isActive: true,
   },
   {
     id: 41,
@@ -914,6 +943,7 @@ export const teams: NBATeam[] = [
       away: WizardsAway,
     },
     isAllStar: false,
+    isActive: true,
   },
 ];
 

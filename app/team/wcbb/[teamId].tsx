@@ -71,7 +71,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames,
-  } = useCBBTeamGames(team?.wid ?? "", { isWomen: true });
+  } = useCBBTeamGames(team?.wid ?? "");
 
   const teamGames = useMemo(
     () =>
@@ -227,7 +227,7 @@ export default function TeamDetailScreen() {
         }}
       >
         {/* Schedule Page */}
-        <View key="schedule" style={{ flex: 1 }}>
+        <View key="schedule" style={styles.contentArea}>
           <View style={styles.monthSelector}>
             <MonthSelector
               months={monthsToShow}
@@ -250,13 +250,10 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView
-          key="news"
-          style={{ flex: 1, paddingBottom: 100 }}
-        ></ScrollView>
+        <ScrollView key="news" style={styles.contentArea}></ScrollView>
 
         {/* Roster Page */}
-        <View key="roster" style={{ flex: 1 }}>
+        <View key="roster" style={styles.contentArea}>
           <Roster
             players={players}
             loading={false}
@@ -270,7 +267,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Stats Page */}
-        <View key="stats" style={{ flex: 1 }}>
+        <View key="stats" style={styles.contentArea}>
           {team?.espnID && team?.id && (
             <CBBRosterStats
               rosterStats={rosterStats}
@@ -286,7 +283,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Standings Page */}
-        <View key="standings" style={{ flex: 1 }}>
+        <View key="standings" style={styles.contentArea}>
           <CBBConferenceStandingsList
             onlyTeamConference={true}
             teamName={team.fullName}
@@ -295,7 +292,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Forum Page */}
-        <View key="forum" style={{ flex: 1 }}>
+        <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league="WCBB" />
         </View>
       </PagerView>

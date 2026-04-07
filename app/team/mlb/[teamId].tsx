@@ -8,11 +8,12 @@ import Roster from "components/Sports/MLB/Team/Roster";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { mlbTeams } from "constants/teamsMLB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBTeamGames } from "hooks/MLBHooks/useMLBTeamGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useTeamTabs } from "hooks/useLeagueTabs";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -25,22 +26,18 @@ import {
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
-type MonthItem = {
-  label: string;
-  month: number;
-  year: number;
-};
-
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
   const styles = teamDetailStyles;
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const league = "MLB";
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("MLB");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -58,6 +55,11 @@ export default function TeamDetailScreen() {
     [teamIdNum],
   );
 
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
   const {
     games: rawTeamGames = [],
     loading: gamesLoading,
@@ -110,8 +112,6 @@ export default function TeamDetailScreen() {
     });
   }, [rawTeamGames, selectedDate]);
 
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const league = "MLB";
   const favorited = team ? isFavorite(league, team.id) : false;
 
   // --- Header ---
@@ -160,7 +160,7 @@ export default function TeamDetailScreen() {
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule */}
-        <View key="schedule" style={{ flex: 1 }}>
+        <View key="schedule" style={styles.contentArea}>
           <MonthSelector
             months={monthsToShow}
             selectedDate={selectedDate}
@@ -180,10 +180,10 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News */}
-        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
+        <ScrollView key="news" style={styles.contentArea}></ScrollView>
 
         {/* Roster Page */}
-        <View key="roster" style={{ flex: 1 }}>
+        <View key="roster" style={styles.contentArea}>
           <Roster
             teamId={Number(team.id)}
             teamFullName={team.fullName}
@@ -196,7 +196,7 @@ export default function TeamDetailScreen() {
         <ScrollView key="stats" style={{ flex: 1 }} />
 
         {/* Standings Page */}
-        <View key="standings" style={{ flex: 1 }}>
+        <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
@@ -205,7 +205,7 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Forum */}
-        <View key="forum" style={{ flex: 1 }}>
+        <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league="MLB" />
         </View>
       </PagerView>

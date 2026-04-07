@@ -9,7 +9,7 @@ import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { memo } from "react";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getGameDate } from "utils/nflGameCardUtils";

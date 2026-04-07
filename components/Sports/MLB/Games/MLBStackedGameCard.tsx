@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { MLBGame } from "types/mlb";
+import { MLBGame } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../GameDetails/BasesIndicator";

@@ -2,6 +2,8 @@
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
+import { ImageSourcePropType } from "react-native";
+
 export interface NFLPlayer {
   id: number;
   name: string;
@@ -19,7 +21,7 @@ export interface NFLPlayer {
   teamId: number;
 }
 
-export type Team = {
+export type FootballTeam = {
   id: number;
   espnID: number;
   oddsID?: string;
@@ -45,74 +47,8 @@ export type Team = {
   venueImage: any;
   venueCapacity: string;
   championships?: number[];
-  isAllStar?: boolean;
-};
-
-export type NFLGame = {
-  game: {
-    id: string;
-    stage: string;
-    week: string;
-    date: { date: string; time: string; timestamp: number };
-    status: { short: string; long: string; timer?: string };
-    venue?: { name: string; city: string };
-  };
-  league: {
-    id: number;
-    name: string;
-    season: string;
-    logo: string;
-    country: {
-      name: string;
-      code: string;
-      flag: string;
-    };
-  };
-  teams: {
-    home: {
-      id: number;
-      name: string;
-      logo: string;
-    };
-    away: {
-      id: number;
-      name: string;
-      logo: string;
-    };
-  };
-  scores: {
-    home?: {
-      total?: number;
-      quarter_1?: number;
-      quarter_2?: number;
-      quarter_3?: number;
-      quarter_4?: number;
-      overtime?: number;
-    };
-    away?: {
-      total?: number;
-      quarter_1?: number;
-      quarter_2?: number;
-      quarter_3?: number;
-      quarter_4?: number;
-      overtime?: number;
-    };
-  };
-};
-
-export type Venue = {
-  name: string;
-  address: string;
-  city: string;
-  latitude?: number;
-  longitude?: number;
-  venueCapacity?: string;
-  venueImage: any;
-};
-
-export type NFLGamesResponse = {
-  results: number;
-  response: NFLGame[];
+  isAllStar: boolean;
+  isActive: boolean;
 };
 
 export type Game = {
@@ -145,8 +81,8 @@ export type Game = {
     logo: string;
   };
   teams: {
-    home: Team;
-    away: Team;
+    home: FootballTeam;
+    away: FootballTeam;
   };
   scores: {
     home: {
@@ -168,38 +104,7 @@ export type Game = {
   };
 };
 
-export interface RawNFLGame {
-  id: string | number;
-  date: string; // ISO string
-  time?: string; // "HH:mm" optional
-  status: {
-    short: string;
-    long: string;
-    timer?: string | null;
-  };
-  venue?: {
-    name: string;
-    city: string;
-  };
-  week?: string;
-  stage?: string;
-  teams: {
-    home: { id: string; name: string; logo?: string };
-    away: { id: string; name: string; logo?: string };
-  };
-  scores: {
-    home?: Record<string, any>;
-    away?: Record<string, any>;
-  };
-  league?: {
-    id?: number;
-    name?: string;
-    season?: string;
-    logo?: string;
-  };
-}
-
-export const emptyTeam: Team = {
+export const emptyTeam: FootballTeam = {
   id: 0,
   espnID: 0,
   oddsID: "0",
@@ -222,13 +127,12 @@ export const emptyTeam: Team = {
   venueImage: null,
   venueCapacity: "",
   isAllStar: false,
+  isActive: false,
 };
 
-// fallback for cards
-export const emptyNFLAwayTeam: Team = {
+export const emptyAwayTeam: FootballTeam = {
   id: 0,
   espnID: -2,
-  oddsID: "0",
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -247,12 +151,12 @@ export const emptyNFLAwayTeam: Team = {
   venueImage: null,
   venueCapacity: "",
   isAllStar: false,
+  isActive: false,
 };
 
-export const emptyNFLHomeTeam: Team = {
+export const emptyHomeTeam: FootballTeam = {
   id: 0,
   espnID: -1,
-  oddsID: "0",
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -271,4 +175,74 @@ export const emptyNFLHomeTeam: Team = {
   venueImage: null,
   venueCapacity: "",
   isAllStar: false,
+  isActive: false,
 };
+
+// CFB
+export type Conference = {
+  name: string;
+  logo: ImageSourcePropType | null;
+  teams: string[];
+  color?: {
+    primary: string;
+    secondary: string;
+  };
+};
+
+export interface BracketTeam {
+  id: number | string;
+  espnID?: string | number;
+  oddsID?: string;
+  name: string;
+  shortName?: string;
+  fullName?: string;
+  code: string;
+  logo: ImageSourcePropType;
+  logoLight?: ImageSourcePropType;
+  abbreviation?: string;
+  city?: string;
+  location?: string;
+  address?: string;
+  coach?: string;
+  coachImage?: string;
+  venue?: string;
+  established?: number;
+  seed?: number | null;
+  score?: number;
+  record?: string | null; // "12-1"
+}
+
+export interface BracketBroadcast {
+  name: string;
+  type: string;
+}
+export type Round = "first" | "quarterfinal" | "semifinal" | "championship";
+
+export interface BracketGame {
+  id: string;
+
+  top: BracketTeam | null;
+  bottom: BracketTeam | null;
+  round: Round;
+
+  // NEW FIELDS REQUIRED BY useCFPBracket
+  status: "scheduled" | "live" | "final";
+  startTime?: string;
+
+  topScore?: number | null;
+  bottomScore?: number | null;
+  broadcasts?: BracketBroadcast[];
+}
+
+export interface BracketRound {
+  title: string;
+  games: BracketGame[];
+}
+
+export interface BracketData {
+  first: BracketRound;
+  quarterfinal: BracketRound;
+  semifinal: BracketRound;
+  championship: BracketRound;
+  isDark: boolean;
+}

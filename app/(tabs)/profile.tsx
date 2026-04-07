@@ -14,9 +14,10 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useProfile } from "hooks/UserHooks/useProfile";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -47,7 +48,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = profileStyles(isDark);
-  const { favorites } = useFavoriteTeams();
+  const { favorites } = useFavoriteTeamsContext();
 
   // Local UI state
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -183,6 +184,7 @@ export default function ProfileScreen() {
       const [league, id] = fav.split(":");
       let team;
       if (league === "NBA") team = teams.find((t) => String(t.id) === id);
+      if (league === "WNBA") team = wnbaTeams.find((t) => String(t.id) === id);
       if (league === "NFL") team = nflTeams.find((t) => String(t.id) === id);
       if (league === "CFB") team = cfbTeams.find((t) => String(t.id) === id);
       if (league === "CBB") team = cbbTeams.find((t) => String(t.id) === id);
@@ -195,7 +197,6 @@ export default function ProfileScreen() {
     .filter(Boolean);
 
   if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
-
 
   const onFollowersPress = () => {
     if (!currentUserId) return;

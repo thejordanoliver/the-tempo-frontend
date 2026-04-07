@@ -5,6 +5,7 @@ import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
@@ -58,6 +59,7 @@ export default function TeamPreviewModal({
   }, [visible]);
 
   const isNBA = team.league === "NBA";
+  const isWNBA = team.league === "WNBA";
   const isWCBB = team.league === "WCBB";
   const isCBB = team.league === "CBB";
   const isMLB = team.league === "MLB";
@@ -71,15 +73,17 @@ export default function TeamPreviewModal({
       ? getCBBTeamLogo((team as any).wid, isDark, true)
       : isNBA
         ? getTeamLogo(team.id, isDark)
-        : isCFB
-          ? getCFBTeamLogo(team.id, isDark)
-          : isNFL
-            ? getNFLTeamLogo(team.id, isDark)
-            : isMLB
-              ? getMLBTeamLogo(team.id, isDark)
-              : isNHL
-                ? getNHLTeamLogo(team.id, isDark)
-                : null;
+        : isWNBA
+          ? getWNBATeamLogo(team.id, isDark)
+          : isCFB
+            ? getCFBTeamLogo(team.id, isDark)
+            : isNFL
+              ? getNFLTeamLogo(team.id, isDark)
+              : isMLB
+                ? getMLBTeamLogo(team.id, isDark)
+                : isNHL
+                  ? getNHLTeamLogo(team.id, isDark)
+                  : null;
 
   const baseColor = isDark
     ? team?.secondaryColor || Colors.midTone

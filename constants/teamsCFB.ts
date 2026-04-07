@@ -1,7 +1,8 @@
 // constants/cfbTeams.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Conference, Venue } from "types/cfb";
-import { Team } from "types/nfl";
+import { Conference } from "types/football";
+import { FootballTeam } from "types/football";
+import { Venue } from "types/types";
 
 //Conference Logos
 import MountainWestConference from "assets/College_Logos/MWC.png";
@@ -380,7 +381,7 @@ import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
-export const cfbTeams: Team[] = [
+export const cfbTeams: FootballTeam[] = [
   {
     id: 241,
     espnID: 2000,
@@ -400,8 +401,9 @@ export const cfbTeams: Team[] = [
     established: 1919,
     latitude: 32.4695,
     longitude: -99.7071,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761153/stadiums/football/cfb_241_anthony_field_at_wildcat_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761153/stadiums/football/cfb_241_anthony_field_at_wildcat_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -423,8 +425,9 @@ export const cfbTeams: Team[] = [
     established: 1955,
     latitude: 38.9959,
     longitude: -104.8439,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761158/stadiums/football/cfb_149_falcon_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761158/stadiums/football/cfb_149_falcon_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -446,8 +449,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 41.0704,
     longitude: -81.5059,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761168/stadiums/football/cfb_67_infocision_stadium_summa_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761168/stadiums/football/cfb_67_infocision_stadium_summa_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -469,8 +473,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 33.2103,
     longitude: -87.5659,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761173/stadiums/football/cfb_106_bryant_denny_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761173/stadiums/football/cfb_106_bryant_denny_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -492,8 +497,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 34.8013,
     longitude: -86.5697,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761179/stadiums/football/cfb_82_louis_crews_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761179/stadiums/football/cfb_82_louis_crews_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 221,
@@ -514,8 +520,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 32.3627,
     longitude: -86.2953,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761187/stadiums/football/cfb_221_asu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761187/stadiums/football/cfb_221_asu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -537,8 +544,9 @@ export const cfbTeams: Team[] = [
     established: 1921,
     latitude: 31.8767,
     longitude: -91.1409,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761192/stadiums/football/cfb_228_jack_spinks_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761192/stadiums/football/cfb_228_jack_spinks_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -560,8 +568,9 @@ export const cfbTeams: Team[] = [
     established: 1929,
     latitude: 36.2114,
     longitude: -81.686,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761200/stadiums/football/cfb_144_kidd_brewer_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761200/stadiums/football/cfb_144_kidd_brewer_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -583,8 +592,9 @@ export const cfbTeams: Team[] = [
     established: 1899,
     latitude: 32.2288,
     longitude: -110.9491,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761213/stadiums/football/cfb_156_arizona_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761213/stadiums/football/cfb_156_arizona_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -606,8 +616,9 @@ export const cfbTeams: Team[] = [
     established: 1897,
     latitude: 33.4261,
     longitude: -111.9328,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761220/stadiums/football/cfb_86_mountain_america_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761220/stadiums/football/cfb_86_mountain_america_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -629,8 +640,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 36.0687,
     longitude: -94.1788,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761237/stadiums/football/cfb_127_donald_w__reynolds_razorback_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761237/stadiums/football/cfb_127_donald_w__reynolds_razorback_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -652,8 +664,9 @@ export const cfbTeams: Team[] = [
     established: 1911,
     latitude: 35.8441,
     longitude: -90.6773,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761246/stadiums/football/cfb_184_centennial_bank_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761246/stadiums/football/cfb_184_centennial_bank_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -676,8 +689,9 @@ export const cfbTeams: Team[] = [
     established: 1916,
     latitude: 34.2413,
     longitude: -92.0181,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761255/stadiums/football/cfb_237_simmons_bank_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761255/stadiums/football/cfb_237_simmons_bank_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -699,8 +713,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 41.3963,
     longitude: -73.9643,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761261/stadiums/football/cfb_177_michie_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761261/stadiums/football/cfb_177_michie_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -722,8 +737,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 32.6025,
     longitude: -85.4893,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761268/stadiums/football/cfb_171_jordan_hare_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761268/stadiums/football/cfb_171_jordan_hare_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -745,8 +761,9 @@ export const cfbTeams: Team[] = [
     established: 1930,
     latitude: 36.5325,
     longitude: -87.354,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761275/stadiums/football/cfb_40_fortera_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761275/stadiums/football/cfb_40_fortera_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -768,8 +785,9 @@ export const cfbTeams: Team[] = [
     established: 1922,
     latitude: 40.2586,
     longitude: -111.6549,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761280/stadiums/football/cfb_136_lavell_edwards_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761280/stadiums/football/cfb_136_lavell_edwards_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -791,8 +809,9 @@ export const cfbTeams: Team[] = [
     established: 1924,
     latitude: 40.221,
     longitude: -85.4166,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761286/stadiums/football/cfb_70_scheumann_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761286/stadiums/football/cfb_70_scheumann_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -814,8 +833,9 @@ export const cfbTeams: Team[] = [
     established: 1899,
     latitude: 31.5632,
     longitude: -97.1152,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761291/stadiums/football/cfb_118_mclane_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761291/stadiums/football/cfb_118_mclane_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -836,8 +856,9 @@ export const cfbTeams: Team[] = [
     established: 2013,
     latitude: 34.2814,
     longitude: -85.1896,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761298/stadiums/football/cfb_467_valhalla_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761298/stadiums/football/cfb_467_valhalla_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -860,8 +881,9 @@ export const cfbTeams: Team[] = [
     established: 1925,
     latitude: 29.1685,
     longitude: -81.1365,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761304/stadiums/football/cfb_124_daytona_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761304/stadiums/football/cfb_124_daytona_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -883,8 +905,9 @@ export const cfbTeams: Team[] = [
     established: 1933,
     latitude: 43.6023,
     longitude: -116.1976,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761315/stadiums/football/cfb_204_albertsons_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761315/stadiums/football/cfb_204_albertsons_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -906,8 +929,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 42.3352,
     longitude: -71.1663,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761326/stadiums/football/cfb_142_alumni_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761326/stadiums/football/cfb_142_alumni_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -929,8 +953,9 @@ export const cfbTeams: Team[] = [
     established: 1919,
     latitude: 41.3797,
     longitude: -83.6293,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761331/stadiums/football/cfb_154_doyt_l__perry_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761331/stadiums/football/cfb_154_doyt_l__perry_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -951,8 +976,9 @@ export const cfbTeams: Team[] = [
     established: 1889,
     latitude: 38.382,
     longitude: -78.9693,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761336/stadiums/football/cfb_377_jopson_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761336/stadiums/football/cfb_377_jopson_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -974,8 +1000,9 @@ export const cfbTeams: Team[] = [
     established: 1999,
     latitude: 41.9205,
     longitude: -71.5333,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761341/stadiums/football/cfb_74_beirne_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761341/stadiums/football/cfb_74_beirne_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -997,8 +1024,9 @@ export const cfbTeams: Team[] = [
     established: 1883,
     latitude: 40.9537,
     longitude: -76.8867,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761347/stadiums/football/cfb_245_christy_mathewson_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761347/stadiums/football/cfb_245_christy_mathewson_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1021,6 +1049,8 @@ export const cfbTeams: Team[] = [
     latitude: 43.0008,
     longitude: -78.7835,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1042,8 +1072,9 @@ export const cfbTeams: Team[] = [
     established: 1884,
     latitude: 39.8436,
     longitude: -86.1711,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761667/stadiums/football/cfb_281_bud_and_jackie_sellick_bowl.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761667/stadiums/football/cfb_281_bud_and_jackie_sellick_bowl.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1065,8 +1096,9 @@ export const cfbTeams: Team[] = [
     established: 1915,
     latitude: 35.3004,
     longitude: -120.6606,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761679/stadiums/football/cfb_89_alex_g__spanos_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761679/stadiums/football/cfb_89_alex_g__spanos_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1088,8 +1120,9 @@ export const cfbTeams: Team[] = [
     established: 1886,
     latitude: 37.871,
     longitude: -122.2506,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761686/stadiums/football/cfb_161_california_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761686/stadiums/football/cfb_161_california_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1111,8 +1144,9 @@ export const cfbTeams: Team[] = [
     established: 1925,
     latitude: 35.4124,
     longitude: -78.7377,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761694/stadiums/football/cfb_249_barker_lane_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761694/stadiums/football/cfb_249_barker_lane_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1134,8 +1168,9 @@ export const cfbTeams: Team[] = [
     established: 1908,
     latitude: 35.0912,
     longitude: -92.4557,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761704/stadiums/football/cfb_214_estes_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761704/stadiums/football/cfb_214_estes_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1158,8 +1193,9 @@ export const cfbTeams: Team[] = [
     established: 1935,
     latitude: 41.6902,
     longitude: -72.7701,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761710/stadiums/football/cfb_137_arute_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761710/stadiums/football/cfb_137_arute_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1181,8 +1217,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 43.5779,
     longitude: -84.7715,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761715/stadiums/football/cfb_62_kelly_shorts_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761715/stadiums/football/cfb_62_kelly_shorts_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1204,8 +1241,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 47.0029,
     longitude: -120.5425,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761724/stadiums/football/cfb_609_tomlinson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761724/stadiums/football/cfb_609_tomlinson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1227,8 +1265,9 @@ export const cfbTeams: Team[] = [
     established: 1991,
     latitude: 32.9766,
     longitude: -80.0615,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761728/stadiums/football/cfb_213_buccaneer_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761728/stadiums/football/cfb_213_buccaneer_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1250,8 +1289,9 @@ export const cfbTeams: Team[] = [
     established: 1946,
     latitude: 35.3094,
     longitude: -80.738,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761734/stadiums/football/cfb_52_jerry_richardson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761734/stadiums/football/cfb_52_jerry_richardson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1273,8 +1313,9 @@ export const cfbTeams: Team[] = [
     established: 1904,
     latitude: 35.0317,
     longitude: -85.3216,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761746/stadiums/football/cfb_255_finley_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761746/stadiums/football/cfb_255_finley_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1295,8 +1336,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 41.7922,
     longitude: -87.5989,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761757/stadiums/football/cfb_431_stagg_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761757/stadiums/football/cfb_431_stagg_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1317,8 +1359,9 @@ export const cfbTeams: Team[] = [
     established: 2001,
     latitude: 37.0639,
     longitude: -76.4946,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761764/stadiums/football/cfb_710_pomoco_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761764/stadiums/football/cfb_710_pomoco_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1340,8 +1383,9 @@ export const cfbTeams: Team[] = [
     established: 1885,
     latitude: 39.1319,
     longitude: -84.5162,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761769/stadiums/football/cfb_128_nippert_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761769/stadiums/football/cfb_128_nippert_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1363,8 +1407,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 34.6737,
     longitude: -82.8365,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761775/stadiums/football/cfb_209_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761775/stadiums/football/cfb_209_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1386,8 +1431,9 @@ export const cfbTeams: Team[] = [
     established: 2003,
     latitude: 33.7934,
     longitude: -79.0128,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761780/stadiums/football/cfb_176_brooks_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761780/stadiums/football/cfb_176_brooks_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1409,8 +1455,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 42.8289,
     longitude: -75.5329,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761786/stadiums/football/cfb_192_andy_kerr_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761786/stadiums/football/cfb_192_andy_kerr_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1433,6 +1480,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.0094,
     longitude: -105.2669,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1454,8 +1503,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 40.5706,
     longitude: -105.0883,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761797/stadiums/football/cfb_116_canvas_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761797/stadiums/football/cfb_116_canvas_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1477,8 +1527,9 @@ export const cfbTeams: Team[] = [
     established: 1870,
     latitude: 40.873,
     longitude: -73.9263,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761803/stadiums/football/cfb_330_robert_k__kraft_field_at_lawrence_a__wien_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761803/stadiums/football/cfb_330_robert_k__kraft_field_at_lawrence_a__wien_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1500,8 +1551,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 42.4467,
     longitude: -76.4753,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761813/stadiums/football/cfb_326_schoellkopf_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761813/stadiums/football/cfb_326_schoellkopf_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1523,8 +1575,9 @@ export const cfbTeams: Team[] = [
     established: 1881,
     latitude: 43.7045,
     longitude: -72.2887,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761818/stadiums/football/cfb_327_memorial_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761818/stadiums/football/cfb_327_memorial_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1546,8 +1599,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 35.5027,
     longitude: -80.8482,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761823/stadiums/football/cfb_283_richardson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761823/stadiums/football/cfb_283_richardson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1569,8 +1623,9 @@ export const cfbTeams: Team[] = [
     established: 1905,
     latitude: 39.7355,
     longitude: -84.1935,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761829/stadiums/football/cfb_277_welcome_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761829/stadiums/football/cfb_277_welcome_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1593,6 +1648,8 @@ export const cfbTeams: Team[] = [
     latitude: 39.6629,
     longitude: -75.7517,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1614,8 +1671,9 @@ export const cfbTeams: Team[] = [
     established: 1924,
     latitude: 39.1874,
     longitude: -75.5402,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761837/stadiums/football/cfb_284_alumni_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761837/stadiums/football/cfb_284_alumni_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1638,6 +1696,8 @@ export const cfbTeams: Team[] = [
     latitude: 39.6417,
     longitude: -86.861,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1659,8 +1719,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 41.6046,
     longitude: -93.6512,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761851/stadiums/football/cfb_289_drake_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761851/stadiums/football/cfb_289_drake_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1682,8 +1743,9 @@ export const cfbTeams: Team[] = [
     established: 1888,
     latitude: 35.9971,
     longitude: -78.9389,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761856/stadiums/football/cfb_99_wallace_wade_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761856/stadiums/football/cfb_99_wallace_wade_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1705,8 +1767,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 40.4386,
     longitude: -79.988,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761872/stadiums/football/cfb_50_arthur_j__rooney_athletic_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761872/stadiums/football/cfb_50_arthur_j__rooney_athletic_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1728,8 +1791,9 @@ export const cfbTeams: Team[] = [
     established: 1932,
     latitude: 35.5989,
     longitude: -77.3623,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761884/stadiums/football/cfb_120_dowdy_ficklen_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761884/stadiums/football/cfb_120_dowdy_ficklen_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1751,8 +1815,9 @@ export const cfbTeams: Team[] = [
     established: 1920,
     latitude: 36.3035,
     longitude: -82.3665,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761889/stadiums/football/cfb_262_william_b__greene_jr__stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761889/stadiums/football/cfb_262_william_b__greene_jr__stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1774,8 +1839,9 @@ export const cfbTeams: Team[] = [
     established: 1915,
     latitude: 33.2465,
     longitude: -95.9117,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761892/stadiums/football/cfb_272_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761892/stadiums/football/cfb_272_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1797,8 +1863,9 @@ export const cfbTeams: Team[] = [
     established: 1899,
     latitude: 39.4961,
     longitude: -88.1769,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761897/stadiums/football/cfb_80_o_brien_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761897/stadiums/football/cfb_80_o_brien_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1820,8 +1887,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 37.7325,
     longitude: -84.3033,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761914/stadiums/football/cfb_95_roy_kidd_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761914/stadiums/football/cfb_95_roy_kidd_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1843,8 +1911,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 42.2551,
     longitude: -83.6759,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761922/stadiums/football/cfb_94_rynearson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761922/stadiums/football/cfb_94_rynearson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1867,8 +1936,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 47.4927,
     longitude: -117.5889,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761928/stadiums/football/cfb_236_roos_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761928/stadiums/football/cfb_236_roos_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1890,8 +1960,9 @@ export const cfbTeams: Team[] = [
     established: 1909,
     latitude: 36.1013,
     longitude: -79.5061,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761933/stadiums/football/cfb_173_rhodes_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761933/stadiums/football/cfb_173_rhodes_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1913,8 +1984,9 @@ export const cfbTeams: Team[] = [
     established: 2001,
     latitude: 26.371,
     longitude: -80.102,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761943/stadiums/football/cfb_51_fau_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761943/stadiums/football/cfb_51_fau_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1936,8 +2008,9 @@ export const cfbTeams: Team[] = [
     established: 2002,
     latitude: 25.7572,
     longitude: -80.3745,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761951/stadiums/football/cfb_73_pitbull_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761951/stadiums/football/cfb_73_pitbull_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1959,8 +2032,9 @@ export const cfbTeams: Team[] = [
     established: 1906,
     latitude: 29.652,
     longitude: -82.325,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761959/stadiums/football/cfb_113_ben_hill_griffin_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761959/stadiums/football/cfb_113_ben_hill_griffin_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -1982,8 +2056,9 @@ export const cfbTeams: Team[] = [
     established: 1907,
     latitude: 30.4268,
     longitude: -84.2841,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761968/stadiums/football/cfb_54_bragg_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761968/stadiums/football/cfb_54_bragg_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2005,8 +2080,9 @@ export const cfbTeams: Team[] = [
     established: 1902,
     latitude: 30.4381,
     longitude: -84.3045,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761973/stadiums/football/cfb_49_doak_campbell_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761973/stadiums/football/cfb_49_doak_campbell_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2028,8 +2104,9 @@ export const cfbTeams: Team[] = [
     established: 1882,
     latitude: 40.8624,
     longitude: -73.8851,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761981/stadiums/football/cfb_257_jack_coffey_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761981/stadiums/football/cfb_257_jack_coffey_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2052,6 +2129,8 @@ export const cfbTeams: Team[] = [
     latitude: 36.8123,
     longitude: -119.7474,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2074,6 +2153,8 @@ export const cfbTeams: Team[] = [
     latitude: 39.6456,
     longitude: -78.9344,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2095,8 +2176,9 @@ export const cfbTeams: Team[] = [
     established: 1889,
     latitude: 34.9264,
     longitude: -82.4366,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761995/stadiums/football/cfb_211_paladin_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761995/stadiums/football/cfb_211_paladin_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2118,8 +2200,9 @@ export const cfbTeams: Team[] = [
     established: 1970,
     latitude: 35.2474,
     longitude: -81.6678,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762000/stadiums/football/cfb_225_spangler_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762000/stadiums/football/cfb_225_spangler_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2141,8 +2224,9 @@ export const cfbTeams: Team[] = [
     established: 1874,
     latitude: 38.9097,
     longitude: -77.0733,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762006/stadiums/football/cfb_279_cooper_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762006/stadiums/football/cfb_279_cooper_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2164,8 +2248,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 33.948,
     longitude: -83.3773,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762013/stadiums/football/cfb_109_sanford_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762013/stadiums/football/cfb_109_sanford_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2187,8 +2272,9 @@ export const cfbTeams: Team[] = [
     established: 1924,
     latitude: 32.3975,
     longitude: -81.7782,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762019/stadiums/football/cfb_166_allen_e__paulson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762019/stadiums/football/cfb_166_allen_e__paulson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2210,8 +2296,9 @@ export const cfbTeams: Team[] = [
     established: 2010,
     latitude: 33.7398,
     longitude: -84.3896,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762025/stadiums/football/cfb_189_center_parc_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762025/stadiums/football/cfb_189_center_parc_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2233,8 +2320,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 33.7725,
     longitude: -84.3928,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762032/stadiums/football/cfb_208_bobby_dodd_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762032/stadiums/football/cfb_208_bobby_dodd_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2256,8 +2344,9 @@ export const cfbTeams: Team[] = [
     established: 1928,
     latitude: 32.5246,
     longitude: -92.7131,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762037/stadiums/football/cfb_185_eddie_g__robinson_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762037/stadiums/football/cfb_185_eddie_g__robinson_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2279,8 +2368,9 @@ export const cfbTeams: Team[] = [
     established: 1973,
     latitude: 42.968996,
     longitude: -85.894735,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762048/stadiums/football/cfb_660_lubbers_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762048/stadiums/football/cfb_660_lubbers_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2302,8 +2392,9 @@ export const cfbTeams: Team[] = [
     established: 1902,
     latitude: 37.023,
     longitude: -76.3346,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762053/stadiums/football/cfb_293_armstrong_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762053/stadiums/football/cfb_293_armstrong_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2326,6 +2417,8 @@ export const cfbTeams: Team[] = [
     latitude: 42.3676,
     longitude: -71.1262,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2347,8 +2440,9 @@ export const cfbTeams: Team[] = [
     established: 1909,
     latitude: 21.2969,
     longitude: -157.8171,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762064/stadiums/football/cfb_59_clarence_t_c__ching_athletics_complex.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762064/stadiums/football/cfb_59_clarence_t_c__ching_athletics_complex.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2371,6 +2465,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.3126,
     longitude: -81.144,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2392,8 +2488,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 42.235,
     longitude: -71.801,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762079/stadiums/football/cfb_223_fitton_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762079/stadiums/football/cfb_223_fitton_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2415,8 +2512,9 @@ export const cfbTeams: Team[] = [
     established: 1946,
     latitude: 29.7216,
     longitude: -95.3482,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762086/stadiums/football/cfb_134_tdecu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762086/stadiums/football/cfb_134_tdecu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2438,8 +2536,9 @@ export const cfbTeams: Team[] = [
     established: 2013,
     latitude: 29.6899,
     longitude: -95.5133,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762092/stadiums/football/cfb_259_husky_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762092/stadiums/football/cfb_259_husky_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2461,8 +2560,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 38.922,
     longitude: -77.021,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762100/stadiums/football/cfb_230_william_h__greene_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762100/stadiums/football/cfb_230_william_h__greene_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2484,8 +2584,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 46.7299,
     longitude: -117.0157,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762104/stadiums/football/cfb_202_kibbie_dome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762104/stadiums/football/cfb_202_kibbie_dome.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2507,8 +2608,9 @@ export const cfbTeams: Team[] = [
     established: 1902,
     latitude: 42.8628,
     longitude: -112.4269,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762115/stadiums/football/cfb_44_holt_arena.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762115/stadiums/football/cfb_44_holt_arena.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2530,8 +2632,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 40.0999,
     longitude: -88.2354,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762118/stadiums/football/cfb_47_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762118/stadiums/football/cfb_47_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2553,8 +2656,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 40.511,
     longitude: -88.9911,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762123/stadiums/football/cfb_126_hancock_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762123/stadiums/football/cfb_126_hancock_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2576,8 +2680,9 @@ export const cfbTeams: Team[] = [
     established: 2009,
     latitude: 29.4658,
     longitude: -98.4673,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762143/stadiums/football/cfb_222_gayle_and_tom_benson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762143/stadiums/football/cfb_222_gayle_and_tom_benson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2599,8 +2704,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 39.1807,
     longitude: -86.5256,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762146/stadiums/football/cfb_103_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762146/stadiums/football/cfb_103_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2622,8 +2728,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 39.4695,
     longitude: -87.3611,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762149/stadiums/football/cfb_218_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762149/stadiums/football/cfb_218_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2645,8 +2752,9 @@ export const cfbTeams: Team[] = [
     established: 1889,
     latitude: 41.6583,
     longitude: -91.5519,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762154/stadiums/football/cfb_138_kinnick_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762154/stadiums/football/cfb_138_kinnick_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2668,8 +2776,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 42.0141,
     longitude: -93.6354,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762159/stadiums/football/cfb_151_jack_trice_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762159/stadiums/football/cfb_151_jack_trice_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2691,8 +2800,9 @@ export const cfbTeams: Team[] = [
     established: 1972,
     latitude: 38.4364,
     longitude: -78.8734,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762164/stadiums/football/cfb_169_bridgeforth_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762164/stadiums/football/cfb_169_bridgeforth_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2714,8 +2824,9 @@ export const cfbTeams: Team[] = [
     established: 1911,
     latitude: 32.3267,
     longitude: -90.171,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762169/stadiums/football/cfb_303_mississippi_veterans_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762169/stadiums/football/cfb_303_mississippi_veterans_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2737,8 +2848,9 @@ export const cfbTeams: Team[] = [
     established: 1904,
     latitude: 33.8227,
     longitude: -85.762,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762174/stadiums/football/cfb_250_burgess_snow_field_at_jsu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762174/stadiums/football/cfb_250_burgess_snow_field_at_jsu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2760,8 +2872,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 38.9629,
     longitude: -95.2436,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762179/stadiums/football/cfb_101_david_booth_kansas_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762179/stadiums/football/cfb_101_david_booth_kansas_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2783,8 +2896,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 39.1989,
     longitude: -96.5938,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762184/stadiums/football/cfb_174_bill_snyder_family_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762184/stadiums/football/cfb_174_bill_snyder_family_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2806,8 +2920,9 @@ export const cfbTeams: Team[] = [
     established: 2015,
     latitude: 34.0231,
     longitude: -84.6007,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762194/stadiums/football/cfb_217_fifth_third_bank_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762194/stadiums/football/cfb_217_fifth_third_bank_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2829,8 +2944,9 @@ export const cfbTeams: Team[] = [
     established: 1920,
     latitude: 41.1403,
     longitude: -81.3031,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762199/stadiums/football/cfb_206_dix_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762199/stadiums/football/cfb_206_dix_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2852,8 +2968,9 @@ export const cfbTeams: Team[] = [
     established: 1881,
     latitude: 38.0221,
     longitude: -84.5058,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762208/stadiums/football/cfb_129_kroger_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762208/stadiums/football/cfb_129_kroger_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2875,8 +2992,9 @@ export const cfbTeams: Team[] = [
     established: 1907,
     latitude: 38.2043,
     longitude: -84.8663,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762211/stadiums/football/cfb_325_alumni_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762211/stadiums/football/cfb_325_alumni_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2898,8 +3016,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 40.5103,
     longitude: -75.7903,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762219/stadiums/football/cfb_382_andre_reed_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762219/stadiums/football/cfb_382_andre_reed_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2921,8 +3040,9 @@ export const cfbTeams: Team[] = [
     established: 1928,
     latitude: 40.8175,
     longitude: -73.6003,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762225/stadiums/football/cfb_76_bethpage_federal_credit_union_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762225/stadiums/football/cfb_76_bethpage_federal_credit_union_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2944,8 +3064,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 30.412,
     longitude: -91.1839,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762230/stadiums/football/cfb_207_tiger_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762230/stadiums/football/cfb_207_tiger_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2967,8 +3088,9 @@ export const cfbTeams: Team[] = [
     established: 1882,
     latitude: 40.7007,
     longitude: -75.2076,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762240/stadiums/football/cfb_216_fisher_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762240/stadiums/football/cfb_216_fisher_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -2990,8 +3112,9 @@ export const cfbTeams: Team[] = [
     established: 1923,
     latitude: 30.0475,
     longitude: -94.072,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762245/stadiums/football/cfb_229_provost_umphrey_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762245/stadiums/football/cfb_229_provost_umphrey_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3013,8 +3136,9 @@ export const cfbTeams: Team[] = [
     established: 1884,
     latitude: 40.5707,
     longitude: -75.3604,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762253/stadiums/football/cfb_275_goodman_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762253/stadiums/football/cfb_275_goodman_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3036,8 +3160,9 @@ export const cfbTeams: Team[] = [
     established: 1973,
     latitude: 37.3513,
     longitude: -79.1829,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762260/stadiums/football/cfb_179_williams_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762260/stadiums/football/cfb_179_williams_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3059,8 +3184,9 @@ export const cfbTeams: Team[] = [
     established: 1990,
     latitude: 38.7857,
     longitude: -90.5079,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762268/stadiums/football/cfb_316_harlen_c__hunter_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762268/stadiums/football/cfb_316_harlen_c__hunter_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3082,8 +3208,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 30.2188,
     longitude: -92.0524,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762279/stadiums/football/cfb_182_cajun_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762279/stadiums/football/cfb_182_cajun_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3105,8 +3232,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 32.5335,
     longitude: -92.6504,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762284/stadiums/football/cfb_84_joe_aillet_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762284/stadiums/football/cfb_84_joe_aillet_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3128,8 +3256,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 38.2058,
     longitude: -85.7589,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762291/stadiums/football/cfb_198_l_n_federal_credit_union_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762291/stadiums/football/cfb_198_l_n_federal_credit_union_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3151,8 +3280,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 44.9055,
     longitude: -68.6744,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762300/stadiums/football/cfb_200_harold_alfond_sports_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762300/stadiums/football/cfb_200_harold_alfond_sports_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3174,8 +3304,9 @@ export const cfbTeams: Team[] = [
     established: 1965,
     latitude: 41.7226,
     longitude: -73.9341,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762312/stadiums/football/cfb_278_tenney_stadium_at_leonidoff_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762312/stadiums/football/cfb_278_tenney_stadium_at_leonidoff_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3197,8 +3328,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 38.4248,
     longitude: -82.4311,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762320/stadiums/football/cfb_158_joan_c__edwards_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762320/stadiums/football/cfb_158_joan_c__edwards_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3220,8 +3352,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 38.9908,
     longitude: -76.9447,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762330/stadiums/football/cfb_140_secu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762330/stadiums/football/cfb_140_secu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3243,8 +3376,9 @@ export const cfbTeams: Team[] = [
     established: 1940,
     latitude: 30.1781,
     longitude: -93.2135,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762336/stadiums/football/cfb_234_cowboy_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762336/stadiums/football/cfb_234_cowboy_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3266,8 +3400,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 35.1187,
     longitude: -89.9773,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762340/stadiums/football/cfb_187_simmons_bank_liberty_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762340/stadiums/football/cfb_187_simmons_bank_liberty_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3289,8 +3424,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 32.8306,
     longitude: -83.6492,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762345/stadiums/football/cfb_172_five_star_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762345/stadiums/football/cfb_172_five_star_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3312,8 +3448,9 @@ export const cfbTeams: Team[] = [
     established: 1903,
     latitude: 42.6605,
     longitude: -71.118,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762350/stadiums/football/cfb_276_duane_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762350/stadiums/football/cfb_276_duane_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3335,8 +3472,9 @@ export const cfbTeams: Team[] = [
     established: 1926,
     latitude: 25.958,
     longitude: -80.2389,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762356/stadiums/football/cfb_123_hard_rock_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762356/stadiums/football/cfb_123_hard_rock_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3358,8 +3496,9 @@ export const cfbTeams: Team[] = [
     established: 1888,
     latitude: 39.5177,
     longitude: -84.7333,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762362/stadiums/football/cfb_130_yager_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762362/stadiums/football/cfb_130_yager_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3381,8 +3520,9 @@ export const cfbTeams: Team[] = [
     established: 1879,
     latitude: 42.2658,
     longitude: -83.7487,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762371/stadiums/football/cfb_115_michigan_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762371/stadiums/football/cfb_115_michigan_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3404,8 +3544,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 42.7284,
     longitude: -84.4849,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762375/stadiums/football/cfb_92_spartan_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762375/stadiums/football/cfb_92_spartan_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3427,8 +3568,9 @@ export const cfbTeams: Team[] = [
     established: 1911,
     latitude: 35.8491,
     longitude: -86.369,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762382/stadiums/football/cfb_170_johnny__red__floyd_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762382/stadiums/football/cfb_170_johnny__red__floyd_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3450,8 +3592,9 @@ export const cfbTeams: Team[] = [
     established: 1882,
     latitude: 44.976,
     longitude: -93.2248,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762392/stadiums/football/cfb_85_huntington_bank_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762392/stadiums/football/cfb_85_huntington_bank_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3473,8 +3616,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 33.4552,
     longitude: -88.793,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762398/stadiums/football/cfb_186_davis_wade_stadium_at_scott_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762398/stadiums/football/cfb_186_davis_wade_stadium_at_scott_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3496,8 +3640,9 @@ export const cfbTeams: Team[] = [
     established: 1953,
     latitude: 33.5151,
     longitude: -90.3415,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762406/stadiums/football/cfb_271_rice_totten_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762406/stadiums/football/cfb_271_rice_totten_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3519,8 +3664,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 38.9354,
     longitude: -92.332,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762416/stadiums/football/cfb_83_faurot_field_at_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762416/stadiums/football/cfb_83_faurot_field_at_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3542,8 +3688,9 @@ export const cfbTeams: Team[] = [
     established: 1909,
     latitude: 37.2018,
     longitude: -93.2843,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762425/stadiums/football/cfb_239_plaster_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762425/stadiums/football/cfb_239_plaster_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3565,8 +3712,9 @@ export const cfbTeams: Team[] = [
     established: 1993,
     latitude: 40.2808,
     longitude: -74.0053,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762430/stadiums/football/cfb_267_kessler_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762430/stadiums/football/cfb_267_kessler_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3588,8 +3736,9 @@ export const cfbTeams: Team[] = [
     established: 1897,
     latitude: 46.8664,
     longitude: -113.9839,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762435/stadiums/football/cfb_288_washington_grizzly_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762435/stadiums/football/cfb_288_washington_grizzly_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3612,6 +3761,8 @@ export const cfbTeams: Team[] = [
     latitude: 45.6592,
     longitude: -111.0527,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3634,6 +3785,8 @@ export const cfbTeams: Team[] = [
     latitude: 38.1864,
     longitude: -83.4334,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3655,8 +3808,9 @@ export const cfbTeams: Team[] = [
     established: 1898,
     latitude: 39.3449,
     longitude: -76.5812,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762455/stadiums/football/cfb_167_hughes_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762455/stadiums/football/cfb_167_hughes_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3678,8 +3832,9 @@ export const cfbTeams: Team[] = [
     established: 1924,
     latitude: 36.6268,
     longitude: -88.3213,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762463/stadiums/football/cfb_194_roy_stewart_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762463/stadiums/football/cfb_194_roy_stewart_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3701,8 +3856,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 35.8001,
     longitude: -78.7199,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762468/stadiums/football/cfb_121_carter_finley_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762468/stadiums/football/cfb_121_carter_finley_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3724,8 +3880,9 @@ export const cfbTeams: Team[] = [
     established: 1960,
     latitude: 35.9485,
     longitude: -77.7826,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762475/stadiums/football/cfb_376_scotty_whitelaw_field_at_rocky_mount_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762475/stadiums/football/cfb_376_scotty_whitelaw_field_at_rocky_mount_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3747,8 +3904,9 @@ export const cfbTeams: Team[] = [
     established: 1879,
     latitude: 38.9852,
     longitude: -76.5073,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762482/stadiums/football/cfb_145_navy_marine_corps_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762482/stadiums/football/cfb_145_navy_marine_corps_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3770,8 +3928,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 40.8206,
     longitude: -96.7056,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762485/stadiums/football/cfb_42_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762485/stadiums/football/cfb_42_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3793,8 +3952,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 39.5454,
     longitude: -119.8183,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762497/stadiums/football/cfb_56_mackay_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762497/stadiums/football/cfb_56_mackay_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3817,6 +3977,8 @@ export const cfbTeams: Team[] = [
     latitude: 43.1402,
     longitude: -70.9396,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3839,6 +4001,8 @@ export const cfbTeams: Team[] = [
     latitude: 35.0679,
     longitude: -106.6248,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3860,8 +4024,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 32.2809,
     longitude: -106.7426,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762506/stadiums/football/cfb_55_aggie_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762506/stadiums/football/cfb_55_aggie_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 164,
@@ -3882,8 +4047,9 @@ export const cfbTeams: Team[] = [
     established: 1972,
     latitude: 29.7929,
     longitude: -90.8029,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_164_john_l__guidry_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_164_john_l__guidry_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 393,
@@ -3903,8 +4069,9 @@ export const cfbTeams: Team[] = [
     established: 1920,
     latitude: 42.0447,
     longitude: -71.9402,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762528/stadiums/football/cfb_393_michael_vendetti_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762528/stadiums/football/cfb_393_michael_vendetti_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3927,6 +4094,8 @@ export const cfbTeams: Team[] = [
     latitude: 36.8466,
     longitude: -76.2635,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3948,8 +4117,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 34.8095,
     longitude: -87.6665,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762536/stadiums/football/cfb_263_braly_municipal_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762536/stadiums/football/cfb_263_braly_municipal_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3971,8 +4141,9 @@ export const cfbTeams: Team[] = [
     established: 1888,
     latitude: 35.9061,
     longitude: -79.0478,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762549/stadiums/football/cfb_53_kenan_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762549/stadiums/football/cfb_53_kenan_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -3995,8 +4166,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 36.0796,
     longitude: -79.7674,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_248_truist_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_248_truist_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4018,8 +4190,9 @@ export const cfbTeams: Team[] = [
     established: 1884,
     latitude: 43.6986,
     longitude: -85.4839,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_249_top_taggart_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_249_top_taggart_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 454,
@@ -4041,6 +4214,8 @@ export const cfbTeams: Team[] = [
     latitude: 34.2745,
     longitude: -81.6187,
     venueImage: "",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 302,
@@ -4063,6 +4238,8 @@ export const cfbTeams: Team[] = [
     latitude: 35.9741,
     longitude: -78.8994,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 731,
@@ -4084,6 +4261,8 @@ export const cfbTeams: Team[] = [
     latitude: 32.2156,
     longitude: -98.2189,
     venueImage: "",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 518,
@@ -4105,6 +4284,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.4997,
     longitude: -81.5325,
     venueImage: "",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 678,
@@ -4126,6 +4307,8 @@ export const cfbTeams: Team[] = [
     latitude: 44.85,
     longitude: -92.623,
     venueImage: "https://example.com/stadiums/uwrf_ramer_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 860,
@@ -4147,6 +4330,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.784,
     longitude: -88.142,
     venueImage: "https://example.com/stadiums/ncc_benedict_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4168,8 +4353,9 @@ export const cfbTeams: Team[] = [
     established: 1876,
     latitude: 39.33,
     longitude: -76.62,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_165_homewood_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762511/stadiums/football/cfb_165_homewood_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 157,
@@ -4190,8 +4376,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 47.9009,
     longitude: -97.0603,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762569/stadiums/football/cfb_157_alerus_center.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762569/stadiums/football/cfb_157_alerus_center.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 652,
@@ -4212,8 +4399,9 @@ export const cfbTeams: Team[] = [
     established: 1924,
     latitude: 35.2465,
     longitude: -91.7377,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_harding_estes_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762561/stadiums/football/cfb_harding_estes_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 254,
@@ -4234,8 +4422,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 46.9054,
     longitude: -96.8008,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762575/stadiums/football/cfb_254_fargodome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762575/stadiums/football/cfb_254_fargodome.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4256,8 +4445,9 @@ export const cfbTeams: Team[] = [
     established: 1994,
     latitude: 35.0739,
     longitude: -82.3739,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762581/stadiums/football/cfb_266_younts_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762581/stadiums/football/cfb_266_younts_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 58,
@@ -4278,8 +4468,9 @@ export const cfbTeams: Team[] = [
     established: 1913,
     latitude: 33.2016,
     longitude: -97.1573,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762585/stadiums/football/cfb_58_datcu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762585/stadiums/football/cfb_58_datcu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4301,8 +4492,9 @@ export const cfbTeams: Team[] = [
     established: 1915,
     latitude: 35.1811,
     longitude: -111.6543,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762592/stadiums/football/cfb_87_walkup_skydome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762592/stadiums/football/cfb_87_walkup_skydome.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4324,8 +4516,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 40.406,
     longitude: -104.709,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762601/stadiums/football/cfb_220_nottingham_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762601/stadiums/football/cfb_220_nottingham_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4347,8 +4540,9 @@ export const cfbTeams: Team[] = [
     established: 1899,
     latitude: 41.9344,
     longitude: -88.778,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762615/stadiums/football/cfb_79_huskie_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762615/stadiums/football/cfb_79_huskie_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4370,8 +4564,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 42.514,
     longitude: -92.4638,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762620/stadiums/football/cfb_150_uni_dome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762620/stadiums/football/cfb_150_uni_dome.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4394,6 +4589,8 @@ export const cfbTeams: Team[] = [
     latitude: 42.063,
     longitude: -87.6922,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4416,8 +4613,9 @@ export const cfbTeams: Team[] = [
     established: 1907,
     latitude: 31.7413,
     longitude: -93.0982,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762636/stadiums/football/cfb_251_harry_turpin_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762636/stadiums/football/cfb_251_harry_turpin_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4439,8 +4637,9 @@ export const cfbTeams: Team[] = [
     established: 1979,
     latitude: 43.6159,
     longitude: -84.2613,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762643/stadiums/football/cfb_734_hantz_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762643/stadiums/football/cfb_734_hantz_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4462,8 +4661,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 41.6984,
     longitude: -86.2336,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762648/stadiums/football/cfb_108_notre_dame_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762648/stadiums/football/cfb_108_notre_dame_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4485,8 +4685,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 39.3214,
     longitude: -82.1053,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762655/stadiums/football/cfb_168_peden_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762655/stadiums/football/cfb_168_peden_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4508,8 +4709,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 40.0017,
     longitude: -83.0197,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762663/stadiums/football/cfb_107_ohio_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762663/stadiums/football/cfb_107_ohio_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4531,8 +4733,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 35.2059,
     longitude: -97.4421,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762673/stadiums/football/cfb_117_gaylord_family_oklahoma_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762673/stadiums/football/cfb_117_gaylord_family_oklahoma_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4554,8 +4757,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 36.1271,
     longitude: -97.073,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762680/stadiums/football/cfb_61_boone_pickens_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762680/stadiums/football/cfb_61_boone_pickens_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4578,6 +4782,8 @@ export const cfbTeams: Team[] = [
     latitude: 36.8866,
     longitude: -76.3027,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4599,8 +4805,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 34.3631,
     longitude: -89.5365,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762689/stadiums/football/cfb_131_vaught_hemingway_stadium_at_hollingsworth_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762689/stadiums/football/cfb_131_vaught_hemingway_stadium_at_hollingsworth_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4623,6 +4830,8 @@ export const cfbTeams: Team[] = [
     latitude: 44.0582,
     longitude: -123.0687,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4644,8 +4853,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 44.5592,
     longitude: -123.2779,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762699/stadiums/football/cfb_203_reser_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762699/stadiums/football/cfb_203_reser_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4667,8 +4877,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 40.8128,
     longitude: -77.856,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762706/stadiums/football/cfb_78_beaver_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762706/stadiums/football/cfb_78_beaver_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4690,8 +4901,9 @@ export const cfbTeams: Team[] = [
     established: 1876,
     latitude: 39.9493,
     longitude: -75.1911,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762711/stadiums/football/cfb_324_franklin_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762711/stadiums/football/cfb_324_franklin_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4714,6 +4926,8 @@ export const cfbTeams: Team[] = [
     latitude: 34.0406,
     longitude: -118.7079,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4735,8 +4949,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 40.4468,
     longitude: -80.0158,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762724/stadiums/football/cfb_63_acrisure_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762724/stadiums/football/cfb_63_acrisure_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4758,8 +4973,9 @@ export const cfbTeams: Team[] = [
     established: 1947,
     latitude: 45.532,
     longitude: -122.9378,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762733/stadiums/football/cfb_91_hillsboro_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762733/stadiums/football/cfb_91_hillsboro_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4780,8 +4996,9 @@ export const cfbTeams: Team[] = [
     established: 1907,
     latitude: 30.0931,
     longitude: -95.9872,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762738/stadiums/football/cfb_295_panther_stadium_at_blackshear_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762738/stadiums/football/cfb_295_panther_stadium_at_blackshear_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4803,8 +5020,9 @@ export const cfbTeams: Team[] = [
     established: 1913,
     latitude: 34.4677,
     longitude: -81.864,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762745/stadiums/football/cfb_294_bailey_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762745/stadiums/football/cfb_294_bailey_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4826,8 +5044,9 @@ export const cfbTeams: Team[] = [
     established: 1869,
     latitude: 40.3431,
     longitude: -74.6551,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762751/stadiums/football/cfb_323_powers_field_at_princeton_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762751/stadiums/football/cfb_323_powers_field_at_princeton_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4849,8 +5068,9 @@ export const cfbTeams: Team[] = [
     established: 1887,
     latitude: 40.427,
     longitude: -86.9188,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762763/stadiums/football/cfb_77_ross_ade_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762763/stadiums/football/cfb_77_ross_ade_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4872,8 +5092,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 41.4848,
     longitude: -71.5338,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762768/stadiums/football/cfb_256_meade_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762768/stadiums/football/cfb_256_meade_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4896,6 +5117,8 @@ export const cfbTeams: Team[] = [
     latitude: 29.7166,
     longitude: -95.4048,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4917,8 +5140,9 @@ export const cfbTeams: Team[] = [
     established: 1881,
     latitude: 37.5732,
     longitude: -77.5399,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762777/stadiums/football/cfb_148_e__claiborne_robins_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762777/stadiums/football/cfb_148_e__claiborne_robins_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4940,8 +5164,9 @@ export const cfbTeams: Team[] = [
     established: 1994,
     latitude: 40.5166,
     longitude: -80.2218,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762783/stadiums/football/cfb_224_joe_walton_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762783/stadiums/football/cfb_224_joe_walton_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4963,8 +5188,9 @@ export const cfbTeams: Team[] = [
     established: 1869,
     latitude: 40.5137,
     longitude: -74.4643,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762789/stadiums/football/cfb_143_shi_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762789/stadiums/football/cfb_143_shi_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -4986,8 +5212,9 @@ export const cfbTeams: Team[] = [
     established: 1930,
     latitude: 30.5157,
     longitude: -90.4626,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762794/stadiums/football/cfb_183_strawberry_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762794/stadiums/football/cfb_183_strawberry_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5009,8 +5236,9 @@ export const cfbTeams: Team[] = [
     established: 1902,
     latitude: 37.3062,
     longitude: -89.5248,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762802/stadiums/football/cfb_152_houck_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762802/stadiums/football/cfb_152_houck_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5032,8 +5260,9 @@ export const cfbTeams: Team[] = [
     established: 1915,
     latitude: 32.8424,
     longitude: -96.7849,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762810/stadiums/football/cfb_190_gerald_j__ford_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762810/stadiums/football/cfb_190_gerald_j__ford_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5055,8 +5284,9 @@ export const cfbTeams: Team[] = [
     established: 1954,
     latitude: 38.5586,
     longitude: -121.4235,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762823/stadiums/football/cfb_258_hornet_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762823/stadiums/football/cfb_258_hornet_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5078,8 +5308,9 @@ export const cfbTeams: Team[] = [
     established: 1991,
     latitude: 41.2226,
     longitude: -73.2438,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762831/stadiums/football/cfb_280_campus_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762831/stadiums/football/cfb_280_campus_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5102,6 +5333,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.5045,
     longitude: -78.6373,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5123,8 +5356,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 30.7241,
     longitude: -95.5509,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762846/stadiums/football/cfb_813_elliott_t__bowers_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762846/stadiums/football/cfb_813_elliott_t__bowers_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5146,8 +5380,9 @@ export const cfbTeams: Team[] = [
     established: 1902,
     latitude: 33.4615,
     longitude: -86.8015,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762851/stadiums/football/cfb_210_seibert_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762851/stadiums/football/cfb_210_seibert_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5169,8 +5404,9 @@ export const cfbTeams: Team[] = [
     established: 1956,
     latitude: 32.7719,
     longitude: -117.1897,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762857/stadiums/football/cfb_300_torero_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762857/stadiums/football/cfb_300_torero_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5193,8 +5429,9 @@ export const cfbTeams: Team[] = [
     established: 1921,
     latitude: 32.7846,
     longitude: -117.1202,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762861/stadiums/football/cfb_155_snapdragon_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762861/stadiums/football/cfb_155_snapdragon_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5216,8 +5453,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 37.3209,
     longitude: -121.8682,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762872/stadiums/football/cfb_90_cefcu_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762872/stadiums/football/cfb_90_cefcu_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5239,8 +5477,9 @@ export const cfbTeams: Team[] = [
     established: 2009,
     latitude: 30.6995,
     longitude: -88.178,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762877/stadiums/football/cfb_163_hancock_whitney_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762877/stadiums/football/cfb_163_hancock_whitney_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5262,8 +5501,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 33.9734,
     longitude: -81.0197,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762883/stadiums/football/cfb_188_williams_brice_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762883/stadiums/football/cfb_188_williams_brice_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5286,8 +5526,9 @@ export const cfbTeams: Team[] = [
     established: 1907,
     latitude: 33.4993,
     longitude: -80.8387,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762889/stadiums/football/cfb_72_oliver_c__dawson_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762889/stadiums/football/cfb_72_oliver_c__dawson_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5309,8 +5550,9 @@ export const cfbTeams: Team[] = [
     established: 1889,
     latitude: 42.7863,
     longitude: -96.9253,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762894/stadiums/football/cfb_175_dakotadome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762894/stadiums/football/cfb_175_dakotadome.jpg",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 600,
@@ -5332,6 +5574,8 @@ export const cfbTeams: Team[] = [
     latitude: 44.0783,
     longitude: -103.225,
     venueImage: "",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5353,8 +5597,9 @@ export const cfbTeams: Team[] = [
     established: 1900,
     latitude: 44.3185,
     longitude: -96.7713,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762900/stadiums/football/cfb_139_dana_j__dykhouse_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762900/stadiums/football/cfb_139_dana_j__dykhouse_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5376,8 +5621,9 @@ export const cfbTeams: Team[] = [
     established: 1997,
     latitude: 27.9767,
     longitude: -82.5033,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762906/stadiums/football/cfb_135_raymond_james_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762906/stadiums/football/cfb_135_raymond_james_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5399,8 +5645,9 @@ export const cfbTeams: Team[] = [
     established: 1916,
     latitude: 30.5163,
     longitude: -91.1824,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762911/stadiums/football/cfb_232_a__w__mumford_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762911/stadiums/football/cfb_232_a__w__mumford_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5422,8 +5669,9 @@ export const cfbTeams: Team[] = [
     established: 1913,
     latitude: 37.6999,
     longitude: -89.214,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762915/stadiums/football/cfb_243_saluki_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762915/stadiums/football/cfb_243_saluki_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5445,8 +5693,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 31.3299,
     longitude: -89.3359,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762928/stadiums/football/cfb_178_m_m__roberts_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762928/stadiums/football/cfb_178_m_m__roberts_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5468,8 +5717,9 @@ export const cfbTeams: Team[] = [
     established: 1963,
     latitude: 37.6774,
     longitude: -113.0713,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762934/stadiums/football/cfb_212_eccles_coliseum.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762934/stadiums/football/cfb_212_eccles_coliseum.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5491,8 +5741,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 37.4349,
     longitude: -122.1619,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762938/stadiums/football/cfb_191_stanford_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762938/stadiums/football/cfb_191_stanford_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5514,8 +5765,9 @@ export const cfbTeams: Team[] = [
     established: 1923,
     latitude: 31.6178,
     longitude: -94.649,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762944/stadiums/football/cfb_231_homer_bryce_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762944/stadiums/football/cfb_231_homer_bryce_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5537,8 +5789,9 @@ export const cfbTeams: Team[] = [
     established: 1901,
     latitude: 29.0285,
     longitude: -81.3021,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762951/stadiums/football/cfb_290_spec_martin_municipal_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762951/stadiums/football/cfb_290_spec_martin_municipal_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5560,8 +5813,9 @@ export const cfbTeams: Team[] = [
     established: 1988,
     latitude: 42.0586,
     longitude: -71.1047,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762957/stadiums/football/cfb_287_w_b__mason_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762957/stadiums/football/cfb_287_w_b__mason_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5583,8 +5837,9 @@ export const cfbTeams: Team[] = [
     established: 1984,
     latitude: 40.9091,
     longitude: -73.1202,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762963/stadiums/football/cfb_246_kenneth_p__lavalle_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762963/stadiums/football/cfb_246_kenneth_p__lavalle_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5606,8 +5861,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 40.7993,
     longitude: -76.8752,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762969/stadiums/football/cfb_833_amos_alonzo_stagg_field_at_nicholas_a__stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762969/stadiums/football/cfb_833_amos_alonzo_stagg_field_at_nicholas_a__stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5629,8 +5885,9 @@ export const cfbTeams: Team[] = [
     established: 1889,
     latitude: 43.0368,
     longitude: -76.1357,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762975/stadiums/football/cfb_197_jma_wireless_dome.png",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762975/stadiums/football/cfb_197_jma_wireless_dome.png",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5652,8 +5909,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 32.7095,
     longitude: -97.3608,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762991/stadiums/football/cfb_105_amon_g__carter_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762991/stadiums/football/cfb_105_amon_g__carter_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5675,8 +5933,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 39.9012,
     longitude: -75.1683,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762997/stadiums/football/cfb_100_lincoln_financial_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766762997/stadiums/football/cfb_100_lincoln_financial_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5698,8 +5957,9 @@ export const cfbTeams: Team[] = [
     established: 1891,
     latitude: 35.9552,
     longitude: -83.925,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763003/stadiums/football/cfb_69_neyland_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763003/stadiums/football/cfb_69_neyland_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5721,8 +5981,9 @@ export const cfbTeams: Team[] = [
     established: 1912,
     latitude: 36.1665,
     longitude: -86.7713,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763014/stadiums/football/cfb_252_nissan_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763014/stadiums/football/cfb_252_nissan_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5744,8 +6005,9 @@ export const cfbTeams: Team[] = [
     established: 1922,
     latitude: 36.1818,
     longitude: -85.5031,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763020/stadiums/football/cfb_102_tucker_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763020/stadiums/football/cfb_102_tucker_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5767,8 +6029,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 30.2672,
     longitude: 97.7431,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763033/stadiums/football/cfb_195_darrell_k_royal_texas_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763033/stadiums/football/cfb_195_darrell_k_royal_texas_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5790,8 +6053,9 @@ export const cfbTeams: Team[] = [
     established: 1894,
     latitude: 30.6105,
     longitude: -96.3398,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763038/stadiums/football/cfb_111_kyle_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763038/stadiums/football/cfb_111_kyle_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5813,8 +6077,9 @@ export const cfbTeams: Team[] = [
     established: 1947,
     latitude: 29.7527,
     longitude: -95.3521,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763045/stadiums/football/cfb_233_shell_energy_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763045/stadiums/football/cfb_233_shell_energy_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5837,6 +6102,8 @@ export const cfbTeams: Team[] = [
     latitude: 29.8927,
     longitude: -97.9285,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5858,8 +6125,9 @@ export const cfbTeams: Team[] = [
     established: 1925,
     latitude: 33.5903,
     longitude: -101.8865,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763059/stadiums/football/cfb_193_jones_at_t_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763059/stadiums/football/cfb_193_jones_at_t_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5881,8 +6149,9 @@ export const cfbTeams: Team[] = [
     established: 1905,
     latitude: 32.7936,
     longitude: -79.9575,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763069/stadiums/football/cfb_260_johnson_hagood_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763069/stadiums/football/cfb_260_johnson_hagood_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5904,8 +6173,9 @@ export const cfbTeams: Team[] = [
     established: 1917,
     latitude: 41.6595,
     longitude: -83.6133,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763074/stadiums/football/cfb_75_glass_bowl.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763074/stadiums/football/cfb_75_glass_bowl.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5927,8 +6197,9 @@ export const cfbTeams: Team[] = [
     established: 1969,
     latitude: 39.3979,
     longitude: -76.6106,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763080/stadiums/football/cfb_244_johnny_unitas_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763080/stadiums/football/cfb_244_johnny_unitas_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5950,8 +6221,9 @@ export const cfbTeams: Team[] = [
     established: 1900,
     latitude: 29.4628,
     longitude: -98.4831,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763085/stadiums/football/cfb_847_trinity_university_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763085/stadiums/football/cfb_847_trinity_university_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5973,8 +6245,9 @@ export const cfbTeams: Team[] = [
     established: 1909,
     latitude: 31.7992,
     longitude: -85.957,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763090/stadiums/football/cfb_132_veterans_memorial_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763090/stadiums/football/cfb_132_veterans_memorial_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -5996,8 +6269,9 @@ export const cfbTeams: Team[] = [
     established: 1893,
     latitude: 29.9401,
     longitude: -90.1213,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763095/stadiums/football/cfb_180_yulman_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763095/stadiums/football/cfb_180_yulman_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6019,8 +6293,9 @@ export const cfbTeams: Team[] = [
     established: 1895,
     latitude: 36.1519,
     longitude: -95.9446,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763099/stadiums/football/cfb_160_h_a__chapman_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763099/stadiums/football/cfb_160_h_a__chapman_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6042,8 +6317,9 @@ export const cfbTeams: Team[] = [
     established: 1991,
     latitude: 33.5257,
     longitude: -86.8125,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763104/stadiums/football/cfb_81_protective_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763104/stadiums/football/cfb_81_protective_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6065,8 +6341,9 @@ export const cfbTeams: Team[] = [
     established: 1970,
     latitude: 42.6865,
     longitude: -73.8244,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763111/stadiums/football/cfb_730_bob_ford_field_at_tom___mary_casey_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763111/stadiums/football/cfb_730_bob_ford_field_at_tom___mary_casey_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6089,6 +6366,8 @@ export const cfbTeams: Team[] = [
     latitude: 38.5379,
     longitude: -121.7571,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6111,6 +6390,8 @@ export const cfbTeams: Team[] = [
     latitude: 28.6077,
     longitude: 81.1952,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6132,8 +6413,9 @@ export const cfbTeams: Team[] = [
     established: 1919,
     latitude: 34.1613,
     longitude: -118.1675,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763126/stadiums/football/cfb_153_rose_bowl.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763126/stadiums/football/cfb_153_rose_bowl.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6155,8 +6437,9 @@ export const cfbTeams: Team[] = [
     established: 1896,
     latitude: 41.756,
     longitude: -72.623,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763136/stadiums/football/cfb_46_pratt___whitney_stadium_at_rentschler_field.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763136/stadiums/football/cfb_46_pratt___whitney_stadium_at_rentschler_field.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6178,8 +6461,9 @@ export const cfbTeams: Team[] = [
     established: 1931,
     latitude: 32.5336,
     longitude: -92.0755,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763142/stadiums/football/cfb_196_malone_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763142/stadiums/football/cfb_196_malone_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6201,8 +6485,9 @@ export const cfbTeams: Team[] = [
     established: 1879,
     latitude: 42.3451,
     longitude: -72.5361,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763146/stadiums/football/cfb_181_warren_mcguirk_alumni_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763146/stadiums/football/cfb_181_warren_mcguirk_alumni_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6224,8 +6509,9 @@ export const cfbTeams: Team[] = [
     established: 1968,
     latitude: 36.0908,
     longitude: -115.1838,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763152/stadiums/football/cfb_43_allegiant_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763152/stadiums/football/cfb_43_allegiant_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6247,8 +6533,9 @@ export const cfbTeams: Team[] = [
     established: 1888,
     latitude: 34.0141,
     longitude: -118.2879,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763160/stadiums/football/cfb_122_los_angeles_memorial_coliseum.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763160/stadiums/football/cfb_122_los_angeles_memorial_coliseum.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6270,8 +6557,9 @@ export const cfbTeams: Team[] = [
     established: 1925,
     latitude: 36.3389,
     longitude: -88.866,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763165/stadiums/football/cfb_247_hardy_m__graham_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763165/stadiums/football/cfb_247_hardy_m__graham_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6293,8 +6581,9 @@ export const cfbTeams: Team[] = [
     established: 1914,
     latitude: 31.7704,
     longitude: -106.5052,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763171/stadiums/football/cfb_57_sun_bowl_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763171/stadiums/football/cfb_57_sun_bowl_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6316,8 +6605,9 @@ export const cfbTeams: Team[] = [
     established: 2011,
     latitude: 29.4181,
     longitude: -98.4786,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763179/stadiums/football/cfb_133_alamodome.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763179/stadiums/football/cfb_133_alamodome.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6339,8 +6629,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 40.7607,
     longitude: -111.848,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763189/stadiums/football/cfb_114_rice_eccles_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763189/stadiums/football/cfb_114_rice_eccles_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6362,8 +6653,9 @@ export const cfbTeams: Team[] = [
     established: 1892,
     latitude: 41.7567,
     longitude: -111.812,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763194/stadiums/football/cfb_45_maverik_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763194/stadiums/football/cfb_45_maverik_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6385,8 +6677,9 @@ export const cfbTeams: Team[] = [
     established: 2006,
     latitude: 37.1166,
     longitude: -113.561,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763201/stadiums/football/cfb_264_greater_zion_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763201/stadiums/football/cfb_264_greater_zion_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6408,8 +6701,9 @@ export const cfbTeams: Team[] = [
     established: 1873,
     latitude: 37.7902,
     longitude: -79.4387,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763206/stadiums/football/cfb_66_alumni_memorial_field_at_foster_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763206/stadiums/football/cfb_66_alumni_memorial_field_at_foster_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6432,6 +6726,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.4636,
     longitude: -87.0493,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6453,8 +6749,9 @@ export const cfbTeams: Team[] = [
     established: 1890,
     latitude: 36.1429,
     longitude: -86.8074,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763224/stadiums/football/cfb_60_firstbank_stadium.jpg",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766763224/stadiums/football/cfb_60_firstbank_stadium.jpg",
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6477,6 +6774,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.0372,
     longitude: -75.3385,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6499,6 +6798,8 @@ export const cfbTeams: Team[] = [
     latitude: 38.0319,
     longitude: -78.5131,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6521,6 +6822,8 @@ export const cfbTeams: Team[] = [
     latitude: 37.2192,
     longitude: -80.4183,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6543,6 +6846,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.615,
     longitude: -74.094,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6565,6 +6870,8 @@ export const cfbTeams: Team[] = [
     latitude: 36.1326,
     longitude: -80.2531,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 205,
@@ -6586,6 +6893,8 @@ export const cfbTeams: Team[] = [
     latitude: 47.6501,
     longitude: -122.3016,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 201,
@@ -6607,6 +6916,8 @@ export const cfbTeams: Team[] = [
     latitude: 46.7336,
     longitude: -117.1634,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 227,
@@ -6628,6 +6939,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.201,
     longitude: -111.946,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6649,6 +6962,8 @@ export const cfbTeams: Team[] = [
     latitude: 32.5904,
     longitude: -88.1875,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6671,6 +6986,8 @@ export const cfbTeams: Team[] = [
     latitude: 33.5702,
     longitude: -85.1077,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6692,6 +7009,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.1704,
     longitude: -80.5665,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6714,6 +7033,8 @@ export const cfbTeams: Team[] = [
     latitude: 39.6506,
     longitude: -79.9552,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6736,6 +7057,8 @@ export const cfbTeams: Team[] = [
     latitude: 35.3097,
     longitude: -83.1847,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6758,6 +7081,8 @@ export const cfbTeams: Team[] = [
     latitude: 40.4701,
     longitude: -90.6846,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6780,6 +7105,8 @@ export const cfbTeams: Team[] = [
     latitude: 36.9841,
     longitude: -86.4553,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6802,12 +7129,13 @@ export const cfbTeams: Team[] = [
     latitude: 42.2831,
     longitude: -85.6019,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
     id: 274,
     espnID: 2848,
-
     name: "Western Oregon",
     fullName: "Western Oregon Wolves",
     code: "WORE",
@@ -6824,6 +7152,8 @@ export const cfbTeams: Team[] = [
     latitude: 44.8499,
     longitude: -123.2335,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6846,6 +7176,8 @@ export const cfbTeams: Team[] = [
     latitude: 37.2716,
     longitude: -76.7199,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6868,6 +7200,8 @@ export const cfbTeams: Team[] = [
     latitude: 43.0699,
     longitude: -89.4127,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6890,6 +7224,8 @@ export const cfbTeams: Team[] = [
     latitude: 34.964,
     longitude: -81.9313,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6912,6 +7248,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.3129,
     longitude: -105.5667,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 
   {
@@ -6934,6 +7272,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.3113,
     longitude: -72.9479,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 482,
@@ -6948,13 +7288,14 @@ export const cfbTeams: Team[] = [
     location: "West Haven, CT",
     city: "West Haven",
     venue: "Ralph F. DellaCamera Stadium",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347223/stadiums/football/cfb_482_Ralph_F_DellaCamera_Stadium.png",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347223/stadiums/football/cfb_482_Ralph_F_DellaCamera_Stadium.png",
     address: "300 Boston Post Rd, West Haven, CT 06516",
     venueCapacity: "5,000",
     established: 1920,
     latitude: 41.2896,
     longitude: -72.9612,
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 381,
@@ -6974,8 +7315,9 @@ export const cfbTeams: Team[] = [
     established: 1926,
     latitude: 42.1129,
     longitude: -80.0866,
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347640/stadiums/football/cfb_381_Saxon_Stadium.webp",
+    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347640/stadiums/football/cfb_381_Saxon_Stadium.webp",
+    isActive: true,
+    isAllStar: false
   },
   {
     id: 238,
@@ -6998,6 +7340,8 @@ export const cfbTeams: Team[] = [
     latitude: 41.1075,
     longitude: -80.6481,
     venueImage: null,
+    isActive: true,
+    isAllStar: false
   },
 ];
 
@@ -7803,14 +8147,6 @@ export function getCFBTeamLogo(
       : team.logo;
 }
 
-export const teamsCFBById: Record<string, Team> = cfbTeams.reduce(
-  (map, team) => {
-    map[team.id] = team;
-    return map;
-  },
-  {} as Record<string, Team>,
-);
-
 export const getTeamByESPNId = (espnId: number | string) => {
   return cfbTeams.find((t) => t.espnID.toString() === espnId.toString())!;
 };
@@ -7825,36 +8161,4 @@ export function getRivalryHeadline(homeId?: number, awayId?: number) {
   );
 
   return match?.rivalryName || null;
-}
-
-const normalize = (s?: unknown) => {
-  if (typeof s !== "string") return "";
-  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
-};
-export function getNeutralStadium(venueName?: string, isNeutralSite?: boolean) {
-  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
-  if (!isNeutralSite) return null;
-
-  if (!venueName) return null;
-
-  const normalizedInput = normalize(venueName);
-
-  // 1. Exact match (fast path)
-  if (neutralStadiums[venueName]) {
-    return neutralStadiums[venueName];
-  }
-
-  // 2. Fuzzy match
-  for (const key of Object.keys(neutralStadiums)) {
-    const normalizedKey = normalize(key);
-
-    if (
-      normalizedInput.includes(normalizedKey) ||
-      normalizedKey.includes(normalizedInput)
-    ) {
-      return neutralStadiums[key];
-    }
-  }
-
-  return null;
 }

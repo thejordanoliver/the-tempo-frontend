@@ -1,6 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 import { CombinedGamesSection } from "components/League/CombinedGamesList";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -10,7 +9,7 @@ import { useNewsStore } from "hooks/newsStore";
 import { useFootballWeeklyGames } from "hooks/NFLHooks/useFootballWeeklyGames";
 import { useHighlights } from "hooks/useHighlights";
 import { useNews } from "hooks/useNews";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 import { useMLBWeeklyGames } from "./MLBHooks/useMLBWeeklyGames";
 import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
@@ -19,7 +18,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export function useHomeData(selectedTab: "scores" | "news") {
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const { favorites } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
 
   // ✅ Local date for filtering
@@ -86,21 +85,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
   );
 
   const setArticles = useNewsStore((s) => s.setArticles);
-
-  // 🧠 Load favorites when screen focuses
-  useFocusEffect(
-    useCallback(() => {
-      const loadFavorites = async () => {
-        try {
-          const stored = await AsyncStorage.getItem("favorites");
-          if (stored) setFavorites(JSON.parse(stored));
-        } catch (error) {
-          console.warn("Failed to load favorites:", error);
-        }
-      };
-      loadFavorites();
-    }, []),
-  );
 
   // --------------------------------------------------
   // Normalize games
@@ -329,7 +313,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
     selectedDate,
     setSelectedDate,
     favorites,
-    setFavorites,
     refreshing,
     handleRefresh,
     gamesByCategory,
@@ -343,7 +326,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       cfbLoading ||
       mensCBBLoading ||
       womensCBBLoading ||
-      loadingFights||
+      loadingFights ||
       newsLoading ||
       highlightsLoading,
   };

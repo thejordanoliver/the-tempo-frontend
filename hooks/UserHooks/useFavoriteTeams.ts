@@ -34,9 +34,7 @@ export function useFavoriteTeams() {
   /* ---------------- TEAM ID HELPER ---------------- */
 
   const getTeamId = (team: TeamWithLeague) => {
-    if (team.league === "WCBB") {
-      return (team as any).wid;
-    }
+    if (team.league === "WCBB") return (team as any).wid;
     return team.id;
   };
 
@@ -57,7 +55,6 @@ export function useFavoriteTeams() {
 
   const filteredTeams = useMemo(() => {
     const q = search.toLowerCase();
-
     return allTeams.filter((team) =>
       (team.fullName ?? team.name ?? "").toLowerCase().includes(q),
     );
@@ -73,6 +70,7 @@ export function useFavoriteTeams() {
       const storedFavorites = await AsyncStorage.getItem(STORAGE_KEY);
 
       setUserId(storedUserId ? Number(storedUserId) : null);
+
       if (storedFavorites) {
         const parsed = JSON.parse(storedFavorites);
         setFavorites(Array.isArray(parsed) ? parsed : []);
@@ -112,14 +110,22 @@ export function useFavoriteTeams() {
           ? prev.filter((f) => f !== key)
           : [...prev, key];
 
-        AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch((err) =>
-          console.error("Failed to persist favorites", err),
-        );
+        AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+          .then(() => {
+            if (userId) {
+              apiClient
+                .patch(`/api/users/id/${userId}/favorites`, { favorites: next })
+                .catch((err) =>
+                  console.warn("❌ Sync error on toggle:", err),
+                );
+            }
+          })
+          .catch((err) => console.error("Failed to persist favorites", err));
 
         return next;
       });
     },
-    [],
+    [userId],
   );
 
   /* ---------------- GRID / LIST TOGGLE ---------------- */
@@ -150,9 +156,7 @@ export function useFavoriteTeams() {
     );
 
     try {
-      const url = `/api/users/id/${userId}/favorites`;
-
-      const res = await apiClient.patch(url, {
+      const res = await apiClient.patch(`/api/users/id/${userId}/favorites`, {
         favorites: normalizedFavorites,
       });
 
@@ -172,6 +176,29 @@ export function useFavoriteTeams() {
       return false;
     }
   };
+
+  /* ---------------- SYNC FAVORITES (drag reorder) ---------------- */
+
+  const syncFavorites = useCallback(
+    async (orderedIds: string[]) => {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(orderedIds));
+
+      if (!userId) {
+        console.warn("No userId found — will sync later.");
+        return;
+      }
+
+      try {
+        await apiClient.patch(`/api/users/id/${userId}/favorites`, {
+          favorites: orderedIds,
+        });
+        console.log("✅ Favorites synced.");
+      } catch (err) {
+        console.warn("❌ Sync error:", err);
+      }
+    },
+    [userId],
+  );
 
   /* ---------------- TEAM PREVIEW ---------------- */
 
@@ -231,6 +258,7 @@ export function useFavoriteTeams() {
           await apiClient.patch(`/api/users/id/${userId}/favorites`, {
             favorites: updatedFavorites,
           });
+          console.log("✅ Favorites synced after remove.");
         } catch (err: any) {
           console.error(
             "Failed to remove favorite",
@@ -260,6 +288,7 @@ export function useFavoriteTeams() {
     toggleFavorite,
     isFavorite,
     saveFavorites,
+    syncFavorites,
     loadFavorites,
 
     filteredTeams,

@@ -21,7 +21,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 
 type Props = {
   games: Game[];

@@ -1,9 +1,8 @@
 import { teams as mlbTeams } from "constants/teamsMLB";
-import { MLBGame } from "types/mlb";
+import { MLBGame } from "types/baseball";
 
 const getTeam = (id: number) =>
   mlbTeams.find((t) => t.id === id) ?? mlbTeams[0];
-
 
 export const mockMLBGames: MLBGame[] = [
   // --- Scheduled Game ---

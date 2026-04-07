@@ -1,7 +1,7 @@
 // hooks/NFLHooks/useFootballSeasonGames.ts
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 import { BASE_URL } from "utils/apiClient";
 
 export function useFootballGamesByWeek(season: number, league: number) {

@@ -202,6 +202,7 @@ export type NBATeam = {
     home: any;
     away: any;
   };
+  isActive: boolean;
   isAllStar: boolean;
 };
 
@@ -210,7 +211,6 @@ export interface NHLTeam {
   espnID: number;
   name: string;
   fullName: string;
-  nickname: string;
   code: string;
   color: string;
   secondaryColor: string;
@@ -220,6 +220,7 @@ export interface NHLTeam {
   established?: number;
   latitude?: number;
   longitude?: number;
+  venueImage?: string;
   venueName?: string;
   venueCapacity?: string;
   address?: string;
@@ -227,6 +228,7 @@ export interface NHLTeam {
   championships?: number[];
   isAllStar: boolean;
   isActive: boolean;
+  national: boolean;
 }
 
 export type Arena = {
@@ -375,7 +377,8 @@ export type CBBTeam = {
   color?: string;
   secondaryColor?: string;
   venueName?: string; // ✅ Add this
-  isAllStar?: boolean;
+  isAllStar: boolean;
+  isActive: boolean;
 };
 
 export type Conference = {

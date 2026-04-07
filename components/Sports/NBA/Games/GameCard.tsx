@@ -232,7 +232,7 @@ export default function GameCard({ game }: { game: Game }) {
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
-              : (["#DFBD69", "#CDA765"] as [string, string])
+              : ([Colors.dark.gold, Colors.dark.gold] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

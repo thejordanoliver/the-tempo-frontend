@@ -39,7 +39,6 @@ export default function WNBALeagueScreen() {
   const pagerRef = useRef<PagerView>(null);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("WNBA");
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);

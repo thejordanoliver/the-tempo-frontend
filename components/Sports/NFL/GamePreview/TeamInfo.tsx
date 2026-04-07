@@ -1,7 +1,7 @@
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { Team } from "types/nfl";
+import { Team } from "types/football";
 
 type TeamInfoProps = {
   team: Team;

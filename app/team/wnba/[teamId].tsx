@@ -3,17 +3,18 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
+import NewsList from "components/News/NewsList";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getWNBATeam } from "constants/teamsWNBA";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/useLeagueTabs";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CBBGame } from "types/types";
 import {
@@ -23,6 +24,7 @@ import {
 } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 
 export default function TeamDetailScreen() {
   const isDark = useColorScheme() === "dark";
@@ -31,10 +33,12 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? Number(teamId) : null;
   const team = getWNBATeam(Number(teamIdNum));
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const league = "WNBA";
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cachedGames, setCachedGames] = useState<CBBGame[]>([]);
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("WNBA");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -46,7 +50,11 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
-
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
   const CACHE_KEY = `teamGames-${teamIdNum}`;
   const CACHE_EXPIRY_HOURS = 6;
 
@@ -152,8 +160,6 @@ export default function TeamDetailScreen() {
     );
   }, [rawTeamGames, teamIdNum]);
 
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const league = "WNBA";
   const favorited = team ? isFavorite(league, team.id) : false;
 
   useLayoutEffect(() => {
@@ -198,7 +204,7 @@ export default function TeamDetailScreen() {
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
-        <View key="schedule" style={{ flex: 1 }}>
+        <View key="schedule" style={styles.contentArea}>
           <View style={styles.monthSelector}>
             <MonthSelector
               months={monthsToShow}
@@ -220,9 +226,32 @@ export default function TeamDetailScreen() {
           />
         </View>
 
+        {/* News Page */}
+        <View key="news" style={styles.contentArea}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            <NewsList
+              items={articles}
+              isDark={isDark}
+              loading={newsLoading}
+              error={newsError}
+              refreshing
+              onRefresh={handleRefresh}
+            />
+          </ScrollView>
+        </View>
+
         {/* Forum Page */}
-        <View key="forum" style={{ flex: 1 }}>
-          <TeamForum teamId={teamId as string} league="WNBA" />
+        <View key="forum" style={styles.contentArea}>
+          <TeamForum teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 
@@ -232,7 +261,7 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          league="WNBA"
+          league={league}
         />
       )}
     </View>

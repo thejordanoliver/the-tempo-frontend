@@ -8,8 +8,8 @@ import { getNHLTeam } from "constants/teamsNHL";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
 
-import { MLBTeam } from "types/mlb";
-import { Team } from "types/nfl";
+import { MLBTeam } from "types/baseball";
+import { Team } from "types/football";
 import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
 
 type Props = {
@@ -54,8 +54,6 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
   })();
 
   if (!team) return null;
-
-  
 
   // --------------------------------------------------
   // LEAGUE RENDERING

@@ -57,7 +57,6 @@ export default function CBBLeagueScreen() {
   } = useLeaguesNews(10, "CBB");
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CBB");
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

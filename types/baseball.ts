@@ -18,6 +18,7 @@ export interface MLBTeam {
   city?: string;
   championships?: number[];
   isAllStar: boolean;
+  isActive: boolean;
 }
 
 export interface MLBScoreSide {

@@ -35,6 +35,7 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CustomTabBar from "../components/CustomTabBar";
+import { FavoriteTeamsProvider } from "contexts/FavoriteTeamsContext";
 
 // --------------------
 // Custom themes
@@ -152,94 +153,96 @@ export default function RootLayout() {
   // Main render
   // --------------------
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NotificationProvider>
-        <BottomSheetModalProvider>
-          <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-            <PreferencesProvider>
-              <Stack
-                screenOptions={({ route, navigation }) => {
-                  const isTabScreen = route.name === "(tabs)";
-                  const isSplashScreen = route.name === "signup/success";
-                  const isProfileScreen = route.name === "profile";
+<GestureHandlerRootView style={{ flex: 1 }}>
+  <FavoriteTeamsProvider> 
+    <NotificationProvider>
+      <BottomSheetModalProvider>
+        <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
+          <PreferencesProvider>
 
-                  return {
-                    headerShown: !isSplashScreen && !isTabScreen,
-                    header: !isSplashScreen
-                      ? () => (
-                          <CustomHeaderTitle
-                            title={route.name}
-                            onBack={
-                              navigation.canGoBack()
-                                ? navigation.goBack
-                                : undefined
-                            }
-                          />
-                        )
-                      : undefined,
-                    gestureEnabled: !isTabScreen,
-                    animation: isProfileScreen
+            <Stack
+              screenOptions={({ route, navigation }) => {
+                const isTabScreen = route.name === "(tabs)";
+                const isSplashScreen = route.name === "signup/success";
+                const isProfileScreen = route.name === "profile";
+
+                return {
+                  headerShown: !isSplashScreen && !isTabScreen,
+                  header: !isSplashScreen
+                    ? () => (
+                        <CustomHeaderTitle
+                          title={route.name}
+                          onBack={
+                            navigation.canGoBack()
+                              ? navigation.goBack
+                              : undefined
+                          }
+                        />
+                      )
+                    : undefined,
+                  gestureEnabled: !isTabScreen,
+                  animation: isProfileScreen
+                    ? "fade"
+                    : isSplashScreen
                       ? "fade"
-                      : isSplashScreen
-                        ? "fade"
-                        : isTabScreen
-                          ? "none"
-                          : "default",
-                    gestureDirection: "horizontal",
-                  };
+                      : isTabScreen
+                        ? "none"
+                        : "default",
+                  gestureDirection: "horizontal",
+                };
+              }}
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="+not-found"
+                options={{ title: "Page Not Found" }}
+              />
+              <Stack.Screen name="signup/success" />
+            </Stack>
+
+            <StatusBar style={isDark ? "light" : "dark"} />
+
+            {!shouldHideTabBar && visibleTabBar && (
+              <Animated.View
+                style={{
+                  opacity,
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
                 }}
               >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="+not-found"
-                  options={{ title: "Page Not Found" }}
+                <CustomTabBar />
+              </Animated.View>
+            )}
+
+            {gameId && isOpen && pathname?.startsWith("/game/") && (
+              <>
+                <LiveChatBottomSheet
+                  gameId={gameId}
+                  onChange={(index) => index === -1 && closeChat()}
+                  onSend={(sendMessage) => setSendFn(() => sendMessage)}
                 />
-                <Stack.Screen name="signup/success" />
-              </Stack>
 
-              <StatusBar style={isDark ? "light" : "dark"} />
-
-              {/* Tab Bar */}
-              {!shouldHideTabBar && visibleTabBar && (
-                <Animated.View
-                  style={{
-                    opacity,
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                <ChatInputBar
+                  value={input}
+                  onChange={setInput}
+                  onSend={() => {
+                    if (!input.trim() || !gameId) return;
+                    if (sendFn) {
+                      sendFn(input);
+                      setInput("");
+                    }
                   }}
-                >
-                  <CustomTabBar />
-                </Animated.View>
-              )}
+                />
+              </>
+            )}
 
-              {/* Global Chat */}
-              {gameId && isOpen && pathname?.startsWith("/game/") && (
-                <>
-                  <LiveChatBottomSheet
-                    gameId={gameId}
-                    onChange={(index) => index === -1 && closeChat()}
-                    onSend={(sendMessage) => setSendFn(() => sendMessage)}
-                  />
-
-                  <ChatInputBar
-                    value={input}
-                    onChange={setInput}
-                    onSend={() => {
-                      if (!input.trim() || !gameId) return;
-                      if (sendFn) {
-                        sendFn(input);
-                        setInput("");
-                      }
-                    }}
-                  />
-                </>
-              )}
-            </PreferencesProvider>
-          </ThemeProvider>
-        </BottomSheetModalProvider>
-      </NotificationProvider>
-    </GestureHandlerRootView>
+          </PreferencesProvider>
+        </ThemeProvider>
+      </BottomSheetModalProvider>
+    </NotificationProvider>
+  </FavoriteTeamsProvider>
+</GestureHandlerRootView>
   );
 }

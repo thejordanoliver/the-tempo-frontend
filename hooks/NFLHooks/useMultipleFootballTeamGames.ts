@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 
 import { BASE_URL } from "utils/apiClient";
 

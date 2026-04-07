@@ -221,7 +221,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         <LinearGradient
           colors={
             isChampionship
-              ? ["#DFBD69", "#CDA765"]
+              ? [Colors.dark.gold, Colors.dark.gold]
               : [awayColor, awayColor, homeColor, homeColor]
           }
           locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}

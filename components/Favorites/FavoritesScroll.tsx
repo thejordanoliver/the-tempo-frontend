@@ -1,27 +1,27 @@
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import { Colors } from "constants/styles";
-import { getMLBTeamLogo, mlbTeams } from "constants/teamsMLB";
-import { getNHLTeamLogo, nhlTeams } from "constants/teamsNHL";
+import { mlbTeams } from "constants/teamsMLB";
+import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Pressable, Text, View, useColorScheme } from "react-native";
-import DraggableFlatList, {
-  RenderItemParams,
-} from "react-native-draggable-flatlist";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
-import { getTeamLogo, teams } from "../../constants/teams";
-import { cbbTeams, getCBBTeamLogo } from "../../constants/teamsCBB";
-import { cfbTeams, getCFBTeamLogo } from "../../constants/teamsCFB";
-import { getNFLTeamLogo, nflTeams } from "../../constants/teamsNFL";
+import { teams } from "../../constants/teams";
+import { cbbTeams } from "../../constants/teamsCBB";
+import { cfbTeams } from "../../constants/teamsCFB";
+import { nflTeams } from "../../constants/teamsNFL";
+import { teamTab } from "./TeamTab";
+
 type TeamWithLeague = {
   id: string | number;
   name: string;
+  code: string;
   logo?: any;
   logoLight?: any;
   color?: string;
@@ -38,8 +38,6 @@ type Props = {
   loading?: boolean;
 };
 
-import { BASE_URL } from "utils/apiClient";
-
 export default function FavoritesScroll({
   favoriteTeamIds,
   onFavoritesChange,
@@ -50,169 +48,73 @@ export default function FavoritesScroll({
   const router = useRouter();
   const isDark = useColorScheme() === "dark";
   const styles = favoritesScrollStyles(isDark);
-  const [username, setUsername] = useState<string | null>(null);
+  const { syncFavorites } = useFavoriteTeamsContext();
 
   // -------------------------
-  // Prepare initial teams
+  // Prepare teams from favoriteTeamIds
   // -------------------------
-  const initialTeams: TeamWithLeague[] = favoriteTeamIds
-    .map((fav) => {
-      const [league, id] = fav.split(":");
-      let baseTeam:
-        | { id: number; name: string; logo?: any; color?: string; wid?: number }
-        | undefined;
+  const data: TeamWithLeague[] = useMemo(() => {
+    return favoriteTeamIds
+      .map((fav) => {
+        const [league, id] = fav.split(":");
 
-      switch (league) {
-        case "NBA":
-          baseTeam = teams.find((t) => String(t.id) === id);
-          break;
-        case "NFL":
-          baseTeam = nflTeams.find((t) => String(t.id) === id);
-          break;
-        case "CFB":
-          baseTeam = cfbTeams.find((t) => String(t.id) === id);
-          break;
-        case "CBB":
-          baseTeam = cbbTeams.find((t) => String(t.id) === id);
-          break;
-        case "WCBB":
-          baseTeam = cbbTeams.find((t) => String(t.wid) === id);
-          if (!baseTeam?.wid) return null; // Skip if wid not present
-          break;
-        case "MLB":
-          baseTeam = mlbTeams.find((t) => String(t.id) === id);
-          break;
-        case "NHL":
-          baseTeam = nhlTeams.find((t) => String(t.id) === id);
-          break;
-      }
+        let baseTeam:
+          | {
+              id: number;
+              name: string;
+              logo?: any;
+              color?: string;
+              wid?: number;
+            }
+          | undefined;
 
-      if (!baseTeam) return null;
+        switch (league) {
+          case "NBA":
+            baseTeam = teams.find((t) => String(t.id) === id);
+            break;
+          case "WNBA":
+            baseTeam = wnbaTeams.find((t) => String(t.id) === id);
+            break;
+          case "NFL":
+            baseTeam = nflTeams.find((t) => String(t.id) === id);
+            break;
+          case "CFB":
+            baseTeam = cfbTeams.find((t) => String(t.id) === id);
+            break;
+          case "CBB":
+            baseTeam = cbbTeams.find((t) => String(t.id) === id);
+            break;
+          case "WCBB":
+            baseTeam = cbbTeams.find((t) => String(t.wid) === id);
+            if (!baseTeam?.wid) return null;
+            break;
+          case "MLB":
+            baseTeam = mlbTeams.find((t) => String(t.id) === id);
+            break;
+          case "NHL":
+            baseTeam = nhlTeams.find((t) => String(t.id) === id);
+            break;
+          default:
+            return null;
+        }
 
-      return {
-        ...baseTeam,
-        id: league === "WCBB" ? String(baseTeam.wid) : String(baseTeam.id),
-        league: league as LeagueType,
-        key: `${league}-${id}`,
-        wid: baseTeam.wid,
-      } as TeamWithLeague;
-    })
-    .filter((t): t is TeamWithLeague => t !== null);
+        if (!baseTeam) return null;
 
-  const [data, setData] = useState<TeamWithLeague[]>(initialTeams);
-
-  // -------------------------
-  // Load username
-  // -------------------------
-  useEffect(() => {
-    AsyncStorage.getItem("username").then((u) => {
-      if (u) setUsername(u);
-    });
-  }, []);
-
-  // -------------------------
-  // Update data if favorites change
-  // -------------------------
-  useEffect(() => {
-    setData(initialTeams);
+        return {
+          ...baseTeam,
+          id: league === "WCBB" ? String(baseTeam.wid) : String(baseTeam.id),
+          league: league as LeagueType,
+          key: `${league}-${id}`,
+          wid: baseTeam.wid,
+        } as TeamWithLeague;
+      })
+      .filter((t): t is TeamWithLeague => t !== null);
   }, [favoriteTeamIds]);
-
-  // -------------------------
-  // Render a single team
-  // -------------------------
-  const renderItem = ({
-    item,
-    drag,
-    isActive,
-  }: RenderItemParams<TeamWithLeague>) => {
-    // Determine logo based on league
-    let logo;
-    switch (item.league) {
-      case "NFL":
-        logo = getNFLTeamLogo(Number(item.id), true);
-        break;
-      case "NBA":
-        logo = getTeamLogo(Number(item.id), true);
-        break;
-      case "CFB":
-        logo = getCFBTeamLogo(Number(item.id), true);
-        break;
-      case "CBB":
-        logo = getCBBTeamLogo(Number(item.id), true, false);
-        break;
-      case "WCBB":
-        logo = getCBBTeamLogo(Number(item.id), true, true); // Use wid for women's teams
-        break;
-      case "NHL":
-        logo = getNHLTeamLogo(Number(item.id), true);
-        break;
-      case "MLB":
-        logo = getMLBTeamLogo(Number(item.id), true);
-        break;
-      default:
-        logo = null;
-    }
-
-    return (
-      <Pressable
-        onLongPress={async () => {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          drag();
-        }}
-        key={item.key}
-        style={({ pressed }) => [
-          styles.teamIcon,
-          pressed && { opacity: 0.6 },
-          isActive && { opacity: 0.8, transform: [{ scale: 1.05 }] },
-        ]}
-        onPress={async () => {
-          await Haptics.selectionAsync();
-          const routeMap: Record<LeagueType, string> = {
-            NBA: "/team/[teamId]",
-            NFL: "/team/nfl/[teamId]",
-            CFB: "/team/cfb/[teamId]",
-            CBB: "/team/cbb/[teamId]",
-            WCBB: "/team/wcbb/[teamId]",
-            MLB: "/team/mlb/[teamId]",
-            NHL: "/team/nhl/[teamId]",
-            MMA: "/player/mma/[id]",
-          };
-          const route = routeMap[item.league];
-          router.push({ pathname: route as any, params: { teamId: item.id } });
-        }}
-      >
-        <View
-          style={[
-            styles.logoWrapper,
-            {
-              backgroundColor: isDark
-                ? item.color || Colors.dark.itemBackground
-                : item.color || Colors.light.itemBackground,
-            },
-          ]}
-        >
-          <Image source={logo} style={styles.logo} />
-        </View>
-
-        <View style={styles.teamLabelContainer}>
-          <Text style={styles.teamLabel}>{item.name}</Text>
-          {(item.league === "CFB" ||
-            item.league === "CBB" ||
-            item.league === "WCBB") && (
-            <>
-              <View style={styles.divider} />
-              <Text style={styles.teamLabel}>{item.league}</Text>
-            </>
-          )}
-        </View>
-      </Pressable>
-    );
-  };
 
   if (loading) return <FavoritesScrollSkeleton />;
 
   // -------------------------
-  // Render the list
+  // Render
   // -------------------------
   return (
     <View style={styles.favoritesWrapper}>
@@ -223,7 +125,7 @@ export default function FavoritesScroll({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.favorites}
         activationDistance={30}
-        renderItem={renderItem}
+        renderItem={teamTab}
         onDragBegin={async () => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           onDragStart?.();
@@ -231,37 +133,18 @@ export default function FavoritesScroll({
         onPlaceholderIndexChange={async () => {
           await Haptics.selectionAsync();
         }}
-        onDragEnd={async ({ data }) => {
+        onDragEnd={async ({ data: reordered }) => {
           await Haptics.notificationAsync(
             Haptics.NotificationFeedbackType.Success,
           );
-          setData(data);
 
-          const orderedIds = data.map((t) =>
+          const orderedIds = reordered.map((t) =>
             t.league === "WCBB" ? `WCBB:${t.wid}` : `${t.league}:${t.id}`,
           );
 
-          await AsyncStorage.setItem("favorites", JSON.stringify(orderedIds));
+          await syncFavorites(orderedIds); // ✅ hook handles storage + API
           onFavoritesChange?.(orderedIds);
           onDragEnd?.();
-
-          const storedUserId = await AsyncStorage.getItem("userId");
-          if (!storedUserId) {
-            console.warn("No userId found — will sync favorites later.");
-            return;
-          }
-
-          try {
-            await axios.patch(
-              `${BASE_URL}/api/users/id/${storedUserId}/favorites`,
-              {
-                favorites: orderedIds,
-              },
-            );
-            console.log("✅ Favorites reordered and synced successfully.");
-          } catch (err) {
-            console.warn("❌ Network error syncing favorites:", err);
-          }
         }}
         ListFooterComponent={() => (
           <Pressable
@@ -269,10 +152,6 @@ export default function FavoritesScroll({
               await Haptics.selectionAsync();
               router.push("/edit-favorites");
             }}
-            accessibilityRole="button"
-            accessibilityLabel={
-              data.length === 0 ? "Add favorite teams" : "Edit favorite teams"
-            }
             style={[styles.teamIcon, styles.editButton]}
           >
             <View style={styles.editIcon}>

@@ -35,7 +35,6 @@ export default function FavoriteTeamsSection({
         <FavoriteTeamsList
           favoriteTeams={favorites}
           isGridView={isGridView}
-          styles={styles}
           itemWidth={itemWidth}
           key={isGridView ? "grid" : "list"}
           isCurrentUser={isCurrentUser} // ✅ enforce current user

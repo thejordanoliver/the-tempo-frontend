@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
-import { MLBGame } from "types/mlb";
-import type { Game as NFLGameType } from "types/nfl";
+import { MLBGame } from "types/baseball";
+import type { Game as NFLGameType } from "types/football";
 import type {
   CBBGame as CBBGameType,
   Game as NBAGameType,

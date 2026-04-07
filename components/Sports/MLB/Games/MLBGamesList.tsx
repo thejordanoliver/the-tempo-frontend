@@ -14,7 +14,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { MLBGame } from "types/mlb";
+import { MLBGame } from "types/baseball";
 import MLBGamePreviewModal from "../GamePreview/MLBGamePreviewModal";
 import MLBGameCard from "./MLBGameCard";
 import MLBSquareGameCard from "./MLBSquareGameCard";

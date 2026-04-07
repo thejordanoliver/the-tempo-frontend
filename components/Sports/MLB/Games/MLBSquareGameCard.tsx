@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { MLBGame } from "types/mlb";
+import { MLBGame } from "types/baseball";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";

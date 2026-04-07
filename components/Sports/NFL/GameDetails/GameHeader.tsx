@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { Team } from "types/nfl";
+import { Team } from "types/football";
 import { NFLGameCenterInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 

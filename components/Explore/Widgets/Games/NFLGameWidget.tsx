@@ -6,7 +6,7 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { Image, Text, View, useColorScheme } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { Team } from "types/nfl";
+import { Team } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import displayeValue from "utils/widgetUtils";

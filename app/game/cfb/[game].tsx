@@ -30,7 +30,7 @@ import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSum
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 
-import { Game } from "types/nfl";
+import { Game } from "types/football";
 /* --- Utils & Stores --- */
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
@@ -171,7 +171,7 @@ export default function CFBGameDetailsScreen() {
   const venueCapacity = neutralSite
     ? neutralVenue?.venueCapacity
     : homeTeam?.venueCapacity || null;
-  const venueAttendance = details?.attendance || null;
+  const venueAttendance = details?.attendance;
   const venueImage = neutralSite
     ? neutralVenue?.venueImage
     : homeTeam?.venueImage || baseVenue?.images[1].href;

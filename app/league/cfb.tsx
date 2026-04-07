@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
+import NewsList from "components/News/NewsList";
 import { Bracket } from "components/Sports/CFB/Bracket/Bracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
@@ -24,14 +24,13 @@ import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
 import { getFootballSeasonYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import NewsList from "components/News/NewsList";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -51,7 +50,7 @@ export default function CFBeagueScreen() {
   const [recruitTeam, setRecruitTeam] = useState("all");
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CFB");
-  const [favorites, setFavorites] = useState<string[]>([]);
+
   const [refreshing, setRefreshing] = useState(false);
   const { data: bracketData } = useCFPBracket();
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
@@ -126,20 +125,6 @@ export default function CFBeagueScreen() {
     });
   }, [selectedWeekGamesRaw, selectedConference, top25Teams]);
 
-  useFocusEffect(
-    useCallback(() => {
-      const loadFavorites = async () => {
-        try {
-          const stored = await AsyncStorage.getItem("favorites");
-          if (stored) setFavorites(JSON.parse(stored));
-        } catch (error) {
-          console.warn("Failed to load favorites:", error);
-        }
-      };
-      loadFavorites();
-    }, []),
-  );
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -211,28 +196,28 @@ export default function CFBeagueScreen() {
             </ScrollView>
           </View>
 
-        {/* NEWS */}
-                <View key="news" style={styles.contentArea}>
-                  <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 100 }}
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={handleRefresh}
-                      />
-                    }
-                  >
-                    <NewsList
-                      items={articles}
-                      isDark={isDark}
-                      loading={newsLoading}
-                      error={newsError}
-                      refreshing
-                      onRefresh={handleRefresh}
-                    />
-                  </ScrollView>
-                </View>
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            >
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
+                error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
+              />
+            </ScrollView>
+          </View>
           {/* STANDINGS */}
           <View key="standings">
             <>

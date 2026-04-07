@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import type { Game } from "types/nfl";
+import type { Game } from "types/football";
 import NFLGamePreviewModal from "../GamePreview/NFLGamePreviewModal";
 import NFLGameCard from "../Games/NFLGameCard";
 type Props = {

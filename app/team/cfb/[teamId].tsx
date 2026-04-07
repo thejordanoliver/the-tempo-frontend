@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
+import NewsList from "components/News/NewsList";
 import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
 import { Roster } from "components/Sports/CFB/Team/Roster";
@@ -8,13 +9,14 @@ import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam } from "constants/teamsCFB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
 import { useTeamTabs } from "hooks/useLeagueTabs";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
@@ -26,9 +28,12 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
   const team = getCFBTeam(Number(teamIdNum));
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const league = "CFB";
+  const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("CFB");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const pagerRef = useRef<PagerView>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -41,6 +46,11 @@ export default function TeamDetailScreen() {
     setSelectedTab(indexToTab(index));
   };
 
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
   const {
     games: teamGames,
     loading: gamesLoading,
@@ -63,10 +73,6 @@ export default function TeamDetailScreen() {
       setRefreshing(false);
     }
   };
-
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const league = "CFB";
-  const favorited = team ? isFavorite(league, team.id) : false;
 
   // --- Header ---
   useLayoutEffect(() => {
@@ -111,7 +117,7 @@ export default function TeamDetailScreen() {
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         {/* Schedule Page */}
-        <View key="schedule" style={{ flex: 1 }}>
+        <View key="schedule" style={styles.contentArea}>
           <CFBGamesList
             games={teamGames}
             loading={gamesLoading}
@@ -123,15 +129,35 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={{ flex: 1 }}></ScrollView>
+        <View key="news" style={styles.contentArea}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            <NewsList
+              items={articles}
+              isDark={isDark}
+              loading={newsLoading}
+              error={newsError}
+              refreshing
+              onRefresh={handleRefresh}
+            />
+          </ScrollView>
+        </View>
 
         {/* Roster Page */}
-        <View key="roster" style={{ flex: 1 }}>
+        <View key="roster" style={styles.contentArea}>
           <Roster
             ref={rosterRef}
             teamId={String(team.id)}
             teamName={team.name}
-            league="CFB"
+            league={league}
           />
         </View>
 
@@ -141,21 +167,21 @@ export default function TeamDetailScreen() {
             <FootballRosterStats
               espnID={Number(team.espnID)}
               teamID={Number(team.id)}
-              league="CFB"
+              league={league}
             />
           )}
         </ScrollView>
 
         {/* Forum Page */}
-        <View key="standings" style={{ flex: 1 }}>
+        <View key="standings" style={styles.contentArea}>
           <CFBConferenceStandingsList
             onlyTeamConference={true}
             teamName={team.fullName}
           />
         </View>
         {/* Forum Page */}
-        <View key="forum" style={{ flex: 1 }}>
-          <TeamForum teamId={teamId as string} league="CFB" />
+        <View key="forum" style={styles.contentArea}>
+          <TeamForum teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 
@@ -165,7 +191,7 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          league="CFB"
+          league={league}
         />
       )}
     </View>

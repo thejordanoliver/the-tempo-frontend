@@ -39,6 +39,8 @@ export const favoritesScrollStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
       marginTop: 4,
+      width: 60,
+    
     },
     divider: {
       width: 1,
