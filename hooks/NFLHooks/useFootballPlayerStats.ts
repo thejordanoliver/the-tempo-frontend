@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 type AggregatedStats = Record<string, number>;
 
@@ -19,8 +19,8 @@ export function useFootballPlayerStats(playerId: number) {
 
       try {
         // ✅ Call your backend endpoint
-        const response = await axios.get(
-          `${BASE_URL}/api/players/football/${playerId}/stats`,
+        const response = await apiClient.get(
+          `api/players/football/${playerId}/stats`,
         );
 
         const data = response.data;

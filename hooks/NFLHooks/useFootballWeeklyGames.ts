@@ -1,11 +1,9 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Game } from "types/football";
-
-import { BASE_URL } from "utils/apiClient";
+import { FootballGame } from "types/football";
+import { apiClient } from "utils/apiClient";
 
 export function useFootballWeeklyGames(league?: number) {
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<FootballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,12 +12,13 @@ export function useFootballWeeklyGames(league?: number) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/games/football/weekly`, {
+      const res = await apiClient.get(`api/games/football/weekly`, {
         params: { league },
       });
 
       // ✅ Handle both backend formats safely
-      const rawGames: Game[] = res.data?.games || res.data?.response || [];
+      const rawGames: FootballGame[] =
+        res.data?.games || res.data?.response || [];
 
       setGames(rawGames);
     } catch (err: any) {

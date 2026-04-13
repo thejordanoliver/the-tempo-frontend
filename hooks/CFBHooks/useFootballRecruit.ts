@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useFootballRecruit(id?: number) {
   const [data, setData] = useState<any>(null);
@@ -18,8 +18,8 @@ export function useFootballRecruit(id?: number) {
         setLoading(true);
         setError(null);
 
-        const res = await axios.get(
-          `${API_URL}/api/recruits/football/player/${id}`,
+        const res = await apiClient.get(
+          `api/recruits/football/player/${id}`,
         );
 
         if (!cancelled) {

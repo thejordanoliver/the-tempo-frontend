@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import { apiClient } from "utils/apiClient";
 
 export type ChampionTeam = {
   team: {
@@ -32,8 +31,8 @@ export function useChampionTeams({
     if (!enabled) return;
 
     setLoading(true);
-    const res = await axios.get(
-      `${API_URL}/api/champions/${league}/teams`,
+    const res = await apiClient.get(
+      `api/champions/${league}/teams`,
       {
         params: { _refresh: refreshToken ?? Date.now() },
       }

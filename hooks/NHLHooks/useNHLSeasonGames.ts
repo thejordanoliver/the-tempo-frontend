@@ -3,6 +3,7 @@ import { getNHLTeam } from "constants/teamsNHL";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { NHLGame } from "types/nhl";
+import { apiClient } from "utils/apiClient";
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL;
 
@@ -48,7 +49,7 @@ export function useNHLSeasonGames(season: string | number) {
         return;
       }
 
-      const res = await axios.get(`${API_BASE}/api/games/nhl/season/${season}`);
+      const res = await apiClient.get(`api/games/nhl/season/${season}`);
 
       const seasonGames = Array.isArray(res.data) ? res.data : [];
 

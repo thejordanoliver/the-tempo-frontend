@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { MMAFight } from "types/mma";
-
-const API_BASE = process.env.EXPO_PUBLIC_API_URL;
+import { apiClient } from "utils/apiClient";
 
 export function useWeeklyFights() {
   const [fights, setFights] = useState<MMAFight[]>([]);
@@ -20,7 +18,7 @@ export function useWeeklyFights() {
 
       setError(null);
 
-      const res = await axios.get(`${API_BASE}/api/fights/mma/weekly`);
+      const res = await apiClient.get(`api/fights/mma/weekly`);
 
       const rawFights: MMAFight[] = res.data?.games ?? [];
       setFights(rawFights);

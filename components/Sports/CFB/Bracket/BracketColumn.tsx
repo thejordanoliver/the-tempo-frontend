@@ -4,7 +4,7 @@ import CFPLogoLight from "assets/College_Logos/CFPLight.png";
 import CFPLogo from "assets/College_Logos/CFPLogo.png";
 import { Colors, Fonts } from "constants/styles";
 import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
-import { BracketRound } from "types/cfb";
+import { BracketRound } from "types/football";
 import { GameCard } from "./GameCard";
 
 export function BracketColumn({ round }: { round: BracketRound }) {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Platform } from "react-native";
+import { apiClient } from "utils/apiClient";
 
 export interface Player {
   id: string;
@@ -55,8 +56,8 @@ export default function usePlayersByTeam(teamId: number | string) {
 
     setLoading(true);
     try {
-      const res = await axios.get<PlayersResponse>(
-        `${API_URL}/api/mlb/players/team/${teamId}`
+      const res = await apiClient.get<PlayersResponse>(
+        `api/mlb/players/team/${teamId}`
       );
 
       // Map players to ensure consistent fields

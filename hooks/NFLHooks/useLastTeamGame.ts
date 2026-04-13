@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export function useLastTeamGame(
   teamId: string | number,
@@ -29,8 +29,8 @@ export function useLastTeamGame(
         return;
       }
 
-      const { data } = await axios.get(
-        `${BASE_URL}/api/games/football/last/${teamId}/${season}`,
+      const { data } = await apiClient.get(
+        `api/games/football/last/${teamId}/${season}`,
       );
 
       const game = data?.game ?? null;

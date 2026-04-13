@@ -5,29 +5,27 @@ import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
 
 import { Colors } from "constants/styles";
 import {
+  getNeutralStadium,
   getNFLTeam,
   getNFLTeamLogo,
-  neutralStadiums,
 } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
-import { useFootballVenues } from "hooks/CFBHooks/useFootballVenues";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { Game } from "types/football";
+import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
-import { findMatchedVenue, resolveFootballVenue } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 
 type Props = {
-  game: Game;
+  game: FootballGame;
   visible: boolean;
   onClose: () => void;
 };
@@ -105,7 +103,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
   const { stats } = useFootballTeamStats(game?.game?.id ?? "");
-  const { data: footballVenues = [] } = useFootballVenues();
   const headlineText = details?.headline;
   const isChampionship = game.game.week === "Super Bowl";
   const styles = gamePreviewModalStyle(isChampionship);
@@ -144,26 +141,30 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
       }
     : undefined;
 
-  const matchedVenue = useMemo(() => {
-    return findMatchedVenue(venue?.fullName, footballVenues);
-  }, [venue?.fullName, footballVenues]);
-
-  const resolvedVenue = useMemo(() => {
-    return resolveFootballVenue({
-      venue,
-      homeTeam,
-      matchedVenue,
-      neutralSite,
-      neutralStadiums,
-    });
-  }, [venue, homeTeam, matchedVenue, neutralSite]);
-
-  const { weather } = useWeatherForecast(
-    resolvedVenue.lat,
-    resolvedVenue.lon,
-    gameDateStr,
-    resolvedVenue.city,
-  );
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralStadium(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name
+    : homeTeam?.venue || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address ||
+      `${baseVenue?.address.city} ${baseVenue?.address.state}, ${baseVenue?.address.zipCode} ${baseVenue?.address.country}`;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueAttendance = details?.attendance;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage
+    : homeTeam?.venueImage || baseVenue?.images[1].href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateStr);
 
   // --------------------------------------------------------------
   // RENDER
@@ -273,12 +274,12 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   awayLastGames={awayLastGames}
                   officials={officials}
                   isDark={isDark}
-                  venueImage={resolvedVenue.image}
-                  venueName={resolvedVenue.name}
-                  venueCity={resolvedVenue.city}
-                  venueAddress={resolvedVenue.address}
-                  venueCapacity={resolvedVenue.capacity}
-                  venueAttendance={venue?.attendance}
+                  venueImage={venueImage}
+                  venueName={venueName}
+                  venueCity={venueLocation}
+                  venueAddress={venueAddress}
+                  venueCapacity={venueCapacity}
+                  venueAttendance={venueAttendance}
                   weather={weather}
                   highlights={highlights}
                   gameStatusDescription={gameStatusDescription}

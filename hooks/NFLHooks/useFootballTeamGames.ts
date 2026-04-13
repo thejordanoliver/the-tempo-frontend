@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Game } from "types/football";
-
-import { BASE_URL } from "utils/apiClient";
+import { FootballGame } from "types/football";
+import { apiClient } from "utils/apiClient";
 
 interface UseFootballTeamGamesReturn {
-  games: Game[];
+  games: FootballGame[];
   loading: boolean;
   error: string | null;
   refreshGames: () => Promise<void>;
@@ -16,7 +15,7 @@ export function useFootballTeamGames(
   season: string,
   league?: number,
 ): UseFootballTeamGamesReturn {
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<FootballGame[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,15 +26,15 @@ export function useFootballTeamGames(
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${BASE_URL}/api/games/football/team/${teamId}/${season}`,
+      const res = await apiClient.get(
+        `api/games/football/team/${teamId}/${season}`,
         {
           params: { league, teamId },
         },
       );
 
       // ✅ RAW RESPONSE ONLY
-      const rawGames: Game[] = res.data?.games || [];
+      const rawGames: FootballGame[] = res.data?.games || [];
 
       setGames(rawGames);
     } catch (err: any) {

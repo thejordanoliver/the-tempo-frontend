@@ -2,8 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SummerGame } from "types/types";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 // Cache expiry (6 hours)
 const CACHE_DURATION = 1000 * 60 * 60 * 6;
@@ -74,7 +73,7 @@ export function useNBASLGames({ season = "2025" }: UseNBASLGamesOptions = {}) {
         return;
       }
 
-      const res = await axios.get(`${BASE_URL}/api/games/nba-summer`, {
+      const res = await apiClient.get(`api/games/nba-summer`, {
         params: { season },
       });
 

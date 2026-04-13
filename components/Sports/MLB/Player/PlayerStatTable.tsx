@@ -5,7 +5,7 @@ import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import {
   CareerTotals,
   useMlbPlayerSeasons,
-} from "hooks/MLBHooks/useMlbPlayerSeasons";
+} from "hooks/MLBHooks/useMLBPlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";

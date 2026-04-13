@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { NHLGame } from "types/nhl";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export function useNHLTeamGames(
   teamId: string | number,
@@ -20,7 +20,7 @@ export function useNHLTeamGames(
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/nhl/team/${teamId}`);
+      const res = await apiClient.get(`api/games/nhl/team/${teamId}`);
 
       const data = res.data;
 

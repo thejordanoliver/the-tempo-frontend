@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NHLGame } from "types/nhl";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export function useNHLWeeklyGames() {
   const [games, setGames] = useState<NHLGame[]>([]);
@@ -13,7 +13,7 @@ export function useNHLWeeklyGames() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/games/nhl/weekly`);
+      const res = await apiClient.get(`api/games/nhl/weekly`);
 
       const gamesArray: NHLGame[] = Array.isArray(res.data?.games)
         ? res.data.games

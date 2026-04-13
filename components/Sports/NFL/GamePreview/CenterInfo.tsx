@@ -2,6 +2,7 @@
 
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
 
 export type CenterInfoProps = {

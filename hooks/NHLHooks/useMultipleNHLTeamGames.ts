@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { NHLGame } from "types/nhl";
 import { apiClient } from "utils/apiClient";
@@ -38,8 +37,8 @@ export function useMultipleNHLTeamGames({
           }
 
           try {
-            const res = await axios.get(
-              `http://localhost:4000/api/games/nhl/team/${teamId}/last`,
+            const res = await apiClient.get(
+              `api/games/nhl/team/${teamId}/last`,
               { params: { season } },
             );
 

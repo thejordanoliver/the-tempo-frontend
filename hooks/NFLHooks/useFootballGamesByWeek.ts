@@ -1,11 +1,10 @@
 // hooks/NFLHooks/useFootballSeasonGames.ts
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Game } from "types/football";
-import { BASE_URL } from "utils/apiClient";
+import { FootballGame } from "types/football";
+import { apiClient } from "utils/apiClient";
 
 export function useFootballGamesByWeek(season: number, league: number) {
-  const [weeks, setWeeks] = useState<Record<string, Game[]>>({});
+  const [weeks, setWeeks] = useState<Record<string, FootballGame[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,8 +13,8 @@ export function useFootballGamesByWeek(season: number, league: number) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${BASE_URL}/api/games/football/weeks/${season}/${league}`,
+      const res = await apiClient.get(
+        `api/games/football/weeks/${season}/${league}`,
       );
 
       // ✅ Use weeks as returned by backend

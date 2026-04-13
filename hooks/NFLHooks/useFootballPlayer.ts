@@ -1,9 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 type League = "NFL" | "CFB";
-
 
 export function useFootballPlayer(playerId: string | number, league: League) {
   const [player, setPlayer] = useState<any | null>(null);
@@ -29,7 +27,7 @@ export function useFootballPlayer(playerId: string | number, league: League) {
             ? `/api/nfl/players/player-id/${id}`
             : `/api/cfb/players/player-id/${id}`;
 
-        const { data } = await axios.get(`${BASE_URL}${endpoint}`);
+        const { data } = await apiClient.get(`${endpoint}`);
 
         setPlayer(data.player);
       } catch (err: any) {

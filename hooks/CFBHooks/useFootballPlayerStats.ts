@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 type PlayerSeasons = {
   playerId: number;
@@ -33,8 +33,8 @@ export function useFootballPlayerStats(
       setLoading(true);
       setError(null);
 
-      const res = await axios.get<PlayerSeasons>(
-        `${BASE_URL}/api/players/cfb/${playerId}/seasons`,
+      const res = await apiClient.get<PlayerSeasons>(
+        `api/players/cfb/${playerId}/seasons`,
       );
 
       setData(res.data);

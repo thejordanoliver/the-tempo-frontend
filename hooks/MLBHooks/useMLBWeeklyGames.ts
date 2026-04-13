@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MLBGame } from "types/baseball";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export function useMLBWeeklyGames() {
   const [games, setGames] = useState<MLBGame[]>([]);
@@ -14,7 +12,7 @@ export function useMLBWeeklyGames() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/games/mlb/weekly`);
+      const res = await apiClient.get(`api/games/mlb/weekly`);
 
       const gamesArray: MLBGame[] = Array.isArray(res.data?.games)
         ? res.data.games

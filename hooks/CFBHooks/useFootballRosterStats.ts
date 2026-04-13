@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export type StatCategory =
   | "pass"
@@ -45,7 +44,7 @@ const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 export function useFootballRosterStats(
   espnID: string,
   league: "CFB" | "NFL",
-  category?: StatCategory
+  category?: StatCategory,
 ) {
   const [data, setData] = useState<CFBStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,14 +77,12 @@ export function useFootballRosterStats(
         // 🔹 2. Fetch from YOUR backend only
         const endpoint =
           league === "NFL"
-            ? `${BASE_URL}/api/players/nfl/teams/${espnID}/stats`
-            : `${BASE_URL}/api/players/cfb/teams/${espnID}/stats`;
+            ? `api/players/nfl/teams/${espnID}/stats`
+            : `api/players/cfb/teams/${espnID}/stats`;
 
         const url = `${endpoint}${category ? `?category=${category}` : ""}`;
 
-        console.log("🌐 Fetching team stats:", url);
-
-        const response = await axios.get<CFBStatsResponse>(url);
+        const response = await apiClient.get<CFBStatsResponse>(url);
 
         const responseData = response.data;
 
@@ -95,7 +92,7 @@ export function useFootballRosterStats(
           JSON.stringify({
             timestamp: Date.now(),
             data: responseData,
-          })
+          }),
         );
 
         console.log("✅ Cached stats:", cacheKey);

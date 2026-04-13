@@ -1,6 +1,5 @@
-import axios from "axios";
-import { GameVenue } from "hooks/NFLHooks/useFootballGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Venue } from "types/types";
 /* ---------------------------------- */
 /* Types                              */
 /* ---------------------------------- */
@@ -28,6 +27,7 @@ export type SeriesSummary = {
     },
   ];
 };
+
 export type Predictor = {
   header: string;
   homeTeam: {
@@ -125,12 +125,12 @@ export type GameDetails = {
     home: TeamRecords;
     away: TeamRecords;
   };
-  venue?: GameVenue | null;
+  venue?: Venue | null;
 };
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* Hook                               */
@@ -176,7 +176,7 @@ export const useBaseballGameDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await axios.get(`${BASE_URL}/api/baseball/details`, {
+        const { data } = await apiClient.get(`api/baseball/details`, {
           params,
         });
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export type AwardSchool = {
   team: {
@@ -43,8 +44,8 @@ export function useAwardSchools(options: Options = {}) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${API_URL}/api/${league}/award-seasons/schools`,
+      const res = await apiClient.get(
+        `api/${league}/award-seasons/schools`,
         {
           params: {
             type: category,

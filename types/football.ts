@@ -220,15 +220,11 @@ export type Round = "first" | "quarterfinal" | "semifinal" | "championship";
 
 export interface BracketGame {
   id: string;
-
   top: BracketTeam | null;
   bottom: BracketTeam | null;
   round: Round;
-
-  // NEW FIELDS REQUIRED BY useCFPBracket
   status: "scheduled" | "live" | "final";
   startTime?: string;
-
   topScore?: number | null;
   bottomScore?: number | null;
   broadcasts?: BracketBroadcast[];
@@ -244,5 +240,4 @@ export interface BracketData {
   quarterfinal: BracketRound;
   semifinal: BracketRound;
   championship: BracketRound;
-  isDark: boolean;
 }

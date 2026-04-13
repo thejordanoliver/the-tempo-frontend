@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Game } from "types/types";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export interface HeadToHead {
   success: boolean;
@@ -33,8 +33,8 @@ export function useHeadToHeadGames(
 
     const fetchGames = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/api/games/nba/matchups/${team1}/${team2}/${season}`,
+        const res = await apiClient.get(
+          `api/games/nba/matchups/${team1}/${team2}/${season}`,
         );
 
         // Return the raw API object

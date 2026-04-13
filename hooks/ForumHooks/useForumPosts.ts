@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 type User = {
   id: string;
@@ -35,7 +35,6 @@ export type Comment = {
   editedAt?: string;
 };
 
-import { BASE_URL } from "utils/apiClient";
 export function useForumPosts(teamId: string) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +45,7 @@ export function useForumPosts(teamId: string) {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${BASE_URL}/api/forum/${teamId}`);
+      const res = await apiClient.get(`api/forum/${teamId}`);
       setPosts(res.data.posts);
     } catch (err: any) {
       setError(err.message || "Failed to fetch posts");
@@ -64,7 +63,7 @@ export function useForumPosts(teamId: string) {
       user: User,
     ) => {
       try {
-        const res = await axios.post(`${BASE_URL}/api/forum/${teamId}`, {
+        const res = await apiClient.post(`api/forum/${teamId}`, {
           text,
           images,
           videos,
@@ -85,7 +84,7 @@ export function useForumPosts(teamId: string) {
       updates: Partial<Pick<Post, "text" | "images" | "videos">>,
     ) => {
       try {
-        const res = await axios.put(`${BASE_URL}/api/forum/${postId}`, updates);
+        const res = await apiClient.put(`api/forum/${postId}`, updates);
         setPosts((prev) =>
           prev.map((p) => (p.id === postId ? res.data.post : p)),
         );
@@ -99,7 +98,7 @@ export function useForumPosts(teamId: string) {
   // Delete post
   const deletePost = useCallback(async (postId: string) => {
     try {
-      await axios.delete(`${BASE_URL}/api/forum/${postId}`);
+      await apiClient.delete(`api/forum/${postId}`);
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     } catch (err: any) {
       setError(err.message || "Failed to delete post");
@@ -111,7 +110,7 @@ export function useForumPosts(teamId: string) {
     async (postId: string, currentlyLiked: boolean) => {
       try {
         // Send explicit like state to backend (true to like, false to unlike)
-        const res = await axios.patch(`${BASE_URL}/api/forum/${postId}/like`, {
+        const res = await apiClient.patch(`api/forum/${postId}/like`, {
           like: !currentlyLiked,
         });
         setPosts((prev) =>
@@ -128,12 +127,9 @@ export function useForumPosts(teamId: string) {
   const toggleBookmark = useCallback(
     async (postId: string, currentlyBookmarked: boolean) => {
       try {
-        const res = await axios.patch(
-          `${BASE_URL}/api/forum/${postId}/bookmark`,
-          {
-            bookmark: !currentlyBookmarked,
-          },
-        );
+        const res = await apiClient.patch(`api/forum/${postId}/bookmark`, {
+          bookmark: !currentlyBookmarked,
+        });
         setPosts((prev) =>
           prev.map((p) => (p.id === postId ? res.data.post : p)),
         );
@@ -150,7 +146,7 @@ export function useForumPosts(teamId: string) {
   const fetchComments = useCallback(
     async (postId: string): Promise<Comment[]> => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/forum/${postId}/comments`);
+        const res = await apiClient.get(`api/forum/${postId}/comments`);
         return res.data.comments;
       } catch (err: any) {
         setError(err.message || "Failed to fetch comments");
@@ -168,13 +164,10 @@ export function useForumPosts(teamId: string) {
       text: string,
     ): Promise<Comment | null> => {
       try {
-        const res = await axios.post(
-          `${BASE_URL}/api/forum/${postId}/comments`,
-          {
-            user,
-            text,
-          },
-        );
+        const res = await apiClient.post(`api/forum/${postId}/comments`, {
+          user,
+          text,
+        });
         // Optionally refresh posts to update comment count after adding comment
         await fetchPosts();
         return res.data.comment;
@@ -194,8 +187,8 @@ export function useForumPosts(teamId: string) {
       text: string,
     ): Promise<Comment | null> => {
       try {
-        const res = await axios.put(
-          `${BASE_URL}/api/forum/${postId}/comments/${commentId}`,
+        const res = await apiClient.put(
+          `api/forum/${postId}/comments/${commentId}`,
           {
             text,
           },
@@ -213,9 +206,7 @@ export function useForumPosts(teamId: string) {
   const deleteComment = useCallback(
     async (postId: string, commentId: string): Promise<boolean> => {
       try {
-        await axios.delete(
-          `${BASE_URL}/api/forum/${postId}/comments/${commentId}`,
-        );
+        await apiClient.delete(`api/forum/${postId}/comments/${commentId}`);
         // Refresh posts to update comment counts
         await fetchPosts();
         return true;

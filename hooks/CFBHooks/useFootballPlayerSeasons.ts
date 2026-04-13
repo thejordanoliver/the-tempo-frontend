@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -47,8 +48,8 @@ export function useFootballPlayerSeasons(
       try {
         setLoading(true);
 
-        const res = await axios.get<PlayerSeasonsResponse>(
-          `${API_URL}/api/players/${league.toLowerCase()}/${playerId}/seasons`,
+        const res = await apiClient.get<PlayerSeasonsResponse>(
+          `api/players/${league.toLowerCase()}/${playerId}/seasons`,
         );
 
         const json = res.data;

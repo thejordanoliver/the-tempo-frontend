@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export const useCFBPortalPlayers = (year: number) => {
   const [data, setData] = useState<any[]>([]);
@@ -16,7 +16,7 @@ export const useCFBPortalPlayers = (year: number) => {
       setError(null);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/cfbd/portal`, {
+        const res = await apiClient.get(`api/cfbd/portal`, {
           params: { year }, // ⭐ ONLY year
         });
 

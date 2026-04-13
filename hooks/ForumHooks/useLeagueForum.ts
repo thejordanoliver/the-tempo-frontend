@@ -3,8 +3,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
 import { LeagueType } from "types/types";
-// FIX #1 + #3: use apiClient — attaches token automatically and handles
-//              refresh transparently. No manual token management needed.
 import { apiClient } from "utils/apiClient";
 
 export function useLeagueForum(league: LeagueType) {

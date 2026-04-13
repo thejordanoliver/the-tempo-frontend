@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export type PlayerSeasonStat = {
   value: string | null;
@@ -57,8 +57,8 @@ export function useNFLPlayerSeasons(playerId?: number) {
       setError(null);
 
       try {
-        const { data } = await axios.get<PlayerSeasonsResponse>(
-          `${BASE_URL}/api/players/nfl/${playerId}/seasons`,
+        const { data } = await apiClient.get<PlayerSeasonsResponse>(
+          `api/players/nfl/${playerId}/seasons`,
         );
 
         if (!cancelled) {

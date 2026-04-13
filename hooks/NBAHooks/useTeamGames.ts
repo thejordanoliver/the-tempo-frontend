@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Game } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";
+
 export type GameWithStatusText = Game & {
   statusText: string;
   arena?: {
@@ -13,7 +14,6 @@ export type GameWithStatusText = Game & {
   month: number;
 };
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL;
 
 export function useTeamGames(teamId?: string, season = getNBASeason()) {
   const [games, setGames] = useState<GameWithStatusText[]>([]);

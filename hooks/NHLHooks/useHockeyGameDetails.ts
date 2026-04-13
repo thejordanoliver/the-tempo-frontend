@@ -107,7 +107,7 @@ export type GameDetails = {
 
 type DateParam = string | { date?: string; utc?: string; timestamp?: number };
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* Hook                               */
@@ -153,7 +153,7 @@ export const useHockeyDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await axios.get(`${BASE_URL}/api/hockey/details`, {
+        const { data } = await apiClient.get(`api/hockey/details`, {
           params,
         });
 

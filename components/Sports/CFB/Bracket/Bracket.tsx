@@ -11,7 +11,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { BracketData } from "types/cfb";
+import { BracketData } from "types/football";
 import { BracketColumn } from "./BracketColumn";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");

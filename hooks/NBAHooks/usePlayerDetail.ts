@@ -4,21 +4,11 @@ import { useLastTeamGame } from "hooks/NBAHooks/useLastTeamGame";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import type { DBPlayer } from "types/types";
+import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";
 
 type TeamWithRecord = (typeof teams)[number] & { record?: string };
 
-const BASE_API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-function getApiBaseUrl() {
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
-
-  if (Platform.OS === "android") {
-    return "http://localhost:4000";
-  }
-
-  return BASE_API_URL;
-}
 
 export function usePlayerDetail(playerId?: string, teamId?: string) {
   const parsedPlayerId = parseInt(playerId ?? "", 10);
@@ -26,8 +16,6 @@ export function usePlayerDetail(playerId?: string, teamId?: string) {
     .replace(/"/g, "")
     .trim();
   const teamNumericId = Number(sanitizedTeamId);
-
-  const API_URL = getApiBaseUrl();
 
   const [player, setPlayer] = useState<DBPlayer | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,8 +42,8 @@ export function usePlayerDetail(playerId?: string, teamId?: string) {
     const fetchPlayer = async () => {
       setLoading(true);
       try {
-        const res = await axios.get<{ player: DBPlayer }>(
-          `${API_URL}/api/players/player-id/${parsedPlayerId}`,
+        const res = await apiClient.get<{ player: DBPlayer }>(
+          `api/players/player-id/${parsedPlayerId}`,
         );
         setPlayer(res.data.player);
       } catch (err: any) {

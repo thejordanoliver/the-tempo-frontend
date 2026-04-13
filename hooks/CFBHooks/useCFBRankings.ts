@@ -132,7 +132,7 @@ export const useCFBRankings = () => {
 
   const fetchLatest = async () => {
     try {
-      const res = await apiClient.get("/api/standings/cfb/rankings");
+      const res = await apiClient.get("api/standings/cfb/rankings");
 
       const raw = res.data.rankings || {};
 

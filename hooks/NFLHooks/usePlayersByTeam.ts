@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { apiClient } from "utils/apiClient";
 
 export interface Player {
   id: number;
@@ -26,25 +25,13 @@ interface PlayersResponse {
   players: Partial<Player>[];
 }
 
-function getApiBaseUrl() {
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL;
-
-  if (Platform.OS === "android") {
-    return "http://10.0.2.2:4000";
-  }
-
-  return "http://192.168.1.90:4000";
-}
-
 export default function usePlayersByTeam(
   teamId: number,
-  league: "NFL" | "CFB" = "NFL"
+  league: "NFL" | "CFB" = "NFL",
 ) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const API_URL = getApiBaseUrl();
 
   const refreshPlayers = useCallback(async () => {
     if (!teamId) {
@@ -62,9 +49,7 @@ export default function usePlayersByTeam(
           ? `/api/nfl/players/team/${teamId}`
           : `/api/cfb/players/team/${teamId}`;
 
-      const res = await axios.get<PlayersResponse>(
-        `${API_URL}${endpoint}`
-      );
+      const res = await apiClient.get<PlayersResponse>(`${endpoint}`);
 
       const mappedPlayers: Player[] = (res.data.players || []).map((p) => ({
         id: p.id ?? 0,
@@ -101,7 +86,7 @@ export default function usePlayersByTeam(
     } finally {
       setLoading(false);
     }
-  }, [teamId, league, API_URL]);
+  }, [teamId, league]);
 
   useEffect(() => {
     refreshPlayers();

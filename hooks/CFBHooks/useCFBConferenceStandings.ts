@@ -31,7 +31,7 @@ export function useCFBConferenceStandings() {
         setLoading(true);
         setError(null);
 
-        const res = await apiClient.get(`/api/standings/cfb/conference`);
+        const res = await apiClient.get(`api/standings/cfb/conference`);
 
         const parsed: CFBTeamStanding[] = [];
 

@@ -1,7 +1,7 @@
 // hooks/NFLHooks/useNFLGameLeaders.ts
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export type PlayerStat = {
   name: string;
@@ -34,7 +34,7 @@ export function useFootballGameLeaders(gameId?: string, teamId?: string) {
       setIsError(false);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/football/game-leaders`, {
+        const res = await apiClient.get(`api/football/game-leaders`, {
           params: { gameId, teamId },
         });
 

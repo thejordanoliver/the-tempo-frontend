@@ -31,7 +31,7 @@ export function useLeaguesNews(limit: number = 10, league: LeagueType) {
 
       try {
         const res = await apiClient.get<NewsResponse>(
-          `/api/news/league/${league.toLowerCase()}?limit=${limit}`,
+          `api/news/league/${league.toLowerCase()}?limit=${limit}`,
         );
 
         if (res.data.success) {

@@ -1,7 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export const useCFBRecruits = (year: number, team?: string) => {
   const [data, setData] = useState<any[]>([]);
@@ -16,7 +14,7 @@ export const useCFBRecruits = (year: number, team?: string) => {
       setError(null);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/cfbd/recruits`, {
+        const res = await apiClient.get(`api/cfbd/recruits`, {
           params: {
             year,
             team,

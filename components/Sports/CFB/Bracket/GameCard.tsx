@@ -2,7 +2,7 @@ import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
-import { BracketGame, BracketTeam } from "types/cfb";
+import { BracketGame, BracketTeam } from "types/football";
 
 export function GameCard({
   game,

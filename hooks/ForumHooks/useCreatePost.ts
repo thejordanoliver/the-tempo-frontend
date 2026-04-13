@@ -5,7 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 import {
   Animated,
@@ -239,9 +239,9 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
 
     try {
       const endpoint = teamId
-        ? `${BASE_URL}/api/forum/team/${teamId}`
-        : `${BASE_URL}/api/forum/league/${league}`;
-      const res = await axios.post(endpoint, formData, {
+        ? `api/forum/team/${teamId}`
+        : `api/forum/league/${league}`;
+      const res = await apiClient.post(endpoint, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

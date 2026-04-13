@@ -189,7 +189,7 @@ export const useGameDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await apiClient.get(`/api/details`, { params });
+        const { data } = await apiClient.get(`api/details`, { params });
 
         if (data?.score) {
           setScore(data.score);

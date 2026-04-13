@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export function useNFLMatchup(
   team1: string | number,
@@ -30,7 +30,7 @@ export function useNFLMatchup(
       if (options?.year) params.year = options.year;
       if (options?.week) params.week = options.week;
 
-      const res = await axios.get(`${BASE_URL}/api/pfr/matchup`, {
+      const res = await apiClient.get(`api/pfr/matchup`, {
         params,
       });
 

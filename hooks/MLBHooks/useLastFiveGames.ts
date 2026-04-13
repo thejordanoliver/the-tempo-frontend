@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { getMLBSeason } from "utils/dateUtils";
+
 type GameResult = {
   id: number;
   date: string;
@@ -18,7 +18,7 @@ type GameResult = {
   opponentLogoLight?: any;
 };
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export const useLastFiveGames = (teamId: number) => {
   const [games, setGames] = useState<GameResult[]>([]);
@@ -31,8 +31,8 @@ export const useLastFiveGames = (teamId: number) => {
         setLoading(true);
         setError(null);
 
-        const response = await axios.get(
-          `${BASE_URL}/api/games/mlb/last-five/${teamId}/${getMLBSeason()}`,
+        const response = await apiClient.get(
+          `api/games/mlb/last-five/${teamId}/${getMLBSeason()}`,
         );
 
         setGames(response.data.games);

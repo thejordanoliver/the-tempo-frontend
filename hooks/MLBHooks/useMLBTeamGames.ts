@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { MLBGame } from "types/baseball";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 export function useMLBTeamGames(teamId: string | number, season = "2026") {
   const [games, setGames] = useState<MLBGame[]>([]);
@@ -16,7 +16,7 @@ export function useMLBTeamGames(teamId: string | number, season = "2026") {
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/mlb/team/${teamId}`, {
+      const res = await apiClient.get(`api/games/mlb/team/${teamId}`, {
         params: { season },
       });
 

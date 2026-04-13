@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MLBGame } from "types/baseball";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export function useMLBSeasonGames(season: string) {
   const [games, setGames] = useState<MLBGame[]>([]);
@@ -14,7 +12,7 @@ export function useMLBSeasonGames(season: string) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${BASE_URL}/api/games/mlb/season/${season}`);
+      const res = await apiClient.get(`api/games/mlb/season/${season}`);
 
       if (!res.data?.success) {
         throw new Error("API returned unsuccessful response");

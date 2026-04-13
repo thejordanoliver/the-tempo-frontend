@@ -2,7 +2,7 @@ import axios from "axios";
 import { Predictor } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* TYPES                              */
@@ -250,7 +250,7 @@ export const useGameDetails = (
           else if (date.date) params.date = date.date;
         }
 
-        const { data } = await axios.get(`${BASE_URL}/api/football/details`, {
+        const { data } = await apiClient.get(`api/football/details`, {
           params,
         });
 

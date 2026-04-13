@@ -38,10 +38,9 @@ export function useTeamForum(teamId: string, league?: string) {
       setError(null);
 
       try {
-        const res = await apiClient.get(
-          `/api/forum/team/${league}/${teamId}`,
-          { params: { page: pageNumber, limit: 10 } },
-        );
+        const res = await apiClient.get(`api/forum/team/${league}/${teamId}`, {
+          params: { page: pageNumber, limit: 10 },
+        });
 
         const data = res.data;
 
@@ -101,7 +100,7 @@ export function useTeamForum(teamId: string, league?: string) {
   */
   const deletePost = useCallback(async (postId: string) => {
     try {
-      await apiClient.delete(`/api/forum/post/${postId}`);
+      await apiClient.delete(`api/forum/post/${postId}`);
       setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
     } catch (err: any) {
       const message =
@@ -118,7 +117,7 @@ export function useTeamForum(teamId: string, league?: string) {
   */
   const editPost = useCallback(async (postId: string, newText: string) => {
     try {
-      const res = await apiClient.patch(`/api/forum/post/${postId}`, {
+      const res = await apiClient.patch(`api/forum/post/${postId}`, {
         text: newText,
       });
       setPosts((prev) =>

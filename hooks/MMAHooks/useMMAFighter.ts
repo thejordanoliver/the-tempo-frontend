@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { MMAFighter } from "types/mma";
+import { apiClient } from "utils/apiClient";
 
 interface useMMAFighterReturn {
   fighter: MMAFighter | null;
@@ -8,7 +9,6 @@ interface useMMAFighterReturn {
   error: string | null;
 }
 
-import { BASE_URL } from "utils/apiClient";
 /**
  * Custom hook to fetch a MMA fighter by API Sports ID
  * @param fighterId - API Sports ID of the fighter
@@ -31,10 +31,10 @@ const useMMAFighter = (fighterId: number | string): useMMAFighterReturn => {
       setError(null);
 
       try {
-        const response = await axios.get<{
+        const response = await apiClient.get<{
           success: boolean;
           fighter: MMAFighter | null;
-        }>(`${BASE_URL}/api/mma/fighters/${fighterId}`);
+        }>(`api/mma/fighters/${fighterId}`);
 
         if (isMounted) {
           setFighter(response.data.fighter);

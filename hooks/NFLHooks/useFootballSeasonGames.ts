@@ -1,12 +1,11 @@
 // hooks/NFLHooks/useFootballSeasonGames.ts
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Game } from "types/football";
-
-import { BASE_URL } from "utils/apiClient";
+import { FootballGame } from "types/football";
+import { apiClient } from "utils/apiClient";
 
 export function useFootballSeasonGames(season: number, league: number) {
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<FootballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +14,8 @@ export function useFootballSeasonGames(season: number, league: number) {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${BASE_URL}/api/games/football/season/${season}/${league}`,
+      const res = await apiClient.get(
+        `api/games/football/season/${season}/${league}`,
         {
           params: { league, season },
         },

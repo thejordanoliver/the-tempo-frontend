@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
 import { getRefreshToken } from "utils/authStorage";
 import { Post } from "components/Forum/PostItem";
+import { apiClient } from "utils/apiClient";
 
 const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
@@ -62,10 +63,10 @@ export function useCommentThread(postId: string | null) {
     setLoading(true);
     try {
       const [postRes, commentRes] = await Promise.all([
-        axios.get(`${BASE_URL}/api/forum/post/${postId}`, {
+        apiClient.get(`api/forum/post/${postId}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }),
-        axios.get(`${BASE_URL}/api/forum/post/${postId}/comments`, {
+        apiClient.get(`api/forum/post/${postId}/comments`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }),
       ]);
@@ -90,8 +91,8 @@ export function useCommentThread(postId: string | null) {
 
     setSubmitting(true);
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/forum/post/${postId}/comments`,
+      const res = await apiClient.post(
+        `api/forum/post/${postId}/comments`,
         { text: text.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -112,8 +113,8 @@ export function useCommentThread(postId: string | null) {
     if (!token) return;
 
     try {
-      await axios.put(
-        `${BASE_URL}/api/forum/post/${postId}/comments/${commentId}`,
+      await apiClient.put(
+        `api/forum/post/${postId}/comments/${commentId}`,
         { text: newText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -136,8 +137,8 @@ export function useCommentThread(postId: string | null) {
     if (!token) return;
 
     try {
-      await axios.delete(
-        `${BASE_URL}/api/forum/post/${postId}/comments/${commentId}`,
+      await apiClient.delete(
+        `api/forum/post/${postId}/comments/${commentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -154,7 +155,7 @@ export function useCommentThread(postId: string | null) {
   const deletePost = async (postIdToDelete: string) => {
     if (!token) return;
 
-    await axios.delete(`${BASE_URL}/api/forum/post/${postIdToDelete}`, {
+    await apiClient.delete(`api/forum/post/${postIdToDelete}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };

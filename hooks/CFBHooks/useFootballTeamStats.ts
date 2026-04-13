@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -15,7 +16,7 @@ export function useFootballTeamStats(gameId: string | number) {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await axios.get(`${BASE_URL}/api/football/details/team/statistics`, {
+        const { data } = await apiClient.get(`api/football/details/team/statistics`, {
           params: { gameId: id },
         });
         setStats(data.games || []); // now always an array

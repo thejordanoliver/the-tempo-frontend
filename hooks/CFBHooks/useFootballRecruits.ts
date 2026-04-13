@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export interface RecruitOffer {
   visit: string | null;
@@ -46,7 +47,6 @@ interface UseFootballRecruitsResult {
   refetch: () => void;
 }
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useFootballRecruits(year: number): UseFootballRecruitsResult {
   const [data, setData] = useState<FootballRecruit[]>([]);
@@ -66,8 +66,8 @@ export function useFootballRecruits(year: number): UseFootballRecruitsResult {
         setLoading(true);
         setError(null);
 
-        const res = await axios.get<FootballRecruit[]>(
-          `${API_URL}/api/recruits/football/${year}`,
+        const res = await apiClient.get<FootballRecruit[]>(
+          `api/recruits/football/${year}`,
           { signal: controller.signal },
         );
 

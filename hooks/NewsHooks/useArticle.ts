@@ -47,7 +47,7 @@ export function useArticle(articleId: number | string) {
 
     try {
       const res = await apiClient.get<ArticleResponse>(
-        `/api/article/${articleId}`,
+        `api/article/${articleId}`,
       );
 
       if (res.data.success) {

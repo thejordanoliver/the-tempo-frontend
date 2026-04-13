@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 import { getFootballSeason } from "utils/dateUtils";
 
 export type LastFiveGamesResult = {
@@ -29,8 +30,8 @@ export const useLastFiveGames = (teamId: number) => {
       try {
         setLoading(true);
 
-        const res = await axios.get(
-          `${API_URL}/api/games/football/last-five/${teamId}/${getFootballSeason()}`,
+        const res = await apiClient.get(
+          `api/games/football/last-five/${teamId}/${getFootballSeason()}`,
         );
 
         setGames(res.data.games);

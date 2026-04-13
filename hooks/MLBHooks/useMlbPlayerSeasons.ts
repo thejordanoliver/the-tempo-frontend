@@ -1,6 +1,7 @@
 // hooks/useMlbPlayerSeasons.ts
 import { useCallback, useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
+import { apiClient } from "utils/apiClient";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -70,7 +71,7 @@ export interface CareerTotals {
 
 // ---------- Hook ----------
 
-export function useMlbPlayerSeasons(playerId: number | string | null) {
+export function useMLBPlayerSeasons(playerId: number | string | null) {
   const [data, setData] = useState<MlbPlayerResponse | null>(null);
   const [seasons, setSeasons] = useState<MlbSeason[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -84,8 +85,8 @@ export function useMlbPlayerSeasons(playerId: number | string | null) {
     setError(null);
 
     try {
-      const response = await axios.get<MlbPlayerResponse>(
-        `${API_URL}/api/players/mlb/${playerId}/seasons`
+      const response = await apiClient.get<MlbPlayerResponse>(
+        `api/players/mlb/${playerId}/seasons`
       );
 
       setData(response.data);
