@@ -6,7 +6,6 @@ import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useState } from "react";
 import {
   FlatList,

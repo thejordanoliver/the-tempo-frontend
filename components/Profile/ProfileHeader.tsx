@@ -9,11 +9,7 @@ type Props = {
   username?: string | null;
   isDark: boolean;
   isCurrentUser: boolean;
-
-  // Props for edit profile (only relevant if isCurrentUser)
   onEditPress?: () => void;
-
-  // Props for follow button (only relevant if !isCurrentUser)
   isFollowing?: boolean;
   loading?: boolean;
   onToggleFollow?: () => void;
@@ -42,13 +38,12 @@ export default function ProfileHeader({
 
       {isCurrentUser ? (
         <Pressable style={styles.editProfileBtn} onPress={onEditPress}>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
           <Ionicons
-            style={styles.editIcon}
             name="create"
             size={18}
             color={isDark ? Colors.black : Colors.white}
           />
-          <Text style={styles.editProfileText}>Edit Profile</Text>
         </Pressable>
       ) : (
         <FollowButton

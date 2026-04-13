@@ -22,14 +22,14 @@ export const gameWidgetStyles = (
 
   // Logo scales with the shorter of the two so it never overflows horizontally,
   // but the envelope is wider to allow filling vertical space.
-  const logo = clamp(Math.min(w * 0.18, h * 0.22), 36, 110);
-  const scoreFz = clamp(unit * 5.5, 20, 60);
+  const logo = clamp(Math.min(w * 0.18, h * 0.22), 40, 50);
+  const scoreFz = clamp(unit * 5.5, 30, 60);
   const recordFz = clamp(unit * 3.2, 18, 32);
   const nameFz = clamp(unit * 2.4, 10, 24);
   const rankFz = clamp(unit * 1.8, 9, 18);
-  const infoFz = clamp(unit * 2.8, 11, 28);
-  const metaFz = clamp(unit * 1.8, 14, 18);
-  const gap = clamp(w * 0.04, 8, 28);
+  const infoFz = clamp(unit * 20, 14, 18);
+  const metaFz = clamp(unit * 2.8, 11, 28);
+  const gap = clamp(w * 0.04, 10, 28);
   const divH = clamp(unit * 3.5, 14, 44);
 
   // Vertical padding scales with height so content isn't a tiny island on tall
@@ -42,8 +42,8 @@ export const gameWidgetStyles = (
       width: "100%",
       height,
       justifyContent: "center",
-      paddingHorizontal: paddingH,
       paddingVertical: paddingV,
+      overflow: "hidden"
     },
 
     wrapper: {
@@ -80,19 +80,19 @@ export const gameWidgetStyles = (
 
     awayPossession: {
       position: "absolute",
-      bottom: -(logo * 0.32),
+      bottom: -(logo * 0.4),
       width: logo * 0.52,
       height: logo * 0.52,
-      marginLeft: logo * 0.45,
+      marginLeft: logo * 0.2,
       resizeMode: "contain",
     },
 
     homePossession: {
       position: "absolute",
-      bottom: -(logo * 0.32),
+      bottom: -(logo * 0.4),
       width: logo * 0.52,
       height: logo * 0.52,
-      marginRight: logo * 0.45,
+      marginRight: logo * 0.2,
       resizeMode: "contain",
     },
 
@@ -118,8 +118,8 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.OSBOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: gap,
-      minWidth: scoreFz * 1.2,
+      marginLeft: gap * 1.5,
+      minWidth: recordFz * 2.5,
       textAlign: "center",
     },
 
@@ -127,8 +127,8 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.OSBOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginRight: gap,
-      minWidth: scoreFz * 1.2,
+      marginRight: gap * 1.5,
+      minWidth: recordFz * 2.5,
       textAlign: "center",
     },
 
@@ -136,7 +136,7 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.OSBOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: gap * 1,
+      marginLeft: gap * 1.5,
       minWidth: recordFz * 2.5,
       textAlign: "center",
     },
@@ -145,7 +145,7 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.OSBOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginRight: gap * 1,
+      marginRight: gap * 1.5,
       minWidth: recordFz * 2.5,
       textAlign: "center",
     },
@@ -153,6 +153,8 @@ export const gameWidgetStyles = (
     /* -------- CENTER INFO -------- */
 
     headlineContainer: {
+      top: 0,
+      position: "absolute",
       width: "100%",
     },
     headline: {
@@ -167,7 +169,6 @@ export const gameWidgetStyles = (
       flexShrink: 1,
       alignItems: "center",
       justifyContent: "center",
-      minWidth: infoFz * 4,
     },
 
     infoWrapper: {
@@ -225,6 +226,12 @@ export const gameWidgetStyles = (
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
+    },
+    leadersContainer: {
+      marginTop: 6,
+      paddingTop: 6,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
     },
   });
 };

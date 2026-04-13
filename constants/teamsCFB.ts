@@ -385,7 +385,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 241,
     espnID: 2000,
-    oddsID: "par_01j4awsmvjexs83fah6g9bdya4",
     name: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
     code: "ACU",
@@ -409,7 +408,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 149,
     espnID: 2005,
-    oddsID: "par_01hqmkr2bze9waa4p2cd9c93wb",
     name: "Air Force",
     fullName: "Air Force Falcons",
     code: "AF",
@@ -433,7 +431,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 67,
     espnID: 2006,
-    oddsID: "par_01hqmkr2c0ee7t9ccymz73x0gq",
     name: "Akron",
     fullName: "Akron Zips",
     code: "AKR",
@@ -457,7 +454,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 106,
     espnID: 333,
-    oddsID: "par_01hqmkr2c1e8c8t2rsknszeqxe",
     name: "Alabama",
     fullName: "Alabama Crimson Tide",
     code: "ALA",
@@ -481,7 +477,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 82,
     espnID: 2010,
-    oddsID: "par_01j69e5b9re0paf80wp2qyjmcn",
     name: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
     code: "AAMU",
@@ -504,7 +499,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 221,
     espnID: 2011,
-    oddsID: "par_01j6gp5dz1f4a91a3gs65e0mkj",
     name: "Alabama State",
     fullName: "Alabama State Hornets",
     code: "ALST",
@@ -528,7 +522,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 228,
     espnID: 2016,
-    oddsID: "par_01hqmkr2c3ef3tv905kefspgn2",
     name: "Alcorn State",
     fullName: "Alcorn State Braves",
     code: "ALCN",
@@ -552,7 +545,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 144,
     espnID: 2026,
-    oddsID: "par_01hqmkr2c4erzvd8ghcyyrnecb",
     name: "App State",
     fullName: "App State Mountaineers",
     code: "APP",
@@ -576,7 +568,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 156,
     espnID: 12,
-    oddsID: "par_01hqmkr2c6esfvg010kdn9nf88",
     name: "Arizona",
     fullName: "Arizona Wildcats",
     code: "ARIZ",
@@ -600,7 +591,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 86,
     espnID: 9,
-    oddsID: "par_01hqmkr2c5fx4bze4nskp3c5z6",
     name: "Arizona State",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
@@ -624,7 +614,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 127,
     espnID: 8,
-    oddsID: "par_01hqmkr2c8ej38rtq238ad47zf",
     name: "Arkansas",
     fullName: "Arkansas Razorbacks",
     code: "ARK",
@@ -648,7 +637,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 184,
     espnID: 2032,
-    oddsID: "par_01hqmkr2c9fd0r8yf37nz6ds6f",
     name: "Arkansas State",
     fullName: "Arkansas State Red Wolves",
     code: "ARST",
@@ -672,7 +660,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 237,
     espnID: 2029,
-    oddsID: "par_01hqmkr2c7f488twkhsfvg36ma",
     name: "Arkansas-Pine Bluff",
     fullName: "Arkansas-Pine Bluff Golden Lions",
     shortName: "AR-Pine Bluff",
@@ -697,7 +684,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 177,
     espnID: 349,
-    oddsID: "par_01hqmkr2caerht3fgbb07m0mke",
     name: "Army",
     fullName: "Army Black Knights",
     code: "ARMY",
@@ -721,7 +707,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 171,
     espnID: 2,
-    oddsID: "par_01hqmkr2cbf0n8g1chgd36xhve",
     name: "Auburn",
     fullName: "Auburn Tigers",
     code: "AUB",
@@ -745,7 +730,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 40,
     espnID: 2046,
-    oddsID: "par_01hqmkr2cceypsc65d0yckhch5",
     name: "Austin Peay",
     fullName: "Austin Peay Governors",
     code: "APSU",
@@ -769,7 +753,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 136,
     espnID: 252,
-    oddsID: "par_01hqmkr2cdfde99znq0bc5q8wx",
     name: "BYU",
     fullName: "BYU Cougars",
     code: "BYU",
@@ -793,7 +776,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 70,
     espnID: 2050,
-    oddsID: "par_01hqmkr2ceekga6842w12xg325",
     name: "Ball State",
     fullName: "Ball State Cardinals",
     code: "BALL",
@@ -817,7 +799,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 118,
     espnID: 239,
-    oddsID: "par_01hqmkr2cfe1jv74t5p0r5v2xv",
     name: "Baylor",
     fullName: "Baylor Bears",
     code: "BAY",
@@ -857,14 +838,13 @@ export const cfbTeams: FootballTeam[] = [
     latitude: 34.2814,
     longitude: -85.1896,
     venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766761298/stadiums/football/cfb_467_valhalla_stadium.jpg",
-    isActive: true,
+    isActive: false,
     isAllStar: false
   },
 
   {
     id: 124,
     espnID: 2065,
-    oddsID: "par_01hqmkr2cgfy7s7gw2skf5f5e5",
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
     shortName: "Bethune",
@@ -889,7 +869,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 204,
     espnID: 68,
-    oddsID: "par_01hqmkr2chfcya2w0tgx1azh4n",
     name: "Boise State",
     fullName: "Boise State Broncos",
     code: "BOIS",
@@ -913,7 +892,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 142,
     espnID: 103,
-    oddsID: "par_01hqmkr2cjevbv90gt5bs4y9a2",
     name: "Boston College",
     fullName: "Boston College Eagles",
     code: "BC",
@@ -937,7 +915,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 154,
     espnID: 189,
-    oddsID: "par_01hqmkr2ckex0vc4kb1hegwrrb",
     name: "Bowling Green",
     fullName: "Bowling Green Falcons",
     code: "BGSU",
@@ -984,7 +961,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 74,
     espnID: 2803,
-    oddsID: "par_01hqmkr2cnfbwbfw3n6g1sqwwe",
     name: "Bryant",
     fullName: "Bryant Bulldogs",
     code: "BRY",
@@ -1008,7 +984,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 245,
     espnID: 2083,
-    oddsID: "par_01j69e46g6ffr9a40khpej629f",
     name: "Bucknell",
     fullName: "Bucknell Bison",
     code: "BUCK",
@@ -1032,7 +1007,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 141,
     espnID: 2084,
-    oddsID: "par_01hqmkr2cpe4nsepap11jqmgw9",
     name: "Buffalo",
     fullName: "Buffalo Bulls",
     code: "BUF",
@@ -1056,7 +1030,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 281,
     espnID: 2086,
-    oddsID: "par_01hqmkr2cqf96tp74c0sp9rgvb",
     name: "Butler",
     fullName: "Butler Bulldogs",
     code: "BUT",
@@ -1080,7 +1053,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 89,
     espnID: 13,
-    oddsID: "par_01hqmkr2crfjf8nh8ncab7rtrv",
     name: "Cal Poly",
     fullName: "Cal Poly Mustangs",
     code: "CP",
@@ -1104,7 +1076,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 161,
     espnID: 25,
-    oddsID: "par_01hqmkr2csfgm8f80c352qhard",
     name: "California",
     fullName: "California Golden Bears",
     code: "CAL",
@@ -1128,7 +1099,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 249,
     espnID: 2097,
-    oddsID: "par_01j5t36899e8nspb6wd6a9kcs5",
     name: "Campbell",
     fullName: "Campbell Fighting Camels",
     code: "CAM",
@@ -1152,7 +1122,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 214,
     espnID: 2110,
-    oddsID: "par_01hqmkr2ctfp6svs2q5vt389zb",
     name: "Central Arkansas",
     fullName: "Central Arkansas Bears",
     code: "CARK",
@@ -1176,7 +1145,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 137,
     espnID: 2115,
-    oddsID: "par_01hqmkr2cvffza92wr1ydm402p",
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
     shortName: "C Connecticut",
@@ -1201,7 +1169,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 62,
     espnID: 2117,
-    oddsID: "par_01hqmkr2cwfg5abn1nn66dafxe",
     name: "Central Michigan",
     fullName: "Central Michigan Chippewas",
     code: "CMU",
@@ -1249,7 +1216,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 213,
     espnID: 2127,
-    oddsID: "par_01hqmkr2cxfdm9wpfkaqbfzrbe",
     name: "Charleston Southern",
     fullName: "Charleston Southern Buccaneers",
     code: "CHSO",
@@ -1273,7 +1239,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 52,
     espnID: 2429,
-    oddsID: "par_01hqmkr2cye7mr9xvcg8qztsce",
     name: "Charlotte",
     fullName: "Charlotte 49ers",
     code: "CLT",
@@ -1297,7 +1262,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 255,
     espnID: 236,
-    oddsID: "par_01hqmkr2czffnrsb36bekcv20b",
     name: "Chattanooga",
     fullName: "Chattanooga Mocs",
     code: "UTC",
@@ -1367,7 +1331,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 128,
     espnID: 2132,
-    oddsID: "par_01hqmkr2d0f4abxrt2xt4w280h",
     name: "Cincinnati",
     fullName: "Cincinnati Bearcats",
     code: "CIN",
@@ -1391,7 +1354,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 209,
     espnID: 228,
-    oddsID: "par_01hqmkr2d2fcnaynkrvhm371ve",
     name: "Clemson",
     fullName: "Clemson Tigers",
     code: "CLEM",
@@ -1415,7 +1377,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 176,
     espnID: 324,
-    oddsID: "par_01hqmkr2d3etysw7j5tpj0asyg",
     name: "Coastal Carolina",
     fullName: "Coastal Carolina Chanticleers",
     code: "CCU",
@@ -1439,7 +1400,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 192,
     espnID: 2142,
-    oddsID: "par_01hqmkr2d4ee5rc757d7j21dx5",
     name: "Colgate",
     fullName: "Colgate Raiders",
     code: "COLG",
@@ -1463,7 +1423,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 104,
     espnID: 38,
-    oddsID: "par_01hqmkr2d5etwsffw4mexxmfkx",
     name: "Colorado",
     fullName: "Colorado Buffaloes",
     code: "COLO",
@@ -1487,7 +1446,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 116,
     espnID: 36,
-    oddsID: "par_01hqmkr2d6fbga7wnz6exjc105",
     name: "Colorado State",
     fullName: "Colorado State Rams",
     code: "CSU",
@@ -1511,7 +1469,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 330,
     espnID: 171,
-    oddsID: "par_01hqmkr2d7fd3rtx9c0bbx1mza",
     name: "Columbia",
     fullName: "Columbia Lions",
     code: "COLU",
@@ -1535,7 +1492,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 326,
     espnID: 172,
-    oddsID: "par_01hqmkr2d8ebmtvyrvsxx8zhf1",
     name: "Cornell",
     fullName: "Cornell Big Red",
     code: "COR",
@@ -1559,7 +1515,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 327,
     espnID: 159,
-    oddsID: "par_01hqmkr2d9emrvdgbmfrf5bnjq",
     name: "Dartmouth",
     fullName: "Dartmouth Big Green",
     code: "DART",
@@ -1583,7 +1538,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 283,
     espnID: 2166,
-    oddsID: "par_01hqmkr2daek1at33shq7wjw5r",
     name: "Davidson",
     fullName: "Davidson Wildcats",
     code: "DAV",
@@ -1607,7 +1561,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 277,
     espnID: 2168,
-    oddsID: "par_01k3wnsxe1f5nbs6td1px2tydx",
     name: "Dayton",
     fullName: "Dayton Flyers",
     code: "DAY",
@@ -1631,7 +1584,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 146,
     espnID: 48,
-    oddsID: "par_01hqmkr2dbeqy9b03q4mfvbvtq",
     name: "Delaware",
     fullName: "Delaware Blue Hens",
     code: "DEL",
@@ -1655,7 +1607,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 284,
     espnID: 2169,
-    oddsID: "par_01hqmkr2dcewzaz1r6ry37d25q",
     name: "Delaware State",
     fullName: "Delaware State Hornets",
     code: "DSU",
@@ -1703,7 +1654,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 289,
     espnID: 2181,
-    oddsID: "par_01hqmkr2def69b26sncxdpk1yf",
     name: "Drake",
     fullName: "Drake Bulldogs",
     code: "DRKE",
@@ -1727,7 +1677,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 99,
     espnID: 150,
-    oddsID: "par_01hqmkr2dfew5v52gvwc7s1gye",
     name: "Duke",
     fullName: "Duke Blue Devils",
     code: "DUKE",
@@ -1751,7 +1700,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 50,
     espnID: 2184,
-    oddsID: "par_01j69e33gre42b5w67f5w1d17b",
     name: "Duquesne",
     fullName: "Duquesne Dukes",
     code: "DUQ",
@@ -1775,7 +1723,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 120,
     espnID: 151,
-    oddsID: "par_01hqmkr2dgfhkb1jg6rm1a93b1",
     name: "East Carolina",
     fullName: "East Carolina Pirates",
     code: "ECU",
@@ -1799,7 +1746,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 262,
     espnID: 2193,
-    oddsID: "par_01hqmkr2dhfnavyabaymkh3q76",
     name: "East Tennessee State",
     fullName: "East Tennessee State Buccaneers",
     code: "ETSU",
@@ -1823,7 +1769,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 272,
     espnID: 2837,
-    oddsID: "par_01hqmkr2jcej4959v623vfqz0e",
     name: "East Texas A&M",
     fullName: "East Texas A&M Lions",
     code: "ETAM",
@@ -1847,7 +1792,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 80,
     espnID: 2197,
-    oddsID: "par_01hqmkr2djex4tfjbmznydkd26",
     name: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
     code: "EIU",
@@ -1871,7 +1815,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 95,
     espnID: 2198,
-    oddsID: "par_01j6gcgp5zft3tp5k1fcqnfvt1",
     name: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
     code: "EKU",
@@ -1895,7 +1838,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 94,
     espnID: 2199,
-    oddsID: "par_01hqmkr2dkfeeta800nd6z84w5",
     name: "Eastern Michigan",
     fullName: "Eastern Michigan Eagles",
     code: "EMU",
@@ -1919,7 +1861,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 236,
     espnID: 331,
-    oddsID: "par_01hqmkr2dme1p95mxskbztcm68",
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
     shortName: "E Washington",
@@ -1944,7 +1885,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 173,
     espnID: 2210,
-    oddsID: "par_01hqmkr2dnfnfsgb15wx5kj24g",
     name: "Elon",
     fullName: "Elon Phoenix",
     code: "ELON",
@@ -1968,7 +1908,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 51,
     espnID: 2226,
-    oddsID: "par_01hqmkr2dqf6g91ztm242pvzxs",
     name: "FAU",
     fullName: "Florida Atlantic Owls",
     code: "FAU",
@@ -1992,7 +1931,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 73,
     espnID: 2229,
-    oddsID: "par_01hqmkr2dse5493v5fdhwhzz9p",
     name: "FIU",
     fullName: "Florida International Panthers",
     code: "FIU",
@@ -2016,7 +1954,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 113,
     espnID: 57,
-    oddsID: "par_01hqmkr2drebetw7r2b9tfw68e",
     name: "Florida",
     fullName: "Florida Gators",
     code: "FLA",
@@ -2040,7 +1977,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 54,
     espnID: 50,
-    oddsID: "par_01hqmkr2dqf6g91ztm242pvzxs",
     name: "Florida A&M",
     fullName: "Florida A&M Rattlers",
     code: "FAMU",
@@ -2064,7 +2000,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 49,
     espnID: 52,
-    oddsID: "par_01hqmkr2dtfmh82gmjkbn6r8d6",
     name: "Florida State",
     fullName: "Florida State Seminoles",
     code: "FSU",
@@ -2088,7 +2023,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 257,
     espnID: 2230,
-    oddsID: "par_01hqmkr2dvefdvy376paskcdkr",
     name: "Fordham",
     fullName: "Fordham Rams",
     code: "FOR",
@@ -2112,7 +2046,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 88,
     espnID: 278,
-    oddsID: "par_01hqmkr2dwf4kasz5jvn0fs6ra",
     name: "Fresno State",
     fullName: "Fresno State Bulldogs",
     code: "FRES",
@@ -2160,7 +2093,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 211,
     espnID: 231,
-    oddsID: "par_01hqmkr2dxew9t78n8bm9czh9p",
     name: "Furman",
     fullName: "Furman Paladins",
     code: "FUR",
@@ -2184,7 +2116,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 225,
     espnID: 2241,
-    oddsID: "par_01hqmkr2dyfjss9w5xk13hcx2a",
     name: "Gardner-Webb",
     fullName: "Gardner-Webb Runnin' Bulldogs",
     code: "GWEB",
@@ -2208,7 +2139,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 279,
     espnID: 46,
-    oddsID: "par_01hqmkr2dzf79tw1asv917p1kp",
     name: "Georgetown",
     fullName: "Georgetown Hoyas",
     code: "GTWN",
@@ -2232,7 +2162,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 109,
     espnID: 61,
-    oddsID: "par_01hqmkr2e0fdnsz5qjew534wzk",
     name: "Georgia",
     fullName: "Georgia Bulldogs",
     code: "UGA",
@@ -2256,7 +2185,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 166,
     espnID: 290,
-    oddsID: "par_01hqmkr2e1ffhr0m9r3vzjbjy0",
     name: "Georgia Southern",
     fullName: "Georgia Southern Eagles",
     code: "GASO",
@@ -2280,7 +2208,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 189,
     espnID: 2247,
-    oddsID: "par_01hqmkr2e2fbzsjjy474ewkjpb",
     name: "Georgia State",
     fullName: "Georgia State Panthers",
     code: "GAST",
@@ -2304,7 +2231,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 208,
     espnID: 59,
-    oddsID: "par_01hqmkr2e3f3n8g4gmy8pep3g8",
     name: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
     code: "GT",
@@ -2328,7 +2254,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 185,
     espnID: 2755,
-    oddsID: "par_01hqmkr2e4f0trdgdczdpyddez",
     name: "Grambling",
     fullName: "Grambling Tigers",
     code: "GRAM",
@@ -2376,7 +2301,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 293,
     espnID: 2261,
-    oddsID: "par_01hqmkr2e5egfbr6cc8gxyn6pm",
     name: "Hampton",
     fullName: "Hampton Pirates",
     code: "HAMP",
@@ -2400,7 +2324,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 321,
     espnID: 108,
-    oddsID: "par_01hqmkr2e6fj990gpt4041ypax",
     name: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
@@ -2424,7 +2347,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 59,
     espnID: 62,
-    oddsID: "par_01hqmkr2e7e5a91h224g38aq9t",
     name: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
@@ -2472,7 +2394,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 223,
     espnID: 107,
-    oddsID: "par_01hqmkr2e8febvtbggyfzr5wgd",
     name: "Holy Cross",
     fullName: "Holy Cross Crusaders",
     code: "HC",
@@ -2496,7 +2417,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 134,
     espnID: 248,
-    oddsID: "par_01hqmkr2eafjc8fyjt3nc46jm6",
     name: "Houston",
     fullName: "Houston Cougars",
     code: "HOU",
@@ -2520,7 +2440,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 259,
     espnID: 2277,
-    oddsID: "par_01hqmkr2e9f7zbfb8eh8mcvwx6",
     name: "Houston Christian",
     fullName: "Houston Christian",
     code: "HCU",
@@ -2544,7 +2463,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 230,
     espnID: 47,
-    oddsID: "par_01hqmkr2ebej9at01z1gdb7bxt",
     name: "Howard",
     fullName: "Howard Bison",
     code: "HOW",
@@ -2568,7 +2486,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 202,
     espnID: 70,
-    oddsID: "par_01hqmkr2edetw86k78zfgncq7w",
     name: "Idaho",
     fullName: "Idaho Vandals",
     code: "IDHO",
@@ -2592,7 +2509,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 44,
     espnID: 304,
-    oddsID: "par_01hqmkr2ecfsh8t76zgtvf55n2",
     name: "Idaho State",
     fullName: "Idaho State Bengals",
     code: "IDST",
@@ -2616,7 +2532,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 47,
     espnID: 356,
-    oddsID: "par_01hqmkr2eee76vxcwh2mf75zzx",
     name: "Illinois",
     fullName: "Illinois Fighting Illini",
     code: "ILL",
@@ -2640,7 +2555,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 126,
     espnID: 2287,
-    oddsID: "par_01hqmkr2efe39v0k4hvhm2rwaf",
     name: "Illinois State",
     fullName: "Illinois State Redbirds",
     code: "ILST",
@@ -2664,7 +2578,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 222,
     espnID: 2916,
-    oddsID: "par_01hqmkr2egepr83jrhatgmzzbb",
     name: "Incarnate Word",
     fullName: "Incarnate Word Cardinals",
     code: "UIW",
@@ -2688,7 +2601,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 103,
     espnID: 84,
-    oddsID: "par_01hqmkr2ehfd4bpnzmpm1ygq6p",
     name: "Indiana",
     fullName: "Indiana Hoosiers",
     code: "IU",
@@ -2712,7 +2624,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 218,
     espnID: 282,
-    oddsID: "par_01hqmkr2eje2jrgdma3mz3qa2g",
     name: "Indiana State",
     fullName: "Indiana State Sycamores",
     code: "INST",
@@ -2736,7 +2647,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 138,
     espnID: 2294,
-    oddsID: "par_01hqmkr2ekfzhv5g5h9dnnvx73",
     name: "Iowa",
     fullName: "Iowa Hawkeyes",
     code: "IOWA",
@@ -2760,7 +2670,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 151,
     espnID: 66,
-    oddsID: "par_01hqmkr2emes5vxzykx0a0e99m",
     name: "Iowa State",
     fullName: "Iowa State Cyclones",
     code: "ISU",
@@ -2784,7 +2693,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 169,
     espnID: 256,
-    oddsID: "par_01hqmkr2eqf848wxa2trbq4qry",
     name: "JMU",
     fullName: "James Madison Dukes",
     code: "JMU",
@@ -2808,7 +2716,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 303,
     espnID: 2296,
-    oddsID: "par_01hqmkr2ene508x3th02sy83ag",
     name: "Jackson State",
     fullName: "Jackson State Tigers",
     code: "JKST",
@@ -2832,7 +2739,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 250,
     espnID: 55,
-    oddsID: "par_01hqmkr2epecz9x8jt8fz9qj2a",
     name: "Jax State",
     fullName: "Jacksonville State Gamecocks",
     code: "JVST",
@@ -2856,7 +2762,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 101,
     espnID: 2305,
-    oddsID: "par_01hqmkr2ese0mb62xv3znvs752",
     name: "Kansas",
     fullName: "Kansas Jayhawks",
     code: "KU",
@@ -2880,7 +2785,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 174,
     espnID: 2306,
-    oddsID: "par_01hqmkr2etftfsmwpa3s87tmex",
     name: "Kansas State",
     fullName: "Kansas State Wildcats",
     code: "KSU",
@@ -2904,7 +2808,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 217,
     espnID: 338,
-    oddsID: "par_01hqmkr2eve1e9mhwph4jh3r63",
     name: "Kennesaw State",
     fullName: "Kennesaw State Owls",
     code: "KENN",
@@ -2928,7 +2831,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 206,
     espnID: 2309,
-    oddsID: "par_01hqmkr2ewfhdrsbemcmskb2n0",
     name: "Kent State",
     fullName: "Kent State Golden Flashes",
     code: "KENT",
@@ -2952,7 +2854,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 129,
     espnID: 96,
-    oddsID: "par_01hqmkr2eyew3t5xv5afre6s8r",
     name: "Kentucky",
     fullName: "Kentucky Wildcats",
     code: "UK",
@@ -2976,7 +2877,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 325,
     espnID: 2310,
-    oddsID: "par_01hqmkr2exfzbs97zh9r0bhzyh",
     name: "Kentucky State",
     fullName: "Kentucky State Thorobreds",
     code: "KYST",
@@ -3024,7 +2924,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 76,
     espnID: 2341,
-    oddsID: "par_01hqmkr2ezea4rys5kv4b2ae33",
     name: "LIU",
     fullName: "LIU",
     code: "LIU",
@@ -3048,7 +2947,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 207,
     espnID: 99,
-    oddsID: "par_01hqmkr2f0etjr70y0vrjjrcdx",
     name: "LSU",
     fullName: "LSU Tigers",
     code: "LSU",
@@ -3072,7 +2970,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 216,
     espnID: 322,
-    oddsID: "par_01hqmkr2f1fz0trq3fhqn170d5",
     name: "Lafayette",
     fullName: "Lafayette Leopards",
     code: "LAF",
@@ -3096,7 +2993,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 229,
     espnID: 2320,
-    oddsID: "par_01hqmkr2f2epxsfnr0pm0capwq",
     name: "Lamar",
     fullName: "Lamar Cardinals",
     code: "LAM",
@@ -3120,7 +3016,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 275,
     espnID: 161,
-    oddsID: "par_01hqmkr2f3emtr7pv1y1xg34za",
     name: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
     code: "LEH",
@@ -3144,7 +3039,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 179,
     espnID: 2335,
-    oddsID: "par_01hqmkr2f4efktw3c1xrkmzw0h",
     name: "Liberty",
     fullName: "Liberty Flames",
     code: "LIB",
@@ -3168,7 +3062,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 316,
     espnID: 2815,
-    oddsID: "par_01hqmkr2f5fsy84b8f37128a31",
     name: "Lindenwood",
     fullName: "Lindenwood Lions",
     code: "LIN",
@@ -3192,7 +3085,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 182,
     espnID: 309,
-    oddsID: "par_01hqmkr2f6fyxbqqjpngmae1qn",
     name: "Louisiana",
     fullName: "Louisiana Ragin' Cajuns",
     code: "UL",
@@ -3216,7 +3108,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 84,
     espnID: 2348,
-    oddsID: "par_01hqmkr2f7ey7rvpa8hszjqs8d",
     name: "Louisiana Tech",
     fullName: "Louisiana Tech Bulldogs",
     code: "LT",
@@ -3240,7 +3131,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 198,
     espnID: 97,
-    oddsID: "par_01hqmkr2f8fdcahme30st5637r",
     name: "Louisville",
     fullName: "Louisville Cardinals",
     code: "LOU",
@@ -3264,7 +3154,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 200,
     espnID: 311,
-    oddsID: "par_01hqmkr2f9ej7br1c42kv6v781",
     name: "Maine",
     fullName: "Maine Black Bears",
     code: "ME",
@@ -3288,7 +3177,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 278,
     espnID: 2368,
-    oddsID: "par_01hqmkr2fae16apgfdgxw6vgn3",
     name: "Marist",
     fullName: "Marist Red Foxes",
     code: "MRST",
@@ -3312,7 +3200,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 158,
     espnID: 276,
-    oddsID: "par_01hqmkr2fbfcevjpy984k1y1hx",
     name: "Marshall",
     fullName: "Marshall Thundering Herd",
     code: "MRSH",
@@ -3336,7 +3223,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 140,
     espnID: 120,
-    oddsID: "par_01hqmkr2fce9wsn7qcnftpv68f",
     name: "Maryland",
     fullName: "Maryland Terrapins",
     code: "MD",
@@ -3360,7 +3246,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 234,
     espnID: 2377,
-    oddsID: "par_01hqmkr2fdee2vgyrrzcrg8maj",
     name: "McNeese",
     fullName: "McNeese Cowboys",
     code: "MCN",
@@ -3384,7 +3269,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 187,
     espnID: 235,
-    oddsID: "par_01hqmkr2fee3rv7s3774b7w5d4",
     name: "Memphis",
     fullName: "Memphis Tigers",
     code: "MEM",
@@ -3408,7 +3292,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 172,
     espnID: 2382,
-    oddsID: "par_01hqmkr2fff3qrb394ezhgx6hs",
     name: "Mercer",
     fullName: "Mercer Bears",
     code: "MER",
@@ -3432,7 +3315,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 276,
     espnID: 2771,
-    oddsID: "par_01hqmkr2fgen8shrgt3gyn1tbv",
     name: "Merrimack",
     fullName: "Merrimack",
     code: "MRMK",
@@ -3456,7 +3338,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 123,
     espnID: 2390,
-    oddsID: "par_01hqmkr2fjfhzb1344050dr84y",
     name: "Miami",
     fullName: "Miami Hurricanes",
     code: "MIA",
@@ -3480,7 +3361,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 130,
     espnID: 193,
-    oddsID: "par_01hqmkr2fhe0jvdah7p7q02sr5",
     name: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
     code: "M-OH",
@@ -3504,7 +3384,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 115,
     espnID: 130,
-    oddsID: "par_01hqmkr2fmf8h9avy0nd5zgjrf",
     name: "Michigan",
     fullName: "Michigan Wolverines",
     code: "MICH",
@@ -3528,7 +3407,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 92,
     espnID: 127,
-    oddsID: "par_01hqmkr2fkejfvybbs6p8a87dy",
     name: "Michigan State",
     fullName: "Michigan State Spartans",
     code: "MSU",
@@ -3552,7 +3430,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 170,
     espnID: 2393,
-    oddsID: "par_01hqmkr2fnev9rp66k21jxh2e0",
     name: "Middle Tennessee",
     fullName: "Middle Tennessee Blue Raiders",
     code: "MTSU",
@@ -3576,7 +3453,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 85,
     espnID: 135,
-    oddsID: "par_01hqmkr2fpfrs91wegchm2r67z",
     name: "Minnesota",
     fullName: "Minnesota Golden Gophers",
     code: "MINN",
@@ -3600,7 +3476,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 186,
     espnID: 344,
-    oddsID: "par_01hqmkr2fqf22bhnwmdhd2kjn8",
     name: "Mississippi State",
     fullName: "Mississippi State Bulldogs",
     code: "MSST",
@@ -3624,7 +3499,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 271,
     espnID: 2400,
-    oddsID: "par_01hqmkr2frfsqr160e8zwmp0ym",
     name: "Mississippi Valley St",
     fullName: "Mississippi Valley State Delta Devils",
     code: "MVSU",
@@ -3648,7 +3522,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 83,
     espnID: 142,
-    oddsID: "par_01hqmkr2ftf7ct4q4bfphcqc6g",
     name: "Missouri",
     fullName: "Missouri Tigers",
     code: "MIZ",
@@ -3672,7 +3545,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 239,
     espnID: 2623,
-    oddsID: "par_01hqmkr2fsf1m96j5v7yymj6ns",
     name: "Missouri State",
     fullName: "Missouri State Bears",
     code: "MOST",
@@ -3696,7 +3568,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 267,
     espnID: 2405,
-    oddsID: "par_01hqmkr2fvfp8rp7j1gtpsnrbb",
     name: "Monmouth",
     fullName: "Monmouth Hawks",
     code: "MONM",
@@ -3720,7 +3591,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 288,
     espnID: 149,
-    oddsID: "par_01hqmkr2fwe49bav2mwm4ardqj",
     name: "Montana",
     fullName: "Montana Grizzlies",
     code: "MONT",
@@ -3744,7 +3614,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 253,
     espnID: 147,
-    oddsID: "par_01hqmkr2fxe4h9p02m0n9tk2rx",
     name: "Montana State",
     fullName: "Montana State Bobcats",
     code: "MTST",
@@ -3768,7 +3637,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 265,
     espnID: 2413,
-    oddsID: "par_01hqmkr2fyeqkvpydz3jfvh9jd",
     name: "Morehead State",
     fullName: "Morehead State Eagles",
     code: "MORE",
@@ -3792,7 +3660,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 167,
     espnID: 2415,
-    oddsID: "par_01hqmkr2fzftn97s032x1k67n3",
     name: "Morgan State",
     fullName: "Morgan State Bears",
     code: "MORG",
@@ -3816,7 +3683,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 194,
     espnID: 93,
-    oddsID: "par_01hqmkr2g0ehxvzbgc0ayzr64c",
     name: "Murray State",
     fullName: "Murray State Racers",
     code: "MUR",
@@ -3840,7 +3706,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 121,
     espnID: 152,
-    oddsID: "par_01hqmkr2g1f4q9v66kkva1962s",
     name: "NC State",
     fullName: "NC State Wolfpack",
     code: "NCSU",
@@ -3888,7 +3753,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 145,
     espnID: 2426,
-    oddsID: "par_01hqmkr2g2eygsv3p1t3p53h2z",
     name: "Navy",
     fullName: "Navy Midshipmen",
     code: "NAVY",
@@ -3912,7 +3776,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 42,
     espnID: 158,
-    oddsID: "par_01hqmkr2g3evyvxb2wp1p1zwhv",
     name: "Nebraska",
     fullName: "Nebraska Cornhuskers",
     code: "NEB",
@@ -3936,7 +3799,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 56,
     espnID: 2440,
-    oddsID: "par_01hqmkr2g4fg0vhx9fyv2jx6yd",
     name: "Nevada",
     fullName: "Nevada Wolf Pack",
     code: "NEV",
@@ -3960,7 +3822,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 261,
     espnID: 160,
-    oddsID: "par_01hqmkr2g5fwbsby1q63yj42sm",
     name: "New Hampshire",
     fullName: "New Hampshire Wildcats",
     code: "UNH",
@@ -3984,7 +3845,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 199,
     espnID: 167,
-    oddsID: "par_01hqmkr2g6en3av2hyczzpmdvh",
     name: "New Mexico",
     fullName: "New Mexico Lobos",
     code: "UNM",
@@ -4008,7 +3868,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 55,
     espnID: 166,
-    oddsID: "par_01hqmkr2g7fvw8ks932hwvefxk",
     name: "New Mexico State",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
@@ -4031,7 +3890,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 164,
     espnID: 2447,
-    oddsID: "par_01hqmkr2g8f6z8n7ny9pxdt2rb",
     name: "Nicholls",
     fullName: "Nicholls Colonels",
     code: "NICH",
@@ -4077,7 +3935,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 159,
     espnID: 2450,
-    oddsID: "par_01hqmkr2g9f7vs5kb134z25qj4",
     name: "Norfolk State",
     fullName: "Norfolk State Spartans",
     code: "NORF",
@@ -4101,7 +3958,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 263,
     espnID: 2453,
-    oddsID: "par_01j6gp5dz2ef3r73jq9z4yt7g5",
     name: "North Alabama",
     fullName: "North Alabama Lions",
     code: "UNA",
@@ -4125,7 +3981,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 53,
     espnID: 153,
-    oddsID: "par_01hqmkr2gcf1v8stp0x42t01vd",
     name: "North Carolina",
     fullName: "North Carolina Tar Heels",
     code: "UNC",
@@ -4149,7 +4004,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 248,
     espnID: 2448,
-    oddsID: "par_01hqmkr2gaeqjbqdwbf4vs7bzn",
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
     shortName: "NC A&T",
@@ -4214,13 +4068,12 @@ export const cfbTeams: FootballTeam[] = [
     latitude: 34.2745,
     longitude: -81.6187,
     venueImage: "",
-    isActive: true,
+    isActive: false,
     isAllStar: false
   },
   {
     id: 302,
     espnID: 2428,
-    oddsID: "par_01hqmkr2gbeks8k9fraeed72r3",
     name: "North Carolina Central",
     fullName: "North Carolina Central Eagles",
     shortName: "NC Central",
@@ -4360,7 +4213,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 157,
     espnID: 155,
-    oddsID: "par_01hqmkr2gdea3tyj94de4sm8gp",
     name: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
     code: "UND",
@@ -4406,7 +4258,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 254,
     espnID: 2449,
-    oddsID: "par_01hqmkr2geeqfrhzdh7jk1303e",
     name: "North Dakota State",
     fullName: "North Dakota State Bison",
     code: "NDSU",
@@ -4452,7 +4303,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 58,
     espnID: 249,
-    oddsID: "par_01hqmkr2gfenxvr1ebc7enc6w0",
     name: "North Texas",
     fullName: "North Texas Mean Green",
     code: "UNT",
@@ -4476,7 +4326,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 87,
     espnID: 2464,
-    oddsID: "par_01hqmkr2ggfea8p9cztdezea9e",
     name: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
     code: "NAU",
@@ -4500,7 +4349,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 220,
     espnID: 2458,
-    oddsID: "par_01hqmkr2ghfshsz0m9sbedrvgc",
     name: "Northern Colorado",
     fullName: "Northern Colorado Bears",
     code: "UNCO",
@@ -4524,7 +4372,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 79,
     espnID: 2459,
-    oddsID: "par_01hqmkr2gjf94ra4nsj18kmfwx",
     name: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
     code: "NIU",
@@ -4548,7 +4395,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 150,
     espnID: 2460,
-    oddsID: "par_01hqmkr2gke1naebcg54ajnprp",
     name: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
     code: "UNI",
@@ -4572,7 +4418,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 41,
     espnID: 77,
-    oddsID: "par_01hqmkr2gneqrb6749sc5q47t5",
     name: "Northwestern",
     fullName: "Northwestern Wildcats",
     code: "NU",
@@ -4596,7 +4441,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 251,
     espnID: 2466,
-    oddsID: "par_01hqmkr2gmfagrzba888g3s4jb",
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
     shortName: "N'Western St",
@@ -4645,7 +4489,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 108,
     espnID: 87,
-    oddsID: "par_01hqmkr2gpfcvsjkmz4mh3qnsh",
     name: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
     code: "ND",
@@ -4669,7 +4512,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 168,
     espnID: 195,
-    oddsID: "par_01hqmkr2gqfe1brkcakx2w2hs2",
     name: "Ohio",
     fullName: "Ohio Bobcats",
     code: "OHIO",
@@ -4693,7 +4535,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 107,
     espnID: 194,
-    oddsID: "par_01hqmkr2grex7ahyqjr06nfcpr",
     name: "Ohio State",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
@@ -4717,7 +4558,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 117,
     espnID: 201,
-    oddsID: "par_01hqmkr2gsezragwjgzkvhabs7",
     name: "Oklahoma",
     fullName: "Oklahoma Sooners",
     code: "OU",
@@ -4741,7 +4581,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 61,
     espnID: 197,
-    oddsID: "par_01hqmkr2gtfvy8rjbktr154ft7",
     name: "Oklahoma State",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
@@ -4765,7 +4604,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 96,
     espnID: 295,
-    oddsID: "par_01hqmkr2gven2trj27t9zwdnkt",
     name: "Old Dominion",
     fullName: "Old Dominion Monarchs",
     code: "ODU",
@@ -4789,7 +4627,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 131,
     espnID: 145,
-    oddsID: "par_01hqmkr2gwezts6hdfddx5nwjk",
     name: "Ole Miss",
     fullName: "Ole Miss Rebels",
     code: "MISS",
@@ -4813,7 +4650,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 110,
     espnID: 2483,
-    oddsID: "par_01hqmkr2gxfzaa8j81pf7vb2yr",
     name: "Oregon",
     fullName: "Oregon Ducks",
     code: "ORE",
@@ -4837,7 +4673,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 203,
     espnID: 204,
-    oddsID: "par_01hqmkr2gyem0a082a78a8dq9v",
     name: "Oregon State",
     fullName: "Oregon State Beavers",
     code: "ORST",
@@ -4861,7 +4696,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 78,
     espnID: 213,
-    oddsID: "par_01hqmkr2gzf4bs5cr8h1xc3xk7",
     name: "Penn State",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
@@ -4885,7 +4719,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 324,
     espnID: 219,
-    oddsID: "par_01hqmkr2h0fvarnyftdxe77bwa",
     name: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
     code: "PENN",
@@ -4933,7 +4766,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 63,
     espnID: 221,
-    oddsID: "par_01hqmkr2h1e41br4sbx376bxhs",
     name: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
     code: "PITT",
@@ -4957,7 +4789,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 91,
     espnID: 2502,
-    oddsID: "par_01hqmkr2h2ebzac1hrwy6pb0a9",
     name: "Portland State",
     fullName: "Portland State Vikings",
     code: "PRST",
@@ -5028,7 +4859,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 323,
     espnID: 163,
-    oddsID: "par_01hqmkr2h5fgtb161fe1thxf4f",
     name: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
@@ -5052,7 +4882,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 77,
     espnID: 2509,
-    oddsID: "par_01hqmkr2h6frbax6pmzk8fwypn",
     name: "Purdue",
     fullName: "Purdue Boilermakers",
     code: "PUR",
@@ -5076,7 +4905,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 256,
     espnID: 227,
-    oddsID: "par_01hqmkr2h7e3zrz03k91xyrfpp",
     name: "Rhode Island",
     fullName: "Rhode Island Rams",
     code: "URI",
@@ -5100,7 +4928,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 36,
     espnID: 242,
-    oddsID: "par_01hqmkr2h8f1b9d8wdfns0tqc3",
     name: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
@@ -5124,7 +4951,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 148,
     espnID: 257,
-    oddsID: "par_01hqmkr2h9ecm92x2anp78k2y7",
     name: "Richmond",
     fullName: "Richmond Spiders",
     code: "RICH",
@@ -5148,7 +4974,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 224,
     espnID: 2523,
-    oddsID: "par_01hqmkr2haermrqwvb26bnf5b1",
     name: "Robert Morris",
     fullName: "Robert Morris Colonials",
     code: "RMU",
@@ -5172,7 +4997,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 143,
     espnID: 164,
-    oddsID: "par_01hqmkr2hbfz2bfswh49pdx03h",
     name: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
@@ -5196,7 +5020,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 183,
     espnID: 2545,
-    oddsID: "par_01hqmkr2hwf998dcrj2nw1cmgt",
     name: "SE Louisiana",
     fullName: "SE Louisiana Lions",
     code: "SELA",
@@ -5220,7 +5043,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 152,
     espnID: 2546,
-    oddsID: "par_01hqmkr2hvf5gv4g72z8ek44dk",
     name: "SE Missouri State",
     fullName: "Southeast Missouri State Redhawks",
     code: "SEMO",
@@ -5244,7 +5066,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 190,
     espnID: 2567,
-    oddsID: "par_01hqmkr2hcfqpstbw33a07k18b",
     name: "SMU",
     fullName: "SMU Mustangs",
     code: "SMU",
@@ -5268,7 +5089,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 258,
     espnID: 16,
-    oddsID: "par_01hqmkr2hdem3sz28v5dds05te",
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
     code: "SAC",
@@ -5292,7 +5112,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 280,
     espnID: 2529,
-    oddsID: "par_01hqmkr2heft0vgvvv2gpzeach",
     name: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
     code: "SHU",
@@ -5316,7 +5135,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 884,
     espnID: 2598,
-    oddsID: "par_01hqmkr2j1e5ztpspp1qdatg87",
     name: "Saint Francis",
     fullName: "Saint Francis Red Flash",
     code: "SFPA",
@@ -5340,7 +5158,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 813,
     espnID: 2534,
-    oddsID: "par_01hqmkr2hffpdrjxadkz42ppw5",
     name: "Sam Houston",
     fullName: "Sam Houston Bearkats",
     code: "SHSU",
@@ -5364,7 +5181,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 210,
     espnID: 2535,
-    oddsID: "par_01hqmkr2hgeb0846q787h65j6j",
     name: "Samford",
     fullName: "Samford Bulldogs",
     code: "SAM",
@@ -5388,7 +5204,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 300,
     espnID: 301,
-    oddsID: "par_01hqmkr2hjeqxbpm5r54dxhrrw",
     name: "San Diego",
     fullName: "San Diego Toreros",
     code: "USD",
@@ -5412,7 +5227,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 155,
     espnID: 21,
-    oddsID: "par_01hqmkr2hhehdttrcgv6ekzszd",
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
     shortName: "San Diego St",
@@ -5437,7 +5251,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 90,
     espnID: 23,
-    oddsID: "par_01hqmkr2hkfmzsf7mhhg5gb33d",
     name: "San José State",
     fullName: "San José State Spartans",
     code: "SJSU",
@@ -5461,7 +5274,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 163,
     espnID: 6,
-    oddsID: "par_01hqmkr2hnfdxsb91dzrmwfvyr",
     name: "South Alabama",
     fullName: "South Alabama Jaguars",
     code: "USA",
@@ -5485,7 +5297,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 188,
     espnID: 2579,
-    oddsID: "par_01hqmkr2hpfvxsygyfnkpd0pq9",
     name: "South Carolina",
     fullName: "South Carolina Gamecocks",
     code: "SC",
@@ -5509,7 +5320,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 72,
     espnID: 2569,
-    oddsID: "par_01hqmkr2hqffgvyyk1ecjqxgyp",
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
     shortName: "SC State",
@@ -5534,7 +5344,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 175,
     espnID: 233,
-    oddsID: "par_01hqmkr2hrfrk93zeszqy3asbv",
     name: "South Dakota",
     fullName: "South Dakota Coyotes",
     code: "SDAK",
@@ -5581,7 +5390,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 139,
     espnID: 2571,
-    oddsID: "par_01hqmkr2hsedw94ap6hj02acds",
     name: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
     code: "SDST",
@@ -5605,7 +5413,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 135,
     espnID: 58,
-    oddsID: "par_01hqmkr2htf91rm9jvn57cwsqq",
     name: "South Florida",
     fullName: "South Florida Bulls",
     code: "USF",
@@ -5629,7 +5436,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 232,
     espnID: 2582,
-    oddsID: "par_01hqmkr2hzeggs1fy0tr81c31b",
     name: "Southern",
     fullName: "Southern Jaguars",
     code: "SOU",
@@ -5653,7 +5459,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 243,
     espnID: 79,
-    oddsID: "par_01hqmkr2hxf4nsczhgybt4w0y1",
     name: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
     code: "SIU",
@@ -5677,7 +5482,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 178,
     espnID: 2572,
-    oddsID: "par_01hqmkr2hyf3tbzganmmz9kby9",
     name: "Southern Miss",
     fullName: "Southern Miss Golden Eagles",
     code: "USM",
@@ -5701,7 +5505,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 212,
     espnID: 253,
-    oddsID: "par_01hqmkr2j0e8g87ng3h82zqzt0",
     name: "Southern Utah",
     fullName: "Southern Utah Thunderbirds",
     code: "SUU",
@@ -5725,7 +5528,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 191,
     espnID: 24,
-    oddsID: "par_01hqmkr2j2fjety117cwkwer04",
     name: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
@@ -5749,7 +5551,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 231,
     espnID: 2617,
-    oddsID: "par_01j6gp5dz8fy9af1my59qcg08g",
     name: "Stephen F. Austin",
     fullName: "Stephen F. Austin Lumberjacks",
     code: "SFA",
@@ -5773,7 +5574,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 290,
     espnID: 56,
-    oddsID: "par_01hqmkr2j3f4etje2pex7n7jm9",
     name: "Stetson",
     fullName: "Stetson Hatters",
     code: "STET",
@@ -5797,7 +5597,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 287,
     espnID: 284,
-    oddsID: "par_01k3wnsxe2e04vaac75stbg6zm",
     name: "Stonehill",
     fullName: "Stonehill Skyhawks",
     code: "STO",
@@ -5821,7 +5620,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 246,
     espnID: 2619,
-    oddsID: "par_01hqmkr2j4fh4tz4qvbje4k9c7",
     name: "Stony Brook",
     fullName: "Stony Brook Seawolves",
     code: "STBK",
@@ -5869,7 +5667,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 197,
     espnID: 183,
-    oddsID: "par_01hqmkr2j5fbdagnja04bx3byc",
     name: "Syracuse",
     fullName: "Syracuse Orange",
     code: "SYR",
@@ -5893,7 +5690,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 105,
     espnID: 2628,
-    oddsID: "par_01hqmkr2j6emwv9nr4ycvjcnbs",
     name: "TCU",
     fullName: "TCU Horned Frogs",
     code: "TCU",
@@ -5917,7 +5713,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 100,
     espnID: 218,
-    oddsID: "par_01hqmkr2j7f6jrf5emg1y09s6p",
     name: "Temple",
     fullName: "Temple Owls",
     code: "TEM",
@@ -5941,7 +5736,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 69,
     espnID: 2633,
-    oddsID: "par_01hqmkr2jae6na0v519gjm9q9b",
     name: "Tennessee",
     fullName: "Tennessee Volunteers",
     code: "TENN",
@@ -5965,7 +5759,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 252,
     espnID: 2634,
-    oddsID: "par_01hqmkr2j8e07t34w0ahzzkkc7",
     name: "Tennessee State",
     fullName: "Tennessee State Tigers",
     code: "TNST",
@@ -5989,7 +5782,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 102,
     espnID: 2635,
-    oddsID: "par_01hqmkr2j9fkjr4n7qs3jrkn6e",
     name: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
     code: "TNTC",
@@ -6013,7 +5805,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 195,
     espnID: 251,
-    oddsID: "par_01hqmkr2jde19td0j9ksjv0z5k",
     name: "Texas",
     fullName: "Texas Longhorns",
     code: "TEX",
@@ -6037,7 +5828,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 111,
     espnID: 245,
-    oddsID: "par_01hqmkr2jbfwmsgbbzss4f4rrp",
     name: "Texas A&M",
     fullName: "Texas A&M Aggies",
     code: "TA&M",
@@ -6061,7 +5851,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 233,
     espnID: 2640,
-    oddsID: "par_01hqmkr2jefgn8w3ambtg4syfd",
     name: "Texas Southern",
     fullName: "Texas Southern Tigers",
     code: "TXSO",
@@ -6085,7 +5874,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 165,
     espnID: 326,
-    oddsID: "par_01hqmkr2jffzzv7d4tphyftx7e",
     name: "Texas State",
     fullName: "Texas State Bobcats",
     code: "TXST",
@@ -6109,7 +5897,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 193,
     espnID: 2641,
-    oddsID: "par_01hqmkr2jgepz9bx1bcjka55m1",
     name: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
     code: "TTU",
@@ -6133,7 +5920,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 260,
     espnID: 2643,
-    oddsID: "par_01hqmkr2d1evesr3yeywzqf3cb",
     name: "The Citadel",
     fullName: "The Citadel Bulldogs",
     code: "CIT",
@@ -6157,7 +5943,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 75,
     espnID: 2649,
-    oddsID: "par_01hqmkr2jhe00vnd66demmm6k1",
     name: "Toledo",
     fullName: "Toledo Rockets",
     code: "TOL",
@@ -6181,7 +5966,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 244,
     espnID: 119,
-    oddsID: "par_01hqmkr2jje37vbnkk42t1yzvp",
     name: "Towson",
     fullName: "Towson Tigers",
     code: "TOW",
@@ -6229,7 +6013,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 132,
     espnID: 2653,
-    oddsID: "par_01hqmkr2jketn9e8k27nk1b4p5",
     name: "Troy",
     fullName: "Troy Trojans",
     code: "TROY",
@@ -6253,7 +6036,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 180,
     espnID: 2655,
-    oddsID: "par_01hqmkr2jmewztzg73x4a39530",
     name: "Tulane",
     fullName: "Tulane Green Wave",
     code: "TULN",
@@ -6277,7 +6059,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 160,
     espnID: 202,
-    oddsID: "par_01hqmkr2jnfqwv2tjchpa01bzv",
     name: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
     code: "TLSA",
@@ -6301,7 +6082,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 81,
     espnID: 5,
-    oddsID: "par_01hqmkr2jpea1a5k0hpwc9qngq",
     name: "UAB",
     fullName: "UAB Blazers",
     code: "UAB",
@@ -6325,7 +6105,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 730,
     espnID: 399,
-    oddsID: "par_01hqmkr2c2fdg8kjvbncb9hz7h",
     name: "UAlbany",
     fullName: "UAlbany Great Danes",
     code: "UALB",
@@ -6349,7 +6128,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 162,
     espnID: 302,
-    oddsID: "par_01hqmkr2jqfdca2wa15z539zrw",
     name: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
@@ -6373,7 +6151,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 71,
     espnID: 2116,
-    oddsID: "par_01hqmkr2jrfvg8ceexct1sbkgx",
     name: "UCF",
     fullName: "UCF Knights",
     code: "UCF",
@@ -6397,7 +6174,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 153,
     espnID: 26,
-    oddsID: "par_01hqmkr2jsed1rvjdy2bxzz0sd",
     name: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
@@ -6421,7 +6197,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 46,
     espnID: 41,
-    oddsID: "par_01hqmkr2jteyp94q873hs7xd4b",
     name: "UConn",
     fullName: "UConn Huskies",
     code: "CONN",
@@ -6445,7 +6220,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 196,
     espnID: 2433,
-    oddsID: "par_01hqmkr2jveaesysqemde06nep",
     name: "UL Monroe",
     fullName: "UL Monroe Warhawks",
     code: "ULM",
@@ -6469,7 +6243,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 181,
     espnID: 113,
-    oddsID: "par_01hqmkr2jwemesyt4amdtgq2wb",
     name: "UMass",
     fullName: "Massachusetts Minutemen",
     code: "MASS",
@@ -6493,7 +6266,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 43,
     espnID: 2439,
-    oddsID: "par_01hqmkr2jxem0rdgyfbckwa611",
     name: "UNLV",
     fullName: "UNLV Rebels",
     code: "UNLV",
@@ -6517,7 +6289,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 122,
     espnID: 30,
-    oddsID: "par_01hqmkr2jyf0xb3g282ddm9gjn",
     name: "USC",
     fullName: "USC Trojans",
     code: "USC",
@@ -6541,7 +6312,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 247,
     espnID: 2630,
-    oddsID: "par_01hqmkr2jzeawtrmmd333t0nga",
     name: "UT Martin",
     fullName: "UT Martin Skyhawks",
     code: "UTM",
@@ -6565,7 +6335,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 57,
     espnID: 2638,
-    oddsID: "par_01hqmkr2k0fjxv6cjwb9j6dpds",
     name: "UTEP",
     fullName: "UTEP Miners",
     code: "UTEP",
@@ -6589,7 +6358,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 133,
     espnID: 2636,
-    oddsID: "par_01hqmkr2k1fnwtfm0hcaxm928z",
     name: "UTSA",
     fullName: "UTSA Roadrunners",
     code: "UTSA",
@@ -6613,7 +6381,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 114,
     espnID: 254,
-    oddsID: "par_01hqmkr2k4e6mrb4f7kj54rcd2",
     name: "Utah",
     fullName: "Utah Utes",
     code: "UTAH",
@@ -6637,7 +6404,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 45,
     espnID: 328,
-    oddsID: "par_01hqmkr2k2frts2aqztas39w6d",
     name: "Utah State",
     fullName: "Utah State Aggies",
     code: "USU",
@@ -6661,7 +6427,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 264,
     espnID: 3101,
-    oddsID: "par_01hqmkr2k3efp9cq1dhmaakmmr",
     name: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
     code: "UTU",
@@ -6685,7 +6450,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 66,
     espnID: 2678,
-    oddsID: "par_01hqmkr2k5ffwrgf804ejj4paw",
     name: "VMI",
     fullName: "VMI Keydets",
     code: "VMI",
@@ -6709,7 +6473,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 298,
     espnID: 2674,
-    oddsID: "par_01hqmkr2k6fcvr3377f77tp9br",
     name: "Valparaiso",
     fullName: "Valparaiso Beacons",
     code: "VAL",
@@ -6733,7 +6496,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 60,
     espnID: 238,
-    oddsID: "par_01hqmkr2k7f8ksrb7fqw7g81g9",
     name: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
     code: "VAN",
@@ -6757,7 +6519,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 242,
     espnID: 222,
-    oddsID: "par_01hqmkr2k8e9t912xj54sy7p1q",
     name: "Villanova",
     fullName: "Villanova Wildcats",
     code: "VILL",
@@ -6781,7 +6542,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 147,
     espnID: 258,
-    oddsID: "par_01hqmkr2k9edpbevdc3fgmd6n7",
     name: "Virginia",
     fullName: "Virginia Cavaliers",
     code: "UVA",
@@ -6805,7 +6565,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 97,
     espnID: 259,
-    oddsID: "par_01hqmkr2kafdt8mg973a6kztm3",
     name: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
     code: "VT",
@@ -6829,7 +6588,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 219,
     espnID: 2681,
-    oddsID: "par_01hqmkr2kbe1drh5z3h95et5fs",
     name: "Wagner",
     fullName: "Wagner Seahawks",
     code: "WAG",
@@ -6853,7 +6611,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 65,
     espnID: 154,
-    oddsID: "par_01hqmkr2kcem6vr8c4h9608c8b",
     name: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
     code: "WAKE",
@@ -6876,7 +6633,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 205,
     espnID: 264,
-    oddsID: "par_01hqmkr2kdeeyv02ttcappmas9",
     name: "Washington",
     fullName: "Washington Huskies",
     code: "WASH",
@@ -6899,7 +6655,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 201,
     espnID: 265,
-    oddsID: "par_01hqmkr2kee6c9venjvfcbaqxr",
     name: "Washington State",
     fullName: "Washington State Cougars",
     code: "WSU",
@@ -6922,7 +6677,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 227,
     espnID: 2692,
-    oddsID: "par_01j6gcpntxe6trypa8c8gyds30",
     name: "Weber State",
     fullName: "Weber State Wildcats",
     code: "WEB",
@@ -6969,7 +6723,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 716,
     espnID: 2698,
-    oddsID: "par_01k49ngvcmerm82m8c76tnkcfc",
     name: "West Georgia",
     fullName: "West Georgia Wolves",
     code: "WGA",
@@ -7016,7 +6769,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 64,
     espnID: 277,
-    oddsID: "par_01hqmkr2kffbtbwtyr0arxv9qq",
     name: "West Virginia",
     fullName: "West Virginia Mountaineers",
     code: "WVU",
@@ -7040,7 +6792,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 226,
     espnID: 2717,
-    oddsID: "par_01hqmkr2kgf0xrdj4mj20gka78",
     name: "Western Carolina",
     fullName: "Western Carolina Catamounts",
     code: "WCU",
@@ -7064,7 +6815,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 215,
     espnID: 2710,
-    oddsID: "par_01hqmkr2khep2ths75prve9p8p",
     name: "Western Illinois",
     fullName: "Western Illinois Leathernecks",
     code: "WIU",
@@ -7088,7 +6838,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 39,
     espnID: 98,
-    oddsID: "par_01hqmkr2kjeegvcye6rygdrtzk",
     name: "Western Kentucky",
     fullName: "Western Kentucky Hilltoppers",
     code: "WKU",
@@ -7112,7 +6861,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 93,
     espnID: 2711,
-    oddsID: "par_01hqmkr2kkf5bsvp0ek56ky1ts",
     name: "Western Michigan",
     fullName: "Western Michigan Broncos",
     code: "WMU",
@@ -7159,7 +6907,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 98,
     espnID: 2729,
-    oddsID: "par_01hqmkr2kmfaftzy9s5xyr19zn",
     name: "William & Mary",
     fullName: "William & Mary Tribe",
     code: "W&M",
@@ -7183,7 +6930,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 125,
     espnID: 275,
-    oddsID: "par_01hqmkr2kpf148kx5sra1set9r",
     name: "Wisconsin",
     fullName: "Wisconsin Badgers",
     code: "WIS",
@@ -7207,7 +6953,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 240,
     espnID: 2747,
-    oddsID: "par_01hqmkr2kqfkkv1hrd1kx3wphw",
     name: "Wofford",
     fullName: "Wofford Terriers",
     code: "WOF",
@@ -7231,7 +6976,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 48,
     espnID: 2751,
-    oddsID: "par_01hqmkr2kre0vvjx5e3anbs2dg",
     name: "Wyoming",
     fullName: "Wyoming Cowboys",
     code: "WYO",
@@ -7255,7 +6999,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 328,
     espnID: 43,
-    oddsID: "par_01hqmkr2kseggane1a6p45qsqq",
     name: "Yale",
     fullName: "Yale Bulldogs",
     code: "YALE",
@@ -7322,7 +7065,6 @@ export const cfbTeams: FootballTeam[] = [
   {
     id: 238,
     espnID: 2754,
-    oddsID: "par_01hqmkr2kte08app1gjph42xez",
     name: "Youngstown State",
     fullName: "Youngstown State Penguins",
     shortName: "Youngstown St",

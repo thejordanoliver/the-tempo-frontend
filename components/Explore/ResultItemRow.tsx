@@ -16,6 +16,7 @@ import type {
   TeamResult,
   UserResult,
 } from "types/types";
+import { BASE_URL } from "utils/apiClient";
 
 type Props = {
   item: ResultItem;
@@ -23,8 +24,6 @@ type Props = {
   onDelete?: (item: ResultItem) => void;
   query?: string;
 };
-
-import { BASE_URL } from "utils/apiClient";
 
 export default function ResultItemRow({
   item,
@@ -39,6 +38,7 @@ export default function ResultItemRow({
   // TEAM
   // -------------------------
   const renderTeam = (team: TeamResult) => {
+    if (team.is_active === false) return null; // 👈 add this
     let localTeamLogo: string | undefined;
 
     if (team.isNFL && team.id != null)

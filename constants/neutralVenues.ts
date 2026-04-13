@@ -364,7 +364,16 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
   },
-
+  "Kaseya Center": {
+    name: "Kaseya Center",
+    city: "Miami",
+    latitude: 25.7814,
+    longitude: -80.187,
+    address: "601 Biscayne Boulevard, Miami, FL 33132",
+    venueCapacity: "19,600",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/heat.jpg",
+  },
 };
 
 export const neutralStadiums: Record<string, Venue> = {

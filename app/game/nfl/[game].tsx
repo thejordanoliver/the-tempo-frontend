@@ -38,7 +38,7 @@ import {
   getNFLTeam,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { Game } from "types/football";
+import { FootballGame } from "types/football";
 
 /* --- Utils & Stores --- */
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
@@ -58,10 +58,10 @@ export default function NFLGameDetailsScreen() {
 
   if (typeof gameParam !== "string") return null;
 
-  let parsedGame: Game;
+  let parsedGame: FootballGame;
 
   try {
-    parsedGame = JSON.parse(gameParam) as Game;
+    parsedGame = JSON.parse(gameParam) as FootballGame;
   } catch (e) {
     console.warn("Failed to parse game:", gameParam);
     return null;

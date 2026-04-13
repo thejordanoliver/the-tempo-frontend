@@ -2,28 +2,34 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { Image, Text, View, useColorScheme } from "react-native";
+import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import { PlayerLeader } from "types/playerLeader";
 import { Game } from "types/types";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import displayeValue from "utils/widgetUtils";
+import PlayerItem from "../Players/PlayerItem";
+import { useNBAWidgetLeaders } from "hooks/NBAHooks/useNBAWidgetLeaders";
 
 type GameWidgetProps = {
   game: Game;
   height?: number;
   width?: number;
   loading?: boolean;
+  isDark: boolean;
+  showPlayers?: boolean; // ← add
 };
 
-export default function GameWidget({
+export default function NBAGameWidget({
   game,
   height = 150,
   width = 150,
   loading = false,
+  isDark,
+  showPlayers = false,
 }: GameWidgetProps) {
-  const isDark = useColorScheme() === "dark";
   const styles = gameWidgetStyles(isDark, height, width);
   const global = globalStyles(isDark);
   const homeId = Number(game?.home?.id);
@@ -57,6 +63,13 @@ export default function GameWidget({
     gameDateStr,
   );
 
+    const { leaders } = useNBAWidgetLeaders(
+    String(game.id),
+    homeId,
+    awayId,
+  );
+
+
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
   const homeScore = liveScore?.home.total;
@@ -76,7 +89,6 @@ export default function GameWidget({
   const headlineText = details?.headline;
   const headline = headlineText || holidayLabel;
   const isLoading = !liveScore;
-  // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
 
@@ -139,6 +151,9 @@ export default function GameWidget({
   // -------------------------
   return (
     <View style={styles.container}>
+      <View style={styles.headlineContainer}>
+        <Text style={styles.headline}>{headline}</Text>
+      </View>
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
@@ -207,6 +222,33 @@ export default function GameWidget({
           </View>
         </View>
       </View>
+      {/* ---------------------- */}
+      {/* Inline Player Leaders  */}
+      {/* ---------------------- */}
+      {showPlayers && !isScheduled && leaders.length > 0 && (
+        <View style={styles.leadersContainer}>
+          {leaders.map((player, index) => (
+            <PlayerItem
+              key={`${player.id}-${player.leaderStat?.name ?? index}`} // ← composite key
+              id={player.id}
+              firstName={player.firstName}
+              lastName={player.lastName}
+              headshot={player.headshot_url}
+              jerseyNumber={player.jersey_number}
+              team={player.team}
+              stats={[
+                {
+                  label: player.leaderStat?.name ?? "",
+                  value: player.leaderStat?.value ?? 0,
+                },
+              ]}
+              isLast={index === leaders.length - 1}
+              width={width}
+              height={40}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 }

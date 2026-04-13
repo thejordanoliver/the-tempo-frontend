@@ -1,12 +1,11 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
-import { useGameLeaders } from "hooks/useGameLeaders";
+import { useGameLeaders } from "hooks/NBAHooks/useGameLeaders";
 import { useMemo, useState } from "react";
-import { Dimensions, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 import GameLeadersSkeleton from "../../../Skeletons/GameDetails/GameLeadersSkeleton";
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type Category = (typeof STAT_CATEGORIES)[number];

@@ -12,7 +12,7 @@ import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, useColorScheme, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 
 export default function NFLPlayerDetailScreen() {
   const styles = playerScreenStyles;
@@ -41,7 +41,7 @@ export default function NFLPlayerDetailScreen() {
     lastGame,
     loading: lastGameLoading,
     error: lastGameError,
-  } = useLastTeamGame(player?.team_id ?? 0, getFootballSeasonYear());
+  } = useLastTeamGame(player?.team_id ?? 0, getFootballSeason());
 
   const {
     data: seasons,

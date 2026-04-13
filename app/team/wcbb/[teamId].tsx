@@ -10,17 +10,17 @@ import CBBRosterStats from "components/Sports/CBB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useTeamTabs } from "hooks/useLeagueTabs";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import {
   getGameCountByMonth,
   getMonthsToShow,
@@ -38,12 +38,15 @@ export default function TeamDetailScreen() {
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? Number(teamId) : null;
+  const teamIdNum = Number(teamId);
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const league = "WCBB";
   const team = getCBBTeam(Number(teamIdNum), true);
   const espnId = team?.espnID;
+  const favorited = team ? isFavorite(league, teamIdNum) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cachedGames, setCachedGames] = useState<CBBGame[]>([]);
+  const [cachedGames, setCachedGames] = useState<BasketballGame[]>([]);
   const {
     rosterStats,
     loading: statsLoading,
@@ -71,7 +74,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames,
-  } = useCBBTeamGames(team?.wid ?? "");
+  } = useCBBTeamGames(team?.wid ?? "", "423");
 
   const teamGames = useMemo(
     () =>
@@ -175,10 +178,6 @@ export default function TeamDetailScreen() {
   }, [rawTeamGames, teamIdNum]);
 
   /** ---------------- HEADER ---------------- */
-
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
-  const league = "WCBB";
-  const favorited = team ? isFavorite(league, team.id) : false;
 
   const logo = getCBBTeamLogo(teamIdNum ?? 0, true, true);
   // --- Header ---

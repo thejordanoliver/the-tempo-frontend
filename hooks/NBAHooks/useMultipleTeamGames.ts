@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Game } from "types/types";
-
 import { apiClient } from "utils/apiClient";
 
 type RawGamesMap = Record<string, Game | null>; // now typed
 
-export function useMultipleLastTeamGame(
+export function useMultipleTeamGames(
   teamIds: (string | number)[],
   season: string | number,
 ) {

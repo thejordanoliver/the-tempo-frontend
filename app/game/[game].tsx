@@ -77,6 +77,7 @@ export default function GameDetailsScreen() {
     month: "short",
     day: "numeric",
   });
+  
   const formattedTime =
     gameDateObj?.toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -206,7 +207,7 @@ export default function GameDetailsScreen() {
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
-    if (isGameLoading || !details || !homeTeam || !awayTeam) {
+    if (isGameLoading || !homeTeam || !awayTeam) {
       navigation.setOptions({
         header: () => null,
       });
@@ -230,7 +231,7 @@ export default function GameDetailsScreen() {
         />
       ),
     });
-  }, [navigation, isGameLoading, details, homeCode, awayCode]);
+  }, [navigation, isGameLoading, homeCode, awayCode]);
 
   if (isGameLoading) {
     return (

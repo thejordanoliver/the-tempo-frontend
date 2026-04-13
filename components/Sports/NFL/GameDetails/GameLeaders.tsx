@@ -7,7 +7,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
-import { useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
+import { useTeamPlayers } from "hooks/NFLHooks/useTeamRosters";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";

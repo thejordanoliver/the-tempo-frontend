@@ -82,6 +82,7 @@ export type PlayerStats = {
     pts: number;
   } | null;
 };
+
 export type TeamStats = {
   gamesPlayed: number;
   pointsPerGame: number;
@@ -175,7 +176,6 @@ export type NBATeam = {
   id: number;
   espnID: number;
   summerLeagueId?: number;
-  oddsID?: string;
   name: string;
   fullName: string;
   logo?: any;
@@ -281,7 +281,7 @@ export type Game = {
   };
 };
 
-export type CBBGame = {
+export type BasketballGame = {
   id: number;
   date: string; // "2025-12-16T21:00:00+00:00"
   time: string; // "21:00"
@@ -658,6 +658,7 @@ export type TeamResult = {
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
+  is_active?: boolean;
   type: "team";
   score: number;
 };

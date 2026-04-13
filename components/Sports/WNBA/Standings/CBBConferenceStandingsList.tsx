@@ -7,7 +7,6 @@ import {
 } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import {
   FlatList,
   Image,

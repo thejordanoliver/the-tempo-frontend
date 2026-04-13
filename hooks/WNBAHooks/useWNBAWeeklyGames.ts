@@ -4,7 +4,7 @@ import { NBATeam } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { getWNBASeason } from "utils/dateUtils";
 
-export type CBBGame = {
+export type BasketballGame = {
   id: number;
   date: string;
   teams: {
@@ -38,7 +38,7 @@ export function useWeeklyWNBAGames({
   timezone,
   league,
 }: useWeeklyWNBAGamesOptions = {}) {
-  const [cbbGames, setGames] = useState<CBBGame[]>([]);
+  const [BasketballGames, setGames] = useState<BasketballGame[]>([]);
   const [cbbLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export function useWeeklyWNBAGames({
         params: { season, timezone, league },
       });
 
-      const data: CBBGame[] = res.data?.response || [];
+      const data: BasketballGame[] = res.data?.response || [];
       setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
@@ -68,19 +68,19 @@ export function useWeeklyWNBAGames({
   }, [refreshWNBAGames]);
 
   const isLiveGame = useCallback(
-    (game: CBBGame) =>
+    (game: BasketballGame) =>
       !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
     [],
   );
 
   const sortedGames = useMemo(() => {
-    return [...cbbGames].sort(
+    return [...BasketballGames].sort(
       (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)),
     );
-  }, [cbbGames, isLiveGame]);
+  }, [BasketballGames, isLiveGame]);
 
   return {
-    cbbGames: sortedGames,
+    BasketballGames: sortedGames,
     cbbLoading,
     error,
     lastFetched,

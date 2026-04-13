@@ -51,7 +51,7 @@ export type FootballTeam = {
   isActive: boolean;
 };
 
-export type Game = {
+export type FootballGame = {
   game: {
     id: string; // ✅
     stage: string;

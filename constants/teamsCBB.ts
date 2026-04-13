@@ -1029,7 +1029,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1946,
     latitude: 42.087,
     longitude: -75.969,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1050,7 +1050,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1829,
     latitude: 43.084,
     longitude: -77.674,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1072,7 +1072,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1830,
     latitude: 30.695,
     longitude: -88.144,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1093,7 +1093,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1930,
     latitude: 35.493,
     longitude: -85.016,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1158,7 +1158,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1976,
     latitude: 29.7138,
     longitude: -95.5235,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1474,7 +1474,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1856,
     latitude: 43.1361,
     longitude: -79.0395,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1560,7 +1560,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1847,
     latitude: 40.5043,
     longitude: -78.6381,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1581,7 +1581,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1946,
     latitude: 40.3745,
     longitude: -80.6341,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1686,7 +1686,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1906,
     latitude: 31.3227,
     longitude: -92.4346,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1708,7 +1708,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1891,
     latitude: 36.0768,
     longitude: -79.7738,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1730,7 +1730,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1920,
     latitude: 41.2896,
     longitude: -72.9612,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1773,7 +1773,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1911,
     latitude: 44.5341,
     longitude: -72.0146,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1794,7 +1794,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1828,
     latitude: 44.6398,
     longitude: -72.677,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1816,7 +1816,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1851,
     latitude: 37.9806,
     longitude: -121.3129,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1852,7 +1852,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#002D62",
     secondaryColor: "#A29061",
     logo: ChampionChristianLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1865,7 +1865,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#2c4b92",
     secondaryColor: "#e3b35a",
     logo: KansasChristianLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1879,7 +1879,7 @@ export const cbbTeams: CBBTeam[] = [
     secondaryColor: "#FFFFFF",
     logo: OlivetLogo,
     logoLight: OlivetLogoLight,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1893,7 +1893,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#FE5000",
     secondaryColor: "#071D49",
     logo: BrewtonParkerLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -1905,7 +1905,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#0054A5",
     secondaryColor: "#D9D9D6",
     logo: ChaminadeLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -2037,7 +2037,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1946,
     latitude: 35.5062,
     longitude: -97.6407,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -2059,7 +2059,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1961,
     latitude: 31.2032,
     longitude: -81.4705,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -3300,30 +3300,8 @@ export const cbbTeams: CBBTeam[] = [
     isAllStar: false,
   },
   {
-    id: 2172,
-    wid: 7228,
-    espnID: 30,
-    name: "USC",
-    fullName: "USC Trojans",
-    code: "USC",
-    color: "#9e2237",
-    secondaryColor: "#ffcc00",
-    logo: USCLogo,
-    logoLight: USCLogoLight,
-    location: "Los Angeles, CA",
-    city: "Los Angeles",
-    venueName: "Galen Center",
-    address: "3400 S Figueroa St, Los Angeles, CA 90089",
-    venueCapacity: "10,258",
-    established: 1880,
-    latitude: 34.0141,
-    longitude: -118.2879,
-    isActive: true,
-    isAllStar: false,
-  },
-  {
     id: 2173,
-    wid: 0,
+    wid: 7148,
     espnID: 2908,
     name: "South Carolina Upstate",
     fullName: "South Carolina Upstate Spartans",
@@ -3345,7 +3323,7 @@ export const cbbTeams: CBBTeam[] = [
     isAllStar: false,
   },
   {
-    id: 2173,
+    id: 2172,
     wid: 7228,
     espnID: 30,
     name: "USC",
@@ -3528,7 +3506,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#985ba3",
     secondaryColor: "#f3a913",
     logo: ArkansasBaptistLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -3542,7 +3520,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#41A425",
     secondaryColor: "#FFFFFF",
     logo: PlaceholderLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -3678,7 +3656,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#EE3024",
     secondaryColor: "#df3e2e",
     logo: NJITLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -4526,7 +4504,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#B4131D",
     secondaryColor: "#FCD13B",
     logo: PlaceholderLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -5341,7 +5319,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#003c78",
     secondaryColor: "#0023b3",
     logo: BrevardCollegeLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -5353,7 +5331,7 @@ export const cbbTeams: CBBTeam[] = [
     color: "#004C97",
     secondaryColor: "#FFFFFF",
     logo: DakotaWesleyanLogo,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -7655,7 +7633,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1964,
     latitude: 41.2312,
     longitude: -80.4813,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8275,7 +8253,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1939,
     latitude: 39.941,
     longitude: -76.7274,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8664,7 +8642,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1827,
     latitude: 38.7832,
     longitude: -90.481,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8705,7 +8683,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1903,
     latitude: 37.4097,
     longitude: -79.181,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8915,7 +8893,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1965,
     latitude: 44.5013,
     longitude: -88.0546,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8931,7 +8909,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1867,
     latitude: 33.745,
     longitude: -84.4151,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -8975,7 +8953,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1899,
     latitude: 32.2157,
     longitude: -98.2158,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9015,7 +8993,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1969,
     latitude: 35.1995,
     longitude: -87.0361,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9036,7 +9014,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1837,
     latitude: 40.1648,
     longitude: -80.5968,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9056,7 +9034,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1850,
     latitude: 41.3127,
     longitude: -81.1436,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9076,7 +9054,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1837,
     latitude: 39.6413,
     longitude: -86.8647,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9120,7 +9098,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1877,
     latitude: 42.4146,
     longitude: -83.1389,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
 
@@ -9143,7 +9121,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1950,
     latitude: 41.0137,
     longitude: -73.8726,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9188,7 +9166,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1956,
     latitude: 35.9891,
     longitude: -77.8364,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9209,7 +9187,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1880,
     latitude: 38.3823,
     longitude: -78.9686,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9230,7 +9208,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1840,
     latitude: 41.9894,
     longitude: -70.9656,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9291,7 +9269,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1906,
     latitude: 33.5712,
     longitude: -85.1035,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9311,7 +9289,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1840,
     latitude: 40.2054,
     longitude: -80.5596,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9355,7 +9333,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1913,
     latitude: 42.2786,
     longitude: -74.9166,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9420,7 +9398,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1900,
     latitude: 46.0039,
     longitude: -112.5348,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9442,7 +9420,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1815,
     latitude: 41.6414,
     longitude: -80.1515,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9461,7 +9439,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1934,
     latitude: 30.3496,
     longitude: -81.6024,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9614,7 +9592,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1867,
     latitude: 41.7209,
     longitude: -87.614,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9636,7 +9614,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1955,
     latitude: 40.6587,
     longitude: -73.6396,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9658,7 +9636,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1964,
     latitude: 41.5032,
     longitude: -81.675,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9680,7 +9658,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1889,
     latitude: 31.7093,
     longitude: -98.9846,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9701,7 +9679,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1947,
     latitude: 40.1009,
     longitude: -75.1154,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9723,7 +9701,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1894,
     latitude: 35.6106,
     longitude: -82.4421,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9754,18 +9732,18 @@ export const cbbTeams: CBBTeam[] = [
     fullName: "Mid-Atlantic Christian Mustangs",
     shortName: "MACU",
     code: "MATC",
-    color: "#002D72", 
-    secondaryColor: "#C8102E", 
+    color: "#002D72",
+    secondaryColor: "#C8102E",
     logo: PlaceholderLogo,
     location: "Elizabeth City, NC",
     city: "Elizabeth City",
     venueName: "Vaughan Center Gymnasium",
     address: "715 N Poindexter St, Elizabeth City, NC 27909",
     venueCapacity: "500",
-    established: 1948, 
+    established: 1948,
     latitude: 36.3026,
     longitude: -76.216,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9787,7 +9765,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1926,
     latitude: 42.1129,
     longitude: -80.0866,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9808,7 +9786,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1847,
     latitude: 40.8216,
     longitude: -73.9496,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9830,7 +9808,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1963,
     latitude: 40.2759,
     longitude: -79.5316,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
   {
@@ -9851,7 +9829,7 @@ export const cbbTeams: CBBTeam[] = [
     established: 1848,
     latitude: 40.7683,
     longitude: -80.3225,
-    isActive: true,
+    isActive: false,
     isAllStar: false,
   },
 ];

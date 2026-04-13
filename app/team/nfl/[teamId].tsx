@@ -7,35 +7,33 @@ import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { nflTeams } from "constants/teamsNFL";
+import { getNFLTeam } from "constants/teamsNFL";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
 import { useTeamTabs } from "hooks/useLeagueTabs";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
-type PageSelectedEvent = {
-  nativeEvent: {
-    position: number;
-  };
-};
 
 export default function TeamDetailScreen() {
+  const league = "NFL";
   const isDark = useColorScheme() === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
-  const league = "NFL";
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const team = getNFLTeam(teamIdNum ?? 0);
+  const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(
-    getFootballSeasonYear().toString(),
+    getFootballSeason().toString(),
   );
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs("NFL");
@@ -50,17 +48,12 @@ export default function TeamDetailScreen() {
     setSelectedTab(indexToTab(index));
   };
 
-  const team = useMemo(
-    () => (teamIdNum ? nflTeams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum],
-  );
-
   const {
     games: teamGames,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum ?? 0, "2022", 2);
+  } = useFootballTeamGames(teamIdNum ?? 0, String(getFootballSeason()), 2);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -76,11 +69,6 @@ export default function TeamDetailScreen() {
       setRefreshing(false);
     }
   };
-
-  // ✅ Use the favorite teams hook
-  const { toggleFavorite, isFavorite } = useFavoriteTeams();
-
-  const favorited = team ? isFavorite(league, team.id) : false;
 
   useLayoutEffect(() => {
     navigation.setOptions({

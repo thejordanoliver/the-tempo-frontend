@@ -1,4 +1,4 @@
-// utils/CBBUtils/cbbGameUtils.ts
+// utils/CBBUtils/BasketballGameUtils.ts
 
 import {
   cbbTeams,
@@ -13,7 +13,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useMemo } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -217,15 +217,15 @@ export const resolveConferenceTeamNameToESPN = (
    MAIN FILTER FUNCTION
 ===================================================== */
 
-export function filterCBBGames({
+export function filterBasketballGames({
   games,
   selectedConference,
   top25Teams,
 }: {
-  games: CBBGame[];
+  games: BasketballGame[];
   selectedConference: string;
   top25Teams: string[]; // ESPN IDs
-}): CBBGame[] {
+}): BasketballGame[] {
   if (!games?.length) return [];
 
   // --- Deduplicate games ---

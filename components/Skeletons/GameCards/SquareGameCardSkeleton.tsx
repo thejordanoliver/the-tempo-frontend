@@ -79,7 +79,9 @@ const getStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       height: 120,
-      backgroundColor: isDark ? "#2e2e2e" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 12,
       paddingHorizontal: 8,
@@ -88,7 +90,7 @@ const getStyles = (isDark: boolean) =>
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? "#444" : "#888",
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRightWidth: 0.5,
       paddingRight: 12,
       gap: 8,

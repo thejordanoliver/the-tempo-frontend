@@ -27,7 +27,7 @@ export const gameListStyles = StyleSheet.create({
   },
 
   skeletonGridWrapper: {
-    gap: 12,
+paddingHorizontal: 12
   },
 
   /* ---------- Grid ---------- */

@@ -3,7 +3,7 @@ import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardS
 import { globalStyles } from "constants/styles";
 import { Text, useColorScheme, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 
 type Props = {
   player: any;
@@ -28,7 +28,7 @@ export default function SeasonStatCard({
   if (loading) return <SeasonStatCardSkeleton />;
   if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
 
-  const displayYear = getFootballSeasonYear().toString();
+  const displayYear = getFootballSeason().toString();
   const position = player?.position || "";
 
   const formatValue = (val: number | string) => {

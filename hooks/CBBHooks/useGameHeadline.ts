@@ -11,7 +11,7 @@ type ESPNDateInput =
 
 type CBBLeague = "cbb" | "wcbb";
 
-interface CBBGameInfoResult {
+interface BasketballGameInfoResult {
   headlineText?: string;
   loading: boolean;
   error: string | null;
@@ -27,8 +27,8 @@ export const useCBBHeadline = (
   homeEspnId?: number,
   awayEspnId?: number,
   date?: ESPNDateInput,
-  league: CBBLeague = "cbb" // 👈 NEW
-): CBBGameInfoResult => {
+  league: CBBLeague = "cbb", // 👈 NEW
+): BasketballGameInfoResult => {
   const [headlineText, setHeadlineText] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,10 +48,10 @@ export const useCBBHeadline = (
         targetDate = date.timestamp
           ? new Date(date.timestamp * 1000)
           : date.utc
-          ? new Date(date.utc)
-          : date.date
-          ? new Date(date.date)
-          : null;
+            ? new Date(date.utc)
+            : date.date
+              ? new Date(date.date)
+              : null;
       }
 
       if (!targetDate || isNaN(targetDate.getTime())) {
@@ -78,14 +78,14 @@ export const useCBBHeadline = (
         const d = new Date(targetDate);
         d.setUTCDate(d.getUTCDate() + offset);
         return `https://site.api.espn.com/apis/site/v2/sports/basketball/${sportKey}/scoreboard?dates=${makeYMD(
-          d
+          d,
         )}&groups=50&limit=500`;
       });
 
       const results = await Promise.allSettled(urls.map((u) => axios.get(u)));
       const allEvents = results
         .filter(
-          (r): r is PromiseFulfilledResult<any> => r.status === "fulfilled"
+          (r): r is PromiseFulfilledResult<any> => r.status === "fulfilled",
         )
         .flatMap((r) => r.value.data?.events || []);
 
@@ -109,7 +109,7 @@ export const useCBBHeadline = (
 
         const gameDate = new Date(g.date).getTime();
         const diffDays = Math.round(
-          (gameDate - targetTime) / (1000 * 60 * 60 * 24)
+          (gameDate - targetTime) / (1000 * 60 * 60 * 24),
         );
 
         return diffDays >= -1 && diffDays <= 1;

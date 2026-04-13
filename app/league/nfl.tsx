@@ -25,7 +25,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 
 dayjs.extend(utc);
@@ -65,14 +65,12 @@ export default function NFLLeagueScreen() {
     error: newsError,
   } = useLeaguesNews(10, "NFL");
   const [refreshing, setRefreshing] = useState(false);
-  const [draftYear, setDraftYear] = useState(
-    getFootballSeasonYear().toString(),
-  );
+  const [draftYear, setDraftYear] = useState(getFootballSeason().toString());
   const [standingsYear, setStandingsYear] = useState(
-    getFootballSeasonYear().toString(),
+    getFootballSeason().toString(),
   );
   const { categories, loading, error } = useSeasonLeaders(
-    getFootballSeasonYear(),
+    getFootballSeason(),
     "NFL",
   );
   const [draftTeam, setDraftTeam] = useState("all");
@@ -85,7 +83,7 @@ export default function NFLLeagueScreen() {
     weeks,
     loading: gamesLoading,
     refetch,
-  } = useFootballGamesByWeek(getFootballSeasonYear(), 1);
+  } = useFootballGamesByWeek(getFootballSeason(), 1);
   const weekLabels = Object.keys(weeks);
 
   // ✅ Map weeks to array of objects for WeekSelector

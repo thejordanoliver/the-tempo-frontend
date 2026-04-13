@@ -20,14 +20,14 @@ import { getNeutralVenue } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLastFiveGames } from "hooks/WNBAHooks/useLastFiveGames";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
+import { useLastFiveGames } from "hooks/WNBAHooks/useLastFiveGames";
 import React, { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
@@ -49,7 +49,7 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Parse Game ---------------- */
 
-  const gameObj: CBBGame | null = useMemo(() => {
+  const gameObj: BasketballGame | null = useMemo(() => {
     try {
       return typeof game === "string" ? JSON.parse(game) : null;
     } catch (e) {

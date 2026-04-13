@@ -7,7 +7,6 @@ import {
 } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { useCFBConferenceStandings } from "hooks/CFBHooks/useCFBConferenceStandings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import {
   FlatList,
   Image,
@@ -18,7 +17,7 @@ import {
   View,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 type Props = {
   selectedConference?: string;
   onlyTeamConference?: boolean;
@@ -86,7 +85,7 @@ export const CFBConferenceStandingsList = ({
   const global = globalStyles(isDark);
   const router = useRouter();
   const teamConference = getTeamConference(teamName);
-  const { isFavorite } = useFavoriteTeams();
+  const { isFavorite } = useFavoriteTeamsContext();
 
   if (loading) {
     return (

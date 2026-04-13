@@ -1,7 +1,5 @@
 import { Colors } from "constants/styles";
-
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
-
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -14,11 +12,11 @@ import {
   View,
 } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-function WNBAStackedGameCard({ game }: { game: CBBGame }) {
+function WNBAStackedGameCard({ game }: { game: BasketballGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 

@@ -163,7 +163,7 @@ export default function ExplorePage() {
         onTabPress={(tab) => setSelectedTab(tab as typeof selectedTab)}
       />
 
-      {!searchVisible && <EmptyState />}
+      {!searchVisible && <EmptyState isDark={isDark} />}
 
       {searchVisible && (
         <SearchResultsList

@@ -1,16 +1,16 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
+import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
+import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
-import { CBBGame } from "types/types";
-import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
-import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
+import { BasketballGame } from "types/types";
 
 type GamePreviewContentProps = {
-  game: CBBGame;
+  game: BasketballGame;
   home: any;
   away: any;
   officials: any;

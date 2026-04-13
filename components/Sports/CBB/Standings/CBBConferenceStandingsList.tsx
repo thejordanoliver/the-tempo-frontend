@@ -1,5 +1,6 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import {
   conferenceListMap,
   getCBBTeamLogo,
@@ -7,7 +8,6 @@ import {
 } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { useCBBConferenceStandings } from "hooks/CBBHooks/useCBBConferenceStandings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import {
   FlatList,
   Image,
@@ -89,7 +89,7 @@ export const CBBConferenceStandingsList = ({
   const router = useRouter();
   const teamConference = getTeamConference(teamName);
   const league = women ? "WCBB" : "CBB";
-  const { isFavorite } = useFavoriteTeams();
+  const { isFavorite } = useFavoriteTeamsContext();
 
   if (loading) {
     return (

@@ -30,7 +30,7 @@ import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSum
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 
-import { Game } from "types/football";
+import { FootballGame } from "types/football";
 /* --- Utils & Stores --- */
 import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
@@ -54,10 +54,10 @@ export default function CFBGameDetailsScreen() {
 
   if (typeof gameParam !== "string") return null;
 
-  let parsedGame: Game;
+  let parsedGame: FootballGame;
 
   try {
-    parsedGame = JSON.parse(gameParam) as Game;
+    parsedGame = JSON.parse(gameParam) as FootballGame;
   } catch (e) {
     console.warn("Failed to parse game:", gameParam);
     return null;

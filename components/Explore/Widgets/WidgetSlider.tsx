@@ -1,8 +1,5 @@
 import { Colors } from "constants/styles";
-import {
-  EXPANDED_HEIGHT_THRESHOLD,
-  LEADER_LABELS,
-} from "constants/widgetLeaders";
+import { EXPANDED_HEIGHT_THRESHOLD } from "constants/widgetLeaders";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -16,13 +13,14 @@ import {
   StyleSheet,
   UIManager,
   View,
-  useColorScheme,
 } from "react-native";
-import { PlayerLeader } from "types/playerLeader";
-import { Game } from "types/types";
-import { getTopLeaders } from "utils/widgetUtils";
-import GameWidget from "./Games/GameWidget";
-import PlayerLeadersSlide from "./Players/PlayerLeadersSlide";
+import { FootballGame } from "types/football";
+import { NHLGame } from "types/nhl";
+import { BasketballGame, Game } from "types/types";
+import BasketballGameWidget from "./GameCards/BasketballGameWidget";
+import FootballGameWidget from "./GameCards/FootballGameWidget";
+import NBAGameWidget from "./GameCards/NBAGameWidget";
+import NHLGameWidget from "./GameCards/NHLGameWidget";
 
 // Outside component — never changes
 const ENABLE_AUTO_SLIDE = false;
@@ -36,27 +34,26 @@ if (
 
 export type WidgetSlide =
   | { type: "NBA"; data: Game }
-  | {
-      type: "leaders";
-      gameId: number;
-      stat: { name: string; players: PlayerLeader[] };
-    };
+  | { type: "NFL"; data: FootballGame }
+  | { type: "CFB"; data: FootballGame }
+  | { type: "CBB"; data: BasketballGame }
+  | { type: "WCBB"; data: BasketballGame }
+  | { type: "WNBA"; data: BasketballGame }
+  | { type: "NHL"; data: NHLGame };
 
 type WidgetSliderProps = {
   games: WidgetSlide[];
-  leadersMap?: Record<number, PlayerLeader[]>;
   initialHeight?: number;
   initialWidth?: number;
+  isDark: boolean;
 };
 
 export default function WidgetSlider({
   games,
-  leadersMap = {},
   initialHeight = 100,
   initialWidth = 100,
+  isDark,
 }: WidgetSliderProps) {
-  const isDark = useColorScheme() === "dark";
-
   // Read once — these don't change during the component's lifetime
   const { width: screenWidth, height: screenHeight } = useMemo(
     () => Dimensions.get("window"),
@@ -106,39 +103,8 @@ export default function WidgetSlider({
   // Slides — only recompute when inputs change, not on every height tick
   // -----------------------------------------------------------------------
   const slides = useMemo<WidgetSlide[]>(() => {
-    const result: WidgetSlide[] = [];
-
-    games.forEach((game) => {
-      if (!("data" in game)) return;
-      result.push(game);
-
-      const leaders = leadersMap[game.data.id];
-      if (!leaders?.length) return;
-
-      const grouped = leaders.reduce<Record<string, PlayerLeader[]>>(
-        (acc, player) => {
-          const statName = player.leaderStat?.name;
-          if (!statName) return acc;
-          (acc[statName] ??= []).push(player);
-          return acc;
-        },
-        {},
-      );
-
-      Object.entries(grouped).forEach(([statName, statPlayers]) => {
-        const topPlayers = getTopLeaders(statPlayers, isExpanded);
-        if (topPlayers.length) {
-          result.push({
-            type: "leaders",
-            gameId: game.data.id,
-            stat: { name: statName, players: topPlayers },
-          });
-        }
-      });
-    });
-
-    return result;
-  }, [games, leadersMap, isExpanded]);
+    return games.filter((game) => "data" in game) as WidgetSlide[];
+  }, [games]);
 
   // -----------------------------------------------------------------------
   // Auto-slide
@@ -342,30 +308,92 @@ export default function WidgetSlider({
         case "NBA":
           return (
             <View style={{ height: slideHeight }}>
-              <GameWidget
+              <NBAGameWidget
                 game={item.data}
                 height={slideHeight}
                 width={slideWidth}
+                showPlayers={showPlayers} // ← missing
+                isDark={isDark}
               />
             </View>
           );
-        case "leaders": {
-          const leaderLabel = LEADER_LABELS[item.stat.name] ?? item.stat.name;
+        case "NFL":
           return (
-            <PlayerLeadersSlide
-              header={leaderLabel}
-              players={item.stat.players}
-              slideWidth={slideWidth}
-              slideHeight={slideHeight}
-              visible={showPlayers}
-            />
+            <View style={{ height: slideHeight }}>
+              <FootballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                league="NFL"
+              />
+            </View>
           );
-        }
+        case "CFB":
+          return (
+            <View style={{ height: slideHeight }}>
+              <FootballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                league="CFB"
+              />
+            </View>
+          );
+        case "CBB":
+          return (
+            <View style={{ height: slideHeight }}>
+              <BasketballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                league="CBB"
+              />
+            </View>
+          );
+        case "WCBB":
+          return (
+            <View style={{ height: slideHeight }}>
+              <BasketballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                league="WCBB"
+              />
+            </View>
+          );
+        case "WNBA":
+          return (
+            <View style={{ height: slideHeight }}>
+              <BasketballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                league="WNBA"
+              />
+            </View>
+          );
+        case "NHL":
+          return (
+            <View style={{ height: slideHeight }}>
+              <NHLGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+              />
+            </View>
+          );
+
         default:
-          return null;
+          return <View style={{ height: slideHeight }} />;
       }
     },
-    [slideHeight, slideWidth, showPlayers],
+    [slideHeight, slideWidth, showPlayers, isDark],
   );
 
   // -----------------------------------------------------------------------

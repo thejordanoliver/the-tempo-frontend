@@ -23,10 +23,13 @@ function parseDateString(d: string) {
   return null;
 }
 
-export const useCBBGameBroadcasts = (
+export const useBasketballGameBroadcasts = (
   home: string,
   away: string,
-  date: string | { date?: string; utc?: string; timestamp?: number } | undefined
+  date:
+    | string
+    | { date?: string; utc?: string; timestamp?: number }
+    | undefined,
 ) => {
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,10 +51,10 @@ export const useCBBGameBroadcasts = (
           targetDate = date.timestamp
             ? new Date(date.timestamp * 1000)
             : date.utc
-            ? new Date(date.utc)
-            : date.date
-            ? new Date(date.date)
-            : null;
+              ? new Date(date.utc)
+              : date.date
+                ? new Date(date.date)
+                : null;
         }
         if (!targetDate) return;
 

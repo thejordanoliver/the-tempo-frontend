@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 
 export type LastFiveGamesResult = {
   id: number;
@@ -30,7 +30,7 @@ export const useLastFiveGames = (teamId: number) => {
         setLoading(true);
 
         const res = await axios.get(
-          `${API_URL}/api/games/football/last-five/${teamId}/${getFootballSeasonYear()}`,
+          `${API_URL}/api/games/football/last-five/${teamId}/${getFootballSeason()}`,
         );
 
         setGames(res.data.games);

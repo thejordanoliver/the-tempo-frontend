@@ -220,6 +220,8 @@ export function useFavoriteTeams() {
         ? "/team/nfl/[teamId]"
         : previewTeam.league === "NBA"
           ? "/team/[teamId]"
+          : previewTeam.league === "WNBA"
+            ? "/team/wnba/[teamId]"
           : previewTeam.league === "CFB"
             ? "/team/cfb/[teamId]"
             : previewTeam.league === "CBB"

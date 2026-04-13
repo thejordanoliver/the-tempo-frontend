@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { apiClient } from "utils/apiClient";
-import { getWNBASeason } from "utils/dateUtils";
 
 // Cache expiry
 const CACHE_DURATION = 1000 * 60 * 60 * 6; // 6 hours
@@ -18,7 +17,7 @@ export function useWNBASeasonGames({
 }: useWNBASeasonGamesOptions = {}) {
   const CACHE_KEY = `wnba_season_games_cache_${league}_${season}`;
 
-  const [games, setGames] = useState<CBBGame[]>([]);
+  const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +29,7 @@ export function useWNBASeasonGames({
       const { data, timestamp } = JSON.parse(cached);
 
       if (Date.now() - timestamp < CACHE_DURATION) {
-        return data as CBBGame[];
+        return data as BasketballGame[];
       }
 
       await AsyncStorage.removeItem(CACHE_KEY);
@@ -42,7 +41,7 @@ export function useWNBASeasonGames({
   }, [CACHE_KEY]);
 
   const saveCache = useCallback(
-    async (data: CBBGame[]) => {
+    async (data: BasketballGame[]) => {
       try {
         await AsyncStorage.setItem(
           CACHE_KEY,

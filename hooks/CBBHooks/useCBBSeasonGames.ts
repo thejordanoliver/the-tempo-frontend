@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { getCBBSeason } from "utils/dateUtils";
 
 import { BASE_URL } from "utils/apiClient";
@@ -26,7 +26,7 @@ export function useCBBSeasonGames({
 
   const CACHE_KEY = `cbb_season_games_cache_${league}_${season}`;
 
-  const [games, setGames] = useState<CBBGame[]>([]);
+  const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +38,7 @@ export function useCBBSeasonGames({
       const { data, timestamp } = JSON.parse(cached);
 
       if (Date.now() - timestamp < CACHE_DURATION) {
-        return data as CBBGame[];
+        return data as BasketballGame[];
       }
 
       await AsyncStorage.removeItem(CACHE_KEY);
@@ -50,7 +50,7 @@ export function useCBBSeasonGames({
   }, [CACHE_KEY]);
 
   const saveCache = useCallback(
-    async (data: CBBGame[]) => {
+    async (data: BasketballGame[]) => {
       try {
         await AsyncStorage.setItem(
           CACHE_KEY,
@@ -95,11 +95,11 @@ export function useCBBSeasonGames({
     fetchSeasonGames();
   }, [fetchSeasonGames]);
 
-  const refreshCBBGames = useCallback(() => {
+  const refreshBasketballGames = useCallback(() => {
     AsyncStorage.removeItem(CACHE_KEY);
     fetchSeasonGames();
   }, [CACHE_KEY, fetchSeasonGames]);
 
   // ✅ NO sorting — backend handles it
-  return { games, loading, error, refreshCBBGames };
+  return { games, loading, error, refreshBasketballGames };
 }

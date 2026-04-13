@@ -34,7 +34,7 @@ type Props = {
   isWomen?: boolean;
 };
 
-type CBBGameSection = {
+type BasketballGameSection = {
   title: string;
   data: any[];
 };
@@ -63,7 +63,7 @@ export default function CBBGamesList({
 
   /* ----------------------------- Sections ----------------------------- */
 
-  const sections: CBBGameSection[] = useMemo(() => {
+  const sections: BasketballGameSection[] = useMemo(() => {
     if (!showHeaders) return [{ title: "All", data: games }];
     return [{ title: "Regular Season", data: games }];
   }, [games, showHeaders]);
@@ -241,7 +241,7 @@ export default function CBBGamesList({
         />
       ) : (
         <SectionList
-          sections={sections as SectionListData<any, CBBGameSection>[]}
+          sections={sections as SectionListData<any, BasketballGameSection>[]}
           keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}

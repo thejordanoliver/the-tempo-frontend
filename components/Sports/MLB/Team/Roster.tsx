@@ -3,7 +3,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { globalStyles } from "constants/styles";
-import { TeamPlayer, useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
+import { TeamPlayer, useTeamPlayers } from "hooks/NFLHooks/useTeamRosters";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 interface TeamPlayerListProps {
   teamId: number; // 👈 pass teamId instead

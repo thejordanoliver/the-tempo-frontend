@@ -2,7 +2,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { useTeamPlayers } from "hooks/NFLHooks/useTeamPlayers";
+import { useTeamRosters } from "hooks/NFLHooks/useTeamRosters";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
   RefreshControl,
@@ -48,7 +48,7 @@ export const Roster = forwardRef(
       refreshing,
       error,
       refetch,
-    } = useTeamPlayers(teamId, league);
+    } = useTeamRosters(teamId, league);
 
     useImperativeHandle(ref, () => ({
       refresh: refetch,

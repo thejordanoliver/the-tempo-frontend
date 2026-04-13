@@ -91,7 +91,7 @@ export function getNBACalendarSeason(): string {
   return `${String(endYear)}`;
 }
 
-export function getFootballSeasonYear(date = new Date()) {
+export function getFootballSeason(date = new Date()) {
   const year = date.getFullYear();
   const month = date.getMonth();
   return month < 7 ? year - 1 : year;

@@ -7,7 +7,6 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000";
 export function useWidgetGameLeaders(
   nbaGames: any[],
   topN = 2,
-  isDark: boolean
 ) {
   const [leadersMap, setLeadersMap] = useState<Record<string, any[]>>({});
 
@@ -63,7 +62,7 @@ export function useWidgetGameLeaders(
                   team: {
                     id: teamEntry.team.id,
                     code: teamEntry.team.code,
-                    logo: getTeamLogo(teamEntry.team.id, isDark),
+                
                   },
                   leaderStat: {
                     name: stat.label,
@@ -116,7 +115,7 @@ export function useWidgetGameLeaders(
     };
 
     fetchAllLeaders();
-  }, [nbaGames, topN, isDark]);
+  }, [nbaGames, topN]);
 
   return leadersMap;
 }

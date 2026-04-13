@@ -29,7 +29,7 @@ import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
-import { getFootballSeasonYear } from "utils/dateUtils";
+import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -55,7 +55,7 @@ export default function CFBeagueScreen() {
   const { data: bracketData } = useCFPBracket();
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const { categories, loading, error } = useSeasonLeaders(
-    getFootballSeasonYear(),
+    getFootballSeason(),
     "CFB",
   );
   const {
@@ -71,7 +71,7 @@ export default function CFBeagueScreen() {
     weeks,
     loading: gamesLoading,
     refetch: refetchGames,
-  } = useFootballGamesByWeek(getFootballSeasonYear(), 2);
+  } = useFootballGamesByWeek(getFootballSeason(), 2);
   const weekLabels = Object.keys(weeks);
   const weekArray = weekLabels.map((label) => ({
     label,

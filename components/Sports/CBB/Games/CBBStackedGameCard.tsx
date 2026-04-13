@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -20,7 +20,7 @@ function CBBStackedGameCard({
   game,
   isWomen = false,
 }: {
-  game: CBBGame;
+  game: BasketballGame;
   isWomen?: boolean; // 👈 NEW
 }) {
   const colorScheme = useColorScheme();

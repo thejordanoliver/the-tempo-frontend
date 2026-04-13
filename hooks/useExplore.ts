@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 const RECENT_SEARCHES_KEY = "recentSearches";
 
 export function useExplore() {
@@ -48,7 +47,7 @@ export function useExplore() {
             item &&
             typeof item === "object" &&
             "type" in item &&
-            ("id" in item || "player_id" in item)
+            ("id" in item || "player_id" in item),
         );
         setRecentSearches(validResults);
       }
@@ -66,7 +65,7 @@ export function useExplore() {
       let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
 
       parsed = parsed.filter(
-        (r) => getResultKey(r) !== key || r.type !== item.type
+        (r) => getResultKey(r) !== key || r.type !== item.type,
       );
       parsed.unshift(item);
       parsed = parsed.slice(0, 10);
@@ -86,7 +85,7 @@ export function useExplore() {
       const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
       let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
       parsed = parsed.filter(
-        (r) => getResultKey(r) !== deleteKey || r.type !== itemToDelete.type
+        (r) => getResultKey(r) !== deleteKey || r.type !== itemToDelete.type,
       );
 
       await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
@@ -106,11 +105,11 @@ export function useExplore() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<{
+      const res = await apiClient.get<{
         players: PlayerResult[];
         teams: TeamResult[];
         users: UserResult[];
-      }>(`${BASE_URL}/api/explore/search`, { params: { query: searchQuery } });
+      }>(`api/explore/search`, { params: { query: searchQuery } });
 
       const q = searchQuery.toLowerCase();
 
@@ -118,14 +117,15 @@ export function useExplore() {
       const scoredUsers: ResultItem[] = res.data.users.map((u) => {
         let score = u.score ?? 0;
         const uname = u.username.toLowerCase();
-        if (uname === q) score += 1000; // exact match boost
+        if (uname === q)
+          score += 1000; // exact match boost
         else if (uname.startsWith(q)) score += 500; // prefix boost
         return { ...u, type: "user" as const, score };
       });
 
       // Sort users by score descending
       const sortedUsers = scoredUsers.sort(
-        (a, b) => (b.score ?? 0) - (a.score ?? 0)
+        (a, b) => (b.score ?? 0) - (a.score ?? 0),
       );
 
       // Sort players by score descending

@@ -1,90 +1,60 @@
-import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Game } from "types/football";
+import { useEffect, useRef, useState } from "react";
+import { FootballGame } from "types/football";
+import { apiClient } from "utils/apiClient";
 
-import { BASE_URL } from "utils/apiClient";
-
-type UseMultipleFootballTeamGamesOptions = {
-  season?: string | number;
-  fetchAll?: boolean;
-};
+type RawGamesMap = Record<string, FootballGame | null>; // now typed
 
 export function useMultipleFootballTeamGames(
   teamIds: (string | number)[],
-  { season }: UseMultipleFootballTeamGamesOptions = {},
+  season: string | number,
 ) {
-  const [allGames, setAllGames] = useState<Record<string, Game[]>>({});
-  const [loading, setLoading] = useState(false);
+  const [lastGames, setLastGames] = useState<RawGamesMap>({});
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Stable, sorted team IDs
-  const stableTeamIds = useMemo(() => teamIds.map(String).sort(), [teamIds]);
+  // cache for each team-season combination
+  const cacheRef = useRef<Map<string, FootballGame | null>>(new Map());
 
-  // Helper to normalize date for NFL or CFB
-  const getGameDate = useCallback((g: any) => {
-    if (!g?.game?.date) return null;
-    if (typeof g.game.date === "string") return g.game.date; // NFL string date
-    if (g.game.date?.utc) return g.game.date.utc; // CFB nested
-    return null;
-  }, []);
+  const fetchLastGames = async () => {
+    if (!teamIds || teamIds.length === 0) return;
 
-  // Fetch games for all teams
-  const fetchGames = useCallback(async () => {
-    if (!stableTeamIds.length || !season) {
-      setAllGames({});
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setError(null);
+      const results = await Promise.all(
+        teamIds.map(async (teamId) => {
+          const cacheKey = `${teamId}-${season}`;
 
-      const result: Record<string, Game[]> = {};
-
-      await Promise.all(
-        stableTeamIds.map(async (teamId) => {
-          try {
-            const res = await axios.get(
-              `${BASE_URL}/api/games/football/team/${teamId}/${season}`,
-              { params: { season, teamId } },
-            );
-
-            // Normalize response: check multiple possible structures
-            const rawGames: Game[] =
-              res.data?.games || res.data?.response || res.data?.events || [];
-
-            // Ensure each game has a proper date field
-            result[teamId] = rawGames.map((g) => ({
-              ...g,
-              date: getGameDate(g) || new Date().toISOString(), // fallback to now
-            }));
-          } catch (teamErr: any) {
-            console.error(`Failed to fetch games for team ${teamId}`, teamErr);
-            result[teamId] = [];
+          const cached = cacheRef.current.get(cacheKey);
+          if (cached !== undefined) {
+            return [teamId, cached ?? null] as const; // <-- ensure null instead of undefined
           }
+
+          const res = await apiClient.get<{ game?: FootballGame }>(
+            `api/games/football/last/${teamId}/${season}`,
+          );
+
+          const game: FootballGame | null = res.data?.game ?? null;
+
+          cacheRef.current.set(cacheKey, game);
+          return [teamId, game] as const;
         }),
       );
 
-      setAllGames(result);
+      setLastGames(Object.fromEntries(results));
     } catch (err: any) {
-      console.error("Error fetching multiple Football team games:", err);
-      setError("Failed to load Football games");
-      setAllGames({});
+      console.error("Error fetching last team games:", err);
+      setError(err.message || "Failed to fetch last games");
     } finally {
       setLoading(false);
     }
-  }, [stableTeamIds, season, getGameDate]);
+  };
 
-  // Auto-fetch on mount / when team IDs or season change
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+    if (!teamIds || teamIds.length === 0) return;
+    fetchLastGames();
+  }, [teamIds, season]);
 
-  // Manual refresh function
-  const refreshGames = useCallback(async () => {
-    await fetchGames();
-  }, [fetchGames]);
-
-  return { allGames, loading, error, refreshGames };
+  return { lastGames, loading, error, refresh: fetchLastGames };
 }

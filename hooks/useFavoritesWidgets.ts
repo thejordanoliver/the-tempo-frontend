@@ -1,15 +1,19 @@
 // hooks/useFavoriteWidgets.ts
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useCallback, useMemo } from "react";
 import { useColorScheme } from "react-native";
-import { getNBASeason } from "utils/dateUtils";
-import { useMultipleLastTeamGame } from "./NBAHooks/useMultipleLastTeamGame";
-import { useFavoriteTeams } from "./UserHooks/useFavoriteTeams";
-import { useWidgetGameLeaders } from "./useWidgetGameLeaders";
 import { Game } from "types/types";
+import { getCBBSeason, getFootballSeason, getNBASeason, getNHLSeason } from "utils/dateUtils";
+import { useMultipleCBBTeamGames } from "./CBBHooks/useMultipleCBBTeamGames";
+import { useMultipleTeamGames } from "./NBAHooks/useMultipleTeamGames";
+import { useMultipleFootballTeamGames } from "./NFLHooks/useMultipleFootballTeamGames";
+import { useMultipleNHLTeamGames } from "./NHLHooks/useMultipleNHLTeamGames";
+import { useWidgetGameLeaders } from "./useWidgetGameLeaders";
+import { useMultipleWNBATeamGames } from "./WNBAHooks/useMultipleWNBATeamGames";
 
 export function useFavoriteWidgets(topN = 4) {
   const isDark = useColorScheme() === "dark";
-  const { favorites } = useFavoriteTeams();
+  const { favorites } = useFavoriteTeamsContext();
 
   // -------------------------------
   // Helpers
@@ -30,34 +34,133 @@ export function useFavoriteWidgets(topN = 4) {
   const cfbTeamIds = useMemo(() => getLeagueIds("CFB:"), [getLeagueIds]);
   const cbbTeamIds = useMemo(() => getLeagueIds("CBB:"), [getLeagueIds]);
   const wcbbTeamIds = useMemo(() => getLeagueIds("WCBB:"), [getLeagueIds]);
+  const wnbaTeamIds = useMemo(() => getLeagueIds("WNBA:"), [getLeagueIds]);
+  const nhlTeamIds = useMemo(() => getLeagueIds("NHL:"), [getLeagueIds]);
 
   // -------------------------------
   // Fetch Games
   // -------------------------------
-  const { lastGames: nbaGames, loading: nbaLoading } = useMultipleLastTeamGame(
+  const { lastGames: nbaGames, loading: nbaLoading } = useMultipleTeamGames(
     nbaTeamIds,
     getNBASeason(),
   );
 
+  const { lastGames: nflGames, loading: nflLoading } =
+    useMultipleFootballTeamGames(nflTeamIds, getFootballSeason());
+
+  const { lastGames: cfbGames, loading: cfbLoading } =
+    useMultipleFootballTeamGames(cfbTeamIds, getFootballSeason());
+
+  const { lastGames: cbbGames, loading: cbbLoading } = useMultipleCBBTeamGames({
+    teamIds: cbbTeamIds,
+    season: getCBBSeason(),
+  });
+
+  const { lastGames: wcbbGames, loading: wcbbLoading } =
+    useMultipleCBBTeamGames({
+      teamIds: wcbbTeamIds,
+      season: getCBBSeason(),
+      isWomen: true,
+    });
+
+  const { lastGames: wnbaGames, loading: wnbaLoading } =
+    useMultipleWNBATeamGames({
+      teamIds: wnbaTeamIds,
+    });
+  const { lastGames: nhlGames, loading: nhlLoadig } = useMultipleNHLTeamGames({
+    teamIds: nhlTeamIds,
+    season:  getNHLSeason()
+  });
+
   // -------------------------------
   // Widgets (Raw Response)
   // -------------------------------
-const nbaWidgets: Record<string, any[]> = useMemo(() => {
-  return Object.fromEntries(
-    Object.entries(nbaGames).map(([teamId, game]) => [teamId, game ? [game] : []])
-  );
-}, [nbaGames]);
+  const nbaWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(nbaGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [nbaGames]);
+
+  const nflWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(nflGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [nflGames]);
+
+  const cfbWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(cfbGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [cfbGames]);
+
+  const cbbWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(cbbGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [cbbGames]);
+
+  const wcbbWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(wcbbGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [wcbbGames]);
+
+  const wnbaWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(wnbaGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [wnbaGames]);
+
+  const nhlWidgets: Record<string, any[]> = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(nhlGames).map(([teamId, game]) => [
+        teamId,
+        game ? [game] : [],
+      ]),
+    );
+  }, [nhlGames]);
+
+// Remove isDark from the hook entirely — it's read inside NBAGameWidget already
 const leadersMap = useWidgetGameLeaders(
   Object.values(nbaGames)
-    .filter((game): game is Game => !!game && game.status.long !== "Scheduled") // only started games
+    .filter((game): game is Game => !!game && game.status.long !== "Scheduled")
     .flat(),
   topN,
-  isDark,
 );
 
   return {
     nbaWidgets,
+    nflWidgets,
+    cfbWidgets,
+    cbbWidgets,
+    wcbbWidgets,
+    wnbaWidgets,
+    nhlWidgets,
     leadersMap,
     nbaLoading,
+    nflLoading,
+    cfbLoading,
+    cbbLoading,
+    wcbbLoading,
+    wnbaLoading,
+    nhlLoadig,
   };
 }

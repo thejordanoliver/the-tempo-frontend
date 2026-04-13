@@ -12,11 +12,11 @@ import {
   View,
 } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-function WNBASquareGameCard({ game }: { game: CBBGame }) {
+function WNBASquareGameCard({ game }: { game: BasketballGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 

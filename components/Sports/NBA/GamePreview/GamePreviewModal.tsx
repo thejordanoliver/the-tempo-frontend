@@ -18,6 +18,7 @@ import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { Colors } from "constants/styles";
 type Props = {
   visible: boolean;
   game: Game;

@@ -32,10 +32,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function MLBLeagueScreen() {
-  const { games, loading: liveLoading } = useNHLSeasonGames(2024);
+  const currentSeason = getNHLSeason();
+  const { games, loading: liveLoading } = useNHLSeasonGames(currentSeason);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const currentSeason = getNHLSeason();
   const [standingsYear, setStandingsYear] = useState(currentSeason);
   const navigation = useNavigation();
   const colorScheme = useColorScheme();

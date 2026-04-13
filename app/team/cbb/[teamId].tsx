@@ -22,7 +22,7 @@ import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import {
   getGameCountByMonth,
   getMonthsToShow,
@@ -41,7 +41,7 @@ export default function TeamDetailScreen() {
   const espnId = team?.espnID;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cachedGames, setCachedGames] = useState<CBBGame[]>([]);
+  const [cachedGames, setCachedGames] = useState<BasketballGame[]>([]);
   const {
     rosterStats,
     loading: statsLoading,
@@ -76,7 +76,7 @@ export default function TeamDetailScreen() {
     games: rawTeamGames = [],
     loading: gamesLoading,
     error: gamesError,
-  } = useCBBTeamGames(teamIdNum ? teamIdNum.toString() : "");
+  } = useCBBTeamGames(teamIdNum ?? "", league);
 
   const teamGames = useMemo(
     () =>

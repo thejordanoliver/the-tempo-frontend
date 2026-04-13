@@ -6,7 +6,6 @@ import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useState } from "react";
 import {
   FlatList,
@@ -19,7 +18,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 type Props = {
   league: "CBB" | "WCBB";
   isWomen?: boolean;
@@ -31,7 +30,7 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
-  const { isFavorite } = useFavoriteTeams();
+  const { isFavorite } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const handleRefresh = async () => {

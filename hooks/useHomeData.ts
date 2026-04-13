@@ -54,13 +54,13 @@ export function useHomeData(selectedTab: "scores" | "news") {
   } = useFootballWeeklyGames(2);
 
   const {
-    cbbGames: mensCBBGames,
+    BasketballGames: mensBasketballGames,
     cbbLoading: mensCBBLoading,
     refresh: refreshMensCBB,
   } = useCBBWeeklyGames();
 
   const {
-    cbbGames: womensCBBGames,
+    BasketballGames: womensBasketballGames,
     cbbLoading: womensCBBLoading,
     refresh: refreshWomensCBB,
   } = useCBBWeeklyGames({ isWomen: true });
@@ -193,13 +193,13 @@ export function useHomeData(selectedTab: "scores" | "news") {
   );
 
   const normalizedMensCBB = useMemo(
-    () => normalizeGames(mensCBBGames, "CBB", false),
-    [mensCBBGames],
+    () => normalizeGames(mensBasketballGames, "CBB", false),
+    [mensBasketballGames],
   );
 
   const normalizedWomensCBB = useMemo(
-    () => normalizeGames(womensCBBGames, "CBB", true),
-    [womensCBBGames],
+    () => normalizeGames(womensBasketballGames, "CBB", true),
+    [womensBasketballGames],
   );
 
   const filteredNBA = weeklyGames;

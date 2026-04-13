@@ -6,7 +6,6 @@ import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { useRouter } from "expo-router";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
 import { useState } from "react";
 import {
   FlatList,
@@ -19,14 +18,14 @@ import {
   useColorScheme,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
 
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
-  const { isFavorite } = useFavoriteTeams();
+  const { isFavorite } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const handleRefresh = async () => {

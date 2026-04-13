@@ -1,5 +1,6 @@
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
 
@@ -9,9 +10,10 @@ type UseTeamGamesOptions = {
 
 export function useCBBTeamGames(
   teamId: string | number,
+  league: string,
   { season = getCBBSeason() }: UseTeamGamesOptions = {},
 ) {
-  const [games, setGames] = useState<CBBGame[]>([]);
+  const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,13 +24,17 @@ export function useCBBTeamGames(
     setError(null);
 
     try {
-      const res = await apiClient.get(`/api/games/cbb/team/${teamId}`, {
-        params: {
-          season,
+      const res = await apiClient.get(
+        `/api/games/cbb/team/${teamId}`,
+        {
+          params: {
+            season,
+            league,
+          },
         },
-      });
+      );
 
-      const rawGames: CBBGame[] = res.data.response || [];
+      const rawGames: BasketballGame[] = res.data.response || [];
 
       setGames(rawGames);
     } catch (err: any) {
@@ -37,7 +43,7 @@ export function useCBBTeamGames(
     } finally {
       setLoading(false);
     }
-  }, [teamId, season]);
+  }, [teamId, season, league]);
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);

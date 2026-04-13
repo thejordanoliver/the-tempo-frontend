@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -20,7 +20,7 @@ function CBBSquareGameCard({
   game,
   isWomen = false,
 }: {
-  game: CBBGame;
+  game: BasketballGame;
   isWomen?: boolean; // 👈 NEW
 }) {
   const isDark = useColorScheme() === "dark";

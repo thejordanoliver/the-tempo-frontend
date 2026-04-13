@@ -11,12 +11,13 @@ import { getWNBATeam } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import {
   getGameCountByMonth,
   getMonthsToShow,
@@ -24,7 +25,6 @@ import {
 } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 
 export default function TeamDetailScreen() {
   const isDark = useColorScheme() === "dark";
@@ -37,7 +37,7 @@ export default function TeamDetailScreen() {
   const league = "WNBA";
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cachedGames, setCachedGames] = useState<CBBGame[]>([]);
+  const [cachedGames, setCachedGames] = useState<BasketballGame[]>([]);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const rosterRef = useRef<{ refresh: () => void }>(null);

@@ -191,7 +191,7 @@ export default function GameCard({ game }: { game: Game }) {
 
       {/* headlineText */}
       <View style={styles.headlineContainer}>
-        <Text style={[styles.headlineText]}>{headline}</Text>
+        <Text style={styles.headlineText}>{headline}</Text>
       </View>
 
       {/* Game Info */}

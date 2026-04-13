@@ -39,12 +39,12 @@ import {
 } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
+  const league = "NBA";
   const isDark = useColorScheme() === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "NBA";
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = parseInt(teamIdStr);
   const [refreshing, setRefreshing] = useState(false);

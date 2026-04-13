@@ -16,6 +16,7 @@ export const standingsStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
+      overflow: "hidden"
     },
     center: {
       flex: 1,

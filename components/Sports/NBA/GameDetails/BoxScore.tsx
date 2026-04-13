@@ -1,8 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { getNBATeam } from "constants/teams";
 import { router } from "expo-router";
+import { useGameLeaders } from "hooks/NBAHooks/useGameLeaders";
 import usePlayersByTeam, { Player } from "hooks/NBAHooks/usePlayersByTeam";
-import { useGameLeaders } from "hooks/useGameLeaders";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,

@@ -12,11 +12,11 @@ import {
   View,
 } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-function WNBAGameCard({ game }: { game: CBBGame }) {
+function WNBAGameCard({ game }: { game: BasketballGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 

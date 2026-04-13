@@ -1,5 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { Colors } from "constants/styles";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
@@ -11,18 +12,17 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { formatCBBQuarter, resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { Colors } from "constants/styles";
 
 type Props = {
   visible: boolean;
-  game: CBBGame;
+  game: BasketballGame;
   onClose: () => void;
 };
 

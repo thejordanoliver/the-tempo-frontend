@@ -30,7 +30,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { filterCBBGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
+import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -47,7 +47,7 @@ export default function CBBLeagueScreen() {
   const {
     games: seasonGames,
     loading: cbbloading,
-    refreshCBBGames,
+    refreshBasketballGames,
   } = useCBBSeasonGames();
   const tournamentFilter = useCBBTournamentGames();
   const {
@@ -83,7 +83,7 @@ export default function CBBLeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshCBBGames()]);
+      await Promise.all([refreshBasketballGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -142,7 +142,7 @@ export default function CBBLeagueScreen() {
         return (seasonStage && homeESPN) || (seasonStage && awayESPN);
       });
     } else if (selectedConference) {
-      result = filterCBBGames({
+      result = filterBasketballGames({
         games: gamesForDate,
         selectedConference,
         top25Teams,

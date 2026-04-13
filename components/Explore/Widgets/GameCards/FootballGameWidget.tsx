@@ -1,52 +1,42 @@
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
-import { Image, Text, View, useColorScheme } from "react-native";
+import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { Team } from "types/football";
+import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 export type FootballGameWidgetProps = {
   league: "NFL" | "CFB";
-  id: number;
-  date: string;
-  time: string;
-  gameDateISO: string;
-  homeTeam: Team;
-  awayTeam: Team;
-  homeScore: number;
-  awayScore: number;
-  status?: string;
-  halftime?: boolean;
-  clock?: string | null;
-  periods: number;
-  leaders?: any[];
+  game: FootballGame;
   height?: number;
   width?: number;
-  loading: boolean;
+  isDark: boolean;
+  loading?: boolean;
 };
 
-export default function NFLGameWidget({
+export default function FootballGameWidget({
+  game,
+  league,
   height = 150,
   width = 150,
-  loading,
-  ...props
+  loading = false,
+  isDark,
 }: FootballGameWidgetProps) {
-  // -------------------------
-  // Appearance & styles
-  // -------------------------
-  const isDark = useColorScheme() === "dark";
   const styles = gameWidgetStyles(isDark, height, width);
+  const global = globalStyles(isDark);
+  const isNFL = league === "NFL";
 
   // -------------------------
   // Game date/time formatting
   // -------------------------
-  const gameDate = new Date(props.gameDateISO);
+  const gameDate = new Date(game?.game?.date?.date);
   const localDate = gameDate.toLocaleString(undefined, {
     month: "short",
     day: "numeric",
@@ -55,21 +45,31 @@ export default function NFLGameWidget({
     hour: "2-digit",
     minute: "2-digit",
   });
-  const gameDateStr = props.gameDateISO;
-  const homeTeam = getCFBTeam(props?.homeTeam?.id);
-  const awayTeam = getCFBTeam(props?.awayTeam?.id);
-  const awayLogo = getCFBTeamLogo(props?.awayTeam?.id, isDark);
-  const homeLogo = getCFBTeamLogo(props?.homeTeam?.id, isDark);
+
+  const gameDateStr = game?.game?.date?.date;
+  const homeTeam = isNFL
+    ? getNFLTeam(game?.teams?.home?.id)
+    : getCFBTeam(game?.teams?.home?.id);
+  const awayTeam = isNFL
+    ? getNFLTeam(game?.teams?.away?.id)
+    : getCFBTeam(game?.teams?.away?.id);
+  const awayLogo = isNFL
+    ? getNFLTeamLogo(game?.teams?.away?.id, isDark)
+    : getCFBTeamLogo(game?.teams?.away?.id, isDark);
+  const homeLogo = isNFL
+    ? getNFLTeamLogo(game?.teams?.home?.id, isDark)
+    : getCFBTeamLogo(game?.teams?.home?.id, isDark);
   const awayName = awayTeam?.code;
   const homeName = homeTeam?.code;
   const homeEspnId = homeTeam?.espnID;
   const awayEspnId = awayTeam?.espnID;
 
-  const {
-    details,
-    score,
-    loading: gameDetailsLoading,
-  } = useGameDetails("cfb", homeEspnId, awayEspnId, gameDateStr);
+  const { details, score } = useGameDetails(
+    isNFL ? "nfl" : "cfb",
+    homeEspnId,
+    awayEspnId,
+    gameDateStr,
+  );
 
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
@@ -82,7 +82,6 @@ export default function NFLGameWidget({
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
-
   const displayClock = score?.displayClock;
   const period = score?.period;
   const redzone = score?.possession.isRedZone;
@@ -98,11 +97,14 @@ export default function NFLGameWidget({
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const football = isDark ? FootballLight : Football;
+  const homeRank = details?.homeRank;
+  const awayRank = details?.awayRank;
+  const isLoading = !score;
 
   const homeHasPossession =
-    inProgress && possessionTeamId === props.homeTeam.espnID;
+    inProgress && possessionTeamId === game.teams.home.espnID;
   const awayHasPossession =
-    inProgress && possessionTeamId === props.awayTeam.espnID;
+    inProgress && possessionTeamId === game.teams.away.espnID;
 
   const homeIsWinner = isFinal && homeScore > awayScore;
   const awayIsWinner = isFinal && awayScore > homeScore;
@@ -132,9 +134,9 @@ export default function NFLGameWidget({
   // -------------------------
   // Loading state
   // -------------------------
-  if (!details) {
+  if (loading || isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={global.emptyContainer}>
         <CustomActivityIndicator isDark={isDark} />
       </View>
     );
@@ -145,6 +147,9 @@ export default function NFLGameWidget({
   // -------------------------
   return (
     <View style={styles.container}>
+      <View style={styles.headlineContainer}>
+        <Text style={styles.headline}>{headline}</Text>
+      </View>
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
@@ -152,15 +157,15 @@ export default function NFLGameWidget({
         <View style={styles.awaySection}>
           <View style={styles.teamWrapper}>
             <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>{awayName}</Text>
+            <Text style={styles.teamName}>
+              {awayRank && <Text style={styles.teamRank}>{awayRank} </Text>}
+              {awayName}
+            </Text>
           </View>
           <View style={styles.scorePossession}>
             {awayDisplay}
             {awayHasPossession && (
-              <Image
-                style={styles.awayPossession}
-                source={isDark ? FootballLight : Football}
-              />
+              <Image style={styles.awayPossession} source={football} />
             )}
           </View>
         </View>
@@ -168,6 +173,7 @@ export default function NFLGameWidget({
         {/* ---------------------- */}
         {/* Game Info Section */}
         {/* ---------------------- */}
+
         <View style={styles.gameInfo}>
           {isScheduled && (
             <View style={styles.infoWrapper}>
@@ -214,15 +220,15 @@ export default function NFLGameWidget({
           <View style={styles.scorePossession}>
             {homeDisplay}
             {homeHasPossession && (
-              <Image
-                style={styles.homePossession}
-                source={isDark ? FootballLight : Football}
-              />
+              <Image style={styles.homePossession} source={football} />
             )}
           </View>
           <View style={styles.teamWrapper}>
             <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>{homeName}</Text>
+            <Text style={styles.teamName}>
+              {homeRank && <Text style={styles.teamRank}>{homeRank} </Text>}
+              {homeName}
+            </Text>
           </View>
         </View>
       </View>

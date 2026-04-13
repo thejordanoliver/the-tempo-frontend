@@ -1,30 +1,8 @@
-import axios from "axios";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CBBTeam } from "types/types";
-import { BASE_URL } from "utils/apiClient";
+import { BasketballGame } from "types/types";
+import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
-
-export type CBBGame = {
-  id: number;
-  date: string;
-  teams: {
-    home: CBBTeam;
-    away: CBBTeam;
-  };
-  scores?: {
-    home: { total: number };
-    away: { total: number };
-  };
-  league?: {
-    id: number;
-    name: string;
-  };
-  status?: {
-    long: string;
-    short: string;
-  };
-};
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
@@ -43,21 +21,21 @@ export function useCBBWeeklyGames({
 }: UseCBBWeeklyGamesOptions = {}) {
   const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
 
-  const [cbbGames, setGames] = useState<CBBGame[]>([]);
+  const [BasketballGames, setGames] = useState<BasketballGame[]>([]);
   const [cbbLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
 
-  const refreshCBBGames = useCallback(async () => {
+  const refreshBasketballGames = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/games/cbb/weekly`, {
+      const res = await apiClient.get(`/api/games/cbb/weekly`, {
         params: { season, timezone, league },
       });
 
-      const data: CBBGame[] = res.data?.response || [];
+      const data: BasketballGame[] = res.data?.response || [];
       setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
@@ -69,26 +47,26 @@ export function useCBBWeeklyGames({
   }, [season, timezone, league]);
 
   useEffect(() => {
-    refreshCBBGames();
-  }, [refreshCBBGames]);
+    refreshBasketballGames();
+  }, [refreshBasketballGames]);
 
   const isLiveGame = useCallback(
-    (game: CBBGame) =>
+    (game: BasketballGame) =>
       !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
     [],
   );
 
   const sortedGames = useMemo(() => {
-    return [...cbbGames].sort(
+    return [...BasketballGames].sort(
       (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)),
     );
-  }, [cbbGames, isLiveGame]);
+  }, [BasketballGames, isLiveGame]);
 
   return {
-    cbbGames: sortedGames,
+    BasketballGames: sortedGames,
     cbbLoading,
     error,
     lastFetched,
-    refresh: refreshCBBGames,
+    refresh: refreshBasketballGames,
   };
 }

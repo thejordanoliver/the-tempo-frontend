@@ -4,12 +4,12 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getTeamByESPNId, nbaDivisionsById } from "constants/teams";
-import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId as getNHLTeamByESPNId } from "constants/teamsNHL";
+import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { useRouter } from "expo-router";
-import { useFavoriteTeams } from "hooks/UserHooks/useFavoriteTeams";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import {
   ConferenceStandings,
   StandingsTeam,
@@ -185,7 +185,7 @@ export const StandingsList = ({
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference",
   );
-  const { isFavorite } = useFavoriteTeams();
+  const { isFavorite } = useFavoriteTeamsContext();
 
   const yearOptions = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -253,14 +253,14 @@ export const StandingsList = ({
   }) => {
     const team =
       league === "NBA"
-        ? getTeamByESPNId(Number(item.teamId)) :
-      league === "WNBA"
-        ? getWNBATeamByESPNId(Number(item.teamId))
-        : league === "NFL"
-          ? getNFLTeamByESPNId(Number(item.teamId))
-          : league === "MLB"
-            ? getMLBTeamByEspnId(item.teamId)
-            : getNHLTeamByESPNId(Number(item.teamId));
+        ? getTeamByESPNId(Number(item.teamId))
+        : league === "WNBA"
+          ? getWNBATeamByESPNId(Number(item.teamId))
+          : league === "NFL"
+            ? getNFLTeamByESPNId(Number(item.teamId))
+            : league === "MLB"
+              ? getMLBTeamByEspnId(item.teamId)
+              : getNHLTeamByESPNId(Number(item.teamId));
 
     const route =
       league === "NBA"
@@ -273,9 +273,7 @@ export const StandingsList = ({
 
     const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
     const teamCode = team?.code;
-
     const favorited = team ? isFavorite(league, team.id) : false;
-
     const isLastRow = index === data.length - 1;
 
     return (
@@ -328,11 +326,13 @@ export const StandingsList = ({
       const team =
         league === "NBA"
           ? getTeamByESPNId(Number(item.teamId))
-          : league === "NFL"
-            ? getNFLTeamByESPNId(Number(item.teamId))
-            : league === "MLB"
-              ? getMLBTeamByEspnId(item.teamId)
-              : getNHLTeamByESPNId(Number(item.teamId));
+          : league === "WNBA"
+            ? getWNBATeamByESPNId(Number(item.teamId))
+            : league === "NFL"
+              ? getNFLTeamByESPNId(Number(item.teamId))
+              : league === "MLB"
+                ? getMLBTeamByEspnId(item.teamId)
+                : getNHLTeamByESPNId(Number(item.teamId));
 
       const favorited = team ? isFavorite(league, team.id) : false;
       const isLastRow = index === data.length - 1;
@@ -471,15 +471,17 @@ export const StandingsList = ({
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
-        <Dropdown
-          options={[
-            { label: "Conference", value: "conference" },
-            { label: "Division", value: "division" },
-          ]}
-          selectedValue={sortMode}
-          onSelect={(value) => setSortMode(value as any)}
-          isDark={isDark}
-        />
+        {league !== "WNBA" && (
+          <Dropdown
+            options={[
+              { label: "Conference", value: "conference" },
+              { label: "Division", value: "division" },
+            ]}
+            selectedValue={sortMode}
+            onSelect={(value) => setSortMode(value as any)}
+            isDark={isDark}
+          />
+        )}
 
         {onYearChange && (
           <Dropdown

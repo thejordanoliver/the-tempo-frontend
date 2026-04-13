@@ -5,12 +5,12 @@ import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { SummerGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function SLGameCard({ game }: { game: SummerGame }) {
+export default function SLGameCard({ game }: { game: BasketballGame }) {
   const isDark = useColorScheme() === "dark";
   const router = useRouter();
 
@@ -177,7 +177,9 @@ export default function SLGameCard({ game }: { game: SummerGame }) {
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <View style={styles.headlineContainer}>
+        <Text style={styles.headlineText}>{headline}</Text>
+      </View>
 
       {/* Game Info */}
       <View style={styles.info}>

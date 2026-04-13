@@ -15,7 +15,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, useColorScheme, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { SummerGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 /* ------------------------------------------------------------------ */
@@ -40,7 +40,7 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Parse Game ---------------- */
 
-  const gameObj: SummerGame | null = useMemo(() => {
+  const gameObj: BasketballGame | null = useMemo(() => {
     try {
       return typeof game === "string" ? JSON.parse(game) : null;
     } catch (e) {

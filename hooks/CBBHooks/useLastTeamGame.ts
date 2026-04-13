@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { getCBBSeason } from "utils/dateUtils";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
@@ -20,7 +20,7 @@ export function useLastTeamGame({
 }: {
   teamId?: number;
 } & UseLastTeamGameOptions) {
-  const [lastGame, setLastGame] = useState<CBBGame | null>(null);
+  const [lastGame, setLastGame] = useState<BasketballGame | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,8 +36,8 @@ export function useLastTeamGame({
     setError(null);
 
     try {
-      const res = await axios.get(
-        `${BASE_URL}/api/games/cbb/team/${teamId}/last`,
+      const res = await apiClient.get(
+        `/api/games/cbb/team/${teamId}/last`,
         {
           params: { season, league },
         },

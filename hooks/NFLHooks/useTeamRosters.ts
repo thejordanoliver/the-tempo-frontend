@@ -1,7 +1,6 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
-import { BASE_URL } from "utils/apiClient";
 export type TeamPlayer = {
   id: number;
   player_id?: number;
@@ -48,7 +47,7 @@ function getLeagueRoute(league: string) {
   }
 }
 
-export function useTeamPlayers(
+export function useTeamRosters(
   teamId?: number | string,
   league?: "NFL" | "CFB" | "MLB" | "NBA" | "CBB" | "WCBB",
 ) {
@@ -62,13 +61,13 @@ export function useTeamPlayers(
       if (!teamId || !league) return;
 
       const route = getLeagueRoute(league);
-      const url = `${BASE_URL}/api/${route}/team/${teamId}`;
+      const url = `/api/${route}/team/${teamId}`;
 
       try {
         isRefresh ? setRefreshing(true) : setLoading(true);
         setError(null);
 
-        const res = await axios.get(url);
+        const res = await apiClient.get(url);
 
         const normalized: TeamPlayer[] = (res.data.players ?? []).map(
           (p: any) => ({

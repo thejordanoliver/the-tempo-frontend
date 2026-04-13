@@ -18,14 +18,16 @@ import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useFootballSeasonGames } from "hooks/NFLHooks/useFootballSeasonGames";
+import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
 import * as React from "react";
 import { useState } from "react";
 import { ScrollView, View, useColorScheme } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import {
-  getFootballSeasonYear,
+  getFootballSeason,
   getMLBSeason,
   getNBASeason,
+  getNHLSeason,
 } from "utils/dateUtils";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 dayjs.extend(utc);
@@ -34,6 +36,7 @@ dayjs.extend(timezone);
 export default function LeagueScreen() {
   const nbaCalendarYear = getNBASeason();
   const mlbCalendarYear = getMLBSeason();
+  const nhlCalendarYear = getNHLSeason();
   const navigation = useNavigation();
   const isDark = useColorScheme() === "dark";
   const styles = getScoresStyles(isDark);
@@ -66,28 +69,34 @@ export default function LeagueScreen() {
   } = useMLBSeasonGames(mlbCalendarYear);
 
   const {
-    games: mensCBBGames,
+    games: mensBasketballGames,
     loading: mensCBBLoading,
-    refreshCBBGames: refreshMensCBB,
+    refreshBasketballGames: refreshMensCBB,
   } = useCBBSeasonGames();
 
   const {
-    games: womensCBBGames,
+    games: womensBasketballGames,
     loading: womensCBBLoading,
-    refreshCBBGames: refreshWomensCBB,
+    refreshBasketballGames: refreshWomensCBB,
   } = useCBBSeasonGames({ isWomen: true });
 
   const {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFLGames,
-  } = useFootballSeasonGames(getFootballSeasonYear(), 1);
+  } = useFootballSeasonGames(getFootballSeason(), 1);
+
+  const {
+    games: nhlGames,
+    loading: nhlLoading,
+    refreshGames: refreshNHLGames,
+  } = useNHLSeasonGames(nhlCalendarYear);
 
   const {
     games: cfbGames,
     loading: cfbLoading,
     refetch: refreshCFBGames,
-  } = useFootballSeasonGames(getFootballSeasonYear(), 2);
+  } = useFootballSeasonGames(getFootballSeason(), 2);
 
   const { favorites } = useFavoriteTeamsContext();
 
@@ -183,12 +192,16 @@ export default function LeagueScreen() {
     [cfbGames],
   );
   const normalizedMensCBB = React.useMemo(
-    () => normalizeGames(mensCBBGames, "CBB", false),
-    [mensCBBGames],
+    () => normalizeGames(mensBasketballGames, "CBB", false),
+    [mensBasketballGames],
   );
   const normalizedWomensCBB = React.useMemo(
-    () => normalizeGames(womensCBBGames, "CBB", true),
-    [womensCBBGames],
+    () => normalizeGames(womensBasketballGames, "WCBB", true),
+    [womensBasketballGames],
+  );
+  const normalizedNHL = React.useMemo(
+    () => normalizeGames(nhlGames, "NHL", true),
+    [nhlGames],
   );
 
   // --------------------------------------------------
@@ -197,6 +210,7 @@ export default function LeagueScreen() {
   const filteredNBA = filterByDate(normalizedNBA, selectedDate);
   const filteredNFL = filterByDate(normalizedNFL, selectedDate);
   const filteredMLB = filterByDate(normalizedMLB, selectedDate);
+  const filteredNHL = filterByDate(normalizedNHL, selectedDate);
   const filteredCFB = filterByDate(normalizedCFB, selectedDate);
   const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
   const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
@@ -228,6 +242,7 @@ export default function LeagueScreen() {
       ...collect(filteredNBA, "NBA"),
       ...collect(filteredNFL, "NFL"),
       ...collect(filteredMLB, "MLB"),
+      ...collect(filteredNHL, "NHL"),
       ...collect(filteredCFB, "CFB"),
       ...collect(filteredMensCBB, "CBB"),
       ...collect(filteredWomensCBB, "WCBB"),
@@ -236,6 +251,7 @@ export default function LeagueScreen() {
     favorites,
     filteredNBA,
     filteredNFL,
+    filteredNHL,
     filteredMLB,
     filteredCFB,
     filteredMensCBB,
@@ -251,6 +267,7 @@ export default function LeagueScreen() {
       { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
       { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
       { category: "MLB", data: limitNonFavorites(filteredMLB, "MLB") },
+      { category: "NHL", data: limitNonFavorites(filteredNHL, "NHL") },
       {
         category: "College Football",
         data: limitNonFavorites(filteredCFB, "CFB"),
@@ -271,6 +288,7 @@ export default function LeagueScreen() {
     filteredNBA,
     filteredNFL,
     filteredMLB,
+    filteredNHL,
     filteredCFB,
     filteredMensCBB,
     filteredWomensCBB,
@@ -286,6 +304,7 @@ export default function LeagueScreen() {
         refreshNBAGames(),
         refreshNFLGames(),
         refreshMLBGames(),
+        refreshNHLGames(),
         refreshCFBGames(),
         refreshMensCBB(),
         refreshWomensCBB(),
@@ -304,6 +323,7 @@ export default function LeagueScreen() {
       ...normalizedNFL,
       ...normalizedMLB,
       ...normalizedCFB,
+      ...normalizedNHL,
       ...normalizedMensCBB,
       ...normalizedWomensCBB,
     ];
@@ -320,6 +340,7 @@ export default function LeagueScreen() {
     normalizedNBA,
     normalizedNFL,
     normalizedMLB,
+    normalizedNHL,
     normalizedCFB,
     normalizedMensCBB,
     normalizedWomensCBB,
@@ -352,6 +373,7 @@ export default function LeagueScreen() {
                   nbaLoading ||
                   nflLoading ||
                   mlbLoading ||
+                  nhlLoading ||
                   cfbLoading ||
                   mensCBBLoading ||
                   womensCBBLoading

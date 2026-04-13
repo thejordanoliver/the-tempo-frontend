@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CBBGame } from "types/types";
+import { BasketballGame } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { getWNBASeason } from "utils/dateUtils";
 
@@ -11,7 +11,7 @@ export function useWNBATeamGames(
   teamId: string | number,
   { season = getWNBASeason() }: useWNBATeamGamesOptions = {},
 ) {
-  const [games, setGames] = useState<CBBGame[]>([]);
+  const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +28,7 @@ export function useWNBATeamGames(
         },
       });
 
-      const rawGames: CBBGame[] = res.data.response || [];
+      const rawGames: BasketballGame[] = res.data.response || [];
 
       // ✅ Just return raw API response
       setGames(rawGames);

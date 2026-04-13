@@ -1,4 +1,4 @@
-import { CBBGameWidgetProps } from "components/Explore/Widgets/Games/CBBGameWidget";
-import { GameWidgetProps } from "components/Explore/Widgets/Games/GameWidget";
+import { GameWidgetProps } from "components/Explore/Widgets/GameCards/NBAGameWidget";
+import { BasketballGameWidgetProps } from "components/Explore/Widgets/Games/BasketballGameWidget";
 
-export type AnyGameWidgetProps = GameWidgetProps | CBBGameWidgetProps;
+export type AnyGameWidgetProps = GameWidgetProps | BasketballGameWidgetProps;
