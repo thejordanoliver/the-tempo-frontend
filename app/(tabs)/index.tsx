@@ -2,22 +2,24 @@ import { useNavigation } from "@react-navigation/native";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import CombinedGamesList from "components/League/CombinedGamesList";
-import NewsHighlightsList from "components/News/NewsHighlightsList";
-import TabBar from "components/TabBar";
+import NewsList from "components/News/NewsList";
+import TabBar from "components/TabBars/TabBar";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useHomeData } from "hooks/useHomeData";
 import React, { useRef } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const styles = homeStyles(isDark, insets.top);
-
+  const { viewMode } = usePreferences();
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
 
   const pagerRef = useRef<PagerView>(null);
@@ -31,8 +33,9 @@ export default function HomeScreen() {
     refreshing,
     handleRefresh,
     gamesByCategory,
-    combinedNewsAndHighlights,
+    articles,
     newsError,
+    newsLoading,
     loading,
   } = useHomeData(selectedTab);
 
@@ -89,6 +92,7 @@ export default function HomeScreen() {
                 loading={loading}
                 onDragStart={() => setIsDraggingFavorites(true)}
                 onDragEnd={() => setIsDraggingFavorites(false)}
+                isDark={isDark}
               />
 
               <CombinedGamesList
@@ -96,28 +100,32 @@ export default function HomeScreen() {
                 loading={loading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
+                isDark={isDark}
+                viewMode={viewMode}
               />
             </ScrollView>
           </View>
 
           {/* -------- NEWS PAGE -------- */}
+          {/* NEWS */}
           <View key="news">
             <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
-                  tintColor={isDark ? Colors.white : Colors.black}
-                  colors={[isDark ? Colors.white : Colors.black]}
                 />
               }
             >
-              <NewsHighlightsList
-                items={combinedNewsAndHighlights}
-                loading={loading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
+              <NewsList
+                items={articles}
+                isDark={isDark}
+                loading={newsLoading}
                 error={newsError}
+                refreshing
+                onRefresh={handleRefresh}
               />
             </ScrollView>
           </View>

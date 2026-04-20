@@ -2,14 +2,7 @@ import { Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const TABS = [
   {
@@ -65,8 +58,11 @@ function getActiveTab(pathname: string): string | null {
   return "/";
 }
 
-export default function CustomTabBar() {
-  const isDark = useColorScheme() === "dark";
+export type TabBarProps = {
+  isDark: boolean;
+};
+
+export default function CustomTabBar({ isDark }: TabBarProps) {
   const router = useRouter();
   const pathname = usePathname();
 

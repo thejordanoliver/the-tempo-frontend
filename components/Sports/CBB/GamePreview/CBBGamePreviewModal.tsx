@@ -216,7 +216,7 @@ export default function CBBGamePreviewModal({
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>
@@ -242,10 +242,6 @@ export default function CBBGamePreviewModal({
                 />
 
                 <CenterInfo
-                  isChampionship={isChampionship}
-                  isFinalFour={isFinalFour}
-                  isMarchMadness={isMarchMadness}
-                  round={round ?? ""}
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}
                   broadcastNetworks={broadcastText}
@@ -253,7 +249,6 @@ export default function CBBGamePreviewModal({
                   period={formatCBBQuarter(Number(liveScore?.period), isWomen)}
                   formattedDate={formattedDate}
                   formattedTime={formattedTime}
-                  isDark={isDark}
                 />
 
                 <TeamInfo
@@ -282,7 +277,6 @@ export default function CBBGamePreviewModal({
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   officials={officials}
-                  isDark={isDark}
                   resolvedVenueImage={resolvedVenue.image}
                   resolvedVenueName={resolvedVenue.name}
                   resolvedVenueCity={resolvedVenue.city}

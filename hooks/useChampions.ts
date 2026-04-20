@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { LeagueType } from "types/types";
+import { apiClient } from "utils/apiClient";
 
 export type ChampionSeason = {
   id: number;
@@ -18,8 +18,7 @@ export type ChampionSeason = {
     id: number;
     code: string;
     name: string;
-    full_name?: string;
-    conference?: string;
+    short_name?: string;
     color?: string;
   } | null;
   notes: string;
@@ -30,8 +29,6 @@ type Options = {
   refreshToken?: number;
   league: LeagueType;
 };
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useChampions({
   league,
@@ -51,20 +48,22 @@ export function useChampions({
 
       const endpoint =
         league === "CFB"
-          ? "/api/cfb/champion-seasons"
+          ? "api/cfb/champion-seasons"
           : league === "NBA"
-            ? "/api/nba/champion-seasons"
-            : league === "MLB"
-              ? "/api/mlb/champion-seasons"
-            : league === "NHL"
-              ? "/api/nhl/champion-seasons"
-              : league === "CBB"
-                ? "/api/cbb/champion-seasons"
-                : league === "WCBB"
-                  ? "/api/wcbb/champion-seasons"
-                  : "/api/nfl/champion-seasons";
+            ? "api/nba/champion-seasons"
+            : league === "WNBA"
+              ? "api/wnba/champion-seasons"
+              : league === "MLB"
+                ? "api/mlb/champion-seasons"
+                : league === "NHL"
+                  ? "api/nhl/champion-seasons"
+                  : league === "CBB"
+                    ? "api/cbb/champion-seasons"
+                    : league === "WCBB"
+                      ? "api/wcbb/champion-seasons"
+                      : "api/nfl/champion-seasons";
 
-      const res = await axios.get(`${API_URL}${endpoint}`, {
+      const res = await apiClient.get(`${endpoint}`, {
         params: {
           _refresh: refreshToken ?? Date.now(), // cache buster
         },

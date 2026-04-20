@@ -1,6 +1,7 @@
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import { Pressable, StyleSheet, Text, useColorScheme } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 type PostButtonProps = {
   onPress: () => void;
@@ -9,36 +10,33 @@ type PostButtonProps = {
 };
 
 export default function PostButton({ onPress, disabled }: PostButtonProps) {
-  const isDark = useColorScheme() === "dark";
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = postButtonStyles(isDark);
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={onPress}
+      activeOpacity={0.7}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.button,
-        {
-          backgroundColor: isDark ? "#fff" : "#000",
-          opacity: pressed || disabled ? 0.7 : 1,
-        },
-      ]}
+      style={styles.button}
     >
-      <Text style={[styles.buttonText, { color: isDark ? "#000" : "#fff" }]}>
-        Post
-      </Text>
-    </Pressable>
+      <Text style={styles.buttonText}>Post</Text>
+    </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    marginVertical: 24,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    fontSize: 16,
-    fontFamily: Fonts.OSMEDIUM,
-  },
-});
+const postButtonStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    button: {
+      marginVertical: 24,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: "center",
+      backgroundColor: isDark ? Colors.white : Colors.black,
+    },
+    buttonText: {
+      fontSize: 16,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.black : Colors.white,
+    },
+  });

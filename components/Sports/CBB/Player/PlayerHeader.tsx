@@ -15,20 +15,7 @@ export default function PlayerHeader({
   isWomen,
 }: PlayerHeaderProps) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
-
   const styles = playerHeaderStyles(isDark);
-  const birthFormatted = player.birth_date
-    ? new Date(player.birth_date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    : null;
-  const draftInfo =
-    player.draft_round && player.draft_number && player.draft_year
-      ? `Rd ${player.draft_round}, Pick ${player.draft_number} · ${player.draft_year}`
-      : "Undrafted";
-
   const calculateAge = (birthDate?: string) => {
     if (!birthDate) return null;
     const d = new Date(birthDate);
@@ -40,8 +27,25 @@ export default function PlayerHeader({
     if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
     return age;
   };
+  const birthFormatted = player.birth_date
+    ? new Date(player.birth_date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : null;
+
+  const experience = player.experience_abbr
+    ? player.experience_abbr
+    : player.experience_years === 0
+      ? "R"
+      : player.experience_years;
 
   const age = calculateAge(player.birth_date);
+  const homeTown = player.birth_place_display_text
+    ? player.birth_place_display_text
+    : `${player.birth_place_city}, ${player.birth_place_state}` || "Unknown";
+
   return (
     <View style={styles.container}>
       {/* Avatar overlapping banner */}
@@ -93,20 +97,22 @@ export default function PlayerHeader({
             <View style={styles.statDivider} />
           </>
         )}
-        <View style={styles.statChip}>
-          <Text style={styles.statValue}>{player.experience_abbr}</Text>
-          <Text style={styles.statLabel}>CLASS</Text>
-        </View>
 
-        {player.experience_years != null && (
+        {age && (
           <>
-            <View style={styles.statDivider} />
             <View style={styles.statChip}>
-              <Text style={styles.statValue}>{player.experience_years}</Text>
-              <Text style={styles.statLabel}>YRS EXP</Text>
+              <Text style={styles.statValue}>{age}</Text>
+              <Text style={styles.statLabel}>AGE</Text>
             </View>
+            <View style={styles.statDivider} />
           </>
         )}
+        <View style={styles.statChip}>
+          <Text style={styles.statValue}>{experience}</Text>
+          <Text style={styles.statLabel}>
+            {player.experience_abbr ? `CLASS` : `YRS EXP`}
+          </Text>
+        </View>
       </View>
 
       {/* Info grid */}
@@ -114,9 +120,16 @@ export default function PlayerHeader({
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>HOMETOWN</Text>
           <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
-            {player.birth_place_display_text ?? "Unknown"}
+            {homeTown}
           </Text>
         </View>
+      </View>
+
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>COLLEGE</Text>
+        <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+          {player.college}
+        </Text>
 
         {birthFormatted ? (
           <View style={styles.infoRow}>

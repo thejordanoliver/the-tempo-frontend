@@ -1,30 +1,21 @@
 import { Colors } from "constants/styles";
 import { getNHLTeam } from "constants/teamsNHL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { memo } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { NHLGame } from "types/nhl";
+import { HockeyGameCardProps } from "types/hockey";
 import { formatNHLQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
-type Props = {
-  game: NHLGame; // Your API Game shape
-};
-
-function NHLGameCard({ game }: Props) {
-  const isDark = useColorScheme() === "dark";
+function NHLGameCard({ game }: HockeyGameCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   /* ===============================
      DATE / TIME
   =============================== */

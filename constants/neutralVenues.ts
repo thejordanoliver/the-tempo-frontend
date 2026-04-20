@@ -32,6 +32,34 @@ export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
   return null;
 }
 
+export function getNeutralStadium(venueName?: string, isNeutralSite?: boolean) {
+  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
+  if (!isNeutralSite) return null;
+
+  if (!venueName) return null;
+
+  const normalizedInput = normalize(venueName);
+
+  // 1. Exact match (fast path)
+  if (neutralStadiums[venueName]) {
+    return neutralStadiums[venueName];
+  }
+
+  // 2. Fuzzy match
+  for (const key of Object.keys(neutralStadiums)) {
+    const normalizedKey = normalize(key);
+
+    if (
+      normalizedInput.includes(normalizedKey) ||
+      normalizedKey.includes(normalizedInput)
+    ) {
+      return neutralStadiums[key];
+    }
+  }
+
+  return null;
+}
+
 export const neutralVenues: Record<string, Venue> = {
   "Etihad Arena": {
     name: "Etihad Arena",

@@ -1,4 +1,4 @@
-import { NHLPlayer } from "types/nhl";
+import { NHLPlayer } from "types/hockey";
 
 export const players: NHLPlayer[] = [
   {

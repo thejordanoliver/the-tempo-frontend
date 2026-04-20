@@ -1,5 +1,5 @@
 // ...
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -7,15 +7,10 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Pressable,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, Pressable, View } from "react-native";
+import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
 import type { LeagueType, Team } from "types/types";
 
 type TeamWithLeague = Team & { league: LeagueType };
@@ -37,13 +32,9 @@ function TeamCard({
   itemWidth,
   onImageLoad,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamCardStyles;
-  // Split fullName into city + nickname
-  const [city, nickname] = (() => {
-    const parts = item.fullName?.split(" ");
-    return [parts?.slice(0, -1).join(" "), parts?.slice(-1).join(" ")];
-  })();
 
   const selectionAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
   const previousSelected = useRef(isSelected);
@@ -114,6 +105,7 @@ function TeamCard({
       <Animated.View
         style={[
           styles.teamCard,
+          
           {
             width: isGridView ? itemWidth : "100%",
             backgroundColor,
@@ -175,62 +167,12 @@ function TeamCard({
           }}
         >
           <Animated.Text style={[styles.teamName, { color: textColor }]}>
-            {item.league === "CFB" ||
-            item.league === "CBB" ||
-            item.league === "WCBB"
-              ? item.name
-              : city}{" "}
+            {isGridView ? item.name : item.fullName}
           </Animated.Text>
-
-          {item.league !== "CFB" &&
-            item.league !== "CBB" &&
-            item.league !== "WCBB" && (
-              <Animated.Text style={[styles.teamName, { color: textColor }]}>
-                {nickname}
-              </Animated.Text>
-            )}
         </View>
       </Animated.View>
     </Pressable>
   );
 }
 
-const teamCardStyles = StyleSheet.create({
-  teamCard: {
-    borderRadius: 8,
-    overflow: "hidden",
-  },
-  teamName: {
-    fontFamily: Fonts.OSREGULAR,
-    fontSize: 12,
-    textAlign: "center",
-  },
-  logoWrapper: {
-    position: "relative",
-    width: 50,
-    height: 50,
-    marginBottom: 8,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-  },
-  sportTag: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    paddingLeft: 12,
-    paddingRight: 6,
-    paddingVertical: 4,
-    borderTopLeftRadius: 6,
-    borderBottomLeftRadius: 100,
-    zIndex: 2,
-  },
-  sportTagText: {
-    color: Colors.white,
-    fontSize: 11,
-    fontFamily: Fonts.OSBOLD,
-  },
-});
 export default React.memo(TeamCard);

@@ -1,7 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export const useCFBTeamRecruits = (year: number) => {
   const [data, setData] = useState<any[]>([]);
@@ -17,10 +15,10 @@ export const useCFBTeamRecruits = (year: number) => {
 
       try {
         const res = await apiClient.get(`api/cfbd/team/recruits`, {
-          params: { year }, // ⭐ ONLY year
+          params: { year },
         });
 
-        setData(res.data); // Expect array like [{ team, rank, points }]
+        setData(res.data);
       } catch (err: any) {
         setError(
           err?.response?.data?.error ||

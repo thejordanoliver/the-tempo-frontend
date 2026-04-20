@@ -1,15 +1,11 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 
 export default function StackedGameCardSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   // Smooth breathing pulse animation

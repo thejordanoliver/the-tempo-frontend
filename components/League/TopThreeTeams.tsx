@@ -1,14 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Image,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type TeamStat = {
   team: {
@@ -25,33 +18,6 @@ type Props = {
   limit?: number; // ✅ NEW
 };
 
-export default function TopThreeTeams({ teams, limit = 3 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const visibleTeams = teams.slice(0, limit);
-  const styles = topThreeTeamsStyles(isDark, visibleTeams.length);
-
-  return (
-    <View style={styles.container}>
-      {visibleTeams.map((item, index) => (
-        <React.Fragment key={item.team.id}>
-          <TeamBubble
-            value={item.value}
-            label={item.team.code}
-            logo={item.logo}
-            teamCount={visibleTeams.length}
-          />
-
-          {index !== visibleTeams.length - 1 && <View style={styles.divider} />}
-        </React.Fragment>
-      ))}
-    </View>
-  );
-}
-
-/* -------------------------------------------------- */
-/* Individual team bubble                             */
-/* -------------------------------------------------- */
-
 function TeamBubble({
   value,
   label,
@@ -63,7 +29,8 @@ function TeamBubble({
   logo?: any;
   teamCount: number;
 }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = topThreeTeamsStyles(isDark, teamCount);
 
   const scale = useRef(new Animated.Value(0.85)).current;
@@ -106,9 +73,29 @@ function TeamBubble({
   );
 }
 
-/* -------------------------------------------------- */
-/* Styles                                             */
-/* -------------------------------------------------- */
+export default function TopThreeTeams({ teams, limit = 3 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const visibleTeams = teams.slice(0, limit);
+  const styles = topThreeTeamsStyles(isDark, visibleTeams.length);
+
+  return (
+    <View style={styles.container}>
+      {visibleTeams.map((item, index) => (
+        <React.Fragment key={item.team.id}>
+          <TeamBubble
+            value={item.value}
+            label={item.team.code}
+            logo={item.logo}
+            teamCount={visibleTeams.length}
+          />
+
+          {index !== visibleTeams.length - 1 && <View style={styles.divider} />}
+        </React.Fragment>
+      ))}
+    </View>
+  );
+}
 
 export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
   const logoSize = teamCount > 4 ? 40 : teamCount > 3 ? 44 : 50;

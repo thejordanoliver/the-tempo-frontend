@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/styles";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
   homeWinProbability: number;
@@ -23,7 +23,8 @@ export default function PredictionBar({
   homeSecondaryColor,
   awaySecondaryColor,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const homePercent = Math.min(Math.max(homeWinProbability, 0), 100);
   const awayPercent = Math.min(Math.max(awayWinProbability, 0), 100);

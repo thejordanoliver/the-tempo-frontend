@@ -2,8 +2,9 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 type Props = {
@@ -77,7 +78,8 @@ export default function PlayerStatTable({
   error,
   position,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 

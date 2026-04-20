@@ -2,34 +2,28 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useLayoutEffect, useState } from "react";
 import {
-  Dimensions,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from "react-native";
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-type SettingsScreenProps = {
-  onRequestLogout: () => void; // triggers showing sign-out modal in parent
-  onRequestDeleteAccount: () => void; // triggers showing delete modal in parent
-};
 export default function SettingsScreen() {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const { deleteAccount } = useAuth();
   const router = useRouter();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const navigation = useNavigation();
   const [password, setPassword] = useState("");
   const styles = getStyles(isDark);
@@ -49,7 +43,7 @@ export default function SettingsScreen() {
         alert("Please enter your password.");
         return;
       }
-      await deleteAccount(password); // backend call
+      await deleteAccount();
       setShowDeleteModal(false);
       setPassword("");
       router.replace("/settings/deleteaccountsplash");
@@ -68,74 +62,37 @@ export default function SettingsScreen() {
     <View style={[styles.screen]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Pressable
-          style={[
-            styles.optionButton,
-            {
-              borderBottomColor: isDark
-                ? "rgba(255,255,255,0.2)"
-                : "rgba(120, 120, 120, 0.5)",
-            },
-          ]}
+          style={styles.optionButton}
           onPress={() => router.push("/settings/accountdetails")}
         >
-          <Text
-            style={[styles.optionText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            Account Details
-          </Text>
+          <Text style={styles.optionText}>Account Details</Text>
           <Ionicons
             name="chevron-forward"
             size={20}
-            color={isDark ? "#fff" : "#1d1d1d"}
+            color={isDark ? Colors.white : Colors.black}
           />
         </Pressable>
 
         <Pressable
-          style={[
-            styles.optionButton,
-            {
-              borderBottomColor: isDark
-                ? "rgba(255,255,255,0.2)"
-                : "rgba(120, 120, 120, 0.5)",
-            },
-          ]}
+          style={styles.optionButton}
           onPress={() => router.push("/settings/preferences")}
         >
-          <Text
-            style={[styles.optionText, { color: isDark ? "#fff" : "#1d1d1d" }]}
-          >
-            Preferences
-          </Text>
+          <Text style={styles.optionText}>Preferences</Text>
           <Ionicons
             name="chevron-forward"
             size={20}
-            color={isDark ? "#fff" : "#1d1d1d"}
+            color={isDark ? Colors.white : Colors.black}
           />
         </Pressable>
 
         <Pressable
-          style={[
-            styles.dangerButton,
-            {
-              borderBottomColor: isDark
-                ? "rgba(255,255,255,0.2)"
-                : "rgba(120, 120, 120, 0.5)",
-            },
-          ]}
+          style={styles.dangerButton}
           onPress={() => setShowSignOutModal(true)}
         >
           <Text style={[styles.dangerText]}>Sign Out</Text>
         </Pressable>
-
         <Pressable
-          style={[
-            styles.dangerButton,
-            {
-              borderBottomColor: isDark
-                ? "rgba(255,255,255,0.2)"
-                : "rgba(120, 120, 120, 0.5)",
-            },
-          ]}
+          style={styles.dangerButton}
           onPress={() => setShowDeleteModal(true)}
         >
           <Text style={styles.dangerText}>Delete Account</Text>
@@ -168,17 +125,11 @@ export default function SettingsScreen() {
       >
         <TextInput
           placeholder="Current Password"
-          placeholderTextColor="#888"
+          placeholderTextColor={Colors.midTone}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          style={[
-            styles.input,
-            {
-              color: isDark ? "#fff" : "#000",
-              borderColor: isDark ? "#444" : "#ccc",
-            },
-          ]}
+          style={styles.input}
         />
       </ConfirmModal>
     </View>
@@ -191,29 +142,41 @@ export const getStyles = (isDark: boolean) =>
       flex: 1,
       position: "relative",
     },
+    container: { gap: 20 },
+    wrapper: {
+      paddingHorizontal: 12,
+    },
     scrollContent: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 12,
       paddingTop: 20,
       paddingBottom: 40,
     },
+    heading: { marginBottom: 0 },
     optionButton: {
       flexDirection: "row",
       justifyContent: "space-between",
-      paddingVertical: 16,
+      alignItems: "center",
+      paddingVertical: 12,
       borderBottomWidth: 1,
+      borderBottomColor: isDark
+        ? Colors.transparentLightGray
+        : Colors.transparentDarkGray,
     },
     optionText: {
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
       fontFamily: Fonts.OSREGULAR,
     },
     dangerButton: {
-      paddingVertical: 16,
+      paddingVertical: 12,
       justifyContent: "space-between",
       borderBottomWidth: 1,
+      borderBottomColor: isDark
+        ? Colors.transparentLightGray
+        : Colors.transparentDarkGray,
     },
     dangerText: {
-      color: "#e53935",
-      fontWeight: "600",
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 18,
       fontFamily: Fonts.OSMEDIUM,
     },
@@ -223,8 +186,11 @@ export const getStyles = (isDark: boolean) =>
       right: 15,
     },
     input: {
-      color: isDark ? "#fff" : "#000",
-      backgroundColor: isDark ? "#222" : "#eee",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      color: isDark ? Colors.white : Colors.black,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       padding: 20,
       borderRadius: 8,
       fontSize: 16,

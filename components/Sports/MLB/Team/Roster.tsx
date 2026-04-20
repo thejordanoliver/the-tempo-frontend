@@ -1,9 +1,9 @@
 // components/TeamPlayerList.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { globalStyles } from "constants/styles";
-import { TeamPlayer, useTeamPlayers } from "hooks/NFLHooks/useTeamRosters";
+import { TeamPlayer, useTeamRosters } from "hooks/NFLHooks/useTeamRosters";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 interface TeamPlayerListProps {
   teamId: number; // 👈 pass teamId instead
@@ -21,7 +21,7 @@ export default function Roster({
   const global = globalStyles(isDark);
 
   // ✅ Fetch players from hook
-  const { players, loading, error, refreshing, refetch } = useTeamPlayers(
+  const { players, loading, error, refreshing, refetch } = useTeamRosters(
     teamId,
     "MLB",
   );

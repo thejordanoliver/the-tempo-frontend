@@ -5,12 +5,13 @@ const ROW_HEIGHT = 50;
 
 export const awardTableStyles = (isDark: boolean) =>
   StyleSheet.create({
+    container: { marginVertical: 12 },
     contentContainerStyle: {
       paddingHorizontal: 12,
       paddingBottom: 100,
       paddingTop: 12,
     },
-    container: { marginVertical: 12 },
+    
     table: {
       overflow: "hidden",
       borderColor: Colors.midTone,

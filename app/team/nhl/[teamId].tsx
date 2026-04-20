@@ -11,13 +11,14 @@ import { players } from "constants/nhlPlayers";
 import { Colors } from "constants/styles";
 import { nhlTeams } from "constants/teamsNHL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useNHLTeamGames } from "hooks/NHLHooks/useNHLTeamGames";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import {
   getGameCountByMonth,
@@ -26,7 +27,7 @@ import {
   scrollToMonth,
 } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import TabBar from "../../../components/TabBar";
+import TabBar from "../../../components/TabBars/TabBar";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 type PageSelectedEvent = {
@@ -42,7 +43,8 @@ export default function TeamDetailScreen() {
   const [standingsYear, setStandingsYear] = useState(getNHLSeason());
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const league = "NHL";
@@ -153,7 +155,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -262,6 +264,7 @@ export default function TeamDetailScreen() {
           onClose={() => setModalVisible(false)}
           teamId={team.id}
           league={league}
+          isDark={isDark}
         />
       )}
     </View>

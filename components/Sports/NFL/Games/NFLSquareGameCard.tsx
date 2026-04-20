@@ -2,28 +2,24 @@ import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { memo } from "react";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { Game } from "types/football";
+import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
-type GameCardProps = {
-  game: Game;
-};
-
-function NFLSquareGameCard({ game }: GameCardProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+function NFLSquareGameCard({ game }: FootballGameCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   // -----------------------------------------------------
   // TEAM + DATE
   // -----------------------------------------------------

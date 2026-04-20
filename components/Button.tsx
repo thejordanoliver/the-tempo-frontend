@@ -56,7 +56,7 @@ const buttonStyles = (isDark: boolean) =>
   StyleSheet.create({
     button: {
       padding: 12,
-      borderRadius: 8,
+      borderRadius: 100,
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
@@ -64,7 +64,7 @@ const buttonStyles = (isDark: boolean) =>
     },
     buttonText: {
       color: isDark ? Colors.black : Colors.white,
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: Fonts.OSMEDIUM,
     },
   });

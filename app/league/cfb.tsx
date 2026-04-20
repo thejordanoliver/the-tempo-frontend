@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
 import NewsList from "components/News/NewsList";
-import { Bracket } from "components/Sports/CFB/Bracket/Bracket";
+import { CFBPlayoffBracket } from "components/Sports/CFB/Bracket/CFBPlayoffBracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
@@ -13,6 +13,8 @@ import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsLi
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -25,7 +27,7 @@ import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
@@ -35,9 +37,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-export default function CFBeagueScreen() {
+export default function CFBLeagueScreen() {
+  const league = "CFB";
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
@@ -49,10 +53,16 @@ export default function CFBeagueScreen() {
   const [recruitYear, setRecruitYear] = useState(dayjs().year().toString());
   const [recruitTeam, setRecruitTeam] = useState("all");
   const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CFB");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
 
   const [refreshing, setRefreshing] = useState(false);
-  const { data: bracketData } = useCFPBracket();
+  const {
+    data: bracketData,
+    loading: playoffLoading,
+    error: playoffError,
+    refreshing: playoffRefreshing,
+    onRefresh,
+  } = useCFPBracket();
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const { categories, loading, error } = useSeasonLeaders(
     getFootballSeason(),
@@ -62,7 +72,7 @@ export default function CFBeagueScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "CFB");
+  } = useLeaguesNews(10, league);
   const apTop25 = useAPTop25();
   const top25Teams = React.useMemo(() => {
     return apTop25.map((t) => t.name);
@@ -130,7 +140,7 @@ export default function CFBeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="CFB"
+          league={league}
           modalVisible={isDropdownOpen}
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -168,7 +178,7 @@ export default function CFBeagueScreen() {
       <View style={styles.container}>
         <PagerView
           ref={pagerRef}
-          style={{ flex: 1 }}
+          style={styles.contentArea}
           initialPage={0}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
@@ -241,9 +251,20 @@ export default function CFBeagueScreen() {
             />
           </View>
 
-          <View key="playoffs" style={styles.contentArea}>
-            {bracketData && <Bracket data={bracketData} />}
-          </View>
+          {/* PLAYOFFS */}
+          <ScrollView
+            key="playoffs"
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={playoffRefreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? Colors.white : Colors.black}
+              />
+            }
+          >
+            <CFBPlayoffBracket bracket={bracketData} loading={playoffLoading} />
+          </ScrollView>
 
           <View key="recruits" style={styles.contentArea}>
             <RecruitsList
@@ -258,12 +279,12 @@ export default function CFBeagueScreen() {
 
           {/* AWARDS */}
           <View key="awards" style={styles.contentArea}>
-            <AwardSeasons league="CFB" />
+            <AwardSeasons league={league} />
           </View>
 
           {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league="CFB" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

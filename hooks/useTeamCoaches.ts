@@ -1,5 +1,7 @@
 // hooks/useTeamCoaches.ts
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export interface Coach {
   id: number;
@@ -19,8 +21,6 @@ interface UseTeamCoachesResult {
   error: string | null;
 }
 
-import { BASE_URL } from "utils/apiClient";
-
 export function useTeamCoaches(
   teamId: number,
   league: string,
@@ -32,23 +32,36 @@ export function useTeamCoaches(
   useEffect(() => {
     if (!teamId || !league) return;
 
-    setLoading(true);
-    setError(null);
+    const controller = new AbortController();
 
-    fetch(`${BASE_URL}/api/coaches/${league}/team/${teamId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch coaches: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
+    const fetchCoaches = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const { data } = await apiClient.get(
+          `api/coaches/${league}/team/${teamId}`,
+          {
+            signal: controller.signal,
+          },
+        );
+
         if (data.success) {
           setCoaches(data.coaches);
         } else {
           setError(data.error || "Unknown error");
         }
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      } catch (err: any) {
+        if (axios.isCancel?.(err)) return;
+        setError(err.message || "Failed to fetch coaches");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoaches();
+
+    return () => controller.abort();
   }, [teamId, league]);
 
   return { coaches, loading, error };

@@ -52,6 +52,10 @@ export type MMAFight = {
   };
 };
 
+export type MMAFightCardProps = {
+  game: MMAFight;
+};
+
 export type MMAFighter = {
   id: number; // API Sports ID
   espn_id: string | null; // ESPN ID can be null

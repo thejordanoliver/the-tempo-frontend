@@ -1,7 +1,8 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { BracketGame, BracketTeam } from "types/football";
 
 export function GameCard({
@@ -11,7 +12,8 @@ export function GameCard({
   game: BracketGame;
   round: string;
 }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const isFirstRound = round === "First Round";
@@ -58,21 +60,46 @@ export function GameCard({
     const teamLogo = getCFBTeamLogo(teamId.id ?? 0, isDark);
 
     const recordScore = showScore ? (
-      <Text style={styles.score}>{team.score}</Text>
+      <Text
+        style={[
+          styles.score,
+          {
+            color: !dimmed
+              ? Colors.black
+              : isDark
+                ? Colors.white
+                : Colors.black,
+          },
+        ]}
+      >
+        {team.score}
+      </Text>
     ) : (
       <Text style={styles.record}>{team.record}</Text>
     );
 
     return (
-      <View style={[styles.teamRow, dimmed && { opacity: 0.5 }]}>
-        <View style={styles.teamWrapper}>
-          {team.seed && <Text style={styles.seed}>{team.seed}</Text>}
-          <Image source={teamLogo} style={styles.logo} />
-          <View>
-            <Text style={styles.name}>{team.code}</Text>
-          </View>
+      <View style={styles.teamRow}>
+        
+          {team.seed && <Text style={styles.seedText}>{team.seed}</Text>}
+          <Image source={teamLogo} style={styles.teamLogo} />
+            <Text style={[styles.teamCode, { opacity: dimmed ? 0.5 : 1 }]}>
+              {team.code}
+            </Text>     
+        <View
+          style={[
+            styles.winsBadge,
+            {
+              backgroundColor: !dimmed
+                ? Colors.light.gold
+                : isDark
+                  ? Colors.darkGray
+                  : Colors.lightGray,
+            },
+          ]}
+        >
+          {recordScore}
         </View>
-        {recordScore}
       </View>
     );
   };
@@ -85,21 +112,23 @@ export function GameCard({
     return (
       <View style={styles.teamRow}>
         <View style={styles.teamWrapper}>
-          <Text style={styles.seed}>-</Text>
-          <Image source={PlaceholderLogo} style={styles.logo} />
-          <Text style={styles.name}>TBD</Text>
+          <Text style={styles.seedText}>-</Text>
+          <Image source={PlaceholderLogo} style={styles.teamLogo} />
+          <Text style={styles.teamCode}>TBD</Text>
         </View>
-        <Text style={styles.record}>-</Text>
+        <View style={styles.winsBadge}>
+          <Text style={styles.record}>-</Text>
+        </View>
       </View>
     );
   };
 
   return (
     <View style={styles.card}>
-      <View style={styles.teamContainer}>
-        {renderTeam(game.top, losingSide === "top")}
-        {renderTeam(game.bottom, losingSide === "bottom")}
-      </View>
+      {renderTeam(game.top, losingSide === "top")}
+      <View style={styles.divider} />
+      {renderTeam(game.bottom, losingSide === "bottom")}
+
       <View style={styles.gameInfo}>
         {isFinal && <Text style={styles.finalText}>Final</Text>}
         {!isFinal && <Text style={styles.infoText}>{formattedDate}</Text>}
@@ -113,73 +142,82 @@ export function GameCard({
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
-      width: 220,
-      height: 100,
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 6,
+      width: 176,
+      height: 142,
+      justifyContent: "space-around",
+      paddingVertical: 10,
       borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      marginVertical: 12,
+      
       shadowColor: "#000",
       shadowOpacity: isDark ? 0.3 : 0.15,
       shadowRadius: 6,
       elevation: 3,
-      borderWidth: 0.5,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      paddingHorizontal: 12,
     },
     teamContainer: {
-      alignItems: "flex-start",
-      justifyContent: "space-between",
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderRightWidth: StyleSheet.hairlineWidth,
-      gap: 12,
-      width: "75%",
+      justifyContent: "center",
     },
     teamRow: {
       flexDirection: "row",
       alignItems: "center",
-      width: "95%",
-      justifyContent: "space-between",
     },
     gameInfo: {
       alignItems: "center",
-      width: "25%",
     },
     teamWrapper: {
       flexDirection: "row",
       justifyContent: "space-between",
     },
-    seed: {
-      width: 18,
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-      marginLeft: 4,
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      marginVertical: 8,
+      backgroundColor: Colors.midTone,
     },
-    name: {
-      fontSize: 15,
+    seedText: {
+      width: 20,
       fontFamily: Fonts.OSBOLD,
+      fontSize: 18,
+      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+    },
+    teamCode: {
+      flex: 1,
+      marginLeft: 4,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    winsBadge: {
+      minWidth: 30,
+      height: 30,
+      paddingHorizontal: 8,
+      borderRadius: 100,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
     },
     score: {
-      fontSize: 14,
       fontFamily: Fonts.OSBOLD,
+      fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
+
     record: {
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    logo: {
-      width: 22,
-      height: 22,
-      marginLeft: 4,
-      marginRight: 4,
+    teamLogo: {
+      width: 34,
+      height: 34,
     },
     infoText: {
       fontFamily: Fonts.OSREGULAR,

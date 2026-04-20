@@ -2,16 +2,15 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useNBAWidgetLeaders } from "hooks/WidgetHooks/useNBAWidgetLeaders";
 import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { PlayerLeader } from "types/playerLeader";
 import { Game } from "types/types";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import displayeValue from "utils/widgetUtils";
 import PlayerItem from "../Players/PlayerItem";
-import { useNBAWidgetLeaders } from "hooks/NBAHooks/useNBAWidgetLeaders";
 
 type GameWidgetProps = {
   game: Game;
@@ -63,12 +62,7 @@ export default function NBAGameWidget({
     gameDateStr,
   );
 
-    const { leaders } = useNBAWidgetLeaders(
-    String(game.id),
-    homeId,
-    awayId,
-  );
-
+  const { leaders } = useNBAWidgetLeaders(String(game.id), homeId, awayId);
 
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
@@ -141,7 +135,7 @@ export default function NBAGameWidget({
   if (loading || isLoading) {
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

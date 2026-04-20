@@ -5,6 +5,8 @@ import {
   getCFBTeamLogo,
   getTeamByESPNId,
 } from "constants/teamsCFB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useCFBConferenceStandings } from "hooks/CFBHooks/useCFBConferenceStandings";
 import {
@@ -13,11 +15,9 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 type Props = {
   selectedConference?: string;
   onlyTeamConference?: boolean;
@@ -80,7 +80,8 @@ export const CFBConferenceStandingsList = ({
   onlyTeamConference = false,
 }: Props) => {
   const { standings, loading, error } = useCFBConferenceStandings();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();

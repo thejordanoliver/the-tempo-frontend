@@ -1,8 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type Stat = {
   name: string;

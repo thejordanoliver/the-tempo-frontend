@@ -1,14 +1,20 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const seasonStatCardStyles = (isDark: boolean) =>
-  StyleSheet.create({
+export const seasonStatCardStyles = (isDark: boolean) => {
+  const bg = isDark ? Colors.black : Colors.white;
+  const surface = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+  const text = isDark ? Colors.white : Colors.black;
+  const muted = Colors.midTone;
+  const divider = isDark ? Colors.darkGray : Colors.lightGray;
+
+  return StyleSheet.create({
     card: {
       borderRadius: 8,
-      padding: 16,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      padding: 12,
+      backgroundColor: surface,
     },
     statsRow: {
       flexDirection: "row",
@@ -18,21 +24,21 @@ export const seasonStatCardStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     statValue: {
-      fontSize: 18,
+      fontSize: 20,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.dark.white : Colors.light.black,
+      color: text,
     },
     statLabel: {
-      fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.midTone : Colors.midTone,
-      marginTop: 2,
+      fontSize: 10,
+      fontFamily: Fonts.OSMEDIUM,
+      color: muted,
+      letterSpacing: 1.8,
+      marginTop: 3,
     },
-    errorText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    statDivider: {
+      width: 1,
+      height: 32,
+      backgroundColor: divider,
     },
   });
+};

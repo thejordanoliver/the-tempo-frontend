@@ -2,7 +2,7 @@ import { Dropdown } from "components/Dropdown";
 import { Colors, Fonts } from "constants/styles";
 import { useCFBPortalPlayers } from "hooks/CFBHooks/useCFBPortalPlayers";
 import React, { useEffect, useMemo, useRef } from "react";
-import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";
 import TransferPlayerCard from "./TransferCard";
 
@@ -29,7 +29,8 @@ export default function TransferList({
   const selectedTeam = team;
   const selectedView = view;
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   /** Refs */

@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Animated, Easing, useColorScheme, View } from "react-native";
+import { Animated, Easing, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import { ResultItem } from "types/types";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -27,7 +28,8 @@ export default function ExplorePage() {
 
   const navigation = useNavigation();
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
   const {
     query,
@@ -65,6 +67,7 @@ export default function ExplorePage() {
       case "team":
         if (item.isNFL) router.push(`/team/nfl/${item.id}`);
         else if (item.isMLB) router.push(`/team/mlb/${item.id}`);
+        else if (item.isWNBA) router.push(`/team/wnba/${item.id}`);
         else if (item.isNHL) router.push(`/team/nhl/${item.id}`);
         else if (item.isCFB) router.push(`/team/cfb/${item.id}`);
         else if (item.isCBB) router.push(`/team/cbb/${item.id}`);
@@ -88,9 +91,25 @@ export default function ExplorePage() {
               teamId: String(item.team_id ?? ""),
             },
           });
+        else if (item.isMMA)
+          router.push({
+            pathname: "/player/mma/[id]",
+            params: {
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
+            },
+          });
         else if (item.isMLB)
           router.push({
             pathname: "/player/mlb/[id]",
+            params: {
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
+            },
+          });
+        else if (item.isWNBA)
+          router.push({
+            pathname: "/player/wnba/[id]",
             params: {
               id: String(item.player_id),
               teamId: String(item.team_id ?? ""),

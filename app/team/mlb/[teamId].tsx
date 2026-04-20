@@ -9,13 +9,14 @@ import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { mlbTeams } from "constants/teamsMLB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMLBTeamGames } from "hooks/MLBHooks/useMLBTeamGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import {
   getGameCountByMonth,
@@ -28,7 +29,8 @@ import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const league = "MLB";
@@ -136,7 +138,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -206,7 +208,7 @@ export default function TeamDetailScreen() {
 
         {/* Forum */}
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamId as string} league="MLB" />
+          <TeamForum teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 
@@ -215,7 +217,8 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          league="MLB"
+          league={league}
+          isDark={isDark}
         />
       )}
     </View>

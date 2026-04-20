@@ -1,16 +1,18 @@
-import { Text, View, useColorScheme } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Text, View } from "react-native";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 // Simplified NFL-managed league status codes
 type StatusCode = "x" | "o" | "c" | "d" | "pi";
 
 // Map each status code to its color
 const statusCodeToColor: Record<StatusCode, string> = {
-  x: "#4caf50", // Clinched Playoff Berth - Green
-  o: "#f44336", // Eliminated - Red
-  c: "#2196f3", // Clinched Conference - Blue
-  d: "#ff9800", // Clinched Division - Orange
-  pi: "#ffc107", // Clinched Play-In - Amber
+  x: "#4caf50",
+  o: "#f44336",
+  c: "#2196f3",
+  d: "#ff9800",
+  pi: "#ffc107",
 };
 
 // Optional: map code to a friendly label
@@ -23,34 +25,31 @@ const statusCodeToLabel: Record<StatusCode, string> = {
 };
 
 interface StatusBadgeProps {
-  code?: string | null; // could be a numeric seed or a special code
-  clinchedConference?: boolean; // explicitly mark if the team clinched conference
+  code?: string | null;
+  clinchedConference?: boolean;
 }
 
 export const StatusBadge = ({
   code,
   clinchedConference = false,
 }: StatusBadgeProps) => {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = standingsStyles(isDark);
 
   if (!code && !clinchedConference) return null;
 
-  // Use "c" for clinched conference if applicable
   const displayCode: StatusCode | string = clinchedConference
     ? "c"
     : ["x", "o", "c", "d", "pi"].includes(code || "")
-    ? (code as StatusCode)
-    : code!;
+      ? (code as StatusCode)
+      : code!;
 
-  // Determine background color
   const backgroundColor =
     (["x", "o", "c", "d", "pi"].includes(displayCode)
       ? statusCodeToColor[displayCode as StatusCode]
-      : "#4caf50") || // green for playoff seeds
-    (isDark ? "#555" : "#ccc");
+      : Colors.dark.leafGreen) || (isDark ? Colors.darkGray : Colors.lightGray);
 
-  // Determine label text
   const label =
     displayCode in statusCodeToLabel
       ? statusCodeToLabel[displayCode as StatusCode]

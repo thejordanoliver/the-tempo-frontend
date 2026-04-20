@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam } from "constants/teams";
 import { useGameLeaders } from "hooks/NBAHooks/useGameLeaders";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
@@ -14,7 +14,7 @@ type Props = {
   gameId: string;
   awayTeamId: number;
   homeTeamId: number;
-  isDark: boolean; // new prop to force lighter colors
+  isDark: boolean;
 };
 
 export default function GameLeaders({
@@ -23,58 +23,43 @@ export default function GameLeaders({
   homeTeamId,
   isDark,
 }: Props) {
-  const { data, isLoading, isError } = useGameLeaders(
-    gameId,
-    awayTeamId,
-    homeTeamId,
-  );
-  const [selectedCategory, setSelectedCategory] = useState<Category>("points");
+  const { data, isLoading } = useGameLeaders(gameId, homeTeamId, awayTeamId);
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category>("points");
+
   const styles = gameLeadersStyles(isDark);
 
-  // Memoized top players
-  const CATEGORY_FIELD_MAP = {
-    points: "points",
-    rebounds: "totReb",
-    assists: "assists",
-    steals: "steals",
-  } as const;
-
-  const topPlayers = useMemo(() => {
+  /**
+   * Clean team ordering (no unstable sort)
+   */
+  const orderedTeams = useMemo(() => {
     if (!data) return [];
 
-    const getTopPlayerPerTeam = (category: Category) => {
-      const field = CATEGORY_FIELD_MAP[category];
+    const away = data.find((t: any) => t.team.id === awayTeamId);
+    const home = data.find((t: any) => t.team.id === homeTeamId);
 
-      const validPlayers = data.filter(
-        (p) => p.player && typeof p[field] === "number",
-      );
+    return [away, home].filter(Boolean);
+  }, [data, awayTeamId, homeTeamId]);
 
-      const teams = [...new Set(validPlayers.map((p) => p.team.id))];
+  /**
+   * Build display data for selected category
+   */
+  const topPlayers = useMemo(() => {
+    return orderedTeams
+      .map((teamBlock: any) => {
+        const leader = teamBlock?.leaders?.[selectedCategory];
 
-      return teams.map((teamId) => {
-        const playersFromTeam = validPlayers.filter(
-          (p) => p.team.id === teamId,
-        );
+        if (!leader?.player || !leader?.stats) return null;
 
-        return playersFromTeam.sort(
-          (a, b) => (b[field] ?? 0) - (a[field] ?? 0),
-        )[0];
-      });
-    };
-
-    const players = getTopPlayerPerTeam(selectedCategory);
-
-    return players.sort((a, b) => {
-      if (a.team.id === awayTeamId) return -1;
-      if (b.team.id === awayTeamId) return 1;
-      if (a.team.id === homeTeamId) return -1;
-      if (b.team.id === homeTeamId) return 1;
-      return 0;
-    });
-  }, [data, selectedCategory, awayTeamId, homeTeamId]);
-
-  // Add this check:
-  if (!topPlayers.length) return null;
+        return {
+          team: teamBlock.team,
+          teamType: teamBlock.teamType,
+          player: leader.player,
+          stats: leader.stats,
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => Boolean(x));
+  }, [orderedTeams, selectedCategory]);
 
   if (isLoading) {
     return (
@@ -83,9 +68,13 @@ export default function GameLeaders({
       </View>
     );
   }
+
+  if (!topPlayers.length) return null;
+
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
+
       <View style={styles.wrapper}>
         <MainScrollTabBar
           tabs={STAT_CATEGORIES}
@@ -94,25 +83,27 @@ export default function GameLeaders({
           isDark={isDark}
         />
 
-        {topPlayers.map((player, idx) => {
-          const p = player.localPlayer;
-          const team = getNBATeam(player.team.id);
-          const logo = getTeamLogo(team?.id, isDark);
+        {topPlayers.map((item: any, idx: number) => {
+          const p = item.player;
+          const team = getNBATeam(item.team.id);
+          const stats = item.stats;
+
           return (
-            <View key={idx} style={styles.card}>
+            <View key={`${item.team.id}-${idx}`} style={styles.card}>
               <View style={styles.avatarWrapper}>
                 <Image
                   source={{ uri: p?.headshot_url }}
                   style={styles.avatar}
                 />
               </View>
+
               <View style={styles.infoSection}>
                 <View style={styles.nameRow}>
                   <Text style={styles.playerName}>
                     {p?.first_name} {p?.last_name}
                   </Text>
                   <Text style={styles.jersey}>
-                    #{p?.jersey_number ?? "(NA)"}
+                    #{p?.jersey_number ?? "NA"}
                   </Text>
                 </View>
 
@@ -122,19 +113,19 @@ export default function GameLeaders({
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>PTS</Text>
                         <Text style={styles.statText}>
-                          {player.points ?? "-"}
+                          {stats?.points ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>FG</Text>
                         <Text style={styles.statText}>
-                          {player.fgm ?? "-"}/{player.fga ?? "-"}
+                          {stats?.fgm ?? "-"}/{stats?.fga ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>3PT</Text>
                         <Text style={styles.statText}>
-                          {player.tpm ?? "-"}/{player.tpa ?? "-"}
+                          {stats?.tpm ?? "-"}/{stats?.tpa ?? "-"}
                         </Text>
                       </View>
                     </>
@@ -145,19 +136,19 @@ export default function GameLeaders({
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>REB</Text>
                         <Text style={styles.statText}>
-                          {player.totReb ?? "-"}
-                        </Text>
-                      </View>
-                      <View style={styles.statBlock}>
-                        <Text style={styles.statLabel}>DREB</Text>
-                        <Text style={styles.statText}>
-                          {player.defReb ?? "-"}
+                          {stats?.totReb ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>OREB</Text>
                         <Text style={styles.statText}>
-                          {player.offReb ?? "-"}
+                          {stats?.offReb ?? "-"}
+                        </Text>
+                      </View>
+                      <View style={styles.statBlock}>
+                        <Text style={styles.statLabel}>DREB</Text>
+                        <Text style={styles.statText}>
+                          {stats?.defReb ?? "-"}
                         </Text>
                       </View>
                     </>
@@ -168,38 +159,43 @@ export default function GameLeaders({
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>AST</Text>
                         <Text style={styles.statText}>
-                          {player.assists ?? "-"}
+                          {stats?.assists ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>TO</Text>
                         <Text style={styles.statText}>
-                          {player.turnovers ?? "-"}
+                          {stats?.turnovers ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>MIN</Text>
-                        <Text style={styles.statText}>{player.min ?? "-"}</Text>
+                        <Text style={styles.statText}>
+                          {stats?.min ?? "-"}
+                        </Text>
                       </View>
                     </>
                   )}
+
                   {selectedCategory === "steals" && (
                     <>
                       <View style={styles.statBlock}>
-                        <Text style={styles.statLabel}>STLS</Text>
+                        <Text style={styles.statLabel}>STL</Text>
                         <Text style={styles.statText}>
-                          {player.steals ?? "-"}
+                          {stats?.steals ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
-                        <Text style={styles.statLabel}>FOULS</Text>
+                        <Text style={styles.statLabel}>FOUL</Text>
                         <Text style={styles.statText}>
-                          {player.pFouls ?? "-"}
+                          {stats?.fouls ?? "-"}
                         </Text>
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>MIN</Text>
-                        <Text style={styles.statText}>{player.min ?? "-"}</Text>
+                        <Text style={styles.statText}>
+                          {stats?.min ?? "-"}
+                        </Text>
                       </View>
                     </>
                   )}
@@ -207,7 +203,7 @@ export default function GameLeaders({
               </View>
 
               <Image
-                source={isDark ? team?.logoLight || team?.logo : logo}
+                source={isDark ? team?.logoLight || team?.logo : team?.logo}
                 style={styles.teamLogo}
                 resizeMode="contain"
               />

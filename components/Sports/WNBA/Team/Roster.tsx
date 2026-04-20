@@ -1,8 +1,8 @@
 // components/TeamPlayerList.tsx
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { globalStyles } from "constants/styles";
-import { RefreshControl, ScrollView, Text, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, Text } from "react-native";
 import { CBBPlayer } from "types/types";
 
 interface TeamPlayerListProps {
@@ -26,7 +26,8 @@ export default function Roster({
   teamId,
   isWomen,
 }: TeamPlayerListProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;

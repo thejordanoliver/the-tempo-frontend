@@ -12,17 +12,13 @@ import {
   View,
 } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { NHLGame } from "types/nhl";
+import { HockeyGameCardProps, NHLGame } from "types/hockey";
 import { formatNHLQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
-type Props = {
-  game: NHLGame; // Your API Game shape
-};
+function NHLSquareGameCard({ game, isDark }: HockeyGameCardProps) {
 
-function NHLSquareGameCard({ game }: Props) {
-  const isDark = useColorScheme() === "dark";
   const router = useRouter();
 
   /* ===============================

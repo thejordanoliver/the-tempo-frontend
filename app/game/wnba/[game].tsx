@@ -1,6 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
@@ -8,6 +7,7 @@ import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
@@ -18,6 +18,7 @@ import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import GameHeader from "components/Sports/WNBA/GameDetails/GameHeader";
 import { getNeutralVenue } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -25,7 +26,7 @@ import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLastFiveGames } from "hooks/WNBAHooks/useLastFiveGames";
 import React, { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -40,10 +41,12 @@ function parseGameDate(raw: any) {
 }
 
 export default function GameDetailsScreen() {
+  const league = "WNBA";
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
 
@@ -171,7 +174,6 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;
-
   const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
   const venueName = neutralSite
     ? neutralVenue?.name || baseVenue?.fullName
@@ -198,10 +200,8 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Status / linescore ---------------- */
 
-  const displayHomeScore = liveScore?.home.total ?? 0;
-  const displayAwayScore = liveScore?.away.total ?? 0;
-
-  // --- Period scores / line score ---
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
@@ -233,7 +233,7 @@ export default function GameDetailsScreen() {
           homeTeamCode={homeName}
           awayTeamCode={awayName}
           isNeutralSite={!!neutralSite}
-          league={"WNBA"}
+          league={league}
         />
       ),
     });
@@ -244,7 +244,7 @@ export default function GameDetailsScreen() {
   if (isLoadingGame) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -268,8 +268,8 @@ export default function GameDetailsScreen() {
           awayLogo={awayLogo}
           rankHome={homeRank}
           rankAway={awayRank}
-          homeScore={displayHomeScore}
-          awayScore={displayAwayScore}
+          homeScore={homeScore}
+          awayScore={awayScore}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
           displayClock={displayClock}
@@ -297,7 +297,7 @@ export default function GameDetailsScreen() {
                 linescore={lineScore}
                 awayCode={awayName ?? ""}
                 homeCode={homeName ?? ""}
-                league={"WNBA"} // ✅ FIX
+                league={league}
                 isDark={isDark}
               />
             )}
@@ -342,7 +342,7 @@ export default function GameDetailsScreen() {
               leaders={leaders}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={"wnba"}
+              league={league}
               gameStatusDescription={gameStatusDescription}
               isDark={isDark}
             />
@@ -357,7 +357,7 @@ export default function GameDetailsScreen() {
                 awayLogo={awayLogo}
                 homePlayers={homeFoulPlayers}
                 awayPlayers={awayFoulPlayers}
-                league={"WNBA"}
+                league={league}
                 isDark={isDark}
               />
             )}
@@ -368,14 +368,14 @@ export default function GameDetailsScreen() {
                 homeTeamId={String(homeEspnId)}
                 awayTeamId={String(awayEspnId)}
                 neutralSite={neutralSite}
-                league={"WNBA"}
+                league={league}
               />
             )}
 
             {(isHalftime || inProgress || isFinal) && (
               <GameSummary
                 plays={plays ?? []}
-                league={"WNBA"}
+                league={league}
                 isDark={isDark}
               />
             )}
@@ -383,7 +383,7 @@ export default function GameDetailsScreen() {
             <GameTeamStats
               stats={teamStats}
               gameStatusDescription={gameStatusDescription}
-              league={"WNBA"}
+              league={league}
               isDark={isDark}
             />
 
@@ -392,7 +392,7 @@ export default function GameDetailsScreen() {
                 playerStats={playerStats}
                 awayTeamId={Number(awayEspnId)}
                 homeTeamId={Number(homeEspnId)}
-                league={"WNBA"}
+                league={league}
                 isDark={isDark}
               />
             )}
@@ -402,7 +402,7 @@ export default function GameDetailsScreen() {
                 playerStats={playerStats}
                 awayTeamId={Number(awayEspnId)}
                 homeTeamId={Number(homeEspnId)}
-                league={"WNBA"}
+                league={league}
                 isDark={isDark}
               />
             )}
@@ -419,7 +419,7 @@ export default function GameDetailsScreen() {
                 games: homeLastGames ?? [],
               }}
               isDark={isDark}
-              league={"WNBA"}
+              league={league}
             />
 
             {highlights?.length > 0 && (

@@ -11,13 +11,16 @@ import SportsListModal, {
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
+import { NBAPlayoffBracket } from "components/Sports/NBA/Playoffs/NBAPlayoffBracket";
 import SLGamesList from "components/Sports/NBASummerLeague/Games/SLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNBAPlayoffSeries } from "hooks/NBAHooks/usePlayoffGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
@@ -25,19 +28,19 @@ import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function NBALeagueScreen() {
+  const league = "NBA";
   const currentYear = getNBASeason();
-
+  const playoffYear = Number(currentYear);
   const {
     games,
     error: errorGames,
@@ -48,7 +51,6 @@ export default function NBALeagueScreen() {
   const {
     games: summerGames,
     loading: loadingSummer,
-    error: errorSummer,
     refreshSummerGames,
   } = useNBASLGames({ season: currentYear.toString() });
 
@@ -62,7 +64,8 @@ export default function NBALeagueScreen() {
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const [draftYear, setDraftYear] = useState(dayjs().year().toString());
   const [standingsYear, setStandingsYear] = useState(
@@ -72,20 +75,27 @@ export default function NBALeagueScreen() {
   const [draftRound, setDraftRound] = useState("all");
   const { leaders, loading, error } = useSeasonLeaders();
   const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NBA");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
   const {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "NBA");
+  } = useLeaguesNews(10, league);
+  const {
+    bracket,
+    loading: playoffLoading,
+    error: playoffError,
+    refreshing: playoffRefreshing,
+    onRefresh,
+  } = useNBAPlayoffSeries(playoffYear);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="NBA"
+          league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -147,7 +157,7 @@ export default function NBALeagueScreen() {
       <View style={styles.container}>
         <PagerView
           ref={pagerRef}
-          style={{ flex: 1 }}
+          style={styles.contentArea}
           initialPage={0}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
@@ -211,7 +221,26 @@ export default function NBALeagueScreen() {
             <StandingsList
               year={standingsYear}
               onYearChange={setStandingsYear}
-              league="NBA"
+              league={league}
+            />
+          </ScrollView>
+
+          {/* PLAYOFFS */}
+          <ScrollView
+            key="playoffs"
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={playoffRefreshing}
+                onRefresh={onRefresh}
+                tintColor={isDark ? Colors.white : Colors.black}
+              />
+            }
+          >
+            <NBAPlayoffBracket
+              loading={playoffLoading}
+              error={playoffError}
+              bracket={bracket}
             />
           </ScrollView>
 
@@ -238,13 +267,13 @@ export default function NBALeagueScreen() {
           </View>
 
           {/* AWARDS */}
-          <ScrollView key="awards">
-            <AwardSeasons league="NBA" />
-          </ScrollView>
+          <View key="awards">
+            <AwardSeasons league={league} />
+          </View>
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league="NBA" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

@@ -1,4 +1,6 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import { Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
@@ -8,18 +10,10 @@ import {
   StyleSheet,
   Text,
   View,
-  useColorScheme,
 } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 import HighlightCard from "../../components/News/HighlightCard";
 import { useHighlights } from "../../hooks/useHighlights";
-
-const OSEXTRALIGHT = "Oswald_200ExtraLight";
-const OSLIGHT = "Oswald_300Light";
-const OSREGULAR = "Oswald_400Regular";
-const OSMEDIUM = "Oswald_500Medium";
-const OSSEMIBOLD = "Oswald_600SemiBold";
-const OSBOLD = "Oswald_700Bold";
 
 export default function HighlightVideoScreen() {
   const { videoId: initialVideoId, title: initialTitle } =
@@ -28,7 +22,8 @@ export default function HighlightVideoScreen() {
       title: string;
     }>();
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const router = useRouter();
   const navigation = useNavigation();
@@ -42,12 +37,12 @@ export default function HighlightVideoScreen() {
     error: highlightsError,
   } = useHighlights(
     "NBA dunks OR game winners OR buzzer beaters OR crossovers OR trending",
-   " 10"
+    " 10",
   );
 
   const queue = React.useMemo(
     () => highlights.filter((item) => item.videoId !== initialVideoId),
-    [highlights, initialVideoId]
+    [highlights, initialVideoId],
   );
 
   const currentVideo =
@@ -102,7 +97,7 @@ export default function HighlightVideoScreen() {
               | "ended"
               | "buffering"
               | "unstarted"
-              | "video-cued"
+              | "video-cued",
           ) => {
             if (state === "ended") handleVideoEnd();
           }}
@@ -159,13 +154,13 @@ const getStyles = (isDark: boolean) =>
     },
     title: {
       fontSize: 20,
-      fontFamily: OSBOLD,
+      fontFamily: Fonts.OSBOLD,
       marginBottom: 12,
       color: isDark ? "#fff" : "#000",
     },
     subheading: {
       fontSize: 24,
-      fontFamily: OSMEDIUM,
+      fontFamily: Fonts.OSMEDIUM,
       marginBottom: 8,
       marginTop: 8,
       paddingBottom: 4,

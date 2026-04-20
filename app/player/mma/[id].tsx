@@ -1,16 +1,21 @@
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
+import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme } from "react-native";
+import { ScrollView, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 import { emptyFighter } from "types/mma";
 import { calculateAge } from "utils/dateUtils";
 
 export default function PlayerDetailScreen() {
-  const isDark = useColorScheme() === "dark";
-  const styles = playerScreenStyles
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = playerScreenStyles;
+  const global = globalStyles(isDark);
   const navigation = useNavigation();
   const { id } = useLocalSearchParams<{
     id?: string;
@@ -35,8 +40,16 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, flag]);
 
+  if (loading) {
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
+
   return (
-     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         fighter={fighter ?? emptyFighter}
         isDark={isDark}

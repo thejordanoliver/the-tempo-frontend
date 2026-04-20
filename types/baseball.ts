@@ -71,6 +71,11 @@ export interface MLBGame {
     away: MLBScoreSide;
   };
 }
+
+export type BaseballGameCardProps = {
+  game: MLBGame;
+};
+
 export interface MLBPlayer {
   id: string;
   name: string;

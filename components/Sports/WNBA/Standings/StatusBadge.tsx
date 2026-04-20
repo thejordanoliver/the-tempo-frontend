@@ -1,4 +1,4 @@
-import { Text, View, useColorScheme } from "react-native";
+import { Text, View } from "react-native";
 import { getStyles } from "styles/LeagueStyles/StandingsStyles";
 
 // Simplified NFL-managed league status codes
@@ -31,7 +31,8 @@ export const StatusBadge = ({
   code,
   clinchedConference = false,
 }: StatusBadgeProps) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   if (!code && !clinchedConference) return null;
@@ -40,8 +41,8 @@ export const StatusBadge = ({
   const displayCode: StatusCode | string = clinchedConference
     ? "c"
     : ["x", "o", "c", "d", "pi"].includes(code || "")
-    ? (code as StatusCode)
-    : code!;
+      ? (code as StatusCode)
+      : code!;
 
   // Determine background color
   const backgroundColor =

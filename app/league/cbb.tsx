@@ -27,18 +27,21 @@ import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 export default function CBBLeagueScreen() {
+  const league = "CBB";
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
@@ -54,22 +57,22 @@ export default function CBBLeagueScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "CBB");
+  } = useLeaguesNews(10, league);
   const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("CBB");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const apTop25 = useAPTop25("CBB");
+  const apTop25 = useAPTop25(league);
   const top25Teams = apTop25.map((t) => String(t?.id));
-  const { categories, loading, error } = useSeasonLeaders(2026, "CBB");
+  const { categories, loading, error } = useSeasonLeaders(2026, league);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="CBB"
+          league={league}
           modalVisible={isDropdownOpen}
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -221,7 +224,7 @@ export default function CBBLeagueScreen() {
               {selectedConference === "Top 25" ||
               selectedConference === "NCAA Tournament" ||
               !selectedConference ? (
-                <CBBStandingsList league="CBB" />
+                <CBBStandingsList league={league} />
               ) : (
                 <CBBConferenceStandingsList
                   selectedConference={selectedConference}
@@ -236,7 +239,7 @@ export default function CBBLeagueScreen() {
               loading={loading}
               error={error}
               categories={categories}
-              league={"CBB"}
+              league={league}
               isDark={isDark}
             />
           </View>
@@ -245,13 +248,13 @@ export default function CBBLeagueScreen() {
           <View key="bracket"></View>
 
           {/* AWARDS */}
-          <ScrollView key="awards">
-            <AwardSeasons league="CBB" />
-          </ScrollView>
+          <View key="awards">
+            <AwardSeasons league={league} />
+          </View>
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league="CBB" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>
@@ -274,7 +277,7 @@ export default function CBBLeagueScreen() {
         onSelect={(conf) => setSelectedConference(conf ?? "")}
         onOpen={() => setIsDropdownOpen(true)}
         onClose={() => setIsDropdownOpen(false)}
-        league="cbb"
+        league={league}
       />
     </>
   );

@@ -1,11 +1,12 @@
 import { Colors, Fonts } from "constants/styles";
 import { teams as nbaTeams } from "constants/teams";
-import { teams as cbbTeams } from "constants/teamsCBB";
+import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { nflTeams } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { GameOdds } from "hooks/useUpcomingOdds";
 import React from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   game: GameOdds;
@@ -20,7 +21,8 @@ export const OddsCard: React.FC<Props> = ({
   error,
   lighter = false,
 }) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = oddsCardStyles(isDark, lighter);
 
   /* -------------------- Error State -------------------- */

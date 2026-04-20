@@ -1,15 +1,9 @@
 // components/FollowersList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { User } from "hooks/UserHooks/useFollowers";
-import {
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-} from "react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
 import FollowingButton from "./ModalFollowingButton";
 
@@ -30,25 +24,25 @@ export default function FollowersList({
   onToggleFollow,
   error,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = followersListStyles(isDark);
   const global = globalStyles(isDark);
 
   if (!users || users.length === 0) {
     return <Text style={global.emptyText}>No users found.</Text>;
   }
+
   if (error) {
     return <Text style={global.errorText}>{error}</Text>;
   }
 
   const renderItem = ({ item }: { item: User }) => {
-    const imageUri = item.profile_image.startsWith("http")
-      ? item.profile_image
-      : `${process.env.EXPO_PUBLIC_API_URL}${item.profile_image}`;
-
+    const profilePlaceholder =
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
+    const profileImage = item.profile_image;
     const isCurrentUser = item.id.toString() === currentUserId;
-    // console.log(JSON.stringify(item, null, 2))
-    const isMutual = item.isFollowing && item.followsYou;
+   
 
     return (
       <View style={styles.itemRow}>
@@ -58,7 +52,10 @@ export default function FollowersList({
             style={styles.userRow}
           >
             <View style={styles.avatarContainer}>
-              <Image source={{ uri: imageUri }} style={styles.avatar} />
+              <Image
+                source={{ uri: profileImage ?? profilePlaceholder }}
+                style={styles.avatar}
+              />
             </View>
             <Text style={styles.username}>{item.username}</Text>
           </TouchableOpacity>
@@ -68,7 +65,7 @@ export default function FollowersList({
             name="infinite-outline"
             size={14}
             color={Colors.midTone}
-            style={{ marginRight: 6 }}
+            style={styles.mutalIcon}
           />
         )}
         {!isCurrentUser && (

@@ -14,18 +14,13 @@ import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import WNBALogo from "assets/Logos/WNBA/WNBA.png";
 import MMALogo from "assets/MMA/MMA_Logos/MMA.png";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { sportsListModalStyles } from "styles/LeagueStyles/SportsListModalStyles";
 import { LeagueType } from "types/types";
 import { snapPoints } from "utils/modalUtils";
 
@@ -64,21 +59,20 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
   ({ onSelect, onClose }, ref) => {
+    const { resolvedColorScheme } = usePreferences();
+    const isDark = resolvedColorScheme === "dark";
+    const styles = sportsListModalStyles(isDark);
+    const router = useRouter();
     const sheetRef = useMemo(
       () => ({ current: null as BottomSheetModal | null }),
       [],
     );
-
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === "dark";
-    const router = useRouter();
 
     useImperativeHandle(ref, () => ({
       present: () => sheetRef.current?.present(),
       dismiss: () => sheetRef.current?.dismiss(),
     }));
 
-    const styles = getStyles(isDark);
     type LeagueRoute =
       | "/league/nba"
       | "/league/wnba"
@@ -175,86 +169,5 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
     );
   },
 );
-
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    backgroundStyle: { backgroundColor: "transparent", overflow: "hidden" },
-    handleStyle: {
-      backgroundColor: "transparent",
-      height: 40,
-      justifyContent: "center",
-      alignItems: "center",
-      position: "absolute",
-      left: 8,
-      right: 8,
-      top: 0,
-    },
-    handleIndicatorStyle: {
-      backgroundColor: Colors.midTone,
-      width: 36,
-      height: 4,
-      borderRadius: 2,
-      zIndex: 9999,
-      marginBottom: 4,
-    },
-    blurContainer: {
-      flex: 1,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      overflow: "hidden",
-      paddingHorizontal: 16,
-      paddingTop: 60,
-    },
-    scrollContent: {
-      paddingBottom: 40,
-    },
-    header: {
-      position: "absolute",
-      width: "100%",
-      top: 0,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      paddingVertical: 12,
-    },
-    headerText: {
-      textAlign: "center",
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
-    },
-    leagueButton: {
-      paddingVertical: 12,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%",
-    },
-    buttonContainer: {
-      backgroundColor: "transparent",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    buttonWrapper: { flexDirection: "row", alignItems: "center" },
-    leagueLogo: {
-      width: 40,
-      height: 40,
-      marginRight: 8,
-    },
-    leagueText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
-    },
-  });
 
 export default SportsListModal;

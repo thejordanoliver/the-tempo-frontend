@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import React, { useMemo } from "react";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import type { TransformedNFLSeriesGame } from "utils/NFLUtils/transformSeriesGame";
 type Props = {
   team1Code: string; // "DAL"
@@ -41,7 +41,8 @@ const NFLSeriesHistory: React.FC<Props> = ({
   team2LogoLight,
   lighter = false,
 }) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const standardizedGames = games ?? [];
 

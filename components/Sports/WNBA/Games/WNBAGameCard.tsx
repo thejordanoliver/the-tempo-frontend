@@ -1,23 +1,19 @@
 import { Colors } from "constants/styles";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { BasketballGame } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 function WNBAGameCard({ game }: { game: BasketballGame }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
 
   const homeId = game?.teams?.home?.id;

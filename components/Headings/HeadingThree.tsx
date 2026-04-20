@@ -1,13 +1,15 @@
 // components/Heading.tsx
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import { StyleSheet, Text, useColorScheme } from "react-native";
+import { StyleSheet, Text } from "react-native";
 type Props = {
   children: React.ReactNode;
 };
 
 const HeadingThree: React.FC<Props> = ({ children }) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = headingStyles(isDark);
   return <Text style={styles.heading}>{children}</Text>;
 };

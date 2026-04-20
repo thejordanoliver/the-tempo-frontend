@@ -1,53 +1,39 @@
-/* ================================================== */
-/* Imports                                            */
-/* ================================================== */
-
-/* --- Navigation & Routing --- */
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-
-/* --- React & React Native --- */
-import { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
-
-/* --- UI Components --- */
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-
-/* --- Game Detail Components --- */
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-
+import GameHeader from "components/Sports/NFL/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
 import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
-/* --- Hooks --- */
+import { getNeutralStadium } from "constants/neutralVenues";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
-
-import { FootballGame } from "types/football";
-/* --- Utils & Stores --- */
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import GameHeader from "components/Sports/NFL/GameDetails/GameHeader";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-
-import { getNeutralStadium } from "constants/teamsNFL";
-import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
+import { useLayoutEffect, useMemo } from "react";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 
 export default function CFBGameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game: gameParam } = useLocalSearchParams();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
@@ -63,7 +49,6 @@ export default function CFBGameDetailsScreen() {
     return null;
   }
   const { teams, game } = parsedGame;
-
   const gameId = String(game.id);
   const homeTeamId = teams?.home?.id ?? 0;
   const awayTeamId = teams?.away?.id ?? 0;
@@ -77,11 +62,6 @@ export default function CFBGameDetailsScreen() {
   const headerAwayLogo = getCFBTeamLogo(awayTeamId, true);
   const homeCode = homeTeam?.code;
   const awayCode = awayTeam?.code;
-
-  /* -------------------------------------------------- */
-  /* Date Handling                                     */
-  /* -------------------------------------------------- */
-
   const gameDateObj = useMemo(() => {
     if (!game?.date) return null;
 
@@ -104,10 +84,6 @@ export default function CFBGameDetailsScreen() {
       minute: "2-digit",
       hour12: true,
     }) || "";
-
-  /* -------------------------------------------------- */
-  /* Data Fetching                                     */
-  /* -------------------------------------------------- */
 
   const { details, score } = useGameDetails(
     "cfb",
@@ -160,6 +136,7 @@ export default function CFBGameDetailsScreen() {
       }
     : undefined;
   const baseVenue = details?.venue;
+
   const neutralVenue = getNeutralStadium(baseVenue?.fullName, neutralSite);
   const venueName = neutralSite
     ? neutralVenue?.name
@@ -225,7 +202,7 @@ export default function CFBGameDetailsScreen() {
   if (isGameLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -238,7 +215,6 @@ export default function CFBGameDetailsScreen() {
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
-        {/* Teams & Score Section */}
         <GameHeader
           headlineText={headline}
           home={homeTeam}
@@ -295,19 +271,17 @@ export default function CFBGameDetailsScreen() {
               />
             )}
 
-            {/* Last Play Field - only show when game is live */}
             {(inProgress || isHalftime) && (
               <PlayByPlayField
                 lastPlay={lastPlay}
                 firstDownYardLine={undefined}
                 possessionTeamId={possessionTeamId}
-                homeTeamId={Number(homeTeam.id)} // ensure number
-                awayTeamId={Number(awayTeam.id)} // ensure number
+                homeTeamId={Number(homeTeam.id)}
+                awayTeamId={Number(awayTeam.id)}
                 league="CFB"
               />
             )}
 
-            {/* Game Leaders - only when game is live */}
             {(inProgress || isHalftime || isFinal) && (
               <>
                 <GameLeaders
@@ -328,6 +302,7 @@ export default function CFBGameDetailsScreen() {
                 />
               </>
             )}
+
             <TeamScoringSummary
               scoringPlays={scoringPlays ?? []}
               homeTeamId={Number(homeTeam?.espnID)}
@@ -379,8 +354,8 @@ export default function CFBGameDetailsScreen() {
               error={null}
               weather={weather}
               grass={venue?.grass ?? undefined}
-              surface="football"
               isDark={isDark}
+              surface="football"
             />
           </View>
         )}

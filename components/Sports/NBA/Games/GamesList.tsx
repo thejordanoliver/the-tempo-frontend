@@ -9,7 +9,7 @@ import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Text, useColorScheme, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import type { Game } from "types/types";
@@ -40,9 +40,9 @@ export default function GamesList({
   scrollEnabled = true,
 }: GamesListProps) {
   const { viewMode } = usePreferences();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = gameListStyles;
-
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [previewGame, setPreviewGame] = useState<Game | null>(null);

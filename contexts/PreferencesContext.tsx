@@ -1,35 +1,86 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Appearance } from "react-native";
 
 type ViewMode = "list" | "grid" | "stacked";
+type ColorSchemePreference = "light" | "dark" | "system";
 
 type PreferencesContextType = {
   viewMode: ViewMode;
   toggleViewMode: () => void;
   setViewMode: (mode: ViewMode) => void;
+
+  colorScheme: ColorSchemePreference;
+  resolvedColorScheme: "light" | "dark";
+  setColorScheme: (scheme: ColorSchemePreference) => void;
+  toggleColorScheme: () => void;
 };
 
-const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined);
+const PreferencesContext = createContext<PreferencesContextType | undefined>(
+  undefined,
+);
 
 const VIEW_MODE_KEY = "@view_mode_preference";
+const COLOR_SCHEME_KEY = "@color_scheme_preference";
 
-export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [viewMode, setViewModeState] = useState<ViewMode>("list");
+  const [colorScheme, setColorSchemeState] =
+    useState<ColorSchemePreference>("system");
 
-  // Load persisted viewMode on mount
+  // ✅ Reactive — stored in state so changes trigger re-renders
+  const [systemScheme, setSystemScheme] = useState<"light" | "dark">(
+    Appearance.getColorScheme() ?? "light",
+  );
+
+  // ✅ Stays in sync with OS theme changes
   useEffect(() => {
-    const loadViewMode = async () => {
+    const listener = Appearance.addChangeListener(({ colorScheme }) => {
+      setSystemScheme(colorScheme === "dark" ? "dark" : "light");
+    });
+    return () => listener.remove();
+  }, []);
+
+  // ✅ Always correct — recomputed whenever colorScheme or systemScheme changes
+  const resolvedColorScheme =
+    colorScheme === "system" ? systemScheme : colorScheme;
+
+  /* ---------------- Load persisted settings ---------------- */
+
+  useEffect(() => {
+    const load = async () => {
       try {
-        const stored = await AsyncStorage.getItem(VIEW_MODE_KEY);
-        if (stored === "list" || stored === "grid" || stored === "stacked") {
-          setViewModeState(stored);
+        const [storedView, storedTheme] = await Promise.all([
+          AsyncStorage.getItem(VIEW_MODE_KEY),
+          AsyncStorage.getItem(COLOR_SCHEME_KEY),
+        ]);
+
+        if (
+          storedView === "list" ||
+          storedView === "grid" ||
+          storedView === "stacked"
+        ) {
+          setViewModeState(storedView);
+        }
+
+        if (
+          storedTheme === "light" ||
+          storedTheme === "dark" ||
+          storedTheme === "system"
+        ) {
+          setColorSchemeState(storedTheme);
         }
       } catch (e) {
-        console.warn("Failed to load view mode from storage:", e);
+        console.warn("Failed to load preferences:", e);
       }
     };
-    loadViewMode();
+
+    load();
   }, []);
+
+  /* ---------------- Persist helpers ---------------- */
 
   const persistViewMode = async (mode: ViewMode) => {
     try {
@@ -39,24 +90,59 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
+  const persistColorScheme = async (scheme: ColorSchemePreference) => {
+    try {
+      await AsyncStorage.setItem(COLOR_SCHEME_KEY, scheme);
+    } catch (e) {
+      console.warn("Failed to save color scheme:", e);
+    }
+  };
+
+  /* ---------------- Setters ---------------- */
+
   const setViewMode = (mode: ViewMode) => {
     setViewModeState(mode);
     persistViewMode(mode);
   };
 
-  // Cycle through all 3 modes
+  const setColorScheme = (scheme: ColorSchemePreference) => {
+    setColorSchemeState(scheme);
+    persistColorScheme(scheme);
+  };
+
+  /* ---------------- Toggles ---------------- */
+
   const toggleViewMode = () => {
     const next =
-      viewMode === "list"
-        ? "grid"
-        : viewMode === "grid"
-        ? "stacked"
-        : "list";
+      viewMode === "list" ? "grid" : viewMode === "grid" ? "stacked" : "list";
+
     setViewMode(next);
   };
 
+  const toggleColorScheme = () => {
+    const next =
+      colorScheme === "light"
+        ? "dark"
+        : colorScheme === "dark"
+          ? "system"
+          : "light";
+
+    setColorScheme(next);
+  };
+
   return (
-    <PreferencesContext.Provider value={{ viewMode, toggleViewMode, setViewMode }}>
+    <PreferencesContext.Provider
+      value={{
+        viewMode,
+        toggleViewMode,
+        setViewMode,
+
+        colorScheme,
+        resolvedColorScheme,
+        setColorScheme,
+        toggleColorScheme,
+      }}
+    >
       {children}
     </PreferencesContext.Provider>
   );

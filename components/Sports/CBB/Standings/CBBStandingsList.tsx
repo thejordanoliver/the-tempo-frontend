@@ -4,6 +4,8 @@ import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useState } from "react";
@@ -15,10 +17,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 type Props = {
   league: "CBB" | "WCBB";
   isWomen?: boolean;
@@ -27,7 +27,8 @@ type Props = {
 export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   const { rankings, loading, error, refresh } = useCBBRankings(league);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();

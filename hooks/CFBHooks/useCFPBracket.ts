@@ -53,7 +53,7 @@ function getCFPPlayoffGames(scoreboard: any) {
 }
 
 /* -----------------------------------------------------
-   ROUND DETECTION (TYPE SAFE)
+   ROUND DETECTION
 ----------------------------------------------------- */
 
 function detectRound(ev: any): Round {
@@ -69,7 +69,6 @@ function detectRound(ev: any): Round {
   if (headline.includes("semifinal")) return "semifinal";
   if (headline.includes("championship")) return "championship";
 
-  // safe fallback (keeps Round valid)
   return "first";
 }
 
@@ -133,15 +132,12 @@ function transformEventToBracketGame(ev: any): BracketGame {
   return {
     id: ev.id,
     round,
-
     top: away,
     bottom: home,
-
     status: state,
     startTime: ev.date,
     topScore: awayRaw?.score ? Number(awayRaw.score) : null,
     bottomScore: homeRaw?.score ? Number(homeRaw.score) : null,
-
     broadcasts,
   };
 }
@@ -222,27 +218,26 @@ function buildBracket(events: any[]): BracketData {
     rounds[r].push(ev);
   });
 
-  const first = rounds.first.map(transformEventToBracketGame);
-  const qf = rounds.quarterfinal.map(transformEventToBracketGame);
-  const semi = rounds.semifinal.map(transformEventToBracketGame);
-  const champ = rounds.championship.map(transformEventToBracketGame);
-
   return {
     first: {
       title: "First Round",
-      games: sortFirstRoundGames(first),
+      games: sortFirstRoundGames(
+        rounds.first.map(transformEventToBracketGame),
+      ),
     },
     quarterfinal: {
       title: "Quarterfinals",
-      games: sortQuarterfinalGames(qf),
+      games: sortQuarterfinalGames(
+        rounds.quarterfinal.map(transformEventToBracketGame),
+      ),
     },
     semifinal: {
       title: "Semifinals",
-      games: semi,
+      games: rounds.semifinal.map(transformEventToBracketGame),
     },
     championship: {
       title: "National Championship",
-      games: champ,
+      games: rounds.championship.map(transformEventToBracketGame),
     },
   };
 }
@@ -253,41 +248,73 @@ function buildBracket(events: any[]): BracketData {
 
 export function useCFPBracket() {
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const eventsRef = useRef<any[]>([]);
 
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  /* ================= FETCH ================= */
 
+  const fetchBracket = useCallback(async () => {
     try {
+      setError(null);
+
       const dates = generateDateRange("2025-12-19", "2026-01-20");
+
+      // 🔥 parallel fetch (faster)
+      const results = await Promise.all(
+        dates.map((d) => fetchScoreboard(d)),
+      );
+
       const map = new Map<string, any>();
 
-      for (const d of dates) {
-        const sb = await fetchScoreboard(d);
-        if (!sb) continue;
+      results.forEach((sb) => {
+        if (!sb) return;
 
         const games = getCFPPlayoffGames(sb);
 
         for (const ev of games) {
           map.set(ev.id, ev);
         }
-      }
+      });
 
       eventsRef.current = Array.from(map.values());
     } catch (err) {
       console.error(err);
       setError("Failed to load CFP bracket.");
     }
-
-    setLoading(false);
   }, []);
 
+  /* ================= INITIAL LOAD ================= */
+
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    let isMounted = true;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+        await fetchBracket();
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    load();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fetchBracket]);
+
+  /* ================= REFRESH ================= */
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchBracket();
+    setRefreshing(false);
+  }, [fetchBracket]);
+
+  /* ================= DERIVED ================= */
 
   const data = useMemo(() => {
     return eventsRef.current.length > 0
@@ -295,5 +322,11 @@ export function useCFPBracket() {
       : null;
   }, [eventsRef.current.length]);
 
-  return { data, loading, error, refresh };
+  return {
+    data,
+    loading,
+    refreshing,
+    error,
+    onRefresh,
+  };
 }

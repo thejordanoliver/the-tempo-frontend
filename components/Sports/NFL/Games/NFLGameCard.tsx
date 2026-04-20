@@ -2,26 +2,23 @@ import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { memo } from "react";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { Game } from "types/football";
+import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getGameDate } from "utils/nflGameCardUtils";
 
-type GameCardProps = {
-  game: Game;
-};
-function NFLGameCard({ game }: GameCardProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+function NFLGameCard({ game }: FootballGameCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   // -----------------------------------------------------
   // TEAM + DATE
   // -----------------------------------------------------
@@ -75,8 +72,8 @@ function NFLGameCard({ game }: GameCardProps) {
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = headlineText ?? holidayLabel ?? "";
   const possessionTeamId = score?.possession.teamId;
-  const homeRecord = details?.records.home.total.summary;
-  const awayRecord = details?.records.away.total.summary;
+  const homeRecord = details?.records?.home?.total?.summary;
+  const awayRecord = details?.records?.away?.total?.summary;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const football = isDark ? FootballLight : Football;

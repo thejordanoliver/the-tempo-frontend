@@ -1,4 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import {
@@ -8,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import Modal from "react-native-modal";
@@ -34,9 +34,9 @@ export default function ConfirmModal({
   cancelText = "Cancel",
   children, // 👈 accept children
 }: ConfirmModalProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = confirmModalStyles(isDark);
-  // Internal state to delay unmount after animation out
   const [showModal, setShowModal] = useState(visible);
 
   useEffect(() => {

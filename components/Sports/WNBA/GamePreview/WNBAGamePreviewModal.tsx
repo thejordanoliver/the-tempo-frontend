@@ -207,7 +207,7 @@ export default function WNBAGamePreviewModal({
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>

@@ -3,6 +3,7 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { globalStyles } from "constants/styles";
 import { getTeamByESPNId } from "constants/teamsCBB";
+import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
@@ -11,6 +12,7 @@ interface Props {
   seasonStatsFlattened: any[];
   careerStatsFlattened: any[];
   isDark: boolean;
+  isWNBA?: boolean;
 }
 
 type StatView = "totals" | "pergame";
@@ -31,6 +33,7 @@ export default function PlayerStatTable({
   seasonStatsFlattened,
   careerStatsFlattened,
   isDark,
+  isWNBA = false,
 }: Props) {
   const [statView, setStatView] = useState<StatView>("totals");
   const styles = statsTableStyles(isDark);
@@ -51,18 +54,6 @@ export default function PlayerStatTable({
     });
 
     return best;
-  }, [seasonStatsFlattened]);
-
-  // ------------------------------
-  // TEAMS PLAYED COUNT
-  // ------------------------------
-  const teamsPlayedCount = useMemo(() => {
-    const teams = new Set<string>();
-    seasonStatsFlattened.forEach((s) => {
-      if (s.team && s.team !== "—") teams.add(s.team);
-    });
-    const count = teams.size;
-    return count === 1 ? "1 TEAM" : `${count} TEAMS`;
   }, [seasonStatsFlattened]);
 
   const renderStat = (stat?: number | null, gp?: number | null) =>
@@ -149,7 +140,9 @@ export default function PlayerStatTable({
                     : styles.rowAltLight
                   : null;
               const highlight = s.season === bestSeason ? styles.best : null;
-              const team = getTeamByESPNId(s.teamId)?.code;
+              const team = isWNBA
+                ? getWNBATeamByESPNId(s.teamId)?.code
+                : getTeamByESPNId(s.teamId)?.code;
 
               return (
                 <View key={s.season} style={[styles.row, zebra, highlight]}>

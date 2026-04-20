@@ -5,14 +5,12 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBWeeklyGames } from "hooks/CBBHooks/useCBBWeeklyGames";
 import { useWeeklyGames } from "hooks/NBAHooks/useWeeklyGames";
-import { useNewsStore } from "hooks/newsStore";
 import { useFootballWeeklyGames } from "hooks/NFLHooks/useFootballWeeklyGames";
-import { useHighlights } from "hooks/useHighlights";
-import { useNews } from "hooks/useNews";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
 import { useMLBWeeklyGames } from "./MLBHooks/useMLBWeeklyGames";
 import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
+import { useAllNews } from "./NewsHooks/useAllNews";
 import { useNHLWeeklyGames } from "./NHLHooks/useNHLWeeklyGames";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -20,7 +18,7 @@ dayjs.extend(timezone);
 export function useHomeData(selectedTab: "scores" | "news") {
   const { favorites } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
-
+  const { articles, loading: newsLoading, error: newsError } = useAllNews(10);
   // ✅ Local date for filtering
   const [selectedDate, setSelectedDate] = useState(() =>
     dayjs().startOf("day").toDate(),
@@ -71,20 +69,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
     error: errorFights,
     refreshFights,
   } = useWeeklyFights();
-
-  const {
-    news,
-    loading: newsLoading,
-    error: newsError,
-    refresh: refreshNews,
-  } = useNews();
-  const { highlights, loading: highlightsLoading } = useHighlights(
-    "all",
-    "",
-    10,
-  );
-
-  const setArticles = useNewsStore((s) => s.setArticles);
 
   // --------------------------------------------------
   // Normalize games
@@ -141,11 +125,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
         };
       })
       .filter(Boolean);
-
-  // 🗞 Cache latest news
-  useEffect(() => {
-    if (news && news.length > 0) setArticles(news);
-  }, [news, setArticles]);
 
   // Helpers
   const isFavoriteGame = (g: any, prefix: string) => {
@@ -268,25 +247,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
     fights,
   ]);
 
-  // 📰 Merge news + highlights
-  const combinedNewsAndHighlights = useMemo(() => {
-    const taggedNews = news.map((n) => ({
-      ...n,
-      itemType: "news" as const,
-      publishedAt: n.publishedAt ?? new Date().toISOString(),
-    }));
-    const taggedHighlights = highlights.map((h) => ({
-      ...h,
-      itemType: "highlight" as const,
-      publishedAt: h.publishedAt ?? new Date().toISOString(),
-      duration: String(h.duration),
-    }));
-    return [...taggedNews, ...taggedHighlights].sort(
-      (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
-    );
-  }, [news, highlights]);
-
   // 🔄 Refresh logic
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -301,8 +261,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshMensCBB(),
           refreshWomensCBB(),
         ]);
-      } else {
-        await refreshNews();
       }
     } finally {
       setRefreshing(false);
@@ -316,8 +274,9 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshing,
     handleRefresh,
     gamesByCategory,
-    combinedNewsAndHighlights,
     newsError,
+    newsLoading,
+    articles,
     loading:
       nbaLoading ||
       mlbLoading ||
@@ -326,8 +285,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
       cfbLoading ||
       mensCBBLoading ||
       womensCBBLoading ||
-      loadingFights ||
-      newsLoading ||
-      highlightsLoading,
+      loadingFights,
   };
 }

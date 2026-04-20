@@ -1,9 +1,11 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View, useColorScheme } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 
 export default function TeamRankCardSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   // Pulse animation
   const opacity = useRef(new Animated.Value(0.4)).current;

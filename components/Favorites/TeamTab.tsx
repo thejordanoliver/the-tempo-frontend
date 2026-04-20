@@ -5,7 +5,7 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Pressable, Text, useColorScheme, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
@@ -19,11 +19,11 @@ type TeamWithLeague = {
   name: string;
   code: string;
   logo?: any;
-  logoLight?: any;
   color?: string;
   league: LeagueType;
   key: string;
   wid?: number;
+  isDark: boolean;
 };
 
 // -------------------------
@@ -64,9 +64,9 @@ export const teamTab = ({
     default:
       logo = null;
   }
-  const isDark = useColorScheme() === "dark";
+
   const router = useRouter();
-  const styles = favoritesScrollStyles(isDark);
+  const styles = favoritesScrollStyles(item.isDark); // ✅ use item.isDark
   const isCollege =
     item.league === "CFB" || item.league === "CBB" || item.league === "WCBB";
   return (
@@ -106,7 +106,7 @@ export const teamTab = ({
         style={[
           styles.logoWrapper,
           {
-            backgroundColor: isDark
+            backgroundColor: item.isDark
               ? item.color || Colors.dark.itemBackground
               : item.color || Colors.light.itemBackground,
           },

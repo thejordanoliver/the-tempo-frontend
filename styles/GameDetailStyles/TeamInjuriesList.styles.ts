@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 export const teamInjuryStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {},
+    contentContainerStyle: { paddingVertical: 12 },
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,

@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
@@ -27,6 +26,7 @@ interface TeamForumProps {
 
 // Removed localhost fallback — won't resolve on a physical device
 import { BASE_URL } from "utils/apiClient";
+import { usePreferences } from "contexts/PreferencesContext";
 
 // AlertConfig defined locally since it's only used here
 interface AlertConfig {
@@ -40,7 +40,8 @@ interface AlertConfig {
 export default function TeamForum({ teamId, league }: TeamForumProps) {
   const setGlobalImage = useImagePreviewStore((state) => state.setImages);
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
 

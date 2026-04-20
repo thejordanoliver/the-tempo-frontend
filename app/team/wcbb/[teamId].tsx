@@ -5,12 +5,13 @@ import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
+import CBBRosterStats from "components/Sports/CBB/Team/CBBRosterStats";
 import Roster from "components/Sports/CBB/Team/Roster";
-import CBBRosterStats from "components/Sports/CBB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
@@ -18,7 +19,7 @@ import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BasketballGame } from "types/types";
 import {
@@ -34,7 +35,8 @@ type PageSelectedEvent = {
 };
 
 export default function TeamDetailScreen() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
@@ -202,7 +204,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -302,7 +304,8 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          league="WCBB"
+          league={league}
+          isDark={isDark}
         />
       )}
     </View>

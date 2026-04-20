@@ -6,25 +6,20 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
 import LabeledInput from "components/LabeledInput";
 import ProfileBanner from "components/Profile/ProfileBanner";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
 import { useEditProfile } from "hooks/UserHooks/useEditProfile";
 import { useEffect, useLayoutEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
 const MAX_BIO_LENGTH = 150;
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const { saving, saveProfile } = useEditProfile();
 
@@ -36,7 +31,9 @@ export default function EditProfileScreen() {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(null);
+  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(
+    null,
+  );
   const [isCropModalVisible, setCropModalVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
 
@@ -123,11 +120,18 @@ export default function EditProfileScreen() {
       const filename = uri.split("/").pop()!;
       const ext = filename.split(".").pop()?.toLowerCase();
       const mimeType =
-        ext === "jpg" || ext === "jpeg" ? "image/jpeg" :
-        ext === "png" ? "image/png" :
-        ext === "gif" ? "image/gif" :
-        "image/*";
-      formData.append(fieldName, { uri, name: filename, type: mimeType } as any);
+        ext === "jpg" || ext === "jpeg"
+          ? "image/jpeg"
+          : ext === "png"
+            ? "image/png"
+            : ext === "gif"
+              ? "image/gif"
+              : "image/*";
+      formData.append(fieldName, {
+        uri,
+        name: filename,
+        type: mimeType,
+      } as any);
     };
 
     appendImage(profileImage, "profileImage");
@@ -136,8 +140,20 @@ export default function EditProfileScreen() {
     try {
       const updatedUser = await saveProfile(userId, formData);
 
-      if (updatedUser.profile_image) setProfileImage(updatedUser.profile_image);
-      if (updatedUser.banner_image) setBannerImage(updatedUser.banner_image);
+      const storageUpdates: [string, string][] = [];
+
+      if (updatedUser.profile_image) {
+        setProfileImage(updatedUser.profile_image);
+        storageUpdates.push(["profileImage", updatedUser.profile_image]);
+      }
+      if (updatedUser.banner_image) {
+        setBannerImage(updatedUser.banner_image);
+        storageUpdates.push(["bannerImage", updatedUser.banner_image]);
+      }
+
+      if (storageUpdates.length > 0) {
+        await AsyncStorage.multiSet(storageUpdates);
+      }
 
       showAlert({
         title: "Saved",
@@ -160,41 +176,38 @@ export default function EditProfileScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-        <View style={styles.container}>
-          <ProfileBanner
-            bannerImage={bannerImage}
-            profileImage={profileImage}
-            isDark={isDark}
-            editable
-            onPressBanner={() => openImagePickerFor("banner")}
-            onPressProfile={() => openImagePickerFor("profile")}
+      <View style={styles.inner}>
+        <ProfileBanner
+          bannerImage={bannerImage}
+          profileImage={profileImage}
+          isDark={isDark}
+          editable
+          onPressBanner={() => openImagePickerFor("banner")}
+          onPressProfile={() => openImagePickerFor("profile")}
+        />
+
+        <View style={styles.formContainer}>
+          <LabeledInput
+            label="Name"
+            value={fullName}
+            onChangeText={setFullName}
           />
-
-          <View style={styles.formContainer}>
-            <LabeledInput
-              label="Name"
-              value={fullName}
-              onChangeText={setFullName}
-            />
-            <LabeledInput
-              label="Username"
-              value={username}
-              editable={false}
-              onChangeText={() => {}}
-            />
-            <LabeledInput
-              label="Bio"
-              value={bio}
-              hint={bioHint}
-              onChangeText={setBio}
-              multiline
-            />
-
-            <Button onPress={handleSave} disabled={saving} isDark={isDark} />
-          </View>
+          <LabeledInput
+            label="Username"
+            value={username}
+            editable={false}
+            onChangeText={() => {}}
+          />
+          <LabeledInput
+            label="Bio"
+            value={bio}
+            hint={bioHint}
+            onChangeText={setBio}
+            multiline
+          />
+          <Button onPress={handleSave} disabled={saving} isDark={isDark} />
         </View>
-      </ScrollView>
+      </View>
 
       {imageToCrop && cropTarget && (
         <CropEditorModal
@@ -225,7 +238,11 @@ export default function EditProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  contentContainerStyle: { paddingBottom: 40 },
-  formContainer: { paddingTop: 60, paddingHorizontal: 12 },
+  container: { flex: 1, paddingBottom: 40 },
+  inner: { flex: 1 },
+  formContainer: {
+    flex: 1,
+    paddingTop: 60,
+    paddingHorizontal: 12,
+  },
 });

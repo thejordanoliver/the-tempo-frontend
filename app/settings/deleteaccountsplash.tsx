@@ -1,12 +1,14 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 
 export default function DeleteAccountSplashScreen() {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const screenFade = useRef(new Animated.Value(0)).current;
   const textFade = useRef(new Animated.Value(0)).current;

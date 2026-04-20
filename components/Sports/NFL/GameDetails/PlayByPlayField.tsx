@@ -4,14 +4,7 @@ import { getCFBTeam } from "constants/teamsCFB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { Athlete, PlayObject } from "hooks/NFLHooks/useGameDetails";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Image,
-  LayoutChangeEvent,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Image, LayoutChangeEvent, Text, View } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
 import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/football";
 import { LeagueType } from "types/types";
@@ -38,7 +31,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   league = "NFL",
   firstDownYardLine,
 }) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = playByPlayFieldStyles(isDark);
   const playAnim = useRef(new Animated.Value(50)).current;
   const scoreAnim = useRef(new Animated.Value(0)).current;

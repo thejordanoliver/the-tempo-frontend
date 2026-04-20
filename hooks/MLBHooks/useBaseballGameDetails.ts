@@ -1,8 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Venue } from "types/types";
 /* ---------------------------------- */
 /* Types                              */
 /* ---------------------------------- */
+
+export type Venue = {
+  id: string;
+  fullName: string;
+  address: {
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  grass: boolean;
+  images: [
+    {
+      href: string;
+      rel: ["full", "day"];
+    },
+    {
+      href: string;
+      rel: ["full", "day", "interior"];
+    },
+  ];
+  attendance?: number
+};
 
 export type SeriesSummary = {
   type: "playoff";

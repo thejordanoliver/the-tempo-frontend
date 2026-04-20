@@ -3,18 +3,11 @@ import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 export type DraftPick = {
   pick: number;
@@ -75,10 +68,9 @@ const NFL_POSITION_MAP: Record<string, string> = {
 };
 
 export default function DraftCard({ player, index, league }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
-  const router = useRouter();
-
   const isNFL = league === "nfl";
   const team = isNFL
     ? getNFLTeamByESPNId(player.teamId)

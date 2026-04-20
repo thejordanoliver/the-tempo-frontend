@@ -2,11 +2,11 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import { GameLeaders, GameLocation } from "components/Sports/NBA/GameDetails";
 import GameTeamStats from "components/Sports/NBA/GameDetails/GameTeamStats";
+import TeamInjuries from "components/Sports/NBA/GameDetails/InjuryReport/TeamInjuries";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import LineScore from "components/Sports/NBA/GameDetails/LineScore";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
 import React from "react";
 
 export default function GamePreviewContent({
@@ -31,7 +31,6 @@ export default function GamePreviewContent({
   resolvedVenueAddress,
   resolvedVenueCapacity,
   weather,
-  isDark,
   gameStatusDescription,
 }: any) {
   return (

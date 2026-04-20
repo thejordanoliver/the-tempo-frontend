@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -11,7 +12,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import DraggableFlatList, {
@@ -53,7 +53,8 @@ export default function PollEditorModal({
   onClose,
   onSave,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const [question, setQuestion] = useState(initial?.question ?? "");

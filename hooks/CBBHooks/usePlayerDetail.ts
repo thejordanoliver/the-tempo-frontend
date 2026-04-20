@@ -1,10 +1,8 @@
-import axios from "axios";
 import { getCBBTeam } from "constants/teamsCBB";
 import { useEffect, useState } from "react";
 import type { DBPlayer } from "types/types";
+import { apiClient } from "utils/apiClient";
 import { useLastTeamGame } from "./useLastTeamGame";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function usePlayerDetail(
   playerId?: string,
@@ -43,8 +41,8 @@ export function usePlayerDetail(
     const fetchPlayer = async () => {
       setLoading(true);
       try {
-        const res = await axios.get<{ player: DBPlayer }>(
-          `${API_URL}/api/${leaguePath}/players/player-id/${parsedPlayerId}`,
+        const res = await apiClient.get<{ player: DBPlayer }>(
+          `/api/${leaguePath}/players/player-id/${parsedPlayerId}`,
         );
 
         setPlayer(res.data.player);

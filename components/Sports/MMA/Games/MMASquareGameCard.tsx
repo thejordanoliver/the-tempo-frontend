@@ -4,15 +4,14 @@ import { Colors } from "constants/styles";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { MMAFight } from "types/mma";
+import { MMAFightCardProps } from "types/mma";
 import { formatRound } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
-export default function MMAGameCard({ game }: { game: MMAFight }) {
-  const isDark = useColorScheme() === "dark";
+export default function MMASquareGameCard({ game, isDark }: MMAFightCardProps) {
   const router = useRouter();
 
   const safeDate = (date?: string | null) => {

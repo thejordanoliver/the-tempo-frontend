@@ -21,49 +21,33 @@ import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { usePreferences } from "contexts/PreferencesContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-type NewsItem = {
-  id: string;
-  title: string;
-  source: string;
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-};
 
-type HighlightItem = {
-  videoId: string;
-  title: string;
-  publishedAt: string;
-  thumbnail: string;
-};
-
-type CombinedItem =
-  | (NewsItem & { itemType: "news" })
-  | (HighlightItem & { itemType: "highlight" });
 
 export default function NFLLeagueScreen() {
+  const league = "NFL";
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
-
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "NFL");
+  } = useLeaguesNews(10, league);
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(getFootballSeason().toString());
   const [standingsYear, setStandingsYear] = useState(
@@ -71,13 +55,13 @@ export default function NFLLeagueScreen() {
   );
   const { categories, loading, error } = useSeasonLeaders(
     getFootballSeason(),
-    "NFL",
+    league,
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("NFL");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
 
   const {
     weeks,
@@ -95,7 +79,7 @@ export default function NFLLeagueScreen() {
   const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
   const selectedWeekGames = weeks[selectedWeekLabel] || [];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!weekLabels.length) return;
 
     const now = dayjs();
@@ -137,7 +121,7 @@ export default function NFLLeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="NFL"
+          league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -233,7 +217,7 @@ export default function NFLLeagueScreen() {
             <StandingsList
               year={standingsYear}
               onYearChange={setStandingsYear}
-              league="NFL"
+              league={league}
             />
           </View>
 
@@ -243,7 +227,7 @@ export default function NFLLeagueScreen() {
               loading={loading}
               error={error}
               categories={categories}
-              league={"NFL"}
+              league={league}
               isDark={isDark}
             />
           </View>
@@ -262,13 +246,13 @@ export default function NFLLeagueScreen() {
           </View>
 
           {/* AWARDS */}
-          <View key="awards" style={styles.contentArea}>
-            <AwardSeasons league="NFL" />
+          <View key="awards">
+            <AwardSeasons league={league} />
           </View>
 
           {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league="NFL" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

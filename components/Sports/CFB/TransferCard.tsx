@@ -4,15 +4,7 @@ import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type PortalPlayer = {
   season: number;
@@ -47,7 +39,8 @@ type Props = {
 };
 
 export default function TransferPlayerCard({ recruit, index }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   /** Safe destination reference */

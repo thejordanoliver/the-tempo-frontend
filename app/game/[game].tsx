@@ -1,4 +1,3 @@
-import MemoizedFloatingChatButton from "components//MemoizedFloatingChatButton";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
@@ -11,18 +10,21 @@ import {
   LineScore,
 } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/NBA/GameDetails/GameHeader";
 import GameOddsSection from "components/Sports/NBA/GameDetails/GameOddsSection";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import HeadToHeadGames from "components/Sports/NBA/GameDetails/HeadToHead/HeadToHeadGames";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
+import TeamInjuries from "components/Sports/NBA/GameDetails/InjuryReport/TeamInjuries";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
-import TeamInjuries from "components/Sports/NBA/GameDetails/TeamInjuries";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
@@ -31,17 +33,18 @@ import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { Game } from "types/types";
 import { getHolidayLabel } from "utils/dateUtils";
-import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameDetailsScreen() {
+  const league = "NBA";
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
@@ -58,7 +61,7 @@ export default function GameDetailsScreen() {
   }
 
   if (!parsedGame?.id) return null;
-  const { home, away, date, venue, id } = parsedGame;
+  const { home, away, date, venue, id,  } = parsedGame;
 
   const gameId = String(id);
 
@@ -77,7 +80,7 @@ export default function GameDetailsScreen() {
     month: "short",
     day: "numeric",
   });
-  
+
   const formattedTime =
     gameDateObj?.toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -85,8 +88,8 @@ export default function GameDetailsScreen() {
       hour12: true,
     }) || "";
 
-  const homeTeam = getNBATeam(home.id);
-  const awayTeam = getNBATeam(away.id);
+  const homeTeam = getNBATeam(home?.id);
+  const awayTeam = getNBATeam(away?.id);
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
@@ -104,11 +107,11 @@ export default function GameDetailsScreen() {
   const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
 
-  const homeLogo = getTeamLogo(home.id, isDark);
-  const awayLogo = getTeamLogo(away.id, isDark);
+  const homeLogo = getTeamLogo(home?.id, isDark);
+  const awayLogo = getTeamLogo(away?.id, isDark);
 
-  const headerHomeLogo = getTeamLogo(home.id, true);
-  const headerAwayLogo = getTeamLogo(away.id, true);
+  const headerHomeLogo = getTeamLogo(home?.id, true);
+  const headerAwayLogo = getTeamLogo(away?.id, true);
 
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
@@ -188,22 +191,31 @@ export default function GameDetailsScreen() {
     [String(awayEspnId)]: awayTeamPlayersData.players,
   };
 
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: details?.venue,
-        homeTeam: homeTeam,
-        isNeutralSite: neutralSite,
-        league: "NBA",
-      }),
-    [details?.venue, homeTeam, neutralSite],
-  );
-
-  const { weather, weatherError, weatherLoading } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    date,
-  );
+  /* ---------------- Neutral site / venue ---------------- */
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : homeTeam?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address ||
+      `${baseVenue?.address.city} ${baseVenue?.address.state}, ${baseVenue?.address.zipCode} ${baseVenue?.address.country}`;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images[0]?.href
+    : homeTeam?.venueImage || baseVenue?.images[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+  const venueAttendance = details?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDate);
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
@@ -227,7 +239,7 @@ export default function GameDetailsScreen() {
           homeLogo={headerHomeLogo}
           awayLogo={headerAwayLogo}
           isNeutralSite={neutralSite}
-          league="NBA"
+          league={league}
         />
       ),
     });
@@ -236,7 +248,7 @@ export default function GameDetailsScreen() {
   if (isGameLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -356,7 +368,7 @@ export default function GameDetailsScreen() {
                   awayLogo={awayLogo}
                   homePlayers={homeFoulPlayers}
                   awayPlayers={awayFoulPlayers}
-                  league={"NBA"}
+                  league={league}
                   isDark={isDark}
                 />
               )}
@@ -367,7 +379,7 @@ export default function GameDetailsScreen() {
                   awayTeamId={Number(awayEspnId)}
                   homeTeamId={Number(homeEspnId)}
                   isDark={isDark}
-                  league={"NBA"}
+                  league={league}
                 />
               )}
 
@@ -376,7 +388,7 @@ export default function GameDetailsScreen() {
                   plays={plays}
                   homeTeamId={String(homeEspnId)}
                   awayTeamId={String(awayEspnId)}
-                  league="NBA"
+                  league={league}
                 />
               )}
               {inProgress && (
@@ -384,12 +396,16 @@ export default function GameDetailsScreen() {
                   playerStats={playerStats}
                   homeTeamId={Number(homeEspnId)}
                   awayTeamId={Number(awayEspnId)}
-                  league={"NBA"}
+                  league={league}
                   isDark={isDark}
                 />
               )}
               {!isScheduled && (
-                <GameSummary plays={plays ?? []} league="NBA" isDark={isDark} />
+                <GameSummary
+                  plays={plays ?? []}
+                  league={league}
+                  isDark={isDark}
+                />
               )}
               <GameTeamStats
                 stats={teamStats}
@@ -417,7 +433,7 @@ export default function GameDetailsScreen() {
                   teamCode: awayCode,
                   games: awayLastGames.games,
                 }}
-                league="NBA"
+                league={league}
               />
 
               <TeamInjuries
@@ -438,14 +454,15 @@ export default function GameDetailsScreen() {
               />
 
               <GameLocation
-                venueImage={resolvedVenue.image}
-                venueName={resolvedVenue.name}
-                location={resolvedVenue.city}
-                address={resolvedVenue.address}
-                venueCapacity={resolvedVenue.capacity}
+                venueImage={venueImage}
+                venueName={venueName}
+                location={venueLocation}
+                address={venueAddress}
+                venueCapacity={venueCapacity}
+                venueAttendance={venueAttendance}
+                loading={false}
+                error={null}
                 weather={weather}
-                loading={weatherLoading}
-                error={weatherError}
                 isDark={isDark}
               />
             </>

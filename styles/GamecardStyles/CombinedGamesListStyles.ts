@@ -17,4 +17,7 @@ export const combinedGameListStyles = (isDark: boolean) =>
       fontSize: 20,
       fontFamily: Fonts.OSLIGHT,
     },
+    itemSeparatorComponent: {
+      height: 12,
+    },
   });

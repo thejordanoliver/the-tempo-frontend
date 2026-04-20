@@ -11,10 +11,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   visible: boolean;
@@ -39,7 +39,8 @@ export default function VideoEditorModal({
   onClose,
   onSave,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const videoRef = useRef<Video>(null);

@@ -2,10 +2,11 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import React, { useMemo } from "react";
-import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import Animated, { SlideInDown, SlideOutUp } from "react-native-reanimated";
 import { PlayerLeadersSlideProps } from "types/playerLeader";
 import PlayerItem from "./PlayerItem";
+import { usePreferences } from "contexts/PreferencesContext";
 
 export default function PlayerLeadersSlide({
   header,
@@ -13,7 +14,8 @@ export default function PlayerLeadersSlide({
   slideWidth,
   slideHeight,
 }: PlayerLeadersSlideProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const ROW_HEIGHT = 40;
   const HEADER_HEIGHT = 32;

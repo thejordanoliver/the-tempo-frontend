@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -6,31 +6,20 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-
-import {
-  Animated,
-  Easing,
-  Image,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  useColorScheme,
-} from "react-native";
-
-import { LeagueType, Team } from "types/types";
-
-type TeamWithLeague = Team & { league: LeagueType };
+import { Animated, Easing, Image, Modal, Pressable, Text } from "react-native";
+import { teamPreviewModalStyles } from "styles/TeamStyles/TeamPreviewModalStyles";
+import { LeagueTeam } from "types/types";
 
 type Props = {
   visible: boolean;
-  team: TeamWithLeague;
+  team: LeagueTeam;
   onClose: () => void;
   onGo: () => void;
-  onRemove?: (team: TeamWithLeague) => void;
+  onRemove?: (team: LeagueTeam) => void;
   currentUser?: boolean;
 };
 
@@ -43,7 +32,8 @@ export default function TeamPreviewModal({
   currentUser,
 }: Props) {
   const scaleAnim = useRef(new Animated.Value(0.85)).current;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamPreviewModalStyles(isDark);
 
   useEffect(() => {
@@ -155,81 +145,3 @@ export default function TeamPreviewModal({
     </Modal>
   );
 }
-
-export const teamPreviewModalStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: { flex: 1 },
-
-    blurViewContainer: {
-      flex: 1,
-      justifyContent: "flex-end",
-    },
-
-    linearGradient: {
-      marginTop: "auto",
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      padding: 1.5,
-    },
-
-    blurViewWrapper: {
-      borderTopLeftRadius: 18.5,
-      borderTopRightRadius: 18.5,
-      paddingHorizontal: 20,
-      paddingVertical: 40,
-      backgroundColor: "rgba(255,255,255,0.05)",
-      alignItems: "center",
-    },
-
-    teamLogo: {
-      width: 60,
-      height: 60,
-      marginBottom: 10,
-    },
-
-    teamName: {
-      fontSize: 20,
-      fontFamily: Fonts.OSSEMIBOLD,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-
-    establishedText: {
-      marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    subText: {
-      marginVertical: 12,
-      fontFamily: Fonts.OSEXTRALIGHT,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    goButton: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      padding: 16,
-      borderRadius: 10,
-      alignItems: "center",
-      marginBottom: 12,
-      width: "100%",
-    },
-
-    goText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontFamily: Fonts.OSSEMIBOLD,
-    },
-
-    removeButton: {
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-      padding: 16,
-      borderRadius: 12,
-      alignItems: "center",
-      width: "100%",
-    },
-
-    removeText: {
-      color: Colors.white,
-      fontFamily: Fonts.OSSEMIBOLD,
-    },
-  });

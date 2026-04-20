@@ -5,6 +5,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import React, {
   forwardRef,
@@ -13,13 +14,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
 import { snapPoints } from "utils/modalUtils";
 
@@ -59,7 +54,8 @@ const DEFAULT_CONFERENCES = ["All Conferences"];
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
   ({ onSelect, onOpen, onClose, league }, ref) => {
     const [selected, setSelected] = useState<string | null>(null);
-    const isDark = useColorScheme() === "dark";
+    const { resolvedColorScheme } = usePreferences();
+    const isDark = resolvedColorScheme === "dark";
     const styles = conferenceListModalStyles(isDark);
 
     const modalRef = useRef<BottomSheetModal>(null);

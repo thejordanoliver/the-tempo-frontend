@@ -12,13 +12,13 @@ import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { Image, Pressable, Text, useColorScheme, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { favoriteTeamsListStyles } from "styles/FavorieTeamsListStyles";
 import type { LeagueType, Team } from "types/types";
 import { getTeamRoute } from "utils/teams";
-
 type TeamWithLeague = Team & { league: LeagueType };
 
 type Props = {
@@ -66,7 +66,8 @@ const FavoriteTeamsList = ({
   isCurrentUser,
 }: Props) => {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = favoriteTeamsListStyles(isDark);
   // ✅ shared context — same instance as ProfileScreenInner
   const {

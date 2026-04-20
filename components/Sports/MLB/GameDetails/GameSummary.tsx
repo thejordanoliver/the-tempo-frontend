@@ -1,16 +1,9 @@
-import TabBar from "components/TabBar";
+import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 
 import { useMemo, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 interface Play {
@@ -51,7 +44,8 @@ type Props = {
 };
 
 export default function GameSummary({ plays = [], loading = false }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   // --- Tabs: All, 1–9, Extras ---

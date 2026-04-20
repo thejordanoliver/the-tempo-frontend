@@ -18,8 +18,6 @@ type Props = {
   };
   avatarUrl?: string;
   isDark: boolean;
-  teamColor?: string;
-  teamSecondaryColor?: string;
   team_name?: string;
 };
 
@@ -27,10 +25,6 @@ export default function PlayerHeader({
   player,
   avatarUrl,
   isDark,
-  teamColor,
-  teamSecondaryColor,
-
-  team_name,
 }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
 

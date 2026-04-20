@@ -1,20 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { MMAFight } from "types/mma";
+import { MMAFightCardProps } from "types/mma";
 import { formatRound } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
-export default function MMAGameCard({ game }: { game: MMAFight }) {
-  const isDark = useColorScheme() === "dark";
+export default function MMAGameCard({ game }: MMAFightCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
     const d = new Date(date);

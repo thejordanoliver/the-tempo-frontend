@@ -1,76 +1,109 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const formStyles = (isDark: boolean) =>
-  StyleSheet.create({
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+const RADIUS = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  full: 100,
+};
+
+const SPACING = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+};
+
+const INPUT_HEIGHT = 54;
+
+export const formStyles = (isDark: boolean) => {
+  const surface = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+  const text = isDark ? Colors.white : Colors.black;
+  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const focusBorder = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
+  const subtleText = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)";
+  const divider = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)";
+
+  return StyleSheet.create({
     container: {
       flex: 1,
-      margin: 12,
+      padding: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      marginBottom: 30,
+      marginBottom: 40,
     },
-
-    formContainer: {
+    sectionContainer: {
       flex: 1,
-      justifyContent: "space-around",
-      gap: 12,
     },
-
     formWrapper: {
       flex: 1,
       justifyContent: "center",
       gap: 12,
     },
 
-    signInInput: {
-      width: "100%",
-      color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      padding: 16,
-      borderRadius: 8,
-      fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+    inputFocused: {
+      borderColor: focusBorder,
     },
 
     input: {
-      color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    passwordInput: {
+      height: INPUT_HEIGHT,
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      backgroundColor: surface,
       borderRadius: 8,
-      padding: 20,
+      paddingHorizontal: SPACING.lg,
+      borderWidth: 1,
+      borderColor: border,
     },
-    passwordText: {
+
+    inputText: {
       flex: 1,
-      color: isDark ? Colors.white : Colors.black,
+      color: text,
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
     },
 
-    button: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      padding: 14,
-      borderRadius: 8,
+    // ── Progress Bar ───────────────────────────────────────────────────────
+    progressContainer: {
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+      gap: SPACING.xs,
+    },
+
+    progressMeta: {
+      flexDirection: "row",
+      justifyContent: "space-between",
       alignItems: "center",
+      marginBottom: SPACING.xs,
     },
-    buttonText: {
-      color: isDark ? Colors.black : Colors.white,
+
+    progressLabel: {
+      fontSize: 11,
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
+      color: subtleText,
+      letterSpacing: 0.5,
+      textTransform: "uppercase",
     },
+
+    progressBarBackground: {
+      height: 3,
+      width: "100%",
+      backgroundColor: divider,
+      borderRadius: RADIUS.full,
+      overflow: "hidden",
+    },
+
+    progressBarFill: {
+      height: "100%",
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      borderRadius: RADIUS.full,
+    },
+
     row: {
       flexDirection: "column",
       justifyContent: "space-between",
@@ -85,53 +118,73 @@ export const formStyles = (isDark: boolean) =>
       marginLeft: 16,
       fontSize: 16,
       fontFamily: Fonts.OSREGULAR,
+      color: Colors.white,
     },
 
+    // ── Image Upload ───────────────────────────────────────────────────────
     imageUploadBox: {
       borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 10,
+      borderColor: border,
+      borderStyle: "dashed",
+      borderRadius: RADIUS.md,
       height: 100,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: surface,
+      overflow: "hidden",
     },
+
     profileImageUploadBox: {
       borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 100,
-      height: 120,
-      width: 120,
+      borderColor: border,
+      borderStyle: "dashed",
+      borderRadius: RADIUS.full,
+      height: 110,
+      width: 110,
       justifyContent: "center",
       alignItems: "center",
       alignSelf: "center",
+      backgroundColor: surface,
+      overflow: "hidden",
+      marginVertical: SPACING.sm,
+    },
+    bannerImage: {
+      width: "100%",
+      height: "100%",
+      borderRadius: 10,
     },
 
+    // ── Section Headings ───────────────────────────────────────────────────
     heading: {
-      fontSize: 16,
+      fontSize: 11,
       fontFamily: Fonts.OSMEDIUM,
-      marginTop: 8,
-      paddingBottom: 4,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      color: isDark ? Colors.white : Colors.black,
+      letterSpacing: 0.6,
+      textTransform: "uppercase",
+      color: subtleText,
+      marginTop: SPACING.lg,
+      marginBottom: SPACING.xs,
+    },
+
+    divider: {
+      height: 1,
+      backgroundColor: divider,
+      marginVertical: SPACING.xs,
     },
 
     reviewInput: {
-      width: "100%",
-      marginTop: 16,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      borderRadius: 8,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
+      backgroundColor: surface,
+      borderRadius: RADIUS.md,
+      paddingVertical: SPACING.md,
+      paddingHorizontal: SPACING.lg,
+      borderWidth: 1,
+      borderColor: border,
+      marginTop: SPACING.xs,
     },
 
     reviewContainer: {
       justifyContent: "center",
       alignContent: "center",
-      paddingHorizontal: 8,
-      paddingBottom: 24,
+      paddingBottom: 100,
     },
     favoritesScroll: {
       maxHeight: 280,
@@ -151,21 +204,11 @@ export const formStyles = (isDark: boolean) =>
     },
     reviewText: {
       marginVertical: 8,
-      color: isDark ? Colors.light.itemBackground : "#333",
+      color: Colors.midTone,
       fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
     },
-    progressBarBackground: {
-      height: 2,
-      width: "100%",
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 100,
-      overflow: "hidden",
-      marginBottom: 10,
-    },
-    progressBarFill: {
-      height: "100%",
-      backgroundColor: "#007AFF",
-    },
+
     skipText: {
       color: Colors.midTone,
       fontSize: 16,
@@ -182,19 +225,7 @@ export const formStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
       borderRadius: 8,
     },
-    teamCardGrid: {
-      flexDirection: "column",
-      flex: 0, // important: don't stretch full width
-      alignItems: "center",
-      marginTop: 12,
-      padding: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      borderRadius: 8,
-      width: "30%", // or fixed width to fit 3 columns nicely
-      maxWidth: 120, // optional max width for consistency
-    },
 
     tabBarWrapper: { paddingHorizontal: 80 },
   });
+};

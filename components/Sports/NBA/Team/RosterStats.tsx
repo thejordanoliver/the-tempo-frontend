@@ -2,6 +2,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -10,7 +11,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
@@ -25,7 +25,8 @@ export default function RosterStats({
   refreshing,
   onRefresh,
 }: RosterStatsProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -193,7 +194,7 @@ export default function RosterStats({
   if (loading)
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   if (error) return <Text style={global.errorText}>{error.name}</Text>;

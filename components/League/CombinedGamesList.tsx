@@ -1,13 +1,12 @@
 // components/Games/CombinedGamesList.tsx
 import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
   FlatList,
   SectionList,
   SectionListData,
-  useColorScheme,
+  Text,
   View,
   ViewStyle,
 } from "react-native";
@@ -69,8 +68,9 @@ import MLBGamePreviewModal from "../Sports/MLB/GamePreview/MLBGamePreviewModal";
 
 // ✅ MMA cards
 import NHLStackedGameCard from "components/Sports/NHL/Games/NHLStackedGameCard";
+import { globalStyles } from "constants/styles";
+import { NHLGame } from "types/hockey";
 import { MMAFight } from "types/mma";
-import { NHLGame } from "types/nhl";
 import MMAGamePreviewModal from "../Sports/MMA/GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "../Sports/MMA/Games/MMAGameCard";
 import MMASquareGameCard from "../Sports/MMA/Games/MMASquareGameCard";
@@ -124,6 +124,8 @@ type CombinedGamesListProps = {
   day?: "todayTomorrow";
   showHeaders?: boolean;
   ListHeaderComponent?: React.ReactNode;
+  isDark: boolean;
+  viewMode: string;
 };
 
 type NFLGameExtended = FootballGame & {
@@ -172,10 +174,11 @@ export default function CombinedGamesList({
   expectedCount,
   day,
   showHeaders = true,
+  viewMode,
+  isDark,
 }: CombinedGamesListProps) {
-  const isDark = useColorScheme() === "dark";
-  const { viewMode } = usePreferences();
   const styles = combinedGameListStyles(isDark);
+  const global = globalStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
   const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(
     null,
@@ -375,7 +378,7 @@ export default function CombinedGamesList({
 
     // ✅ NBA Summer League
     if (category === "NBA Summer League") {
-      const slGame = item as SummerGame;
+      const slGame = item as BasketballGame;
       if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} />);
       if (viewMode === "grid")
         return wrapper(<SummerSquareGameCard game={slGame} />, index);
@@ -515,13 +518,13 @@ export default function CombinedGamesList({
           const visibleSections = gamesByCategory.filter(
             (s) => s.data.length > 0,
           );
-
           const multipleSections = visibleSections.length > 1;
 
           const isFirstSection =
             visibleSections.findIndex(
               (s) => s.category === section.category,
             ) === 0;
+
           return (
             <View
               style={{
@@ -537,7 +540,9 @@ export default function CombinedGamesList({
         stickySectionHeadersEnabled={false}
         scrollEnabled={false}
         ItemSeparatorComponent={() =>
-          viewMode !== "grid" ? <View style={{ height: 12 }} /> : null
+          viewMode !== "grid" ? (
+            <View style={styles.itemSeparatorComponent} />
+          ) : null
         }
         renderSectionFooter={({ section }) => {
           if (viewMode === "grid") {
@@ -556,6 +561,7 @@ export default function CombinedGamesList({
                       section.category,
                     );
                     if (!validated) return null;
+
                     return renderGameCard(
                       validated.game,
                       validated.category,
@@ -571,6 +577,11 @@ export default function CombinedGamesList({
           }
           return <View style={{ height: 16 }} />;
         }}
+        ListEmptyComponent={() => (
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyText}>No games today</Text>
+          </View>
+        )}
       />
 
       {modalVisible && previewGame && previewCategory === "NFL" && (

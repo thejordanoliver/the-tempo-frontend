@@ -1,13 +1,15 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 
 type PulseBlockProps = {
   style?: any;
 };
 
 export default function NewsCardSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = newsCardSkeletonStyles(isDark);
 
   // 🔁 Master animation value

@@ -2,12 +2,13 @@ import HeadingWithDropdowns from "components/Headings/HeadingWithDropdowns";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
+import { usePreferences } from "contexts/PreferencesContext";
 import {
   CareerTotals,
-  useMlbPlayerSeasons,
+  useMLBPlayerSeasons,
 } from "hooks/MLBHooks/useMLBPlayerSeasons";
 import { useMemo, useState } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
@@ -37,9 +38,10 @@ const perGame = (stat?: number | string, g?: number | string) => {
 export default function PlayerStatTable({ playerId }: Props) {
   const [statView, setStatView] = useState<StatView>("totals");
   const [statType, setStatType] = useState<StatType>("batting");
-  const { seasons, loading, error } = useMlbPlayerSeasons(playerId);
+  const { seasons, loading, error } = useMLBPlayerSeasons(playerId);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 

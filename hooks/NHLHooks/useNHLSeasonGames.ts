@@ -1,8 +1,7 @@
-import axios from "axios";
 import { getNHLTeam } from "constants/teamsNHL";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 import { apiClient } from "utils/apiClient";
 
 const API_BASE = process.env.EXPO_PUBLIC_API_URL;

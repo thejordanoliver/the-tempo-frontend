@@ -1,10 +1,8 @@
 import { Colors } from "constants/styles";
-import { Text, View, useColorScheme } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Text, View } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
-/**
- * Only leagues that use playoff status codes
- */
 type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
 
 type StatusConfig = {
@@ -12,16 +10,13 @@ type StatusConfig = {
   labels: Record<string, string>;
 };
 
-/**
- * Centralized playoff status configuration
- */
 export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
   MLB: {
     colors: {
-      "*": "#4caf50", // Clinched Division + Bye
-      y: "#2196f3", // Wild Card
-      x: "#ff9800", // Division
-      e: "#f44336", // Eliminated
+      "*": Colors.dark.leafGreen,
+      y: Colors.dark.blue,
+      x: Colors.dark.orange,
+      e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Division + Bye",
@@ -33,10 +28,10 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
 
   NFL: {
     colors: {
-      "*": "#4caf50", // Clinched Division + Bye
-      z: "#ff9800", // Clinched Division
-      y: "#2196f3", // Wild Card
-      e: "#f44336", // Eliminated
+      "*": Colors.dark.leafGreen,
+      z: Colors.dark.orange,
+      y: Colors.dark.blue,
+      e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Division + Bye",
@@ -48,13 +43,13 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
 
   NBA: {
     colors: {
-      "*": "#4caf50", // Clinched Conference
-      z: "#4caf50", // Clinched Division
-      y: "#ff9800", // Clinched Division
-      x: "#2196f3", // Clinched Playoff Berth
-      xp: "#2196f3", // Clinched Playoff - Won Play-In
-      pb: "#ff9800", // Clinched Play-in Berth
-      e: "#f44336", // Eliminated From Playoff
+      "*": Colors.dark.leafGreen,
+      z: Colors.dark.leafGreen,
+      y: Colors.dark.orange,
+      x: Colors.dark.blue,
+      xp: Colors.dark.blue,
+      pb: Colors.dark.yellow,
+      e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Best League Record",
@@ -68,32 +63,29 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
   },
   WNBA: {
     colors: {
-      "*": "#4caf50", // Clinched Conference
-      z: "#4caf50", // Clinched Division
-      y: "#ff9800", // Clinched Division
-      x: "#2196f3", // Clinched Playoff Berth
-      xp: "#2196f3", // Clinched Playoff - Won Play-In
-      pb: "#ff9800", // Clinched Play-in Berth
-      e: "#f44336", // Eliminated From Playoff
+      "*": Colors.dark.leafGreen,
+      cx: Colors.dark.leafGreen,
+      x: Colors.dark.blue,
+      xp: Colors.dark.blue,
+      pb: Colors.dark.yellow,
+      e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Best League Record",
-      z: "Clinched Conference",
-      y: "Clinched Division",
+      cx: "Clinched Playoff Berth and Won Commissioner's Cup",
       x: "Clinched playoff Berth",
       xp: "Clinched Playoff - Won Play-In",
-      pb: "Clinched Play-in Berth",
       e: "Eliminated From Playoff",
     },
   },
 
   NHL: {
     colors: {
-      "*": "#4caf50", // Presidents' Trophy
-      z: "#4caf50", // Best in Conference
-      y: "#ff9800", // Division Title
-      x: "#2196f3", // Playoff Berth
-      e: "#f44336", // Eliminated
+      "*": Colors.dark.leafGreen,
+      z: Colors.dark.leafGreen,
+      y: Colors.dark.yellow,
+      x: Colors.dark.blue,
+      e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Presidents' Trophy (Best Regular-Season Record)",
@@ -106,15 +98,13 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
 };
 
 interface StatusBadgeProps {
-  code?: string | null; // numeric seed OR playoff code
+  code?: string | null;
   league: PlayoffLeague;
 }
 
-/**
- * Generic Playoff Status Badge
- */
 export const StatusBadge = ({ code, league }: StatusBadgeProps) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
 
   if (!code) return null;

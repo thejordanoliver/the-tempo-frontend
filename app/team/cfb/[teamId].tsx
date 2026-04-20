@@ -10,19 +10,21 @@ import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 
 export default function TeamDetailScreen() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
@@ -96,7 +98,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -192,6 +194,7 @@ export default function TeamDetailScreen() {
           onClose={() => setModalVisible(false)}
           teamId={team.id}
           league={league}
+          isDark={isDark}
         />
       )}
     </View>

@@ -1,19 +1,15 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const ROWS = 16;
 const ROW_HEIGHT = 60;
 const RANK_WIDTH = 20;
 
 export const StandingsSkeleton = () => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const bg = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
 
   const pulse = useRef(new Animated.Value(0.4)).current;

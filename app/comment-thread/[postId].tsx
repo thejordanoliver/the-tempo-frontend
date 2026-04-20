@@ -7,6 +7,7 @@ import AlertModal from "components/Forum/AlertModal";
 import { CommentItem } from "components/Forum/CommentItem";
 import { Post, PostItem } from "components/Forum/PostItem";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -20,7 +21,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { commentThreadStyles } from "styles/ForumStyles/CommentThreadStyles";
 
@@ -52,7 +52,8 @@ function mapCommentToPost(comment: Comment): Post {
 export default function CommentThreadScreen() {
   const params = useLocalSearchParams();
   const postId = typeof params.postId === "string" ? params.postId : null;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = commentThreadStyles(isDark);
   const global = globalStyles(isDark);
   const navigation = useNavigation();
@@ -102,7 +103,7 @@ export default function CommentThreadScreen() {
   if (loading) {
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

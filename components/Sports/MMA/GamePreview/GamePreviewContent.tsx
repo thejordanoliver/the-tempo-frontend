@@ -1,15 +1,11 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 
 export default function GamePreviewContent({
-  home,
-  away,
-  officials,
   resolvedVenueImage,
   resolvedVenueName,
   resolvedVenueCity,

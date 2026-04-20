@@ -22,17 +22,19 @@ import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getMLBSeason, getMLBStandingsSeason } from "utils/dateUtils";
 import { filterMLBByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { usePreferences } from "contexts/PreferencesContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function MLBLeagueScreen() {
+  const league = "MLB";
   const {
     games,
     loading: liveLoading,
@@ -42,7 +44,7 @@ export default function MLBLeagueScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "MLB");
+  } = useLeaguesNews(10, league);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
 
@@ -50,18 +52,18 @@ export default function MLBLeagueScreen() {
   const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
 
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
 
-  const { categories, loading, error } = useSeasonLeaders(2025, "MLB");
-
+  const { categories, loading, error } = useSeasonLeaders(2025, league);
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
 
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MLB");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
 
   useLayoutEffect(() => {
@@ -69,7 +71,7 @@ export default function MLBLeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="MLB"
+          league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -202,7 +204,7 @@ export default function MLBLeagueScreen() {
             <StandingsList
               year={standingsYear}
               onYearChange={setStandingsYear}
-              league="MLB"
+              league={league}
             />
           </View>
 
@@ -212,19 +214,19 @@ export default function MLBLeagueScreen() {
               loading={loading}
               error={error}
               categories={categories}
-              league={"MLB"}
+              league={league}
               isDark={isDark}
             />
           </View>
 
           {/* AWARDS */}
           <View key="awards" style={styles.contentArea}>
-            <AwardSeasons league="MLB" />
+            <AwardSeasons league={league} />
           </View>
 
           {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league="MLB" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

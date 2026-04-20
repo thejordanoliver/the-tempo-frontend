@@ -1,15 +1,8 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
-
-/* -------------------------------------------------- */
-/* Shared layout constants                            */
-/* -------------------------------------------------- */
-
-/* -------------------------------------------------- */
-/* Shared layout constants                            */
-/* -------------------------------------------------- */
+import { Animated, StyleSheet, View } from "react-native";
 
 const LOGO_SIZE = 28;
 const TEAM_NAME_WIDTH = 40;
@@ -54,7 +47,8 @@ const Pulse = ({ style, color }: { style?: any; color: string }) => {
 /* -------------------------------------------------- */
 
 export const OddsSkeleton = () => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const skeletonColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   return (

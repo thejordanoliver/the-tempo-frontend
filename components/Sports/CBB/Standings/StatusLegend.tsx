@@ -1,5 +1,6 @@
-import { Text, View, useColorScheme } from "react-native";
-import { getStyles } from "styles/LeagueStyles/StandingsStyles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Text, View } from "react-native";
+import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import { StatusBadge } from "./StatusBadge";
 
@@ -29,8 +30,9 @@ export const statusCodeToColor: Record<string, string> = {
 };
 
 export const StatusLegend = () => {
-  const isDark = useColorScheme() === "dark";
-  const styles = getStyles(isDark);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = standingsStyles(isDark);
 
   return (
     <View style={styles.legendContainer}>
@@ -39,7 +41,7 @@ export const StatusLegend = () => {
         {Object.entries(statusCodeToLabel).map(([code, label]) => (
           <View key={code} style={styles.legendItem}>
             <StatusBadge code={code} />
-            <Text style={[styles.legendLabel, { marginLeft: 6 }]}>{label}</Text>
+            <Text style={styles.statText}>{label}</Text>
           </View>
         ))}
       </View>

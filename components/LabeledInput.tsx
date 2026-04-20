@@ -1,21 +1,14 @@
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+
 type LabeledInputProps = {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
   multiline?: boolean;
   placeholder?: string;
-  containerStyle?: object | object[];
-  inputStyle?: object | object[];
-  labelStyle?: object | object[];
   [key: string]: any; // for other TextInput props
   hint?: string | null;
 };
@@ -26,13 +19,11 @@ export default function LabeledInput({
   onChangeText,
   multiline = false,
   placeholder,
-  containerStyle,
-  inputStyle,
-  labelStyle,
   hint,
   ...rest
 }: LabeledInputProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = labeledInputStyles(isDark);
 
   const MAX_LENGTH = 150;
@@ -43,8 +34,8 @@ export default function LabeledInput({
   };
 
   return (
-    <View style={containerStyle}>
-      <Text style={[styles.label, labelStyle]}>{label}</Text>
+    <View style={styles.container}>
+      <Text style={styles.label}>{label}</Text>
 
       <TextInput
         value={value}
@@ -55,7 +46,7 @@ export default function LabeledInput({
         placeholderTextColor={Colors.midTone}
         style={[
           styles.input,
-          inputStyle,
+
           multiline && { minHeight: 120, textAlignVertical: "top" },
         ]}
         {...rest}
@@ -75,22 +66,30 @@ export default function LabeledInput({
 
 const labeledInputStyles = (isDark: boolean) =>
   StyleSheet.create({
+    container: { marginBottom: 10 },
     label: {
-      marginVertical: 12,
-      fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.transparentLightGray : Colors.transparentDarkGray,
+      letterSpacing: 0.3,
+      textTransform: "uppercase",
+      paddingLeft: 4,
     },
     input: {
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 16,
-      marginBottom: 12,
-      fontFamily: Fonts.OSLIGHT,
+      paddingVertical: 20,
+      paddingHorizontal: 12,
+      color: isDark ? Colors.white : Colors.black,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      color: isDark ? Colors.white : Colors.black,
+      borderRadius: 12,
+      marginVertical: 12,
+      fontSize: 15,
+      fontFamily: Fonts.OSREGULAR,
+      borderWidth: 1,
+      borderColor: isDark
+        ? Colors.transparentLightGray
+        : Colors.transparentDarkGray,
     },
 
     hintContainer: {

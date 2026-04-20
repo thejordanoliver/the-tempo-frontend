@@ -1,32 +1,23 @@
 import { Colors } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGameCardProps } from "types/basketball";
 import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 function CBBStackedGameCard({
   game,
   isWomen = false,
-}: {
-  game: BasketballGame;
-  isWomen?: boolean; // 👈 NEW
-}) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+}: BasketballGameCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const detailsLeague = isWomen ? "wcbb" : "cbb";
 
   const homeId = game?.teams?.home?.id;

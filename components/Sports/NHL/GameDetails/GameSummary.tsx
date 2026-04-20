@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import TabBar from "components/TabBar";
+import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
 import { useEffect, useMemo, useRef, useState } from "react";

@@ -10,7 +10,6 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -23,7 +22,8 @@ export default function ChatInputBar({
   onChange: (t: string) => void;
   onSend: () => void;
 }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const translateY = useRef(new Animated.Value(0)).current; // slide up/down
   const paddingBottom = useRef(new Animated.Value(30)).current; // animated padding

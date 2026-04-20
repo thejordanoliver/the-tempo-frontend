@@ -1,9 +1,7 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { BasketballGame } from "types/types";
 import { getCBBSeason } from "utils/dateUtils";
-
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
@@ -36,12 +34,9 @@ export function useLastTeamGame({
     setError(null);
 
     try {
-      const res = await apiClient.get(
-        `/api/games/cbb/team/${teamId}/last`,
-        {
-          params: { season, league },
-        },
-      );
+      const res = await apiClient.get(`/api/games/cbb/team/${teamId}/last`, {
+        params: { season, league },
+      });
 
       // Backend returns: { league, results, response }
       if (res.data?.results > 0) {

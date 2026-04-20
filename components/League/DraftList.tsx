@@ -11,11 +11,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import DraftCard, { DraftPick } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
   year: string;
   team: string;
@@ -67,7 +67,8 @@ export default function DraftList({
   onRoundChange,
   onViewChange,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const listRef = useRef<FlatList>(null);

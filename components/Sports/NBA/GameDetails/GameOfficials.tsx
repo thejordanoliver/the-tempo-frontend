@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Fonts } from "constants/styles";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export type Official = {
   fullName?: string;
@@ -15,7 +15,8 @@ type Props = {
 };
 
 export default function GameOfficials({ officials, lighter }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark, lighter ?? false);
 
   // Filter out invalid or empty officials

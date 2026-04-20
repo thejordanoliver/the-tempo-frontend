@@ -3,28 +3,15 @@ import { getMLBTeam } from "constants/teamsMLB";
 import { useRouter } from "expo-router";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { memo } from "react";
-
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { MLBGame } from "types/baseball";
+import { BaseballGameCardProps } from "types/baseball";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../GameDetails/BasesIndicator";
 
-type Props = {
-  game: MLBGame; // Your API Game shape
-  isDark?: boolean;
-};
-
-function MLBSquareGameCard({ game }: Props) {
-  const isDark = useColorScheme() === "dark";
+function MLBSquareGameCard({ game, isDark }: BaseballGameCardProps) {
   const router = useRouter();
 
   /* ===============================

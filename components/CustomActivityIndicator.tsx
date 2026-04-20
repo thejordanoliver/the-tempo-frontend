@@ -1,4 +1,5 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
@@ -6,16 +7,15 @@ import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 interface Props {
   size?: number;
   thickness?: number;
-  isDark: boolean;
 }
 
 export default function CustomActivityIndicator({
   size = 48,
   thickness = 4,
-  isDark,
 }: Props) {
   const rotateAnim = useRef(new Animated.Value(0)).current;
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const gradientStart = isDark ? Colors.white : Colors.white;
   const gradientEnd = isDark ? "transparent" : "transparent";
 

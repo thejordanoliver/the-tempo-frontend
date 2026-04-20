@@ -1,35 +1,12 @@
 import React from "react";
-import {
-  GestureResponderEvent,
-  Image,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
+import { ProfileBannerProps } from "types/user";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
-type Props = {
-  bannerImage?: string | null;
-  profileImage?: string | null;
-  isDark: boolean;
-  editable?: boolean;
-  onPressBanner?: (e: GestureResponderEvent) => void;
-  onPressProfile?: (e: GestureResponderEvent) => void;
-};
-
-const bannerDefault = { uri: "https://placehold.co/800x200/png" };
-const profileDefault = { uri: "https://placehold.co/120" };
-
-function safeSource(uri?: string | null) {
-  if (!uri || typeof uri !== "string") return undefined;
-
-  // Show local file URIs for preview
-  if (uri.startsWith("file://")) return { uri };
-
-  // Show remote URLs
-  if (uri.startsWith("http")) return { uri };
-
-  return undefined;
-}
+const bannerPlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
+const profilePlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
 
 export default function ProfileBanner({
   bannerImage,
@@ -38,9 +15,8 @@ export default function ProfileBanner({
   editable = false,
   onPressBanner,
   onPressProfile,
-}: Props) {
+}: ProfileBannerProps) {
   const styles = profileStyles(isDark);
-
   const BannerComponent = editable ? TouchableOpacity : View;
   const ProfileComponent = editable ? TouchableOpacity : View;
 
@@ -48,7 +24,7 @@ export default function ProfileBanner({
     <View style={styles.bannerContainer}>
       <BannerComponent onPress={onPressBanner} activeOpacity={0.7}>
         <Image
-          source={safeSource(bannerImage) ?? bannerDefault}
+          source={{ uri: bannerImage ?? bannerPlaceholder }}
           style={styles.banner}
         />
       </BannerComponent>
@@ -56,7 +32,7 @@ export default function ProfileBanner({
       <View style={styles.profilePicWrapper}>
         <ProfileComponent onPress={onPressProfile} activeOpacity={0.7}>
           <Image
-            source={safeSource(profileImage) ?? profileDefault}
+            source={{ uri: profileImage ?? profilePlaceholder }}
             style={styles.profilePic}
           />
         </ProfileComponent>

@@ -15,12 +15,12 @@ import {
   Keyboard,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from "react-native";
 import { io, Socket } from "socket.io-client";
 import { BASE_URL } from "utils/apiClient";
 import ChatMessage from "./ChatMessage";
+import { usePreferences } from "contexts/PreferencesContext";
 const SOCKET_URL =
   process.env.EXPO_PUBLIC_SOCKET_URL || "http://localhost:4000";
 
@@ -48,7 +48,8 @@ export default function LiveChatBottomSheet({
   const socketRef = useRef<Socket | null>(null);
   const flatListRef = useRef<FlatList>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const userName = user?.username ?? "Anonymous";
   const userProfile = user?.profile_image ?? userPlaceholderImage;
   const [userCount, setUserCount] = useState(0);

@@ -104,6 +104,10 @@ export type FootballGame = {
   };
 };
 
+export type FootballGameCardProps = {
+  game: FootballGame;
+};
+
 export const emptyTeam: FootballTeam = {
   id: 0,
   espnID: 0,

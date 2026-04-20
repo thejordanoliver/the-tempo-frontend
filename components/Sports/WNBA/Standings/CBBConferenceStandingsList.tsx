@@ -13,7 +13,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
@@ -82,7 +81,8 @@ export const CBBConferenceStandingsList = ({
   women = false,
 }: Props) => {
   const { standings, loading, error } = useCBBConferenceStandings({ women });
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();

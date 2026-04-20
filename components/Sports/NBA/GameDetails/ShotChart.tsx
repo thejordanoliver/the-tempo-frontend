@@ -1,20 +1,14 @@
 import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import TabBar from "components/TabBar";
+import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
 import { wnbaTeams } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useState } from "react";
-import {
-  Image,
-  LayoutChangeEvent,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 interface Play {
@@ -48,7 +42,8 @@ export default function ShotChart({
   league,
   neutralSite = false,
 }: ShotChartProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const COURT_LENGTH = league === "CBB" || "WCBB" ? 82 : 84;

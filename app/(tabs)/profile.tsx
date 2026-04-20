@@ -16,22 +16,18 @@ import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { wnbaTeams } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useProfile } from "hooks/UserHooks/useProfile";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import {
-  Animated,
-  ScrollView,
-  View,
-  useColorScheme,
-  useWindowDimensions,
-} from "react-native";
+import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 export default function ProfileScreen() {
+  const { favorites, loadFavorites } = useFavoriteTeamsContext();
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
   const horizontalPadding = 40;
@@ -39,26 +35,17 @@ export default function ProfileScreen() {
   const totalGap = columnGap * (numColumns - 1);
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
-
-  // FIX #12: use logout from useAuth so server token is invalidated and
-  //          in-memory user/token state is cleared. Was calling AsyncStorage.clear() directly.
-  // FIX #7:  use deleteAccount from useAuth instead of re-implementing inline.
   const { logout, deleteAccount } = useAuth();
   const navigation = useNavigation();
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = profileStyles(isDark);
-  const { favorites } = useFavoriteTeamsContext();
-
-  // Local UI state
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  // FIX: removed `password` state — deleteAccount no longer requires a password.
-  //      The backend authenticates via the Bearer token in the Authorization header.
 
-  // Profile hook
   const {
     isLoading,
     currentUserId,
@@ -73,14 +60,12 @@ export default function ProfileScreen() {
   } = useProfile();
   const viewedUserId = currentUserId;
 
-  // Followers modal & settings modal stores
   const { type, targetUserId, openModal, shouldRestore, clearRestore } =
     useFollowersStore();
 
   const { showOnReturn, setShowOnReturn, setShowSettingsModal } =
     useSettingsModalStore();
 
-  /** Toggle between grid and list view for favorite teams */
   const toggleFavoriteTeamsView = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -96,9 +81,7 @@ export default function ProfileScreen() {
     });
   };
 
-  /** Delete account handler */
   const confirmDeleteAccount = async () => {
-    // FIX: removed password check — no longer needed
     try {
       await deleteAccount();
       setShowDeleteModal(false);
@@ -108,9 +91,6 @@ export default function ProfileScreen() {
     }
   };
 
-  /** Sign out handler */
-  // FIX #12: delegate entirely to useAuth.logout — it calls the backend,
-  //          clears AsyncStorage, resets in-memory state, and redirects.
   const signOut = async () => {
     try {
       await logout();
@@ -121,7 +101,6 @@ export default function ProfileScreen() {
     }
   };
 
-  /** Load profile on focus and handle modal restore / settings */
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -152,6 +131,7 @@ export default function ProfileScreen() {
       };
     }, [
       loadProfile,
+      loadFavorites,
       shouldRestore,
       targetUserId,
       type,
@@ -164,7 +144,6 @@ export default function ProfileScreen() {
     ]),
   );
 
-  /** Header with logout/settings buttons */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -176,9 +155,8 @@ export default function ProfileScreen() {
         />
       ),
     });
-  }, [navigation, username, isDark]);
+  }, [navigation, username]);
 
-  /** Map favorites strings to team objects */
   const favoriteTeamsWithLeague = favorites
     .map((fav) => {
       const [league, id] = fav.split(":");

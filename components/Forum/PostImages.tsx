@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useState } from "react";
 import {
   Dimensions,
@@ -7,7 +8,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import PostImagesModal from "./PostImagesModal";
@@ -43,7 +43,8 @@ type Props = {
 };
 
 export default function PostImages({ media, item }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const [modalVisible, setModalVisible] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);

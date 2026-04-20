@@ -1,10 +1,10 @@
 // components/TeamPlayerList.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { globalStyles } from "constants/styles";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
-import { NHLPlayer } from "types/nhl";
+import { NHLPlayer } from "types/hockey";
 
 interface RosterProps {
   players: NHLPlayer[];

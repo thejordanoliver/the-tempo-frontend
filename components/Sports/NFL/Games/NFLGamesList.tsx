@@ -15,7 +15,6 @@ import {
   SectionList,
   SectionListData,
   Text,
-  useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
@@ -51,7 +50,8 @@ export default function NFLGamesList({
   showHeaders,
   scrollEnabled,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = footballGamesListStyle;
   const global = globalStyles(isDark);
   const { viewMode } = usePreferences();

@@ -13,6 +13,7 @@ import { getNFLTeam, nflTeams } from "constants/teamsNFL";
 
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useEffect, useMemo, useRef } from "react";
@@ -26,7 +27,6 @@ import {
   Text,
   TextStyle,
   TouchableOpacity,
-  useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
@@ -500,7 +500,8 @@ export function CustomHeaderTitle({
   logo,
   logoLight,
 }: CustomHeaderTitleProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
 
   const modalToMapKey: Record<string, string> = {
@@ -587,9 +588,9 @@ export function CustomHeaderTitle({
             ? mlbTeams
             : league === "NHL"
               ? nhlTeams
-            : league === "WNBA"
-              ? wnbaTeams
-              : nbaTeams;
+              : league === "WNBA"
+                ? wnbaTeams
+                : nbaTeams;
 
   const homeTeam = useMemo(() => {
     const team =

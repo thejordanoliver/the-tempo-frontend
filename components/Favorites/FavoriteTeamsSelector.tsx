@@ -1,5 +1,6 @@
+import SearchBar from "components/SearchBars/SearchBar";
 import React, { useCallback, useMemo } from "react";
-import { Animated, FlatList } from "react-native";
+import { Animated, FlatList, StyleSheet } from "react-native";
 import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
@@ -13,6 +14,7 @@ type Props = {
   search: string;
   itemWidth: number;
   loading?: boolean;
+  setSearch: (t: string) => void;
 };
 
 const FavoriteTeamsSelector = ({
@@ -23,14 +25,25 @@ const FavoriteTeamsSelector = ({
   fadeAnim,
   search,
   itemWidth,
+  setSearch,
   loading = false,
 }: Props) => {
+  const styles = useMemo(
+    () => createStyles(isGridView, itemWidth),
+    [isGridView, itemWidth],
+  );
+
   const filteredTeams = useMemo(() => {
     const query = search.toLowerCase().trim();
     if (!query) return teams;
 
     return teams.filter((team) => {
-      const name = (team.fullName || team.name || team.displayName || "").toLowerCase();
+      const name = (
+        team.fullName ||
+        team.name ||
+        team.displayName ||
+        ""
+      ).toLowerCase();
       const league = team.league.toLowerCase();
       const searchTerms = ((team as any).searchTerms ?? "").toLowerCase();
 
@@ -55,7 +68,7 @@ const FavoriteTeamsSelector = ({
       return (
         <TeamCard
           item={displayItem}
-          isSelected={favorites.includes(`${item.league}:${item.id.toString()}`)}
+          isSelected={favorites.includes(`${item.league}:${item.id}`)}
           onPress={() => toggleFavorite(item.league, item.id.toString())}
           isGridView={isGridView}
           itemWidth={itemWidth}
@@ -75,32 +88,44 @@ const FavoriteTeamsSelector = ({
   }
 
   return (
-    <Animated.View style={{ flex: 1, opacity: fadeAnim, marginTop: 12 }}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <SearchBar
+        placeholder="Search teams or leagues..."
+        value={search}
+        onChangeText={setSearch}
+      />
+
       <FlatList
         key={isGridView ? "grid" : "list"}
         data={filteredTeams}
         keyExtractor={(item) => `${item.league}-${item.id}`}
         numColumns={isGridView ? 3 : 1}
-        contentContainerStyle={{
-          flexGrow: 1,
-          alignItems: isGridView ? "center" : "stretch",
-          paddingBottom: 20,
-        }}
-        columnWrapperStyle={
-          isGridView
-            ? {
-                width: itemWidth * 3 + 24,
-                justifyContent: "flex-start",
-                gap: 12,
-                marginBottom: 12,
-              }
-            : undefined
-        }
+        contentContainerStyle={styles.contentContainer}
+        columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
       />
     </Animated.View>
   );
 };
+
+const createStyles = (isGridView: boolean, itemWidth: number) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      gap: 12,
+    },
+    contentContainer: {
+      flexGrow: 1,
+      alignItems: isGridView ? "center" : "stretch",
+      paddingBottom: 20,
+    },
+    columnWrapper: {
+      width: itemWidth * 3 + 24,
+      justifyContent: "flex-start",
+      gap: 12,
+      marginBottom: 12,
+    },
+  });
 
 export default FavoriteTeamsSelector;

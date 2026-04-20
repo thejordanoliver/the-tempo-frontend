@@ -1,10 +1,12 @@
 import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 
 export default function HeadToHeadSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const pulseAnim = useRef(new Animated.Value(1)).current;

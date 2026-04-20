@@ -1,7 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useTeamRosters } from "hooks/NFLHooks/useTeamRosters";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
@@ -9,7 +10,6 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -81,7 +81,8 @@ export const Roster = forwardRef(
         }));
     }, [teamPlayers]);
 
-    const isDark = useColorScheme() === "dark";
+    const { resolvedColorScheme } = usePreferences();
+    const isDark = resolvedColorScheme === "dark";
     const styles = rosterStyles(isDark);
     const global = globalStyles(isDark);
 

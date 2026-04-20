@@ -4,6 +4,8 @@ import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
 import { useState } from "react";
@@ -15,14 +17,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();

@@ -7,17 +7,20 @@ import NewsList from "components/News/NewsList";
 import EventSelector from "components/Sports/MMA/EventSelector";
 import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 export default function UFCLeagueScreen() {
-  const isDark = useColorScheme() === "dark";
+  const league = "MMA";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const navigation = useNavigation();
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
@@ -56,7 +59,7 @@ export default function UFCLeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="MMA"
+          league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -141,7 +144,7 @@ export default function UFCLeagueScreen() {
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league="MMA" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

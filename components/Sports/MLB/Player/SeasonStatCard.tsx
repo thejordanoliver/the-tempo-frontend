@@ -1,8 +1,9 @@
-import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
+import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
-import { useCBBPlayerSeasons } from "hooks/CBBHooks/useCBBPlayerSeasons";
-import { Text, useColorScheme, View } from "react-native";
+import { useCBBPlayerSeasons } from "hooks/CBBHooks/useBasketballPlayerSeasons";
+import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import CenteredHeader from "../../../Headings/CenteredHeader";
 
@@ -23,7 +24,8 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   const { player, careerStats, seasonStats, loading, error } =
     useCBBPlayerSeasons(playerId);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
 
   /* ------------------------------
@@ -45,7 +47,7 @@ export default function SeasonStatCard({ playerId, season }: Props) {
   if (!seasons.length) {
     return (
       <>
-        <CenteredHeader>Season</CenteredHeader>
+        <CenteredHeader isDark={isDark}>Season</CenteredHeader>
         <Text style={styles.errorText}>No stats available</Text>
       </>
     );

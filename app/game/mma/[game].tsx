@@ -1,30 +1,33 @@
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import { getNeutralVenue } from "constants/neutralVenues";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { emptyFighter, MMAFight } from "types/mma";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
 export default function GameDetailsScreen() {
+  const navigation = useNavigation();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+
   const { game } = useLocalSearchParams();
   const styles = gameDetailsScreenStyles;
   const parsedGame: MMAFight | null = game
     ? (JSON.parse(game as string) as MMAFight)
     : null;
-  const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
   const safeDate = (date?: string | null) => {
@@ -130,9 +133,7 @@ export default function GameDetailsScreen() {
   const venueName = baseVenue?.fullName;
   const venueAddress = neutralVenue?.address;
   const venueCapacity = neutralVenue?.venueCapacity;
-  const venueImage = neutralVenue?.venueImage
-    ? neutralVenue?.venueImage
-    : null;
+  const venueImage = neutralVenue?.venueImage ? neutralVenue?.venueImage : null;
   const venueLocation = neutralVenue?.city;
   const venueLat = neutralVenue?.latitude ?? 0;
   const venueLon = neutralVenue?.longitude ?? 0;
@@ -147,7 +148,7 @@ export default function GameDetailsScreen() {
   if (isLoading || !details) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

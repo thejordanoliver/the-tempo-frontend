@@ -1,5 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
-import { Image, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Animated, {
   SlideInDown,
   SlideOutUp,
@@ -28,7 +29,7 @@ export type PlayerWidgetProps = {
   height?: number;
   width?: number;
   isLast?: boolean;
-  visible?: boolean; // ✅ NEW: animate visibility
+  visible?: boolean; 
 };
 
 export default function PlayerItem({
@@ -36,7 +37,8 @@ export default function PlayerItem({
   isLast = false,
   ...props
 }: PlayerWidgetProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = playerItemStyles(isDark);
 
   const animatedStyle = useAnimatedStyle(() => {

@@ -1,14 +1,8 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
 
 const STAT_COLUMNS = 22;
 const CELL_WIDTH = 30;
@@ -17,7 +11,8 @@ const CELL_MARGIN = 8;
 const ROW_HEIGHT = 36;
 
 export default function PlayerStatTableSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   // Pulse animation for ALL cells

@@ -1,7 +1,8 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
-import SeasonStatCardSkeleton from "components/Sports/NBA/Player/SeasonStatCardSkeleton";
+import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
-import { Text, useColorScheme, View } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { getFootballSeason } from "utils/dateUtils";
 
@@ -21,7 +22,8 @@ export default function SeasonStatCard({
   loading,
   error,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
 

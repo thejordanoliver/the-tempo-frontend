@@ -1,4 +1,4 @@
-import { Text, View, useColorScheme } from "react-native";
+import { Text, View } from "react-native";
 import { getStyles } from "styles/LeagueStyles/StandingsStyles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import { StatusBadge } from "./StatusBadge";
@@ -29,7 +29,8 @@ export const statusCodeToColor: Record<string, string> = {
 };
 
 export const StatusLegend = () => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   return (

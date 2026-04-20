@@ -1,27 +1,25 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { neutralVenues } from "constants/neutralVenues";
-import { getNBATeam } from "constants/teams";
+import { getNeutralVenue } from "constants/neutralVenues";
+import { getTeamBySummerId } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useLastFiveGames } from "hooks/NBAHooks/useLastFiveGames";
-import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
-import React, { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import React, { useRef } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-
-import { Game } from "types/types";
+import { BasketballGame } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { Colors } from "constants/styles";
 type Props = {
   visible: boolean;
-  game: Game;
+  game: BasketballGame;
   onClose: () => void;
 };
 
@@ -30,168 +28,125 @@ export default function SummerLeagueGamePreviewModal({
   game,
   onClose,
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
   const dateObj = new Date(game.date);
+  const styles = gamePreviewModalStyle();
+  /* ---------------- League ---------------- */
+
+  const isLasVegas = game.league.name === "NBA - Las Vegas Summer League";
+
+  /* ---------------- Teams ---------------- */
+
+  const homeTeamId = Number(game?.teams?.home?.id);
+  const awayTeamId = Number(game?.teams?.away?.id);
+
+  const homeTeam = getTeamBySummerId(homeTeamId);
+  const awayTeam = getTeamBySummerId(awayTeamId);
+
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
+
+  const homeEspnId = homeTeam?.espnID ?? 0;
+  const awayEspnId = awayTeam?.espnID ?? 0;
 
   const formattedDate = dateObj.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
   });
 
-  const formattedTime =
-    dateObj?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedTime = dateObj.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
-  const isChampionship =
-    dateObj.getMonth() === 5 &&
-    dateObj.getDate() >= 5 &&
-    dateObj.getDate() <= 22;
+  const gameDateISO = dateObj.toISOString();
+  const gameDateYMD = gameDateISO.split("T")[0];
 
-  const isChristmasDay = dateObj.getMonth() === 11 && dateObj.getDate() === 25;
-  const isNewYearsDay = dateObj.getMonth() === 0 && dateObj.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
+  /* ---------------- Hooks ---------------- */
+  const detailsLeague = isLasVegas ? "summerVegas" : "summerUtah";
 
-  const styles = gamePreviewModalStyle(isChampionship);
-
-  // --- Safeguard ---
-  if (!game) return null;
-
-  // --- Fetch playoff info ---
-  const home = getNBATeam(game.home?.id);
-  const away = getNBATeam(game.away?.id);
-
-  const homeId = Number(home?.id) || 0;
-  const awayId = Number(away?.id) || 0;
-
-  const homeName = home?.code ?? home?.name ?? "";
-  const awayName = away?.code ?? home?.name ?? "";
-
-  const homeColor = home?.color ?? "";
-  const awayColor = away?.color ?? "";
-
-  // --- Team stats, weather, details ---
-  const { data: gameStats } = useGameStatistics(game?.id ?? 0);
-
-  // --- Weather + Broadcasts ---
-  const neutralVenueData = neutralVenues[game?.venue?.name ?? ""];
-  const lat = neutralVenueData?.latitude ?? home?.latitude ?? null;
-  const lon = neutralVenueData?.longitude ?? home?.longitude ?? null;
-  const { weather, weatherLoading, weatherError } = useWeatherForecast(
-    lat,
-    lon,
-    new Date(game.date).toISOString(),
-  );
-
-  // --- Handle modal visibility safely ---
-  useEffect(() => {
-    if (!sheetRef.current) return;
-    if (visible) {
-      requestAnimationFrame(() => sheetRef.current?.present());
-    } else {
-      requestAnimationFrame(() => sheetRef.current?.dismiss());
-    }
-  }, [visible]);
-
-  // --- Live scores + LineScore logic ---
   const { score: liveScore, details } = useGameDetails(
-    "nba",
-    home?.espnID?.toString(),
-    away?.espnID?.toString(),
-    new Date(game.date).toISOString().split("T")[0],
+    detailsLeague,
+    String(homeEspnId),
+    String(awayEspnId),
+    gameDateYMD,
   );
+
+  const isLoadingGame =
+    !liveScore ||
+    !details ||
+    liveScore.home?.total == null ||
+    liveScore.away?.total == null;
+
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-  const homeTimeouts = liveScore?.timeouts.home ?? 0;
-  const awayTimeouts = liveScore?.timeouts.away ?? 0;
+  const period = liveScore?.period ?? 0;
+  const displayClock = liveScore?.displayClock;
   const fouls = liveScore?.fouls;
   const awayBonus = fouls?.away?.bonusState;
   const homeBonus = fouls?.home?.bonusState;
-  const injuries = details?.injuries ?? [];
-  const officials = details?.officials ?? [];
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const gameStats = liveScore?.teamStats;
   const headlineText = details?.headline;
+  const holidayLabel = getHolidayLabel(dateObj);
   const headline = headlineText || holidayLabel;
-
-  // Team records
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-
-  // --- Broadcasts ---
+  const officials = details?.officials ?? [];
+  const neutralSite = details?.neutralSite;
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
+  const homeRecord = details?.records.home.overall ?? "0-0";
+  const awayRecord = details?.records.away.overall ?? "0-0";
+  const homeTimeouts = liveScore?.timeouts.home ?? 0;
+  const awayTimeouts = liveScore?.timeouts.away ?? 0;
 
+  /* ---------------- Neutral site / venue ---------------- */
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : homeTeam?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address ||
+      `${baseVenue?.address.city} ${baseVenue?.address.state}, ${baseVenue?.address.zipCode} ${baseVenue?.address.country}`;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images[0]?.href
+    : homeTeam?.venueImage || baseVenue?.images[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+  const venueAttendance = details?.attendance || null;
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    venueLat,
+    venueLon,
+    gameDateISO,
+  );
+
+  /* ---------------- Status / linescore ---------------- */
+
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
+
+  // --- Period scores / line score ---
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
-    : game?.linescore?.home?.length
-      ? {
-          home: game.linescore.home.map((v) => v.toString()),
-          away: game.linescore.away.map((v) => v.toString()),
-        }
-      : undefined;
-
-  // --- Venue memoization ---
-  const {
-    resolvedVenueImage,
-    resolvedVenueName,
-    resolvedVenueCity,
-    resolvedVenueAddress,
-    resolvedVenueCapacity,
-  } = useMemo(() => {
-    const cleanedVenueName = game?.venue?.name
-      ?.replace(/\s*\(.*?\)/, "")
-      .trim();
-    const resolvedVenueName = cleanedVenueName || home?.venueName || "";
-    const resolvedVenueCity = game?.venue?.city ?? home?.location ?? "";
-    const resolvedVenueAddress =
-      neutralVenueData?.address || home?.address || "";
-    const resolvedVenueCapacity =
-      neutralVenueData?.venueCapacity || home?.venueCapacity || "";
-    const resolvedVenueImage =
-      neutralVenueData?.venueImage || home?.venueImage || "";
-    neutralVenues[game?.venue?.city ?? ""] ||
-      neutralVenues[home?.code ?? ""] ||
-      home?.venueImage;
-
-    return {
-      resolvedVenueImage,
-      resolvedVenueName,
-      resolvedVenueCity,
-      resolvedVenueAddress,
-      resolvedVenueCapacity,
-    };
-  }, [game, home, neutralVenueData]);
-
-  const homeLastGames = useLastFiveGames(homeId);
-  const awayLastGames = useLastFiveGames(awayId);
-
-  // --- Clock display ---
-  const period = liveScore?.period ?? game.status?.short;
-  const displayClock = liveScore?.displayClock ?? game.status?.clock;
-
-  const isLiveScoreReady = !!liveScore;
-  const homeScore =
-    liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
-  const awayScore =
-    liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+    : undefined;
 
   return (
     <BottomSheetModal
@@ -216,12 +171,8 @@ export default function SummerLeagueGamePreviewModal({
       <View style={styles.container}>
         {/* Background gradients */}
         <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
+          colors={[awayColor, awayColor, homeColor, homeColor]}
+          locations={[0, 0.4, 0.6, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -242,9 +193,9 @@ export default function SummerLeagueGamePreviewModal({
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          {!isLiveScoreReady ? (
+          {!isLoadingGame ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>
@@ -259,8 +210,7 @@ export default function SummerLeagueGamePreviewModal({
               {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
-                  team={away}
-                  teamName={awayName}
+                  team={awayTeam}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
@@ -271,7 +221,6 @@ export default function SummerLeagueGamePreviewModal({
                 />
 
                 <CenterInfo
-                  isChampionship={isChampionship}
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}
                   broadcastNetworks={broadcastText}
@@ -284,8 +233,7 @@ export default function SummerLeagueGamePreviewModal({
                 />
 
                 <TeamInfo
-                  team={home}
-                  teamName={homeName}
+                  team={homeTeam}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
@@ -299,20 +247,19 @@ export default function SummerLeagueGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  gameStatusDescription={gameStatusDescription}
                   game={game}
-                  home={home}
-                  away={away}
+                  home={homeTeam}
+                  away={awayTeam}
                   lineScore={lineScore}
                   gameStats={gameStats}
-                  homeLastGames={homeLastGames}
-                  awayLastGames={awayLastGames}
-                  injuries={injuries}
                   officials={officials}
-                  resolvedVenueImage={resolvedVenueImage}
-                  resolvedVenueName={resolvedVenueName}
-                  resolvedVenueCity={resolvedVenueCity}
-                  resolvedVenueAddress={resolvedVenueAddress}
-                  resolvedVenueCapacity={resolvedVenueCapacity}
+                  venueImage={venueImage}
+                  venueName={venueName}
+                  venueCity={venueLocation}
+                  venueAddress={venueAddress}
+                  venueAttendance={venueAttendance}
+                  venueCapacity={venueCapacity}
                   weather={weather}
                   weatherLoading={weatherLoading}
                   weatherError={weatherError}

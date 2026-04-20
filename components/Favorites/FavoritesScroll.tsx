@@ -8,7 +8,7 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
-import { Pressable, Text, View, useColorScheme } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import { LeagueType } from "types/types";
@@ -28,6 +28,7 @@ type TeamWithLeague = {
   league: LeagueType;
   key: string;
   wid?: number;
+  isDark: boolean;
 };
 
 type Props = {
@@ -36,6 +37,7 @@ type Props = {
   onDragStart?: () => void;
   onDragEnd?: () => void;
   loading?: boolean;
+  isDark: boolean;
 };
 
 export default function FavoritesScroll({
@@ -44,9 +46,9 @@ export default function FavoritesScroll({
   onDragStart,
   onDragEnd,
   loading,
+  isDark,
 }: Props) {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
   const styles = favoritesScrollStyles(isDark);
   const { syncFavorites } = useFavoriteTeamsContext();
 
@@ -106,12 +108,12 @@ export default function FavoritesScroll({
           league: league as LeagueType,
           key: `${league}-${id}`,
           wid: baseTeam.wid,
+          isDark, // ✅ now correctly set on every item
         } as TeamWithLeague;
       })
       .filter((t): t is TeamWithLeague => t !== null);
-  }, [favoriteTeamIds]);
-
-  if (loading) return <FavoritesScrollSkeleton />;
+  }, [favoriteTeamIds, isDark]); // ✅ isDark added to deps so items update on theme change
+  if (loading) return <FavoritesScrollSkeleton isDark={isDark} />;
 
   // -------------------------
   // Render

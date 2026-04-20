@@ -5,25 +5,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { memo } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { MLBGame } from "types/baseball";
+import { BaseballGameCardProps } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../GameDetails/BasesIndicator";
 
-type Props = {
-  game: MLBGame; // Your API Game shape
-};
-
-function MLBGameCard({ game }: Props) {
-  const isDark = useColorScheme() === "dark";
+function MLBGameCard({ game, isDark }: BaseballGameCardProps) {
   const router = useRouter();
 
   /* ===============================

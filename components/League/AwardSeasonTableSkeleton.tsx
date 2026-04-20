@@ -1,13 +1,8 @@
 // components/GameDetails/AwardSeasonTableSkeleton.tsx
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const COLUMN_WIDTH = 70;
 const NAME_COLUMN_WIDTH = "100%";
@@ -24,7 +19,8 @@ export default function AwardSeasonTableSkeleton({
   lighter = false,
   teams = 1,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark, lighter);
 
   // Shared pulse animation

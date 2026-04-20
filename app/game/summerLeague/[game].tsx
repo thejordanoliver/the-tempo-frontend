@@ -7,16 +7,17 @@ import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NBASummerLeague/GameDetails/GameHeader";
-import { teams } from "constants/teams";
+import { getNeutralVenue } from "constants/neutralVenues";
+import { getTeamBySummerId, teams } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/types";
-import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
@@ -34,7 +35,8 @@ function parseGameDate(raw: any) {
 
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
 
@@ -54,29 +56,23 @@ export default function GameDetailsScreen() {
   /* ---------------- League ---------------- */
 
   const isLasVegas = gameObj.league.name === "NBA - Las Vegas Summer League";
-  const isUtah = gameObj.league.name === "NBA Salt Lake City Summer League";
 
   /* ---------------- Teams ---------------- */
 
   const homeTeamId = Number(gameObj?.teams?.home?.id);
   const awayTeamId = Number(gameObj?.teams?.away?.id);
 
-  const homeTeamData = teams.find(
-    (t) => String((t as any).summerLeagueId) === String(homeTeamId),
-  );
+  const homeTeam = getTeamBySummerId(homeTeamId);
+  const awayTeam = getTeamBySummerId(awayTeamId);
 
-  const awayTeamData = teams.find(
-    (t) => String((t as any).summerLeagueId) === String(awayTeamId),
-  );
-
-  if (!homeTeamData || !awayTeamData) {
+  if (!homeTeam || !awayTeam) {
     const sampleTeams = teams.slice(0, 5).map((t) => ({
       name: t.name,
       id: t.id,
       espnID: t.espnID,
     }));
 
-    console.warn("⚠️ Missing team data in GameDetailsScreen", {
+    console.warn("⚠️ Missing team  in GameDetailsScreen", {
       league: isLasVegas ? "SummerVegas" : "SummerUtah",
       apiTeamIds: {
         homeTeamId,
@@ -90,8 +86,8 @@ export default function GameDetailsScreen() {
           (gameObj as any)?.timestamp ?? (gameObj as any)?.date ?? "unknown",
       },
       found: {
-        homeTeamFound: !!homeTeamData,
-        awayTeamFound: !!awayTeamData,
+        homeTeamFound: !!homeTeam,
+        awayTeamFound: !!awayTeam,
       },
       teamSample: sampleTeams,
     });
@@ -99,16 +95,11 @@ export default function GameDetailsScreen() {
     return null;
   }
 
-  const homeLogo = isDark
-    ? homeTeamData.logoLight || homeTeamData.logo
-    : homeTeamData.logo;
+  const homeLogo = isDark ? homeTeam.logoLight || homeTeam.logo : homeTeam.logo;
+  const awayLogo = isDark ? awayTeam.logoLight || awayTeam.logo : awayTeam.logo;
 
-  const awayLogo = isDark
-    ? awayTeamData.logoLight || awayTeamData.logo
-    : awayTeamData.logo;
-
-  const homeEspnId = homeTeamData.espnID ?? 0;
-  const awayEspnId = awayTeamData.espnID ?? 0;
+  const homeEspnId = homeTeam.espnID ?? 0;
+  const awayEspnId = awayTeam.espnID ?? 0;
 
   /* ---------------- Date ---------------- */
 
@@ -152,8 +143,6 @@ export default function GameDetailsScreen() {
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
   const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -161,15 +150,12 @@ export default function GameDetailsScreen() {
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const homeRank = details?.homeRank;
   const awayRank = details?.awayRank;
-  const plays = liveScore?.plays ?? [];
   const headlineText = details?.headline;
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const venue = details?.venue;
   const neutralSite = details?.neutralSite;
   const leaders = liveScore?.leaders ?? [];
   const playerStats = liveScore?.playerStats ?? [];
-  const teamStats = liveScore?.teamStats ?? [];
   const lastPlay = liveScore?.lastPlay ?? "";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
@@ -177,26 +163,39 @@ export default function GameDetailsScreen() {
   const awayRecord = details?.records.away.overall ?? "0-0";
 
   /* ---------------- Neutral site / venue ---------------- */
-
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: details?.venue,
-        homeTeam: homeTeamData,
-      }),
-    [details?.venue, homeTeamData],
-  );
-
-  const { weather } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateYMD,
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : homeTeam?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address ||
+      `${baseVenue?.address.city} ${baseVenue?.address.state}, ${baseVenue?.address.zipCode} ${baseVenue?.address.country}`;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images[0]?.href
+    : homeTeam?.venueImage || baseVenue?.images[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+  const venueAttendance = details?.attendance || null;
+  const { weather, weatherError, weatherLoading } = useWeatherForecast(
+    venueLat,
+    venueLon,
+    gameDateISO,
   );
 
   /* ---------------- Status / linescore ---------------- */
 
-  const displayHomeScore = liveScore?.home.total ?? 0;
-  const displayAwayScore = liveScore?.away.total ?? 0;
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
 
   // --- Period scores / line score ---
   const lineScore = liveScore?.periodScores?.length
@@ -209,8 +208,8 @@ export default function GameDetailsScreen() {
   /* ---------------- Header ---------------- */
 
   useLayoutEffect(() => {
-    // While loading or missing data → NO HEADER
-    if (isLoadingGame || !homeTeamData || !awayTeamData) {
+    // While loading or missing  → NO HEADER
+    if (isLoadingGame || !homeTeam || !awayTeam) {
       navigation.setOptions({
         header: () => null,
       });
@@ -223,10 +222,10 @@ export default function GameDetailsScreen() {
         <CustomHeaderTitle
           tabName="Game"
           onBack={goBack}
-          homeTeamId={homeTeamData.id}
-          awayTeamId={awayTeamData.id}
-          homeTeamCode={homeTeamData.code}
-          awayTeamCode={awayTeamData.code}
+          homeTeamId={homeTeam.id}
+          awayTeamId={awayTeam.id}
+          homeTeamCode={homeTeam.code}
+          awayTeamCode={awayTeam.code}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
           isNeutralSite={!!neutralSite}
@@ -234,18 +233,12 @@ export default function GameDetailsScreen() {
         />
       ),
     });
-  }, [
-    navigation,
-    isLoadingGame,
-    neutralSite,
-    homeTeamData?.code,
-    awayTeamData?.code,
-  ]);
+  }, [navigation, isLoadingGame, neutralSite, homeTeam?.code, awayTeam?.code]);
 
   if (isLoadingGame) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -259,16 +252,16 @@ export default function GameDetailsScreen() {
     >
       <GameHeader
         headlineText={headlineText ?? ""}
-        homeTeamData={homeTeamData}
-        awayTeamData={awayTeamData}
+        homeTeamData={homeTeam}
+        awayTeamData={awayTeam}
         homeLogo={homeLogo}
         awayLogo={awayLogo}
         rankHome={homeRank}
         rankAway={awayRank}
-        homeScore={displayHomeScore}
-        awayScore={displayAwayScore}
-        home={homeTeamData}
-        away={awayTeamData}
+        homeScore={homeScore}
+        awayScore={awayScore}
+        home={homeTeam}
+        away={awayTeam}
         homeRecord={homeRecord}
         awayRecord={awayRecord}
         displayClock={displayClock}
@@ -289,8 +282,8 @@ export default function GameDetailsScreen() {
           {!isScheduled && (
             <LineScore
               linescore={lineScore}
-              homeCode={homeTeamData.code ?? ""}
-              awayCode={awayTeamData.code ?? ""}
+              homeCode={homeTeam.code ?? ""}
+              awayCode={awayTeam.code ?? ""}
               isDark={isDark}
             />
           )}
@@ -323,14 +316,15 @@ export default function GameDetailsScreen() {
           />
 
           <GameLocation
-            venueImage={resolvedVenue.image}
-            venueName={resolvedVenue.name}
-            location={resolvedVenue.city}
-            address={resolvedVenue.address}
-            venueCapacity={String(resolvedVenue.capacity ?? "")}
+            venueImage={venueImage}
+            venueName={venueName}
+            location={venueLocation}
+            address={venueAddress}
+            venueCapacity={venueCapacity}
+            venueAttendance={venueAttendance}
             weather={weather}
-            loading={false}
-            error={null}
+            loading={weatherLoading}
+            error={weatherError}
             isDark={isDark}
           />
         </View>

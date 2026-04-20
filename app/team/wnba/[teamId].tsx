@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
+import { StandingsList } from "components/League/Standings/StandingsList";
 import MonthSelector from "components/MonthSelector";
 import NewsList from "components/News/NewsList";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
@@ -9,25 +10,31 @@ import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BasketballGame } from "types/types";
 import {
   getGameCountByMonth,
   getMonthsToShow,
+  getWNBASeason,
   scrollToMonth,
 } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
-  const isDark = useColorScheme() === "dark";
+  const [standingsYear, setStandingsYear] = useState(
+    getWNBASeason().toString(),
+  );
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
@@ -183,7 +190,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -249,6 +256,21 @@ export default function TeamDetailScreen() {
           </ScrollView>
         </View>
 
+        {/* Roster Page */}
+        <View key="roster" style={styles.contentArea}></View>
+
+        {/* Stats Page */}
+        <View key="stats" style={styles.contentArea}></View>
+
+        {/* Standings Page */}
+        <View key="standings" style={styles.contentArea}>
+          <StandingsList
+            year={standingsYear}
+            onYearChange={setStandingsYear}
+            league={league}
+          />
+        </View>
+
         {/* Forum Page */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league={league} />
@@ -262,6 +284,7 @@ export default function TeamDetailScreen() {
           onClose={() => setModalVisible(false)}
           teamId={team.id}
           league={league}
+          isDark={isDark}
         />
       )}
     </View>

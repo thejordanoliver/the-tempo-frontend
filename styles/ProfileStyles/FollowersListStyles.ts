@@ -1,3 +1,4 @@
+import FollowButton from "components/Profile/FollowButton";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
@@ -34,7 +35,6 @@ export const followersListStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
-
     avatarContainer: {
       width: 44,
       height: 44,
@@ -48,7 +48,6 @@ export const followersListStyles = (isDark: boolean) =>
       width: 44,
       height: 44,
     },
-
     userRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -61,4 +60,5 @@ export const followersListStyles = (isDark: boolean) =>
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },
+    mutalIcon: { marginRight: 6 }
   });

@@ -1,14 +1,13 @@
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
-import { Text, useColorScheme, View } from "react-native";
+import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import SeasonStatCardSkeleton from "./SeasonStatCardSkeleton";
+import SeasonStatCardSkeleton from "../../../Skeletons/SeasonStatCardSkeleton";
 type Props = {
   playerId: number;
-  teamColor?: string;
-  teamColorDark?: string;
-  season?: string; // optional season
+  season?: string;
 };
 
 export default function SeasonStatCard({ playerId, season }: Props) {
@@ -26,7 +25,8 @@ export default function SeasonStatCard({ playerId, season }: Props) {
 
   const seasonData = seasons.find((s) => s.season === displaySeason);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
 

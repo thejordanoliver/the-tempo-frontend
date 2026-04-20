@@ -27,7 +27,6 @@ type GamePreviewContentProps = {
   resolvedVenueAddress?: string;
   resolvedVenueCapacity: any;
   weather: any;
-  isDark?: boolean;
   highlights: any;
   gameStatusDescription: string;
 };

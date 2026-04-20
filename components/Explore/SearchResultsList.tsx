@@ -1,16 +1,11 @@
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { globalStyles } from "constants/styles";
-import {
-  FlatList,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/types";
 import ResultItemRow from "./ResultItemRow";
+import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
   data: ResultItem[];
   loading: boolean;
@@ -34,12 +29,14 @@ export default function SearchResultsList({
   showAll = false,
   isSearching,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
   const global = globalStyles(isDark);
 
   function getTeamLeagueKey(item: any) {
     if (item.isNFL) return "nfl";
+    if (item.isWNBA) return "wnba";
     if (item.isMLB) return "mlb";
     if (item.isNHL) return "nhl";
     if (item.isCFB) return "cfb";

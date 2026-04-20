@@ -1,12 +1,14 @@
 import { Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 
 export default function SignupSuccessScreen() {
   const router = useRouter();
   const { token, id } = useLocalSearchParams();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const screenFade = useRef(new Animated.Value(0)).current;
   const textFade = useRef(new Animated.Value(0)).current;

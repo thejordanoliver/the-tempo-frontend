@@ -1,58 +1,38 @@
-/* ================================================== */
-/* Imports                                            */
-/* ================================================== */
-
-/* --- Navigation & Routing --- */
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-
-/* --- React & React Native --- */
-import { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
-
-/* --- UI Components --- */
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-
-/* --- Game Detail Components --- */
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-
-/* --- NFL Components --- */
 import NFLGameHeader from "components/Sports/NFL/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import NFLInjuries from "components/Sports/NFL/GameDetails/Injuries";
 import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
-/* --- Hooks --- */
+import { getNeutralStadium } from "constants/neutralVenues";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
-
-/* --- Constants & Types --- */
-import {
-  getNeutralStadium,
-  getNFLTeam,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
-import { FootballGame } from "types/football";
-
-/* --- Utils & Stores --- */
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
-import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
+import { useLayoutEffect, useMemo } from "react";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
+import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 
 export default function NFLGameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game: gameParam } = useLocalSearchParams();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
@@ -123,8 +103,6 @@ export default function NFLGameDetailsScreen() {
 
   const homeLastGames = useLastFiveGames(homeTeamId);
   const awayLastGames = useLastFiveGames(awayTeamId);
-  const { stats } = useFootballTeamStats(parsedGame?.game?.id ?? "");
-
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -223,7 +201,7 @@ export default function NFLGameDetailsScreen() {
   if (isGameLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

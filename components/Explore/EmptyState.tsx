@@ -1,5 +1,5 @@
 // components/Explore/EmptyState.tsx
-import { useFavoriteWidgets } from "hooks/useFavoritesWidgets";
+import { useFavoriteWidgets } from "hooks/WidgetHooks/useFavoritesWidgets";
 import { View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import WidgetSlider from "./Widgets/WidgetSlider";
@@ -17,7 +17,6 @@ export default function EmptyState({ isDark }: EmptyStateProps) {
     wcbbWidgets,
     wnbaWidgets,
     nhlWidgets,
-    leadersMap,
   } = useFavoriteWidgets();
 
   const styles = exploreStyles(isDark);
@@ -56,11 +55,7 @@ export default function EmptyState({ isDark }: EmptyStateProps) {
 
   return (
     <View style={styles.centerPrompt}>
-      <WidgetSlider
-        games={allWidgets}
-        leadersMap={leadersMap}
-        isDark={isDark}
-      />
+      <WidgetSlider games={allWidgets} isDark={isDark} />
     </View>
   );
 }

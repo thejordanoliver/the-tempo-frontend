@@ -18,13 +18,13 @@ import {
   Text,
   TouchableOpacity,
   UIManager,
-  useColorScheme,
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
 import { BASE_URL } from "utils/apiClient";
 import { getAccessToken } from "utils/authStorage";
 import { MediaItem } from "./PostImages";
+import { usePreferences } from "contexts/PreferencesContext";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -62,7 +62,8 @@ export default function PostImagesModal({
   profileImage,
   username,
 }: PostImagesModalProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const flatListRef = useRef<FlatList<MediaItem>>(null);

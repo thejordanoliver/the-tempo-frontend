@@ -23,7 +23,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      padding: 12,
+      padding: 8,
       alignItems: "center",
       justifyContent: "space-between",
     },
@@ -82,7 +82,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     teamRecord: {
-      fontSize: 18,
+      fontSize: 16,
       fontFamily: Fonts.OSBOLD,
       color: textColor,
       textAlign: "center",
@@ -97,7 +97,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       height: 40,
       borderWidth: 1,
       alignItems: "center",
-
       borderRadius: 100,
       borderColor,
       overflow: "hidden",
@@ -133,31 +132,31 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     date: {
       fontFamily: Fonts.OSREGULAR,
       color: textColor,
-      fontSize: 14,
+      fontSize: 12,
     },
 
     period: {
       fontFamily: Fonts.OSREGULAR,
       color: textColor,
-      fontSize: 14,
+      fontSize: 12,
     },
 
     finalText: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
 
     clock: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
 
     outs: {
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: accentRed,
       textAlign: "center",
@@ -178,13 +177,13 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     statusDivider: {
-      height: 14,
+      height: 12,
       width: 1,
       backgroundColor: textColor,
     },
 
     finalStatusDivider: {
-      height: 14,
+      height: 12,
       width: 1,
       backgroundColor: accentRed,
     },

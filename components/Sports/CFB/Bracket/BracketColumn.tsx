@@ -3,12 +3,14 @@
 import CFPLogoLight from "assets/College_Logos/CFPLight.png";
 import CFPLogo from "assets/College_Logos/CFPLogo.png";
 import { Colors, Fonts } from "constants/styles";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { BracketRound } from "types/football";
 import { GameCard } from "./GameCard";
 
 export function BracketColumn({ round }: { round: BracketRound }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const isChampionship = round.title === "National Championship";
@@ -85,21 +87,22 @@ const getStyles = (isDark: boolean) =>
       flex: 1,
       width: "100%",
       alignItems: "center",
-      height: "100%",
     },
 
     rowTitle: {
+      position: "absolute",
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
+      top: 28
     },
 
     title: {
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
-      color: isDark ? Colors.white : Colors.black,
+      color: Colors.midTone,
       textAlign: "center",
-      marginTop: 5,
+      textTransform: "uppercase",
     },
 
     gameContainer: {
@@ -130,7 +133,7 @@ const getStyles = (isDark: boolean) =>
     //----------------------------
     horizontalConnector: {
       position: "absolute",
-      right: -110,
+      right: -80,
       top: "50%",
       width: 220,
       height: 0.4,
@@ -147,8 +150,8 @@ const getStyles = (isDark: boolean) =>
       right: 0,
       top: "50%",
       width: 120,
-      height: 0.4,
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      height: 2,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       transform: [{ translateY: -1 }],
       zIndex: -1,
     },
@@ -157,9 +160,9 @@ const getStyles = (isDark: boolean) =>
       position: "absolute",
       right: 0,
       top: 122,
-      width: 0.5,
+      width: 2,
       height: 146,
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       transform: [{ translateY: -60 }],
       zIndex: -1,
     },

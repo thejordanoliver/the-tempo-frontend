@@ -1,5 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { Colors } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +8,7 @@ import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { MLBGame } from "types/baseball";
 import { resolveVenue } from "utils/games";
@@ -17,7 +18,6 @@ import { getGameDate } from "utils/nflGameCardUtils";
 import { GameInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { Colors } from "constants/styles";
 type Props = {
   game: MLBGame;
   visible: boolean;
@@ -26,7 +26,8 @@ type Props = {
 
 export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   /* ==================================================
      GAME DATA
@@ -205,7 +206,7 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>

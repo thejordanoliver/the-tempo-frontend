@@ -5,11 +5,12 @@ import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
+import { getWNBATeam } from "constants/teamsWNBA";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
 
 import { MLBTeam } from "types/baseball";
-import { Team } from "types/football";
+import { FootballTeam } from "types/football";
 import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
 
 type Props = {
@@ -48,6 +49,9 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       case "NHL":
         return getNHLTeam(teamId);
 
+      case "WNBA":
+        return getWNBATeam(teamId);
+
       default:
         return null;
     }
@@ -79,7 +83,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "CFB": {
-      const t = team as Team;
+      const t = team as FootballTeam;
 
       return (
         <View style={{ width: "100%" }}>
@@ -116,7 +120,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "NFL": {
-      const t = team as Team;
+      const t = team as FootballTeam;
 
       return (
         <View style={{ width: "100%" }}>
@@ -152,6 +156,23 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
 
     case "NHL": {
       const t = team as NHLTeam;
+
+      return (
+        <View style={{ width: "100%" }}>
+          <InfoCard
+            label="Coach"
+            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            team={t}
+          />
+
+          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Arena" value={t.venueName} team={t} />
+          <InfoCard label="Established" value={t.established} team={t} />
+        </View>
+      );
+    }
+    case "WNBA": {
+      const t = team as CBBTeam;
 
       return (
         <View style={{ width: "100%" }}>

@@ -5,6 +5,7 @@ import AlertModal from "components/Forum/AlertModal";
 import PollEditorModal, { PollData } from "components/Forum/PollEditorModal";
 import VideoEditorModal from "components/Forum/VideoEditorModal";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { MediaItem, useCreatePost } from "hooks/ForumHooks/useCreatePost";
@@ -16,7 +17,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import DraggableFlatList, {
@@ -56,7 +56,8 @@ export default function CreatePostScreen() {
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppingIndex, setCroppingIndex] = useState<number | null>(null);
   const [pollEditorVisible, setPollEditorVisible] = useState(false);
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = createPostStyles(isDark);
   const navigation = useNavigation();
   const router = useRouter();
@@ -64,7 +65,10 @@ export default function CreatePostScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle title="Create Post" onBack={() => router.back()} />
+        <CustomHeaderTitle
+          title="Create Post"
+          onBack={() => router.back()}
+        />
       ),
     });
   }, [navigation]);

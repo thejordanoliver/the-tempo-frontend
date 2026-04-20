@@ -1,11 +1,6 @@
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 
 type Props = {
   isGridView: boolean;
@@ -13,14 +8,14 @@ type Props = {
   count?: number;
 };
 
-
 export default function FavoriteTeamsSelectorSkeleton({
   isGridView,
   itemWidth,
   count = 30,
 }: Props) {
   const skeletons = Array.from({ length: count });
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const textWidth1 = isGridView ? itemWidth * 0.6 : itemWidth * 0.4;
   const textWidth2 = isGridView ? itemWidth * 0.4 : 0;
@@ -45,7 +40,7 @@ export default function FavoriteTeamsSelectorSkeleton({
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   };
 
@@ -66,7 +61,7 @@ export default function FavoriteTeamsSelectorSkeleton({
           duration: 600,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [
     shimmerLogo,

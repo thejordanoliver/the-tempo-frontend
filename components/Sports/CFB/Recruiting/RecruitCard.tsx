@@ -2,6 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
@@ -14,7 +15,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 
 type Props = {
@@ -23,7 +23,8 @@ type Props = {
 };
 
 export default function RecruitCard({ recruit, index }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const router = useRouter();
 

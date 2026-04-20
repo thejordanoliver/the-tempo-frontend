@@ -1,15 +1,16 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
@@ -17,7 +18,6 @@ import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { Colors } from "constants/styles";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;
@@ -25,7 +25,8 @@ type Props = {
 };
 
 export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const gameInfo = game;
@@ -172,7 +173,7 @@ export default function NHLGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>

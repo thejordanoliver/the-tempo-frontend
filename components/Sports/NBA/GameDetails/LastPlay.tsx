@@ -2,15 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import useDbPlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
-import {
-  Image,
-  LayoutChangeEvent,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Image, LayoutChangeEvent, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 type NBALastPlay = {
   id?: string;
@@ -59,7 +54,8 @@ export default function LastPlay({
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
 
   const onLayout = (e: LayoutChangeEvent) =>

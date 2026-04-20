@@ -5,11 +5,12 @@ import PlayerHeader from "components/Sports/CBB/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/CBB/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/CBB/Player/SeasonStatCard";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useCBBPlayerSeasons } from "hooks/CBBHooks/useCBBPlayerSeasons";
+import { useBasketballPlayerSeasons } from "hooks/CBBHooks/useBasketballPlayerSeasons";
 import { usePlayerDetail } from "hooks/CBBHooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
@@ -20,7 +21,8 @@ export default function PlayerDetailScreen() {
   }>();
 
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   // -------------------------
   // Params
@@ -46,7 +48,7 @@ export default function PlayerDetailScreen() {
     careerStatsFlattened,
     loading: statsLoading,
     error: statsError,
-  } = useCBBPlayerSeasons(Number(playerId), isWomen);
+  } = useBasketballPlayerSeasons(Number(playerId), isWomen);
   const styles = playerScreenStyles;
   const numericTeamId = Number(teamIdParam);
   const team = getCBBTeam(numericTeamId, isWomen);
@@ -78,14 +80,16 @@ export default function PlayerDetailScreen() {
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader
         player={player}
-        avatarUrl={player.headshot_url} // ✅ DB uses avatarUrl not imageUrl
+        avatarUrl={player.headshot_url}
         isDark={isDark}
         isWomen={isWomen}
       />
 
-      {!loading && !error && (
-        <SeasonStatCard seasonStats={seasonStats} isDark={isDark} />
-      )}
+      <SeasonStatCard
+        seasonStats={seasonStats}
+        loading={loading}
+        error={error}
+      />
 
       {enrichedLastGame && (
         <View>

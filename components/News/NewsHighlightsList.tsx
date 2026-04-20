@@ -1,11 +1,12 @@
 // components/NewsHighlightsList.tsx
 import { globalStyles } from "constants/styles";
 import React from "react";
-import { FlatList, Text, useColorScheme, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import HighlightCard from "./HighlightCard";
 import NewsCard from "./NewsCard";
+import { usePreferences } from "contexts/PreferencesContext";
 type NewsItem = {
   id: string;
   title: string;
@@ -43,7 +44,8 @@ const NewsHighlightsList: React.FC<NewsHighlightsListProps> = ({
   onRefresh,
   error,
 }) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = newsHighlightsListStyles(isDark);
   const global = globalStyles(isDark);
 

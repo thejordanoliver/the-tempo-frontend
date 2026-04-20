@@ -1,30 +1,25 @@
 // login.tsx
-import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  KeyboardAvoidingView,
-  Platform,
-  View,
-  useColorScheme,
-} from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Animated, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { formStyles } from "styles/FormStyles";
 import CropEditorModal from "../components/CropEditorModal";
-import SignInForm from "../components/SignInForm";
-import SignUpForm from "../components/SignUpForm";
-import TabBar from "../components/TabBar";
+import SignInForm from "../components/Forms/SignInForm";
+import SignUpForm from "../components/Forms/SignUpForm";
+import TabBar from "../components/TabBars/TabBar";
 import { LeagueType } from "../types/types";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = formStyles(isDark);
 
   // FIX #3: delegate all auth storage to useAuth — no direct AsyncStorage writes here
@@ -34,7 +29,9 @@ export default function LoginScreen() {
 
   // ====================== STATE ======================
   const tabs = ["sign in", "sign up"] as const;
-  const [selectedTab, setSelectedTab] = useState<"sign in" | "sign up">("sign in");
+  const [selectedTab, setSelectedTab] = useState<"sign in" | "sign up">(
+    "sign in",
+  );
   const [signupStep, setSignupStep] = useState(0);
   const [signupData, setSignupData] = useState({
     fullName: "",
@@ -52,7 +49,9 @@ export default function LoginScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCropModalVisible, setCropModalVisible] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(null);
+  const [cropTarget, setCropTarget] = useState<"profile" | "banner" | null>(
+    null,
+  );
   const [isGridView, setIsGridView] = useState(true);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
 
@@ -236,39 +235,10 @@ export default function LoginScreen() {
     });
   }, [navigation, selectedTab, signupStep, isGridView]);
 
-  // ====================== PROGRESS BAR ======================
-  const progress = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(progress, {
-      toValue: signupStep / 4,
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [signupStep]);
-
-  const progressInterpolate = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0%", "100%"],
-  });
-
-  // FIX #1: was a floating JSX expression — moved into a variable so it renders
-  const progressBar = selectedTab === "sign up" && signupStep > 0 ? (
-    <View style={styles.progressBarBackground}>
-      <Animated.View
-        style={[styles.progressBarFill, { width: progressInterpolate }]}
-      />
-    </View>
-  ) : null;
-
   // ====================== RENDER ======================
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.sectionContainer}>
         {!(selectedTab === "sign up" && signupStep > 0) && (
           <View style={styles.tabBarWrapper}>
             <TabBar
@@ -287,11 +257,8 @@ export default function LoginScreen() {
           </View>
         )}
 
-        {/* FIX #1: progress bar now actually renders */}
-        {progressBar}
-
         <PagerView
-          style={{ flex: 1 }}
+          style={styles.sectionContainer}
           initialPage={selectedTab === "sign in" ? 0 : 1}
           ref={pagerRef}
           scrollEnabled={signupStep === 0 || selectedTab === "sign in"}
@@ -304,7 +271,7 @@ export default function LoginScreen() {
           }}
         >
           {/* Sign In Page */}
-          <View key="1" style={{ flex: 1 }}>
+          <View style={styles.sectionContainer}>
             <SignInForm
               username={username}
               password={password}
@@ -317,7 +284,7 @@ export default function LoginScreen() {
           </View>
 
           {/* Sign Up Page */}
-          <View key="2" style={{ flex: 1 }}>
+          <View style={styles.sectionContainer}>
             <SignUpForm
               signupData={signupData}
               signupStep={signupStep}
@@ -333,6 +300,7 @@ export default function LoginScreen() {
               fadeAnim={fadeAnim}
               isSubmitting={isSubmitting}
               onSubmit={handleSignup}
+              selectedTab={selectedTab}
             />
           </View>
         </PagerView>
@@ -362,6 +330,6 @@ export default function LoginScreen() {
           if (!alertConfig?.onConfirm) closeAlert();
         }}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }

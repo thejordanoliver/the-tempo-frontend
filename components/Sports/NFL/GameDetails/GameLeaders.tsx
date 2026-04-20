@@ -7,11 +7,10 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
-import { useTeamPlayers } from "hooks/NFLHooks/useTeamRosters";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
-
+import usePlayersByTeam from "hooks/NFLHooks/usePlayersByTeam";
 const CATEGORIES = [
   "Passing",
   "Rushing",
@@ -154,8 +153,8 @@ export default function GameLeaders({
   } = useFootballGameLeaders(gameId, awayTeamId);
 
   /* 🔑 USE TEAM PLAYERS (FIX) */
-  const { players: homeRoster } = useTeamPlayers(homeTeamId, league);
-  const { players: awayRoster } = useTeamPlayers(awayTeamId, league);
+  const { players: homeRoster } = usePlayersByTeam(Number(homeTeamId), league);
+  const { players: awayRoster } = usePlayersByTeam(Number(awayTeamId), league);
 
   const home = useMemo(
     () =>
@@ -169,8 +168,7 @@ export default function GameLeaders({
     [rawAway, awayRoster, league],
   );
 
-  const textColor = isDark ? Colors.white : Colors.black;
-  const subTextColor = isDark ? Colors.midTone : Colors.midTone;
+  
 
   const leadersByCategory = useMemo(() => {
     return CATEGORIES.reduce(
@@ -213,14 +211,16 @@ export default function GameLeaders({
             league === "NFL"
               ? getNFLTeamLogo(p.teamId, isDark)
               : getCFBTeamLogo(p.teamId, isDark);
+const stats = STAT_KEYS[selectedCategory].map((k) => {
+  const found = p.statistics.find(
+    (s) => s.name.toLowerCase() === k.toLowerCase(),
+  );
 
-          const stats = STAT_KEYS[selectedCategory]
-            .map((k) =>
-              p.statistics.find(
-                (s) => s.name.toLowerCase() === k.toLowerCase(),
-              ),
-            )
-            .filter(Boolean) as PlayerStat[];
+  return {
+    name: k,
+    value: found?.value ?? "-",
+  };
+});
 
           return (
             <View key={i} style={styles.card}>

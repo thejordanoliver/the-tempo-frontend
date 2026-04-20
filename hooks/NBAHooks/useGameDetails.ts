@@ -1,6 +1,7 @@
 import { Venue } from "hooks/NFLHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+
 export type Athlete = {
   athlete: {
     id: string;
@@ -18,6 +19,7 @@ export type Athlete = {
   reason?: string;
   ejected?: boolean;
 };
+
 type FoulTroublePlayer = {
   id: string;
   name: string;
@@ -26,18 +28,16 @@ type FoulTroublePlayer = {
   position: string;
   fouls: number;
   starter: boolean;
-
-  /** DB fields */
   avatar?: string | null;
   team_id?: number | null;
-
-  /** ESPN fallback */
   team: any;
 };
+
 type FoulTroubleTeam = {
   team: any;
   players: FoulTroublePlayer[];
 };
+
 type TeamFouls = {
   bonusState: string | null;
   foulsToGive: number;
@@ -53,28 +53,19 @@ type TeamStat = {
 export type Score = {
   home: { total: number };
   away: { total: number };
-
   periodScores?: { period: number; home: number; away: number }[];
-
   homeTeam: string;
   awayTeam: string;
-
   status: "canceled" | "scheduled" | "in_play" | "final";
-
   gameStatusDescription: string;
   gameStatusDetail: string;
-
   statusText?: string;
   displayClock?: string;
   period?: number;
-
   lastUpdated?: number;
-
   boxScore: any | null;
-
   plays: any[];
   lastPlay: string;
-
   teamStats: {
     team: any;
     stats: TeamStat[];
@@ -199,7 +190,7 @@ export const useGameDetails = (
           setWarning("Game data unavailable");
         }
       } catch (err: any) {
-        console.warn(`[${league}] game details fetch failed`, err);
+        // console.warn(`[${league}] game details fetch failed`, err);
         setWarning(err?.message ?? "Unable to refresh game data");
       } finally {
         if (!silent) setLoading(false);

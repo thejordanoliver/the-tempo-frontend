@@ -11,7 +11,7 @@ export interface ArticleVideo {
   description: string;
   url: string | null;
   thumbnail?: string;
-  duration: number
+  duration: number;
 }
 
 export interface Article {
@@ -47,7 +47,7 @@ export function useArticle(articleId: number | string) {
 
     try {
       const res = await apiClient.get<ArticleResponse>(
-        `api/article/${articleId}`,
+        `api/news/article/${articleId}`,
       );
 
       if (res.data.success) {

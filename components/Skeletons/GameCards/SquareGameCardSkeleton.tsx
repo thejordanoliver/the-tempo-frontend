@@ -1,13 +1,7 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
-import {
-  Animated,
-  StyleProp,
-  StyleSheet,
-  useColorScheme,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Animated, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 type SquareGameCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;
@@ -16,7 +10,8 @@ type SquareGameCardSkeletonProps = {
 export default function SquareGameCardSkeleton({
   style,
 }: SquareGameCardSkeletonProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   // Pulse animation value

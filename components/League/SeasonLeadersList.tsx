@@ -1,14 +1,14 @@
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam } from "constants/teams"; // import your teams list
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import {
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -62,7 +62,8 @@ export default function SeasonLeadersList({
   loading,
   error,
 }: SeasonLeadersListProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const router = useRouter();
   const global = globalStyles(isDark);

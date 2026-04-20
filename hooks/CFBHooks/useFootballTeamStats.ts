@@ -1,8 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useFootballTeamStats(gameId: string | number) {
   const [stats, setStats] = useState<any[]>([]); // always an array
@@ -16,9 +13,12 @@ export function useFootballTeamStats(gameId: string | number) {
       setLoading(true);
       setError(null);
       try {
-        const { data } = await apiClient.get(`api/football/details/team/statistics`, {
-          params: { gameId: id },
-        });
+        const { data } = await apiClient.get(
+          `api/football/details/team/statistics`,
+          {
+            params: { gameId: id },
+          },
+        );
         setStats(data.games || []); // now always an array
       } catch (err: any) {
         setError(err.message || "Failed to fetch team stats");

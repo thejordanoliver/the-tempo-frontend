@@ -3,6 +3,7 @@ import Button from "components/Button";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useLayoutEffect, useState } from "react";
@@ -16,15 +17,14 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from "react-native";
 
 export default function AccountDetailsScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
-  const styles = getStyles(isDark);
+  const styles = accountDetailsStyles(isDark);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -86,7 +86,7 @@ export default function AccountDetailsScreen() {
         style={[
           styles.container,
           {
-            backgroundColor: isDark ? "#000" : "#fff",
+            backgroundColor: isDark ? Colors.black : Colors.white,
             justifyContent: "center",
             alignItems: "center",
           },
@@ -94,7 +94,7 @@ export default function AccountDetailsScreen() {
       >
         <ActivityIndicator
           size="large"
-          color={isDark ? Colors.white : "#000"}
+          color={isDark ? Colors.white : Colors.black}
         />
       </View>
     );
@@ -106,13 +106,13 @@ export default function AccountDetailsScreen() {
         style={[
           styles.container,
           {
-            backgroundColor: isDark ? "#000" : "#fff",
+            backgroundColor: isDark ? Colors.black : Colors.white,
             justifyContent: "center",
             alignItems: "center",
           },
         ]}
       >
-        <Text style={{ color: isDark ? Colors.white : "#000" }}>
+        <Text style={{ color: isDark ? Colors.white : Colors.black }}>
           Unable to load account details.
         </Text>
       </View>
@@ -179,7 +179,7 @@ export default function AccountDetailsScreen() {
         <Button
           onPress={handleChangePassword}
           disabled={isChangingPassword}
-          title="Change Password"
+          children="Change Password"
           isDark={isDark}
         />
 
@@ -188,7 +188,7 @@ export default function AccountDetailsScreen() {
     </KeyboardAvoidingView>
   );
 }
-const getStyles = (isDark: boolean) =>
+const accountDetailsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1 },
     contentContainerStyle: {

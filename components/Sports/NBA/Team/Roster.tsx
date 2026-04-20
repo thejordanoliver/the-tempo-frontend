@@ -1,10 +1,11 @@
 // components/Roster.tsx
 import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import React from "react";
-import { RefreshControl, ScrollView, Text, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, Text } from "react-native";
+import PlayerCardSkeletonList from "../../../Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "../Player/PlayerCard";
-import PlayerCardSkeletonList from "../Player/PlayerCardListSkeleton";
 interface RosterProps {
   players: Player[];
   loading: boolean;
@@ -24,7 +25,9 @@ export default function Roster({
   teamFullName,
   teamColor,
 }: RosterProps) {
-  const isDark = useColorScheme() === "dark";
+  
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;

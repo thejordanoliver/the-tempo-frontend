@@ -4,19 +4,23 @@ import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useChampions } from "hooks/useChampions";
-import { Image, Text, View, useColorScheme } from "react-native";
+import { Image, Text, View } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   title: string;
   refreshSignal?: number;
-  league: "CFB" | "CBB" | "WCBB" | "NBA" | "NFL" | "MLB";
+  league: "CFB" | "CBB" | "WCBB" | "NBA" | "WNBA" | "NFL" | "NHL" | "MLB";
 };
 
 export default function ChampionsTable({ title, league }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = awardTableStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -24,7 +28,7 @@ export default function ChampionsTable({ title, league }: Props) {
 
   if (loading) {
     return (
-      <View style={{ marginVertical: 12 }}>
+      <View style={styles.container}>
         <AwardSeasonTableSkeleton teams={1} />
       </View>
     );
@@ -32,14 +36,14 @@ export default function ChampionsTable({ title, league }: Props) {
 
   if (error) {
     return (
-      <View style={{ marginVertical: 12 }}>
+      <View style={styles.container}>
         <Text style={global.errorText}>Failed to load.</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ marginVertical: 12 }}>
+    <View style={styles.container}>
       <View style={styles.table}>
         {/* Header */}
         <View style={styles.headerRow}>
@@ -52,13 +56,17 @@ export default function ChampionsTable({ title, league }: Props) {
               ? getCFBTeamLogo(row.team.id, isDark)
               : row.team && league === "NBA"
                 ? getTeamLogo(row.team.id, isDark)
-                : row.team && league === "MLB"
-                  ? getMLBTeamLogo(row.team.id, isDark)
-                  : row.team && league === "CBB"
-                    ? getCBBTeamLogo(row.team.id, isDark)
-                    : row.team && league === "WCBB"
-                      ? getCBBTeamLogo(row.team.id, isDark, true)
-                      : getNFLTeamLogo(row.team?.id ?? 0, isDark);
+                : row.team && league === "WNBA"
+                  ? getWNBATeamLogo(row.team.id, isDark)
+                  : row.team && league === "MLB"
+                    ? getMLBTeamLogo(row.team.id, isDark)
+                    : row.team && league === "NHL"
+                      ? getNHLTeamLogo(row.team.id, isDark)
+                      : row.team && league === "CBB"
+                        ? getCBBTeamLogo(row.team.id, isDark)
+                        : row.team && league === "WCBB"
+                          ? getCBBTeamLogo(row.team.id, isDark, true)
+                          : getNFLTeamLogo(row.team?.id ?? 0, isDark);
 
           const isSuperBowl = league === "NFL";
 

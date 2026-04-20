@@ -11,11 +11,12 @@ import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
+import { getWNBATeam } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { useChampions } from "hooks/useChampions";
 import { useTeamCoaches } from "hooks/useTeamCoaches";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
 import TeamInfoCard from "./TeamInfoCard";
@@ -27,6 +28,7 @@ type Props = {
   teamHistory?: string;
   teamId?: string | number;
   league: LeagueType;
+  isDark: boolean;
 };
 
 export default function TeamInfoModal({
@@ -34,12 +36,15 @@ export default function TeamInfoModal({
   onClose,
   teamId,
   league,
+  isDark,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets(); // ✅ MOVE HERE
   const sheetRef = useRef<BottomSheetModal>(null);
+  const styles = TeamInfoModalStyles(isDark, insets);
+
   const isChampionsSupported =
     league === "NBA" ||
+    league === "WNBA" ||
     league === "CFB" ||
     league === "NFL" ||
     league === "MLB" ||
@@ -53,10 +58,7 @@ export default function TeamInfoModal({
   );
 
   const { data: champions } = useChampions({
-    league: ["NBA", "CFB", "NFL", "MLB", "NHL", "CBB", "WCBB"].includes(league)
-      ? league
-      : "NBA",
-    enabled: isChampionsSupported && !!teamId,
+    league: league,
   });
 
   // --------------------------------------------------
@@ -67,6 +69,8 @@ export default function TeamInfoModal({
     switch (league) {
       case "CBB":
         return getCBBTeam(teamId);
+      case "WNBA":
+        return getWNBATeam(teamId);
       case "WCBB":
         return getCBBTeam(teamId, true);
       case "CFB":
@@ -130,21 +134,9 @@ export default function TeamInfoModal({
           pressBehavior="close"
         />
       )}
-      backgroundStyle={{ backgroundColor: "transparent" }}
-      handleStyle={{
-        backgroundColor: "transparent",
-        paddingTop: 12,
-        alignItems: "center",
-        position: "absolute",
-        left: 0,
-        right: 0,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: Colors.midTone,
-        width: 36,
-        height: 4,
-        borderRadius: 2,
-      }}
+      backgroundStyle={styles.backgroundStyle}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
     >
       <View style={styles.container}>
         <BlurView
@@ -153,40 +145,18 @@ export default function TeamInfoModal({
           style={StyleSheet.absoluteFill}
         />
 
-        <View style={{ paddingHorizontal: 12, flex: 1 }}>
+        <View style={styles.wrapper}>
           {/* TEAM NAME */}
           {team?.fullName && (
-            <Text
-              style={[
-                styles.teamName,
-                {
-                  paddingTop: insets.top - 20,
-                  color: isDark ? Colors.white : Colors.black,
-                },
-              ]}
-            >
-              {team.fullName}
-            </Text>
+            <Text style={styles.teamName}>{team.fullName}</Text>
           )}
 
           <BottomSheetScrollView
-            contentContainerStyle={{ paddingTop: 20, paddingBottom: 40 }}
+            contentContainerStyle={styles.contentContainerStyle}
             showsVerticalScrollIndicator={false}
           >
             {/* HEADER */}
-            <Text
-              style={[
-                styles.sectionTitle,
-                {
-                  borderBottomColor: isDark
-                    ? Colors.lightGray
-                    : Colors.darkGray,
-                  color: isDark ? Colors.white : Colors.black,
-                },
-              ]}
-            >
-              Championships
-            </Text>
+            <Text style={styles.sectionTitle}>Championships</Text>
 
             {/* CHAMPIONSHIP BANNERS */}
             <ChampionshipBanner
@@ -201,6 +171,7 @@ export default function TeamInfoModal({
               teamName={team?.fullName}
               teamId={getTeamId(team, league)}
               league={league}
+              isDark={isDark}
             />
 
             {/* TEAM INFO CARD */}
@@ -216,25 +187,47 @@ export default function TeamInfoModal({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: "hidden",
-  },
-  teamName: {
-    fontFamily: Fonts.OSSEMIBOLD,
-    fontSize: 20,
-    paddingBottom: 12,
-    textAlign: "center",
-  },
-  sectionTitle: {
-    textAlign: "center",
-    fontSize: 20,
-    fontFamily: Fonts.OSMEDIUM,
-    marginBottom: 8,
-    paddingBottom: 4,
-    borderBottomWidth: 0.5,
-  },
-});
+const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
+  StyleSheet.create({
+    backgroundStyle: { backgroundColor: "transparent" },
+    handleStyle: {
+      backgroundColor: "transparent",
+      paddingTop: 12,
+      alignItems: "center",
+      position: "absolute",
+      left: 0,
+      right: 0,
+    },
+    handleIndicatorStyle: {
+      backgroundColor: Colors.midTone,
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+    },
+    container: {
+      flex: 1,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      overflow: "hidden",
+    },
+    wrapper: { paddingHorizontal: 12, flex: 1 },
+    contentContainerStyle: { paddingTop: 20, paddingBottom: 40 },
+    teamName: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 20,
+      paddingBottom: 12,
+      textAlign: "center",
+      paddingTop: insets.top - 20,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    sectionTitle: {
+      textAlign: "center",
+      fontSize: 20,
+      fontFamily: Fonts.OSMEDIUM,
+      marginBottom: 8,
+      paddingBottom: 4,
+      borderBottomWidth: 0.5,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      color: isDark ? Colors.white : Colors.black,
+    },
+  });

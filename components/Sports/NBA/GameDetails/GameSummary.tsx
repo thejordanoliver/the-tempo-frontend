@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import TabBar from "components/TabBar";
+import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
 import {

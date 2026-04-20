@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export function useNHLTeamGames(
   teamId: string | number,

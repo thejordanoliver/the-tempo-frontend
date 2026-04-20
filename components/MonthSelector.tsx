@@ -6,10 +6,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import MonthSelectorSkeleton from "./Skeletons/MonthSelectorSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 
 type MonthItem = {
   month: number; // 0–11
@@ -31,7 +31,8 @@ export default function MonthSelector({
   loading,
   gameCountByMonth,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = monthSelectorStyles(isDark);
   const scrollRef = useRef<ScrollView>(null);
 

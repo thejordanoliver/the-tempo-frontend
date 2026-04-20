@@ -4,7 +4,7 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -128,7 +128,7 @@ export default function NHLGameWidget({
   if (loading || isLoading) {
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

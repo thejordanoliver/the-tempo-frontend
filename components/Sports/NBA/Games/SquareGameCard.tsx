@@ -1,5 +1,6 @@
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -16,10 +17,10 @@ import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function SquareGameCard({ game }: { game: Game }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+export default function SquareGameCard({ game }: { game: Game,  }) {
   const router = useRouter();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const homeId = game.home?.id;
   const awayId = game.away?.id;
 

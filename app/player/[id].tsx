@@ -6,54 +6,52 @@ import PlayerHeader from "components/Sports/NBA/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NBA/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
 import { globalStyles } from "constants/styles";
+import { getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { usePlayerDetail } from "hooks/NBAHooks/usePlayerDetail";
+import { usePlayerById } from "hooks/NBAHooks/usePlayerById";
 import { useLayoutEffect } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const { id, teamId } = useLocalSearchParams();
   const router = useRouter();
   const navigation = useNavigation();
 
-  const {
-    player,
-    loading,
-    error,
-    team,
-    teamObj,
-    lastGame,
-    teamGameLoading,
-    calculateAge,
-    calculateExperience,
-  } = usePlayerDetail(
-    Array.isArray(id) ? id[0] : id,
-    Array.isArray(teamId) ? teamId[0] : teamId,
-  );
+  const { player, loading, error, team, lastGame, teamGameLoading } =
+    usePlayerById(
+      Array.isArray(id) ? id[0] : id,
+      Array.isArray(teamId) ? teamId[0] : teamId,
+    );
+  const teamLogo = getTeamLogo(player?.team_id, true);
+  const teamColor = team?.color;
+  const teamSecondaryColor = team?.secondaryColor;
+  const teamName = team?.name;
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          logo={team?.logoLight || team?.logo}
+          logo={teamLogo}
           teamColor={team?.color}
           teamCode={team?.code}
-          isTeamScreen={!!teamObj}
+          isTeamScreen={!!team}
           isPlayerScreen
           onBack={() => router.back()}
         />
       ),
     });
-  }, [navigation, teamObj, isDark]);
+  }, [navigation, isDark, teamLogo]);
 
   if (loading)
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   if (error || !player)
@@ -69,18 +67,10 @@ export default function PlayerDetailScreen() {
         player={player}
         avatarUrl={player.headshot_url}
         isDark={isDark}
-        teamColor={teamObj?.color}
-        teamSecondaryColor={teamObj?.secondaryColor}
-        team_name={teamObj?.name}
+        team_name={teamName}
       />
 
-      {player.active && (
-        <SeasonStatCard
-          playerId={player.player_id}
-          teamColor={teamObj?.secondaryColor}
-          teamColorDark={teamObj?.secondaryColor}
-        />
-      )}
+      {player.active && <SeasonStatCard playerId={player.player_id} />}
 
       <LatestGame game={lastGame} loading={teamGameLoading} isDark={isDark} />
 

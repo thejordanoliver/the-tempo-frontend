@@ -1,6 +1,7 @@
-// hooks/useGameLeaders.ts
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+
+type TeamType = "home" | "away" | undefined;
 
 export function useGameLeaders(
   gameId: string,
@@ -19,23 +20,30 @@ export function useGameLeaders(
       setError(null);
 
       try {
-        const url = `/api/player-stats/${gameId}`;
+        const res = await apiClient.get(
+          `/api/game-stats/leaders/${gameId}`,
+        );
 
-        const res = await apiClient.get(url);
+        if (!isMounted) return;
 
-        if (isMounted) {
-          // Add teamType based on team IDs
-          const playersWithTeamType = res.data.response.map((player: any) => ({
-            ...player,
-            teamType:
-              player.team.id === homeTeamId
-                ? "home"
-                : player.team.id === awayTeamId
-                  ? "away"
-                  : undefined,
-          }));
-          setData(playersWithTeamType);
-        }
+        const teams = res.data.response || [];
+
+        const normalized = teams.map((teamBlock: any) => {
+          const teamType: TeamType =
+            teamBlock.team.id === homeTeamId
+              ? "home"
+              : teamBlock.team.id === awayTeamId
+                ? "away"
+                : undefined;
+
+          return {
+            team: teamBlock.team,
+            leaders: teamBlock.leaders,
+            teamType,
+          };
+        });
+
+        setData(normalized);
       } catch (err: any) {
         if (isMounted) {
           setError(err.message || "Failed to fetch game leaders");

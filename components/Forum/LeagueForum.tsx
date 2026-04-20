@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useLeagueForum } from "hooks/ForumHooks/useLeagueForum";
 import { useCallback, useEffect } from "react";
@@ -9,7 +10,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
@@ -39,7 +39,8 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
 
   const setGlobalImage = useImagePreviewStore((s) => s.setImages);
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = forumStyles(isDark);
   const global = globalStyles(isDark);
 

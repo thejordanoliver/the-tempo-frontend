@@ -1,16 +1,11 @@
 import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
 export default function FanPredictionVoteSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   // 🔥 Color pulse (same as header)

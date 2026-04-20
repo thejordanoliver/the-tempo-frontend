@@ -4,19 +4,21 @@ import LatestGame from "components/Sports/NFL/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
 import { globalStyles } from "constants/styles";
-import { getNFLTeam } from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFootballPlayerSeasons } from "hooks/CFBHooks/useFootballPlayerSeasons";
 import { useLastTeamGame } from "hooks/NFLHooks/useLastTeamGame";
 import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
 import { useLayoutEffect } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 import { getFootballSeason } from "utils/dateUtils";
 
 export default function NFLPlayerDetailScreen() {
   const styles = playerScreenStyles;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const navigation = useNavigation();
   const router = useRouter();
@@ -32,8 +34,8 @@ export default function NFLPlayerDetailScreen() {
   } = usePlayerById(playerId, "NFL");
 
   /* ---------------- Team info ---------------- */
-  const teamObj = player?.team_id ? getNFLTeam(player.team_id) : null;
-  const isTeamAvailable = !!teamObj;
+  const team = player?.team_id ? getNFLTeam(player.team_id) : null;
+  const isTeamAvailable = !!team;
   const fullName = player?.name ?? "Player";
 
   /* ---------------- Last game ---------------- */
@@ -49,6 +51,8 @@ export default function NFLPlayerDetailScreen() {
     error: seasonsError,
   } = useFootballPlayerSeasons(playerId, "NFL");
 
+  const teamLogo = getNFLTeamLogo(player?.team_id, true);
+
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     if (!player) {
@@ -62,31 +66,22 @@ export default function NFLPlayerDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           playerName={fullName}
-          logo={
-            isTeamAvailable
-              ? teamObj?.logo
-              : require("assets/Football/NFL_Logos/NFL.png")
-          }
-          logoLight={
-            teamObj?.logoLight
-              ? { uri: teamObj.logoLight }
-              : require("assets/Football/NFL_Logos/NFL.png")
-          }
-          teamColor={teamObj?.color ?? "#1D428A"}
+          logo={teamLogo}
+          teamColor={team?.color ?? "#1D428A"}
           onBack={() => router.back()}
-          isTeamScreen={!!teamObj}
-          teamCode={teamObj?.code}
+          isTeamScreen={!!team}
+          teamCode={team?.code}
           isPlayerScreen
           league="NFL"
         />
       ),
     });
-  }, [navigation, fullName, teamObj, isTeamAvailable, isDark]);
+  }, [navigation, fullName, team, isTeamAvailable, isDark]);
 
   if (playerLoading || !player)
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   if (playerError || !player)
@@ -104,8 +99,8 @@ export default function NFLPlayerDetailScreen() {
         player={player}
         avatarUrl={player.headshot_url}
         isDark={isDark}
-        teamColor={teamObj?.color}
-        team_name={teamObj?.code}
+        teamColor={team?.color}
+        team_name={team?.code}
         age={player.age}
         isCollegePlayer={false}
       />

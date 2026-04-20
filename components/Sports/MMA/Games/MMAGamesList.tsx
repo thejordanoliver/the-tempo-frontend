@@ -5,7 +5,7 @@ import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { FlatList, Text, useColorScheme, View, ViewStyle } from "react-native";
+import { FlatList, Text, View, ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import MMAGameCard from "./MMAGameCard";
@@ -37,7 +37,8 @@ export default function MMAGamesList({
   scrollEnabled = true,
 }: GamesListProps) {
   const { viewMode } = usePreferences();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = gameListStyles;
   const global = globalStyles(isDark);
 

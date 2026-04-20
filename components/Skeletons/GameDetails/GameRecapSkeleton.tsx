@@ -1,11 +1,13 @@
 import HeadingThree from "components/Headings/HeadingThree";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 
 export default function GameRecapSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = skeletonStyles(isDark);
 
   const pulse = useRef(new Animated.Value(0.6)).current;

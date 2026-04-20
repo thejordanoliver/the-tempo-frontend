@@ -1,11 +1,11 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
   StyleProp,
   StyleSheet,
-  useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
@@ -15,7 +15,8 @@ type HeaderSkeletonProps = {
 };
 
 export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
   const styles = skeletonStyles(isDark);
 

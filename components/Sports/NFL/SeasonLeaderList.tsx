@@ -1,9 +1,10 @@
+import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
-import PlayerCardSkeletonList from "components/Sports/NBA/Player/PlayerCardListSkeleton";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
 import { Leader } from "hooks/NFLHooks/useSeasonLeaders";
 import { useEffect, useRef } from "react";
 import { FlatList, Text, View } from "react-native";
@@ -22,7 +23,7 @@ interface SeasonLeadersListProps {
   loading?: boolean;
   error?: string | null;
   categories?: Category[];
-  league: "NFL" | "CFB" | "MLB" | "CBB" | "WCBB";
+  league: "NFL" | "NHL" | "CFB" | "MLB" | "CBB" | "WCBB";
   isDark: boolean;
 }
 
@@ -46,6 +47,7 @@ export default function SeasonLeadersList({
 
   const leagueTeamsMap = {
     NFL: nflTeams,
+    NHL: nhlTeams,
     CFB: cfbTeams,
     MLB: mlbTeams,
     CBB: cbbTeams,

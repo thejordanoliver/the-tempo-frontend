@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -46,7 +45,6 @@ interface UseFootballRecruitsResult {
   error: string | null;
   refetch: () => void;
 }
-
 
 export function useFootballRecruits(year: number): UseFootballRecruitsResult {
   const [data, setData] = useState<FootballRecruit[]>([]);

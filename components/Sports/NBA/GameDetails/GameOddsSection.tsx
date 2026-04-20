@@ -1,17 +1,19 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { useUpcomingOdds } from "hooks/useUpcomingOdds";
-import { useColorScheme, View } from "react-native";
+import { View } from "react-native";
 import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
 import { GameOddsSectionProps } from "types/odds";
 import OddsSkeleton from "../../../Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "./OddsCard";
+import { usePreferences } from "contexts/PreferencesContext";
 
 export default function GameOddsSection({
   date,
   homeCode,
   awayCode,
 }: GameOddsSectionProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = gameOddsStyles(isDark);
 
   // --- Upcoming odds ---

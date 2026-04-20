@@ -5,12 +5,13 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useEffect, useRef } from "react";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -26,7 +27,6 @@ type Props = {
 };
 
 export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
-  const isDark = useColorScheme() === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const gameInfo = game;
@@ -149,7 +149,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>

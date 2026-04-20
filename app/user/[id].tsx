@@ -5,16 +5,11 @@ import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useLayoutEffect, useState } from "react";
-import {
-  Animated,
-  ScrollView,
-  View,
-  useColorScheme,
-  useWindowDimensions,
-} from "react-native";
+import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
@@ -31,8 +26,8 @@ export default function UserProfileScreen() {
   const [isGridView, setIsGridView] = useState(true);
   const navigation = useNavigation();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const {
     isLoading,

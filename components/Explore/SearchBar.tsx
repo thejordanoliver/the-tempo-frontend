@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import TabBar from "components/TabBar";
+import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -8,7 +9,6 @@ import {
   Pressable,
   StyleSheet,
   TextInput,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -36,7 +36,8 @@ export default function SearchBar({
   onTabPress,
 }: Props) {
   const inputAnim = useRef(new Animated.Value(0)).current;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = searchBarStyles(isDark);
 
   useEffect(() => {

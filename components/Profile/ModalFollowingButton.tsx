@@ -1,34 +1,26 @@
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
 import {
-  ActivityIndicator,
   Animated,
   Easing,
   GestureResponderEvent,
   Pressable,
+  StyleSheet,
   Text,
-  TextStyle,
-  useColorScheme,
-  ViewStyle,
 } from "react-native";
 
 type Props = {
   isFollowing: boolean;
   onToggle: () => void;
   loading?: boolean;
-  containerStyle?: ViewStyle;
-  textStyle?: TextStyle;
 };
 
-export default function FollowingButton({
-  isFollowing,
-  onToggle,
-  loading = false,
-  containerStyle,
-  textStyle,
-}: Props) {
-  const isDark = useColorScheme() === "dark";
+export default function FollowingButton({ isFollowing, onToggle }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const opacityAnim = useRef(new Animated.Value(1)).current;
+  const styles = followButtonStyles(isDark, isFollowing);
 
   useEffect(() => {
     Animated.sequence([
@@ -50,69 +42,51 @@ export default function FollowingButton({
   const handlePress = (e: GestureResponderEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!loading) onToggle();
+    onToggle(); // no guard
   };
 
-  const backgroundColor = isFollowing
-    ? isDark
-      ? "#fff"
-      : "#1d1d1d"
-    : "transparent";
-
-  const textColor = isFollowing
-    ? isDark
-      ? "#1d1d1d"
-      : "#fff"
-    : isDark
-      ? "#fff"
-      : "#1d1d1d";
-
-  const borderColor = isDark ? "#fff" : "#1d1d1d";
-
   return (
-    <Animated.View
-      style={[
-        {
-          opacity: opacityAnim,
-          width: 80,
-          overflow: "hidden",
-          marginVertical: 4,
-        },
-        containerStyle,
-      ]}
-    >
-      <Pressable
-        onPress={handlePress}
-        disabled={loading}
-        style={{
-          backgroundColor,
-          borderColor,
-          borderRadius: 8,
-          borderWidth: 1,
-          paddingVertical: 8,
-          paddingHorizontal: 16,
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color={textColor} />
-        ) : (
-          <Text
-            style={[
-              {
-                color: textColor,
-                fontSize: 12,
-                fontFamily: Fonts.OSMEDIUM,
-              },
-              textStyle,
-            ]}
-          >
-            {isFollowing ? "Following" : "Follow"}
-          </Text>
-        )}
+    <Animated.View style={[styles.container, { opacity: opacityAnim }]}>
+      <Pressable onPress={handlePress} style={styles.wrapper}>
+        <Text style={styles.buttonText}>
+          {isFollowing ? "Following" : "Follow"}
+        </Text>
       </Pressable>
     </Animated.View>
   );
 }
+
+export const followButtonStyles = (isDark: boolean, isFollowing: boolean) =>
+  StyleSheet.create({
+    container: {
+      width: 80,
+      overflow: "hidden",
+      marginVertical: 4,
+    },
+    wrapper: {
+      backgroundColor: isFollowing
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : "transparent",
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 8,
+      borderWidth: 1,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+    },
+    buttonText: {
+      color: isFollowing
+        ? isDark
+          ? Colors.black
+          : Colors.white
+        : isDark
+          ? Colors.white
+          : Colors.black,
+      fontSize: 12,
+      fontFamily: Fonts.OSMEDIUM,
+    },
+  });

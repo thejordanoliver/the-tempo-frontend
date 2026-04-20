@@ -1,20 +1,14 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { Colors, Fonts } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  ViewStyle,
-} from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { FlatList, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { NHLGame } from "types/nhl";
+import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
+import { NHLGame } from "types/hockey";
 import NHLGamePreviewModal from "../GamePreview/NHLGamePreviewModal";
 import NHLGameCard from "./NHLGameCard";
 import NHLSquareGameCard from "./NHLGameSquareCard";
@@ -29,7 +23,8 @@ type GamesListProps = {
   day?: "todayTomorrow";
   scrollEnabled?: boolean;
 };
-
+type GameWithPlaceholder = NHLGame & { _isPlaceholder?: boolean };
+const ItemSeparator = () => <View style={{ height: 12 }} />;
 export default function NHLGamesList({
   games,
   loading,
@@ -39,120 +34,121 @@ export default function NHLGamesList({
   day,
   scrollEnabled = true,
 }: GamesListProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = gameListStyles;
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { viewMode } = usePreferences();
 
   const [previewGame, setPreviewGame] = useState<NHLGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (game: NHLGame) => {
+  const handleLongPress = useCallback((game: NHLGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
-  };
+  }, []);
 
-  const renderGameCard = (game: NHLGame, index?: number) => {
-    if ((game as any)?._isPlaceholder) {
-      return (
-        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
-      );
-    }
+  const handleCloseModal = useCallback(() => setModalVisible(false), []);
 
-    const wrapper = (child: React.ReactNode, indexInRow?: number) => {
-      let gridStyle: ViewStyle = {};
-
-      if (viewMode === "grid" && indexInRow !== undefined) {
-        gridStyle = {
-          flex: 1,
-          marginLeft: indexInRow % 2 === 0 ? 12 : 6,
-          marginRight: indexInRow % 2 === 0 ? 6 : 12,
-        };
+  const renderGameCard = useCallback(
+    (game: GameWithPlaceholder) => {
+      if (game._isPlaceholder) {
+        return <View style={{ flex: 1 }} />;
       }
+
+      const cardContent =
+        viewMode === "list" ? (
+          <NHLGameCard game={game} />
+        ) : viewMode === "grid" ? (
+          <NHLSquareGameCard game={game} />
+        ) : (
+          <NHLStackedGameCard game={game} />
+        );
 
       return (
         <LongPressGestureHandler
-          key={game.id}
           minDurationMs={300}
           onHandlerStateChange={({ nativeEvent }) => {
             if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
           }}
         >
-          <View style={gridStyle}>{child}</View>
+          <View style={viewMode === "grid" ? styles.gridItem : undefined}>
+            {cardContent}
+          </View>
         </LongPressGestureHandler>
       );
-    };
+    },
+    [viewMode, handleLongPress, styles.gridItem],
+  );
 
-    if (viewMode === "list")
-      return wrapper(
-        <View style={{ marginBottom: 12 }}>
-          <NHLGameCard game={game} />
-        </View>,
-      );
-    if (viewMode === "grid")
-      return wrapper(<NHLSquareGameCard game={game} />, index);
-    return wrapper(
-      <View style={{ marginBottom: 12 }}>
-        <NHLStackedGameCard game={game} />
-      </View>,
-    );
-  };
+  const renderItem = useCallback(
+    ({ item }: { item: GameWithPlaceholder }) => renderGameCard(item),
+    [renderGameCard],
+  );
 
-  const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
+  const renderSkeletons = useCallback(
+    (count: number) => {
+      if (viewMode === "list") {
+        return (
+          <View style={styles.skeletonWrapper}>
+            {Array.from({ length: count }).map((_, i) => (
+              <GameCardSkeleton key={`list-skel-${i}`} />
+            ))}
+          </View>
+        );
+      }
+
+      if (viewMode === "grid") {
+        const pairs: number[][] = [];
+        for (let i = 0; i < count; i += 2) {
+          pairs.push(i + 1 < count ? [i, i + 1] : [i]);
+        }
+
+        return (
+          <View style={styles.skeletonGridWrapper}>
+            {pairs.map((pair, rowIndex) => (
+              <View key={`skel-row-${rowIndex}`} style={styles.gridRow}>
+                <SquareGameCardSkeleton style={{ flex: 1 }} />
+                {pair.length === 2 ? (
+                  <SquareGameCardSkeleton style={{ flex: 1 }} />
+                ) : (
+                  <View style={{ flex: 1 }} />
+                )}
+              </View>
+            ))}
+          </View>
+        );
+      }
+
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, i) => (
-            <GameCardSkeleton key={`list-skel-${i}`} />
+            <StackedGameCardSkeleton key={`stack-skel-${i}`} />
           ))}
         </View>
       );
-    }
+    },
+    [viewMode, styles],
+  );
 
-    if (viewMode === "grid") {
-      const skeletons = Array.from({ length: count }).map((_, i) => ({
-        _id: `grid-skel-${i}`,
-      }));
-
-      return (
-        <FlatList
-          data={skeletons}
-          keyExtractor={(item) => item._id}
-          numColumns={2}
-          columnWrapperStyle={styles.gridRow}
-          renderItem={({ item, index }) => {
-            const itemStyle: ViewStyle = {
-              width: "48%", // half width
-              marginLeft: index % 2 === 0 ? 0 : 4,
-              marginRight: index % 2 === 0 ? 4 : 0,
-              marginBottom: 12,
-            };
-            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
-          }}
-          scrollEnabled={false}
-          contentContainerStyle={styles.skeletonGridWrapper}
-        />
-      );
-    }
-
-    return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, i) => (
-          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
-        ))}
-      </View>
-    );
-  };
+  const gridData = useMemo<GameWithPlaceholder[]>(
+    () =>
+      viewMode === "grid" && games.length % 2 === 1
+        ? [...games, { _isPlaceholder: true } as any]
+        : games,
+    [games, viewMode],
+  );
 
   if (loading) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
 
-  if (!loading && games.length === 0) {
+  if (games.length === 0) {
     return (
-      <View style={{ marginTop: 10 }}>
-        <Text style={[styles.emptyText, { color: Colors.midTone }]}>
+      <View style={styles.emptyWrapper}>
+        <Text style={global.emptyText}>
           {day === "todayTomorrow"
             ? "No games found for today or tomorrow."
             : "No games found on this date."}
@@ -161,50 +157,27 @@ export default function NHLGamesList({
     );
   }
 
-  if (viewMode === "grid") {
-    const dataWithPlaceholder =
-      games.length % 2 === 1
-        ? [...games, { _isPlaceholder: true } as any]
-        : games;
-
-    return (
-      <>
-        <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(item, index) =>
-            (item as any)?._isPlaceholder
-              ? `placeholder-${index}`
-              : `game-${item.id}`
-          }
-          numColumns={2}
-          renderItem={({ item, index }) => renderGameCard(item, index)}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          contentContainerStyle={styles.gridListContainer}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={scrollEnabled}
-        />
-        {modalVisible && previewGame && (
-          <NHLGamePreviewModal
-            game={previewGame}
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
-      </>
-    );
-  }
-
-  // list + stacked
   return (
     <>
       <FlatList
-        data={games}
-        keyExtractor={(item) => `game-${item.id}`}
-        renderItem={({ item, index }) => renderGameCard(item, index)}
+        data={viewMode === "grid" ? gridData : games}
+        keyExtractor={(item, index) =>
+          (item as any)?._isPlaceholder
+            ? `placeholder-${index}`
+            : `game-${item.id}`
+        }
+        renderItem={renderItem}
+        numColumns={viewMode === "grid" ? 2 : 1}
+        key={viewMode}
+        columnWrapperStyle={viewMode === "grid" ? styles.gridRow : undefined}
+        ItemSeparatorComponent={viewMode !== "grid" ? ItemSeparator : undefined}
+        contentContainerStyle={
+          viewMode === "grid"
+            ? styles.gridListContainer
+            : styles.contentContainer
+        }
         refreshing={refreshing}
         onRefresh={onRefresh}
-        contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
       />
@@ -218,42 +191,3 @@ export default function NHLGamesList({
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  skeletonWrapper: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingHorizontal: 12,
-    gap: 12,
-  },
-  skeletonGridWrapper: {
-    paddingBottom: 20,
-    paddingHorizontal: 12,
-  },
-  gridListContainer: {
-    paddingBottom: 100,
-    gap: 12,
-  },
-  contentContainer: {
-    paddingTop: 10,
-    paddingBottom: 100,
-    paddingHorizontal: 12,
-  },
-  gridRow: {
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 20,
-    fontSize: 20,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  gridItem: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  stackedItem: {
-    marginHorizontal: 12,
-  },
-});

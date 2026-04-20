@@ -9,7 +9,6 @@ export type CenterInfoProps = {
   time: string | undefined;
   period?: number;
   clock?: string | null;
-  isDark: boolean;
   downAndDistance: string | null | undefined;
   broadcast?: string;
   gameStatusDescription: string | undefined;

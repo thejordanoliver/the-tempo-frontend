@@ -10,7 +10,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
@@ -69,7 +68,8 @@ const CBBRosterStats: React.FC<Props> = ({
     "Player Stats",
   );
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
@@ -81,7 +81,7 @@ const CBBRosterStats: React.FC<Props> = ({
   if (loading) {
     return (
       <View style={styles.container}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

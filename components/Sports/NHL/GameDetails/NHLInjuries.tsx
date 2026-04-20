@@ -2,10 +2,11 @@ import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesS
 import { globalStyles } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import FixedWidthTabBar from "../../../TabBars/FixedWidthTabBar";
+import TeamInjuriesList from "./TeamInjuriesList";
 
 export interface Injury {
   status: string;
@@ -44,7 +45,6 @@ type Props = {
   isDark: boolean;
 };
 
-const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
 
 export default function NHLInjuries({
   injuries,
@@ -57,8 +57,6 @@ export default function NHLInjuries({
   const styles = teamInjuryStyles(isDark);
   const global = globalStyles(isDark);
 
-  // Away is always left (index 0), home always right (index 1).
-  // Mirror the TeamInjuries pattern: reorder by known away/home IDs upfront.
   const reorderedInjuries = (() => {
     if (!injuries?.length) return [];
     const away = injuries.find((t) => t.team.id === awayTeamId);
@@ -98,62 +96,6 @@ export default function NHLInjuries({
   if (!injuries?.length || !currentTeam) return null;
 
   // ------------------------------------------------------------------
-  // Render injury row
-  // ------------------------------------------------------------------
-  const renderInjury = ({ item, index }: { item: Injury; index: number }) => {
-    const player = item.athlete;
-    const avatarUrl = player.headshot?.href || DEFAULT_HEADSHOT;
-
-    return (
-      <View
-        style={[
-          styles.injuryItem,
-          {
-            borderBottomWidth:
-              index === (currentTeam.injuries.length ?? 0) - 1
-                ? 0
-                : StyleSheet.hairlineWidth,
-          },
-        ]}
-      >
-        <Image
-          source={{ uri: avatarUrl }}
-          style={styles.avatarWrapper}
-          resizeMode="cover"
-        />
-
-        <View style={{ flex: 1 }}>
-          <View style={styles.infoSection}>
-            <View style={styles.playerHeader}>
-              <Text style={styles.name}>{player.shortName}</Text>
-              <Text style={styles.jersey}>
-                {player?.position?.abbreviation ?? "—"}{" "}
-                {player?.jersey ? `#${player.jersey}` : ""}
-              </Text>
-            </View>
-
-            {item.details?.type && (
-              <>
-                <Text style={styles.status}>{item.status}</Text>
-                <Text style={styles.details}>
-                  {item.details.type} — {item.details.location ?? "N/A"}
-                </Text>
-              </>
-            )}
-          </View>
-        </View>
-
-        {item.details?.returnDate && (
-          <Text style={styles.status}>
-            Return:{" "}
-            {new Date(item.details.returnDate).toLocaleDateString("en-US")}
-          </Text>
-        )}
-      </View>
-    );
-  };
-
-  // ------------------------------------------------------------------
   // Render
   // ------------------------------------------------------------------
   return (
@@ -188,19 +130,10 @@ export default function NHLInjuries({
           }}
         />
 
-        {currentTeam.injuries.length > 0 ? (
-          <FlatList
-            data={currentTeam.injuries}
-            renderItem={renderInjury}
-            keyExtractor={(inj) => inj.athlete.id}
-            scrollEnabled={false}
-            contentContainerStyle={{ paddingVertical: 8 }}
-          />
-        ) : (
-          <Text style={global.emptyText}>
-            No injuries reported for this team.
-          </Text>
-        )}
+        <TeamInjuriesList
+          injuries={currentTeam ? [currentTeam] : []}
+          isDark={isDark}
+        />
       </View>
     </View>
   );

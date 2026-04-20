@@ -1,7 +1,6 @@
-import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { NHLGame } from "types/nhl";
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { NHLGame } from "types/hockey";
+import { apiClient } from "utils/apiClient";
 
 export function useNHLWeeklyGames() {
   const [games, setGames] = useState<NHLGame[]>([]);

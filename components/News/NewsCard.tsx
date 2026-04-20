@@ -1,12 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 // ✅ Import fallback image
 import { newsCardStyles } from "styles/NewsStyles/NewsCardStyles";
 
@@ -28,7 +22,8 @@ export default function NewsCard({
   thumbnail,
 }: NewsCardProps) {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = newsCardStyles(isDark);
 
   const [imageError, setImageError] = useState(false);
@@ -46,9 +41,7 @@ export default function NewsCard({
     <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
       <View style={styles.card}>
         <Image
-          source={
-            imageError || !thumbnail ? { uri: "" } : { uri: thumbnail }
-          }
+          source={imageError || !thumbnail ? { uri: "" } : { uri: thumbnail }}
           onError={() => setImageError(true)}
           style={styles.thumbnail}
         />

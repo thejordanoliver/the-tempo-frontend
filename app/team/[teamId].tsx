@@ -12,6 +12,7 @@ import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNBATeam } from "constants/teams";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
@@ -21,13 +22,7 @@ import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useTeamRosterStats } from "hooks/useTeamRosterStats";
 import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Dimensions,
-  RefreshControl,
-  ScrollView,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Dimensions, RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { User } from "types/types";
@@ -40,7 +35,8 @@ import {
 
 export default function TeamDetailScreen() {
   const league = "NBA";
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
@@ -208,7 +204,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -327,6 +323,7 @@ export default function TeamDetailScreen() {
           onClose={() => setModalVisible(false)}
           teamId={team.id}
           league={league}
+          isDark={isDark}
         />
       )}
     </View>

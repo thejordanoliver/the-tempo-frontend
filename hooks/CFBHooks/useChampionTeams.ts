@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type ChampionTeam = {
@@ -14,7 +14,7 @@ export type ChampionTeam = {
 };
 
 type Options = {
-  league: "CFB" | "CBB" | "WCBB" |  "NBA" | "NFL";
+  league: LeagueType;
   enabled?: boolean;
   refreshToken?: number;
 };
@@ -31,12 +31,9 @@ export function useChampionTeams({
     if (!enabled) return;
 
     setLoading(true);
-    const res = await apiClient.get(
-      `api/champions/${league}/teams`,
-      {
-        params: { _refresh: refreshToken ?? Date.now() },
-      }
-    );
+    const res = await apiClient.get(`api/champions/${league}/teams`, {
+      params: { _refresh: refreshToken ?? Date.now() },
+    });
     setData(res.data ?? []);
     setLoading(false);
   }, [league, enabled, refreshToken]);

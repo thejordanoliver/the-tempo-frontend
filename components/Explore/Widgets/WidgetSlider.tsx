@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { FootballGame } from "types/football";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 import { BasketballGame, Game } from "types/types";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";

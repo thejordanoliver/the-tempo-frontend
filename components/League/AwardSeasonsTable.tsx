@@ -1,6 +1,5 @@
 import { Colors, globalStyles } from "constants/styles";
 import { useRouter } from "expo-router";
-import { AwardCategory, League, useAwardSeasons } from "hooks/useAwardSeasons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   LayoutAnimation,
@@ -9,10 +8,11 @@ import {
   TouchableOpacity,
   UIManager,
   View,
-  useColorScheme,
 } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
+import { AwardCategory } from "types/types";
 import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 
 const NAME_COLUMN_WIDTH = "100%";
 const COLLAPSED_ROWS = 5;
@@ -22,35 +22,27 @@ if (Platform.OS === "android") {
 }
 
 type Props = {
-  league: League;
   category: AwardCategory;
   title: string;
-  lighter?: boolean;
   refreshSignal?: number;
+  data: any[];
+  loading: boolean;
+  error: string | null;
 };
 
 export function AwardSeasonsTable({
-  league,
   category,
   title,
-  refreshSignal,
+  loading,
+  error,
+  data,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = awardTableStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
   const isCOY = category === "coy";
-
-  const { data, loading, error, refetch } = useAwardSeasons({
-    league,
-    category,
-  });
-
-  useEffect(() => {
-    if (refreshSignal !== undefined) {
-      refetch();
-    }
-  }, [refreshSignal, refetch]);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -59,7 +51,7 @@ export function AwardSeasonsTable({
   }, [expanded]);
 
   const visibleRows = useMemo(
-    () => (expanded ? data : data.slice(0, COLLAPSED_ROWS)),
+    () => (expanded ? data : data?.slice(0, COLLAPSED_ROWS)),
     [expanded, data],
   );
 
@@ -107,9 +99,9 @@ export function AwardSeasonsTable({
             <Text style={styles.headerName}>{title}</Text>
           </View>
 
-          {visibleRows.map((row, index) => (
+          {visibleRows?.map((row, index) => (
             <View
-              key={`${row.season}-${row.player_id ?? row.team_abbr ?? row.school}`}
+              key={`${row.award_type ?? "type"}-${row.season ?? "season"}-${row.player_name ?? "player"}-${row.team_code ?? "team"}-${index}`}
               style={[
                 styles.nameRow,
                 { backgroundColor: getRowBackground(index) },
@@ -133,12 +125,15 @@ export function AwardSeasonsTable({
 
               <Text style={styles.seasonText}>
                 {row.season} ·{" "}
-                {row.award_team?.code ?? row.team_abbr ?? row.school}
+                {row.award_team?.code ??
+                  row.team_code ??
+                  row.team_abbr ??
+                  row.school}
               </Text>
             </View>
           ))}
         </View>
-        {data.length > COLLAPSED_ROWS && (
+        {data?.length > COLLAPSED_ROWS && (
           <TouchableOpacity
             onPress={() => setExpanded((p) => !p)}
             style={{ paddingVertical: 14, alignItems: "center" }}

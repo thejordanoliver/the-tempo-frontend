@@ -14,9 +14,7 @@ type FighterInfoProps = {
 };
 
 export default function FighterInfo({
-  fighter,
   logo,
-  headshot,
   record,
   name,
   gameStatusDescription,

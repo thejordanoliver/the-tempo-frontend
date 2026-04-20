@@ -1,8 +1,7 @@
-import React from "react";
-import { View, StyleSheet, useColorScheme } from "react-native";
-import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
 import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions } from "react-native";
+import React from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -54,7 +53,8 @@ const SkeletonCard = ({ shimmerColors }: { shimmerColors: string[] }) => {
 };
 
 export default function GameDetailsSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const shimmerColor = isDark ? "#444" : "#e0e0e0";
 
   const shimmerColors = [shimmerColor, "#999", shimmerColor];

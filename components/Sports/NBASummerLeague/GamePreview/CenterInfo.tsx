@@ -1,8 +1,7 @@
-import { useEffect, useRef } from "react";
-import { Animated, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 import { formatQuarter } from "utils/games";
 type CenterInfoProps = {
-  isChampionship: boolean;
   broadcastNetworks?: string;
   period: number;
   time: string;
@@ -18,7 +17,6 @@ type CenterInfoProps = {
 };
 
 export default function CenterInfo({
-  isChampionship,
   gameStatusDescription,
   gameStatusDetail,
   broadcastNetworks,
@@ -29,8 +27,6 @@ export default function CenterInfo({
   isDark,
   statusText,
 }: CenterInfoProps) {
-  const lightOpacity = useRef(new Animated.Value(isDark ? 0 : 1)).current;
-  const darkOpacity = useRef(new Animated.Value(isDark ? 1 : 0)).current;
   const styles = CenterInfoStyles;
 
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -42,23 +38,6 @@ export default function CenterInfo({
   const isPostponed = gameStatusDescription === "Postponed";
   const isEndOfPeriod = gameStatusDescription === "End of Period";
   const displayPeriod = formatQuarter(period);
-
-  useEffect(() => {
-    if (isChampionship) {
-      Animated.parallel([
-        Animated.timing(lightOpacity, {
-          toValue: isDark ? 0 : 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(darkOpacity, {
-          toValue: isDark ? 1 : 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [isDark, isChampionship, lightOpacity, darkOpacity]);
 
   return (
     <View style={styles.container}>

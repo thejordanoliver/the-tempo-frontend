@@ -1,6 +1,5 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameHeader from "components/Sports/CBB/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
@@ -9,6 +8,7 @@ import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
@@ -21,6 +21,7 @@ import {
   getCBBTeamLogo,
   getNeutralVenue,
 } from "constants/teamsCBB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
@@ -28,7 +29,7 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/types";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -46,7 +47,8 @@ export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
 
@@ -183,7 +185,6 @@ export default function GameDetailsScreen() {
 
   /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;
-
   const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
   const venueName = neutralSite
     ? neutralVenue?.name || baseVenue?.fullName
@@ -256,7 +257,7 @@ export default function GameDetailsScreen() {
   if (isLoadingGame) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

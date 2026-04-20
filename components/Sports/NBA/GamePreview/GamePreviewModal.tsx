@@ -1,6 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { neutralVenues } from "constants/neutralVenues";
+import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,15 +11,15 @@ import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { Game } from "types/types";
+import { getHolidayLabel } from "utils/dateUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { Colors } from "constants/styles";
 type Props = {
   visible: boolean;
   game: Game;
@@ -26,8 +27,6 @@ type Props = {
 };
 
 export default function GamePreviewModal({ visible, game, onClose }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
   const dateObj = new Date(game.date);
 
@@ -50,11 +49,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   const isChristmasDay = dateObj.getMonth() === 11 && dateObj.getDate() === 25;
   const isNewYearsDay = dateObj.getMonth() === 0 && dateObj.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
 
   const styles = gamePreviewModalStyle(isChampionship);
 
@@ -125,7 +119,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = headlineText || getHolidayLabel(dateObj);
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const broadcasts = details?.broadcasts;
@@ -231,11 +225,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
           style={StyleSheet.absoluteFill}
         />
         <LinearGradient
-          colors={
-            isDark
-              ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]
-              : ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]
-          }
+          colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={StyleSheet.absoluteFill}
@@ -248,7 +238,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         >
           {!isLiveScoreReady ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>
@@ -276,7 +266,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                 />
 
                 <CenterInfo
-                  isChampionship={isChampionship}
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}
                   broadcastNetworks={broadcastText}
@@ -284,8 +273,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                   clock={displayClock}
                   time={formattedTime}
                   formattedDate={formattedDate}
-                  isDark={isDark}
-                  lighter
                 />
 
                 <TeamInfo
@@ -327,7 +314,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
                   weather={weather}
                   weatherLoading={weatherLoading}
                   weatherError={weatherError}
-                  isDark={isDark}
                 />
               )}
             </>

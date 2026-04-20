@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
+import AwardSeasons from "components/League/AwardSeasons";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -22,27 +23,30 @@ import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useWNBASeasonGames } from "hooks/WNBAHooks/useWNBASeasonGames";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getWNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 export default function WNBALeagueScreen() {
+  const league = "WNBA";
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const pagerRef = useRef<PagerView>(null);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("WNBA");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<Date>(
+  const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
   const [standingsYear, setStandingsYear] = useState(
@@ -52,7 +56,7 @@ export default function WNBALeagueScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "WNBA");
+  } = useLeaguesNews(10, league);
 
   const {
     games,
@@ -102,7 +106,7 @@ export default function WNBALeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="WNBA"
+          league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
           onOpenLeagueModal={() => {
@@ -186,13 +190,18 @@ export default function WNBALeagueScreen() {
             <StandingsList
               year={standingsYear}
               onYearChange={setStandingsYear}
-              league="WNBA"
+              league={league}
             />
+          </View>
+
+          {/* AWARDS */}
+          <View key="awards">
+            <AwardSeasons league={league} />
           </View>
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league="WNBA" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

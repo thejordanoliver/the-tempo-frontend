@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { useEffect, useState } from "react";
-import { LayoutChangeEvent, Text, View, useColorScheme } from "react-native";
+import { LayoutChangeEvent, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
 type MLBLastPlay = {
@@ -26,7 +26,8 @@ export default function LastPlay({ lastPlay }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
 
   const onLayout = (e: LayoutChangeEvent) =>

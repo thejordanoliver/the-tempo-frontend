@@ -23,31 +23,34 @@ import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
-import * as React from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-
+import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 export default function WCBBLeagueScreen() {
+  const league = "WCBB";
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
-  const conferenceModalRef = React.useRef<ConferenceListModalRef>(null);
-  const pagerRef = React.useRef<PagerView>(null);
+  const conferenceModalRef = useRef<ConferenceListModalRef>(null);
+  const pagerRef = useRef<PagerView>(null);
   const [selectedConference, setSelectedConference] =
-    React.useState<string>("Top 25");
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("WCBB");
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [showCalendarModal, setShowCalendarModal] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
-  const { categories, loading, error } = useSeasonLeaders(2026, "WCBB");
+    useState<string>("Top 25");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const [refreshing, setRefreshing] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { categories, loading, error } = useSeasonLeaders(2026, league);
 
   const {
     games: seasonGames,
@@ -62,6 +65,7 @@ export default function WCBBLeagueScreen() {
       return newDate;
     });
   };
+
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -72,16 +76,17 @@ export default function WCBBLeagueScreen() {
       setRefreshing(false);
     }
   };
+
   const {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, "WCBB");
+  } = useLeaguesNews(10, league);
   /* -------------------------------
      WOMEN’S AP TOP 25 (FIXED)
   -------------------------------- */
-  const apTop25 = useAPTop25("WCBB");
-  const top25Teams = React.useMemo(
+  const apTop25 = useAPTop25(league);
+  const top25Teams = useMemo(
     () => apTop25.map((t) => String(t?.id)),
     [apTop25],
   );
@@ -89,12 +94,12 @@ export default function WCBBLeagueScreen() {
   /* -------------------------------
      HEADER
   -------------------------------- */
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league="WCBB"
+          league={league}
           modalVisible={isDropdownOpen}
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
@@ -108,7 +113,7 @@ export default function WCBBLeagueScreen() {
   /* -------------------------------
      FILTERED GAMES (FIXED)
   -------------------------------- */
-  const filteredGames = React.useMemo(() => {
+  const filteredGames = useMemo(() => {
     const gamesForDate = seasonGames.filter((game) =>
       dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day"),
     );
@@ -223,7 +228,7 @@ export default function WCBBLeagueScreen() {
               loading={loading}
               error={error}
               categories={categories}
-              league={"WCBB"}
+              league={league}
               isDark={isDark}
             />
           </View>
@@ -232,13 +237,13 @@ export default function WCBBLeagueScreen() {
           <View key="bracket"></View>
 
           {/* AWARDS */}
-          <ScrollView key="awards">
-            <AwardSeasons league="WCBB" />
-          </ScrollView>
+          <View key="awards">
+            <AwardSeasons league={league} />
+          </View>
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league="WCBB" />
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

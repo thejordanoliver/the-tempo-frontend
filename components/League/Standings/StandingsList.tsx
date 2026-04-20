@@ -8,8 +8,9 @@ import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId as getNHLTeamByESPNId } from "constants/teamsNHL";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
-import { useRouter } from "expo-router";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useRouter } from "expo-router";
 import {
   ConferenceStandings,
   StandingsTeam,
@@ -22,7 +23,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
@@ -178,7 +178,8 @@ export const StandingsList = ({
     loading,
     error,
   } = useLeagueStandings(league, year);
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
@@ -267,9 +268,11 @@ export const StandingsList = ({
         ? "/team/[teamId]"
         : league === "NFL"
           ? "/team/nfl/[teamId]"
-          : league === "MLB"
-            ? "/team/mlb/[teamId]"
-            : "/team/nhl/[teamId]";
+          : league === "WNBA"
+            ? "/team/wnba/[teamId]"
+            : league === "MLB"
+              ? "/team/mlb/[teamId]"
+              : "/team/nhl/[teamId]";
 
     const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
     const teamCode = team?.code;

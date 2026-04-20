@@ -1,13 +1,8 @@
 import { Colors } from "constants/styles";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
+import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   rows?: number;
@@ -15,7 +10,8 @@ type Props = {
 };
 
 export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
   const borderPulse = useRef(new Animated.Value(0.3)).current;
   useEffect(() => {

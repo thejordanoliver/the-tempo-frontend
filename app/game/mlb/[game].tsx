@@ -1,17 +1,19 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import GameHeader from "components/Sports/MLB/GameDetails/GameHeader";
 import GameSummary from "components/Sports/MLB/GameDetails/GameSummary";
 import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import MLBInjuries from "components/Sports/MLB/GameDetails/MLBInjuries";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNeutralStadium } from "constants/neutralVenues";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
@@ -19,17 +21,17 @@ import { useLastFiveGames } from "hooks/MLBHooks/useLastFiveGames";
 import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
@@ -60,7 +62,7 @@ export default function GameDetailsScreen() {
   const awayId = away?.id ?? parsedGame?.teams?.away?.id;
 
   if (!homeId || !awayId) return null;
-
+  const gameId = String(parsedGame?.id);
   const homeTeam = getMLBTeam(homeId);
   const awayTeam = getMLBTeam(awayId);
   const homeTeamId = homeTeam?.id ?? 0;
@@ -146,22 +148,31 @@ export default function GameDetailsScreen() {
     [String(awayEspnId)]: awayTeamPlayersData.players,
   };
 
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: venue,
-        homeTeam: homeTeam,
-        isNeutralSite: neutralSite,
-        league: "MLB",
-      }),
-    [venue, homeTeam, neutralSite],
-  );
-
-  const { weather } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateStr,
-  );
+  /* ---------------- Neutral site / venue ---------------- */
+  const baseVenue = details?.venue;
+  const neutralVenue = getNeutralStadium(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : homeTeam?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address ||
+      `${baseVenue?.address.city} ${baseVenue?.address.state}, ${baseVenue?.address.zipCode} ${baseVenue?.address.country}`;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images[0]?.href
+    : homeTeam?.venueImage || baseVenue?.images[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateStr);
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
@@ -190,15 +201,11 @@ export default function GameDetailsScreen() {
       ),
     });
   }, [navigation, isLoading, liveScore, homeCode, awayCode, neutralSite]);
-  useEffect(() => {
-    const timeout = setTimeout(() => setIsLoading(false), 400);
-    return () => clearTimeout(timeout);
-  }, []);
 
   if (isLoading || !liveScore) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -242,24 +249,21 @@ export default function GameDetailsScreen() {
 
           {!isFinal && (
             <FanPredictionVote
-              gameId={parsedGame.id}
+              gameId={gameId}
               awayTeam={{
-                id: awayTeam.id,
-                code: awayTeam.code,
-                logo: awayTeam.logo,
-                logoLight: awayTeam.logoLight,
-                color: awayTeam.color,
+                id: awayTeamId,
+                code: awayCode,
+                logo: headerAwayLogo,
+                color: awayTeam?.color,
               }}
               homeTeam={{
-                id: homeTeam.id,
-                code: homeTeam.code,
-                logo: homeTeam.logo,
-                logoLight: homeTeam.logoLight,
-                color: homeTeam.color,
+                id: homeTeamId,
+                code: homeCode,
+                logo: headerHomeLogo,
+                color: homeTeam?.color,
               }}
             />
           )}
-
           {!isScheduled && (
             <LineScore
               linescore={lineScore}
@@ -270,24 +274,24 @@ export default function GameDetailsScreen() {
             />
           )}
 
-          {isScheduled && homeChance != 0 && awayChance != 0 && (
+          {isScheduled && (
             <MatchupPredictor
-              away={{
-                name: awayTeam.code ?? "UNK",
-                logo: awayLogo,
-                color: isDark ? awayTeam.secondaryColor : awayTeam.color,
-                chance: awayChance,
-              }}
               home={{
-                name: homeTeam.code ?? "UNK",
+                name: homeCode,
                 logo: homeLogo,
-                color: isDark ? homeTeam.secondaryColor : homeTeam.color,
                 chance: homeChance,
+                color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
+              }}
+              away={{
+                name: awayCode,
+                logo: awayLogo,
+                chance: awayChance,
               }}
               size={180}
               isDark={isDark}
             />
           )}
+
           <GameSummary plays={plays ?? []} />
 
           <LastFiveGames
@@ -322,18 +326,16 @@ export default function GameDetailsScreen() {
           />
 
           <GameLocation
-            venueImage={resolvedVenue.image}
-            venueName={resolvedVenue.name}
-            location={
-              resolvedVenue.city ? `${resolvedVenue.city}` : resolvedVenue.name
-            }
-            address={resolvedVenue.address}
-            venueCapacity={String(resolvedVenue.capacity ?? "")}
-            venueAttendance={undefined}
+            venueImage={venueImage}
+            venueName={venueImage}
+            location={venueLocation}
+            address={venueAddress}
+            venueCapacity={String(venueCapacity)}
+            venueAttendance={venueAttendance}
             weather={weather}
-            isDark={isDark}
             loading={false}
             error={null}
+            isDark={isDark}
           />
         </View>
       </ScrollView>

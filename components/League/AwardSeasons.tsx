@@ -6,48 +6,48 @@ import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useAwardSchools } from "hooks/CFBHooks/useAwardSchools";
 import { useChampionTeams } from "hooks/CFBHooks/useChampionTeams";
-import { AwardCategory, League } from "hooks/useAwardSeasons";
+import { useAwardSeasons } from "hooks/useAwardSeasons";
 import { useMemo, useState } from "react";
-import { RefreshControl, ScrollView, useColorScheme, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
-import { AWARD_CONFIG } from "types/types";
+import { AWARD_CONFIG, AwardCategory, LeagueType } from "types/types";
+import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
-import AwardSchoolsTable from "./AwardTeamsTable";
 import TopThreeTeams from "./TopThreeTeams";
+import { usePreferences } from "contexts/PreferencesContext";
 type ViewMode = "champions" | "players" | "teams";
 
-const LEAGUE_CHAMPIONS_TITLE: Partial<Record<League, string>> = {
+const LEAGUE_CHAMPIONS_TITLE: Partial<Record<LeagueType, string>> = {
   CFB: "College Football Champions",
+  WNBA: "WNBA Champions",
   CBB: "Men's College Basketball Champions",
   WCBB: "Women's College Basketball Champions",
   NBA: "NBA Champions",
   NFL: "Super Bowl Champions",
   MLB: "World Series Champions",
+  NHL: "Stanley Cup Champions",
 };
 
 type Props = {
-  league: League;
-  lighter?: boolean;
+  league: LeagueType;
 };
 
-export default function AwardSeasons({ league, lighter = false }: Props) {
-  const isDark = useColorScheme() === "dark";
-  const styles = useMemo(() => awardTableStyles(isDark), [isDark, lighter]);
-
+export default function AwardSeasons({ league }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = useMemo(() => awardTableStyles(isDark), [isDark]);
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedAward, setSelectedAward] = useState<AwardCategory>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("players");
-
-  /* ------------------------------------------------ */
-  /* League → API mapping (FIXED + SAFE)             */
-  /* ------------------------------------------------ */
 
   const VIEW_MODE_OPTIONS = [
     { label: "Championships", value: "champions" },
     { label: "Players", value: "players" },
+
     // Only show "Teams" for CFB, CBB, WCBB
     ...(league === "CFB" || league === "CBB" || league === "WCBB"
       ? [{ label: "Teams", value: "teams" }]
@@ -65,6 +65,33 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
         return undefined;
     }
   }, [league]);
+
+  const { data, loading, error, refetch } = useAwardSeasons({
+    league,
+  });
+  const {
+    data: awardSchools,
+    loading: awardSchoolsLoading,
+    error: awardSchoolsError,
+  } = useAwardSchools({
+    league: apiLeague,
+    category: selectedAward,
+  });
+
+  const dataByCategory = useMemo(() => {
+    const grouped: Record<string, any[]> = {};
+
+    data.forEach((row) => {
+      const key = row.award_type;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(row);
+    });
+
+    return grouped;
+  }, [data]);
+  /* ------------------------------------------------ */
+  /* League → API mapping (FIXED + SAFE)             */
+  /* ------------------------------------------------ */
 
   /* ------------------------------------------------ */
   /* Award Teams Hook                                */
@@ -87,9 +114,12 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
   const showChampionTopThree = viewMode === "champions";
 
   const championTeamsResult =
+    league === "NHL" ||
+    league === "MLB" ||
     league === "CFB" ||
     league === "CBB" ||
     league === "WCBB" ||
+    league === "WNBA" ||
     league === "NBA" ||
     league === "NFL"
       ? useChampionTeams({
@@ -104,13 +134,11 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
   /* ------------------------------------------------ */
   /* Refresh                                          */
   /* ------------------------------------------------ */
-
   const handleRefresh = async () => {
     setRefreshing(true);
-    setRefreshKey((k) => k + 1);
-    setTimeout(() => setRefreshing(false), 500);
+    await Promise.all([refetch()]);
+    setRefreshing(false);
   };
-
   /* ------------------------------------------------ */
   /* Render                                           */
   /* ------------------------------------------------ */
@@ -157,15 +185,19 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
             logo:
               league === "NBA"
                 ? getTeamLogo(t.team.id, isDark)
-                : league === "CFB"
-                  ? getCFBTeamLogo(t.team.id, isDark)
-                  : league === "CBB"
-                    ? getCBBTeamLogo(t.team.id, isDark)
-                    : league === "WCBB"
-                      ? getCBBTeamLogo(t.team.id, isDark, true)
-                      : league === "MLB"
-                        ? getMLBTeamLogo(t.team.id, isDark)
-                        : getNFLTeamLogo(t.team.id, isDark),
+                : league === "WNBA"
+                  ? getWNBATeamLogo(t.team.id, isDark)
+                  : league === "CFB"
+                    ? getCFBTeamLogo(t.team.id, isDark)
+                    : league === "CBB"
+                      ? getCBBTeamLogo(t.team.id, isDark)
+                      : league === "WCBB"
+                        ? getCBBTeamLogo(t.team.id, isDark, true)
+                        : league === "MLB"
+                          ? getMLBTeamLogo(t.team.id, isDark)
+                          : league === "NHL"
+                            ? getNHLTeamLogo(t.team.id, isDark)
+                            : getNFLTeamLogo(t.team.id, isDark),
           }))}
         />
       )}
@@ -194,13 +226,15 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
 
       {viewMode === "champions" &&
         (league === "NBA" ||
+          league === "WNBA" ||
           league === "NFL" ||
           league === "MLB" ||
           league === "CFB" ||
           league === "CBB" ||
+          league === "NHL" ||
           league === "WCBB") && (
           <ChampionsTable
-            key={`${league}-champions-${refreshKey}`}
+            key={`${league}-champions`}
             title={LEAGUE_CHAMPIONS_TITLE[league] ?? "Champions"}
             league={league}
           />
@@ -219,10 +253,13 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
 
           return (
             <AwardSchoolsTable
-              key={`${league}-teams-${value}-${refreshKey}`}
+              key={`${league}-teams-${value}`}
               league={apiLeague}
               category={value}
               title={title}
+              data={awardSchools}
+              loading={awardSchoolsLoading}
+              error={awardSchoolsError}
             />
           );
         })}
@@ -233,9 +270,12 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
 
       {viewMode === "players" &&
         (league === "NBA" ||
+          league === "WNBA" ||
           league === "NFL" ||
           league === "CFB" ||
           league === "CBB" ||
+          league === "NHL" ||
+          league === "MLB" ||
           league === "WCBB") &&
         awards.map(({ value, title }) => {
           if (value === "all") return null;
@@ -244,12 +284,12 @@ export default function AwardSeasons({ league, lighter = false }: Props) {
 
           return (
             <AwardSeasonsTable
-              key={`${league}-${value}-${refreshKey}`}
-              league={league}
+              key={`${league}-${value}`}
               category={value}
               title={title}
-              lighter={lighter}
-              refreshSignal={refreshKey}
+              data={dataByCategory[value]}
+              loading={loading}
+              error={error}
             />
           );
         })}

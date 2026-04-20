@@ -1,7 +1,8 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Text, View, useColorScheme } from "react-native";
+import { Text, View } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StatusBadge, statusConfigs } from "./StatusBadge";
+import { usePreferences } from "contexts/PreferencesContext";
 
 export type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
 
@@ -10,7 +11,8 @@ interface StatusLegendProps {
 }
 
 export const StatusLegend = ({ league }: StatusLegendProps) => {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
 
   const config = statusConfigs[league];

@@ -7,8 +7,10 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type {
   PlayerResult,
@@ -16,7 +18,6 @@ import type {
   TeamResult,
   UserResult,
 } from "types/types";
-import { BASE_URL } from "utils/apiClient";
 
 type Props = {
   item: ResultItem;
@@ -31,7 +32,8 @@ export default function ResultItemRow({
   onDelete,
   query = "",
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
 
   // -------------------------
@@ -43,6 +45,8 @@ export default function ResultItemRow({
 
     if (team.isNFL && team.id != null)
       localTeamLogo = getNFLTeamLogo(team.id, isDark);
+    else if (team.isWNBA && team.id != null)
+      localTeamLogo = getWNBATeamLogo(team.id, isDark);
     else if (team.isMLB && team.id != null)
       localTeamLogo = getMLBTeamLogo(team.id, isDark);
     else if (team.isNHL && team.id != null)
@@ -94,19 +98,6 @@ export default function ResultItemRow({
       player.avatarUrl ?? player.headshot_url ?? playerPlaceholderImage;
     const teamId = player.team_id ?? null;
 
-    let localTeamLogo: string | undefined;
-
-    if (teamId && player.isNFL) localTeamLogo = getNFLTeamLogo(teamId, isDark);
-    else if (teamId && player.isMLB)
-      localTeamLogo = getMLBTeamLogo(teamId, isDark);
-    else if (teamId && player.isCFB)
-      localTeamLogo = getCFBTeamLogo(teamId, isDark);
-    else if (teamId && player.isCBB)
-      localTeamLogo = getCBBTeamLogo(teamId, isDark);
-    else if (teamId && player.isWCBB)
-      localTeamLogo = getCBBTeamLogo(teamId, isDark);
-    else if (teamId && player.isNBA)
-      localTeamLogo = getTeamLogo(teamId, isDark);
     const localTeam =
       teamId && player.isNFL
         ? getNFLTeam(teamId)
@@ -120,6 +111,8 @@ export default function ResultItemRow({
                 ? getCBBTeam(teamId, true)
                 : teamId && player.isNBA
                   ? getNBATeam(teamId)
+                : teamId && player.isWNBA
+                  ? getWNBATeam(teamId)
                   : null;
 
     return (
@@ -159,10 +152,7 @@ export default function ResultItemRow({
   // USER
   // -------------------------
   const renderUser = (user: UserResult) => {
-    let profileImageUrl = user.profileImageUrl?.trim();
-    if (!profileImageUrl) profileImageUrl = "https://via.placeholder.com/150";
-    else if (!profileImageUrl.startsWith("http"))
-      profileImageUrl = `${BASE_URL}${profileImageUrl}`;
+    const profileImageUrl = user.profileImageUrl?.trim();
 
     return (
       <View style={styles.itemRow}>

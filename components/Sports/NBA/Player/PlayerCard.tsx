@@ -3,15 +3,13 @@ import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
+import { LeagueType } from "types/types";
 
 export interface PlayerCardProps {
   id: number;
@@ -23,13 +21,16 @@ export interface PlayerCardProps {
   avatarUrl?: string | null;
   rank?: number | null;
   number?: string | number | null;
-  league?: "NBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB";
+  league?: LeagueType;
   statNumber?: string | number | null;
 }
 
 const LEAGUE_TEAMS = {
   NBA: teams,
+  WNBA: wnbaTeams,
+  MMA: null,
   NFL: nflTeams,
+  NHL: nhlTeams,
   CFB: cfbTeams,
   CBB: cbbTeams,
   WCBB: cbbTeams,
@@ -38,7 +39,10 @@ const LEAGUE_TEAMS = {
 
 const LEAGUE_ROUTES = {
   NBA: "/player/[id]",
+  WNBA: "/player/wnba/[id]",
+  MMA: "/player/mma/[id]",
   NFL: "/player/nfl/[id]",
+  NHL: "/player/nhl/[id]",
   CFB: "/player/cfb/[id]",
   CBB: "/player/cbb/[id]",
   WCBB: "/player/cbb/[id]",
@@ -57,16 +61,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   league = "NBA",
 }) => {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = playerCardStyles(isDark);
 
   const teamList = LEAGUE_TEAMS[league];
 
   const teamObj =
-    teamList.find(
+    teamList?.find(
       (t) => t.name === team || t.fullName === team || t.code === team,
     ) ?? null;
-
 
   const initial = name?.[0]?.toUpperCase() ?? "?";
 

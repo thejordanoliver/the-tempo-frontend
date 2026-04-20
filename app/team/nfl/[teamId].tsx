@@ -9,12 +9,13 @@ import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNFLTeam } from "constants/teamsNFL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
@@ -22,7 +23,8 @@ import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "NFL";
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
@@ -91,7 +93,7 @@ export default function TeamDetailScreen() {
   if (!team) {
     return (
       <View style={styles.loadContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }
@@ -131,7 +133,7 @@ export default function TeamDetailScreen() {
             ref={rosterRef}
             teamId={String(team.id)}
             teamName={team.name}
-            league="NFL"
+            league={league}
           />
         </View>
 
@@ -150,13 +152,13 @@ export default function TeamDetailScreen() {
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
-            league="NFL"
+            league={league}
           />
         </View>
 
         {/* Forum Page */}
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamId as string} league="NFL" />
+          <TeamForum teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 
@@ -166,7 +168,8 @@ export default function TeamDetailScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           teamId={team.id}
-          league="NFL"
+          league={league}
+          isDark={isDark}
         />
       )}
     </View>

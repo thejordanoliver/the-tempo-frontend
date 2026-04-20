@@ -1,22 +1,20 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-
 import { Colors, Fonts } from "constants/styles";
-
-import { getNBATeam } from "constants/teams";
-import { getCBBTeam } from "constants/teamsCBB";
-import { getCFBTeam } from "constants/teamsCFB";
-import { getMLBTeam } from "constants/teamsMLB";
-import { getNFLTeam } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
-
+import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
 
 type Props = {
+  isDark: boolean
   years?: (number | string)[];
   currentYear?: number;
   logo?: any;
@@ -58,14 +56,50 @@ function getTeamByLeague(league: LeagueType, teamId?: string | number) {
       return getMLBTeam(teamId);
 
     case "NHL":
-      return nhlTeams.find((t) => String(t.id) === String(teamId));
+      return getNHLTeam(teamId);
+
+    case "WNBA":
+      return getWNBATeam(teamId);
 
     default:
       return getNBATeam(teamId);
   }
 }
+function getTeamLogoByLeague(
+  league: LeagueType,
+  isDark: boolean,
+  teamId?: string | number,
+) {
+  if (!teamId) return undefined;
+
+  switch (league) {
+    case "NFL":
+      return getNFLTeamLogo(Number(teamId), isDark);
+
+    case "CFB":
+      return getCFBTeamLogo(Number(teamId), isDark);
+
+    case "CBB":
+      return getCBBTeamLogo(Number(teamId), isDark);
+    case "WCBB":
+      return getCBBTeamLogo(Number(teamId), isDark, true);
+
+    case "MLB":
+      return getMLBTeamLogo(Number(teamId), isDark);
+
+    case "NHL":
+      return getNHLTeamLogo(Number(teamId), isDark);
+
+    case "WNBA":
+      return getWNBATeamLogo(Number(teamId), isDark);
+
+    default:
+      return getTeamLogo(teamId, isDark);
+  }
+}
 
 export default function ChampionshipBanner({
+  isDark,
   years,
   currentYear,
   teamId,
@@ -73,6 +107,8 @@ export default function ChampionshipBanner({
   league = "NBA",
 }: Props) {
   const team = getTeamByLeague(league, teamId);
+  const teamLogo = getTeamLogoByLeague(league, true, teamId);
+  const styles = championshipBannerStyles(isDark);
 
   if (!team) {
     console.warn(
@@ -138,6 +174,9 @@ export default function ChampionshipBanner({
         if (league === "NHL" && yearVal != null) {
           label = "STANLEY CUP CHAMPIONS";
         }
+        if (league === "WNBA" && yearVal != null) {
+          label = "WNBA CHAMPIONS";
+        }
 
         return (
           <View key={index} style={styles.bannerWrapper}>
@@ -161,7 +200,7 @@ export default function ChampionshipBanner({
               <Text style={styles.yearText}>{yearShort}</Text>
 
               <Image
-                source={resolveTeamLogo(team) || PlaceholderLogo}
+                source={teamLogo || PlaceholderLogo}
                 style={styles.teamLogo}
               />
             </View>
@@ -172,7 +211,7 @@ export default function ChampionshipBanner({
   );
 }
 
-const styles = StyleSheet.create({
+const championshipBannerStyles = (isDark: boolean) => StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",

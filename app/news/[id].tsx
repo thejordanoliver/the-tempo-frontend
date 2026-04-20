@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { formatDistanceToNowStrict } from "date-fns";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -13,19 +14,20 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from "react-native";
 import { getStyles } from "styles/NewsStyles/NewsArticleStyle";
 
 export default function ArticleScreen() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
   const global = globalStyles(isDark);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
   const newsId = Array.isArray(id) ? id[0] : id;
   const { article, loading, error } = useArticle(newsId);
+
   const headline = article?.headline;
   const source = article?.byline || article?.source;
   const thumbnail = article?.images[0];
@@ -69,6 +71,7 @@ export default function ArticleScreen() {
   }, [navigation]);
 
   if (loading) return <NewsArticleSkeleton />;
+
   if (error)
     return (
       <View style={global.emptyContainer}>

@@ -1,9 +1,10 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { WeatherData } from "hooks/useWeather";
 import LottieView from "lottie-react-native";
 import React from "react";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import ClearDay from "../../../../assets/Weather/clear-day.json";
 import ClearNight from "../../../../assets/Weather/clear-night.json";
 import Cloudy from "../../../../assets/Weather/cloudy.json";
@@ -28,10 +29,14 @@ export const Weather: React.FC<Props> = ({
   error,
   lighter = false,
 }) => {
-  const isDark = useColorScheme() === "dark";
-  const textColor = lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const textColor = lighter
+    ? Colors.white
+    : isDark
+      ? Colors.white
+      : Colors.black;
 
-  // ✅ Don't render if weather is missing or marked "Unknown"
   if (
     !weather ||
     !weather.description ||
@@ -76,7 +81,7 @@ export const Weather: React.FC<Props> = ({
 
   return (
     <View>
-      <HeadingTwo lighter={lighter}>Weather</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Weather</HeadingTwo>
 
       {loading && !error ? (
         <TeamLocationSkeleton />

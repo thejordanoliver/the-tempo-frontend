@@ -5,7 +5,6 @@ import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoSty
 import { Team } from "types/types";
 type TeamInfoProps = {
   team?: Team;
-  teamName: string;
   score?: number;
   opponentScore?: number;
   record?: string;
@@ -17,7 +16,6 @@ type TeamInfoProps = {
 
 export default function TeamInfo({
   team,
-  teamName,
   score,
   opponentScore,
   record,
@@ -137,7 +135,7 @@ export default function TeamInfo({
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
 
-        <Text style={styles.teamName}>{teamName}</Text>
+        <Text style={styles.teamName}>{team?.code}</Text>
 
         {/* Final only → show record */}
         {!isScheduled && isFinal && record && (

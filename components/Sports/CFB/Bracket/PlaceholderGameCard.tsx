@@ -1,8 +1,10 @@
 import { Colors, Fonts } from "constants/styles";
-import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { usePreferences } from "contexts/PreferencesContext";
+import { StyleSheet, Text, View } from "react-native";
 
 export function PlaceholderGameCard() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   return (
     <View

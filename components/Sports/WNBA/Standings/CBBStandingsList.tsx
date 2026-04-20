@@ -15,7 +15,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
@@ -27,7 +26,8 @@ type Props = {
 export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   const { rankings, loading, error, refresh } = useCBBRankings(league);
 
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
   const { isFavorite } = useFavoriteTeams();

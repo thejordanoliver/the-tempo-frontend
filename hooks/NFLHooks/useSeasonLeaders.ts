@@ -5,7 +5,7 @@ import { apiClient } from "utils/apiClient";
 /* ----------------------------- Types ----------------------------- */
 
 export interface Leader {
-  playerId: MonthNumbers
+  playerId: MonthNumbers;
   value: number;
   rank: number;
   displayValue: string;
@@ -39,7 +39,7 @@ interface SeasonLeaderResult {
 
 export function useSeasonLeaders(
   season: number,
-  league: "NFL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL",
+  league: "NFL" | "NHL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL",
 ): SeasonLeaderResult {
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(true);

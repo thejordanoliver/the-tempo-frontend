@@ -6,9 +6,8 @@ export type PlayerLeader = {
   headshot_url?: string;
   team: {
     id: number;
-    code: string;
-    logo: any;
-    logoLight: any;
+    code: string,
+    logo: any
   };
   leaderStat?: {
     name: string;
@@ -16,12 +15,10 @@ export type PlayerLeader = {
   };
 };
 
-
 export type PlayerLeadersSlideProps = {
   header: string;
   players: PlayerLeader[];
   slideWidth: number;
   slideHeight: number;
-    visible: boolean; // ✅ add
-
+  visible: boolean; // ✅ add
 };

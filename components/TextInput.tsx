@@ -1,6 +1,7 @@
 import { Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import { StyleSheet, TextInput, useColorScheme, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 type LabeledInputProps = {
   value: string;
   onChangeText: (text: string) => void;
@@ -22,7 +23,8 @@ export default function TextInputComponent({
   labelStyle,
   ...rest
 }: LabeledInputProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   return (
     <View style={[styles.container, containerStyle]}>

@@ -1,12 +1,6 @@
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { highlightCardStyles } from "styles/NewsStyles/HighlightCardStyles";
 
 type HighlightCardProps = {
@@ -40,7 +34,8 @@ export default function HighlightCard({
   duration,
 }: HighlightCardProps) {
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = highlightCardStyles(isDark, thumbnailHeight);
 
   const handlePress = () => {

@@ -1,9 +1,9 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import MemoizedFloatingChatButton from "components/MemoizedFloatingChatButton";
 import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
+import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
@@ -11,15 +11,16 @@ import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
 import NHLInjuries from "components/Sports/NHL/GameDetails/NHLInjuries";
 import ShotChart from "components/Sports/NHL/GameDetails/ShotChart";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, useColorScheme, View } from "react-native";
+import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { NHLGame } from "types/nhl";
+import { NHLGame } from "types/hockey";
 import { resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
@@ -27,7 +28,8 @@ import { getGameDate } from "utils/nflGameCardUtils";
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams<{ game: string }>();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
@@ -127,7 +129,7 @@ export default function GameDetailsScreen() {
   if (loading || !liveScore) {
     return (
       <View style={styles.loadingContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

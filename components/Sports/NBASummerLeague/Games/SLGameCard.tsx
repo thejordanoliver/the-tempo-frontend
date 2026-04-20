@@ -1,19 +1,20 @@
 import { Colors } from "constants/styles";
 import { getTeamBySummerId } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function SLGameCard({ game }: { game: BasketballGame }) {
-  const isDark = useColorScheme() === "dark";
+export default function SLGameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
-
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const homeId = Number(game.teams.home?.id);
   const awayId = Number(game.teams.away?.id);
 

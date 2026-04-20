@@ -1,12 +1,7 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Dimensions,
-  StyleSheet,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
 
 const ITEM_WIDTH = 70;
 const SPACING = 12;
@@ -16,7 +11,8 @@ export default function MonthSelectorSkeleton({
 }: {
   itemCount?: number;
 }) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const screenWidth = Dimensions.get("window").width;

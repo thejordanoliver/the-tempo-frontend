@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as ImageManipulator from "expo-image-manipulator";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -13,7 +14,6 @@ import {
   SafeAreaView,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import { cropEditorModalStyles } from "styles/ModalsStyles/CropEditorModalStyles";
@@ -58,7 +58,8 @@ export default function CropEditorModal({
   mode,
 }: CropEditorModalProps) {
   const windowWidth = Dimensions.get("window").width;
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const isProfile = mode === "profile";
   const isBanner = mode === "banner";

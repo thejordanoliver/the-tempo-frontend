@@ -1,23 +1,5 @@
 // types.ts
-import { AwardCategory } from "hooks/useAwardSeasons";
 import { ImageSourcePropType } from "react-native";
-
-// types/types.ts (backend User)
-export type BackendUser = {
-  id: number;
-  username: string;
-  full_name: string;
-  email: string;
-  profile_image?: string;
-};
-
-// types/forum.ts (forum User)
-export type ForumUser = {
-  id: string;
-  username: string;
-  name: string; // display name
-  avatar: string; // URL
-};
 
 export type User = {
   id: number;
@@ -157,15 +139,10 @@ export type Team = {
   color?: string;
   first_season?: string;
   firstSeason?: string;
-  transparent_color?: string;
   secondary_color?: string;
   secondaryColor?: string;
   code?: string;
-  city?: string;
-  state?: string;
-  arena_name?: string;
   primary_color?: string;
-  conference_championships?: number[]; // or number[]
   conference?: string;
   displayName?: string;
   isAllStar: boolean;
@@ -402,12 +379,6 @@ export type Venue = {
   venueImage?: any;
 };
 
-export type GameStatus = {
-  long: string;
-  short: string;
-  timer: string | null;
-};
-
 export type SummerGame = {
   id: number;
   date: string; // "2025-12-16T21:00:00+00:00"
@@ -466,29 +437,6 @@ export type SummerGame = {
   };
 };
 
-export interface GameOddsCardProps {
-  team1: {
-    name: string;
-    record: string;
-    logo: any;
-    open: string;
-    spread: string;
-    total: string;
-    moneyline: string;
-    isAway: boolean;
-  };
-  team2: {
-    name: string;
-    record: string;
-    logo: any;
-    open: string;
-    spread: string;
-    total: string;
-    moneyline: string;
-    isAway: boolean;
-  };
-}
-
 export type DBPlayer = {
   id: number;
   player_id: number;
@@ -508,7 +456,7 @@ export type DBPlayer = {
   draft_year: number;
   draft_number: number;
   awards: string[];
-  experience_years: string;
+  experience_years: number;
   experience_display: string;
   experience_abbr: string;
   birth_place_city: string;
@@ -554,50 +502,73 @@ export type Highlight = {
   };
 };
 
-export type GameHighlights = {
-  gameId: string;
-  highlights: Highlight[];
-};
+export type AwardCategory =
+  | "all"
 
-export type NBAOrNFLTeam = {
-  id: string | number;
-  name: string;
-  fullName: string;
-  location?: string;
-  logo: any;
-  logoLight?: any;
-  city?: string;
-};
+  // NBA
+  | "mvp"
+  | "roy"
+  | "sixthman"
+  | "dpoy"
+  | "coy"
+  | "mip"
+  | "fmvp"
 
-export type AwardStats = {
-  games?: number;
-  minutes_per_game?: number;
-  points?: number;
-  rebounds?: number;
-  assists?: number;
-  steals?: number;
-  blocks?: number;
-  fg_pct?: number;
-  three_pct?: number;
-  ft_pct?: number;
-  win_shares?: number;
-  ws_per_48?: number;
+  // CFB
+  | "heisman"
+  | "apoy"
+  | "camp"
+  | "maxwell"
+  | "biletnikoff"
+  | "doak"
+  | "mackey"
+  | "groza"
+  | "thorpe"
+  | "nagurski"
+  | "butkus"
+  | "hendricks"
+  | "lombardi"
+  | "lott"
+  | "obrien"
+  | "manning"
+  | "rimington"
+  | "outland"
+  | "unitas"
+  | "apcoy"
+  | "afca"
 
-  // COY / coach-style stats
-  wins?: number;
-  losses?: number;
-  win_pct?: number;
+  // CBB
+  | "apoy"
+  | "naismith"
+  | "cousy"
+  | "erving"
+  | "kareem"
+  | "malone"
+  | "west"
+  | "wooden"
 
-  // Allow future expansion
-  [key: string]: number | string | undefined;
-};
+  // NFL
+  | "ropoy"
+  | "rdpoy"
+  | "opoy"
+  | "dpoy"
+  | "coy"
 
+  // NHL
+  | "selke"
+  | "smythe"
+  | "ross"
+  | "norris"
+
+  // MLB
+  | "ruth"
+  | "gehrig"
+  | "young"
+  | "clemente";
 export type AwardSeason = {
   id: number;
-
   season: string;
-  league: "NBA" | "CFB";
-
+  league: LeagueType;
   award_type:
     | "mvp"
     | "roy"
@@ -605,18 +576,15 @@ export type AwardSeason = {
     | "sixthman"
     | "coy"
     | "mip"
-    | "fmvp"
-    | "heisman";
+    | "heisman"
+    | "fmvp";
 
   player_id?: number | null;
   player_name: string;
-  bbref_id?: string | null;
-  team_abbr?: string | null;
   voting?: string | null;
   age?: number | null;
   summary: string;
   coach?: string;
-  stats: AwardStats | null;
   school: string;
   award_team?: NBATeam | Team;
   current_team?: NBATeam | Team;
@@ -634,11 +602,13 @@ export type PlayerResult = {
   espn_team_id: string;
   team_id: number;
   isNFL?: boolean;
+  isMMA?: boolean;
   isNBA?: boolean;
   isMLB?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
+  isWNBA?: boolean;
   isNHL?: boolean;
   type: "player";
   score: number;
@@ -649,15 +619,14 @@ export type TeamResult = {
   wid?: number;
   name: string;
   full_name: string;
-  nickname: string;
-  city: string;
-  logo_filename: string;
+  short_name: string;
   isNFL?: boolean;
   isMLB?: boolean;
   isNHL?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
+  isWNBA?: boolean;
   is_active?: boolean;
   type: "team";
   score: number;
@@ -686,6 +655,20 @@ export const AWARD_CONFIG: Partial<
     { label: "COY", value: "coy", title: "NBA Coach of the Year" },
     { label: "MIP", value: "mip", title: "NBA Most Improved Player" },
     { label: "FMVP", value: "fmvp", title: "NBA Finals MVP" },
+  ],
+
+  WNBA: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "MVP", value: "mvp", title: "WNBA MVP" },
+    { label: "ROTY", value: "roy", title: "WNBA Rookie of the Year" },
+    {
+      label: "DPOY",
+      value: "dpoy",
+      title: "WNBA Defensive Player of the Year",
+    },
+    { label: "6MOY", value: "sixthman", title: "WNBA Sixth Man of the Year" },
+    { label: "COY", value: "coy", title: "WNBA Coach of the Year" },
+    { label: "MIP", value: "mip", title: "WNBA Most Improved Player" },
   ],
 
   CFB: [
@@ -811,6 +794,44 @@ export const AWARD_CONFIG: Partial<
       label: "Coach of the Year",
       value: "coy",
       title: "NFL Coach of the Year",
+    },
+  ],
+  NHL: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "MVP", value: "mvp", title: "NHL Most Valuable Player" },
+    {
+      label: "James Norris Memorial Trophy",
+      value: "norris",
+      title: "James Norris Memorial Trophy",
+    },
+    {
+      label: "Frank J. Selke Trophy",
+      value: "selke",
+      title: "NHL Frank J. Selke Trophy",
+    },
+    {
+      label: "Coach of the Year",
+      value: "coy",
+      title: "NHL Coach of the Year",
+    },
+  ],
+  MLB: [
+    { label: "All Awards", value: "all", title: "" },
+    { label: "MVP", value: "mvp", title: "MLB Most Valuable Player" },
+    {
+      label: "Cy Young Award",
+      value: "young",
+      title: "Cy Young Award",
+    },
+    {
+      label: "Jackie Robinson Rookie of The Year",
+      value: "roy",
+      title: "Jackie Robinson Rookie of The Year",
+    },
+    {
+      label: "Manager of the Year",
+      value: "coy",
+      title: "MLB Manager of the Year",
     },
   ],
 };

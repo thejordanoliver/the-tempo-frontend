@@ -2,7 +2,10 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import ChatInputBar from "components/Sports/NBA/GameDetails/ChatInputBar";
 import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
 import { NotificationProvider } from "contexts/NotificationContext";
-import { PreferencesProvider } from "contexts/PreferencesContext";
+import {
+  PreferencesProvider,
+  usePreferences,
+} from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useChatStore } from "store/chatStore";
@@ -24,18 +27,13 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { Colors } from "constants/styles";
+import { FavoriteTeamsProvider } from "contexts/FavoriteTeamsContext";
 import { Stack, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  View,
-  useColorScheme,
-} from "react-native";
+import { ActivityIndicator, Animated, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CustomTabBar from "../components/CustomTabBar";
-import { FavoriteTeamsProvider } from "contexts/FavoriteTeamsContext";
 
 // --------------------
 // Custom themes
@@ -75,22 +73,15 @@ const hiddenRoutes = [
   "/comment-thread/",
 ];
 
-export default function RootLayout() {
+// --------------------
+// Inner layout — safely consumes PreferencesProvider
+// --------------------
+function AppLayout() {
   const pathname = usePathname();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences(); // ✅ now inside the provider
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const { user, loadingUser } = useAuth();
-
-  // Load fonts
-  const [fontsLoaded] = useFonts({
-    Oswald_200ExtraLight,
-    Oswald_300Light,
-    Oswald_400Regular,
-    Oswald_500Medium,
-    Oswald_600SemiBold,
-    Oswald_700Bold,
-  });
 
   // Animation
   const opacity = useRef(new Animated.Value(1)).current;
@@ -127,25 +118,23 @@ export default function RootLayout() {
   }, [pathname, shouldHideTabBar, closeChat]);
 
   // --------------------
-  // Show loader while fonts or user data is loading
+  // Show loader while user data is loading
   // --------------------
-  if (!fontsLoaded || loadingUser) {
+  if (loadingUser) {
     return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: isDark ? Colors.black : Colors.white,
-          }}
-        >
-          <ActivityIndicator
-            size="large"
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </View>
-      </GestureHandlerRootView>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: isDark ? Colors.black : Colors.white,
+        }}
+      >
+        <ActivityIndicator
+          size="large"
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </View>
     );
   }
 
@@ -153,96 +142,126 @@ export default function RootLayout() {
   // Main render
   // --------------------
   return (
-<GestureHandlerRootView style={{ flex: 1 }}>
-  <FavoriteTeamsProvider> 
-    <NotificationProvider>
-      <BottomSheetModalProvider>
-        <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-          <PreferencesProvider>
+    <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
+      <Stack
+        screenOptions={({ route, navigation }) => {
+          const isTabScreen = route.name === "(tabs)";
+          const isSplashScreen = route.name === "signup/success";
+          const isProfileScreen = route.name === "profile";
 
-            <Stack
-              screenOptions={({ route, navigation }) => {
-                const isTabScreen = route.name === "(tabs)";
-                const isSplashScreen = route.name === "signup/success";
-                const isProfileScreen = route.name === "profile";
-
-                return {
-                  headerShown: !isSplashScreen && !isTabScreen,
-                  header: !isSplashScreen
-                    ? () => (
-                        <CustomHeaderTitle
-                          title={route.name}
-                          onBack={
-                            navigation.canGoBack()
-                              ? navigation.goBack
-                              : undefined
-                          }
-                        />
-                      )
-                    : undefined,
-                  gestureEnabled: !isTabScreen,
-                  animation: isProfileScreen
-                    ? "fade"
-                    : isSplashScreen
-                      ? "fade"
-                      : isTabScreen
-                        ? "none"
-                        : "default",
-                  gestureDirection: "horizontal",
-                };
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="+not-found"
-                options={{ title: "Page Not Found" }}
-              />
-              <Stack.Screen name="signup/success" />
-            </Stack>
-
-            <StatusBar style={isDark ? "light" : "dark"} />
-
-            {!shouldHideTabBar && visibleTabBar && (
-              <Animated.View
-                style={{
-                  opacity,
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                }}
-              >
-                <CustomTabBar />
-              </Animated.View>
-            )}
-
-            {gameId && isOpen && pathname?.startsWith("/game/") && (
-              <>
-                <LiveChatBottomSheet
-                  gameId={gameId}
-                  onChange={(index) => index === -1 && closeChat()}
-                  onSend={(sendMessage) => setSendFn(() => sendMessage)}
-                />
-
-                <ChatInputBar
-                  value={input}
-                  onChange={setInput}
-                  onSend={() => {
-                    if (!input.trim() || !gameId) return;
-                    if (sendFn) {
-                      sendFn(input);
-                      setInput("");
+          return {
+            headerShown: !isSplashScreen && !isTabScreen,
+            header: !isSplashScreen
+              ? () => (
+                  <CustomHeaderTitle
+                    title={route.name}
+                    onBack={
+                      navigation.canGoBack() ? navigation.goBack : undefined
                     }
-                  }}
-                />
-              </>
-            )}
+                  />
+                )
+              : undefined,
+            gestureEnabled: !isTabScreen,
+            animation: isProfileScreen
+              ? "fade"
+              : isSplashScreen
+                ? "fade"
+                : isTabScreen
+                  ? "none"
+                  : "default",
+            gestureDirection: "horizontal",
+          };
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" options={{ title: "Page Not Found" }} />
+        <Stack.Screen name="signup/success" />
+      </Stack>
 
-          </PreferencesProvider>
-        </ThemeProvider>
-      </BottomSheetModalProvider>
-    </NotificationProvider>
-  </FavoriteTeamsProvider>
-</GestureHandlerRootView>
+      <StatusBar style={isDark ? "light" : "dark"} />
+
+      {!shouldHideTabBar && visibleTabBar && (
+        <Animated.View
+          style={{
+            opacity,
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <CustomTabBar isDark={isDark} />
+        </Animated.View>
+      )}
+
+      {gameId && isOpen && pathname?.startsWith("/game/") && (
+        <>
+          <LiveChatBottomSheet
+            gameId={gameId}
+            onChange={(index) => index === -1 && closeChat()}
+            onSend={(sendMessage) => setSendFn(() => sendMessage)}
+          />
+
+          <ChatInputBar
+            value={input}
+            onChange={setInput}
+            onSend={() => {
+              if (!input.trim() || !gameId) return;
+              if (sendFn) {
+                sendFn(input);
+                setInput("");
+              }
+            }}
+          />
+        </>
+      )}
+    </ThemeProvider>
+  );
+}
+
+// --------------------
+// Outer layout — only provides context, never consumes it
+// --------------------
+export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    Oswald_200ExtraLight,
+    Oswald_300Light,
+    Oswald_400Regular,
+    Oswald_500Medium,
+    Oswald_600SemiBold,
+    Oswald_700Bold,
+  });
+
+  // --------------------
+  // Show loader while fonts are loading
+  // --------------------
+  if (!fontsLoaded) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      </GestureHandlerRootView>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PreferencesProvider>
+        <FavoriteTeamsProvider>
+          <NotificationProvider>
+            <BottomSheetModalProvider>
+              <AppLayout />
+            </BottomSheetModalProvider>
+          </NotificationProvider>
+        </FavoriteTeamsProvider>
+      </PreferencesProvider>
+    </GestureHandlerRootView>
   );
 }

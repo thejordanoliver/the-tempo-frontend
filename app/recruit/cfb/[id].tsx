@@ -6,15 +6,17 @@ import RecruitHeader from "components/Sports/CFB/Recruiting/RecruitHeader";
 import StarRating from "components/Sports/CFB/Recruiting/StarRating";
 import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFootballRecruit } from "hooks/CFBHooks/useFootballRecruit";
 import { useLayoutEffect } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 export default function RecruitDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   /* ---------------- Route params ---------------- */
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -50,7 +52,7 @@ export default function RecruitDetailScreen() {
   if (loading)
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   if (error || !player)

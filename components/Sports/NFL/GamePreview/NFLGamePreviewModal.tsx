@@ -3,12 +3,10 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
 
+import { getNeutralStadium } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
-import {
-  getNeutralStadium,
-  getNFLTeam,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
@@ -16,7 +14,7 @@ import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
 import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
@@ -31,7 +29,8 @@ type Props = {
 };
 
 export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   // --------------------------------------------------------------
@@ -213,7 +212,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
         >
           {isGameLoading ? (
             <View style={styles.loadingContainer}>
-              <CustomActivityIndicator isDark />
+              <CustomActivityIndicator />
             </View>
           ) : (
             <>
@@ -240,7 +239,6 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
                   time={formattedTime}
                   period={period}
                   clock={displayClock}
-                  isDark={isDark}
                   downAndDistance={downDistanceText}
                   broadcast={broadcast}
                   gameStatusDescription={gameStatusDescription}

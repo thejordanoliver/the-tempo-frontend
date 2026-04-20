@@ -137,7 +137,7 @@ export default function FootballGameWidget({
   if (loading || isLoading) {
     return (
       <View style={global.emptyContainer}>
-        <CustomActivityIndicator isDark={isDark} />
+        <CustomActivityIndicator />
       </View>
     );
   }

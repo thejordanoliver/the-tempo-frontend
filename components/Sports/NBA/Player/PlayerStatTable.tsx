@@ -2,9 +2,10 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { usePlayerSeasons } from "hooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
-import { ScrollView, Text, useColorScheme, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
@@ -56,17 +57,18 @@ const pct = (val?: number | string | null) =>
     : `${(Number(val) * 100).toFixed(1)}%`;
 
 export default function PlayerStatTable({ playerId }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = statsTableStyles(isDark);
+  const global = globalStyles(isDark);
+  
   const [statView, setStatView] = useState<StatView>("totals");
-
   const { seasons, loading, error } = usePlayerSeasons(playerId);
   const per36 = (stat?: number | null, mp?: number | null) => {
     if (!stat || !mp) return "0.0";
     return ((stat / mp) * 36).toFixed(1);
   };
 
-  const isDark = useColorScheme() === "dark";
-  const styles = statsTableStyles(isDark);
-  const global = globalStyles(isDark);
 
   // 🔥 Best season by PPG
   const bestSeason = useMemo(() => {

@@ -91,7 +91,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
       gap: 8,
       paddingVertical: 14,
       paddingHorizontal: 12,
-      marginHorizontal: 20,
+      width: "100%",
     },
     statChip: {
       width: 80,
@@ -104,7 +104,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
       color: text,
     },
     statLabel: {
-      fontSize: 9,
+      fontSize: 10,
       fontFamily: Fonts.OSMEDIUM,
       color: muted,
       letterSpacing: 1.8,
@@ -130,7 +130,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
       borderBottomColor: divider,
     },
     infoLabel: {
-      fontSize: 9,
+      fontSize: 10,
       fontFamily: Fonts.OSMEDIUM,
       color: muted,
       letterSpacing: 1.8,
@@ -138,7 +138,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     infoValue: {
       flex: 1,
-      fontSize: 13,
+      fontSize: 14,
       fontFamily: Fonts.OSLIGHT,
       color: text,
       textAlign: "right",

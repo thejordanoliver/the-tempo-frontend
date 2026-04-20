@@ -13,13 +13,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 import RecruitCardSkeleton from "../../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../../Skeletons/TeamRankCardSkeleton";
 import TeamRankCard from "../TeamRankCard";
 import RecruitCard from "./RecruitCard";
+import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
   year: string;
   team: string;
@@ -37,7 +37,8 @@ export default function RecruitsList({
   onTeamChange,
   onViewChange,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const listRef = useRef<FlatList>(null);

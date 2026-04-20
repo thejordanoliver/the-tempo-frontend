@@ -9,8 +9,7 @@ import { nflTeams } from "constants/teamsNFL";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 /**
  * Normalize image URLs (Cloudinary or server URLs)
@@ -56,7 +55,7 @@ export function useUserProfile(userId?: string) {
 
     setIsLoading(true);
     try {
-      const { data } = await axios.get(`${BASE_URL}/api/users/id/${userId}`, {
+      const { data } = await apiClient.get(`api/users/id/${userId}`, {
         params: { currentUserId },
       });
 
@@ -130,7 +129,7 @@ export function useUserProfile(userId?: string) {
     setFollowLoading(true);
 
     try {
-      await axios.post(`${BASE_URL}/api/follows/toggle`, {
+      await axios.post(`api/follows/toggle`, {
         followerId: currentUserId,
         followeeId: userId,
       });

@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import CustomRefreshControl from "components/CustomRefreshControl";
+
 import DateNavigator from "components/DateNavigator";
 import CombinedGamesList, {
   CombinedGamesSection,
@@ -11,6 +11,7 @@ import SportsListModal, {
 } from "components/League/SportsListModal";
 import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -21,7 +22,7 @@ import { useFootballSeasonGames } from "hooks/NFLHooks/useFootballSeasonGames";
 import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
 import * as React from "react";
 import { useState } from "react";
-import { ScrollView, View, useColorScheme } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import {
   getFootballSeason,
@@ -38,7 +39,8 @@ export default function LeagueScreen() {
   const mlbCalendarYear = getMLBSeason();
   const nhlCalendarYear = getNHLSeason();
   const navigation = useNavigation();
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme, viewMode } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
 
   // --------------------------------------------------
@@ -365,24 +367,34 @@ export default function LeagueScreen() {
             isDark={isDark}
           />
 
-          <CustomRefreshControl onRefresh={handleRefresh}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <CombinedGamesList
-                gamesByCategory={gamesByCategory}
-                loading={
-                  nbaLoading ||
-                  nflLoading ||
-                  mlbLoading ||
-                  nhlLoading ||
-                  cfbLoading ||
-                  mensCBBLoading ||
-                  womensCBBLoading
-                }
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
+                tintColor={isDark ? Colors.white : Colors.black}
+                colors={[isDark ? Colors.white : Colors.black]} // Android
               />
-            </ScrollView>
-          </CustomRefreshControl>
+            }
+          >
+            <CombinedGamesList
+              gamesByCategory={gamesByCategory}
+              loading={
+                nbaLoading ||
+                nflLoading ||
+                mlbLoading ||
+                nhlLoading ||
+                cfbLoading ||
+                mensCBBLoading ||
+                womensCBBLoading
+              }
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              isDark={isDark}
+              viewMode={viewMode}
+            />
+          </ScrollView>
         </View>
       </View>
 

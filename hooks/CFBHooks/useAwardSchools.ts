@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -13,17 +12,14 @@ export type AwardSchool = {
   total_awards: number;
   unique_players: number;
 };
-
-type LeagueType = "cfb" | "cbb";
+type AwardSchoolsLeague = "cfb" | "cbb";
 
 type Options = {
-  league?: LeagueType; // NEW
+  league?: AwardSchoolsLeague;
   category?: string; // heisman, wooden, all, etc.
   enabled?: boolean;
   refreshToken?: number;
 };
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export function useAwardSchools(options: Options = {}) {
   const {
@@ -44,15 +40,12 @@ export function useAwardSchools(options: Options = {}) {
       setLoading(true);
       setError(null);
 
-      const res = await apiClient.get(
-        `api/${league}/award-seasons/schools`,
-        {
-          params: {
-            type: category,
-            _refresh: refreshToken ?? Date.now(),
-          },
+      const res = await apiClient.get(`api/${league}/award-seasons/schools`, {
+        params: {
+          type: category,
+          _refresh: refreshToken ?? Date.now(),
         },
-      );
+      });
 
       setData(res.data ?? []);
     } catch (err) {

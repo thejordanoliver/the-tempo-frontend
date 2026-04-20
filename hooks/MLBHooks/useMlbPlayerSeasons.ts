@@ -1,9 +1,7 @@
 // hooks/useMlbPlayerSeasons.ts
+import { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
 import { apiClient } from "utils/apiClient";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 // ---------- Types ----------
 
@@ -27,7 +25,6 @@ export interface MlbPlayerResponse {
   team_id: number | null;
   seasons: MlbSeason[];
 }
-
 
 export interface CareerTotals {
   g: number;
@@ -86,7 +83,7 @@ export function useMLBPlayerSeasons(playerId: number | string | null) {
 
     try {
       const response = await apiClient.get<MlbPlayerResponse>(
-        `api/players/mlb/${playerId}/seasons`
+        `api/players/mlb/${playerId}/seasons`,
       );
 
       setData(response.data);

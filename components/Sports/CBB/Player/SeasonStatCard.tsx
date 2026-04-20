@@ -1,5 +1,7 @@
-import { Colors } from "constants/styles";
-import { PlayerSeasonStat } from "hooks/CBBHooks/useCBBPlayerSeasons";
+import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
+import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { PlayerSeasonStat } from "hooks/CBBHooks/useBasketballPlayerSeasons";
 import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import CenteredHeader from "../../../Headings/CenteredHeader";
@@ -8,12 +10,16 @@ const safeFixed = (val?: number | null) =>
   val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
 
 type Props = {
-  seasonStats: PlayerSeasonStat[]; // array already fetched
-  isDark: boolean;
+  seasonStats: PlayerSeasonStat[];
+  loading?: boolean;
+  error?: string | null;
 };
 
-export default function SeasonStatCard({ seasonStats, isDark }: Props) {
+export default function SeasonStatCard({ seasonStats, loading, error }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
+  const global = globalStyles(isDark);
 
   const selectedSeason =
     seasonStats && seasonStats.length > 0
@@ -21,7 +27,7 @@ export default function SeasonStatCard({ seasonStats, isDark }: Props) {
       : null;
 
   const displayYear = selectedSeason?.season
-    ? `${selectedSeason.season - 1}-${String(selectedSeason.season).slice(-2)}`
+    ? `${String(selectedSeason.season)}`
     : "N/A";
 
   const ppg = safeFixed(Number(selectedSeason?.averages?.avgPoints ?? 0));
@@ -39,6 +45,9 @@ export default function SeasonStatCard({ seasonStats, isDark }: Props) {
       </View>
     );
   }
+
+  if (loading) return <SeasonStatCardSkeleton />;
+  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
 
   return (
     <View>

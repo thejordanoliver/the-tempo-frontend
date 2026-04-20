@@ -1,19 +1,21 @@
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import React from "react";
-import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { Game } from "types/types";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
 export default function GameCard({ game }: { game: Game }) {
-  const isDark = useColorScheme() === "dark";
   const router = useRouter();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const homeId = game.home?.id;
   const awayId = game.away?.id;

@@ -1,9 +1,11 @@
 // components/NewsArticleSkeleton.tsx
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, useColorScheme, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 export default function NewsArticleSkeleton() {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   // 🔁 Master animation value
   const pulseAnim = useRef(new Animated.Value(1)).current;

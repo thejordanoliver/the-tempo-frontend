@@ -1,3 +1,4 @@
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
 import {
   Animated,
@@ -5,7 +6,6 @@ import {
   GestureResponderEvent,
   Pressable,
   Text,
-  useColorScheme,
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
@@ -20,7 +20,8 @@ export default function FollowButton({
   loading,
   onToggle,
 }: FollowButtonProps) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {

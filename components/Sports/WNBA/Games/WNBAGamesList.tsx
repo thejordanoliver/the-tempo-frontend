@@ -10,7 +10,6 @@ import {
   SectionList,
   SectionListData,
   Text,
-  useColorScheme,
   View,
   ViewStyle,
 } from "react-native";
@@ -50,7 +49,8 @@ export default function WNBAGamesList({
   scrollEnabled = true,
   isWomen = false,
 }: Props) {
-  const isDark = useColorScheme() === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const { viewMode } = usePreferences();
   const styles = gameListStyles;
   const global = globalStyles(isDark);
