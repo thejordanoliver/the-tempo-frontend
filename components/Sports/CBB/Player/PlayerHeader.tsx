@@ -1,8 +1,8 @@
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
-import { DBPlayer } from "types/types";
+import { BasketballPlayer } from "types/basketball";
 type PlayerHeaderProps = {
-  player: DBPlayer;
+  player: BasketballPlayer;
   avatarUrl?: string;
   isDark: boolean;
   isWomen?: boolean;
@@ -27,8 +27,8 @@ export default function PlayerHeader({
     if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
     return age;
   };
-  const birthFormatted = player.birth_date
-    ? new Date(player.birth_date).toLocaleDateString("en-US", {
+  const birthFormatted = player.date_of_birth
+    ? new Date(player.date_of_birth).toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -41,10 +41,10 @@ export default function PlayerHeader({
       ? "R"
       : player.experience_years;
 
-  const age = calculateAge(player.birth_date);
-  const homeTown = player.birth_place_display_text
-    ? player.birth_place_display_text
-    : `${player.birth_place_city}, ${player.birth_place_state}` || "Unknown";
+  const college = player.college;
+  const age = calculateAge(player.date_of_birth);
+  const homeTown =
+    `${player.birth_place_city}, ${player.birth_place_state}` || "Unknown";
 
   return (
     <View style={styles.container}>
@@ -125,19 +125,27 @@ export default function PlayerHeader({
         </View>
       </View>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>COLLEGE</Text>
-        <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
-          {player.college}
-        </Text>
-
-        {birthFormatted ? (
+      {college && (
+        <>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>BORN</Text>
-            <Text style={styles.infoValue}>{birthFormatted}</Text>
+            <Text style={styles.infoLabel}>COLLEGE</Text>
+            <Text
+              style={styles.infoValue}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {player.college}
+            </Text>
           </View>
-        ) : null}
-      </View>
+        </>
+      )}
+
+      {birthFormatted ? (
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>BORN</Text>
+          <Text style={styles.infoValue}>{birthFormatted}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }

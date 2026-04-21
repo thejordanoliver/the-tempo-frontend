@@ -33,6 +33,7 @@ import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
+  const league = "CBB";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -50,9 +51,9 @@ export default function TeamDetailScreen() {
     error: statsError,
     refreshingStats,
     onRefresh: refreshRosterStats,
-  } = useRosterStats("CBB", espnId ?? 0);
+  } = useRosterStats(league, espnId ?? 0);
   const { players } = usePlayersByTeam(team?.espnID?.toString() ?? "");
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("CBB");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -65,7 +66,7 @@ export default function TeamDetailScreen() {
     setSelectedTab(indexToTab(index));
   };
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "CBB";
+
   const favorited = team ? isFavorite(league, team.id) : false;
   const {
     articles,

@@ -5,6 +5,7 @@ import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import MonthSelector from "components/MonthSelector";
 import NewsList from "components/News/NewsList";
+import Roster from "components/Sports/CBB/Team/Roster";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -13,6 +14,7 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
@@ -30,6 +32,7 @@ import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
+  const league = "WNBA";
   const [standingsYear, setStandingsYear] = useState(
     getWNBASeason().toString(),
   );
@@ -41,7 +44,6 @@ export default function TeamDetailScreen() {
   const teamIdNum = teamId ? Number(teamId) : null;
   const team = getWNBATeam(Number(teamIdNum));
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "WNBA";
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cachedGames, setCachedGames] = useState<BasketballGame[]>([]);
@@ -57,6 +59,14 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+  const {
+    players,
+    loading,
+    error,
+    refreshing: refreshingRoster,
+    refreshPlayers,
+    onRefresh,
+  } = usePlayersByTeam(team?.id ?? "", false, true);
   const {
     articles,
     loading: newsLoading,
@@ -257,7 +267,18 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* Roster Page */}
-        <View key="roster" style={styles.contentArea}></View>
+        <View key="roster" style={styles.contentArea}>
+          <Roster
+            players={players}
+            loading={loading}
+            error={error}
+            refreshing={refreshingRoster}
+            onRefresh={onRefresh}
+            teamFullName={team?.fullName ?? "Unknown Team"}
+            teamId={team.id}
+            isWNBA
+          />
+        </View>
 
         {/* Stats Page */}
         <View key="stats" style={styles.contentArea}></View>

@@ -1,27 +1,4 @@
-// types.ts
-import { ImageSourcePropType } from "react-native";
 import { NBATeam } from "./nba";
-
-export type User = {
-  id: number;
-  username: string;
-  full_name: string;
-  email: string;
-  profile_image?: string;
-  banner_image?: string | null; // add this
-  bio?: string | null;
-  favorites?: string[];
-};
-
-export type Follow = {
-  followersCount: number;
-  followingCount: number;
-  isDark: boolean;
-  currentUserId: string;
-  targetUserId: string;
-  onFollowersPress: () => void;
-  onFollowingPress: () => void;
-};
 
 export type PlayerStats = {
   playerId: number;
@@ -150,8 +127,6 @@ export type Team = {
   league?: string;
 };
 
-
-
 export type Arena = {
   name: string;
   city?: string | null;
@@ -171,8 +146,6 @@ export type LeagueType =
   | "MMA";
 
 export type LeagueTeam = Team & { league: LeagueType };
-
-
 
 export type Venue = {
   name?: string;

@@ -101,6 +101,7 @@ export type BasketballGameCardProps = {
   game: BasketballGame;
   isWomen?: boolean;
 };
+
 export type Conference = {
   name: string;
   logo: any;
@@ -110,3 +111,28 @@ export type Conference = {
     secondary: string;
   };
 };
+
+export interface BasketballPlayer {
+  id: number;
+  league: string;
+  name?: string;
+  first_name?: string;
+  last_name?: string;
+  short_name?: string;
+  jersey_number?: string;
+  position: string;
+  height?: string;
+  weight?: string;
+  experience_years?: number;
+  experience_display?: string;
+  experience_abbr?: string;
+  team?: string;
+  team_id?: string;
+  headshot_url?: string;
+  college: string;
+  birth_place_city: string;
+  birth_place_state?: string;
+  birth_place_country?: string;
+  date_of_birth: string;
+  status: boolean;
+}

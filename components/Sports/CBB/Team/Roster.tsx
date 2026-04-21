@@ -4,10 +4,10 @@ import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { RefreshControl, ScrollView, Text } from "react-native";
-import { CBBPlayer } from "types/types";
+import { BasketballPlayer } from "types/basketball";
 
 interface TeamPlayerListProps {
-  players: CBBPlayer[];
+  players: BasketballPlayer[];
   loading: boolean;
   error?: string | null;
   refreshing: boolean;
@@ -15,6 +15,7 @@ interface TeamPlayerListProps {
   teamFullName: string | null;
   teamId: string | number | undefined;
   isWomen?: boolean;
+  isWNBA?: boolean;
 }
 
 export default function Roster({
@@ -26,6 +27,7 @@ export default function Roster({
   teamFullName,
   teamId,
   isWomen,
+  isWNBA,
 }: TeamPlayerListProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -50,21 +52,21 @@ export default function Roster({
       {players &&
         [...players]
           .sort((a, b) => {
-            const jerseyA = parseInt(a.jersey ?? "0", 10);
-            const jerseyB = parseInt(b.jersey ?? "0", 10);
+            const jerseyA = parseInt(a.jersey_number ?? "0", 10);
+            const jerseyB = parseInt(b.jersey_number ?? "0", 10);
             return jerseyA - jerseyB;
           })
           .map((player) => (
             <PlayerCard
               key={player.id}
               id={Number(player.id)}
-              name={player.fullName ?? ""}
+              name={player.name ?? ""}
               position={player.position}
               team={teamFullName}
               teamId={teamId}
-              avatarUrl={player.imageUrl}
-              number={player.jersey}
-              league={isWomen ? "WCBB" : "CBB"}
+              avatarUrl={player.headshot_url}
+              number={player.jersey_number}
+              league={isWNBA ? "WNBA" : isWomen ? "WCBB" : "CBB"}
             />
           ))}
     </ScrollView>

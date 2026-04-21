@@ -1,21 +1,19 @@
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FollowersList from "components/Profile/FollowersList";
 import SearchBar from "components/SearchBars/SearchBar";
-import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useFollowers } from "hooks/UserHooks/useFollowers";
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
-type Mode = "followers" | "following";
+import { Mode } from "types/user";
 
 export default function FollowersScreen() {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = followersListStyles(isDark);
-  const global = globalStyles(isDark);
   const navigation = useNavigation();
   const { type, currentUserId, targetUserId } = useLocalSearchParams<{
     type: Mode;

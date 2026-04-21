@@ -1,6 +1,6 @@
 import { getCBBTeam } from "constants/teamsCBB";
 import { useEffect, useState } from "react";
-import type { DBPlayer } from "types/types";
+import { BasketballPlayer } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { useLastTeamGame } from "./useLastTeamGame";
 
@@ -17,7 +17,7 @@ export function usePlayerDetail(
 
   const leaguePath = isWomen ? "wcbb" : "cbb";
 
-  const [player, setPlayer] = useState<DBPlayer | null>(null);
+  const [player, setPlayer] = useState<BasketballPlayer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ export function usePlayerDetail(
     const fetchPlayer = async () => {
       setLoading(true);
       try {
-        const res = await apiClient.get<{ player: DBPlayer }>(
+        const res = await apiClient.get<{ player: BasketballPlayer }>(
           `/api/${leaguePath}/players/player-id/${parsedPlayerId}`,
         );
 
