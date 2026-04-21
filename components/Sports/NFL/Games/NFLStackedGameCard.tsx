@@ -67,15 +67,15 @@ function NFLStackedGameCard({ game }: FootballGameCardProps) {
   const period = score?.period;
   const redzone = score?.possession.isRedZone;
   const isRedzone = redzone;
-  const headlineText = details?.headline;
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const downDistanceText = score?.possession.downDistanceText;
+  const headlineText = details?.headline;
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = headlineText ?? holidayLabel ?? "";
   const possessionTeamId = score?.possession.teamId;
-  const homeRecord = details?.records.home.total.summary;
-  const awayRecord = details?.records.away.total.summary;
+  const homeRecord = details?.records?.home?.total?.summary;
+  const awayRecord = details?.records?.away?.total?.summary;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const football = isDark ? FootballLight : Football;
@@ -225,10 +225,7 @@ function NFLStackedGameCard({ game }: FootballGameCardProps) {
         </View>
       </View>
 
-      {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
-
-      {/* Center Info */}
+      <Text style={styles.headlineText}>{headline}</Text>
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}

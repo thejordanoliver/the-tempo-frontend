@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";
 
@@ -13,7 +13,6 @@ export type GameWithStatusText = Game & {
   year: number;
   month: number;
 };
-
 
 export function useTeamGames(teamId?: string, season = getNBASeason()) {
   const [games, setGames] = useState<GameWithStatusText[]>([]);

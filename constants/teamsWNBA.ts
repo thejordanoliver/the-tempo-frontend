@@ -1,4 +1,4 @@
-import { NBATeam } from "types/types";
+import { NBATeam } from "types/nba";
 
 // Logos
 import AcesLogo from "../assets/Logos/WNBA/Aces.png";

@@ -3,6 +3,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import type { TransformedNFLSeriesGame } from "utils/NFLUtils/transformSeriesGame";

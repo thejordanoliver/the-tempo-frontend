@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
 
 export function useSeasonGames(season: string) {

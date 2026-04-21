@@ -1,17 +1,51 @@
+export type CBBTeam = {
+  id: number;
+  wid?: number;
+  espnID?: number;
+  name: string;
+  shortName?: string;
+  fullName?: string;
+  code?: string;
+  abbreviation?: string;
+  city?: string;
+  location?: string;
+  address?: string;
+  coach?: string;
+  coachImage?: string;
+  established?: number;
+  country?: {
+    name: string;
+    code: string;
+    flag: string;
+  };
+  latitude?: number;
+  longitude?: number;
+  venueImage?: any;
+  venueCapacity?: string;
+  wLogo?: any;
+  logo: any;
+  logoLight?: any;
+  color?: string;
+  secondaryColor?: string;
+  venueName?: string; // ✅ Add this
+  isAllStar: boolean;
+  isActive: boolean;
+};
+
 export type BasketballGame = {
   id: number;
-  date: string; // "2025-12-16T21:00:00+00:00"
-  time: string; // "21:00"
-  timestamp: number; // 1765918800
-  timezone: string; // "UTC"
+  date: string;
+  time: string;
+  timestamp: number;
+  timezone: string;
 
   stage: string | null;
   week: string | null;
   venue: string | null;
 
   status: {
-    long: string; // "Not Started"
-    short: string; // "NS"
+    long: string;
+    short: string;
     timer: string | null;
   };
 
@@ -30,7 +64,6 @@ export type BasketballGame = {
     isWomen?: boolean;
   };
 
-  // ✅ Use shared CBBTeam type here
   teams: {
     home: {
       id: number;
@@ -63,7 +96,17 @@ export type BasketballGame = {
     };
   };
 };
+
 export type BasketballGameCardProps = {
   game: BasketballGame;
-  isWomen?: boolean; // 👈 NEW
+  isWomen?: boolean;
+};
+export type Conference = {
+  name: string;
+  logo: any;
+  teams: string[];
+  color?: {
+    primary: string;
+    secondary: string;
+  };
 };

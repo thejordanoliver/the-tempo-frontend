@@ -13,13 +13,9 @@ import {
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
 import { MLBGame } from "types/baseball";
+import { BasketballGame } from "types/basketball";
 import type { FootballGame } from "types/football";
-import type {
-  BasketballGame as BasketballGameType,
-  Game as NBAGameType,
-  SummerGame,
-} from "types/types";
-import { BasketballGame } from "types/types";
+import { Game as NBAGameType, SummerGame } from "types/nba";
 import HeadingTwo from "../Headings/HeadingTwo";
 import HeaderSkeleton from "../Skeletons/HeaderSkeleton";
 import CBBGamePreviewModal from "../Sports/CBB/GamePreview/CBBGamePreviewModal";
@@ -109,7 +105,7 @@ type CombinedGame =
   | FootballGame
   | FootballGame
   | NBAGameType
-  | BasketballGameType
+  | BasketballGame
   | MLBGame
   | NHLGame
   | MMAFight
@@ -348,7 +344,7 @@ export default function CombinedGamesList({
 
     // ✅ Men's College Basketball
     if (category === "Men's College Basketball") {
-      const BasketballGame = item as BasketballGameType;
+      const BasketballGame = item as BasketballGame;
       if (viewMode === "list")
         return wrapper(<CBBGameCard game={BasketballGame} isWomen={false} />);
       if (viewMode === "grid")
@@ -363,7 +359,7 @@ export default function CombinedGamesList({
 
     // ✅ Women's College Basketball
     if (category === "Women's College Basketball") {
-      const BasketballGame = item as BasketballGameType;
+      const BasketballGame = item as BasketballGame;
       if (viewMode === "list")
         return wrapper(<CBBGameCard game={BasketballGame} isWomen={true} />);
       if (viewMode === "grid")
@@ -620,7 +616,7 @@ export default function CombinedGamesList({
           previewCategory === "Women's College Basketball") && (
           <CBBGamePreviewModal
             visible={modalVisible}
-            game={previewGame as BasketballGameType}
+            game={previewGame as BasketballGame}
             isWomen={previewCategory === "Women's College Basketball"}
             onClose={() => setModalVisible(false)}
           />

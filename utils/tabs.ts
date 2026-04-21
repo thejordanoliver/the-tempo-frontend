@@ -1,7 +1,25 @@
 export const LEAGUE_TABS = {
-  NBA: ["scores", "news", "standings", "playoffs", "stats", "draft", "awards", "forum"],
+  NBA: [
+    "scores",
+    "news",
+    "standings",
+    "playoffs",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ],
   WNBA: ["scores", "news", "standings", "awards", "forum"],
-  NFL: ["scores", "news", "standings", "stats", "draft", "awards", "forum"],
+  NFL: [
+    "scores",
+    "news",
+    "standings",
+    "playoffs",
+    "stats",
+    "draft",
+    "awards",
+    "forum",
+  ],
   MLB: ["scores", "news", "standings", "stats", "awards", "forum"],
   NHL: ["scores", "news", "standings", "stats", "awards", "forum"],
   CFB: [

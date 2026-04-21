@@ -1,6 +1,6 @@
 // constants/teamsCBB.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { CBBTeam, Conference } from "types/types";
+import { CBBTeam, Conference } from "types/basketball";
 import { neutralVenues } from "./neutralVenues";
 export type Venue = {
   name: string;

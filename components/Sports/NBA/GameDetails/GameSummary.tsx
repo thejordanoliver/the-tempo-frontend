@@ -8,6 +8,7 @@ import {
   getTeamLogo as getCBBTeamLogo,
 } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -21,7 +22,9 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { CBBTeam, LeagueType, NBATeam } from "types/types";
+import { CBBTeam } from "types/basketball";
+import { NBATeam } from "types/nba";
+import { LeagueType } from "types/types";
 
 type AnyTeam = NBATeam | CBBTeam;
 
@@ -43,7 +46,6 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
-  isDark: boolean;
   league?: LeagueType;
 };
 
@@ -97,9 +99,10 @@ function AnimatedPlayRow({
 export default function GameSummary({
   plays = [],
   loading = false,
-  isDark,
   league = "NBA",
 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = gameSummaryStyles(isDark);
   const global = globalStyles(isDark);
 

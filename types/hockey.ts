@@ -1,4 +1,27 @@
-import { NHLTeam } from "./types";
+export interface NHLTeam {
+  id: number;
+  espnID: number;
+  name: string;
+  fullName: string;
+  code: string;
+  color: string;
+  secondaryColor: string;
+  logo: any;
+  logoLight?: any;
+  location?: string;
+  established?: number;
+  latitude?: number;
+  longitude?: number;
+  venueImage?: string;
+  venueName?: string;
+  venueCapacity?: string;
+  address?: string;
+  city?: string;
+  championships?: number[];
+  isAllStar: boolean;
+  isActive: boolean;
+  national: boolean;
+}
 
 export type NHLGame = {
   id: number;
@@ -77,6 +100,7 @@ export type NHLGame = {
 export type HockeyGameCardProps = {
   game: NHLGame;
 };
+
 export interface NHLPlayer {
   id: string;
   name: string;

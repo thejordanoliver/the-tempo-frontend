@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export interface HeadToHead {
   success: boolean;

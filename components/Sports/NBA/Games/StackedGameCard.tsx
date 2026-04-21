@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, View } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

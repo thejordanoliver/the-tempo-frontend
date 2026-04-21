@@ -10,7 +10,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";

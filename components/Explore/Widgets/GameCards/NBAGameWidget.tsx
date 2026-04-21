@@ -5,7 +5,7 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useNBAWidgetLeaders } from "hooks/WidgetHooks/useNBAWidgetLeaders";
 import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";

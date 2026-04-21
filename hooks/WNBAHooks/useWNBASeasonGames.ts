@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 
 // Cache expiry

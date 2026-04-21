@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
 import NewsList from "components/News/NewsList";
-import { CFBPlayoffBracket } from "components/Sports/CFB/Bracket/CFBPlayoffBracket";
+import { CFBPlayoffBracket } from "components/Sports/CFB/Playoffs/CFBPlayoffBracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";

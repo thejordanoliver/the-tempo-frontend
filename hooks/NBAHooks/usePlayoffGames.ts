@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PlayoffGame, PlayoffResponse, PlayoffSeries } from "types/nba";
 import { apiClient } from "utils/apiClient";
 import { buildPlayoffTree } from "utils/NBAUtils/buildBracket";

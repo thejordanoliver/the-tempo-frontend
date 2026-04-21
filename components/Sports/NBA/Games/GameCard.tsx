@@ -8,7 +8,7 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

@@ -66,9 +66,9 @@ function NFLGameCard({ game }: FootballGameCardProps) {
   const period = score?.period;
   const redzone = score?.possession.isRedZone;
   const isRedzone = redzone;
-  const headlineText = details?.headline;
   const broadcast = details?.broadcast ?? "";
   const downDistanceText = score?.possession.downDistanceText;
+  const headlineText = details?.headline;
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = headlineText ?? holidayLabel ?? "";
   const possessionTeamId = score?.possession.teamId;

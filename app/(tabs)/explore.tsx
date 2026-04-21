@@ -7,7 +7,7 @@ import { useExplore } from "hooks/useExplore";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Animated, Easing, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import { ResultItem } from "types/types";
+import { ResultItem } from "types/explore";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
 

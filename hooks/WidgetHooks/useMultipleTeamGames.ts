@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
 
 type RawGamesMap = Record<string, Game | null>; // now typed

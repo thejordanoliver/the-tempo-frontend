@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
 
 export function useWeeklyGames() {

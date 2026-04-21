@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { getWNBASeason } from "utils/dateUtils";
 
@@ -43,7 +43,7 @@ export function useMultipleWNBATeamGames({
             );
 
             // Backend returns { league, results, response }
-    const game: BasketballGame | null = res.data?.response ?? null;
+            const game: BasketballGame | null = res.data?.response ?? null;
 
             cacheRef.current.set(cacheKey, game);
             return [teamId, game] as const;

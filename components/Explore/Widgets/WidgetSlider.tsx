@@ -14,9 +14,10 @@ import {
   UIManager,
   View,
 } from "react-native";
+import { BasketballGame } from "types/basketball";
 import { FootballGame } from "types/football";
 import { NHLGame } from "types/hockey";
-import { BasketballGame, Game } from "types/types";
+import { Game } from "types/nba";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";
 import NBAGameWidget from "./GameCards/NBAGameWidget";

@@ -5,7 +5,7 @@ import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import GameLeaders from "../GameDetails/GameLeaders";
 import GameTeamStats from "../GameDetails/GameTeamStats";
 

@@ -1,4 +1,5 @@
-import { NHLTeam, Venue } from "types/types";
+import { NHLTeam } from "types/hockey";
+import { Venue } from "types/types";
 
 import AvalancheLogo from "../assets/Hockey/NHL_Logos/Avalanche.png";
 import AvalancheLogoLight from "../assets/Hockey/NHL_Logos/AvalancheLight.png";

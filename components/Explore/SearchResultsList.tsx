@@ -1,11 +1,12 @@
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import type { ResultItem } from "types/types";
+import type { ResultItem } from "types/explore";
 import ResultItemRow from "./ResultItemRow";
-import { usePreferences } from "contexts/PreferencesContext";
+
 type Props = {
   data: ResultItem[];
   loading: boolean;

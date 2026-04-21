@@ -27,7 +27,7 @@ export const getColCenter = (col: number) => getX(col) + CARD_WIDTH / 2;
 export const getCenteredX = (col: number, width: number) =>
   getColCenter(col) - width / 2;
 
-export const playoffBracketStyles = (isDark: boolean) =>
+export const nbaPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
     scrollContent: {
       paddingHorizontal: 12,

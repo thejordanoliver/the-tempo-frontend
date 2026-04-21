@@ -1,5 +1,6 @@
 // types.ts
 import { ImageSourcePropType } from "react-native";
+import { NBATeam } from "./nba";
 
 export type User = {
   id: number;
@@ -149,64 +150,7 @@ export type Team = {
   league?: string;
 };
 
-export type NBATeam = {
-  id: number;
-  espnID: number;
-  summerLeagueId?: number;
-  name: string;
-  fullName: string;
-  logo?: any;
-  logoLight?: any;
-  color: string;
-  established?: string;
-  secondaryColor?: string;
-  record?: string;
-  wins?: number;
-  losses?: number;
-  coach?: string;
-  code: string;
-  location: string;
-  address: string;
-  city?: string;
-  state?: string;
-  latitude: number;
-  longitude: number;
-  venueName: string;
-  venueImage: any;
-  venueCapacity: string;
-  conference?: string;
-  uniforms?: {
-    home: any;
-    away: any;
-  };
-  isActive: boolean;
-  isAllStar: boolean;
-};
 
-export interface NHLTeam {
-  id: number;
-  espnID: number;
-  name: string;
-  fullName: string;
-  code: string;
-  color: string;
-  secondaryColor: string;
-  logo: any;
-  logoLight?: any;
-  location?: string;
-  established?: number;
-  latitude?: number;
-  longitude?: number;
-  venueImage?: string;
-  venueName?: string;
-  venueCapacity?: string;
-  address?: string;
-  city?: string;
-  championships?: number[];
-  isAllStar: boolean;
-  isActive: boolean;
-  national: boolean;
-}
 
 export type Arena = {
   name: string;
@@ -228,145 +172,7 @@ export type LeagueType =
 
 export type LeagueTeam = Team & { league: LeagueType };
 
-export type Game = {
-  id: number;
-  date: string;
-  time: string;
-  home: Team;
-  away: Team;
-  scores?: { home: { points: number }; visitors: { points: number } };
-  homeScore?: number;
-  awayScore?: number;
-  period?: string;
-  status: {
-    clock?: string;
-    halftime: boolean;
-    short: number;
-    long: string;
-  };
-  isPlayoff?: boolean;
-  stage?: number;
-  isHalftime?: boolean;
-  linescore?: { home: string[]; away: string[] };
-  periods?: { current: number; total: number; endOfPeriod: boolean };
-  venue?: {
-    name: string;
-    city: string;
-    state?: string;
-    country?: string;
-    capacity?: number;
-  };
-};
 
-export type BasketballGame = {
-  id: number;
-  date: string; // "2025-12-16T21:00:00+00:00"
-  time: string; // "21:00"
-  timestamp: number; // 1765918800
-  timezone: string; // "UTC"
-
-  stage: string | null;
-  week: string | null;
-  venue: string | null;
-
-  status: {
-    long: string; // "Not Started"
-    short: string; // "NS"
-    timer: string | null;
-  };
-
-  league: {
-    id: number;
-    name: string;
-    type: string;
-    season: string;
-    logo: string;
-    country: {
-      id: number;
-      name: string;
-      code: string;
-      flag: string;
-    };
-    isWomen?: boolean;
-  };
-
-  // ✅ Use shared CBBTeam type here
-  teams: {
-    home: {
-      id: number;
-      name: string;
-      logo: string;
-    };
-    away: {
-      id: number;
-      name: string;
-      logo: string;
-    };
-  };
-
-  scores: {
-    home: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
-    away: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
-  };
-};
-
-export type CBBTeam = {
-  id: number;
-  wid?: number;
-  espnID?: number;
-  name: string;
-  shortName?: string;
-  fullName?: string;
-  code?: string;
-  abbreviation?: string;
-  city?: string;
-  location?: string;
-  address?: string;
-  coach?: string;
-  coachImage?: string;
-  established?: number;
-  country?: {
-    name: string;
-    code: string;
-    flag: string;
-  };
-  latitude?: number;
-  longitude?: number;
-  venueImage?: any;
-  venueCapacity?: string;
-  wLogo?: any;
-  logo: any;
-  logoLight?: any;
-  color?: string;
-  secondaryColor?: string;
-  venueName?: string; // ✅ Add this
-  isAllStar: boolean;
-  isActive: boolean;
-};
-
-export type Conference = {
-  name: string;
-  logo: ImageSourcePropType | null;
-  teams: string[];
-  color?: {
-    primary: string;
-    secondary: string;
-  };
-};
 
 export type Venue = {
   name?: string;
@@ -377,64 +183,6 @@ export type Venue = {
   longitude?: number;
   venueCapacity?: string;
   venueImage?: any;
-};
-
-export type SummerGame = {
-  id: number;
-  date: string; // "2025-12-16T21:00:00+00:00"
-  time: string; // "21:00"
-  timestamp: number; // 1765918800
-  timezone: string; // "UTC"
-
-  stage: string | null;
-  week: string | null;
-  venue: string | null;
-
-  status: {
-    long: string; // "Not Started"
-    short: string; // "NS"
-    timer: string | null;
-  };
-
-  league: {
-    id: number;
-    name: string;
-    type: string;
-    season: string;
-    logo: string;
-    country: {
-      id: number;
-      name: string;
-      code: string;
-      flag: string;
-    };
-    isWomen?: boolean;
-  };
-
-  // ✅ Use shared CBBTeam type here
-  teams: {
-    home: NBATeam;
-    away: NBATeam;
-  };
-
-  scores: {
-    home: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
-    away: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
-  };
 };
 
 export type DBPlayer = {
@@ -565,6 +313,7 @@ export type AwardCategory =
   | "gehrig"
   | "young"
   | "clemente";
+
 export type AwardSeason = {
   id: number;
   season: string;
@@ -591,57 +340,6 @@ export type AwardSeason = {
   current_team_id?: number | null;
   created_at: string;
 };
-
-export type PlayerResult = {
-  id: number;
-  player_id: number;
-  name: string;
-  avatarUrl: string;
-  headshot_url: string;
-  position: string;
-  espn_team_id: string;
-  team_id: number;
-  isNFL?: boolean;
-  isMMA?: boolean;
-  isNBA?: boolean;
-  isMLB?: boolean;
-  isCFB?: boolean;
-  isCBB?: boolean;
-  isWCBB?: boolean;
-  isWNBA?: boolean;
-  isNHL?: boolean;
-  type: "player";
-  score: number;
-};
-
-export type TeamResult = {
-  id: number;
-  wid?: number;
-  name: string;
-  full_name: string;
-  short_name: string;
-  isNFL?: boolean;
-  isMLB?: boolean;
-  isNHL?: boolean;
-  isCFB?: boolean;
-  isCBB?: boolean;
-  isWCBB?: boolean;
-  isWNBA?: boolean;
-  is_active?: boolean;
-  type: "team";
-  score: number;
-};
-
-export type UserResult = {
-  id: number;
-  full_name: string;
-  username: string;
-  profileImageUrl: string;
-  type: "user";
-  score: number;
-};
-
-export type ResultItem = PlayerResult | TeamResult | UserResult;
 
 export const AWARD_CONFIG: Partial<
   Record<LeagueType, { label: string; value: AwardCategory; title: string }[]>

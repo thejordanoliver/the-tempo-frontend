@@ -20,10 +20,10 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
-import { Game } from "types/football";
+import { FootballGame } from "types/football";
 
 type Props = {
-  games: Game[];
+  games: FootballGame[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -36,7 +36,7 @@ type Props = {
 
 type NFLGameSection = {
   title: string;
-  data: Game[];
+  data: FootballGame[];
 };
 
 export default function NFLGamesList({
@@ -60,11 +60,14 @@ export default function NFLGamesList({
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
 
-  const chunkIntoRows = (data: Game[], size = 2): (Game | null)[][] => {
-    const rows: (Game | null)[][] = [];
+  const chunkIntoRows = (
+    data: FootballGame[],
+    size = 2,
+  ): (FootballGame | null)[][] => {
+    const rows: (FootballGame | null)[][] = [];
 
     for (let i = 0; i < data.length; i += size) {
-      const row: (Game | null)[] = data.slice(i, i + size);
+      const row: (FootballGame | null)[] = data.slice(i, i + size);
 
       if (row.length < size) {
         row.push(null);
@@ -130,7 +133,7 @@ export default function NFLGamesList({
     }));
   }, [sections]);
 
-  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+  const renderGridRow = ({ item }: { item: (FootballGame | null)[] }) => {
     return (
       <View style={styles.gridRow}>
         {item.map((game, index) => {

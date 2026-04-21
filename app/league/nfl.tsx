@@ -8,9 +8,11 @@ import SportsListModal, {
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
+import { NFLPlayoffBracket } from "components/Sports/NFL/Playoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
@@ -18,6 +20,7 @@ import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
+import { useNFLBracket } from "hooks/NFLHooks/useNFLPlayoffBracket";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -27,16 +30,14 @@ import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { usePreferences } from "contexts/PreferencesContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-
-
 export default function NFLLeagueScreen() {
   const league = "NFL";
+  const currentSeason = getFootballSeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -49,12 +50,13 @@ export default function NFLLeagueScreen() {
     error: newsError,
   } = useLeaguesNews(10, league);
   const [refreshing, setRefreshing] = useState(false);
-  const [draftYear, setDraftYear] = useState(getFootballSeason().toString());
-  const [standingsYear, setStandingsYear] = useState(
-    getFootballSeason().toString(),
-  );
+  const [draftYear, setDraftYear] = useState(currentSeason.toString());
+  const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
+  const { playoffData, playoffsLoading, playoffError } =
+    useNFLBracket(currentSeason);
+
   const { categories, loading, error } = useSeasonLeaders(
-    getFootballSeason(),
+    currentSeason,
     league,
   );
   const [draftTeam, setDraftTeam] = useState("all");
@@ -220,6 +222,14 @@ export default function NFLLeagueScreen() {
               league={league}
             />
           </View>
+          {/* PLAYOFFS */}
+          <ScrollView key="playoffs" showsVerticalScrollIndicator={false}>
+            <NFLPlayoffBracket
+              bracket={playoffData}
+              loading={playoffsLoading}
+              error={playoffError}
+            />
+          </ScrollView>
 
           {/* STATS */}
           <View key="stats" style={styles.contentArea}>

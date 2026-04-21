@@ -1,7 +1,6 @@
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { Game } from "types/types";
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { Game } from "types/nba";
+import { apiClient } from "utils/apiClient";
 
 export function useLastTeamGame(
   teamId: string | number,
@@ -29,9 +28,7 @@ export function useLastTeamGame(
     }
 
     try {
-      const res = await apiClient.get(
-        `api/games/nba/last/${teamId}/${season}`,
-      );
+      const res = await apiClient.get(`api/games/nba/last/${teamId}/${season}`);
       const raw = res.data?.game ?? null;
 
       cacheRef.current.set(cacheKey, raw);

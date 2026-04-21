@@ -1,4 +1,3 @@
-// utils/getTopLeaders.ts
 import {
   COLLAPSED_PLAYER_COUNT,
   EXPANDED_MAX_PLAYERS,
@@ -14,7 +13,7 @@ type PlayerLeader = {
 
 type displayeValue = {
   isHome: boolean;
-  record: string ;
+  record: string;
   score: number;
   status: boolean;
   isFinal: boolean;
@@ -25,10 +24,10 @@ type displayeValue = {
 
 export function getTopLeaders<T extends PlayerLeader>(
   players: T[],
-  isExpanded: boolean
+  isExpanded: boolean,
 ): T[] {
   const sorted = [...players].sort(
-    (a, b) => (b.leaderStat?.value ?? 0) - (a.leaderStat?.value ?? 0)
+    (a, b) => (b.leaderStat?.value ?? 0) - (a.leaderStat?.value ?? 0),
   );
 
   if (!isExpanded) {
@@ -44,7 +43,7 @@ export function getTopLeaders<T extends PlayerLeader>(
     .flatMap((teamPlayers) =>
       teamPlayers
         .sort((a, b) => (b.leaderStat?.value ?? 0) - (a.leaderStat?.value ?? 0))
-        .slice(0, EXPANDED_PLAYERS_PER_TEAM)
+        .slice(0, EXPANDED_PLAYERS_PER_TEAM),
     )
     .slice(0, EXPANDED_MAX_PLAYERS);
 }
@@ -58,7 +57,7 @@ export default function displayeValue(
   score = 0,
   isDark = true,
   height = 150,
-  width = 150
+  width = 150,
 ) {
   const styles = gameWidgetStyles(isDark, height, width);
 

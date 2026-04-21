@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { BasketballGame } from "types/types";
-import { getCBBSeason } from "utils/dateUtils";
+import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
+import { getCBBSeason } from "utils/dateUtils";
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";

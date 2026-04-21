@@ -182,7 +182,6 @@ export const emptyHomeTeam: FootballTeam = {
   isActive: false,
 };
 
-// CFB
 export type Conference = {
   name: string;
   logo: ImageSourcePropType | null;
@@ -193,7 +192,7 @@ export type Conference = {
   };
 };
 
-export interface BracketTeam {
+export interface CFBPlayoffBracketTeam {
   id: number | string;
   espnID?: string | number;
   oddsID?: string;
@@ -216,32 +215,125 @@ export interface BracketTeam {
   record?: string | null; // "12-1"
 }
 
-export interface BracketBroadcast {
+export interface CFBPlayoffBracketBroadcast {
   name: string;
   type: string;
 }
+
 export type Round = "first" | "quarterfinal" | "semifinal" | "championship";
 
-export interface BracketGame {
+export interface CFBPlayoffBracketGame {
   id: string;
-  top: BracketTeam | null;
-  bottom: BracketTeam | null;
+  top: CFBPlayoffBracketTeam | null;
+  bottom: CFBPlayoffBracketTeam | null;
   round: Round;
   status: "scheduled" | "live" | "final";
   startTime?: string;
   topScore?: number | null;
   bottomScore?: number | null;
-  broadcasts?: BracketBroadcast[];
+  broadcasts?: CFBPlayoffBracketBroadcast[];
 }
 
-export interface BracketRound {
+export interface CFBPlayoffBracketRound {
   title: string;
-  games: BracketGame[];
+  games: CFBPlayoffBracketGame[];
 }
 
 export interface BracketData {
-  first: BracketRound;
-  quarterfinal: BracketRound;
-  semifinal: BracketRound;
-  championship: BracketRound;
+  first: CFBPlayoffBracketRound;
+  quarterfinal: CFBPlayoffBracketRound;
+  semifinal: CFBPlayoffBracketRound;
+  championship: CFBPlayoffBracketRound;
 }
+
+export type NFLPlayoffTeam = {
+  id: number;
+  name: string;
+  logo: string;
+  conference: "AFC" | "NFC";
+  seed: number;
+};
+
+export type NFLPlayoffScoreBreakdown = {
+  quarter_1: number;
+  quarter_2: number;
+  quarter_3: number;
+  quarter_4: number;
+  overtime: number | null;
+  total: number;
+};
+
+export type NFLPlayoffGameMeta = {
+  id: number;
+  stage: string;
+  week: string;
+  date: {
+    timezone: string;
+    date: string;
+    time: string;
+    timestamp: number;
+  };
+  venue: {
+    name: string;
+    city: string;
+  };
+  status: {
+    short: string;
+    long: string;
+    timer: string | null;
+  };
+};
+
+export type NFLPlayoffGame = {
+  game: NFLPlayoffGameMeta;
+  league: {
+    id: number;
+    name: string;
+    season: string;
+    logo: string;
+    country: {
+      name: string;
+      code: string;
+      flag: string;
+    };
+  };
+  teams: {
+    home: NFLPlayoffTeam;
+    away: NFLPlayoffTeam;
+  };
+  scores: {
+    home: NFLPlayoffScoreBreakdown;
+    away: NFLPlayoffScoreBreakdown;
+  };
+};
+
+export type Matchup = {
+  round: string;
+  conference: "AFC" | "NFC";
+  teams: {
+    top: NFLPlayoffTeam;
+    bottom: NFLPlayoffTeam;
+  };
+  winner: number | null;
+  games: NFLPlayoffGame[];
+};
+
+export type ConferenceBracket = {
+  wildCard: Matchup[];
+  divisional: Matchup[];
+  conference: Matchup[];
+};
+
+export type SuperBowl = Matchup[];
+
+export type NFLPlayoffBracket = {
+  afc: ConferenceBracket;
+  nfc: ConferenceBracket;
+  superBowl: SuperBowl;
+};
+
+export type BracketApiResponse = {
+  success: boolean;
+  season: number;
+  bracket: NFLPlayoffBracket;
+};

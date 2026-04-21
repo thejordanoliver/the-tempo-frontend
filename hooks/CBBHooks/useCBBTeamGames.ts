@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
 
@@ -24,15 +23,12 @@ export function useCBBTeamGames(
     setError(null);
 
     try {
-      const res = await apiClient.get(
-        `/api/games/cbb/team/${teamId}`,
-        {
-          params: {
-            season,
-            league,
-          },
+      const res = await apiClient.get(`/api/games/cbb/team/${teamId}`, {
+        params: {
+          season,
+          league,
         },
-      );
+      });
 
       const rawGames: BasketballGame[] = res.data.response || [];
 

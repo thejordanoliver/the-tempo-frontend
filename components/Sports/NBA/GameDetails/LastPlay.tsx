@@ -91,10 +91,14 @@ export default function LastPlay({
     }));
   };
 
-  const athletes =
-    "participants" in (currentPlay as any)
-      ? participantsToAthletes((currentPlay as any).participants)
-      : (currentPlay as NBALastPlay).athletes || [];
+ const isObject = (val: unknown): val is Record<string, any> =>
+  typeof val === "object" && val !== null;
+
+const athletes = isObject(currentPlay) && "participants" in currentPlay
+  ? participantsToAthletes((currentPlay as any).participants)
+  : isObject(currentPlay)
+    ? (currentPlay as NBALastPlay).athletes || []
+    : [];
 
   const firstAthlete = athletes[0];
 

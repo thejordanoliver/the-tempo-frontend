@@ -7,7 +7,7 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { memo, useCallback, useMemo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 

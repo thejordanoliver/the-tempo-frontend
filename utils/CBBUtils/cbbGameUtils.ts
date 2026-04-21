@@ -13,7 +13,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useMemo } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

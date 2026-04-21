@@ -7,18 +7,15 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useLayoutEffect, useState } from "react";
-
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function AccountDetailsScreen() {
   const { resolvedColorScheme } = usePreferences();
@@ -127,88 +124,103 @@ export default function AccountDetailsScreen() {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0} // adjust if header overlaps
+    <KeyboardAwareScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainerStyle}
+      enableOnAndroid
+      extraScrollHeight={20}
+      keyboardShouldPersistTaps="handled"
     >
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainerStyle}
-      >
-        <HeadingTwo isDark={isDark}>Full Name</HeadingTwo>
-        <Text style={styles.text}>{userData.fullName}</Text>
+      <HeadingTwo isDark={isDark}>Full Name</HeadingTwo>
+      <Text style={styles.text}>{userData.fullName}</Text>
 
-        <HeadingTwo isDark={isDark}>Username</HeadingTwo>
-        <Text style={styles.text}>{userData.username}</Text>
+      <HeadingTwo isDark={isDark}>Username</HeadingTwo>
+      <Text style={styles.text}>{userData.username}</Text>
 
-        <HeadingTwo isDark={isDark}>Email</HeadingTwo>
-        <Text style={styles.text}>{userData.email}</Text>
+      <HeadingTwo isDark={isDark}>Email</HeadingTwo>
+      <Text style={styles.text}>{userData.email}</Text>
 
-        {/* Password Section */}
+      {/* Password Section */}
 
-        <HeadingTwo isDark={isDark}>Password</HeadingTwo>
-        <Text style={styles.text}>••••••••</Text>
+      <HeadingTwo isDark={isDark}>Password</HeadingTwo>
+      <Text style={styles.text}>••••••••</Text>
 
-        {/* Change Password Inputs */}
+      <View style={styles.input}>
         <TextInput
           placeholder="Current Password"
-          placeholderTextColor={Colors.midTone}
           secureTextEntry
           value={currentPassword}
           onChangeText={setCurrentPassword}
-          style={styles.input}
+          placeholderTextColor={Colors.midTone}
+          style={styles.inputText}
+          autoCapitalize="none"
         />
+      </View>
+
+      {/* Change Password Inputs */}
+
+      <View style={styles.input}>
         <TextInput
           placeholder="New Password"
           placeholderTextColor={Colors.midTone}
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
-          style={styles.input}
+          style={styles.inputText}
         />
+      </View>
+
+      <View style={styles.input}>
         <TextInput
           placeholder="Confirm New Password"
           placeholderTextColor={Colors.midTone}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
-          style={styles.input}
+          style={styles.inputText}
         />
+      </View>
 
-        <Button
-          onPress={handleChangePassword}
-          disabled={isChangingPassword}
-          children="Change Password"
-          isDark={isDark}
-        />
+      <Button
+        onPress={handleChangePassword}
+        disabled={isChangingPassword}
+        children="Change Password"
+        isDark={isDark}
+      />
 
-        <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>
+    </KeyboardAwareScrollView>
   );
 }
 const accountDetailsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1 },
     contentContainerStyle: {
-      flexGrow: 1,
-      paddingHorizontal: 20,
+      flex: 1,
+      paddingHorizontal: 12,
       paddingTop: 20,
-      paddingBottom: 120,
       gap: 16,
     },
     input: {
-      color: isDark ? Colors.white : Colors.black,
+      height: 54,
+      flexDirection: "row",
+      alignItems: "center",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
-      fontSize: 16,
-      padding: 20,
-      fontFamily: Fonts.OSLIGHT,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
     },
+
+    inputText: {
+      flex: 1,
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+    },
+
     button: {
       padding: 14,
       borderRadius: 8,

@@ -1,6 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-import { PlayerResult, ResultItem, TeamResult, UserResult } from "types/types";
+import {
+  PlayerResult,
+  ResultItem,
+  TeamResult,
+  UserResult,
+} from "types/explore";
 import { apiClient } from "utils/apiClient";
 const RECENT_SEARCHES_KEY = "recentSearches";
 

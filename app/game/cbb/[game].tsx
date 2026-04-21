@@ -31,7 +31,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
@@ -387,11 +387,7 @@ export default function GameDetailsScreen() {
             )}
 
             {(isHalftime || inProgress || isFinal) && (
-              <GameSummary
-                plays={plays ?? []}
-                league={league}
-                isDark={isDark}
-              />
+              <GameSummary plays={plays ?? []} league={league} />
             )}
 
             <GameTeamStats

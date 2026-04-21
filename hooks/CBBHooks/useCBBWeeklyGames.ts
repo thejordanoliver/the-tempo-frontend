@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
 

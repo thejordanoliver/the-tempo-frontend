@@ -19,7 +19,7 @@ import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import {
   getGameCountByMonth,
   getMonthsToShow,

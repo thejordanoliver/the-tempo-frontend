@@ -17,7 +17,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */

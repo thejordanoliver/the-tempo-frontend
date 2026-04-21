@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { getCBBSeason } from "utils/dateUtils";
 
 import { BASE_URL } from "utils/apiClient";

@@ -6,7 +6,7 @@ import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";

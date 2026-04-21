@@ -35,7 +35,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { Animated, ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { getHolidayLabel } from "utils/dateUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -48,7 +48,7 @@ export default function GameDetailsScreen() {
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
     useScrollFade();
-
+  const LAZY_PLAY_LIMIT = 15;
   if (typeof game !== "string") return null;
 
   let parsedGame: Game;
@@ -61,7 +61,7 @@ export default function GameDetailsScreen() {
   }
 
   if (!parsedGame?.id) return null;
-  const { home, away, date, venue, id,  } = parsedGame;
+  const { home, away, date, venue, id } = parsedGame;
 
   const gameId = String(id);
 
@@ -219,7 +219,7 @@ export default function GameDetailsScreen() {
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
-    if (isGameLoading || !homeTeam || !awayTeam) {
+    if (isGameLoading || !homeTeam || !awayTeam || !plays) {
       navigation.setOptions({
         header: () => null,
       });
@@ -400,13 +400,7 @@ export default function GameDetailsScreen() {
                   isDark={isDark}
                 />
               )}
-              {!isScheduled && (
-                <GameSummary
-                  plays={plays ?? []}
-                  league={league}
-                  isDark={isDark}
-                />
-              )}
+          
               <GameTeamStats
                 stats={teamStats}
                 gameStatusDescription={gameStatusDescription}

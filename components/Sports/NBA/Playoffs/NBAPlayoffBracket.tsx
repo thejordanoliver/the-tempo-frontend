@@ -11,8 +11,8 @@ import {
   getCenteredX,
   getColCenter,
   getX,
-  playoffBracketStyles,
-} from "styles/PlayoffBraketStyles";
+  nbaPlayoffBracketStyles,
+} from "styles/NBAPlayoffBraketStyles";
 import { BracketMatchup, PlayoffBracket, PlayoffTeam } from "types/nba";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
@@ -24,8 +24,6 @@ const CARD_HEIGHT = 142;
 const ROUND2_HEIGHT = 142;
 const ROUND3_HEIGHT = 142;
 const FINALS_HEIGHT = 178;
-const COL_WIDTH = 220;
-const COL_GAP = 20;
 const LABEL_WIDTH = 180;
 const LABEL_TOP = 28;
 
@@ -128,6 +126,7 @@ const getSeriesRecord = (matchup: BracketMatchup) => {
   const bottomWins = matchup.wins[bottomTeamId(matchup)] ?? 0;
   return { topWins, bottomWins };
 };
+
 const getSeriesLeader = (matchup: BracketMatchup) => {
   const leader = matchup.leader;
   return { leader };
@@ -165,7 +164,7 @@ const getLiveGameStatus = (
   game: BracketMatchup["games"][number],
   isDark: boolean,
 ) => {
-  const styles = playoffBracketStyles(isDark);
+  const styles = nbaPlayoffBracketStyles(isDark);
   const status = game.periods.current || 0;
   const halftime = game.status.halftime;
   const clock = game.status.clock?.trim();
@@ -203,8 +202,15 @@ const getFooterLabel = (matchup: BracketMatchup) => {
   const { topWins, bottomWins } = getSeriesRecord(matchup);
   const { leader } = getSeriesLeader(matchup);
   const teamName = getNBATeam(leader ?? 0)?.code;
-  if (topWins || bottomWins) {
+
+  if (topWins === bottomWins && topWins != 0 && bottomWins != 0) {
+    return `Series Tied`;
+  }
+  if (topWins > bottomWins) {
     return `${teamName} leads ${topWins}-${bottomWins}`;
+  }
+  if (topWins < bottomWins) {
+    return `${teamName} leads ${bottomWins}-${topWins}`;
   }
 
   return "Best of 7";
@@ -222,16 +228,16 @@ const TeamRow = ({
   team,
   wins,
   score,
-  status,
+  oponnentWins,
   isDark,
 }: {
   team?: PlayoffTeam;
   wins: number;
+  oponnentWins: number;
   score: number | null;
-  status: "winner" | "loser" | "tied";
   isDark: boolean;
 }) => {
-  const styles = playoffBracketStyles(isDark);
+  const styles = nbaPlayoffBracketStyles(isDark);
   const teamId = team?.id ?? 0;
   const teamLogo = getTeamLogo(teamId, isDark);
   const teamData = getNBATeam(teamId);
@@ -239,7 +245,8 @@ const TeamRow = ({
   const getTeamCodeColor = () => {
     if (!team) return Colors.midTone;
 
-    if (status === "loser") return Colors.midTone;
+    if (wins === 4) return isDark ? Colors.white : Colors.black;
+    if (oponnentWins === 4) return Colors.midTone;
 
     return isDark ? Colors.white : Colors.black;
   };
@@ -279,7 +286,12 @@ const TeamRow = ({
           style={[
             styles.winsBadge,
             {
-              backgroundColor: status === "winner" ? Colors.light.gold : "",
+              backgroundColor:
+                wins === 4
+                  ? Colors.light.gold
+                  : isDark
+                    ? Colors.transparentDarkGray
+                    : Colors.transparentLightGray,
             },
           ]}
         >
@@ -288,7 +300,7 @@ const TeamRow = ({
               styles.winsText,
               {
                 color:
-                  status === "winner"
+                  wins === 4
                     ? Colors.black
                     : isDark
                       ? Colors.white
@@ -315,7 +327,7 @@ const MatchupCard = ({
   isDark: boolean;
   finals?: boolean;
 }) => {
-  const styles = playoffBracketStyles(isDark);
+  const styles = nbaPlayoffBracketStyles(isDark);
   const { topWins, bottomWins } = getSeriesRecord(matchup);
   const topStatus = getTeamStatus(true, topWins, bottomWins);
   const bottomStatus = getTeamStatus(false, topWins, bottomWins);
@@ -327,11 +339,11 @@ const MatchupCard = ({
     ? getTeamGamePoints(liveGame, matchup.bottomTeam?.id)
     : null;
 
-  const topTeamData = getNBATeam(matchup?.topTeam?.id ?? 0);
-  const bottomTeamData = getNBATeam(matchup?.bottomTeam?.id ?? 0);
+  const topTeam = getNBATeam(matchup?.topTeam?.id ?? 0);
+  const bottomTeam = getNBATeam(matchup?.bottomTeam?.id ?? 0);
+  const topTeamEspnId = String(topTeam?.espnID);
+  const bottomTeamEspnId = String(bottomTeam?.espnID ?? 0);
 
-  const topTeamEspnId = String(topTeamData?.espnID);
-  const bottomTeamEspnId = String(bottomTeamData?.espnID ?? 0);
   const gameDateObj = useMemo(() => {
     if (!liveGame?.date.start) return new Date(); // fallback to now
     const d = new Date(liveGame?.date.start);
@@ -378,8 +390,8 @@ const MatchupCard = ({
       <TeamRow
         team={matchup.topTeam}
         wins={topWins}
+        oponnentWins={bottomWins}
         score={liveTopPoints}
-        status={topStatus}
         isDark={isDark}
       />
       <View style={styles.divider} />
@@ -387,8 +399,8 @@ const MatchupCard = ({
       <TeamRow
         team={matchup.bottomTeam}
         wins={bottomWins}
+        oponnentWins={topWins}
         score={liveBottomPoints}
-        status={bottomStatus}
         isDark={isDark}
       />
       <View style={styles.statusContainer}>
@@ -416,7 +428,7 @@ const ConnectorLayer = ({ isDark }: { isDark: boolean }) => {
       const targetIndex = Math.floor(index / 2);
       const targetLayout = target[targetIndex];
       const nextLayout = source[index + 1];
-      const styles = playoffBracketStyles(isDark);
+      const styles = nbaPlayoffBracketStyles(isDark);
       // ❌ Skip anything invalid OR non-pair starters
       if (!layout || !targetLayout || index % 2 !== 0 || !nextLayout)
         return null;
@@ -482,7 +494,7 @@ const ConnectorLayer = ({ isDark }: { isDark: boolean }) => {
 
   const renderRightPair = (source: CardLayout[], target: CardLayout[]) =>
     source.map((layout, index) => {
-      const styles = playoffBracketStyles(isDark);
+      const styles = nbaPlayoffBracketStyles(isDark);
       const targetIndex = Math.floor(index / 2);
       const targetLayout = target[targetIndex];
       const nextLayout = source[index + 1];
@@ -572,7 +584,7 @@ const RoundLabel = ({
   x: number;
   isDark: boolean;
 }) => {
-  const styles = playoffBracketStyles(isDark);
+  const styles = nbaPlayoffBracketStyles(isDark);
 
   return (
     <Text
@@ -602,7 +614,7 @@ export function NBAPlayoffBracket({
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => playoffBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => nbaPlayoffBracketStyles(isDark), [isDark]);
   const global = globalStyles(isDark);
 
   if (loading) {
@@ -628,7 +640,7 @@ export function NBAPlayoffBracket({
     );
   }
 
-  const logoSource = isDark ? NBAPlayoffsLight : NBAPlayoffsDark;
+  const PlayoffsLogo = isDark ? NBAPlayoffsLight : NBAPlayoffsDark;
 
   return (
     <ScrollView
@@ -682,7 +694,7 @@ export function NBAPlayoffBracket({
           isDark={isDark}
         />
         <Image
-          source={logoSource}
+          source={PlayoffsLogo}
           style={styles.playoffsLogo}
           resizeMode="contain"
         />

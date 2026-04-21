@@ -5,19 +5,13 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import {
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Text, TextStyle, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { Game } from "types/types";
+import { Game } from "types/nba";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 
-export default function SquareGameCard({ game }: { game: Game,  }) {
+export default function SquareGameCard({ game }: { game: Game }) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -162,7 +156,7 @@ export default function SquareGameCard({ game }: { game: Game,  }) {
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfPeriod)
-      return <Text style={styles.clock}>{gameStatusDetail}</Text>;
+      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
 
     if (isFinal)
       return (

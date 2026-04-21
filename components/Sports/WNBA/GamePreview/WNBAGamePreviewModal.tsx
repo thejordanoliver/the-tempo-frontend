@@ -12,7 +12,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { BasketballGame } from "types/types";
+import { BasketballGame } from "types/basketball";
 import { formatCBBQuarter, resolveVenue } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
