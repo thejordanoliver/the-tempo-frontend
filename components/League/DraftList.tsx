@@ -4,6 +4,8 @@ import SearchBar from "components/SearchBars/AnimatedSearchBar";
 import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
 import { nflTeams } from "constants/teamsNFL";
+import { wnbaTeams } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useDraft } from "hooks/useLeagueDraft";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -15,7 +17,7 @@ import {
 } from "react-native";
 import DraftCard, { DraftPick } from "./DraftCard";
 import DraftCardSkeleton from "./DraftCardSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
+
 type Props = {
   year: string;
   team: string;
@@ -25,7 +27,7 @@ type Props = {
   onTeamChange: (t: string) => void;
   onRoundChange: (r: string) => void;
   onViewChange?: (v: "players" | "teams") => void;
-  league: "nba" | "nfl";
+  league: "nba" | "wnba" | "nfl";
 };
 
 const POSITION_MAP: Record<string, string> = {
@@ -60,20 +62,15 @@ export default function DraftList({
   year,
   team,
   round,
-  view,
   league,
   onYearChange,
   onTeamChange,
   onRoundChange,
-  onViewChange,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
-
   const listRef = useRef<FlatList>(null);
-
-  // 🔍 SEARCH TERM
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const toggleSearch = () => {
@@ -153,7 +150,8 @@ export default function DraftList({
   }, [picks]);
 
   // Choose correct team list based on league
-  const TEAM_LIST = league === "nba" ? teams : nflTeams;
+  const TEAM_LIST =
+    league === "nba" ? teams : league === "wnba" ? wnbaTeams : nflTeams;
 
   // -------------------------------------------
   // TEAM OPTIONS — league-dependent

@@ -5,7 +5,6 @@ import { getTeamByESPNId } from "constants/teams";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
@@ -35,7 +34,7 @@ export type DraftPick = {
 type Props = {
   player: DraftPick;
   index: number;
-  league: "nba" | "nfl";
+  league: "nba" | "wnba" | "nfl";
 };
 
 const POSITION_MAP: Record<string, string> = {
