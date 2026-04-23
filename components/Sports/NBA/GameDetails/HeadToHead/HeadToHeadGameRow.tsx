@@ -3,10 +3,11 @@ import { Image } from "expo-image";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
+import { Game } from "types/nba";
 import { formatQuarter } from "utils/games";
 
 type Props = {
-  game: any;
+  game: Game;
   homeTeamEspnId: string;
   awayTeamEspnId: string;
   homeTeamId: number;
@@ -33,14 +34,14 @@ export default function HeadToHeadGameRow({
   isLast = false, // default false
 }: Props) {
   const styles = headToHeadStyles(isDark);
-
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
     const d = new Date(date);
     return isNaN(d.getTime()) ? new Date() : d;
   };
 
-  const gameDate = safeDate(game.date.start);
+  const gameDate = safeDate(game.date);
+
   const gameDateStr = gameDate.toISOString();
 
   const { details, score: liveScore } = useGameDetails(
@@ -82,8 +83,8 @@ export default function HeadToHeadGameRow({
 
   // --- Corrected score mapping ---
   const getTeamScore = (teamId: number) => {
-    if (game.teams.home.id === teamId) return liveScore?.home?.total ?? 0;
-    if (game.teams.visitors.id === teamId) return liveScore?.away?.total ?? 0;
+    if (game?.home?.id === teamId) return game.homeScore ?? 0;
+    if (game?.away?.id === teamId) return game.awayScore ?? 0;
     return 0;
   };
 

@@ -4,7 +4,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { nflPlayoffBracketStyles } from "styles/NFLPlayoffBracketStyles";
 import type {
   Matchup,
@@ -17,12 +17,6 @@ import type {
 const CARD_WIDTH = 176;
 const CARD_HEIGHT = 142;
 
-const ROUND2_WIDTH = 176;
-const ROUND2_HEIGHT = 142;
-
-const ROUND3_WIDTH = 176;
-const ROUND3_HEIGHT = 142;
-
 const FINALS_WIDTH = 176;
 const FINALS_HEIGHT = 178;
 
@@ -31,8 +25,6 @@ const COL_GAP = 20;
 
 const LABEL_WIDTH = 180;
 const LABEL_TOP = 28;
-
-/* ---------------- GRID ---------------- */
 
 const COLS = {
   AFC_R1: 0,
@@ -51,10 +43,7 @@ type CardLayout = {
   height: number;
 };
 
-/* ---------------- CANVAS ---------------- */
-
 export const getX = (col: number) => col * (COL_WIDTH + COL_GAP);
-
 export const CANVAS_WIDTH = getX(COLS.NFC_R1) + CARD_WIDTH;
 export const CANVAS_HEIGHT = 840;
 
@@ -64,8 +53,6 @@ export const getColCenter = (col: number) => getX(col) + CARD_WIDTH / 2;
 
 export const getCenteredX = (col: number, width: number) =>
   getColCenter(col) - width / 2;
-
-/* ---------------- TEAM ROW ---------------- */
 
 const TeamRow = ({
   team,
@@ -79,7 +66,6 @@ const TeamRow = ({
   isDark: boolean;
 }) => {
   const styles = nflPlayoffBracketStyles(isDark);
-
   const teamId = team?.id ?? 0;
   const teamLogo = getNFLTeamLogo(teamId, isDark);
   const teamData = getNFLTeam(teamId);
@@ -99,7 +85,10 @@ const TeamRow = ({
         resizeMode="contain"
       />
 
-      <Text numberOfLines={1} style={[styles.teamCode, { opacity: eliminated }]}>
+      <Text
+        numberOfLines={1}
+        style={[styles.teamCode, { opacity: eliminated }]}
+      >
         {teamName}
       </Text>
 
@@ -111,8 +100,6 @@ const TeamRow = ({
     </View>
   );
 };
-
-/* ---------------- MATCHUP CARD ---------------- */
 
 const MatchupCard = ({
   matchup,
@@ -191,20 +178,8 @@ const MatchupCard = ({
   );
 };
 
-/* ---------------- BRACKET LOGIC ---------------- */
-
 const centerY = (l?: CardLayout) => (l ? l.y + l.height / 2 : 0);
 
-/**
- * NFL wildcard slots (canonical top-to-bottom order):
- *   slot 0 = 3/6 game  -> feeds R2[0] (joins 1 seed bye)
- *   slot 1 = 2/7 game  -> feeds R2[1] (2 seed itself)
- *   slot 2 = 4/5 game  -> feeds R2[1] (joins 2 seed)
- *
- * The API can return wildcard matchups in any order, so we assign each
- * matchup a canonical slot based on its seeds. That makes AFC and NFC
- * render identically regardless of array order.
- */
 const SLOT_36 = 0;
 const SLOT_27 = 1;
 const SLOT_45 = 2;
@@ -228,10 +203,6 @@ const getR1Slot = (m: Matchup): number | null => {
   return null;
 };
 
-/**
- * Assign each wildcard matchup to its canonical slot.
- * Any matchup without a recognizable seed pair falls back to its original index.
- */
 const assignR1Slots = (wildCard: Matchup[]): (Matchup | undefined)[] => {
   const slots: (Matchup | undefined)[] = Array.from({ length: R1_SLOT_COUNT });
   const leftover: Matchup[] = [];
@@ -279,8 +250,6 @@ const RoundLabel = ({
     </Text>
   );
 };
-
-/* ---------------- CONNECTORS ---------------- */
 
 const ConnectorLayer = ({
   isDark,
@@ -374,16 +343,18 @@ const ConnectorLayer = ({
   return <>{connectors}</>;
 };
 
-/* ---------------- MAIN ---------------- */
-
 export function NFLPlayoffBracket({
   bracket,
   loading,
   error,
+  refreshing,
+  onRefresh,
 }: {
   bracket: NFLPlayoffBracket | null;
   loading: boolean;
   error: string | null;
+  refreshing: any;
+  onRefresh: any;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -410,16 +381,16 @@ export function NFLPlayoffBracket({
   const AFC_R2 = useMemo(
     () => [
       {
-        x: getCenteredX(COLS.AFC_R2, ROUND2_WIDTH),
+        x: getCenteredX(COLS.AFC_R2, CARD_WIDTH),
         y: AFC_R1_SLOTS[SLOT_36].y,
-        width: ROUND2_WIDTH,
-        height: ROUND2_HEIGHT,
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
       },
       {
-        x: getCenteredX(COLS.AFC_R2, ROUND2_WIDTH),
+        x: getCenteredX(COLS.AFC_R2, CARD_WIDTH),
         y: (AFC_R1_SLOTS[SLOT_27].y + AFC_R1_SLOTS[SLOT_45].y) / 2,
-        width: ROUND2_WIDTH,
-        height: ROUND2_HEIGHT,
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
       },
     ],
     [AFC_R1_SLOTS],
@@ -427,22 +398,22 @@ export function NFLPlayoffBracket({
 
   const NFC_R2 = useMemo(
     () =>
-      AFC_R2.map((l) => ({ ...l, x: getCenteredX(COLS.NFC_R2, ROUND2_WIDTH) })),
+      AFC_R2.map((l) => ({ ...l, x: getCenteredX(COLS.NFC_R2, CARD_WIDTH) })),
     [AFC_R2],
   );
 
   const AFC_R3 = useMemo(
     () => ({
-      x: getCenteredX(COLS.AFC_R3, ROUND3_WIDTH),
+      x: getCenteredX(COLS.AFC_R3, CARD_WIDTH),
       y: (AFC_R2[0].y + AFC_R2[1].y) / 2,
-      width: ROUND3_WIDTH,
-      height: ROUND3_HEIGHT,
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
     }),
     [AFC_R2],
   );
 
   const NFC_R3 = useMemo(
-    () => ({ ...AFC_R3, x: getCenteredX(COLS.NFC_R3, ROUND3_WIDTH) }),
+    () => ({ ...AFC_R3, x: getCenteredX(COLS.NFC_R3, CARD_WIDTH) }),
     [AFC_R3],
   );
 
@@ -490,139 +461,150 @@ export function NFLPlayoffBracket({
 
   return (
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={isDark ? Colors.white : Colors.black}
+        />
+      }
     >
-      <View style={styles.canvas}>
-        <RoundLabel
-          title="WILD CARD"
-          x={getColCenter(COLS.AFC_R1)}
-          isDark={isDark}
-        />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
+      >
+        <View style={styles.canvas}>
+          <RoundLabel
+            title="WILD CARD"
+            x={getColCenter(COLS.AFC_R1)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="DIVISIONAL ROUND"
-          x={getColCenter(COLS.AFC_R2)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="DIVISIONAL ROUND"
+            x={getColCenter(COLS.AFC_R2)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="CONFERENCE CHAMPIONSHIP"
-          x={getColCenter(COLS.AFC_R3)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="CONFERENCE CHAMPIONSHIP"
+            x={getColCenter(COLS.AFC_R3)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="SUPER BOWL"
-          x={getColCenter(COLS.FINALS)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="SUPER BOWL"
+            x={getColCenter(COLS.FINALS)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="CONFERENCE CHAMPIONSHIP"
-          x={getColCenter(COLS.NFC_R3)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="CONFERENCE CHAMPIONSHIP"
+            x={getColCenter(COLS.NFC_R3)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="DIVISIONAL ROUND"
-          x={getColCenter(COLS.NFC_R2)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="DIVISIONAL ROUND"
+            x={getColCenter(COLS.NFC_R2)}
+            isDark={isDark}
+          />
 
-        <RoundLabel
-          title="WILD CARD"
-          x={getColCenter(COLS.NFC_R1)}
-          isDark={isDark}
-        />
+          <RoundLabel
+            title="WILD CARD"
+            x={getColCenter(COLS.NFC_R1)}
+            isDark={isDark}
+          />
 
-        <ConnectorLayer
-          isDark={isDark}
-          r1Slots={afcR1LayoutsForConnectors}
-          r2={AFC_R2}
-          r3={AFC_R3}
-          finals={FINALS_LAYOUT}
-        />
-        <ConnectorLayer
-          isDark={isDark}
-          r1Slots={nfcR1LayoutsForConnectors}
-          r2={NFC_R2}
-          r3={NFC_R3}
-          finals={FINALS_LAYOUT}
-        />
+          <ConnectorLayer
+            isDark={isDark}
+            r1Slots={afcR1LayoutsForConnectors}
+            r2={AFC_R2}
+            r3={AFC_R3}
+            finals={FINALS_LAYOUT}
+          />
+          <ConnectorLayer
+            isDark={isDark}
+            r1Slots={nfcR1LayoutsForConnectors}
+            r2={NFC_R2}
+            r3={NFC_R3}
+            finals={FINALS_LAYOUT}
+          />
 
-        <Image source={NFLPlayoffsLogo} style={styles.playoffsLogo} />
-        <Text style={[styles.sideLabel, styles.afcLabel]}>AFC</Text>
-        <Text style={[styles.sideLabel, styles.nfcLabel]}>NFC</Text>
+          <Image source={NFLPlayoffsLogo} style={styles.playoffsLogo} />
+          <Text style={[styles.sideLabel, styles.afcLabel]}>AFC</Text>
+          <Text style={[styles.sideLabel, styles.nfcLabel]}>NFC</Text>
 
-        {afcR1BySlot.map((m, slot) =>
-          m ? (
+          {afcR1BySlot.map((m, slot) =>
+            m ? (
+              <MatchupCard
+                key={`afc-r1-${slot}`}
+                matchup={m}
+                layout={AFC_R1_SLOTS[slot]}
+                isDark={isDark}
+              />
+            ) : null,
+          )}
+
+          {bracket.afc.divisional.map((m, i) => (
             <MatchupCard
-              key={`afc-r1-${slot}`}
+              key={`afc-r2-${i}`}
               matchup={m}
-              layout={AFC_R1_SLOTS[slot]}
+              layout={AFC_R2[i]}
               isDark={isDark}
             />
-          ) : null,
-        )}
+          ))}
 
-        {bracket.afc.divisional.map((m, i) => (
-          <MatchupCard
-            key={`afc-r2-${i}`}
-            matchup={m}
-            layout={AFC_R2[i]}
-            isDark={isDark}
-          />
-        ))}
-
-        {bracket.afc.conference.map((m, i) => (
-          <MatchupCard
-            key={`afc-r3-${i}`}
-            matchup={m}
-            layout={AFC_R3}
-            isDark={isDark}
-          />
-        ))}
-
-        {nfcR1BySlot.map((m, slot) =>
-          m ? (
+          {bracket.afc.conference.map((m, i) => (
             <MatchupCard
-              key={`nfc-r1-${slot}`}
+              key={`afc-r3-${i}`}
               matchup={m}
-              layout={NFC_R1_SLOTS[slot]}
+              layout={AFC_R3}
               isDark={isDark}
             />
-          ) : null,
-        )}
+          ))}
 
-        {bracket.nfc.divisional.map((m, i) => (
-          <MatchupCard
-            key={`nfc-r2-${i}`}
-            matchup={m}
-            layout={NFC_R2[i]}
-            isDark={isDark}
-          />
-        ))}
+          {nfcR1BySlot.map((m, slot) =>
+            m ? (
+              <MatchupCard
+                key={`nfc-r1-${slot}`}
+                matchup={m}
+                layout={NFC_R1_SLOTS[slot]}
+                isDark={isDark}
+              />
+            ) : null,
+          )}
 
-        {bracket.nfc.conference.map((m, i) => (
-          <MatchupCard
-            key={`nfc-r3-${i}`}
-            matchup={m}
-            layout={NFC_R3}
-            isDark={isDark}
-          />
-        ))}
+          {bracket.nfc.divisional.map((m, i) => (
+            <MatchupCard
+              key={`nfc-r2-${i}`}
+              matchup={m}
+              layout={NFC_R2[i]}
+              isDark={isDark}
+            />
+          ))}
 
-        {bracket.superBowl?.[0] && (
-          <MatchupCard
-            matchup={bracket.superBowl[0]}
-            layout={FINALS_LAYOUT}
-            isDark={isDark}
-            finals
-          />
-        )}
-      </View>
+          {bracket.nfc.conference.map((m, i) => (
+            <MatchupCard
+              key={`nfc-r3-${i}`}
+              matchup={m}
+              layout={NFC_R3}
+              isDark={isDark}
+            />
+          ))}
+
+          {bracket.superBowl?.[0] && (
+            <MatchupCard
+              matchup={bracket.superBowl[0]}
+              layout={FINALS_LAYOUT}
+              isDark={isDark}
+              finals
+            />
+          )}
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 }

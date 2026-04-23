@@ -38,7 +38,7 @@ export type Game = {
   time: string;
   home: NBATeam;
   away: NBATeam;
-  scores?: { home: { points: number }; visitors: { points: number } };
+  scores?: { home: { points: number }; away: { points: number } };
   homeScore?: number;
   awayScore?: number;
   period?: string;

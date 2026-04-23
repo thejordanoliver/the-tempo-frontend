@@ -1,5 +1,6 @@
 import { Colors } from "constants/styles";
 import { getMLBTeam } from "constants/teamsMLB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { memo } from "react";
@@ -11,7 +12,9 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../GameDetails/BasesIndicator";
 
-function MLBSquareGameCard({ game, isDark }: BaseballGameCardProps) {
+function MLBSquareGameCard({ game }: BaseballGameCardProps) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
 
   /* ===============================

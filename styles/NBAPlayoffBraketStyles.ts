@@ -29,9 +29,8 @@ export const getCenteredX = (col: number, width: number) =>
 
 export const nbaPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
-    scrollContent: {
+    container: {
       paddingHorizontal: 12,
-      paddingTop: 14,
     },
     canvas: {
       width: CANVAS_WIDTH,

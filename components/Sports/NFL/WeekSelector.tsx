@@ -27,12 +27,12 @@ const ITEM_WIDTH = 80;
 const SPACING = 12;
 
 const LABEL_OVERRIDES: Record<string, string> = {
-  "Conference Championships": "Conf Champ",
+  "Conference Championship": "Conf Champ",
   "Divisional Round": "Div Round",
   "Hall of Fame Weekend": "HOF Week",
-  "Pre Season Week 1": "Pre Week 1",
-  "Pre Season Week 2": "Pre Week 2",
-  "Pre Season Week 3": "Pre Week 3",
+  "Preseason Week 1": "Pre Week 1",
+  "Preseason Week 2": "Pre Week 2",
+  "Preseason Week 3": "Pre Week 3",
 };
 
 export default function WeekSelector({

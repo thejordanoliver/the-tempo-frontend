@@ -25,9 +25,8 @@ export const CANVAS_HEIGHT = 840;
 
 export const nflPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
-    scrollContent: {
+       container: {
       paddingHorizontal: 12,
-      paddingTop: 14,
     },
     canvas: {
       width: CANVAS_WIDTH,
@@ -81,6 +80,7 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
       textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
     },
     teamLogo: {
       width: 34,
@@ -91,6 +91,7 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
       marginLeft: 4,
       fontFamily: Fonts.OSBOLD,
       fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
     winsBadge: {
       minWidth: 30,

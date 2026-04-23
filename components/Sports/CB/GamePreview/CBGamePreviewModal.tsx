@@ -1,31 +1,26 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getCBTeamLogo } from "constants/teamsCB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
-import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
-import { useWeatherForecast } from "hooks/useWeather";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { MLBGame } from "types/baseball";
-import { resolveVenue } from "utils/games";
+import { CollegeBaseballGame } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
-import { getGameDate } from "utils/nflGameCardUtils";
 import { GameInfo } from "./CenterInfo";
-import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
-  game: MLBGame;
+  game: CollegeBaseballGame;
   visible: boolean;
   onClose: () => void;
 };
 
-export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
+export default function CBGamePreviewModal({ game, visible, onClose }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -33,25 +28,22 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   /* ==================================================
      GAME DATA
   ================================================== */
-  const { teams, timestamp, scores } = game;
-  const { home, away } = teams;
+  const { homeTeam, awayTeam } = game;
 
-  const {
-    date,
-    iso: gameDateStr,
-    formattedDate,
-    formattedTime,
-  } = getGameDate(timestamp);
+  const gameDateObj = new Date(game.date);
+  const formattedDate = gameDateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
-  /* ==================================================
-     INTERNAL TEAM MAPPING
-     ================================================== */
+  const formattedTime = gameDateObj.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
-  const homeId = home?.id;
-  const awayId = away?.id;
-
-  const homeTeam = getMLBTeam(homeId);
-  const awayTeam = getMLBTeam(awayId);
+  const homeId = homeTeam?.id;
+  const awayId = awayTeam?.id;
 
   const homeName = homeTeam?.code ?? "";
   const awayName = awayTeam?.code ?? "";
@@ -59,20 +51,17 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const homeEspnId = homeTeam?.espnID;
-  const awayEspnId = awayTeam?.espnID;
-
-  const homeLogo = getMLBTeamLogo(homeTeam?.id ?? 0, true);
-  const awayLogo = getMLBTeamLogo(awayTeam?.id ?? 0, true);
+  const homeLogo = getCBTeamLogo(homeTeam?.id ?? 0, true);
+  const awayLogo = getCBTeamLogo(awayTeam?.id ?? 0, true);
 
   /* ==================================================
      LIVE GAME DETAILS
   ================================================== */
   const { score: liveScore, details } = useBaseballGameDetails(
-    "mlb",
-    String(awayEspnId),
-    String(homeEspnId),
-    gameDateStr,
+    "cb",
+    String(awayId),
+    String(homeId),
+    game.startDate,
   );
 
   const isLiveScoreReady = !!liveScore;
@@ -101,8 +90,8 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
   const playerStats = liveScore?.playerStats ?? [];
-  const homeScore = liveScore?.home.total ?? game.scores.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? game.scores.away.total ?? 0;
+  const homeScore = game.homeTeam.score ?? 0;
+  const awayScore = game.awayTeam.score ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const period = liveScore?.period;
@@ -123,37 +112,12 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
       third: false,
     };
 
-  const homeTeamPlayersData = usePlayersByTeam(String(homeId));
-  const awayTeamPlayersData = usePlayersByTeam(String(awayId));
-
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
-
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: venue,
-        homeTeam: homeTeam,
-        isNeutralSite: neutralSite,
-        league: "MLB",
-      }),
-    [venue, homeTeam, neutralSite],
-  );
-
-  const { weather, weatherLoading, weatherError } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateStr,
-  );
 
   useEffect(() => {
     visible ? sheetRef.current?.present() : sheetRef.current?.dismiss();
@@ -220,7 +184,6 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
                   side="away"
-                  team={away}
                   logo={awayLogo}
                   name={awayName}
                   score={awayScore}
@@ -243,7 +206,6 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
 
                 <TeamInfo
                   side="home"
-                  team={home}
                   logo={homeLogo}
                   name={homeName}
                   score={homeScore}
@@ -252,31 +214,6 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
                   gameStatusDescription={gameStatusDescription}
                 />
               </View>
-
-              {/* --- Scrollable Content --- */}
-              {!dontShowDetails && (
-                <GamePreviewContent
-                  gameStatusDescription={gameStatusDescription}
-                  game={game}
-                  home={homeTeam}
-                  away={awayTeam}
-                  homeChance={homeChance}
-                  awayChance={awayChance}
-                  lineScore={lineScore}
-                  injuries={injuries}
-                  officials={officials}
-                  teamPlayersMap={teamPlayersMap}
-                  resolvedVenueImage={resolvedVenue.image}
-                  resolvedVenueName={resolvedVenue.name}
-                  resolvedVenueCity={resolvedVenue.city}
-                  resolvedVenueAddress={resolvedVenue.address}
-                  resolvedVenueCapacity={resolvedVenue.capacity}
-                  weather={weather}
-                  weatherLoading={weatherLoading}
-                  weatherError={weatherError}
-                  isDark={isDark}
-                />
-              )}
             </>
           )}
         </BlurView>

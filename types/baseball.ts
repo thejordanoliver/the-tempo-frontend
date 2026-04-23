@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export interface MLBTeam {
   id: number;
   espnID: number;
@@ -91,3 +93,83 @@ export interface MLBPlayer {
   teamId: string;
   imageUrl: string;
 }
+
+export type CollegeBaseballTeam = {
+  id: number;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  color: string | null;
+  logo: ImageSourcePropType;
+  logoLight?: ImageSourcePropType;
+  isActive: boolean;
+  isAllStar: boolean;
+};
+
+export type CollegeBaseballGame = {
+  id: string;
+  uid: string;
+  name: string;
+  shortName: string;
+  date: string;
+  startDate: string;
+  timestamp: number;
+  status: {
+    state: string;
+    description: string;
+    detail: string;
+    shortDetail: string;
+    period: number;
+    completed: boolean;
+  };
+  venue: {
+    id: string;
+    name: string;
+    city: string;
+    state: string;
+    indoor: boolean;
+  };
+  broadcasts: [];
+  geoBroadcasts: [];
+  innings: 9;
+  homeTeam: {
+    id: string;
+    uid: string;
+    name: string;
+    code: string;
+    location: string;
+    logo: any;
+    color: string;
+    score: number;
+    hits: number;
+    errors: number;
+    record: string;
+  };
+  awayTeam: {
+    id: string;
+    uid: string;
+    name: string;
+    code: string;
+    location: string;
+    logo: any;
+    color: string;
+    score: number;
+    hits: number;
+    errors: number;
+    record: string;
+  };
+  isConferenceGame: boolean;
+  isNeutralSite: boolean;
+  attendance: number;
+  playByPlayAvailable: boolean;
+  recent: true;
+  wasSuspended: boolean;
+  raw: {
+    eventId: string;
+    competitionId: string;
+  };
+};
+export type CollegeBaseballGameCardProps = {
+  game: CollegeBaseballGame;
+};

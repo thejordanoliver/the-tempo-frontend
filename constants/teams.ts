@@ -1,4 +1,4 @@
-import { NBATeam } from "types/types";
+import { NBATeam } from "types/nba";
 // Logos
 import SixersLogo from "../assets/Logos/76ers.png";
 import SixersLogoLight from "../assets/Logos/76ersLight.png";
@@ -108,6 +108,7 @@ export const teams: NBATeam[] = [
     code: "ATL",
     location: "Atlanta, GA",
     logo: HawksLogo,
+    logoLight: HawksLogo,
     color: "rgba(224, 58, 62, 1)",
     secondaryColor: "rgba(193, 211, 47, 1)",
     venueImage:
@@ -135,6 +136,7 @@ export const teams: NBATeam[] = [
     code: "BOS",
     location: "Boston, MA",
     logo: CelticsLogo,
+    logoLight: CelticsLogo,
     color: "rgba(0, 122, 51, 1)",
     secondaryColor: "rgba(255, 255, 255, 1)",
     venueImage:
@@ -162,6 +164,7 @@ export const teams: NBATeam[] = [
     code: "BKN",
     location: "Brooklyn, NY",
     logo: NetsLogo,
+    logoLight: NetsLogo,
     color: "rgba(0, 0, 0, 1)",
     secondaryColor: "rgba(255, 255, 255, 1)",
     venueImage:
@@ -189,6 +192,7 @@ export const teams: NBATeam[] = [
     code: "CHA",
     location: "Charlotte, NC",
     logo: HornetsLogo,
+    logoLight: HornetsLogo,
     color: "rgba(29, 17, 96, 1)",
     secondaryColor: "rgba(0, 120, 140, 1)",
     venueImage:
@@ -216,6 +220,7 @@ export const teams: NBATeam[] = [
     code: "CHI",
     location: "Chicago, IL",
     logo: BullsLogo,
+    logoLight: BullsLogo,
     color: "rgba(206, 17, 65, 1)",
     secondaryColor: "rgba(0, 0, 0, 1)",
     venueImage:
@@ -243,6 +248,7 @@ export const teams: NBATeam[] = [
     code: "CLE",
     location: "Cleveland, OH",
     logo: CavaliersLogo,
+    logoLight: CavaliersLogo,
     color: "#860038",
     secondaryColor: "rgba(253, 187, 48, 1)",
     venueImage:
@@ -270,6 +276,7 @@ export const teams: NBATeam[] = [
     code: "DAL",
     location: "Dallas, TX",
     logo: MavericksLogo,
+    logoLight: MavericksLogo,
     color: "rgb(0, 83, 188)",
     secondaryColor: "rgb(255, 255, 255)",
     venueImage:
@@ -297,6 +304,7 @@ export const teams: NBATeam[] = [
     code: "DEN",
     location: "Denver, CO",
     logo: NuggetsLogo,
+    logoLight: NuggetsLogo,
     color: "rgba(13, 34, 64, 1)",
     secondaryColor: "rgba(255, 198, 39, 1)",
     venueImage:
@@ -324,6 +332,7 @@ export const teams: NBATeam[] = [
     code: "DET",
     location: "Detroit, MI",
     logo: PistonsLogo,
+    logoLight: PistonsLogo,
     color: "rgba(200, 16, 46, 1)",
     secondaryColor: "rgba(29, 66, 138, 1)",
     venueImage:
@@ -351,6 +360,7 @@ export const teams: NBATeam[] = [
     code: "GSW",
     location: "San Francisco, CA",
     logo: WarriorsLogo,
+    logoLight: WarriorsLogo,
     color: "rgba(29, 66, 138, 1)",
     secondaryColor: "rgba(255, 199, 44, 1)",
     venueImage:
@@ -406,6 +416,7 @@ export const teams: NBATeam[] = [
     code: "IND",
     location: "Indianapolis, IN",
     logo: PacersLogo,
+    logoLight: PacersLogo,
     color: "rgba(0, 45, 98, 1)",
     secondaryColor: "rgba(255, 198, 39, 1)",
     venueImage:
@@ -433,6 +444,7 @@ export const teams: NBATeam[] = [
     code: "LAC",
     location: "Los Angeles, CA",
     logo: ClippersLogo,
+    logoLight: ClippersLogo,
     color: "rgba(200, 16, 46, 1)",
     secondaryColor: "rgba(29, 66, 148, 1)",
     venueImage:
@@ -460,6 +472,7 @@ export const teams: NBATeam[] = [
     code: "LAL",
     location: "Los Angeles, CA",
     logo: LakersLogo,
+    logoLight: LakersLogo,
     color: "#552582",
     secondaryColor: "rgba(253, 185, 39, 1)",
     venueImage:
@@ -487,6 +500,7 @@ export const teams: NBATeam[] = [
     code: "MEM",
     location: "Memphis, TN",
     logo: GrizzliesLogo,
+    logoLight: GrizzliesLogo,
     color: "rgba(18, 23, 63, 1)",
     secondaryColor: "#5d76a9",
     venueImage:
@@ -514,6 +528,7 @@ export const teams: NBATeam[] = [
     code: "MIA",
     location: "Miami, FL",
     logo: HeatLogo,
+    logoLight: HeatLogo,
     color: "#98002e",
     secondaryColor: "rgba(0, 0, 0, 1)",
     venueImage:
@@ -541,6 +556,7 @@ export const teams: NBATeam[] = [
     code: "MIL",
     location: "Milwaukee, WI",
     logo: BucksLogo,
+    logoLight: BucksLogo,
     color: "#00471b",
     secondaryColor: "rgba(240, 235, 210, 1)",
     venueImage:
@@ -568,6 +584,7 @@ export const teams: NBATeam[] = [
     code: "MIN",
     location: "Minneapolis, MN",
     logo: TimberwolvesLogo,
+    logoLight: TimberwolvesLogo,
     color: "#0c2340",
     secondaryColor: "rgba(120, 190, 32, 1)",
     venueImage:
@@ -596,6 +613,7 @@ export const teams: NBATeam[] = [
     code: "NOP",
     location: "New Orleans, LA",
     logo: PelicansLogo,
+    logoLight: PelicansLogo,
     color: "#001641",
     secondaryColor: "rgba(227, 24, 55, 1)",
     venueImage:
@@ -623,6 +641,7 @@ export const teams: NBATeam[] = [
     code: "NYK",
     location: "New York, NY",
     logo: KnicksLogo,
+    logoLight: KnicksLogo,
     color: "rgba(0, 114, 206, 1)",
     secondaryColor: "rgba(245, 132, 38, 1)",
     venueImage:
@@ -650,6 +669,7 @@ export const teams: NBATeam[] = [
     code: "OKC",
     location: "Oklahoma City, OK",
     logo: ThunderLogo,
+    logoLight: ThunderLogo,
     color: "rgba(0, 124, 195, 1)",
     secondaryColor: "rgba(239, 59, 36, 1)",
     venueImage:
@@ -678,6 +698,7 @@ export const teams: NBATeam[] = [
     code: "ORL",
     location: "Orlando, FL",
     logo: MagicLogo,
+    logoLight: MagicLogo,
     color: "rgba(32, 80, 175, 1)",
     secondaryColor: "rgb(255, 255, 255)",
     venueImage:
@@ -733,6 +754,7 @@ export const teams: NBATeam[] = [
     code: "PHX",
     location: "Phoenix, AZ",
     logo: SunsLogo,
+    logoLight: SunsLogo,
     color: "rgba(29, 17, 96, 1)",
     secondaryColor: "rgba(229, 96, 32, 1)",
     venueImage:
@@ -760,6 +782,7 @@ export const teams: NBATeam[] = [
     code: "POR",
     location: "Portland, OR",
     logo: TrailBlazersLogo,
+    logoLight: TrailBlazersLogo,
     color: "#e03a3e",
     secondaryColor: "rgba(0, 0, 0, 1)",
     venueImage:
@@ -787,6 +810,7 @@ export const teams: NBATeam[] = [
     code: "SAC",
     location: "Sacramento, CA",
     logo: KingsLogo,
+    logoLight: KingsLogo,
     color: "#5b2b82",
     secondaryColor: "rgba(99, 113, 122, 1)",
     venueImage:
@@ -814,6 +838,7 @@ export const teams: NBATeam[] = [
     code: "SAS",
     location: "San Antonio, TX",
     logo: SpursLogo,
+    logoLight: SpursLogo,
     color: "rgba(0, 0, 0, 1)",
     secondaryColor: "rgba(196,206,211, 1)",
     venueImage:
@@ -897,6 +922,7 @@ export const teams: NBATeam[] = [
     code: "WAS",
     location: "Washington, DC",
     logo: WizardsLogo,
+    logoLight: WizardsLogo,
     color: "rgb(0, 43, 92)",
     secondaryColor: "rgba(227, 24, 55, 1)",
     venueImage:
@@ -928,6 +954,7 @@ export const getNBATeam = (id: number | string) => {
   if (id == null) return undefined;
   return teams.find((t) => String(t.id) === String(id));
 };
+
 export function getTeamLogo(id: number | string | undefined, isDark: boolean) {
   if (!id) return PlaceholderLogo;
 

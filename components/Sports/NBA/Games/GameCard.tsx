@@ -69,7 +69,7 @@ export default function GameCard({ game }: { game: Game }) {
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
-    liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+    liveScore?.away.total ?? game.scores?.away?.points ?? game.awayScore;
 
   const gameStatusDescription = liveScore?.gameStatusDescription;
   const gameStatusDetail = liveScore?.gameStatusDetail;

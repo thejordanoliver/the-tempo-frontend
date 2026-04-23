@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
-import { getMLBTeam } from "constants/teamsMLB";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -8,12 +8,12 @@ import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { BaseballGameCardProps } from "types/baseball";
+import { CollegeBaseballGameCardProps } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
-import BasesIndicator from "../GameDetails/BasesIndicator";
+import BasesIndicator from "../../MLB/GameDetails/BasesIndicator";
 
-function MLBGameCard({ game }: BaseballGameCardProps) {
+function CBStackedGameCard({ game }: CollegeBaseballGameCardProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
@@ -33,35 +33,30 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
   /* ===============================
      BASIC GAME FIELDS FROM API
   =============================== */
-  const home = game?.teams.home;
-  const away = game?.teams.away;
+  const home = game?.homeTeam;
+  const away = game?.awayTeam;
 
   // Find matching internal teams using ESPN ID
-  const homeTeam = getMLBTeam(home?.id);
-  const awayTeam = getMLBTeam(away?.id);
+  const homeTeam = getCBTeam(home?.id);
+  const awayTeam = getCBTeam(away?.id);
 
   const homeName = homeTeam?.name;
   const awayName = awayTeam?.name;
 
-  const homeLogo = isDark ? homeTeam?.logoLight : homeTeam?.logo;
-  const awayLogo = isDark ? awayTeam?.logoLight : awayTeam?.logo;
-  const homeEspnId = homeTeam?.espnID;
-  const awayEspnId = awayTeam?.espnID;
+  const homeLogo = getCBTeamLogo(homeTeam?.id, isDark);
+  const awayLogo = getCBTeamLogo(awayTeam?.id, isDark);
 
   const { score: liveScore, details } = useBaseballGameDetails(
-    "mlb",
-    String(awayEspnId),
-    String(homeEspnId),
+    "cb",
+    String(homeTeam?.id),
+    String(awayTeam?.id),
     gameDateStr,
   );
   const isChampionship = details?.playoffRound === "World Series";
   const styles = GameCardStyles(isDark, isChampionship);
-  const isSpringTraining = game.league.name === "MLB - Spring Training";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const headline = details?.headline;
-  const seriesSummary = details?.seriesSummary;
-  const seasonState = details?.seasonState;
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.statusText ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -72,8 +67,8 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
-  const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
-  const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
+  const homeScore = game?.homeTeam?.score ?? 0;
+  const awayScore = game?.awayTeam?.score ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const isTopInning = gameStatusDetail.includes("Top");
@@ -84,7 +79,6 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
       second: false,
       third: false,
     };
- 
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -242,4 +236,4 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
   );
 }
 
-export default memo(MLBGameCard);
+export default memo(CBStackedGameCard);

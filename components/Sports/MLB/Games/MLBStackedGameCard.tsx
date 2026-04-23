@@ -5,6 +5,7 @@ import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 
 import { memo } from "react";
 
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { BaseballGameCardProps } from "types/baseball";
@@ -12,7 +13,9 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../GameDetails/BasesIndicator";
 
-function MLBStackedGameCard({ game, isDark }: BaseballGameCardProps) {
+function MLBStackedGameCard({ game }: BaseballGameCardProps) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
 
   /* ===============================

@@ -4,21 +4,23 @@ import { apiClient } from "utils/apiClient";
 
 type UseNFLBracketResult = {
   playoffData: BracketApiResponse["bracket"] | null;
-  playoffsLoading: boolean;
+  playoffLoading: boolean;
   playoffError: string | null;
-  refetch: () => Promise<void>;
+  playoffRefreshing: boolean;
+  onRefresh: () => Promise<void>;
 };
 
 export const useNFLBracket = (season: number): UseNFLBracketResult => {
   const [playoffData, setPlayoffData] = useState<
     BracketApiResponse["bracket"] | null
   >(null);
-  const [playoffsLoading, setPlayoffsLoading] = useState(false);
+  const [playoffLoading, setPlayoffLoading] = useState(false);
   const [playoffError, setPlayoffError] = useState<string | null>(null);
+  const [playoffRefreshing, setPlayoffRefreshing] = useState<boolean>(false);
 
-  const fetchBracket = useCallback(async () => {
+  const fetchPlayoffs = useCallback(async () => {
     try {
-      setPlayoffsLoading(true);
+      setPlayoffLoading(true);
       setPlayoffError(null);
 
       const res = await apiClient.get<BracketApiResponse>(
@@ -29,18 +31,26 @@ export const useNFLBracket = (season: number): UseNFLBracketResult => {
     } catch (err: any) {
       setPlayoffError(err?.message ?? "Failed to load bracket");
     } finally {
-      setPlayoffsLoading(false);
+      setPlayoffLoading(false);
     }
   }, [season]);
 
   useEffect(() => {
-    fetchBracket();
-  }, [fetchBracket]);
+    fetchPlayoffs();
+  }, [fetchPlayoffs]);
+
+  /* pull to refresh handler */
+  const onRefresh = useCallback(async () => {
+    setPlayoffRefreshing(true);
+    await fetchPlayoffs();
+    setPlayoffRefreshing(false);
+  }, [fetchPlayoffs]);
 
   return {
     playoffData,
-    playoffsLoading,
+    playoffLoading,
     playoffError,
-    refetch: fetchBracket,
+    playoffRefreshing,
+    onRefresh,
   };
 };

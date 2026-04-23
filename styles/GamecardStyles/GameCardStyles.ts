@@ -150,7 +150,7 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     clock: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },

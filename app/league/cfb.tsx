@@ -2,18 +2,17 @@ import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/AwardSeasons";
 import NewsList from "components/News/NewsList";
-import { CFBPlayoffBracket } from "components/Sports/CFB/Playoffs/CFBPlayoffBracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "components/Sports/CFB/ConferenceListModal";
 import CFBGamesList from "components/Sports/CFB/Games/CFBGamesList";
+import { CFBPlayoffBracket } from "components/Sports/CFB/Playoffs/CFBPlayoffBracket";
 import RecruitsList from "components/Sports/CFB/Recruiting/RecruitsList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -228,6 +227,7 @@ export default function CFBLeagueScreen() {
               />
             </ScrollView>
           </View>
+          
           {/* STANDINGS */}
           <View key="standings">
             <>
@@ -240,6 +240,7 @@ export default function CFBLeagueScreen() {
               )}
             </>
           </View>
+
           {/* STATS */}
           <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList
@@ -252,19 +253,14 @@ export default function CFBLeagueScreen() {
           </View>
 
           {/* PLAYOFFS */}
-          <ScrollView
-            key="playoffs"
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={playoffRefreshing}
-                onRefresh={onRefresh}
-                tintColor={isDark ? Colors.white : Colors.black}
-              />
-            }
-          >
-            <CFBPlayoffBracket bracket={bracketData} loading={playoffLoading} />
-          </ScrollView>
+          <View key="playoffs" style={styles.contentArea}>
+            <CFBPlayoffBracket
+              bracket={bracketData}
+              loading={playoffLoading}
+              refreshing={playoffRefreshing}
+              onRefresh={onRefresh}
+            />
+          </View>
 
           <View key="recruits" style={styles.contentArea}>
             <RecruitsList

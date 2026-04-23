@@ -11,15 +11,15 @@ const isValidSeries = (s: unknown): s is PlayoffSeries => {
 
 /* ================= HOOK ================= */
 
-export const useNBAPlayoffSeries = (season: number) => {
+export const usePlayoffGames = (season: number) => {
   const [data, setData] = useState<PlayoffResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [playoffsLoading, setPlayoffsLoading] = useState(false);
+  const [playoffsError, setPlayoffsError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchPlayoffs = useCallback(async () => {
     try {
-      setError(null);
+      setPlayoffsError(null);
 
       const res = await apiClient.get<PlayoffResponse>(
         `/api/games/nba/playoffs/${season}`,
@@ -27,30 +27,29 @@ export const useNBAPlayoffSeries = (season: number) => {
 
       setData(res.data);
     } catch (err: any) {
-      setError(err?.message || "Failed to fetch playoff data");
+      setPlayoffsError(err?.message || "Failed to fetch playoff data");
     }
-  }, []);
+  }, [season]);
 
-  /* initial load */
   useEffect(() => {
     if (!season) return;
 
-    let isMounted = true;
+    const controller = new AbortController();
 
     const load = async () => {
       try {
-        setLoading(true);
+        setPlayoffsLoading(true);
         await fetchPlayoffs();
       } finally {
-        if (isMounted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setPlayoffsLoading(false);
+        }
       }
     };
 
     load();
 
-    return () => {
-      isMounted = false;
-    };
+    return () => controller.abort();
   }, [season, fetchPlayoffs]);
 
   /* pull to refresh handler */
@@ -85,9 +84,9 @@ export const useNBAPlayoffSeries = (season: number) => {
     westSeries,
     allGames,
     bracket,
-    loading,
+    playoffsLoading,
     refreshing,
-    error,
+    playoffsError,
     onRefresh,
   };
 };

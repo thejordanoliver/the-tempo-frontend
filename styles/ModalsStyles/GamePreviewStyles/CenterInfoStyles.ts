@@ -7,23 +7,23 @@ export const CenterInfoStyles = StyleSheet.create({
     alignItems: "center",
   },
   date: {
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: Fonts.OSREGULAR,
     color: Colors.dark.white,
   },
   time: {
     fontFamily: Fonts.OSREGULAR,
     color: Colors.dark.white,
-    fontSize: 18,
+    fontSize: 14,
   },
   period: {
     fontFamily: Fonts.OSMEDIUM,
-    fontSize: 18,
+    fontSize: 14,
     color: Colors.dark.white,
   },
   clock: {
     fontFamily: Fonts.OSMEDIUM,
-    fontSize: 18,
+    fontSize: 14,
     color: Colors.dark.white,
     textAlign: "center",
   },
@@ -36,7 +36,7 @@ export const CenterInfoStyles = StyleSheet.create({
   },
   finalText: {
     fontFamily: Fonts.OSMEDIUM,
-    fontSize: 18,
+    fontSize: 14,
     color: Colors.dark.lightRed,
     textAlign: "center",
   },

@@ -6,9 +6,11 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
-import CBBLogo from "assets/College_Logos/CBB.png";
-import CFBLogo from "assets/College_Logos/CFB.png";
-import WCBBLogo from "assets/College_Logos/WCBB.png";
+import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
+import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
+import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
+import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
+import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
@@ -39,6 +41,8 @@ const leagues: LeagueType[] = [
   "WNBA",
   "NFL",
   "CFB",
+  "CB",
+  "SB",
   "CBB",
   "WCBB",
   "MLB",
@@ -50,6 +54,8 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
   WNBA: { label: "WNBA", logo: WNBALogo },
   NFL: { label: "NFL", logo: NFLLogo },
   CFB: { label: "College Football", logo: CFBLogo },
+  CB: { label: "College Baseball", logo: CBLogo },
+  SB: { label: "College Softball", logo: SBLogo },
   CBB: { label: "Men's College Basketball", logo: CBBLogo },
   WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
   MLB: { label: "MLB", logo: MLBLogo },
@@ -77,6 +83,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       | "/league/nba"
       | "/league/wnba"
       | "/league/nfl"
+      | "/league/cb"
       | "/league/cfb"
       | "/league/cbb"
       | "/league/wcbb"
@@ -97,15 +104,17 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
               ? "/league/nfl"
               : league === "CFB"
                 ? "/league/cfb"
-                : league === "CBB"
-                  ? "/league/cbb"
-                  : league === "WCBB"
-                    ? "/league/wcbb"
-                    : league === "NHL"
-                      ? "/league/nhl"
-                      : league === "MMA"
-                        ? "/league/mma"
-                        : "/league/mlb";
+                : league === "CB"
+                  ? "/league/cb"
+                  : league === "CBB"
+                    ? "/league/cbb"
+                    : league === "WCBB"
+                      ? "/league/wcbb"
+                      : league === "NHL"
+                        ? "/league/nhl"
+                        : league === "MMA"
+                          ? "/league/mma"
+                          : "/league/mlb";
       router.push(route);
       onSelect(league);
     };

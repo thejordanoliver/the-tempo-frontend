@@ -6,24 +6,25 @@ import cfpTrophy from "assets/College_Logos/cfptrophy.webp";
 import ChampionTape from "assets/Placeholders/ChampionTape.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
 import { BracketData } from "types/football";
 import { GameCard } from "./GameCard";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const CARD_WIDTH = 176;
 const CARD_HEIGHT = 142;
-const CHAMPIONSHIP_HEIGHT = 178;
-const COL_WIDTH = 220;
-const COL_GAP = 20;
 const LABEL_WIDTH = 200;
 const LABEL_TOP = 28;
 const H_PAD = 16;
-const CANVAS_HEIGHT = 820;
+const CHAMPIONSHIP_HEIGHT = 178;
+const CARD_WIDTH = 176;
+const CANVAS_HEIGHT = 840;
+const COL_WIDTH = 220;
+const COL_GAP = 20;
 
 const COLS = {
   FIRST_ROUND: 0,
@@ -34,8 +35,6 @@ const COLS = {
 
 type CardLayout = { x: number; y: number; width: number; height: number };
 
-// ─── Layout helpers ───────────────────────────────────────────────────────────
-
 const getX = (col: number) => H_PAD + col * (COL_WIDTH + COL_GAP);
 const getColCenter = (col: number) => getX(col) + COL_WIDTH / 2;
 const getCenteredX = (col: number, width: number) =>
@@ -43,9 +42,6 @@ const getCenteredX = (col: number, width: number) =>
 const centerY = (layout: CardLayout) => layout.y + layout.height / 2;
 const rightX = (layout: CardLayout) => layout.x + layout.width;
 
-// Returns the horizontal midpoint of a round's actual game cards.
-// First Round cards are left-aligned at getX(0), so their center differs from
-// getColCenter(0) — 104 vs 126. Every other round is centered in its column.
 const getCardCenter = (col: number) => {
   if (col === COLS.FIRST_ROUND) return getX(COLS.FIRST_ROUND) + CARD_WIDTH / 2;
   return getColCenter(col);
@@ -89,10 +85,6 @@ const QUARTERFINAL_LAYOUTS: CardLayout[] = [
   },
 ];
 
-// SF Y = midpoint of each QF pair's centerY
-// QF centerY: 155, 325, 495, 665
-// SF[0]: (155+325)/2 = 240 → y = 240 - 71 = 169
-// SF[1]: (495+665)/2 = 580 → y = 580 - 71 = 509
 const SEMIFINAL_LAYOUTS: CardLayout[] = [
   {
     x: getCenteredX(COLS.SEMIFINALS, CARD_WIDTH),
@@ -108,8 +100,6 @@ const SEMIFINAL_LAYOUTS: CardLayout[] = [
   },
 ];
 
-// Championship Y = midpoint of SF pair's centerY
-// SF centerY: 240, 580 → midpoint = 410 → y = 410 - 89 = 321
 const CHAMPIONSHIP_LAYOUT: CardLayout = {
   x: getCenteredX(COLS.CHAMPIONSHIP, CARD_WIDTH),
   y: 321,
@@ -128,15 +118,13 @@ function getChampion(bracket: BracketData | null) {
   const { top, bottom } = game;
   if (!top || !bottom) return null;
 
-  return (game.topScore ?? 0) > (game.bottomScore ?? 0)
-    ? top
-    : bottom;
+  return (game.topScore ?? 0) > (game.bottomScore ?? 0) ? top : bottom;
 }
 // ─── ConnectorLayer ───────────────────────────────────────────────────────────
 
 const ConnectorLayer = React.memo(({ isDark }: { isDark: boolean }) => {
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
-  const styles = useMemo(() => bracketStyles(isDark), [isDark]);
+  const styles = bracketStyles;
 
   // Straight horizontal bridge: each source card feeds one target at the same Y.
   // Used for First Round → Quarterfinals.
@@ -238,7 +226,7 @@ const RoundLabel = ({
   col: number;
   isDark: boolean;
 }) => {
-  const styles = useMemo(() => bracketStyles(isDark), [isDark]);
+  const styles = bracketStyles;
   return (
     <Text
       style={[
@@ -260,20 +248,21 @@ const RoundLabel = ({
 export function CFBPlayoffBracket({
   bracket,
   loading,
+  refreshing,
+  onRefresh,
 }: {
   bracket: BracketData | null;
   loading: boolean;
+  refreshing: any;
+  onRefresh: any;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => bracketStyles(isDark), [isDark]);
+  const styles = bracketStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-
   const winner = useMemo(() => getChampion(bracket), [bracket]);
   const winnerTeam = getTeamByESPNId(winner?.espnID ?? 0);
-  const winnerLogo = isDark
-    ? (winnerTeam?.logoLight ?? winnerTeam?.logo)
-    : winnerTeam?.logo;
+  const winnerLogo = getCFBTeamLogo(winnerTeam.id, isDark)
   const cfpLogo = useMemo(() => (isDark ? CFPLogoLight : CFPLogo), [isDark]);
 
   if (loading) {
@@ -288,198 +277,215 @@ export function CFBPlayoffBracket({
 
   return (
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}
-      snapToAlignment="center"
-      snapToInterval={COL_WIDTH + COL_GAP}
-      decelerationRate="fast"
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={isDark ? Colors.white : Colors.black}
+        />
+      }
     >
-      <View
-        style={[styles.canvas, { width: CANVAS_WIDTH, height: CANVAS_HEIGHT }]}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
       >
-        <RoundLabel
-          title="FIRST ROUND"
-          col={COLS.FIRST_ROUND}
-          isDark={isDark}
-        />
-        <RoundLabel
-          title="QUARTERFINALS"
-          col={COLS.QUARTERFINALS}
-          isDark={isDark}
-        />
-        <RoundLabel title="SEMIFINALS" col={COLS.SEMIFINALS} isDark={isDark} />
-
         <View
           style={[
-            styles.champLabelRow,
-            {
-              top: LABEL_TOP,
-              left: champCenter - LABEL_WIDTH / 2,
-            },
+            styles.canvas,
+            { width: CANVAS_WIDTH, height: CANVAS_HEIGHT },
           ]}
         >
-          <Image source={cfpLogo} style={styles.cfpLogo} resizeMode="contain" />
-          <Text style={styles.champLabelText}>{"NATIONAL CHAMPIONSHIP"}</Text>
-        </View>
+          <RoundLabel
+            title="FIRST ROUND"
+            col={COLS.FIRST_ROUND}
+            isDark={isDark}
+          />
+          <RoundLabel
+            title="QUARTERFINALS"
+            col={COLS.QUARTERFINALS}
+            isDark={isDark}
+          />
+          <RoundLabel
+            title="SEMIFINALS"
+            col={COLS.SEMIFINALS}
+            isDark={isDark}
+          />
 
-        <ConnectorLayer isDark={isDark} />
-
-        {bracket?.first.games.map((game, i) => {
-          const layout = FIRST_ROUND_LAYOUTS[i];
-          if (!layout) return null;
-          return (
-            <View
-              key={game.id}
-              style={{
-                position: "absolute",
-                left: layout.x,
-                top: layout.y,
-                width: layout.width,
-              }}
-            >
-              <GameCard game={game} round={bracket.first.title} />
-            </View>
-          );
-        })}
-
-        {bracket?.quarterfinal.games.map((game, i) => {
-          const layout = QUARTERFINAL_LAYOUTS[i];
-          if (!layout) return null;
-          return (
-            <View
-              key={game.id}
-              style={{
-                position: "absolute",
-                left: layout.x,
-                top: layout.y,
-                width: layout.width,
-              }}
-            >
-              <GameCard game={game} round={bracket?.quarterfinal.title} />
-            </View>
-          );
-        })}
-
-        {bracket?.semifinal.games.map((game, i) => {
-          const layout = SEMIFINAL_LAYOUTS[i];
-          if (!layout) return null;
-          return (
-            <View
-              key={game.id}
-              style={{
-                position: "absolute",
-                left: layout.x,
-                top: layout.y,
-                width: layout.width,
-              }}
-            >
-              <GameCard game={game} round={bracket.semifinal.title} />
-            </View>
-          );
-        })}
-
-        {bracket?.championship.games[0] && (
           <View
-            style={{
-              position: "absolute",
-              left: CHAMPIONSHIP_LAYOUT.x,
-              top: CHAMPIONSHIP_LAYOUT.y,
-              width: CHAMPIONSHIP_LAYOUT.width,
-            }}
+            style={[
+              styles.champLabelRow,
+              {
+                top: LABEL_TOP,
+                left: champCenter - LABEL_WIDTH / 2,
+              },
+            ]}
           >
-            <GameCard
-              game={bracket.championship.games[0]}
-              round={bracket.championship.title}
+            <Image
+              source={cfpLogo}
+              style={styles.cfpLogo}
+              resizeMode="contain"
             />
+            <Text style={styles.champLabelText}>{"NATIONAL CHAMPIONSHIP"}</Text>
           </View>
-        )}
 
-        {winner?.id && (
-          <>
-            <Image source={ChampionTape} style={styles.championTape} />
-            {winnerLogo && (
-              <Image source={winnerLogo} style={styles.winnerLogo} />
-            )}
-            <Image source={cfpTrophy} style={styles.trophy} />
-          </>
-        )}
-      </View>
+          <ConnectorLayer isDark={isDark} />
+
+          {bracket?.first.games.map((game, i) => {
+            const layout = FIRST_ROUND_LAYOUTS[i];
+            if (!layout) return null;
+            return (
+              <View
+                key={game.id}
+                style={{
+                  position: "absolute",
+                  left: layout.x,
+                  top: layout.y,
+                  width: layout.width,
+                }}
+              >
+                <GameCard game={game} round={bracket.first.title} />
+              </View>
+            );
+          })}
+
+          {bracket?.quarterfinal.games.map((game, i) => {
+            const layout = QUARTERFINAL_LAYOUTS[i];
+            if (!layout) return null;
+            return (
+              <View
+                key={game.id}
+                style={{
+                  position: "absolute",
+                  left: layout.x,
+                  top: layout.y,
+                  width: layout.width,
+                }}
+              >
+                <GameCard game={game} round={bracket?.quarterfinal.title} />
+              </View>
+            );
+          })}
+
+          {bracket?.semifinal.games.map((game, i) => {
+            const layout = SEMIFINAL_LAYOUTS[i];
+            if (!layout) return null;
+            return (
+              <View
+                key={game.id}
+                style={{
+                  position: "absolute",
+                  left: layout.x,
+                  top: layout.y,
+                  width: layout.width,
+                }}
+              >
+                <GameCard game={game} round={bracket.semifinal.title} />
+              </View>
+            );
+          })}
+
+          {bracket?.championship.games[0] && (
+            <View
+              style={{
+                position: "absolute",
+                left: CHAMPIONSHIP_LAYOUT.x,
+                top: CHAMPIONSHIP_LAYOUT.y,
+                width: CHAMPIONSHIP_LAYOUT.width,
+              }}
+            >
+              <GameCard
+                game={bracket.championship.games[0]}
+                round={bracket.championship.title}
+              />
+            </View>
+          )}
+
+          {winner?.id && (
+            <>
+              <Image source={ChampionTape} style={styles.championTape} />
+              {winnerLogo && (
+                <Image source={winnerLogo} style={styles.winnerLogo} />
+              )}
+              <Image source={cfpTrophy} style={styles.trophy} />
+            </>
+          )}
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const bracketStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    scrollContent: {
-      paddingHorizontal: 12,
-      paddingTop: 14,
-    },
-    canvas: {
-      position: "relative",
-    },
-    connectorH: {
-      position: "absolute",
-      height: 2,
-    },
-    connectorV: {
-      position: "absolute",
-      width: 2,
-    },
-    // position: "absolute" is required so that top/left props take effect
-    roundLabel: {
-      position: "absolute",
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 18,
-      color: Colors.midTone,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    champLabelRow: {
-      position: "absolute",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    champLabelText: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 18,
-      color: Colors.midTone,
-      textAlign: "center",
-      textTransform: "uppercase",
-      flexShrink: 1,
-    },
-    cfpLogo: {
-      width: 22,
-      height: 22,
-      marginRight: 5,
-    },
-    trophy: {
-      position: "absolute",
-      height: 180,
-      resizeMode: "contain",
-      zIndex: -2,
-      right: -140,
-      top: 140,
-    },
-    winnerLogo: {
-      position: "absolute",
-      height: 200,
-      resizeMode: "contain",
-      transform: [{ rotate: "-12deg" }],
-      zIndex: -10,
-      right: -120,
-      top: 90,
-    },
-    championTape: {
-      position: "absolute",
-      height: 30,
-      resizeMode: "contain",
-      transform: [{ rotate: "-8deg" }],
-      zIndex: -1,
-      right: -350,
-      top: 280,
-    },
-  });
+const bracketStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 12,
+  },
+  canvas: {
+    position: "relative",
+  },
+  connectorH: {
+    position: "absolute",
+    height: 2,
+  },
+  connectorV: {
+    position: "absolute",
+    width: 2,
+  },
+  // position: "absolute" is required so that top/left props take effect
+  roundLabel: {
+    position: "absolute",
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 18,
+    color: Colors.midTone,
+    textAlign: "center",
+    textTransform: "uppercase",
+  },
+  champLabelRow: {
+    position: "absolute",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  champLabelText: {
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 18,
+    color: Colors.midTone,
+    textAlign: "center",
+    textTransform: "uppercase",
+    flexShrink: 1,
+  },
+  cfpLogo: {
+    width: 22,
+    height: 22,
+    marginRight: 5,
+  },
+  trophy: {
+    position: "absolute",
+    height: 180,
+    resizeMode: "contain",
+    zIndex: -2,
+    right: -160,
+    top: 144,
+  },
+  winnerLogo: {
+    position: "absolute",
+    height: 200,
+    resizeMode: "contain",
+    transform: [{ rotate: "-12deg" }],
+    zIndex: -10,
+    right: -120,
+    top: 90,
+  },
+  championTape: {
+    position: "absolute",
+    height: 35,
+    resizeMode: "contain",
+    transform: [{ rotate: "-4deg" }],
+    zIndex: -1,
+    right: -350,
+    top: 270,
+  },
+});

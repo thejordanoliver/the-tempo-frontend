@@ -1,10 +1,6 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import GameCard from "components/Sports/NBA/Games/GameCard";
-import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
-import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
@@ -12,10 +8,14 @@ import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import { Game } from "types/nba";
+import { CollegeBaseballGame } from "types/baseball";
+import CBGamePreviewModal from "../GamePreview/CBGamePreviewModal";
+import CBGameCard from "./CBGameCard";
+import CBSquareGameCard from "./CBSquareGameCard";
+import CBStackedGameCard from "./CBStackedGameCard";
 
 type GamesListProps = {
-  games: Game[];
+  games: CollegeBaseballGame[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -25,7 +25,7 @@ type GamesListProps = {
   error: Error | null;
 };
 
-type GameWithPlaceholder = Game & { _isPlaceholder?: boolean };
+type GameWithPlaceholder = CollegeBaseballGame & { _isPlaceholder?: boolean };
 
 const ItemSeparator = () => <View style={{ height: 12 }} />;
 
@@ -45,10 +45,12 @@ export default function GamesList({
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const [previewGame, setPreviewGame] = useState<Game | null>(null);
+  const [previewGame, setPreviewGame] = useState<CollegeBaseballGame | null>(
+    null,
+  );
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = useCallback((game: Game) => {
+  const handleLongPress = useCallback((game: CollegeBaseballGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
@@ -64,11 +66,11 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <GameCard game={game} />
+          <CBGameCard game={game} />
         ) : viewMode === "grid" ? (
-          <SquareGameCard game={game} />
+          <CBSquareGameCard game={game} />
         ) : (
-          <StackedGameCard game={game} />
+          <CBStackedGameCard game={game} />
         );
 
       return (
@@ -188,7 +190,7 @@ export default function GamesList({
       />
 
       {modalVisible && previewGame && (
-        <GamePreviewModal
+        <CBGamePreviewModal
           game={previewGame}
           visible={modalVisible}
           onClose={handleCloseModal}

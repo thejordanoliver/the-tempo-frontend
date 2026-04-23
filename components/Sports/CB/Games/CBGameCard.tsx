@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
-import { getMLBTeam } from "constants/teamsMLB";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -8,62 +8,56 @@ import { useBaseballGameDetails } from "hooks/MLBHooks/useBaseballGameDetails";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { BaseballGameCardProps } from "types/baseball";
+import { CollegeBaseballGameCardProps } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-import { getGameDate } from "utils/nflGameCardUtils";
-import BasesIndicator from "../GameDetails/BasesIndicator";
+import BasesIndicator from "../../MLB/GameDetails/BasesIndicator";
 
-function MLBGameCard({ game }: BaseballGameCardProps) {
+function CBGameCard({ game }: CollegeBaseballGameCardProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
 
-  /* ===============================
-     DATE / TIME
-  =============================== */
-  const timestamp = game?.timestamp;
+  const gameDateObj = new Date(game.date);
+  const formattedDate = gameDateObj.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
-  const {
-    date: gameDate,
-    iso: gameDateStr,
-    formattedDate,
-    formattedTime,
-  } = getGameDate(timestamp);
-
+  const formattedTime = gameDateObj.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
   /* ===============================
      BASIC GAME FIELDS FROM API
   =============================== */
-  const home = game?.teams.home;
-  const away = game?.teams.away;
+  const home = game?.homeTeam;
+  const away = game?.awayTeam;
 
   // Find matching internal teams using ESPN ID
-  const homeTeam = getMLBTeam(home?.id);
-  const awayTeam = getMLBTeam(away?.id);
+  const homeTeam = getCBTeam(home?.id);
+  const awayTeam = getCBTeam(away?.id);
 
-  const homeName = homeTeam?.name;
-  const awayName = awayTeam?.name;
+  const homeName = homeTeam?.shortName;
+  const awayName = awayTeam?.shortName;
 
-  const homeLogo = isDark ? homeTeam?.logoLight : homeTeam?.logo;
-  const awayLogo = isDark ? awayTeam?.logoLight : awayTeam?.logo;
-  const homeEspnId = homeTeam?.espnID;
-  const awayEspnId = awayTeam?.espnID;
+  const homeLogo = getCBTeamLogo(homeTeam?.id, isDark);
+  const awayLogo = getCBTeamLogo(awayTeam?.id, isDark);
 
   const { score: liveScore, details } = useBaseballGameDetails(
-    "mlb",
-    String(awayEspnId),
-    String(homeEspnId),
-    gameDateStr,
+    "cb",
+    String(homeTeam?.id),
+    String(awayTeam?.id),
+    game.startDate,
   );
+
   const isChampionship = details?.playoffRound === "World Series";
   const styles = GameCardStyles(isDark, isChampionship);
-  const isSpringTraining = game.league.name === "MLB - Spring Training";
-  const broadcasts = details?.broadcasts;
+  const broadcasts = game?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
   const headline = details?.headline;
-  const seriesSummary = details?.seriesSummary;
-  const seasonState = details?.seasonState;
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.statusText ?? "";
+  const gameStatusDescription = game.status.description ?? "";
+  const gameStatusDetail = game.status.shortDetail ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -72,10 +66,12 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
-  const homeScore = liveScore?.home.total ?? game?.scores?.home?.total ?? 0;
-  const awayScore = liveScore?.away.total ?? game?.scores?.away?.total ?? 0;
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
+  const homeScore = game?.homeTeam?.score ?? 0;
+  const awayScore = game?.awayTeam?.score ?? 0;
+  const homeRecord = game.homeTeam.record ?? "0-0";
+  const awayRecord = game.awayTeam.record ?? "0-0";
+  const homeRank = details?.homeRank;
+  const awayRank = details?.awayRank;
   const isTopInning = gameStatusDetail.includes("Top");
   const outs = liveScore?.outs;
   const bases: { first: boolean; second: boolean; third: boolean } =
@@ -84,7 +80,6 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
       second: false,
       third: false,
     };
- 
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -137,7 +132,7 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
             <View style={styles.statusDivider} />
             <Text style={styles.outs}>Outs: {outs}</Text>
           </View>
-          <BasesIndicator bases={bases} isDark={isDark} size={8} />
+          <BasesIndicator bases={bases} isDark={isDark} size={6} />
         </>
       );
 
@@ -176,7 +171,10 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
         />
-        <Text style={styles.teamName}>{awayName}</Text>
+        <Text style={styles.teamName}>
+          {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
+          {awayName}
+        </Text>
       </View>
       {/* Away Score / Record */}
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
@@ -204,7 +202,10 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
         />
-        <Text style={styles.teamName}>{homeName}</Text>
+        <Text style={styles.teamName}>
+          {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
+          {homeName}
+        </Text>
       </View>
     </>
   );
@@ -242,4 +243,4 @@ function MLBGameCard({ game }: BaseballGameCardProps) {
   );
 }
 
-export default memo(MLBGameCard);
+export default memo(CBGameCard);

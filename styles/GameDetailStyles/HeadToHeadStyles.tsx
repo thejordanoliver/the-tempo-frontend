@@ -21,7 +21,7 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
 
     gameCard: {
-      padding: 12,
+      paddingVertical: 12,
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
@@ -36,17 +36,18 @@ export const headToHeadStyles = (isDark: boolean) =>
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 100,
+      flex: 1,
     },
     teamInfo: {
       alignItems: "center",
       justifyContent: "center",
+      flex: 1,
     },
 
     teamRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 20,
+      flex: 1,
     },
 
     teamLogo: {
@@ -66,6 +67,7 @@ export const headToHeadStyles = (isDark: boolean) =>
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
+      flex: 1,
     },
     teamRecord: {
       fontFamily: Fonts.OSREGULAR,

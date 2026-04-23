@@ -74,6 +74,7 @@ type CustomHeaderTitleProps = {
     | "WNBA"
     | "NFL"
     | "CFB"
+    | "CB"
     | "CBB"
     | "WCBB"
     | "MLB"
@@ -462,7 +463,6 @@ const GameHeader = ({
 // ---------- MAIN COMPONENT ----------
 export function CustomHeaderTitle({
   title,
-  playerName,
   tabName,
   onLogout,
   onSettings,

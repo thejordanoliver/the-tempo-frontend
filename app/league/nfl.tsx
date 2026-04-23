@@ -20,7 +20,8 @@ import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
-import { useNFLBracket } from "hooks/NFLHooks/useNFLPlayoffBracket";
+import { useNFLSeasonCalendar } from "hooks/NFLHooks/useNFLSeasonCalendar";
+import { useNFLBracket } from "hooks/NFLHooks/usePlayoffGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
@@ -52,8 +53,13 @@ export default function NFLLeagueScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [draftYear, setDraftYear] = useState(currentSeason.toString());
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
-  const { playoffData, playoffsLoading, playoffError } =
-    useNFLBracket(currentSeason);
+  const {
+    playoffData,
+    playoffLoading,
+    playoffError,
+    onRefresh,
+    playoffRefreshing,
+  } = useNFLBracket(currentSeason);
 
   const { categories, loading, error } = useSeasonLeaders(
     currentSeason,
@@ -70,52 +76,44 @@ export default function NFLLeagueScreen() {
     loading: gamesLoading,
     refetch,
   } = useFootballGamesByWeek(getFootballSeason(), 1);
-  const weekLabels = Object.keys(weeks);
+  const { calendar } = useNFLSeasonCalendar();
+  const weekArray = calendar?.filter((w) => w.stage !== "Off Season") || [];
 
-  // ✅ Map weeks to array of objects for WeekSelector
-  const weekArray = weekLabels.map((label) => ({
-    label, // week name
-    stage: weeks[label][0]?.game?.stage || "Unknown", // stage (Pre Season / Regular / Playoffs)
-  }));
-
+  const weekLabels = weekArray.map((w) => w.label);
   const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
   const selectedWeekGames = weeks[selectedWeekLabel] || [];
 
   useEffect(() => {
-    if (!weekLabels.length) return;
+    if (!calendar?.length) return;
 
     const now = dayjs();
 
-    let liveIndex: number | null = null;
-    let upcomingIndex: number | null = null;
-    let pastIndex: number | null = null;
+    // 1. Active week — skip Off Season entirely
+    const activeIndex = calendar.findIndex(
+      (week) =>
+        week.stage !== "Off Season" &&
+        dayjs(now).isBetween(week.startDate, week.endDate, null, "[]"),
+    );
 
-    weekLabels.forEach((label, index) => {
-      const games = weeks[label];
-      if (!games?.length) return;
+    if (activeIndex !== -1) {
+      setSelectedWeekIndex(activeIndex);
+      return;
+    }
 
-      const gameDate = dayjs(games[0]?.game?.date?.timestamp);
+    // 2. Find LAST meaningful NFL week (ignore offseason completely)
+    let lastIndex = 0;
 
-      // 🟢 LIVE (same week as today)
-      if (gameDate.isSame(now, "week")) {
-        liveIndex = index;
-      }
+    calendar.forEach((week, index) => {
+      const isOffseason = week.stage === "Off Season";
+      const isPast = dayjs(week.endDate).isBefore(now);
 
-      // 🔵 UPCOMING (first future week)
-      if (gameDate.isAfter(now) && upcomingIndex === null) {
-        upcomingIndex = index;
-      }
-
-      // ⚫ PAST (keep updating → last past week wins)
-      if (gameDate.isBefore(now)) {
-        pastIndex = index;
+      if (!isOffseason && isPast) {
+        lastIndex = index;
       }
     });
 
-    const finalIndex = liveIndex ?? upcomingIndex ?? pastIndex ?? 0;
-
-    setSelectedWeekIndex(finalIndex);
-  }, [weeks]);
+    setSelectedWeekIndex(lastIndex);
+  }, [calendar]);
 
   // --- Header ---
   useLayoutEffect(() => {
@@ -222,14 +220,17 @@ export default function NFLLeagueScreen() {
               league={league}
             />
           </View>
+          
           {/* PLAYOFFS */}
-          <ScrollView key="playoffs" showsVerticalScrollIndicator={false}>
+          <View key="playoffs" style={styles.contentArea}>
             <NFLPlayoffBracket
               bracket={playoffData}
-              loading={playoffsLoading}
+              loading={playoffLoading}
               error={playoffError}
+              refreshing={playoffRefreshing}
+              onRefresh={onRefresh}
             />
-          </ScrollView>
+          </View>
 
           {/* STATS */}
           <View key="stats" style={styles.contentArea}>

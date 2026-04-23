@@ -7,6 +7,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useMemo } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
 import {
   getCenteredX,
   getColCenter,
@@ -329,8 +330,6 @@ const MatchupCard = ({
 }) => {
   const styles = nbaPlayoffBracketStyles(isDark);
   const { topWins, bottomWins } = getSeriesRecord(matchup);
-  const topStatus = getTeamStatus(true, topWins, bottomWins);
-  const bottomStatus = getTeamStatus(false, topWins, bottomWins);
   const liveGame = getLiveGame(matchup);
   const liveTopPoints = liveGame
     ? getTeamGamePoints(liveGame, matchup.topTeam?.id)
@@ -607,19 +606,23 @@ export function NBAPlayoffBracket({
   bracket,
   loading,
   error,
+  refreshing,
+  onRefresh,
 }: {
   bracket: PlayoffBracket | null;
   loading: boolean;
   error: string | null;
+  refreshing: any;
+  onRefresh: any;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => nbaPlayoffBracketStyles(isDark), [isDark]);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (loading) {
     return (
-      <View style={styles.loadingState}>
+      <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
@@ -644,120 +647,131 @@ export function NBAPlayoffBracket({
 
   return (
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={isDark ? Colors.white : Colors.black}
+        />
+      }
     >
-      <View style={styles.canvas}>
-        <Text style={[styles.sideLabel, styles.westLabel]}>WEST</Text>
-        <Text style={[styles.sideLabel, styles.eastLabel]}>EAST</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
+      >
+        <View style={styles.canvas}>
+          <Text style={[styles.sideLabel, styles.westLabel]}>WEST</Text>
+          <Text style={[styles.sideLabel, styles.eastLabel]}>EAST</Text>
 
-        <RoundLabel
-          title="FIRST ROUND"
-          x={getColCenter(COLS.WEST_R1)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="CONFERENCE SEMIFINALS"
-          x={getColCenter(COLS.WEST_R2)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="CONFERENCE FINALS"
-          x={getColCenter(COLS.WEST_R3)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="NBA FINALS"
-          x={getColCenter(COLS.FINALS)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="CONFERENCE FINALS"
-          x={getColCenter(COLS.EAST_R3)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="CONFERENCE SEMIFINALS"
-          x={getColCenter(COLS.EAST_R2)}
-          isDark={isDark}
-        />
-
-        <RoundLabel
-          title="FIRST ROUND"
-          x={getColCenter(COLS.EAST_R1)}
-          isDark={isDark}
-        />
-        <Image
-          source={PlayoffsLogo}
-          style={styles.playoffsLogo}
-          resizeMode="contain"
-        />
-
-        <ConnectorLayer isDark={isDark} />
-
-        {bracket.west[0].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={WEST_ROUND1_LAYOUTS[index]}
+          <RoundLabel
+            title="FIRST ROUND"
+            x={getColCenter(COLS.WEST_R1)}
             isDark={isDark}
           />
-        ))}
-        {bracket.west[1].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={WEST_ROUND2_LAYOUTS[index]}
+
+          <RoundLabel
+            title="CONFERENCE SEMIFINALS"
+            x={getColCenter(COLS.WEST_R2)}
             isDark={isDark}
           />
-        ))}
-        {bracket.west[2].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={WEST_ROUND3_LAYOUTS[index]}
+
+          <RoundLabel
+            title="CONFERENCE FINALS"
+            x={getColCenter(COLS.WEST_R3)}
             isDark={isDark}
           />
-        ))}
-        {bracket.east[2].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={EAST_ROUND3_LAYOUTS[index]}
+
+          <RoundLabel
+            title="NBA FINALS"
+            x={getColCenter(COLS.FINALS)}
             isDark={isDark}
           />
-        ))}
-        {bracket.east[1].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={EAST_ROUND2_LAYOUTS[index]}
+
+          <RoundLabel
+            title="CONFERENCE FINALS"
+            x={getColCenter(COLS.EAST_R3)}
             isDark={isDark}
           />
-        ))}
-        {bracket.east[0].map((matchup, index) => (
-          <MatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            layout={EAST_ROUND1_LAYOUTS[index]}
+
+          <RoundLabel
+            title="CONFERENCE SEMIFINALS"
+            x={getColCenter(COLS.EAST_R2)}
             isDark={isDark}
           />
-        ))}
-        {bracket.finals ? (
-          <MatchupCard
-            matchup={bracket.finals}
-            layout={FINALS_LAYOUT}
+
+          <RoundLabel
+            title="FIRST ROUND"
+            x={getColCenter(COLS.EAST_R1)}
             isDark={isDark}
-            finals={true}
           />
-        ) : null}
-      </View>
+          <Image
+            source={PlayoffsLogo}
+            style={styles.playoffsLogo}
+            resizeMode="contain"
+          />
+
+          <ConnectorLayer isDark={isDark} />
+
+          {bracket.west[0].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={WEST_ROUND1_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.west[1].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={WEST_ROUND2_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.west[2].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={WEST_ROUND3_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.east[2].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={EAST_ROUND3_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.east[1].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={EAST_ROUND2_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.east[0].map((matchup, index) => (
+            <MatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              layout={EAST_ROUND1_LAYOUTS[index]}
+              isDark={isDark}
+            />
+          ))}
+          {bracket.finals ? (
+            <MatchupCard
+              matchup={bracket.finals}
+              layout={FINALS_LAYOUT}
+              isDark={isDark}
+              finals={true}
+            />
+          ) : null}
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 }

@@ -139,8 +139,10 @@ export type LeagueType =
   | "WNBA"
   | "NFL"
   | "CFB"
+  | "CB"
   | "CBB"
   | "MLB"
+  | "SB"
   | "WCBB"
   | "NHL"
   | "MMA";

@@ -301,7 +301,7 @@ import FordhamLogo from "../assets/College_Logos/Fordham.png";
 import FranciscanLogo from "../assets/College_Logos/Franciscan.png";
 import FresnoStLogo from "../assets/College_Logos/FresnoState.png";
 import FtLauderdaleLogo from "../assets/College_Logos/FtLauderdale.png";
-import Furman from "../assets/College_Logos/Furman.png";
+import FurmanLogo from "../assets/College_Logos/Furman.png";
 import GardnerWebbLogo from "../assets/College_Logos/Gardner-Webb.png";
 import GenevaLogo from "../assets/College_Logos/Geneva.png";
 import GeorgeMasonLogo from "../assets/College_Logos/GeorgeMason.png";
@@ -5675,7 +5675,7 @@ export const cbbTeams: CBBTeam[] = [
     code: "FUR",
     color: "#582c83",
     secondaryColor: "#ffffff",
-    logo: Furman,
+    logo: FurmanLogo,
     location: "Greenville, SC",
     city: "Greenville",
     venueName: "Timmons Arena",
