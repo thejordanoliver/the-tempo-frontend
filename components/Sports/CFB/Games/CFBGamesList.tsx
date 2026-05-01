@@ -17,13 +17,13 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
-import { Game } from "types/football";
+import { FootballGame } from "types/football";
 import CFBGamePreviewModal from "../GamePreview/CFBGamePreviewModal";
 import CFBGameCard from "./CFBGameCard";
 import CFBSquareGameCard from "./CFBSquareGameCard";
 import CFBStackedGameCard from "./CFBStackedGameCard";
 type Props = {
-  games: Game[];
+  games: FootballGame[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -36,7 +36,7 @@ type Props = {
 
 type CFBGameSection = {
   title: string;
-  data: Game[];
+  data: FootballGame[];
 };
 
 export default function CFBGamesList({
@@ -61,11 +61,14 @@ export default function CFBGamesList({
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const chunkIntoRows = (data: Game[], size = 2): (Game | null)[][] => {
-    const rows: (Game | null)[][] = [];
+  const chunkIntoRows = (
+    data: FootballGame[],
+    size = 2,
+  ): (FootballGame | null)[][] => {
+    const rows: (FootballGame | null)[][] = [];
 
     for (let i = 0; i < data.length; i += size) {
-      const row: (Game | null)[] = data.slice(i, i + size);
+      const row: (FootballGame | null)[] = data.slice(i, i + size);
 
       if (row.length < size) {
         row.push(null);
@@ -122,7 +125,7 @@ export default function CFBGamesList({
     }));
   }, [sections]);
 
-  const renderGridRow = ({ item }: { item: (Game | null)[] }) => {
+  const renderGridRow = ({ item }: { item: (FootballGame | null)[] }) => {
     return (
       <View style={styles.gridRow}>
         {item.map((game, index) => {
@@ -149,13 +152,13 @@ export default function CFBGamesList({
     setPage(1);
   }, [games]);
 
-  const handleLongPress = (game: Game) => {
+  const handleLongPress = (game: FootballGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
   };
 
-  const renderGameCard = (game: Game, index?: number) => {
+  const renderGameCard = (game: FootballGame, index?: number) => {
     if ((game as any)?._isPlaceholder) {
       return (
         <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />

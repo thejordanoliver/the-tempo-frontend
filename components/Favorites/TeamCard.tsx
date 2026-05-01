@@ -1,4 +1,3 @@
-// ...
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
@@ -8,8 +7,8 @@ import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, Easing, Pressable, View } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { Image, Pressable, Text, View } from "react-native";
 import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
 import type { LeagueType, Team } from "types/types";
 
@@ -19,7 +18,7 @@ type Props = {
   item: TeamWithLeague;
   isSelected: boolean;
   isGridView: boolean;
-  onPress: () => void;
+  onPress: (league: LeagueType, id: string) => void;
   itemWidth: number;
   onImageLoad?: () => void;
 };
@@ -36,89 +35,64 @@ function TeamCard({
   const isDark = resolvedColorScheme === "dark";
   const styles = teamCardStyles;
 
-  const selectionAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
-  const previousSelected = useRef(isSelected);
-
-  useEffect(() => {
-    if (previousSelected.current !== isSelected) {
-      Animated.timing(selectionAnim, {
-        toValue: isSelected ? 1 : 0,
-        duration: 300,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }).start();
-      previousSelected.current = isSelected;
-    }
-  }, [isSelected]);
-
   const selectedColor =
     typeof item.color === "string" && item.color.startsWith("#")
       ? item.color
       : Colors.midTone;
 
-  const backgroundColor = selectionAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [
-      isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
-      selectedColor,
-    ],
-  });
+  const useAltLogo = isDark || isSelected;
 
-  const textColor = selectionAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [
-      isDark ? Colors.dark.text : Colors.light.text,
-      Colors.dark.text,
-    ],
-  });
+  const logo = useMemo(() => {
+    if (item.league === "CFB") return getCFBTeamLogo(item.id, useAltLogo);
+    if (item.league === "CBB") return getCBBTeamLogo(item.id, useAltLogo, false);
+    if (item.league === "WCBB") return getCBBTeamLogo(item.id, useAltLogo, true);
+    if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
+    if (item.league === "NBA") return getTeamLogo(item.id, useAltLogo);
+    if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
+    if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
+    return getNHLTeamLogo(item.id, useAltLogo);
+  }, [item.id, item.league, useAltLogo]);
 
-  const logo =
-    item.league === "CFB"
-      ? getCFBTeamLogo(item.id, isDark || isSelected)
-      : item.league === "CBB"
-        ? getCBBTeamLogo(item.id, isDark || isSelected, false)
-        : item.league === "WCBB"
-          ? getCBBTeamLogo(item.id, isDark || isSelected, true)
-          : item.league === "MLB"
-            ? getMLBTeamLogo(item.id, isDark || isSelected)
-            : item.league === "NBA"
-              ? getTeamLogo(item.id, isDark || isSelected)
-              : item.league === "WNBA"
-                ? getWNBATeamLogo(item.id, isDark || isSelected)
-                : item.league === "NFL"
-                  ? getNFLTeamLogo(item.id, isDark || isSelected)
-                  : getNHLTeamLogo(item.id, isDark || isSelected);
+  const handlePress = useCallback(() => {
+    onPress(item.league, item.id.toString());
+  }, [item.id, item.league, onPress]);
 
   const logoSize = isGridView ? 50 : 40;
+  const backgroundColor = isSelected
+    ? selectedColor
+    : isDark
+      ? Colors.dark.itemBackground
+      : Colors.light.itemBackground;
+  const textColor = isSelected
+    ? Colors.dark.text
+    : isDark
+      ? Colors.dark.text
+      : Colors.light.text;
 
   return (
     <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        {
-          opacity: pressed ? 0.6 : 1,
-          width: isGridView ? itemWidth : "100%",
-          marginBottom: isGridView ? 0 : 12,
-        },
-      ]}
+      onPress={handlePress}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.7 : 1,
+        width: isGridView ? itemWidth : "100%",
+        marginBottom: isGridView ? 0 : 12,
+      })}
     >
-      <Animated.View
+      <View
         style={[
           styles.teamCard,
-          
           {
             width: isGridView ? itemWidth : "100%",
             backgroundColor,
             flexDirection: isGridView ? "column" : "row",
             justifyContent: isGridView ? "center" : "flex-start",
             alignItems: "center",
-            paddingHorizontal: isGridView ? 0 : 12,
+            paddingHorizontal: isGridView ? 8 : 12,
             paddingVertical: 12,
-            height: isGridView ? 130 : "auto",
+            minHeight: isGridView ? 130 : 64,
           },
         ]}
       >
-        {/* League Tag for CFB / CBB / WCBB */}
         {(item.league === "CFB" ||
           item.league === "CBB" ||
           item.league === "WCBB") && (
@@ -130,49 +104,58 @@ function TeamCard({
                   item.league === "CFB"
                     ? "#228B22"
                     : item.league === "WCBB"
-                      ? "#C2185B" // 🎀 WCBB color
-                      : "#1E90FF", // CBB
+                      ? "#C2185B"
+                      : "#1E90FF",
               },
             ]}
           >
-            <Animated.Text style={styles.sportTagText}>
-              {item.league}
-            </Animated.Text>
+            <Text style={styles.sportTagText}>{item.league}</Text>
           </View>
         )}
 
-        {/* Logo */}
         <View
           style={[
             styles.logoWrapper,
             !isGridView && {
               marginRight: 12,
+              marginBottom: 0,
               width: logoSize,
               height: logoSize,
             },
           ]}
         >
-          <Animated.Image
+          <Image
             source={logo}
             style={[styles.logo, { width: logoSize, height: logoSize }]}
             onLoad={onImageLoad}
           />
         </View>
 
-        {/* Team Name */}
         <View
           style={{
             alignItems: isGridView ? "center" : "flex-start",
             flexDirection: isGridView ? "column" : "row",
+            flex: isGridView ? 0 : 1,
           }}
         >
-          <Animated.Text style={[styles.teamName, { color: textColor }]}>
+          <Text style={[styles.teamName, { color: textColor }]}>
             {isGridView ? item.name : item.fullName}
-          </Animated.Text>
+          </Text>
         </View>
-      </Animated.View>
+      </View>
     </Pressable>
   );
 }
 
-export default React.memo(TeamCard);
+export default React.memo(
+  TeamCard,
+  (prevProps, nextProps) =>
+    prevProps.item.id === nextProps.item.id &&
+    prevProps.item.league === nextProps.item.league &&
+    prevProps.item.name === nextProps.item.name &&
+    prevProps.item.fullName === nextProps.item.fullName &&
+    prevProps.item.color === nextProps.item.color &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.isGridView === nextProps.isGridView &&
+    prevProps.itemWidth === nextProps.itemWidth,
+);

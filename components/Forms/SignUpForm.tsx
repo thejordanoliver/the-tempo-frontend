@@ -6,6 +6,11 @@ import { cbbTeams } from "constants/teamsCBB";
 import { useEffect, useRef, useState } from "react";
 
 import Button from "components/Button";
+import { cfbTeams } from "constants/teamsCFB";
+import { mlbTeams } from "constants/teamsMLB";
+import { nflTeams } from "constants/teamsNFL";
+import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
   Animated,
@@ -272,23 +277,62 @@ export default function SignUpForm({
                   </Text>
                 </View>
 
-                <Text style={[styles.heading, { marginTop: 16 }]}>
-                  Favorites
-                </Text>
+                <Text style={styles.heading}>Favorites</Text>
                 {signupData.favorites.length > 0 ? (
-                  <ScrollView horizontal={false} style={styles.favoritesScroll}>
+                  <ScrollView style={styles.favoritesContainer}>
                     {signupData.favorites.map((favId) => {
-                      const [league, id] = favId.split(":") as [
-                        LeagueType,
-                        string,
-                      ];
-                      let team;
-                      if (league === "CBB") {
-                        team = cbbTeams.find((t) => String(t.wid) === id);
-                      } else {
-                        team = teams.find((t) => String(t.id) === id);
+                      let league: LeagueType | null = null;
+                      let id = favId;
+
+                      if (favId.includes(":")) {
+                        const parts = favId.split(":");
+                        league = parts[0] as LeagueType;
+                        id = parts[1];
                       }
+
+                      let team;
+
+                      switch (league) {
+                        case "WCBB":
+                          team = cbbTeams.find((t) => String(t.wid) === id);
+                          break;
+
+                        case "CBB":
+                          team = cbbTeams.find((t) => String(t.id) === id);
+                          break;
+
+                        case "NFL":
+                          team = nflTeams.find((t) => String(t.id) === id);
+                          break;
+
+                        case "CFB":
+                          team = cfbTeams.find((t) => String(t.id) === id);
+                          break;
+
+                        case "NHL":
+                          team = nhlTeams.find((t) => String(t.id) === id);
+                          break;
+
+                        case "MLB":
+                          team = mlbTeams.find((t) => String(t.id) === id);
+                          break;
+                        case "WNBA":
+                          team = wnbaTeams.find((t) => String(t.id) === id);
+                          break;
+
+                        default:
+                          team =
+                            teams.find((t) => String(t.id) === id) ||
+                            cbbTeams.find((t) => String(t.wid) === id) ||
+                            nflTeams.find((t) => String(t.id) === id) ||
+                            cfbTeams.find((t) => String(t.id) === id) ||
+                            nhlTeams.find((t) => String(t.id) === id) ||
+                            mlbTeams.find((t) => String(t.id) === id) ||
+                            wnbaTeams.find((t) => String(t.id) === id);
+                      }
+
                       if (!team) return null;
+
                       return (
                         <View
                           key={favId}

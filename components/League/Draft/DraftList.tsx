@@ -1,22 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { teams } from "constants/teams";
 import { nflTeams } from "constants/teamsNFL";
 import { wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useDraft } from "hooks/useLeagueDraft";
+import dayjs from "dayjs";
+import { useDraft } from "hooks/LeagueHooks/useLeagueDraft";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import DraftCardSkeleton from "../../Skeletons/DraftCardSkeleton";
 import DraftCard, { DraftPick } from "./DraftCard";
-import DraftCardSkeleton from "./DraftCardSkeleton";
+import DraftNewsList from "./DraftNewsList";
 
 type Props = {
   year: string;
@@ -39,6 +42,7 @@ const POSITION_MAP: Record<string, string> = {
   "7": "Forward",
   "9": "Center",
 };
+
 const NFL_POSITION_MAP: Record<string, string> = {
   "8": "Quarterback",
   "9": "Running Back",
@@ -58,6 +62,21 @@ const NFL_POSITION_MAP: Record<string, string> = {
   "94": "Punter",
 };
 
+export const getDefaultDraftYear = (league: "nba" | "wnba" | "nfl") => {
+  const now = dayjs();
+  const year = now.year();
+
+  if (league === "nfl") {
+    return now.month() >= 3 ? year : year - 1; // April+
+  }
+
+  if (league === "nba") {
+    return now.month() >= 5 ? year : year - 1; // June+
+  }
+
+  return year;
+};
+
 export default function DraftList({
   year,
   team,
@@ -69,7 +88,8 @@ export default function DraftList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = draftListStyles(isDark);
+  const global = globalStyles(isDark);
   const listRef = useRef<FlatList>(null);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -99,14 +119,13 @@ export default function DraftList({
     let maxSeason: number;
 
     if (league === "nfl") {
-      // NFL season starts Aug 1
-      const seasonHasStarted =
-        now.getMonth() > 7 || (now.getMonth() === 7 && now.getDate() >= 1);
+      // NFL Draft ~ April
+      const seasonHasStarted = now.getMonth() >= 3; // April = 3
       maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
     } else if (league === "nba") {
-      // NBA season typically starts Oct 15
+      // NBA Draft occurs in Jun
       const seasonHasStarted =
-        now.getMonth() > 9 || (now.getMonth() === 9 && now.getDate() >= 15);
+        now.getMonth() > 5 || (now.getMonth() === 9 && now.getDate() >= 15);
       maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
     } else {
       maxSeason = currentYear;
@@ -120,14 +139,43 @@ export default function DraftList({
     return arr;
   }, [league]);
 
-  const safeYear =
-    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
+  const getDraftSeasonYear = (league: "nba" | "nfl" | "wnba") => {
+    const now = new Date();
+    const year = now.getFullYear();
+
+    if (league === "nfl") {
+      // NFL draft switches in April
+      const isNewSeason = now.getMonth() >= 3;
+      return isNewSeason ? year : year - 1;
+    }
+
+    if (league === "nba") {
+      // NBA draft switches in late June
+      const isNewSeason =
+        now.getMonth() > 5 || (now.getMonth() === 5 && now.getDate() >= 20);
+
+      return isNewSeason ? year : year - 1;
+    }
+
+    return year;
+  };
+
+  const defaultYear = getDraftSeasonYear(league);
+  const safeYear = year ?? String(defaultYear);
+
+  useEffect(() => {
+    if (!year) {
+      onYearChange(String(defaultYear));
+    }
+  }, [defaultYear, year, onYearChange]);
 
   // ---------------------------
   // FETCH NBA DRAFT
   // ---------------------------
-  const { draft, loading, error } = useDraft(league, Number(safeYear));
-
+  const { draft, loading, error, refresh, refreshing, onRefresh } = useDraft(
+    league,
+    Number(safeYear),
+  );
   const picks = draft?.picks ?? [];
 
   // ---------------------------
@@ -178,7 +226,7 @@ export default function DraftList({
     return map;
   }, [league]);
 
-  const CHUNK_SIZE = 20; // how many picks load per "page"
+  const CHUNK_SIZE = 20;
 
   // How many picks are currently visible
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
@@ -234,19 +282,79 @@ export default function DraftList({
     [filteredPicks, visibleCount],
   );
 
+  if (error)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Error: {String(error)}</Text>
+      </View>
+    );
+  if (loading)
+    return (
+      <FlatList
+        ref={listRef}
+        data={Array.from({ length: 10 })}
+        keyExtractor={(_, i) => "skel-" + i}
+        renderItem={() => <DraftCardSkeleton />}
+      />
+    );
+  if (filteredPicks.length === 0)
+    return (
+      <View style={styles.container}>
+        <View style={styles.dropdownContainer}>
+          <View style={styles.dropdownWrapper}>
+            <TouchableOpacity onPress={toggleSearch}>
+              <Ionicons
+                name={searchOpen ? "close" : "search"}
+                size={22}
+                color={isDark ? Colors.lightGray : Colors.darkGray}
+              />
+            </TouchableOpacity>
+
+            {/* RIGHT: Dropdowns */}
+            <View style={styles.dropdownRow}>
+              <Dropdown
+                options={yearOptions}
+                selectedValue={safeYear}
+                onSelect={onYearChange}
+                isDark={isDark}
+                width={120}
+              />
+
+              <Dropdown
+                options={roundOptions}
+                selectedValue={round}
+                onSelect={onRoundChange}
+                isDark={isDark}
+                width={120}
+              />
+
+              <Dropdown
+                options={teamOptions}
+                selectedValue={team}
+                onSelect={onTeamChange}
+                isDark={isDark}
+                width={150}
+              />
+            </View>
+          </View>
+
+          <SearchBar
+            value={search}
+            onChangeText={setSearch}
+            visible={searchOpen}
+            placeholder="Search players..."
+          />
+        </View>
+
+        <Text style={global.emptyText}>No results found</Text>
+      </View>
+    );
+
   return (
     <View style={styles.container}>
-      <View style={{ paddingHorizontal: 12, marginBottom: 12 }}>
-        {/* ROW 1 — Icon + Dropdowns */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 8,
-          }}
-        >
-          {/* LEFT: Search icon */}
+      <DraftNewsList year={year} league={league} />
+      <View style={styles.dropdownContainer}>
+        <View style={styles.dropdownWrapper}>
           <TouchableOpacity onPress={toggleSearch}>
             <Ionicons
               name={searchOpen ? "close" : "search"}
@@ -256,7 +364,7 @@ export default function DraftList({
           </TouchableOpacity>
 
           {/* RIGHT: Dropdowns */}
-          <View style={{ flexDirection: "row", gap: 8 }}>
+          <View style={styles.dropdownRow}>
             <Dropdown
               options={yearOptions}
               selectedValue={safeYear}
@@ -283,7 +391,6 @@ export default function DraftList({
           </View>
         </View>
 
-        {/* ROW 2 — SearchBar (full-width & collapsible) */}
         <SearchBar
           value={search}
           onChangeText={setSearch}
@@ -292,58 +399,55 @@ export default function DraftList({
         />
       </View>
 
-      {loading ? (
-        <FlatList
-          ref={listRef}
-          data={Array.from({ length: 10 })}
-          keyExtractor={(_, i) => "skel-" + i}
-          renderItem={() => <DraftCardSkeleton />}
-        />
-      ) : error ? (
-        <View style={styles.center}>
-          <Text style={styles.errorText}>Error: {String(error)}</Text>
-        </View>
-      ) : filteredPicks.length === 0 ? (
-        <View style={styles.center}>
-          <Text style={styles.emptyText}>No results found</Text>
-        </View>
-      ) : (
-        <FlatList
-          ref={listRef}
-          data={visiblePicks}
-          keyExtractor={(item) => `${item.overall}`}
-          renderItem={({ item, index }) => (
-            <DraftCard player={item} index={index} league={league} />
-          )}
-          onEndReachedThreshold={0.2}
-          onEndReached={() => {
-            if (visibleCount < filteredPicks.length) {
-              setVisibleCount((prev) => prev + CHUNK_SIZE);
-            }
-          }}
-          ListFooterComponent={
-            visibleCount < filteredPicks.length ? (
-              <View style={{ padding: 20, alignItems: "center" }}>
-                <Text
-                  style={{ color: isDark ? Colors.lightGray : Colors.darkGray }}
-                >
-                  Loading more…
-                </Text>
-              </View>
-            ) : null
+      <FlatList
+        ref={listRef}
+        data={visiblePicks}
+        keyExtractor={(item) => `${item.overall}`}
+        renderItem={({ item, index }) => (
+          <DraftCard player={item} index={index} league={league} />
+        )}
+        // 👇 ADD THIS
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.lightGray : Colors.darkGray}
+          />
+        }
+        onEndReachedThreshold={0.2}
+        onEndReached={() => {
+          if (visibleCount < filteredPicks.length) {
+            setVisibleCount((prev) => prev + CHUNK_SIZE);
           }
-        />
-      )}
+        }}
+        ListFooterComponent={
+          visibleCount < filteredPicks.length ? (
+            <View style={{ padding: 20, alignItems: "center" }}>
+              <Text
+                style={{ color: isDark ? Colors.lightGray : Colors.darkGray }}
+              >
+                Loading more…
+              </Text>
+            </View>
+          ) : null
+        }
+      />
     </View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
+export const draftListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 14,
       paddingBottom: 80,
+    },
+    dropdownContainer: { paddingHorizontal: 12, marginVertical: 12 },
+    dropdownWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 8,
     },
     dropdownRow: {
       flexDirection: "row",

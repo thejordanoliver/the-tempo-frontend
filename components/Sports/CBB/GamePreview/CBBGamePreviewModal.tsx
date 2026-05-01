@@ -7,7 +7,6 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
@@ -62,7 +61,6 @@ export default function CBBGamePreviewModal({
           : (week ?? "");
 
   const isChampionship = week === "NCAA - Final";
-  const isFinalFour = week === "NCAA - Semi-finals";
   const styles = gamePreviewModalStyle(isChampionship);
 
   const home = getCBBTeam(game.teams.home.id ?? "", isWomen);
@@ -74,7 +72,6 @@ export default function CBBGamePreviewModal({
   const awayLogo = getCBBTeamLogo(away?.id, true, isWomen);
   const homeColor = home?.color ?? "";
   const awayColor = away?.color ?? "";
-  const { data: gameStats } = useGameStatistics(game?.id ?? 0);
 
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -89,11 +86,6 @@ export default function CBBGamePreviewModal({
 
   const gameDateISO = gameDate ? gameDate.toISOString() : "";
   const gameDateStr = gameDateISO ? gameDateISO.split("T")[0] : "";
-
-  // March Madness runs March 18 – April 7
-  const isMarchMadness =
-    (gameDate?.getMonth() === 2 && gameDate?.getDate() >= 18) ||
-    (gameDate?.getMonth() === 3 && gameDate?.getDate() <= 7);
 
   const { score: liveScore, details } = useGameDetails(
     isWomen ? "wcbb" : "cbb",
@@ -277,11 +269,11 @@ export default function CBBGamePreviewModal({
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   officials={officials}
-                  resolvedVenueImage={resolvedVenue.image}
-                  resolvedVenueName={resolvedVenue.name}
-                  resolvedVenueCity={resolvedVenue.city}
-                  resolvedVenueAddress={resolvedVenue.address}
-                  resolvedVenueCapacity={resolvedVenue.capacity}
+                  venueImage={resolvedVenue.image}
+                  venueName={resolvedVenue.name}
+                  venueCity={resolvedVenue.city}
+                  venueAddress={resolvedVenue.address}
+                  venueCapacity={resolvedVenue.capacity}
                   weather={weather}
                   highlights={highlights}
                   gameStatusDescription={gameStatusDescription}

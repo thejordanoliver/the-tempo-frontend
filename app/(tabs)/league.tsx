@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-
 import DateNavigator from "components/DateNavigator";
 import CombinedGamesList, {
   CombinedGamesSection,
@@ -20,8 +19,8 @@ import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useFootballSeasonGames } from "hooks/NFLHooks/useFootballSeasonGames";
 import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
-import * as React from "react";
-import { useState } from "react";
+import { useWNBASeasonGames } from "hooks/WNBAHooks/useWNBASeasonGames";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import {
@@ -30,11 +29,12 @@ import {
   getNBASeason,
   getNHLSeason,
 } from "utils/dateUtils";
-import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
+import { filterByDate, isLiveGame, normalizeGames } from "utils/games";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function LeagueScreen() {
+  const { favorites } = useFavoriteTeamsContext();
   const nbaCalendarYear = getNBASeason();
   const mlbCalendarYear = getMLBSeason();
   const nhlCalendarYear = getNHLSeason();
@@ -53,7 +53,7 @@ export default function LeagueScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const sportsModalRef = React.useRef<SportsListModalRef>(null);
+  const sportsModalRef = useRef<SportsListModalRef>(null);
 
   // --------------------------------------------------
   // Game Data Hooks
@@ -83,6 +83,12 @@ export default function LeagueScreen() {
   } = useCBBSeasonGames({ isWomen: true });
 
   const {
+    wnbaGames,
+    wnbaLoading,
+    refreshGames: refreshWNBAGames,
+  } = useWNBASeasonGames();
+
+  const {
     games: nflGames,
     loading: nflLoading,
     refetch: refreshNFLGames,
@@ -100,12 +106,10 @@ export default function LeagueScreen() {
     refetch: refreshCFBGames,
   } = useFootballSeasonGames(getFootballSeason(), 2);
 
-  const { favorites } = useFavoriteTeamsContext();
-
   // --------------------------------------------------
   // Header
   // --------------------------------------------------
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
@@ -124,84 +128,36 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   // Normalize games
   // --------------------------------------------------
-  const normalizeGames = (games: any[], leagueType: string, isWomen = false) =>
-    games
-      .map((game: any) => {
-        let date: dayjs.Dayjs | null = null;
 
-        if (leagueType === "CFB" || leagueType === "NFL") {
-          const ts = game.game?.date?.timestamp;
-          if (!ts) return null;
-          date = dayjs.unix(ts).local();
-        } else {
-          const raw =
-            game.date?.start ?? game.date?.date ?? game.date ?? game.game?.date;
-          if (!raw) return null;
-          date = dayjs.utc(raw).local();
-        }
-
-        let home, away;
-
-        if (leagueType === "NBA") {
-          home = { ...game.home, id: String(game.home?.id) };
-          away = {
-            ...game.away,
-            id: String(game.away?.id),
-          };
-        } else if (leagueType === "NFL" || leagueType === "CFB") {
-          home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
-          away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
-        } else if (leagueType === "MLB") {
-          home = {
-            id: game.teams?.home?.id,
-            name: game.teams?.home?.name,
-          };
-
-          away = {
-            id: game.teams?.away?.id,
-            name: game.teams?.away?.name,
-          };
-        } else {
-          home = normalizeTeam(game.teams?.home, isWomen);
-          away = normalizeTeam(game.teams?.away, isWomen);
-        }
-
-        return {
-          ...game,
-          date: date.toDate(),
-          dateString: date.format("YYYY-MM-DD"),
-          time: date.format("h:mm A"),
-          home,
-          away,
-        };
-      })
-      .filter(Boolean);
-
-  const normalizedNBA = React.useMemo(
+  const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "NBA"),
     [nbaGames],
   );
-  const normalizedMLB = React.useMemo(
+  const normalizedWNBA = useMemo(
+    () => normalizeGames(wnbaGames, "WNBA"),
+    [nbaGames],
+  );
+  const normalizedMLB = useMemo(
     () => normalizeGames(mlbGames, "MLB"),
     [mlbGames],
   );
-  const normalizedNFL = React.useMemo(
+  const normalizedNFL = useMemo(
     () => normalizeGames(nflGames, "NFL"),
     [nflGames],
   );
-  const normalizedCFB = React.useMemo(
+  const normalizedCFB = useMemo(
     () => normalizeGames(cfbGames, "CFB"),
     [cfbGames],
   );
-  const normalizedMensCBB = React.useMemo(
+  const normalizedMensCBB = useMemo(
     () => normalizeGames(mensBasketballGames, "CBB", false),
     [mensBasketballGames],
   );
-  const normalizedWomensCBB = React.useMemo(
+  const normalizedWomensCBB = useMemo(
     () => normalizeGames(womensBasketballGames, "WCBB", true),
     [womensBasketballGames],
   );
-  const normalizedNHL = React.useMemo(
+  const normalizedNHL = useMemo(
     () => normalizeGames(nhlGames, "NHL", true),
     [nhlGames],
   );
@@ -216,6 +172,7 @@ export default function LeagueScreen() {
   const filteredCFB = filterByDate(normalizedCFB, selectedDate);
   const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
   const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
+  const filteredWNBA = filterByDate(normalizedWNBA, selectedDate);
 
   // --------------------------------------------------
   // Favorites helpers
@@ -236,7 +193,7 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   // Favorites
   // --------------------------------------------------
-  const favoriteGames = React.useMemo(() => {
+  const favoriteGames = useMemo(() => {
     const collect = (games: any[], prefix: string) =>
       games.filter((g) => isFavoriteGame(g, prefix));
 
@@ -248,6 +205,7 @@ export default function LeagueScreen() {
       ...collect(filteredCFB, "CFB"),
       ...collect(filteredMensCBB, "CBB"),
       ...collect(filteredWomensCBB, "WCBB"),
+      ...collect(filteredWNBA, "WNBA"),
     ];
   }, [
     favorites,
@@ -263,10 +221,11 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   // Sections
   // --------------------------------------------------
-  const gamesByCategory = React.useMemo(() => {
+  const gamesByCategory = useMemo(() => {
     const sections: CombinedGamesSection[] = [
       { category: "Favorites", data: sortLiveFirst(favoriteGames) },
       { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
+      { category: "WNBA", data: limitNonFavorites(filteredWNBA, "WNBA") },
       { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
       { category: "MLB", data: limitNonFavorites(filteredMLB, "MLB") },
       { category: "NHL", data: limitNonFavorites(filteredNHL, "NHL") },
@@ -288,6 +247,7 @@ export default function LeagueScreen() {
   }, [
     favoriteGames,
     filteredNBA,
+    filteredWNBA,
     filteredNFL,
     filteredMLB,
     filteredNHL,
@@ -304,6 +264,7 @@ export default function LeagueScreen() {
     try {
       await Promise.all([
         refreshNBAGames(),
+        refreshWNBAGames(),
         refreshNFLGames(),
         refreshMLBGames(),
         refreshNHLGames(),
@@ -319,9 +280,10 @@ export default function LeagueScreen() {
   // --------------------------------------------------
   // Marked dates
   // --------------------------------------------------
-  const markedDates = React.useMemo(() => {
+  const markedDates = useMemo(() => {
     const all = [
       ...normalizedNBA,
+      ...normalizedWNBA,
       ...normalizedNFL,
       ...normalizedMLB,
       ...normalizedCFB,
@@ -340,6 +302,7 @@ export default function LeagueScreen() {
     );
   }, [
     normalizedNBA,
+    normalizedWNBA,
     normalizedNFL,
     normalizedMLB,
     normalizedNHL,
@@ -382,6 +345,7 @@ export default function LeagueScreen() {
               gamesByCategory={gamesByCategory}
               loading={
                 nbaLoading ||
+                wnbaLoading ||
                 nflLoading ||
                 mlbLoading ||
                 nhlLoading ||

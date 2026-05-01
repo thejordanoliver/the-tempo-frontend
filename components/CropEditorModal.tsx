@@ -317,27 +317,75 @@ export default function CropEditorModal({
   // Crop
   // --------------------------------------------------------------------------
   const handleCrop = useCallback(async () => {
-    if (!imageSize) return;
+    if (!imageSize || !displayedImageSize.width || !displayedImageSize.height) {
+      return;
+    }
 
     const { width: imgW, height: imgH } = imageSize;
     const scale = currentScale.current;
-    const rot = rotation.current;
+    const rot = ((rotation.current % 360) + 360) % 360;
+    const isSideways = rot === 90 || rot === 270;
 
-    const rotatedW = rot % 180 === 0 ? imgW : imgH;
-    const rotatedH = rot % 180 === 0 ? imgH : imgW;
+    // Crop after rotation, so all crop coordinates must be in the rotated
+    // image's pixel space. 90/270 degree rotations swap the source bounds.
+    const rotatedW = isSideways ? imgH : imgW;
+    const rotatedH = isSideways ? imgW : imgH;
 
-    const displayToOriginalScale =
-      rotatedW / (displayedImageSize.width * scale);
+    // Match the on-screen rotated preview dimensions before converting pixels.
+    // Banner crops are sensitive here: using width scale for Y creates drift.
+    const displayedW = isSideways
+      ? displayedImageSize.height
+      : displayedImageSize.width;
+    const displayedH = isSideways
+      ? displayedImageSize.width
+      : displayedImageSize.height;
 
-    const originX =
-      rotatedW / 2 -
-      (cropWidth / 2) * displayToOriginalScale -
-      currentOffset.current.x * displayToOriginalScale;
+    const scaledDisplayedW = displayedW * scale;
+    const scaledDisplayedH = displayedH * scale;
 
-    const originY =
-      rotatedH / 2 -
-      (cropHeight / 2) * displayToOriginalScale -
-      currentOffset.current.y * displayToOriginalScale;
+    const imagePxPerScreenX = rotatedW / scaledDisplayedW;
+    const imagePxPerScreenY = rotatedH / scaledDisplayedH;
+
+    const cropW = Math.min(
+      rotatedW,
+      Math.round(cropWidth * imagePxPerScreenX),
+    );
+    const cropH = Math.min(
+      rotatedH,
+      Math.round(cropHeight * imagePxPerScreenY),
+    );
+
+    const cropBoxCenterX = cropWidth / 2;
+    const cropBoxCenterY = cropHeight / 2;
+    const renderedImageCenterX = isPost
+      ? cropBoxCenterX + currentOffset.current.x
+      : displayedImageSize.width / 2 + currentOffset.current.x;
+    const renderedImageCenterY = isPost
+      ? cropBoxCenterY + currentOffset.current.y
+      : displayedImageSize.height / 2 + currentOffset.current.y;
+
+    // Map the crop-box center to the rendered image center. Moving the image
+    // right/down means the visible crop moves left/up in source coordinates.
+    const cropCenterX =
+      rotatedW / 2 +
+      (cropBoxCenterX - renderedImageCenterX) * imagePxPerScreenX;
+    const cropCenterY =
+      rotatedH / 2 +
+      (cropBoxCenterY - renderedImageCenterY) * imagePxPerScreenY;
+
+    const clamp = (value: number, min: number, max: number) =>
+      Math.min(max, Math.max(min, value));
+
+    const originX = clamp(
+      Math.round(cropCenterX - cropW / 2),
+      0,
+      rotatedW - cropW,
+    );
+    const originY = clamp(
+      Math.round(cropCenterY - cropH / 2),
+      0,
+      rotatedH - cropH,
+    );
 
     const actions: ImageManipulator.Action[] = [];
 
@@ -345,10 +393,10 @@ export default function CropEditorModal({
 
     actions.push({
       crop: {
-        originX: Math.max(0, Math.round(originX)),
-        originY: Math.max(0, Math.round(originY)),
-        width: Math.round(cropWidth * displayToOriginalScale),
-        height: Math.round(cropHeight * displayToOriginalScale),
+        originX,
+        originY,
+        width: cropW,
+        height: cropH,
       },
     });
 
@@ -375,11 +423,13 @@ export default function CropEditorModal({
   // --------------------------------------------------------------------------
   // Render
   // --------------------------------------------------------------------------
-  return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.wrapper}>
-          <View style={styles.header}>
+return (
+  <Modal visible={visible} animationType="slide" transparent>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.wrapper}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={{ width: 40, alignItems: "flex-start" }}>
             <Pressable onPress={onCancel}>
               <Ionicons
                 name="close"
@@ -387,9 +437,21 @@ export default function CropEditorModal({
                 color={isDark ? Colors.white : Colors.black}
               />
             </Pressable>
+          </View>
 
+          <View style={{ flex: 1, alignItems: "center" }}>
             <Text style={styles.headerTitle}>Crop</Text>
+          </View>
 
+          <View
+            style={{
+              width: 80,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
             <Pressable onPress={rotate90}>
               <Ionicons
                 name="refresh"
@@ -402,38 +464,51 @@ export default function CropEditorModal({
               <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
           </View>
+        </View>
 
-          <View style={styles.cropContainer}>
-            <View style={styles.imageContainer} {...panResponder.panHandlers}>
-              <Animated.View
+        {/* Crop Area */}
+        <View style={styles.cropContainer}>
+          <View
+            style={[
+              styles.imageContainer,
+              {
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden",
+              },
+            ]}
+            {...panResponder.panHandlers}
+          >
+            <Animated.View
+              style={{
+                width: displayedImageSize.width,
+                height: displayedImageSize.height,
+                transform: [
+                  { translateX: animatedOffset.x },
+                  { translateY: animatedOffset.y },
+                  { scale: animatedScale },
+                  {
+                    rotate: animatedRotation.interpolate({
+                      inputRange: [0, 360],
+                      outputRange: ["0deg", "360deg"],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <Image
+                source={{ uri: imageUri }}
                 style={{
                   width: displayedImageSize.width,
                   height: displayedImageSize.height,
-                  transform: [
-                    { translateX: animatedOffset.x },
-                    { translateY: animatedOffset.y },
-                    { scale: animatedScale },
-                    {
-                      rotate: animatedRotation.interpolate({
-                        inputRange: [0, 360],
-                        outputRange: ["0deg", "360deg"],
-                      }),
-                    },
-                  ],
                 }}
-              >
-                <Image
-                  source={{ uri: imageUri }}
-                  style={{
-                    width: displayedImageSize.width,
-                    height: displayedImageSize.height,
-                  }}
-                />
-              </Animated.View>
-            </View>
+                resizeMode="cover"
+              />
+            </Animated.View>
           </View>
         </View>
-      </SafeAreaView>
-    </Modal>
-  );
+      </View>
+    </SafeAreaView>
+  </Modal>
+);
 }

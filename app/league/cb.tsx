@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -16,9 +15,9 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBDailyGames } from "hooks/CBHooks/useCBDailyGames";
-import { useCBSeasonCalendar } from "hooks/CBHooks/useCBSeasonCalendar";
+import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -43,7 +42,7 @@ export default function NBALeagueScreen() {
     refreshGames,
     loading: loadingGames,
   } = useCBDailyGames(selectedDate);
-  const { calendar } = useCBSeasonCalendar();
+  const { calendar } = useLeagueCalendar(league);
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const navigation = useNavigation();
@@ -173,11 +172,6 @@ export default function NBALeagueScreen() {
           {/* STANDINGS */}
           <View key="standings">
             <CBStandingsList league="cb" />
-          </View>
-
-          {/* FORUM */}
-          <View key="forum">
-            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

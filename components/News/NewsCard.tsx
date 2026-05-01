@@ -1,39 +1,40 @@
+import { formatDistanceToNowStrict } from "date-fns";
 import { useRouter } from "expo-router";
+import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-// ✅ Import fallback image
 import { newsCardStyles } from "styles/NewsStyles/NewsCardStyles";
 
 type NewsCardProps = {
-  id: string;
-  title: string;
-  source: string | { id?: string; name?: string };
-
-  url: string;
-  thumbnail?: string;
-  publishedAt?: string;
-  date?: string;
+  content: NewsArticle;
+  isDark: boolean;
 };
 
-export default function NewsCard({
-  title,
-  source,
-  url,
-  thumbnail,
-}: NewsCardProps) {
+export default function NewsCard({ content, isDark }: NewsCardProps) {
   const router = useRouter();
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const styles = newsCardStyles(isDark);
-
   const [imageError, setImageError] = useState(false);
-  const displaySource =
-    typeof source === "string" ? source : (source?.name ?? "Unknown Source");
+  const formattedDate = new Date(content.published).toLocaleDateString(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    },
+  );
+  const newsId = content.id;
+  const thumbnail = content.image;
+  const title = content.headline;
+  const published = formattedDate;
+  const source = content.byline;
+  const timeAgo = formatDistanceToNowStrict(new Date(content.published), {
+    addSuffix: true,
+  });
 
-  const handlePress = () => {
+    const handlePress = () => {
     router.push({
-      pathname: "/news/article",
-      params: { url, title, thumbnail },
+      pathname: "/news/[id]",
+      params: { id: newsId },
     });
   };
 
@@ -49,7 +50,11 @@ export default function NewsCard({
           <Text numberOfLines={2} style={styles.title}>
             {title}
           </Text>
-          <Text style={styles.source}>{displaySource}</Text>
+          {source && <Text style={styles.source}>{source}</Text>}
+          <View style={styles.timeContainer}>
+            <Text style={styles.source}>{published}</Text>
+            <Text style={styles.source}>{timeAgo}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>

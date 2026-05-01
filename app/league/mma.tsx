@@ -4,15 +4,16 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import NewsList from "components/News/NewsList";
+import MMAChampionsList from "components/Sports/MMA/Champions/MMAChampionsList";
 import EventSelector from "components/Sports/MMA/EventSelector";
 import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -142,6 +143,10 @@ export default function UFCLeagueScreen() {
             </ScrollView>
           </View>
 
+          {/* CHAMPIONS */}
+          <View key="champions">
+            <MMAChampionsList />
+          </View>
           {/* FORUM */}
           <View key="forum">
             <LeagueForum league={league} />

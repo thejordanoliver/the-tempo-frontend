@@ -9,8 +9,8 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  CB: ["scores", "news","standings",  "forum"],
-  WNBA: ["scores", "news", "standings", "awards", "forum"],
+  CB: ["scores", "news", "standings"],
+  WNBA: ["scores", "news", "standings", "draft", "awards", "forum"],
   NFL: [
     "scores",
     "news",

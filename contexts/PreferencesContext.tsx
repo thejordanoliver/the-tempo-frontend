@@ -136,7 +136,6 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
         viewMode,
         toggleViewMode,
         setViewMode,
-
         colorScheme,
         resolvedColorScheme,
         setColorScheme,

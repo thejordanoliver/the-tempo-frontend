@@ -8,7 +8,7 @@ import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
+import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
@@ -29,7 +29,7 @@ import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/basketball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -361,34 +361,34 @@ export default function GameDetailsScreen() {
               isDark={isDark}
             />
 
-            {isHalftime && inProgress && (
-              <PlayersInFoulTrouble
-                homeId={String(homeEspnId)}
-                homeCode={homeName}
-                homeLogo={homeLogo}
-                awayId={String(awayEspnId)}
-                awayCode={awayName}
-                awayLogo={awayLogo}
-                homePlayers={homeFoulPlayers}
-                awayPlayers={awayFoulPlayers}
-                league={league}
-                isDark={isDark}
-              />
-            )}
+            <PlayersInFoulTrouble
+              homeId={String(homeEspnId)}
+              homeCode={homeName}
+              homeLogo={homeLogo}
+              awayId={String(awayEspnId)}
+              awayCode={awayName}
+              awayLogo={awayLogo}
+              homePlayers={homeFoulPlayers}
+              awayPlayers={awayFoulPlayers}
+              league={league}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {(isHalftime || inProgress || isFinal) && (
-              <ShotChart
-                plays={plays}
-                homeTeamId={String(homeEspnId)}
-                awayTeamId={String(awayEspnId)}
-                neutralSite={neutralSite}
-                league={league}
-              />
-            )}
+            <ShotChart
+              plays={plays}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              neutralSite={neutralSite}
+              league={league}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {(isHalftime || inProgress || isFinal) && (
-              <GameSummary plays={plays ?? []} league={league} />
-            )}
+            <GameSummary
+              plays={plays ?? []}
+              league={league}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <GameTeamStats
               stats={teamStats}
@@ -397,51 +397,42 @@ export default function GameDetailsScreen() {
               isDark={isDark}
             />
 
-            {(isHalftime || inProgress || isFinal) && (
-              <BoxScore
-                playerStats={playerStats}
-                awayTeamId={Number(awayEspnId)}
-                homeTeamId={Number(homeEspnId)}
-                league={league}
-                isDark={isDark}
-              />
-            )}
+            <BoxScore
+              playerStats={playerStats}
+              awayTeamId={Number(awayEspnId)}
+              homeTeamId={Number(homeEspnId)}
+              league={league}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {(isHalftime || inProgress) && (
-              <PlayersOnCourt
-                playerStats={playerStats}
-                awayTeamId={Number(awayEspnId)}
-                homeTeamId={Number(homeEspnId)}
-                league={league}
-                isDark={isDark}
-              />
-            )}
+            <PlayersOnCourt
+              playerStats={playerStats}
+              awayTeamId={Number(awayEspnId)}
+              homeTeamId={Number(homeEspnId)}
+              league={league}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <LastFiveGames
               away={{
                 teamId: awayTeamId,
                 teamCode: awayName,
-                games: awayLastGames ?? [],
+                games: awayLastGames,
               }}
               home={{
-                teamId: homeTeamId ?? "",
+                teamId: homeTeamId,
                 teamCode: homeName,
-                games: homeLastGames ?? [],
+                games: homeLastGames,
               }}
               isDark={isDark}
               league={league}
             />
 
-            {highlights?.length > 0 && (
-              <HighlightVideoList highlights={highlights} isDark={isDark} />
-            )}
+            <HighlightVideoList highlights={highlights} isDark={isDark} />
 
-            <Officials
-              officials={officials ?? []}
-              loading={false}
-              error={null}
-              isDark={isDark}
-            />
+            <Officials officials={officials ?? []} isDark={isDark} />
 
             <GameLocation
               venueImage={venueImage}
@@ -450,8 +441,6 @@ export default function GameDetailsScreen() {
               address={venueAddress}
               venueCapacity={venueCapacity}
               venueAttendance={venueAttendance}
-              loading={false}
-              error={null}
               weather={weather}
               isDark={isDark}
             />
@@ -459,9 +448,10 @@ export default function GameDetailsScreen() {
         )}
       </ScrollView>
 
-      <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton gameId={String(gameObj.id)} />
-      </Animated.View>
+      <GameLiveChatOverlay
+        gameId={String(gameObj?.id)}
+        opacityAnim={opacityAnim}
+      />
     </>
   );
 }

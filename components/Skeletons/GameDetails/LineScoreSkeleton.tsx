@@ -1,11 +1,12 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
+import { LeagueType } from "types/types";
 import HeaderSkeleton from "../HeaderSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
-  league: "MLB" | "NBA" | "WNBA" | "CBB" | "WCBB" | "CFB" | "NFL" | "NHL";
+  league: LeagueType;
 };
 
 export default function LineScoreSkeleton({ league }: Props) {
@@ -34,8 +35,10 @@ export default function LineScoreSkeleton({ league }: Props) {
   }, [pulse]);
 
   // Correct periods by league
-  const PERIOD_MAP: Record<Props["league"], number> = {
+  const PERIOD_MAP: Record<Props["league"], number | null> = {
     MLB: 9,
+    CB: 9,
+    SB: 7,
     NBA: 4,
     WNBA: 4,
     WCBB: 4,
@@ -43,6 +46,7 @@ export default function LineScoreSkeleton({ league }: Props) {
     CFB: 4,
     NFL: 4,
     NHL: 3,
+    MMA: null,
   };
 
   const periods = PERIOD_MAP[league] ?? 4;

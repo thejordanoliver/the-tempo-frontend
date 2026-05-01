@@ -1,4 +1,6 @@
+import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -11,8 +13,6 @@ import {
 } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import { AwardCategory } from "types/types";
-import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
 
 const NAME_COLUMN_WIDTH = "100%";
 const COLLAPSED_ROWS = 5;

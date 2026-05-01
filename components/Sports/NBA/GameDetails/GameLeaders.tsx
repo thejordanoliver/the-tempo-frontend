@@ -11,39 +11,36 @@ const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type Category = (typeof STAT_CATEGORIES)[number];
 
 type Props = {
-  gameId: string;
+  gameLeaders: any,
   awayTeamId: number;
   homeTeamId: number;
   isDark: boolean;
+  loading: boolean;
+  error: any
 };
 
 export default function GameLeaders({
-  gameId,
+  gameLeaders,
   awayTeamId,
   homeTeamId,
   isDark,
+  loading,
+  error,
 }: Props) {
-  const { data, isLoading } = useGameLeaders(gameId, homeTeamId, awayTeamId);
-  const [selectedCategory, setSelectedCategory] =
-    useState<Category>("points");
+
+  const [selectedCategory, setSelectedCategory] = useState<Category>("points");
 
   const styles = gameLeadersStyles(isDark);
 
-  /**
-   * Clean team ordering (no unstable sort)
-   */
   const orderedTeams = useMemo(() => {
-    if (!data) return [];
+    if (!gameLeaders) return [];
 
-    const away = data.find((t: any) => t.team.id === awayTeamId);
-    const home = data.find((t: any) => t.team.id === homeTeamId);
+    const away = gameLeaders.find((t: any) => t.team.id === awayTeamId);
+    const home = gameLeaders.find((t: any) => t.team.id === homeTeamId);
 
     return [away, home].filter(Boolean);
-  }, [data, awayTeamId, homeTeamId]);
+  }, [gameLeaders, awayTeamId, homeTeamId]);
 
-  /**
-   * Build display data for selected category
-   */
   const topPlayers = useMemo(() => {
     return orderedTeams
       .map((teamBlock: any) => {
@@ -61,7 +58,14 @@ export default function GameLeaders({
       .filter((x): x is NonNullable<typeof x> => Boolean(x));
   }, [orderedTeams, selectedCategory]);
 
-  if (isLoading) {
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <GameLeadersSkeleton />
+      </View>
+    );
+  }
+  if (error) {
     return (
       <View style={styles.container}>
         <GameLeadersSkeleton />
@@ -102,9 +106,7 @@ export default function GameLeaders({
                   <Text style={styles.playerName}>
                     {p?.first_name} {p?.last_name}
                   </Text>
-                  <Text style={styles.jersey}>
-                    #{p?.jersey_number ?? "NA"}
-                  </Text>
+                  <Text style={styles.jersey}>#{p?.jersey_number ?? "NA"}</Text>
                 </View>
 
                 <View style={styles.statRow}>
@@ -170,9 +172,7 @@ export default function GameLeaders({
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>MIN</Text>
-                        <Text style={styles.statText}>
-                          {stats?.min ?? "-"}
-                        </Text>
+                        <Text style={styles.statText}>{stats?.min ?? "-"}</Text>
                       </View>
                     </>
                   )}
@@ -193,9 +193,7 @@ export default function GameLeaders({
                       </View>
                       <View style={styles.statBlock}>
                         <Text style={styles.statLabel}>MIN</Text>
-                        <Text style={styles.statText}>
-                          {stats?.min ?? "-"}
-                        </Text>
+                        <Text style={styles.statText}>{stats?.min ?? "-"}</Text>
                       </View>
                     </>
                   )}

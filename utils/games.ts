@@ -1,7 +1,6 @@
 // utils/games.ts
-import { neutralVenues } from "constants/neutralVenues";
+import { neutralStadiums, neutralVenues } from "constants/neutralVenues";
 import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
-import { neutralStadiums } from "constants/teamsNFL";
 import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -39,6 +38,63 @@ type ResolveVenueParams = {
   neutralStadiums: Record<string, any>;
 };
 
+export const normalizeGames = (
+  games: any[],
+  leagueType: string,
+  isWomen = false,
+) =>
+  games
+    .map((game: any) => {
+      let date: dayjs.Dayjs | null = null;
+
+      if (leagueType === "CFB" || leagueType === "NFL") {
+        const ts = game.game?.date?.timestamp;
+        if (!ts) return null;
+        date = dayjs.unix(ts).local();
+      } else {
+        const raw =
+          game.date?.start ?? game.date?.date ?? game.date ?? game.game?.date;
+        if (!raw) return null;
+        date = dayjs.utc(raw).local();
+      }
+
+      let home, away;
+
+      if (leagueType === "NBA") {
+        home = { ...game.home, id: String(game.home?.id) };
+        away = {
+          ...game.away,
+          id: String(game.away?.id),
+        };
+      } else if (leagueType === "NFL" || leagueType === "CFB") {
+        home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
+        away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+      } else if (leagueType === "MLB") {
+        home = {
+          id: game.teams?.home?.id,
+          name: game.teams?.home?.name,
+        };
+
+        away = {
+          id: game.teams?.away?.id,
+          name: game.teams?.away?.name,
+        };
+      } else {
+        home = normalizeTeam(game.teams?.home, isWomen);
+        away = normalizeTeam(game.teams?.away, isWomen);
+      }
+
+      return {
+        ...game,
+        date: date.toDate(),
+        dateString: date.format("YYYY-MM-DD"),
+        time: date.format("h:mm A"),
+        home,
+        away,
+      };
+    })
+    .filter(Boolean);
+
 // ---------- 🧩 Team Helpers ----------
 export const hasIdAndName = (team: any): team is TeamLike =>
   team &&
@@ -62,9 +118,6 @@ export const localDateOnly = (date: string | Date) => {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 };
 
-/**
- * Converts an API date to device local time and returns both the Date object and YYYY-MM-DD string.
- */
 export function toLocalDate(apiDate: any) {
   const nowLocal = dayjs();
 
@@ -160,6 +213,7 @@ export const formatQuarter = (period?: number | string) => {
 
   return period;
 };
+
 export const formatNHLQuarter = (period?: number | string) => {
   if (!period) return "";
 

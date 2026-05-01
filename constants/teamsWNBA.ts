@@ -263,7 +263,7 @@ export const wnbaTeams: NBATeam[] = [
     isActive: true,
   },
   {
-    id: 0,
+    id: 7100,
     espnID: 132052,
     name: "Fire",
     fullName: "Portland Fire",

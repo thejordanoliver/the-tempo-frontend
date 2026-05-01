@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { officialsStyles } from "styles/GameDetailStyles/OfficialsStyles";
 
 type Official = {
@@ -11,35 +11,11 @@ type Official = {
 
 type Props = {
   officials: Official[];
-  loading: boolean;
-  error: any;
   isDark: boolean;
 };
 
-export default function Officials({
-  officials,
-  loading,
-  error,
-  isDark,
-}: Props) {
+export default function Officials({ officials, isDark }: Props) {
   const styles = officialsStyles(isDark);
-
-  if (loading) {
-    return (
-      <View>
-        <ActivityIndicator size="small" color={undefined} />
-        <Text style={styles.loadingText}>Loading officials...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View>
-        <Text style={styles.errorText}>Failed to load officials</Text>
-      </View>
-    );
-  }
 
   if (!officials || officials.length === 0) return null;
 

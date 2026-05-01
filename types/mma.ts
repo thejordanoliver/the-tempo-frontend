@@ -93,6 +93,36 @@ export type MMAFighter = {
   alternate_color: string | null;
 };
 
+export type MMAChampion = {
+  championship_id: string;
+  reign: number;
+  is_current: boolean;
+  won_title_date: string;
+  lost_title_date: string | null;
+  method: string;
+  opponent: string;
+  event: string;
+  defenses: number;
+  notes: string | null;
+  fighter: MMAFighter;
+};
+
+export type MMADivision =
+  | "Heavyweight"
+  | "Light Heavyweight"
+  | "Middleweight"
+  | "Welterweight"
+  | "Lightweight"
+  | "Men's Featherweight"
+  | "Men's Bantamweight"
+  | "Men's Flyweight"
+  | "Women's Featherweight"
+  | "Women's Bantamweight"
+  | "Women's Flyweight"
+  | "Women's Strawweight";
+
+export type MMAChampionsResponse = Record<MMADivision, MMAChampion[]>;
+
 export const emptyFighter: MMAFighter = {
   id: 0,
   espn_id: null,

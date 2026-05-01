@@ -3,7 +3,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
-import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
+import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { getNeutralVenue } from "constants/neutralVenues";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -12,7 +12,7 @@ import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useLayoutEffect } from "react";
-import { Animated, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { emptyFighter, MMAFight } from "types/mma";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
@@ -197,9 +197,10 @@ export default function GameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton gameId={String(parsedGame?.id)} />
-      </Animated.View>
+      <GameLiveChatOverlay
+        gameId={String(parsedGame?.id)}
+        opacityAnim={opacityAnim}
+      />
     </>
   );
 }

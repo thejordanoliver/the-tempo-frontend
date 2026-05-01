@@ -214,15 +214,7 @@ function CBGameCard({ game }: CollegeBaseballGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() =>
-        router.push({
-          pathname: "/game/mlb/[game]",
-          params: { game: JSON.stringify(game) },
-        })
-      }
-    >
+    <TouchableOpacity activeOpacity={0.85} onPress={() => {}}>
       {isChampionship ? (
         <LinearGradient
           colors={

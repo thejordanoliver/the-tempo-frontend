@@ -27,7 +27,7 @@ export function useLastTeamGame({
     setError(null);
 
     try {
-      const res = await apiClient.get(`/api/games/wnba/team/${teamId}/last`, {
+      const res = await apiClient.get(`api/games/wnba/team/${teamId}/last`, {
         params: { season },
       });
 

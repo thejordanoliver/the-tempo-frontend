@@ -2,11 +2,13 @@ import { useNavigation } from "@react-navigation/native";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoritesScroll from "components/Favorites/FavoritesScroll";
 import CombinedGamesList from "components/League/CombinedGamesList";
+import { XFeed } from "components/League/Social/XFeed";
 import NewsList from "components/News/NewsList";
 import TabBar from "components/TabBars/TabBar";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useHomeData } from "hooks/useHomeData";
+import { mockSocialFeed } from "mocks/social";
 import React, { useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -36,7 +38,9 @@ export default function HomeScreen() {
     articles,
     newsError,
     newsLoading,
-    loading,
+    socialData,
+    socialLoading,
+    socialError,
   } = useHomeData(selectedTab);
 
   // --------------------------------------------------
@@ -69,7 +73,7 @@ export default function HomeScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
-          scrollEnabled={!isDraggingFavorites} // ✅ disable swipe while dragging
+          scrollEnabled={!isDraggingFavorites}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
             setSelectedTab(index === 0 ? "scores" : "news");
@@ -89,7 +93,7 @@ export default function HomeScreen() {
             >
               <FavoritesScroll
                 favoriteTeamIds={favorites}
-                loading={loading}
+                loading={newsLoading}
                 onDragStart={() => setIsDraggingFavorites(true)}
                 onDragEnd={() => setIsDraggingFavorites(false)}
                 isDark={isDark}
@@ -97,7 +101,7 @@ export default function HomeScreen() {
 
               <CombinedGamesList
                 gamesByCategory={gamesByCategory}
-                loading={loading}
+                loading={newsLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 isDark={isDark}
@@ -119,6 +123,11 @@ export default function HomeScreen() {
                 />
               }
             >
+              <XFeed
+                items={mockSocialFeed}
+                loading={newsLoading}
+                error={null}
+              />
               <NewsList
                 items={articles}
                 isDark={isDark}

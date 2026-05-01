@@ -184,11 +184,9 @@ export const formStyles = (isDark: boolean) => {
     reviewContainer: {
       justifyContent: "center",
       alignContent: "center",
-      paddingBottom: 100,
     },
-    favoritesScroll: {
-      maxHeight: 280,
-      marginTop: 8,
+    favoritesContainer: {
+      flex: 1,
     },
     imagePreview: {
       height: 120,
@@ -206,7 +204,6 @@ export const formStyles = (isDark: boolean) => {
       marginVertical: 8,
       color: Colors.midTone,
       fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
     },
 
     skipText: {

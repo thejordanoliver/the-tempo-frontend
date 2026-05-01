@@ -3,8 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { apiClient, saveTokens } from "utils/apiClient";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL, saveTokens } from "utils/apiClient";
 
 interface User {
   id: number;
@@ -15,6 +14,22 @@ interface User {
   banner_image?: string | null;
   favorites?: string[];
 }
+
+const LEGACY_FAVORITES_KEY = "favorites";
+const getFavoritesStorageKey = (userId: number | string) =>
+  `favoriteTeams:${userId}`;
+const SESSION_STORAGE_KEYS = [
+  "accessToken",
+  "refreshToken",
+  "userId",
+  "username",
+  "fullName",
+  "bio",
+  "profileImage",
+  "bannerImage",
+  "loggedInUser",
+  LEGACY_FAVORITES_KEY,
+];
 
 // ─── Image normalization ──────────────────────────────────────────────────────
 
@@ -44,11 +59,13 @@ export function useAuth() {
           "bio",
           "profileImage",
           "bannerImage",
-          "favorites",
         ]);
 
         const stored: Record<string, string | null> =
           Object.fromEntries(values);
+        const storedFavorites = stored.userId
+          ? await AsyncStorage.getItem(getFavoritesStorageKey(stored.userId))
+          : null;
 
         if (stored.accessToken) {
           setToken(stored.accessToken);
@@ -62,7 +79,7 @@ export function useAuth() {
             bio: stored.bio ?? "",
             profile_image: normalizeImage(stored.profileImage),
             banner_image: normalizeImage(stored.bannerImage),
-            favorites: stored.favorites ? JSON.parse(stored.favorites) : [],
+            favorites: storedFavorites ? JSON.parse(storedFavorites) : [],
           });
         }
       } catch (err) {
@@ -94,8 +111,9 @@ export function useAuth() {
       ["bio", user.bio ?? ""],
       ["profileImage", normalizeImage(user.profile_image) ?? ""],
       ["bannerImage", normalizeImage(user.banner_image) ?? ""],
-      ["favorites", JSON.stringify(user.favorites ?? [])],
+      [getFavoritesStorageKey(user.id), JSON.stringify(user.favorites ?? [])],
     ]);
+    await AsyncStorage.removeItem(LEGACY_FAVORITES_KEY);
   };
 
   // ─── Login ─────────────────────────────────────────────────────────────────
@@ -117,7 +135,7 @@ export function useAuth() {
       router.replace("/(tabs)/profile");
     } catch (err: any) {
       const message =
-        err.response?.data?.error ?? err.message ?? "Invalid credentials";
+        err.response?.data?.warn ?? err.message ?? "Invalid credentials";
       console.error("Login error:", message);
       throw new Error(message);
     } finally {
@@ -174,7 +192,7 @@ export function useAuth() {
     } catch (err) {
       console.warn("Logout error:", err);
     } finally {
-      await AsyncStorage.clear();
+      await AsyncStorage.multiRemove(SESSION_STORAGE_KEYS);
       setUser(null);
       setToken(null);
       router.replace("/login");
@@ -188,7 +206,10 @@ export function useAuth() {
       // apiClient attaches the Bearer token automatically via its request interceptor
       await apiClient.delete("/api/delete-account");
 
-      await AsyncStorage.clear();
+      await AsyncStorage.multiRemove([
+        ...SESSION_STORAGE_KEYS,
+        ...(user?.id ? [getFavoritesStorageKey(user.id)] : []),
+      ]);
       setUser(null);
       setToken(null);
       router.replace("/login");

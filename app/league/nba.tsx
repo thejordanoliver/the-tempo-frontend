@@ -2,8 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
-import DraftList from "components/League/DraftList";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "components/League/Draft/DraftList";
 import SeasonLeadersList from "components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
@@ -20,11 +22,12 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { usePlayoffGames } from "hooks/NBAHooks/usePlayoffGames";
 import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
 import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
@@ -56,7 +59,7 @@ export default function NBALeagueScreen() {
     loading: loadingSummer,
     refreshSummerGames,
   } = useNBASLGames({ season: currentYear.toString() });
-
+  const { calendar } = useLeagueCalendar(league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
@@ -66,7 +69,9 @@ export default function NBALeagueScreen() {
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const navigation = useNavigation();
-  const [draftYear, setDraftYear] = useState(dayjs().year().toString());
+  const [draftYear, setDraftYear] = useState(() =>
+    getDefaultDraftYear("nba").toString(),
+  );
   const [standingsYear, setStandingsYear] = useState(
     getNBACalendarSeason().toString(),
   );
@@ -124,17 +129,16 @@ export default function NBALeagueScreen() {
     );
   };
 
-  const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce(
-      (acc, game) => {
-        const localDate = new Date(game.date);
-        const iso = `${localDate.getFullYear()}-${String(
-          localDate.getMonth() + 1,
-        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+  const markDates = (calendarArray: string[]) =>
+    calendarArray.reduce(
+      (acc, dateStr) => {
+        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+
         acc[iso] = {
           marked: true,
           dotColor: isDark ? Colors.white : Colors.black,
         };
+
         return acc;
       },
       {} as Record<string, { marked: boolean; dotColor: string }>,
@@ -253,7 +257,7 @@ export default function NBALeagueScreen() {
               onYearChange={setDraftYear}
               onTeamChange={setDraftTeam}
               onRoundChange={setDraftRound}
-              league="nba"
+              league={"nba"}
             />
           </View>
 
@@ -280,7 +284,7 @@ export default function NBALeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...games, ...summerGames]),
+          ...markDates([...calendar]),
         }}
       />
 

@@ -64,7 +64,7 @@ export default function SeasonLeadersList({
 }: SeasonLeadersListProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = seasonLeadersListStyles(isDark);
   const router = useRouter();
   const global = globalStyles(isDark);
   if (loading) {
@@ -146,7 +146,7 @@ export default function SeasonLeadersList({
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const seasonLeadersListStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainerStyle: {
       paddingBottom: 100,

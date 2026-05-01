@@ -74,7 +74,7 @@ const getStyles = (isDark: boolean) => {
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 8,
-      padding: 14, // ✅ match real card
+      padding: 8,
       alignItems: "center",
       justifyContent: "space-between",
     },

@@ -1,5 +1,5 @@
 import SearchBar from "components/SearchBars/SearchBar";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useDeferredValue, useMemo } from "react";
 import { Animated, FlatList, StyleSheet } from "react-native";
 import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
@@ -30,11 +30,14 @@ const FavoriteTeamsSelector = ({
 }: Props) => {
   const styles = useMemo(
     () => createStyles(isGridView, itemWidth),
-    [isGridView, itemWidth],
+    [isGridView, itemWidth]
   );
+  const deferredSearch = useDeferredValue(search);
+
+  const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const filteredTeams = useMemo(() => {
-    const query = search.toLowerCase().trim();
+    const query = deferredSearch.toLowerCase().trim();
     if (!query) return teams;
 
     return teams.filter((team) => {
@@ -44,6 +47,7 @@ const FavoriteTeamsSelector = ({
         team.displayName ||
         ""
       ).toLowerCase();
+
       const league = team.league.toLowerCase();
       const searchTerms = ((team as any).searchTerms ?? "").toLowerCase();
 
@@ -53,29 +57,49 @@ const FavoriteTeamsSelector = ({
         searchTerms.includes(query)
       );
     });
-  }, [teams, search]);
+  }, [teams, deferredSearch]);
+
+  const handleToggle = useCallback(
+    (league: LeagueType, id: string) => {
+      toggleFavorite(league, id);
+    },
+    [toggleFavorite]
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: LeagueTeam }) => {
-      const displayItem = {
-        ...item,
-        fullName:
-          item.league === "NFL" || item.league === "NBA"
-            ? item.fullName
-            : item.fullName || item.name,
-      };
+      const key = `${item.league}:${item.id}`;
 
       return (
         <TeamCard
-          item={displayItem}
-          isSelected={favorites.includes(`${item.league}:${item.id}`)}
-          onPress={() => toggleFavorite(item.league, item.id.toString())}
+          item={item}
+          isSelected={favoritesSet.has(key)}
+          onPress={handleToggle}
           isGridView={isGridView}
           itemWidth={itemWidth}
         />
       );
     },
-    [favorites, isGridView, itemWidth, toggleFavorite],
+    [favoritesSet, handleToggle, isGridView, itemWidth]
+  );
+
+  const keyExtractor = useCallback(
+    (item: LeagueTeam) => `${item.league}-${item.id}`,
+    []
+  );
+
+  const getItemLayout = useCallback(
+    (_: ArrayLike<LeagueTeam> | null | undefined, index: number) => {
+      const itemHeight = 76;
+      const separatorHeight = 12;
+
+      return {
+        length: itemHeight + separatorHeight,
+        offset: (itemHeight + separatorHeight) * index,
+        index,
+      };
+    },
+    []
   );
 
   if (loading) {
@@ -98,12 +122,20 @@ const FavoriteTeamsSelector = ({
       <FlatList
         key={isGridView ? "grid" : "list"}
         data={filteredTeams}
-        keyExtractor={(item) => `${item.league}-${item.id}`}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         numColumns={isGridView ? 3 : 1}
         contentContainerStyle={styles.contentContainer}
         columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
-        renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        windowSize={5}
+        initialNumToRender={12}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        getItemLayout={isGridView ? undefined : getItemLayout}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       />
     </Animated.View>
   );

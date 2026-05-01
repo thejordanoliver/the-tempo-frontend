@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { NBATeam } from "types/types";
+import { NBATeam } from "types/nba";
 import { apiClient } from "utils/apiClient";
 import { getWNBASeason } from "utils/dateUtils";
 
@@ -27,7 +27,7 @@ export type BasketballGame = {
 
 const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
-type useWeeklyWNBAGamesOptions = {
+type UseWeeklyWNBAGamesOptions = {
   season?: string;
   timezone?: string;
   league?: string;
@@ -37,29 +37,33 @@ export function useWeeklyWNBAGames({
   season = getWNBASeason(),
   timezone,
   league,
-}: useWeeklyWNBAGamesOptions = {}) {
-  const [BasketballGames, setGames] = useState<BasketballGame[]>([]);
-  const [cbbLoading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+}: UseWeeklyWNBAGamesOptions = {}) {
+  const [games, setGames] = useState<BasketballGame[]>([]);
+  const [wnbaLoading, setWNBALoading] = useState(false);
+  const [wnbaError, setWNBAError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
 
+  // ---------------------------------------
+  // Fetch
+  // ---------------------------------------
   const refreshWNBAGames = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setWNBALoading(true);
+    setWNBAError(null);
 
     try {
-      const res = await apiClient.get(`api/games/cbb/weekly`, {
+      const res = await apiClient.get(`api/games/wnba/weekly`, {
         params: { season, timezone, league },
       });
 
-      const data: BasketballGame[] = res.data?.response || [];
+      const data: BasketballGame[] = res.data?.response ?? [];
+
       setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     } catch (err: any) {
-      console.error("Error fetching WNBA weekly games:", err.message);
-      setError("Failed to load weekly WNBA games");
+      console.error("Error fetching WNBA weekly games:", err?.message);
+      setWNBAError("Failed to load weekly WNBA games");
     } finally {
-      setLoading(false);
+      setWNBALoading(false);
     }
   }, [season, timezone, league]);
 
@@ -67,22 +71,33 @@ export function useWeeklyWNBAGames({
     refreshWNBAGames();
   }, [refreshWNBAGames]);
 
+  // ---------------------------------------
+  // Helpers
+  // ---------------------------------------
   const isLiveGame = useCallback(
     (game: BasketballGame) =>
       !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
-    [],
+    []
   );
 
+  // ---------------------------------------
+  // Sort (live games first)
+  // ---------------------------------------
   const sortedGames = useMemo(() => {
-    return [...BasketballGames].sort(
-      (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)),
-    );
-  }, [BasketballGames, isLiveGame]);
+    if (!games?.length) return [];
 
+    return [...games].sort(
+      (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a))
+    );
+  }, [games, isLiveGame]);
+
+  // ---------------------------------------
+  // Return
+  // ---------------------------------------
   return {
-    BasketballGames: sortedGames,
-    cbbLoading,
-    error,
+    wnbaGames: sortedGames,
+    wnbaLoading,
+    wnbaError,
     lastFetched,
     refresh: refreshWNBAGames,
   };

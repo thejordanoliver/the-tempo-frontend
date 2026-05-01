@@ -3,7 +3,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
+import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
@@ -23,7 +23,7 @@ import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
-import { Animated, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
@@ -367,9 +367,10 @@ export default function NFLGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton gameId={String(parsedGame.game.id)} />
-      </Animated.View>
+      <GameLiveChatOverlay
+        gameId={String(parsedGame.game.id)}
+        opacityAnim={opacityAnim}
+      />
     </>
   );
 }

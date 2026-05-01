@@ -1,8 +1,5 @@
-import { teams as mlbTeams } from "constants/teamsMLB";
+import { getMLBTeam } from "constants/teamsMLB";
 import { MLBGame } from "types/baseball";
-
-const getTeam = (id: number) =>
-  mlbTeams.find((t) => t.id === id) ?? mlbTeams[0];
 
 export const mockMLBGames: MLBGame[] = [
   // --- Scheduled Game ---
@@ -21,20 +18,17 @@ export const mockMLBGames: MLBGame[] = [
       code: "US",
       flag: "https://media.api-sports.io/flags/us.svg",
     },
-    date: {
-      utc: new Date(Date.now() + 1000 * 60 * 60 * 6).toLocaleString(),
-      time: "7:05 PM",
-      timestamp: Math.floor(Date.now() / 1000) + 21600,
-      timezone: "UTC",
-    },
+    date: "7:05 PM",
+    timestamp: Math.floor(Date.now() / 1000) + 21600,
+
     status: {
       long: "Scheduled",
       short: "NS",
       clock: null,
     },
     teams: {
-      home: getTeam(17), // Yankees
-      away: getTeam(21), // Red Sox
+      home: getMLBTeam(17),  // Yankees
+      away: getMLBTeam(21), // Red Sox
     },
     scores: {
       home: {
@@ -54,7 +48,7 @@ export const mockMLBGames: MLBGame[] = [
 
   // --- In Progress Game ---
   {
-    id: 2002,
+    id: 2001,
     league: {
       id: 1,
       name: "MLB",
@@ -68,52 +62,38 @@ export const mockMLBGames: MLBGame[] = [
       code: "US",
       flag: "https://media.api-sports.io/flags/us.svg",
     },
-    date: {
-      utc: new Date().toISOString(),
-      time: "8:10 PM",
-      timestamp: Math.floor(Date.now() / 1000),
-      timezone: "UTC",
-    },
+    date: "7:05 PM",
+    timestamp: Math.floor(Date.now() / 1000) + 21600,
+
     status: {
-      long: "Top 5",
-      short: "LIVE",
-      clock: "Top 5th",
+      long: "Scheduled",
+      short: "NS",
+      clock: null,
     },
     teams: {
-      home: getTeam(2), // Diamondbacks
-      away: getTeam(10), // Rockies
+      home: getMLBTeam(17),  // Yankees
+      away: getMLBTeam(21), // Red Sox
     },
     scores: {
       home: {
-        hits: 7,
-        errors: 1,
-        innings: {
-          1: 1,
-          2: 0,
-          3: 2,
-          4: 0,
-          5: null,
-        },
-        total: 3,
+        hits: 0,
+        errors: 0,
+        innings: {},
+        total: 0,
       },
       away: {
-        hits: 5,
+        hits: 0,
         errors: 0,
-        innings: {
-          1: 0,
-          2: 1,
-          3: 0,
-          4: 1,
-          5: null,
-        },
-        total: 2,
+        innings: {},
+        total: 0,
       },
     },
   },
 
+
   // --- Final Game ---
   {
-    id: 2003,
+    id: 2001,
     league: {
       id: 1,
       name: "MLB",
@@ -127,54 +107,32 @@ export const mockMLBGames: MLBGame[] = [
       code: "US",
       flag: "https://media.api-sports.io/flags/us.svg",
     },
-    date: {
-      utc: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-      time: "10:15 PM",
-      timestamp: Math.floor(Date.now() / 1000) - 86400,
-      timezone: "UTC",
-    },
+    date: "7:05 PM",
+    timestamp: Math.floor(Date.now() / 1000) + 21600,
+
     status: {
-      long: "Final",
-      short: "FT",
+      long: "Scheduled",
+      short: "NS",
       clock: null,
     },
     teams: {
-      home: getTeam(26), // A's
-      away: getTeam(4), // Cubs
+      home: getMLBTeam(17),  // Yankees
+      away: getMLBTeam(21), // Red Sox
     },
     scores: {
       home: {
-        hits: 9,
-        errors: 1,
-        innings: {
-          1: 0,
-          2: 1,
-          3: 0,
-          4: 0,
-          5: 3,
-          6: 0,
-          7: 1,
-          8: 2,
-          9: null,
-        },
-        total: 7,
+        hits: 0,
+        errors: 0,
+        innings: {},
+        total: 0,
       },
       away: {
-        hits: 6,
-        errors: 2,
-        innings: {
-          1: 1,
-          2: 0,
-          3: 0,
-          4: 1,
-          5: 0,
-          6: 0,
-          7: 1,
-          8: 0,
-          9: null,
-        },
-        total: 3,
+        hits: 0,
+        errors: 0,
+        innings: {},
+        total: 0,
       },
     },
   },
+
 ];

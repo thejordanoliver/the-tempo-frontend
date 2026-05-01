@@ -16,7 +16,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
       padding: 12,
       height: 80,
       alignItems: "center",
-      borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
+      borderBottomColor:  Colors.midTone,
     },
     avatar: {
       width: 50,

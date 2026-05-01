@@ -21,11 +21,13 @@ type GamePreviewContentProps = {
   awayLastGames: any;
   playerStats: any;
   data?: any;
-  resolvedVenueImage: any;
-  resolvedVenueName: any;
-  resolvedVenueCity: any;
-  resolvedVenueAddress?: string;
-  resolvedVenueCapacity: any;
+  venueImage: any;
+  venueName: any;
+  venueCity: any;
+  venueAddress?: string;
+  venueLocation: string;
+  venueCapacity: any;
+  venueAttendance: string;
   weather: any;
   highlights: any;
   gameStatusDescription: string;
@@ -42,11 +44,13 @@ export default function GamePreviewContent({
   awayLastGames,
   playerStats,
   teamStats,
-  resolvedVenueImage,
-  resolvedVenueName,
-  resolvedVenueCity,
-  resolvedVenueAddress,
-  resolvedVenueCapacity,
+  venueImage,
+  venueName,
+  venueCity,
+  venueAddress,
+  venueCapacity,
+  venueLocation,
+  venueAttendance,
   weather,
   highlights,
   gameStatusDescription,
@@ -73,15 +77,15 @@ export default function GamePreviewContent({
         awayTeamId={Number(away.espnID)}
         homeTeamId={Number(home.espnID)}
         league={isWomen ? "wcbb" : "cbb"}
-        gameStatusDescription={gameStatusDescription}
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
 
       <GameTeamStats
         stats={teamStats}
-        gameStatusDescription={gameStatusDescription}
         league={isWomen ? "WCBB" : "CBB"}
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
 
       {/* Last Five Games */}
@@ -110,6 +114,7 @@ export default function GamePreviewContent({
           homeTeamId={Number(home.espnId)}
           league={isWomen ? "WCBB" : "CBB"}
           isDark
+          gameStatusDescription={gameStatusDescription}
         />
       )}
 
@@ -125,20 +130,16 @@ export default function GamePreviewContent({
           isDark
         />
       )}
-      {/* Venue Info */}
-      {(resolvedVenueImage || resolvedVenueName) && (
-        <GameLocation
-          venueImage={resolvedVenueImage}
-          venueName={resolvedVenueName}
-          location={resolvedVenueCity}
-          address={resolvedVenueAddress}
-          venueCapacity={resolvedVenueCapacity}
-          weather={weather}
-          isDark
-          loading={false}
-          error={null}
-        />
-      )}
+      <GameLocation
+        venueImage={venueImage}
+        venueName={venueName}
+        location={venueLocation}
+        address={venueAddress}
+        venueCapacity={venueCapacity}
+        venueAttendance={venueAttendance}
+        weather={weather}
+        isDark
+      />
     </BottomSheetScrollView>
   );
 }

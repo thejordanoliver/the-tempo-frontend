@@ -208,6 +208,8 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
     ],
   );
 
+  if (highlights?.length > 0) return null;
+
   return (
     <View>
       <HeadingTwo isDark={isDark}>Highlights</HeadingTwo>

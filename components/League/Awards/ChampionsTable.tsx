@@ -1,3 +1,4 @@
+import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
@@ -6,11 +7,10 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
-import { useChampions } from "hooks/useChampions";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useChampions } from "hooks/LeagueHooks/useChampions";
 import { Image, Text, View } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
-import AwardSeasonTableSkeleton from "./AwardSeasonTableSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   title: string;

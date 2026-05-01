@@ -41,12 +41,14 @@ interface Play {
   clock?: { displayValue: string };
   awayScore: number;
   homeScore: number;
+  gameStatusDescription: string;
 }
 
 type Props = {
   plays?: Play[];
   loading?: boolean;
   league?: LeagueType;
+  gameStatusDescription: string;
 };
 
 // Enable LayoutAnimation on Android
@@ -100,6 +102,7 @@ export default function GameSummary({
   plays = [],
   loading = false,
   league = "NBA",
+  gameStatusDescription,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -160,6 +163,10 @@ export default function GameSummary({
   if (!loading && plays?.length === 0) return null;
 
   const latestPlayId = teamPlays?.[0]?.id;
+
+  if (gameStatusDescription === "Scheduled") {
+    return null;
+  }
 
   return (
     <View>

@@ -1,7 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
-import DraftList from "components/League/DraftList";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "components/League/Draft/DraftList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -18,12 +20,12 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
-import { useNFLSeasonCalendar } from "hooks/NFLHooks/useNFLSeasonCalendar";
+import { useFootballSeasonCalendar } from "hooks/NFLHooks/useFootballSeasonCalendar";
 import { useNFLBracket } from "hooks/NFLHooks/usePlayoffGames";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -51,7 +53,9 @@ export default function NFLLeagueScreen() {
     error: newsError,
   } = useLeaguesNews(10, league);
   const [refreshing, setRefreshing] = useState(false);
-  const [draftYear, setDraftYear] = useState(currentSeason.toString());
+  const [draftYear, setDraftYear] = useState(() =>
+    getDefaultDraftYear("nfl").toString(),
+  );
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
   const {
     playoffData,
@@ -76,7 +80,7 @@ export default function NFLLeagueScreen() {
     loading: gamesLoading,
     refetch,
   } = useFootballGamesByWeek(getFootballSeason(), 1);
-  const { calendar } = useNFLSeasonCalendar();
+  const { calendar } = useFootballSeasonCalendar(league);
   const weekArray = calendar?.filter((w) => w.stage !== "Off Season") || [];
 
   const weekLabels = weekArray.map((w) => w.label);
@@ -220,7 +224,7 @@ export default function NFLLeagueScreen() {
               league={league}
             />
           </View>
-          
+
           {/* PLAYOFFS */}
           <View key="playoffs" style={styles.contentArea}>
             <NFLPlayoffBracket

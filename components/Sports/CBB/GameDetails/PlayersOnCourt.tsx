@@ -34,6 +34,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  gameStatusDescription: string;
 };
 
 type Player = {
@@ -62,6 +63,7 @@ export default function PlayersOnCourt({
   isError = false,
   isDark,
   league,
+  gameStatusDescription,
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
   const router = useRouter();
@@ -196,6 +198,13 @@ export default function PlayersOnCourt({
         })}
     </View>
   );
+
+  if (
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Final"
+  ) {
+    return null;
+  }
 
   return (
     <ScrollView>

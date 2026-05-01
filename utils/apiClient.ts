@@ -28,6 +28,19 @@ export const clearTokens = async () => {
   await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
 };
 
+const SESSION_STORAGE_KEYS = [
+  "accessToken",
+  "refreshToken",
+  "userId",
+  "username",
+  "fullName",
+  "bio",
+  "profileImage",
+  "bannerImage",
+  "loggedInUser",
+  "favorites",
+];
+
 // ─── Request interceptor ─────────────────────────────────────────────────────
 // Attach the current access token to every outgoing request.
 
@@ -45,10 +58,10 @@ apiClient.interceptors.request.use(async (config) => {
 //   2. If refresh fails, clear all auth data and send the user to /login.
 
 let isRefreshing = false;
-let failedQueue: Array<{
+let failedQueue: {
   resolve: (value: string) => void;
   reject: (reason?: any) => void;
-}> = [];
+}[] = [];
 
 // While a refresh is in-flight, queue other failed auth requests instead of
 // firing more refresh requests. Once the refresh settles, drain the queue.
@@ -123,7 +136,7 @@ apiClient.interceptors.response.use(
       processQueue(refreshError, null);
 
       // Refresh failed — session is unrecoverable. Clear everything and redirect.
-      await AsyncStorage.clear();
+      await AsyncStorage.multiRemove(SESSION_STORAGE_KEYS);
       router.replace("/login");
 
       return Promise.reject(refreshError);

@@ -1,6 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { BlurView } from "expo-blur";
+import { useDebounce } from "hooks/useDebounce";
+import { useGiphySearch } from "hooks/useGiphySearch";
+import React, { useCallback, useEffect } from "react";
 import {
   Alert,
   FlatList,
@@ -10,14 +14,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
   View,
-  Pressable,
 } from "react-native";
-import { BlurView } from "expo-blur";
-
-const GIPHY_API_KEY = "ziu4cg5WsQ4XKiSNor4rdUxNilamMmU8";
-
+import { useState } from "react";
 type GifItem = {
   id: string;
   images: {
@@ -26,26 +25,12 @@ type GifItem = {
   };
 };
 
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
 type Props = {
   visible: boolean;
   onClose: () => void;
-  
   onGifSelected: (gifUrl: string) => void;
   gifsCount: number;
 };
-
-const LIMIT = 25;
 
 export const GiphySearchModal: React.FC<Props> = ({
   visible,
@@ -54,90 +39,47 @@ export const GiphySearchModal: React.FC<Props> = ({
   gifsCount,
 }) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<GifItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true); // track if more results exist
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const debouncedQuery = useDebounce(query, 400);
+  const { data: results, loading, hasMore, searchGifs } = useGiphySearch();
 
-  // To avoid race conditions, track current query ref
-  const currentQueryRef = useRef(debouncedQuery);
-
-  // Reset when query changes
   useEffect(() => {
-    setResults([]);
-    setOffset(0);
-    setHasMore(true);
-    currentQueryRef.current = debouncedQuery;
+    searchGifs(debouncedQuery || "NBA", true);
   }, [debouncedQuery]);
 
-  const fetchGifs = async (searchQuery: string, offsetValue: number) => {
-    if (!hasMore) return;
-    setLoading(true);
-    try {
-      const res = await axios.get(`https://api.giphy.com/v1/gifs/search`, {
-        params: {
-          api_key: GIPHY_API_KEY,
-          q: searchQuery || "NBA",
-          limit: LIMIT,
-          offset: offsetValue,
-          rating: "pg",
-        },
-      });
-      const newData: GifItem[] = res.data.data;
-      const totalCount: number = res.data.pagination.total_count;
-
-      // Only update if query hasn't changed meanwhile
-      if (currentQueryRef.current === searchQuery) {
-        setResults((prev) => (offsetValue === 0 ? newData : [...prev, ...newData]));
-        setHasMore(offsetValue + LIMIT < totalCount);
-        setOffset(offsetValue + LIMIT);
-      }
-    } catch (e) {
-      Alert.alert("Error", "Failed to fetch GIFs.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Initial load or query change
-  useEffect(() => {
-    fetchGifs(debouncedQuery || "NBA", 0);
-  }, [debouncedQuery]);
-
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchGifs(debouncedQuery || "NBA", offset);
+      searchGifs(debouncedQuery || "NBA", false);
     }
-  };
+  }, [loading, hasMore, debouncedQuery, searchGifs]);
 
-const renderItem = useCallback(
-  ({ item }: { item: GifItem }) => (
-    <TouchableOpacity
-      onPress={() => handleGifSelect(item)}
-      style={styles.gifContainer}
-    >
-      <Image
-        source={{ uri: item.images.fixed_width_small.url }}
-        style={styles.gifImage}
-        resizeMode="cover"
-      />
-    </TouchableOpacity>
-  ),
-  [gifsCount] // include gifsCount or any other deps if needed
-);
+  const handleGifSelect = useCallback(
+    (gif: GifItem) => {
+      if (gifsCount >= 8) {
+        Alert.alert("Limit reached", "You can only add up to 8 GIFs.");
+        return;
+      }
+      onGifSelected(gif.images.original.url);
+      onClose();
+    },
+    [gifsCount, onGifSelected, onClose],
+  );
 
-const handleGifSelect = (gif: GifItem) => {
-  if (gifsCount >= 8) {
-    Alert.alert("Limit reached", "You can only add up to 8 GIFs.");
-    return;
-  }
-  onGifSelected(gif.images.original.url);
-  onClose();
-};
-
+  const renderItem = useCallback(
+    ({ item }: { item: GifItem }) => (
+      <TouchableOpacity
+        onPress={() => handleGifSelect(item)}
+        style={styles.gifContainer}
+      >
+        <Image
+          source={{ uri: item.images.fixed_width_small.url }}
+          style={styles.gifImage}
+        />
+      </TouchableOpacity>
+    ),
+    [handleGifSelect],
+  );
 
   return (
     <Modal
@@ -157,7 +99,7 @@ const handleGifSelect = (gif: GifItem) => {
               style={[
                 styles.searchInput,
                 {
-                  backgroundColor: isDark ? "#333" : "#eee",
+                  backgroundColor: isDark ? Colors.dark.itemBackground : "#eee",
                   color: isDark ? "#fff" : "#000",
                 },
               ]}
@@ -173,14 +115,16 @@ const handleGifSelect = (gif: GifItem) => {
           </View>
 
           <FlatList
-            data={results}
+            data={results as GifItem[]}
             keyExtractor={(item) => item.id}
             numColumns={3}
             renderItem={renderItem}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 24 }}
             ListEmptyComponent={() =>
-              !loading && query.length >= 3 ? (
+              !loading && debouncedQuery.length >= 3 ? (
                 <Text style={{ textAlign: "center", marginTop: 20, color: isDark ? "#fff" : "#000" }}>
                   No GIFs found.
                 </Text>
@@ -193,8 +137,6 @@ const handleGifSelect = (gif: GifItem) => {
                 </Text>
               ) : null
             }
-            contentContainerStyle={{ paddingBottom: 24 }}
-            showsVerticalScrollIndicator={false}
           />
         </View>
       </BlurView>
@@ -203,42 +145,11 @@ const handleGifSelect = (gif: GifItem) => {
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  container: {
-height: "90%",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 18,
-    padding: 10,
-    borderRadius: 8,
-  },
-  closeButton: {
-    marginLeft: 12,
-  },
-  gifContainer: {
-    flex: 1 / 3,
-    aspectRatio: 1,
-    margin: 4,
-  },
-  gifImage: {
-    flex: 1,
-    borderRadius: 8,
-  },
+  modalBackground: { flex: 1, justifyContent: "flex-end" },
+  container: { height: "90%", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 },
+  header: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  searchInput: { flex: 1, fontSize: 18, padding: 10, borderRadius: 8 },
+  closeButton: { marginLeft: 12 },
+  gifContainer: { flex: 1 / 3, aspectRatio: 1, margin: 4 },
+  gifImage: { flex: 1, borderRadius: 8 },
 });

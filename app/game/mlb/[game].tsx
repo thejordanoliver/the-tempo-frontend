@@ -6,13 +6,13 @@ import LastPlay from "components/Sports/MLB/GameDetails/LastPlay";
 import MLBInjuries from "components/Sports/MLB/GameDetails/MLBInjuries";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import MemoizedFloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/MemoizedFloatingChatButton";
+import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNeutralStadium } from "constants/neutralVenues";
+import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -22,7 +22,7 @@ import usePlayersByTeam from "hooks/MLBHooks/usePlayersByTeam";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo, useState } from "react";
-import { Animated, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
@@ -318,12 +318,7 @@ export default function GameDetailsScreen() {
             teamPlayersMap={teamPlayersMap}
           />
 
-          <Officials
-            officials={officials ?? []}
-            isDark={isDark}
-            loading={false}
-            error={null}
-          />
+          <Officials officials={officials ?? []} isDark={isDark} />
 
           <GameLocation
             venueImage={venueImage}
@@ -333,16 +328,15 @@ export default function GameDetailsScreen() {
             venueCapacity={String(venueCapacity)}
             venueAttendance={venueAttendance}
             weather={weather}
-            loading={false}
-            error={null}
             isDark={isDark}
           />
         </View>
       </ScrollView>
 
-      <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton gameId={parsedGame.id} />
-      </Animated.View>
+      <GameLiveChatOverlay
+        gameId={String(parsedGame?.id)}
+        opacityAnim={opacityAnim}
+      />
     </>
   );
 }

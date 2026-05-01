@@ -1,16 +1,49 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
-import { GameLeaders, GameLocation } from "components/Sports/NBA/GameDetails";
-import GameTeamStats from "components/Sports/NBA/GameDetails/GameTeamStats";
-import TeamInjuries from "components/Sports/NBA/GameDetails/InjuryReport/TeamInjuries";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
-import LineScore from "components/Sports/NBA/GameDetails/LineScore";
-import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
+import {
+  BoxScore,
+  GameLeaders,
+  GameLocation,
+  GameTeamStats,
+  LastFiveGames,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+  TeamInjuries,
+} from "components/Sports/NBA/GameDetails";
 import React from "react";
+import { NBATeam } from "types/nba";
+
+type GamePreviewContentProps = {
+  home: NBATeam;
+  away: NBATeam;
+  homeChance: number;
+  awayChance: number;
+  lineScore?: {
+    home: string[];
+    away: string[];
+  };
+  homeLastGames: { games: any[] };
+  awayLastGames: { games: any[] };
+  playerStats: any[];
+  teamStats: any[];
+  officials: any[];
+  injuries: any[];
+  loading: boolean;
+  error?: string | null;
+  teamPlayersMap: Record<string, any[]>;
+  detailsLoading?: boolean;
+  gameLeaders: any[] | null;
+  venueImage?: any;
+  venueName?: string;
+  venueLocation?: string;
+  venueAddress?: string;
+  venueCapacity?: string | null;
+  venueAttendance?: number | null;
+  weather?: any;
+  gameStatusDescription: string;
+};
 
 export default function GamePreviewContent({
-  game,
   home,
   away,
   homeChance,
@@ -19,27 +52,32 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   playerStats,
-  gameStats,
+  teamStats,
   officials,
   injuries,
+  loading,
+  error,
   teamPlayersMap,
   detailsLoading,
-  detailsError,
-  resolvedVenueImage,
-  resolvedVenueName,
-  resolvedVenueCity,
-  resolvedVenueAddress,
-  resolvedVenueCapacity,
+  gameLeaders,
+  venueImage,
+  venueName,
+  venueLocation,
+  venueAddress,
+  venueCapacity,
+  venueAttendance,
   weather,
   gameStatusDescription,
-}: any) {
+}: GamePreviewContentProps) {
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const showLiveSections = !isScheduled;
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      {/* Matchup Predictor */}
-      {gameStatusDescription === "Scheduled" && (
+      {isScheduled && (
         <MatchupPredictor
           home={{
             name: home.code,
@@ -54,102 +92,81 @@ export default function GamePreviewContent({
             chance: awayChance,
           }}
           size={180}
-          isDark={true}
+          isDark
         />
       )}
-      {/* Line Score */}
+
       {lineScore && (
         <LineScore
           linescore={lineScore}
           homeCode={home?.code}
           awayCode={away?.code}
-          isDark={true}
+          isDark
         />
       )}
 
-      {/* Game Leaders */}
-      {game?.id && gameStats?.length > 0 && (
+      {showLiveSections && (
         <>
           <GameLeaders
-            gameId={game.id.toString()}
+            gameLeaders={gameLeaders}
             awayTeamId={away?.id}
             homeTeamId={home?.id}
-            isDark={true}
+            loading={loading}
+            error={error}
+            isDark
           />
-
-          {/* Box Score */}
 
           <BoxScore
             playerStats={playerStats}
             awayTeamId={away?.espnID}
             homeTeamId={home?.espnID}
-            isDark
             league={"NBA"}
+            gameStatusDescription={gameStatusDescription}
+            isDark
           />
 
-          {/* Team Stats */}
-
-          {gameStats.length > 0 && (
-            <GameTeamStats
-              stats={gameStats}
-              isDark
-              gameStatusDescription={gameStatusDescription}
-            />
-          )}
+          <GameTeamStats
+            stats={teamStats}
+            gameStatusDescription={gameStatusDescription}
+            isDark
+          />
         </>
       )}
 
-      {/* Last Five Games */}
-      {(homeLastGames?.games?.length > 0 ||
-        awayLastGames?.games?.length > 0) && (
-        <LastFiveGamesSwitcher
-          home={{
-            teamId: home.id,
-            teamCode: home.code,
-            games: homeLastGames.games,
-          }}
-          away={{
-            teamId: away.id,
-            teamCode: away.code,
-            games: awayLastGames.games,
-          }}
-          league="NBA"
-          isDark={true}
-        />
-      )}
-
-      {/* Injuries */}
+      <LastFiveGames
+        home={{
+          teamId: home.id,
+          teamCode: home.code,
+          games: homeLastGames.games,
+        }}
+        away={{
+          teamId: away.id,
+          teamCode: away.code,
+          games: awayLastGames.games,
+        }}
+        league="NBA"
+        isDark
+      />
 
       <TeamInjuries
         injuries={injuries}
         loading={detailsLoading}
-        isDark={true}
+        isDark
         teamPlayersMap={teamPlayersMap}
       />
 
-      {/* Officials */}
+      <Officials officials={officials ?? []} isDark />
 
-      <Officials
-        officials={officials ?? []}
-        loading={false}
-        error={null}
-        isDark={true}
+      <GameLocation
+        venueImage={venueImage}
+        venueName={venueName}
+        location={venueLocation}
+        address={venueAddress}
+        venueCapacity={venueCapacity}
+        venueAttendance={venueAttendance}
+        weather={weather}
+        isDark
       />
-
-      {/* Venue Info */}
-      {(resolvedVenueImage || resolvedVenueName) && (
-        <GameLocation
-          venueImage={resolvedVenueImage}
-          venueName={resolvedVenueName}
-          location={resolvedVenueCity}
-          address={resolvedVenueAddress}
-          venueCapacity={resolvedVenueCapacity}
-          weather={weather}
-          loading={detailsLoading}
-          error={detailsError ?? null}
-          isDark={true}
-        />
-      )}
     </BottomSheetScrollView>
   );
 }

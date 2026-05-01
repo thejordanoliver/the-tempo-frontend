@@ -34,6 +34,17 @@ export function useProfile() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
+  const resetProfile = useCallback(() => {
+    setCurrentUserId(null);
+    setUsername(null);
+    setFullName(null);
+    setBio(null);
+    setProfileImage(null);
+    setBannerImage(null);
+    setFollowersCount(0);
+    setFollowingCount(0);
+  }, []);
+
   /* ------------------ LOAD FROM CACHE ------------------ */
   const loadFromCache = useCallback(async () => {
     try {
@@ -48,9 +59,10 @@ export function useProfile() {
 
       const result = await AsyncStorage.multiGet(keys);
       const data = Object.fromEntries(result);
+      const cachedUserId = data.userId ? Number(data.userId) : null;
 
-      if (data.userId) {
-        setCurrentUserId(Number(data.userId));
+      if (cachedUserId) {
+        setCurrentUserId(cachedUserId);
       }
 
       setUsername(parseString(data.username));
@@ -58,8 +70,10 @@ export function useProfile() {
       setBio(parseString(data.bio));
       setProfileImage(parseImageUrl(data.profileImage));
       setBannerImage(parseImageUrl(data.bannerImage));
+      return cachedUserId;
     } catch (error) {
       console.warn("[useProfile] Cache load failed:", error);
+      return null;
     }
   }, []);
 
@@ -97,8 +111,10 @@ export function useProfile() {
 
       // Save fresh data to cache
       await saveToCache(data);
+      return Number(data.id);
     } catch (error) {
       console.warn("[useProfile] API load failed:", error);
+      return Number(userId);
     }
   }, [saveToCache]);
 
@@ -110,21 +126,23 @@ export function useProfile() {
       const userId = await AsyncStorage.getItem("userId");
 
       if (!userId) {
+        resetProfile();
         setIsLoading(false);
-        return;
+        return null;
       }
 
       // 1. Load cached data instantly (fast UI)
       await loadFromCache();
 
       // 2. Fetch fresh data in background
-      await loadFromAPI(userId);
+      return await loadFromAPI(userId);
     } catch (error) {
       console.warn("[useProfile] Failed:", error);
+      return null;
     } finally {
       setIsLoading(false);
     }
-  }, [loadFromCache, loadFromAPI]);
+  }, [loadFromCache, loadFromAPI, resetProfile]);
 
   /* ------------------ RETURN ------------------ */
   return {
@@ -138,5 +156,6 @@ export function useProfile() {
     followersCount,
     followingCount,
     loadProfile,
+    resetProfile,
   };
 }

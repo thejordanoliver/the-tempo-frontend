@@ -1,21 +1,23 @@
 import { Animated } from "react-native";
 import { useRef, useEffect } from "react";
-import { useChatStore } from "store/chatStore";
 import FloatingChatButton from "components/Sports/NBA/GameDetails/GameChat/FloatingButton";
 
-type Props = { gameId: string };
+type Props = {
+  gameId: string;
+  isOpen: boolean;
+  onPress: () => void;
+};
 
-export default function MemoizedFloatingChatButton({ gameId }: Props) {
-  const { openChat, isOpen: isChatOpen } = useChatStore();
-  const opacityAnim = useRef(new Animated.Value(isChatOpen ? 0 : 1)).current;
+export default function MemoizedFloatingChatButton({ gameId, isOpen, onPress }: Props) {
+  const opacityAnim = useRef(new Animated.Value(isOpen ? 0 : 1)).current;
 
   useEffect(() => {
     Animated.timing(opacityAnim, {
-      toValue: isChatOpen ? 0 : 1,
+      toValue: isOpen ? 0 : 1,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [isChatOpen]);
+  }, [isOpen, opacityAnim]);
 
   return (
     <Animated.View
@@ -26,9 +28,9 @@ export default function MemoizedFloatingChatButton({ gameId }: Props) {
         left: 0,
         right: 0,
       }}
-      pointerEvents={isChatOpen ? "none" : "auto"}
+      pointerEvents={isOpen ? "none" : "auto"}
     >
-      <FloatingChatButton gameId={gameId} openChat={openChat} />
+      <FloatingChatButton openChat={onPress} />
     </Animated.View>
   );
 }

@@ -1,5 +1,4 @@
 import { Dropdown } from "components/Dropdown";
-import ChampionsTable from "components/League/ChampionsTable";
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
@@ -8,6 +7,7 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useAwardSchools } from "hooks/CFBHooks/useAwardSchools";
 import { useChampionTeams } from "hooks/CFBHooks/useChampionTeams";
 import { useAwardSeasons } from "hooks/useAwardSeasons";
@@ -17,8 +17,8 @@ import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import { AWARD_CONFIG, AwardCategory, LeagueType } from "types/types";
 import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
+import ChampionsTable from "./ChampionsTable";
 import TopThreeTeams from "./TopThreeTeams";
-import { usePreferences } from "contexts/PreferencesContext";
 type ViewMode = "champions" | "players" | "teams";
 
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<LeagueType, string>> = {

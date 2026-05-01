@@ -22,7 +22,7 @@ export function useWNBATeamGames(
     setError(null);
 
     try {
-      const res = await apiClient.get(`/api/games/wnba/team/${teamId}`, {
+      const res = await apiClient.get(`api/games/wnba/team/${teamId}`, {
         params: {
           season,
         },

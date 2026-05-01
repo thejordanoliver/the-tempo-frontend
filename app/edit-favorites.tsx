@@ -5,8 +5,8 @@ import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useLayoutEffect } from "react";
-import { Animated, View, useWindowDimensions } from "react-native";
+import { useCallback, useLayoutEffect, useMemo } from "react";
+import { View, useWindowDimensions } from "react-native";
 import { editFavoritesStyles } from "styles/EditFavoriteStyles";
 import { favoriteTeamsList } from "utils/teams";
 
@@ -20,20 +20,32 @@ export default function EditFavoritesScreen() {
     toggleLayout,
     fadeAnim,
     saveFavorites,
+    isLoading,
   } = useFavoriteTeamsContext();
 
   const { width: screenWidth } = useWindowDimensions();
-  const numColumns = 3;
-  const containerPadding = 40;
-  const columnGap = 12;
-  const totalSpacing = columnGap * (numColumns - 1);
-  const availableWidth = screenWidth - containerPadding - totalSpacing;
-  const itemWidth = availableWidth / numColumns;
+
   const navigation = useNavigation();
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = editFavoritesStyles(isDark, isGridView);
+
+  /**
+   * 🚀 Prevent unnecessary recalculation on every render
+   */
+  const itemWidth = useMemo(() => {
+    const numColumns = 3;
+    const containerPadding = 40;
+    const columnGap = 12;
+    const totalSpacing = columnGap * (numColumns - 1);
+
+    return (screenWidth - containerPadding - totalSpacing) / numColumns;
+  }, [screenWidth]);
+
+  const styles = useMemo(
+    () => editFavoritesStyles(isDark, isGridView),
+    [isDark, isGridView]
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -46,27 +58,27 @@ export default function EditFavoritesScreen() {
         />
       ),
     });
-  }, [navigation, isGridView]);
+  }, [navigation, router, toggleLayout, isGridView]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const success = await saveFavorites();
     if (success) router.back();
-  };
+  }, [router, saveFavorites]);
 
   return (
     <View style={styles.container}>
-      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-        <FavoriteTeamsSelector
-          teams={favoriteTeamsList}
-          favorites={favorites}
-          toggleFavorite={toggleFavorite}
-          isGridView={isGridView}
-          fadeAnim={fadeAnim}
-          search={search}
-          itemWidth={itemWidth}
-          setSearch={setSearch}
-        />
-      </Animated.View>
+      <FavoriteTeamsSelector
+        teams={favoriteTeamsList}
+        favorites={favorites}
+        toggleFavorite={toggleFavorite}
+        isGridView={isGridView}
+        fadeAnim={fadeAnim}
+        search={search}
+        itemWidth={itemWidth}
+        setSearch={setSearch}
+        loading={isLoading}
+      />
+
       <View style={styles.buttonContainer}>
         <Button onPress={handleSave} isDark={isDark} />
       </View>

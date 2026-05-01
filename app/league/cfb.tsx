@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
 import NewsList from "components/News/NewsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
@@ -20,10 +20,10 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCFPBracket } from "hooks/CFBHooks/useCFPBracket";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -227,7 +227,7 @@ export default function CFBLeagueScreen() {
               />
             </ScrollView>
           </View>
-          
+
           {/* STANDINGS */}
           <View key="standings">
             <>

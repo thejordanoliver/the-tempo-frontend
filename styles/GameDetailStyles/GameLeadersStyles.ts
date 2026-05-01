@@ -16,7 +16,7 @@ export const gameLeadersStyles = (isDark: boolean) =>
       alignItems: "center",
       padding: 12,
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.midTone : Colors.midTone,
+      borderColor:  Colors.midTone,
     },
     avatar: {
       width: 52,

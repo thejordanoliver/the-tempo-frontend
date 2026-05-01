@@ -4,7 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "components/League/Draft/DraftList";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -13,13 +16,14 @@ import NewsList from "components/News/NewsList";
 import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import { useWNBASeasonGames } from "hooks/WNBAHooks/useWNBASeasonGames";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
@@ -29,7 +33,6 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getWNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -49,6 +52,11 @@ export default function WNBALeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+  const [draftYear, setDraftYear] = useState(() =>
+    getDefaultDraftYear("wnba").toString(),
+  );
+  const [draftTeam, setDraftTeam] = useState("all");
+  const [draftRound, setDraftRound] = useState("all");
   const [standingsYear, setStandingsYear] = useState(
     getWNBASeason().toString(),
   );
@@ -58,12 +66,11 @@ export default function WNBALeagueScreen() {
     error: newsError,
   } = useLeaguesNews(10, league);
 
-  const {
-    games,
-    loading: wnbaGamesLoading,
-    refreshGames,
-  } = useWNBASeasonGames({ season: getWNBASeason() });
-  const filteredSeasonGames = filterByDate(games, selectedDate);
+  const { wnbaGames, wnbaLoading, refreshGames } = useWNBASeasonGames({
+    season: getWNBASeason(),
+  });
+
+  const filteredSeasonGames = filterByDate(wnbaGames, selectedDate);
 
   const changeDateByDays = (days: number) => {
     setSelectedDate((prevDate) => {
@@ -156,7 +163,7 @@ export default function WNBALeagueScreen() {
 
             <WNBAGamesList
               games={filteredSeasonGames}
-              loading={wnbaGamesLoading}
+              loading={wnbaLoading}
               refreshing={refreshing}
               onRefresh={handleRefresh}
             />
@@ -194,6 +201,19 @@ export default function WNBALeagueScreen() {
             />
           </View>
 
+          {/* DRAFT */}
+          <View key="draft">
+            <DraftList
+              year={draftYear}
+              team={draftTeam}
+              round={draftRound}
+              onYearChange={setDraftYear}
+              onTeamChange={setDraftTeam}
+              onRoundChange={setDraftRound}
+              league={"wnba"}
+            />
+          </View>
+
           {/* AWARDS */}
           <View key="awards">
             <AwardSeasons league={league} />
@@ -217,7 +237,7 @@ export default function WNBALeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...games]),
+          ...markDates([...wnbaGames]),
         }}
       />
 

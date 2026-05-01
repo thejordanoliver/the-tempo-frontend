@@ -1,16 +1,14 @@
 // hooks/useAccountActions.ts
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 
 export function useAccountActions() {
-  const { deleteAccount } = useAuth();
+  const { deleteAccount, logout } = useAuth();
   const router = useRouter();
 
   const signOut = async () => {
     try {
-      await AsyncStorage.clear();
-      router.replace("/login");
+      await logout();
     } catch (err) {
       console.warn("Failed to sign out:", err);
     }
@@ -21,7 +19,7 @@ export function useAccountActions() {
     try {
       await deleteAccount();
       router.replace("/settings/deleteaccountsplash");
-    } catch (err) {
+    } catch {
       throw new Error("Failed to delete account. Check password.");
     }
   };

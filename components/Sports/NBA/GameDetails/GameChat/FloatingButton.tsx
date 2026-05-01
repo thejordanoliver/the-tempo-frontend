@@ -4,11 +4,9 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 export default function FloatingChatButton({
-  gameId,
   openChat,
 }: {
-  gameId: string;
-  openChat: (id: string) => void;
+  openChat: () => void;
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -17,7 +15,7 @@ export default function FloatingChatButton({
   return (
     <TouchableOpacity
       style={styles.floatingButton}
-      onPress={() => openChat(gameId)}
+      onPress={openChat}
       activeOpacity={0.8}
     >
       <Ionicons

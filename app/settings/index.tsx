@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors, Fonts } from "constants/styles";
+import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -20,7 +20,8 @@ import {
 export default function SettingsScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const { deleteAccount } = useAuth();
+  const { clearFavorites } = useFavoriteTeamsContext();
+  const { deleteAccount, logout } = useAuth();
   const router = useRouter();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -30,8 +31,8 @@ export default function SettingsScreen() {
 
   const signOut = async () => {
     try {
-      await AsyncStorage.clear();
-      router.replace("/login");
+      clearFavorites();
+      await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
     }
@@ -47,7 +48,7 @@ export default function SettingsScreen() {
       setShowDeleteModal(false);
       setPassword("");
       router.replace("/settings/deleteaccountsplash");
-    } catch (error) {
+    } catch {
       alert("Failed to delete account. Check your password and try again.");
     }
   };

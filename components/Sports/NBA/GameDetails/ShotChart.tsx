@@ -33,6 +33,7 @@ interface ShotChartProps {
   awayTeamId?: string;
   league?: "NBA" | "WNBA" | "CBB" | "WCBB";
   neutralSite?: boolean;
+  gameStatusDescription: string;
 }
 
 export default function ShotChart({
@@ -41,6 +42,7 @@ export default function ShotChart({
   awayTeamId,
   league,
   neutralSite = false,
+  gameStatusDescription,
 }: ShotChartProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -188,6 +190,10 @@ export default function ShotChart({
     const { width, height } = event.nativeEvent.layout;
     setLayout({ width, height });
   };
+
+  if (gameStatusDescription === "Scheduled") {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

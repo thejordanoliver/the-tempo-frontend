@@ -15,7 +15,7 @@ import {
   ConferenceStandings,
   StandingsTeam,
   useLeagueStandings,
-} from "hooks/useLeagueStandings";
+} from "hooks/LeagueHooks/useLeagueStandings";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,

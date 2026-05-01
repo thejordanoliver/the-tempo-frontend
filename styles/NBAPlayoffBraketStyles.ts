@@ -1,14 +1,23 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-
-const CARD_WIDTH = 176;
-const CANVAS_HEIGHT = 840;
-const COL_WIDTH = 220;
-const COL_GAP = 20;
-const LOGO_WIDTH = 360;
-const LOGO_HEIGHT = 92;
-const LOGO_TOP = 112;
-const SIDE_LABEL_TOP = CANVAS_HEIGHT / 2 - 22;
+import { CardLayout } from "types/nba";
+export const CARD_WIDTH = 176;
+export const CANVAS_HEIGHT = 840;
+export const COL_WIDTH = 220;
+export const COL_GAP = 20;
+export const LOGO_WIDTH = 360;
+export const LOGO_HEIGHT = 150;
+export const LOGO_TOP = 112;
+export const SIDE_LABEL_TOP = CANVAS_HEIGHT / 2 - 22;
+export const ROUND2_WIDTH = 176;
+export const ROUND3_WIDTH = 176;
+export const FINALS_WIDTH = 176;
+export const CARD_HEIGHT = 142;
+export const ROUND2_HEIGHT = 142;
+export const ROUND3_HEIGHT = 142;
+export const FINALS_HEIGHT = 178;
+export const LABEL_WIDTH = 180;
+export const LABEL_TOP = 28;
 
 const COLS = {
   WEST_R1: 0,
@@ -26,6 +35,9 @@ const CANVAS_WIDTH = BRACKET_RIGHT_EDGE;
 export const getColCenter = (col: number) => getX(col) + CARD_WIDTH / 2;
 export const getCenteredX = (col: number, width: number) =>
   getColCenter(col) - width / 2;
+export const centerY = (layout?: CardLayout) =>
+  layout ? layout.y + layout.height / 2 : 0;
+export const rightX = (layout: CardLayout) => layout.x + layout.width;
 
 export const nbaPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({

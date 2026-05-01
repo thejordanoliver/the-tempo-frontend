@@ -4,25 +4,23 @@ import { apiClient } from "utils/apiClient";
 type TeamType = "home" | "away" | undefined;
 
 export function useGameLeaders(
-  gameId: string,
+  gameId: number,
   homeTeamId: number,
   awayTeamId: number,
 ) {
-  const [data, setData] = useState<any[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<null | string>(null);
+  const [gameLeaders, setGameLeaders] = useState<any[] | null>(null);
+  const [gameLeadersLoading, setGameLeadersLoading] = useState(true);
+  const [gameLeadersError, setGameLeadersError] = useState<null | string>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchLeaders = async () => {
-      setLoading(true);
-      setError(null);
+      setGameLeadersLoading(true);
+      setGameLeadersError(null);
 
       try {
-        const res = await apiClient.get(
-          `/api/game-stats/leaders/${gameId}`,
-        );
+        const res = await apiClient.get(`/api/game-stats/leaders/${gameId}`);
 
         if (!isMounted) return;
 
@@ -43,21 +41,21 @@ export function useGameLeaders(
           };
         });
 
-        setData(normalized);
+        setGameLeaders(normalized);
       } catch (err: any) {
         if (isMounted) {
-          setError(err.message || "Failed to fetch game leaders");
+          setGameLeadersError(err.message || "Failed to fetch game leaders");
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) setGameLeadersLoading(false);
       }
     };
 
     if (gameId && homeTeamId && awayTeamId) {
       fetchLeaders();
     } else {
-      setLoading(false);
-      setData(null);
+      setGameLeadersLoading(false);
+      setGameLeaders(null);
     }
 
     return () => {
@@ -66,9 +64,8 @@ export function useGameLeaders(
   }, [gameId, homeTeamId, awayTeamId]);
 
   return {
-    data,
-    isLoading: loading,
-    isError: !!error,
-    error,
+    gameLeaders,
+    gameLeadersLoading,
+    gameLeadersError,
   };
 }

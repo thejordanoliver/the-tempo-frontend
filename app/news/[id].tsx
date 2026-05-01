@@ -30,16 +30,21 @@ export default function ArticleScreen() {
 
   const headline = article?.headline;
   const source = article?.byline || article?.source;
-  const thumbnail = article?.images[0];
-  const video = article?.videos;
+
+  const thumbnail = article?.images?.[0];
+  const firstVideo = article?.videos?.[0];
+
+  const videoThumbnail = firstVideo?.thumbnail || thumbnail?.url || null;
+  const videoUrl = firstVideo?.url;
+  const hasVideo = typeof videoUrl === "string" && videoUrl.length > 0;
   const isMedia = article?.type === "Media" || article?.type === "Preview";
   const story = article?.story;
   const description = article?.description;
-  const duration = video?.[0]?.duration ?? 0;
+  const duration = firstVideo?.duration ?? 0;
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
   const formattedSeconds = String(seconds).padStart(2, "0");
-  const videoTime = `${minutes}:${formattedSeconds}`;
+  const videoTime = firstVideo ? `${minutes}:${formattedSeconds}` : "";
 
   const publishedDate = article?.published ? new Date(article.published) : null;
   const timeAgo = publishedDate
@@ -83,55 +88,47 @@ export default function ArticleScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{headline}</Text>
 
-      {isMedia && video?.[0]?.url ? (
-        <View style={styles.image}>
-          {hasPlayed ? (
-            <Video
-              ref={videoRef}
-              source={{ uri: video[0].url }}
-              style={styles.image}
-              resizeMode={ResizeMode.CONTAIN}
-              shouldPlay={isPlaying}
-              useNativeControls
-              onLoad={() => {
-                requestAnimationFrame(() => {
-                  videoRef.current?.presentFullscreenPlayer();
-                });
-              }}
-              onPlaybackStatusUpdate={(status: AVPlaybackStatus) => {
-                if (!status.isLoaded) return;
-                setIsPlaying(status.isPlaying);
+    {hasVideo && videoUrl ? (
+  <View style={styles.image}>
+    {hasPlayed ? (
+      <Video
+        ref={videoRef}
+        source={{ uri: videoUrl }}
+        style={styles.image}
+        resizeMode={ResizeMode.CONTAIN}
+        shouldPlay={isPlaying}
+        useNativeControls
+        onPlaybackStatusUpdate={(status: AVPlaybackStatus) => {
+          if (!status.isLoaded) return;
+          setIsPlaying(status.isPlaying);
 
-                if (status.didJustFinish) {
-                  videoRef.current?.pauseAsync();
-                  videoRef.current?.setPositionAsync(0);
-                  setIsPlaying(false);
-                  setHasPlayed(false);
-                }
-              }}
-            />
-          ) : video[0].thumbnail ? (
-            <Pressable style={styles.image} onPress={handlePlay}>
-              <Image
-                source={{ uri: video[0].thumbnail }}
-                style={styles.image}
-              />
-              <View
-                style={{
-                  ...StyleSheet.absoluteFillObject,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "rgba(0,0,0,0.3)",
-                }}
-              >
-                <Ionicons name="play-circle" size={64} color="white" />
-              </View>
-            </Pressable>
-          ) : null}
+          if (status.didJustFinish) {
+            videoRef.current?.pauseAsync();
+            videoRef.current?.setPositionAsync(0);
+            setIsPlaying(false);
+            setHasPlayed(false);
+          }
+        }}
+      />
+    ) : videoThumbnail ? (
+      <Pressable style={styles.image} onPress={handlePlay}>
+        <Image source={{ uri: videoThumbnail }} style={styles.image} />
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.3)",
+          }}
+        >
+          <Ionicons name="play-circle" size={64} color="white" />
         </View>
-      ) : thumbnail?.url ? (
-        <Image style={styles.image} source={{ uri: thumbnail?.url }} />
-      ) : null}
+      </Pressable>
+    ) : null}
+  </View>
+) : thumbnail?.url ? (
+  <Image style={styles.image} source={{ uri: thumbnail.url }} />
+) : null}
 
       <View style={styles.descriptionContainer}>
         {videoTime && isMedia && (

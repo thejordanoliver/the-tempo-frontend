@@ -14,7 +14,7 @@ export const officialsStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: Colors.midTone,
     },
     nameContainer: {
       marginLeft: 8,

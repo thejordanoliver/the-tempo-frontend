@@ -4,7 +4,7 @@ import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
-import NewsCardCopy from "./NewsCardCopy";
+import NewsCard from "./NewsCard";
 
 interface NewsHighlightsListProps {
   items: NewsArticle[];
@@ -47,7 +47,7 @@ export default function NewsList({
       onRefresh={onRefresh}
       scrollEnabled={false}
       contentContainerStyle={styles.container}
-      renderItem={({ item }) => <NewsCardCopy content={item} isDark={isDark} />}
+      renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
       ListEmptyComponent={
         <Text style={global.emptyText}>No news or highlights found.</Text>
       }

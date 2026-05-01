@@ -12,15 +12,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import GameLocationSkeleton from "../../../Skeletons/GameDetails/GameLocationSkeleton";
 
 type Props = {
   weather?: WeatherData | null;
   venueImage?: any;
   venueName?: string;
   location?: string;
-  loading: boolean;
-  error: string | null;
   address?: string;
   venueCapacity: string | null | undefined;
   venueAttendance?: number | string | null;
@@ -37,8 +34,6 @@ const GameLocation: React.FC<Props> = ({
   address,
   venueCapacity,
   venueAttendance,
-  loading,
-  error,
   isDark = false,
   surface = "default",
   grass,
@@ -109,85 +104,74 @@ const GameLocation: React.FC<Props> = ({
   return (
     <View>
       <HeadingTwo isDark={isDark}>Location</HeadingTwo>
+      <View style={styles.wrapper}>
+        {venueImage && (
+          <Image
+            source={
+              typeof venueImage === "string" ? { uri: venueImage } : venueImage
+            }
+            style={styles.venueImage}
+            resizeMode="cover"
+          />
+        )}
 
-      {loading && !error ? (
-        <GameLocationSkeleton />
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.wrapper}>
-            {venueImage && (
-              <Image
-                source={
-                  typeof venueImage === "string"
-                    ? { uri: venueImage }
-                    : venueImage
-                }
-                style={styles.venueImage}
-                resizeMode="cover"
-              />
-            )}
+        <View style={styles.textContainer}>
+          <Text style={styles.venueTitle}>{venueName}</Text>
+        </View>
 
-            <View style={styles.textContainer}>
-              <Text style={styles.venueTitle}>{venueName}</Text>
-            </View>
+        <View style={styles.addressContainer}>
+          <Ionicons name="location" size={20} color={styles.icon.color} />
+          {address && (
+            <TouchableOpacity onPress={openInMaps}>
+              <Text style={[styles.subText]}>{address}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
+        {weather?.tempFahrenheit !== null &&
+          weather?.tempFahrenheit !== undefined &&
+          !isNaN(Number(weather?.tempFahrenheit)) && (
             <View style={styles.addressContainer}>
-              <Ionicons name="location" size={20} color={styles.icon.color} />
-              {address && (
-                <TouchableOpacity onPress={openInMaps}>
-                  <Text style={[styles.subText]}>{address}</Text>
-                </TouchableOpacity>
-              )}
+              <Ionicons
+                name={getWeatherIcon(desc)}
+                size={20}
+                color={styles.icon.color}
+              />
+              <Text style={styles.subText}>
+                Temperature:{" "}
+                {weather?.tempFahrenheit != null
+                  ? `${weather.tempFahrenheit.toFixed(0)}°F`
+                  : "--"}
+              </Text>
             </View>
+          )}
+        <View style={styles.addressContainer}>
+          <Ionicons name="person" size={20} color={styles.icon.color} />
+          <Text style={styles.subText}>Capacity: {venueCapacity || "N/A"}</Text>
+        </View>
 
-            {weather?.tempFahrenheit !== null &&
-              weather?.tempFahrenheit !== undefined &&
-              !isNaN(Number(weather?.tempFahrenheit)) && (
-                <View style={styles.addressContainer}>
-                  <Ionicons
-                    name={getWeatherIcon(desc)}
-                    size={20}
-                    color={styles.icon.color}
-                  />
-                  <Text style={styles.subText}>
-                    Temperature:{" "}
-                    {weather?.tempFahrenheit != null
-                      ? `${weather.tempFahrenheit.toFixed(0)}°F`
-                      : "--"}
-                  </Text>
-                </View>
-              )}
+        {venueAttendance !== null &&
+          venueAttendance !== undefined &&
+          !isNaN(Number(venueAttendance)) && (
             <View style={styles.addressContainer}>
               <Ionicons name="person" size={20} color={styles.icon.color} />
               <Text style={styles.subText}>
-                Capacity: {venueCapacity || "N/A"}
+                Attendance:{" "}
+                {Intl.NumberFormat("en-US").format(Number(venueAttendance))}
               </Text>
             </View>
+          )}
 
-            {venueAttendance !== null &&
-              venueAttendance !== undefined &&
-              !isNaN(Number(venueAttendance)) && (
-                <View style={styles.addressContainer}>
-                  <Ionicons name="person" size={20} color={styles.icon.color} />
-                  <Text style={styles.subText}>
-                    Attendance:{" "}
-                    {Intl.NumberFormat("en-US").format(Number(venueAttendance))}
-                  </Text>
-                </View>
-              )}
-
-            {/* Grass indicator */}
-            {typeof grass === "boolean" && (
-              <View style={styles.addressContainer}>
-                <Ionicons name="leaf" size={20} color={styles.icon.color} />
-                <Text style={styles.subText}>
-                  {grass ? "Natural Grass" : "Artificial Turf"}
-                </Text>
-              </View>
-            )}
+        {/* Grass indicator */}
+        {typeof grass === "boolean" && (
+          <View style={styles.addressContainer}>
+            <Ionicons name="leaf" size={20} color={styles.icon.color} />
+            <Text style={styles.subText}>
+              {grass ? "Natural Grass" : "Artificial Turf"}
+            </Text>
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 };

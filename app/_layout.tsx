@@ -1,15 +1,3 @@
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import ChatInputBar from "components/Sports/NBA/GameDetails/ChatInputBar";
-import LiveChatBottomSheet from "components/Sports/NBA/GameDetails/LiveChat";
-import { NotificationProvider } from "contexts/NotificationContext";
-import {
-  PreferencesProvider,
-  usePreferences,
-} from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
-import { useAuth } from "hooks/UserHooks/useAuth";
-import { useChatStore } from "store/chatStore";
-
 import {
   Oswald_200ExtraLight,
   Oswald_300Light,
@@ -19,25 +7,28 @@ import {
   Oswald_700Bold,
   useFonts,
 } from "@expo-google-fonts/oswald";
-
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationLightTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors } from "constants/styles";
 import { FavoriteTeamsProvider } from "contexts/FavoriteTeamsContext";
-import { Stack, usePathname } from "expo-router";
+import { NotificationProvider } from "contexts/NotificationContext";
+import {
+  PreferencesProvider,
+  usePreferences,
+} from "contexts/PreferencesContext";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useAuth } from "hooks/UserHooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CustomTabBar from "../components/CustomTabBar";
 
-// --------------------
-// Custom themes
-// --------------------
 const CustomDarkTheme = {
   ...NavigationDarkTheme,
   colors: {
@@ -56,9 +47,6 @@ const CustomLightTheme = {
   },
 };
 
-// --------------------
-// Routes where tab bar should be hidden
-// --------------------
 const hiddenRoutes = [
   "/news/article",
   "/highlights/video",
@@ -73,53 +61,27 @@ const hiddenRoutes = [
   "/comment-thread/",
 ];
 
-// --------------------
-// Inner layout — safely consumes PreferencesProvider
-// --------------------
 function AppLayout() {
   const pathname = usePathname();
-  const { resolvedColorScheme } = usePreferences(); // ✅ now inside the provider
+  const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const { user, loadingUser } = useAuth();
-
-  // Animation
   const opacity = useRef(new Animated.Value(1)).current;
-
-  // Chat state
-  const { isOpen, gameId, closeChat } = useChatStore();
-  const [input, setInput] = useState("");
-  const [sendFn, setSendFn] = useState<((msg: string) => void) | null>(null);
-
-  // Tab bar visibility
   const [visibleTabBar, setVisibleTabBar] = useState(true);
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
-  // --------------------
-  // Redirect to login if user is null
-  // --------------------
   useEffect(() => {
     if (!loadingUser && !user) {
       router.replace("/login");
     }
   }, [user, loadingUser, router]);
 
-  // --------------------
-  // Update tab bar visibility + close chat when navigating
-  // --------------------
   useEffect(() => {
     if (!pathname) return;
-
     setVisibleTabBar(!shouldHideTabBar);
+  }, [pathname, shouldHideTabBar]);
 
-    if (!pathname.startsWith("/game/")) {
-      closeChat();
-    }
-  }, [pathname, shouldHideTabBar, closeChat]);
-
-  // --------------------
-  // Show loader while user data is loading
-  // --------------------
   if (loadingUser) {
     return (
       <View
@@ -138,9 +100,6 @@ function AppLayout() {
     );
   }
 
-  // --------------------
-  // Main render
-  // --------------------
   return (
     <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
       <Stack
@@ -193,35 +152,10 @@ function AppLayout() {
           <CustomTabBar isDark={isDark} />
         </Animated.View>
       )}
-
-      {gameId && isOpen && pathname?.startsWith("/game/") && (
-        <>
-          <LiveChatBottomSheet
-            gameId={gameId}
-            onChange={(index) => index === -1 && closeChat()}
-            onSend={(sendMessage) => setSendFn(() => sendMessage)}
-          />
-
-          <ChatInputBar
-            value={input}
-            onChange={setInput}
-            onSend={() => {
-              if (!input.trim() || !gameId) return;
-              if (sendFn) {
-                sendFn(input);
-                setInput("");
-              }
-            }}
-          />
-        </>
-      )}
     </ThemeProvider>
   );
 }
 
-// --------------------
-// Outer layout — only provides context, never consumes it
-// --------------------
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Oswald_200ExtraLight,
@@ -232,18 +166,11 @@ export default function RootLayout() {
     Oswald_700Bold,
   });
 
-  // --------------------
-  // Show loader while fonts are loading
-  // --------------------
   if (!fontsLoaded) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ActivityIndicator size="large" />
         </View>

@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -13,14 +13,15 @@ import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
 import { getNHLTeam } from "constants/teamsNHL";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -30,7 +31,6 @@ import { NHLGame } from "types/hockey";
 import { getNHLSeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 

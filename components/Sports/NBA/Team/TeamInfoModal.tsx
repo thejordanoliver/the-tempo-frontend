@@ -13,7 +13,7 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
-import { useChampions } from "hooks/useChampions";
+import { useChampions } from "hooks/LeagueHooks/useChampions";
 import { useTeamCoaches } from "hooks/useTeamCoaches";
 import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";

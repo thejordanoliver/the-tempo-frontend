@@ -7,7 +7,6 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useGameStatistics } from "hooks/useGameStatistics";
 import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
@@ -72,7 +71,6 @@ export default function WNBAGamePreviewModal({
   const awayLogo = getWNBATeamLogo(away?.id, true);
   const homeColor = home?.color ?? "";
   const awayColor = away?.color ?? "";
-  const { data: gameStats } = useGameStatistics(game?.id ?? 0);
 
   const formattedDate = gameDate
     ? gameDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })
@@ -87,11 +85,6 @@ export default function WNBAGamePreviewModal({
 
   const gameDateISO = gameDate ? gameDate.toISOString() : "";
   const gameDateStr = gameDateISO ? gameDateISO.split("T")[0] : "";
-
-  // March Madness runs March 18 – April 7
-  const isMarchMadness =
-    (gameDate?.getMonth() === 2 && gameDate?.getDate() >= 18) ||
-    (gameDate?.getMonth() === 3 && gameDate?.getDate() <= 7);
 
   const { score: liveScore, details } = useGameDetails(
     "wnba",
@@ -234,8 +227,6 @@ export default function WNBAGamePreviewModal({
 
                 <CenterInfo
                   isChampionship={isChampionship}
-                  isFinalFour={isFinalFour}
-                  isMarchMadness={isMarchMadness}
                   round={round ?? ""}
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}

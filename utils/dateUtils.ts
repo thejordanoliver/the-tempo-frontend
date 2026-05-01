@@ -43,7 +43,7 @@ export function getWNBASeason(): string {
   const month = today.month() + 1; // 1–12
 
   // WNBA season runs May–October, season year matches calendar year
-  if (month >= 5) {
+  if (month >= 3) {
     return String(year);
   }
 

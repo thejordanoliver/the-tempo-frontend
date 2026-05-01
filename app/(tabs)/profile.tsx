@@ -27,7 +27,8 @@ import { useSettingsModalStore } from "store/settingsModalStore";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
 export default function ProfileScreen() {
-  const { favorites, loadFavorites } = useFavoriteTeamsContext();
+  const { favorites, loadFavorites, clearFavorites } =
+    useFavoriteTeamsContext();
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
   const horizontalPadding = 40;
@@ -57,6 +58,7 @@ export default function ProfileScreen() {
     followersCount,
     followingCount,
     loadProfile,
+    resetProfile,
   } = useProfile();
   const viewedUserId = currentUserId;
 
@@ -93,6 +95,8 @@ export default function ProfileScreen() {
 
   const signOut = async () => {
     try {
+      clearFavorites();
+      resetProfile();
       await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
@@ -107,14 +111,18 @@ export default function ProfileScreen() {
 
       const initialize = async () => {
         if (!isActive) return;
-        await loadProfile();
+        const loadedUserId = await loadProfile();
+        if (!isActive) return;
+
+        await loadFavorites(loadedUserId);
+        if (!isActive) return;
 
         if (shouldRestore && targetUserId) {
           clearRestore();
           openModal(
             type,
             targetUserId,
-            currentUserId ? String(currentUserId) : undefined,
+            loadedUserId ? String(loadedUserId) : undefined,
           );
         }
 
@@ -135,7 +143,6 @@ export default function ProfileScreen() {
       shouldRestore,
       targetUserId,
       type,
-      currentUserId,
       openModal,
       clearRestore,
       showOnReturn,
@@ -155,7 +162,7 @@ export default function ProfileScreen() {
         />
       ),
     });
-  }, [navigation, username]);
+  }, [navigation, router, username]);
 
   const favoriteTeamsWithLeague = favorites
     .map((fav) => {

@@ -4,7 +4,6 @@ import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterIn
 
 type CenterInfoProps = {
   isChampionship: boolean;
-  isFinalFour: boolean;
   broadcastNetworks?: string;
   period: number | string;
   formattedTime: string;

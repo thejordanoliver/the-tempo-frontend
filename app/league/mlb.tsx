@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
@@ -12,14 +12,15 @@ import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useMLBSeasonGames } from "hooks/MLBHooks/useMLBSeasonGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -28,7 +29,6 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getMLBSeason, getMLBStandingsSeason } from "utils/dateUtils";
 import { filterMLBByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { usePreferences } from "contexts/PreferencesContext";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

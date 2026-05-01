@@ -15,17 +15,17 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useTeamGames } from "hooks/NBAHooks/useTeamGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useTeamTabs } from "hooks/useLeagueTabs";
 import { useTeamRosterStats } from "hooks/useTeamRosterStats";
 import { useTeamStats } from "hooks/useTeamStats";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { User } from "types/types";
+import { User } from "types/user";
 import {
   getGameCountByMonth,
   getMonthsToShow,

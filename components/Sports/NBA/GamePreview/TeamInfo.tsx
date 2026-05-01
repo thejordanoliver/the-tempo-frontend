@@ -1,7 +1,7 @@
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NBATeam } from "types/types";
+import { NBATeam } from "types/nba";
 
 type TeamInfoProps = {
   team?: NBATeam;
@@ -37,8 +37,6 @@ export default function TeamInfo({
   const isScheduled = gameStatusDescription === "Scheduled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
   // --- Winner / opacity logic ---
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 

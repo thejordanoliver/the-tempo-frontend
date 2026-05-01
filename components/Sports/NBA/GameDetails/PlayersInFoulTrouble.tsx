@@ -24,6 +24,7 @@ type Props = {
   awayPlayers: Player[];
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  gameStatusDescription: string;
 };
 export default function PlayersInFoulTrouble({
   homeId,
@@ -36,6 +37,7 @@ export default function PlayersInFoulTrouble({
   awayPlayers,
   isDark,
   league = "NBA",
+  gameStatusDescription,
 }: Props) {
   const styles = foulTroubleStyles(isDark);
 
@@ -83,6 +85,13 @@ export default function PlayersInFoulTrouble({
       </View>
     );
   };
+
+  if (
+    gameStatusDescription !== "In Progress" &&
+    gameStatusDescription !== "Halftime"
+  ) {
+    return null;
+  }
 
   return (
     <View style={styles.constainer}>

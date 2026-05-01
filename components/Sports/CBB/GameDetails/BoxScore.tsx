@@ -48,6 +48,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
+  gameStatusDescription: string;
 };
 
 export default function BoxScore({
@@ -58,6 +59,7 @@ export default function BoxScore({
   isError = false,
   league,
   isDark,
+  gameStatusDescription,
 }: Props) {
   const styles = boxScoreStyles(isDark);
   const global = globalStyles(isDark);
@@ -345,6 +347,10 @@ export default function BoxScore({
       </View>
     );
   };
+
+  if (gameStatusDescription === "Scheduled") {
+    return null;
+  }
 
   if (isLoading) {
     return (

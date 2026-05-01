@@ -17,9 +17,9 @@ export function useWNBASeasonGames({
 }: useWNBASeasonGamesOptions = {}) {
   const CACHE_KEY = `wnba_season_games_cache_${league}_${season}`;
 
-  const [games, setGames] = useState<BasketballGame[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [wnbaGames, setWNBAGames] = useState<BasketballGame[]>([]);
+  const [wnbaLoading, setWNBAGamesLoading] = useState(true);
+  const [wnbaGamesError, setWNBAGamesError] = useState<string | null>(null);
 
   const loadCachedGames = useCallback(async () => {
     try {
@@ -55,30 +55,30 @@ export function useWNBASeasonGames({
   );
 
   const fetchSeasonGames = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setWNBAGamesLoading(true);
+    setWNBAGamesError(null);
 
     try {
       const cached = await loadCachedGames();
       if (cached && cached.length > 0) {
-        setGames(cached);
-        setLoading(false);
+        setWNBAGames(cached);
+        setWNBAGamesLoading(false);
         return;
       }
 
-      const res = await apiClient.get(`/api/games/wnba`, {
+      const res = await apiClient.get(`api/games/wnba`, {
         params: { season, league, all: 1 },
       });
 
       const response = res.data.response || [];
 
-      setGames(response);
+      setWNBAGames(response);
       saveCache(response);
     } catch (err: any) {
       console.error("Error fetching WNBA season games:", err.message);
-      setError("Failed to load WNBA season games");
+      setWNBAGamesError("Failed to load WNBA season games");
     } finally {
-      setLoading(false);
+      setWNBAGamesLoading(false);
     }
   }, [season, league, loadCachedGames, saveCache]);
 
@@ -92,5 +92,5 @@ export function useWNBASeasonGames({
   }, [CACHE_KEY, fetchSeasonGames]);
 
   // ✅ NO sorting — backend handles it
-  return { games, loading, error, refreshGames };
+  return { wnbaGames, wnbaLoading, wnbaGamesError, refreshGames };
 }

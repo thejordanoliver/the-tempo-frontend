@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 type NFLWeek = {
@@ -9,7 +10,8 @@ type NFLWeek = {
   endDate: string;
 };
 
-export function useNFLSeasonCalendar() {
+
+export function useFootballSeasonCalendar(league: LeagueType) {
   const [calendar, setCalendar] = useState<NFLWeek[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -20,7 +22,9 @@ export function useNFLSeasonCalendar() {
         setLoading(true);
         setError(null);
 
-        const { data } = await apiClient.get("api/games/football/calendar");
+        const { data } = await apiClient.get(
+          `api/games/football/${league.toLowerCase()}/calendar`,
+        );
 
         // 🔥 FLATTEN + NORMALIZE HERE
         const flattened: NFLWeek[] =
@@ -31,7 +35,7 @@ export function useNFLSeasonCalendar() {
               weekNumber: Number(entry.value),
               startDate: entry.startDate,
               endDate: entry.endDate,
-            }))
+            })),
           ) || [];
 
         setCalendar(flattened);

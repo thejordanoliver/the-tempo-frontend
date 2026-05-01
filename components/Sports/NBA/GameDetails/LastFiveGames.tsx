@@ -31,7 +31,6 @@ export default function LastFiveGames({ isDark, home, away, league }: Props) {
   const team = selected === "home" ? home : away;
 
   const styles = lastFiveGameStyles(isDark);
-
   const resolveTeam = (teamId?: number) => {
     if (!teamId) return undefined;
 
@@ -125,6 +124,8 @@ export default function LastFiveGames({ isDark, home, away, league }: Props) {
   };
 
   const tabs: readonly ("away" | "home")[] = ["away", "home"];
+
+  if (home?.games?.length > 0 || away?.games?.length > 0) return null;
 
   return (
     <View style={styles.container}>

@@ -2,6 +2,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
+import { LeagueType } from "types/types";
 
 // Allow MLB numbers + NBA/CBB strings
 type ScoreValue = string | number | null | undefined;
@@ -18,7 +19,7 @@ type Props = {
   awayCode: string | undefined;
   isDark: boolean;
   loading?: boolean;
-  league?: "NBA" | "WNBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL";
+  league?: LeagueType;
 };
 
 export default function LineScore({

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
-export function useCBSeasonCalendar() {
+export function useLeagueCalendar(league: LeagueType) {
   const [calendar, setCalendar] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -12,7 +13,9 @@ export function useCBSeasonCalendar() {
         setLoading(true);
         setError(null);
 
-        const { data } = await apiClient.get("api/games/cb/calendar");
+        const { data } = await apiClient.get(
+          `api/games/${league.toLowerCase()}/calendar`,
+        );
 
         setCalendar(data.calendar || []);
       } catch (err) {

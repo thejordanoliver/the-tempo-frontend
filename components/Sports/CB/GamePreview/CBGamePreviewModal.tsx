@@ -1,7 +1,7 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getCBTeamLogo } from "constants/teamsCB";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,6 +13,7 @@ import { CollegeBaseballGame } from "types/baseball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import { GameInfo } from "./CenterInfo";
+import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 type Props = {
   game: CollegeBaseballGame;
@@ -48,11 +49,12 @@ export default function CBGamePreviewModal({ game, visible, onClose }: Props) {
   const homeName = homeTeam?.code ?? "";
   const awayName = awayTeam?.code ?? "";
 
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
-
-  const homeLogo = getCBTeamLogo(homeTeam?.id ?? 0, true);
-  const awayLogo = getCBTeamLogo(awayTeam?.id ?? 0, true);
+  const home = getCBTeam(homeId ?? 0);
+  const away = getCBTeam(awayId ?? 0);
+  const homeLogo = getCBTeamLogo(homeId ?? 0, true);
+  const awayLogo = getCBTeamLogo(awayId ?? 0, true);
+  const homeColor = home?.color ?? "";
+  const awayColor = away?.color ?? "";
 
   /* ==================================================
      LIVE GAME DETAILS
@@ -72,37 +74,24 @@ export default function CBGamePreviewModal({ game, visible, onClose }: Props) {
   const isChampionship = details?.playoffRound === "World Series";
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
-  const neutralSite = details?.neutralSite;
-  const headline = details?.headline;
-  const seriesSummary = details?.seriesSummary;
-  const seasonState = details?.seasonState;
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.statusText ?? "";
-  const plays = liveScore?.plays;
-  const lastPlay = liveScore?.lastPlay;
-  const isPostseason = details?.isPostseason;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
   const headlineText = details?.headline;
-  const playerStats = liveScore?.playerStats ?? [];
   const homeScore = game.homeTeam.score ?? 0;
   const awayScore = game.awayTeam.score ?? 0;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
-  const period = liveScore?.period;
   const venue = details?.venue;
-  const attendance = details?.venue;
-  const officials = details?.officials ?? [];
-  const injuries = details?.injuries ?? [];
-  const highlights = details?.highlights ?? [];
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-
+  const venueName = venue?.fullName;
+  const venueImage = venue?.images[0]?.href;
+  const venueCity = venue?.address.city;
+  const venueAddress = `${venue?.address.city}, ${venue?.address.state}`;
+  const venueSurface = venue?.grass;
+  const venueAttendance = venue?.attendance;
   const isTopInning = gameStatusDetail.includes("Top");
   const outs = liveScore?.outs;
   const bases: { first: boolean; second: boolean; third: boolean } =
@@ -111,13 +100,6 @@ export default function CBGamePreviewModal({ game, visible, onClose }: Props) {
       second: false,
       third: false,
     };
-
-  const lineScore = liveScore?.periodScores?.length
-    ? {
-        home: liveScore.periodScores.map((p) => p.home.toString()),
-        away: liveScore.periodScores.map((p) => p.away.toString()),
-      }
-    : undefined;
 
   useEffect(() => {
     visible ? sheetRef.current?.present() : sheetRef.current?.dismiss();
@@ -214,6 +196,19 @@ export default function CBGamePreviewModal({ game, visible, onClose }: Props) {
                   gameStatusDescription={gameStatusDescription}
                 />
               </View>
+              {/* --- Scrollable Content --- */}
+              {!dontShowDetails && (
+                <GamePreviewContent
+                  game={game}
+                  venueImage={venueImage}
+                  venueName={venueName}
+                  venueCity={venueCity}
+                  venueAddress={venueAddress}
+                  venueAttendance={venueAttendance}
+                  venueSurface={venueSurface}
+                  isDark={isDark}
+                />
+              )}
             </>
           )}
         </BlurView>

@@ -1,12 +1,14 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { GameLeaders, GameLocation } from "components/Sports/NBA/GameDetails";
-import BoxScore from "components/Sports/NBA/GameDetails/BoxScore";
-import GameTeamStats from "components/Sports/NBA/GameDetails/GameTeamStats";
-import TeamInjuries from "components/Sports/NBA/GameDetails/InjuryReport/TeamInjuries";
-import LineScore from "components/Sports/NBA/GameDetails/LineScore";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
+import {
+  BoxScore,
+  GameLeaders,
+  GameLocation,
+  GameTeamStats,
+  LineScore,
+  Officials,
+  TeamInjuries,
+} from "components/Sports/NBA/GameDetails";
 import React from "react";
-
 export default function GamePreviewContent({
   gameStatusDescription,
   game,
@@ -14,6 +16,7 @@ export default function GamePreviewContent({
   away,
   lineScore,
   gameStats,
+  playerStats,
   officials,
   injuries,
   weatherLoading,
@@ -52,10 +55,11 @@ export default function GamePreviewContent({
           />
 
           <BoxScore
-            gameId={game.id.toString()}
+            playerStats={playerStats}
             awayTeamId={away?.id}
             homeTeamId={home?.id}
             isDark={true}
+            league="NBA"
           />
 
           {gameStats.length > 0 && (

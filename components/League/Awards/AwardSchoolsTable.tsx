@@ -1,4 +1,4 @@
-import AwardSeasonTableSkeleton from "components/League/AwardSeasonTableSkeleton";
+import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";

@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { getCBBSeason } from "utils/dateUtils";
 
 const MEN_CBB_LEAGUE = "116";
 const WOMEN_CBB_LEAGUE = "423";
+
 const LIVE_STATUSES = ["Q1", "Q2", "Q3", "Q4", "OT", "BT", "HT"];
 
 type UseCBBWeeklyGamesOptions = {
@@ -20,11 +21,13 @@ export function useCBBWeeklyGames({
   isWomen = false,
 }: UseCBBWeeklyGamesOptions = {}) {
   const league = isWomen ? WOMEN_CBB_LEAGUE : MEN_CBB_LEAGUE;
-
-  const [BasketballGames, setGames] = useState<BasketballGame[]>([]);
+  const [basketballGames, setGames] = useState<BasketballGame[]>([]);
   const [cbbLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastFetched, setLastFetched] = useState<string | null>(null);
+
+  // Prevent double-fetch in React 18 Strict Mode (dev only)
+  const hasFetchedRef = useRef(false);
 
   const refreshBasketballGames = useCallback(async () => {
     setLoading(true);
@@ -32,38 +35,52 @@ export function useCBBWeeklyGames({
 
     try {
       const res = await apiClient.get(`/api/games/cbb/weekly`, {
-        params: { season, timezone, league },
+        params: { league },
       });
 
       const data: BasketballGame[] = res.data?.response || [];
       setGames(data);
       setLastFetched(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-    } catch (err: any) {
-      console.error("Error fetching CBB weekly games:", err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error fetching CBB weekly games:", err.message);
+      } else {
+        console.error("Error fetching CBB weekly games:", err);
+      }
       setError("Failed to load weekly CBB games");
     } finally {
       setLoading(false);
     }
-  }, [season, timezone, league]);
+  }, [league]);
 
   useEffect(() => {
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
     refreshBasketballGames();
   }, [refreshBasketballGames]);
 
-  const isLiveGame = useCallback(
-    (game: BasketballGame) =>
-      !!game.status?.short && LIVE_STATUSES.includes(game.status.short),
-    [],
-  );
-
   const sortedGames = useMemo(() => {
-    return [...BasketballGames].sort(
-      (a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a)),
-    );
-  }, [BasketballGames, isLiveGame]);
+    const isLive = (g: BasketballGame) =>
+      !!g.status?.short && LIVE_STATUSES.includes(g.status.short);
+
+    return [...basketballGames].sort((a, b) => {
+      const aLive = isLive(a);
+      const bLive = isLive(b);
+
+      // Live games first
+      if (aLive !== bLive) return Number(bLive) - Number(aLive);
+
+      // Secondary sort: by game date (earliest first)
+      const aTime = new Date(a.date).getTime();
+      const bTime = new Date(b.date).getTime();
+
+      return aTime - bTime;
+    });
+  }, [basketballGames]);
 
   return {
-    BasketballGames: sortedGames,
+    basketballGames: sortedGames,
     cbbLoading,
     error,
     lastFetched,

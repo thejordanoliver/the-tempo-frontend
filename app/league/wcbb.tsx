@@ -1,9 +1,10 @@
 // app/league/cbb.tsx (WOMEN)
 
 import { useNavigation } from "@react-navigation/native";
+import CalendarModal from "components/CalendarModal";
 import DateNavigator from "components/DateNavigator";
 import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/AwardSeasons";
+import AwardSeasons from "components/League/Awards/AwardSeasons";
 import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
@@ -13,24 +14,25 @@ import ConferenceListModal, {
 } from "components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import { Colors } from "constants/styles";
 import { getCBBTeam } from "constants/teamsCBB";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
+import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
-import { useLeagueTabs } from "hooks/useLeagueTabs";
-
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { usePreferences } from "contexts/PreferencesContext";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -57,14 +59,27 @@ export default function WCBBLeagueScreen() {
     loading: cbbloading,
     refreshBasketballGames,
   } = useCBBSeasonGames({ isWomen: true });
-
+  const { calendar } = useLeagueCalendar(league);
   const changeDateByDays = (days: number) => {
-    setSelectedDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    });
+    setSelectedDate((prev) =>
+      dayjs(prev).add(days, "day").startOf("day").toDate(),
+    );
   };
+
+  const markDates = (calendarArray: string[]) =>
+    calendarArray.reduce(
+      (acc, dateStr) => {
+        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+
+        acc[iso] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return acc;
+      },
+      {} as Record<string, { marked: boolean; dotColor: string }>,
+    );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -248,6 +263,20 @@ export default function WCBBLeagueScreen() {
         </PagerView>
       </View>
 
+      <CalendarModal
+        visible={showCalendarModal}
+        onClose={() => setShowCalendarModal(false)}
+        onSelectDate={(dateString) => {
+          const localSelected = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+          setSelectedDate(localSelected);
+          setShowCalendarModal(false);
+        }}
+        markedDates={{
+          ...markDates([...calendar]),
+        }}
+      />
       <ConferenceListModal
         ref={conferenceModalRef}
         league="cbb"
