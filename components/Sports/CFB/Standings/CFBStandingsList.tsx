@@ -7,7 +7,10 @@ import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { CFBTeamRank, useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
+import {
+  CFBTeamRank,
+  useCFBRankings,
+} from "hooks/FootballHooks/useCFBRankings";
 import { useState } from "react";
 import {
   FlatList,

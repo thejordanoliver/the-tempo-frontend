@@ -4,7 +4,7 @@ import {
   getTeamByESPNId as getNFLTeamByESPNId,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { PlayObject } from "hooks/NFLHooks/useGameDetails";
+import { PlayObject } from "hooks/FootballHooks/useGameDetails";
 import { FlatList, Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";

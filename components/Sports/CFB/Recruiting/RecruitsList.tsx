@@ -2,11 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
 import { Colors, Fonts } from "constants/styles";
-import { useCFBTeamRecruits } from "hooks/CFBHooks/useCFBTeamRecruits";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useCFBTeamRecruits } from "hooks/FootballHooks/useCFBTeamRecruits";
 import {
   FootballRecruit,
   useFootballRecruits,
-} from "hooks/CFBHooks/useFootballRecruits";
+} from "hooks/FootballHooks/useFootballRecruits";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -19,7 +20,6 @@ import RecruitCardSkeleton from "../../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../../Skeletons/TeamRankCardSkeleton";
 import TeamRankCard from "../TeamRankCard";
 import RecruitCard from "./RecruitCard";
-import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
   year: string;
   team: string;

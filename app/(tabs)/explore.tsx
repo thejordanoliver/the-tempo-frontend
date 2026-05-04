@@ -1,13 +1,20 @@
-import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import AddWidgetModal from "components/Explore/AddWidgetModal";
 import EmptyState from "components/Explore/EmptyState";
 import SearchResultsList from "components/Explore/SearchResultsList";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useExplore } from "hooks/useExplore";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Animated, Easing, View } from "react-native";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import { ResultItem } from "types/explore";
+import {
+  ExploreWidgetConfig,
+  ExploreWidgetSize,
+  ExploreWidgetType,
+} from "types/widgets";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import SearchBar from "../../components/Explore/SearchBar";
 
@@ -19,12 +26,99 @@ const tabToTypeMap = {
   Accounts: "user",
 };
 
+const EXPLORE_WIDGETS_KEY_PREFIX = "exploreWidgets";
+const getExploreWidgetsKey = (userId: string | number) =>
+  `${EXPLORE_WIDGETS_KEY_PREFIX}:${userId}`;
+
+const isExploreWidgetType = (value: unknown): value is ExploreWidgetType =>
+  typeof value === "string" &&
+  [
+    "nba_games",
+    "nfl_games",
+    "mlb_games",
+    "nhl_games",
+    "wnba_games",
+    "cbb_games",
+    "wcbb_games",
+    "cfb_games",
+    "favorite_games",
+    "favorite_teams",
+    "trending_news",
+    "player_leaders",
+    "standings",
+  ].includes(value);
+
+const isExploreWidgetSize = (value: unknown): value is ExploreWidgetSize =>
+  value === "small" || value === "medium" || value === "large";
+
+const getDefaultWidgetSize = (
+  type: ExploreWidgetType,
+): ExploreWidgetSize => {
+  switch (type) {
+    case "trending_news":
+    case "standings":
+      return "medium";
+    case "favorite_games":
+    case "nba_games":
+    case "nfl_games":
+    case "mlb_games":
+    case "nhl_games":
+    case "wnba_games":
+    case "cbb_games":
+    case "wcbb_games":
+    case "cfb_games":
+      return "medium";
+    default:
+      return "medium";
+  }
+};
+
+const withSequentialOrder = (widgets: ExploreWidgetConfig[]) =>
+  widgets
+    .slice()
+    .sort((a, b) => a.order - b.order || a.createdAt - b.createdAt)
+    .map((widget, index) => ({ ...widget, order: index }));
+
+const normalizeStoredWidgets = (value: unknown): ExploreWidgetConfig[] => {
+  if (!Array.isArray(value)) return [];
+
+  const normalized = value
+    .filter(
+      (widget): widget is Partial<ExploreWidgetConfig> =>
+        Boolean(widget) &&
+        typeof widget === "object" &&
+        isExploreWidgetType((widget as ExploreWidgetConfig).type),
+    )
+    .map((widget) => ({
+      id:
+        typeof widget.id === "string"
+          ? widget.id
+          : `${widget.type}:${Date.now()}`,
+      type: widget.type as ExploreWidgetType,
+      title:
+        typeof widget.title === "string" && widget.title
+          ? widget.title
+          : String(widget.type),
+      createdAt:
+        typeof widget.createdAt === "number" ? widget.createdAt : Date.now(),
+      size: isExploreWidgetSize(widget.size)
+        ? widget.size
+        : getDefaultWidgetSize(widget.type as ExploreWidgetType),
+      order: typeof widget.order === "number" ? widget.order : Number.MAX_SAFE_INTEGER,
+    }));
+
+  return withSequentialOrder(normalized);
+};
+
 export default function ExplorePage() {
   const [searchVisible, setSearchVisible] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const [selectedTab, setSelectedTab] = useState<(typeof tabs)[number]>("All");
   const [showAll, setShowAll] = useState(false);
-  const inputAnim = useRef(new Animated.Value(0)).current;
+  const [widgetModalVisible, setWidgetModalVisible] = useState(false);
+  const [widgets, setWidgets] = useState<ExploreWidgetConfig[]>([]);
+  const [widgetsReady, setWidgetsReady] = useState(false);
+  const [widgetUserId, setWidgetUserId] = useState<string | null>(null);
+  const widgetLoadRequestId = useRef(0);
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -38,20 +132,10 @@ export default function ExplorePage() {
     recentSearches,
     loading,
     error,
-    search,
     isSearching,
     saveToRecentSearches,
     deleteRecentSearch,
   } = useExplore();
-
-  useEffect(() => {
-    Animated.timing(inputAnim, {
-      toValue: searchVisible ? 1 : 0,
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: false,
-    }).start();
-  }, [searchVisible]);
 
   const filteredResults = (query.trim() ? results : recentSearches).filter(
     (item) => {
@@ -139,6 +223,59 @@ export default function ExplorePage() {
     }
   };
 
+  const loadWidgets = useCallback(async () => {
+    const requestId = ++widgetLoadRequestId.current;
+    setWidgetsReady(false);
+
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (requestId !== widgetLoadRequestId.current) return;
+
+      if (!userId) {
+        setWidgetUserId(null);
+        setWidgets([]);
+        return;
+      }
+
+      setWidgetUserId(userId);
+      AsyncStorage.removeItem(EXPLORE_WIDGETS_KEY_PREFIX).catch(() => {});
+
+      const storedWidgets = await AsyncStorage.getItem(
+        getExploreWidgetsKey(userId),
+      );
+
+      if (requestId !== widgetLoadRequestId.current) return;
+
+      setWidgets(
+        storedWidgets ? normalizeStoredWidgets(JSON.parse(storedWidgets)) : [],
+      );
+    } catch (err) {
+      if (requestId !== widgetLoadRequestId.current) return;
+      console.error("Failed to load Explore widgets", err);
+      setWidgets([]);
+    } finally {
+      if (requestId === widgetLoadRequestId.current) {
+        setWidgetsReady(true);
+      }
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadWidgets();
+    }, [loadWidgets]),
+  );
+
+  useEffect(() => {
+    if (!widgetsReady || !widgetUserId) return;
+
+    AsyncStorage.setItem(
+      getExploreWidgetsKey(widgetUserId),
+      JSON.stringify(widgets),
+    ).catch((err) => console.error("Failed to save Explore widgets", err));
+  }, [widgetUserId, widgets, widgetsReady]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -150,16 +287,75 @@ export default function ExplorePage() {
               if (prev) {
                 setQuery(""); // clear text
                 setSelectedTab("All"); // reset tabs
-                setIsFocused(false);
               }
               return !prev;
             });
           }}
-          onAddWidget={() => {}}
+
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, setQuery]);
+
+  const handleAddWidget = (
+    type: ExploreWidgetType,
+    title: string,
+    size: ExploreWidgetSize,
+  ) => {
+    setWidgets((prev) => {
+      if (prev.some((widget) => widget.type === type)) return prev;
+      const ordered = withSequentialOrder(prev);
+
+      return [
+        ...ordered,
+        {
+          id: `${type}:${Date.now()}`,
+          type,
+          title,
+          createdAt: Date.now(),
+          size,
+          order: ordered.length,
+        },
+      ];
+    });
+  };
+
+  const handleRemoveWidget = (widgetId: string) => {
+    setWidgets((prev) =>
+      withSequentialOrder(prev.filter((widget) => widget.id !== widgetId)),
+    );
+  };
+
+  const handleResizeWidget = (
+    widgetId: string,
+    size: ExploreWidgetSize,
+  ) => {
+    setWidgets((prev) =>
+      prev.map((widget) =>
+        widget.id === widgetId ? { ...widget, size } : widget,
+      ),
+    );
+  };
+
+  const handleMoveWidget = (widgetId: string, direction: -1 | 1) => {
+    setWidgets((prev) => {
+      const ordered = withSequentialOrder(prev);
+      const currentIndex = ordered.findIndex((widget) => widget.id === widgetId);
+      const nextIndex = currentIndex + direction;
+
+      if (currentIndex < 0 || nextIndex < 0 || nextIndex >= ordered.length) {
+        return ordered;
+      }
+
+      const next = ordered.slice();
+      [next[currentIndex], next[nextIndex]] = [
+        next[nextIndex],
+        next[currentIndex],
+      ];
+
+      return withSequentialOrder(next);
+    });
+  };
 
   const handleChangeText = (text: string) => {
     if (!searchVisible) return;
@@ -173,16 +369,23 @@ export default function ExplorePage() {
         placeholder="Explore Teams, Players and Accounts..."
         onChangeText={handleChangeText}
         visible={searchVisible}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => {
-          if (!query.trim()) setIsFocused(false);
-        }}
+        onFocus={() => {}}
+        onBlur={() => {}}
         tabs={[...tabs]}
         selectedTab={selectedTab}
         onTabPress={(tab) => setSelectedTab(tab as typeof selectedTab)}
       />
 
-      {!searchVisible && <EmptyState isDark={isDark} />}
+      {!searchVisible && (
+        <EmptyState
+          isDark={isDark}
+          selectedWidgets={widgets}
+          onAddWidget={() => setWidgetModalVisible(true)}
+          onRemoveWidget={handleRemoveWidget}
+          onResizeWidget={handleResizeWidget}
+          onMoveWidget={handleMoveWidget}
+        />
+      )}
 
       {searchVisible && (
         <SearchResultsList
@@ -197,6 +400,14 @@ export default function ExplorePage() {
           isSearching={isSearching}
         />
       )}
+
+      <AddWidgetModal
+        visible={widgetModalVisible}
+        isDark={isDark}
+        selectedWidgets={widgets}
+        onClose={() => setWidgetModalVisible(false)}
+        onAddWidget={handleAddWidget}
+      />
     </View>
   );
 }

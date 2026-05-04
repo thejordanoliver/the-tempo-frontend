@@ -108,7 +108,6 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       flexDirection: "row",
       flex: 1,
       alignItems: "center",
-      margin: 2,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

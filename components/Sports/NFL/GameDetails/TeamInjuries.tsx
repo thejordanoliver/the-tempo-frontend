@@ -1,4 +1,6 @@
+import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
+import { globalStyles } from "constants/styles";
 import { getNFLTeamLogo, getTeamByESPNId } from "constants/teamsNFL";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
@@ -6,7 +8,7 @@ import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.style
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import FixedWidthTabBar from "../../../TabBars/FixedWidthTabBar";
 
-type Injury = {
+export type Injury = {
   espnId: number | null;
   name: string;
   position?: string | null;
@@ -30,9 +32,9 @@ type Props = {
   isDark: boolean;
 };
 
-const DEFAULT_HEADSHOT = "https://via.placeholder.com/36?text=👤";
+const DEFAULT_HEADSHOT = playerPlaceholder;
 
-export default function NFLInjuries({
+export default function TeamInjuries({
   injuries = [], // ✅ DEFAULT FIX
   loading,
   error,
@@ -43,6 +45,7 @@ export default function NFLInjuries({
   isDark,
 }: Props) {
   const styles = teamInjuryStyles(isDark);
+  const global = globalStyles(isDark);
 
   /* -------------------------------------------------- */
   /* Group injuries by teamId                           */
@@ -95,8 +98,8 @@ export default function NFLInjuries({
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Failed to load injuries</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load injuries</Text>
       </View>
     );
   }
@@ -163,9 +166,8 @@ export default function NFLInjuries({
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
-
       <View style={styles.wrapper}>
         <FixedWidthTabBar
           tabs={tabs}
@@ -196,18 +198,12 @@ export default function NFLInjuries({
           }}
         />
 
-        {selectedInjuries.length > 0 ? (
-          <FlatList
-            data={selectedInjuries}
-            renderItem={renderInjury}
-            keyExtractor={(i, idx) => `${i.espnId ?? idx}`}
-            scrollEnabled={false}
-          />
-        ) : (
-          <Text style={styles.errorText}>
-            No injuries reported for this team.
-          </Text>
-        )}
+        <FlatList
+          data={selectedInjuries}
+          renderItem={renderInjury}
+          keyExtractor={(i, idx) => `${i.espnId ?? idx}`}
+          scrollEnabled={false}
+        />
       </View>
     </View>
   );

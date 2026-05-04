@@ -4,7 +4,7 @@ import {
   getTeamByESPNId as getNFLTeamByESPNId,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { PlayObject } from "hooks/NFLHooks/useGameDetails";
+import { PlayObject } from "hooks/FootballHooks/useGameDetails";
 import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -19,6 +19,7 @@ type Props = {
   homeTeamId: number;
   isDark: boolean;
   league?: "NFL" | "CFB";
+  gameStatusDescription: string;
 };
 
 export default function TeamDrives({
@@ -30,6 +31,7 @@ export default function TeamDrives({
   homeTeamId,
   isDark,
   league = "NFL",
+  gameStatusDescription,
 }: Props) {
   const styles = TeamDrivesStyles;
 
@@ -94,6 +96,7 @@ export default function TeamDrives({
   }, [allDrives, selectedTeam]);
 
   if (!loading && allDrives.length === 0) return null;
+  if (gameStatusDescription === "Scheduled") return null;
 
   return (
     <View style={styles.container}>

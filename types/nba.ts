@@ -15,7 +15,7 @@ export type NBATeam = {
   logoLight: any;
   color: string;
   secondaryColor?: string;
-  established?: string;
+  established?: number;
   record?: string;
   wins?: number;
   losses?: number;

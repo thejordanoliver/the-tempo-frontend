@@ -22,11 +22,11 @@ export default function GamePreviewContent({
   injuries,
   detailsLoading,
   detailsError,
-  resolvedVenueImage,
-  resolvedVenueName,
-  resolvedVenueCity,
-  resolvedVenueAddress,
-  resolvedVenueCapacity,
+  venueImage,
+  venueName,
+  venueCity,
+  venueAddress,
+  venueCapacity,
   highlights,
   weather,
   gameStatusDescription,
@@ -83,21 +83,17 @@ export default function GamePreviewContent({
 
         <Officials
           officials={officials ?? []}
-          loading={false}
-          error={null}
+          gameStatusDescription={gameStatusDescription}
           isDark
         />
 
         <GameLocation
-          venueImage={resolvedVenueImage}
-          venueName={resolvedVenueName}
-          location={resolvedVenueCity}
-          address={resolvedVenueAddress}
-          venueCapacity={resolvedVenueCapacity}
-          venueAttendance={undefined}
+          venueImage={venueImage}
+          venueName={venueName}
+          location={venueCity}
+          address={venueAddress}
+          venueCapacity={venueCapacity}
           weather={weather}
-          loading={false}
-          error={null}
           isDark
         />
       </View>

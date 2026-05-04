@@ -6,7 +6,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
+import { useGameDetails } from "hooks/FootballHooks/useGameDetails";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";

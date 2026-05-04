@@ -1,5 +1,5 @@
 import { Colors } from "constants/styles";
-import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
+import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import { Image, Text, View } from "react-native";
 import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
 

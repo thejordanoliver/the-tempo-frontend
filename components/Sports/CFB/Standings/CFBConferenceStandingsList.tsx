@@ -8,7 +8,7 @@ import {
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useCFBConferenceStandings } from "hooks/CFBHooks/useCFBConferenceStandings";
+import { useCFBConferenceStandings } from "hooks/FootballHooks/useCFBConferenceStandings";
 import {
   FlatList,
   Image,

@@ -27,6 +27,7 @@ import { useAuth } from "hooks/UserHooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { getAccessToken } from "utils/apiClient";
 import CustomTabBar from "../components/CustomTabBar";
 
 const CustomDarkTheme = {
@@ -58,8 +59,11 @@ const hiddenRoutes = [
   "/settings",
   "/settings/index",
   "/login",
+  "/forgot-password",
   "/comment-thread/",
 ];
+
+const publicRoutes = ["/login", "/forgot-password"];
 
 function AppLayout() {
   const pathname = usePathname();
@@ -72,10 +76,24 @@ function AppLayout() {
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
   useEffect(() => {
-    if (!loadingUser && !user) {
-      router.replace("/login");
-    }
-  }, [user, loadingUser, router]);
+    let isMounted = true;
+    const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
+
+    const redirectIfUnauthenticated = async () => {
+      if (loadingUser || user || isPublicRoute) return;
+
+      const storedAccessToken = await getAccessToken();
+      if (isMounted && !storedAccessToken) {
+        router.replace("/login");
+      }
+    };
+
+    redirectIfUnauthenticated();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, loadingUser, pathname, router]);
 
   useEffect(() => {
     if (!pathname) return;
@@ -134,6 +152,7 @@ function AppLayout() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" options={{ title: "Page Not Found" }} />
+        <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
         <Stack.Screen name="signup/success" />
       </Stack>
 

@@ -6,7 +6,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import {
   StatCategory,
   useFootballRosterStats,
-} from "hooks/CFBHooks/useFootballRosterStats";
+} from "hooks/FootballHooks/useFootballRosterStats";
 import React, { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";

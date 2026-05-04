@@ -298,59 +298,55 @@ export default function GameDetailsScreen() {
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            {!isFinal && !isScheduled && (
-              <LastPlay
-                lastPlay={lastPlay}
-                homeTeamId={homeEspnId}
-                awayTeamId={awayEspnId}
-              />
-            )}
+            <LastPlay
+              lastPlay={lastPlay}
+              homeTeamId={homeEspnId}
+              awayTeamId={awayEspnId}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {!isScheduled && (
-              <LineScore
-                linescore={lineScore}
-                awayCode={awayName ?? ""}
-                homeCode={homeName ?? ""}
-                league={league} // ✅ FIX
-                isDark={isDark}
-              />
-            )}
+            <LineScore
+              linescore={lineScore}
+              awayCode={awayName ?? ""}
+              homeCode={homeName ?? ""}
+              league={league}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {!isFinal && (
-              <FanPredictionVote
-                gameId={String(gameObj.id)}
-                awayTeam={{
-                  id: awayTeamId,
-                  code: awayName,
-                  logo: awayHeaderLogo,
-                  color: awayTeam?.color,
-                }}
-                homeTeam={{
-                  id: homeTeamId,
-                  code: homeName,
-                  logo: homeHeaderLogo,
-                  color: homeTeam?.color,
-                }}
-              />
-            )}
+            <FanPredictionVote
+              gameId={String(gameObj.id)}
+              awayTeam={{
+                id: awayTeamId,
+                code: awayName,
+                logo: awayHeaderLogo,
+                color: awayTeam?.color,
+              }}
+              homeTeam={{
+                id: homeTeamId,
+                code: homeName,
+                logo: homeHeaderLogo,
+                color: homeTeam?.color,
+              }}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {isScheduled && (
-              <MatchupPredictor
-                away={{
-                  name: awayTeam?.code,
-                  logo: awayLogo,
-                  chance: awayChance,
-                }}
-                home={{
-                  name: homeTeam?.code,
-                  logo: homeLogo,
-                  color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
-                  chance: homeChance,
-                }}
-                size={180}
-                isDark={isDark}
-              />
-            )}
+            <MatchupPredictor
+              away={{
+                name: awayTeam?.code,
+                logo: awayLogo,
+                chance: awayChance,
+              }}
+              home={{
+                name: homeTeam?.code,
+                logo: homeLogo,
+                color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
+                chance: homeChance,
+              }}
+              size={180}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <GameLeaders
               leaders={leaders}
@@ -432,7 +428,11 @@ export default function GameDetailsScreen() {
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
 
-            <Officials officials={officials ?? []} isDark={isDark} />
+            <Officials
+              officials={officials ?? []}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <GameLocation
               venueImage={venueImage}

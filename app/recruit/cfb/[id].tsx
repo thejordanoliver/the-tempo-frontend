@@ -8,7 +8,7 @@ import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useFootballRecruit } from "hooks/CFBHooks/useFootballRecruit";
+import { useFootballRecruit } from "hooks/FootballHooks/useFootballRecruit";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 

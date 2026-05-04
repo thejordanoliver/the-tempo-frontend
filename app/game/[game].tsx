@@ -324,49 +324,46 @@ export default function GameDetailsScreen() {
         <View style={styles.innerContainer}>
           {!dontShowDetails && (
             <>
-              {!isFinal && !isScheduled && (
-                <LastPlay
-                  lastPlay={lastPlay}
-                  homeTeamId={String(homeTeamId)}
-                  awayTeamId={String(awayTeamId)}
-                />
-              )}
+              <LastPlay
+                lastPlay={lastPlay}
+                homeTeamId={String(homeTeamId)}
+                awayTeamId={String(awayTeamId)}
+                gameStatusDescription={gameStatusDescription}
+              />
 
-              {!isFinal && (
-                <FanPredictionVote
-                  gameId={gameId}
-                  awayTeam={{
-                    id: awayTeamId,
-                    code: awayCode,
-                    logo: headerAwayLogo,
-                    color: awayTeam?.color,
-                  }}
-                  homeTeam={{
-                    id: homeTeamId,
-                    code: homeCode,
-                    logo: headerHomeLogo,
-                    color: homeTeam?.color,
-                  }}
-                />
-              )}
+              <FanPredictionVote
+                gameId={gameId}
+                awayTeam={{
+                  id: awayTeamId,
+                  code: awayCode,
+                  logo: headerAwayLogo,
+                  color: awayTeam?.color,
+                }}
+                homeTeam={{
+                  id: homeTeamId,
+                  code: homeCode,
+                  logo: headerHomeLogo,
+                  color: homeTeam?.color,
+                }}
+                gameStatusDescription={gameStatusDescription}
+              />
 
-              {isScheduled && (
-                <MatchupPredictor
-                  home={{
-                    name: homeCode,
-                    logo: homeLogo,
-                    chance: homeChance,
-                    color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
-                  }}
-                  away={{
-                    name: awayCode,
-                    logo: awayLogo,
-                    chance: awayChance,
-                  }}
-                  size={180}
-                  isDark={isDark}
-                />
-              )}
+              <MatchupPredictor
+                home={{
+                  name: homeCode,
+                  logo: homeLogo,
+                  chance: homeChance,
+                  color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
+                }}
+                away={{
+                  name: awayCode,
+                  logo: awayLogo,
+                  chance: awayChance,
+                }}
+                size={180}
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
+              />
 
               <GameOddsSection
                 date={date ?? ""}
@@ -377,14 +374,13 @@ export default function GameDetailsScreen() {
                 awayCode={awayCode}
               />
 
-              {lineScore && (
-                <LineScore
-                  linescore={lineScore}
-                  homeCode={homeCode}
-                  awayCode={awayCode}
-                  isDark={isDark}
-                />
-              )}
+              <LineScore
+                linescore={lineScore}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
+              />
 
               <GameLeaders
                 gameLeaders={gameLeaders}
@@ -393,23 +389,22 @@ export default function GameDetailsScreen() {
                 loading={gameLeadersLoading}
                 error={gameLeadersError}
                 isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
               />
 
-              {isHalftime && inProgress && (
-                <PlayersInFoulTrouble
-                  homeId={String(homeEspnId)}
-                  homeCode={homeCode}
-                  homeLogo={homeLogo}
-                  awayId={String(awayEspnId)}
-                  awayCode={awayCode}
-                  awayLogo={awayLogo}
-                  homePlayers={homeFoulPlayers}
-                  awayPlayers={awayFoulPlayers}
-                  league={LEAGUE}
-                  isDark={isDark}
-                  gameStatusDescription={gameStatusDescription}
-                />
-              )}
+              <PlayersInFoulTrouble
+                homeId={String(homeEspnId)}
+                homeCode={homeCode}
+                homeLogo={homeLogo}
+                awayId={String(awayEspnId)}
+                awayCode={awayCode}
+                awayLogo={awayLogo}
+                homePlayers={homeFoulPlayers}
+                awayPlayers={awayFoulPlayers}
+                league={LEAGUE}
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
+              />
 
               <BoxScore
                 playerStats={playerStats}
@@ -439,8 +434,8 @@ export default function GameDetailsScreen() {
 
               <GameTeamStats
                 stats={teamStats}
-                gameStatusDescription={gameStatusDescription}
                 isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
               />
 
               <HeadToHeadGames
@@ -472,11 +467,13 @@ export default function GameDetailsScreen() {
                 isDark={isDark}
               />
 
-              {highlights.length > 0 && (
-                <HighlightVideoList highlights={highlights} isDark={isDark} />
-              )}
+              <HighlightVideoList highlights={highlights} isDark={isDark} />
 
-              <Officials officials={officials ?? []} isDark={isDark} />
+              <Officials
+                officials={officials ?? []}
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
+              />
 
               <GameLocation
                 venueImage={venueImage}

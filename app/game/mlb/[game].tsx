@@ -318,7 +318,11 @@ export default function GameDetailsScreen() {
             teamPlayersMap={teamPlayersMap}
           />
 
-          <Officials officials={officials ?? []} isDark={isDark} />
+          <Officials
+            officials={officials ?? []}
+            isDark={isDark}
+            gameStatusDescription={gameStatusDescription}
+          />
 
           <GameLocation
             venueImage={venueImage}

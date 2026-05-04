@@ -1,4 +1,4 @@
-import { Venue } from "hooks/NFLHooks/useGameDetails";
+import { Venue } from "hooks/FootballHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 

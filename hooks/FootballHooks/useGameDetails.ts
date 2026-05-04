@@ -1,8 +1,6 @@
-import axios from "axios";
 import { Predictor } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 /* ---------------------------------- */
 /* TYPES                              */
@@ -28,7 +26,7 @@ export type Venue = {
       rel: ["full", "day", "interior"];
     },
   ];
-  attendance?: number
+  attendance?: number;
 };
 
 export type Athlete = {

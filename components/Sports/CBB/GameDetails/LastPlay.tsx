@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Text, View } from "react-native";
@@ -36,6 +37,7 @@ type LastPlayProps = {
   homeTeamId?: number;
   awayTeamId?: number;
   isWomen?: boolean;
+  gameStatusDescription: string;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
@@ -45,6 +47,7 @@ export default function LastPlay({
   homeTeamId,
   awayTeamId,
   isWomen = false,
+  gameStatusDescription,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -67,14 +70,14 @@ export default function LastPlay({
   const homePlayers: PlayerAvatarSource[] = (homeResult.players ?? []).map(
     (p) => ({
       id: p.id,
-      avatar: p.imageUrl ?? null,
+      avatar: p.headshot_url ?? null,
     }),
   );
 
   const awayPlayers: PlayerAvatarSource[] = (awayResult.players ?? []).map(
     (p) => ({
       id: p.id,
-      avatar: p.imageUrl ?? null,
+      avatar: p.headshot_url ?? null,
     }),
   );
 
@@ -146,6 +149,8 @@ export default function LastPlay({
   };
 
   if (!currentPlay) return null;
+  if (gameStatusDescription == "Final" || gameStatusDescription == "Scheduled")
+    return null;
 
   if (typeof currentPlay === "string") {
     return (

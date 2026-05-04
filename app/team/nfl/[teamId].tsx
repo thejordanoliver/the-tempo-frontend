@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import NewsList from "components/News/NewsList";
 import { Roster } from "components/Sports/CFB/Team/Roster";
 import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
@@ -12,10 +13,11 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useFootballTeamGames } from "hooks/FootballHooks/useFootballTeamGames";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useFootballTeamGames } from "hooks/NFLHooks/useFootballTeamGames";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
@@ -49,6 +51,12 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
 
   const {
     games: teamGames,
@@ -124,8 +132,28 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* News Page */}
-        <ScrollView key="news" style={styles.contentArea}></ScrollView>
+        {/* News */}
+        <View key="news" style={styles.contentArea}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            <NewsList
+              items={articles}
+              isDark={isDark}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+            />
+          </ScrollView>
+        </View>
 
         {/* Roster Page */}
         <View key="roster" style={styles.contentArea}>

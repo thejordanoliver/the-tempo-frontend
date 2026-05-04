@@ -20,12 +20,12 @@ import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useFootballGamesByWeek } from "hooks/FootballHooks/useFootballGamesByWeek";
+import { useNFLBracket } from "hooks/FootballHooks/usePlayoffGames";
+import { useSeasonLeaders } from "hooks/FootballHooks/useSeasonLeaders";
+import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useFootballGamesByWeek } from "hooks/NFLHooks/useFootballGamesByWeek";
-import { useFootballSeasonCalendar } from "hooks/NFLHooks/useFootballSeasonCalendar";
-import { useNFLBracket } from "hooks/NFLHooks/usePlayoffGames";
-import { useSeasonLeaders } from "hooks/NFLHooks/useSeasonLeaders";
 import * as React from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
@@ -80,9 +80,8 @@ export default function NFLLeagueScreen() {
     loading: gamesLoading,
     refetch,
   } = useFootballGamesByWeek(getFootballSeason(), 1);
-  const { calendar } = useFootballSeasonCalendar(league);
+  const { calendar } = useLeagueCalendar(league, "football");
   const weekArray = calendar?.filter((w) => w.stage !== "Off Season") || [];
-
   const weekLabels = weekArray.map((w) => w.label);
   const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
   const selectedWeekGames = weeks[selectedWeekLabel] || [];
@@ -182,15 +181,13 @@ export default function NFLLeagueScreen() {
               isDark={isDark}
               loading={gamesLoading}
             />
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <NFLGamesList
-                games={selectedWeekGames}
-                loading={gamesLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={false}
-              />
-            </ScrollView>
+
+            <NFLGamesList
+              games={selectedWeekGames}
+              loading={gamesLoading}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+            />
           </View>
 
           {/* NEWS */}

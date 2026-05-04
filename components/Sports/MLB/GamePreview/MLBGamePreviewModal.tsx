@@ -47,8 +47,8 @@ export default function MLBGamePreviewModal({ game, visible, onClose }: Props) {
      INTERNAL TEAM MAPPING
      ================================================== */
 
-  const homeId = home?.id;
-  const awayId = away?.id;
+  const homeId = home?.id ?? 0;
+  const awayId = away?.id ?? 0;
 
   const homeTeam = getMLBTeam(homeId);
   const awayTeam = getMLBTeam(awayId);

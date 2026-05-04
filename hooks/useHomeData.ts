@@ -4,11 +4,10 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCBBWeeklyGames } from "hooks/CBBHooks/useCBBWeeklyGames";
+import { useFootballWeeklyGames } from "hooks/FootballHooks/useFootballWeeklyGames";
 import { useWeeklyGames } from "hooks/NBAHooks/useWeeklyGames";
-import { useFootballWeeklyGames } from "hooks/NFLHooks/useFootballWeeklyGames";
 import { useMemo, useState } from "react";
 import { filterByDate, isLiveGame, normalizeTeam } from "utils/games";
-import { useLeagueSocial } from "./LeagueHooks/useLeagueSocial";
 import { useMLBWeeklyGames } from "./MLBHooks/useMLBWeeklyGames";
 import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
 import { useAllNews } from "./NewsHooks/useAllNews";
@@ -33,11 +32,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     dayjs().startOf("day").toDate(),
   );
 
-  const { socialData, socialLoading, socialError } = useLeagueSocial(
-    undefined,
-    15,
-    ["nba", "nfl", "ufc"],
-  );
+  // const { socialData, socialLoading, socialError } = useLeagueSocial(
+  //   undefined,
+  //   15,
+  //   ["nba", "nfl", "ufc"],
+  // );
 
   // ===========================
   // DATA SOURCES
@@ -325,9 +324,9 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshing,
     handleRefresh,
     gamesByCategory,
-    socialData,
-    socialLoading,
-    socialError,
+    // socialData,
+    // socialLoading,
+    // socialError,
     newsError,
     errorFights,
     newsLoading,

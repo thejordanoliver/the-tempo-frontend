@@ -3,7 +3,7 @@ import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoSty
 import { MLBTeam } from "types/baseball";
 
 type TeamInfoProps = {
-  team?: MLBTeam;
+  team: MLBTeam;
   logo: any;
   name: string;
   score?: number;

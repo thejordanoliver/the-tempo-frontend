@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/MonthSelector";
+import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import CBBRosterStats from "components/Sports/CBB/Team/CBBRosterStats";
@@ -18,8 +19,9 @@ import { useRosterStats } from "hooks/CBBHooks/useCBBRosterStats";
 import { useCBBTeamGames } from "hooks/CBBHooks/useCBBTeamGames";
 import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BasketballGame } from "types/basketball";
 import {
@@ -49,6 +51,12 @@ export default function TeamDetailScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [cachedGames, setCachedGames] = useState<BasketballGame[]>([]);
+
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
   const {
     rosterStats,
     loading: statsLoading,
@@ -56,10 +64,12 @@ export default function TeamDetailScreen() {
     refreshingStats,
     onRefresh: refreshRosterStats,
   } = useRosterStats("WCBB", espnId ?? 0);
+
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tabToIndex(tab));
   };
+
   const { players } = usePlayersByTeam(team?.espnID?.toString() ?? "", true);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs("WCBB");
   const pagerRef = useRef<PagerView>(null);
@@ -251,7 +261,27 @@ export default function TeamDetailScreen() {
         </View>
 
         {/* News Page */}
-        <ScrollView key="news" style={styles.contentArea}></ScrollView>
+        <View key="news" style={styles.contentArea}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            <NewsList
+              items={articles}
+              isDark={isDark}
+              loading={newsLoading}
+              error={newsError}
+              refreshing
+              onRefresh={handleRefresh}
+            />
+          </ScrollView>
+        </View>
 
         {/* Roster Page */}
         <View key="roster" style={styles.contentArea}>

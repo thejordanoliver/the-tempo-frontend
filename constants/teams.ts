@@ -114,7 +114,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/hawks.jpg",
     venueName: "State Farm Arena",
-    established: "1949",
+    established: 1949,
     conference: "Eastern",
     latitude: 33.7573,
     longitude: -84.3963,
@@ -142,7 +142,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/celtics.jpg",
     venueName: "TD Garden",
-    established: "1949",
+    established: 1949,
     conference: "Eastern",
     latitude: 42.3662,
     longitude: -71.0621,
@@ -170,7 +170,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/nets.jpg",
     venueName: "Barclays Center",
-    established: "1976",
+    established: 1976,
     conference: "Eastern",
     latitude: 40.6826,
     longitude: -73.9754,
@@ -198,7 +198,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/hornets.jpg",
     venueName: "Spectrum Center",
-    established: "1988",
+    established: 1988,
     conference: "Eastern",
     latitude: 35.2251,
     longitude: -80.8392,
@@ -226,7 +226,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/bulls.jpg",
     venueName: "United Center",
-    established: "1966",
+    established: 1966,
     conference: "Eastern",
     latitude: 41.8807,
     longitude: -87.6742,
@@ -254,7 +254,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/cavaliers.jpg",
     venueName: "Rocket Arena",
-    established: "1970",
+    established: 1970,
     conference: "Eastern",
     latitude: 41.496,
     longitude: -81.6882,
@@ -282,7 +282,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/mavericks.jpg",
     venueName: "American Airlines Center",
-    established: "1980",
+    established: 1980,
     conference: "Western",
     latitude: 32.7905,
     longitude: -96.8103,
@@ -310,7 +310,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/nuggets.jpg",
     venueName: "Ball Arena",
-    established: "1976",
+    established: 1976,
     conference: "Western",
     latitude: 39.7487,
     longitude: -105.0077,
@@ -338,7 +338,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pistons.jpg",
     venueName: "Little Caesars Arena",
-    established: "1948",
+    established: 1948,
     conference: "Eastern",
     latitude: 42.3297,
     longitude: -83.0425,
@@ -366,7 +366,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/warriors.jpg",
     venueName: "Chase Center",
-    established: "1946",
+    established: 1946,
     conference: "Western",
     latitude: 37.768,
     longitude: -122.3877,
@@ -394,7 +394,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/rockets.jpg",
     venueName: "Toyota Center",
-    established: "1967",
+    established: 1967,
     conference: "Western",
     latitude: 29.7508,
     longitude: -95.3621,
@@ -422,7 +422,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pacers.jpg",
     venueName: "Gainbridge Fieldhouse",
-    established: "1976",
+    established: 1976,
     conference: "Eastern",
     latitude: 39.764,
     longitude: -86.1559,
@@ -450,7 +450,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/clippers.jpg",
     venueName: "Intuit Dome",
-    established: "1970",
+    established: 1970,
     conference: "Western",
     latitude: 34.043,
     longitude: -118.2673,
@@ -478,7 +478,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/lakers.jpg",
     venueName: "Crypto.com Arena",
-    established: "1948",
+    established: 1948,
     conference: "Western",
     latitude: 34.043,
     longitude: -118.2673,
@@ -506,7 +506,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/grizzlies.jpg",
     venueName: "FedExForum",
-    established: "1995",
+    established: 1995,
     conference: "Western",
     latitude: 35.1389,
     longitude: -90.0509,
@@ -534,7 +534,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/heat.jpg",
     venueName: "Kaseya Center",
-    established: "1988",
+    established: 1988,
     conference: "Eastern",
     latitude: 25.7814,
     longitude: -80.187,
@@ -562,7 +562,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/bucks.jpg",
     venueName: "Fiserv Forum",
-    established: "1968",
+    established: 1968,
     conference: "Eastern",
     latitude: 43.0451,
     longitude: -87.9172,
@@ -590,7 +590,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/timberwolves.jpg",
     venueName: "Target Center",
-    established: "1989",
+    established: 1989,
     conference: "Western",
     latitude: 44.9796,
     longitude: -93.276,
@@ -619,7 +619,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pelicans.jpg",
     venueName: "Smoothie King Center",
-    established: "2002",
+    established: 2002,
     conference: "Western",
     latitude: 29.949,
     longitude: -90.081,
@@ -647,7 +647,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/knicks.jpg",
     venueName: "Madison Square Garden",
-    established: "1946",
+    established: 1946,
     conference: "Eastern",
     latitude: 40.7128,
     longitude: -74.006,
@@ -675,7 +675,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/thunder.jpg",
     venueName: "Paycom Center",
-    established: "1967",
+    established: 1967,
     conference: "Western",
     latitude: 35.4633,
     longitude: -97.5151,
@@ -704,7 +704,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/magic.jpg",
     venueName: "Kia Center",
-    established: "1989",
+    established: 1989,
     conference: "Eastern",
     latitude: 28.5392,
     longitude: -81.3839,
@@ -732,7 +732,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/sixers.jpg",
     venueName: "Xfinity Mobile Arena",
-    established: "1949",
+    established: 1949,
     conference: "Eastern",
     latitude: 39.9012,
     longitude: -75.172,
@@ -760,7 +760,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/suns.jpg",
     venueName: "Mortgage Matchup Center",
-    established: "1968",
+    established: 1968,
     conference: "Western",
     latitude: 33.4452,
     longitude: -112.0712,
@@ -788,7 +788,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680186/arenas/basketball/trail-blazers.jpg",
     venueName: "Moda Center",
-    established: "1970",
+    established: 1970,
     conference: "Western",
     latitude: 45.5316,
     longitude: -122.6668,
@@ -816,7 +816,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/kings.jpg",
     venueName: "Golden 1 Center",
-    established: "1948",
+    established: 1948,
     conference: "Western",
     latitude: 38.5807,
     longitude: -121.4994,
@@ -844,7 +844,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/spurs.jpg",
     venueName: "Frost Bank Center",
-    established: "1976",
+    established: 1976,
     conference: "Western",
     latitude: 29.427,
     longitude: -98.4378,
@@ -872,7 +872,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/raptors.jpg",
     venueName: "Scotiabank Arena",
-    established: "1995",
+    established: 1995,
     conference: "Eastern",
     latitude: 43.6435,
     longitude: -79.3791,
@@ -900,7 +900,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/jazz.jpg",
     venueName: "Delta Center",
-    established: "1974",
+    established: 1974,
     conference: "Western",
     latitude: 40.768,
     longitude: -111.9011,
@@ -928,7 +928,7 @@ export const teams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/wizards.jpg",
     venueName: "Capital One Arena",
-    established: "1961",
+    established: 1961,
     conference: "Eastern",
     latitude: 38.898,
     longitude: -77.0209,

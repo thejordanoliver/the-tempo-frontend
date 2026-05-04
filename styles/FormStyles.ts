@@ -68,6 +68,18 @@ export const formStyles = (isDark: boolean) => {
       fontFamily: Fonts.OSREGULAR,
     },
 
+    forgotPasswordLink: {
+      alignSelf: "center",
+      paddingVertical: SPACING.md,
+      paddingHorizontal: SPACING.lg,
+    },
+
+    forgotPasswordText: {
+      color: Colors.midTone,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+    },
+
     // ── Progress Bar ───────────────────────────────────────────────────────
     progressContainer: {
       paddingTop: SPACING.sm,

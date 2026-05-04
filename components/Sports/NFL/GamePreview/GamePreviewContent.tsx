@@ -1,18 +1,19 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
+import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
 import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import React from "react";
-import { Game } from "types/football";
-import NFLInjuries from "../GameDetails/Injuries";
+import { FootballGame } from "types/football";
+import NFLInjuries from "../GameDetails/TeamInjuries";
+import TeamInjuries from "../GameDetails/TeamInjuries";
 
 type GamePreviewContentProps = {
-  game: Game;
+  game: FootballGame;
   home: any;
   away: any;
   officials: any;
@@ -29,7 +30,7 @@ type GamePreviewContentProps = {
   weather: any;
   isDark?: boolean;
   highlights: any;
-  gameStatusDescription: string | undefined;
+  gameStatusDescription: string;
   previousDrives: any;
   currentDrives: any;
   scoringPlays: any;
@@ -66,14 +67,13 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      {lineScore && (
-        <LineScore
-          linescore={lineScore}
-          homeCode={home.code}
-          awayCode={away.code}
-          isDark
-        />
-      )}
+      <LineScore
+        linescore={lineScore}
+        homeCode={home.code}
+        awayCode={away.code}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
       {gameStatusDescription === "In Progress" && (
         <GameLeaders
@@ -93,6 +93,7 @@ export default function GamePreviewContent({
         homeTeamId={Number(home.espnID)}
         awayTeamId={Number(away.espnID)}
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
 
       <TeamScoringSummary
@@ -101,9 +102,10 @@ export default function GamePreviewContent({
         awayTeamId={Number(away.espnID)}
         league="NFL"
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
 
-      <LastFiveGamesSwitcher
+      <LastFiveGames
         home={{
           teamId: home.id,
           teamCode: home.code,
@@ -118,29 +120,10 @@ export default function GamePreviewContent({
         league="NFL"
       />
 
-      {highlights.length > 0 && (
-        <HighlightVideoList highlights={highlights} isDark />
-      )}
-
-      {/* {matchup && (
-      <NFLSeriesHistory
-        team2Code={getNFLTeam(matchup?.teams.team2.id)?.code ?? "UNK"}
-        team1Code={getNFLTeam(matchup?.teams.team1.id)?.code ?? "UNK"}
-        team1Full={matchup?.teams.team1.fullName ?? ""}
-        team2Full={matchup?.teams.team2.fullName ?? ""}
-        team1Wins={matchup?.series.winsA ?? 0}
-        team2Wins={matchup?.series.winsB ?? 0}
-        ties={matchup?.series.ties ?? 0}
-        games={seriesGames}
-        team1Logo={getNFLTeam(matchup?.teams.team1.id)?.logo}
-        team2Logo={getNFLTeam(matchup?.teams.team2.id)?.logo}
-        team1LogoLight={getNFLTeam(matchup?.teams.team1.id)?.logoLight}
-        team2LogoLight={getNFLTeam(matchup?.teams.team2.id)?.logoLight}
-      />
-    )} */}
+      <HighlightVideoList highlights={highlights} isDark />
 
       {!injuries && (
-        <NFLInjuries
+        <TeamInjuries
           injuries={injuries}
           loading={false}
           error={null}
@@ -152,7 +135,11 @@ export default function GamePreviewContent({
         />
       )}
 
-      <Officials officials={officials} loading={false} error={null} isDark />
+      <Officials
+        officials={officials}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
 
       <GameLocation
         venueImage={venueImage}
@@ -161,12 +148,10 @@ export default function GamePreviewContent({
         address={venueAddress}
         venueCapacity={venueCapacity}
         venueAttendance={venueAttendance}
-        loading={false}
-        error={null}
-        isDark
         surface="football"
         grass={venue?.grass ?? undefined}
         weather={weather}
+        isDark
       />
     </BottomSheetScrollView>
   );

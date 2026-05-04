@@ -277,16 +277,18 @@ export default function GameDetailsScreen() {
 
       {!dontShowDetails && (
         <View style={{ gap: 20, marginTop: 20 }}>
-          {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
+          <LastPlay
+            lastPlay={lastPlay}
+            gameStatusDescription={gameStatusDescription}
+          />
 
-          {!isScheduled && (
-            <LineScore
-              linescore={lineScore}
-              homeCode={homeTeam.code ?? ""}
-              awayCode={awayTeam.code ?? ""}
-              isDark={isDark}
-            />
-          )}
+          <LineScore
+            linescore={lineScore}
+            homeCode={homeTeam.code ?? ""}
+            awayCode={awayTeam.code ?? ""}
+            isDark={isDark}
+            gameStatusDescription={gameStatusDescription}
+          />
 
           <GameLeaders
             leaders={leaders}
@@ -303,15 +305,14 @@ export default function GameDetailsScreen() {
             awayTeamId={Number(awayEspnId)}
             league={"SL"}
             isDark={isDark}
+            gameStatusDescription={gameStatusDescription}
           />
 
-          {highlights.length > 0 && (
-            <HighlightVideoList highlights={highlights} isDark={isDark} />
-          )}
+          <HighlightVideoList highlights={highlights} isDark={isDark} />
+
           <Officials
             officials={officials ?? []}
-            loading={false}
-            error={null}
+            gameStatusDescription={gameStatusDescription}
             isDark={isDark}
           />
 
@@ -323,8 +324,6 @@ export default function GameDetailsScreen() {
             venueCapacity={venueCapacity}
             venueAttendance={venueAttendance}
             weather={weather}
-            loading={weatherLoading}
-            error={weatherError}
             isDark={isDark}
           />
         </View>

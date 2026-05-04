@@ -9,7 +9,7 @@ import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
 import Roster from "components/Sports/NHL/Team/Roster";
 import { players } from "constants/nhlPlayers";
 import { Colors } from "constants/styles";
-import { nhlTeams } from "constants/teamsNHL";
+import { getNHLTeam } from "constants/teamsNHL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -40,6 +40,7 @@ export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
+  const team = getNHLTeam(teamIdNum ?? 0);
   const [standingsYear, setStandingsYear] = useState(getNHLSeason());
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -49,11 +50,6 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const league = "NHL";
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
-  const {
-    articles,
-    loading: newsLoading,
-    error: newsError,
-  } = useLeaguesNews(10, league);
   const rosterRef = useRef<{ refresh: () => void }>(null);
   const pagerRef = useRef<PagerView>(null);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -61,10 +57,11 @@ export default function TeamDetailScreen() {
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
 
-  const team = useMemo(
-    () => (teamIdNum ? nhlTeams.find((t) => Number(t.id) === teamIdNum) : null),
-    [teamIdNum],
-  );
+  const {
+    articles,
+    loading: newsLoading,
+    error: newsError,
+  } = useLeaguesNews(10, league);
 
   const {
     games: rawTeamGames = [],

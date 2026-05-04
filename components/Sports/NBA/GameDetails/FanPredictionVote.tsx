@@ -29,6 +29,7 @@ type Props = {
   awayTeam: VoteTeam;
   homeTeam: VoteTeam;
   onVoteCast?: (teamId: string | number) => void;
+  gameStatusDescription: string;
 };
 
 export default function FanPredictionVote({
@@ -36,6 +37,7 @@ export default function FanPredictionVote({
   awayTeam,
   homeTeam,
   onVoteCast,
+  gameStatusDescription,
 }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -50,8 +52,6 @@ export default function FanPredictionVote({
   const [submitting, setSubmitting] = useState(false);
   const [barWidth, setBarWidth] = useState(0);
   const [resultsRevealed, setResultsRevealed] = useState(false);
-
-  const LOGO_SIZE = 64;
 
   const animPctAway = useRef(new Animated.Value(0.5)).current;
   const animPctHome = useRef(new Animated.Value(0.5)).current;
@@ -211,11 +211,7 @@ export default function FanPredictionVote({
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  const resolveLogo = (logo: any) => {
-    if (!logo) return undefined;
-    if (typeof logo === "string") return { uri: logo };
-    return logo;
-  };
+  if (gameStatusDescription === "Scheduled") return null;
 
   if (error)
     return (

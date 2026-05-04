@@ -165,7 +165,6 @@ const FavoriteTeamsList = ({
                       flexDirection: isGridView ? "column" : "row",
                       justifyContent: isGridView ? "center" : "flex-start",
                       height: isGridView ? 130 : "auto",
-                      marginBottom: isGridView ? 0 : 8,
                       paddingVertical: isGridView ? 20 : 12,
                     },
                   ]}

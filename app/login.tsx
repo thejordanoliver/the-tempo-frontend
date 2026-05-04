@@ -280,6 +280,7 @@ export default function LoginScreen() {
               onPasswordChange={setPassword}
               onToggleShowPassword={() => setShowPassword((p) => !p)}
               onSubmit={handleLogin}
+              onForgotPassword={() => router.push("/forgot-password")}
             />
           </View>
 

@@ -10,6 +10,7 @@ import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
 import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
 import NHLInjuries from "components/Sports/NHL/GameDetails/NHLInjuries";
 import ShotChart from "components/Sports/NHL/GameDetails/ShotChart";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -21,7 +22,7 @@ import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { NHLGame } from "types/hockey";
-import { resolveVenue } from "utils/games";
+import { formatVenueAddress } from "utils/CBBUtils/cbbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
@@ -81,60 +82,14 @@ export default function GameDetailsScreen() {
     gameDateStr,
   );
 
-  const venue = details?.venue;
-  const neutralSite = details?.neutralSite;
-
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: venue,
-        homeTeam,
-        isNeutralSite: neutralSite,
-        league: "NHL",
-      }),
-    [venue, homeTeam, neutralSite],
-  );
-  const { weather, weatherError, weatherLoading } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateStr,
-  );
-
-  useLayoutEffect(() => {
-    if (!liveScore || !homeTeam || !awayTeam) {
-      navigation.setOptions({ header: () => null });
-      return;
-    }
-    navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle
-          tabName="Game"
-          onBack={goBack}
-          homeTeamId={homeTeamId}
-          awayTeamId={awayTeamId}
-          homeTeamCode={homeCode}
-          awayTeamCode={awayCode}
-          homeLogo={headerHomeLogo}
-          awayLogo={headerAwayLogo}
-          isNeutralSite={neutralSite}
-          league="NHL"
-        />
-      ),
-    });
-  }, [navigation, liveScore, homeCode, awayCode, neutralSite]);
-
   // ✅ Early returns AFTER all hooks
   if (!parsedGame?.id || !homeTeam || !awayTeam) return null;
 
-  if (loading || !liveScore) {
-    return (
-      <View style={styles.loadingContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
-
-  // Derived values (no hooks below this point)
+  const isLoadingGame =
+    !liveScore ||
+    !details ||
+    liveScore.home?.total == null ||
+    liveScore.away?.total == null;
   const broadcastText = getBroadcastDisplay(details?.broadcasts);
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
@@ -159,13 +114,70 @@ export default function GameDetailsScreen() {
   const officials = details?.officials ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
-
+  const neutralSite = details?.neutralSite;
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
+  /* ---------------- Neutral site / venue ---------------- */
+  const baseVenue = details?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : homeTeam?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : homeTeam?.address || baseVenueAddress;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : homeTeam?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
+    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (homeTeam?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (homeTeam?.longitude ?? 0);
+
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateStr);
+
+  useLayoutEffect(() => {
+    if (!liveScore || !homeTeam || !awayTeam) {
+      navigation.setOptions({ header: () => null });
+      return;
+    }
+    navigation.setOptions({
+      header: () => (
+        <CustomHeaderTitle
+          tabName="Game"
+          onBack={goBack}
+          homeTeamId={homeTeamId}
+          awayTeamId={awayTeamId}
+          homeTeamCode={homeCode}
+          awayTeamCode={awayCode}
+          homeLogo={headerHomeLogo}
+          awayLogo={headerAwayLogo}
+          isNeutralSite={neutralSite}
+          league="NHL"
+        />
+      ),
+    });
+  }, [navigation, liveScore, homeCode, awayCode, neutralSite]);
+
+  if (isLoadingGame) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -202,33 +214,31 @@ export default function GameDetailsScreen() {
             <>
               {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
 
-              {!isFinal && (
-                <FanPredictionVote
-                  gameId={String(gameId)}
-                  awayTeam={{
-                    id: awayTeamId,
-                    code: awayCode,
-                    logo: headerAwayLogo,
-                    color: awayTeam.color,
-                  }}
-                  homeTeam={{
-                    id: homeTeamId,
-                    code: homeCode,
-                    logo: headerHomeLogo,
-                    color: homeTeam.color,
-                  }}
-                />
-              )}
+              <FanPredictionVote
+                gameId={String(gameId)}
+                awayTeam={{
+                  id: awayTeamId,
+                  code: awayCode,
+                  logo: headerAwayLogo,
+                  color: awayTeam.color,
+                }}
+                homeTeam={{
+                  id: homeTeamId,
+                  code: homeCode,
+                  logo: headerHomeLogo,
+                  color: homeTeam.color,
+                }}
+                gameStatusDescription={gameStatusDescription}
+              />
 
-              {lineScore && (
-                <LineScore
-                  linescore={lineScore}
-                  homeCode={homeCode}
-                  awayCode={awayCode}
-                  league="NHL"
-                  isDark={isDark}
-                />
-              )}
+              <LineScore
+                linescore={lineScore}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                league="NHL"
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
+              />
 
               {!isScheduled && (
                 <ShotChart
@@ -240,7 +250,6 @@ export default function GameDetailsScreen() {
               )}
 
               <GameSummary plays={plays ?? []} isDark={isDark} />
-              <HighlightVideoList highlights={highlights} isDark={isDark} />
 
               <NHLInjuries
                 injuries={injuries}
@@ -250,24 +259,21 @@ export default function GameDetailsScreen() {
                 awayTeamId={String(awayEspnId)}
                 isDark={isDark}
               />
-
+              <HighlightVideoList highlights={highlights} isDark={isDark} />
               <Officials
                 officials={officials}
-                loading={loading}
-                error={null}
                 isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
               />
 
               <GameLocation
-                venueImage={resolvedVenue.image}
-                venueName={resolvedVenue.name}
-                location={resolvedVenue.city ?? resolvedVenue.name}
-                address={resolvedVenue.address}
-                venueCapacity={String(resolvedVenue.capacity ?? "")}
+                venueImage={venueImage}
+                venueName={venueName}
+                location={venueLocation}
+                address={venueAddress}
+                venueCapacity={venueCapacity}
                 venueAttendance={undefined}
-                loading={weatherLoading}
                 weather={weather}
-                error={weatherError}
                 isDark={isDark}
               />
             </>

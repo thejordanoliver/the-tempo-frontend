@@ -1,11 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import {
+  GameLocation,
+  LastFiveGames,
+  LineScore,
+} from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NFL/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
@@ -18,9 +21,9 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useFootballTeamStats } from "hooks/CFBHooks/useFootballTeamStats";
-import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
-import { useLastFiveGames } from "hooks/NFLHooks/useLastFiveGames";
+import { useFootballTeamStats } from "hooks/FootballHooks/useFootballTeamStats";
+import { useGameDetails } from "hooks/FootballHooks/useGameDetails";
+import { useLastFiveGames } from "hooks/FootballHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
@@ -315,7 +318,7 @@ export default function CFBGameDetailsScreen() {
               <GameTeamStats stats={stats} isDark={isDark} league="CFB" />
             )}
 
-            <LastFiveGamesSwitcher
+            <LastFiveGames
               isDark={isDark}
               home={{
                 teamId: homeTeamId,
@@ -330,11 +333,13 @@ export default function CFBGameDetailsScreen() {
               league="CFB"
             />
 
-            {highlights.length > 0 && (
-              <HighlightVideoList highlights={highlights} isDark={isDark} />
-            )}
+            <HighlightVideoList highlights={highlights} isDark={isDark} />
 
-            <Officials officials={officials ?? []} isDark={isDark} />
+            <Officials
+              officials={officials ?? []}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <GameLocation
               venueImage={venueImage}

@@ -1,7 +1,7 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
+import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
@@ -28,7 +28,7 @@ type GamePreviewContentProps = {
   weather: any;
   isDark?: boolean;
   highlights: any;
-  gameStatusDescription: string | undefined;
+  gameStatusDescription: string;
   previousDrives: any;
   currentDrives: any;
   scoringPlays: any;
@@ -89,8 +89,8 @@ export default function GamePreviewContent({
         currentDrives={currentDrives ?? []}
         homeTeamId={home?.espnID}
         awayTeamId={away?.espnID}
-        isDark
         league="CFB"
+        isDark
       />
       <TeamScoringSummary
         scoringPlays={scoringPlays ?? []}
@@ -100,7 +100,7 @@ export default function GamePreviewContent({
         isDark
       />
 
-      <LastFiveGamesSwitcher
+      <LastFiveGames
         home={{
           teamId: home.id,
           teamCode: home.code,
@@ -111,15 +111,17 @@ export default function GamePreviewContent({
           teamCode: away.code,
           games: awayLastGames.games,
         }}
-        isDark
         league="CFB"
+        isDark
       />
 
-      {highlights.length > 0 && (
-        <HighlightVideoList highlights={highlights} isDark />
-      )}
+      <HighlightVideoList highlights={highlights} isDark />
 
-      <Officials officials={officials} loading={false} error={null} isDark />
+      <Officials
+        officials={officials}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
 
       <GameLocation
         venueImage={venueImage}
@@ -128,12 +130,10 @@ export default function GamePreviewContent({
         address={venueAddress}
         venueCapacity={venueCapacity}
         venueAttendance={venueAttendance}
-        loading={false}
-        error={null}
-        isDark
         surface="football"
         grass={venue?.grass}
         weather={weather}
+        isDark
       />
     </BottomSheetScrollView>
   );

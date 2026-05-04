@@ -5,7 +5,7 @@ import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
+import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,

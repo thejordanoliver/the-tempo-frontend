@@ -12,6 +12,18 @@ export const apiClient = axios.create({
   baseURL: BASE_URL,
 });
 
+export const forgotPassword = (email: string) =>
+  apiClient.post("/api/forgot-password", { email });
+
+export const verifyResetCode = (email: string, code: string) =>
+  apiClient.post("/api/verify-reset-code", { email, code });
+
+export const resetPassword = (
+  email: string,
+  code: string,
+  password: string,
+) => apiClient.post("/api/reset-password", { email, code, password });
+
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
 export const getAccessToken = () => AsyncStorage.getItem("accessToken");

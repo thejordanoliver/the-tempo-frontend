@@ -1,6 +1,6 @@
 import { Dropdown } from "components/Dropdown";
 import { Colors, Fonts } from "constants/styles";
-import { useCFBPortalPlayers } from "hooks/CFBHooks/useCFBPortalPlayers";
+import { useCFBPortalPlayers } from "hooks/FootballHooks/useCFBPortalPlayers";
 import React, { useEffect, useMemo, useRef } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";

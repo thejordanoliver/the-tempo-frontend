@@ -1,5 +1,4 @@
 // hooks/NFLHooks/useFootballSeasonGames.ts
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { FootballGame } from "types/football";
 import { apiClient } from "utils/apiClient";

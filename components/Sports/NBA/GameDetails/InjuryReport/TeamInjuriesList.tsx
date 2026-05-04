@@ -1,5 +1,4 @@
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { globalStyles } from "constants/styles";
 import { Player } from "hooks/NBAHooks/usePlayersByTeam";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
@@ -14,7 +13,7 @@ type Props = {
 type FlatItem = {
   teamId: string;
   injury: TeamInjury["injuries"][number];
-  dbPlayer: Player | undefined;
+  player: Player | undefined;
   isLast: boolean;
 };
 
@@ -26,24 +25,23 @@ export default function TeamInjuriesList({
   isDark,
 }: Props) {
   const styles = teamInjuryStyles(isDark);
-  const global = globalStyles(isDark);
-  // Flatten all injuries across teams into a single array for FlatList
+
   const flatItems: FlatItem[] = injuries.flatMap((team) => {
     const teamPlayers = teamPlayersMap[String(team.team.id)] ?? [];
     return team.injuries.map((inj, idx) => ({
       teamId: String(team.team.id),
       injury: inj,
-      dbPlayer: teamPlayers.find((p) => p.espn_id === Number(inj.athlete.id)),
+      player: teamPlayers.find((p) => p.espn_id === Number(inj.athlete.id)),
       isLast: idx === team.injuries.length - 1,
     }));
   });
 
   const renderItem = ({ item }: { item: FlatItem }) => {
-    const { injury: inj, dbPlayer, isLast } = item;
-    const avatarUrl = dbPlayer?.avatarUrl || DEFAULT_HEADSHOT;
-    const playerName = dbPlayer?.short_name || inj.athlete.fullName;
-    const jersey = dbPlayer?.jersey_number || "N/A";
-    const position = dbPlayer?.position || "—";
+    const { injury: inj, player, isLast } = item;
+    const avatarUrl = player?.avatarUrl || DEFAULT_HEADSHOT;
+    const playerName = player?.short_name;
+    const jersey = player?.jersey_number || "N/A";
+    const position = player?.position || "—";
 
     return (
       <View
@@ -83,23 +81,21 @@ export default function TeamInjuriesList({
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={flatItems}
-        keyExtractor={(item, index) =>
-          `${item.teamId}-${item.injury.athlete.id}-${index}`
-        }
-        renderItem={renderItem}
-        scrollEnabled={false}
-        removeClippedSubviews={false}
-        ListEmptyComponent={
-          <View style={global.emptyContainer}>
-            <Text style={global.emptyText}>
-              No injuries reported for this team.
-            </Text>
-          </View>
-        }
-      />
-    </View>
+    <FlatList
+      data={flatItems}
+      keyExtractor={(item, index) =>
+        `${item.teamId}-${item.injury.athlete.id}-${index}`
+      }
+      renderItem={renderItem}
+      scrollEnabled={false}
+      removeClippedSubviews={false}
+      ListEmptyComponent={
+        <View style={styles.emptyItem}>
+          <Text style={styles.emptyText}>
+            No injuries reported for this team.
+          </Text>
+        </View>
+      }
+    />
   );
 }

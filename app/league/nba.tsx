@@ -37,6 +37,8 @@ import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
 import { filterByDate } from "utils/games";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { XFeed } from "components/League/Social/XFeed";
+import { mockSocialFeed } from "mocks/social";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -208,6 +210,11 @@ export default function NBALeagueScreen() {
                 />
               }
             >
+              <XFeed
+                items={mockSocialFeed}
+                loading={newsLoading}
+                error={null}
+              />
               <NewsList
                 items={articles}
                 isDark={isDark}

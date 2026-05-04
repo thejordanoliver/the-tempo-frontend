@@ -7,6 +7,7 @@ import {
   Animated,
   Keyboard,
   Pressable,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -21,6 +22,7 @@ type SignInFormProps = {
   onPasswordChange: (text: string) => void;
   onToggleShowPassword: () => void;
   onSubmit: () => void;
+  onForgotPassword: () => void;
 };
 
 export default function SignInForm({ ...props }: SignInFormProps) {
@@ -90,7 +92,15 @@ export default function SignInForm({ ...props }: SignInFormProps) {
           </View>
         </View>
 
-        <Button isDark={isDark} onPress={props.onSubmit} children={"Sign In"} />
+        <Button isDark={isDark} onPress={props.onSubmit}>
+          Sign In
+        </Button>
+        <Pressable
+          onPress={props.onForgotPassword}
+          style={styles.forgotPasswordLink}
+        >
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </Pressable>
       </View>
     </TouchableWithoutFeedback>
   );

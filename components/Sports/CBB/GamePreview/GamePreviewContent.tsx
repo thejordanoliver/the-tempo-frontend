@@ -2,7 +2,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
+import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
 import { BasketballGame } from "types/basketball";
@@ -91,7 +91,7 @@ export default function GamePreviewContent({
       {/* Last Five Games */}
       {(homeLastGames?.games?.length > 0 ||
         awayLastGames?.games?.length > 0) && (
-        <LastFiveGamesSwitcher
+        <LastFiveGames
           isDark={true}
           home={{
             teamId: home?.id,
@@ -118,16 +118,13 @@ export default function GamePreviewContent({
         />
       )}
 
-      {highlights.length > 0 && (
-        <HighlightVideoList highlights={highlights} isDark />
-      )}
+      <HighlightVideoList highlights={highlights} isDark />
 
       {game?.id && officials?.length > 0 && (
         <Officials
           officials={officials ?? []}
-          loading={false}
-          error={null}
           isDark
+          gameStatusDescription={gameStatusDescription}
         />
       )}
       <GameLocation

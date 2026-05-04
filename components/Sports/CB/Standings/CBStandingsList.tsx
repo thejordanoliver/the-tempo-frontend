@@ -31,7 +31,6 @@ export const standingLabels = ["W-L", "Points", "1st Votes"];
 
 export const CBStandingsList = ({ league }: Props) => {
   const { rankings, loading, error, refresh } = useCBRankings(league);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();

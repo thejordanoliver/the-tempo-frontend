@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, Fonts } from "constants/styles";
-import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
+import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import { StyleSheet, Text, View } from "react-native";
 
 type Props = {

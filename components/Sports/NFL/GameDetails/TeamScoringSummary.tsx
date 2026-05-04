@@ -5,7 +5,7 @@ import {
   getTeamByESPNId as getNFLTeamByESPNId,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { ScoringPlays } from "hooks/NFLHooks/useGameDetails";
+import { ScoringPlays } from "hooks/FootballHooks/useGameDetails";
 import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
@@ -17,6 +17,7 @@ type Props = {
   homeTeamId?: number;
   isDark: boolean;
   league?: LeagueType;
+  gameStatusDescription: string;
 };
 
 export default function TeamScoringSummary({
@@ -26,6 +27,7 @@ export default function TeamScoringSummary({
   homeTeamId,
   isDark,
   league = "NFL",
+  gameStatusDescription,
 }: Props) {
   const styles = TeamScoringSummaryStyles(isDark);
 
@@ -88,6 +90,8 @@ export default function TeamScoringSummary({
     OT: "OT",
     OVERTIME: "OT",
   };
+
+  if (gameStatusDescription === "Scheduled") return null;
 
   return (
     <View style={styles.container}>

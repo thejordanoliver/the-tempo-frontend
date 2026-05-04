@@ -94,7 +94,7 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
 
   const fetchLatest = async () => {
     try {
-      const res = await apiClient.get(`/api/standings/cbb/rankings`, {
+      const res = await apiClient.get(`api/standings/cbb/rankings`, {
         params: { league },
       });
 

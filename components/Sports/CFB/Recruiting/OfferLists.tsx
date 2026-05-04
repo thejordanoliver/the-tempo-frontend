@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { FootballRecruit } from "hooks/CFBHooks/useFootballRecruits";
+import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import { useEffect, useMemo, useState } from "react";
 import {
   FlatList,

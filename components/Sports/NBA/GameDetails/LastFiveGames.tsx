@@ -1,4 +1,4 @@
-// ---- LastFiveGamesSwitcher.tsx ----
+// ---- LastFiveGames.tsx ----
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";

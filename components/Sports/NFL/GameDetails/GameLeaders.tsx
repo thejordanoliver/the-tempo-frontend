@@ -3,14 +3,14 @@ import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { useFootballGameLeaders } from "hooks/NFLHooks/useFootballGameLeaders";
+import { useFootballGameLeaders } from "hooks/FootballHooks/useFootballGameLeaders";
+import usePlayersByTeam from "hooks/FootballHooks/usePlayersByTeam";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
-import usePlayersByTeam from "hooks/NFLHooks/usePlayersByTeam";
 const CATEGORIES = [
   "Passing",
   "Rushing",
@@ -168,8 +168,6 @@ export default function GameLeaders({
     [rawAway, awayRoster, league],
   );
 
-  
-
   const leadersByCategory = useMemo(() => {
     return CATEGORIES.reduce(
       (acc, cat) => {
@@ -211,16 +209,16 @@ export default function GameLeaders({
             league === "NFL"
               ? getNFLTeamLogo(p.teamId, isDark)
               : getCFBTeamLogo(p.teamId, isDark);
-const stats = STAT_KEYS[selectedCategory].map((k) => {
-  const found = p.statistics.find(
-    (s) => s.name.toLowerCase() === k.toLowerCase(),
-  );
+          const stats = STAT_KEYS[selectedCategory].map((k) => {
+            const found = p.statistics.find(
+              (s) => s.name.toLowerCase() === k.toLowerCase(),
+            );
 
-  return {
-    name: k,
-    value: found?.value ?? "-",
-  };
-});
+            return {
+              name: k,
+              value: found?.value ?? "-",
+            };
+          });
 
           return (
             <View key={i} style={styles.card}>

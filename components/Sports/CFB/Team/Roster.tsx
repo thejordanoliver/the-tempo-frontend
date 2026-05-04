@@ -3,7 +3,7 @@ import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton"
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useTeamRosters } from "hooks/NFLHooks/useTeamRosters";
+import { useTeamRosters } from "hooks/FootballHooks/useTeamRosters";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import {
   RefreshControl,

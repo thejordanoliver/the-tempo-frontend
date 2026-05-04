@@ -5,7 +5,7 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
-import { Leader } from "hooks/NFLHooks/useSeasonLeaders";
+import { Leader } from "hooks/FootballHooks/useSeasonLeaders";
 import { useEffect, useRef } from "react";
 import { FlatList, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";

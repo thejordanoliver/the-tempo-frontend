@@ -1,10 +1,9 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
-import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
+import { lineScoreStyles } from "styles/GameDetailStyles/LineScoreStyles";
 import { LeagueType } from "types/types";
-
-// Allow MLB numbers + NBA/CBB strings
+import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
 type ScoreValue = string | number | null | undefined;
 
 type Props = {
@@ -20,6 +19,7 @@ type Props = {
   isDark: boolean;
   loading?: boolean;
   league?: LeagueType;
+  gameStatusDescription: string;
 };
 
 export default function LineScore({
@@ -29,17 +29,13 @@ export default function LineScore({
   isDark,
   loading,
   league = "NBA",
+  gameStatusDescription,
 }: Props) {
   const styles = lineScoreStyles(isDark);
-
-  if (loading || !linescore || !linescore.home || !linescore.away) {
-    return <LineScoreSkeleton league={league} />;
-  }
 
   const textColor = isDark ? Colors.white : Colors.black;
   const borderColor = isDark ? Colors.midTone : Colors.lightGray;
 
-  // Convert strings | numbers to totals
   const total = (scores: ScoreValue[]) => {
     const numericValues = scores
       .map((v) => {
@@ -52,22 +48,21 @@ export default function LineScore({
     return numericValues.reduce((a, b) => a + b, 0);
   };
 
-  const homeTotal = total(linescore.home);
-  const awayTotal = total(linescore.away);
+  const homeScores = linescore?.home ?? [];
+  const awayScores = linescore?.away ?? [];
+
+  const homeTotal = total(homeScores);
+  const awayTotal = total(awayScores);
 
   const renderScore = (score: ScoreValue) =>
     score != null ? String(score) : "-";
-
-  // ------------------------------------------------------------
-  // PERIOD LABELS
-  // ------------------------------------------------------------
 
   const baseColumns = league === "CBB" ? 2 : league === "NHL" ? 3 : 4;
 
   const numColumns = Math.max(
     baseColumns,
-    linescore.home.length,
-    linescore.away.length,
+    homeScores.length,
+    awayScores.length,
   );
 
   const getPeriodLabel = (index: number): string => {
@@ -114,6 +109,12 @@ export default function LineScore({
   );
 
   const columnStyle: ViewStyle = { flex: 1, alignItems: "center" };
+
+  if (loading) {
+    return <LineScoreSkeleton league={league} />;
+  }
+  if (gameStatusDescription === "Scheduled") return null;
+  if (!linescore) return null;
 
   return (
     <View style={styles.container}>
@@ -190,54 +191,3 @@ export default function LineScore({
     </View>
   );
 }
-
-const lineScoreStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    container: {
-      width: "100%",
-    },
-    wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
-      overflow: "hidden",
-      padding: 12,
-    },
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 4,
-    },
-    teamCode: {
-      width: 48,
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-      paddingLeft: 8,
-    },
-    scoresWrapper: {
-      flex: 1,
-      flexDirection: "row",
-    },
-    header: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-      textTransform: "uppercase",
-      width: "100%",
-    },
-    score: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
-      textAlign: "center",
-    },
-    totalScore: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 14,
-      textAlign: "center",
-    },
-  });

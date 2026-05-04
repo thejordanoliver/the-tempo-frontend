@@ -7,7 +7,7 @@ import { apiClient } from "utils/apiClient";
    TYPES
 ===================================================== */
 
-export type CBBTeamWithGroups = CollegeBaseballTeam & {
+export type CBTeamWithGroups = CollegeBaseballTeam & {
   groups?: {
     id: string;
     shortName: string;
@@ -27,7 +27,7 @@ export type CBTeamRank = {
   firstPlaceVotes: number;
   trend: string;
   recordSummary: string;
-  team: CBBTeamWithGroups | null;
+  team: CBTeamWithGroups | null;
   date: string;
   lastUpdated: string;
 };
@@ -69,10 +69,7 @@ export const useCBRankings = (league: "cb" | "sb") => {
         JSON.stringify({ timestamp: Date.now(), data }),
       );
     } catch (err) {
-      console.warn(
-        `⚠️ Failed to cache ${league.toUpperCase()} rankings:`,
-        err,
-      );
+      console.warn(`⚠️ Failed to cache ${league.toUpperCase()} rankings:`, err);
     }
   };
 
@@ -99,21 +96,16 @@ export const useCBRankings = (league: "cb" | "sb") => {
 
   const fetchLatest = useCallback(async () => {
     try {
-      const res = await apiClient.get(
-        `/api/standings/${league}/rankings`,
-      );
+      const res = await apiClient.get(`api/standings/${league}/rankings`);
 
       const polls: CBRankPoll[] = res.data?.rankings?.all || [];
 
       setRankings(polls);
 
       await saveCache(polls);
-      await AsyncStorage.setItem(
-        LAST_REFRESH_KEY,
-        Date.now().toString(),
-      );
+      await AsyncStorage.setItem(LAST_REFRESH_KEY, Date.now().toString());
     } catch (err: any) {
-      console.error("❌ Fetch CBB rankings failed:", err);
+      console.error("❌ Fetch CB rankings failed:", err);
 
       const message =
         err.response?.data?.error ||

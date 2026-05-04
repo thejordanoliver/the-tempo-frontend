@@ -1,7 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNBATeam } from "constants/teams";
-import { useGameLeaders } from "hooks/NBAHooks/useGameLeaders";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
@@ -11,12 +10,13 @@ const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type Category = (typeof STAT_CATEGORIES)[number];
 
 type Props = {
-  gameLeaders: any,
+  gameLeaders: any;
   awayTeamId: number;
   homeTeamId: number;
   isDark: boolean;
   loading: boolean;
-  error: any
+  error: any;
+  gameStatusDescription: string;
 };
 
 export default function GameLeaders({
@@ -26,8 +26,8 @@ export default function GameLeaders({
   isDark,
   loading,
   error,
+  gameStatusDescription,
 }: Props) {
-
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
 
   const styles = gameLeadersStyles(isDark);
@@ -74,6 +74,7 @@ export default function GameLeaders({
   }
 
   if (!topPlayers.length) return null;
+  if (gameStatusDescription === "Scheduled") return null;
 
   return (
     <View style={styles.container}>

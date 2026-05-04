@@ -12,12 +12,12 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import type {
+import {
   PlayerResult,
   ResultItem,
   TeamResult,
   UserResult,
-} from "types/types";
+} from "types/explore";
 
 type Props = {
   item: ResultItem;
@@ -111,9 +111,9 @@ export default function ResultItemRow({
                 ? getCBBTeam(teamId, true)
                 : teamId && player.isNBA
                   ? getNBATeam(teamId)
-                : teamId && player.isWNBA
-                  ? getWNBATeam(teamId)
-                  : null;
+                  : teamId && player.isWNBA
+                    ? getWNBATeam(teamId)
+                    : null;
 
     return (
       <View style={styles.itemRow}>

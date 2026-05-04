@@ -4,6 +4,7 @@ import {
   GameLeaders,
   GameLocation,
   GameTeamStats,
+  HeadToHeadGames,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
@@ -69,69 +70,68 @@ export default function GamePreviewContent({
   weather,
   gameStatusDescription,
 }: GamePreviewContentProps) {
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const showLiveSections = !isScheduled;
-
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      {isScheduled && (
-        <MatchupPredictor
-          home={{
-            name: home.code,
-            logo: home.logoLight || home.logo,
-            color: home.secondaryColor,
-            chance: homeChance,
-          }}
-          away={{
-            name: away.code,
-            logo: away.logoLight || away.logo,
-            color: away.secondaryColor,
-            chance: awayChance,
-          }}
-          size={180}
-          isDark
-        />
-      )}
+      <MatchupPredictor
+        home={{
+          name: home.code,
+          logo: home.logoLight || home.logo,
+          color: home.secondaryColor,
+          chance: homeChance,
+        }}
+        away={{
+          name: away.code,
+          logo: away.logoLight || away.logo,
+          color: away.secondaryColor,
+          chance: awayChance,
+        }}
+        size={180}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
-      {lineScore && (
-        <LineScore
-          linescore={lineScore}
-          homeCode={home?.code}
-          awayCode={away?.code}
-          isDark
-        />
-      )}
+      <LineScore
+        linescore={lineScore}
+        homeCode={home?.code}
+        awayCode={away?.code}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
-      {showLiveSections && (
-        <>
-          <GameLeaders
-            gameLeaders={gameLeaders}
-            awayTeamId={away?.id}
-            homeTeamId={home?.id}
-            loading={loading}
-            error={error}
-            isDark
-          />
+      <GameLeaders
+        gameLeaders={gameLeaders}
+        awayTeamId={away?.id}
+        homeTeamId={home?.id}
+        loading={loading}
+        error={error}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
-          <BoxScore
-            playerStats={playerStats}
-            awayTeamId={away?.espnID}
-            homeTeamId={home?.espnID}
-            league={"NBA"}
-            gameStatusDescription={gameStatusDescription}
-            isDark
-          />
+      <BoxScore
+        playerStats={playerStats}
+        awayTeamId={away?.espnID}
+        homeTeamId={home?.espnID}
+        league={"NBA"}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
 
-          <GameTeamStats
-            stats={teamStats}
-            gameStatusDescription={gameStatusDescription}
-            isDark
-          />
-        </>
-      )}
+      <GameTeamStats
+        stats={teamStats}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
+      <HeadToHeadGames
+        awayTeamId={away.id}
+        homeTeamId={home.id}
+        homeTeamColor={home?.color}
+        awayTeamColor={away?.color}
+        isDark
+      />
 
       <LastFiveGames
         home={{
@@ -155,7 +155,11 @@ export default function GamePreviewContent({
         teamPlayersMap={teamPlayersMap}
       />
 
-      <Officials officials={officials ?? []} isDark />
+      <Officials
+        officials={officials ?? []}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
 
       <GameLocation
         venueImage={venueImage}

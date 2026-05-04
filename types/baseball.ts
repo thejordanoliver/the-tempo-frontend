@@ -64,8 +64,8 @@ export interface MLBGame {
   };
 
   teams: {
-    home: MLBTeam | null;
-    away: MLBTeam | null;
+    home: MLBTeam;
+    away: MLBTeam;
   };
 
   scores: {

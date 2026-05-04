@@ -38,9 +38,6 @@ export default function HomeScreen() {
     articles,
     newsError,
     newsLoading,
-    socialData,
-    socialLoading,
-    socialError,
   } = useHomeData(selectedTab);
 
   // --------------------------------------------------
@@ -126,7 +123,7 @@ export default function HomeScreen() {
               <XFeed
                 items={mockSocialFeed}
                 loading={newsLoading}
-                error={null}
+                error={newsError}
               />
               <NewsList
                 items={articles}

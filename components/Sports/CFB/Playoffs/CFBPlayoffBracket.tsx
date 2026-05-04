@@ -262,7 +262,7 @@ export function CFBPlayoffBracket({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const winner = useMemo(() => getChampion(bracket), [bracket]);
   const winnerTeam = getTeamByESPNId(winner?.espnID ?? 0);
-  const winnerLogo = getCFBTeamLogo(winnerTeam.id, isDark)
+  const winnerLogo = getCFBTeamLogo(winnerTeam?.id, isDark)
   const cfpLogo = useMemo(() => (isDark ? CFPLogoLight : CFPLogo), [isDark]);
 
   if (loading) {
@@ -337,7 +337,7 @@ export function CFBPlayoffBracket({
             if (!layout) return null;
             return (
               <View
-                key={game.id}
+                key={game?.id}
                 style={{
                   position: "absolute",
                   left: layout.x,
@@ -355,7 +355,7 @@ export function CFBPlayoffBracket({
             if (!layout) return null;
             return (
               <View
-                key={game.id}
+                key={game?.id}
                 style={{
                   position: "absolute",
                   left: layout.x,
@@ -373,7 +373,7 @@ export function CFBPlayoffBracket({
             if (!layout) return null;
             return (
               <View
-                key={game.id}
+                key={game?.id}
                 style={{
                   position: "absolute",
                   left: layout.x,

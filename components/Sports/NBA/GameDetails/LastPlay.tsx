@@ -42,6 +42,7 @@ type LastPlayProps = {
   lastPlay?: string | NBALastPlay;
   homeTeamId?: string;
   awayTeamId?: string;
+  gameStatusDescription: string;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
@@ -50,6 +51,7 @@ export default function LastPlay({
   lastPlay,
   homeTeamId,
   awayTeamId,
+  gameStatusDescription,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -91,14 +93,15 @@ export default function LastPlay({
     }));
   };
 
- const isObject = (val: unknown): val is Record<string, any> =>
-  typeof val === "object" && val !== null;
+  const isObject = (val: unknown): val is Record<string, any> =>
+    typeof val === "object" && val !== null;
 
-const athletes = isObject(currentPlay) && "participants" in currentPlay
-  ? participantsToAthletes((currentPlay as any).participants)
-  : isObject(currentPlay)
-    ? (currentPlay as NBALastPlay).athletes || []
-    : [];
+  const athletes =
+    isObject(currentPlay) && "participants" in currentPlay
+      ? participantsToAthletes((currentPlay as any).participants)
+      : isObject(currentPlay)
+        ? (currentPlay as NBALastPlay).athletes || []
+        : [];
 
   const firstAthlete = athletes[0];
 
@@ -141,6 +144,11 @@ const athletes = isObject(currentPlay) && "participants" in currentPlay
   }
 
   if (!currentPlay) return null;
+  if (
+    gameStatusDescription === "Final" ||
+    gameStatusDescription === "Scheduled"
+  )
+    return null;
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>

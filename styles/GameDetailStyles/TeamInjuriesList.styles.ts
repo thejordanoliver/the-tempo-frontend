@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 
 export const teamInjuryStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {},
     contentContainerStyle: { paddingVertical: 12 },
     wrapper: {
       borderColor: Colors.midTone,
@@ -14,10 +13,11 @@ export const teamInjuryStyles = (isDark: boolean) =>
     injuryItem: {
       flexDirection: "row",
       padding: 12,
-      height: 80,
+      height: 82,
       alignItems: "center",
-      borderBottomColor:  Colors.midTone,
+      borderBottomColor: Colors.midTone,
     },
+
     avatar: {
       width: 50,
       height: 50,
@@ -120,5 +120,19 @@ export const teamInjuryStyles = (isDark: boolean) =>
     logo: {
       width: 28,
       height: 28,
+    },
+    emptyItem: {
+      flexDirection: "row",
+      padding: 12,
+      height: 82,
+      alignItems: "center",
+      justifyContent: "center",
+      borderBottomColor: Colors.midTone,
+    },
+    emptyText: {
+      textAlign: "center",
+      fontSize: 20,
+      fontFamily: Fonts.OSREGULAR,
+      color: Colors.midTone,
     },
   });

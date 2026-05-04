@@ -104,6 +104,12 @@ const getFooterLabel = (matchup: BracketMatchup) => {
   if (topWins === bottomWins && topWins != 0 && bottomWins != 0) {
     return `Series Tied`;
   }
+  if (bottomWins === 4) {
+    return `${teamName} won series ${bottomWins}-${topWins}`;
+  }
+  if (topWins === 4) {
+    return `${teamName} won series ${topWins}-${bottomWins}`;
+  }
   if (topWins > bottomWins) {
     return `${teamName} leads ${topWins}-${bottomWins}`;
   }

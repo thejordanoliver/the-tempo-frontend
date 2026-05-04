@@ -8,7 +8,7 @@ import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useBasketballPlayerSeasons } from "hooks/CBBHooks/useBasketballPlayerSeasons";
-import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
+import { usePlayerById } from "hooks/FootballHooks/usePlayerById";
 import { useLayoutEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";

@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useCFBRankings } from "hooks/CFBHooks/useCFBRankings";
+import { useCFBRankings } from "hooks/FootballHooks/useCFBRankings";
 import { useMemo } from "react";
 import type { Game } from "types/football";
 

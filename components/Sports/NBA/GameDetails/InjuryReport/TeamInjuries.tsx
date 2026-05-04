@@ -36,7 +36,7 @@ type Props = {
   injuries: TeamInjury[];
   isDark: boolean;
   loading?: boolean;
-  teamPlayersMap?: Record<string, Player[]>; // ✅ add this
+  teamPlayersMap?: Record<string, Player[]>;
 };
 
 export default function TeamInjuries({

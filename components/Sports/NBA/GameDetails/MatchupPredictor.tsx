@@ -15,6 +15,7 @@ interface Props {
   away: MinimalTeam & { chance?: number };
   size?: number;
   isDark: boolean;
+  gameStatusDescription: string;
 }
 
 const MatchupPredictor: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const MatchupPredictor: React.FC<Props> = ({
   away,
   size = 184,
   isDark,
+  gameStatusDescription,
 }) => {
   const styles = mathupPredictorStyles(isDark);
   const strokeWidth = 10;
@@ -120,6 +122,9 @@ const MatchupPredictor: React.FC<Props> = ({
   const dividerHeight = radius + 20;
   const dividerTop = 50 - dividerHeight / 2;
   const dividerBottom = 50 + dividerHeight / 2;
+
+  if (!homeChance || !awayChance) return null;
+  if (gameStatusDescription === "Scheduled") return null;
 
   return (
     <View style={styles.outerContainer}>

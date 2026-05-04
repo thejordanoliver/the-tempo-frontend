@@ -2,8 +2,39 @@ import { useEffect, useState } from "react";
 import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
-export function useLeagueCalendar(league: LeagueType) {
-  const [calendar, setCalendar] = useState<string[]>([]);
+export type FootballCalendarWeek = {
+  label: string;
+  stage: string;
+  weekNumber: number;
+  startDate: string;
+  endDate: string;
+};
+
+type CalendarFormat = "raw" | "football";
+
+type UseLeagueCalendarResult<T> = {
+  calendar: T[];
+  loading: boolean;
+  error: Error | null;
+};
+
+export function useLeagueCalendar(
+  league: LeagueType,
+  format: "football",
+): UseLeagueCalendarResult<FootballCalendarWeek>;
+
+export function useLeagueCalendar(
+  league: LeagueType,
+  format?: "raw",
+): UseLeagueCalendarResult<string>;
+
+export function useLeagueCalendar(
+  league: LeagueType,
+  format: CalendarFormat = "raw",
+): UseLeagueCalendarResult<string | FootballCalendarWeek> {
+  const [calendar, setCalendar] = useState<(string | FootballCalendarWeek)[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -14,8 +45,24 @@ export function useLeagueCalendar(league: LeagueType) {
         setError(null);
 
         const { data } = await apiClient.get(
-          `api/games/${league.toLowerCase()}/calendar`,
+          `api/games/calendar/${league.toLowerCase()}`,
         );
+
+        if (format === "football") {
+          const flattened: FootballCalendarWeek[] =
+            data.calendar?.flatMap((phase: any) =>
+              (phase.entries ?? []).map((entry: any) => ({
+                label: entry.label,
+                stage: phase.label,
+                weekNumber: Number(entry.value),
+                startDate: entry.startDate,
+                endDate: entry.endDate,
+              })),
+            ) || [];
+
+          setCalendar(flattened);
+          return;
+        }
 
         setCalendar(data.calendar || []);
       } catch (err) {
@@ -27,7 +74,7 @@ export function useLeagueCalendar(league: LeagueType) {
     };
 
     fetchCalendar();
-  }, []);
+  }, [league, format]);
 
   return {
     calendar,

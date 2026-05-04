@@ -4,7 +4,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { useGameDetails } from "hooks/NFLHooks/useGameDetails";
+import { useGameDetails } from "hooks/FootballHooks/useGameDetails";
 import { Image, Text, View } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
 import { FootballGame } from "types/football";

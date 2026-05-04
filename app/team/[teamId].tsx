@@ -59,11 +59,13 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+
   const {
     articles,
     loading: newsLoading,
     error: newsError,
   } = useLeaguesNews(10, league);
+
   const {
     games: teamGames,
     loading: gamesLoading,
@@ -209,9 +211,17 @@ export default function TeamDetailScreen() {
     );
   }
 
-  function handleRefresh(): void {
-    throw new Error("Function not implemented.");
-  }
+  const handleRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      if (selectedTab === "news") {
+        await refetch();
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <View style={styles.container}>

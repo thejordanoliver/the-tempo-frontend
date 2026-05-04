@@ -2,9 +2,12 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import {
+  GameLocation,
+  LastFiveGames,
+  LineScore,
+} from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGamesSwitcher from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
 import { BasketballGame } from "types/basketball";
@@ -21,11 +24,11 @@ type GamePreviewContentProps = {
   awayLastGames: any;
   playerStats: any;
   data?: any;
-  resolvedVenueImage: any;
-  resolvedVenueName: any;
-  resolvedVenueCity: any;
-  resolvedVenueAddress?: string;
-  resolvedVenueCapacity: any;
+  venueImage: any;
+  venueName: any;
+  venueCity: any;
+  venueAddress?: string;
+  venueCapacity: any;
   weather: any;
   isDark?: boolean;
   highlights: any;
@@ -43,11 +46,11 @@ export default function GamePreviewContent({
   awayLastGames,
   playerStats,
   teamStats,
-  resolvedVenueImage,
-  resolvedVenueName,
-  resolvedVenueCity,
-  resolvedVenueAddress,
-  resolvedVenueCapacity,
+  venueImage,
+  venueName,
+  venueCity,
+  venueAddress,
+  venueCapacity,
   weather,
   highlights,
   gameStatusDescription,
@@ -85,24 +88,20 @@ export default function GamePreviewContent({
         isDark
       />
 
-      {/* Last Five Games */}
-      {(homeLastGames?.games?.length > 0 ||
-        awayLastGames?.games?.length > 0) && (
-        <LastFiveGamesSwitcher
-          isDark={true}
-          home={{
-            teamId: home?.id,
-            teamCode: home?.code ?? "",
-            games: homeLastGames?.games ?? [],
-          }}
-          away={{
-            teamId: away?.id,
-            teamCode: away?.code ?? "",
-            games: awayLastGames?.games ?? [],
-          }}
-          league={isWomen ? "WCBB" : "CBB"}
-        />
-      )}
+      <LastFiveGames
+        home={{
+          teamId: home?.id,
+          teamCode: home?.code ?? "",
+          games: homeLastGames?.games,
+        }}
+        away={{
+          teamId: away?.id,
+          teamCode: away?.code ?? "",
+          games: awayLastGames?.games,
+        }}
+        league={isWomen ? "WCBB" : "CBB"}
+        isDark
+      />
 
       {playerStats && (
         <BoxScore
@@ -110,36 +109,27 @@ export default function GamePreviewContent({
           awayTeamId={Number(away.espnId)}
           homeTeamId={Number(home.espnId)}
           league={isWomen ? "WCBB" : "CBB"}
+          gameStatusDescription={gameStatusDescription}
           isDark
         />
       )}
 
-      {highlights.length > 0 && (
-        <HighlightVideoList highlights={highlights} isDark />
-      )}
+      <HighlightVideoList highlights={highlights} isDark />
 
-      {game?.id && officials?.length > 0 && (
-        <Officials
-          officials={officials ?? []}
-          loading={false}
-          error={null}
-          isDark
-        />
-      )}
-      {/* Venue Info */}
-      {(resolvedVenueImage || resolvedVenueName) && (
-        <GameLocation
-          venueImage={resolvedVenueImage}
-          venueName={resolvedVenueName}
-          location={resolvedVenueCity}
-          address={resolvedVenueAddress}
-          venueCapacity={resolvedVenueCapacity}
-          weather={weather}
-          isDark
-          loading={false}
-          error={null}
-        />
-      )}
+      <Officials
+        officials={officials ?? []}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
+
+      <GameLocation
+        venueImage={venueImage}
+        venueName={venueName}
+        address={venueAddress}
+        venueCapacity={venueCapacity}
+        weather={weather}
+        isDark
+      />
     </BottomSheetScrollView>
   );
 }

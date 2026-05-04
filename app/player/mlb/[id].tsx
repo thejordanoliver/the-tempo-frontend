@@ -6,7 +6,7 @@ import { globalStyles } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerById } from "hooks/NFLHooks/usePlayerById";
+import { usePlayerById } from "hooks/FootballHooks/usePlayerById";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";

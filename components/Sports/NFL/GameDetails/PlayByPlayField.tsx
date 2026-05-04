@@ -2,11 +2,12 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getNFLTeam } from "constants/teamsNFL";
-import { Athlete, PlayObject } from "hooks/NFLHooks/useGameDetails";
+import { usePreferences } from "contexts/PreferencesContext";
+import { Athlete, PlayObject } from "hooks/FootballHooks/useGameDetails";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, LayoutChangeEvent, Text, View } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
-import { emptyNFLAwayTeam, emptyNFLHomeTeam } from "types/football";
+import { emptyAwayTeam, emptyHomeTeam } from "types/football";
 import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {
@@ -68,11 +69,11 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   // League helpers
   const getTeamInfo = league === "NFL" ? getNFLTeam : getCFBTeam;
 
-  const homeTeam = getTeamInfo(homeTeamId) ?? emptyNFLHomeTeam;
-  const awayTeam = getTeamInfo(awayTeamId) ?? emptyNFLAwayTeam;
+  const homeTeam = getTeamInfo(homeTeamId) ?? emptyHomeTeam;
+  const awayTeam = getTeamInfo(awayTeamId) ?? emptyAwayTeam;
 
-  const homeColor = homeTeam.color ?? emptyNFLHomeTeam.color;
-  const awayColor = awayTeam.color ?? emptyNFLAwayTeam.color;
+  const homeColor = homeTeam.color ?? emptyHomeTeam.color;
+  const awayColor = awayTeam.color ?? emptyAwayTeam.color;
   const homeEspnID = homeTeam.espnID;
   const awayEspnID = awayTeam.espnID;
   const homeLogo = homeTeam.logoLight || homeTeam.logo;
