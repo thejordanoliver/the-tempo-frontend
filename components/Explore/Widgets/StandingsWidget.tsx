@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/styles";
 import { getTeamByESPNId as getNBATeamByESPNId } from "constants/teams";
 import { getTeamByESPNId as getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getTeamByESPNId as getCFBTeamByESPNId } from "constants/teamsCFB";
@@ -18,7 +16,7 @@ import {
   StandingsTeam,
   useLeagueStandings,
 } from "hooks/LeagueHooks/useLeagueStandings";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -31,16 +29,24 @@ import {
 import { standingsWidgetStyles } from "styles/ExploreStyles/StadningWidgetStyles";
 import type { LeagueType } from "types/types";
 import { ExploreWidgetSize } from "types/widgets";
+import { WidgetEditControls } from "./WidgetSlider";
 
 type StandingsWidgetProps = {
   isDark: boolean;
   size?: ExploreWidgetSize;
   containerWidth?: number;
   containerHeight?: number;
-  controls?: ReactNode;
+  widgetId?: string;
+  widgetSize?: ExploreWidgetSize;
+  isEditing?: boolean;
+  availableSizeOptions?: ExploreWidgetSize[];
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget?: (widgetId: string) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
   favoriteLeagues?: string[];
   initialLeague?: string;
-  onRemove?: () => void;
 };
 
 type SupportedStandingsLeague =
@@ -100,13 +106,12 @@ const getContentHeight = ({
   if (!containerHeight) return undefined;
 
   const verticalPadding = compact ? 20 : 28;
-  const headerHeight = compact ? 28 : 38;
   const chipHeight = compact ? 30 : 34;
   const cardGap = compact ? 8 : 10;
 
   return Math.max(
     0,
-    containerHeight - verticalPadding - headerHeight - chipHeight - cardGap * 2,
+    containerHeight - verticalPadding - chipHeight - cardGap,
   );
 };
 
@@ -667,10 +672,17 @@ export default function StandingsWidget({
   size = "medium",
   containerWidth,
   containerHeight,
-  controls,
+  widgetId,
+  widgetSize = size,
+  isEditing = false,
+  availableSizeOptions,
+  onResizeWidget,
+  onRemoveWidget,
+  onMoveWidget,
+  canMoveUp,
+  canMoveDown,
   favoriteLeagues = [],
   initialLeague,
-  onRemove,
 }: StandingsWidgetProps) {
   const router = useRouter();
 
@@ -678,6 +690,7 @@ export default function StandingsWidget({
     size === "small" || (containerWidth != null && containerWidth < 260);
 
   const styles = standingsWidgetStyles(isDark, compact);
+  const showActions = isEditing && widgetId != null;
 
   const contentHeight = getContentHeight({ compact, containerHeight });
 
@@ -743,45 +756,9 @@ export default function StandingsWidget({
         containerHeight ? { height: containerHeight } : null,
       ]}
     >
-      <View style={styles.header}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.title} numberOfLines={1}>
+        <Text style={styles.heading} numberOfLines={1}>
             Standings
           </Text>
-
-          {!compact && <Text style={styles.subtitle}>Top teams snapshot</Text>}
-        </View>
-
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            onPress={() =>
-              router.push(`/league/${selectedLeague.toLowerCase()}` as Href)
-            }
-            hitSlop={8}
-          >
-            <Text style={styles.linkText}>View full</Text>
-          </TouchableOpacity>
-
-          {controls}
-
-          {onRemove && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={onRemove}
-              style={styles.removeButton}
-              hitSlop={8}
-            >
-              <Ionicons
-                name="close"
-                size={16}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
       <ScrollView
         horizontal
         style={styles.chipScroll}
@@ -789,6 +766,8 @@ export default function StandingsWidget({
         showsHorizontalScrollIndicator={false}
         bounces={false}
       >
+       
+
         {leagueOptions.map((league) => {
           const selected = selectedLeague === league;
 
@@ -836,6 +815,21 @@ export default function StandingsWidget({
           />
         )}
       </Animated.View>
+
+      {showActions && widgetId && (
+        <WidgetEditControls
+          isDark={isDark}
+          widgetId={widgetId}
+          widgetSize={widgetSize}
+          availableSizeOptions={availableSizeOptions}
+          onResizeWidget={onResizeWidget}
+          onRemoveWidget={onRemoveWidget}
+          onMoveWidget={onMoveWidget}
+          canMoveUp={canMoveUp}
+          canMoveDown={canMoveDown}
+          compact={compact}
+        />
+      )}
     </View>
   );
 }

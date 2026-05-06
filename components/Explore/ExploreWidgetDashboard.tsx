@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { WIDGET_OPTIONS } from "components/Explore/AddWidgetModal";
 import {
   EXPLORE_WIDGET_HEIGHTS,
   EXPLORE_WIDGET_MAX_HEIGHTS,
@@ -26,7 +25,10 @@ import {
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
 import NewsWidget from "./Widgets/NewsWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
-import WidgetSlider, { WidgetSlide } from "./Widgets/WidgetSlider";
+import WidgetSlider, {
+  WidgetEditControls,
+  WidgetSlide,
+} from "./Widgets/WidgetSlider";
 
 type ExploreWidgetDashboardProps = {
   isDark: boolean;
@@ -40,7 +42,6 @@ type ExploreWidgetDashboardProps = {
 type GameWidgetSection = {
   type: ExploreWidgetType;
   title: string;
-  badge: string;
   slides: WidgetSlide[];
 };
 
@@ -54,9 +55,28 @@ type DashboardWidgetRow = {
   cells: DashboardWidgetCell[];
 };
 
+type WidgetEditProps = {
+  widgetId: string;
+  widgetSize: ExploreWidgetSize;
+  isEditing: boolean;
+  availableSizeOptions: ExploreWidgetSize[];
+  onResizeWidget: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget: (widgetId: string) => void;
+  onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  placeholderHeight?: number;
+};
+
 const nonGameCopy: Partial<Record<ExploreWidgetType, string>> = {
   player_leaders: "Player leader snapshots will appear here.",
 };
+
+const WIDGET_SIZE_OPTIONS: ExploreWidgetSize[] = [
+  "small",
+  "medium",
+  "large",
+];
 
 const emptyGameCopy: Partial<Record<ExploreWidgetType, string>> = {
   nba_games: "Add favorite NBA teams to see their games here.",
@@ -151,55 +171,46 @@ export default function ExploreWidgetDashboard({
     {
       type: "favorite_games",
       title: "Favorites Games",
-      badge: "Games",
       slides: favoriteGameSlides,
     },
     {
       type: "nba_games",
       title: "NBA Games",
-      badge: "NBA",
       slides: nbaGames.map((game) => ({ type: "NBA", data: game })),
     },
     {
       type: "nfl_games",
       title: "NFL Games",
-      badge: "NFL",
       slides: nflGames.map((game) => ({ type: "NFL", data: game })),
     },
     {
       type: "mlb_games",
       title: "MLB Games",
-      badge: "MLB",
       slides: mlbGames.map((game) => ({ type: "MLB", data: game })),
     },
     {
       type: "nhl_games",
       title: "NHL Games",
-      badge: "NHL",
       slides: nhlGames.map((game) => ({ type: "NHL", data: game })),
     },
     {
       type: "wnba_games",
       title: "WNBA Games",
-      badge: "WNBA",
       slides: wnbaGames.map((game) => ({ type: "WNBA", data: game })),
     },
     {
       type: "cbb_games",
       title: "CBB Games",
-      badge: "CBB",
       slides: cbbGames.map((game) => ({ type: "CBB", data: game })),
     },
     {
       type: "wcbb_games",
       title: "WCBB Games",
-      badge: "WCBB",
       slides: wcbbGames.map((game) => ({ type: "WCBB", data: game })),
     },
     {
       type: "cfb_games",
       title: "CFB Games",
-      badge: "CFB",
       slides: cfbGames.map((game) => ({ type: "CFB", data: game })),
     },
   ];
@@ -254,64 +265,44 @@ export default function ExploreWidgetDashboard({
     </View>
   );
 
-  const renderEmptyCard = (type: ExploreWidgetType, title: string) => (
-    <View style={dashboardStyles.placeholderCard}>
+  const renderEmptyCard = (
+    type: ExploreWidgetType,
+    title: string,
+    editProps?: WidgetEditProps,
+  ) => (
+    <View
+      style={[
+        dashboardStyles.placeholderCard,
+        editProps?.placeholderHeight
+          ? { height: editProps.placeholderHeight }
+          : null,
+      ]}
+    >
       <Text style={dashboardStyles.placeholderTitle}>{title}</Text>
       <Text style={dashboardStyles.placeholderText}>
         {emptyGameCopy[type] ??
           "This widget has been added to your Explore board."}
       </Text>
+      {editProps?.isEditing && (
+        <WidgetEditControls
+          isDark={isDark}
+          widgetId={editProps.widgetId}
+          widgetSize={editProps.widgetSize}
+          availableSizeOptions={editProps.availableSizeOptions}
+          onResizeWidget={editProps.onResizeWidget}
+          onRemoveWidget={editProps.onRemoveWidget}
+          onMoveWidget={editProps.onMoveWidget}
+          canMoveUp={editProps.canMoveUp}
+          canMoveDown={editProps.canMoveDown}
+          compact={editProps.widgetSize === "small"}
+        />
+      )}
     </View>
   );
 
   if (selectedWidgets.length === 0) {
     return renderEmptyBoard();
   }
-
-  const renderWidgetControls = (
-    widget: ExploreWidgetConfig,
-    index: number,
-    includeRemove = true,
-  ) => (
-    <View style={dashboardStyles.widgetControls}>
-      <View style={dashboardStyles.sizeControls}>
-        {(["small", "medium", "large"] as ExploreWidgetSize[]).map((size) => (
-          <TouchableOpacity
-            key={size}
-            activeOpacity={0.85}
-            onPress={() => onResizeWidget(widget.id, size)}
-            style={[
-              dashboardStyles.sizeButton,
-              widget.size === size && dashboardStyles.sizeButtonSelected,
-            ]}
-          >
-            <Text
-              style={[
-                dashboardStyles.sizeButtonText,
-                widget.size === size && dashboardStyles.sizeButtonTextSelected,
-              ]}
-            >
-              {size[0].toUpperCase()}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {includeRemove && (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => onRemoveWidget(widget.id)}
-          style={dashboardStyles.removeButton}
-        >
-          <Ionicons
-            name="close"
-            size={16}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
 
   const renderWidget = ({
     widget,
@@ -327,46 +318,42 @@ export default function ExploreWidgetDashboard({
     const gameSection = gameSections.find(
       (section) => section.type === widget.type,
     );
-    const controls = isEditMode ? renderWidgetControls(widget, index) : null;
+    const editProps = {
+      widgetId: widget.id,
+      widgetSize: widget.size,
+      isEditing: isEditMode,
+      availableSizeOptions: WIDGET_SIZE_OPTIONS,
+      onResizeWidget,
+      onRemoveWidget,
+      onMoveWidget,
+      canMoveUp: index > 0,
+      canMoveDown: index < visibleWidgets.length - 1,
+    };
 
     if (gameSection) {
-      const sliderHeight = Math.max(widgetHeight - (isEditMode ? 74 : 38), 1);
-
       return (
         <View style={dashboardStyles.section}>
-          <View style={dashboardStyles.sectionHeader}>
-            <Text
-              style={dashboardStyles.sectionTitle}
-              numberOfLines={widget.size === "small" ? 1 : undefined}
-            >
-              {gameSection.title}
-            </Text>
-            <View style={dashboardStyles.headerActions}>
-              <Text style={dashboardStyles.badge}>{gameSection.badge}</Text>
-              {controls}
-            </View>
-          </View>
           {gameSection.slides.length > 0 ? (
             <WidgetSlider
               games={gameSection.slides}
-              initialHeight={sliderHeight}
+              initialHeight={widgetHeight}
               initialWidth={widgetWidth}
               isDark={isDark}
               dashboardMode
               orientation="horizontal"
+              {...editProps}
             />
           ) : (
-            renderEmptyCard(gameSection.type, gameSection.title)
+            renderEmptyCard(gameSection.type, gameSection.title, {
+              ...editProps,
+              placeholderHeight: widgetHeight,
+            })
           )}
         </View>
       );
     }
 
     if (widget.type === "favorite_teams") {
-      const favoriteTeamControls = isEditMode
-        ? renderWidgetControls(widget, index, false)
-        : null;
-
       return (
         <View style={dashboardStyles.section}>
           <FavoriteTeamsWidget
@@ -376,9 +363,7 @@ export default function ExploreWidgetDashboard({
             height={widgetHeight}
             containerWidth={widgetWidth}
             containerHeight={widgetHeight}
-            controls={favoriteTeamControls}
-            onRemove={() => onRemoveWidget(widget.id)}
-            isEditing={isEditMode}
+            {...editProps}
           />
         </View>
       );
@@ -391,7 +376,7 @@ export default function ExploreWidgetDashboard({
           size={widget.size}
           containerWidth={widgetWidth}
           containerHeight={widgetHeight}
-          controls={controls}
+          {...editProps}
         />
       );
     }
@@ -403,32 +388,17 @@ export default function ExploreWidgetDashboard({
           size={widget.size}
           containerWidth={widgetWidth}
           containerHeight={widgetHeight}
-          controls={controls}
           favoriteLeagues={favoriteLeagues}
+          {...editProps}
         />
       );
     }
 
-    const option = WIDGET_OPTIONS.find((item) => item.type === widget.type);
-
     return (
-      <View style={[dashboardStyles.placeholderCard, { height: widgetHeight }]}>
-        <View style={dashboardStyles.placeholderHeader}>
-          <Text style={dashboardStyles.placeholderTitle} numberOfLines={2}>
-            {widget.title}
-          </Text>
-          <View style={dashboardStyles.headerActions}>
-            {option?.badge && (
-              <Text style={dashboardStyles.badge}>{option.badge}</Text>
-            )}
-            {controls}
-          </View>
-        </View>
-        <Text style={dashboardStyles.placeholderText}>
-          {nonGameCopy[widget.type] ??
-            "This widget has been added to your Explore board."}
-        </Text>
-      </View>
+      renderEmptyCard(widget.type, widget.title, {
+        ...editProps,
+        placeholderHeight: widgetHeight,
+      })
     );
   };
 

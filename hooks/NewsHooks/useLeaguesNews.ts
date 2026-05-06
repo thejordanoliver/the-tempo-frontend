@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
+
 export interface NewsArticle {
   id: number;
   keyId: string;
@@ -22,16 +23,27 @@ export interface NewsResponse {
 export function useLeaguesNews(limit: number = 10, league: LeagueType) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
+  const fetchNews = useCallback(
+    async (isRefresh = false) => {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
       setError(null);
 
       try {
         const res = await apiClient.get<NewsResponse>(
-          `api/news/league/${league.toLowerCase()}?limit=${limit}`,
+          `api/news/league/${league.toLowerCase()}`,
+          {
+            params: {
+              limit,
+            },
+          },
         );
 
         if (res.data.success) {
@@ -40,14 +52,28 @@ export function useLeaguesNews(limit: number = 10, league: LeagueType) {
           setError("Failed to fetch news.");
         }
       } catch (err: any) {
-        setError(err.message || "An error occurred while fetching news.");
+        setError(err?.message || "An error occurred while fetching news.");
       } finally {
         setLoading(false);
+        setRefreshing(false);
       }
-    };
+    },
+    [limit, league],
+  );
 
+  useEffect(() => {
     fetchNews();
-  }, [limit, league]); // include league here
+  }, [fetchNews]);
 
-  return { articles, loading, error };
+  const refresh = useCallback(async () => {
+    await fetchNews(true);
+  }, [fetchNews]);
+
+  return {
+    articles,
+    loading,
+    refreshing,
+    error,
+    refresh,
+  };
 }

@@ -2,8 +2,8 @@
 export { default as BoxScore } from "../../CBB/GameDetails/BoxScore";
 export { default as PlayersOnCourt } from "../../CBB/GameDetails/PlayersOnCourt";
 export { default as FanPredictionVote } from "./FanPredictionVote";
+export { default as ChatButton } from "./GameChat/ChatButton";
 export { default as LiveChat } from "./GameChat/LiveChat";
-export { default as MemoizedFloatingChatButton } from "./GameChat/MemoizedFloatingChatButton";
 export { default as GameHeader } from "./GameHeader";
 export { GameInfo } from "./GameInfo";
 export { default as GameLeaders } from "./GameLeaders";

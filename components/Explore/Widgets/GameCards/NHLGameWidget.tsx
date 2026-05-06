@@ -3,7 +3,10 @@ import { globalStyles } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useHockeyDetails } from "hooks/NHLHooks/useHockeyGameDetails";
 import { Image, Text, View } from "react-native";
-import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import {
+  gameWidgetStyles,
+  isSmallGameWidgetLayout,
+} from "styles/ExploreStyles/GameWidgetStyles";
 import { NHLGame } from "types/hockey";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
@@ -26,6 +29,8 @@ export default function NHLGameWidget({
   isDark,
 }: GameWidgetProps) {
   const styles = gameWidgetStyles(isDark, height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const showHeadline = !isSmallLayout || height >= 170;
   const global = globalStyles(isDark);
   const homeId = Number(game?.teams.home?.id);
   const awayId = Number(game?.teams.away?.id);
@@ -82,6 +87,8 @@ export default function NHLGameWidget({
   // --- Broadcasts ---
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
+  const showBroadcast =
+    Boolean(broadcastText) && (!isSmallLayout || height >= 180);
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -111,6 +118,8 @@ export default function NHLGameWidget({
     homeRecord,
     homeScore,
     isDark,
+    height,
+    width,
   );
   const awayDisplay = displayeValue(
     false,
@@ -120,6 +129,8 @@ export default function NHLGameWidget({
     awayRecord,
     awayScore,
     isDark,
+    height,
+    width,
   );
 
   // -------------------------
@@ -133,23 +144,42 @@ export default function NHLGameWidget({
     );
   }
 
+  const awayTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={awayLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {awayName}
+      </Text>
+    </View>
+  );
+
+  const homeTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={homeLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {homeName}
+      </Text>
+    </View>
+  );
+
   // -------------------------
   // Render widget
   // -------------------------
   return (
     <View style={styles.container}>
-      <View style={styles.headlineContainer}>
-        <Text style={styles.headline}>{headline}</Text>
-      </View>
+      {showHeadline && (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headline} numberOfLines={1}>
+            {headline}
+          </Text>
+        </View>
+      )}
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
         {/* ---------------------- */}
         <View style={styles.awaySection}>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>{awayName}</Text>
-          </View>
+          {awayTeamContent}
           {awayDisplay}
         </View>
 
@@ -159,42 +189,72 @@ export default function NHLGameWidget({
         <View style={styles.gameInfo}>
           {isScheduled && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime}>{formattedDate}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedDate}
+              </Text>
               <View style={styles.divider} />
-              <Text style={styles.dateTime}>{formattedTime}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedTime}
+              </Text>
             </View>
           )}
 
-          {isFinal && <Text style={styles.finalText}>{gameStatusDetail}</Text>}
+          {isFinal && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDetail}
+            </Text>
+          )}
 
           {isPostponed && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
           )}
           {isCanceled && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
           )}
           {isDelayed && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
           )}
           {isForfeited && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
           )}
 
           {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              End of {formatQuarter(period)}
+            </Text>
           )}
 
           {inProgress && !isHalftime && !endOfPeriod && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.period}>{formatQuarter(period)}</Text>
+              <Text style={styles.period} numberOfLines={1}>
+                {formatQuarter(period)}
+              </Text>
               <View style={styles.divider} />
-              {displayClock && <Text style={styles.clock}>{displayClock}</Text>}
+              {displayClock && (
+                <Text style={styles.clock} numberOfLines={1}>
+                  {displayClock}
+                </Text>
+              )}
             </View>
           )}
 
-          {isHalftime && <Text style={styles.finalText}>Halftime</Text>}
-          {broadcastText && (
-            <Text style={styles.broadcast}>{broadcastText}</Text>
+          {isHalftime && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              Halftime
+            </Text>
+          )}
+          {showBroadcast && (
+            <Text style={styles.broadcast} numberOfLines={1}>
+              {broadcastText}
+            </Text>
           )}
         </View>
 
@@ -202,11 +262,17 @@ export default function NHLGameWidget({
         {/* Home Team Section */}
         {/* ---------------------- */}
         <View style={styles.homeSection}>
-          {homeDisplay}
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>{homeName}</Text>
-          </View>
+          {isSmallLayout ? (
+            <>
+              {homeTeamContent}
+              {homeDisplay}
+            </>
+          ) : (
+            <>
+              {homeDisplay}
+              {homeTeamContent}
+            </>
+          )}
         </View>
       </View>
     </View>

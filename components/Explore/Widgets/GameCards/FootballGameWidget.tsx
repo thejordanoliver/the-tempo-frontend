@@ -6,7 +6,10 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useGameDetails } from "hooks/FootballHooks/useGameDetails";
 import { Image, Text, View } from "react-native";
-import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import {
+  gameWidgetStyles,
+  isSmallGameWidgetLayout,
+} from "styles/ExploreStyles/GameWidgetStyles";
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
@@ -30,6 +33,8 @@ export default function FootballGameWidget({
   isDark,
 }: FootballGameWidgetProps) {
   const styles = gameWidgetStyles(isDark, height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const showHeadline = !isSmallLayout || height >= 170;
   const global = globalStyles(isDark);
   const isNFL = league === "NFL";
 
@@ -88,6 +93,7 @@ export default function FootballGameWidget({
   const isRedzone = redzone;
   const headlineText = details?.headline;
   const broadcast = details?.broadcast ?? "";
+  const showBroadcast = Boolean(broadcast) && (!isSmallLayout || height >= 180);
   const downDistanceText = score?.possession.downDistanceText;
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = headlineText ?? holidayLabel ?? "";
@@ -120,6 +126,8 @@ export default function FootballGameWidget({
     homeRecord,
     homeScore,
     isDark,
+    height,
+    width,
   );
   const awayDisplay = displayeValue(
     false,
@@ -129,6 +137,8 @@ export default function FootballGameWidget({
     awayRecord,
     awayScore,
     isDark,
+    height,
+    width,
   );
 
   // -------------------------
@@ -142,32 +152,63 @@ export default function FootballGameWidget({
     );
   }
 
+  const awayTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={awayLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {awayRank && <Text style={styles.teamRank}>{awayRank} </Text>}
+        {awayName}
+      </Text>
+    </View>
+  );
+
+  const awayScoreContent = (
+    <View style={styles.scorePossession}>
+      {awayDisplay}
+      {awayHasPossession && (
+        <Image style={styles.awayPossession} source={football} />
+      )}
+    </View>
+  );
+
+  const homeTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={homeLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {homeRank && <Text style={styles.teamRank}>{homeRank} </Text>}
+        {homeName}
+      </Text>
+    </View>
+  );
+
+  const homeScoreContent = (
+    <View style={styles.scorePossession}>
+      {homeDisplay}
+      {homeHasPossession && (
+        <Image style={styles.homePossession} source={football} />
+      )}
+    </View>
+  );
+
   // -------------------------
   // Render widget
   // -------------------------
   return (
     <View style={styles.container}>
-      <View style={styles.headlineContainer}>
-        <Text style={styles.headline}>{headline}</Text>
-      </View>
+      {showHeadline && (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headline} numberOfLines={1}>
+            {headline}
+          </Text>
+        </View>
+      )}
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
         {/* ---------------------- */}
         <View style={styles.awaySection}>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>
-              {awayRank && <Text style={styles.teamRank}>{awayRank} </Text>}
-              {awayName}
-            </Text>
-          </View>
-          <View style={styles.scorePossession}>
-            {awayDisplay}
-            {awayHasPossession && (
-              <Image style={styles.awayPossession} source={football} />
-            )}
-          </View>
+          {awayTeamContent}
+          {awayScoreContent}
         </View>
 
         {/* ---------------------- */}
@@ -177,59 +218,77 @@ export default function FootballGameWidget({
         <View style={styles.gameInfo}>
           {isScheduled && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime}>{localDate}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {localDate}
+              </Text>
               <View style={styles.divider} />
-              <Text style={styles.dateTime}>{localTime}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {localTime}
+              </Text>
             </View>
           )}
 
           {isFinal && (
             <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>{gameStatusDetail}</Text>
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDetail}
+              </Text>
             </View>
           )}
 
           {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              End of {formatQuarter(period)}
+            </Text>
           )}
 
           {inProgress && !isHalftime && !endOfPeriod && (
             <>
               <View style={styles.infoWrapper}>
-                <Text style={styles.period}>{formatQuarter(period ?? "")}</Text>
+                <Text style={styles.period} numberOfLines={1}>
+                  {formatQuarter(period ?? "")}
+                </Text>
                 <View style={styles.divider} />
-                <Text style={styles.finalText}>{displayClock}</Text>
+                <Text style={styles.finalText} numberOfLines={1}>
+                  {displayClock}
+                </Text>
               </View>
               {downDistanceText && (
-                <Text style={styles.downAndDistance}>{downDistanceText}</Text>
+                <Text style={styles.downAndDistance} numberOfLines={1}>
+                  {downDistanceText}
+                </Text>
               )}
             </>
           )}
 
           {inProgress && isHalftime && (
-            <Text style={styles.finalText}>Halftime</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              Halftime
+            </Text>
           )}
 
-          {broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+          {showBroadcast && (
+            <Text style={styles.broadcast} numberOfLines={1}>
+              {broadcast}
+            </Text>
+          )}
         </View>
 
         {/* ---------------------- */}
         {/* Home Team Section */}
         {/* ---------------------- */}
         <View style={styles.homeSection}>
-          <View style={styles.scorePossession}>
-            {homeDisplay}
-            {homeHasPossession && (
-              <Image style={styles.homePossession} source={football} />
-            )}
-          </View>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>
-              {homeRank && <Text style={styles.teamRank}>{homeRank} </Text>}
-              {homeName}
-            </Text>
-          </View>
+          {isSmallLayout ? (
+            <>
+              {homeTeamContent}
+              {homeScoreContent}
+            </>
+          ) : (
+            <>
+              {homeScoreContent}
+              {homeTeamContent}
+            </>
+          )}
         </View>
       </View>
     </View>

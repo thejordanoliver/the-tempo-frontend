@@ -101,6 +101,7 @@ export type TeamRecords = {
   away?: string | null;
   conference?: string | null;
 };
+
 export type Predictor = {
   header: string;
   homeTeam: {
@@ -134,7 +135,9 @@ export type GameDetails = {
   };
 };
 
-type DateParam = string | { date?: string; utc?: string; timestamp?: number };
+export type DateParam =
+  | string
+  | { date?: string; utc?: string; timestamp?: number };
 
 /* ---------------------------------- */
 /* Hook                               */

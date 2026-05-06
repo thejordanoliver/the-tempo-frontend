@@ -18,12 +18,12 @@ export const CenterInfoStyles = StyleSheet.create({
   },
   period: {
     fontFamily: Fonts.OSMEDIUM,
-    fontSize: 14,
+    fontSize: 18,
     color: Colors.dark.white,
   },
   clock: {
     fontFamily: Fonts.OSMEDIUM,
-    fontSize: 14,
+    fontSize: 18,
     color: Colors.dark.white,
     textAlign: "center",
   },

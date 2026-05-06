@@ -20,7 +20,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useProfile } from "hooks/UserHooks/useProfile";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
@@ -46,6 +46,8 @@ export default function ProfileScreen() {
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const hasLoadedProfileRef = useRef(false);
+  const lastLoadedUserIdRef = useRef<number | null>(null);
 
   const {
     isLoading,
@@ -95,6 +97,8 @@ export default function ProfileScreen() {
 
   const signOut = async () => {
     try {
+      hasLoadedProfileRef.current = false;
+      lastLoadedUserIdRef.current = null;
       clearFavorites();
       resetProfile();
       await logout();
@@ -110,19 +114,36 @@ export default function ProfileScreen() {
       let isActive = true;
 
       const initialize = async () => {
-        if (!isActive) return;
-        const loadedUserId = await loadProfile();
-        if (!isActive) return;
+        let activeUserId = currentUserId;
 
-        await loadFavorites(loadedUserId);
-        if (!isActive) return;
+        if (
+          !hasLoadedProfileRef.current ||
+          !activeUserId ||
+          activeUserId !== lastLoadedUserIdRef.current
+        ) {
+          const loadedUserId = await loadProfile();
+          if (!isActive) return;
+
+          activeUserId = loadedUserId;
+          hasLoadedProfileRef.current = Boolean(loadedUserId);
+        }
+
+        if (
+          activeUserId &&
+          activeUserId !== lastLoadedUserIdRef.current
+        ) {
+          await loadFavorites(activeUserId);
+          if (!isActive) return;
+
+          lastLoadedUserIdRef.current = activeUserId;
+        }
 
         if (shouldRestore && targetUserId) {
           clearRestore();
           openModal(
             type,
             targetUserId,
-            loadedUserId ? String(loadedUserId) : undefined,
+            activeUserId ? String(activeUserId) : undefined,
           );
         }
 
@@ -138,6 +159,7 @@ export default function ProfileScreen() {
         isActive = false;
       };
     }, [
+      currentUserId,
       loadProfile,
       loadFavorites,
       shouldRestore,
@@ -164,22 +186,33 @@ export default function ProfileScreen() {
     });
   }, [navigation, router, username]);
 
-  const favoriteTeamsWithLeague = favorites
-    .map((fav) => {
-      const [league, id] = fav.split(":");
-      let team;
-      if (league === "NBA") team = teams.find((t) => String(t.id) === id);
-      if (league === "WNBA") team = wnbaTeams.find((t) => String(t.id) === id);
-      if (league === "NFL") team = nflTeams.find((t) => String(t.id) === id);
-      if (league === "CFB") team = cfbTeams.find((t) => String(t.id) === id);
-      if (league === "CBB") team = cbbTeams.find((t) => String(t.id) === id);
-      if (league === "WCBB") team = cbbTeams.find((t) => String(t.wid) === id);
-      if (league === "MLB") team = mlbTeams.find((t) => String(t.id) === id);
-      if (league === "NHL") team = nhlTeams.find((t) => String(t.id) === id);
-      if (!team) return null;
-      return { ...team, league: league as any };
-    })
-    .filter(Boolean);
+  const favoriteTeamsWithLeague = useMemo(
+    () =>
+      favorites
+        .map((fav) => {
+          const [league, id] = fav.split(":");
+          let team;
+          if (league === "NBA") team = teams.find((t) => String(t.id) === id);
+          if (league === "WNBA")
+            team = wnbaTeams.find((t) => String(t.id) === id);
+          if (league === "NFL")
+            team = nflTeams.find((t) => String(t.id) === id);
+          if (league === "CFB")
+            team = cfbTeams.find((t) => String(t.id) === id);
+          if (league === "CBB")
+            team = cbbTeams.find((t) => String(t.id) === id);
+          if (league === "WCBB")
+            team = cbbTeams.find((t) => String(t.wid) === id);
+          if (league === "MLB")
+            team = mlbTeams.find((t) => String(t.id) === id);
+          if (league === "NHL")
+            team = nhlTeams.find((t) => String(t.id) === id);
+          if (!team) return null;
+          return { ...team, league: league as any };
+        })
+        .filter(Boolean),
+    [favorites],
+  );
 
   if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
 

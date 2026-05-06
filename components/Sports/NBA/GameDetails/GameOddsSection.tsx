@@ -1,54 +1,71 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useUpcomingOdds } from "hooks/useUpcomingOdds";
+import { OddsLeague, useUpcomingOdds } from "hooks/useUpcomingOdds";
 import { View } from "react-native";
 import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
 import { GameOddsSectionProps } from "types/odds";
 import OddsSkeleton from "../../../Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "./OddsCard";
-import { usePreferences } from "contexts/PreferencesContext";
+
+type Props = GameOddsSectionProps & {
+  league?: OddsLeague;
+  isDark: boolean;
+  awayLogo: any;
+  homeLogo: any;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
+  gameStatusDescription: string;
+};
 
 export default function GameOddsSection({
   date,
   homeCode,
   awayCode,
-}: GameOddsSectionProps) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
+  awayLogo,
+  homeLogo,
+  league = "nba",
+  isDark = false,
+  gameStatusDescription,
+}: Props) {
   const styles = gameOddsStyles(isDark);
 
-  // --- Upcoming odds ---
   const {
     data: upcomingOdds = [],
-    loading: upcomingLoading,
+    loading,
     error,
   } = useUpcomingOdds({
-    timestamp: date,
+    league,
     team1: awayCode,
     team2: homeCode,
+    timestamp: date,
+    includeTimestamp: false,
   });
 
-  const loading = upcomingLoading;
-
-  // Prefer upcoming odds, fallback to historical
-  const oddsToRender = upcomingOdds;
-
-  // ❌ Nothing to show
-  if (!loading && oddsToRender.length === 0) {
+  if (!loading && upcomingOdds.length === 0) {
     return null;
   }
 
-  // ⏳ Single skeleton
   if (loading) {
     return <OddsSkeleton />;
   }
+
+  if (gameStatusDescription === "Final") return null;
 
   return (
     <View>
       <HeadingTwo isDark={isDark}>Betting Odds</HeadingTwo>
 
       <View style={styles.wrapper}>
-        {oddsToRender.map((game) => (
-          <OddsCard key={game.id} league="nba" game={game} error={error} />
+        {upcomingOdds.map((game) => (
+          <OddsCard
+            key={game.id}
+            game={game}
+            awayLogo={awayLogo}
+            homeLogo={homeLogo}
+            awayCode={awayCode}
+            homeCode={homeCode}
+            error={error}
+            isDark={isDark}
+          />
         ))}
       </View>
     </View>

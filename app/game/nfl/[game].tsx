@@ -28,6 +28,8 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 
+ const LEAGUE = "NFL";
+
 export default function NFLGameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game: gameParam } = useLocalSearchParams();
@@ -164,7 +166,7 @@ export default function NFLGameDetailsScreen() {
           homeLogo={headerHomeLogo}
           awayLogo={headerAwayLogo}
           isNeutralSite={neutralSite}
-          league="NFL"
+          league={LEAGUE}
         />
       ),
     });
@@ -213,7 +215,7 @@ export default function NFLGameDetailsScreen() {
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
-        {/* Teams & Score Section */}
+    
         <NFLGameHeader
           headlineText={headline}
           home={homeTeam}
@@ -237,7 +239,7 @@ export default function NFLGameDetailsScreen() {
           gameStatusShortDetail={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
           redzone={redzone}
-          league="nfl"
+          league={"nfl"}
         />
 
         {!dontShowDetails && (
@@ -267,22 +269,22 @@ export default function NFLGameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
-            {(inProgress || isHalftime) && (
-              <PlayByPlayField
-                lastPlay={lastPlay}
-                firstDownYardLine={undefined}
-                possessionTeamId={possessionTeamId}
-                homeTeamId={Number(homeTeam.id)}
-                awayTeamId={Number(awayTeam.id)}
-              />
-            )}
+            <PlayByPlayField
+              lastPlay={lastPlay}
+              firstDownYardLine={undefined}
+              possessionTeamId={possessionTeamId}
+              homeTeamId={Number(homeTeam.id)}
+              awayTeamId={Number(awayTeam.id)}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <GameLeaders
               gameId={String(parsedGame.game.id)}
               homeTeamId={String(homeTeam.id)}
               awayTeamId={String(awayTeam.id)}
-              league="NFL"
+              league={LEAGUE}
               isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <TeamDrives
@@ -299,7 +301,7 @@ export default function NFLGameDetailsScreen() {
               homeTeamId={Number(homeTeam?.espnID)}
               awayTeamId={Number(awayTeam?.espnID)}
               isDark={isDark}
-              league="NFL"
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
 
@@ -315,7 +317,7 @@ export default function NFLGameDetailsScreen() {
                 games: awayLastGames.games,
               }}
               isDark={isDark}
-              league="NFL"
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -354,10 +356,12 @@ export default function NFLGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <GameLiveChatOverlay
-        gameId={String(parsedGame.game.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame.game.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

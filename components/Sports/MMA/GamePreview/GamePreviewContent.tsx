@@ -34,8 +34,6 @@ export default function GamePreviewContent({
           venueCapacity={resolvedVenueCapacity}
           venueAttendance={undefined}
           weather={weather}
-          loading={false}
-          error={null}
           isDark
         />
       </View>

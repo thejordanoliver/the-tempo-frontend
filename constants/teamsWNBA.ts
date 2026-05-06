@@ -39,7 +39,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1775410994/arenas/basketball/gateway-center-arena.jpg",
     venueCapacity: "3,500",
-    established: "2008",
+    established: 2008,
     isAllStar: false,
     isActive: true,
   },
@@ -60,7 +60,7 @@ export const wnbaTeams: NBATeam[] = [
     venueName: "Wintrust Arena",
     venueImage: undefined,
     venueCapacity: "10,387",
-    established: "2006",
+    established: 2006,
     isAllStar: false,
     isActive: true,
   },
@@ -69,7 +69,7 @@ export const wnbaTeams: NBATeam[] = [
     espnID: 18,
     name: "Sun",
     fullName: "Connecticut Sun",
-    code: "CON",
+    code: "CONN",
     color: "#f05023",
     secondaryColor: "#0a2240",
     logo: SunLogo,
@@ -82,7 +82,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774671887/arenas/basketball/mohegan-sun-arena.jpg",
     venueCapacity: "10,000",
-    established: "1999",
+    established: 1999,
     isAllStar: false,
     isActive: true,
   },
@@ -104,7 +104,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1775411537/arenas/basketball/college-park-center.jpg",
     venueCapacity: "7,000",
-    established: "1998",
+    established: 1998,
     isAllStar: false,
     isActive: true,
   },
@@ -126,7 +126,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/warriors.jpg",
     venueCapacity: "18,064",
-    established: "2023",
+    established: 2023,
     isAllStar: false,
     isActive: true,
   },
@@ -148,7 +148,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/pacers.jpg",
     venueCapacity: "17,923",
-    established: "2000",
+    established: 2000,
     isAllStar: false,
     isActive: true,
   },
@@ -170,7 +170,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1775411686/arenas/basketball/michelob-ultra-arena.jpg",
     venueCapacity: "12,000",
-    established: "1997",
+    established: 1997,
     isAllStar: false,
     isActive: true,
   },
@@ -192,7 +192,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/lakers.jpg",
     venueCapacity: "19,079",
-    established: "1997",
+    established: 1997,
     isAllStar: false,
     isActive: true,
   },
@@ -214,7 +214,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/timberwolves.jpg",
     venueCapacity: "18,798",
-    established: "1999",
+    established: 1999,
     isAllStar: false,
     isActive: true,
   },
@@ -236,7 +236,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/nets.jpg",
     venueCapacity: "17,732",
-    established: "1997",
+    established: 1997,
     isAllStar: false,
     isActive: true,
   },
@@ -258,7 +258,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/suns.jpg",
     venueCapacity: "18,422",
-    established: "1997",
+    established: 1997,
     isAllStar: false,
     isActive: true,
   },
@@ -280,7 +280,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680186/arenas/basketball/trail-blazers.jpg",
     venueCapacity: "19,441",
-    established: "2000",
+    established: 2000,
     isAllStar: false,
     isActive: true,
   },
@@ -302,7 +302,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1775412019/arenas/basketball/climate-pledge-arena.jpg",
     venueCapacity: "18,100",
-    established: "2000",
+    established: 2000,
     isAllStar: false,
     isActive: true,
   },
@@ -324,7 +324,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/raptors.jpg",
     venueCapacity: "19,800",
-    established: "2023",
+    established: 2023,
     isAllStar: false,
     isActive: true,
   },
@@ -346,7 +346,7 @@ export const wnbaTeams: NBATeam[] = [
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/wizards.jpg",
     venueCapacity: "20,356",
-    established: "1998",
+    established: 1998,
     isAllStar: false,
     isActive: true,
   },
@@ -367,7 +367,7 @@ export const wnbaTeams: NBATeam[] = [
     venueName: "Toyota Gymnasium",
     venueImage: "YOUR_IMAGE_URL",
     venueCapacity: "Unknown",
-    established: "1961",
+    established: 1961,
     isAllStar: false,
     isActive: false,
   },

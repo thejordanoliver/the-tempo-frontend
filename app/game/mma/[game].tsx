@@ -1,8 +1,10 @@
-import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
-import { GameLocation } from "components/Sports/NBA/GameDetails";
+import {
+  GameLocation,
+  GameOddsSection,
+} from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { getNeutralVenue } from "constants/neutralVenues";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -18,6 +20,8 @@ import { emptyFighter, MMAFight } from "types/mma";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
+ const LEAGUE = "NHL";
+ 
 export default function GameDetailsScreen() {
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
@@ -69,7 +73,6 @@ export default function GameDetailsScreen() {
 
   const secondFighterLastName =
     parsedGame?.fighters?.second?.info?.last_name ?? "";
-  parsedGame?.fighters?.first?.logo ?? placeholderImage;
 
   const firstFighterEspnId = parsedGame?.fighters?.first?.info?.espn_id;
   const secondFighterEspnId = parsedGame?.fighters?.second?.info?.espn_id;
@@ -101,7 +104,7 @@ export default function GameDetailsScreen() {
           firstFighterId={firstFighterId}
           secondFighterId={secondFighterId}
           isNeutralSite
-          league={"MMA"}
+          league={LEAGUE}
         />
       ),
     });
@@ -119,7 +122,8 @@ export default function GameDetailsScreen() {
   const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
   const firstFighterRecord = parsedGame?.fighters?.first?.info?.record;
   const secondFighterRecord = parsedGame?.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description;
+  const gameStatusDescription = details?.fight?.status.description ?? "";
+  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -183,6 +187,19 @@ export default function GameDetailsScreen() {
         />
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
+            <GameOddsSection
+              date={parsedGame?.date ?? ""}
+              homeId={firstFighterId}
+              awayId={secondFighterId}
+              gameDate={formattedDate}
+              homeCode={firstFighterName}
+              awayCode={secondFighterName}
+              homeLogo={""}
+              awayLogo={""}
+              league={"mma"}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}
@@ -190,17 +207,17 @@ export default function GameDetailsScreen() {
               address={venueAddress}
               venueCapacity={venueCapacity}
               weather={weather}
-              loading={weatherLoading}
-              error={weatherError}
               isDark={isDark}
             />
           </View>
         )}
       </ScrollView>
-      <GameLiveChatOverlay
-        gameId={String(parsedGame?.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame?.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

@@ -211,7 +211,7 @@ export default function FanPredictionVote({
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  if (gameStatusDescription === "Scheduled") return null;
+  if (gameStatusDescription === "Final") return null;
 
   if (error)
     return (

@@ -78,7 +78,7 @@ export default function GameDetailsScreen() {
   const gameId = id ? String(id) : "";
 
   const gameDateObj = useMemo(() => {
-    if (!date) return new Date(); // fallback to now
+    if (!date) return new Date();
     const d = new Date(date);
     return isNaN(d.getTime()) ? new Date() : d;
   }, [date]);
@@ -137,9 +137,6 @@ export default function GameDetailsScreen() {
   // --- Live details and status ---
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -180,6 +177,7 @@ export default function GameDetailsScreen() {
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const homeFoulPlayers =
     liveScore?.foulTrouble
       ?.find((t) => String(t.team?.id) === String(homeEspnId))
@@ -369,11 +367,15 @@ export default function GameDetailsScreen() {
                 date={date ?? ""}
                 homeId={homeTeamId}
                 awayId={awayTeamId}
-                gameDate={gameDate}
+                gameDate={formattedDate}
                 homeCode={homeCode}
                 awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                league={"nba"}
+                isDark={isDark}
+                gameStatusDescription={gameStatusDescription}
               />
-
               <LineScore
                 linescore={lineScore}
                 homeCode={homeCode}
@@ -394,9 +396,9 @@ export default function GameDetailsScreen() {
 
               <PlayersInFoulTrouble
                 homeId={String(homeEspnId)}
+                awayId={String(awayEspnId)}
                 homeCode={homeCode}
                 homeLogo={homeLogo}
-                awayId={String(awayEspnId)}
                 awayCode={awayCode}
                 awayLogo={awayLogo}
                 homePlayers={homeFoulPlayers}
@@ -489,10 +491,12 @@ export default function GameDetailsScreen() {
           )}
         </View>
       </ScrollView>
-      <GameLiveChatOverlay
-        gameId={String(parsedGame.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

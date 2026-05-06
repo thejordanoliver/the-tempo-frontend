@@ -11,17 +11,6 @@ type PlayerLeader = {
   leaderStat?: { value: number };
 };
 
-type displayeValue = {
-  isHome: boolean;
-  record: string;
-  score: number;
-  status: boolean;
-  isFinal: boolean;
-  winner: boolean;
-  height: number;
-  width: number;
-};
-
 export function getTopLeaders<T extends PlayerLeader>(
   players: T[],
   isExpanded: boolean,
@@ -62,15 +51,36 @@ export default function displayeValue(
   const styles = gameWidgetStyles(isDark, height, width);
 
   if (isHome === true && status === true) {
-    return <Text style={styles.homeRecord}>{record}</Text>;
+    return (
+      <Text
+        style={styles.homeRecord}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
+      >
+        {record}
+      </Text>
+    );
   }
   if (isHome === false && status === true) {
-    return <Text style={styles.awayRecord}>{record}</Text>;
+    return (
+      <Text
+        style={styles.awayRecord}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
+      >
+        {record}
+      </Text>
+    );
   }
   if (isHome === true && status === false) {
     return (
       <Text
         style={[styles.homeScore, isFinal && { opacity: winner ? 1 : 0.5 }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
       >
         {score}
       </Text>
@@ -79,6 +89,9 @@ export default function displayeValue(
     return (
       <Text
         style={[styles.awayScore, isFinal && { opacity: winner ? 1 : 0.5 }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.85}
       >
         {score}
       </Text>

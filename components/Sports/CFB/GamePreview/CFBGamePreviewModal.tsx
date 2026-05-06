@@ -1,4 +1,3 @@
-// ./NFL/GamePreview/NFLGamePreviewModal.tsx
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
@@ -101,7 +100,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
   const headlineText = details?.headline;
   const isChampionship = headlineText?.includes("National Championship");
   const styles = gamePreviewModalStyle(isChampionship);
-  const gameStatusDescription = score?.gameStatusDescription;
+  const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -216,7 +215,6 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
             <>
               {headline && <Text style={styles.headlineText}>{headline}</Text>}
 
-              {/* HEADER */}
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
                   team={away}
@@ -260,7 +258,6 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
                 />
               </View>
 
-              {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
                   game={game}

@@ -1,5 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useState } from "react";
 import { LayoutChangeEvent, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
@@ -20,12 +21,15 @@ type MLBLastPlay = {
 
 type LastPlayProps = {
   lastPlay?: string | MLBLastPlay;
+  gameStatusDescription: string;
 };
 
-export default function LastPlay({ lastPlay }: LastPlayProps) {
+export default function LastPlay({
+  lastPlay,
+  gameStatusDescription,
+}: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
@@ -73,7 +77,12 @@ export default function LastPlay({ lastPlay }: LastPlayProps) {
     return defaultColor;
   };
 
-  if (!currentPlay) return null;
+  if (
+    !currentPlay ||
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Final"
+  )
+    return null;
 
   if (typeof currentPlay === "string") {
     return (

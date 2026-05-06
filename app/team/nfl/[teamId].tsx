@@ -8,7 +8,7 @@ import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getNFLTeam } from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -29,10 +29,11 @@ export default function TeamDetailScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
-  const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const team = getNFLTeam(teamIdNum ?? 0);
+  const { teamId } = useLocalSearchParams();
+  const teamIdNum = Number(teamId);
+  const team = getNFLTeam(teamIdNum);
+  const teamLogo = getNFLTeamLogo(teamIdNum, true);
   const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -85,7 +86,7 @@ export default function TeamDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           teamId={team?.id}
-          logo={team?.logoLight || team?.logo}
+          logo={teamLogo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}

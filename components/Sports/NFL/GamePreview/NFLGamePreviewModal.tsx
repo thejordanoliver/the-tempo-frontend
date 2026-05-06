@@ -2,7 +2,6 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
-
 import { getNeutralStadium } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -105,7 +104,7 @@ export default function NFLGamePreviewModal({ game, visible, onClose }: Props) {
   const headlineText = details?.headline;
   const isChampionship = game.game.week === "Super Bowl";
   const styles = gamePreviewModalStyle(isChampionship);
-  const gameStatusDescription = score?.gameStatusDescription;
+  const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";

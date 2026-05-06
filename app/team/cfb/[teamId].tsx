@@ -8,7 +8,7 @@ import { Roster } from "components/Sports/CFB/Team/Roster";
 import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getCFBTeam } from "constants/teamsCFB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -23,16 +23,17 @@ import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 
 export default function TeamDetailScreen() {
+  const league = "CFB";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
-  const team = getCFBTeam(Number(teamIdNum));
+  const teamIdNum = Number(teamId);
+  const team = getCFBTeam(teamIdNum);
+  const teamLogo = getCFBTeamLogo(teamIdNum, true);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "CFB";
-  const favorited = team ? isFavorite(league, team.id) : false;
+  const favorited = team ? isFavorite(league, teamIdNum) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
@@ -58,7 +59,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum ?? 0, "2025", 2);
+  } = useFootballTeamGames(teamIdNum ?? 0, "2024", 2);
 
   // --- Refresh handler ---
   const handleRefresh = async () => {
@@ -82,7 +83,7 @@ export default function TeamDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           teamId={team?.id}
-          logo={team?.logoLight || team?.logo}
+          logo={teamLogo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}

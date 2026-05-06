@@ -29,9 +29,7 @@ function parseGameDate(raw: any) {
   return new Date(raw);
 }
 
-/* ------------------------------------------------------------------ */
-/* Screen                                                             */
-/* ------------------------------------------------------------------ */
+const LEAGUE = "SL";
 
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
@@ -276,7 +274,7 @@ export default function GameDetailsScreen() {
       />
 
       {!dontShowDetails && (
-        <View style={{ gap: 20, marginTop: 20 }}>
+        <View style={styles.innerContainer}>
           <LastPlay
             lastPlay={lastPlay}
             gameStatusDescription={gameStatusDescription}
@@ -284,8 +282,8 @@ export default function GameDetailsScreen() {
 
           <LineScore
             linescore={lineScore}
-            homeCode={homeTeam.code ?? ""}
-            awayCode={awayTeam.code ?? ""}
+            homeCode={homeTeam.code}
+            awayCode={awayTeam.code}
             isDark={isDark}
             gameStatusDescription={gameStatusDescription}
           />
@@ -303,7 +301,7 @@ export default function GameDetailsScreen() {
             playerStats={playerStats}
             homeTeamId={Number(homeEspnId)}
             awayTeamId={Number(awayEspnId)}
-            league={"SL"}
+            league={LEAGUE}
             isDark={isDark}
             gameStatusDescription={gameStatusDescription}
           />
@@ -311,7 +309,7 @@ export default function GameDetailsScreen() {
           <HighlightVideoList highlights={highlights} isDark={isDark} />
 
           <Officials
-            officials={officials ?? []}
+            officials={officials}
             gameStatusDescription={gameStatusDescription}
             isDark={isDark}
           />

@@ -69,7 +69,7 @@ export default function GameDetailsScreen() {
   const isWomen =
     String(gameObj?.league?.id) === "423" ||
     gameObj?.league?.name === "Women's College Basketball";
-  const league = isWomen ? "WCBB" : "CBB";
+  const LEAGUE = isWomen ? "WCBB" : "CBB";
 
   /* ---------------- Teams ---------------- */
 
@@ -128,9 +128,6 @@ export default function GameDetailsScreen() {
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -246,7 +243,7 @@ export default function GameDetailsScreen() {
           homeTeamCode={homeName}
           awayTeamCode={awayName}
           isNeutralSite={!!neutralSite}
-          league={league}
+          league={LEAGUE}
         />
       ),
     });
@@ -309,7 +306,7 @@ export default function GameDetailsScreen() {
               linescore={lineScore}
               awayCode={awayName ?? ""}
               homeCode={homeName ?? ""}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -366,7 +363,7 @@ export default function GameDetailsScreen() {
               awayLogo={awayLogo}
               homePlayers={homeFoulPlayers}
               awayPlayers={awayFoulPlayers}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -376,20 +373,20 @@ export default function GameDetailsScreen() {
               homeTeamId={String(homeEspnId)}
               awayTeamId={String(awayEspnId)}
               neutralSite={neutralSite}
-              league={league}
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
 
             <GameSummary
               plays={plays ?? []}
-              league={league}
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
 
             <GameTeamStats
               stats={teamStats}
               gameStatusDescription={gameStatusDescription}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
             />
 
@@ -397,7 +394,7 @@ export default function GameDetailsScreen() {
               playerStats={playerStats}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -406,7 +403,7 @@ export default function GameDetailsScreen() {
               playerStats={playerStats}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -423,13 +420,13 @@ export default function GameDetailsScreen() {
                 games: homeLastGames,
               }}
               isDark={isDark}
-              league={league}
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
 
             <Officials
-              officials={officials ?? []}
+              officials={officials}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -448,10 +445,12 @@ export default function GameDetailsScreen() {
         )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(gameObj?.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(gameObj.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

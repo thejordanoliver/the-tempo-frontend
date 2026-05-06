@@ -2,23 +2,43 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { useRouter } from "expo-router";
 import { NewsArticle, useAllNews } from "hooks/NewsHooks/useAllNews";
-import { ReactNode } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ExploreWidgetSize } from "types/widgets";
+import { WidgetEditControls } from "./WidgetSlider";
 
 type NewsWidgetProps = {
   isDark: boolean;
   size?: ExploreWidgetSize;
   containerWidth?: number;
   containerHeight?: number;
-  controls?: ReactNode;
-  onRemove?: () => void;
+  widgetId?: string;
+  widgetSize?: ExploreWidgetSize;
+  isEditing?: boolean;
+  availableSizeOptions?: ExploreWidgetSize[];
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget?: (widgetId: string) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
 };
 
 const rowsBySize: Record<ExploreWidgetSize, number> = {
   small: 2,
   medium: 4,
   large: 6,
+};
+
+const articlesBySize: Record<ExploreWidgetSize, number> = {
+  small: 8,
+  medium: 12,
+  large: 18,
 };
 
 const getNewsLayout = ({
@@ -43,16 +63,15 @@ const getNewsLayout = ({
   }
 
   const verticalPadding = compact ? 20 : 28;
-  const headerHeight = compact ? 20 : 34;
-  const cardGap = compact ? 9 : 12;
-  const availableListHeight =
-    containerHeight - verticalPadding - headerHeight - cardGap;
+  const availableListHeight = containerHeight - verticalPadding;
   const rowsThatFit = Math.floor(
     (availableListHeight + rowGap) / (defaultRowHeight + rowGap),
   );
   const rowCount = Math.max(1, Math.min(preferredRows, rowsThatFit));
-  const rowHeight =
-    (availableListHeight - rowGap * (rowCount - 1)) / rowCount;
+  const rowHeight = Math.max(
+    compact ? 48 : 56,
+    (availableListHeight - rowGap * (rowCount - 1)) / rowCount,
+  );
 
   return {
     rowCount,
@@ -63,6 +82,7 @@ const getNewsLayout = ({
 
 const formatDate = (published?: string) => {
   if (!published) return "";
+
   const date = new Date(published);
   if (Number.isNaN(date.getTime())) return "";
 
@@ -108,17 +128,24 @@ function NewsRow({
           />
         </View>
       )}
+
       <View style={styles.newsBody}>
         <Text style={styles.headline} numberOfLines={2}>
           {article.headline}
         </Text>
+
         <View style={styles.metaRow}>
-          {article.byline && (
+          {article.byline ? (
             <Text style={styles.metaText} numberOfLines={1}>
               {article.byline}
             </Text>
+          ) : (
+            <View style={styles.metaSpacer} />
           )}
-          <Text style={styles.metaText}>{formatDate(article.published)}</Text>
+
+          <Text style={styles.metaText} numberOfLines={1}>
+            {formatDate(article.published)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -130,56 +157,41 @@ export default function NewsWidget({
   size = "medium",
   containerWidth,
   containerHeight,
-  controls,
-  onRemove,
+  widgetId,
+  widgetSize = size,
+  isEditing = false,
+  availableSizeOptions,
+  onResizeWidget,
+  onRemoveWidget,
+  onMoveWidget,
+  canMoveUp,
+  canMoveDown,
 }: NewsWidgetProps) {
   const compact =
     size === "small" || (containerWidth != null && containerWidth < 240);
-  const { rowCount, rowHeight, rowGap } = getNewsLayout({
+
+  const { rowHeight, rowGap } = getNewsLayout({
     size,
     compact,
     containerHeight,
   });
+
   const styles = newsWidgetStyles(isDark, compact, rowHeight, rowGap);
-  const { articles, loading, error, refresh } = useAllNews(6);
+  const { articles, loading, error, refresh } = useAllNews(
+    articlesBySize[size],
+  );
+  const showActions = isEditing && widgetId != null;
 
   return (
     <View
-      style={[styles.card, containerHeight ? { height: containerHeight } : null]}
+      style={[
+        styles.card,
+        containerHeight ? { height: containerHeight } : null,
+      ]}
     >
-      <View style={styles.header}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.title} numberOfLines={1}>
-            Trending News
-          </Text>
-          {!compact && (
-            <Text style={styles.subtitle}>Latest stories across sports</Text>
-          )}
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity activeOpacity={0.85} onPress={refresh}>
-            <Ionicons
-              name="refresh"
-              size={17}
-              color={isDark ? Colors.lightGray : Colors.darkGray}
-            />
-          </TouchableOpacity>
-          {controls}
-          {onRemove && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={onRemove}
-              style={styles.removeButton}
-            >
-              <Ionicons
-                name="close"
-                size={16}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
+      <Text style={styles.heading} numberOfLines={1}>
+        Latest News
+      </Text>
 
       {loading ? (
         <View style={styles.stateCard}>
@@ -188,14 +200,27 @@ export default function NewsWidget({
       ) : error ? (
         <View style={styles.stateCard}>
           <Text style={styles.errorText}>Failed to load news</Text>
+
+          <TouchableOpacity activeOpacity={0.85} onPress={refresh}>
+            <Text style={styles.retryText}>Retry</Text>
+          </TouchableOpacity>
         </View>
       ) : articles.length === 0 ? (
         <View style={styles.stateCard}>
           <Text style={styles.stateText}>No stories available.</Text>
         </View>
       ) : (
-        <View style={styles.newsList}>
-          {articles.slice(0, rowCount).map((article) => (
+        <ScrollView
+          style={styles.newsScroll}
+          contentContainerStyle={[
+            styles.newsScrollContent,
+            showActions && styles.newsScrollContentEditing,
+          ]}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
+          bounces
+        >
+          {articles.map((article) => (
             <NewsRow
               key={article.keyId ?? String(article.id)}
               article={article}
@@ -204,7 +229,22 @@ export default function NewsWidget({
               rowHeight={rowHeight}
             />
           ))}
-        </View>
+        </ScrollView>
+      )}
+
+      {showActions && widgetId && (
+        <WidgetEditControls
+          isDark={isDark}
+          widgetId={widgetId}
+          widgetSize={widgetSize}
+          availableSizeOptions={availableSizeOptions}
+          onResizeWidget={onResizeWidget}
+          onRemoveWidget={onRemoveWidget}
+          onMoveWidget={onMoveWidget}
+          canMoveUp={canMoveUp}
+          canMoveDown={canMoveDown}
+          compact={compact}
+        />
       )}
     </View>
   );
@@ -220,53 +260,29 @@ const newsWidgetStyles = (
     card: {
       borderRadius: 8,
       padding: compact ? 10 : 14,
-      gap: compact ? 9 : 12,
       overflow: "hidden",
       borderColor: Colors.midTone,
       borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      position: "relative",
     },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 8,
-    },
-    titleWrap: {
-      flex: 1,
-      minWidth: 0,
-    },
-    headerActions: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: compact ? 8 : 12,
-    },
-    title: {
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: compact ? 15 : 18,
+    heading: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: compact ? 14 : 18,
       color: isDark ? Colors.white : Colors.black,
+      marginBottom: compact ? 8 : 10,
     },
-    subtitle: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    removeButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    newsList: {
+    newsScroll: {
       flex: 1,
       minHeight: 0,
-      gap: rowGap ?? (compact ? 8 : 10),
+    },
+    newsScrollContent: {
+      paddingBottom: compact ? 2 : 4,
+    },
+    newsScrollContentEditing: {
+      paddingBottom: compact ? 48 : 56,
     },
     newsRow: {
       height: rowHeight,
@@ -294,6 +310,7 @@ const newsWidgetStyles = (
     newsBody: {
       flex: 1,
       gap: 5,
+      minWidth: 0,
     },
     headline: {
       fontFamily: Fonts.OSMEDIUM,
@@ -304,6 +321,7 @@ const newsWidgetStyles = (
     metaRow: {
       flexDirection: "row",
       justifyContent: "space-between",
+      alignItems: "center",
       gap: 6,
     },
     metaText: {
@@ -312,10 +330,15 @@ const newsWidgetStyles = (
       fontSize: compact ? 10 : 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
+    metaSpacer: {
+      flex: 1,
+    },
     stateCard: {
+      flex: 1,
       minHeight: 76,
       justifyContent: "center",
       alignItems: "center",
+      gap: 8,
     },
     stateText: {
       fontFamily: Fonts.OSREGULAR,
@@ -326,5 +349,10 @@ const newsWidgetStyles = (
       fontFamily: Fonts.OSREGULAR,
       fontSize: 13,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    retryText: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

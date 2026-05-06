@@ -100,114 +100,8 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       fontSize: 14,
       color: isDark ? Colors.black : Colors.white,
     },
-    headerRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    dashboardTitle: {
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: 22,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    dashboardSubtitle: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    iconBtn: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
     section: {
-      gap: 10,
-    },
-    sectionHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-      gap: 10,
-    },
-    headerActions: {
-      flexDirection: "row",
-      alignItems: "center",
-      flexShrink: 0,
-      gap: 8,
-    },
-    widgetControls: {
-      flexDirection: "row",
-      alignItems: "center",
-      flexWrap: "wrap",
-      gap: 6,
-    },
-    sizeControls: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 3,
-    },
-    sizeButton: {
-      width: 24,
-      height: 24,
-      borderRadius: 5,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    sizeButtonSelected: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-    },
-    sizeButtonText: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 10,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    sizeButtonTextSelected: {
-      color: isDark ? Colors.black : Colors.white,
-    },
-    iconAction: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    iconActionDisabled: {
-      opacity: 0.35,
-    },
-    removeButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    sectionTitle: {
       flex: 1,
-      minWidth: 0,
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: 17,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    sectionSubtitle: {
-      marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     placeholderCard: {
       borderRadius: 8,
@@ -218,6 +112,8 @@ export const widgetDashboardStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      position: "relative",
+      overflow: "hidden",
     },
     loadingCard: {
       minHeight: 84,
@@ -236,12 +132,6 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? "#7a2d2d" : "#f2b8b8",
     },
-    placeholderHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 10,
-    },
     placeholderTitle: {
       flex: 1,
       fontFamily: Fonts.OSMEDIUM,
@@ -253,15 +143,5 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       fontSize: 13,
       lineHeight: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    badge: {
-      overflow: "hidden",
-      borderRadius: 4,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 10,
-      color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
     },
   });

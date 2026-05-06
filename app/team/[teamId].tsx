@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -10,7 +9,7 @@ import Roster from "components/Sports/NBA/Team/Roster";
 import RosterStats from "components/Sports/NBA/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getNBATeam } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -25,13 +24,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { User } from "types/user";
-import {
-  getGameCountByMonth,
-  getMonthsToShow,
-  getNBASeason,
-  scrollToMonth,
-} from "utils/dateUtils";
+import { getNBASeason, scrollToMonth } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "NBA";
@@ -42,20 +35,23 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
-  const teamIdNum = parseInt(teamIdStr);
+  const teamIdNum = parseInt(teamIdStr, 10);
+  const team = getNBATeam(teamIdNum);
+  const teamLogo = getTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
-  const team = getNBATeam(teamIdNum);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tabToIndex(tab));
   };
-  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
-  const indexToTab = (index: number) => tabs[index];
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
@@ -67,26 +63,12 @@ export default function TeamDetailScreen() {
   } = useLeaguesNews(10, league);
 
   const {
-    games: teamGames,
+    games: selectedMonthGames,
+    gamesByMonth,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum.toString());
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const jsonUser = await AsyncStorage.getItem("loggedInUser");
-        if (jsonUser) {
-          const userData = JSON.parse(jsonUser);
-          setLoggedInUser(userData);
-        }
-      } catch (e) {
-        console.error("Failed to load user:", e);
-      }
-    };
-    loadUser();
-  }, []);
+  } = useTeamGames(teamIdNum.toString(), getNBASeason(), selectedDate);
 
   const {
     teamRoster,
@@ -102,29 +84,35 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats(teamIdNum);
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+  } = usePlayersByTeam(teamIdNum.toString());
 
-  const gameCountByMonth = useMemo(
-    () => getGameCountByMonth(teamGames, (g) => g.date),
-    [teamGames],
-  );
+  const gameCountByMonth = useMemo(() => {
+    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
+  }, [gamesByMonth]);
 
-  const monthsToShow = useMemo(
-    () => getMonthsToShow(teamGames, (g) => g.date),
-    [teamGames],
-  );
+  const monthsToShow = useMemo(() => {
+    return gamesByMonth.map((group) => ({
+      key: group.key,
+      year: group.year,
+      month: group.month,
+      label: group.label,
+      count: group.count,
+    }));
+  }, [gamesByMonth]);
 
   useEffect(() => {
     if (
       !gamesLoading &&
-      teamGames.length > 0 &&
+      gamesByMonth.length > 0 &&
       !selectedDate &&
       monthsToShow.length > 0
     ) {
       const today = new Date();
 
-      // Try to find a month that matches the current month/year
       const currentMonthWithGames = monthsToShow.find(
         ({ month, year }) =>
           month === today.getMonth() && year === today.getFullYear(),
@@ -134,53 +122,32 @@ export default function TeamDetailScreen() {
 
       setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
 
-      // Scroll to that month
       setTimeout(() => {
-        if (scrollViewRef.current) {
-          const index = monthsToShow.findIndex(
-            (m) =>
-              m.month === startingMonth.month && m.year === startingMonth.year,
-          );
-          const itemWidth = 70;
-          const spacing = 12;
-          const screenWidth = Dimensions.get("window").width;
-          const scrollToX =
-            index * itemWidth +
-            index * spacing -
-            screenWidth / 2 +
-            itemWidth / 2;
+        if (!scrollViewRef.current) return;
 
-          scrollViewRef.current.scrollTo({
-            x: Math.max(0, scrollToX),
-            animated: true,
-          });
-        }
+        const index = monthsToShow.findIndex(
+          (m) =>
+            m.month === startingMonth.month && m.year === startingMonth.year,
+        );
+
+        const itemWidth = 70;
+        const spacing = 12;
+        const screenWidth = Dimensions.get("window").width;
+        const scrollToX =
+          index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
+
+        scrollViewRef.current.scrollTo({
+          x: Math.max(0, scrollToX),
+          animated: true,
+        });
       }, 150);
     }
-  }, [gamesLoading, teamGames, selectedDate, monthsToShow]);
+  }, [gamesLoading, gamesByMonth, selectedDate, monthsToShow]);
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
     scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
   };
-
-  const {
-    players,
-    loading: playersLoading,
-    error: playersError,
-    refreshPlayers,
-  } = usePlayersByTeam(teamIdNum.toString());
-
-  const filteredGames = useMemo(() => {
-    if (!selectedDate) return [];
-    return teamGames.filter((game: any) => {
-      const gameDate = new Date(game.date);
-      return (
-        gameDate.getFullYear() === selectedDate.getFullYear() &&
-        gameDate.getMonth() === selectedDate.getMonth()
-      );
-    });
-  }, [selectedDate, teamGames]);
 
   const favorited = team ? isFavorite(league, team.id) : false;
 
@@ -189,8 +156,7 @@ export default function TeamDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           teamId={team?.id}
-          logo={team?.logo}
-          logoLight={team?.logoLight}
+          logo={teamLogo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}
@@ -201,7 +167,7 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [navigation, team, favorited]);
+  }, [navigation, team, favorited, toggleFavorite]);
 
   if (!team) {
     return (
@@ -215,6 +181,10 @@ export default function TeamDetailScreen() {
     setRefreshing(true);
 
     try {
+      if (selectedTab === "schedule") {
+        await refreshTeamGames();
+      }
+
       if (selectedTab === "news") {
         await refetch();
       }
@@ -253,12 +223,12 @@ export default function TeamDetailScreen() {
           </View>
 
           <GamesList
-            games={filteredGames}
+            games={selectedMonthGames}
             loading={gamesLoading}
             error={gamesError}
             refreshing={refreshing}
             onRefresh={refreshTeamGames}
-            expectedCount={filteredGames.length}
+            expectedCount={selectedMonthGames.length}
           />
         </View>
 
@@ -279,7 +249,7 @@ export default function TeamDetailScreen() {
               isDark={isDark}
               loading={newsLoading}
               error={newsError}
-              refreshing
+              refreshing={refreshing}
               onRefresh={handleRefresh}
             />
           </ScrollView>
@@ -302,7 +272,7 @@ export default function TeamDetailScreen() {
         <View key="stats" style={styles.contentArea}>
           <RosterStats
             rosterStats={teamRoster}
-            teamId={teamId as string}
+            teamId={teamIdStr}
             teamStats={teamStats}
             loading={rosterStatsLoading || teamStatsLoading}
             error={rosterStatsError || teamStatsError}
@@ -322,20 +292,17 @@ export default function TeamDetailScreen() {
 
         {/* Forum Page */}
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamId as string} league={league} />
+          <TeamForum teamId={teamIdStr} league={league} />
         </View>
       </PagerView>
 
-      {/* --- Bottom Sheet --- */}
-      {team && (
-        <TeamInfoModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={team.id}
-          league={league}
-          isDark={isDark}
-        />
-      )}
+      <TeamInfoModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        teamId={team.id}
+        league={league}
+        isDark={isDark}
+      />
     </View>
   );
 }

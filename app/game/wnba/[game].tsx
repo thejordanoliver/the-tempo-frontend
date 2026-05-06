@@ -5,7 +5,11 @@ import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
 import LastPlay from "components/Sports/CBB/GameDetails/LastPlay";
 import PlayersOnCourt from "components/Sports/CBB/GameDetails/PlayersOnCourt";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import {
+  GameLocation,
+  GameOddsSection,
+  LineScore,
+} from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
@@ -30,21 +34,15 @@ import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/basketball";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
-/* ------------------------------------------------------------------ */
-/* Helpers                                                            */
-/* ------------------------------------------------------------------ */
-interface ChatSendPayload {
-  text?: string;
-  gifUrl?: string;
-}
+
 function parseGameDate(raw: any) {
   if (!raw) return new Date();
   if (typeof raw === "number") return new Date(raw * 1000);
   return new Date(raw);
 }
+const LEAGUE = "WNBA";
 
 export default function GameDetailsScreen() {
-  const league = "WNBA";
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
   const navigation = useNavigation();
@@ -70,12 +68,19 @@ export default function GameDetailsScreen() {
 
   const homeTeamId = Number(gameObj?.teams?.home?.id);
   const awayTeamId = Number(gameObj?.teams?.away?.id);
-  const homeTeam = getWNBATeam(gameObj.teams.home.id);
-  const awayTeam = getWNBATeam(gameObj.teams.away.id);
+
+  const homeTeam = getWNBATeam(homeTeamId);
+  const awayTeam = getWNBATeam(awayTeamId);
+
+  const awayCode = useMemo(() => awayTeam?.code, [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code, [homeTeam?.code]);
+
   const homeLogo = getWNBATeamLogo(homeTeamId, isDark);
   const awayLogo = getWNBATeamLogo(awayTeamId, isDark);
+
   const homeName = homeTeam?.code;
   const awayName = awayTeam?.code;
+
   const homeHeaderLogo = getWNBATeamLogo(homeTeamId, true);
   const awayHeaderLogo = getWNBATeamLogo(awayTeamId, true);
 
@@ -240,7 +245,7 @@ export default function GameDetailsScreen() {
           homeTeamCode={homeName}
           awayTeamCode={awayName}
           isNeutralSite={!!neutralSite}
-          league={league}
+          league={LEAGUE}
         />
       ),
     });
@@ -291,20 +296,18 @@ export default function GameDetailsScreen() {
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            {!isFinal && !isScheduled && (
-              <LastPlay
-                lastPlay={lastPlay}
-                homeTeamId={homeEspnId}
-                awayTeamId={awayEspnId}
-                 gameStatusDescription={gameStatusDescription}
-              />
-            )}
+            <LastPlay
+              lastPlay={lastPlay}
+              homeTeamId={homeEspnId}
+              awayTeamId={awayEspnId}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <LineScore
               linescore={lineScore}
-              awayCode={awayName ?? ""}
-              homeCode={homeName ?? ""}
-              league={league}
+              awayCode={awayName}
+              homeCode={homeName}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -343,11 +346,25 @@ export default function GameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
+            <GameOddsSection
+              date={gameDateISO ?? ""}
+              homeId={homeTeamId}
+              awayId={awayTeamId}
+              gameDate={formattedDate}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              league={"wnba"}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
+
             <GameLeaders
               leaders={leaders}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={league}
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
               isDark={isDark}
             />
@@ -362,7 +379,7 @@ export default function GameDetailsScreen() {
                 awayLogo={awayLogo}
                 homePlayers={homeFoulPlayers}
                 awayPlayers={awayFoulPlayers}
-                league={league}
+                league={LEAGUE}
                 isDark={isDark}
                 gameStatusDescription={gameStatusDescription}
               />
@@ -373,20 +390,20 @@ export default function GameDetailsScreen() {
               homeTeamId={String(homeEspnId)}
               awayTeamId={String(awayEspnId)}
               neutralSite={neutralSite}
-              league={league}
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
 
             <GameSummary
               plays={plays ?? []}
-              league={league}
+              league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
 
             <GameTeamStats
               stats={teamStats}
               gameStatusDescription={gameStatusDescription}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
             />
 
@@ -394,7 +411,7 @@ export default function GameDetailsScreen() {
               playerStats={playerStats}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -403,7 +420,7 @@ export default function GameDetailsScreen() {
               playerStats={playerStats}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={league}
+              league={LEAGUE}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
             />
@@ -420,7 +437,7 @@ export default function GameDetailsScreen() {
                 games: homeLastGames ?? [],
               }}
               isDark={isDark}
-              league={league}
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -445,10 +462,12 @@ export default function GameDetailsScreen() {
         )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(gameObj.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(gameObj.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

@@ -32,6 +32,8 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 
+const LEAGUE = "CFB";
+
 export default function CFBGameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game: gameParam } = useLocalSearchParams();
@@ -186,7 +188,7 @@ export default function CFBGameDetailsScreen() {
           homeLogo={headerHomeLogo}
           awayLogo={headerAwayLogo}
           isNeutralSite={neutralSite}
-          league="CFB"
+          league={LEAGUE}
         />
       ),
     });
@@ -246,77 +248,71 @@ export default function CFBGameDetailsScreen() {
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            {!isFinal && (
-              <FanPredictionVote
-                gameId={gameId}
-                awayTeam={{
-                  id: awayTeamId,
-                  code: awayCode,
-                  logo: headerAwayLogo,
-                  color: awayTeam?.color,
-                }}
-                homeTeam={{
-                  id: homeTeamId,
-                  code: homeCode,
-                  logo: headerHomeLogo,
-                  color: homeTeam?.color,
-                }}
-              />
-            )}
+            <FanPredictionVote
+              gameId={gameId}
+              awayTeam={{
+                id: awayTeamId,
+                code: awayCode,
+                logo: headerAwayLogo,
+                color: awayTeam?.color,
+              }}
+              homeTeam={{
+                id: homeTeamId,
+                code: homeCode,
+                logo: headerHomeLogo,
+                color: homeTeam?.color,
+              }}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {!isScheduled && (
-              <LineScore
-                linescore={lineScore}
-                homeCode={homeCode}
-                awayCode={awayCode}
-                isDark={isDark}
-                league="CFB"
-              />
-            )}
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              isDark={isDark}
+              league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {(inProgress || isHalftime) && (
-              <PlayByPlayField
-                lastPlay={lastPlay}
-                firstDownYardLine={undefined}
-                possessionTeamId={possessionTeamId}
-                homeTeamId={Number(homeTeam.id)}
-                awayTeamId={Number(awayTeam.id)}
-                league="CFB"
-              />
-            )}
+            <PlayByPlayField
+              lastPlay={lastPlay}
+              firstDownYardLine={undefined}
+              possessionTeamId={possessionTeamId}
+              homeTeamId={Number(homeTeam.id)}
+              awayTeamId={Number(awayTeam.id)}
+              league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-            {(inProgress || isHalftime || isFinal) && (
-              <>
-                <GameLeaders
-                  gameId={String(parsedGame.game.id)}
-                  homeTeamId={String(homeTeam.id)}
-                  awayTeamId={String(awayTeam.id)}
-                  isDark={isDark}
-                  league="CFB"
-                />
+            <GameLeaders
+              gameId={String(parsedGame.game.id)}
+              homeTeamId={String(homeTeam.id)}
+              awayTeamId={String(awayTeam.id)}
+              isDark={isDark}
+              league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-                <TeamDrives
-                  previousDrives={previousDrives ?? []}
-                  currentDrives={currentDrives ?? []}
-                  homeTeamId={Number(homeTeam?.espnID)}
-                  awayTeamId={Number(awayTeam?.espnID)}
-                  isDark={isDark}
-                  league="CFB"
-                />
-              </>
-            )}
+            <TeamDrives
+              previousDrives={previousDrives}
+              currentDrives={currentDrives}
+              homeTeamId={Number(homeTeam?.espnID)}
+              awayTeamId={Number(awayTeam?.espnID)}
+              isDark={isDark}
+              league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <TeamScoringSummary
               scoringPlays={scoringPlays ?? []}
               homeTeamId={Number(homeTeam?.espnID)}
               awayTeamId={Number(awayTeam?.espnID)}
               isDark={isDark}
-              league="CFB"
+              league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
             />
 
-            {stats && (
-              <GameTeamStats stats={stats} isDark={isDark} league="CFB" />
-            )}
+            <GameTeamStats stats={stats} isDark={isDark} league={LEAGUE} />
 
             <LastFiveGames
               isDark={isDark}
@@ -330,7 +326,7 @@ export default function CFBGameDetailsScreen() {
                 teamCode: awayCode,
                 games: awayLastGames.games,
               }}
-              league="CFB"
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -356,10 +352,12 @@ export default function CFBGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      <GameLiveChatOverlay
-        gameId={String(parsedGame?.game.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame.game.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { EXPANDED_HEIGHT_THRESHOLD } from "constants/widgetLeaders";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -11,6 +12,8 @@ import {
   PanResponder,
   Platform,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   UIManager,
   View,
 } from "react-native";
@@ -19,6 +22,7 @@ import { MLBGame } from "types/baseball";
 import { FootballGame } from "types/football";
 import { NHLGame } from "types/hockey";
 import { Game } from "types/nba";
+import { ExploreWidgetSize } from "types/widgets";
 import BaseballGameWidget from "./GameCards/BaseballGameWidget";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";
@@ -54,7 +58,129 @@ type WidgetSliderProps = {
   isDark: boolean;
   dashboardMode?: boolean;
   orientation?: WidgetSliderOrientation;
+  widgetId?: string;
+  widgetSize?: ExploreWidgetSize;
+  isEditing?: boolean;
+  availableSizeOptions?: ExploreWidgetSize[];
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget?: (widgetId: string) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
 };
+
+type WidgetEditControlsProps = {
+  isDark: boolean;
+  widgetId: string;
+  widgetSize: ExploreWidgetSize;
+  availableSizeOptions?: ExploreWidgetSize[];
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget?: (widgetId: string) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
+  compact?: boolean;
+};
+
+const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = [
+  "small",
+  "medium",
+  "large",
+];
+
+export function WidgetEditControls({
+  isDark,
+  widgetId,
+  widgetSize,
+  availableSizeOptions = DEFAULT_SIZE_OPTIONS,
+  onResizeWidget,
+  onRemoveWidget,
+  onMoveWidget,
+  canMoveUp = true,
+  canMoveDown = true,
+  compact = false,
+}: WidgetEditControlsProps) {
+  const styles = editControlStyles(isDark, compact);
+
+  return (
+    <View style={styles.editOverlay} pointerEvents="box-none">
+      <View style={styles.editControls}>
+        {onResizeWidget && (
+          <View style={styles.sizeControls}>
+            {availableSizeOptions.map((size) => (
+              <TouchableOpacity
+                key={size}
+                activeOpacity={0.85}
+                onPress={() => onResizeWidget(widgetId, size)}
+                style={[
+                  styles.sizeButton,
+                  widgetSize === size && styles.sizeButtonSelected,
+                ]}
+                hitSlop={4}
+              >
+                <Text
+                  style={[
+                    styles.sizeButtonText,
+                    widgetSize === size && styles.sizeButtonTextSelected,
+                  ]}
+                >
+                  {size[0].toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {onMoveWidget && (
+          <View style={styles.moveControls}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              disabled={!canMoveUp}
+              onPress={() => onMoveWidget(widgetId, -1)}
+              style={[styles.iconButton, !canMoveUp && styles.disabledButton]}
+              hitSlop={4}
+            >
+              <Ionicons
+                name="chevron-up"
+                size={compact ? 13 : 15}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.85}
+              disabled={!canMoveDown}
+              onPress={() => onMoveWidget(widgetId, 1)}
+              style={[styles.iconButton, !canMoveDown && styles.disabledButton]}
+              hitSlop={4}
+            >
+              <Ionicons
+                name="chevron-down"
+                size={compact ? 13 : 15}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {onRemoveWidget && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => onRemoveWidget(widgetId)}
+            style={styles.removeButton}
+            hitSlop={4}
+          >
+            <Ionicons
+              name="close"
+              size={compact ? 14 : 16}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  );
+}
 
 export default function WidgetSlider({
   games,
@@ -63,12 +189,21 @@ export default function WidgetSlider({
   isDark,
   dashboardMode = false,
   orientation = "vertical",
+  widgetId,
+  widgetSize,
+  isEditing = false,
+  availableSizeOptions,
+  onResizeWidget,
+  onRemoveWidget,
+  onMoveWidget,
+  canMoveUp,
+  canMoveDown,
 }: WidgetSliderProps) {
-  // Read once — these don't change during the component's lifetime
   const { width: screenWidth, height: screenHeight } = useMemo(
     () => Dimensions.get("window"),
     [],
   );
+
   const resolvedInitialWidth = initialWidth ?? Math.max(screenWidth - 24, 280);
   const isHorizontal = orientation === "horizontal";
   const canResize = !dashboardMode && !isHorizontal;
@@ -81,12 +216,9 @@ export default function WidgetSlider({
   const [slideHeight, setSlideHeight] = useState(initialHeight);
   const [slideWidth, setSlideWidth] = useState(resolvedInitialWidth);
 
-  // Single source of truth for height — avoids stale state in callbacks
   const slideHeightRef = useRef(initialHeight);
   const slideWidthRef = useRef(resolvedInitialWidth);
 
-  // Keep a ref in sync with currentIndex so panResponder can read it without
-  // being recreated (fixes the stale-closure bug on lockedIndex assignment)
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentIndexRef = useRef(0);
 
@@ -95,7 +227,6 @@ export default function WidgetSlider({
   const isResizing = useRef(false);
   const lockedIndex = useRef(0);
 
-  // Keep currentIndexRef in sync
   useEffect(() => {
     currentIndexRef.current = currentIndex;
   }, [currentIndex]);
@@ -109,25 +240,20 @@ export default function WidgetSlider({
     setSlideWidth(resolvedInitialWidth);
   }, [dashboardMode, initialHeight, resolvedInitialWidth]);
 
-  // Layout animation only fires when expand/collapse threshold is crossed
   useEffect(() => {
     if (dashboardMode) return;
+
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [dashboardMode, isExpanded]);
 
-  // -----------------------------------------------------------------------
-  // Slides — only recompute when inputs change, not on every height tick
-  // -----------------------------------------------------------------------
   const slides = useMemo<WidgetSlide[]>(() => {
     return games.filter((game) => "data" in game) as WidgetSlide[];
   }, [games]);
 
-  // -----------------------------------------------------------------------
-  // Auto-slide
-  // -----------------------------------------------------------------------
   useEffect(() => {
-    if (!ENABLE_AUTO_SLIDE || slides.length <= 1 || !flatListRef.current)
+    if (!ENABLE_AUTO_SLIDE || slides.length <= 1 || !flatListRef.current) {
       return;
+    }
 
     const interval = setInterval(() => {
       const nextIndex = currentIndexRef.current + 1;
@@ -135,16 +261,17 @@ export default function WidgetSlider({
       const itemLength = isHorizontal
         ? slideWidthRef.current
         : slideHeightRef.current;
-      const to =
-        nextIndex < slides.length ? nextIndex * itemLength : 0;
+      const to = nextIndex < slides.length ? nextIndex * itemLength : 0;
 
       let start: number | null = null;
       const duration = 600;
 
       const animate = (timestamp: number) => {
         if (!start) start = timestamp;
+
         const progress = Math.min((timestamp - start) / duration, 1);
         const eased = progress * progress;
+
         flatListRef.current?.scrollToOffset({
           offset: from + (to - from) * eased,
           animated: false,
@@ -162,11 +289,8 @@ export default function WidgetSlider({
     }, 15000);
 
     return () => clearInterval(interval);
-  }, [isHorizontal, slides.length]); // currentIndex removed — read from ref instead
+  }, [isHorizontal, slides.length]);
 
-  // -----------------------------------------------------------------------
-  // Scroll handler — uses ref for height to avoid stale closure
-  // -----------------------------------------------------------------------
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (isResizing.current) return;
@@ -174,6 +298,7 @@ export default function WidgetSlider({
       const offset = isHorizontal
         ? event.nativeEvent.contentOffset.x
         : event.nativeEvent.contentOffset.y;
+
       const itemLength = isHorizontal
         ? slideWidthRef.current
         : slideHeightRef.current;
@@ -185,11 +310,9 @@ export default function WidgetSlider({
     [isHorizontal, scrollPosition],
   );
 
-  // -----------------------------------------------------------------------
-  // Snap helper
-  // -----------------------------------------------------------------------
   const snapToCurrentSlide = useCallback(() => {
     if (!flatListRef.current) return;
+
     requestAnimationFrame(() => {
       flatListRef.current?.scrollToOffset({
         offset:
@@ -200,9 +323,6 @@ export default function WidgetSlider({
     });
   }, [isHorizontal]);
 
-  // -----------------------------------------------------------------------
-  // PanResponder — reads all mutable state from refs, never recreated
-  // -----------------------------------------------------------------------
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -210,7 +330,6 @@ export default function WidgetSlider({
 
       onPanResponderGrant: () => {
         isResizing.current = true;
-        // Read from ref — fixes the stale-closure bug where this was always 0
         lockedIndex.current = currentIndexRef.current;
       },
 
@@ -227,18 +346,21 @@ export default function WidgetSlider({
           newW = maxW;
           newH = newW / aspectRatio;
         }
+
         if (newW < minW) {
           newW = minW;
           newH = newW / aspectRatio;
         }
+
         if (newH > maxH) {
           newH = maxH;
           newW = newH * aspectRatio;
         }
+
         if (newH < minH) {
           newH = minH;
           newW = newH * aspectRatio;
-        } // was / aspectRatio
+        }
 
         slideHeightRef.current = newH;
         slideWidthRef.current = newW;
@@ -250,6 +372,7 @@ export default function WidgetSlider({
         isResizing.current = false;
         snapToCurrentSlide();
       },
+
       onPanResponderTerminate: () => {
         isResizing.current = false;
         snapToCurrentSlide();
@@ -257,13 +380,9 @@ export default function WidgetSlider({
     }),
   ).current;
 
-  // -----------------------------------------------------------------------
-  // Progress bar
-  // -----------------------------------------------------------------------
   const progressOpacity = useRef(new Animated.Value(0)).current;
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Memoized so it isn't recreated on every render
   const progressHeight = useMemo(
     () =>
       scrollPosition.interpolate({
@@ -285,6 +404,7 @@ export default function WidgetSlider({
       clearTimeout(hideTimeout.current);
       hideTimeout.current = null;
     }
+
     Animated.timing(progressOpacity, {
       toValue: 1,
       duration: 150,
@@ -311,9 +431,6 @@ export default function WidgetSlider({
     [progressOpacity],
   );
 
-  // -----------------------------------------------------------------------
-  // FlatList item layout — stable callback
-  // -----------------------------------------------------------------------
   const getItemLayout = useCallback(
     (_: unknown, index: number) => ({
       length: isHorizontal ? slideWidth : slideHeight,
@@ -338,11 +455,12 @@ export default function WidgetSlider({
                 game={item.data}
                 height={slideHeight}
                 width={slideWidth}
-                showPlayers={showPlayers} // ← missing
+                showPlayers={showPlayers}
                 isDark={isDark}
               />
             </View>
           );
+
         case "NFL":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -355,6 +473,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "CFB":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -367,6 +486,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "MLB":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -378,6 +498,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "CBB":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -390,6 +511,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "WCBB":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -402,6 +524,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "WNBA":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -414,6 +537,7 @@ export default function WidgetSlider({
               />
             </View>
           );
+
         case "NHL":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
@@ -433,17 +557,14 @@ export default function WidgetSlider({
     [slideHeight, slideWidth, showPlayers, isDark],
   );
 
-  // -----------------------------------------------------------------------
-  // Styles — memoized, not recreated every render
-  // -----------------------------------------------------------------------
   const styles = useMemo(
     () => sliderStyles(isDark, dashboardMode),
     [dashboardMode, isDark],
   );
 
-  // -----------------------------------------------------------------------
-  // Render
-  // -----------------------------------------------------------------------
+  const showEditControls = isEditing && widgetId != null && widgetSize != null;
+  const showDots = dashboardMode && slides.length > 1 && !showEditControls;
+
   return (
     <Animated.View
       style={{
@@ -476,8 +597,24 @@ export default function WidgetSlider({
           scrollEventThrottle={16}
           renderItem={renderItem}
         />
+
         {canResize && (
           <View style={styles.resizeHandle} {...panResponder.panHandlers} />
+        )}
+
+        {showEditControls && widgetId && widgetSize && (
+          <WidgetEditControls
+            isDark={isDark}
+            widgetId={widgetId}
+            widgetSize={widgetSize}
+            availableSizeOptions={availableSizeOptions}
+            onResizeWidget={onResizeWidget}
+            onRemoveWidget={onRemoveWidget}
+            onMoveWidget={onMoveWidget}
+            canMoveUp={canMoveUp}
+            canMoveDown={canMoveDown}
+            compact={slideWidth < 240 || slideHeight < 260}
+          />
         )}
       </View>
 
@@ -491,15 +628,12 @@ export default function WidgetSlider({
         </Animated.View>
       )}
 
-      {dashboardMode && slides.length > 1 && (
+      {showDots && (
         <View style={styles.dots}>
           {slides.map((_, index) => (
             <View
               key={index}
-              style={[
-                styles.dot,
-                index === currentIndex && styles.activeDot,
-              ]}
+              style={[styles.dot, index === currentIndex && styles.activeDot]}
             />
           ))}
         </View>
@@ -508,9 +642,6 @@ export default function WidgetSlider({
   );
 }
 
-// -----------------------------------------------------------------------
-// Styles
-// -----------------------------------------------------------------------
 const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
   StyleSheet.create({
     container: {
@@ -558,6 +689,7 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       alignSelf: "center",
       flexDirection: "row",
       gap: 5,
+      zIndex: 5,
     },
     dot: {
       width: 6,
@@ -568,5 +700,88 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
     activeDot: {
       width: 16,
       backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
+    },
+  });
+
+const editControlStyles = (isDark: boolean, compact: boolean) =>
+  StyleSheet.create({
+    editOverlay: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: compact ? 6 : 8,
+      zIndex: 30,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    editControls: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: compact ? 4 : 6,
+      borderRadius: 999,
+      paddingHorizontal: compact ? 5 : 7,
+      paddingVertical: compact ? 4 : 5,
+      backgroundColor: isDark ? "rgba(0,0,0,0.82)" : "rgba(255,255,255,0.92)",
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      shadowColor: Colors.black,
+      shadowOpacity: 0.16,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 5,
+    },
+    sizeControls: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 3,
+    },
+    sizeButton: {
+      width: compact ? 22 : 24,
+      height: compact ? 22 : 24,
+      borderRadius: 999,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    sizeButtonSelected: {
+      backgroundColor: isDark ? Colors.white : Colors.black,
+    },
+    sizeButtonText: {
+      fontWeight: "700",
+      fontSize: compact ? 9 : 10,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    sizeButtonTextSelected: {
+      color: isDark ? Colors.black : Colors.white,
+    },
+    moveControls: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 3,
+    },
+    iconButton: {
+      width: compact ? 22 : 24,
+      height: compact ? 22 : 24,
+      borderRadius: 999,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.darkGray : Colors.white,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    disabledButton: {
+      opacity: 0.35,
+    },
+    removeButton: {
+      width: compact ? 24 : 28,
+      height: compact ? 24 : 28,
+      borderRadius: 999,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.darkGray : Colors.white,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

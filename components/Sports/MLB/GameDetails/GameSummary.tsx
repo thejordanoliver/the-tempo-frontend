@@ -2,6 +2,7 @@ import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 
+import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -41,9 +42,14 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
+  gameStatusDescription: string;
 };
 
-export default function GameSummary({ plays = [], loading = false }: Props) {
+export default function GameSummary({
+  plays = [],
+  loading = false,
+  gameStatusDescription,
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
@@ -57,9 +63,6 @@ export default function GameSummary({ plays = [], loading = false }: Props) {
 
   const [selectedInning, setSelectedInning] = useState<string>("All");
 
-  /**
-   * Convert ESPN's `period` → our `inning` format
-   */
   const normalizedPlays = useMemo(() => {
     return plays.map((p) => {
       if (p.inning) return p;
@@ -74,42 +77,35 @@ export default function GameSummary({ plays = [], loading = false }: Props) {
     });
   }, [plays]);
 
-  /**
-   * Filtering logic (now работает 100%)
-   */
   const filteredPlays = useMemo(() => {
-    return (
-      normalizedPlays
-        // ✅ must have inning
-        .filter((p) => p.inning && p.inning.number)
+    return normalizedPlays
 
-        // ✅ must have meaningful text
-        .filter((p) => typeof p.text === "string" && p.text.trim().length > 0)
+      .filter((p) => p.inning && p.inning.number)
 
-        // ✅ inning tab logic
-        .filter((p) => {
-          if (selectedInning === "All") return true;
-          if (selectedInning === "Extras") return p.inning!.number > 9;
+      .filter((p) => typeof p.text === "string" && p.text.trim().length > 0)
 
-          return String(p.inning!.number) === selectedInning;
-        })
+      .filter((p) => {
+        if (selectedInning === "All") return true;
+        if (selectedInning === "Extras") return p.inning!.number > 9;
 
-        // ✅ sort by inning + half
-        .sort((a, b) => {
-          const innA = a.inning?.number ?? 0;
-          const innB = b.inning?.number ?? 0;
+        return String(p.inning!.number) === selectedInning;
+      })
 
-          if (innA !== innB) return innA - innB;
+      .sort((a, b) => {
+        const innA = a.inning?.number ?? 0;
+        const innB = b.inning?.number ?? 0;
 
-          const halfA = a.inning?.half === "Top" ? 0 : 1;
-          const halfB = b.inning?.half === "Top" ? 0 : 1;
+        if (innA !== innB) return innA - innB;
 
-          return halfA - halfB;
-        })
-    );
+        const halfA = a.inning?.half === "Top" ? 0 : 1;
+        const halfB = b.inning?.half === "Top" ? 0 : 1;
+
+        return halfA - halfB;
+      });
   }, [normalizedPlays, selectedInning]);
 
   if (!loading && plays?.length === 0) return null;
+  if (gameStatusDescription === "Scheduled") return null;
 
   return (
     <View>
@@ -119,6 +115,7 @@ export default function GameSummary({ plays = [], loading = false }: Props) {
           tabs={inningTabs}
           selected={selectedInning}
           onTabPress={(tab) => setSelectedInning(tab)}
+          isDark={isDark}
         />
 
         <ScrollView

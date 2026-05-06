@@ -27,6 +27,8 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
+const LEAGUE = "MLB";
+
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams();
@@ -78,11 +80,7 @@ export default function GameDetailsScreen() {
 
   if (!homeTeam || !awayTeam) return null;
 
-  const {
-    score: liveScore,
-    details,
-    loading,
-  } = useBaseballGameDetails(
+  const { score: liveScore, details } = useBaseballGameDetails(
     "mlb",
     awayTeam?.espnID,
     homeTeam?.espnID,
@@ -196,7 +194,7 @@ export default function GameDetailsScreen() {
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
           isNeutralSite={neutralSite}
-          league="MLB"
+          league={LEAGUE}
         />
       ),
     });
@@ -245,54 +243,58 @@ export default function GameDetailsScreen() {
         />
 
         <View style={styles.innerContainer}>
-          {!isFinal && <LastPlay lastPlay={lastPlay} />}
+          <LastPlay
+            lastPlay={lastPlay}
+            gameStatusDescription={gameStatusDescription}
+          />
 
-          {!isFinal && (
-            <FanPredictionVote
-              gameId={gameId}
-              awayTeam={{
-                id: awayTeamId,
-                code: awayCode,
-                logo: headerAwayLogo,
-                color: awayTeam?.color,
-              }}
-              homeTeam={{
-                id: homeTeamId,
-                code: homeCode,
-                logo: headerHomeLogo,
-                color: homeTeam?.color,
-              }}
-            />
-          )}
-          {!isScheduled && (
-            <LineScore
-              linescore={lineScore}
-              homeCode={homeTeam.code}
-              awayCode={awayTeam.code}
-              league="MLB"
-              isDark={isDark}
-            />
-          )}
+          <FanPredictionVote
+            gameId={gameId}
+            awayTeam={{
+              id: awayTeamId,
+              code: awayCode,
+              logo: headerAwayLogo,
+              color: awayTeam?.color,
+            }}
+            homeTeam={{
+              id: homeTeamId,
+              code: homeCode,
+              logo: headerHomeLogo,
+              color: homeTeam?.color,
+            }}
+            gameStatusDescription={gameStatusDescription}
+          />
 
-          {isScheduled && (
-            <MatchupPredictor
-              home={{
-                name: homeCode,
-                logo: homeLogo,
-                chance: homeChance,
-                color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
-              }}
-              away={{
-                name: awayCode,
-                logo: awayLogo,
-                chance: awayChance,
-              }}
-              size={180}
-              isDark={isDark}
-            />
-          )}
+          <LineScore
+            linescore={lineScore}
+            homeCode={homeTeam.code}
+            awayCode={awayTeam.code}
+            league={LEAGUE}
+            isDark={isDark}
+            gameStatusDescription={gameStatusDescription}
+          />
 
-          <GameSummary plays={plays ?? []} />
+          <MatchupPredictor
+            home={{
+              name: homeCode,
+              logo: homeLogo,
+              chance: homeChance,
+              color: isDark ? homeTeam?.secondaryColor : homeTeam?.color,
+            }}
+            away={{
+              name: awayCode,
+              logo: awayLogo,
+              chance: awayChance,
+            }}
+            size={180}
+            isDark={isDark}
+            gameStatusDescription={gameStatusDescription}
+          />
+
+          <GameSummary
+            plays={plays ?? []}
+            gameStatusDescription={gameStatusDescription}
+          />
 
           <LastFiveGames
             isDark={isDark}
@@ -306,7 +308,7 @@ export default function GameDetailsScreen() {
               teamCode: awayCode,
               games: awayLastGames.games,
             }}
-            league="MLB"
+            league={LEAGUE}
           />
 
           <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -337,10 +339,12 @@ export default function GameDetailsScreen() {
         </View>
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(parsedGame?.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

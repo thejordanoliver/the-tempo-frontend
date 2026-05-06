@@ -8,26 +8,50 @@ import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScree
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
-import { useLayoutEffect, useState } from "react";
-import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
-import { useFollowersStore } from "store/followersStore";
+import {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Animated,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
+
+const NUM_COLUMNS = 3;
+const HORIZONTAL_PADDING = 40;
+const COLUMN_GAP = 12;
+
+type RouteParam = string | string[] | undefined;
+
+const normalizeRouteParam = (param: RouteParam) => {
+  if (Array.isArray(param)) return param[0] ?? "";
+  return param ?? "";
+};
 
 export default function UserProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
-  const numColumns = 3;
-  const horizontalPadding = 40;
-  const columnGap = 12;
-  const totalGap = columnGap * (numColumns - 1);
-  const availableWidth = screenWidth - horizontalPadding - totalGap;
-  const itemWidth = availableWidth / numColumns;
-  const params = useLocalSearchParams();
-  const userId = params.id as string | undefined;
+  const itemWidth = useMemo(() => {
+    const totalGap = COLUMN_GAP * (NUM_COLUMNS - 1);
+    const availableWidth = screenWidth - HORIZONTAL_PADDING - totalGap;
+    return availableWidth / NUM_COLUMNS;
+  }, [screenWidth]);
+  const params = useLocalSearchParams<{ id?: RouteParam }>();
+  const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const [isGridView, setIsGridView] = useState(true);
+  const isAnimatingRef = useRef(false);
   const navigation = useNavigation();
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const styles = useMemo(() => profileStyles(isDark), [isDark]);
+  const scrollContentStyle = useMemo(() => ({ paddingBottom: 30 }), []);
 
   const {
     isLoading,
@@ -46,31 +70,41 @@ export default function UserProfileScreen() {
     toggleFollow,
   } = useUserProfile(userId);
 
-  const {
-    isVisible,
-    type,
-    targetUserId,
-    openModal,
-    closeModal,
-    shouldRestore,
-    clearRestore,
-  } = useFollowersStore();
+  const headerTitle = useMemo(
+    () => (username ? `@${username}` : "User"),
+    [username],
+  );
 
-  // Navigation header
+  const currentUserIdString = useMemo(
+    () => (currentUserId ? String(currentUserId) : ""),
+    [currentUserId],
+  );
+
+  const isCurrentUser = useMemo(
+    () => Boolean(currentUserIdString && userId && currentUserIdString === userId),
+    [currentUserIdString, userId],
+  );
+
+  const handleBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          title={username ? `@${username}` : "User"}
+          title={headerTitle}
           tabName="User"
-          onBack={() => router.back()}
+          onBack={handleBack}
         />
       ),
     });
-  }, [navigation, username, router]);
+  }, [navigation, headerTitle, handleBack]);
 
-  // Toggle favorite teams grid/list
-  const toggleFavoriteTeamsView = () => {
+  const toggleFavoriteTeamsView = useCallback(() => {
+    if (isAnimatingRef.current) return;
+
+    isAnimatingRef.current = true;
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
@@ -81,51 +115,62 @@ export default function UserProfileScreen() {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        isAnimatingRef.current = false;
+      });
     });
-  };
+  }, [fadeAnim]);
 
-  const styles = profileStyles(isDark);
-
-  if (isLoading) {
-    return <SkeletonProfileScreen isDark={isDark} />;
-  }
-
-  const onFollowersPress = () => {
-    if (!currentUserId || !userId) return;
+  const onFollowersPress = useCallback(() => {
+    if (!currentUserIdString || !userId) return;
 
     router.push({
       pathname: "/user/followers",
       params: {
         type: "followers",
-        currentUserId: String(currentUserId),
-        targetUserId: String(userId), // ✅ viewed profile
+        currentUserId: currentUserIdString,
+        targetUserId: userId,
       },
     });
-  };
+  }, [currentUserIdString, router, userId]);
 
-  const onFollowingPress = () => {
-    if (!currentUserId || !userId) return;
+  const onFollowingPress = useCallback(() => {
+    if (!currentUserIdString || !userId) return;
 
     router.push({
       pathname: "/user/followers",
       params: {
         type: "following",
-        currentUserId: String(currentUserId),
-        targetUserId: String(userId), // ✅ viewed profile
+        currentUserId: currentUserIdString,
+        targetUserId: userId,
       },
     });
-  };
+  }, [currentUserIdString, router, userId]);
 
-  const isCurrentUser =
-    currentUserId !== null && String(currentUserId) === userId;
+  const handleToggleFollow = useCallback(() => {
+    if (isCurrentUser || !userId || !currentUserIdString) return;
+    toggleFollow();
+  }, [currentUserIdString, isCurrentUser, toggleFollow, userId]);
+
+  if (!userId) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.bioText}>User not found.</Text>
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return <SkeletonProfileScreen isDark={isDark} />;
+  }
 
   return (
     <>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{ paddingBottom: 30 }}
+        contentContainerStyle={scrollContentStyle}
         contentInsetAdjustmentBehavior="never"
+        showsVerticalScrollIndicator={false}
       >
         <ProfileBanner
           bannerImage={bannerImage}
@@ -137,8 +182,8 @@ export default function UserProfileScreen() {
           followersCount={followersCount}
           followingCount={followingCount}
           isDark={isDark}
-          currentUserId={currentUserId ? String(currentUserId) : ""}
-          targetUserId={userId ?? ""}
+          currentUserId={currentUserIdString}
+          targetUserId={userId}
           onFollowersPress={onFollowersPress}
           onFollowingPress={onFollowingPress}
         />
@@ -150,7 +195,7 @@ export default function UserProfileScreen() {
           isCurrentUser={isCurrentUser}
           isFollowing={isFollowing}
           loading={followLoading}
-          onToggleFollow={toggleFollow}
+          onToggleFollow={handleToggleFollow}
         />
 
         <BioSection bio={bio} isDark={isDark} />

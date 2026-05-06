@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * User shape returned by the followers / following endpoints
@@ -65,14 +65,14 @@ export function useFollowers(
       .finally(() => {
         setLoading(false);
       });
-  }, [targetUserId, type]);
+  }, [currentUserId, targetUserId, type]);
 
   /**
    * Toggle follow/unfollow for a specific user
    *
    * @param followeeId - ID of the user to follow or unfollow
    */
-  const toggleFollow = async (followeeId: string) => {
+  const toggleFollow = useCallback(async (followeeId: string) => {
     // Prevent attempting to follow yourself
     if (followeeId === currentUserId) return;
 
@@ -93,11 +93,11 @@ export function useFollowers(
             : user
         )
       );
-    } catch {
-      // Failure is silently ignored to avoid UI disruption
-      // Server remains the source of truth
+    } catch (error) {
+      // Let callers roll back optimistic UI for the affected row.
+      throw error;
     }
-  };
+  }, [currentUserId]);
 
   return {
     users,

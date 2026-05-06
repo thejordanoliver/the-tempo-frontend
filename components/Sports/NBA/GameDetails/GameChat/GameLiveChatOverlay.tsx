@@ -1,14 +1,47 @@
-import { Animated } from "react-native";
-import { useCallback, useEffect, useState } from "react";
-
 import LiveChat from "components/Sports/NBA/GameDetails/GameChat/LiveChat";
-import ChatInputBar from "components/Sports/NBA/GameDetails/GameChat/ChatInputBar";
-import { MemoizedFloatingChatButton } from "components/Sports/NBA/GameDetails";
+import { useLiveGameChat } from "hooks/useLiveGameChat";
+import { memo, useCallback, useEffect, useState } from "react";
+import { Animated, StyleSheet } from "react-native";
+import type { ChatSendPayload } from "utils/chatPayload";
+import ChatButton from "./ChatButton";
 
-interface ChatSendPayload {
-  text?: string;
-  gifUrl?: string;
-}
+type GameChatSessionProps = {
+  gameId: string;
+  onClose: () => void;
+};
+
+const GameChatSession = memo(function GameChatSession({
+  gameId,
+  onClose,
+}: GameChatSessionProps) {
+  const {
+    messages,
+    userCount,
+    currentUserName,
+    isReady,
+    sendMessage,
+    addReaction,
+  } = useLiveGameChat(gameId);
+
+  const handleSend = useCallback(
+    async (payload: ChatSendPayload) => {
+      return sendMessage(payload);
+    },
+    [sendMessage],
+  );
+
+  return (
+    <LiveChat
+      messages={messages}
+      userCount={userCount}
+      currentUserName={currentUserName}
+      onReaction={addReaction}
+      onSend={handleSend}
+      inputDisabled={!isReady}
+      onDismiss={onClose}
+    />
+  );
+});
 
 export default function GameLiveChatOverlay({
   gameId,
@@ -18,66 +51,47 @@ export default function GameLiveChatOverlay({
   opacityAnim: Animated.Value;
 }) {
   const [chatOpen, setChatOpen] = useState(false);
-  const [input, setInput] = useState("");
-  const [selectedGifUrl, setSelectedGifUrl] = useState<string | null>(null);
-  const [sendFn, setSendFn] = useState<
-    ((payload: ChatSendPayload) => void) | null
-  >(null);
+
   const handleCloseChat = useCallback(() => {
     setChatOpen(false);
-    setInput("");
-    setSelectedGifUrl(null);
-    setSendFn(null);
+  }, []);
+
+  const handleOpenChat = useCallback(() => {
+    setChatOpen(true);
   }, []);
 
   useEffect(() => {
-    setInput("");
-    setSelectedGifUrl(null);
-    setSendFn(null);
     setChatOpen(false);
   }, [gameId]);
 
   return (
     <>
-      {/* Floating button */}
-      <Animated.View style={{ opacity: opacityAnim }}>
-        <MemoizedFloatingChatButton
+      <Animated.View
+        pointerEvents="box-none"
+        style={[styles.floatingButtonLayer, { opacity: opacityAnim }]}
+      >
+        <ChatButton
           gameId={gameId}
           isOpen={chatOpen}
-          onPress={() => setChatOpen(true)}
+          onPress={handleOpenChat}
         />
       </Animated.View>
 
-      {/* Chat UI */}
       {chatOpen && (
-        <>
-          <LiveChat
-            gameId={gameId}
-            onChange={(index) => index === -1 && handleCloseChat()}
-            onSend={(fn) => setSendFn(() => fn)}
-          />
-
-          <ChatInputBar
-            value={input}
-            onChange={setInput}
-            selectedGifUrl={selectedGifUrl}
-            onGifSelected={setSelectedGifUrl}
-            onRemoveGif={() => setSelectedGifUrl(null)}
-            onSend={() => {
-              if (!input.trim() && !selectedGifUrl) return;
-              if (!sendFn) return;
-
-              sendFn({
-                text: input,
-                gifUrl: selectedGifUrl ?? undefined,
-              });
-
-              setInput("");
-              setSelectedGifUrl(null);
-            }}
-          />
-        </>
+        <GameChatSession
+          key={gameId}
+          gameId={gameId}
+          onClose={handleCloseChat}
+        />
       )}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  floatingButtonLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1000,
+    elevation: 1000,
+  },
+});

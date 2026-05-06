@@ -9,6 +9,7 @@ type LabeledInputProps = {
   onChangeText: (text: string) => void;
   multiline?: boolean;
   placeholder?: string;
+  enforceMaxLength?: boolean;
   [key: string]: any; // for other TextInput props
   hint?: string | null;
 };
@@ -19,6 +20,7 @@ export default function LabeledInput({
   onChangeText,
   multiline = false,
   placeholder,
+  enforceMaxLength = true,
   hint,
   ...rest
 }: LabeledInputProps) {
@@ -29,7 +31,7 @@ export default function LabeledInput({
   const MAX_LENGTH = 150;
 
   const handleChange = (text: string) => {
-    if (multiline && text.length > MAX_LENGTH) return;
+    if (enforceMaxLength && multiline && text.length > MAX_LENGTH) return;
     onChangeText(text);
   };
 

@@ -138,6 +138,8 @@ export default function GameTeamStats({
     (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
     (isDark ? Colors.white : Colors.black);
 
+  if (!stats) return null;
+
   return (
     <View>
       <HeadingTwo isDark={isDark}>Game Stats</HeadingTwo>

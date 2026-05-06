@@ -1,4 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useRef } from "react";
 import {
   Dimensions,
@@ -9,11 +10,13 @@ import {
   View,
 } from "react-native";
 import MonthSelectorSkeleton from "./Skeletons/MonthSelectorSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
 
 type MonthItem = {
+  key?: string;
   month: number; // 0–11
   year: number;
+  label?: string;
+  count?: number;
 };
 
 type Props = {
@@ -41,11 +44,10 @@ export default function MonthSelector({
   const screenWidth = Dimensions.get("window").width;
 
   const contentWidth =
-    months.length * ITEM_WIDTH + (months.length - 1) * SPACING;
+    months.length * ITEM_WIDTH + Math.max(0, months.length - 1) * SPACING;
 
   const needsScroll = contentWidth > screenWidth;
 
-  // Center selected month on mount / change
   useEffect(() => {
     if (!selectedDate || months.length === 0 || !needsScroll) return;
 
@@ -66,7 +68,7 @@ export default function MonthSelector({
         animated: true,
       });
     });
-  }, [selectedDate, months, needsScroll]);
+  }, [selectedDate, months, needsScroll, screenWidth]);
 
   if (loading) return <MonthSelectorSkeleton />;
 
@@ -84,32 +86,35 @@ export default function MonthSelector({
                 paddingHorizontal: SPACING / 2,
               }
             : {
-                width: screenWidth, // 🔥 THIS IS THE KEY
-                alignItems: "center", // center items horizontally
+                width: screenWidth,
+                alignItems: "center",
                 justifyContent: "space-around",
               }
         }
       >
-        {months.map(({ month, year }, index) => {
+        {months.map(({ key: monthKey, month, year, count: monthCount }, index) => {
           const isSelected =
             selectedDate?.getMonth() === month &&
             selectedDate?.getFullYear() === year;
-          const key = `${year}-${month}`;
-          const count = gameCountByMonth.get(key) ?? 0;
 
-          const label = new Date(year, month).toLocaleString("en-US", {
+          const key =
+            monthKey ?? `${year}-${String(month + 1).padStart(2, "0")}`;
+
+          const count = monthCount ?? gameCountByMonth.get(key) ?? 0;
+
+          const label = new Date(year, month, 1).toLocaleString("en-US", {
             month: "short",
           });
 
           return (
             <TouchableOpacity
-              key={`${month}-${year}`}
+              key={key}
               onPress={() => onSelect(month, year, index)}
               style={[
                 styles.monthButton,
                 {
                   width: ITEM_WIDTH,
-                  marginHorizontal: needsScroll ? SPACING / 2 : SPACING / 2,
+                  marginHorizontal: SPACING / 2,
                 },
                 isSelected && styles.monthButtonSelected,
               ]}
@@ -122,6 +127,7 @@ export default function MonthSelector({
               >
                 {label}
               </Text>
+
               <Text
                 style={[
                   styles.gameCountText,

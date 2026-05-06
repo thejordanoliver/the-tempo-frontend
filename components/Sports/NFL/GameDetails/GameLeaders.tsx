@@ -28,6 +28,7 @@ type Props = {
   awayTeamId: string;
   league: "NFL" | "CFB";
   isDark: boolean;
+  gameStatusDescription: string;
 };
 
 type PlayerStat = { name: string; value: string | number | null };
@@ -134,6 +135,7 @@ export default function GameLeaders({
   awayTeamId,
   league,
   isDark,
+  gameStatusDescription,
 }: Props) {
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
@@ -188,6 +190,14 @@ export default function GameLeaders({
 
   if (errorHome || errorAway)
     return <Text style={global.errorText}>Failed to load leaders</Text>;
+
+  if (
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Canceled" ||
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Postponed"
+  )
+    return null;
 
   const { home: homeP, away: awayP } = leadersByCategory[selectedCategory];
 

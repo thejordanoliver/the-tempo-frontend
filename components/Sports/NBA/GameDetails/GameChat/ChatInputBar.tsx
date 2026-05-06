@@ -1,194 +1,223 @@
 import { Ionicons } from "@expo/vector-icons";
-import { GiphySearchModal } from "components/Forum/GiphySearchModal";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Colors, Fonts } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
-  Animated,
   Keyboard,
-  Platform,
+  LayoutChangeEvent,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const TAB_BAR_HEIGHT = 60;
+import { buildChatPayload, type ChatSendPayload } from "utils/chatPayload";
 
 type Props = {
-  value: string;
-  onChange: (t: string) => void;
-  onSend: () => void;
+  onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;
+  isDark: boolean;
+  disabled?: boolean;
+  onHeightChange?: (height: number) => void;
+  onSent?: () => void;
   selectedGifUrl: string | null;
-  onGifSelected: (gifUrl: string) => void;
-  onRemoveGif: () => void;
+  onSelectedGifUrlChange: (gifUrl: string | null) => void;
+  onOpenGifPicker: () => void;
 };
 
 function ChatInputBar({
-  value,
-  onChange,
   onSend,
+  isDark,
+  disabled = false,
+  onHeightChange,
+  onSent,
   selectedGifUrl,
-  onGifSelected,
-  onRemoveGif,
+  onSelectedGifUrlChange,
+  onOpenGifPicker,
 }: Props) {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const { bottom } = useSafeAreaInsets();
-  const bottomOffset = bottom + TAB_BAR_HEIGHT;
-  const translateY = useRef(new Animated.Value(0)).current;
-  const [gifModalVisible, setGifModalVisible] = useState(false);
+  const [value, setValue] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-  const styles = getStyles(isDark);
+  const isSendingRef = useRef(false);
+  const styles = useMemo(() => getStyles(isDark), [isDark]);
 
-  useEffect(() => {
-    const keyboardShowEvent =
-      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const keyboardHideEvent =
-      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+  const payload = useMemo(
+    () => buildChatPayload(value, selectedGifUrl),
+    [selectedGifUrl, value],
+  );
 
-    const keyboardShow = Keyboard.addListener(keyboardShowEvent, (e) => {
-      Animated.timing(translateY, {
-        toValue: -(e.endCoordinates.height - TAB_BAR_HEIGHT - bottom),
-        duration: e.duration || 250,
-        useNativeDriver: true,
-      }).start();
+  const sendDisabled = !payload || isSending || disabled;
+
+  const handleLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      onHeightChange?.(event.nativeEvent.layout.height);
+    },
+    [onHeightChange],
+  );
+
+  const handleOpenGifPicker = useCallback(() => {
+    if (disabled || isSending) return;
+
+    Keyboard.dismiss();
+
+    requestAnimationFrame(() => {
+      onOpenGifPicker();
     });
+  }, [disabled, isSending, onOpenGifPicker]);
 
-    const keyboardHide = Keyboard.addListener(keyboardHideEvent, (e) => {
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: e.duration || 250,
-        useNativeDriver: true,
-      }).start();
-    });
+  const handleSend = useCallback(async () => {
+    if (sendDisabled || isSendingRef.current) return;
 
-    return () => {
-      keyboardShow.remove();
-      keyboardHide.remove();
-    };
-  }, [bottom, translateY]);
+    const nextPayload = buildChatPayload(value, selectedGifUrl);
+    if (!nextPayload) return;
+
+    isSendingRef.current = true;
+    setIsSending(true);
+
+    try {
+      const sent = await onSend(nextPayload);
+      if (!sent) return;
+
+      setValue("");
+      onSelectedGifUrlChange(null);
+      Keyboard.dismiss();
+      onSent?.();
+    } catch (error) {
+      console.warn("Failed to send chat message", error);
+    } finally {
+      isSendingRef.current = false;
+      setIsSending(false);
+    }
+  }, [
+    onSelectedGifUrlChange,
+    onSend,
+    onSent,
+    selectedGifUrl,
+    sendDisabled,
+    value,
+  ]);
+
+  const handleRemoveGif = useCallback(() => {
+    onSelectedGifUrlChange(null);
+  }, [onSelectedGifUrlChange]);
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          paddingBottom: bottomOffset + 8,
-          transform: [{ translateY }],
-        },
-      ]}
-    >
-      <BlurView
-        intensity={100}
-        tint="systemMaterial"
-        style={StyleSheet.absoluteFill}
-      />
-
-      {/* GIF Preview */}
+    <View style={styles.container} onLayout={handleLayout}>
       {selectedGifUrl && (
         <View style={styles.previewContainer}>
           <Image source={{ uri: selectedGifUrl }} style={styles.previewGif} />
+
           <TouchableOpacity
-            onPress={onRemoveGif}
+            onPress={handleRemoveGif}
             style={styles.previewCloseButton}
+            activeOpacity={0.85}
+            hitSlop={8}
           >
-            <Ionicons name="close-circle" size={22} color="#fff" />
+            <Ionicons name="close-circle" size={22} color={Colors.white} />
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Input Row */}
       <View style={styles.inputRow}>
-        {/* GIF Button */}
         <TouchableOpacity
-          onPress={() => setGifModalVisible(true)}
+          onPress={handleOpenGifPicker}
           style={styles.iconButton}
+          activeOpacity={0.85}
+          disabled={disabled || isSending}
+          hitSlop={8}
         >
           <Ionicons
             name="images-outline"
             size={22}
-            color={isDark ? Colors.white : Colors.black}
+            color={
+              disabled || isSending
+                ? Colors.darkGray
+                : isDark
+                  ? Colors.white
+                  : Colors.black
+            }
           />
         </TouchableOpacity>
 
-        {/* Text Input */}
-        <TextInput
+        <BottomSheetTextInput
           style={styles.input}
           placeholder={selectedGifUrl ? "Add a caption..." : "Message..."}
-          placeholderTextColor={isDark ? Colors.white : Colors.black}
+          placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
           value={value}
-          onChangeText={onChange}
-          onSubmitEditing={onSend}
+          onChangeText={setValue}
+          onSubmitEditing={handleSend}
           returnKeyType="send"
+          submitBehavior="submit"
           multiline
+          editable={!disabled && !isSending}
+          scrollEnabled
+          textAlignVertical="center"
+          blurOnSubmit={false}
         />
 
-        {/* Send Button */}
-        <TouchableOpacity onPress={onSend} style={styles.sendButton}>
-          <Ionicons name="send" size={18} color={Colors.white} />
+        <TouchableOpacity
+          onPress={handleSend}
+          style={[styles.sendButton, sendDisabled && styles.sendButtonDisabled]}
+          disabled={sendDisabled}
+          activeOpacity={0.85}
+          hitSlop={8}
+        >
+          <Ionicons
+            name="send"
+            size={18}
+            color={isDark ? Colors.black : Colors.white}
+          />
         </TouchableOpacity>
       </View>
-
-      <GiphySearchModal
-        visible={gifModalVisible}
-        onClose={() => setGifModalVisible(false)}
-        onGifSelected={(gifUrl) => {
-          onGifSelected(gifUrl);
-          setGifModalVisible(false);
-        }}
-        gifsCount={0}
-      />
-    </Animated.View>
+    </View>
   );
 }
 
 const MemoizedChatInputBar = memo(ChatInputBar);
 
+export default MemoizedChatInputBar;
+
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      position: "absolute",
-      bottom: 0,
       width: "100%",
-      paddingHorizontal: 12,
+      paddingHorizontal: 20,
       paddingTop: 8,
-      overflow: "hidden",
-    },
-
-    inputRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      paddingVertical: 10,
-      paddingHorizontal: 10,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      paddingBottom: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
-
+    inputRow: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      gap: 8,
+      minHeight: 54,
+      paddingVertical: 8,
+      paddingHorizontal: 10,
+      borderRadius: 22,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      marginBottom: 8,
+    },
     input: {
       flex: 1,
-      maxHeight: 100,
-      minHeight: 22,
-      paddingVertical: 6,
+      maxHeight: 104,
+      minHeight: 38,
+      paddingTop: 9,
+      paddingBottom: 9,
       paddingHorizontal: 10,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      lineHeight: 19,
     },
-
     iconButton: {
-      padding: 6,
+      width: 38,
+      height: 38,
+      borderRadius: 19,
       justifyContent: "center",
       alignItems: "center",
     },
-
     sendButton: {
       width: 38,
       height: 38,
@@ -197,7 +226,9 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
     },
-
+    sendButtonDisabled: {
+      opacity: 0.35,
+    },
     previewContainer: {
       marginBottom: 8,
       marginHorizontal: 4,
@@ -210,12 +241,10 @@ const getStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
-
     previewGif: {
-      width: 132,
-      height: 132,
+      width: 148,
+      height: 112,
     },
-
     previewCloseButton: {
       position: "absolute",
       top: 6,
@@ -224,5 +253,3 @@ const getStyles = (isDark: boolean) =>
       borderRadius: 999,
     },
   });
-
-export default MemoizedChatInputBar;

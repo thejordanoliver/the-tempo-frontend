@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { EXPLORE_WIDGET_HEIGHTS } from "constants/exploreWidgetSizes";
 import { Colors, Fonts } from "constants/styles";
@@ -7,17 +6,17 @@ import {
   ExploreFavoriteTeam,
   normalizeExploreFavoriteTeam,
 } from "hooks/WidgetHooks/useExploreWidgetGames";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ImageSourcePropType,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { ExploreWidgetSize } from "types/widgets";
 import { favoriteTeamsList } from "utils/teams";
 import FavoriteTeamsSlider, { FavoriteTeamSlide } from "./FavoriteTeamsSlider";
+import { WidgetEditControls } from "./WidgetSlider";
 
 type FavoriteTeamsWidgetProps = {
   isDark: boolean;
@@ -26,9 +25,15 @@ type FavoriteTeamsWidgetProps = {
   height?: number;
   containerWidth?: number;
   containerHeight?: number;
-  controls?: ReactNode;
-  onRemove?: () => void;
+  widgetId?: string;
+  widgetSize?: ExploreWidgetSize;
   isEditing?: boolean;
+  availableSizeOptions?: ExploreWidgetSize[];
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onRemoveWidget?: (widgetId: string) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
 };
 
 const sizeFallback: Record<ExploreWidgetSize, number> = {
@@ -54,9 +59,15 @@ export default function FavoriteTeamsWidget({
   height,
   containerWidth,
   containerHeight,
-  controls,
-  onRemove,
+  widgetId,
+  widgetSize = size,
   isEditing = false,
+  availableSizeOptions,
+  onResizeWidget,
+  onRemoveWidget,
+  onMoveWidget,
+  canMoveUp,
+  canMoveDown,
 }: FavoriteTeamsWidgetProps) {
   const { favorites, isLoading, ready } = useFavoriteTeamsContext();
   const resolvedWidth = Math.max(
@@ -70,15 +81,13 @@ export default function FavoriteTeamsWidget({
   const compact = size === "small" || resolvedWidth < 240;
   const verticalPadding = compact ? 10 : 14;
   const horizontalPadding = compact ? 10 : 14;
-  const headerHeight = compact ? 30 : 42;
-  const contentGap = compact ? 8 : 12;
   const bodyWidth = Math.max(resolvedWidth - horizontalPadding * 2, 1);
   const bodyHeight = Math.max(
-    resolvedHeight - verticalPadding * 2 - headerHeight - contentGap,
+    resolvedHeight - verticalPadding * 2,
     1,
   );
   const styles = favoriteTeamsWidgetStyles(isDark, compact);
-  const showActions = isEditing && (Boolean(controls) || Boolean(onRemove));
+  const showActions = isEditing && widgetId != null;
 
   const slides = useMemo<FavoriteTeamSlide[]>(
     () =>
@@ -103,30 +112,6 @@ export default function FavoriteTeamsWidget({
         }),
     [favorites, isDark],
   );
-
-  const renderActionBar = () => {
-    if (!showActions) return null;
-
-    return (
-      <View style={styles.headerActions}>
-        {controls}
-
-        {onRemove && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={onRemove}
-            style={styles.removeButton}
-          >
-            <Ionicons
-              name="close"
-              size={16}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  };
 
   const renderContent = () => {
     if (isLoading || !ready) {
@@ -170,27 +155,27 @@ export default function FavoriteTeamsWidget({
           height: resolvedHeight,
           paddingVertical: verticalPadding,
           paddingHorizontal: horizontalPadding,
-          gap: contentGap,
         },
       ]}
     >
-      <View style={[styles.header, { minHeight: headerHeight }]}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.title} numberOfLines={1}>
-            Favorite Teams
-          </Text>
-          {!compact && (
-            <Text style={styles.subtitle} numberOfLines={1}>
-              Quick team shortcuts
-            </Text>
-          )}
-        </View>
-        {renderActionBar()}
-      </View>
-
       <View style={[styles.body, { width: bodyWidth, height: bodyHeight }]}>
         {renderContent()}
       </View>
+
+      {showActions && widgetId && (
+        <WidgetEditControls
+          isDark={isDark}
+          widgetId={widgetId}
+          widgetSize={widgetSize}
+          availableSizeOptions={availableSizeOptions}
+          onResizeWidget={onResizeWidget}
+          onRemoveWidget={onRemoveWidget}
+          onMoveWidget={onMoveWidget}
+          canMoveUp={canMoveUp}
+          canMoveDown={canMoveDown}
+          compact={compact}
+        />
+      )}
     </View>
   );
 }
@@ -205,45 +190,7 @@ const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       overflow: "hidden",
-    },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 8,
-      flexShrink: 0,
-    },
-    titleWrap: {
-      flex: 1,
-      minWidth: 0,
-    },
-    headerActions: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      gap: compact ? 7 : 10,
-      flexShrink: 0,
-      zIndex: 2,
-    },
-    title: {
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: compact ? 15 : 18,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    removeButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      position: "relative",
     },
     body: {
       flex: 1,

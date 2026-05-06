@@ -4,13 +4,15 @@ import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useNBAWidgetLeaders } from "hooks/WidgetHooks/useNBAWidgetLeaders";
 import { Image, Text, View } from "react-native";
-import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import {
+  gameWidgetStyles,
+  isSmallGameWidgetLayout,
+} from "styles/ExploreStyles/GameWidgetStyles";
 import { Game } from "types/nba";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import displayeValue from "utils/widgetUtils";
-import PlayerItem from "../Players/PlayerItem";
 
 type GameWidgetProps = {
   game: Game;
@@ -30,6 +32,8 @@ export default function NBAGameWidget({
   showPlayers = false,
 }: GameWidgetProps) {
   const styles = gameWidgetStyles(isDark, height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const showHeadline = !isSmallLayout || height >= 170;
   const global = globalStyles(isDark);
   const homeId = Number(game?.home?.id);
   const awayId = Number(game?.away?.id);
@@ -89,6 +93,8 @@ export default function NBAGameWidget({
   // --- Broadcasts ---
   const broadcasts = details?.broadcasts;
   const broadcastText = getBroadcastDisplay(broadcasts);
+  const showBroadcast =
+    Boolean(broadcastText) && (!isSmallLayout || height >= 180);
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -118,6 +124,8 @@ export default function NBAGameWidget({
     homeRecord,
     homeScore,
     isDark,
+    height,
+    width,
   );
   const awayDisplay = displayeValue(
     false,
@@ -127,6 +135,8 @@ export default function NBAGameWidget({
     awayRecord,
     awayScore,
     isDark,
+    height,
+    width,
   );
 
   // -------------------------
@@ -140,109 +150,212 @@ export default function NBAGameWidget({
     );
   }
 
+  const awayTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={awayLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {awayName}
+      </Text>
+    </View>
+  );
+
+  const homeTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={homeLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {homeName}
+      </Text>
+    </View>
+  );
+
   // -------------------------
   // Render widget
   // -------------------------
   return (
     <View style={styles.container}>
-      <View style={styles.headlineContainer}>
-        <Text style={styles.headline}>{headline}</Text>
-      </View>
+      {showHeadline && (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headline} numberOfLines={1}>
+            {headline}
+          </Text>
+        </View>
+      )}
       <View style={styles.wrapper}>
         {/* ---------------------- */}
         {/* Away Team Section */}
         {/* ---------------------- */}
         <View style={styles.awaySection}>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>{awayName}</Text>
-          </View>
+          {awayTeamContent}
           {awayDisplay}
         </View>
 
         {/* ---------------------- */}
         {/* Game Info Section */}
         {/* ---------------------- */}
-        <View style={styles.gameInfo}>
-          {isScheduled && (
-            <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime}>{formattedDate}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.dateTime}>{formattedTime}</Text>
-            </View>
-          )}
+        {!isSmallLayout && (
+          <View style={styles.gameInfo}>
+            {isScheduled && (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.dateTime} numberOfLines={1}>
+                  {formattedDate}
+                </Text>
+                <View style={styles.divider} />
+                <Text style={styles.dateTime} numberOfLines={1}>
+                  {formattedTime}
+                </Text>
+              </View>
+            )}
 
-          {isFinal && <Text style={styles.finalText}>{gameStatusDetail}</Text>}
+            {isFinal && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDetail}
+              </Text>
+            )}
 
-          {isPostponed && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
-          )}
-          {isCanceled && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
-          )}
-          {isDelayed && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
-          )}
-          {isForfeited && (
-            <Text style={styles.finalText}>{gameStatusDescription}</Text>
-          )}
+            {isPostponed && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isCanceled && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isDelayed && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isForfeited && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
 
-          {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
-          )}
+            {inProgress && !isHalftime && endOfPeriod && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                End of {formatQuarter(period)}
+              </Text>
+            )}
 
-          {inProgress && !isHalftime && !endOfPeriod && (
-            <View style={styles.infoWrapper}>
-              <Text style={styles.period}>{formatQuarter(period)}</Text>
-              <View style={styles.divider} />
-              {displayClock && <Text style={styles.clock}>{displayClock}</Text>}
-            </View>
-          )}
+            {inProgress && !isHalftime && !endOfPeriod && (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.period} numberOfLines={1}>
+                  {formatQuarter(period)}
+                </Text>
+                <View style={styles.divider} />
+                {displayClock && (
+                  <Text style={styles.clock} numberOfLines={1}>
+                    {displayClock}
+                  </Text>
+                )}
+              </View>
+            )}
 
-          {isHalftime && <Text style={styles.finalText}>Halftime</Text>}
-          {broadcastText && (
-            <Text style={styles.broadcast}>{broadcastText}</Text>
-          )}
-        </View>
-
+            {isHalftime && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                Halftime
+              </Text>
+            )}
+            {showBroadcast && (
+              <Text style={styles.broadcast} numberOfLines={1}>
+                {broadcastText}
+              </Text>
+            )}
+          </View>
+        )}
+        
         {/* ---------------------- */}
         {/* Home Team Section */}
         {/* ---------------------- */}
         <View style={styles.homeSection}>
-          {homeDisplay}
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>{homeName}</Text>
-          </View>
+          {isSmallLayout ? (
+            <>
+              {homeTeamContent}
+              {homeDisplay}
+            </>
+          ) : (
+            <>
+              {homeDisplay}
+              {homeTeamContent}
+            </>
+          )}
         </View>
-      </View>
-      {/* ---------------------- */}
-      {/* Inline Player Leaders  */}
-      {/* ---------------------- */}
-      {showPlayers && !isScheduled && leaders.length > 0 && (
-        <View style={styles.leadersContainer}>
-          {leaders.map((player, index) => (
-            <PlayerItem
-              key={`${player.id}-${player.leaderStat?.name ?? index}`} // ← composite key
-              id={player.id}
-              firstName={player.firstName}
-              lastName={player.lastName}
-              headshot={player.headshot_url}
-              jerseyNumber={player.jersey_number}
-              team={player.team}
-              stats={[
-                {
-                  label: player.leaderStat?.name ?? "",
-                  value: player.leaderStat?.value ?? 0,
-                },
-              ]}
-              isLast={index === leaders.length - 1}
-              width={width}
-              height={40}
-            />
-          ))}
+      {isSmallLayout && (
+        <View style={styles.gameInfo}>
+          {isScheduled && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedDate}
+              </Text>
+              <View style={styles.divider} />
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedTime}
+              </Text>
+            </View>
+          )}
+
+          {isFinal && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDetail}
+            </Text>
+          )}
+
+          {isPostponed && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
+          )}
+          {isCanceled && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
+          )}
+          {isDelayed && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
+          )}
+          {isForfeited && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              {gameStatusDescription}
+            </Text>
+          )}
+
+          {inProgress && !isHalftime && endOfPeriod && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              End of {formatQuarter(period)}
+            </Text>
+          )}
+
+          {inProgress && !isHalftime && !endOfPeriod && (
+            <View style={styles.infoWrapper}>
+              <Text style={styles.period} numberOfLines={1}>
+                {formatQuarter(period)}
+              </Text>
+              <View style={styles.divider} />
+              {displayClock && (
+                <Text style={styles.clock} numberOfLines={1}>
+                  {displayClock}
+                </Text>
+              )}
+            </View>
+          )}
+
+          {isHalftime && (
+            <Text style={styles.finalText} numberOfLines={1}>
+              Halftime
+            </Text>
+          )}
+          {showBroadcast && (
+            <Text style={styles.broadcast} numberOfLines={1}>
+              {broadcastText}
+            </Text>
+          )}
         </View>
       )}
+      </View>
     </View>
   );
 }

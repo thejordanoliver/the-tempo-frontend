@@ -3,89 +3,254 @@ import FollowersList from "components/Profile/FollowersList";
 import SearchBar from "components/SearchBars/SearchBar";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useFollowers } from "hooks/UserHooks/useFollowers";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import {
+  useFollowers,
+  type User as FollowersHookUser,
+} from "hooks/UserHooks/useFollowers";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ScrollView, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
 import { Mode } from "types/user";
+
+type RouteParam = string | string[] | undefined;
+
+type FollowerUser = Omit<
+  FollowersHookUser,
+  "id" | "full_name" | "profile_image"
+> & {
+  id: string;
+  username: string;
+  full_name: string;
+  fullName?: string | null;
+  profile_image: string;
+  profileImage?: string | null;
+  isFollowing: boolean;
+};
+
+const normalizeRouteParam = (param: RouteParam) => {
+  if (Array.isArray(param)) return param[0] ?? "";
+  return param ?? "";
+};
+
+const normalizeFollowerUser = (
+  user: FollowersHookUser & {
+    fullName?: string | null;
+    profileImage?: string | null;
+  },
+): FollowerUser => {
+  const fullName = user.fullName ?? user.full_name ?? "";
+  const profileImage = user.profileImage ?? user.profile_image ?? "";
+
+  return {
+    ...user,
+    id: String(user.id),
+    username: user.username ?? "",
+    full_name: fullName,
+    fullName: user.fullName,
+    profile_image: profileImage,
+    profileImage: user.profileImage,
+  };
+};
+
+const getUserSignature = (user: FollowerUser) =>
+  [
+    user.id,
+    user.username,
+    user.full_name,
+    user.fullName ?? "",
+    user.profile_image,
+    user.profileImage ?? "",
+    String(user.isFollowing),
+    String(user.followsYou ?? false),
+  ].join("\u0001");
 
 export default function FollowersScreen() {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = followersListStyles(isDark);
+  const styles = useMemo(() => followersListStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { type, currentUserId, targetUserId } = useLocalSearchParams<{
-    type: Mode;
-    currentUserId: string;
-    targetUserId: string;
+    type?: Mode | string[];
+    currentUserId?: string | string[];
+    targetUserId?: string | string[];
   }>();
 
-  const mode: Mode =
-    type === "followers" || type === "following" ? type : "followers";
+  const mode = useMemo<Mode>(() => {
+    const normalizedType = normalizeRouteParam(type);
+    return normalizedType === "following" ? "following" : "followers";
+  }, [type]);
+
+  const normalizedCurrentUserId = useMemo(
+    () => normalizeRouteParam(currentUserId),
+    [currentUserId],
+  );
+  const normalizedTargetUserId = useMemo(
+    () => normalizeRouteParam(targetUserId),
+    [targetUserId],
+  );
+  const headerTitle = useMemo(
+    () => (mode === "followers" ? "Followers" : "Following"),
+    [mode],
+  );
 
   const [search, setSearch] = useState("");
-  const [loadingIds, setLoadingIds] = useState<string[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [loadingIdSet, setLoadingIdSet] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [users, setUsers] = useState<FollowerUser[]>([]);
+  const loadingIdsRef = useRef<Set<string>>(new Set());
+  const sourceSignatureRef = useRef("");
 
   const {
     users: usersFromHook,
     error,
     toggleFollow,
-  } = useFollowers(currentUserId ?? "", targetUserId ?? "", mode);
+  } = useFollowers(normalizedCurrentUserId, normalizedTargetUserId, mode);
+
+  const normalizedSourceUsers = useMemo(
+    () => (usersFromHook ?? []).map(normalizeFollowerUser),
+    [usersFromHook],
+  );
+
+  const sourceSignature = useMemo(
+    () => normalizedSourceUsers.map(getUserSignature).join("\u0002"),
+    [normalizedSourceUsers],
+  );
+
+  const loadingIds = useMemo(() => Array.from(loadingIdSet), [loadingIdSet]);
+
+  const addLoadingId = useCallback((targetId: string) => {
+    loadingIdsRef.current.add(targetId);
+    setLoadingIdSet(new Set(loadingIdsRef.current));
+  }, []);
+
+  const removeLoadingId = useCallback((targetId: string) => {
+    loadingIdsRef.current.delete(targetId);
+    setLoadingIdSet(new Set(loadingIdsRef.current));
+  }, []);
 
   useEffect(() => {
-    setUsers(usersFromHook ?? []);
-  }, [usersFromHook]);
+    if (sourceSignatureRef.current === sourceSignature) return;
 
-  const handleUserPress = (userId: string) => {
-    router.push(`/user/${userId}`);
-  };
+    sourceSignatureRef.current = sourceSignature;
+    setUsers((prevUsers) => {
+      if (loadingIdsRef.current.size === 0) {
+        return normalizedSourceUsers;
+      }
 
-  const handleToggleFollow = async (targetId: string) => {
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id.toString() === targetId
-          ? { ...u, isFollowing: !u.isFollowing }
-          : u,
-      ),
-    );
+      const optimisticUsersById = new Map(
+        prevUsers.map((user) => [user.id, user]),
+      );
 
-    setLoadingIds((prev) => [...prev, targetId]);
+      return normalizedSourceUsers.map((user) =>
+        loadingIdsRef.current.has(user.id)
+          ? optimisticUsersById.get(user.id) ?? user
+          : user,
+      );
+    });
+  }, [normalizedSourceUsers, sourceSignature]);
 
-    try {
-      await toggleFollow(targetId);
-    } catch {
-      // rollback
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+
+  const handleUserPress = useCallback(
+    (userId: string) => {
+      if (!userId) return;
+      router.push(`/user/${userId}`);
+    },
+    [router],
+  );
+
+  const handleToggleFollow = useCallback(
+    async (targetId: string) => {
+      if (
+        !normalizedCurrentUserId ||
+        !targetId ||
+        targetId === normalizedCurrentUserId ||
+        loadingIdsRef.current.has(targetId)
+      ) {
+        return;
+      }
+
+      const previousIsFollowing = users.find(
+        (user) => user.id === targetId,
+      )?.isFollowing;
+
+      if (previousIsFollowing === undefined) return;
+
+      addLoadingId(targetId);
       setUsers((prev) =>
-        prev.map((u) =>
-          u.id.toString() === targetId
-            ? { ...u, isFollowing: !u.isFollowing }
-            : u,
+        prev.map((user) =>
+          user.id === targetId
+            ? { ...user, isFollowing: !user.isFollowing }
+            : user,
         ),
       );
-    } finally {
-      setLoadingIds((prev) => prev.filter((id) => id !== targetId));
-    }
-  };
+
+      try {
+        await toggleFollow(targetId);
+      } catch {
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === targetId
+              ? { ...user, isFollowing: previousIsFollowing }
+              : user,
+          ),
+        );
+      } finally {
+        removeLoadingId(targetId);
+      }
+    },
+    [
+      addLoadingId,
+      normalizedCurrentUserId,
+      removeLoadingId,
+      toggleFollow,
+      users,
+    ],
+  );
 
   const filteredUsers = useMemo(() => {
-    return users
-      .filter((u) => u.username?.toLowerCase().includes(search.toLowerCase()))
-      .map((u) => ({ ...u, id: u.id.toString() }));
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) return users;
+
+    return users.filter((user) => {
+      const username = user.username.toLowerCase();
+      const fullName = user.full_name.toLowerCase();
+      const displayName = user.fullName?.toLowerCase() ?? "";
+
+      return (
+        username.includes(normalizedSearch) ||
+        fullName.includes(normalizedSearch) ||
+        displayName.includes(normalizedSearch)
+      );
+    });
   }, [users, search]);
+
+  const handleBack = useCallback(() => {
+    router.back();
+  }, [router]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          title={mode === "followers" ? "Followers" : "Following"}
+          title={headerTitle}
           tabName="User"
-          onBack={() => router.back()}
+          onBack={handleBack}
         />
       ),
     });
-  }, [navigation, mode, router]);
+  }, [navigation, headerTitle, handleBack]);
 
   return (
     <View style={styles.container}>
@@ -96,13 +261,13 @@ export default function FollowersScreen() {
         <SearchBar
           placeholder="Search"
           value={search}
-          onChangeText={setSearch}
+          onChangeText={handleSearchChange}
         />
 
         <FollowersList
           users={filteredUsers}
           loadingIds={loadingIds}
-          currentUserId={currentUserId ?? ""}
+          currentUserId={normalizedCurrentUserId}
           onUserPress={handleUserPress}
           onToggleFollow={handleToggleFollow}
           error={error}

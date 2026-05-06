@@ -35,6 +35,8 @@ type GamePreviewContentProps = {
   venue: any;
 };
 
+const LEAGUE = "CFB";
+
 export default function GamePreviewContent({
   game,
   home,
@@ -63,41 +65,42 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      {lineScore && (
-        <LineScore
-          linescore={lineScore}
-          homeCode={home.code}
-          awayCode={away.code}
-          isDark
-        />
-      )}
+      <LineScore
+        linescore={lineScore}
+        homeCode={home.code}
+        awayCode={away.code}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
-      {(gameStatusDescription === "Final" ||
-        gameStatusDescription === "In Progress") && (
-        <GameLeaders
-          gameId={String(game.game.id)}
-          homeTeamId={String(home.id)}
-          awayTeamId={String(away.id)}
-          league="CFB"
-          isDark
-        />
-      )}
-      {stats && <GameTeamStats stats={stats} isDark league="CFB" />}
+      <GameLeaders
+        gameId={String(game.game.id)}
+        homeTeamId={String(home.id)}
+        awayTeamId={String(away.id)}
+        league={LEAGUE}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
+
+      <GameTeamStats stats={stats} isDark league={LEAGUE} />
 
       <TeamDrives
         previousDrives={previousDrives ?? []}
         currentDrives={currentDrives ?? []}
         homeTeamId={home?.espnID}
         awayTeamId={away?.espnID}
-        league="CFB"
+        league={LEAGUE}
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
+
       <TeamScoringSummary
         scoringPlays={scoringPlays ?? []}
         homeTeamId={home?.espnID}
         awayTeamId={away?.espnID}
-        league="CFB"
+        league={LEAGUE}
         isDark
+        gameStatusDescription={gameStatusDescription}
       />
 
       <LastFiveGames
@@ -111,7 +114,7 @@ export default function GamePreviewContent({
           teamCode: away.code,
           games: awayLastGames.games,
         }}
-        league="CFB"
+        league={LEAGUE}
         isDark
       />
 

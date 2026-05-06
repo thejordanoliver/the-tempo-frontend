@@ -1,28 +1,122 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
-import axios from "axios";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { nhlTeams } from "constants/teamsNHL";
+import { wnbaTeams } from "constants/teamsWNBA";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
+import type { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
-/**
- * Normalize image URLs (Cloudinary or server URLs)
- */
+type SupportedFavoriteLeague = Extract<
+  LeagueType,
+  "NBA" | "WNBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL"
+>;
+
+type TeamLookupItem = {
+  id: number | string;
+  wid?: number | string | null;
+};
+
+type FavoriteTeamWithLeague = TeamLookupItem & {
+  league: SupportedFavoriteLeague;
+};
+
+type UserProfileResponse = {
+  username?: string | null;
+  fullName?: string | null;
+  bio?: string | null;
+  profileImage?: string | null;
+  bannerImage?: string | null;
+  followersCount?: number | null;
+  followingCount?: number | null;
+  favorites?: unknown;
+  isFollowing?: boolean | null;
+};
+
+const SUPPORTED_FAVORITE_LEAGUES = new Set<SupportedFavoriteLeague>([
+  "NBA",
+  "WNBA",
+  "NFL",
+  "CFB",
+  "CBB",
+  "WCBB",
+  "MLB",
+  "NHL",
+]);
+
+const isSupportedFavoriteLeague = (
+  league: string,
+): league is SupportedFavoriteLeague =>
+  SUPPORTED_FAVORITE_LEAGUES.has(league as SupportedFavoriteLeague);
+
+const createTeamLookup = <T extends TeamLookupItem>(
+  teamList: readonly T[],
+  idKey: "id" | "wid" = "id",
+) => {
+  const lookup = new Map<string, T>();
+
+  teamList.forEach((team) => {
+    const id = team[idKey];
+    if (id !== undefined && id !== null) {
+      lookup.set(String(id), team);
+    }
+  });
+
+  return lookup;
+};
+
+const teamLookups: Record<SupportedFavoriteLeague, Map<string, TeamLookupItem>> =
+  {
+    NBA: createTeamLookup(teams),
+    WNBA: createTeamLookup(wnbaTeams),
+    NFL: createTeamLookup(nflTeams),
+    CFB: createTeamLookup(cfbTeams),
+    CBB: createTeamLookup(cbbTeams),
+    WCBB: createTeamLookup(cbbTeams, "wid"),
+    MLB: createTeamLookup(mlbTeams),
+    NHL: createTeamLookup(nhlTeams),
+  };
+
 function parseImageUrl(url: string | null | undefined): string | null {
   if (!url || url === "null" || url === "undefined") return null;
   if (!url.startsWith("http")) return null;
   return url;
 }
 
+function parseString(value: string | null | undefined): string | null {
+  if (!value || value === "null" || value === "undefined") return null;
+  return value;
+}
+
+function parseStoredUserId(id: string | null): number | null {
+  if (!id) return null;
+
+  const parsed = Number(id);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function normalizeFavorites(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (favorite): favorite is string =>
+      typeof favorite === "string" && favorite.includes(":"),
+  );
+}
+
+function getProfileKey(userId: string, currentUserId: number | null) {
+  return `${userId}:${currentUserId ?? "guest"}`;
+}
+
 export function useUserProfile(userId?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [hasLoadedCurrentUserId, setHasLoadedCurrentUserId] = useState(false);
 
   const [username, setUsername] = useState<string | null>(null);
   const [fullName, setFullName] = useState<string | null>(null);
@@ -38,125 +132,219 @@ export function useUserProfile(userId?: string) {
   const [followLoading, setFollowLoading] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const isMountedRef = useRef(true);
+  const requestIdRef = useRef(0);
+  const lastLoadedProfileKeyRef = useRef<string | null>(null);
+  const followLoadingRef = useRef(false);
 
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersStore();
 
-  // Load current user ID from AsyncStorage
-  useEffect(() => {
-    AsyncStorage.getItem("userId").then((id) => {
-      if (id) setCurrentUserId(Number(id));
-    });
+  const resetProfileState = useCallback(() => {
+    setUsername(null);
+    setFullName(null);
+    setBio(null);
+    setProfileImage(null);
+    setBannerImage(null);
+    setFollowersCount(0);
+    setFollowingCount(0);
+    setFavorites([]);
+    setIsFollowing(false);
   }, []);
 
-  // Fetch user profile
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+      requestIdRef.current += 1;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadCurrentUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (!isActive || !isMountedRef.current) return;
+
+        setCurrentUserId(parseStoredUserId(storedUserId));
+      } catch (error) {
+        console.warn("Failed to load current user id", error);
+        if (!isActive || !isMountedRef.current) return;
+
+        setCurrentUserId(null);
+      } finally {
+        if (isActive && isMountedRef.current) {
+          setHasLoadedCurrentUserId(true);
+        }
+      }
+    };
+
+    loadCurrentUserId();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const fetchUserData = useCallback(async () => {
-    if (!userId || currentUserId === null) return;
+    if (!userId) {
+      requestIdRef.current += 1;
+      lastLoadedProfileKeyRef.current = null;
+      resetProfileState();
+      setIsLoading(false);
+      return;
+    }
 
-    setIsLoading(true);
+    if (!hasLoadedCurrentUserId) return;
+
+    const requestId = ++requestIdRef.current;
+    const profileKey = getProfileKey(userId, currentUserId);
+    const shouldShowInitialLoading =
+      lastLoadedProfileKeyRef.current !== profileKey;
+
+    if (shouldShowInitialLoading) {
+      setIsLoading(true);
+    }
+
     try {
-      const { data } = await apiClient.get(`api/users/id/${userId}`, {
-        params: { currentUserId },
-      });
+      const { data } = await apiClient.get<UserProfileResponse>(
+        `api/users/id/${userId}`,
+        {
+          params:
+            currentUserId === null
+              ? undefined
+              : {
+                  currentUserId,
+                },
+        },
+      );
 
-      setUsername(data.username ?? null);
-      setFullName(data.fullName ?? null);
-      setBio(data.bio ?? null);
+      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
+
+      setUsername(parseString(data.username));
+      setFullName(parseString(data.fullName));
+      setBio(parseString(data.bio));
       setProfileImage(parseImageUrl(data.profileImage));
       setBannerImage(parseImageUrl(data.bannerImage));
       setFollowersCount(data.followersCount ?? 0);
       setFollowingCount(data.followingCount ?? 0);
-      setFavorites(Array.isArray(data.favorites) ? data.favorites : []);
-      if (typeof data.isFollowing === "boolean")
-        setIsFollowing(data.isFollowing);
-    } catch (err) {
-      console.warn("Failed to load user profile", err);
-      setUsername(null);
-      setFullName(null);
-      setBio(null);
-      setProfileImage(null);
-      setBannerImage(null);
-      setFollowersCount(0);
-      setFollowingCount(0);
-      setFavorites([]);
-      setIsFollowing(false);
+      setFavorites(normalizeFavorites(data.favorites));
+      setIsFollowing(
+        typeof data.isFollowing === "boolean" ? data.isFollowing : false,
+      );
+      lastLoadedProfileKeyRef.current = profileKey;
+    } catch (error) {
+      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
+
+      console.warn("Failed to load user profile", error);
+      resetProfileState();
+      lastLoadedProfileKeyRef.current = null;
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current && requestId === requestIdRef.current) {
+        setIsLoading(false);
+      }
     }
-  }, [userId, currentUserId]);
+  }, [currentUserId, hasLoadedCurrentUserId, resetProfileState, userId]);
 
-  // Refetch when both userId and currentUserId are ready
   useEffect(() => {
-    if (userId && currentUserId !== null) {
-      fetchUserData();
+    if (!userId) {
+      requestIdRef.current += 1;
+      lastLoadedProfileKeyRef.current = null;
+      resetProfileState();
+      setIsLoading(false);
+      return;
     }
-  }, [userId, currentUserId, fetchUserData]);
 
-  // Restore modal + refetch on focus
+    if (!hasLoadedCurrentUserId) return;
+
+    const profileKey = getProfileKey(userId, currentUserId);
+    if (lastLoadedProfileKeyRef.current === profileKey) return;
+
+    fetchUserData();
+  }, [
+    currentUserId,
+    fetchUserData,
+    hasLoadedCurrentUserId,
+    resetProfileState,
+    userId,
+  ]);
+
   useFocusEffect(
     useCallback(() => {
       if (shouldRestore && targetUserId) {
         clearRestore();
         openModal(type, targetUserId, currentUserId?.toString());
       }
-
-      if (userId && currentUserId !== null) {
-        fetchUserData();
-      }
     }, [
       shouldRestore,
       targetUserId,
       type,
       currentUserId,
-      userId,
-      fetchUserData,
       openModal,
       clearRestore,
     ]),
   );
 
-  // Toggle follow/unfollow with optimistic update
-  const toggleFollow = async () => {
-    if (!userId || currentUserId === null || followLoading) return;
+  const toggleFollow = useCallback(async () => {
+    if (
+      !userId ||
+      currentUserId === null ||
+      String(currentUserId) === userId ||
+      followLoadingRef.current
+    ) {
+      return;
+    }
 
-    const prevFollowing = isFollowing;
-    const prevCount = followersCount;
-    const optimistic = !prevFollowing;
+    const previousIsFollowing = isFollowing ?? false;
+    const previousFollowersCount = followersCount;
+    const optimisticIsFollowing = !previousIsFollowing;
 
-    // Optimistic update
-    setIsFollowing(optimistic);
-    setFollowersCount((c) => (optimistic ? c + 1 : Math.max(c - 1, 0)));
+    setIsFollowing(optimisticIsFollowing);
+    setFollowersCount((count) =>
+      optimisticIsFollowing ? count + 1 : Math.max(count - 1, 0),
+    );
+    followLoadingRef.current = true;
     setFollowLoading(true);
 
     try {
-      await axios.post(`api/follows/toggle`, {
+      await apiClient.post("api/follows/toggle", {
         followerId: currentUserId,
         followeeId: userId,
       });
-      // No need to update count if backend doesn't return it
-    } catch (err) {
-      // Revert if request fails
-      setIsFollowing(prevFollowing);
-      setFollowersCount(prevCount);
+    } catch (error) {
+      console.warn("Failed to toggle follow", error);
+      if (isMountedRef.current) {
+        setIsFollowing(previousIsFollowing);
+        setFollowersCount(previousFollowersCount);
+      }
     } finally {
-      setFollowLoading(false);
+      followLoadingRef.current = false;
+      if (isMountedRef.current) {
+        setFollowLoading(false);
+      }
     }
-  };
+  }, [currentUserId, followersCount, isFollowing, userId]);
 
-  // Map favorite teams with league info
-  const favoriteTeamsWithLeague = favorites
-    .map((fav) => {
-      const [league, id] = fav.split(":");
-      let team;
-      if (league === "NBA") team = teams.find((t) => String(t.id) === id);
-      if (league === "NFL") team = nflTeams.find((t) => String(t.id) === id);
-      if (league === "CFB") team = cfbTeams.find((t) => String(t.id) === id);
-      if (league === "CBB") team = cbbTeams.find((t) => String(t.id) === id);
-      if (league === "WCBB") team = cbbTeams.find((t) => String(t.wid) === id);
-      if (league === "MLB") team = mlbTeams.find((t) => String(t.id) === id);
-      return team ? { ...team, league } : null;
-    })
-    .filter(Boolean);
+  const favoriteTeamsWithLeague = useMemo(
+    () =>
+      favorites
+        .map((favorite): FavoriteTeamWithLeague | null => {
+          const [league, id] = favorite.split(":");
+          if (!league || !id || !isSupportedFavoriteLeague(league)) {
+            return null;
+          }
+
+          const team = teamLookups[league].get(id);
+          return team ? { ...team, league } : null;
+        })
+        .filter(
+          (team): team is FavoriteTeamWithLeague => team !== null,
+        ),
+    [favorites],
+  );
 
   return {
     isLoading,

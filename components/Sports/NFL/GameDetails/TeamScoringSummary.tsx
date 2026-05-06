@@ -91,7 +91,13 @@ export default function TeamScoringSummary({
     OVERTIME: "OT",
   };
 
-  if (gameStatusDescription === "Scheduled") return null;
+  if (
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Canceled" ||
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Postponed"
+  )
+    return null;
 
   return (
     <View style={styles.container}>

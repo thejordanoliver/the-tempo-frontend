@@ -9,26 +9,26 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useHomeData } from "hooks/useHomeData";
 import { mockSocialFeed } from "mocks/social";
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
-  const { resolvedColorScheme } = usePreferences();
+  const { resolvedColorScheme, viewMode } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const styles = homeStyles(isDark, insets.top);
-  const { viewMode } = usePreferences();
+
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
-
-  const pagerRef = useRef<PagerView>(null);
-
   const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
     "scores",
   );
+
+  const pagerRef = useRef<PagerView>(null);
 
   const {
     favorites,
@@ -38,21 +38,31 @@ export default function HomeScreen() {
     articles,
     newsError,
     newsLoading,
+    loading: gamesLoading,
   } = useHomeData(selectedTab);
 
-  // --------------------------------------------------
-  // Header
-  // --------------------------------------------------
   React.useLayoutEffect(() => {
     navigation.setOptions({
       header: () => <CustomHeaderTitle tabName="Home" />,
     });
   }, [navigation]);
 
-  const handleTabPress = (tab: "scores" | "news") => {
+  const handleTabPress = useCallback((tab: "scores" | "news") => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
-  };
+  }, []);
+
+  const refreshControl = useCallback(
+    () => (
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        tintColor={isDark ? Colors.white : Colors.black}
+        colors={[isDark ? Colors.white : Colors.black]}
+      />
+    ),
+    [refreshing, handleRefresh, isDark],
+  );
 
   return (
     <View style={styles.container}>
@@ -76,21 +86,16 @@ export default function HomeScreen() {
             setSelectedTab(index === 0 ? "scores" : "news");
           }}
         >
-          {/* -------- SCORES PAGE -------- */}
-          <View key="scores">
+          {/* SCORES PAGE */}
+          <View key="scores" style={{ flex: 1 }}>
             <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  tintColor={isDark ? Colors.white : Colors.black}
-                  colors={[isDark ? Colors.white : Colors.black]}
-                />
-              }
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ paddingBottom: 100 }}
+              refreshControl={refreshControl()}
             >
               <FavoritesScroll
                 favoriteTeamIds={favorites}
-                loading={newsLoading}
+                loading={gamesLoading}
                 onDragStart={() => setIsDraggingFavorites(true)}
                 onDragEnd={() => setIsDraggingFavorites(false)}
                 isDark={isDark}
@@ -98,7 +103,7 @@ export default function HomeScreen() {
 
               <CombinedGamesList
                 gamesByCategory={gamesByCategory}
-                loading={newsLoading}
+                loading={gamesLoading}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 isDark={isDark}
@@ -107,30 +112,25 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          {/* -------- NEWS PAGE -------- */}
-          {/* NEWS */}
-          <View key="news">
+          {/* NEWS PAGE */}
+          <View key="news" style={{ flex: 1 }}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
+              refreshControl={refreshControl()}
             >
               <XFeed
                 items={mockSocialFeed}
                 loading={newsLoading}
                 error={newsError}
               />
+
               <NewsList
                 items={articles}
                 isDark={isDark}
                 loading={newsLoading}
                 error={newsError}
-                refreshing
+                refreshing={refreshing}
                 onRefresh={handleRefresh}
               />
             </ScrollView>

@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Fonts, Colors } from "constants/styles";
 
 export const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
@@ -13,51 +13,14 @@ export const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       overflow: "hidden",
-    },
-    header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: 8,
-      flexShrink: 0,
-    },
-    titleWrap: {
-      flex: 1,
-      minWidth: 0,
-    },
-    headerActions: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: compact ? 7 : 10,
-      flexShrink: 0,
-    },
-    title: {
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: compact ? 15 : 18,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    linkText: {
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    removeButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      position: "relative",
     },
 
-    // League button rail
+     heading: {
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: compact ? 14 : 18,
+      color: isDark ? Colors.white : Colors.black,
+    },
     chipScroll: {
       flexGrow: 0,
       flexShrink: 0,
@@ -94,7 +57,6 @@ export const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
     selectedChipText: {
       color: isDark ? Colors.black : Colors.white,
     },
-
     animatedContent: {
       flex: 1,
       minHeight: 0,

@@ -3,10 +3,11 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
-import useDbPlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
+import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
+
 type NBALastPlay = {
   id?: string;
   text: string;
@@ -55,7 +56,6 @@ export default function LastPlay({
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
@@ -67,8 +67,8 @@ export default function LastPlay({
     setCurrentPlay(lastPlay);
   }, [lastPlay]);
 
-  const homePlayersResult = useDbPlayersByTeam(homeTeamId || "");
-  const awayPlayersResult = useDbPlayersByTeam(awayTeamId || "");
+  const homePlayersResult = usePlayersByTeam(homeTeamId || "");
+  const awayPlayersResult = usePlayersByTeam(awayTeamId || "");
 
   const homePlayers = homePlayersResult.players || [];
   const awayPlayers = awayPlayersResult.players || [];
@@ -133,8 +133,8 @@ export default function LastPlay({
         />
       );
   };
-  // Determine team color safely
-  let teamColor = Colors.light.green; // default
+
+  let teamColor = Colors.light.green;
 
   if (typeof currentPlay !== "string" && currentPlay?.team?.id) {
     const team = getTeamByESPNId(currentPlay.team.id);

@@ -9,8 +9,8 @@ import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import React from "react";
 import { FootballGame } from "types/football";
-import NFLInjuries from "../GameDetails/TeamInjuries";
 import TeamInjuries from "../GameDetails/TeamInjuries";
+
 
 type GamePreviewContentProps = {
   game: FootballGame;
@@ -37,6 +37,8 @@ type GamePreviewContentProps = {
   venue: any;
   injuries: any;
 };
+
+const LEAGUE ="NFL"
 
 export default function GamePreviewContent({
   game,
@@ -75,17 +77,16 @@ export default function GamePreviewContent({
         gameStatusDescription={gameStatusDescription}
       />
 
-      {gameStatusDescription === "In Progress" && (
-        <GameLeaders
-          gameId={String(game.game.id)}
-          homeTeamId={String(home.id)}
-          awayTeamId={String(away.id)}
-          league="NFL"
-          isDark
-        />
-      )}
+      <GameLeaders
+        gameId={String(game.game.id)}
+        homeTeamId={String(home.id)}
+        awayTeamId={String(away.id)}
+        league={LEAGUE}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
-      <GameTeamStats stats={stats ?? null} isDark league="NFL" />
+      <GameTeamStats stats={stats ?? null} isDark league={LEAGUE} />
 
       <TeamDrives
         previousDrives={previousDrives}
@@ -100,7 +101,7 @@ export default function GamePreviewContent({
         scoringPlays={scoringPlays ?? []}
         homeTeamId={Number(home.espnID)}
         awayTeamId={Number(away.espnID)}
-        league="NFL"
+        league={LEAGUE}
         isDark
         gameStatusDescription={gameStatusDescription}
       />
@@ -117,7 +118,7 @@ export default function GamePreviewContent({
           games: awayLastGames.games,
         }}
         isDark
-        league="NFL"
+        league={LEAGUE}
       />
 
       <HighlightVideoList highlights={highlights} isDark />

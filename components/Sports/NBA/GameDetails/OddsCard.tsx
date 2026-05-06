@@ -1,62 +1,41 @@
-import { Colors, Fonts } from "constants/styles";
-import { teams as nbaTeams } from "constants/teams";
-import { cbbTeams } from "constants/teamsCBB";
-import { cfbTeams } from "constants/teamsCFB";
-import { nflTeams } from "constants/teamsNFL";
-import { usePreferences } from "contexts/PreferencesContext";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { GameOdds } from "hooks/useUpcomingOdds";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   game: GameOdds;
-  league: "nba" | "cbb" | "nfl" | "cfb";
   error?: string | null;
-  lighter?: boolean;
+  isDark: boolean;
+  homeLogo: any;
+  awayLogo: any;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
 }
 
 export const OddsCard: React.FC<Props> = ({
   game,
-  league,
   error,
-  lighter = false,
+  homeCode,
+  awayCode,
+  homeLogo,
+  awayLogo,
+  isDark = false,
 }) => {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = oddsCardStyles(isDark, lighter);
+  const styles = oddsCardStyles(isDark);
+  const global = globalStyles(isDark);
 
   /* -------------------- Error State -------------------- */
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>❌ {error}</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>❌ {error}</Text>
       </View>
     );
   }
 
-  /* -------------------- Team Sources -------------------- */
-  const teamsSource =
-    league === "cbb"
-      ? cbbTeams
-      : league === "nfl"
-        ? nflTeams
-        : league === "cfb"
-          ? cfbTeams
-          : nbaTeams;
-
   /* -------------------- Bookmaker -------------------- */
   const bookmaker = game.bookmakers?.[0];
-
-  /* -------------------- Team Matching -------------------- */
-  const normalize = (str?: string) => str?.toLowerCase().replace(/[^a-z]/g, "");
-
-  const homeTeam = teamsSource.find(
-    (t) => normalize(t.fullName) === normalize(game.home_team),
-  );
-
-  const awayTeam = teamsSource.find(
-    (t) => normalize(t.fullName) === normalize(game.away_team),
-  );
 
   /* -------------------- Markets -------------------- */
   const getMarket = (key: string) =>
@@ -67,22 +46,10 @@ export const OddsCard: React.FC<Props> = ({
   const totals = getMarket("totals");
 
   const oddsMap = [
-    { label: "ML", market: h2h },
+    { label: "H2H", market: h2h },
     { label: "Spread", market: spreads },
     { label: "Total", market: totals },
   ];
-
-  /* -------------------- Logo Resolver -------------------- */
-  const getLogo = (team: any) => {
-    if (!team) return undefined;
-
-    // CBB women support
-    if (league === "cbb" && team.wLogo) {
-      return isDark ? team.logoLight || team.wLogo : team.wLogo;
-    }
-
-    return isDark ? team.logoLight || team.logo : team.logo;
-  };
 
   /* -------------------- Odds Formatter -------------------- */
   const formatOutcome = (
@@ -121,14 +88,13 @@ export const OddsCard: React.FC<Props> = ({
       {/* Away Team */}
       <View style={styles.teamRow}>
         <View style={styles.teamInfo}>
-          {awayTeam && (
-            <Image
-              source={getLogo(awayTeam)}
-              style={styles.teamLogo}
-              resizeMode="contain"
-            />
-          )}
-          <Text style={styles.teamName}>{awayTeam?.code ?? "UNK"}</Text>
+          <Image
+            source={awayLogo}
+            style={styles.teamLogo}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.teamName}>{awayCode}</Text>
         </View>
 
         {oddsMap.map(({ market, label }, i) => (
@@ -146,14 +112,13 @@ export const OddsCard: React.FC<Props> = ({
       {/* Home Team */}
       <View style={styles.teamRow}>
         <View style={styles.teamInfo}>
-          {homeTeam && (
-            <Image
-              source={getLogo(homeTeam)}
-              style={styles.teamLogo}
-              resizeMode="contain"
-            />
-          )}
-          <Text style={styles.teamName}>{homeTeam?.code ?? "UNK"}</Text>
+          <Image
+            source={homeLogo}
+            style={styles.teamLogo}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.teamName}>{homeCode}</Text>
         </View>
 
         {oddsMap.map(({ market, label }, i) => (
@@ -165,12 +130,17 @@ export const OddsCard: React.FC<Props> = ({
           </Text>
         ))}
       </View>
+
+      {/* Footer */}
+      <View style={styles.footerRow}>
+        <Text style={styles.footerText}>Powered By: {bookmaker.title}</Text>
+      </View>
     </View>
   );
 };
 
 /* -------------------- Styles -------------------- */
-const oddsCardStyles = (isDark: boolean, lighter: boolean) =>
+const oddsCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       padding: 4,
@@ -180,10 +150,21 @@ const oddsCardStyles = (isDark: boolean, lighter: boolean) =>
       alignItems: "center",
       marginBottom: 12,
     },
+    footerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 12,
+    },
     headerTeamText: {
       flex: 2,
       fontSize: 12,
       fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    footerText: {
+      flex: 2,
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     headerText: {
@@ -221,11 +202,7 @@ const oddsCardStyles = (isDark: boolean, lighter: boolean) =>
     },
     divider: {
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: lighter
-        ? Colors.lightGray
-        : isDark
-          ? Colors.midTone
-          : Colors.lightGray,
+      borderBottomColor: isDark ? Colors.midTone : Colors.lightGray,
 
       marginVertical: 8,
     },

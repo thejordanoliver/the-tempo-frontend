@@ -2,7 +2,10 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { Image, Text, View } from "react-native";
-import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
+import {
+  gameWidgetStyles,
+  isSmallGameWidgetLayout,
+} from "styles/ExploreStyles/GameWidgetStyles";
 import { MLBGame } from "types/baseball";
 import { getHolidayLabel } from "utils/dateUtils";
 
@@ -30,6 +33,8 @@ export default function BaseballGameWidget({
   isDark,
 }: BaseballGameWidgetProps) {
   const styles = gameWidgetStyles(isDark, height, width);
+  const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const showHeadline = !isSmallLayout || height >= 170;
   const global = globalStyles(isDark);
 
   if (loading || !game) {
@@ -65,41 +70,96 @@ export default function BaseballGameWidget({
     hour12: true,
   });
 
+  const awayTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={awayLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {away?.code}
+      </Text>
+    </View>
+  );
+
+  const homeTeamContent = (
+    <View style={styles.teamWrapper}>
+      <Image style={styles.teamLogo} source={homeLogo} />
+      <Text style={styles.teamName} numberOfLines={1}>
+        {home?.code}
+      </Text>
+    </View>
+  );
+
+  const awayScoreContent = (
+    <Text
+      style={styles.awayScore}
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      minimumFontScale={0.85}
+    >
+      {isScheduled ? "" : awayScore}
+    </Text>
+  );
+
+  const homeScoreContent = (
+    <Text
+      style={styles.homeScore}
+      numberOfLines={1}
+      adjustsFontSizeToFit
+      minimumFontScale={0.85}
+    >
+      {isScheduled ? "" : homeScore}
+    </Text>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.headlineContainer}>
-        <Text style={styles.headline}>{holidayLabel}</Text>
-      </View>
+      {showHeadline && (
+        <View style={styles.headlineContainer}>
+          <Text style={styles.headline} numberOfLines={1}>
+            {holidayLabel}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.wrapper}>
         <View style={styles.awaySection}>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={awayLogo} />
-            <Text style={styles.teamName}>{away?.code}</Text>
-          </View>
-          <Text style={styles.awayScore}>{isScheduled ? "" : awayScore}</Text>
+          {awayTeamContent}
+          {awayScoreContent}
         </View>
 
         <View style={styles.gameInfo}>
           {isScheduled ? (
             <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime}>{formattedDate}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedDate}
+              </Text>
               <View style={styles.divider} />
-              <Text style={styles.dateTime}>{formattedTime}</Text>
+              <Text style={styles.dateTime} numberOfLines={1}>
+                {formattedTime}
+              </Text>
             </View>
           ) : isFinal ? (
-            <Text style={styles.finalText}>{statusLong || "Final"}</Text>
+            <Text style={styles.finalText} numberOfLines={1}>
+              {statusLong || "Final"}
+            </Text>
           ) : (
-            <Text style={styles.period}>{statusLong || statusShort}</Text>
+            <Text style={styles.period} numberOfLines={1}>
+              {statusLong || statusShort}
+            </Text>
           )}
         </View>
 
         <View style={styles.homeSection}>
-          <Text style={styles.homeScore}>{isScheduled ? "" : homeScore}</Text>
-          <View style={styles.teamWrapper}>
-            <Image style={styles.teamLogo} source={homeLogo} />
-            <Text style={styles.teamName}>{home?.code}</Text>
-          </View>
+          {isSmallLayout ? (
+            <>
+              {homeTeamContent}
+              {homeScoreContent}
+            </>
+          ) : (
+            <>
+              {homeScoreContent}
+              {homeTeamContent}
+            </>
+          )}
         </View>
       </View>
     </View>

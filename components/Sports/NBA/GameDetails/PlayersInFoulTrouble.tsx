@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/styles";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 type Player = {
@@ -26,6 +26,7 @@ type Props = {
   league: "NBA" | "WNBA" | "CBB" | "WCBB";
   gameStatusDescription: string;
 };
+
 export default function PlayersInFoulTrouble({
   homeId,
   awayId,
@@ -49,33 +50,49 @@ export default function PlayersInFoulTrouble({
     [homeId, awayId, homeCode, awayCode, homeLogo, awayLogo],
   );
 
-  const tabIds = tabs.map((t) => t.id);
+  const tabIds = useMemo(() => tabs.map((tab) => tab.id), [tabs]);
+
   const [selectedTeamId, setSelectedTeamId] = useState(tabIds[0] ?? "");
+
+  useEffect(() => {
+    if (!selectedTeamId || !tabIds.includes(selectedTeamId)) {
+      setSelectedTeamId(tabIds[0] ?? "");
+    }
+  }, [selectedTeamId, tabIds]);
+
   const players = useMemo(
     () => [...homePlayers, ...awayPlayers],
     [homePlayers, awayPlayers],
   );
+
   const filteredPlayers = useMemo(() => {
     return players
-      .filter((p: Player) => !selectedTeamId || p.teamId === selectedTeamId)
-      .sort((a: Player, b: Player) => b.fouls - a.fouls);
+      .filter((player) => !selectedTeamId || player.teamId === selectedTeamId)
+      .sort((a, b) => b.fouls - a.fouls);
   }, [players, selectedTeamId]);
 
   const renderRow = ({ item, index }: { item: Player; index: number }) => {
     const isLast = index === filteredPlayers.length - 1;
-    const isFouledOut = league === "NBA" ? item.fouls >= 6 : item.fouls >= 5;
+    const foulLimit = league === "NBA" ? 6 : 5;
+    const isFouledOut = item.fouls >= foulLimit;
 
     return (
-      <View style={[styles.playerRow, isLast && { borderBottomWidth: 0 }]}>
+      <View style={[styles.playerRow, isLast && styles.lastPlayerRow]}>
         <View style={styles.left}>
           <View style={styles.avatarWrapper}>
-            {item.avatarUrl && (
+            {item.avatarUrl ? (
               <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
-            )}
+            ) : null}
           </View>
+
           <View style={styles.playerInfo}>
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.jersey}>#{item.jersey}</Text>
+            <Text style={styles.name} numberOfLines={1}>
+              {item.name}
+            </Text>
+
+            {item.jersey ? (
+              <Text style={styles.jersey}>#{item.jersey}</Text>
+            ) : null}
           </View>
         </View>
 
@@ -87,14 +104,14 @@ export default function PlayersInFoulTrouble({
   };
 
   if (
-    gameStatusDescription !== "In Progress" &&
-    gameStatusDescription !== "Halftime"
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Final"
   ) {
     return null;
   }
 
   return (
-    <View style={styles.constainer}>
+    <View style={styles.container}>
       <HeadingTwo isDark={isDark}>In Foul Trouble</HeadingTwo>
 
       <View style={styles.wrapper}>
@@ -103,21 +120,22 @@ export default function PlayersInFoulTrouble({
           selected={selectedTeamId}
           onTabPress={setSelectedTeamId}
           renderLabel={(tabKey, isSelected, tabStyles) => {
-            const teamLogo = tabKey === "home" ? homeLogo : awayLogo;
-            const teamCode = tabKey === "home" ? homeCode : awayCode;
+            const tab = tabs.find((teamTab) => teamTab.id === tabKey);
+
             return (
               <View style={styles.tabLabel}>
-                {teamLogo && (
+                {tab?.logo ? (
                   <Image
-                    source={teamLogo}
+                    source={tab.logo}
                     style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
-                )}
+                ) : null}
 
                 <Text
                   style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
+                  numberOfLines={1}
                 >
-                  {teamCode}
+                  {tab?.label ?? ""}
                 </Text>
               </View>
             );
@@ -139,12 +157,13 @@ export default function PlayersInFoulTrouble({
 
 const foulTroubleStyles = (isDark: boolean) =>
   StyleSheet.create({
-    constainer: {},
+    container: {},
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
       paddingTop: 10,
+      overflow: "hidden",
     },
     playerRow: {
       marginHorizontal: 12,
@@ -155,10 +174,15 @@ const foulTroubleStyles = (isDark: boolean) =>
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
     },
-    left: { flexDirection: "row", alignItems: "center", flex: 1 },
-    avatar: {
-      width: 52,
-      height: 52,
+    lastPlayerRow: {
+      borderBottomWidth: 0,
+    },
+    left: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+      minWidth: 0,
+      paddingRight: 12,
     },
     avatarWrapper: {
       width: 60,
@@ -171,16 +195,22 @@ const foulTroubleStyles = (isDark: boolean) =>
       borderWidth: 0.5,
       borderColor: isDark ? Colors.white : Colors.black,
     },
-
+    avatar: {
+      width: 52,
+      height: 52,
+    },
     playerInfo: {
       flexDirection: "row",
       alignItems: "baseline",
+      flex: 1,
+      minWidth: 0,
     },
     name: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: 8,
+      flexShrink: 1,
     },
     jersey: {
       fontFamily: Fonts.OSREGULAR,
@@ -197,6 +227,7 @@ const foulTroubleStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
+      minWidth: 0,
     },
     tabLogo: {
       width: 28,

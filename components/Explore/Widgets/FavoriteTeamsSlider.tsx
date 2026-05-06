@@ -72,10 +72,6 @@ export default function FavoriteTeamsSlider({
             })
           }
         >
-          <View style={styles.leagueBadge}>
-            <Text style={styles.leagueBadgeText}>{item.favorite.league}</Text>
-          </View>
-
           {item.logo ? (
             <Image source={item.logo} style={styles.teamLogo} />
           ) : (
@@ -90,13 +86,9 @@ export default function FavoriteTeamsSlider({
 
           <View style={styles.teamTextWrap}>
             <Text style={styles.teamName} numberOfLines={2}>
-              {item.name}
+              {item.fullName}
             </Text>
-            {item.fullName && item.fullName !== item.name && (
-              <Text style={styles.teamFullName} numberOfLines={1}>
-                {item.fullName}
-              </Text>
-            )}
+            <Text style={styles.leagueBadgeText}>{item.favorite.league}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -161,19 +153,10 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
       paddingTop: compact ? 8 : 12,
       paddingBottom: compact ? 18 : 24,
     },
-    leagueBadge: {
-      position: "absolute",
-      top: compact ? 10 : 14,
-      right: compact ? 10 : 14,
-      borderRadius: 4,
-      paddingHorizontal: 7,
-      paddingVertical: 3,
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-    },
     leagueBadgeText: {
       fontFamily: Fonts.OSBOLD,
-      fontSize: 10,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     teamLogo: {
       width: compact ? "48%" : "52%",

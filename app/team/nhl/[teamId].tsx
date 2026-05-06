@@ -9,7 +9,7 @@ import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
 import Roster from "components/Sports/NHL/Team/Roster";
 import { players } from "constants/nhlPlayers";
 import { Colors } from "constants/styles";
-import { getNHLTeam } from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -39,8 +39,9 @@ type PageSelectedEvent = {
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
-  const teamIdNum = teamId ? parseInt(teamId as string, 10) : null;
-  const team = getNHLTeam(teamIdNum ?? 0);
+  const teamIdNum = Number(teamId);
+  const team = getNHLTeam(teamIdNum);
+  const teamLogo = getNHLTeamLogo(teamIdNum, true);
   const [standingsYear, setStandingsYear] = useState(getNHLSeason());
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -136,7 +137,7 @@ export default function TeamDetailScreen() {
       header: () => (
         <CustomHeaderTitle
           teamId={team?.id}
-          logo={team?.logoLight || team?.logo}
+          logo={teamLogo}
           teamColor={team?.color}
           onBack={goBack}
           isTeamScreen={true}

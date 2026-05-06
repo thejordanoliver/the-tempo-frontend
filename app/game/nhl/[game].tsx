@@ -26,6 +26,8 @@ import { formatVenueAddress } from "utils/CBBUtils/cbbGameUtils";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 
+const LEAGUE = "NHL";
+
 export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const { game } = useLocalSearchParams<{ game: string }>();
@@ -165,7 +167,7 @@ export default function GameDetailsScreen() {
           homeLogo={headerHomeLogo}
           awayLogo={headerAwayLogo}
           isNeutralSite={neutralSite}
-          league="NHL"
+          league={LEAGUE}
         />
       ),
     });
@@ -209,82 +211,85 @@ export default function GameDetailsScreen() {
           gameStatusDetail={gameStatusDetail}
         />
 
-        <View style={styles.innerContainer}>
-          {!dontShowDetails && (
-            <>
-              {!isFinal && !isScheduled && <LastPlay lastPlay={lastPlay} />}
+        {!dontShowDetails && (
+          <View style={styles.innerContainer}>
+            <LastPlay
+              lastPlay={lastPlay}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-              <FanPredictionVote
-                gameId={String(gameId)}
-                awayTeam={{
-                  id: awayTeamId,
-                  code: awayCode,
-                  logo: headerAwayLogo,
-                  color: awayTeam.color,
-                }}
-                homeTeam={{
-                  id: homeTeamId,
-                  code: homeCode,
-                  logo: headerHomeLogo,
-                  color: homeTeam.color,
-                }}
-                gameStatusDescription={gameStatusDescription}
-              />
+            <FanPredictionVote
+              gameId={String(gameId)}
+              awayTeam={{
+                id: awayTeamId,
+                code: awayCode,
+                logo: headerAwayLogo,
+                color: awayTeam.color,
+              }}
+              homeTeam={{
+                id: homeTeamId,
+                code: homeCode,
+                logo: headerHomeLogo,
+                color: homeTeam.color,
+              }}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-              <LineScore
-                linescore={lineScore}
-                homeCode={homeCode}
-                awayCode={awayCode}
-                league="NHL"
-                isDark={isDark}
-                gameStatusDescription={gameStatusDescription}
-              />
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              league={LEAGUE}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
-              {!isScheduled && (
-                <ShotChart
-                  plays={plays}
-                  homeTeamId={String(homeEspnId)}
-                  awayTeamId={String(awayEspnId)}
-                  isDark={isDark}
-                />
-              )}
+            <ShotChart
+              plays={plays}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              isDark={isDark}
+            />
 
-              <GameSummary plays={plays ?? []} isDark={isDark} />
+            <GameSummary plays={plays ?? []} isDark={isDark} />
 
-              <NHLInjuries
-                injuries={injuries}
-                loading={loading}
-                error={null}
-                homeTeamId={String(homeEspnId)}
-                awayTeamId={String(awayEspnId)}
-                isDark={isDark}
-              />
-              <HighlightVideoList highlights={highlights} isDark={isDark} />
-              <Officials
-                officials={officials}
-                isDark={isDark}
-                gameStatusDescription={gameStatusDescription}
-              />
+            <NHLInjuries
+              injuries={injuries}
+              loading={loading}
+              error={null}
+              homeTeamId={String(homeEspnId)}
+              awayTeamId={String(awayEspnId)}
+              isDark={isDark}
+            />
 
-              <GameLocation
-                venueImage={venueImage}
-                venueName={venueName}
-                location={venueLocation}
-                address={venueAddress}
-                venueCapacity={venueCapacity}
-                venueAttendance={undefined}
-                weather={weather}
-                isDark={isDark}
-              />
-            </>
-          )}
-        </View>
+            <HighlightVideoList highlights={highlights} isDark={isDark} />
+
+            <Officials
+              officials={officials}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
+
+            <GameLocation
+              venueImage={venueImage}
+              venueName={venueName}
+              location={venueLocation}
+              address={venueAddress}
+              venueCapacity={venueCapacity}
+              venueAttendance={undefined}
+              weather={weather}
+              isDark={isDark}
+            />
+          </View>
+        )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(parsedGame.id)}
-        opacityAnim={opacityAnim}
-      />
+      {!dontShowDetails && !isFinal && (
+        <GameLiveChatOverlay
+          gameId={String(parsedGame.id)}
+          opacityAnim={opacityAnim}
+        />
+      )}
     </>
   );
 }

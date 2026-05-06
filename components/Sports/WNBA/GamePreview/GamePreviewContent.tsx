@@ -62,15 +62,14 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      {lineScore && (
-        <LineScore
-          linescore={lineScore}
-          homeCode={home?.code ?? ""}
-          awayCode={away?.code ?? ""}
-          league={isWomen ? "WCBB" : "CBB"}
-          isDark
-        />
-      )}
+      <LineScore
+        linescore={lineScore}
+        homeCode={home?.code ?? ""}
+        awayCode={away?.code ?? ""}
+        league={isWomen ? "WCBB" : "CBB"}
+        isDark
+        gameStatusDescription={gameStatusDescription}
+      />
 
       <GameLeaders
         leaders={leaders}
