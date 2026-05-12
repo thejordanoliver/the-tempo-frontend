@@ -1,11 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import AlertModal from "components/Forum/AlertModal";
+import ConfirmModal from "components/ConfirmModal";
+import { Post } from "components/Forum/PostItem";
 import { Colors } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
-import { AlertConfig } from "hooks/ForumHooks/useCreatePost";
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Animated as RNAnimated,
+  Easing as RNEasing,
   Image,
   PixelRatio,
   Text,
@@ -13,24 +15,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import Animated, {
+import Reanimated, {
   Easing,
-  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  type SharedValue,
 } from "react-native-reanimated";
-import { commentItemStyles } from "styles/ForumStyles/CommentItemStyles";
-import { Post } from "./PostItem";
+import { commentItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { AlertConfig } from "types/alert";
+import PostImages, { MediaItem } from "./PostImages";
 
 interface CommentItemProps {
   comment: Post;
   postId: string;
   isDark: boolean;
-  BASE_URL: string;
   currentUserId: string | number;
   editComment: (commentId: string, newText: string) => Promise<void>;
   deleteComment: (postId: string, commentId: string) => Promise<void>;
@@ -38,49 +36,111 @@ interface CommentItemProps {
 }
 
 const COLLAPSED_HEIGHT = Math.round(3 * 20 * PixelRatio.getFontScale());
-const ACTION_WIDTH = 180;
 
-type RightActionsProps = {
-  dragX: SharedValue<number>;
+type CommentSubmenuProps = {
+  visible: boolean;
   isDark: boolean;
   onEdit: () => void;
   onDelete: () => void;
 };
 
-const RightActions = ({
-  dragX,
+const CommentSubmenu = ({
+  visible,
   isDark,
   onEdit,
   onDelete,
-}: RightActionsProps) => {
-  const styles = commentItemStyles(isDark);
+}: CommentSubmenuProps) => {
+  const progress = useRef(new RNAnimated.Value(0)).current;
+  const [shouldRender, setShouldRender] = useState(visible);
+  const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const translateX = interpolate(
-      dragX.value,
-      [-ACTION_WIDTH, 0],
-      [0, ACTION_WIDTH],
-    );
+  useEffect(() => {
+    if (visible) {
+      setShouldRender(true);
 
-    return {
-      transform: [{ translateX }],
-    };
-  });
+      RNAnimated.spring(progress, {
+        toValue: 1,
+        damping: 16,
+        stiffness: 230,
+        mass: 0.8,
+        useNativeDriver: true,
+      }).start();
+
+      return;
+    }
+
+    RNAnimated.timing(progress, {
+      toValue: 0,
+      duration: 130,
+      easing: RNEasing.in(RNEasing.quad),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) setShouldRender(false);
+    });
+  }, [progress, visible]);
+
+  if (!shouldRender) return null;
 
   return (
-    <Animated.View style={[styles.actionsContainer, animatedStyle]}>
-      <View style={styles.actionWrapper}>
-        <TouchableOpacity style={styles.confirmButton} onPress={onEdit}>
-          <Ionicons name="create" size={22} color={Colors.white} />
-        </TouchableOpacity>
-      </View>
+    <RNAnimated.View
+      pointerEvents={visible ? "auto" : "none"}
+      style={[
+        styles.submenu,
+        {
+          opacity: progress,
+          transform: [
+            {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-6, 0],
+              }),
+            },
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.94, 1],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.submenuItem}
+        onPress={onEdit}
+      >
+        <View style={styles.submenuIconWrap}>
+          <Ionicons
+            name="create-outline"
+            size={16}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </View>
 
-      <View style={styles.actionWrapper}>
-        <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
-          <Ionicons name="trash" size={22} color={Colors.white} />
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
+        <Text style={styles.submenuText}>Edit</Text>
+      </TouchableOpacity>
+
+      <View style={styles.submenuSeparator} />
+
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.submenuItem}
+        onPress={onDelete}
+      >
+        <View style={styles.submenuIconWrap}>
+          <Ionicons
+            name="trash-outline"
+            size={16}
+            color={isDark ? Colors.dark.lightRed : Colors.light.red}
+          />
+        </View>
+
+        <Text style={[styles.submenuText, styles.deleteSubmenuText]}>
+          Delete
+        </Text>
+      </TouchableOpacity>
+    </RNAnimated.View>
   );
 };
 
@@ -88,64 +148,103 @@ export const CommentItem = ({
   comment,
   postId,
   isDark,
-  BASE_URL,
   currentUserId,
   editComment,
   deleteComment,
   isLast,
 }: CommentItemProps) => {
+  const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
+  const router = useRouter();
+
+  const commentText = comment.text ?? "";
+  const hasText = commentText.trim().length > 0;
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState(comment.text);
+  const [editText, setEditText] = useState(commentText);
   const [textExpanded, setTextExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const swipeRef = React.useRef<SwipeableMethods>(null);
-  const router = useRouter();
+  const [submenuVisible, setSubmenuVisible] = useState(false);
 
-  const onPressUser = () => {
+  const animatedHeight = useSharedValue(COLLAPSED_HEIGHT);
+
+  const isAuthor = String(currentUserId) === String(comment.user_id);
+  const profileImageUri = comment.profile_image?.trim() || null;
+  const profileInitial = (comment.username?.[0] ?? "T").toUpperCase();
+
+  const media = useMemo<MediaItem[]>(
+    () => [
+      ...(comment.images ?? []).map((uri, index) => ({
+        id: `comment-img-${comment.id}-${index}`,
+        type: "image" as const,
+        uri,
+      })),
+      ...(comment.videos ?? []).map((uri, index) => ({
+        id: `comment-vid-${comment.id}-${index}`,
+        type: "video" as const,
+        uri,
+        thumbnailUri: comment.video_thumbnails?.[index] ?? undefined,
+      })),
+    ],
+    [comment.id, comment.images, comment.video_thumbnails, comment.videos],
+  );
+
+  useEffect(() => {
+    setEditText(commentText);
+    setTextExpanded(false);
+    setFullHeight(0);
+  }, [commentText]);
+
+  useEffect(() => {
+    if (isEditing) {
+      setSubmenuVisible(false);
+    }
+  }, [isEditing]);
+
+  const shouldShowExpand =
+    hasText && (commentText.length > 100 || commentText.split("\n").length > 3);
+
+  useEffect(() => {
+    if (!shouldShowExpand) return;
+
+    animatedHeight.value = withTiming(
+      textExpanded ? Math.max(fullHeight, COLLAPSED_HEIGHT) : COLLAPSED_HEIGHT,
+      {
+        duration: 140,
+        easing: Easing.inOut(Easing.ease),
+      },
+    );
+  }, [animatedHeight, fullHeight, shouldShowExpand, textExpanded]);
+
+  const heightStyle = useAnimatedStyle(() => ({
+    height: animatedHeight.value,
+  }));
+
+  const timestamp = formatDistanceToNow(new Date(comment.created_at), {
+    addSuffix: true,
+  }).replace(/^about /, "");
+
+  const closeAlert = () => setAlertConfig(null);
+
+  const handleOpenUser = () => {
+    if (isEditing) return;
+
     router.push({
       pathname: "/user/[id]",
       params: { id: comment.user_id },
     });
   };
 
-  const styles = commentItemStyles(isDark);
-
-  /* ---------------- Height animation (Reanimated) ---------------- */
-  const animatedHeight = useSharedValue(COLLAPSED_HEIGHT);
-
-  useEffect(() => {
-    animatedHeight.value = withTiming(
-      textExpanded ? fullHeight || COLLAPSED_HEIGHT : COLLAPSED_HEIGHT,
-      {
-        duration: 140,
-        easing: Easing.inOut(Easing.ease),
-      },
-    );
-  }, [textExpanded, fullHeight]);
-
-  const heightStyle = useAnimatedStyle(() => ({
-    height: animatedHeight.value,
-  }));
-
-  /* ---------------- Helpers ---------------- */
-  const showAlert = (config: AlertConfig) => setAlertConfig(config);
-  const closeAlert = () => setAlertConfig(null);
-
-  const profileUri = comment.profile_image
-    ? comment.profile_image.startsWith("http")
-      ? comment.profile_image
-      : `${BASE_URL}${comment.profile_image}`
-    : undefined;
-
-  const isAuthor = String(currentUserId) === String(comment.user_id);
-
   const confirmDelete = () => {
-    showAlert({
+    setSubmenuVisible(false);
+
+    setAlertConfig({
       title: "Delete Comment",
-      message: "Are you sure you want to delete this comment?",
+      message:
+        "This action can't be undone. The comment will be permanently deleted.",
       confirmText: "Delete",
       cancelText: "Cancel",
+      variant: "danger",
       onConfirm: async () => {
         await deleteComment(postId, comment.id);
         closeAlert();
@@ -153,164 +252,219 @@ export const CommentItem = ({
     });
   };
 
-  const onSaveEdit = async () => {
-    if (editText.trim() && editText !== comment.text) {
-      await editComment(comment.id, editText.trim());
+  const handleStartEdit = () => {
+    setSubmenuVisible(false);
+    setEditText(commentText);
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    const nextText = editText.trim();
+
+    if (nextText && nextText !== commentText.trim()) {
+      await editComment(comment.id, nextText);
     }
+
     setIsEditing(false);
   };
 
-  /* ---------------- Swipe actions (ReanimatedSwipeable) ---------------- */
-  const renderRightActions = (
-    progress: SharedValue<number>,
-    dragX: SharedValue<number>,
-  ) => {
-    if (!isAuthor || isEditing) return null;
-
-    return (
-      <RightActions
-        dragX={dragX}
-        isDark={isDark}
-        onEdit={() => {
-          swipeRef.current?.close(); // 👈 CLOSE IT
-          setIsEditing(true);
-        }}
-        onDelete={() => {
-          swipeRef.current?.close(); // optional but nice
-          confirmDelete();
-        }}
-      />
-    );
+  const handleCancelEdit = () => {
+    setEditText(commentText);
+    setIsEditing(false);
   };
 
-  const rawTimeAgo = formatDistanceToNow(new Date(comment.created_at), {
-    addSuffix: true,
-  });
+  const toggleSubmenu = () => {
+    if (isEditing) return;
 
-  const timestamp = rawTimeAgo.startsWith("about ")
-    ? rawTimeAgo.slice(6)
-    : rawTimeAgo;
+    setSubmenuVisible((current) => !current);
+  };
 
-  /* ---------------- Render ---------------- */
   return (
-    <View style={[styles.container, isLast && { borderBottomWidth: 0 }]}>
-      <Swipeable
-        ref={swipeRef}
-        enabled={!isEditing}
-        renderRightActions={renderRightActions}
-      >
-        <View>
-          {/* Header */}
-          <TouchableOpacity activeOpacity={0.75} onPress={onPressUser}>
-            <View style={styles.user}>
-              <Image
-                source={profileUri ? { uri: profileUri } : undefined}
-                style={styles.image}
-              />
-              <Text
-                style={styles.username}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
+    <View
+      style={[
+        styles.container,
+        submenuVisible && styles.containerMenuOpen,
+      ]}
+    >
+      <View style={[styles.commentContainer, isLast && styles.lastContainer]}>
+        <View style={styles.userRow}>
+          <View style={styles.leftSide}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={isEditing}
+              onPress={handleOpenUser}
+              style={styles.avatarButton}
+            >
+              {profileImageUri ? (
+                <Image
+                  source={{ uri: profileImageUri }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View style={[styles.profileImage, styles.profilePlaceholder]}>
+                  <Text style={styles.profileInitial}>{profileInitial}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={isEditing}
+              onPress={handleOpenUser}
+              style={styles.userMeta}
+            >
+              <Text style={styles.username} numberOfLines={1}>
                 {comment.username}
               </Text>
-            </View>
-          </TouchableOpacity>
+              <Text style={styles.timestamp} numberOfLines={1}>
+                {timestamp}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-          {/* Body */}
-          {isEditing ? (
-            <>
-              <TextInput
-                style={styles.editInputContainer}
-                multiline
-                value={editText}
-                onChangeText={setEditText}
+          {isAuthor ? (
+            <View style={styles.menuAnchor}>
+              <CommentSubmenu
+                visible={submenuVisible}
+                isDark={isDark}
+                onEdit={handleStartEdit}
+                onDelete={confirmDelete}
               />
 
-              <View style={styles.editActionsContainer}>
-                <TouchableOpacity onPress={onSaveEdit} style={styles.button}>
-                  <Text style={styles.saveText}>Save</Text>
-                  <Ionicons
-                    name="checkmark"
-                    size={30}
-                    color={isDark ? Colors.dark.leafGreen : Colors.light.green}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => setIsEditing(false)}
-                >
-                  <Text style={styles.cancelText}>Cancel</Text>
-                  <Ionicons
-                    name="close"
-                    size={30}
-                    color={isDark ? Colors.dark.lightRed : Colors.light.red}
-                  />
-                </TouchableOpacity>
-              </View>
-            </>
-          ) : (
-            <View style={styles.commentContainer}>
-              <Animated.View
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={toggleSubmenu}
                 style={[
-                  heightStyle,
-                  {
-                    overflow: "hidden",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  },
+                  styles.menuButton,
+                  submenuVisible && styles.menuButtonActive,
                 ]}
+                hitSlop={8}
               >
-                <Text
-                  style={styles.text}
-                  numberOfLines={textExpanded ? undefined : 3}
-                >
-                  {comment.text}
-                </Text>
-              </Animated.View>
-
-              {(comment.text.length > 100 ||
-                comment.text.split("\n").length > 2) && (
-                <TouchableOpacity
-                  onPress={() => setTextExpanded(!textExpanded)}
-                >
-                  <Text style={styles.expandText}>
-                    {textExpanded ? "Collapse" : "Expand"}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              {/* Measurement */}
-              <Text
-                pointerEvents="none"
-                style={[
-                  styles.text,
-                  { position: "absolute", opacity: 0, width: "100%" },
-                ]}
-                onLayout={(e) => setFullHeight(e.nativeEvent.layout.height)}
-              >
-                {comment.text}
-              </Text>
-
-              <View style={styles.timestampContainer}>
-                <Text style={styles.timestamp}>{timestamp}</Text>
-              </View>
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={20}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              </TouchableOpacity>
             </View>
+          ) : (
+            <View style={styles.menuPlaceholder} />
           )}
         </View>
 
-        <AlertModal
-          visible={!!alertConfig}
-          isDark={isDark}
-          title={alertConfig?.title}
-          message={alertConfig?.message}
-          confirmText={alertConfig?.confirmText ?? "OK"}
-          cancelText={alertConfig?.cancelText}
-          onCancel={closeAlert}
-          onConfirm={alertConfig?.onConfirm}
-        />
-      </Swipeable>
+        {isEditing ? (
+          <View style={styles.editContainer}>
+            <TextInput
+              style={styles.editInput}
+              multiline
+              value={editText}
+              onChangeText={setEditText}
+              placeholder="Edit your comment..."
+              placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
+              textAlignVertical="top"
+            />
+
+            <View style={styles.editActionsContainer}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={handleCancelEdit}
+                style={styles.editButton}
+              >
+                <Text style={styles.cancelText}>Cancel</Text>
+                <Ionicons
+                  name="close"
+                  size={22}
+                  color={isDark ? Colors.dark.lightRed : Colors.light.red}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={handleSaveEdit}
+                style={styles.editButton}
+              >
+                <Text style={styles.saveText}>Save</Text>
+                <Ionicons
+                  name="checkmark"
+                  size={22}
+                  color={isDark ? Colors.dark.leafGreen : Colors.light.green}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.commentBody}>
+            {hasText &&
+              (shouldShowExpand ? (
+                <>
+                  <Reanimated.View
+                    style={[styles.commentTextClip, heightStyle]}
+                  >
+                    <Text
+                      style={styles.commentText}
+                      numberOfLines={textExpanded ? undefined : 3}
+                    >
+                      {commentText}
+                    </Text>
+                  </Reanimated.View>
+
+                  <TouchableOpacity
+                    activeOpacity={0.75}
+                    onPress={() => setTextExpanded((prev) => !prev)}
+                    style={styles.expandButton}
+                  >
+                    <Text style={styles.expandText}>
+                      {textExpanded ? "Show less" : "Show more"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Text
+                    pointerEvents="none"
+                    style={[styles.commentText, styles.measureText]}
+                    onLayout={(event) =>
+                      setFullHeight(event.nativeEvent.layout.height)
+                    }
+                  >
+                    {commentText}
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.commentText}>{commentText}</Text>
+              ))}
+
+            {media.length > 0 && (
+              <View
+                style={[
+                  styles.commentMediaWrapper,
+                  !hasText && styles.mediaOnlyWrapper,
+                ]}
+              >
+                <PostImages media={media} item={comment} />
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+
+      <ConfirmModal
+        visible={!!alertConfig}
+        title={alertConfig?.title}
+        message={alertConfig?.message}
+        confirmText={alertConfig?.confirmText ?? "OK"}
+        cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
+        onCancel={closeAlert}
+        onConfirm={async () => {
+          if (alertConfig?.onConfirm) {
+            await alertConfig.onConfirm();
+            return;
+          }
+
+          closeAlert();
+        }}
+      />
     </View>
   );
 };

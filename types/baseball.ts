@@ -145,6 +145,7 @@ export type CollegeBaseballGame = {
     hits: number;
     errors: number;
     record: string;
+    homeRank: number
   };
   awayTeam: {
     id: string;
@@ -158,6 +159,7 @@ export type CollegeBaseballGame = {
     hits: number;
     errors: number;
     record: string;
+    awayRank: number
   };
   isConferenceGame: boolean;
   isNeutralSite: boolean;

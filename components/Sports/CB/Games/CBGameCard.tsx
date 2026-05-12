@@ -70,8 +70,8 @@ function CBGameCard({ game }: CollegeBaseballGameCardProps) {
   const awayScore = game?.awayTeam?.score ?? 0;
   const homeRecord = game.homeTeam.record ?? "0-0";
   const awayRecord = game.awayTeam.record ?? "0-0";
-  const homeRank = details?.homeRank;
-  const awayRank = details?.awayRank;
+  const homeRank = game.homeTeam.homeRank
+  const awayRank = game.awayTeam.awayRank
   const isTopInning = gameStatusDetail.includes("Top");
   const outs = liveScore?.outs;
   const bases: { first: boolean; second: boolean; third: boolean } =

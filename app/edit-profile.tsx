@@ -1,9 +1,9 @@
 // screens/EditProfileScreen.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "components/Button";
+import ConfirmModal from "components/ConfirmModal";
 import CropEditorModal from "components/CropEditorModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
 import LabeledInput from "components/LabeledInput";
 import ProfileBanner from "components/Profile/ProfileBanner";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -24,6 +24,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { AlertConfig } from "types/alert";
 
 const MAX_BIO_LENGTH = 150;
 const BIO_INPUT_BUFFER = 25;
@@ -130,18 +131,12 @@ const appendLocalImageToFormData = (
 const getSavedProfileImage = (
   savedProfile: SavedProfileData | null | undefined,
   fallback: string | null,
-) =>
-  savedProfile?.profile_image ??
-  savedProfile?.profileImage ??
-  fallback;
+) => savedProfile?.profile_image ?? savedProfile?.profileImage ?? fallback;
 
 const getSavedBannerImage = (
   savedProfile: SavedProfileData | null | undefined,
   fallback: string | null,
-) =>
-  savedProfile?.banner_image ??
-  savedProfile?.bannerImage ??
-  fallback;
+) => savedProfile?.banner_image ?? savedProfile?.bannerImage ?? fallback;
 
 export default function EditProfileScreen() {
   // ====================== STATE ======================
@@ -159,13 +154,10 @@ export default function EditProfileScreen() {
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [cropTarget, setCropTarget] = useState<CropTarget | null>(null);
   const [isCropModalVisible, setCropModalVisible] = useState(false);
-
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-
   const trimmedFullName = useMemo(() => fullName.trim(), [fullName]);
   const trimmedBio = useMemo(() => bio.trim(), [bio]);
   const isBioTooLong = bio.length > MAX_BIO_LENGTH;
@@ -505,13 +497,15 @@ export default function EditProfileScreen() {
         />
       )}
 
-      <AlertModal
+      <ConfirmModal
         visible={!!alertConfig}
-        isDark={isDark}
         title={alertConfig?.title}
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}
         cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
         onConfirm={() => {
           if (alertConfig?.onConfirm) {

@@ -217,7 +217,7 @@ const getStyles = (isDark: boolean) =>
       paddingTop: 10,
       paddingBottom: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      borderTopWidth: StyleSheet.hairlineWidth,
+
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
     },

@@ -1,24 +1,30 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export const useCFBTeamRecruits = (year: number) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!year) return;
+  const fetchData = useCallback(
+    async (isRefresh = false) => {
+      if (!year) return;
 
-    const fetchData = async () => {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
       setError(null);
 
       try {
-        const res = await apiClient.get(`api/cfbd/team/recruits`, {
+        const res = await apiClient.get("api/cfbd/team/recruits", {
           params: { year },
         });
 
-        setData(res.data);
+        setData(Array.isArray(res.data) ? res.data : []);
       } catch (err: any) {
         setError(
           err?.response?.data?.error ||
@@ -27,11 +33,25 @@ export const useCFBTeamRecruits = (year: number) => {
         );
       } finally {
         setLoading(false);
+        setRefreshing(false);
       }
-    };
+    },
+    [year],
+  );
 
-    fetchData();
-  }, [year]);
+  const refresh = useCallback(() => {
+    return fetchData(true);
+  }, [fetchData]);
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchData(false);
+  }, [fetchData]);
+
+  return {
+    data,
+    loading,
+    refreshing,
+    error,
+    refresh,
+  };
 };

@@ -34,7 +34,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB";
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 type Player = {

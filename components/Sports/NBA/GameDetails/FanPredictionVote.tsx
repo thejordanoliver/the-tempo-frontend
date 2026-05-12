@@ -29,7 +29,7 @@ type Props = {
   awayTeam: VoteTeam;
   homeTeam: VoteTeam;
   onVoteCast?: (teamId: string | number) => void;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function FanPredictionVote({

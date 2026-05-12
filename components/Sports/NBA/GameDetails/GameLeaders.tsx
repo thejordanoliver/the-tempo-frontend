@@ -16,7 +16,7 @@ type Props = {
   isDark: boolean;
   loading: boolean;
   error: any;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function GameLeaders({

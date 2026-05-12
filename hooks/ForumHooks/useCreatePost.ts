@@ -1,12 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { PollData } from "components/Forum/PollEditorModal";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiClient, BASE_URL } from "utils/apiClient";
-
 import {
   Animated,
   Easing,
@@ -14,6 +11,9 @@ import {
   Platform,
   UIManager,
 } from "react-native";
+import { AlertConfig } from "types/alert";
+import { LeagueType } from "types/types";
+import { apiClient } from "utils/apiClient";
 
 export type MediaItem = {
   id: string;
@@ -24,15 +24,6 @@ export type MediaItem = {
   trimEndMs?: number;
 };
 
-export interface AlertConfig {
-  title?: string;
-  message?: string;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-}
-
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -42,7 +33,7 @@ if (
 
 const createAnim = () => ({ opacity: new Animated.Value(1) });
 
-export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
+export function useCreatePost(teamId?: string, league?: LeagueType) {
   const [newPostText, setNewPostText] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -180,7 +171,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
       showAlert({
         title: "Not Logged In",
         message: "You must be logged in to create a post.",
-        confirmText: "Cancel",
+        confirmText: "OK",
       });
       return null;
     }
@@ -188,7 +179,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
       showAlert({
         title: "Error",
         message: "League is required to create a post.",
-        cancelText: "Cancel",
+        confirmText: "OK",
       });
       return null;
     }
@@ -298,7 +289,7 @@ export function useCreatePost(teamId?: string, league?: "NBA" | "NFL") {
     setMedia,
     setMediaAnims,
     posts,
-    poll,    // ✅
+    poll, // ✅
     setPoll, // ✅
   };
 }

@@ -1,4 +1,4 @@
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
 import { StyleSheet, TextInput, View } from "react-native";
@@ -25,42 +25,38 @@ export default function TextInputComponent({
 }: LabeledInputProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const styles = inputStyles(isDark);
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View>
       <TextInput
         value={value}
         onChangeText={onChangeText}
         multiline={multiline}
         placeholder={placeholder}
-        placeholderTextColor={isDark ? "#888" : "#666"}
-        style={[
-          styles.input,
-          multiline && styles.bioInput,
-          {
-            color: isDark ? "#fff" : "#000",
-            backgroundColor: isDark ? "#2e2e2e" : "#eee",
-          },
-          inputStyle,
-        ]}
+        placeholderTextColor={Colors.midTone}
+        style={[styles.input, multiline && styles.bioInput, inputStyle]}
         {...rest}
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {},
-
-  input: {
-    padding: 20,
-    borderRadius: 8,
-    fontSize: 16,
-    marginBottom: 12,
-    fontFamily: Fonts.OSLIGHT,
-  },
-  bioInput: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-});
+const inputStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    input: {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      padding: 16,
+      borderRadius: 8,
+      marginBottom: 12,
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    bioInput: {
+      height: 100,
+      textAlignVertical: "top",
+    },
+  });

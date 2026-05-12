@@ -1,3 +1,5 @@
+import { OddsLeague } from "hooks/OddsHooks/useUpcomingOdds";
+
 export type PlayerOutcome = {
   name: "Over" | "Under";
   description: string; // Player name
@@ -42,11 +44,14 @@ export type UseEventOddsParams = {
 };
 
 export type GameOddsSectionProps = {
-  date: string; // ISO date-time string
-  gameDate: string; // YYYY-MM-DD
+  date: string | undefined;
+  gameDate: string;
+  neutralSite?: boolean;
+  league?: OddsLeague;
+  isDark: boolean;
+  awayLogo: any;
+  homeLogo: any;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  homeId: number | undefined;
-  awayId: number | undefined;
-  neutralSite?: boolean;
+  gameStatusDescription: string | undefined;
 };

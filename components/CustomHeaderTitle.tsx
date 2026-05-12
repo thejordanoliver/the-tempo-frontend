@@ -10,13 +10,12 @@ import {
 import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam, mlbTeams } from "constants/teamsMLB";
 import { getNFLTeam, nflTeams } from "constants/teamsNFL";
-
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -34,12 +33,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
+const FALLBACK_MESSAGE_AVATAR =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
+
 type CustomHeaderTitleProps = {
   title?: string;
   playerName?: string;
   tabName?: string;
   onLogout?: () => void;
   onSettings?: () => void;
+  onMessages?: () => void;
+  onCreateMessage?: () => void;
   onBack?: () => void;
   onCalendarPress?: () => void;
   onOpenLeagueModal?: () => void;
@@ -87,18 +91,22 @@ type CustomHeaderTitleProps = {
   onOpenInfo?: () => void;
   onToggleFavorite?: () => void;
   onToggleNotifications?: () => void;
+
+  // Message thread header props
+  messageAvatar?: string;
+  messageUsername?: string;
+  messageFullName?: string;
+  messageIsOnline?: boolean;
+  messageIsVerified?: boolean;
 };
 
 function resolveImage(source: any): ImageSourcePropType | undefined {
   if (!source) return undefined;
 
-  // require("image.png")
   if (typeof source === "number") return source;
 
-  // already { uri }
   if (typeof source === "object" && source.uri) return source;
 
-  // plain URL string
   if (typeof source === "string") return { uri: source };
 
   return undefined;
@@ -109,7 +117,6 @@ const TeamBackground = ({
   insets,
   isDark,
   selectedTeam,
-  teamId,
   logo,
   teamColor,
   isTeamScreen,
@@ -126,6 +133,7 @@ const TeamBackground = ({
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
   const styles = customHeaderStyles;
+
   if (!(isTeamScreen || isPlayerScreen)) {
     return (
       <View
@@ -156,12 +164,14 @@ const TeamBackground = ({
           zIndex: -1,
         }}
       />
+
       {(selectedTeam?.logo || logo) && (
         <Image source={resolveImage(logo)} style={styles.bgImage} />
       )}
     </View>
   );
 };
+
 const ConferenceBackground = ({
   insets,
   isDark,
@@ -179,6 +189,7 @@ const ConferenceBackground = ({
 }) => {
   const defaultBgColor = isDark ? Colors.black : Colors.white;
   const styles = customHeaderStyles;
+
   if (!isConferenceScreen) {
     return (
       <View
@@ -209,6 +220,7 @@ const ConferenceBackground = ({
           zIndex: -1,
         }}
       />
+
       {(selectedTeam?.logo || logo) && (
         <Image
           source={
@@ -220,6 +232,226 @@ const ConferenceBackground = ({
         />
       )}
     </View>
+  );
+};
+
+const MessageThreadHeader = ({
+  avatar,
+  username,
+  fullName,
+  isOnline,
+  isVerified,
+  isDark,
+}: {
+  avatar?: string;
+  username?: string;
+  fullName?: string;
+  isOnline?: boolean;
+  isVerified?: boolean;
+  isDark: boolean;
+}) => {
+  const styles = customHeaderStyles;
+  const avatarSource = resolveImage(avatar) ?? { uri: FALLBACK_MESSAGE_AVATAR };
+  const displayUsername = username || fullName || "New Message";
+  const displayFullName =
+    fullName && fullName !== displayUsername ? fullName : "";
+
+  return (
+    <View style={styles.messageHeaderContainer}>
+      <View style={styles.messageAvatarWrap}>
+        <Image source={avatarSource} style={styles.messageAvatar} />
+
+        {isOnline && (
+          <View
+            style={[
+              styles.messageOnlineDot,
+              {
+                borderColor: isDark ? Colors.black : Colors.white,
+              },
+            ]}
+          />
+        )}
+      </View>
+
+      <View style={styles.messageHeaderTextWrap}>
+        <View style={styles.messageUsernameRow}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.messageUsername,
+              { color: isDark ? Colors.white : Colors.black },
+            ]}
+          >
+            {displayUsername}
+          </Text>
+
+          {isVerified && (
+            <Ionicons
+              name="checkmark-circle"
+              size={14}
+              color={Colors.dark.blue}
+            />
+          )}
+        </View>
+
+        {!!displayFullName && (
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.messageFullName,
+              { color: isDark ? Colors.lightGray : Colors.darkGray },
+            ]}
+          >
+            {displayFullName}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+};
+
+const ProfileHeaderMenu = ({
+  visible,
+  isDark,
+  onSettings,
+  onLogout,
+}: {
+  visible: boolean;
+  isDark: boolean;
+  onSettings?: () => void;
+  onLogout?: () => void;
+}) => {
+  const progress = useRef(new Animated.Value(0)).current;
+  const [shouldRender, setShouldRender] = useState(visible);
+  const styles = customHeaderStyles;
+  useEffect(() => {
+    if (visible) {
+      setShouldRender(true);
+
+      Animated.spring(progress, {
+        toValue: 1,
+        damping: 16,
+        stiffness: 230,
+        mass: 0.8,
+        useNativeDriver: true,
+      }).start();
+
+      return;
+    }
+
+    Animated.timing(progress, {
+      toValue: 0,
+      duration: 130,
+      easing: Easing.in(Easing.quad),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) setShouldRender(false);
+    });
+  }, [progress, visible]);
+
+  if (!shouldRender) return null;
+
+  return (
+    <Animated.View
+      pointerEvents={visible ? "auto" : "none"}
+      style={[
+        styles.profileSubmenu,
+        {
+          backgroundColor: isDark
+            ? Colors.dark.itemBackground
+            : Colors.light.itemBackground,
+          borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+          opacity: progress,
+          transform: [
+            {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-6, 0],
+              }),
+            },
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.94, 1],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      {onSettings && (
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.profileSubmenuItem}
+          onPress={onSettings}
+        >
+          <View
+            style={[
+              styles.profileSubmenuIconWrap,
+              { backgroundColor: isDark ? Colors.black : Colors.white },
+            ]}
+          >
+            <Ionicons
+              name="settings-outline"
+              size={16}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.profileSubmenuText,
+              { color: isDark ? Colors.dark.text : Colors.light.text },
+            ]}
+          >
+            Settings
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {onLogout && (
+        <>
+          {onSettings && (
+            <View
+              style={[
+                styles.profileSubmenuSeparator,
+                {
+                  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+                },
+              ]}
+            />
+          )}
+
+          <TouchableOpacity
+            activeOpacity={0.85}
+            style={styles.profileSubmenuItem}
+            onPress={onLogout}
+          >
+            <View
+              style={[
+                styles.profileSubmenuIconWrap,
+                { backgroundColor: isDark ? Colors.black : Colors.white },
+              ]}
+            >
+              <Ionicons
+                name="log-out-outline"
+                size={16}
+                color={isDark ? Colors.dark.lightRed : Colors.light.red}
+              />
+            </View>
+
+            <Text
+              style={[
+                styles.profileSubmenuText,
+                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
+              ]}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </>
+      )}
+    </Animated.View>
   );
 };
 
@@ -246,25 +478,25 @@ const GameHeader = ({
   isWomen: boolean;
 }) => {
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
+
   const styles = customHeaderStyles;
   const isMMA = league === "MMA";
-
   const dividerText = isNeutralSite ? "vs" : "@";
+
   const { fighter: firstFighter } = useMMAFighter(firstFighterId ?? 0);
   const { fighter: secondFighter } = useMMAFighter(secondFighterId ?? 0);
-  const homeColor = homeTeam?.color ?? Colors.lightGray;
 
+  const homeColor = homeTeam?.color ?? Colors.lightGray;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
   const awayName = secondFighter?.last_name || "UNK";
   const homeName = firstFighter?.last_name || "UNK";
-  // --- Main animations ---
+
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
 
-  // --- Letter-level animations ---
   const awayLetters: string[] = isMMA
     ? awayName.split("")
     : (awayTeam.code ?? "AWY").split("");
@@ -282,6 +514,7 @@ const GameHeader = ({
     () => homeLetters.map(() => new Animated.Value(0)),
     [homeLetters.join("")],
   );
+
   useEffect(() => {
     Animated.sequence([
       Animated.parallel([
@@ -348,7 +581,6 @@ const GameHeader = ({
         { flexDirection: "row", zIndex: -10, opacity },
       ]}
     >
-      {/* Gradient background */}
       <LinearGradient
         colors={[awayColor, awayColor, homeColor, homeColor]}
         locations={[0, 0.5, 0.5, 1]}
@@ -357,7 +589,6 @@ const GameHeader = ({
         style={StyleSheet.absoluteFillObject}
       />
 
-      {/* Away team */}
       <View style={styles.teamHalfWrapper}>
         <Animated.View
           style={[
@@ -370,6 +601,7 @@ const GameHeader = ({
             style={styles.bgLogo}
             resizeMode="contain"
           />
+
           <View style={{ flexDirection: "row" }}>
             {awayLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -402,7 +634,6 @@ const GameHeader = ({
         </Animated.View>
       </View>
 
-      {/* Divider */}
       <Animated.View
         style={[
           styles.dividerWrapper,
@@ -412,7 +643,6 @@ const GameHeader = ({
         <Text style={styles.dividerText}>{dividerText}</Text>
       </Animated.View>
 
-      {/* Home team */}
       <View style={styles.teamHalfWrapper}>
         <Animated.View
           style={[
@@ -425,6 +655,7 @@ const GameHeader = ({
             style={styles.bgLogo}
             resizeMode="contain"
           />
+
           <View style={{ flexDirection: "row" }}>
             {homeLetters.map((char: string, i: number) => (
               <Animated.Text
@@ -466,6 +697,8 @@ export function CustomHeaderTitle({
   tabName,
   onLogout,
   onSettings,
+  onMessages,
+  onCreateMessage,
   onBack,
   onCalendarPress,
   onOpenLeagueModal,
@@ -498,11 +731,46 @@ export function CustomHeaderTitle({
   setModalVisible = () => {},
   league = "Leagues",
   logo,
-  logoLight,
+  messageAvatar,
+  messageUsername,
+  messageFullName,
+  messageIsOnline,
+  messageIsVerified,
 }: CustomHeaderTitleProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
+  const styles = customHeaderStyles;
+  const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+
+  const toggleProfileMenu = useCallback(() => {
+    setProfileMenuVisible((current) => !current);
+  }, []);
+
+  const closeProfileMenu = useCallback(() => {
+    setProfileMenuVisible(false);
+  }, []);
+
+  const handleProfileMessages = useCallback(() => {
+    closeProfileMenu();
+    onMessages?.();
+  }, [closeProfileMenu, onMessages]);
+
+  const handleProfileSettings = useCallback(() => {
+    closeProfileMenu();
+    onSettings?.();
+  }, [closeProfileMenu, onSettings]);
+
+  const handleProfileLogout = useCallback(() => {
+    closeProfileMenu();
+    onLogout?.();
+  }, [closeProfileMenu, onLogout]);
+
+  useEffect(() => {
+    if (tabName !== "Profile") {
+      setProfileMenuVisible(false);
+    }
+  }, [tabName]);
 
   const modalToMapKey: Record<string, string> = {
     SEC: "SEC",
@@ -532,6 +800,7 @@ export function CustomHeaderTitle({
     if (!selectedConferenceName) return null;
     const mapKey =
       modalToMapKey[selectedConferenceName] || selectedConferenceName;
+
     return conferenceMap[mapKey] ?? null;
   }, [selectedConferenceName]);
 
@@ -541,6 +810,7 @@ export function CustomHeaderTitle({
     (isDark ? Colors.black : Colors.white);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     Animated.timing(rotateAnim, {
       toValue: modalVisible ? 1 : 0,
@@ -548,6 +818,7 @@ export function CustomHeaderTitle({
       useNativeDriver: true,
     }).start();
   }, [modalVisible]);
+
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "180deg"],
@@ -575,7 +846,7 @@ export function CustomHeaderTitle({
       default:
         return getNBATeam(teamId ?? 0);
     }
-  }, [teamCode, league]);
+  }, [teamCode, league, teamId]);
 
   const teamsForLeague =
     league === "NFL"
@@ -606,7 +877,7 @@ export function CustomHeaderTitle({
         logo: null,
       }
     );
-  }, [homeTeamId, homeTeamCode, league]);
+  }, [homeTeamId, homeTeamCode, league, teamsForLeague]);
 
   const awayTeam = useMemo(() => {
     const team =
@@ -622,7 +893,7 @@ export function CustomHeaderTitle({
         logo: null,
       }
     );
-  }, [awayTeamId, awayTeamCode, league]);
+  }, [awayTeamId, awayTeamCode, league, teamsForLeague]);
 
   const isWomenLeague = league === "WCBB";
 
@@ -632,6 +903,7 @@ export function CustomHeaderTitle({
     color: isDark ? Colors.white : Colors.black,
     textAlign: "center",
   };
+
   const constantTextStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
     fontSize: 20,
@@ -648,9 +920,22 @@ export function CustomHeaderTitle({
     height: 56,
   };
 
+  const headerIconColor =
+    tabName === "Game" || selectedConference || isTeamScreen
+      ? Colors.white
+      : isDark
+        ? Colors.white
+        : Colors.black;
+
   return (
-    <View style={{ paddingTop: insets.top, height: 56 + insets.top }}>
-      {/* Background */}
+    <View
+      style={{
+        paddingTop: insets.top,
+        height: 56 + insets.top,
+        zIndex: tabName === "Profile" ? 50 : 1,
+        overflow: "visible",
+      }}
+    >
       {tabName === "League" ? (
         <ConferenceBackground
           insets={insets}
@@ -672,29 +957,27 @@ export function CustomHeaderTitle({
         />
       )}
 
-      <View style={[containerStyle, { zIndex: 2 }]}>
-        {/* Left button */}
+      <View style={[containerStyle, { zIndex: 2, overflow: "visible" }]}>
         {tabName === "Profile" ? (
-          <TouchableOpacity onPress={onLogout}>
-            <Ionicons
-              name="log-out-outline"
-              size={24}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
+          onMessages ? (
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={handleProfileMessages}
+              style={styles.profileHeaderActionButton}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={21}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          ) : (
+            <View style={{ width: 32 }} />
+          )
         ) : showBackButton && onBack ? (
           <TouchableOpacity onPress={onBack}>
-            <Ionicons
-              name="arrow-back"
-              size={24}
-              color={
-                tabName === "Game" || selectedConference || isTeamScreen
-                  ? Colors.white
-                  : isDark
-                    ? Colors.white
-                    : Colors.black
-              }
-            />
+            <Ionicons name="arrow-back" size={24} color={headerIconColor} />
           </TouchableOpacity>
         ) : tabName === "Explore" && onAddWidget ? (
           <TouchableOpacity onPress={onAddWidget}>
@@ -708,7 +991,6 @@ export function CustomHeaderTitle({
           <View style={{ width: 24 }} />
         )}
 
-        {/* Center title */}
         {tabName === "Game" ? (
           <GameHeader
             tabName={tabName}
@@ -741,6 +1023,7 @@ export function CustomHeaderTitle({
               >
                 {selectedConferenceName || league}
               </HeaderTitle>
+
               <Animated.View style={{ transform: [{ rotate }] }}>
                 <Ionicons
                   name="chevron-down"
@@ -756,6 +1039,15 @@ export function CustomHeaderTitle({
               </Animated.View>
             </TouchableOpacity>
           </View>
+        ) : tabName === "Message" ? (
+          <MessageThreadHeader
+            avatar={messageAvatar}
+            username={messageUsername || title}
+            fullName={messageFullName}
+            isOnline={messageIsOnline}
+            isVerified={messageIsVerified}
+            isDark={isDark}
+          />
         ) : (
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
@@ -766,7 +1058,6 @@ export function CustomHeaderTitle({
           </View>
         )}
 
-        {/* Right buttons */}
         {isTeamScreen ? (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {onToggleFavorite && (
@@ -781,6 +1072,7 @@ export function CustomHeaderTitle({
                 />
               </TouchableOpacity>
             )}
+
             {onToggleNotifications && (
               <TouchableOpacity
                 onPress={onToggleNotifications}
@@ -793,6 +1085,7 @@ export function CustomHeaderTitle({
                 />
               </TouchableOpacity>
             )}
+
             {!isPlayerScreen && onOpenInfo && (
               <TouchableOpacity onPress={onOpenInfo} style={{ padding: 8 }}>
                 <Ionicons
@@ -803,14 +1096,42 @@ export function CustomHeaderTitle({
               </TouchableOpacity>
             )}
           </View>
-        ) : tabName === "Profile" && onSettings ? (
-          <TouchableOpacity onPress={onSettings}>
-            <Ionicons
-              name="settings-outline"
-              size={24}
-              color={isDark ? Colors.white : Colors.black}
+        ) : tabName === "Profile" ? (
+          <View style={styles.profileMenuAnchor}>
+            <ProfileHeaderMenu
+              visible={profileMenuVisible}
+              isDark={isDark}
+              onSettings={handleProfileSettings}
+              onLogout={handleProfileLogout}
             />
-          </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={toggleProfileMenu}
+              style={[
+                styles.profileHeaderActionButton,
+                {
+                  borderColor: profileMenuVisible
+                    ? Colors.lightGray
+                    : isDark
+                      ? Colors.darkGray
+                      : Colors.lightGray,
+                  backgroundColor: profileMenuVisible
+                    ? isDark
+                      ? Colors.black
+                      : Colors.white
+                    : "transparent",
+                },
+              ]}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="ellipsis-horizontal"
+                size={22}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
         ) : tabName === "League" && onCalendarPress ? (
           <TouchableOpacity onPress={onCalendarPress}>
             <Ionicons
@@ -823,6 +1144,14 @@ export function CustomHeaderTitle({
           <TouchableOpacity onPress={onSearchToggle}>
             <Ionicons
               name="search"
+              size={24}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        ) : title === "Messages" && onCreateMessage ? (
+          <TouchableOpacity onPress={onCreateMessage}>
+            <Ionicons
+              name="create-outline"
               size={24}
               color={isDark ? Colors.white : Colors.black}
             />
@@ -854,6 +1183,7 @@ export const customHeaderStyles = StyleSheet.create({
     top: -70,
     zIndex: 0,
   },
+
   teamHalfWrapper: {
     flex: 1,
     alignItems: "center",
@@ -861,12 +1191,14 @@ export const customHeaderStyles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
+
   teamHalfContent: {
     ...StyleSheet.absoluteFillObject,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 2,
   },
+
   bgLogo: {
     position: "absolute",
     width: "100%",
@@ -875,21 +1207,141 @@ export const customHeaderStyles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 10,
   },
+
   teamCode: {
     color: Colors.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
     zIndex: 2,
   },
+
   dividerWrapper: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 2,
   },
+
   dividerText: {
     color: Colors.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
+  },
+
+  messageHeaderContainer: {
+    flex: 1,
+    height: 56,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+
+  messageAvatarWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 9,
+  },
+
+  messageAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.darkGray,
+  },
+
+  messageOnlineDot: {
+    position: "absolute",
+    right: -1,
+    bottom: 1,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1.5,
+    backgroundColor: Colors.dark.leafGreen,
+  },
+
+  messageHeaderTextWrap: {
+    maxWidth: width * 0.54,
+    justifyContent: "center",
+  },
+
+  messageUsernameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+
+  messageUsername: {
+    flexShrink: 1,
+    fontSize: 15,
+    fontFamily: Fonts.OSBOLD,
+  },
+
+  messageFullName: {
+    marginTop: 1,
+    fontSize: 11,
+    fontFamily: Fonts.OSREGULAR,
+  },
+
+  profileMenuAnchor: {
+    position: "relative",
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 50,
+    elevation: 50,
+  },
+
+  profileHeaderActionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  profileSubmenu: {
+    position: "absolute",
+    top: 38,
+    right: 0,
+    width: 150,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    shadowColor: Colors.black,
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 18,
+    overflow: "hidden",
+  },
+
+  profileSubmenuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    gap: 8,
+  },
+
+  profileSubmenuIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  profileSubmenuText: {
+    flex: 1,
+    fontSize: 12,
+    fontFamily: Fonts.OSBOLD,
+  },
+
+  profileSubmenuSeparator: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 42,
   },
 });

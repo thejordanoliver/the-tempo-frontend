@@ -118,9 +118,12 @@ export const searchBarStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     searchInput: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderWidth: StyleSheet.hairlineWidth,
       paddingHorizontal: 12,
       paddingVertical: 8,
       fontSize: 16,

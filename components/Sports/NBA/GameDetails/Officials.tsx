@@ -12,7 +12,7 @@ type Official = {
 type Props = {
   officials: Official[];
   isDark: boolean;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function Officials({

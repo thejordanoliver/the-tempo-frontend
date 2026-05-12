@@ -86,6 +86,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     postOptionsInnerWrapper: { flexDirection: "row", alignItems: "center" },
 
+    imageContainer: { overflow: "visible", marginBottom: 12 },
     pollCardContainer: {
       overflow: "hidden",
     },

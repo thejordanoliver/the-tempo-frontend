@@ -43,7 +43,7 @@ type LastPlayProps = {
   lastPlay?: string | NBALastPlay;
   homeTeamId?: string;
   awayTeamId?: string;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";

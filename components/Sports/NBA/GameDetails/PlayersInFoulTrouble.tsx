@@ -24,7 +24,7 @@ type Props = {
   awayPlayers: Player[];
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB";
-  gameStatusDescription: string;
+ gameStatusDescription: string | undefined;
 };
 
 export default function PlayersInFoulTrouble({

@@ -1,6 +1,7 @@
 // components/CFB/TeamRankCard.tsx
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
@@ -22,7 +23,6 @@ export default function TeamRankCard({ item, index }: Props) {
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  // Same as RecruitCard animations
   const slideX = useRef(new Animated.Value(70)).current;
   const fade = useRef(new Animated.Value(0)).current;
 

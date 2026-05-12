@@ -36,7 +36,7 @@ export default function ProfileScreen() {
   const totalGap = columnGap * (numColumns - 1);
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
-  const { logout, deleteAccount } = useAuth();
+  const { logout } = useAuth();
   const navigation = useNavigation();
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -45,7 +45,6 @@ export default function ProfileScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);
 
@@ -85,16 +84,6 @@ export default function ProfileScreen() {
     });
   };
 
-  const confirmDeleteAccount = async () => {
-    try {
-      await deleteAccount();
-      setShowDeleteModal(false);
-      router.replace("/settings/deleteaccountsplash");
-    } catch {
-      alert("Failed to delete account. Please try again.");
-    }
-  };
-
   const signOut = async () => {
     try {
       hasLoadedProfileRef.current = false;
@@ -128,10 +117,7 @@ export default function ProfileScreen() {
           hasLoadedProfileRef.current = Boolean(loadedUserId);
         }
 
-        if (
-          activeUserId &&
-          activeUserId !== lastLoadedUserIdRef.current
-        ) {
+        if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
           await loadFavorites(activeUserId);
           if (!isActive) return;
 
@@ -181,11 +167,21 @@ export default function ProfileScreen() {
           tabName="Profile"
           onLogout={() => setShowSignOutModal(true)}
           onSettings={() => router.push("/settings")}
+          onMessages={() =>
+            router.push({
+              pathname: "/messages",
+              params: {
+                userId: currentUserId ? String(currentUserId) : "",
+                username: username ?? "",
+                fullName: fullName ?? "",
+                profileImage: profileImage ?? "",
+              },
+            })
+          }
         />
       ),
     });
-  }, [navigation, router, username]);
-
+  }, [navigation, router, username, currentUserId, fullName, profileImage]);
   const favoriteTeamsWithLeague = useMemo(
     () =>
       favorites
@@ -287,22 +283,13 @@ export default function ProfileScreen() {
 
       <ConfirmModal
         visible={showSignOutModal}
-        title="Confirm Sign Out"
-        message="Are you sure you want to sign out?"
-        confirmText="Sign Out"
+        title="Log Out?"
+        message="You will need to log in again to access your account."
+        confirmText="Log out"
         cancelText="Cancel"
+        variant="danger"
         onConfirm={signOut}
         onCancel={() => setShowSignOutModal(false)}
-      />
-
-      <ConfirmModal
-        visible={showDeleteModal}
-        title="Delete Account"
-        message="This action cannot be undone. Are you sure you want to delete your account?"
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={confirmDeleteAccount}
-        onCancel={() => setShowDeleteModal(false)}
       />
     </>
   );

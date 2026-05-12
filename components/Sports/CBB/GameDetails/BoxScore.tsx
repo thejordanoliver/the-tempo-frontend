@@ -48,7 +48,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function BoxScore({

@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
 import {
   EXPLORE_WIDGET_HEIGHTS,
   EXPLORE_WIDGET_MAX_HEIGHTS,
@@ -72,11 +71,7 @@ const nonGameCopy: Partial<Record<ExploreWidgetType, string>> = {
   player_leaders: "Player leader snapshots will appear here.",
 };
 
-const WIDGET_SIZE_OPTIONS: ExploreWidgetSize[] = [
-  "small",
-  "medium",
-  "large",
-];
+const WIDGET_SIZE_OPTIONS: ExploreWidgetSize[] = ["small", "medium", "large"];
 
 const emptyGameCopy: Partial<Record<ExploreWidgetType, string>> = {
   nba_games: "Add favorite NBA teams to see their games here.",
@@ -394,12 +389,10 @@ export default function ExploreWidgetDashboard({
       );
     }
 
-    return (
-      renderEmptyCard(widget.type, widget.title, {
-        ...editProps,
-        placeholderHeight: widgetHeight,
-      })
-    );
+    return renderEmptyCard(widget.type, widget.title, {
+      ...editProps,
+      placeholderHeight: widgetHeight,
+    });
   };
 
   const renderWidgetRow = ({ item: row }: { item: DashboardWidgetRow }) => {
@@ -490,12 +483,6 @@ export default function ExploreWidgetDashboard({
           </Text>
         </TouchableOpacity>
       </View>
-
-      {loading && hasSelectedGameWidget && (
-        <View style={dashboardStyles.loadingCard}>
-          <CustomActivityIndicator />
-        </View>
-      )}
 
       {error && hasSelectedGameWidget && (
         <TouchableOpacity

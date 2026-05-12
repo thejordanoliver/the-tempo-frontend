@@ -15,7 +15,7 @@ interface Props {
   away: MinimalTeam & { chance?: number };
   size?: number;
   isDark: boolean;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 }
 
 const MatchupPredictor: React.FC<Props> = ({

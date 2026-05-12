@@ -38,9 +38,12 @@ const searchBarStyles = (isDark: boolean) =>
       paddingHorizontal: 10,
       fontSize: 16,
       fontFamily: Fonts.OSLIGHT,
-      color: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
       borderRadius: 8,
-      borderColor: Colors.midTone,
-      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      color: isDark ? Colors.white : Colors.black,
+      borderWidth: StyleSheet.hairlineWidth,
     },
   });

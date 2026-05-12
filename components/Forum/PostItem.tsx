@@ -1,8 +1,9 @@
 // components/Forum/PostItem.tsx
+
 import { Ionicons } from "@expo/vector-icons";
+import ConfirmModal from "components/ConfirmModal";
 import { Colors, Fonts } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useRef, useState } from "react";
 import {
@@ -17,7 +18,6 @@ import {
 import { useLikesStore } from "store/useLikesStore";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
 import { apiClient } from "utils/apiClient";
-import AlertModal from "./AlertModal";
 import PollBlock from "./PollBlock";
 import PostImages, { MediaItem } from "./PostImages";
 
@@ -43,10 +43,129 @@ interface PostItemProps {
   currentUserId: number | null;
   deletePost: (postId: string) => void;
   editPost: (postId: string, newText: string) => void;
-  BASE_URL: string;
   onImagePress: (uri: string, caption?: string) => void;
   disableCommentNavigation?: boolean;
 }
+
+type PostSubmenuProps = {
+  visible: boolean;
+  isDark: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+};
+
+const PostSubmenu = ({
+  visible,
+  isDark,
+  onEdit,
+  onDelete,
+}: PostSubmenuProps) => {
+  const progress = useRef(new Animated.Value(0)).current;
+  const [shouldRender, setShouldRender] = useState(visible);
+  const styles = postItemStyles(isDark);
+  useEffect(() => {
+    if (visible) {
+      setShouldRender(true);
+
+      Animated.spring(progress, {
+        toValue: 1,
+        damping: 16,
+        stiffness: 230,
+        mass: 0.8,
+        useNativeDriver: true,
+      }).start();
+
+      return;
+    }
+
+    Animated.timing(progress, {
+      toValue: 0,
+      duration: 130,
+      easing: Easing.in(Easing.quad),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) setShouldRender(false);
+    });
+  }, [progress, visible]);
+
+  if (!shouldRender) return null;
+
+  return (
+    <Animated.View
+      pointerEvents={visible ? "auto" : "none"}
+      style={[
+        styles.submenu,
+        {
+          opacity: progress,
+          backgroundColor: isDark
+            ? Colors.dark.itemBackground
+            : Colors.light.itemBackground,
+          borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+          transform: [
+            {
+              translateY: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-6, 0],
+              }),
+            },
+            {
+              scale: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0.94, 1],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.submenuItem}
+        onPress={onEdit}
+      >
+        <View
+          style={[
+            styles.submenuIconWrap,
+            { backgroundColor: isDark ? Colors.black : Colors.white },
+          ]}
+        >
+          <Ionicons
+            name="create-outline"
+            size={16}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </View>
+
+        <Text style={styles.submenuText}>Edit</Text>
+      </TouchableOpacity>
+
+      <View style={styles.submenuSeparator} />
+
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.submenuItem}
+        onPress={onDelete}
+      >
+        <View style={styles.submenuIconWrap}>
+          <Ionicons
+            name="trash-outline"
+            size={16}
+            color={isDark ? Colors.dark.lightRed : Colors.light.red}
+          />
+        </View>
+
+        <Text
+          style={[
+            styles.submenuText,
+            { color: isDark ? Colors.dark.lightRed : Colors.light.red },
+          ]}
+        >
+          Delete
+        </Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
 
 export const PostItem = memo(function PostItem({
   item,
@@ -54,8 +173,6 @@ export const PostItem = memo(function PostItem({
   currentUserId,
   deletePost,
   editPost,
-  BASE_URL,
-  onImagePress,
   disableCommentNavigation,
 }: PostItemProps) {
   const { likes, setLike, toggleLike } = useLikesStore();
@@ -63,16 +180,10 @@ export const PostItem = memo(function PostItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [submenuVisible, setSubmenuVisible] = useState(false);
 
   const router = useRouter();
   const styles = postItemStyles(isDark);
-
-  const resolveMediaUrl = (url: string | null | undefined): string | null => {
-    if (!url) return null;
-    if (url.startsWith("http")) return url;
-    return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
-  };
 
   const profileImageUri = item.profile_image;
 
@@ -80,29 +191,46 @@ export const PostItem = memo(function PostItem({
     ...(item.images ?? []).map((uri, index) => ({
       id: `img-${item.id}-${index}`,
       type: "image" as const,
-      uri: resolveMediaUrl(uri) ?? uri,
+      uri,
     })),
     ...(item.videos ?? []).map((uri, index) => ({
       id: `vid-${item.id}-${index}`,
       type: "video" as const,
-      uri: resolveMediaUrl(uri) ?? uri,
-      thumbnailUri:
-        resolveMediaUrl(item.video_thumbnails?.[index] ?? null) ?? undefined,
+      uri,
+      thumbnailUri: item.video_thumbnails?.[index] ?? undefined,
     })),
   ];
+
+  useEffect(() => {
+    setEditText(item.text);
+  }, [item.text]);
 
   useEffect(() => {
     if (!likes[item.id]) {
       setLike(item.id, item.liked_by_current_user, item.likes);
     }
-  }, []);
+  }, [item.id, item.liked_by_current_user, item.likes, likes, setLike]);
+
+  useEffect(() => {
+    if (isEditing) {
+      setSubmenuVisible(false);
+    }
+  }, [isEditing]);
 
   const likeState = useLikesStore((state) => state.likes[item.id]);
   const liked = likeState?.liked ?? item.liked_by_current_user;
   const likeCount = likeState?.count ?? item.likes;
 
+  const isAuthor =
+    currentUserId != null && String(currentUserId) === String(item.user_id);
+
+  const timestamp = formatDistanceToNow(new Date(item.created_at), {
+    addSuffix: true,
+  }).replace(/^about /, "");
+
   const toggleLikePress = async () => {
     toggleLike(item.id);
+
     try {
       await apiClient.patch(`/api/forum/post/${item.id}/like`, {
         like: !liked,
@@ -115,70 +243,55 @@ export const PostItem = memo(function PostItem({
     }
   };
 
-  const isAuthor =
-    currentUserId != null && String(currentUserId) === String(item.user_id);
+  const handleOpenUser = () => {
+    router.push({
+      pathname: "/user/[id]",
+      params: { id: item.user_id },
+    });
+  };
 
-  const confirmDelete = () => setShowDeleteModal(true);
+  const handleStartEdit = () => {
+    setSubmenuVisible(false);
+    setIsEditing(true);
+  };
+
+  const confirmDelete = () => {
+    setSubmenuVisible(false);
+    setShowDeleteModal(true);
+  };
+
   const handleDeleteConfirm = () => {
     deletePost(item.id);
     setShowDeleteModal(false);
-    setDropdownVisible(false);
-  };
-  const handleDeleteCancel = () => setShowDeleteModal(false);
-
-  const dropdownAnim = useRef(new Animated.Value(0)).current;
-
-  const showDropdown = () => {
-    setDropdownVisible(true);
-    Animated.timing(dropdownAnim, {
-      toValue: 1,
-      duration: 300,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      useNativeDriver: true,
-    }).start();
+    setSubmenuVisible(false);
   };
 
-  const hideDropdown = () => {
-    Animated.timing(dropdownAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      useNativeDriver: true,
-    }).start(() => setDropdownVisible(false));
+  const handleDeleteCancel = () => {
+    setShowDeleteModal(false);
   };
 
   const onSaveEdit = () => {
-    if (editText.trim() && editText !== item.text) {
-      editPost(item.id, editText);
+    const nextText = editText.trim();
+
+    if (nextText && nextText !== item.text) {
+      editPost(item.id, nextText);
     }
+
     setIsEditing(false);
-    setDropdownVisible(false);
+    setSubmenuVisible(false);
   };
 
-  const getTextStyle = (isDark: boolean, isDelete?: boolean) => ({
-    fontSize: 18,
-    color: isDelete
-      ? isDark
-        ? Colors.dark.lightRed
-        : Colors.light.red
-      : isDark
-        ? Colors.white
-        : Colors.black,
-    fontFamily: Fonts.OSREGULAR,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  });
+  const onCancelEdit = () => {
+    setEditText(item.text);
+    setIsEditing(false);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.postContainer}>
-        {/* User Row */}
         <View style={styles.userRow}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <TouchableOpacity
-              onPress={() => router.push(`/user/${item.user_id}`)}
-              activeOpacity={0.7}
-            >
+          <View style={styles.leftSide}>
+            <TouchableOpacity onPress={handleOpenUser} activeOpacity={0.7}>
               {profileImageUri ? (
                 <Image
                   source={{ uri: profileImageUri }}
@@ -189,100 +302,78 @@ export const PostItem = memo(function PostItem({
                   <Text
                     style={{ color: Colors.white, fontFamily: Fonts.OSBOLD }}
                   >
-                    {item.username[0].toUpperCase()}
+                    {(item.username?.[0] ?? "T").toUpperCase()}
                   </Text>
                 </View>
               )}
             </TouchableOpacity>
+
             <TouchableOpacity
-              onPress={() => router.push(`/user/${item.user_id}`)}
+              onPress={handleOpenUser}
               activeOpacity={0.7}
-              style={{ marginLeft: 4 }}
+              style={styles.userRow}
             >
-              <Text style={styles.username}>{item.username}</Text>
+              <Text style={styles.username} numberOfLines={1}>
+                {item.username}
+              </Text>
             </TouchableOpacity>
           </View>
 
-          {isAuthor && (
-            <TouchableOpacity
-              onPress={() =>
-                dropdownVisible ? hideDropdown() : showDropdown()
-              }
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Ionicons
-                name="ellipsis-horizontal"
-                size={24}
-                color={isDark ? Colors.white : Colors.black}
+          {isAuthor ? (
+            <View style={styles.menuAnchor}>
+              <PostSubmenu
+                visible={submenuVisible}
+                isDark={isDark}
+                onEdit={handleStartEdit}
+                onDelete={confirmDelete}
               />
-            </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={() => setSubmenuVisible((current) => !current)}
+                style={[
+                  styles.menuButton,
+                  submenuVisible && {
+                    borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+                    backgroundColor: isDark
+                      ? Colors.darkGray
+                      : Colors.lightGray,
+                  },
+                ]}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={22}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.menuPlaceholder} />
           )}
         </View>
 
-        {/* Dropdown */}
-        {dropdownVisible && (
-          <Animated.View
-            style={[
-              styles.dropdownMenu,
-              {
-                opacity: dropdownAnim,
-                transform: [
-                  {
-                    translateY: dropdownAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-10, 0],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
-            <BlurView
-              intensity={50}
-              tint="systemChromeMaterial"
-              style={{
-                borderRadius: 8,
-                borderTopRightRadius: 4,
-                overflow: "hidden",
-              }}
-            >
-              <View style={styles.dropdownItem}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsEditing(true);
-                    hideDropdown();
-                  }}
-                >
-                  <Text style={getTextStyle(isDark)}>Edit</Text>
-                </TouchableOpacity>
-              </View>
-              <View>
-                <TouchableOpacity onPress={confirmDelete}>
-                  <Text style={getTextStyle(isDark, true)}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-          </Animated.View>
-        )}
-
-        {/* Post Content */}
         {isEditing ? (
           <TextInput
             style={styles.editPostText}
             multiline
             value={editText}
             onChangeText={setEditText}
+            placeholder="Edit your post..."
+            placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
+            textAlignVertical="top"
           />
         ) : (
           <View style={styles.postTextWrapper}>
-            {item.text && <Text style={styles.postText}>{item.text}</Text>}
+            {!!item.text && <Text style={styles.postText}>{item.text}</Text>}
+
             {media.length > 0 && <PostImages media={media} item={item} />}
-            {/* Poll — rendered below media if present */}
+
             <PollBlock postId={item.id} isDark={isDark} />
           </View>
         )}
 
-        {/* Footer */}
         <View style={styles.postFooter}>
           {isEditing ? (
             <View style={styles.editActionsContainer}>
@@ -294,10 +385,8 @@ export const PostItem = memo(function PostItem({
                   color={isDark ? Colors.dark.leafGreen : Colors.light.green}
                 />
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setIsEditing(false)}
-              >
+
+              <TouchableOpacity style={styles.button} onPress={onCancelEdit}>
                 <Text style={styles.cancelText}>Cancel</Text>
                 <Ionicons
                   name="close"
@@ -319,13 +408,15 @@ export const PostItem = memo(function PostItem({
                       size={28}
                       color={isDark ? Colors.white : Colors.black}
                     />
+
                     <Text style={styles.count}>{likeCount}</Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity
                     onPress={() => {
                       if (!disableCommentNavigation) {
                         router.push({
-                          pathname: "/comment-thread/[postId]",
+                          pathname: "/post/[postId]",
                           params: { postId: item.id },
                         });
                       }
@@ -337,20 +428,25 @@ export const PostItem = memo(function PostItem({
                       size={28}
                       color={isDark ? Colors.white : Colors.black}
                     />
+
                     <Text style={styles.count}>{item.comments_count}</Text>
                   </TouchableOpacity>
                 </View>
+
                 <View style={styles.rightSide}>
                   <TouchableOpacity style={styles.likeButtonContainer}>
                     <Text style={styles.count}>0</Text>
+
                     <Ionicons
                       name="bookmark-outline"
                       size={28}
                       color={isDark ? Colors.white : Colors.black}
                     />
                   </TouchableOpacity>
+
                   <TouchableOpacity style={styles.likeButtonContainer}>
                     <Text style={styles.count}>0</Text>
+
                     <Ionicons
                       name="share-social-outline"
                       size={28}
@@ -359,27 +455,23 @@ export const PostItem = memo(function PostItem({
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={styles.timeWrapper}>
-                <Text style={styles.timestamp}>
-                  {formatDistanceToNow(new Date(item.created_at), {
-                    addSuffix: true,
-                  }).replace(/^about /, "")}
-                </Text>
-              </View>
+              <Text style={styles.timestamp} numberOfLines={1}>
+                {timestamp}
+              </Text>
             </View>
           )}
         </View>
       </View>
 
-      <AlertModal
+      <ConfirmModal
         title="Delete Post"
-        message="Are you sure you want to delete this post?"
+        message="This action can't be undone. The post and its replies will be permanently deleted."
         visible={showDeleteModal}
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         confirmText="Delete"
         cancelText="Cancel"
-        isDark={isDark}
+        variant="danger"
       />
     </View>
   );

@@ -90,7 +90,6 @@ export default function HomeScreen() {
           <View key="scores" style={{ flex: 1 }}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={refreshControl()}
             >
               <FavoritesScroll

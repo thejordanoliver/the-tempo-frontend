@@ -119,7 +119,6 @@ export default function ExplorePage() {
   const [widgetsReady, setWidgetsReady] = useState(false);
   const [widgetUserId, setWidgetUserId] = useState<string | null>(null);
   const widgetLoadRequestId = useRef(0);
-
   const navigation = useNavigation();
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();

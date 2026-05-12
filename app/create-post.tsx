@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
+import Button from "components/Button";
+import ConfirmModal from "components/ConfirmModal";
 import CropEditorModal from "components/CropEditorModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import AlertModal from "components/Forum/AlertModal";
 import PollEditorModal, { PollData } from "components/Forum/PollEditorModal";
 import VideoEditorModal from "components/Forum/VideoEditorModal";
 import { Colors } from "constants/styles";
@@ -23,12 +24,12 @@ import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
 import { createPostStyles } from "styles/ForumStyles/CreatePostStyles";
-import PostButton from "../components/Forum/PostButton";
+import { LeagueType } from "types/types";
 
 export default function CreatePostScreen() {
   const { teamId, league } = useLocalSearchParams<{
     teamId?: string;
-    league?: "NBA" | "NFL";
+    league?: LeagueType;
   }>();
   const {
     newPostText,
@@ -43,7 +44,6 @@ export default function CreatePostScreen() {
     showAlert,
     closeAlert,
     setMedia,
-    prependPost,
     poll,
     setPoll,
   } = useCreatePost(teamId, league);
@@ -65,10 +65,7 @@ export default function CreatePostScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
-          title="Create Post"
-          onBack={() => router.back()}
-        />
+        <CustomHeaderTitle title="Create Post" onBack={() => router.back()} />
       ),
     });
   }, [navigation]);
@@ -160,12 +157,14 @@ export default function CreatePostScreen() {
   const handleAddPollPress = useCallback(() => {
     if (newPostText || media.length > 0) {
       showAlert({
-        title: "Switch to Poll?",
-        message: "This will remove your text and media content.",
-        confirmText: "Continue",
+        title: "Discard Current Post?",
+        message:
+          "Switching to a poll will remove your text and media from this draft. This can't be undone.",
+        confirmText: "Discard",
         cancelText: "Cancel",
+        variant: "danger",
         onConfirm: () => {
-          closeAlert(); // <-- Close the alert first
+          closeAlert();
           setNewPostText("");
           setMedia([]);
           setPollEditorVisible(true);
@@ -290,13 +289,13 @@ export default function CreatePostScreen() {
           </TouchableOpacity>
         </View>
 
-        {!poll && (
+        {!poll && media && (
           <DraggableFlatList
             horizontal
             data={media}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ overflow: "visible" }}
-            style={{ overflow: "visible" }}
+            style={styles.imageContainer}
             activationDistance={20}
             scrollEnabled={!isActiveDrag}
             onScrollBeginDrag={() => setIsScrolling(true)}
@@ -316,10 +315,11 @@ export default function CreatePostScreen() {
           />
         )}
 
-        <PostButton
+        <Button
           onPress={createPost}
           disabled={loading}
-          title={loading ? "Posting..." : "Post"}
+          children={loading ? "Posting..." : "Post"}
+          isDark={isDark}
         />
       </View>
 
@@ -374,14 +374,15 @@ export default function CreatePostScreen() {
         }}
       />
 
-      {/* Alert Modal */}
-      <AlertModal
+      <ConfirmModal
         visible={!!alertConfig}
-        isDark={isDark}
         title={alertConfig?.title}
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}
         cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
         onConfirm={() => {
           alertConfig?.onConfirm?.();

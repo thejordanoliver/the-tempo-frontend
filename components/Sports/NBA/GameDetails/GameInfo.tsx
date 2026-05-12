@@ -9,7 +9,7 @@ type GameInfoProps = {
   isDark: boolean;
   playoffInfo?: string | string[];
   broadcastNetworks: string;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
   gameStatusShortDescription: string;
 };
 
@@ -65,9 +65,7 @@ export function GameInfo({
 
       {endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>
-            End of {formatQuarter(period)}
-          </Text>
+          <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
         </View>
       )}
       {isHalftime && (

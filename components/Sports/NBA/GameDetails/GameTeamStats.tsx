@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getTeamByESPNId } from "constants/teams";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -196,13 +196,25 @@ export default function GameTeamStats({
   stats,
   gameStatusDescription,
   isDark,
+  homeLogo,
+  awayLogo,
+  homeCode,
+  awayCode,
 }: {
-  gameStatusDescription: string;
-  stats: any[];
+  homeLogo: any;
+  awayLogo: any;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
+  gameStatusDescription: string | undefined;
+  stats: any[] | undefined;
   isDark: boolean;
 }) {
   const styles = gameTeamStatsStyles(isDark);
-
+  const [expanded, setExpanded] = useState(false);
+  const [fullHeight, setFullHeight] = useState(0);
+  const heightAnim = useRef(
+    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
+  ).current;
   const isScheduled = gameStatusDescription === "Scheduled";
 
   if (!Array.isArray(stats) || stats.length < 2) return null;
@@ -219,13 +231,6 @@ export default function GameTeamStats({
 
   const awayStats = mapStats(away.stats);
   const homeStats = mapStats(home.stats);
-
-  // ✅ SAFE: All hooks after this point
-  const [expanded, setExpanded] = useState(false);
-  const [fullHeight, setFullHeight] = useState(0);
-  const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
-  ).current;
 
   useEffect(() => {
     const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
@@ -252,8 +257,6 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayLogo = getTeamLogo(awayTeam?.id, isDark);
-  const homeLogo = getTeamLogo(homeTeam?.id, isDark);
   const awayColor = isDark ? Colors.white : Colors.black;
 
   const homeColor =
@@ -268,12 +271,12 @@ export default function GameTeamStats({
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
           <Image source={awayLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{awayTeam?.code}</Text>
+          <Text style={styles.teamLabel}>{awayCode}</Text>
         </View>
 
         <View style={styles.teamContainer}>
           <Image source={homeLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{homeTeam?.code}</Text>
+          <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
       <ScrollView style={styles.container}>

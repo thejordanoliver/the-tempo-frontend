@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import RecruitCardSkeleton from "../../Skeletons/RecruitCardSkeleton";
 import TransferPlayerCard from "./TransferCard";
+import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   year: string;

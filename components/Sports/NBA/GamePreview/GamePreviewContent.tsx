@@ -121,6 +121,10 @@ export default function GamePreviewContent({
       />
 
       <GameTeamStats
+        homeCode={home.code}
+        awayCode={away.code}
+        homeLogo={home.logoLight || home.logo}
+        awayLogo={away.logoLight || away.logo}
         stats={teamStats}
         isDark
         gameStatusDescription={gameStatusDescription}

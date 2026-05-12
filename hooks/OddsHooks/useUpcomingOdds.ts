@@ -18,7 +18,13 @@ export interface Bookmaker {
 export interface GameOdds {
   id: string;
   commence_time: string;
-  commence_time_local?: string;
+  home_team: string;
+  away_team: string;
+  bookmakers: Bookmaker[];
+}
+export interface EventOdds {
+  id: string;
+  commence_time: string;
   home_team: string;
   away_team: string;
   bookmakers: Bookmaker[];

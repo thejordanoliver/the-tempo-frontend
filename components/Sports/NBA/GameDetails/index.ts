@@ -1,6 +1,7 @@
 // components/GameDetails/index.ts
 export { default as BoxScore } from "../../CBB/GameDetails/BoxScore";
 export { default as PlayersOnCourt } from "../../CBB/GameDetails/PlayersOnCourt";
+export { default as GameOddsSection } from "../../Odds/GameOddsSection";
 export { default as FanPredictionVote } from "./FanPredictionVote";
 export { default as ChatButton } from "./GameChat/ChatButton";
 export { default as LiveChat } from "./GameChat/LiveChat";
@@ -8,7 +9,6 @@ export { default as GameHeader } from "./GameHeader";
 export { GameInfo } from "./GameInfo";
 export { default as GameLeaders } from "./GameLeaders";
 export { default as GameLocation } from "./GameLocation";
-export { default as GameOddsSection } from "./GameOddsSection";
 export { default as GameSummary } from "./GameSummary";
 export { default as GameTeamStats } from "./GameTeamStats";
 export { default as GameUniforms } from "./GameUniforms";

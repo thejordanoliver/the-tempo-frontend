@@ -1,21 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Colors, Fonts } from "constants/styles";
+import TextInputComponent from "components/TextInput";
+import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import { useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
-  Pressable,
+  InteractionManager,
   ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { settingsStyles } from "styles/SettingsStyles";
+import { AlertConfig } from "types/alert";
 
 export default function SettingsScreen() {
   const { resolvedColorScheme } = usePreferences();
@@ -23,11 +25,51 @@ export default function SettingsScreen() {
   const { clearFavorites } = useFavoriteTeamsContext();
   const { deleteAccount, logout } = useAuth();
   const router = useRouter();
-  const [showSignOutModal, setShowSignOutModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigation = useNavigation();
+  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const [pendingAlertConfig, setPendingAlertConfig] =
+    useState<AlertConfig | null>(null);
+  const [showLogoutModal, setshowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState("");
-  const styles = getStyles(isDark);
+
+  const styles = settingsStyles(isDark);
+
+  const closeAlert = useCallback(() => {
+    setAlertConfig(null);
+  }, []);
+
+  const queueAlert = useCallback((config: AlertConfig) => {
+    setPendingAlertConfig(config);
+  }, []);
+
+  useEffect(() => {
+    if (
+      !pendingAlertConfig ||
+      showDeleteModal ||
+      showLogoutModal ||
+      alertConfig
+    ) {
+      return;
+    }
+
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      timeout = setTimeout(() => {
+        setAlertConfig(pendingAlertConfig);
+        setPendingAlertConfig(null);
+      }, 150);
+    });
+
+    return () => {
+      task.cancel?.();
+
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [alertConfig, pendingAlertConfig, showDeleteModal, showLogoutModal]);
 
   const signOut = async () => {
     try {
@@ -35,21 +77,58 @@ export default function SettingsScreen() {
       await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
+
+      setshowLogoutModal(false);
+
+      queueAlert({
+        title: "Sign Out Failed",
+        message: "Something went wrong while signing out. Please try again.",
+        confirmText: "OK",
+      });
     }
   };
 
   const confirmDeleteAccount = async () => {
+    const currentPassword = password.trim();
+
+    if (!currentPassword) {
+      setShowDeleteModal(false);
+
+      queueAlert({
+        title: "Password Required",
+        message: "Please enter your current password.",
+        confirmText: "OK",
+      });
+
+      return;
+    }
+
     try {
-      if (!password.trim()) {
-        alert("Please enter your password.");
-        return;
-      }
-      await deleteAccount();
+      await deleteAccount(currentPassword);
+
       setShowDeleteModal(false);
       setPassword("");
+
       router.replace("/settings/deleteaccountsplash");
-    } catch {
-      alert("Failed to delete account. Check your password and try again.");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Check your password and try again.";
+
+      console.warn("Failed to delete account:", message);
+
+      setShowDeleteModal(false);
+      setPassword("");
+
+      queueAlert({
+        title: "Delete Account Failed",
+        message:
+          message === "Incorrect password"
+            ? "The password you entered is incorrect. Please try again."
+            : message,
+        confirmText: "OK",
+      });
     }
   };
 
@@ -57,146 +136,111 @@ export default function SettingsScreen() {
     navigation.setOptions({
       header: () => <CustomHeaderTitle title="Settings" onBack={goBack} />,
     });
-  }, [navigation, isDark]);
+  }, [navigation]);
 
   return (
-    <View style={[styles.screen]}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Pressable
-          style={styles.optionButton}
-          onPress={() => router.push("/settings/accountdetails")}
-        >
-          <Text style={styles.optionText}>Account Details</Text>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </Pressable>
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={() => router.push("/settings/accountdetails")}
+          >
+            <Text style={styles.optionText}>Account Details</Text>
 
-        <Pressable
-          style={styles.optionButton}
-          onPress={() => router.push("/settings/preferences")}
-        >
-          <Text style={styles.optionText}>Preferences</Text>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </Pressable>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        </View>
 
-        <Pressable
-          style={styles.dangerButton}
-          onPress={() => setShowSignOutModal(true)}
-        >
-          <Text style={[styles.dangerText]}>Sign Out</Text>
-        </Pressable>
-        <Pressable
-          style={styles.dangerButton}
-          onPress={() => setShowDeleteModal(true)}
-        >
-          <Text style={styles.dangerText}>Delete Account</Text>
-        </Pressable>
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={() => router.push("/settings/preferences")}
+          >
+            <Text style={styles.optionText}>Preferences</Text>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={() => setshowLogoutModal(true)}
+          >
+            <Text style={styles.dangerText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={() => setShowDeleteModal(true)}
+          >
+            <Text style={styles.dangerText}>Delete Account</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
+
       <ConfirmModal
-        visible={showSignOutModal}
-        title="Confirm Sign Out"
-        message="Are you sure you want to sign out?"
-        confirmText="Sign Out"
+        visible={showLogoutModal}
+        title="Logout?"
+        message="You will need to log in again to access your account."
+        confirmText="Logout"
         cancelText="Cancel"
+        variant="danger"
         onConfirm={() => {
-          setShowSignOutModal(false);
+          setshowLogoutModal(false);
           signOut();
         }}
-        onCancel={() => setShowSignOutModal(false)}
+        onCancel={() => setshowLogoutModal(false)}
       />
 
       <ConfirmModal
         visible={showDeleteModal}
         title="Delete Account"
-        message="This action cannot be undone. Please enter your password to confirm deletion."
+        message="This action can't be undone. Enter your password to permanently delete your account."
         confirmText="Delete"
         cancelText="Cancel"
+        variant="danger"
         onConfirm={confirmDeleteAccount}
         onCancel={() => {
           setShowDeleteModal(false);
           setPassword("");
         }}
       >
-        <TextInput
+        <TextInputComponent
           placeholder="Current Password"
           placeholderTextColor={Colors.midTone}
           secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="password"
           value={password}
           onChangeText={setPassword}
-          style={styles.input}
         />
       </ConfirmModal>
+
+      <ConfirmModal
+        visible={!!alertConfig}
+        title={alertConfig?.title}
+        message={alertConfig?.message}
+        confirmText={alertConfig?.confirmText ?? "OK"}
+        cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
+        onCancel={closeAlert}
+        onConfirm={closeAlert}
+      />
     </View>
   );
 }
-
-export const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    screen: {
-      flex: 1,
-      position: "relative",
-    },
-    container: { gap: 20 },
-    wrapper: {
-      paddingHorizontal: 12,
-    },
-    scrollContent: {
-      paddingHorizontal: 12,
-      paddingTop: 20,
-      paddingBottom: 40,
-    },
-    heading: { marginBottom: 0 },
-    optionButton: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark
-        ? Colors.transparentLightGray
-        : Colors.transparentDarkGray,
-    },
-    optionText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
-    },
-    dangerButton: {
-      paddingVertical: 12,
-      justifyContent: "space-between",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark
-        ? Colors.transparentLightGray
-        : Colors.transparentDarkGray,
-    },
-    dangerText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
-    },
-    closeButton: {
-      position: "absolute",
-      top: 24,
-      right: 15,
-    },
-    input: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      color: isDark ? Colors.white : Colors.black,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 16,
-      marginVertical: 12,
-      fontFamily: Fonts.OSLIGHT,
-      width: "100%",
-    },
-  });

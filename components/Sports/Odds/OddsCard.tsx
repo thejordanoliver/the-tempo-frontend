@@ -1,5 +1,5 @@
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { GameOdds } from "hooks/useUpcomingOdds";
+import { GameOdds } from "hooks/OddsHooks/useUpcomingOdds";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -36,6 +36,14 @@ export const OddsCard: React.FC<Props> = ({
 
   /* -------------------- Bookmaker -------------------- */
   const bookmaker = game.bookmakers?.[0];
+  const commenceTime = game.commence_time;
+  const date = new Date(commenceTime);
+  const localDate = date.toLocaleString([], {
+    month: "short",
+    day: "2-digit",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 
   /* -------------------- Markets -------------------- */
   const getMarket = (key: string) =>
@@ -71,7 +79,7 @@ export const OddsCard: React.FC<Props> = ({
 
   /* -------------------- Render -------------------- */
   return (
-    <View style={styles.wrapper}>
+    <View>
       {/* Header */}
       <View style={styles.headerRow}>
         <Text style={styles.headerTeamText}>Team</Text>
@@ -134,6 +142,7 @@ export const OddsCard: React.FC<Props> = ({
       {/* Footer */}
       <View style={styles.footerRow}>
         <Text style={styles.footerText}>Powered By: {bookmaker.title}</Text>
+        <Text style={styles.footerText}>Commence Time: {localDate}</Text>
       </View>
     </View>
   );
@@ -142,9 +151,7 @@ export const OddsCard: React.FC<Props> = ({
 /* -------------------- Styles -------------------- */
 const oddsCardStyles = (isDark: boolean) =>
   StyleSheet.create({
-    wrapper: {
-      padding: 4,
-    },
+   
     headerRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -152,6 +159,7 @@ const oddsCardStyles = (isDark: boolean) =>
     },
     footerRow: {
       flexDirection: "row",
+      justifyContent: "space-between",
       alignItems: "center",
       marginTop: 12,
     },
@@ -162,7 +170,6 @@ const oddsCardStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     footerText: {
-      flex: 2,
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,

@@ -3477,6 +3477,7 @@ export const cfbTeams: FootballTeam[] = [
     id: 186,
     espnID: 344,
     name: "Mississippi State",
+    shortName: "Miss State",
     fullName: "Mississippi State Bulldogs",
     code: "MSST",
     color: "#5d1725",

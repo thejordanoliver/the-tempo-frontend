@@ -1,6 +1,7 @@
 // login.tsx
+import ConfirmModal from "components/ConfirmModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import AlertModal, { AlertConfig } from "components/Forum/AlertModal";
+import { AlertConfig } from "types/alert";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
@@ -318,13 +319,15 @@ export default function LoginScreen() {
         )}
       </View>
 
-      <AlertModal
+      <ConfirmModal
         visible={!!alertConfig}
-        isDark={isDark}
         title={alertConfig?.title}
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}
         cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
         onConfirm={() => {
           alertConfig?.onConfirm?.();

@@ -1,16 +1,21 @@
 // components/CFB/RecruitCard.tsx
+
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
-import React, { useEffect, useRef } from "react";
+import {
+  FootballRecruit,
+  RecruitPredictedSchool,
+} from "hooks/FootballHooks/useFootballRecruits";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
   Image,
+  ImageSourcePropType,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,14 +27,150 @@ type Props = {
   index: number;
 };
 
+type LogoDisplayItem = {
+  teamId: number;
+  teamName: string;
+  logo: ImageSourcePropType;
+};
+
+function formatPercentage(value: number | string | null | undefined) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const numericValue = Number(String(value).replace("%", "").trim());
+
+  if (!Number.isFinite(numericValue)) {
+    return null;
+  }
+
+  return Number.isInteger(numericValue)
+    ? `${numericValue}%`
+    : `${numericValue.toFixed(1)}%`;
+}
+
+function getSortedPredictions(
+  predictions: RecruitPredictedSchool[] | undefined,
+) {
+  if (!Array.isArray(predictions)) {
+    return [];
+  }
+
+  return predictions
+    .filter((prediction) => prediction?.team_name)
+    .sort((a, b) => {
+      const percentageA = a.percentage ?? -1;
+      const percentageB = b.percentage ?? -1;
+
+      if (percentageB !== percentageA) {
+        return percentageB - percentageA;
+      }
+
+      const confidenceA = a.confidence_score ?? -1;
+      const confidenceB = b.confidence_score ?? -1;
+
+      return confidenceB - confidenceA;
+    });
+}
+
+function getTopTiedPredictions(predictions: RecruitPredictedSchool[]) {
+  if (!predictions.length) {
+    return [];
+  }
+
+  const topPercentage = predictions[0]?.percentage;
+
+  if (topPercentage === null || topPercentage === undefined) {
+    return [predictions[0]];
+  }
+
+  return predictions.filter(
+    (prediction) => prediction.percentage === topPercentage,
+  );
+}
+
 export default function RecruitCard({ recruit, index }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = useMemo(() => getStyles(isDark), [isDark]);
   const router = useRouter();
 
-  const teamId = recruit.projected_team_id;
-  const logo = teamId ? getCFBTeamLogo(teamId, isDark) : null;
+  const sortedPredictions = useMemo(
+    () => getSortedPredictions(recruit.predicted_schools),
+    [recruit.predicted_schools],
+  );
+
+  const topTiedPredictions = useMemo(
+    () => getTopTiedPredictions(sortedPredictions),
+    [sortedPredictions],
+  );
+
+  const isPredictionTie = recruit.predicted && topTiedPredictions.length > 1;
+
+  const logoItems = useMemo<LogoDisplayItem[]>(() => {
+    if (isPredictionTie) {
+      return topTiedPredictions
+        .slice(0, 2)
+        .map((prediction) => {
+          if (!prediction.team_id) {
+            return null;
+          }
+
+          const logo = getCFBTeamLogo(prediction.team_id, isDark);
+
+          if (!logo) {
+            return null;
+          }
+
+          return {
+            teamId: prediction.team_id,
+            teamName: prediction.team_name,
+            logo,
+          };
+        })
+        .filter((item): item is LogoDisplayItem => Boolean(item));
+    }
+
+    const primaryPrediction = sortedPredictions[0];
+
+    const fallbackTeamId =
+      recruit.committed_team_id ||
+      recruit.projected_team_id ||
+      primaryPrediction?.team_id ||
+      recruit.predicted_team_id;
+
+    if (!fallbackTeamId) {
+      return [];
+    }
+
+    const logo = getCFBTeamLogo(fallbackTeamId, isDark);
+
+    if (!logo) {
+      return [];
+    }
+
+    return [
+      {
+        teamId: fallbackTeamId,
+        teamName:
+          recruit.projected_school ||
+          recruit.predicted_school ||
+          primaryPrediction?.team_name ||
+          "Team",
+        logo,
+      },
+    ];
+  }, [
+    isDark,
+    isPredictionTie,
+    recruit.committed_team_id,
+    recruit.predicted_school,
+    recruit.predicted_team_id,
+    recruit.projected_school,
+    recruit.projected_team_id,
+    sortedPredictions,
+    topTiedPredictions,
+  ]);
 
   /** Animations */
   const slideX = useRef(new Animated.Value(70)).current;
@@ -52,7 +193,7 @@ export default function RecruitCard({ recruit, index }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fade, index, slideX]);
 
   const isFiveStar = recruit.stars === 5;
   const avatar = recruit.image_url;
@@ -65,9 +206,66 @@ export default function RecruitCard({ recruit, index }: Props) {
         ? "Prediction"
         : "Uncommitted";
 
-  const statusSchool = recruit.projected_school || recruit.predicted_school;
+  const statusDisplay = useMemo(() => {
+    if (recruit.signed || recruit.committed) {
+      const school =
+        recruit.projected_school ||
+        recruit.predicted_school ||
+        sortedPredictions[0]?.team_name ||
+        null;
+
+      return {
+        school,
+        percentage: null,
+      };
+    }
+
+    if (isPredictionTie) {
+      const school = topTiedPredictions
+        .map((prediction) => prediction.team_name)
+        .join(" / ");
+
+      const percentage = formatPercentage(topTiedPredictions[0]?.percentage);
+
+      return {
+        school,
+        percentage: percentage ? `${percentage}` : null,
+      };
+    }
+
+    if (recruit.predicted) {
+      const topPrediction = sortedPredictions[0];
+
+      const school =
+        topPrediction?.team_name || recruit.predicted_school || null;
+
+      const percentage =
+        formatPercentage(topPrediction?.percentage) ||
+        formatPercentage(recruit.prediction_percentage);
+
+      return {
+        school,
+        percentage,
+      };
+    }
+
+    return {
+      school: null,
+      percentage: null,
+    };
+  }, [
+    isPredictionTie,
+    recruit.committed,
+    recruit.predicted,
+    recruit.predicted_school,
+    recruit.prediction_percentage,
+    recruit.projected_school,
+    recruit.signed,
+    sortedPredictions,
+    topTiedPredictions,
+  ]);
+
   const recruitId = recruit.id;
-  const recruitInfo = recruit;
 
   return (
     <View style={styles.cardWrapper}>
@@ -81,7 +279,7 @@ export default function RecruitCard({ recruit, index }: Props) {
         }
       >
         {/* Animated Team Logo */}
-        {logo && (
+        {logoItems.length > 0 && (
           <Animated.View
             style={[
               styles.logoContainer,
@@ -91,7 +289,31 @@ export default function RecruitCard({ recruit, index }: Props) {
               },
             ]}
           >
-            <Image source={logo} style={styles.backgroundLogo} />
+            {logoItems.length > 1 ? (
+              <View style={styles.splitLogoStack}>
+                {logoItems.map((item, logoIndex) => (
+                  <View
+                    key={`${item.teamId}-${logoIndex}`}
+                    style={[styles.splitLogoPane]}
+                  >
+                    <Image
+                      source={item.logo}
+                      style={[
+                        styles.backgroundLogo,
+                        styles.splitBackgroundLogo,
+                      ]}
+                      resizeMode="contain"
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Image
+                source={logoItems[0].logo}
+                style={styles.backgroundLogo}
+                resizeMode="contain"
+              />
+            )}
           </Animated.View>
         )}
 
@@ -127,16 +349,27 @@ export default function RecruitCard({ recruit, index }: Props) {
           <View style={styles.row}>
             <View style={styles.playerHeader}>
               <View style={styles.avatarContainer}>
-                {avatar && (
+                {avatar ? (
                   <Image
                     source={{ uri: avatar }}
                     style={styles.avatar}
                     resizeMode="cover"
                   />
+                ) : (
+                  <View style={styles.avatarFallback}>
+                    <Ionicons
+                      name="person"
+                      size={22}
+                      color={isDark ? Colors.lightGray : Colors.darkGray}
+                    />
+                  </View>
                 )}
               </View>
+
               <View style={styles.namePosition}>
-                <Text style={styles.name}>{recruit.name}</Text>
+                <Text style={styles.name} numberOfLines={1}>
+                  {recruit.name}
+                </Text>
                 <Text style={styles.positionText}>{recruit.position}</Text>
               </View>
             </View>
@@ -158,6 +391,7 @@ export default function RecruitCard({ recruit, index }: Props) {
             <View style={styles.divider} />
             <Text style={styles.subText}>St {recruit.state_rank}</Text>
           </View>
+
           {/* Stars / Meta */}
           <View style={styles.contentRow}>
             {[...Array(5)].map((_, i) => {
@@ -186,20 +420,28 @@ export default function RecruitCard({ recruit, index }: Props) {
 
             <Text style={styles.subText}>{recruit.score}</Text>
           </View>
+
           <View style={styles.contentRow}>
-            <Text style={styles.subText}>{recruit.high_school}</Text>
+            <Text style={styles.subText} numberOfLines={1}>
+              {recruit.high_school}
+            </Text>
             <View style={styles.divider} />
             <Text style={styles.subText}>{recruit.height} ft</Text>
             <View style={styles.divider} />
             <Text style={styles.subText}>{recruit.weight} lbs</Text>
           </View>
+
           {/* Status */}
-          {statusSchool ? (
-            <Text style={styles.commitText}>
-              {statusLabel}: {statusSchool}
-              {recruit.prediction_percentage
-                ? ` (${recruit.prediction_percentage})`
-                : ""}
+          {statusDisplay.school ? (
+            <Text
+              style={[
+                styles.commitText,
+                isPredictionTie && styles.predictionTieText,
+              ]}
+              numberOfLines={2}
+            >
+              {statusLabel}: {statusDisplay.school}
+              {statusDisplay.percentage ? ` (${statusDisplay.percentage})` : ""}
             </Text>
           ) : (
             <Text style={styles.uncommittedText}>Uncommitted</Text>
@@ -230,11 +472,30 @@ const getStyles = (isDark: boolean) =>
       alignItems: "flex-end",
     },
 
+    splitLogoStack: {
+      width: "100%",
+      height: "100%",
+      overflow: "hidden",
+    },
+
+    splitLogoPane: {
+      flex: 1,
+      overflow: "hidden",
+      alignItems: "flex-end",
+      justifyContent: "center",
+    },
+
     backgroundLogo: {
       height: "155%",
       aspectRatio: 1,
       opacity: 0.55,
       marginRight: -40,
+    },
+
+    splitBackgroundLogo: {
+      height: "190%",
+      opacity: 0.48,
+      marginRight: -34,
     },
 
     cardGradient: {
@@ -257,11 +518,15 @@ const getStyles = (isDark: boolean) =>
     },
 
     playerHeader: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 4,
+      paddingRight: 8,
     },
+
     namePosition: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "baseline",
     },
@@ -274,6 +539,7 @@ const getStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     avatar: {
@@ -281,7 +547,14 @@ const getStyles = (isDark: boolean) =>
       height: "100%",
     },
 
+    avatarFallback: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
     name: {
+      flexShrink: 1,
       fontFamily: Fonts.OSBOLD,
       fontSize: 20,
       color: isDark ? Colors.dark.white : Colors.light.black,
@@ -335,6 +608,10 @@ const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       fontSize: 16,
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
+    },
+
+    predictionTieText: {
+      color: isDark ? Colors.dark.yellow : Colors.light.yellow,
     },
 
     uncommittedText: {

@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+// hooks/CFB/useFootballRecruits.ts
+
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export interface RecruitOffer {
@@ -6,11 +8,24 @@ export interface RecruitOffer {
   school: string;
   status: string | null;
   hasOffer: boolean;
-  signedDate: string | null; // JSON shows "(12/5/2025)" as string
+  signedDate: string | null;
+}
+
+export interface RecruitPredictedSchool {
+  team_id: number | null;
+  team_name: string;
+  team_title: string | null;
+  percentage: number | null;
+  confidence_score: number | null;
+  confidence_text: string | null;
+  matched_by?: string | null;
+  href?: string | null;
+  image_url?: string | null;
 }
 
 export interface FootballRecruit {
   id: number;
+  year?: number;
   name: string;
   first_name: string;
   last_name: string;
@@ -29,49 +44,154 @@ export interface FootballRecruit {
   committed: boolean;
   signed: boolean;
   predicted: boolean;
+
   projected_school: string | null;
   predicted_school: string | null;
   prediction_percentage: string | null;
+
+  predicted_schools: RecruitPredictedSchool[];
+
   image_url: string | null;
-  committed_team_id: number;
-  predicted_team_id: number;
-  projected_team_id: number;
+
+  committed_team_id: number | null;
+  predicted_team_id: number | null;
+  projected_team_id: number | null;
+
   offers: RecruitOffer[];
+}
+
+interface RawFootballRecruit
+  extends Omit<FootballRecruit, "predicted_schools" | "offers"> {
+  predicted_schools?: RecruitPredictedSchool[] | string | null;
+  offers?: RecruitOffer[] | string | null;
 }
 
 interface UseFootballRecruitsResult {
   data: FootballRecruit[];
   loading: boolean;
+  refreshing: boolean;
   error: string | null;
-  refetch: () => void;
+  refresh: () => Promise<void>;
+  refetch: () => Promise<void>;
+}
+
+function parseJsonArray<T>(value: T[] | string | null | undefined): T[] {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function normalizePredictedSchool(
+  prediction: Partial<RecruitPredictedSchool>,
+): RecruitPredictedSchool | null {
+  const teamName =
+    typeof prediction.team_name === "string"
+      ? prediction.team_name.trim()
+      : "";
+
+  if (!teamName) {
+    return null;
+  }
+
+  return {
+    team_id:
+      typeof prediction.team_id === "number" && Number.isFinite(prediction.team_id)
+        ? prediction.team_id
+        : null,
+    team_name: teamName,
+    team_title: prediction.team_title ?? null,
+    percentage:
+      typeof prediction.percentage === "number" &&
+      Number.isFinite(prediction.percentage)
+        ? prediction.percentage
+        : null,
+    confidence_score:
+      typeof prediction.confidence_score === "number" &&
+      Number.isFinite(prediction.confidence_score)
+        ? prediction.confidence_score
+        : null,
+    confidence_text: prediction.confidence_text ?? null,
+    matched_by: prediction.matched_by ?? null,
+    href: prediction.href ?? null,
+    image_url: prediction.image_url ?? null,
+  };
+}
+
+function normalizeRecruit(recruit: RawFootballRecruit): FootballRecruit {
+  const predictedSchools = parseJsonArray<RecruitPredictedSchool>(
+    recruit.predicted_schools,
+  )
+    .map(normalizePredictedSchool)
+    .filter((prediction): prediction is RecruitPredictedSchool =>
+      Boolean(prediction),
+    );
+
+  const offers = parseJsonArray<RecruitOffer>(recruit.offers);
+
+  return {
+    ...recruit,
+    committed_team_id: recruit.committed_team_id ?? null,
+    predicted_team_id: recruit.predicted_team_id ?? null,
+    projected_team_id: recruit.projected_team_id ?? null,
+    predicted: Boolean(recruit.predicted || predictedSchools.length > 0),
+    predicted_schools: predictedSchools,
+    offers,
+  };
 }
 
 export function useFootballRecruits(year: number): UseFootballRecruitsResult {
   const [data, setData] = useState<FootballRecruit[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
 
-  const refetch = () => setReloadKey((k) => k + 1);
+  const fetchRecruits = useCallback(
+    async (isRefresh = false, signal?: AbortSignal) => {
+      if (!year) {
+        setData([]);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
 
-  useEffect(() => {
-    if (!year) return;
-
-    const controller = new AbortController();
-
-    async function fetchRecruits() {
-      try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
         setLoading(true);
-        setError(null);
+      }
 
-        const res = await apiClient.get<FootballRecruit[]>(
+      setError(null);
+
+      try {
+        const res = await apiClient.get<RawFootballRecruit[]>(
           `api/recruits/football/${year}`,
-          { signal: controller.signal },
+          { signal },
         );
 
-        setData(res.data);
+        const recruits = Array.isArray(res.data)
+          ? res.data.map(normalizeRecruit)
+          : [];
+
+        setData(recruits);
       } catch (err: any) {
-        if (err.name === "CanceledError") return;
+        if (
+          err?.name === "CanceledError" ||
+          err?.code === "ERR_CANCELED" ||
+          signal?.aborted
+        ) {
+          return;
+        }
 
         setError(
           err?.response?.data?.error ||
@@ -80,13 +200,34 @@ export function useFootballRecruits(year: number): UseFootballRecruitsResult {
         );
       } finally {
         setLoading(false);
+        setRefreshing(false);
       }
-    }
+    },
+    [year],
+  );
 
-    fetchRecruits();
+  const refresh = useCallback(() => {
+    return fetchRecruits(true);
+  }, [fetchRecruits]);
+
+  const refetch = useCallback(() => {
+    return fetchRecruits(false);
+  }, [fetchRecruits]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchRecruits(false, controller.signal);
 
     return () => controller.abort();
-  }, [year, reloadKey]);
+  }, [fetchRecruits]);
 
-  return { data, loading, error, refetch };
+  return {
+    data,
+    loading,
+    refreshing,
+    error,
+    refresh,
+    refetch,
+  };
 }

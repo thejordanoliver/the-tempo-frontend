@@ -48,6 +48,7 @@ export const formStyles = (isDark: boolean) => {
 
     inputFocused: {
       borderColor: focusBorder,
+      borderWidth: 1,
     },
 
     input: {
@@ -57,8 +58,6 @@ export const formStyles = (isDark: boolean) => {
       backgroundColor: surface,
       borderRadius: 8,
       paddingHorizontal: SPACING.lg,
-      borderWidth: 1,
-      borderColor: border,
     },
 
     inputText: {

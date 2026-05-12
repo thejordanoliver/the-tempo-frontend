@@ -33,7 +33,7 @@ interface ShotChartProps {
   awayTeamId?: string;
   league?: "NBA" | "WNBA" | "CBB" | "WCBB";
   neutralSite?: boolean;
-  gameStatusDescription: string;
+ gameStatusDescription: string | undefined;
 }
 
 export default function ShotChart({

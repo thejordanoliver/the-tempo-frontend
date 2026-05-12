@@ -135,7 +135,7 @@ export default function GameDetailsScreen() {
   const awayLastGames = useLastFiveGames(awayTeamId);
 
   // --- Live details and status ---
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
+  const gameStatusDescription = liveScore?.gameStatusDescription;
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -160,7 +160,7 @@ export default function GameDetailsScreen() {
   const lastPlay = liveScore?.lastPlay;
   const headlineText = details?.headline;
   const playerStats = liveScore?.playerStats ?? [];
-  const teamStats = liveScore?.teamStats ?? [];
+  const teamStats = liveScore?.teamStats;
   const homeScore = liveScore?.home.total ?? 0;
   const awayScore = liveScore?.away.total ?? 0;
   const neutralSite = details?.neutralSite;
@@ -170,7 +170,6 @@ export default function GameDetailsScreen() {
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) ?? 0;
   const holidayLabel = getHolidayLabel(gameDateObj);
   const headline = headlineText ?? holidayLabel ?? "";
-  const isGameLoading = !liveScore;
   const lineScore = liveScore?.periodScores?.length
     ? {
         home: liveScore.periodScores.map((p) => p.home.toString()),
@@ -235,6 +234,7 @@ export default function GameDetailsScreen() {
     : (homeTeam?.longitude ?? 0);
   const venueAttendance = details?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, gameDate);
+  const isGameLoading = !gameLeaders || !liveScore;
 
   useLayoutEffect(() => {
     // Hide header while loading or missing live data
@@ -364,9 +364,7 @@ export default function GameDetailsScreen() {
               />
 
               <GameOddsSection
-                date={date ?? ""}
-                homeId={homeTeamId}
-                awayId={awayTeamId}
+                date={date}
                 gameDate={formattedDate}
                 homeCode={homeCode}
                 awayCode={awayCode}
@@ -376,6 +374,7 @@ export default function GameDetailsScreen() {
                 isDark={isDark}
                 gameStatusDescription={gameStatusDescription}
               />
+
               <LineScore
                 linescore={lineScore}
                 homeCode={homeCode}
@@ -398,8 +397,8 @@ export default function GameDetailsScreen() {
                 homeId={String(homeEspnId)}
                 awayId={String(awayEspnId)}
                 homeCode={homeCode}
-                homeLogo={homeLogo}
                 awayCode={awayCode}
+                homeLogo={homeLogo}
                 awayLogo={awayLogo}
                 homePlayers={homeFoulPlayers}
                 awayPlayers={awayFoulPlayers}
@@ -436,6 +435,10 @@ export default function GameDetailsScreen() {
 
               <GameTeamStats
                 stats={teamStats}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                homeCode={homeCode}
+                awayCode={awayCode}
                 isDark={isDark}
                 gameStatusDescription={gameStatusDescription}
               />

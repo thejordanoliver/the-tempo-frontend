@@ -16,8 +16,10 @@ interface User {
 }
 
 const LEGACY_FAVORITES_KEY = "favorites";
+
 const getFavoritesStorageKey = (userId: number | string) =>
   `favoriteTeams:${userId}`;
+
 const SESSION_STORAGE_KEYS = [
   "accessToken",
   "refreshToken",
@@ -31,8 +33,6 @@ const SESSION_STORAGE_KEYS = [
   LEGACY_FAVORITES_KEY,
 ];
 
-// ─── Image normalization ──────────────────────────────────────────────────────
-
 const normalizeImage = (value?: string | null): string | null => {
   if (!value || value === "null" || value === "undefined") return null;
   return value;
@@ -45,8 +45,6 @@ export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingAction, setLoadingAction] = useState(false);
-
-  // ─── Load persisted session on mount ───────────────────────────────────────
 
   useEffect(() => {
     const loadUser = async () => {
@@ -63,6 +61,7 @@ export function useAuth() {
 
         const stored: Record<string, string | null> =
           Object.fromEntries(values);
+
         const storedFavorites = stored.userId
           ? await AsyncStorage.getItem(getFavoritesStorageKey(stored.userId))
           : null;
@@ -92,8 +91,6 @@ export function useAuth() {
     loadUser();
   }, []);
 
-  // ─── Shared post-auth handler ───────────────────────────────────────────────
-
   const handleAuthSuccess = async (
     accessToken: string,
     refreshToken: string,
@@ -113,13 +110,13 @@ export function useAuth() {
       ["bannerImage", normalizeImage(user.banner_image) ?? ""],
       [getFavoritesStorageKey(user.id), JSON.stringify(user.favorites ?? [])],
     ]);
+
     await AsyncStorage.removeItem(LEGACY_FAVORITES_KEY);
   };
 
-  // ─── Login ─────────────────────────────────────────────────────────────────
-
   const login = async (username: string, password: string) => {
     setLoadingAction(true);
+
     try {
       const res = await axios.post<{
         accessToken: string;
@@ -132,6 +129,7 @@ export function useAuth() {
         res.data.refreshToken,
         res.data.user,
       );
+
       router.replace("/(tabs)/profile");
     } catch (err: any) {
       const message =
@@ -143,10 +141,9 @@ export function useAuth() {
     }
   };
 
-  // ─── Signup ────────────────────────────────────────────────────────────────
-
   const signup = async (formData: FormData) => {
     setLoadingAction(true);
+
     try {
       const res = await axios.post<{
         accessToken: string;
@@ -161,6 +158,7 @@ export function useAuth() {
         res.data.refreshToken,
         res.data.user,
       );
+
       router.replace("/(tabs)/profile");
     } catch (err: any) {
       const message =
@@ -172,15 +170,12 @@ export function useAuth() {
     }
   };
 
-  // ─── Logout ────────────────────────────────────────────────────────────────
-
   const logout = async () => {
     try {
       const stored = await AsyncStorage.multiGet(["refreshToken"]);
       const refreshToken = Object.fromEntries(stored).refreshToken;
 
       if (refreshToken) {
-        // Best-effort — local cleanup always runs regardless of server response
         await axios
           .post(`${BASE_URL}/api/logout`, { refreshToken })
           .catch(() => {});
@@ -192,34 +187,50 @@ export function useAuth() {
     } catch (err) {
       console.warn("Logout error:", err);
     } finally {
-      await AsyncStorage.multiRemove(SESSION_STORAGE_KEYS);
-      setUser(null);
-      setToken(null);
-      router.replace("/login");
-    }
-  };
-
-  // ─── Delete account ────────────────────────────────────────────────────────
-
-  const deleteAccount = async () => {
-    try {
-      // apiClient attaches the Bearer token automatically via its request interceptor
-      await apiClient.delete("/api/delete-account");
-
       await AsyncStorage.multiRemove([
         ...SESSION_STORAGE_KEYS,
         ...(user?.id ? [getFavoritesStorageKey(user.id)] : []),
       ]);
+
       setUser(null);
       setToken(null);
+
       router.replace("/login");
-    } catch (err: any) {
-      const message =
-        err.response?.data?.error ?? err.message ?? "Failed to delete account";
-      console.error("Delete account error:", message);
-      throw new Error(message);
     }
   };
+
+const deleteAccount = async (password: string) => {
+  const currentPassword = password.trim();
+
+  if (!currentPassword) {
+    throw new Error("Password is required");
+  }
+
+  try {
+    await apiClient.delete("/api/delete-account", {
+      data: {
+        password: currentPassword,
+      },
+    });
+
+    await AsyncStorage.multiRemove([
+      ...SESSION_STORAGE_KEYS,
+      ...(user?.id ? [getFavoritesStorageKey(user.id)] : []),
+      ...(user?.id ? [`@view_mode_preference_${user.id}`] : []),
+    ]);
+
+    setUser(null);
+    setToken(null);
+  } catch (err: any) {
+    const message =
+      err.response?.data?.error ?? err.message ?? "Failed to delete account";
+
+    // Do not use console.error here for expected validation errors like wrong password.
+    console.warn("Delete account failed:", message);
+
+    throw new Error(message);
+  }
+};
 
   return {
     user,

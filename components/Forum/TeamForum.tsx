@@ -1,6 +1,8 @@
 // components/Forum/TeamForum.tsx
 import { Ionicons } from "@expo/vector-icons";
+import ConfirmModal from "components/ConfirmModal";
 import { Colors, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTeamForum } from "hooks/ForumHooks/useTeamForum";
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +17,6 @@ import {
 } from "react-native";
 import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
-import AlertModal from "./AlertModal";
 import { Post, PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
@@ -24,17 +25,15 @@ interface TeamForumProps {
   league?: LeagueType;
 }
 
-// Removed localhost fallback — won't resolve on a physical device
-import { BASE_URL } from "utils/apiClient";
-import { usePreferences } from "contexts/PreferencesContext";
-
-// AlertConfig defined locally since it's only used here
 interface AlertConfig {
   title?: string;
   message?: string;
   confirmText?: string;
   cancelText?: string;
-  onConfirm?: () => void;
+  onConfirm?: () => void | Promise<void>;
+  variant?: "default" | "danger";
+  showCancel?: boolean;
+  confirmDisabled?: boolean;
 }
 
 export default function TeamForum({ teamId, league }: TeamForumProps) {
@@ -52,7 +51,6 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     loading,
     refreshing,
     error,
-    // token removed — PostItem authenticates via apiClient
     currentUserId,
     fetchPosts,
     refresh,
@@ -109,19 +107,34 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     [editPost, showAlert],
   );
 
-  // Refetch on screen focus — consistent with LeagueForum
   useFocusEffect(
     useCallback(() => {
       fetchPosts(1);
     }, [fetchPosts]),
   );
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       setGlobalImage([], 0);
     };
   }, [setGlobalImage]);
+
+  const renderPostItem = useCallback(
+    ({ item }: { item: Post }) => (
+      <PostItem
+        item={item}
+        isDark={isDark}
+        currentUserId={currentUserId}
+        deletePost={handleDeletePost}
+        editPost={handleEditPost}
+        onImagePress={(imgUri) => {
+          setGlobalImage([], 0);
+          setGlobalImage([imgUri], 0);
+        }}
+      />
+    ),
+    [isDark, currentUserId, handleDeletePost, handleEditPost, setGlobalImage],
+  );
 
   if (loading)
     return (
@@ -133,25 +146,6 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     );
 
   if (error) return <Text style={global.errorText}>{error}</Text>;
-
-  const renderPostItem = useCallback(
-    ({ item }: { item: Post }) => (
-      <PostItem
-        item={item}
-        isDark={isDark}
-        currentUserId={currentUserId}
-        deletePost={handleDeletePost}
-        editPost={handleEditPost}
-        BASE_URL={BASE_URL}
-        onImagePress={(imgUri) => {
-          setGlobalImage([], 0);
-          setGlobalImage([imgUri], 0);
-        }}
-      />
-    ),
-    [isDark, currentUserId, handleDeletePost, handleEditPost, setGlobalImage],
-    // token removed from deps — no longer passed or needed
-  );
 
   return (
     <>
@@ -172,7 +166,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
               size={48}
               color={Colors.midTone}
             />
-            <Text style={global.emptyText}>It's Quiet Here</Text>
+            <Text style={global.emptyText}>{"It's Quiet Here"}</Text>
             <Text style={global.emptySubText}>
               No posts yet. Be the first to start the conversation.
             </Text>
@@ -198,13 +192,15 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         />
       </TouchableOpacity>
 
-      <AlertModal
+      <ConfirmModal
         visible={!!alertConfig}
-        isDark={isDark}
         title={alertConfig?.title}
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}
         cancelText={alertConfig?.cancelText}
+        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
+        confirmDisabled={alertConfig?.confirmDisabled}
+        variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
         onConfirm={() => {
           alertConfig?.onConfirm?.();

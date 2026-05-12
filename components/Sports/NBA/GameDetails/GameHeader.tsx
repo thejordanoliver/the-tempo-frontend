@@ -30,7 +30,7 @@ type Props = {
   halftime?: boolean;
   league?: "nba";
   gameStatusDetail: string;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function GameHeader({

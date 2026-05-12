@@ -22,14 +22,12 @@ import {
   Keyboard,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FullWindowOverlay } from "react-native-screens";
 import type { ChatMessageItem } from "types/chat";
 import type { ChatSendPayload } from "utils/chatPayload";
 import { createMessageKey } from "utils/chatUtils";
@@ -81,10 +79,27 @@ export default function LiveChat({
   const previousMessageCountRef = useRef(messages.length);
 
   const scrollToLatestMessage = useCallback((animated = true) => {
-    requestAnimationFrame(() => {
-      listRef.current?.scrollToEnd({ animated });
+    const scroll = (shouldAnimate: boolean) => {
+      listRef.current?.scrollToEnd({ animated: shouldAnimate });
+
+      // More reliable than scrollToEnd when the footer/bottom padding/image layout
+      // changes after the first scroll calculation.
+      listRef.current?.scrollToOffset?.({
+        offset: Number.MAX_SAFE_INTEGER,
+        animated: shouldAnimate,
+      });
+
       isNearBottomRef.current = true;
       setShowLatestButton(false);
+    };
+
+    requestAnimationFrame(() => {
+      scroll(animated);
+
+      // BottomSheet footer + GIF/image content can change measured height after
+      // the first frame, so run it again after layout settles.
+      setTimeout(() => scroll(false), 60);
+      setTimeout(() => scroll(false), 160);
     });
   }, []);
 
@@ -288,12 +303,13 @@ export default function LiveChat({
         )}
       >
         <View style={styles.content}>
+          {header}
           <BottomSheetFlatList<ChatMessageItem>
             ref={listRef}
             data={messages}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
-            ListHeaderComponent={header}
+            ListHeaderComponent={null}
             contentContainerStyle={contentContainerStyle}
             onContentSizeChange={handleContentSizeChange}
             onLayout={handleListLayout}
@@ -315,7 +331,7 @@ export default function LiveChat({
               style={[
                 styles.latestButton,
                 {
-                  bottom: inputHeight  + 14,
+                  bottom: inputHeight + bottom + 14,
                 },
               ]}
             >
@@ -396,8 +412,8 @@ const liveChatStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      paddingHorizontal: 14,
-      paddingVertical: 8,
+      paddingHorizontal: 20,
+      paddingVertical: 12,
       borderRadius: 999,
       backgroundColor: isDark ? Colors.white : Colors.black,
       shadowColor: Colors.black,

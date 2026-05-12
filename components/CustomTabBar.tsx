@@ -27,8 +27,7 @@ const TABS = [
   },
 ];
 
-// Map nested or related routes to their parent tab route
-const TAB_ROUTE_PARENTS: { [key: string]: string } = {
+const TAB_ROUTE_PARENTS: Record<string, string> = {
   "/league/stats": "/league",
   "/league/schedule": "/league",
 
@@ -43,12 +42,34 @@ const TAB_ROUTE_PARENTS: { [key: string]: string } = {
   "/profile": "/profile",
 };
 
-function getActiveTab(pathname: string): string | null {
+const HIDDEN_TAB_ROUTES = ["/login", "/forgot-password", "/create-post"];
+
+const HIDDEN_TAB_PREFIXES = [
+  "/messages",
+  "/comment-thread",
+  "/post",
+  "/edit-profile",
+];
+
+const DETAIL_SCREEN_PREFIXES = [
+  "/team",
+  "/game",
+  "/messages",
+  "/player",
+  "/user",
+  "/comment-thread",
+  "/post",
+];
+
+const MAIN_TABS = ["/", "/league", "/explore", "/profile"];
+
+function getActiveTab(pathname: string): string {
   if (TAB_ROUTE_PARENTS[pathname]) return TAB_ROUTE_PARENTS[pathname];
 
   const keys = Object.keys(TAB_ROUTE_PARENTS).sort(
     (a, b) => b.length - a.length,
   );
+
   for (const key of keys) {
     if (pathname.startsWith(key)) {
       return TAB_ROUTE_PARENTS[key];
@@ -56,6 +77,17 @@ function getActiveTab(pathname: string): string | null {
   }
 
   return "/";
+}
+
+function shouldHideTabBar(pathname: string) {
+  return (
+    HIDDEN_TAB_ROUTES.includes(pathname) ||
+    HIDDEN_TAB_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+  );
+}
+
+function isDetailScreen(pathname: string) {
+  return DETAIL_SCREEN_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 export type TabBarProps = {
@@ -69,37 +101,17 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
   const [lastActiveTab, setLastActiveTab] = useState<string>("/");
 
   const currentActiveTab = getActiveTab(pathname);
+  const detailScreen = isDetailScreen(pathname);
 
   useEffect(() => {
-    if (
-      !pathname.startsWith("/team") &&
-      !pathname.startsWith("/game") &&
-      !pathname.startsWith("/player") &&
-      !pathname.startsWith("/user")
-    ) {
-      setLastActiveTab(currentActiveTab || "/");
+    if (!detailScreen) {
+      setLastActiveTab(currentActiveTab);
     }
-  }, [pathname, currentActiveTab]);
+  }, [currentActiveTab, detailScreen]);
 
-  const activeTabRoute =
-    pathname.startsWith("/team") ||
-    pathname.startsWith("/game") ||
-    pathname.startsWith("/player") ||
-    pathname.startsWith("/user")
-      ? lastActiveTab
-      : currentActiveTab;
+  if (shouldHideTabBar(pathname)) return null;
 
-  if (pathname === "/login") return null;
-
-  // Helper to identify detail screens
-  const isDetailScreen = (path: string) =>
-    path.startsWith("/team") ||
-    path.startsWith("/game") ||
-    path.startsWith("/player") ||
-    path.startsWith("/user");
-
-  // Main tabs routes
-  const mainTabs = ["/", "/league", "/explore", "/profile"];
+  const activeTabRoute = detailScreen ? lastActiveTab : currentActiveTab;
 
   return (
     <View style={styles.tabBarWrapper}>
@@ -109,6 +121,7 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
           tint={isDark ? "dark" : "light"}
           style={StyleSheet.absoluteFill}
         />
+
         <View
           style={[
             StyleSheet.absoluteFill,
@@ -119,20 +132,20 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
             },
           ]}
         />
+
         <View style={styles.tabRow}>
           {TABS.map(({ name, route, icon }) => {
             const focused = activeTabRoute === route;
 
             const handlePress = () => {
-              if (route === pathname) return; // already there
+              if (route === pathname) return;
 
-              if (isDetailScreen(pathname) && mainTabs.includes(route)) {
-                // From detail screen to main tab → instant navigation
+              if (detailScreen && MAIN_TABS.includes(route)) {
                 router.replace(route as any);
-              } else {
-                // Otherwise normal slide animation
-                router.push(route as any);
+                return;
               }
+
+              router.push(route as any);
             };
 
             return (
@@ -158,6 +171,7 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
                   }}
                   resizeMode="contain"
                 />
+
                 <Text
                   style={{
                     marginTop: 4,
@@ -194,11 +208,13 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 12,
   },
+
   tabBarContainer: {
     height: 80,
     overflow: "hidden",
     backgroundColor: "transparent",
   },
+
   tabRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -207,6 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingVertical: 20,
   },
+
   tabButton: {
     flex: 1,
     alignItems: "center",

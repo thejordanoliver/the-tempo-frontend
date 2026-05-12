@@ -205,7 +205,6 @@ const getStyles = (isDark: boolean) =>
       minHeight: 38,
       paddingTop: 9,
       paddingBottom: 9,
-      paddingHorizontal: 10,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,

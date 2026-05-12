@@ -17,8 +17,8 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { BasketballGame } from "types/basketball";
 import { MLBGame } from "types/baseball";
+import { BasketballGame } from "types/basketball";
 import { FootballGame } from "types/football";
 import { NHLGame } from "types/hockey";
 import { Game } from "types/nba";
@@ -82,11 +82,7 @@ type WidgetEditControlsProps = {
   compact?: boolean;
 };
 
-const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = [
-  "small",
-  "medium",
-  "large",
-];
+const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = ["small", "medium", "large"];
 
 export function WidgetEditControls({
   isDark,
@@ -455,7 +451,6 @@ export default function WidgetSlider({
                 game={item.data}
                 height={slideHeight}
                 width={slideWidth}
-                showPlayers={showPlayers}
                 isDark={isDark}
               />
             </View>

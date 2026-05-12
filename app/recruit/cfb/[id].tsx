@@ -73,6 +73,7 @@ export default function RecruitDetailScreen() {
       {player.predicted_school && (
         <PredictionRing
           prediction={player.predicted_school}
+          predictedSchools={player.predicted_schools}
           teamId={
             player.committed_team_id ||
             player.predicted_team_id ||

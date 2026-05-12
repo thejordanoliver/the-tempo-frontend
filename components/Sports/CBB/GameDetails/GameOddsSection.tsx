@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import OddsSkeleton from "components/Skeletons/GameDetails/OddsSkeleton";
-import { OddsCard } from "components/Sports/NBA/GameDetails/OddsCard";
+import { OddsCard } from "components/Sports/Odds/OddsCard";
 import { useOdds } from "hooks/CBBHooks/useOdds";
 import { View } from "react-native";
 

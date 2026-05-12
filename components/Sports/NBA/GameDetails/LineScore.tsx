@@ -19,7 +19,7 @@ type Props = {
   isDark: boolean;
   loading?: boolean;
   league?: LeagueType;
-  gameStatusDescription: string;
+  gameStatusDescription: string | undefined;
 };
 
 export default function LineScore({
