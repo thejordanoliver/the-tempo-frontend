@@ -28,7 +28,7 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 
- const LEAGUE = "NFL";
+const LEAGUE = "NFL";
 
 export default function NFLGameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
@@ -210,12 +210,11 @@ export default function NFLGameDetailsScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: 140 }]}
+        contentContainerStyle={styles.container}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
-    
         <NFLGameHeader
           headlineText={headline}
           home={homeTeam}

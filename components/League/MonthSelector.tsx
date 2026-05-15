@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MonthSelectorSkeleton from "./Skeletons/MonthSelectorSkeleton";
+import MonthSelectorSkeleton from "../Skeletons/MonthSelectorSkeleton";
 
 type MonthItem = {
   key?: string;
@@ -92,53 +92,55 @@ export default function MonthSelector({
               }
         }
       >
-        {months.map(({ key: monthKey, month, year, count: monthCount }, index) => {
-          const isSelected =
-            selectedDate?.getMonth() === month &&
-            selectedDate?.getFullYear() === year;
+        {months.map(
+          ({ key: monthKey, month, year, count: monthCount }, index) => {
+            const isSelected =
+              selectedDate?.getMonth() === month &&
+              selectedDate?.getFullYear() === year;
 
-          const key =
-            monthKey ?? `${year}-${String(month + 1).padStart(2, "0")}`;
+            const key =
+              monthKey ?? `${year}-${String(month + 1).padStart(2, "0")}`;
 
-          const count = monthCount ?? gameCountByMonth.get(key) ?? 0;
+            const count = monthCount ?? gameCountByMonth.get(key) ?? 0;
 
-          const label = new Date(year, month, 1).toLocaleString("en-US", {
-            month: "short",
-          });
+            const label = new Date(year, month, 1).toLocaleString("en-US", {
+              month: "short",
+            });
 
-          return (
-            <TouchableOpacity
-              key={key}
-              onPress={() => onSelect(month, year, index)}
-              style={[
-                styles.monthButton,
-                {
-                  width: ITEM_WIDTH,
-                  marginHorizontal: SPACING / 2,
-                },
-                isSelected && styles.monthButtonSelected,
-              ]}
-            >
-              <Text
+            return (
+              <TouchableOpacity
+                key={key}
+                onPress={() => onSelect(month, year, index)}
                 style={[
-                  styles.monthText,
-                  isSelected && styles.monthTextSelected,
+                  styles.monthButton,
+                  {
+                    width: ITEM_WIDTH,
+                    marginHorizontal: SPACING / 2,
+                  },
+                  isSelected && styles.monthButtonSelected,
                 ]}
               >
-                {label}
-              </Text>
+                <Text
+                  style={[
+                    styles.monthText,
+                    isSelected && styles.monthTextSelected,
+                  ]}
+                >
+                  {label}
+                </Text>
 
-              <Text
-                style={[
-                  styles.gameCountText,
-                  isSelected && styles.gameCountTextSelected,
-                ]}
-              >
-                {count} Games
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+                <Text
+                  style={[
+                    styles.gameCountText,
+                    isSelected && styles.gameCountTextSelected,
+                  ]}
+                >
+                  {count} Games
+                </Text>
+              </TouchableOpacity>
+            );
+          },
+        )}
       </ScrollView>
     </View>
   );

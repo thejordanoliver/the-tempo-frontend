@@ -11,7 +11,10 @@ import { View } from "react-native";
 
 import { MLBTeam } from "types/baseball";
 import { FootballTeam } from "types/football";
-import { CBBTeam, LeagueType, NBATeam, NHLTeam } from "types/types";
+import { LeagueType } from "types/types";
+import { NBATeam } from "types/nba";
+import { NHLTeam } from "types/hockey";
+import { BasketballTeam } from "types/basketball";
 
 type Props = {
   teamId?: string | number;
@@ -102,7 +105,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
 
     case "CBB":
     case "WCBB": {
-      const t = team as CBBTeam;
+      const t = team as BasketballTeam;
 
       return (
         <View style={{ width: "100%" }}>
@@ -172,7 +175,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       );
     }
     case "WNBA": {
-      const t = team as CBBTeam;
+      const t = team as BasketballTeam;
 
       return (
         <View style={{ width: "100%" }}>

@@ -1,8 +1,8 @@
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NBATeam } from "types/types";
+import { BasketballTeam } from "types/basketball";
 type TeamInfoProps = {
-  team?: NBATeam;
+  team?: BasketballTeam;
   logo: any;
   name: string | undefined;
   score?: number;

@@ -174,4 +174,5 @@ export type CollegeBaseballGame = {
 };
 export type CollegeBaseballGameCardProps = {
   game: CollegeBaseballGame;
+  isWomens: boolean
 };

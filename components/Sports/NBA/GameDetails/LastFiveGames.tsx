@@ -24,9 +24,10 @@ type Props = {
   home: TeamData;
   away: TeamData;
   league: LeagueType;
+  gameStatusDescription: string
 };
 
-export default function LastFiveGames({ isDark, home, away, league }: Props) {
+export default function LastFiveGames({ isDark, home, away, league, gameStatusDescription }: Props) {
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
 
@@ -127,6 +128,7 @@ export default function LastFiveGames({ isDark, home, away, league }: Props) {
 
   if (home?.games?.length > 0 || away?.games?.length > 0) return null;
 
+  if (gameStatusDescription === "Final") return null
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Last Five Games</HeadingTwo>

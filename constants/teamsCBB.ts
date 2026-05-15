@@ -1,6 +1,6 @@
 // constants/teamsCBB.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { CBBTeam, Conference } from "types/basketball";
+import { BasketballTeam, Conference } from "types/basketball";
 import { neutralVenues } from "./neutralVenues";
 export type Venue = {
   name: string;
@@ -574,7 +574,7 @@ import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
-export const cbbTeams: CBBTeam[] = [
+export const cbbTeams: BasketballTeam[] = [
   {
     id: 1504,
     wid: 7114,
@@ -10331,7 +10331,7 @@ const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
 export const getCBBTeam = (id: string | number, isWomen = false) =>
   resolveCBBTeam(id, isWomen) || null || undefined;
 
-export const getTeamByESPNId = (id: number | string): CBBTeam | null => {
+export const getTeamByESPNId = (id: number | string): BasketballTeam | null => {
   if (!id) return null;
 
   const searchStr = String(id);

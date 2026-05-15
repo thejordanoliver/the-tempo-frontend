@@ -13,7 +13,6 @@ import {
   View,
 } from "react-native";
 import { LeagueType } from "types/types";
-import { BASE_URL } from "utils/apiClient";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
@@ -80,7 +79,6 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
             currentUserId={currentUserId}
             deletePost={deletePost}
             editPost={editPost}
-            BASE_URL={BASE_URL}
             onImagePress={(imgUri) => {
               setGlobalImage([], 0);
               setGlobalImage([imgUri], 0);
@@ -112,7 +110,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
         onPress={() =>
           router.push({
             pathname: "/create-post",
-            params: { league },
+            params: { league, currentUserId },
           })
         }
         activeOpacity={0.8}

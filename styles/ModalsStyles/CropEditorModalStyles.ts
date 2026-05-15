@@ -56,11 +56,17 @@ export const cropEditorModalStyles = (
     imageContainer: {
       width: cropWidth,
       height: cropHeight,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderWidth: 2,
       borderRadius: isProfile ? cropHeight / 2 : 8,
       overflow: "hidden",
       backgroundColor: Colors.black,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    cropFrame: {
+      ...StyleSheet.absoluteFillObject,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderWidth: 2,
+      borderRadius: isProfile ? cropHeight / 2 : 8,
     },
     controlsContainer: {
       paddingVertical: 20,

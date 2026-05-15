@@ -12,7 +12,6 @@ import {
 } from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import GameSummary from "components/Sports/NBA/GameDetails/GameSummary";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
@@ -125,9 +124,6 @@ export default function GameDetailsScreen() {
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
   const period = liveScore?.period;
   const displayClock = liveScore?.displayClock;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -204,11 +200,7 @@ export default function GameDetailsScreen() {
     ? (neutralVenue?.longitude ?? 0)
     : (homeTeam?.longitude ?? 0);
   const venueAttendance = details?.attendance || null;
-  const { weather, weatherError, weatherLoading } = useWeatherForecast(
-    venueLat,
-    venueLon,
-    gameDateISO,
-  );
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateISO);
 
   /* ---------------- Status / linescore ---------------- */
 
@@ -348,54 +340,44 @@ export default function GameDetailsScreen() {
 
             <GameOddsSection
               date={gameDateISO ?? ""}
-              homeId={homeTeamId}
-              awayId={awayTeamId}
               gameDate={formattedDate}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
               league={"wnba"}
-              isDark={isDark}
               gameStatusDescription={gameStatusDescription}
+              isDark={isDark}
             />
 
             <GameLeaders
               leaders={leaders}
               awayTeamId={Number(awayEspnId)}
               homeTeamId={Number(homeEspnId)}
-              league={LEAGUE}
+              league={"wnba"}
               gameStatusDescription={gameStatusDescription}
               isDark={isDark}
             />
 
-            {isHalftime && inProgress && (
-              <PlayersInFoulTrouble
-                homeId={String(homeEspnId)}
-                homeCode={homeName}
-                homeLogo={homeLogo}
-                awayId={String(awayEspnId)}
-                awayCode={awayName}
-                awayLogo={awayLogo}
-                homePlayers={homeFoulPlayers}
-                awayPlayers={awayFoulPlayers}
-                league={LEAGUE}
-                isDark={isDark}
-                gameStatusDescription={gameStatusDescription}
-              />
-            )}
+            <PlayersInFoulTrouble
+              homeId={String(homeEspnId)}
+              homeCode={homeName}
+              homeLogo={homeLogo}
+              awayId={String(awayEspnId)}
+              awayCode={awayName}
+              awayLogo={awayLogo}
+              homePlayers={homeFoulPlayers}
+              awayPlayers={awayFoulPlayers}
+              league={LEAGUE}
+              isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
+            />
 
             <ShotChart
               plays={plays}
               homeTeamId={String(homeEspnId)}
               awayTeamId={String(awayEspnId)}
               neutralSite={neutralSite}
-              league={LEAGUE}
-              gameStatusDescription={gameStatusDescription}
-            />
-
-            <GameSummary
-              plays={plays ?? []}
               league={LEAGUE}
               gameStatusDescription={gameStatusDescription}
             />
@@ -438,6 +420,7 @@ export default function GameDetailsScreen() {
               }}
               isDark={isDark}
               league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />

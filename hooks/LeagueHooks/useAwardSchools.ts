@@ -12,11 +12,11 @@ export type AwardSchool = {
   total_awards: number;
   unique_players: number;
 };
-type AwardSchoolsLeague = "cfb" | "cbb";
+type AwardSchoolsLeague = "cfb" | "cbb" | "wcbb";
 
 type Options = {
   league?: AwardSchoolsLeague;
-  category?: string; // heisman, wooden, all, etc.
+  category?: string;
   enabled?: boolean;
   refreshToken?: number;
 };

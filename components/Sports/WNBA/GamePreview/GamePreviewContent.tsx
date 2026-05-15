@@ -2,20 +2,17 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
 import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/CBB/GameDetails/GameTeamStats";
-import {
-  GameLocation,
-  LastFiveGames,
-  LineScore,
-} from "components/Sports/NBA/GameDetails";
+import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
+import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
-import { BasketballGame } from "types/basketball";
+import { BasketballGame, BasketballTeam } from "types/basketball";
 
 type GamePreviewContentProps = {
   game: BasketballGame;
-  home: any;
-  away: any;
+  home: BasketballTeam | undefined;
+  away: BasketballTeam | undefined;
   officials: any;
   lineScore: any;
   leaders: any;
@@ -26,11 +23,11 @@ type GamePreviewContentProps = {
   data?: any;
   venueImage: any;
   venueName: any;
-  venueCity: any;
   venueAddress?: string;
+  venueLocation?: string;
   venueCapacity: any;
+  venueAttendance?: number | null;
   weather: any;
-  isDark?: boolean;
   highlights: any;
   gameStatusDescription: string;
 };
@@ -48,15 +45,14 @@ export default function GamePreviewContent({
   teamStats,
   venueImage,
   venueName,
-  venueCity,
   venueAddress,
   venueCapacity,
+  venueLocation,
+  venueAttendance,
   weather,
   highlights,
   gameStatusDescription,
 }: GamePreviewContentProps) {
-  const isWomen = game.league.id === 423;
-
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
@@ -66,24 +62,24 @@ export default function GamePreviewContent({
         linescore={lineScore}
         homeCode={home?.code ?? ""}
         awayCode={away?.code ?? ""}
-        league={isWomen ? "WCBB" : "CBB"}
-        isDark
+        league={"WNBA"}
         gameStatusDescription={gameStatusDescription}
+        isDark
       />
 
       <GameLeaders
         leaders={leaders}
-        awayTeamId={Number(away.espnID)}
-        homeTeamId={Number(home.espnID)}
-        league={isWomen ? "wcbb" : "cbb"}
+        awayTeamId={Number(away?.espnID)}
+        homeTeamId={Number(home?.espnID)}
+        league={"wnba"}
         gameStatusDescription={gameStatusDescription}
         isDark
       />
 
       <GameTeamStats
         stats={teamStats}
+        league={"WNBA"}
         gameStatusDescription={gameStatusDescription}
-        league={isWomen ? "WCBB" : "CBB"}
         isDark
       />
 
@@ -91,27 +87,26 @@ export default function GamePreviewContent({
         home={{
           teamId: home?.id,
           teamCode: home?.code ?? "",
-          games: homeLastGames?.games,
+          games: homeLastGames?.games ?? [],
         }}
         away={{
           teamId: away?.id,
           teamCode: away?.code ?? "",
-          games: awayLastGames?.games,
+          games: awayLastGames?.games ?? [],
         }}
-        league={isWomen ? "WCBB" : "CBB"}
-        isDark
+        league={"WNBA"}
+        gameStatusDescription={gameStatusDescription}
+        isDark={true}
       />
 
-      {playerStats && (
-        <BoxScore
-          playerStats={playerStats}
-          awayTeamId={Number(away.espnId)}
-          homeTeamId={Number(home.espnId)}
-          league={isWomen ? "WCBB" : "CBB"}
-          gameStatusDescription={gameStatusDescription}
-          isDark
-        />
-      )}
+      <BoxScore
+        playerStats={playerStats}
+        awayTeamId={Number(away?.espnID)}
+        homeTeamId={Number(home?.espnID)}
+        league={"WNBA"}
+        gameStatusDescription={gameStatusDescription}
+        isDark
+      />
 
       <HighlightVideoList highlights={highlights} isDark />
 
@@ -124,8 +119,10 @@ export default function GamePreviewContent({
       <GameLocation
         venueImage={venueImage}
         venueName={venueName}
+        location={venueLocation}
         address={venueAddress}
         venueCapacity={venueCapacity}
+        venueAttendance={venueAttendance}
         weather={weather}
         isDark
       />

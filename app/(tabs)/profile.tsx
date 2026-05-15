@@ -98,66 +98,63 @@ export default function ProfileScreen() {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
+useFocusEffect(
+  useCallback(() => {
+    let isActive = true;
 
-      const initialize = async () => {
-        let activeUserId = currentUserId;
+    const initialize = async () => {
+      // Always reload profile on focus so edits from EditProfileScreen
+      // immediately update banner, avatar, name, and bio after router.back().
+      const loadedUserId = await loadProfile();
 
-        if (
-          !hasLoadedProfileRef.current ||
-          !activeUserId ||
-          activeUserId !== lastLoadedUserIdRef.current
-        ) {
-          const loadedUserId = await loadProfile();
-          if (!isActive) return;
+      if (!isActive) return;
 
-          activeUserId = loadedUserId;
-          hasLoadedProfileRef.current = Boolean(loadedUserId);
-        }
+      const activeUserId = loadedUserId ?? currentUserId;
 
-        if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
-          await loadFavorites(activeUserId);
-          if (!isActive) return;
+      hasLoadedProfileRef.current = Boolean(activeUserId);
 
-          lastLoadedUserIdRef.current = activeUserId;
-        }
+      if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
+        await loadFavorites(activeUserId);
 
-        if (shouldRestore && targetUserId) {
-          clearRestore();
-          openModal(
-            type,
-            targetUserId,
-            activeUserId ? String(activeUserId) : undefined,
-          );
-        }
+        if (!isActive) return;
 
-        if (showOnReturn) {
-          setShowSettingsModal(true);
-          setShowOnReturn(false);
-        }
-      };
+        lastLoadedUserIdRef.current = activeUserId;
+      }
 
-      initialize();
+      if (shouldRestore && targetUserId) {
+        clearRestore();
+        openModal(
+          type,
+          targetUserId,
+          activeUserId ? String(activeUserId) : undefined,
+        );
+      }
 
-      return () => {
-        isActive = false;
-      };
-    }, [
-      currentUserId,
-      loadProfile,
-      loadFavorites,
-      shouldRestore,
-      targetUserId,
-      type,
-      openModal,
-      clearRestore,
-      showOnReturn,
-      setShowSettingsModal,
-      setShowOnReturn,
-    ]),
-  );
+      if (showOnReturn) {
+        setShowSettingsModal(true);
+        setShowOnReturn(false);
+      }
+    };
+
+    initialize();
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    currentUserId,
+    loadProfile,
+    loadFavorites,
+    shouldRestore,
+    targetUserId,
+    type,
+    openModal,
+    clearRestore,
+    showOnReturn,
+    setShowSettingsModal,
+    setShowOnReturn,
+  ]),
+);
 
   useLayoutEffect(() => {
     navigation.setOptions({

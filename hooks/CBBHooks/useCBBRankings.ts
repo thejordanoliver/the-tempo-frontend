@@ -1,12 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CBBTeam } from "types/basketball";
+import { BasketballTeam } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 /* =====================================================
    TYPES
 ===================================================== */
 
-export type CBBTeamWithGroups = CBBTeam & {
+export type CBBTeamWithGroups = BasketballTeam & {
   groups?: {
     id: string;
     shortName: string;

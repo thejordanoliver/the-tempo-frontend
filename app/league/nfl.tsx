@@ -8,11 +8,11 @@ import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
 import { StandingsList } from "components/League/Standings/StandingsList";
+import WeekSelector from "components/League/WeekSelector";
 import NewsList from "components/News/NewsList";
 import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import { NFLPlayoffBracket } from "components/Sports/NFL/Playoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
@@ -71,7 +71,6 @@ export default function NFLLeagueScreen() {
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
 
@@ -79,8 +78,9 @@ export default function NFLLeagueScreen() {
     weeks,
     loading: gamesLoading,
     refetch,
-  } = useFootballGamesByWeek(getFootballSeason(), 1);
+  } = useFootballGamesByWeek(currentSeason, 1);
   const { calendar } = useLeagueCalendar(league, "football");
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
   const weekArray = calendar?.filter((w) => w.stage !== "Off Season") || [];
   const weekLabels = weekArray.map((w) => w.label);
   const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";

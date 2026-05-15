@@ -1,16 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
-import { useEffect, useState } from "react";
-import {
-  Appearance,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Modal from "react-native-modal";
 
@@ -79,47 +73,93 @@ export default function CalendarModal({
   onSelectDate,
   markedDates,
 }: Props) {
-  const systemColorScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemColorScheme === "dark");
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+
+  const styles = useMemo(() => calendarModalStyles(isDark), [isDark]);
+
   const [selectedDate, setSelectedDate] = useState(
     dayjs().tz("America/New_York").format("YYYY-MM-DD"),
   );
-  const [calendarKey, setCalendarKey] = useState(0); // force re-render to update `initialDate`
 
-  useEffect(() => {
-    const listener = Appearance.addChangeListener(({ colorScheme }) => {
-      setIsDark(colorScheme === "dark");
-    });
-    return () => listener.remove();
-  }, []);
+  const [calendarKey, setCalendarKey] = useState(0);
 
   useEffect(() => {
     if (visible) {
-      setCalendarKey((prev) => prev + 1); // re-render calendar on modal open
+      setCalendarKey((prev) => prev + 1);
     }
-  }, [visible]);
+  }, [visible, resolvedColorScheme]);
 
   const goToToday = () => {
-    const today = dayjs().format("YYYY-MM-DD");
+    const today = dayjs().tz("America/New_York").format("YYYY-MM-DD");
     setSelectedDate(today);
-    setCalendarKey((prev) => prev + 1); // force re-render with today
+    setCalendarKey((prev) => prev + 1);
   };
+
+  const calendarTheme = useMemo(
+    () => ({
+      backgroundColor: "transparent",
+      calendarBackground: "transparent",
+
+      textSectionTitleColor: isDark ? Colors.white : Colors.black,
+      todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+      dayTextColor: isDark ? Colors.white : Colors.black,
+      textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
+
+      dotColor: isDark ? Colors.white : Colors.black,
+      selectedDotColor: isDark ? Colors.black : Colors.white,
+
+      monthTextColor: isDark ? Colors.white : Colors.black,
+      arrowColor: isDark ? Colors.white : Colors.black,
+
+      textDayFontFamily: Fonts.OSBOLD,
+      textMonthFontFamily: Fonts.OSBOLD,
+      textDayHeaderFontFamily: Fonts.OSBOLD,
+
+      textMonthFontSize: 24,
+      textDayFontSize: 20,
+      textDayHeaderFontSize: 18,
+    }),
+    [isDark],
+  );
+
+  const calendarMarkedDates = useMemo(() => {
+    const selectedMarkedDate = markedDates?.[selectedDate] ?? {};
+
+    return {
+      ...markedDates,
+      [selectedDate]: {
+        ...selectedMarkedDate,
+        customStyles: {
+          ...(selectedMarkedDate.customStyles ?? {}),
+          container: {
+            ...(selectedMarkedDate.customStyles?.container ?? {}),
+            backgroundColor: "transparent",
+          },
+          text: {
+            ...(selectedMarkedDate.customStyles?.text ?? {}),
+            color: isDark ? Colors.dark.limeGreen : Colors.light.green,
+            fontFamily: Fonts.OSBOLD,
+          },
+        },
+      },
+    };
+  }, [isDark, markedDates, selectedDate]);
 
   return (
     <Modal
       isVisible={visible}
       onBackdropPress={onClose}
-      backdropOpacity={0.5}
+      backdropOpacity={isDark ? 0.5 : 0.25}
       style={styles.modal}
-      useNativeDriver={true}
+      useNativeDriver
     >
       <BlurView
         intensity={100}
-        tint={isDark ? "dark" : "light"}
+        tint={"systemMaterial"}
         style={styles.blurContainer}
       >
         <View style={styles.calendarWrapper}>
-          {/* Close Button */}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Ionicons
               name="close"
@@ -128,72 +168,31 @@ export default function CalendarModal({
             />
           </TouchableOpacity>
 
-          {/* Today Button */}
           <TouchableOpacity style={styles.todayButton} onPress={goToToday}>
             <Ionicons
               name="calendar"
               size={18}
               color={isDark ? Colors.white : Colors.black}
-              style={{ marginRight: 6 }}
+              style={styles.todayIcon}
             />
-            <Text
-              style={{
-                color: isDark ? Colors.white : Colors.black,
-                fontFamily: Fonts.OSBOLD,
-              }}
-            >
-              Today
-            </Text>
+            <Text style={styles.todayText}>Today</Text>
           </TouchableOpacity>
 
-          {/* Calendar */}
           <Calendar
-            key={calendarKey}
+            key={`${resolvedColorScheme}-${calendarKey}`}
             current={dayjs(selectedDate)
               .tz("America/New_York")
               .format("YYYY-MM-DD")}
-            markedDates={{
-              ...markedDates,
-              [selectedDate]: {
-                customStyles: {
-                  container: {
-                    backgroundColor: "transparent",
-                  },
-                  text: {
-                    color: isDark
-                      ? Colors.dark.limeGreen
-                      : Colors.dark.limeGreen,
-                    fontFamily: Fonts.OSBOLD,
-                  },
-                },
-              },
-            }}
+            markedDates={calendarMarkedDates}
             markingType="custom"
             onDayPress={(day: CalendarDay) => {
               setSelectedDate(day.dateString);
               onSelectDate(day.dateString);
               onClose();
             }}
-            enableSwipeMonths={true}
+            enableSwipeMonths
             disableMonthChange={false}
-            theme={{
-              backgroundColor: "transparent",
-              calendarBackground: "transparent",
-              textSectionTitleColor: isDark ? Colors.white : Colors.black,
-              todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-              dayTextColor: isDark ? Colors.white : Colors.black,
-              textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
-              dotColor: isDark ? Colors.white : Colors.black,
-              selectedDotColor: isDark ? Colors.black : Colors.white,
-              monthTextColor: isDark ? Colors.white : Colors.black,
-              arrowColor: isDark ? Colors.white : Colors.black,
-              textDayFontFamily: Fonts.OSBOLD,
-              textMonthFontFamily: Fonts.OSBOLD,
-              textDayHeaderFontFamily: Fonts.OSBOLD,
-              textMonthFontSize: 24,
-              textDayFontSize: 20,
-              textDayHeaderFontSize: 18,
-            }}
+            theme={calendarTheme}
           />
         </View>
       </BlurView>
@@ -201,39 +200,52 @@ export default function CalendarModal({
   );
 }
 
-const styles = StyleSheet.create({
-  modal: {
-    margin: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  blurContainer: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    paddingTop: 100,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  calendarWrapper: {
-    borderRadius: 20,
-    padding: 20,
-    width: "100%",
-    height: 500,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    marginBottom: 10,
-    padding: 5,
-  },
-  todayButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 10,
-    backgroundColor: "rgba(120,120,120,0.15)",
-  },
-});
+const calendarModalStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    modal: {
+      margin: 0,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    blurContainer: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      paddingTop: 100,
+      justifyContent: "flex-start",
+      alignItems: "center",
+      backgroundColor: isDark
+        ? "rgba(0, 0, 0, 0.55)"
+        : "rgba(255, 255, 255, 0.65)",
+    },
+    calendarWrapper: {
+      borderRadius: 20,
+      padding: 20,
+      width: "100%",
+      height: 500,
+    },
+    closeButton: {
+      alignSelf: "flex-end",
+      marginBottom: 10,
+      padding: 5,
+    },
+    todayButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      marginBottom: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 10,
+      backgroundColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
+    },
+    todayIcon: {
+      marginRight: 6,
+    },
+    todayText: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSBOLD,
+    },
+  });

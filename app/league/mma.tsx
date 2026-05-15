@@ -3,28 +3,80 @@ import LeagueForum from "components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "components/League/SportsListModal";
+import WeekSelector from "components/League/WeekSelector";
 import NewsList from "components/News/NewsList";
 import MMAChampionsList from "components/Sports/MMA/Champions/MMAChampionsList";
-import EventSelector from "components/Sports/MMA/EventSelector";
 import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigation, useRouter } from "expo-router";
+import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+
+const getComparableValue = (value: unknown) => {
+  if (value === null || value === undefined) return "";
+
+  return String(value).trim().toLowerCase();
+};
+
+const getEventIdFromFightEvent = (event: any) => {
+  return (
+    event?.eventId ??
+    event?.id ??
+    event?.espnId ??
+    event?.espn_id ??
+    event?.event_id ??
+    null
+  );
+};
+
+const getEventLabelFromFightEvent = (event: any) => {
+  return (
+    event?.label ??
+    event?.name ??
+    event?.title ??
+    event?.displayName ??
+    event?.shortName ??
+    ""
+  );
+};
+
 export default function UFCLeagueScreen() {
-  const league = "MMA";
+  const league = "MMA" as const;
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
+
   const navigation = useNavigation();
+  const router = useRouter();
+
+  const sportsModalRef = useRef<SportsListModalRef>(null);
+  const pagerRef = useRef<PagerView>(null);
+
+  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
+  const [refreshingNews, setRefreshingNews] = useState(false);
+
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MMA");
+
+  const {
+    calendar: mmaCalendar,
+    loading: calendarLoading,
+  } = useLeagueCalendar(league, "mma");
 
   const {
     events,
@@ -33,27 +85,103 @@ export default function UFCLeagueScreen() {
     refreshFights,
     error,
   } = useSeasonFights();
+
   const {
     articles,
     loading: newsLoading,
     error: newsError,
   } = useLeaguesNews(10, "MMA");
-  const selectedEvent = events[selectedEventIndex];
-  const sportsModalRef = useRef<SportsListModalRef>(null);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MMA");
-  const pagerRef = useRef<PagerView>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-    } catch (error) {
-      console.warn("Failed to refresh:", error);
-    } finally {
-      setRefreshing(false);
+  useEffect(() => {
+    if (mmaCalendar.length === 0) {
+      if (selectedEventIndex !== 0) {
+        setSelectedEventIndex(0);
+      }
+
+      return;
     }
-  };
+
+    if (selectedEventIndex > mmaCalendar.length - 1) {
+      setSelectedEventIndex(mmaCalendar.length - 1);
+    }
+  }, [mmaCalendar.length, selectedEventIndex]);
+
+  const selectedCalendarEvent = useMemo(() => {
+    if (mmaCalendar.length === 0) return null;
+
+    return mmaCalendar[selectedEventIndex] ?? mmaCalendar[0] ?? null;
+  }, [mmaCalendar, selectedEventIndex]);
+
+  const selectedFightEvent = useMemo(() => {
+    if (events.length === 0) return null;
+
+    if (!selectedCalendarEvent) {
+      return events[selectedEventIndex] ?? null;
+    }
+
+    const selectedCalendarEventId = getComparableValue(
+      selectedCalendarEvent.eventId,
+    );
+
+    const selectedCalendarLabel = getComparableValue(
+      selectedCalendarEvent.label,
+    );
+
+    const matchedById =
+      selectedCalendarEventId.length > 0
+        ? events.find((event: any) => {
+            const eventId = getComparableValue(getEventIdFromFightEvent(event));
+
+            return eventId.length > 0 && eventId === selectedCalendarEventId;
+          })
+        : null;
+
+    if (matchedById) {
+      return matchedById;
+    }
+
+    const matchedByLabel =
+      selectedCalendarLabel.length > 0
+        ? events.find((event: any) => {
+            const eventLabel = getComparableValue(
+              getEventLabelFromFightEvent(event),
+            );
+
+            return (
+              eventLabel.length > 0 &&
+              (eventLabel === selectedCalendarLabel ||
+                selectedCalendarLabel.includes(eventLabel) ||
+                eventLabel.includes(selectedCalendarLabel))
+            );
+          })
+        : null;
+
+    if (matchedByLabel) {
+      return matchedByLabel;
+    }
+
+    return events[selectedEventIndex] ?? null;
+  }, [events, selectedCalendarEvent, selectedEventIndex]);
+
+  const selectedEventGames = useMemo(
+    () => [
+      ...(selectedFightEvent?.mainCard ?? []),
+      ...(selectedFightEvent?.prelims ?? []),
+    ],
+    [selectedFightEvent],
+  );
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshingNews(true);
+
+    try {
+      await refreshFights();
+    } catch (error) {
+      console.warn("Failed to refresh MMA screen:", error);
+    } finally {
+      setRefreshingNews(false);
+    }
+  }, [refreshFights]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,11 +195,11 @@ export default function UFCLeagueScreen() {
             setLeagueModalVisible(true);
             sportsModalRef.current?.present();
           }}
-          onBack={goBack}
+          onBack={() => router.back()}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, router, leagueModalVisible]);
 
   return (
     <>
@@ -80,8 +208,11 @@ export default function UFCLeagueScreen() {
         selected={selectedTab}
         onTabPress={(tab) => {
           setSelectedTab(tab);
+
           const index = tabs.indexOf(tab);
-          pagerRef.current?.setPage(index);
+          if (index >= 0) {
+            pagerRef.current?.setPage(index);
+          }
         }}
         isDark={isDark}
       />
@@ -93,41 +224,39 @@ export default function UFCLeagueScreen() {
           initialPage={0}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
-            setSelectedTab(tabs[index]);
+            const nextTab = tabs[index];
+
+            if (nextTab) {
+              setSelectedTab(nextTab);
+            }
           }}
         >
-          {/* SCORES */}
-          <View key="fights">
-            <>
-              <EventSelector
-                events={events}
-                selectedEventIndex={selectedEventIndex}
-                onSelectEvent={setSelectedEventIndex}
-                textStyle={styles.eventText}
-                textSelectedStyle={styles.eventTextSelected}
-              />
+          <View key="fights" style={styles.contentArea}>
+            <WeekSelector
+              mode="mma"
+              events={mmaCalendar}
+              selectedEventIndex={selectedEventIndex}
+              onSelectEvent={setSelectedEventIndex}
+              isDark={isDark}
+              loading={calendarLoading}
+            />
 
-              <MMAGamesList
-                games={[
-                  ...(selectedEvent?.mainCard ?? []),
-                  ...(selectedEvent?.prelims ?? []),
-                ]}
-                loading={loading}
-                error={error}
-                refreshing={refreshingFights}
-                onRefresh={refreshFights}
-              />
-            </>
+            <MMAGamesList
+              games={selectedEventGames}
+              loading={loading}
+              error={error}
+              refreshing={refreshingFights}
+              onRefresh={refreshFights}
+            />
           </View>
 
-          {/* NEWS */}
           <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
-                  refreshing={refreshing}
+                  refreshing={refreshingNews}
                   onRefresh={handleRefresh}
                 />
               }
@@ -137,18 +266,17 @@ export default function UFCLeagueScreen() {
                 isDark={isDark}
                 loading={newsLoading}
                 error={newsError}
-                refreshing
+                refreshing={refreshingNews}
                 onRefresh={handleRefresh}
               />
             </ScrollView>
           </View>
 
-          {/* CHAMPIONS */}
-          <View key="champions">
+          <View key="champions" style={styles.contentArea}>
             <MMAChampionsList />
           </View>
-          {/* FORUM */}
-          <View key="forum">
+
+          <View key="forum" style={styles.contentArea}>
             <LeagueForum league={league} />
           </View>
         </PagerView>

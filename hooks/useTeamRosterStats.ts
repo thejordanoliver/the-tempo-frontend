@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient, BASE_URL } from "utils/apiClient";
+
 export function useTeamRosterStats(teamId: number) {
   const [teamRoster, setTeamRoster] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -14,10 +15,10 @@ export function useTeamRosterStats(teamId: number) {
     setError(null);
 
     try {
-      const url = `${BASE_URL}/api/players/nba/teams/${teamId}/players`;
+      const url = `api/players/nba/teams/${teamId}/players`;
       console.log("🌐 Fetching roster:", url);
 
-      const response = await axios.get(url);
+      const response = await apiClient.get(url);
 
       // Just set the raw response
       setTeamRoster(response.data.players);

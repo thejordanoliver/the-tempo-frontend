@@ -1,7 +1,8 @@
-// hooks/CFB/useFootballRecruits.ts
+// hooks/CFB/useCBBRecruits.ts
 
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { CFBRecruit } from "types/football";
 
 export interface RecruitOffer {
   visit: string | null;
@@ -23,51 +24,15 @@ export interface RecruitPredictedSchool {
   image_url?: string | null;
 }
 
-export interface FootballRecruit {
-  id: number;
-  year?: number;
-  name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  profile_url: string;
-  high_school: string;
-  hometown: string;
-  position: string;
-  height: string | null;
-  weight: string | null;
-  score: string;
-  stars: number;
-  national_rank: string;
-  position_rank: string;
-  state_rank: string;
-  committed: boolean;
-  signed: boolean;
-  predicted: boolean;
 
-  projected_school: string | null;
-  predicted_school: string | null;
-  prediction_percentage: string | null;
-
-  predicted_schools: RecruitPredictedSchool[];
-
-  image_url: string | null;
-
-  committed_team_id: number | null;
-  predicted_team_id: number | null;
-  projected_team_id: number | null;
-
-  offers: RecruitOffer[];
-}
-
-interface RawFootballRecruit
-  extends Omit<FootballRecruit, "predicted_schools" | "offers"> {
+interface RawCFBRecruit
+  extends Omit<CFBRecruit, "predicted_schools" | "offers"> {
   predicted_schools?: RecruitPredictedSchool[] | string | null;
   offers?: RecruitOffer[] | string | null;
 }
 
-interface UseFootballRecruitsResult {
-  data: FootballRecruit[];
+interface useCBBRecruitsResult {
+  data: CFBRecruit[];
   loading: boolean;
   refreshing: boolean;
   error: string | null;
@@ -128,7 +93,7 @@ function normalizePredictedSchool(
   };
 }
 
-function normalizeRecruit(recruit: RawFootballRecruit): FootballRecruit {
+function normalizeRecruit(recruit: RawCFBRecruit): CFBRecruit {
   const predictedSchools = parseJsonArray<RecruitPredictedSchool>(
     recruit.predicted_schools,
   )
@@ -150,8 +115,8 @@ function normalizeRecruit(recruit: RawFootballRecruit): FootballRecruit {
   };
 }
 
-export function useFootballRecruits(year: number): UseFootballRecruitsResult {
-  const [data, setData] = useState<FootballRecruit[]>([]);
+export function useCBBRecruits(year: number): useCBBRecruitsResult {
+  const [data, setData] = useState<CFBRecruit[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -174,8 +139,8 @@ export function useFootballRecruits(year: number): UseFootballRecruitsResult {
       setError(null);
 
       try {
-        const res = await apiClient.get<RawFootballRecruit[]>(
-          `api/recruits/football/${year}`,
+        const res = await apiClient.get<RawCFBRecruit[]>(
+          `api/recruits/basketball/${year}`,
           { signal },
         );
 

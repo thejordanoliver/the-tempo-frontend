@@ -140,9 +140,9 @@ export type LeagueType =
   | "NFL"
   | "CFB"
   | "CB"
+  | "SB"
   | "CBB"
   | "MLB"
-  | "SB"
   | "WCBB"
   | "NHL"
   | "MMA";
@@ -260,7 +260,7 @@ export type AwardCategory =
   | "apcoy"
   | "afca"
 
-  // CBB
+  // CBB & WCBB
   | "apoy"
   | "naismith"
   | "cousy"
@@ -269,6 +269,9 @@ export type AwardCategory =
   | "malone"
   | "west"
   | "wooden"
+  | "leslie"
+  | "mcclain"
+  | "lieberman"
 
   // NFL
   | "ropoy"
@@ -446,6 +449,40 @@ export const AWARD_CONFIG: Partial<
       label: "Men's Wooden Award",
       value: "wooden",
       title: "Men's Wooden Award",
+    },
+  ],
+  WCBB: [
+    { label: "All Awards", value: "all", title: "" },
+    {
+      label: "Women's AP Player of the Year",
+      value: "apoy",
+      title: "Women's AP Player of The Year",
+    },
+    {
+      label: "Women's Defensive Player of the Year",
+      value: "dpoy",
+      title: "Women's Defensive Player of The Year",
+    },
+    {
+      label: "Women's Naismith Award",
+      value: "naismith",
+      title: "Women's Naismith Award",
+    },
+    {
+      label: "Women's Lisa Leslie Award",
+      value: "mcclain",
+      title: "Women's Lisa Leslie Award",
+    },
+    {
+      label: "Women's Nancy Lieberman Award",
+      value: "lieberman",
+      title: "Women's Nancy Lieberman Award",
+    },
+
+    {
+      label: "Women's Wooden Award",
+      value: "wooden",
+      title: "Women's Wooden Award",
     },
   ],
   NFL: [

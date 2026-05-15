@@ -9,8 +9,8 @@ import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useAwardSchools } from "hooks/LeagueHooks/useAwardSchools";
+import { useAwardSeasons } from "hooks/LeagueHooks/useAwardSeasons";
 import { useChampionTeams } from "hooks/LeagueHooks/useChampionTeams";
-import { useAwardSeasons } from "hooks/useAwardSeasons";
 import { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
@@ -59,8 +59,10 @@ export default function AwardSeasons({ league }: Props) {
       case "CFB":
         return "cfb";
       case "CBB":
-      case "WCBB":
         return "cbb";
+      case "WCBB":
+        return "wcbb";
+
       default:
         return undefined;
     }

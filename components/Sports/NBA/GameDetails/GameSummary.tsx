@@ -22,11 +22,11 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { CBBTeam } from "types/basketball";
+import { BasketballTeam } from "types/basketball";
 import { NBATeam } from "types/nba";
 import { LeagueType } from "types/types";
 
-type AnyTeam = NBATeam | CBBTeam;
+type AnyTeam = NBATeam | BasketballTeam;
 
 interface Play {
   id: string;
@@ -190,7 +190,7 @@ export default function GameSummary({
 
             const allTeams: AnyTeam[] =
               league === "CBB" || league === "WCBB"
-                ? (cbbTeams as CBBTeam[])
+                ? (cbbTeams as BasketballTeam[])
                 : league === "WNBA"
                   ? wnbaTeams
                   : (nbaTeams as NBATeam[]);

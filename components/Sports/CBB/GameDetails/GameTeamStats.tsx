@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
-import { CBBTeam } from "types/types";
+import { BasketballTeam } from "types/basketball";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -265,7 +265,7 @@ export default function GameTeamStats({
   const awayLogo = isWNBA
     ? getWNBATeamLogo(awayTeam?.id, isDark)
     : getCBBTeamLogo(
-        isWomen ? (awayTeam as CBBTeam)?.wid : awayTeam?.id,
+        isWomen ? (awayTeam as BasketballTeam)?.wid : awayTeam?.id,
         isDark,
         isWomen,
       );
@@ -273,7 +273,7 @@ export default function GameTeamStats({
   const homeLogo = isWNBA
     ? getWNBATeamLogo(homeTeam?.id, isDark)
     : getCBBTeamLogo(
-        isWomen ? (homeTeam as CBBTeam)?.wid : homeTeam?.id,
+        isWomen ? (homeTeam as BasketballTeam)?.wid : homeTeam?.id,
         isDark,
         isWomen,
       );

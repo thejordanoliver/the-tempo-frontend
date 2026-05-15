@@ -421,6 +421,7 @@ export default function GameDetailsScreen() {
               }}
               isDark={isDark}
               league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />

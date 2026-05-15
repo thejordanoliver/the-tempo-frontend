@@ -23,11 +23,10 @@ type GamePreviewContentProps = {
   data?: any;
   venueImage: any;
   venueName: any;
-  venueCity: any;
   venueAddress?: string;
-  venueLocation: string;
+  venueLocation?: string;
   venueCapacity: any;
-  venueAttendance: string;
+  venueAttendance?: number | null;
   weather: any;
   highlights: any;
   gameStatusDescription: string;
@@ -46,7 +45,6 @@ export default function GamePreviewContent({
   teamStats,
   venueImage,
   venueName,
-  venueCity,
   venueAddress,
   venueCapacity,
   venueLocation,
@@ -68,6 +66,7 @@ export default function GamePreviewContent({
           homeCode={home?.code ?? ""}
           awayCode={away?.code ?? ""}
           league={isWomen ? "WCBB" : "CBB"}
+          gameStatusDescription={gameStatusDescription}
           isDark
         />
       )}
@@ -89,23 +88,22 @@ export default function GamePreviewContent({
       />
 
       {/* Last Five Games */}
-      {(homeLastGames?.games?.length > 0 ||
-        awayLastGames?.games?.length > 0) && (
-        <LastFiveGames
-          isDark={true}
-          home={{
-            teamId: home?.id,
-            teamCode: home?.code ?? "",
-            games: homeLastGames?.games ?? [],
-          }}
-          away={{
-            teamId: away?.id,
-            teamCode: away?.code ?? "",
-            games: awayLastGames?.games ?? [],
-          }}
-          league={isWomen ? "WCBB" : "CBB"}
-        />
-      )}
+
+      <LastFiveGames
+        isDark={true}
+        home={{
+          teamId: home?.id,
+          teamCode: home?.code ?? "",
+          games: homeLastGames?.games ?? [],
+        }}
+        away={{
+          teamId: away?.id,
+          teamCode: away?.code ?? "",
+          games: awayLastGames?.games ?? [],
+        }}
+        league={isWomen ? "WCBB" : "CBB"}
+        gameStatusDescription={gameStatusDescription}
+      />
 
       {playerStats && (
         <BoxScore

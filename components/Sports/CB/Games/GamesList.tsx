@@ -23,6 +23,7 @@ type GamesListProps = {
   day?: "todayTomorrow";
   scrollEnabled?: boolean;
   error: Error | null;
+  isWomens?: boolean
 };
 
 type GameWithPlaceholder = CollegeBaseballGame & { _isPlaceholder?: boolean };
@@ -38,6 +39,7 @@ export default function GamesList({
   expectedCount,
   day,
   scrollEnabled = true,
+  isWomens = false
 }: GamesListProps) {
   const { viewMode } = usePreferences();
   const { resolvedColorScheme } = usePreferences();
@@ -66,11 +68,11 @@ export default function GamesList({
 
       const cardContent =
         viewMode === "list" ? (
-          <CBGameCard game={game} />
+          <CBGameCard game={game} isWomens={isWomens} />
         ) : viewMode === "grid" ? (
-          <CBSquareGameCard game={game} />
+          <CBSquareGameCard game={game} isWomens={isWomens}  />
         ) : (
-          <CBStackedGameCard game={game} />
+          <CBStackedGameCard game={game} isWomens={isWomens}  />
         );
 
       return (

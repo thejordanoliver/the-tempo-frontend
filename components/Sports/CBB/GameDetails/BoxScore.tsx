@@ -1,7 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import {
-  getNBATeam,
   getTeamByESPNId as getNBATeamByESPNId,
   getTeamLogo,
 } from "constants/teams";
@@ -9,7 +8,7 @@ import { getCBBTeamLogo, getTeamByESPNId } from "constants/teamsCBB";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { router } from "expo-router";
 import { Athlete } from "hooks/NBAHooks/useGameDetails";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -26,7 +25,6 @@ import BoxScoreSkeleton from "../../../Skeletons/GameDetails/BoxScoreSkeleton";
 const COLUMN_WIDTH = 50;
 const PLAYER_ROW_HEIGHT = 36;
 const COLLAPSED_ROWS = 5;
-const COLLAPSED_HEIGHT = PLAYER_ROW_HEIGHT * COLLAPSED_ROWS;
 
 if (
   Platform.OS === "android" &&
@@ -35,8 +33,27 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
+type LeagueType = "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
+
+type TeamInfo = {
+  id?: number | string | null;
+  teamId?: number | string | null;
+  team_id?: number | string | null;
+  espnId?: number | string | null;
+  espn_id?: number | string | null;
+  wid?: number | string | null;
+  code?: string | null;
+  abbreviation?: string | null;
+  name?: string | null;
+  fullName?: string | null;
+  displayName?: string | null;
+  shortName?: string | null;
+  short_name?: string | null;
+  shortDisplayName?: string | null;
+};
+
 type TeamBlock = {
-  team: { id: number };
+  team: TeamInfo;
   athletes: Athlete[];
 };
 
@@ -47,9 +64,60 @@ type Props = {
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
+  league: LeagueType;
   gameStatusDescription: string | undefined;
 };
+
+const normalizeIdentifier = (value: unknown) => {
+  if (value === null || value === undefined) return null;
+
+  const normalized = String(value).trim().toLowerCase();
+  return normalized.length > 0 ? normalized : null;
+};
+
+const collectTeamIdentifiers = (team?: TeamInfo | null) => {
+  const values = [
+    team?.id,
+    team?.teamId,
+    team?.team_id,
+    team?.espnId,
+    team?.espn_id,
+    team?.wid,
+    team?.code,
+    team?.abbreviation,
+    team?.name,
+    team?.fullName,
+    team?.displayName,
+    team?.shortName,
+    team?.short_name,
+    team?.shortDisplayName,
+  ];
+
+  return values
+    .map(normalizeIdentifier)
+    .filter((value): value is string => Boolean(value));
+};
+
+const getAthleteId = (athlete: Athlete["athlete"] & Record<string, any>) =>
+  athlete?.playerId ?? athlete?.id ?? athlete?.espnId ?? athlete?.espn_id;
+
+const getAthleteTeamId = (
+  athlete: Athlete["athlete"] & Record<string, any>,
+  fallbackTeamId?: number | string,
+) =>
+  athlete?.teamId ??
+  athlete?.team_id ??
+  athlete?.team?.id ??
+  athlete?.team?.teamId ??
+  fallbackTeamId;
+
+const getAthleteName = (athlete: Athlete["athlete"] & Record<string, any>) =>
+  athlete?.shortName ??
+  athlete?.short_name ??
+  athlete?.displayName ??
+  athlete?.fullName ??
+  athlete?.name ??
+  "Player";
 
 export default function BoxScore({
   homeTeamId,
@@ -63,23 +131,18 @@ export default function BoxScore({
 }: Props) {
   const styles = boxScoreStyles(isDark);
   const global = globalStyles(isDark);
+
   const heightAnimMap = useRef<Record<string, Animated.Value>>({});
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {},
   );
 
-  const getRowBackground = useCallback(
-    (index: number) =>
-      index % 2 === 1
-        ? isDark
-          ? Colors.transparentDarkGray
-          : Colors.transparentLightGray
-        : "transparent",
-    [isDark],
-  );
+  const isNBA = league === "NBA" || league === "SL";
+  const isCollege = league === "CBB" || league === "WCBB";
+  const isWNBA = league === "WNBA";
 
   const labels =
-    league === "CBB" || league === "WCBB"
+    isCollege || isWNBA
       ? [
           "MIN",
           "PTS",
@@ -112,88 +175,188 @@ export default function BoxScore({
           "+/-",
         ];
 
-  const homeTeam =
-    league === "NBA" || league === "SL"
-      ? getNBATeamByESPNId(homeTeamId)
-      : league === "WNBA"
-        ? getWNBATeamByESPNId(homeTeamId)
-        : getTeamByESPNId(homeTeamId);
-  const awayTeam =
-    league === "NBA" || league === "SL"
-      ? getNBATeamByESPNId(awayTeamId)
-      : league === "WNBA"
-        ? getWNBATeamByESPNId(awayTeamId)
-        : getTeamByESPNId(awayTeamId);
+  const homeTeam = useMemo(
+    () =>
+      isNBA
+        ? getNBATeamByESPNId(homeTeamId)
+        : isWNBA
+          ? getWNBATeamByESPNId(homeTeamId)
+          : getTeamByESPNId(homeTeamId),
+    [homeTeamId, isNBA, isWNBA],
+  );
 
-  const homeCode = homeTeam?.code ?? "home";
-  const awayCode = awayTeam?.code ?? "away";
+  const awayTeam = useMemo(
+    () =>
+      isNBA
+        ? getNBATeamByESPNId(awayTeamId)
+        : isWNBA
+          ? getWNBATeamByESPNId(awayTeamId)
+          : getTeamByESPNId(awayTeamId),
+    [awayTeamId, isNBA, isWNBA],
+  );
 
-  const homeLogo =
-    league === "CBB" || league === "WCBB"
-      ? getCBBTeamLogo(homeTeam?.id, isDark, league === "WCBB")
-      : league === "NBA" || league === "SL"
-        ? getTeamLogo(homeTeam?.id, isDark)
-        : league === "WNBA"
-          ? getWNBATeamLogo(homeTeam?.id, isDark)
-          : null;
+  const homeLogo = useMemo(() => {
+    if (isCollege) return getCBBTeamLogo(homeTeam?.id, isDark, league === "WCBB");
+    if (isNBA) return getTeamLogo(homeTeam?.id, isDark);
+    if (isWNBA) return getWNBATeamLogo(homeTeam?.id, isDark);
+    return null;
+  }, [homeTeam?.id, isCollege, isDark, isNBA, isWNBA, league]);
 
-  const awayLogo =
-    league === "CBB" || league === "WCBB"
-      ? getCBBTeamLogo(awayTeam?.id, isDark, league === "WCBB")
-      : league === "NBA" || league === "SL"
-        ? getTeamLogo(awayTeam?.id, isDark)
-        : league === "WNBA"
-          ? getWNBATeamLogo(awayTeam?.id, isDark)
-          : null;
+  const awayLogo = useMemo(() => {
+    if (isCollege) return getCBBTeamLogo(awayTeam?.id, isDark, league === "WCBB");
+    if (isNBA) return getTeamLogo(awayTeam?.id, isDark);
+    if (isWNBA) return getWNBATeamLogo(awayTeam?.id, isDark);
+    return null;
+  }, [awayTeam?.id, isCollege, isDark, isNBA, isWNBA, league]);
 
-  // Initialize animated heights
-  [homeCode, awayCode].forEach((code) => {
-    if (!heightAnimMap.current[code]) {
-      heightAnimMap.current[code] = new Animated.Value(COLLAPSED_HEIGHT);
+  const getRowBackground = useCallback(
+    (index: number) =>
+      index % 2 === 1
+        ? isDark
+          ? Colors.transparentDarkGray
+          : Colors.transparentLightGray
+        : "transparent",
+    [isDark],
+  );
+
+  const getHeightAnim = useCallback((sectionKey: string) => {
+    if (!heightAnimMap.current[sectionKey]) {
+      heightAnimMap.current[sectionKey] = new Animated.Value(
+        PLAYER_ROW_HEIGHT * COLLAPSED_ROWS,
+      );
     }
-  });
 
-  /** Animate expansion */
+    return heightAnimMap.current[sectionKey];
+  }, []);
+
+  const findTeamBlock = useCallback(
+    (
+      targetTeamId: number | string,
+      targetTeam?: TeamInfo | null,
+      fallbackIndex?: number,
+    ) => {
+      const targetIdentifiers = new Set([
+        normalizeIdentifier(targetTeamId),
+        ...collectTeamIdentifiers(targetTeam),
+      ]);
+
+      const matchedBlock = playerStats.find((block) => {
+        const blockIdentifiers = collectTeamIdentifiers(block.team);
+        return blockIdentifiers.some((id) => targetIdentifiers.has(id));
+      });
+
+      if (matchedBlock) return matchedBlock;
+
+      // ESPN box score arrays usually come in away/home order.
+      // This fallback fixes WNBA cases where the team block id shape differs.
+      if (
+        typeof fallbackIndex === "number" &&
+        playerStats.length > fallbackIndex
+      ) {
+        return playerStats[fallbackIndex];
+      }
+
+      return null;
+    },
+    [playerStats],
+  );
+
+  const awayTeamBlock = useMemo(
+    () => findTeamBlock(awayTeamId, awayTeam, 0),
+    [awayTeamId, awayTeam, findTeamBlock],
+  );
+
+  const homeTeamBlock = useMemo(
+    () => findTeamBlock(homeTeamId, homeTeam, 1),
+    [homeTeamId, homeTeam, findTeamBlock],
+  );
+
   useEffect(() => {
-    [homeCode, awayCode].forEach((code) => {
-      const isExpanded = expandedTeams[code] ?? false;
-      const teamBlock = playerStats.find((t) => String(t.team.id) === code);
-      const playerCount = teamBlock?.athletes.length ?? 0;
+    const sections = [
+      {
+        key: "away",
+        teamBlock: awayTeamBlock,
+      },
+      {
+        key: "home",
+        teamBlock: homeTeamBlock,
+      },
+    ];
+
+    sections.forEach(({ key, teamBlock }) => {
+      const isExpanded = expandedTeams[key] ?? false;
+      const playerCount = teamBlock?.athletes?.length ?? 0;
 
       const targetHeight = isExpanded
         ? playerCount * PLAYER_ROW_HEIGHT
         : Math.min(playerCount, COLLAPSED_ROWS) * PLAYER_ROW_HEIGHT;
 
-      Animated.timing(heightAnimMap.current[code], {
+      Animated.timing(getHeightAnim(key), {
         toValue: targetHeight,
         duration: 300,
         useNativeDriver: false,
       }).start();
     });
-  }, [expandedTeams, playerStats]);
+  }, [awayTeamBlock, expandedTeams, getHeightAnim, homeTeamBlock]);
 
-  const toggleExpand = (teamCode: string) => {
+  const toggleExpand = useCallback((sectionKey: string) => {
     setExpandedTeams((prev) => ({
       ...prev,
-      [teamCode]: !prev[teamCode],
+      [sectionKey]: !prev[sectionKey],
     }));
-  };
+  }, []);
 
-  const renderTeamBox = (teamCode: string, teamName: string, teamLogo: any) => {
-    const teamBlock = playerStats.find((t) => String(t.team.id) === teamCode);
+  const handlePlayerPress = useCallback(
+    (
+      playerId: number | string | undefined | null,
+      teamId: number | string | undefined | null,
+    ) => {
+      if (!playerId || !teamId) return;
+
+      const leagueRoute = isCollege ? "cbb" : undefined;
+
+      router.push({
+        pathname: isNBA
+          ? "/player/[id]"
+          : leagueRoute
+            ? "/player/cbb/[id]"
+            : "/player/[id]",
+        params: {
+          id: String(playerId),
+          teamId: String(teamId),
+          league,
+        },
+      });
+    },
+    [isCollege, isNBA, league],
+  );
+
+  const renderTeamBox = ({
+    sectionKey,
+    teamId,
+    teamName,
+    teamLogo,
+    teamBlock,
+  }: {
+    sectionKey: "away" | "home";
+    teamId: number;
+    teamName: string;
+    teamLogo: any;
+    teamBlock: TeamBlock | null;
+  }) => {
     if (!teamBlock) return null;
 
-    const players = teamBlock.athletes;
-    const isExpanded = expandedTeams[teamCode] ?? false;
+    const players = Array.isArray(teamBlock.athletes) ? teamBlock.athletes : [];
+    const isExpanded = expandedTeams[sectionKey] ?? false;
     const visiblePlayers = isExpanded
       ? players
       : players.slice(0, COLLAPSED_ROWS);
 
     return (
       <View style={styles.teamContainer}>
-        {/* HEADER */}
         <View style={styles.teamHeader}>
           <Text style={styles.teamLabel}>{teamName}</Text>
+
           {teamLogo && (
             <Image
               source={teamLogo}
@@ -203,68 +366,41 @@ export default function BoxScore({
           )}
         </View>
 
-        {/* PLAYER NAMES */}
         <View style={styles.playerColumn}>
           <View style={styles.playerNameColumn}>
             <View style={styles.tableHeader}>
               <Text style={styles.cellName}>Player</Text>
             </View>
+
             <Animated.View
               style={{
-                maxHeight: heightAnimMap.current[teamCode],
+                maxHeight: getHeightAnim(sectionKey),
                 overflow: "hidden",
               }}
             >
               {visiblePlayers.map((p: Athlete, index) => {
-                const teamId = p.athlete.teamId;
-                const team =
-                  league === "NBA" || league === "SL"
-                    ? getNBATeam(teamId)
-                    : getTeamByESPNId(teamId);
-                const id =
-                  league === "NBA"
-                    ? p.athlete.playerId
-                    : (p.athlete.id ?? `idx-${index}`);
+                const athlete = p.athlete as Athlete["athlete"] &
+                  Record<string, any>;
 
-                const isNBA = league === "NBA" || league === "SL";
-
-                const playerId = isNBA ? p.athlete.playerId : p.athlete.id;
+                const playerId = getAthleteId(athlete);
+                const playerTeamId = getAthleteTeamId(athlete, teamId);
+                const playerName = getAthleteName(athlete);
 
                 return (
                   <View
-                    key={`${teamCode}-${id}`} // ✅ FIX key here too
+                    key={`${sectionKey}-name-${playerId ?? index}`}
                     style={[
                       styles.tableRow,
                       { backgroundColor: getRowBackground(index) },
                     ]}
                   >
                     <TouchableOpacity
-                      key={p.athlete.id}
-                      onPress={() => {
-                        // Determine league route only if not NBA
-                        const leagueRoute = !isNBA
-                          ? league === "CBB" || league === "WCBB"
-                            ? "cbb"
-                            : undefined
-                          : undefined;
-
-                        if (playerId && teamId) {
-                          router.push({
-                            pathname: isNBA
-                              ? `/player/[id]`
-                              : leagueRoute
-                                ? `/player/${leagueRoute}/[id]`
-                                : `/player/[id]`, // fallback
-                            params: {
-                              id: playerId,
-                              teamId: teamId,
-                              league,
-                            },
-                          });
-                        }
-                      }}
+                      activeOpacity={0.7}
+                      onPress={() => handlePlayerPress(playerId, playerTeamId)}
                     >
-                      <Text style={styles.cellName}>{p.athlete.shortName}</Text>
+                      <Text style={styles.cellName} numberOfLines={1}>
+                        {playerName}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 );
@@ -272,7 +408,6 @@ export default function BoxScore({
             </Animated.View>
           </View>
 
-          {/* STATS */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View>
               <View
@@ -290,53 +425,60 @@ export default function BoxScore({
 
               <Animated.View
                 style={{
-                  maxHeight: heightAnimMap.current[teamCode],
+                  maxHeight: getHeightAnim(sectionKey),
                   overflow: "hidden",
                 }}
               >
-                {visiblePlayers.map((p: Athlete, index) => (
-                  <View
-                    key={p.athlete.id}
-                    style={[
-                      styles.tableRow,
-                      { backgroundColor: getRowBackground(index) },
-                    ]}
-                  >
-                    {p.didNotPlay ? (
-                      <View
-                        style={[
-                          styles.didNotPlayerRow,
-                          {
-                            minWidth: labels.length * COLUMN_WIDTH,
-                          },
-                        ]}
-                      >
-                        <Text style={styles.didNotPlayCell}>
-                          DID NOT PLAY: COACH DECISION
-                        </Text>
-                      </View>
-                    ) : (
-                      p.stats.map((val: string | number, i: number) => (
+                {visiblePlayers.map((p: Athlete, index) => {
+                  const athlete = p.athlete as Athlete["athlete"] &
+                    Record<string, any>;
+
+                  const playerId = getAthleteId(athlete);
+                  const stats = Array.isArray(p.stats) ? p.stats : [];
+
+                  return (
+                    <View
+                      key={`${sectionKey}-stats-${playerId ?? index}`}
+                      style={[
+                        styles.tableRow,
+                        { backgroundColor: getRowBackground(index) },
+                      ]}
+                    >
+                      {p.didNotPlay ? (
                         <View
-                          key={`${p.athlete.id}-${i}`}
-                          style={styles.cellContainer}
+                          style={[
+                            styles.didNotPlayerRow,
+                            {
+                              minWidth: labels.length * COLUMN_WIDTH,
+                            },
+                          ]}
                         >
-                          <Text style={styles.cell}>{val ?? 0}</Text>
+                          <Text style={styles.didNotPlayCell}>
+                            DID NOT PLAY: COACH DECISION
+                          </Text>
                         </View>
-                      ))
-                    )}
-                  </View>
-                ))}
+                      ) : (
+                        labels.map((_, i) => (
+                          <View
+                            key={`${sectionKey}-${playerId ?? index}-${i}`}
+                            style={styles.cellContainer}
+                          >
+                            <Text style={styles.cell}>{stats[i] ?? 0}</Text>
+                          </View>
+                        ))
+                      )}
+                    </View>
+                  );
+                })}
               </Animated.View>
             </View>
           </ScrollView>
         </View>
 
-        {/* EXPAND / COLLAPSE */}
         {players.length > COLLAPSED_ROWS && (
           <TouchableOpacity
             activeOpacity={0.85}
-            onPress={() => toggleExpand(teamCode)}
+            onPress={() => toggleExpand(sectionKey)}
             style={{ padding: 10, alignItems: "center" }}
           >
             <Text style={styles.showMoreLess}>
@@ -360,29 +502,37 @@ export default function BoxScore({
       </ScrollView>
     );
   }
-  if (isError)
+
+  if (isError) {
     return (
       <ScrollView>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
         <Text style={global.errorText}>Failed to load box score.</Text>
       </ScrollView>
     );
+  }
 
   return (
     <ScrollView>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
+
       <View style={{ marginBottom: 24 }}>
-        {renderTeamBox(
-          String(awayTeamId),
-          awayTeam?.fullName ?? "Away Team",
-          awayLogo,
-        )}
+        {renderTeamBox({
+          sectionKey: "away",
+          teamId: awayTeamId,
+          teamName: awayTeam?.fullName ?? awayTeam?.name ?? "Away Team",
+          teamLogo: awayLogo,
+          teamBlock: awayTeamBlock,
+        })}
       </View>
-      {renderTeamBox(
-        String(homeTeamId),
-        homeTeam?.fullName ?? "Home Team",
-        homeLogo,
-      )}
+
+      {renderTeamBox({
+        sectionKey: "home",
+        teamId: homeTeamId,
+        teamName: homeTeam?.fullName ?? homeTeam?.name ?? "Home Team",
+        teamLogo: homeLogo,
+        teamBlock: homeTeamBlock,
+      })}
     </ScrollView>
   );
 }

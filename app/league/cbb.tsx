@@ -6,6 +6,7 @@ import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/Awards/AwardSeasons";
 import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
+import RecruitsList from "components/Sports/CBB/Recruiting/RecruitsList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
 import ConferenceListModal, {
@@ -33,6 +34,7 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
+import { getRecruitYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -53,16 +55,26 @@ export default function CBBLeagueScreen() {
     loading: cbbloading,
     refreshBasketballGames,
   } = useCBBSeasonGames();
+  const [newsRefreshing, setNewsRefreshing] = useState(false);
   const { calendar } = useLeagueCalendar(league);
   const tournamentFilter = useCBBTournamentGames();
   const {
     articles,
     loading: newsLoading,
     error: newsError,
+    refresh: refreshNews,
   } = useLeaguesNews(10, league);
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
+  const [recruitTeam, setRecruitTeam] = useState("all");
+  const [recruitYear, setRecruitYear] = useState(() =>
+    String(getRecruitYear()),
+  );
+
+  const [recruitView, setRecruitView] = useState<"players" | "teams">(
+    "players",
+  );
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const apTop25 = useAPTop25(league);
@@ -95,6 +107,18 @@ export default function CBBLeagueScreen() {
       setRefreshing(false);
     }
   };
+
+  const handleNewsRefresh = React.useCallback(async () => {
+    setNewsRefreshing(true);
+
+    try {
+      await refreshNews();
+    } catch (error) {
+      console.warn("Failed to refresh news:", error);
+    } finally {
+      setNewsRefreshing(false);
+    }
+  }, [refreshNews]);
 
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
@@ -206,8 +230,8 @@ export default function CBBLeagueScreen() {
               contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
+                  refreshing={newsRefreshing}
+                  onRefresh={handleNewsRefresh}
                 />
               }
             >
@@ -250,6 +274,17 @@ export default function CBBLeagueScreen() {
 
           {/* Bracket */}
           <View key="bracket"></View>
+
+          <View key="recruits" style={styles.contentArea}>
+            <RecruitsList
+              year={recruitYear}
+              team={recruitTeam}
+              view={recruitView}
+              onYearChange={setRecruitYear}
+              onTeamChange={setRecruitTeam}
+              onViewChange={setRecruitView}
+            />
+          </View>
 
           {/* AWARDS */}
           <View key="awards">

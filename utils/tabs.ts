@@ -10,6 +10,7 @@ export const LEAGUE_TABS = {
     "forum",
   ],
   CB: ["scores", "news", "standings"],
+  SB: ["scores", "news", "standings"],
   WNBA: ["scores", "news", "standings", "draft", "awards", "forum"],
   NFL: [
     "scores",
@@ -33,7 +34,16 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  CBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
+  CBB: [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "bracket",
+    "recruits",
+    "awards",
+    "forum",
+  ],
   WCBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
   MMA: ["fights", "news", "champions", "forum"],
 } as const;

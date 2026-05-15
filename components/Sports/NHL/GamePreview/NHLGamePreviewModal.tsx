@@ -18,6 +18,7 @@ import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
+import { usePreferences } from "contexts/PreferencesContext";
 type Props = {
   game: NHLGame; // ✅ normalized type, consistent with NBA + Summer League
   visible: boolean;

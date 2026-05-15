@@ -18,41 +18,49 @@ import { useCBDailyGames } from "hooks/CBHooks/useCBDailyGames";
 import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function NBALeagueScreen() {
+export default function SBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
+
   const league = "CB";
+
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<Date>(
+  const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+  const [gamesRefreshing, setGamesRefreshing] = useState(false);
+  const [newsRefreshing, setNewsRefreshing] = useState(false);
+  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
+
+  const navigation = useNavigation();
+  const pagerRef = useRef<PagerView>(null);
+  const sportsModalRef = useRef<SportsListModalRef>(null);
+
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const { calendar } = useLeagueCalendar(league);
+
   const {
     games,
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useCBDailyGames(selectedDate);
-  const { calendar } = useLeagueCalendar(league);
-  const sportsModalRef = useRef<SportsListModalRef>(null);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-  const [refreshing, setRefreshing] = useState(false);
+  } = useCBDailyGames(selectedDate, "cb");
+
   const {
     articles,
     loading: newsLoading,
     error: newsError,
+    refresh: refreshNews,
   } = useLeaguesNews(10, league);
 
   useLayoutEffect(() => {
@@ -73,16 +81,29 @@ export default function NBALeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
+  const handleScoresRefresh = useCallback(async () => {
+    setGamesRefreshing(true);
+
     try {
-      await Promise.all([refreshGames()]);
+      await refreshGames();
     } catch (error) {
-      console.warn("Failed to refresh:", error);
+      console.warn("Failed to refresh games:", error);
     } finally {
-      setRefreshing(false);
+      setGamesRefreshing(false);
     }
-  };
+  }, [refreshGames]);
+
+  const handleNewsRefresh = useCallback(async () => {
+    setNewsRefreshing(true);
+
+    try {
+      await refreshNews();
+    } catch (error) {
+      console.warn("Failed to refresh news:", error);
+    } finally {
+      setNewsRefreshing(false);
+    }
+  }, [refreshNews]);
 
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
@@ -104,6 +125,7 @@ export default function NBALeagueScreen() {
       },
       {} as Record<string, { marked: boolean; dotColor: string }>,
     );
+
   return (
     <>
       <MainScrollTabBar
@@ -140,8 +162,8 @@ export default function NBALeagueScreen() {
               games={games}
               error={gamesError}
               loading={loadingGames}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
+              refreshing={gamesRefreshing}
+              onRefresh={handleScoresRefresh}
               scrollEnabled={true}
             />
           </View>
@@ -153,8 +175,9 @@ export default function NBALeagueScreen() {
               contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={
                 <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
+                  refreshing={newsRefreshing}
+                  onRefresh={handleNewsRefresh}
+                  tintColor={isDark ? Colors.white : Colors.black}
                 />
               }
             >
@@ -163,8 +186,8 @@ export default function NBALeagueScreen() {
                 isDark={isDark}
                 loading={newsLoading}
                 error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
+                refreshing={newsRefreshing}
+                onRefresh={handleNewsRefresh}
               />
             </ScrollView>
           </View>
@@ -183,6 +206,7 @@ export default function NBALeagueScreen() {
           const localSelected = dayjs(dateString, "YYYY-MM-DD")
             .startOf("day")
             .toDate();
+
           setSelectedDate(localSelected);
           setShowCalendarModal(false);
         }}

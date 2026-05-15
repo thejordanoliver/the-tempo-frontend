@@ -6,10 +6,7 @@ import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import {
-  FootballRecruit,
-  RecruitPredictedSchool,
-} from "hooks/FootballHooks/useFootballRecruits";
+import { RecruitPredictedSchool } from "hooks/FootballHooks/useCFBRecruits";
 import React, { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
@@ -21,9 +18,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { CFBRecruit } from "types/football";
 
 type Props = {
-  recruit: FootballRecruit;
+  recruit: CFBRecruit;
   index: number;
 };
 
@@ -104,10 +102,44 @@ export default function RecruitCard({ recruit, index }: Props) {
     () => getTopTiedPredictions(sortedPredictions),
     [sortedPredictions],
   );
+  const isCommittedOrSigned = recruit.signed || recruit.committed;
 
-  const isPredictionTie = recruit.predicted && topTiedPredictions.length > 1;
+  const isPredictionTie =
+    !isCommittedOrSigned && recruit.predicted && topTiedPredictions.length > 1;
 
   const logoItems = useMemo<LogoDisplayItem[]>(() => {
+    const primaryPrediction = sortedPredictions[0];
+
+    if (isCommittedOrSigned) {
+      const committedTeamId =
+        recruit.committed_team_id ||
+        recruit.projected_team_id ||
+        recruit.predicted_team_id ||
+        primaryPrediction?.team_id;
+
+      if (!committedTeamId) {
+        return [];
+      }
+
+      const logo = getCFBTeamLogo(committedTeamId, isDark);
+
+      if (!logo) {
+        return [];
+      }
+
+      return [
+        {
+          teamId: committedTeamId,
+          teamName:
+            recruit.projected_school ||
+            recruit.predicted_school ||
+            primaryPrediction?.team_name ||
+            "Team",
+          logo,
+        },
+      ];
+    }
+
     if (isPredictionTie) {
       return topTiedPredictions
         .slice(0, 2)
@@ -131,10 +163,7 @@ export default function RecruitCard({ recruit, index }: Props) {
         .filter((item): item is LogoDisplayItem => Boolean(item));
     }
 
-    const primaryPrediction = sortedPredictions[0];
-
     const fallbackTeamId =
-      recruit.committed_team_id ||
       recruit.projected_team_id ||
       primaryPrediction?.team_id ||
       recruit.predicted_team_id;
@@ -162,6 +191,7 @@ export default function RecruitCard({ recruit, index }: Props) {
     ];
   }, [
     isDark,
+    isCommittedOrSigned,
     isPredictionTie,
     recruit.committed_team_id,
     recruit.predicted_school,
@@ -171,7 +201,6 @@ export default function RecruitCard({ recruit, index }: Props) {
     sortedPredictions,
     topTiedPredictions,
   ]);
-
   /** Animations */
   const slideX = useRef(new Animated.Value(70)).current;
   const fade = useRef(new Animated.Value(0)).current;

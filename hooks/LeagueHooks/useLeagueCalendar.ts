@@ -10,12 +10,29 @@ export type FootballCalendarWeek = {
   endDate: string;
 };
 
-type CalendarFormat = "raw" | "football";
+export type MMACalendarEvent = {
+  label: string;
+  stage: string;
+  eventNumber: number;
+  startDate: string;
+  endDate: string;
+  eventRef: string | null;
+  eventId: string | null;
+};
+
+type CalendarFormat = "raw" | "football" | "mma";
 
 type UseLeagueCalendarResult<T> = {
   calendar: T[];
   loading: boolean;
   error: Error | null;
+};
+
+const extractEventIdFromRef = (ref?: string | null) => {
+  if (!ref) return null;
+
+  const match = ref.match(/\/events\/([^?]+)/);
+  return match?.[1] ?? null;
 };
 
 export function useLeagueCalendar(
@@ -25,28 +42,39 @@ export function useLeagueCalendar(
 
 export function useLeagueCalendar(
   league: LeagueType,
+  format: "mma",
+): UseLeagueCalendarResult<MMACalendarEvent>;
+
+export function useLeagueCalendar(
+  league: LeagueType,
   format?: "raw",
 ): UseLeagueCalendarResult<string>;
 
 export function useLeagueCalendar(
   league: LeagueType,
   format: CalendarFormat = "raw",
-): UseLeagueCalendarResult<string | FootballCalendarWeek> {
-  const [calendar, setCalendar] = useState<(string | FootballCalendarWeek)[]>(
-    [],
-  );
+): UseLeagueCalendarResult<
+  string | FootballCalendarWeek | MMACalendarEvent
+> {
+  const [calendar, setCalendar] = useState<
+    (string | FootballCalendarWeek | MMACalendarEvent)[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchCalendar = async () => {
       try {
         setLoading(true);
         setError(null);
 
         const { data } = await apiClient.get(
-          `api/games/calendar/${league.toLowerCase()}`,
+          `/api/games/calendar/${league.toLowerCase()}`,
         );
+
+        if (!isMounted) return;
 
         if (format === "football") {
           const flattened: FootballCalendarWeek[] =
@@ -64,16 +92,44 @@ export function useLeagueCalendar(
           return;
         }
 
+        if (format === "mma") {
+          const flattened: MMACalendarEvent[] =
+            data.calendar?.map((event: any, index: number) => {
+              const eventRef = event.event?.$ref ?? null;
+
+              return {
+                label: event.label,
+                stage: "Event",
+                eventNumber: index + 1,
+                startDate: event.startDate,
+                endDate: event.endDate,
+                eventRef,
+                eventId: extractEventIdFromRef(eventRef),
+              };
+            }) || [];
+
+          setCalendar(flattened);
+          return;
+        }
+
         setCalendar(data.calendar || []);
       } catch (err) {
+        if (!isMounted) return;
+
         console.error(err);
         setError(new Error("Failed to fetch calendar"));
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchCalendar();
+
+    return () => {
+      isMounted = false;
+    };
   }, [league, format]);
 
   return {

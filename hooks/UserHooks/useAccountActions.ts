@@ -1,10 +1,8 @@
 // hooks/useAccountActions.ts
-import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 
 export function useAccountActions() {
   const { deleteAccount, logout } = useAuth();
-  const router = useRouter();
 
   const signOut = async () => {
     try {
@@ -17,8 +15,7 @@ export function useAccountActions() {
   const confirmDeleteAccount = async (password: string) => {
     if (!password.trim()) throw new Error("Password required");
     try {
-      await deleteAccount();
-      router.replace("/settings/deleteaccountsplash");
+      await deleteAccount(password);
     } catch {
       throw new Error("Failed to delete account. Check password.");
     }

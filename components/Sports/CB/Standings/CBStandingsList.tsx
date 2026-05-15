@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
+import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { CBTeamRank, useCBRankings } from "hooks/CBHooks/useCBRankings";
@@ -107,9 +108,15 @@ export const CBStandingsList = ({ league }: Props) => {
     index: number;
   }) => {
     const isLastRow = index === allRanks.length - 1;
-    const team = getCBTeam(item.team?.id ?? "");
+    const team =
+      league === "sb"
+        ? getSBTeam(item.team?.id ?? "")
+        : getCBTeam(item.team?.id ?? "");
     const teamId = team?.id ?? 0;
-    const teamLogo = getCBTeamLogo(teamId, isDark);
+    const teamLogo =
+      league === "sb"
+        ? getSBTeamLogo(teamId, isDark)
+        : getCBTeamLogo(teamId, isDark);
 
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;

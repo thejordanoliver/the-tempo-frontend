@@ -1,29 +1,41 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
-import { ResizeMode, Video } from "expo-av";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLastFiveGames } from "hooks/CBBHooks/useLastFiveGames";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { useWeatherForecast } from "hooks/useWeather";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BasketballGame } from "types/basketball";
-import { formatCBBQuarter, resolveVenue } from "utils/games";
+import { formatCBBQuarter } from "utils/games";
 import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
-
 type Props = {
   visible: boolean;
   game: BasketballGame;
   onClose: () => void;
   isWomen?: boolean;
+};
+
+const formatVenueAddress = (address?: {
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+}) => {
+  if (!address) return undefined;
+
+  return [address.city, address.state, address.zipCode, address.country]
+    .filter(Boolean)
+    .join(" ");
 };
 
 export default function CBBGamePreviewModal({
@@ -106,11 +118,8 @@ export default function CBBGamePreviewModal({
   const teamStats = liveScore?.teamStats;
   const headline = details?.headline;
   const highlights = details?.highlights ?? [];
-  const officials = details?.officials ?? [];
-  const venue = details?.venue; // optional
   const leaders = liveScore?.leaders ?? [];
-  const neutralSite = details?.neutralSite;
-  const league = isWomen ? "WCBB" : "CBB";
+  const officials = details?.officials;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
   const homeRank = details?.homeRank;
@@ -124,22 +133,31 @@ export default function CBBGamePreviewModal({
         away: liveScore.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-  const resolvedVenue = useMemo(
-    () =>
-      resolveVenue({
-        espnVenue: venue,
-        homeTeam: home,
-        isNeutralSite: neutralSite,
-        league,
-      }),
-    [details?.venue, home, neutralSite, league],
-  );
-
-  const { weather } = useWeatherForecast(
-    resolvedVenue.latitude,
-    resolvedVenue.longitude,
-    gameDateStr,
-  );
+  const neutralSite = details?.neutralSite;
+  const baseVenue = details?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
+  const venueName = neutralSite
+    ? neutralVenue?.name || baseVenue?.fullName
+    : home?.venueName || baseVenue?.fullName;
+  const venueAddress = neutralSite
+    ? neutralVenue?.address
+    : home?.address || baseVenueAddress;
+  const venueCapacity = neutralSite
+    ? neutralVenue?.venueCapacity
+    : home?.venueCapacity || null;
+  const venueImage = neutralSite
+    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
+    : home?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
+  const venueLat = neutralSite
+    ? (neutralVenue?.latitude ?? 0)
+    : (home?.latitude ?? 0);
+  const venueLon = neutralSite
+    ? (neutralVenue?.longitude ?? 0)
+    : (home?.longitude ?? 0);
+  const venueAttendance = details?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, game.date);
 
   const homeLastGames = useLastFiveGames(
     Number(game.teams.home?.id) || 0,
@@ -173,15 +191,6 @@ export default function CBBGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <Video
-          source={require("assets/videos/background.mp4")}
-          style={StyleSheet.absoluteFill}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay
-          isLooping
-          isMuted={true}
-        />
-
         <LinearGradient
           colors={
             isChampionship
@@ -263,19 +272,20 @@ export default function CBBGamePreviewModal({
                   home={home}
                   away={away}
                   lineScore={lineScore}
+                  leaders={leaders}
                   teamStats={teamStats}
                   playerStats={playerStats}
-                  leaders={leaders}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   officials={officials}
-                  venueImage={resolvedVenue.image}
-                  venueName={resolvedVenue.name}
-                  venueCity={resolvedVenue.city}
-                  venueAddress={resolvedVenue.address}
-                  venueCapacity={resolvedVenue.capacity}
-                  weather={weather}
+                  venueImage={venueImage}
                   highlights={highlights}
+                  venueLocation={venueLocation}
+                  venueName={venueName}
+                  venueAddress={venueAddress}
+                  venueCapacity={venueCapacity}
+                  venueAttendance={venueAttendance}
+                  weather={weather}
                   gameStatusDescription={gameStatusDescription}
                 />
               )}

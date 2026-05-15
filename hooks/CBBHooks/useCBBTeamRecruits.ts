@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export const useCFBTeamRecruits = (year: number) => {
+export const useCBBTeamRecruits = (year: number) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -20,7 +20,7 @@ export const useCFBTeamRecruits = (year: number) => {
       setError(null);
 
       try {
-        const res = await apiClient.get("api/cfbd/team/recruits", {
+        const res = await apiClient.get("api/team/recruits/basketball", {
           params: { year },
         });
 

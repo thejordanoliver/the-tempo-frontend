@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
-import { getCFBTeam } from "constants/teamsCFB";
-import { getNFLTeam } from "constants/teamsNFL";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Athlete, PlayObject } from "hooks/FootballHooks/useGameDetails";
 import React, { useEffect, useRef, useState } from "react";
@@ -73,19 +73,27 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
 
   const homeTeam = getTeamInfo(homeTeamId) ?? emptyHomeTeam;
   const awayTeam = getTeamInfo(awayTeamId) ?? emptyAwayTeam;
+  const homeColor = homeTeam?.color ?? emptyHomeTeam?.color;
+  const awayColor = awayTeam?.color ?? emptyAwayTeam?.color;
+  const homeEspnID = homeTeam?.espnID;
+  const awayEspnID = awayTeam?.espnID;
+  const homeLogo =
+    league === "NFL"
+      ? getNFLTeamLogo(homeTeamId, isDark)
+      : getCFBTeamLogo(homeTeamId, isDark);
+  const awayLogo =
+    league === "NFL"
+      ? getNFLTeamLogo(awayTeamId, isDark)
+      : getCFBTeamLogo(awayTeamId, isDark);
 
-  const homeColor = homeTeam.color ?? emptyHomeTeam.color;
-  const awayColor = awayTeam.color ?? emptyAwayTeam.color;
-  const homeEspnID = homeTeam.espnID;
-  const awayEspnID = awayTeam.espnID;
-  const homeLogo = homeTeam.logoLight || homeTeam.logo;
-  const awayLogo = awayTeam.logoLight || awayTeam.logo;
-  const touchdownHome = isDark
-    ? homeTeam.logoLight || homeTeam.logo
-    : homeTeam.logo;
-  const touchdownAway = isDark
-    ? awayTeam.logoLight || awayTeam.logo
-    : awayTeam.logo;
+  const touchdownHome =
+    league === "NFL"
+      ? getNFLTeamLogo(homeTeamId, true)
+      : getCFBTeamLogo(homeTeamId, true);
+  const touchdownAway =
+    league === "NFL"
+      ? getNFLTeamLogo(awayTeamId, true)
+      : getCFBTeamLogo(awayTeamId, true);
 
   // Endzone glow pulse
   useEffect(() => {
@@ -156,11 +164,11 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
       result: null,
     };
     const playId =
-      (play as any).id ??
-      (play as any).sequence ??
-      (play.start as any)?.playId ??
+      (play as any)?.id ??
+      (play as any)?.sequence ??
+      (play?.start as any)?.playId ??
       Math.random();
-    const playResult = play.result?.toUpperCase();
+    const playResult = play?.result?.toUpperCase();
 
     if (
       lastAnimatedRef.playId === playId &&
@@ -170,7 +178,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     (PlayByPlayField as any)._lastAnimatedRef = { playId, result: playResult };
 
     const scoringEspnId =
-      play.team?.id ?? play.team?.id ?? possessionTeamId ?? null;
+      play?.team?.id ?? play?.team?.id ?? possessionTeamId ?? null;
     let endzone: "home" | "away" | null = null;
     let scoreText: string | null = null;
 
@@ -237,10 +245,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
   if (
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Canceled" ||
-    gameStatusDescription === "Delayed" ||
-    gameStatusDescription === "Postponed"
+    gameStatusDescription === "Final" ||
+    gameStatusDescription === "Scheduled"
   )
     return null;
 

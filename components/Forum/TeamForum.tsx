@@ -180,7 +180,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         onPress={() =>
           router.push({
             pathname: "/create-post",
-            params: { teamId, league },
+            params: { teamId, league, currentUserId },
           })
         }
         activeOpacity={0.8}

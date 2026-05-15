@@ -1,13 +1,13 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View } from "react-native";
-import { CBBTeam } from "types/types";
+import { BasketballTeam } from "types/basketball";
 import { formatCBBQuarter } from "utils/games";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  home: CBBTeam | undefined;
-  away: CBBTeam | undefined;
+  home: BasketballTeam | undefined;
+  away: BasketballTeam | undefined;
   rankHome: number | undefined | null;
   rankAway: number | undefined | null;
   homeScore: number;

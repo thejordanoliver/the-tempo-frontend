@@ -1,11 +1,10 @@
 import { Colors } from "constants/styles";
-import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import { Image, Text, View } from "react-native";
 import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
+import { CFBRecruit } from "types/football";
 
 type Props = {
-  player: FootballRecruit;
-  avatarUrl?: string;
+  player: CFBRecruit;
   isDark: boolean;
   teamColor?: string;
   team_name?: string;
@@ -15,7 +14,6 @@ type Props = {
 
 export default function RecruitHeader({
   player,
-  avatarUrl,
   isDark,
   teamColor,
   team_name,
@@ -30,9 +28,9 @@ export default function RecruitHeader({
       {/* Avatar overlapping banner */}
       <View style={styles.avatarWrapper}>
         <View style={styles.avatarRing}>
-          {avatarUrl ? (
+          {player.image_url ? (
             <Image
-              source={{ uri: avatarUrl }}
+              source={{ uri: player.image_url }}
               style={styles.avatar}
               accessibilityLabel={`${player.first_name} ${player.last_name} photo`}
             />

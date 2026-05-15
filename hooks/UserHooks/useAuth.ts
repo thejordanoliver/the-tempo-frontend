@@ -1,9 +1,8 @@
 // hooks/useAuth.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { apiClient, BASE_URL, saveTokens } from "utils/apiClient";
+import { apiClient, clearAuthSession, saveTokens } from "utils/apiClient";
 
 interface User {
   id: number;
@@ -20,22 +19,20 @@ const LEGACY_FAVORITES_KEY = "favorites";
 const getFavoritesStorageKey = (userId: number | string) =>
   `favoriteTeams:${userId}`;
 
-const SESSION_STORAGE_KEYS = [
-  "accessToken",
-  "refreshToken",
-  "userId",
-  "username",
-  "fullName",
-  "bio",
-  "profileImage",
-  "bannerImage",
-  "loggedInUser",
-  LEGACY_FAVORITES_KEY,
-];
-
 const normalizeImage = (value?: string | null): string | null => {
   if (!value || value === "null" || value === "undefined") return null;
   return value;
+};
+
+const parseFavorites = (value: string | null): string[] => {
+  if (!value) return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 };
 
 export function useAuth() {
@@ -65,22 +62,32 @@ export function useAuth() {
         const storedFavorites = stored.userId
           ? await AsyncStorage.getItem(getFavoritesStorageKey(stored.userId))
           : null;
+        const parsedUserId = stored.userId
+          ? Number.parseInt(stored.userId, 10)
+          : NaN;
 
-        if (stored.accessToken) {
-          setToken(stored.accessToken);
+        if (
+          !stored.accessToken ||
+          !stored.userId ||
+          !stored.username ||
+          Number.isNaN(parsedUserId)
+        ) {
+          await clearAuthSession(stored.userId);
+          setToken(null);
+          setUser(null);
+          return;
         }
 
-        if (stored.userId && stored.username) {
-          setUser({
-            id: parseInt(stored.userId, 10),
-            username: stored.username,
-            full_name: stored.fullName ?? "",
-            bio: stored.bio ?? "",
-            profile_image: normalizeImage(stored.profileImage),
-            banner_image: normalizeImage(stored.bannerImage),
-            favorites: storedFavorites ? JSON.parse(storedFavorites) : [],
-          });
-        }
+        setToken(stored.accessToken);
+        setUser({
+          id: parsedUserId,
+          username: stored.username,
+          full_name: stored.fullName ?? "",
+          bio: stored.bio ?? "",
+          profile_image: normalizeImage(stored.profileImage),
+          banner_image: normalizeImage(stored.bannerImage),
+          favorites: parseFavorites(storedFavorites),
+        });
       } catch (err) {
         console.error("Failed to load user from storage:", err);
       } finally {
@@ -118,11 +125,11 @@ export function useAuth() {
     setLoadingAction(true);
 
     try {
-      const res = await axios.post<{
+      const res = await apiClient.post<{
         accessToken: string;
         refreshToken: string;
         user: User;
-      }>(`${BASE_URL}/api/login`, { username, password });
+      }>("/api/login", { username, password });
 
       await handleAuthSuccess(
         res.data.accessToken,
@@ -132,10 +139,31 @@ export function useAuth() {
 
       router.replace("/(tabs)/profile");
     } catch (err: any) {
+      const status = err.response?.status;
       const message =
-        err.response?.data?.warn ?? err.message ?? "Invalid credentials";
-      console.error("Login error:", message);
-      throw new Error(message);
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        "Login failed";
+
+      console.warn("Login failed:", message);
+
+      const loginError = new Error(message) as Error & {
+        status?: number;
+        code?: "USERNAME_NOT_FOUND" | "WRONG_PASSWORD";
+      };
+
+      loginError.status = status;
+
+      if (status === 404 || message.toLowerCase().includes("username")) {
+        loginError.code = "USERNAME_NOT_FOUND";
+        loginError.message = "Username does not exist.";
+      } else if (status === 401 || message.toLowerCase().includes("password")) {
+        loginError.code = "WRONG_PASSWORD";
+        loginError.message = "Wrong password.";
+      }
+
+      throw loginError;
     } finally {
       setLoadingAction(false);
     }
@@ -145,11 +173,11 @@ export function useAuth() {
     setLoadingAction(true);
 
     try {
-      const res = await axios.post<{
+      const res = await apiClient.post<{
         accessToken: string;
         refreshToken: string;
         user: User;
-      }>(`${BASE_URL}/api/signup`, formData, {
+      }>("api/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -171,66 +199,61 @@ export function useAuth() {
   };
 
   const logout = async () => {
+    const currentUserId = user?.id;
+    let refreshToken: string | null = null;
+
     try {
-      const stored = await AsyncStorage.multiGet(["refreshToken"]);
-      const refreshToken = Object.fromEntries(stored).refreshToken;
-
-      if (refreshToken) {
-        await axios
-          .post(`${BASE_URL}/api/logout`, { refreshToken })
-          .catch(() => {});
-      }
-
-      if (user?.id) {
-        await AsyncStorage.removeItem(`@view_mode_preference_${user.id}`);
-      }
+      refreshToken = await AsyncStorage.getItem("refreshToken");
     } catch (err) {
-      console.warn("Logout error:", err);
-    } finally {
-      await AsyncStorage.multiRemove([
-        ...SESSION_STORAGE_KEYS,
-        ...(user?.id ? [getFavoritesStorageKey(user.id)] : []),
-      ]);
+      console.warn("Failed to read refresh token before logout:", err);
+    }
 
+    try {
+      await clearAuthSession(currentUserId);
       setUser(null);
       setToken(null);
 
       router.replace("/login");
+
+      if (refreshToken) {
+        void apiClient.post(`/api/logout`, { refreshToken }).catch(() => {});
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+      setUser(null);
+      setToken(null);
+      router.replace("/login");
     }
   };
 
-const deleteAccount = async (password: string) => {
-  const currentPassword = password.trim();
+  const deleteAccount = async (password: string) => {
+    const currentPassword = password.trim();
 
-  if (!currentPassword) {
-    throw new Error("Password is required");
-  }
+    if (!currentPassword) {
+      throw new Error("Password is required");
+    }
 
-  try {
-    await apiClient.delete("/api/delete-account", {
-      data: {
-        password: currentPassword,
-      },
-    });
+    try {
+      await apiClient.delete("/api/delete-account", {
+        data: {
+          password: currentPassword,
+        },
+      });
 
-    await AsyncStorage.multiRemove([
-      ...SESSION_STORAGE_KEYS,
-      ...(user?.id ? [getFavoritesStorageKey(user.id)] : []),
-      ...(user?.id ? [`@view_mode_preference_${user.id}`] : []),
-    ]);
+      await clearAuthSession(user?.id);
+      setUser(null);
+      setToken(null);
+      router.replace("/login");
+    } catch (err: any) {
+      const message =
+        err.response?.data?.error ?? err.message ?? "Failed to delete account";
 
-    setUser(null);
-    setToken(null);
-  } catch (err: any) {
-    const message =
-      err.response?.data?.error ?? err.message ?? "Failed to delete account";
+      // Do not use console.error here for expected validation errors like wrong password.
+      console.warn("Delete account failed:", message);
 
-    // Do not use console.error here for expected validation errors like wrong password.
-    console.warn("Delete account failed:", message);
-
-    throw new Error(message);
-  }
-};
+      throw new Error(message);
+    }
+  };
 
   return {
     user,

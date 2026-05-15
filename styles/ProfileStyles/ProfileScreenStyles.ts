@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { Animated, StyleSheet } from "react-native";
-const BANNER_HEIGHT = 120;
-const PROFILE_PIC_SIZE = 120;
+export const PROFILE_BANNER_HEIGHT = 120;
+export const PROFILE_PIC_SIZE = 120;
 
 export const profileStyles = (
   isDark: boolean,
@@ -21,12 +21,12 @@ export const profileStyles = (
       position: "relative",
       top: 0,
       width: "100%",
-      height: BANNER_HEIGHT,
+      height: PROFILE_BANNER_HEIGHT,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     banner: {
       width: "100%",
-      height: BANNER_HEIGHT,
+      height: PROFILE_BANNER_HEIGHT,
     },
     profilePicWrapper: {
       position: "absolute",

@@ -36,11 +36,7 @@ export const saveTokens = async (accessToken: string, refreshToken: string) => {
   ]);
 };
 
-export const clearTokens = async () => {
-  await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
-};
-
-const SESSION_STORAGE_KEYS = [
+const AUTH_SESSION_STORAGE_KEYS = [
   "accessToken",
   "refreshToken",
   "userId",
@@ -51,32 +47,108 @@ const SESSION_STORAGE_KEYS = [
   "bannerImage",
   "loggedInUser",
   "favorites",
+  "currentUser",
+  "user",
+  "authUser",
+  "authState",
+  "session",
 ];
 
+const AUTH_SESSION_STORAGE_KEY_PREFIXES = [
+  "favoriteTeams:",
+  "@view_mode_preference_",
+];
+
+export const clearAuthSession = async (userId?: number | string | null) => {
+  const keysToRemove = new Set(AUTH_SESSION_STORAGE_KEYS);
+
+  if (userId != null) {
+    keysToRemove.add(`favoriteTeams:${userId}`);
+    keysToRemove.add(`@view_mode_preference_${userId}`);
+  }
+
+  try {
+    const existingKeys = await AsyncStorage.getAllKeys();
+
+    existingKeys.forEach((key) => {
+      if (
+        AUTH_SESSION_STORAGE_KEY_PREFIXES.some((prefix) =>
+          key.startsWith(prefix),
+        )
+      ) {
+        keysToRemove.add(key);
+      }
+    });
+  } catch (err) {
+    console.warn("Failed to list auth storage keys:", err);
+  }
+
+  try {
+    await AsyncStorage.multiRemove(Array.from(keysToRemove));
+  } finally {
+    delete apiClient.defaults.headers.common.Authorization;
+    delete apiClient.defaults.headers.common.authorization;
+  }
+};
+
+export const clearTokens = async () => {
+  await clearAuthSession();
+};
+
+const PUBLIC_AUTH_PATHS = [
+  "/api/login",
+  "/api/signup",
+  "/api/forgot-password",
+  "/api/verify-reset-code",
+  "/api/reset-password",
+  "/api/refresh",
+];
+
+const getRequestPath = (url?: string) => {
+  if (!url) return "";
+
+  try {
+    return new URL(url, BASE_URL || "http://localhost").pathname;
+  } catch {
+    const withoutQuery = url.split("?")[0];
+    const withoutBase =
+      BASE_URL && withoutQuery.startsWith(BASE_URL)
+        ? withoutQuery.slice(BASE_URL.length)
+        : withoutQuery;
+
+    return withoutBase.startsWith("/") ? withoutBase : `/${withoutBase}`;
+  }
+};
+
+const shouldSkipAuthRefresh = (url?: string) => {
+  const requestPath = getRequestPath(url);
+
+  return PUBLIC_AUTH_PATHS.some(
+    (path) => requestPath === path || requestPath === `${path}/`,
+  );
+};
+
 // ─── Request interceptor ─────────────────────────────────────────────────────
-// Attach the current access token to every outgoing request.
 
 apiClient.interceptors.request.use(async (config) => {
   const token = await getAccessToken();
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
 // ─── Response interceptor ────────────────────────────────────────────────────
-// On a 401 or 403:
-//   1. Try to refresh — if successful, retry the original request once.
-//   2. If refresh fails, clear all auth data and send the user to /login.
 
 let isRefreshing = false;
+
 let failedQueue: {
   resolve: (value: string) => void;
   reject: (reason?: any) => void;
 }[] = [];
 
-// While a refresh is in-flight, queue other failed auth requests instead of
-// firing more refresh requests. Once the refresh settles, drain the queue.
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -85,6 +157,7 @@ const processQueue = (error: any, token: string | null = null) => {
       prom.resolve(token!);
     }
   });
+
   failedQueue = [];
 };
 
@@ -93,18 +166,22 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
+    const requestUrl = originalRequest?.url;
 
-    // FIX #2: catch both 401 (missing token) and 403 (expired/invalid token).
-    //         authenticateToken middleware returns 403 for expired JWTs, so
-    //         only catching 401 meant expired tokens were never refreshed.
     const isAuthError = status === 401 || status === 403;
 
-    if (!isAuthError || originalRequest._retry) {
+    // Important:
+    // Do NOT refresh/redirect for login/signup/reset routes.
+    // A 401 from /api/login means "Wrong password", not "expired session".
+    if (!originalRequest || shouldSkipAuthRefresh(requestUrl)) {
+      return Promise.reject(error);
+    }
+
+    if (!isAuthError || originalRequest?._retry) {
       return Promise.reject(error);
     }
 
     if (isRefreshing) {
-      // Another refresh is already in-flight — queue this request.
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       })
@@ -125,10 +202,6 @@ apiClient.interceptors.response.use(
         throw new Error("No refresh token available");
       }
 
-      // Use a plain axios call (not apiClient) to avoid triggering this
-      // interceptor again on the refresh request itself.
-      // FIX #1: corrected URL from /api/users/refresh → /api/refresh
-      //         (auth router is mounted at /api in server.js, not /api/users)
       const res = await axios.post(`${BASE_URL}/api/refresh`, {
         refreshToken,
       });
@@ -147,8 +220,7 @@ apiClient.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError, null);
 
-      // Refresh failed — session is unrecoverable. Clear everything and redirect.
-      await AsyncStorage.multiRemove(SESSION_STORAGE_KEYS);
+      await clearAuthSession();
       router.replace("/login");
 
       return Promise.reject(refreshError);

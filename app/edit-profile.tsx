@@ -28,8 +28,6 @@ import { AlertConfig } from "types/alert";
 
 const MAX_BIO_LENGTH = 150;
 const BIO_INPUT_BUFFER = 25;
-const PROFILE_CROP_RATIO = 1;
-const BANNER_CROP_RATIO = 3;
 
 type CropTarget = "profile" | "banner";
 type ImageFieldName = "profileImage" | "bannerImage";
@@ -78,7 +76,12 @@ const normalizeStoredImage = (value?: string | null) => {
 const getImageMimeType = (filenameOrUri: string, mimeType?: string | null) => {
   if (mimeType) return mimeType.toLowerCase();
 
-  const extension = filenameOrUri.split("?")[0].split(".").pop()?.toLowerCase();
+  const extension = filenameOrUri
+    .split("?")[0]
+    .split("#")[0]
+    .split(".")
+    .pop()
+    ?.toLowerCase();
 
   switch (extension) {
     case "jpg":
@@ -92,6 +95,21 @@ const getImageMimeType = (filenameOrUri: string, mimeType?: string | null) => {
       return "image/webp";
     default:
       return "image/jpeg";
+  }
+};
+
+const getImageExtensionFromMime = (mimeType: string) => {
+  switch (mimeType.toLowerCase()) {
+    case "image/png":
+      return "png";
+    case "image/gif":
+      return "gif";
+    case "image/webp":
+      return "webp";
+    case "image/jpeg":
+    case "image/jpg":
+    default:
+      return "jpg";
   }
 };
 
@@ -109,6 +127,20 @@ const isLocalImageUri = (uri: string | null): uri is string => {
   );
 };
 
+const getSafeUploadFileName = (
+  uri: string,
+  fieldName: ImageFieldName,
+  mimeType: string,
+) => {
+  const fallbackName = `${fieldName}.${getImageExtensionFromMime(mimeType)}`;
+  const rawFilename = uri.split("/").pop()?.split("?")[0]?.split("#")[0];
+
+  if (!rawFilename) return fallbackName;
+
+  const hasExtension = /\.[a-zA-Z0-9]+$/.test(rawFilename);
+  return hasExtension ? rawFilename : fallbackName;
+};
+
 const appendLocalImageToFormData = (
   formData: FormData,
   uri: string | null,
@@ -117,15 +149,16 @@ const appendLocalImageToFormData = (
   if (!isLocalImageUri(uri)) return;
 
   const localUri = uri;
-  const fallbackName = `${fieldName}.jpg`;
-  const filename = localUri.split("/").pop()?.split("?")[0] || fallbackName;
+  const mimeType = getImageMimeType(localUri);
+  const filename = getSafeUploadFileName(localUri, fieldName, mimeType);
+
   const file: ReactNativeFormDataFile = {
     uri: localUri,
     name: filename,
-    type: getImageMimeType(filename),
+    type: mimeType,
   };
 
-  formData.append(fieldName, file as unknown as Blob);
+  formData.append(fieldName, file as any);
 };
 
 const getSavedProfileImage = (
@@ -139,7 +172,6 @@ const getSavedBannerImage = (
 ) => savedProfile?.banner_image ?? savedProfile?.bannerImage ?? fallback;
 
 export default function EditProfileScreen() {
-  // ====================== STATE ======================
   const navigation = useNavigation();
   const router = useRouter();
 
@@ -158,12 +190,15 @@ export default function EditProfileScreen() {
   const [cropTarget, setCropTarget] = useState<CropTarget | null>(null);
   const [isCropModalVisible, setCropModalVisible] = useState(false);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+
   const trimmedFullName = useMemo(() => fullName.trim(), [fullName]);
   const trimmedBio = useMemo(() => bio.trim(), [bio]);
+
   const isBioTooLong = bio.length > MAX_BIO_LENGTH;
   const bioHint = isBioTooLong
     ? `Must be ${MAX_BIO_LENGTH} characters or less`
     : null;
+
   const canSave = Boolean(userId) && !saving && !isBioTooLong;
 
   const showAlert = useCallback((config: AlertConfig) => {
@@ -180,7 +215,6 @@ export default function EditProfileScreen() {
     setCropModalVisible(false);
   }, []);
 
-  // ====================== LOAD USER DATA ======================
   useEffect(() => {
     let mounted = true;
 
@@ -222,7 +256,6 @@ export default function EditProfileScreen() {
     };
   }, [showAlert]);
 
-  // ====================== HEADER ======================
   const handleBack = useCallback(() => {
     router.back();
   }, [router]);
@@ -235,7 +268,6 @@ export default function EditProfileScreen() {
     });
   }, [handleBack, navigation]);
 
-  // ====================== IMAGE PICKER / CROP ======================
   const requestImagePermission = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -336,7 +368,6 @@ export default function EditProfileScreen() {
     [cropTarget, resetCropState, showAlert],
   );
 
-  // ====================== SAVE PROFILE ======================
   const handleSave = useCallback(async () => {
     if (!canSave || saving) return;
 
@@ -357,11 +388,22 @@ export default function EditProfileScreen() {
     }
 
     const formData = new FormData();
+
     formData.append("fullName", trimmedFullName);
     formData.append("bio", trimmedBio);
 
     appendLocalImageToFormData(formData, profileImage, "profileImage");
     appendLocalImageToFormData(formData, bannerImage, "bannerImage");
+
+    if (__DEV__) {
+      console.log("Edit profile save payload:", {
+        userId,
+        hasProfileImage: isLocalImageUri(profileImage),
+        hasBannerImage: isLocalImageUri(bannerImage),
+        profileImage,
+        bannerImage,
+      });
+    }
 
     try {
       const updatedUser = (await saveProfile(
@@ -429,7 +471,6 @@ export default function EditProfileScreen() {
     userId,
   ]);
 
-  // ====================== RENDER ======================
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -491,9 +532,6 @@ export default function EditProfileScreen() {
           onCancel={resetCropState}
           onCrop={handleImageCropped}
           mode={cropTarget}
-          aspectRatio={
-            cropTarget === "profile" ? PROFILE_CROP_RATIO : BANNER_CROP_RATIO
-          }
         />
       )}
 

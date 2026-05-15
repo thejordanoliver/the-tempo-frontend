@@ -1,20 +1,27 @@
 // login.tsx
 import ConfirmModal from "components/ConfirmModal";
+import CropEditorModal from "components/CropEditorModal";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { AlertConfig } from "types/alert";
+import SignInForm from "components/Forms/SignInForm";
+import SignUpForm from "components/Forms/SignUpForm";
+import TabBar from "components/TabBars/TabBar";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
-import PagerView from "react-native-pager-view";
 import { formStyles } from "styles/FormStyles";
-import CropEditorModal from "../components/CropEditorModal";
-import SignInForm from "../components/Forms/SignInForm";
-import SignUpForm from "../components/Forms/SignUpForm";
-import TabBar from "../components/TabBars/TabBar";
-import { LeagueType } from "../types/types";
+import { AlertConfig } from "types/alert";
+import { LeagueType } from "types/types";
+
+const SIGNUP_HEADER_TITLES: Record<number, string> = {
+  0: "Create Account",
+  1: "Email & Password",
+  2: "Select Favorite Teams",
+  3: "Upload Images",
+  4: "Review Details",
+};
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -23,13 +30,12 @@ export default function LoginScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = formStyles(isDark);
 
-  // FIX #3: delegate all auth storage to useAuth — no direct AsyncStorage writes here
   const { login, signup } = useAuth();
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  // ====================== STATE ======================
   const tabs = ["sign in", "sign up"] as const;
+
   const [selectedTab, setSelectedTab] = useState<"sign in" | "sign up">(
     "sign in",
   );
@@ -56,18 +62,16 @@ export default function LoginScreen() {
   const [isGridView, setIsGridView] = useState(true);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
 
-  const pagerRef = useRef<PagerView>(null);
-
   const showAlert = (config: AlertConfig) => setAlertConfig(config);
   const closeAlert = () => setAlertConfig(null);
 
-  // ====================== IMAGE PICKER / CROP ======================
   const openImagePickerFor = async (target: "profile" | "banner") => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
     });
+
     if (!result.canceled) {
       setImageToCrop(result.assets[0].uri);
       setCropTarget(target);
@@ -81,37 +85,70 @@ export default function LoginScreen() {
     } else if (cropTarget === "banner") {
       setSignupData((prev) => ({ ...prev, bannerImage: croppedUri }));
     }
+
     setCropModalVisible(false);
     setImageToCrop(null);
     setCropTarget(null);
   };
 
-  // ====================== LOGIN ======================
+  const getLoginErrorMessage = (err: any) => {
+    if (err?.code === "USERNAME_NOT_FOUND") {
+      return "Username does not exist.";
+    }
+
+    if (err?.code === "WRONG_PASSWORD") {
+      return "Wrong password.";
+    }
+
+    const message = String(err?.message || "").toLowerCase();
+
+    if (message.includes("username") || message.includes("does not exist")) {
+      return "Username does not exist.";
+    }
+
+    if (message.includes("password")) {
+      return "Wrong password.";
+    }
+
+    if (message.includes("invalid credentials")) {
+      return "Username or password is incorrect.";
+    }
+
+    return err?.message || "Something went wrong. Please try again.";
+  };
+
   const handleLogin = async () => {
     const trimmedUsername = username?.trim().toLowerCase();
-    if (!trimmedUsername || password.length < 4) {
+
+    if (!trimmedUsername) {
       showAlert({
-        title: "Invalid credentials",
-        message: "Please enter a valid username and password.",
+        title: "Username required",
+        message: "Please enter your username.",
+      });
+      return;
+    }
+
+    if (!password) {
+      showAlert({
+        title: "Password required",
+        message: "Please enter your password.",
       });
       return;
     }
 
     try {
       setIsSubmitting(true);
-      // FIX #3: call useAuth.login — it handles storage, state, and navigation
       await login(trimmedUsername, password);
     } catch (err: any) {
       showAlert({
         title: "Login failed",
-        message: err.message ?? "Something went wrong.",
+        message: getLoginErrorMessage(err),
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // ====================== SIGNUP ======================
   const handleSignup = async () => {
     const {
       fullName,
@@ -141,11 +178,17 @@ export default function LoginScreen() {
 
     const appendImage = (uri: string | null, name: string) => {
       if (!uri) return;
+
       const filename = uri.split("/").pop()!;
       const match = /\.(\w+)$/.exec(filename);
       const ext = match?.[1];
       const mimeType = ext === "png" ? "image/png" : "image/jpeg";
-      formData.append(name, { uri, name: filename, type: mimeType } as any);
+
+      formData.append(name, {
+        uri,
+        name: filename,
+        type: mimeType,
+      } as any);
     };
 
     appendImage(profileImage, "profileImage");
@@ -153,7 +196,6 @@ export default function LoginScreen() {
 
     try {
       setIsSubmitting(true);
-      // FIX #3: call useAuth.signup — it handles storage, state, and navigation
       await signup(formData);
     } catch (err: any) {
       showAlert({
@@ -165,11 +207,12 @@ export default function LoginScreen() {
     }
   };
 
-  // ====================== FAVORITES ======================
   const handleToggleFavorite = (league: LeagueType, id: string) => {
     const key = `${league}:${id}`;
+
     setSignupData((prev) => {
       const isFavorite = prev.favorites.includes(key);
+
       return {
         ...prev,
         favorites: isFavorite
@@ -179,30 +222,21 @@ export default function LoginScreen() {
     });
   };
 
-  // ====================== LAYOUT TOGGLE ======================
-  const toggleLayout = () => {
+  const toggleLayout = useCallback(() => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
       setIsGridView((prev) => !prev);
+
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
     });
-  };
-
-  // ====================== HEADER ======================
-  const headerTitles: Record<number, string> = {
-    0: "Create Account",
-    1: "Email & Password",
-    2: "Select Favorite Teams",
-    3: "Upload Images",
-    4: "Review Details",
-  };
+  }, [fadeAnim]);
 
   useLayoutEffect(() => {
     const showBackButton = !(
@@ -213,7 +247,7 @@ export default function LoginScreen() {
     const headerTitle =
       selectedTab === "sign in"
         ? "Sign In"
-        : headerTitles[signupStep] || "Sign Up";
+        : SIGNUP_HEADER_TITLES[signupStep] || "Sign Up";
 
     navigation.setOptions({
       header: () => (
@@ -224,7 +258,6 @@ export default function LoginScreen() {
             if (selectedTab === "sign up" && signupStep > 0) {
               setSignupStep((prev) => prev - 1);
             } else {
-              // FIX #4: use router.back() instead of internal Expo Router import
               router.back();
             }
           }}
@@ -234,9 +267,8 @@ export default function LoginScreen() {
         />
       ),
     });
-  }, [navigation, selectedTab, signupStep, isGridView]);
+  }, [navigation, router, selectedTab, signupStep, isGridView, toggleLayout]);
 
-  // ====================== RENDER ======================
   return (
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
@@ -248,31 +280,14 @@ export default function LoginScreen() {
               onTabPress={(tab) => {
                 setSelectedTab(tab);
                 setSignupStep(0);
-                if (pagerRef.current) {
-                  const pageIndex = tab === "sign in" ? 0 : 1;
-                  pagerRef.current.setPage(pageIndex);
-                }
               }}
               isDark={isDark}
             />
           </View>
         )}
 
-        <PagerView
-          style={styles.sectionContainer}
-          initialPage={selectedTab === "sign in" ? 0 : 1}
-          ref={pagerRef}
-          scrollEnabled={signupStep === 0 || selectedTab === "sign in"}
-          onPageSelected={(e) => {
-            if (signupStep === 0) {
-              setSelectedTab(
-                e.nativeEvent.position === 0 ? "sign in" : "sign up",
-              );
-            }
-          }}
-        >
-          {/* Sign In Page */}
-          <View style={styles.sectionContainer}>
+        <View style={styles.sectionContainer}>
+          {selectedTab === "sign in" ? (
             <SignInForm
               username={username}
               password={password}
@@ -283,10 +298,7 @@ export default function LoginScreen() {
               onSubmit={handleLogin}
               onForgotPassword={() => router.push("/forgot-password")}
             />
-          </View>
-
-          {/* Sign Up Page */}
-          <View style={styles.sectionContainer}>
+          ) : (
             <SignUpForm
               signupData={signupData}
               signupStep={signupStep}
@@ -304,8 +316,8 @@ export default function LoginScreen() {
               onSubmit={handleSignup}
               selectedTab={selectedTab}
             />
-          </View>
-        </PagerView>
+          )}
+        </View>
 
         {imageToCrop && cropTarget && (
           <CropEditorModal
@@ -314,7 +326,6 @@ export default function LoginScreen() {
             onCancel={() => setCropModalVisible(false)}
             onCrop={onImageCropped}
             mode={cropTarget}
-            aspectRatio={cropTarget === "profile" ? 1 : 3}
           />
         )}
       </View>

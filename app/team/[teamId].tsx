@@ -1,8 +1,8 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
+import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
-import MonthSelector from "components/MonthSelector";
 import NewsList from "components/News/NewsList";
 import GamesList from "components/Sports/NBA/Games/GamesList";
 import Roster from "components/Sports/NBA/Team/Roster";

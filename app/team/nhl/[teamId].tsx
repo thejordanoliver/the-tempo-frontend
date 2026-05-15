@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
+import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
-import MonthSelector from "components/MonthSelector";
 import NewsList from "components/News/NewsList";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";

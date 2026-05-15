@@ -8,7 +8,7 @@ import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useFootballRecruit } from "hooks/FootballHooks/useFootballRecruit";
+import { useCFBRecruit } from "hooks/FootballHooks/useCFBRecruit";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 
@@ -23,10 +23,13 @@ export default function RecruitDetailScreen() {
   const playerId = Number(id);
 
   /** FETCH DATA */
-  const { data: player, loading, error } = useFootballRecruit(playerId);
-  const teamId = player?.committed_team_id;
+  const { data: player, loading, error } = useCFBRecruit(playerId);
+  const teamId = player?.committed_team_id ?? 0;
+  const predictionPercentage = Number(
+    player?.prediction_percentage?.replace("%", ""),
+  );
   const team = getCFBTeam(teamId);
-  const teamLogo = getCFBTeamLogo(teamId, isDark);
+  const teamLogo = getCFBTeamLogo(teamId, true);
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -47,7 +50,7 @@ export default function RecruitDetailScreen() {
         );
       },
     });
-  }, [navigation, player?.committed_team_id, isDark, loading]);
+  }, [navigation, teamId, isDark, loading]);
 
   if (loading)
     return (
@@ -64,11 +67,7 @@ export default function RecruitDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-      <RecruitHeader
-        player={player}
-        avatarUrl={player.image_url}
-        isDark={isDark}
-      />
+      <RecruitHeader player={player} isDark={isDark} />
       <StarRating recruit={player} isDark={isDark} />
       {player.predicted_school && (
         <PredictionRing
@@ -79,7 +78,7 @@ export default function RecruitDetailScreen() {
             player.predicted_team_id ||
             player.projected_team_id
           }
-          percentage={Number(player.prediction_percentage.replace("%", ""))}
+          percentage={predictionPercentage}
           delay={500}
           duration={1400}
           size={200}

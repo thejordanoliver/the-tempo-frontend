@@ -1,11 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, Fonts } from "constants/styles";
-import { FootballRecruit } from "hooks/FootballHooks/useFootballRecruits";
 import { StyleSheet, Text, View } from "react-native";
+import { CFBRecruit } from "types/football";
 
 type Props = {
-  recruit: FootballRecruit;
+  recruit: CFBRecruit;
   isDark: boolean;
 };
 

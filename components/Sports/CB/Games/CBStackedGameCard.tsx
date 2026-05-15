@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
+import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -13,7 +14,7 @@ import { getBroadcastDisplay } from "utils/matchBroadcast";
 import { getGameDate } from "utils/nflGameCardUtils";
 import BasesIndicator from "../../MLB/GameDetails/BasesIndicator";
 
-function CBStackedGameCard({ game }: CollegeBaseballGameCardProps) {
+function CBStackedGameCard({ game, isWomens }: CollegeBaseballGameCardProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
@@ -37,21 +38,26 @@ function CBStackedGameCard({ game }: CollegeBaseballGameCardProps) {
   const away = game?.awayTeam;
 
   // Find matching internal teams using ESPN ID
-  const homeTeam = getCBTeam(home?.id);
-  const awayTeam = getCBTeam(away?.id);
+  const homeTeam = isWomens ? getSBTeam(home?.id) : getCBTeam(home?.id);
+  const awayTeam = isWomens ? getSBTeam(away?.id) : getCBTeam(away?.id);
 
-  const homeName = homeTeam?.name;
-  const awayName = awayTeam?.name;
+  const homeName = homeTeam?.shortName;
+  const awayName = awayTeam?.shortName;
 
-  const homeLogo = getCBTeamLogo(homeTeam?.id, isDark);
-  const awayLogo = getCBTeamLogo(awayTeam?.id, isDark);
+  const homeLogo = isWomens
+    ? getSBTeamLogo(homeTeam?.id, isDark)
+    : getCBTeamLogo(homeTeam?.id, isDark);
+  const awayLogo = isWomens
+    ? getSBTeamLogo(homeTeam?.id, isDark)
+    : getCBTeamLogo(awayTeam?.id, isDark);
 
   const { score: liveScore, details } = useBaseballGameDetails(
-    "cb",
+    isWomens ? "sb" : "cb",
     String(homeTeam?.id),
     String(awayTeam?.id),
     gameDateStr,
   );
+  
   const isChampionship = details?.playoffRound === "World Series";
   const styles = GameCardStyles(isDark, isChampionship);
   const broadcasts = details?.broadcasts;

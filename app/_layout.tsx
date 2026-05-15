@@ -21,13 +21,14 @@ import {
   PreferencesProvider,
   usePreferences,
 } from "contexts/PreferencesContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { getAccessToken } from "utils/apiClient";
+import { clearAuthSession } from "utils/apiClient";
 import CustomTabBar from "../components/CustomTabBar";
 
 const CustomDarkTheme = {
@@ -77,13 +78,36 @@ function AppLayout() {
 
   useEffect(() => {
     let isMounted = true;
-    const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
 
     const redirectIfUnauthenticated = async () => {
+      const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
+
       if (loadingUser || user || isPublicRoute) return;
 
-      const storedAccessToken = await getAccessToken();
-      if (isMounted && !storedAccessToken) {
+      const values = await AsyncStorage.multiGet([
+        "accessToken",
+        "userId",
+        "username",
+      ]);
+      const stored: Record<string, string | null> = Object.fromEntries(values);
+      const parsedUserId = stored.userId
+        ? Number.parseInt(stored.userId, 10)
+        : NaN;
+
+      if (!isMounted) return;
+
+      if (
+        stored.accessToken &&
+        stored.userId &&
+        stored.username &&
+        !Number.isNaN(parsedUserId)
+      ) {
+        return;
+      }
+
+      await clearAuthSession(stored.userId);
+
+      if (isMounted) {
         router.replace("/login");
       }
     };

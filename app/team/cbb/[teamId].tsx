@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
-import MonthSelector from "components/MonthSelector";
+import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
 import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";

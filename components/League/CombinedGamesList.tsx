@@ -63,6 +63,7 @@ import MLBGamePreviewModal from "../Sports/MLB/GamePreview/MLBGamePreviewModal";
 
 // ✅ MMA cards
 import NHLStackedGameCard from "components/Sports/NHL/Games/NHLStackedGameCard";
+import WNBAGamePreviewModal from "components/Sports/WNBA/GamePreview/WNBAGamePreviewModal";
 import WNBAGameCard from "components/Sports/WNBA/Games/WNBAGameCard";
 import WNBASquareGameCard from "components/Sports/WNBA/Games/WNBASquareGameCard";
 import WNBAStackedGameCard from "components/Sports/WNBA/Games/WNBAStackedGameCard";
@@ -424,7 +425,6 @@ export default function CombinedGamesList({
         ? getCategoryForFavorites(item)
         : sectionCategory;
 
-   
     switch (category) {
       case "NBA":
       case "WNBA":
@@ -589,6 +589,13 @@ export default function CombinedGamesList({
         <MMAGamePreviewModal
           visible={modalVisible}
           game={previewGame as MMAFight}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
+      {modalVisible && previewGame && previewCategory === "WNBA" && (
+        <WNBAGamePreviewModal
+          game={previewGame as BasketballGame}
+          visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />
       )}

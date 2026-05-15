@@ -3,11 +3,11 @@ import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useCFBTeamRecruits } from "hooks/FootballHooks/useCFBTeamRecruits";
+import { useCFBRecruits } from "hooks/FootballHooks/useCFBRecruits";
 import {
-  FootballRecruit,
-  useFootballRecruits,
-} from "hooks/FootballHooks/useFootballRecruits";
+  CFBRecruitTeamRanking,
+  useCFBTeamRecruitingRankings,
+} from "hooks/FootballHooks/useCFBTeamRecruitingRankings";
 import React, {
   memo,
   useCallback,
@@ -23,10 +23,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { CFBRecruit } from "types/football";
 import RecruitCardSkeleton from "../../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../../Skeletons/TeamRankCardSkeleton";
-import TeamRankCard from "../TeamRankCard";
 import RecruitCard from "./RecruitCard";
+import TeamRankCard from "./TeamRankCard";
 
 type Props = {
   year: string;
@@ -44,7 +45,7 @@ type DropdownOption = {
 
 type RecruitsHeaderProps = {
   isDark: boolean;
-  styles: ReturnType<typeof getStyles>;
+  styles: ReturnType<typeof recruitListStyles>;
   year: string;
   team: string;
   view: "players" | "teams";
@@ -59,6 +60,18 @@ type RecruitsHeaderProps = {
   onSearchChange: (value: string) => void;
   onToggleSearch: () => void;
 };
+
+const CHUNK_SIZE = 20;
+
+function getErrorMessage(error: unknown) {
+  if (!error) return "Something went wrong.";
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+function normalizeSearchValue(value: string | number | null | undefined) {
+  return String(value ?? "").toLowerCase().trim();
+}
 
 const RecruitsHeader = memo(function RecruitsHeader({
   isDark,
@@ -139,14 +152,14 @@ export default function RecruitsList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => getStyles(isDark), [isDark]);
+  const styles = useMemo(() => recruitListStyles(isDark), [isDark]);
 
-  const listRef = useRef<FlatList>(null);
+  const listRef = useRef<FlatList<any>>(null);
 
-  const CHUNK_SIZE = 20;
   const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [refreshingTeamRankings, setRefreshingTeamRankings] = useState(false);
 
   useEffect(() => {
     listRef.current?.scrollToOffset({ offset: 0, animated: false });
@@ -175,42 +188,44 @@ export default function RecruitsList({
   );
 
   const {
-    data: playerData,
+    data: playerData = [],
     loading: loadingPlayers,
     error: errorPlayers,
     refreshing: refreshingPlayers = false,
     refresh: refreshPlayers,
-  } = useFootballRecruits(Number(year));
+  } = useCFBRecruits(Number(year));
 
   const {
-    data: teamData,
+    rankings: teamRankings = [],
     loading: loadingTeams,
     error: errorTeams,
-    refreshing: refreshingTeams,
-    refresh: refreshTeams,
-  } = useCFBTeamRecruits(Number(year));
+    refetch: refetchTeamRankings,
+  } = useCFBTeamRecruitingRankings(Number(year));
 
   const loading = view === "players" ? loadingPlayers : loadingTeams;
-  const refreshing = view === "players" ? refreshingPlayers : refreshingTeams;
+  const refreshing =
+    view === "players" ? refreshingPlayers : refreshingTeamRankings;
   const error = view === "players" ? errorPlayers : errorTeams;
-  const listData = view === "players" ? playerData : teamData;
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     if (view === "players") {
       refreshPlayers?.();
       return;
     }
 
-    refreshTeams();
-  }, [refreshPlayers, refreshTeams, view]);
+    try {
+      setRefreshingTeamRankings(true);
+      await refetchTeamRankings();
+    } finally {
+      setRefreshingTeamRankings(false);
+    }
+  }, [refetchTeamRankings, refreshPlayers, view]);
 
   const teamOptions = useMemo(() => {
-    if (!playerData) return [{ label: "All Teams", value: "all" }];
-
     const uniqueTeams = Array.from(
       new Set(
         playerData
-          .map((r: FootballRecruit) => r.projected_school || r.predicted_school)
+          .map((r: CFBRecruit) => r.projected_school || r.predicted_school)
           .filter((t): t is string => Boolean(t)),
       ),
     ).sort((a, b) => a.localeCompare(b));
@@ -230,12 +245,10 @@ export default function RecruitsList({
   }, []);
 
   const filteredPlayers = useMemo(() => {
-    if (!playerData) return [];
-
     let list = playerData;
 
     if (team !== "all") {
-      list = list.filter((r: FootballRecruit) => {
+      list = list.filter((r: CFBRecruit) => {
         return r.projected_school === team || r.predicted_school === team;
       });
     }
@@ -243,7 +256,7 @@ export default function RecruitsList({
     const query = search.trim().toLowerCase();
 
     if (query.length > 0) {
-      list = list.filter((p: FootballRecruit) => {
+      list = list.filter((p: CFBRecruit) => {
         const predictionMatches = p.predicted_schools?.some((prediction) =>
           prediction.team_name?.toLowerCase().includes(query),
         );
@@ -263,15 +276,44 @@ export default function RecruitsList({
     return list;
   }, [playerData, team, search]);
 
+  const filteredTeamRankings = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    if (!query) return teamRankings;
+
+    return teamRankings.filter((ranking: CFBRecruitTeamRanking) => {
+      return (
+        normalizeSearchValue(ranking.team_name).includes(query) ||
+        normalizeSearchValue(ranking.team_slug).includes(query) ||
+        normalizeSearchValue(ranking.rank).includes(query) ||
+        normalizeSearchValue(ranking.previous_rank).includes(query) ||
+        normalizeSearchValue(ranking.total_commits).includes(query) ||
+        normalizeSearchValue(ranking.five_stars).includes(query) ||
+        normalizeSearchValue(ranking.four_stars).includes(query) ||
+        normalizeSearchValue(ranking.three_stars).includes(query) ||
+        normalizeSearchValue(ranking.average_rating).includes(query) ||
+        normalizeSearchValue(ranking.points).includes(query)
+      );
+    });
+  }, [search, teamRankings]);
+
+  const activeFilteredLength =
+    view === "players" ? filteredPlayers.length : filteredTeamRankings.length;
+
   const loadMore = useCallback(() => {
-    if (visibleCount < filteredPlayers.length) {
+    if (visibleCount < activeFilteredLength) {
       setVisibleCount((prev) => prev + CHUNK_SIZE);
     }
-  }, [filteredPlayers.length, visibleCount]);
+  }, [activeFilteredLength, visibleCount]);
 
-  const visiblePicks = useMemo(
+  const visiblePlayers = useMemo(
     () => filteredPlayers.slice(0, visibleCount),
     [filteredPlayers, visibleCount],
+  );
+
+  const visibleTeamRankings = useMemo(
+    () => filteredTeamRankings.slice(0, visibleCount),
+    [filteredTeamRankings, visibleCount],
   );
 
   const listHeaderComponent = useMemo(
@@ -313,6 +355,18 @@ export default function RecruitsList({
     ],
   );
 
+  const emptyTitle = useMemo(() => {
+    if (search.trim()) {
+      return view === "players"
+        ? "No recruits match your search"
+        : "No teams match your search";
+    }
+
+    return view === "players"
+      ? `No recruits found for ${year}`
+      : `No team rankings found for ${year}`;
+  }, [search, view, year]);
+
   if (loading && !refreshing) {
     return (
       <View style={styles.container}>
@@ -349,12 +403,14 @@ export default function RecruitsList({
             <>
               {listHeaderComponent}
               <View style={styles.center}>
-                <Text style={styles.errorText}>Error: {String(error)}</Text>
+                <Text style={styles.errorText}>
+                  Error: {getErrorMessage(error)}
+                </Text>
                 <Text style={styles.helperText}>Pull down to try again.</Text>
               </View>
             </>
           }
-          renderItem={null}
+          renderItem={() => null}
           refreshing={refreshing}
           onRefresh={onRefresh}
           contentContainerStyle={styles.listContent}
@@ -365,7 +421,7 @@ export default function RecruitsList({
     );
   }
 
-  if (!listData || listData.length === 0) {
+  if (activeFilteredLength === 0) {
     return (
       <View style={styles.container}>
         <FlatList
@@ -376,14 +432,12 @@ export default function RecruitsList({
             <>
               {listHeaderComponent}
               <View style={styles.center}>
-                <Text style={styles.emptyText}>
-                  No rankings found for {year}
-                </Text>
+                <Text style={styles.emptyText}>{emptyTitle}</Text>
                 <Text style={styles.helperText}>Pull down to refresh.</Text>
               </View>
             </>
           }
-          renderItem={null}
+          renderItem={() => null}
           refreshing={refreshing}
           onRefresh={onRefresh}
           contentContainerStyle={styles.listContent}
@@ -401,7 +455,7 @@ export default function RecruitsList({
       {view === "players" ? (
         <FlatList
           ref={listRef}
-          data={visiblePicks}
+          data={visiblePlayers}
           keyExtractor={(item, index) =>
             `recruit-${item.year ?? year}-${item.id ?? index}`
           }
@@ -418,7 +472,7 @@ export default function RecruitsList({
           removeClippedSubviews={false}
           style={styles.list}
           ListFooterComponent={
-            visibleCount < filteredPlayers.length ? (
+            visibleCount < activeFilteredLength ? (
               <View style={styles.footer}>
                 <Text style={styles.footerText}>Loading more…</Text>
               </View>
@@ -428,13 +482,15 @@ export default function RecruitsList({
       ) : (
         <FlatList
           ref={listRef}
-          data={teamData}
+          data={visibleTeamRankings}
           keyExtractor={(item, index) =>
-            `team-${item.team_id ?? item.id ?? item.team ?? index}`
+            `team-ranking-${item.year}-${item.team_id ?? item.id ?? index}`
           }
           renderItem={({ item, index }) => (
             <TeamRankCard item={item} index={index} />
           )}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.6}
           refreshing={refreshing}
           onRefresh={onRefresh}
           contentContainerStyle={styles.listContent}
@@ -442,13 +498,20 @@ export default function RecruitsList({
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}
           style={styles.list}
+          ListFooterComponent={
+            visibleCount < activeFilteredLength ? (
+              <View style={styles.footer}>
+                <Text style={styles.footerText}>Loading more…</Text>
+              </View>
+            ) : null
+          }
         />
       )}
     </View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const recruitListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -465,7 +528,6 @@ const getStyles = (isDark: boolean) =>
         ? Colors.dark.background
         : Colors.light.background,
     },
-
     list: {
       zIndex: 1,
       elevation: 1,
@@ -484,7 +546,7 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "space-between",
       marginBottom: 8,
     },
-      dropdownGroup: {
+    dropdownGroup: {
       flexDirection: "row",
       gap: 8,
       position: "relative",

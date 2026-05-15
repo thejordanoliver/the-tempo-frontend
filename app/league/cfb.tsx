@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import LeagueForum from "components/Forum/LeagueForum";
 import AwardSeasons from "components/League/Awards/AwardSeasons";
+import WeekSelector from "components/League/WeekSelector";
 import NewsList from "components/News/NewsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
@@ -11,7 +12,6 @@ import RecruitsList from "components/Sports/CFB/Recruiting/RecruitsList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "components/Sports/CFB/Standings/CFBStandingsList";
 import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import WeekSelector from "components/Sports/NFL/WeekSelector";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
@@ -30,7 +30,7 @@ import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
 import { useAPTop25 } from "utils/CFBUtils/cfbGameUtils";
-import { getFootballSeason } from "utils/dateUtils";
+import { getFootballSeason, getRecruitYear } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -49,11 +49,13 @@ export default function CFBLeagueScreen() {
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
     "players",
   );
-  const [recruitYear, setRecruitYear] = useState(dayjs().year().toString());
+  const [recruitYear, setRecruitYear] = useState(() =>
+    String(getRecruitYear()),
+  );
   const [recruitTeam, setRecruitTeam] = useState("all");
+
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-
   const [refreshing, setRefreshing] = useState(false);
   const {
     data: bracketData,

@@ -19,7 +19,7 @@ export function useSeasonFights() {
 
       setError(null);
 
-      const res = await apiClient.get(`api/fights/mma/season/${currentSeason}`);
+      const res = await apiClient.get(`api/fights/mma/season/${2024}`);
 
       const rawEvents: MMAEvent[] = res.data?.events ?? [];
       setEvents(rawEvents);

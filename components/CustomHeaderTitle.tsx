@@ -79,6 +79,7 @@ type CustomHeaderTitleProps = {
     | "NFL"
     | "CFB"
     | "CB"
+    | "SB"
     | "CBB"
     | "WCBB"
     | "MLB"
@@ -921,7 +922,7 @@ export function CustomHeaderTitle({
   };
 
   const headerIconColor =
-    tabName === "Game" || selectedConference || isTeamScreen
+    tabName === "Game" || selectedConference || isTeamScreen || isPlayerScreen
       ? Colors.white
       : isDark
         ? Colors.white

@@ -5658,6 +5658,7 @@ export const cbTeams: CollegeBaseballTeam[] = [
     isActive: true,
     isAllStar: false,
   },
+
 ];
 
 export const getCBTeam = (id: number | string) => {

@@ -112,7 +112,7 @@ export const GiphySearchModal: React.FC<Props> = ({
       animationType="slide"
       transparent
       statusBarTranslucent
-      presentationStyle="overFullScreen"
+      presentationStyle="pageSheet"
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
@@ -121,17 +121,13 @@ export const GiphySearchModal: React.FC<Props> = ({
       >
         <BlurView
           intensity={100}
-          tint={
-            isDark ? "systemChromeMaterialDark" : "systemChromeMaterialLight"
-          }
+          tint={"systemMaterial"}
           style={StyleSheet.absoluteFill}
         />
 
         <Pressable style={styles.backdropPressable} onPress={handleClose} />
 
         <View style={styles.container}>
-          <View style={styles.dragHandle} />
-
           <View style={styles.header}>
             <View>
               <Text style={styles.title}>GIFs</Text>
@@ -221,14 +217,7 @@ const getStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
     },
-    dragHandle: {
-      width: 42,
-      height: 4,
-      borderRadius: 999,
-      alignSelf: "center",
-      marginBottom: 12,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
+
     header: {
       flexDirection: "row",
       alignItems: "center",
