@@ -1,12 +1,15 @@
+import {
+  CBBTeamRank,
+  useCBBRankings,
+} from "@/hooks/BasketballHooks/useCBBRankings";
 import { getTeamByESPNId as getNBATeamByESPNId } from "constants/teams";
-import { getTeamByESPNId as getCBBTeamByESPNId } from "constants/teamsCBB";
+import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getTeamByESPNId as getCFBTeamByESPNId } from "constants/teamsCFB";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId } from "constants/teamsNHL";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
-import { Href, useRouter } from "expo-router";
-import { CBBTeamRank, useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
+import { useRouter } from "expo-router";
 import {
   CFBTeamRank,
   useCFBRankings,
@@ -109,10 +112,7 @@ const getContentHeight = ({
   const chipHeight = compact ? 30 : 34;
   const cardGap = compact ? 8 : 10;
 
-  return Math.max(
-    0,
-    containerHeight - verticalPadding - chipHeight - cardGap,
-  );
+  return Math.max(0, containerHeight - verticalPadding - chipHeight - cardGap);
 };
 
 const getLayoutConstants = (compact: boolean) => ({
@@ -756,9 +756,9 @@ export default function StandingsWidget({
         containerHeight ? { height: containerHeight } : null,
       ]}
     >
-        <Text style={styles.heading} numberOfLines={1}>
-            Standings
-          </Text>
+      <Text style={styles.heading} numberOfLines={1}>
+        Standings
+      </Text>
       <ScrollView
         horizontal
         style={styles.chipScroll}
@@ -766,8 +766,6 @@ export default function StandingsWidget({
         showsHorizontalScrollIndicator={false}
         bounces={false}
       >
-       
-
         {leagueOptions.map((league) => {
           const selected = selectedLeague === league;
 

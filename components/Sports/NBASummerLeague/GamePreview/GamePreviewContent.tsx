@@ -23,6 +23,7 @@ export default function GamePreviewContent({
   weatherError,
   venueImage,
   venueName,
+  venueCity,
   venueLocation,
   venueAddress,
   venueAttendance,
@@ -41,6 +42,7 @@ export default function GamePreviewContent({
           homeCode={home?.code}
           awayCode={away?.code}
           isDark={true}
+          gameStatusDescription={gameStatusDescription}
         />
       )}
 
@@ -48,23 +50,35 @@ export default function GamePreviewContent({
       {game?.id && gameStats?.length > 0 && (
         <>
           <GameLeaders
-            gameId={game.id.toString()}
+            gameLeaders={null}
             awayTeamId={away?.id}
             homeTeamId={home?.id}
+            loading={false}
+            error={null}
             isDark={true}
+            gameStatusDescription={gameStatusDescription}
           />
 
           <BoxScore
-            playerStats={playerStats}
+            playerStats={playerStats ?? []}
             awayTeamId={away?.id}
             homeTeamId={home?.id}
+            homeName={home?.name ?? home?.code ?? ""}
+            awayName={away?.name ?? away?.code ?? ""}
+            homeLogo={home?.logo}
+            awayLogo={away?.logo}
             isDark={true}
             league="NBA"
+            gameStatusDescription={gameStatusDescription}
           />
 
           {gameStats.length > 0 && (
             <GameTeamStats
               stats={gameStats}
+              homeLogo={home?.logo}
+              awayLogo={away?.logo}
+              homeCode={home?.code}
+              awayCode={away?.code}
               gameStatusDescription={gameStatusDescription}
               isDark={true}
             />
@@ -74,13 +88,12 @@ export default function GamePreviewContent({
 
       {/* Injuries */}
 
-      <TeamInjuries injuries={injuries} isDark={true} />
+      <TeamInjuries injuries={injuries ?? []} league="NBA" isDark={true} />
 
       <Officials
         officials={officials ?? []}
-        loading={false}
-        error={null}
         isDark={true}
+        gameStatusDescription={gameStatusDescription}
       />
 
       {/* Venue Info */}
@@ -88,13 +101,11 @@ export default function GamePreviewContent({
         <GameLocation
           venueImage={venueImage}
           venueName={venueName}
-          location={venueLocation}
+          location={venueLocation ?? venueCity}
           address={venueAddress}
           venueCapacity={venueCapacity}
           venueAttendance={venueAttendance}
           weather={weather}
-          loading={weatherLoading}
-          error={weatherError}
           isDark={true}
         />
       )}

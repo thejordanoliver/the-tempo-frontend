@@ -6,7 +6,7 @@ import { LeagueType } from "types/types";
 import HeaderSkeleton from "../HeaderSkeleton";
 
 type Props = {
-  league: LeagueType;
+  league: string;
 };
 
 export default function LineScoreSkeleton({ league }: Props) {

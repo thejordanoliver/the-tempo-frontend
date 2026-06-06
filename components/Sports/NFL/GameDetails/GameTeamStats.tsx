@@ -13,6 +13,7 @@ import {
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
+
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
 
@@ -83,16 +84,6 @@ export default function GameTeamStats({
   const styles = gameTeamStatsStyles(isDark);
 
   const isNFL = league === "NFL";
-
-  if (!Array.isArray(stats) || stats.length < 2) return null;
-
-  const away = isNFL ? stats[0] : stats[1];
-  const home = isNFL ? stats[1] : stats[0];
-
-  const awayStats = flattenStats(away.statistics);
-  const homeStats = flattenStats(home.statistics);
-
-  // ✅ SAFE: All hooks after this point
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const heightAnim = useRef(
@@ -107,7 +98,15 @@ export default function GameTeamStats({
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [expanded, fullHeight]);
+  }, [expanded, fullHeight, heightAnim]);
+
+  if (!Array.isArray(stats) || stats.length < 2) return null;
+
+  const away = isNFL ? stats[0] : stats[1];
+  const home = isNFL ? stats[1] : stats[0];
+
+  const awayStats = flattenStats(away.statistics);
+  const homeStats = flattenStats(home.statistics);
 
   const awayTeam = isNFL ? getNFLTeam(away.team.id) : getCFBTeam(away.team.id);
   const homeTeam = isNFL ? getNFLTeam(home.team.id) : getCFBTeam(home.team.id);

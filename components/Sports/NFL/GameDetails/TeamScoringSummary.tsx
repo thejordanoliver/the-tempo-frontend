@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
 import HeadingTwo from "../../../Headings/HeadingTwo";
+
 type Props = {
   scoringPlays?: ScoringPlays | null;
   loading?: boolean;

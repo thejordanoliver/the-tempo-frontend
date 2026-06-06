@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BASE_URL } from "utils/apiClient";
 
 type PredictionResponse = {
   home_team_id: number;
@@ -17,7 +18,6 @@ export function useGamePrediction(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  import { BASE_URL } from "utils/apiClient";
   useEffect(() => {
     async function fetchPrediction() {
       setLoading(true);
@@ -46,7 +46,7 @@ export function useGamePrediction(
     if (home_team_id && away_team_id && season) {
       fetchPrediction();
     }
-  }, [home_team_id, away_team_id, season, BASE_URL]);
+  }, [home_team_id, away_team_id, season]);
 
   return { data, loading, error };
 }

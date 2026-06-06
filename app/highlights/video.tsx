@@ -56,14 +56,6 @@ export default function HighlightVideoScreen() {
     }
   }, [currentIndex, queue.length]);
 
-  if (!initialVideoId) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>No video ID provided.</Text>
-      </View>
-    );
-  }
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -76,6 +68,14 @@ export default function HighlightVideoScreen() {
       ),
     });
   }, [navigation, isDark]);
+
+  if (!initialVideoId) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>No video ID provided.</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView

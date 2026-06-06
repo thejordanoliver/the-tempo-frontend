@@ -1,27 +1,21 @@
 // ./CFB/GamePreview/CenterInfo.tsx
-
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
-import { formatQuarter } from "utils/games";
 
 export type CenterInfoProps = {
-  status: string;
-  date: string;
-  week: string;
-  time: string;
-  period?: string;
-  clock?: string | null;
-  isDark: boolean;
-  downAndDistance: string | undefined;
+  date: string | undefined;
+  time: string | undefined;
+  period: string;
+  clock: string | null;
+  downAndDistance: string | null | undefined;
   broadcast?: string;
   gameStatusDescription: string | undefined;
-  gameStatusShortDetail: string | undefined;
+  gameStatusDetail: string | undefined;
   redzone: boolean | undefined;
 };
 
 export function CenterInfo({
-  status,
   date,
   time,
   redzone,
@@ -30,14 +24,12 @@ export function CenterInfo({
   downAndDistance,
   broadcast,
   gameStatusDescription,
-  gameStatusShortDetail,
+  gameStatusDetail,
 }: CenterInfoProps) {
-  const isRedzone = redzone;
-
+  const styles = CenterInfoStyles;
   const renderDownAndDistance = () => {
     if (!downAndDistance) return null;
 
-    // Split only once on " at "
     const [beforeAt, afterAt] = downAndDistance.split(" at ");
 
     return (
@@ -49,9 +41,9 @@ export function CenterInfo({
             <Text
               style={[
                 styles.downAndDistance,
-                isRedzone && {
+                redzone && {
                   color: Colors.dark.lightRed,
-                }, // or any red you want
+                },
               ]}
             >
               {afterAt}
@@ -62,32 +54,30 @@ export function CenterInfo({
     );
   };
 
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled =
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Not Started";
+  const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
-  const isOvertime = gameStatusShortDetail?.includes("OT");
-  const endOfPeriod = gameStatusDescription === "End of Period";
-  const styles = CenterInfoStyles;
-  const displayPeriod = formatQuarter(period);
+  const isFinal = gameStatusDescription === "Final";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
 
   return (
     <View style={styles.container}>
-      {/* Scheduled */}
-      {isScheduled && !isFinal && !inProgress && (
+      {isScheduled && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{date || "TBD"}</Text>
+          <Text style={styles.date}>{date}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.time}>{time || ""}</Text>
+          <Text style={styles.date}>{time}</Text>
         </View>
       )}
 
-      {/* In Progress + End of Period */}
       {inProgress && (
         <>
           <View style={styles.infoWrapper}>
-            <Text style={styles.period}>{displayPeriod}</Text>
+            <Text style={styles.period}>{period}</Text>
             <View style={styles.statusDivider} />
             <Text style={styles.clock}>{clock}</Text>
           </View>
@@ -95,32 +85,43 @@ export function CenterInfo({
         </>
       )}
 
-      {endOfPeriod && (
+      {inProgress && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>End of {displayPeriod}</Text>
+          <Text style={styles.period}>{period}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.clock}>{clock}</Text>
         </View>
       )}
 
-      {/* Halftime */}
-      {gameStatusDescription === "Halftime" && (
-        <Text style={styles.finalText}>Halftime</Text>
+      {isHalftime && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Halftime</Text>
+        </View>
       )}
 
-      {/* Final */}
-      {gameStatusDescription === "Final" && (
+      {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{date || ""}</Text>
+          <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
 
-      {/* Canceled, Postponed, Delayed */}
-      {(status === "Canceled" ||
-        status === "Postponed" ||
-        status === "Delayed") && <Text style={styles.finalText}>{status}</Text>}
+      {isEndOfPeriod && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>End of {period}</Text>
+        </View>
+      )}
 
-      {status !== "Final" && <Text style={styles.broadcast}>{broadcast}</Text>}
+      {(isCanceled || isDelayed || isForfeited || isPostponed) && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
+        </View>
+      )}
+
+      {broadcast && (inProgress || isScheduled) && (
+        <Text style={styles.broadcast}>{broadcast}</Text>
+      )}
     </View>
   );
 }

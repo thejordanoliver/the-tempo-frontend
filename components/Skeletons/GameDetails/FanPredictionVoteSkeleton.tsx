@@ -1,4 +1,5 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
@@ -31,7 +32,7 @@ export default function FanPredictionVoteSkeleton() {
 
     pulse.start();
     return () => pulse.stop();
-  }, []);
+  }, [pulseAnim]);
 
   const animatedColor = pulseAnim.interpolate({
     inputRange: [0.3, 1],
@@ -76,7 +77,7 @@ export default function FanPredictionVoteSkeleton() {
 
     loop.start();
     return () => loop.stop();
-  }, []);
+  }, [animSplit]);
 
   // 🔥 Mirror the split
   const homeFlex = animSplit.interpolate({

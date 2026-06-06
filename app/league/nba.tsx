@@ -1,44 +1,42 @@
 import { useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/Awards/AwardSeasons";
-import DraftList, {
-  getDefaultDraftYear,
-} from "components/League/Draft/DraftList";
-import SeasonLeadersList from "components/League/SeasonLeadersList";
-import SportsListModal, {
-  SportsListModalRef,
-} from "components/League/SportsListModal";
-import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsList from "components/News/NewsList";
-import GamesList from "components/Sports/NBA/Games/GamesList";
-import { NBAPlayoffBracket } from "components/Sports/NBA/Playoffs/NBAPlayoffBracket";
-import SLGamesList from "components/Sports/NBASummerLeague/Games/SLGamesList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { usePlayoffGames } from "hooks/NBAHooks/usePlayoffGames";
-import { useSeasonGames } from "hooks/NBAHooks/useSeasonGames";
-import { useNBASLGames } from "hooks/NBASLHooks/useNBASLGames";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useSeasonLeaders } from "hooks/useSeasonLeaders";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getNBACalendarSeason, getNBASeason } from "utils/dateUtils";
-import { filterByDate } from "utils/games";
+import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import { XFeed } from "components/League/Social/XFeed";
-import { mockSocialFeed } from "mocks/social";
+import DateNavigator from "../../components/DateNavigator";
+import LeagueForum from "../../components/Forum/LeagueForum";
+import AwardSeasons from "../../components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "../../components/League/Draft/DraftList";
+import SeasonLeadersList from "../../components/League/SeasonLeadersList";
+import SportsListModal, {
+  SportsListModalRef,
+} from "../../components/League/SportsListModal";
+import { StandingsList } from "../../components/League/Standings/StandingsList";
+import NewsList from "../../components/News/NewsList";
+import GamesList from "../../components/Sports/NBA/Games/GamesList";
+import { NBAPlayoffBracket } from "../../components/Sports/NBA/Playoffs/NBAPlayoffBracket";
+import SLGamesList from "../../components/Sports/NBASummerLeague/Games/SLGamesList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { Colors } from "../../constants/styles";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useNBASLGames } from "../../hooks/NBAHooks/useNBASLGames";
+import { usePlayoffGames } from "../../hooks/NBAHooks/usePlayoffGames";
+import { useSeasonGames } from "../../hooks/NBAHooks/useSeasonGames";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { useSeasonLeaders } from "../../hooks/NBAHooks/useSeasonLeaders";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { filterByDate, getNBACalendarSeason } from "../../utils/dateUtils";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -47,20 +45,19 @@ export default function NBALeagueScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const league = "NBA";
-  const currentYear = getNBASeason();
-  const playoffYear = Number(currentYear);
+
   const {
     games,
     error: errorGames,
     loading: loadingGames,
     refreshGames: refreshGames,
-  } = useSeasonGames(currentYear);
+  } = useSeasonGames();
 
   const {
     games: summerGames,
     loading: loadingSummer,
     refreshSummerGames,
-  } = useNBASLGames({ season: currentYear.toString() });
+  } = useNBASLGames();
   const { calendar } = useLeagueCalendar(league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date>(
@@ -83,18 +80,22 @@ export default function NBALeagueScreen() {
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
+
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
-  } = useLeaguesNews(10, league);
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
   const {
     bracket,
     playoffsLoading,
     playoffsError,
     refreshing: playoffRefreshing,
     onRefresh,
-  } = usePlayoffGames(playoffYear);
+  } = usePlayoffGames();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -200,30 +201,14 @@ export default function NBALeagueScreen() {
 
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <XFeed
-                items={mockSocialFeed}
-                loading={newsLoading}
-                error={null}
-              />
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           {/* STANDINGS */}

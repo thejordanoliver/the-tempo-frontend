@@ -2,7 +2,6 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
 import { lineScoreStyles } from "styles/GameDetailStyles/LineScoreStyles";
-import { LeagueType } from "types/types";
 import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
 type ScoreValue = string | number | null | undefined;
 
@@ -18,7 +17,7 @@ type Props = {
   awayCode: string | undefined;
   isDark: boolean;
   loading?: boolean;
-  league?: LeagueType;
+  league?: string;
   gameStatusDescription: string | undefined;
 };
 
@@ -57,7 +56,18 @@ export default function LineScore({
   const renderScore = (score: ScoreValue) =>
     score != null ? String(score) : "-";
 
-  const baseColumns = league === "CBB" ? 2 : league === "NHL" ? 3 : 4;
+  const baseColumns =
+    league === "CBB"
+      ? 2
+      : league === "NHL"
+        ? 3
+        : league === "MLB"
+          ? 9
+          : league === "CB"
+            ? 9
+            : league === "SB"
+              ? 7
+              : 4;
 
   const numColumns = Math.max(
     baseColumns,
@@ -67,41 +77,32 @@ export default function LineScore({
 
   const getPeriodLabel = (index: number): string => {
     // ---------------- MLB ----------------
-    if (league === "MLB") {
+    if (league === "MLB" || league === "CB") {
+      return `${index + 1}`;
+    }
+
+    if (league === "SB") {
       return String(index + 1);
     }
 
     // ---------------- NHL ----------------
     if (league === "NHL") {
-      if (index < 3) return `P${index + 1}`;
+      if (index < 3) return `${index + 1}`;
       if (index === 3) return "OT";
-      return `OT${index - 2}`;
+      return `${index - 2}OT`;
     }
 
     // ---------------- CBB ----------------
     if (league === "CBB") {
-      if (index === 0) return "1H";
-      if (index === 1) return "2H";
+      if (index === 0) return "1";
+      if (index === 1) return "2";
       if (index === 2) return "OT";
-      return `OT${index - 1}`;
-    }
-    // ---------------- NFL ----------------
-    if (league === "NFL") {
-      if (index < 4) return `Q${index + 1}`;
-      if (index === 4) return "OT";
-      return `OT${index - 3}`;
-    }
-    // ---------------- CFB ----------------
-    if (league === "CFB") {
-      if (index < 4) return `Q${index + 1}`;
-      if (index === 4) return "OT";
-      return `OT${index - 3}`;
+      return `${index - 1}OT`;
     }
 
-    // ---------------- NBA ----------------
-    if (index < 4) return `Q${index + 1}`;
+    if (index < 4) return `${index + 1}`;
     if (index === 4) return "OT";
-    return `OT${index - 3}`;
+    return `${index - 3}OT`;
   };
 
   const columns = Array.from({ length: numColumns }, (_, i) =>
@@ -113,8 +114,8 @@ export default function LineScore({
   if (loading) {
     return <LineScoreSkeleton league={league} />;
   }
-  if (gameStatusDescription === "Scheduled") return null;
-  if (!linescore) return null;
+
+  if (!linescore || gameStatusDescription === "Scheduled") return null;
 
   return (
     <View style={styles.container}>

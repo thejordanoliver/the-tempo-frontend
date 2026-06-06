@@ -1,12 +1,11 @@
 export type PlayerResult = {
   id: number;
   player_id: number;
-  name: string;
-  avatarUrl: string;
+  team_id: number;
+  espn_id: string;
+  full_name: string;
   headshot_url: string;
   position: string;
-  espn_team_id: string;
-  team_id: number;
   isNFL?: boolean;
   isMMA?: boolean;
   isNBA?: boolean;

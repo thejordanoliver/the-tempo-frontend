@@ -8,8 +8,10 @@ export type CardLayout = {
 export type NBATeam = {
   id: number;
   espnID: number;
+  seed?: number;
   summerLeagueId?: number;
   name: string;
+  shortName: string;
   fullName: string;
   logo: any;
   logoLight: any;
@@ -162,8 +164,8 @@ export type PlayoffGame = {
 
 export type PlayoffSeries = {
   teams: {
-    top: NBATeam;
-    bottom: NBATeam;
+    top: PlayoffTeam;
+    bottom: PlayoffTeam;
   };
   wins: Record<string, number>;
   leader: number;
@@ -183,9 +185,9 @@ export type BracketMatchup = {
   id: string;
   round: number;
   conference: "east" | "west" | "finals";
-  topTeam?: NBATeam;
-  bottomTeam?: NBATeam;
-  winner?: NBATeam;
+  topTeam?: PlayoffTeam;
+  bottomTeam?: PlayoffTeam;
+  winner?: PlayoffTeam;
   wins: Record<string, number>;
   leader?: number;
   status?: string;

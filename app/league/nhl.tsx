@@ -1,36 +1,35 @@
+import GamesList from "@/components/Sports/NHL/Games/GamesList";
+import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
+import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/Awards/AwardSeasons";
-import SportsListModal, {
-  SportsListModalRef,
-} from "components/League/SportsListModal";
-import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsList from "components/News/NewsList";
-import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import NHLGamesList from "components/Sports/NHL/Games/NHLGamesList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
-import { getNHLTeam } from "constants/teamsNHL";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useSeasonLeaders } from "hooks/FootballHooks/useSeasonLeaders";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useNHLSeasonGames } from "hooks/NHLHooks/useNHLSeasonGames";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { NHLGame } from "types/hockey";
-import { getNHLSeason } from "utils/dateUtils";
-import { filterByDate } from "utils/games";
+import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import DateNavigator from "../../components/DateNavigator";
+import LeagueForum from "../../components/Forum/LeagueForum";
+import AwardSeasons from "../../components/League/Awards/AwardSeasons";
+import SportsListModal, {
+  SportsListModalRef,
+} from "../../components/League/SportsListModal";
+import { StandingsList } from "../../components/League/Standings/StandingsList";
+import NewsList from "../../components/News/NewsList";
+import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { Colors } from "../../constants/styles";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { getNHLSeason } from "../../utils/dateUtils";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -41,7 +40,7 @@ export default function NHLLeagueScreen() {
     Number(getNHLSeason()),
     league,
   );
-  const { games, loading: liveLoading } = useNHLSeasonGames(currentSeason);
+
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(currentSeason);
@@ -50,17 +49,30 @@ export default function NHLLeagueScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [gamesRefreshing, setGamesRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+
+  const { calendar } = useLeagueCalendar(league);
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useHockeyGames(selectedDate);
+
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-  const [refreshing, setRefreshing] = useState(false);
+
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
-  } = useLeaguesNews(10, league);
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
   // Header
   useLayoutEffect(() => {
@@ -81,83 +93,38 @@ export default function NHLLeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  // --- Normalize regular season games ---
-  const normalizedSeasonGames = games.map((game: NHLGame) => {
-    const home = getNHLTeam(game.teams?.home.id ?? {});
-    const away = getNHLTeam(game.teams?.away.id ?? {});
+  const handleScoresRefresh = React.useCallback(async () => {
+    setGamesRefreshing(true);
 
-    let rawTimestamp: number | null = null;
-
-    if (typeof game.date === "number") {
-      rawTimestamp = game.date;
-    } else if (typeof game.timestamp === "number") {
-      rawTimestamp = game.timestamp;
-    }
-
-    const date = rawTimestamp ? dayjs(rawTimestamp * 1000) : dayjs(NaN);
-
-    return {
-      ...game,
-      date: date.toDate(),
-      dateString: date.isValid() ? date.format("YYYY-MM-DD") : "",
-      time: date.isValid() ? date.format("h:mm A") : "",
-      home,
-      away,
-    };
-  });
-
-  // --- Helper to sort live games on top ---
-  const sortLiveGamesFirst = (gamesArray: any[]) =>
-    [...gamesArray].sort((a, b) => {
-      const aStatus = a.status?.long?.toLowerCase() || "";
-      const bStatus = b.status?.long?.toLowerCase() || "";
-
-      if (aStatus === "in play" && bStatus !== "in play") return -1;
-      if (aStatus !== "in play" && bStatus === "in play") return 1;
-
-      // Otherwise, sort by date/time
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
-
-  // Filter both sets by selectedDate
-  const filteredSeasonGames = sortLiveGamesFirst(
-    filterByDate(normalizedSeasonGames, selectedDate),
-  );
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
     try {
+      await refreshGames();
     } catch (error) {
-      console.warn("Failed to refresh:", error);
+      console.warn("Failed to refresh games:", error);
     } finally {
-      setRefreshing(false);
+      setGamesRefreshing(false);
     }
-  };
+  }, [refreshGames]);
 
-  // --- Change Date (now local) ---
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
       dayjs(prev).add(days, "day").startOf("day").toDate(),
     );
   };
 
-  // Helper to mark games on calendar
-  const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce(
-      (acc, game) => {
-        const localDate = new Date(game.date);
-        const iso = `${localDate.getFullYear()}-${String(
-          localDate.getMonth() + 1,
-        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+  const markDates = (calendarArray: string[]) =>
+    calendarArray.reduce(
+      (acc, dateStr) => {
+        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+
         acc[iso] = {
           marked: true,
           dotColor: isDark ? Colors.white : Colors.black,
         };
+
         return acc;
       },
       {} as Record<string, { marked: boolean; dotColor: string }>,
     );
-
   return (
     <>
       <MainScrollTabBar
@@ -189,35 +156,26 @@ export default function NHLLeagueScreen() {
               isDark={isDark}
             />
 
-            <NHLGamesList
-              games={filteredSeasonGames} // <-- filtered by selectedDate
-              loading={liveLoading}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
+            <GamesList
+              games={games}
+              error={gamesError}
+              loading={loadingGames}
+              refreshing={gamesRefreshing}
+              onRefresh={handleScoresRefresh}
+              scrollEnabled={true}
             />
           </View>
 
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           {/* STANDINGS */}
@@ -236,7 +194,6 @@ export default function NHLLeagueScreen() {
               error={error}
               categories={categories}
               league={league}
-              isDark={isDark}
             />
           </View>
 
@@ -263,7 +220,7 @@ export default function NHLLeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...normalizedSeasonGames]),
+          ...markDates([...calendar]),
         }}
       />
 

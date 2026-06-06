@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PlayoffGame, PlayoffResponse, PlayoffSeries } from "types/nba";
 import { apiClient } from "utils/apiClient";
+import { getNBASeason } from "utils/dateUtils";
 import { buildPlayoffTree } from "utils/NBAUtils/buildBracket";
 
 /* ================= TYPE GUARD ================= */
@@ -11,12 +12,12 @@ const isValidSeries = (s: unknown): s is PlayoffSeries => {
 
 /* ================= HOOK ================= */
 
-export const usePlayoffGames = (season: number) => {
+export const usePlayoffGames = () => {
   const [data, setData] = useState<PlayoffResponse | null>(null);
   const [playoffsLoading, setPlayoffsLoading] = useState(false);
   const [playoffsError, setPlayoffsError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
+  const season = getNBASeason();
   const fetchPlayoffs = useCallback(async () => {
     try {
       setPlayoffsError(null);

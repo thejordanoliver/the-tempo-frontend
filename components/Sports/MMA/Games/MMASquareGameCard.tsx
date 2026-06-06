@@ -1,18 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { Text, TouchableOpacity, View } from "react-native";
-import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
+import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { MMAFightCardProps } from "types/mma";
-import { formatRound } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatRound, getBroadcastDisplay } from "utils/games";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
-export default function MMASquareGameCard({ game, isDark }: MMAFightCardProps) {
+export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const router = useRouter();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -87,7 +89,7 @@ export default function MMASquareGameCard({ game, isDark }: MMAFightCardProps) {
   const period = details?.fight?.status.period;
   const displayClock = details?.fight?.status.displayClock;
   const headline = details?.event?.shortName;
-  const styles = SquareGameCardStyles(isDark);
+  const styles = squareGameCardStyles(isDark);
 
   const isTie =
     game.fighters.first.winner === false &&

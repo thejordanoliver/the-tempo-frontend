@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 import { CFBRecruit } from "types/football";
 
+export type FootballRecruit = CFBRecruit;
+
 export interface RecruitOffer {
   visit: string | null;
   school: string;

@@ -4,23 +4,29 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Defs, Path, Pattern, Rect } from "react-native-svg";
 
-interface MinimalTeam {
-  name: string | undefined;
-  logo: any;
-  color?: string;
-}
-
 interface Props {
-  home: MinimalTeam & { chance?: number };
-  away: MinimalTeam & { chance?: number };
+  homeCode: string;
+  homeLogo: any;
+  homeColor: string;
+  homeChance: number;
+  awayCode: string;
+  awayLogo: any;
+  awayColor: string;
+  awayChance: number;
   size?: number;
   isDark: boolean;
   gameStatusDescription: string | undefined;
 }
 
 const MatchupPredictor: React.FC<Props> = ({
-  home,
-  away,
+  homeCode,
+  homeLogo,
+  homeColor,
+  homeChance,
+  awayCode,
+  awayLogo,
+  awayColor,
+  awayChance,
   size = 184,
   isDark,
   gameStatusDescription,
@@ -28,11 +34,6 @@ const MatchupPredictor: React.FC<Props> = ({
   const styles = mathupPredictorStyles(isDark);
   const strokeWidth = 10;
   const radius = 44.8;
-
-  const homeChance = home.chance ?? 50;
-  const awayChance = away.chance ?? 50;
-
-  const homeColor = home.color ?? Colors.midTone;
 
   const animatedHome = useRef(new Animated.Value(0)).current;
   const animatedAway = useRef(new Animated.Value(0)).current;
@@ -57,7 +58,7 @@ const MatchupPredictor: React.FC<Props> = ({
         useNativeDriver: false,
       }),
     ]).start();
-  }, [homeChance, awayChance]);
+  }, [homeChance, awayChance, animatedHome, animatedAway]);
 
   // Sync animated values to state
   useEffect(() => {
@@ -73,7 +74,7 @@ const MatchupPredictor: React.FC<Props> = ({
       animatedHome.removeListener(homeListener);
       animatedAway.removeListener(awayListener);
     };
-  }, []);
+  }, [animatedHome, animatedAway]);
 
   const polarToCartesian = (
     cx: number,
@@ -124,7 +125,7 @@ const MatchupPredictor: React.FC<Props> = ({
   const dividerBottom = 50 + dividerHeight / 2;
 
   if (!homeChance || !awayChance) return null;
-  if (gameStatusDescription === "Scheduled") return null;
+  if (gameStatusDescription === "In Progress") return null;
 
   return (
     <View style={styles.outerContainer}>
@@ -187,11 +188,11 @@ const MatchupPredictor: React.FC<Props> = ({
           {/* Center content */}
           <View style={styles.innerContent}>
             <View style={styles.teamContainer}>
-              <Image source={away.logo} style={styles.logo} />
+              <Image source={awayLogo} style={styles.logo} />
             </View>
 
             <View style={styles.teamContainer}>
-              <Image source={home.logo} style={styles.logo} />
+              <Image source={homeLogo} style={styles.logo} />
             </View>
           </View>
         </View>
@@ -224,7 +225,7 @@ const MatchupPredictor: React.FC<Props> = ({
                   fill="url(#legendAwayPattern)"
                 />
               </Svg>
-              <Text style={styles.legendText}>{away.name}</Text>
+              <Text style={styles.legendText}>{awayCode}</Text>
             </View>
             <Text style={styles.chanceText}>{awayChance.toFixed(1)}%</Text>
           </View>
@@ -234,7 +235,7 @@ const MatchupPredictor: React.FC<Props> = ({
               <View
                 style={[styles.legendSwatch, { backgroundColor: homeColor }]}
               />
-              <Text style={styles.legendText}>{home.name}</Text>
+              <Text style={styles.legendText}>{homeCode}</Text>
             </View>
             <Text style={styles.chanceText}>{homeChance.toFixed(1)}%</Text>
           </View>

@@ -23,82 +23,92 @@ export interface NHLTeam {
   national: boolean;
 }
 
-export type NHLGame = {
-  id: number;
-  date: string;
-  time: string;
-  timestamp: number;
-  timezone: string;
-  week: null;
-  timer: null;
-  status: {
-    long:
-      | "Not Started"
-      | "Finished"
-      | "First Period"
-      | "Second Period"
-      | "Third Period"
-      | "Over Time"
-      | "Penalties Time"
-      | "Break Time"
-      | "Awarded"
-      | "Postponed"
-      | "Cancelled"
-      | "Interrupted"
-      | "Abandoned"
-      | "After Over Time"
-      | "After Penalties";
-
-    short:
-      | "NS" // Not Started
-      | "P1" // First Period (In Play)
-      | "P2" // Second Period (In Play)
-      | "P3" // Third Period (In Play)
-      | "OT" // Over Time (In Play)
-      | "PT" // Penalties Time (In Play)
-      | "BT" // Break Time (In Play)
-      | "AW" // Awarded
-      | "POST" // Postponed
-      | "CANC" // Cancelled
-      | "INTR" // Interrupted
-      | "ABD" // Abandoned
-      | "AOT" // After Over Time (Game Finished)
-      | "AP" // After Penalties (Game Finished)
-      | "FT"; // Finished (Game Finished)
-  };
-  country: {
+export type HockeyGame = {
+  league: {
     id: number;
+    uid: string;
+    code: string;
+    name: string;
+    slug: string;
+  };
+  id: string | number;
+  uid: string;
+  name: string;
+  shortName: string;
+  headline: string;
+  date: string;
+  startDate: string;
+  timestamp: number;
+  season: {
+    year: number;
+    type: number;
+    slug: string;
+  };
+  status: {
+    state: string;
+    description: string;
+    detail: string;
+    shortDetail: string;
+    period: number;
+    clock: string;
+    completed: boolean;
+  };
+  venue: {
+    id: string;
+    name: string;
+    city: string;
+    state: string;
+    indoor: boolean;
+  };
+  broadcasts: [];
+  geoBroadcasts: [];
+  innings: number;
+  home: {
+    id: number;
+    espnId: number;
     name: string;
     code: string;
-    flag: string;
+    primaryColor: string;
+    secondaryColor: string;
+    score: number;
+    hits: number;
+    errors: number;
+    record: string;
+    homeRank: number;
+    winner: boolean;
   };
-  league: {
-    id: 3;
+  away: {
+    id: number;
+    espnId: number;
     name: string;
-    type: string;
-    logo: string;
-    season: 2025;
+    fullName: string;
+    code: string;
+    primaryColor: string;
+    secondaryColor: string;
+    score: number;
+    hits: number;
+    errors: number;
+    record: string;
+    awayRank: number;
+    winner: boolean;
   };
-  teams: {
-    home: NHLTeam;
-    away: NHLTeam;
+  isConferenceGame: boolean;
+  isNeutralSite: boolean;
+  attendance: number;
+  playByPlayAvailable: boolean;
+  recent: true;
+  wasSuspended: boolean;
+  situation: null;
+  raw: {
+    eventId: string;
+    competitionId: string;
   };
-  scores: {
-    home: number;
-    away: number;
-  };
-  periods: {
-    first: string;
-    second: string;
-    third: string;
-    overtime: null;
-    penalties: null;
-  };
-  events: true;
 };
 
 export type HockeyGameCardProps = {
-  game: NHLGame;
+  game: HockeyGame;
+  isNHL: boolean;
+  isMCH: boolean;
 };
 
 export interface NHLPlayer {

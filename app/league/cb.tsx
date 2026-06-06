@@ -1,28 +1,28 @@
 import { useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import SportsListModal, {
-  SportsListModalRef,
-} from "components/League/SportsListModal";
-import NewsList from "components/News/NewsList";
-import GamesList from "components/Sports/CB/Games/GamesList";
-import { CBStandingsList } from "components/Sports/CB/Standings/CBStandingsList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBDailyGames } from "hooks/CBHooks/useCBDailyGames";
-import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import DateNavigator from "../../components/DateNavigator";
+import SportsListModal, {
+  SportsListModalRef,
+} from "../../components/League/SportsListModal";
+import NewsList from "../../components/News/NewsList";
+import GamesList from "../../components/Sports/Baseball/Games/GamesList";
+import { CBStandingsList } from "../../components/Sports/Baseball/Standings/CBStandingsList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { Colors } from "../../constants/styles";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useBaseballGames } from "../../hooks/BaseballHooks/useBaseballGames";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -39,7 +39,6 @@ export default function SBLeagueScreen() {
     dayjs().startOf("day").toDate(),
   );
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const [newsRefreshing, setNewsRefreshing] = useState(false);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
   const navigation = useNavigation();
@@ -54,14 +53,15 @@ export default function SBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useCBDailyGames(selectedDate, "cb");
+  } = useBaseballGames(selectedDate, "cb");
 
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
     refresh: refreshNews,
-  } = useLeaguesNews(10, league);
+  } = useLeaguesNews(league, 10);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -92,18 +92,6 @@ export default function SBLeagueScreen() {
       setGamesRefreshing(false);
     }
   }, [refreshGames]);
-
-  const handleNewsRefresh = useCallback(async () => {
-    setNewsRefreshing(true);
-
-    try {
-      await refreshNews();
-    } catch (error) {
-      console.warn("Failed to refresh news:", error);
-    } finally {
-      setNewsRefreshing(false);
-    }
-  }, [refreshNews]);
 
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
@@ -164,32 +152,21 @@ export default function SBLeagueScreen() {
               loading={loadingGames}
               refreshing={gamesRefreshing}
               onRefresh={handleScoresRefresh}
+              isCB={true}
               scrollEnabled={true}
             />
           </View>
 
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={newsRefreshing}
-                  onRefresh={handleNewsRefresh}
-                  tintColor={isDark ? Colors.white : Colors.black}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing={newsRefreshing}
-                onRefresh={handleNewsRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           {/* STANDINGS */}

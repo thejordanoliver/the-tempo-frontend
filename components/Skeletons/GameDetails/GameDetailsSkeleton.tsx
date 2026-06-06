@@ -1,9 +1,8 @@
+import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const SkeletonCard = ({ shimmerColors }: { shimmerColors: string[] }) => {
   return (

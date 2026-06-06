@@ -9,7 +9,7 @@ import { getWNBATeam } from "constants/teamsWNBA";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
 
-import { MLBTeam } from "types/baseball";
+import { BaseballTeam } from "types/baseball";
 import { FootballTeam } from "types/football";
 import { LeagueType } from "types/types";
 import { NBATeam } from "types/nba";
@@ -140,7 +140,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "MLB": {
-      const t = team as MLBTeam;
+      const t = team as BaseballTeam;
 
       return (
         <View style={{ width: "100%" }}>

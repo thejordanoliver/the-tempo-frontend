@@ -1,38 +1,44 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LineScore from "components/Sports/NBA/GameDetails/LineScore";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
-import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
 import React from "react";
-import NHLInjuries from "../GameDetails/NHLInjuries";
-import ShotChart from "../GameDetails/ShotChart";
+
+type GamePreviewContentProps = {
+  homeColor: string;
+  homeName: string;
+  homeCode: string;
+  homeLogo: any;
+  awayColor: string;
+  awayName: string;
+  awayCode: string;
+  awayLogo: any;
+  lineScore: any;
+  venueImage?: any;
+  venueName?: string;
+  venueLocation?: string;
+  venueAddress?: string;
+  venueCity?: string | null;
+  venueCapacity?: string | null;
+  venueAttendance?: number | null;
+  weather?: any;
+  gameStatusDescription: string;
+};
 
 export default function GamePreviewContent({
-  game,
-  home,
-  away,
-  homeChance,
-  awayChance,
+  homeCode,
+  awayCode,
+  homeName,
+  awayName,
   lineScore,
-  homeLastGames,
-  awayLastGames,
-  highlights,
-  plays,
-  officials,
-  injuries,
-  teamPlayersMap,
-  detailsLoading,
-  detailsError,
-  resolvedVenueImage,
-  resolvedVenueName,
-  resolvedVenueCity,
-  resolvedVenueAddress,
-  resolvedVenueCapacity,
+  venueImage,
+  venueName,
+  venueLocation,
+  venueAddress,
+  venueAttendance,
+  venueCapacity,
   weather,
-  isDark,
   gameStatusDescription,
-}: any) {
+}: GamePreviewContentProps) {
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
@@ -41,51 +47,22 @@ export default function GamePreviewContent({
       {lineScore && (
         <LineScore
           linescore={lineScore}
-          homeCode={home.code}
-          awayCode={away.code}
+          homeCode={homeCode}
+          awayCode={awayCode}
           league="NHL"
           isDark
+          gameStatusDescription={gameStatusDescription}
         />
       )}
 
-      {!plays && (
-        <ShotChart
-          plays={plays}
-          homeTeamId={String(home.espnID)}
-          awayTeamId={String(away.espnID)}
-          isDark
-        />
-      )}
-
-      <GameSummary plays={plays ?? []} isDark />
-
-      <HighlightVideoList highlights={highlights} isDark />
-
-      <NHLInjuries
-        injuries={injuries}
-        loading={detailsLoading}
-        error={null}
-        awayTeamId={String(away.espnID)}
-        homeTeamId={String(home.espnID)}
-        isDark
-      />
-
-      <Officials
-        officials={officials ?? []}
-        loading={detailsLoading}
-        error={null}
-        isDark
-      />
       <GameLocation
-        venueImage={resolvedVenueImage}
-        venueName={resolvedVenueName}
-        location={resolvedVenueCity}
-        address={resolvedVenueAddress}
-        venueCapacity={resolvedVenueCapacity}
-        venueAttendance={undefined}
+        venueImage={venueImage}
+        venueName={venueName}
+        location={venueLocation}
+        address={venueAddress}
+        venueCapacity={venueCapacity}
+        venueAttendance={venueAttendance}
         weather={weather}
-        loading={false}
-        error={null}
         isDark
       />
     </BottomSheetScrollView>

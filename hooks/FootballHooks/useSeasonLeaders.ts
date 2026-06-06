@@ -1,11 +1,10 @@
-import { MonthNumbers } from "node_modules/@types/luxon";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 /* ----------------------------- Types ----------------------------- */
 
 export interface Leader {
-  playerId: MonthNumbers;
+  playerId: number;
   value: number;
   rank: number;
   displayValue: string;

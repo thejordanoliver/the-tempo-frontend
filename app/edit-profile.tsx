@@ -1,15 +1,15 @@
 // screens/EditProfileScreen.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Button from "components/Button";
-import ConfirmModal from "components/ConfirmModal";
-import CropEditorModal from "components/CropEditorModal";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import LabeledInput from "components/LabeledInput";
-import ProfileBanner from "components/Profile/ProfileBanner";
-import { usePreferences } from "contexts/PreferencesContext";
+import Button from "../components/Button";
+import ConfirmModal from "../components/ConfirmModal";
+import CropEditorModal from "../components/CropEditorModal";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import LabeledInput from "../components/LabeledInput";
+import ProfileBanner from "../components/Profile/ProfileBanner";
+import { usePreferences } from "../contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
-import { useEditProfile } from "hooks/UserHooks/useEditProfile";
+import { useEditProfile } from "../hooks/UserHooks/useEditProfile";
 import {
   useCallback,
   useEffect,
@@ -24,7 +24,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { AlertConfig } from "types/alert";
+import { AlertConfig } from "../types/alert";
 
 const MAX_BIO_LENGTH = 150;
 const BIO_INPUT_BUFFER = 25;

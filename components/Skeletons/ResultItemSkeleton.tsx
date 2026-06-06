@@ -1,56 +1,27 @@
+import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function SearchItemSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  // Shared pulse animation for all skeleton parts
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [pulseAnim]);
-
-  function SkeletonBlock({ style }: { style: any }) {
-    return <Animated.View style={[style, { opacity: pulseAnim }]} />;
-  }
-  const borderBottomColor = pulseAnim.interpolate({
-    inputRange: [0.3, 1],
-    outputRange: [
-      isDark ? Colors.darkGray : Colors.midTone,
-      isDark ? Colors.lightGray : Colors.midTone,
-    ],
-  });
+  const borderBottomColor = isDark ? Colors.darkGray : Colors.midTone;
 
   return (
-    <Animated.View style={[styles.card, { borderBottomColor }]}>
+    <View style={[styles.card, { borderBottomColor }]}>
       {/* Top Team */}
       <View style={styles.itemContainer}>
-        <SkeletonBlock style={styles.avatarContainer} />
+        <SkeletonCircle size={44} style={styles.avatarContainer} />
         <View style={styles.textContainer}>
           <SkeletonBlock style={styles.name} />
 
           <SkeletonBlock style={styles.subText} />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }
 

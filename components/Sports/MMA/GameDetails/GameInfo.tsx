@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
+import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
 
 type GameInfoProps = {
   gameStatusDescription: string | undefined;
@@ -22,7 +22,7 @@ export function GameInfo({
   period,
   broadcastNetworks,
 }: GameInfoProps) {
-  const styles = getStyles(isDark);
+  const styles = gameInfoStyles(isDark);
 
   const inProgress =
     gameStatusDescription === "In Progress" ||

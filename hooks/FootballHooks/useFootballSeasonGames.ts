@@ -2,12 +2,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { FootballGame } from "types/football";
 import { apiClient } from "utils/apiClient";
+import { getFootballSeason } from "utils/dateUtils";
 
-export function useFootballSeasonGames(season: number, league: number) {
+export function useFootballSeasonGames(league: number) {
   const [games, setGames] = useState<FootballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const season = getFootballSeason();
   const fetchSeasonGames = useCallback(async () => {
     try {
       setLoading(true);

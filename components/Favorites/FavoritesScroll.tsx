@@ -16,7 +16,7 @@ import { teams } from "../../constants/teams";
 import { cbbTeams } from "../../constants/teamsCBB";
 import { cfbTeams } from "../../constants/teamsCFB";
 import { nflTeams } from "../../constants/teamsNFL";
-import { teamTab } from "./TeamTab";
+import { TeamTab } from "./TeamTab";
 
 type TeamWithLeague = {
   id: string | number;
@@ -65,7 +65,7 @@ export default function FavoritesScroll({
               id: number;
               name: string;
               logo?: any;
-              color?: string;
+              color?: string | null;
               wid?: number;
             }
           | undefined;
@@ -105,6 +105,7 @@ export default function FavoritesScroll({
         return {
           ...baseTeam,
           id: league === "WCBB" ? String(baseTeam.wid) : String(baseTeam.id),
+          color: baseTeam.color ?? undefined,
           league: league as LeagueType,
           key: `${league}-${id}`,
           wid: baseTeam.wid,
@@ -127,7 +128,7 @@ export default function FavoritesScroll({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.favorites}
         activationDistance={30}
-        renderItem={teamTab}
+        renderItem={TeamTab}
         onDragBegin={async () => {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           onDragStart?.();

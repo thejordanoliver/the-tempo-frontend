@@ -44,7 +44,24 @@ export type PlayerStats = {
 };
 
 export type TeamStats = {
+  team: {
+    id: string;
+    name: string;
+    fullName: string;
+    code: string;
+    recordSummary: string;
+    standingSummary: string;
+  };
+
+  season: {
+    year: string;
+    type: string;
+    name: string;
+    displayName: string;
+  };
+
   gamesPlayed: number;
+
   pointsPerGame: number;
   reboundsPerGame: number;
   assistsPerGame: number;
@@ -52,12 +69,18 @@ export type TeamStats = {
   blocksPerGame: number;
   turnoversPerGame: number;
   foulsPerGame: number;
+
   fgPercent: number;
   ftPercent: number;
   tpPercent: number;
+
   totalPoints: number;
   totalRebounds: number;
   totalAssists: number;
+  totalSteals: number;
+  totalBlocks: number;
+  totalTurnovers: number;
+  totalFouls: number;
 };
 
 export interface CBBPlayer {
@@ -101,7 +124,7 @@ export type RosterStatsProps = {
   teamId: string;
   teamStats?: TeamStats | null;
   loading?: boolean;
-  error?: Error | null; // ✅ change here
+  error?: Error | null;
   refreshing: boolean;
   onRefresh: () => void;
 };

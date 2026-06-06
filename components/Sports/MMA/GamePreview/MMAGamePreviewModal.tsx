@@ -14,7 +14,7 @@ import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getBroadcastDisplay } from "utils/games";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 import { snapPoints } from "utils/modalUtils";
 import { getGameDate } from "utils/nflGameCardUtils";

@@ -1,26 +1,23 @@
 import { Text, View } from "react-native";
 import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
-import { formatQuarter } from "utils/games";
 type CenterInfoProps = {
-  broadcastNetworks?: string;
-  period: number;
+  broadcast?: string;
+  period: string | number;
   time: string;
   clock?: string | null;
+  date: string;
   gameStatusDetail: string;
-  formattedDate: string;
-  statusText?: string;
   gameStatusDescription: string;
 };
 
 export default function CenterInfo({
   gameStatusDescription,
   gameStatusDetail,
-  broadcastNetworks,
+  broadcast,
   period,
   clock,
   time,
-  formattedDate,
-  statusText,
+  date,
 }: CenterInfoProps) {
   const styles = CenterInfoStyles;
 
@@ -29,59 +26,57 @@ export default function CenterInfo({
   const isFinal = gameStatusDescription === "Final";
   const isHalftime = gameStatusDescription === "Halftime";
   const isCanceled = gameStatusDescription === "Canceled";
+  const isForfeited = gameStatusDescription === "Forfeited";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isEndOfPeriod = gameStatusDescription === "End of Period";
-  const displayPeriod = formatQuarter(period);
 
   return (
     <View style={styles.container}>
-      {isCanceled ? (
-        <Text style={styles.finalText}>Cancelled</Text>
-      ) : isFinal ? (
+      {isScheduled && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
-        </View>
-      ) : isDelayed ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
-      ) : isPostponed ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      ) : isScheduled ? (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formattedDate}</Text>
+          <Text style={styles.date}>{date}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.date}>{time}</Text>
         </View>
-      ) : inProgress ? (
+      )}
+
+      {inProgress && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{displayPeriod}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
-      ) : isHalftime ? (
+      )}
+
+      {isHalftime && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>Halftime</Text>
         </View>
-      ) : isEndOfPeriod ? (
+      )}
+
+      {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>End of {displayPeriod}</Text>
-        </View>
-      ) : (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{statusText}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
+          <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
 
-      {broadcastNetworks && (
-        <Text style={styles.broadcast}>{broadcastNetworks}</Text>
+      {isEndOfPeriod && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>End of {period}</Text>
+        </View>
+      )}
+
+      {(isCanceled || isDelayed || isForfeited || isPostponed) && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
+        </View>
+      )}
+
+      {broadcast && (inProgress || isScheduled) && (
+        <Text style={styles.broadcast}>{broadcast}</Text>
       )}
     </View>
   );

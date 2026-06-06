@@ -1,20 +1,19 @@
 import { Colors } from "constants/styles";
 import { getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, View } from "react-native";
-import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
-export default function SLStackedGameCard({
-  game,
-  isDark,
-}: BasketballGameCardProps) {
+export default function SLStackedGameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const homeId = Number(game.teams.home?.id);
   const awayId = Number(game.teams.away?.id);
@@ -41,7 +40,7 @@ export default function SLStackedGameCard({
   const gameDateStr = gameDate.toISOString();
 
   const holidayLabel = getHolidayLabel(gameDate);
-  const styles = StackedGameCardStyles(isDark);
+  const styles = stackedGameCardStyles(isDark);
 
   const isLasVegas = game.league.id === 17;
   const detailsLeague = isLasVegas ? "summerVegas" : "summerUtah";
@@ -129,7 +128,7 @@ export default function SLStackedGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
@@ -142,7 +141,7 @@ export default function SLStackedGameCard({
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfPeriod)
-      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+      return <Text style={styles.clock}>End of {formatQuarter(period ?? 0)}</Text>;
 
     if (isFinal)
       return (

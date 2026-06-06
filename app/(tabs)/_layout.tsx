@@ -1,7 +1,7 @@
-import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
+import { usePreferences } from "../../contexts/PreferencesContext";
 
 export default function TabLayout() {
   const { resolvedColorScheme } = usePreferences();

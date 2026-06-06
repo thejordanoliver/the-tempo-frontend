@@ -1,58 +1,54 @@
+import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
+import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
+import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
+import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import { useLastTeamGame } from "@/hooks/BasketballHooks/useLastTeamGame";
+import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
+import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import HeadingTwo from "components/Headings/HeadingTwo";
-import CBBGameCard from "components/Sports/CBB/Games/CBBGameCard";
-import PlayerHeader from "components/Sports/CBB/Player/PlayerHeader";
-import PlayerStatTable from "components/Sports/CBB/Player/PlayerStatTable";
-import SeasonStatCard from "components/Sports/CBB/Player/SeasonStatCard";
+import { Colors, globalStyles } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useBasketballPlayerSeasons } from "hooks/CBBHooks/useBasketballPlayerSeasons";
-import { usePlayerDetail } from "hooks/CBBHooks/usePlayerDetail";
 import { useLayoutEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
-  const params = useLocalSearchParams<{
+  const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
-    teamId?: string;
-    league?: string;
+    teamId: string;
+    league: any;
   }>();
-
-  const navigation = useNavigation();
+  const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
-  // -------------------------
-  // Params
-  // -------------------------
-  const playerId = params.id;
-  const teamIdParam = params.teamId;
-  // console.log(params);
-
-  const league = params.league === "WCBB" ? "WCBB" : "CBB";
+  const global = globalStyles(isDark);
+  const navigation = useNavigation();
+  const playerId = Number(id);
   const isWomen = league === "WCBB";
+  const { player, loading, error } = usePlayerById(playerId, league);
+  const team = teamId ? getCBBTeam(teamId, isWomen) : null;
+  const teamLogo = getCBBTeamLogo(teamId, true, isWomen);
+  const teamColor = team?.color ?? Colors.midTone;
 
-  // -------------------------
-  // Hook
-  // -------------------------
-  const { player, loading, error, enrichedLastGame } = usePlayerDetail(
-    playerId,
-    teamIdParam,
-    isWomen,
-  );
+  const {
+    game,
+    loading: gameLoading,
+    error: gameError,
+  } = useLastTeamGame({
+    teamId: teamId,
+    isWomen: isWomen,
+  });
+
   const {
     seasonStats,
     seasonStatsFlattened,
     careerStatsFlattened,
-    loading: statsLoading,
-    error: statsError,
-  } = useBasketballPlayerSeasons(Number(playerId), isWomen);
-  const styles = playerScreenStyles;
-  const numericTeamId = Number(teamIdParam);
-  const team = getCBBTeam(numericTeamId, isWomen);
-  const teamLogo = getCBBTeamLogo(numericTeamId, true, isWomen);
+    loading: seasonsLoading,
+    error: seasonsError,
+  } = usePlayerSeasons(playerId, isWomen);
 
   // -------------------------
   // Header
@@ -61,29 +57,33 @@ export default function PlayerDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={numericTeamId}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={() => navigation.goBack()}
-          teamCode={team?.code}
           isTeamScreen
           isPlayerScreen
-          league={league}
         />
       ),
     });
-  }, [navigation, numericTeamId, team, league, isWomen]);
+  }, [navigation, teamLogo, teamColor]);
 
-  if (loading || error || !player) return null;
+  if (loading)
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+
+  if (error || !player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader
-        player={player}
-        avatarUrl={player.headshot_url}
-        isDark={isDark}
-        isWomen={isWomen}
-      />
+      <PlayerHeader player={player} isDark={isDark} isCollegePlayer />
 
       <SeasonStatCard
         seasonStats={seasonStats}
@@ -91,16 +91,19 @@ export default function PlayerDetailScreen() {
         error={error}
       />
 
-      {enrichedLastGame && (
-        <View>
-          <HeadingTwo isDark={isDark}>Last Game</HeadingTwo>
-          <CBBGameCard game={enrichedLastGame} isWomen={isWomen} />
-        </View>
-      )}
+      <LatestGame
+        game={game}
+        error={gameError}
+        loading={gameLoading}
+        league={league}
+        isDark={isDark}
+      />
 
       <PlayerStatTable
         seasonStatsFlattened={seasonStatsFlattened}
         careerStatsFlattened={careerStatsFlattened}
+        loading={seasonsLoading}
+        error={seasonsError}
         isDark={isDark}
       />
     </ScrollView>

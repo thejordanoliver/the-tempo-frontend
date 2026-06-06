@@ -1,15 +1,15 @@
 // TeamInjuries.tsx
+import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
-import { Player } from "hooks/NBAHooks/usePlayersByTeam";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import TeamInjuriesList from "./TeamInjuriesList";
 
-// ✅ Define type for injuries
 export type TeamInjury = {
   team: {
     id: string | number;
@@ -36,17 +36,20 @@ type Props = {
   injuries: TeamInjury[];
   isDark: boolean;
   loading?: boolean;
+  league: "NBA" | "WNBA";
   teamPlayersMap?: Record<string, Player[]>;
 };
 
 export default function TeamInjuries({
   injuries,
   loading,
+  league,
   isDark,
   teamPlayersMap = {},
 }: Props) {
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const styles = teamInjuryStyles(isDark);
+  const isWNBA = league === "WNBA";
 
   const reorderedInjuries =
     injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);
@@ -62,7 +65,7 @@ export default function TeamInjuries({
     if (!selectedTeamId && tabs.length) {
       setSelectedTeamId(tabs[0].id);
     }
-  }, [tabs]);
+  }, [tabs, selectedTeamId]);
 
   const currentInjuries = reorderedInjuries.find(
     (t) => String(t.team.id) === selectedTeamId,
@@ -89,9 +92,13 @@ export default function TeamInjuries({
           onTabPress={setSelectedTeamId}
           isDark={isDark}
           renderLabel={(tabId, isSelected, tabStyles) => {
-            const team = getTeamByESPNId(tabId);
+            const team = isWNBA
+              ? getWNBATeamByESPNId(tabId)
+              : getTeamByESPNId(tabId);
             const teamCode = team?.code;
-            const logo = getTeamLogo(Number(team?.id), isDark);
+            const logo = isWNBA
+              ? getWNBATeamLogo(Number(team?.id), isDark)
+              : getTeamLogo(Number(team?.id), isDark);
 
             return (
               <View style={styles.tabLabel}>
@@ -116,6 +123,7 @@ export default function TeamInjuries({
           injuries={[currentInjuries]}
           teamPlayersMap={teamPlayersMap}
           isDark={isDark}
+          league={league}
         />
       </View>
     </View>

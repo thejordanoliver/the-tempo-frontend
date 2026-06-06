@@ -15,8 +15,7 @@ import {
   normalizeProfileImage,
 } from "utils/chatUtils";
 
-const SOCKET_URL =
-  process.env.EXPO_PUBLIC_SOCKET_URL || "http://localhost:4000";
+const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL;
 const DUPLICATE_SEND_BLOCK_MS = 800;
 
 export function useLiveGameChat(gameId: string | number) {
@@ -92,9 +91,7 @@ export function useLiveGameChat(gameId: string | number) {
 
         const normalizedMessages = parsedMessages
           .map((message) => normalizeMessage(message as IncomingChatMessage))
-          .filter(
-            (message): message is ChatMessageItem => message !== null,
-          );
+          .filter((message): message is ChatMessageItem => message !== null);
 
         setMessages(dedupeMessages(normalizedMessages));
       } catch (error) {

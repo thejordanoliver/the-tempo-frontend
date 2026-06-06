@@ -1,24 +1,23 @@
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NBATeam } from "types/nba";
 
 type TeamInfoProps = {
-  team?: NBATeam;
   name: string | undefined;
+  rank: number | null | undefined;
   score?: number;
   opponentScore?: number;
   record?: string;
   side: "home" | "away";
-  timeouts: number;
+  timeouts: number | null;
   bonusState: string | undefined | null;
   gameStatusDescription: string;
   logo: any;
 };
 
 export default function TeamInfo({
-  team,
   name,
+  rank,
   score,
   opponentScore,
   record,
@@ -32,12 +31,11 @@ export default function TeamInfo({
 
   const isFinal = gameStatusDescription === "Final";
   const inProgress = gameStatusDescription === "In Progress";
-
   const isHalftime = gameStatusDescription === "Halftime";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  // --- Winner / opacity logic ---
+
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 
   const scoreOpacity =
@@ -104,7 +102,7 @@ export default function TeamInfo({
               styles.teamValue,
               {
                 opacity: scoreOpacity,
-                fontSize: valueFontSize, // 🔥 dynamic
+                fontSize: valueFontSize,
               },
             ]}
           >
@@ -118,13 +116,19 @@ export default function TeamInfo({
       <View style={styles.teamContainer}>
         <Image source={logo} style={styles.teamLogo} />
 
-        <Text style={styles.teamName}>{name}</Text>
+        <Text style={styles.teamName}>
+          {rank && <Text style={styles.teamRank}>{rank} </Text>}
+          {name}
+        </Text>
 
         {/* Final only → show record */}
         {!isScheduled && isFinal && record && (
           <Text style={styles.teamRecord}>{record}</Text>
         )}
-        {(inProgress || isHalftime) && renderTimeouts(timeouts)}
+
+        {(inProgress || isHalftime) &&
+          typeof timeouts === "number" &&
+          renderTimeouts(timeouts)}
       </View>
 
       {/* ─────────── AWAY SCORE (LEFT) ─────────── */}

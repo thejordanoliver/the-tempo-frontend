@@ -1,3 +1,6 @@
+import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -15,43 +18,65 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
+import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
 import { useTeamGames } from "hooks/NBAHooks/useTeamGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useTeamRosterStats } from "hooks/useTeamRosterStats";
-import { useTeamStats } from "hooks/useTeamStats";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, RefreshControl, ScrollView, View } from "react-native";
+import { useLayoutEffect, useRef, useState } from "react";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getNBASeason, scrollToMonth } from "utils/dateUtils";
+import { getNBASeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "NBA";
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
+
   const { teamId } = useLocalSearchParams();
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
-  const teamIdNum = parseInt(teamIdStr, 10);
+  const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
+
   const team = getNBATeam(teamIdNum);
+  const teamColor = team?.color;
+  const espnId = team?.espnID ?? 0;
   const teamLogo = getTeamLogo(teamIdNum, true);
+
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
+
+  const {
+    games: selectedMonthGames,
+    gamesByMonth,
+    loading: gamesLoading,
+    error: gamesError,
+    refreshGames: refreshTeamGames,
+  } = useTeamGames(teamIdNum.toString(), selectedDate);
+
+  const { monthsToShow, gameCountByMonth, handleSelectMonth } =
+    useTeamMonthSelector({
+      gamesByMonth,
+      selectedDate,
+      setSelectedDate,
+    });
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
+
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tabToIndex(tab));
   };
+
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
@@ -60,15 +85,9 @@ export default function TeamDetailScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, league);
-
-  const {
-    games: selectedMonthGames,
-    gamesByMonth,
-    loading: gamesLoading,
-    error: gamesError,
-    refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum.toString(), getNBASeason(), selectedDate);
+    refreshing: refreshingNews,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
   const {
     teamRoster,
@@ -76,78 +95,22 @@ export default function TeamDetailScreen() {
     loading: rosterStatsLoading,
     error: rosterStatsError,
     refetch,
-  } = useTeamRosterStats(teamIdNum);
+  } = useRosterStats(teamIdNum);
 
   const {
     teamStats,
     loading: teamStatsLoading,
     error: teamStatsError,
-  } = useTeamStats(teamIdNum);
+  } = useTeamStats({
+    teamId: espnId,
+    league,
+  });
 
   const {
     players,
     loading: playersLoading,
     error: playersError,
-  } = usePlayersByTeam(teamIdNum.toString());
-
-  const gameCountByMonth = useMemo(() => {
-    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
-  }, [gamesByMonth]);
-
-  const monthsToShow = useMemo(() => {
-    return gamesByMonth.map((group) => ({
-      key: group.key,
-      year: group.year,
-      month: group.month,
-      label: group.label,
-      count: group.count,
-    }));
-  }, [gamesByMonth]);
-
-  useEffect(() => {
-    if (
-      !gamesLoading &&
-      gamesByMonth.length > 0 &&
-      !selectedDate &&
-      monthsToShow.length > 0
-    ) {
-      const today = new Date();
-
-      const currentMonthWithGames = monthsToShow.find(
-        ({ month, year }) =>
-          month === today.getMonth() && year === today.getFullYear(),
-      );
-
-      const startingMonth = currentMonthWithGames ?? monthsToShow[0];
-
-      setSelectedDate(new Date(startingMonth.year, startingMonth.month, 1));
-
-      setTimeout(() => {
-        if (!scrollViewRef.current) return;
-
-        const index = monthsToShow.findIndex(
-          (m) =>
-            m.month === startingMonth.month && m.year === startingMonth.year,
-        );
-
-        const itemWidth = 70;
-        const spacing = 12;
-        const screenWidth = Dimensions.get("window").width;
-        const scrollToX =
-          index * itemWidth + index * spacing - screenWidth / 2 + itemWidth / 2;
-
-        scrollViewRef.current.scrollTo({
-          x: Math.max(0, scrollToX),
-          animated: true,
-        });
-      }, 150);
-    }
-  }, [gamesLoading, gamesByMonth, selectedDate, monthsToShow]);
-
-  const handleSelectMonth = (month: number, year: number, index: number) => {
-    setSelectedDate(new Date(year, month, 1));
-    scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
-  };
+  } = useRoster(teamIdNum, league);
 
   const favorited = team ? isFavorite(league, team.id) : false;
 
@@ -155,27 +118,27 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={goBack}
-          isTeamScreen={true}
+          isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, team, favorited, toggleFavorite]);
-
-  if (!team) {
-    return (
-      <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
+  }, [
+    navigation,
+    team,
+    teamLogo,
+    teamColor,
+    favorited,
+    toggleFavorite,
+    teamIdNum,
+  ]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -186,12 +149,24 @@ export default function TeamDetailScreen() {
       }
 
       if (selectedTab === "news") {
+        await refreshNews();
+      }
+
+      if (selectedTab === "stats") {
         await refetch();
       }
     } finally {
       setRefreshing(false);
     }
   };
+
+  if (!team) {
+    return (
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -204,19 +179,16 @@ export default function TeamDetailScreen() {
 
       <PagerView
         ref={pagerRef}
-        style={{ flex: 1 }}
+        style={styles.contentArea}
         initialPage={tabToIndex(selectedTab)}
-        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
+        onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
-        {/* Schedule Page */}
         <View key="schedule" style={styles.contentArea}>
           <View style={styles.monthSelector}>
             <MonthSelector
               months={monthsToShow}
               selectedDate={selectedDate}
-              onSelect={(month, year, index) =>
-                handleSelectMonth(month, year, index)
-              }
+              onSelect={handleSelectMonth}
               loading={gamesLoading}
               gameCountByMonth={gameCountByMonth}
             />
@@ -232,30 +204,17 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* News Page */}
         <View key="news" style={styles.contentArea}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          >
-            <NewsList
-              items={articles}
-              isDark={isDark}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
+          <NewsList
+            items={articles}
+            loading={newsLoading}
+            error={newsError}
+            refreshing={refreshingNews}
+            onRefresh={refreshNews}
+            isDark={isDark}
+          />
         </View>
 
-        {/* Roster Page */}
         <View key="roster" style={styles.contentArea}>
           <Roster
             players={players}
@@ -263,12 +222,10 @@ export default function TeamDetailScreen() {
             error={playersError}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            teamFullName={team.fullName}
-            teamColor={team.color}
+            league={league}
           />
         </View>
 
-        {/* Stats Page */}
         <View key="stats" style={styles.contentArea}>
           <RosterStats
             rosterStats={teamRoster}
@@ -281,7 +238,6 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Standings Page */}
         <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
@@ -290,7 +246,6 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Forum Page */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamIdStr} league={league} />
         </View>

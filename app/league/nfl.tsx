@@ -1,38 +1,40 @@
+import WeekSelector, {
+  FootballWeekGroup,
+} from "@/components/League/WeekSelector";
+import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
 import { useNavigation } from "@react-navigation/native";
-import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/Awards/AwardSeasons";
-import DraftList, {
-  getDefaultDraftYear,
-} from "components/League/Draft/DraftList";
-import SportsListModal, {
-  SportsListModalRef,
-} from "components/League/SportsListModal";
-import { StandingsList } from "components/League/Standings/StandingsList";
-import WeekSelector from "components/League/WeekSelector";
-import NewsList from "components/News/NewsList";
-import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
-import { NFLPlayoffBracket } from "components/Sports/NFL/Playoffs/NFLPlayoffBracket";
-import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useFootballGamesByWeek } from "hooks/FootballHooks/useFootballGamesByWeek";
-import { useNFLBracket } from "hooks/FootballHooks/usePlayoffGames";
-import { useSeasonLeaders } from "hooks/FootballHooks/useSeasonLeaders";
-import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import * as React from "react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import LeagueForum from "../../components/Forum/LeagueForum";
+import AwardSeasons from "../../components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "../../components/League/Draft/DraftList";
+import SportsListModal, {
+  SportsListModalRef,
+} from "../../components/League/SportsListModal";
+import { StandingsList } from "../../components/League/Standings/StandingsList";
+import NewsList from "../../components/News/NewsList";
+import FootballGamesList from "../../components/Sports/NFL/Games/FootballGamesList";
+import { NFLPlayoffBracket } from "../../components/Sports/NFL/Playoffs/NFLPlayoffBracket";
+import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useNFLBracket } from "../../hooks/FootballHooks/usePlayoffGames";
+import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { getFootballSeason } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -42,21 +44,96 @@ export default function NFLLeagueScreen() {
   const league = "NFL";
   const currentSeason = getFootballSeason();
   const navigation = useNavigation();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
+
   const sportsModalRef = useRef<SportsListModalRef>(null);
+  const pagerRef = useRef<PagerView>(null);
+
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
-  const {
-    articles,
-    loading: newsLoading,
-    error: newsError,
-  } = useLeaguesNews(10, league);
-  const [refreshing, setRefreshing] = useState(false);
+  const [screenRefreshing, setScreenRefreshing] = useState(false);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+
   const [draftYear, setDraftYear] = useState(() =>
     getDefaultDraftYear("nfl").toString(),
   );
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
+  const [draftTeam, setDraftTeam] = useState("all");
+  const [draftRound, setDraftRound] = useState("all");
+
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const { calendar } = useLeagueCalendar(league, "football");
+
+  const getSeasonTypeFromStage = (stage?: string) => {
+    const normalizedStage = String(stage || "").toLowerCase();
+
+    if (normalizedStage.includes("preseason")) return 1;
+    if (normalizedStage.includes("postseason")) return 3;
+    if (normalizedStage.includes("playoff")) return 3;
+
+    return 2; // regular season
+  };
+
+  const getSeasonSlugFromStage = (stage?: string) => {
+    const normalizedStage = String(stage || "").toLowerCase();
+
+    if (normalizedStage.includes("preseason")) return "pre-season";
+    if (normalizedStage.includes("postseason")) return "post-season";
+    if (normalizedStage.includes("playoff")) return "post-season";
+
+    return "regular-season";
+  };
+
+  const weekGroups: FootballWeekGroup[] = useMemo(() => {
+    if (!calendar?.length) return [];
+
+    return calendar
+      .filter((week) => week.stage !== "Off Season")
+      .map((week, index) => {
+        const seasonType = getSeasonTypeFromStage(week.stage);
+        const seasonSlug = getSeasonSlugFromStage(week.stage);
+
+        return {
+          key: `${seasonSlug}-week-${week.weekNumber}-${index}`,
+          label: week.label || `Week ${week.weekNumber}`,
+          season: {
+            year: currentSeason,
+            type: seasonType,
+            slug: seasonSlug,
+          },
+          week: {
+            number: week.weekNumber,
+          },
+          count: 0,
+          games: [],
+        };
+      });
+  }, [calendar, currentSeason]);
+
+  const selectedWeekNumber = weekGroups[selectedWeekIndex]?.week.number ?? 1;
+
+  const {
+    games: selectedWeekGames,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    refreshGames,
+  } = useFootballGames({
+    league: "nfl",
+    season: currentSeason,
+    week: selectedWeekNumber,
+    seasontype: weekGroups[selectedWeekIndex]?.season.type ?? 2,
+  });
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
   const {
     playoffData,
     playoffLoading,
@@ -65,60 +142,51 @@ export default function NFLLeagueScreen() {
     playoffRefreshing,
   } = useNFLBracket(currentSeason);
 
-  const { categories, loading, error } = useSeasonLeaders(
-    currentSeason,
-    league,
-  );
-  const [draftTeam, setDraftTeam] = useState("all");
-  const [draftRound, setDraftRound] = useState("all");
-  const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-
   const {
-    weeks,
-    loading: gamesLoading,
-    refetch,
-  } = useFootballGamesByWeek(currentSeason, 1);
-  const { calendar } = useLeagueCalendar(league, "football");
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-  const weekArray = calendar?.filter((w) => w.stage !== "Off Season") || [];
-  const weekLabels = weekArray.map((w) => w.label);
-  const selectedWeekLabel = weekLabels[selectedWeekIndex] || "";
-  const selectedWeekGames = weeks[selectedWeekLabel] || [];
+    categories,
+    loading: leadersLoading,
+    error: leadersError,
+  } = useSeasonLeaders(currentSeason, league);
 
   useEffect(() => {
-    if (!calendar?.length) return;
+    if (!weekGroups.length) {
+      setSelectedWeekIndex(0);
+      return;
+    }
+
+    setSelectedWeekIndex((currentIndex) => {
+      if (currentIndex >= weekGroups.length) return 0;
+      return currentIndex;
+    });
+  }, [weekGroups.length]);
+
+  useEffect(() => {
+    if (!calendar?.length || !weekGroups.length) return;
 
     const now = dayjs();
 
-    // 1. Active week — skip Off Season entirely
-    const activeIndex = calendar.findIndex(
+    const activeCalendarWeek = calendar.find(
       (week) =>
         week.stage !== "Off Season" &&
         dayjs(now).isBetween(week.startDate, week.endDate, null, "[]"),
     );
 
-    if (activeIndex !== -1) {
-      setSelectedWeekIndex(activeIndex);
-      return;
-    }
+    if (!activeCalendarWeek) return;
 
-    // 2. Find LAST meaningful NFL week (ignore offseason completely)
-    let lastIndex = 0;
+    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
 
-    calendar.forEach((week, index) => {
-      const isOffseason = week.stage === "Off Season";
-      const isPast = dayjs(week.endDate).isBefore(now);
-
-      if (!isOffseason && isPast) {
-        lastIndex = index;
-      }
+    const matchingGroupIndex = weekGroups.findIndex((group) => {
+      return (
+        group.week.number === activeCalendarWeek.weekNumber &&
+        group.season.type === activeSeasonType
+      );
     });
 
-    setSelectedWeekIndex(lastIndex);
-  }, [calendar]);
+    if (matchingGroupIndex !== -1) {
+      setSelectedWeekIndex(matchingGroupIndex);
+    }
+  }, [calendar, weekGroups]);
 
-  // --- Header ---
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -137,15 +205,15 @@ export default function NFLLeagueScreen() {
     });
   }, [navigation, leagueModalVisible]);
 
-  // --- Refresh handler ---
   const handleRefresh = async () => {
-    setRefreshing(true);
+    setScreenRefreshing(true);
+
     try {
-      await refetch();
+      await refreshGames();
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
-      setRefreshing(false);
+      setScreenRefreshing(false);
     }
   };
 
@@ -167,53 +235,40 @@ export default function NFLLeagueScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
+          onPageSelected={(event) => {
+            const index = event.nativeEvent.position;
             setSelectedTab(tabs[index]);
           }}
         >
-          {/* SCORES */}
           <View key="scores" style={styles.contentArea}>
             <WeekSelector
-              weeks={weekArray}
+              groups={weekGroups}
+              loading={gamesLoading}
               selectedWeekIndex={selectedWeekIndex}
               onSelectWeek={setSelectedWeekIndex}
               isDark={isDark}
-              loading={gamesLoading}
             />
 
-            <NFLGamesList
+            <FootballGamesList
               games={selectedWeekGames}
               loading={gamesLoading}
-              refreshing={refreshing}
+              refreshing={screenRefreshing || gamesRefreshing}
               onRefresh={handleRefresh}
+              isNFL={true}
             />
           </View>
 
-          {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
-          {/* STANDINGS */}
           <View key="standings" style={styles.contentArea}>
             <StandingsList
               year={standingsYear}
@@ -222,7 +277,6 @@ export default function NFLLeagueScreen() {
             />
           </View>
 
-          {/* PLAYOFFS */}
           <View key="playoffs" style={styles.contentArea}>
             <NFLPlayoffBracket
               bracket={playoffData}
@@ -233,18 +287,15 @@ export default function NFLLeagueScreen() {
             />
           </View>
 
-          {/* STATS */}
           <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList
-              loading={loading}
-              error={error}
+              loading={leadersLoading}
+              error={leadersError}
               categories={categories}
               league={league}
-              isDark={isDark}
             />
           </View>
 
-          {/* DRAFT */}
           <View key="draft" style={styles.contentArea}>
             <DraftList
               year={draftYear}
@@ -257,12 +308,10 @@ export default function NFLLeagueScreen() {
             />
           </View>
 
-          {/* AWARDS */}
           <View key="awards">
             <AwardSeasons league={league} />
           </View>
 
-          {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
             <LeagueForum league={league} />
           </View>

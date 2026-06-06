@@ -1,17 +1,17 @@
 // utils/CBBUtils/BasketballGameUtils.ts
 
+import { useCBBRankings } from "@/hooks/BasketballHooks/useCBBRankings";
 import {
   cbbTeams,
   conferenceObjectListMap,
   getCBBTeam,
-  getTeamByESPNId,
+  getCBBTeamByESPNId,
   modalToMapKey,
 } from "constants/teamsCBB";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useCBBRankings } from "hooks/CBBHooks/useCBBRankings";
 import { useMemo } from "react";
 import { BasketballGame } from "types/basketball";
 
@@ -287,7 +287,7 @@ export function useAPTop25(league: "CBB" | "WCBB") {
     return apPoll.ranks
       .slice(0, 25)
       .map((r) => {
-        const team = getTeamByESPNId(r.team?.id ?? 0);
+        const team = getCBBTeamByESPNId(r.team?.id ?? 0);
 
         if (!team) return null;
 

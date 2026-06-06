@@ -1,50 +1,68 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
+import { getNBASeason } from "utils/dateUtils";
 
 export function useLastTeamGame(
-  teamId: string | number,
-  season: string | number,
+  teamId: string | number | null | undefined,
+  isActive: boolean = true,
 ) {
-  const [lastGame, setLastGame] = useState<Game | null>(null); // raw response
-  const [loading, setLoading] = useState(true);
+  const [game, setGame] = useState<Game | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheRef = useRef<Map<string, any | null>>(new Map());
+  const season = getNBASeason();
+  const cacheRef = useRef<Map<string, Game | null>>(new Map());
 
-  const fetchLastGame = async () => {
-    if (!teamId) return;
-
-    setLoading(true);
-    setError(null);
-
-    const cacheKey = `${teamId}-${season}`;
-
-    // Return cached result if available
-    if (cacheRef.current.has(cacheKey)) {
-      setLastGame(cacheRef.current.get(cacheKey));
+  const fetchLastGame = useCallback(async () => {
+    if (!isActive || !teamId) {
       setLoading(false);
       return;
     }
 
+    const cacheKey = `${teamId}-${season}`;
+
+    if (cacheRef.current.has(cacheKey)) {
+      setGame(cacheRef.current.get(cacheKey) ?? null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const res = await apiClient.get(`api/games/nba/last/${teamId}/${season}`);
+      const res = await apiClient.get<{ game?: Game | null }>(
+        `api/games/nba/last/${teamId}/${season}`,
+      );
+
       const raw = res.data?.game ?? null;
 
       cacheRef.current.set(cacheKey, raw);
-      setLastGame(raw);
+      setGame(raw);
     } catch (err: any) {
       console.error("Error fetching last team game:", err);
-      setError(err.message || "Failed to fetch last game");
+      setError(err?.message || "Failed to fetch last game");
+      setGame(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, [teamId, season, isActive]);
 
   useEffect(() => {
-    if (!teamId) return;
-    fetchLastGame();
-  }, [teamId, season]);
+    if (!isActive || !teamId) {
+      setLoading(false);
+      return;
+    }
 
-  return { lastGame, loading, error, refresh: fetchLastGame };
+    fetchLastGame();
+  }, [teamId, season, isActive, fetchLastGame]);
+
+  return {
+    game,
+    loading,
+    error,
+    refresh: fetchLastGame,
+  };
 }

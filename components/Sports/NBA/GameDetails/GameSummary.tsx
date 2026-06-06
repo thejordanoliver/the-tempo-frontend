@@ -2,11 +2,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
-import {
-  cbbTeams,
-  getCBBTeam,
-  getTeamLogo as getCBBTeamLogo,
-} from "constants/teamsCBB";
+import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useRef, useState } from "react";

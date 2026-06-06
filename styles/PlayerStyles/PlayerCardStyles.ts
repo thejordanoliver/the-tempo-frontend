@@ -13,33 +13,24 @@ export const playerCardStyles = (isDark: boolean) =>
       paddingHorizontal: 20,
       paddingVertical: 12,
     },
+    avatarContainer: {
+      width: 50,
+      height: 50,
+      borderRadius: 30,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      paddingTop: 4,
+      overflow: "hidden",
+    },
     avatar: {
       width: 50,
       height: 50,
-      borderRadius: 30,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      paddingTop: 8,
-    },
-    avatarPlaceholder: {
-      width: 50,
-      height: 50,
-      borderRadius: 30,
-      borderWidth: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      borderColor: Colors.midTone,
     },
     rank: {
       fontSize: 24,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.OSBOLD,
       marginRight: 12,
-    },
-    initial: {
-      fontSize: 24,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
     },
     info: {
       flex: 1,
@@ -49,7 +40,7 @@ export const playerCardStyles = (isDark: boolean) =>
       marginLeft: 12,
       height: "100%",
     },
-    nameContainer: {
+    container: {
       flexDirection: "row",
       alignItems: "center",
     },

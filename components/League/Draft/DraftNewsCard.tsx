@@ -1,7 +1,7 @@
 // components/NBA/DraftNewsCard.tsx
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { BreakingNews } from "hooks/LeagueHooks/useLeagueDraft";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -18,7 +18,7 @@ export default function DraftNewsCard({ item }: Props) {
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  const timeAgo = formatDistanceToNowStrict(new Date(item.timestamp), {
+  const timeAgo = formatDistanceToNow(new Date(item.timestamp), {
     addSuffix: true,
   });
 

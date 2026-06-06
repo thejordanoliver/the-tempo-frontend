@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { Follow } from "types/types";
+import { Follow } from "types/user";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 export default function FollowStats({

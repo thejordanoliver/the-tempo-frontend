@@ -13,22 +13,22 @@ import {
   DefaultTheme as NavigationLightTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import { Colors } from "constants/styles";
-import { FavoriteTeamsProvider } from "contexts/FavoriteTeamsContext";
-import { NotificationProvider } from "contexts/NotificationContext";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { Colors } from "../constants/styles";
+import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
+import { NotificationProvider } from "../contexts/NotificationContext";
 import {
   PreferencesProvider,
   usePreferences,
-} from "contexts/PreferencesContext";
+} from "../contexts/PreferencesContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useAuth } from "hooks/UserHooks/useAuth";
+import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { clearAuthSession } from "utils/apiClient";
+import { clearAuthSession } from "../utils/apiClient";
 import CustomTabBar from "../components/CustomTabBar";
 
 const CustomDarkTheme = {

@@ -8,7 +8,6 @@ import {
 } from "hooks/NBAHooks/useHeadToHeadGames";
 import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
-import { getNBASeason } from "utils/dateUtils";
 import HeadToHeadGameRow from "./HeadToHeadGameRow";
 type Props = {
   homeTeamId: number;
@@ -43,7 +42,6 @@ export default function HeadToHeadGames({
   const { data, loading, error } = useHeadToHeadGames(
     homeTeamId,
     awayTeamId,
-    Number(getNBASeason()),
   );
 
   if (loading) return <HeadToHeadSkeleton />;

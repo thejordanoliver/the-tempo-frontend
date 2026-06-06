@@ -1,10 +1,10 @@
+import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useTeamRosters } from "hooks/FootballHooks/useTeamRosters";
-import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { useMemo } from "react";
 import {
   RefreshControl,
   SectionList,
@@ -14,9 +14,12 @@ import {
 } from "react-native";
 
 interface RosterProps {
-  teamId: string;
-  teamName: string;
+  players: Player[];
   league: "NFL" | "CFB";
+  loading: boolean;
+  error?: string | null;
+  refreshing: boolean;
+  onRefresh: () => void;
 }
 
 /* ------------------------- */
@@ -40,107 +43,102 @@ const POSITION_ORDER = [
   "LS",
 ];
 
-export const Roster = forwardRef(
-  ({ teamId, teamName, league }: RosterProps, ref) => {
-    const {
-      players: teamPlayers,
-      loading,
-      refreshing,
-      error,
-      refetch,
-    } = useTeamRosters(teamId, league);
+export default function Roster({
+  players,
+  league,
+  loading,
+  error,
+  refreshing,
+  onRefresh,
+}: RosterProps) {
+  const sections = useMemo(() => {
+    if (!players || players.length === 0) return [];
 
-    useImperativeHandle(ref, () => ({
-      refresh: refetch,
-    }));
+    const grouped: Record<string, typeof players> = {};
 
-    const sections = useMemo(() => {
-      if (!teamPlayers || teamPlayers.length === 0) return [];
+    players.forEach((p) => {
+      const pos = p.position || "Other";
+      if (!grouped[pos]) grouped[pos] = [];
+      grouped[pos].push(p);
+    });
 
-      const grouped: Record<string, typeof teamPlayers> = {};
+    return Object.keys(grouped)
+      .sort((a, b) => {
+        const indexA = POSITION_ORDER.indexOf(a);
+        const indexB = POSITION_ORDER.indexOf(b);
 
-      teamPlayers.forEach((p) => {
-        const pos = p.position || "Other";
-        if (!grouped[pos]) grouped[pos] = [];
-        grouped[pos].push(p);
-      });
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return a.localeCompare(b);
+      })
+      .map((pos) => ({
+        title: pos,
+        data: grouped[pos],
+      }));
+  }, [players]);
 
-      return Object.keys(grouped)
-        .sort((a, b) => {
-          const indexA = POSITION_ORDER.indexOf(a);
-          const indexB = POSITION_ORDER.indexOf(b);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = rosterStyles(isDark);
+  const global = globalStyles(isDark);
+  const tintColor = isDark ? Colors.white : Colors.black;
 
-          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-          if (indexA !== -1) return -1;
-          if (indexB !== -1) return 1;
-          return a.localeCompare(b);
-        })
-        .map((pos) => ({
-          title: pos,
-          data: grouped[pos],
-        }));
-    }, [teamPlayers]);
-
-    const { resolvedColorScheme } = usePreferences();
-    const isDark = resolvedColorScheme === "dark";
-    const styles = rosterStyles(isDark);
-    const global = globalStyles(isDark);
-
-    if (loading && !refreshing) {
-      return (
-        <View style={styles.loadingContainer}>
-          <PlayerCardSkeletonList count={75} />
-        </View>
-      );
-    }
-
-    if (error) {
-      return (
-        <View style={global.emptyContainer}>
-          <Text style={global.errorText}>{error}</Text>
-        </View>
-      );
-    }
-
-    if (!teamPlayers || teamPlayers.length === 0) {
-      return <Text style={global.emptyText}>No players found.</Text>;
-    }
-
+  if (loading && !refreshing) {
     return (
-      <SectionList
-        sections={sections}
-        keyExtractor={(item, index) =>
-          item.player_id ? String(item.player_id) : `player-${index}`
-        }
-        contentContainerStyle={styles.listContent}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        stickySectionHeadersEnabled={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={refetch}
-            tintColor={isDark ? Colors.white : Colors.black}
-          />
-        }
-        renderItem={({ item }) => (
-          <PlayerCard
-            id={item.player_id ?? 0}
-            name={item.name}
-            position={item.position ?? ""}
-            avatarUrl={item.avatarUrl ?? undefined}
-            number={item.jersey_number ?? undefined}
-            team={teamName}
-            league={league}
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <HeadingTwo isDark={isDark}>{title}</HeadingTwo>
-        )}
-        renderSectionFooter={() => <View style={{ height: 12 }} />}
-      />
+      <View style={styles.loadingContainer}>
+        <PlayerCardSkeletonList count={75} />
+      </View>
     );
-  },
-);
+  }
+
+  if (error) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!players || players.length === 0) {
+    return <Text style={global.emptyText}>No players found.</Text>;
+  }
+
+  return (
+    <SectionList
+      sections={sections}
+      keyExtractor={(item, index) =>
+        item.player_id ? String(item.player_id) : `player-${index}`
+      }
+      contentContainerStyle={styles.listContent}
+      ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      stickySectionHeadersEnabled={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={tintColor}
+        />
+      }
+      renderItem={({ item }) => (
+        <PlayerCard
+          key={item.id}
+          id={item.player_id}
+          name={item.full_name}
+          position={item.position}
+          headshot={item.headshot_url}
+          number={item.jersey_number}
+          teamId={item.team_id}
+          league={league}
+        />
+      )}
+      renderSectionHeader={({ section: { title } }) => (
+        <HeadingTwo isDark={isDark}>{title}</HeadingTwo>
+      )}
+      renderSectionFooter={() => <View style={{ height: 12 }} />}
+    />
+  );
+}
 
 export const rosterStyles = (isDark: boolean) =>
   StyleSheet.create({

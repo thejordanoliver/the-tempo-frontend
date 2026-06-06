@@ -1,4 +1,4 @@
-import { MLBTeam } from "types/baseball";
+import { BaseballTeam } from "types/baseball";
 
 import {
   default as AngelsLogo,
@@ -86,11 +86,12 @@ import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
 import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
-export const mlbTeams: MLBTeam[] = [
+export const mlbTeams: BaseballTeam[] = [
   {
     id: 2,
     espnID: 29,
     name: "Diamondbacks",
+    shortName: "Diamondbacks",
     fullName: "Arizona Diamondbacks",
     code: "ARI",
     color: "#aa182c",
@@ -104,14 +105,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "48,405",
     address: "401 E Jefferson St, Phoenix, AZ 85004",
     city: "Phoenix, AZ",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/diamondbacks.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/diamondbacks.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 963,
     espnID: 11,
     name: "Athletics",
+    shortName: "Athletics",
     fullName: "Oakland Athletics",
     code: "ATH",
     color: "#003831",
@@ -125,14 +128,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "63,132",
     address: "7000 Coliseum Way, Oakland, CA 94621",
     city: "Oakland, CA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/athletics.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/athletics.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 3,
     espnID: 15,
     name: "Braves",
+    shortName: "Braves",
     fullName: "Atlanta Braves",
     code: "ATL",
     color: "#0c2340",
@@ -146,14 +151,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,149",
     address: "755 Battery Ave SE, Atlanta, GA 30339",
     city: "Atlanta, GA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 4,
     espnID: 1,
     name: "Orioles",
+    shortName: "Orioles",
     fullName: "Baltimore Orioles",
     code: "BAL",
     color: "#df4601",
@@ -167,14 +174,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "45,971",
     address: "333 W Camden St, Baltimore, MD 21201",
     city: "Baltimore, MD",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 5,
     espnID: 2,
     name: "Red Sox",
+    shortName: "Red Sox",
     fullName: "Boston Red Sox",
     code: "BOS",
     color: "#0d2b56",
@@ -188,14 +197,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "37,755",
     address: "4 Jersey St, Boston, MA 02215",
     city: "Boston, MA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/redsox.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/redsox.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 6,
     espnID: 16,
     name: "Cubs",
+    shortName: "Cubs",
     fullName: "Chicago Cubs",
     code: "CHC",
     color: "#0e3386",
@@ -209,14 +220,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,649",
     address: "1060 W Addison St, Chicago, IL 60613",
     city: "Chicago, IL",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cubs.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cubs.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 7,
     espnID: 4,
     name: "White Sox",
+    shortName: "White Sox",
     fullName: "Chicago White Sox",
     code: "CHW",
     color: "#000000",
@@ -230,14 +243,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "40,615",
     address: "333 W 35th St, Chicago, IL 60616",
     city: "Chicago, IL",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/whitesox.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/whitesox.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 8,
     espnID: 17,
     name: "Reds",
+    shortName: "Reds",
     fullName: "Cincinnati Reds",
     code: "CIN",
     color: "#c6011f",
@@ -251,14 +266,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "42,319",
     address: "100 Joe Nuxhall Way, Cincinnati, OH 45202",
     city: "Cincinnati, OH",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/reds.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/reds.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 9,
     espnID: 5,
     name: "Guardians",
+    shortName: "Guardians",
     fullName: "Cleveland Guardians",
     code: "CLE",
     color: "#002b5c",
@@ -272,14 +289,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "34,830",
     address: "2401 Ontario St, Cleveland, OH 44115",
     city: "Cleveland, OH",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/guardians.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/guardians.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 10,
     espnID: 27,
     name: "Rockies",
+    shortName: "Rockies",
     fullName: "Colorado Rockies",
     code: "COL",
     color: "#33006f",
@@ -293,14 +312,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "50,398",
     address: "2001 Blake St, Denver, CO 80205",
     city: "Denver, CO",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rockies.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rockies.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 12,
     espnID: 6,
     name: "Tigers",
+    shortName: "Tigers",
     fullName: "Detroit Tigers",
     code: "DET",
     color: "#0a2240",
@@ -314,14 +335,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,083",
     address: "2100 Woodward Ave, Detroit, MI 48201",
     city: "Detroit, MI",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/tigers.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/tigers.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 15,
     espnID: 18,
     name: "Astros",
+    shortName: "Astros",
     fullName: "Houston Astros",
     code: "HOU",
     color: "#002d62",
@@ -335,14 +358,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,168",
     address: "501 Crawford St, Houston, TX 77002",
     city: "Houston, TX",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/astros.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/astros.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 16,
     espnID: 7,
     name: "Royals",
+    shortName: "Royals",
     fullName: "Kansas City Royals",
     code: "KC",
     color: "#004687",
@@ -356,14 +381,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "37,903",
     address: "1 Royal Way, Kansas City, MO 64129",
     city: "Kansas City, MO",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/royals.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/royals.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 17,
     espnID: 3,
     name: "Angels",
+    shortName: "Angels",
     fullName: "Los Angeles Angels",
     code: "LAA",
     color: "#ba0021",
@@ -377,14 +404,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "45,517",
     address: "2000 E Gene Autry Way, Anaheim, CA 92806",
     city: "Anaheim, CA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/angels.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/angels.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 18,
     espnID: 19,
     name: "Dodgers",
+    shortName: "Dodgers",
     fullName: "Los Angeles Dodgers",
     code: "LAD",
     color: "#005a9c",
@@ -398,14 +427,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "56,000",
     address: "1000 Vin Scully Ave, Los Angeles, CA 90012",
     city: "Los Angeles, CA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/dodgers.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/dodgers.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 19,
     espnID: 28,
     name: "Marlins",
+    shortName: "Marlins",
     fullName: "Miami Marlins",
     code: "MIA",
     color: "#00a3e0",
@@ -419,14 +450,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "36,742",
     address: "501 Marlins Way, Miami, FL 33125",
     city: "Miami, FL",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/marlins.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/marlins.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 20,
     espnID: 8,
     name: "Brewers",
+    shortName: "Brewers",
     fullName: "Milwaukee Brewers",
     code: "MIL",
     color: "#13294b",
@@ -440,14 +473,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,900",
     address: "1 Brewers Way, Milwaukee, WI 53214",
     city: "Milwaukee, WI",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/brewers.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/brewers.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 22,
     espnID: 9,
     name: "Twins",
+    shortName: "Twins",
     fullName: "Minnesota Twins",
     code: "MIN",
     color: "#031f40",
@@ -461,14 +496,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "38,544",
     address: "1 Twins Way, Minneapolis, MN 55403",
     city: "Minneapolis, MN",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/twins.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/twins.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 24,
     espnID: 21,
     name: "Mets",
+    shortName: "Mets",
     fullName: "New York Mets",
     code: "NYM",
     color: "#002d72",
@@ -482,14 +519,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,922",
     address: "41 Seaver Way, Queens, NY 11368",
     city: "Queens, NY",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mets.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mets.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 25,
     espnID: 10,
     name: "Yankees",
+    shortName: "Yankees",
     fullName: "New York Yankees",
     code: "NYY",
     color: "#132448",
@@ -503,14 +542,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "46,537",
     address: "1 E 161st St, Bronx, NY 10451",
     city: "Bronx, NY",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/yankees.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/yankees.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 27,
     espnID: 22,
     name: "Phillies",
+    shortName: "Phillies",
     fullName: "Philadelphia Phillies",
     code: "PHI",
     color: "#e81828",
@@ -524,14 +565,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "42,792",
     address: "1 Citizens Bank Way, Philadelphia, PA 19148",
     city: "Philadelphia, PA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/phillies.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/phillies.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 28,
     espnID: 23,
     name: "Pirates",
+    shortName: "Pirates",
     fullName: "Pittsburgh Pirates",
     code: "PIT",
     color: "#000000",
@@ -545,14 +588,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "38,362",
     address: "115 Federal St, Pittsburgh, PA 15212",
     city: "Pittsburgh, PA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/pirates.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/pirates.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 30,
     espnID: 25,
     name: "Padres",
+    shortName: "Padres",
     fullName: "San Diego Padres",
     code: "SD",
     color: "#2f241d",
@@ -566,14 +611,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "40,209",
     address: "100 Park Blvd, San Diego, CA 92101",
     city: "San Diego, CA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/padres.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/padres.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 31,
     espnID: 26,
     name: "Giants",
+    shortName: "Giants",
     fullName: "San Francisco Giants",
     code: "SF",
     color: "#000000",
@@ -587,14 +634,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,915",
     address: "24 Willie Mays Plaza, San Francisco, CA 94107",
     city: "San Francisco, CA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/giants.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/giants.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 32,
     espnID: 12,
     name: "Mariners",
+    shortName: "Mariners",
     fullName: "Seattle Mariners",
     code: "SEA",
     color: "#005c5c",
@@ -608,14 +657,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "47,929",
     address: "1250 1st Ave S, Seattle, WA 98134",
     city: "Seattle, WA",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mariners.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mariners.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 33,
     espnID: 24,
     name: "Cardinals",
+    shortName: "Cardinals",
     fullName: "St. Louis Cardinals",
     code: "STL",
     color: "#be0a14",
@@ -629,14 +680,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "45,529",
     address: "700 Clark Ave, St. Louis, MO 63102",
     city: "St. Louis, MO",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cardinals.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cardinals.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 34,
     espnID: 30,
     name: "Rays",
+    shortName: "Rays",
     fullName: "Tampa Bay Rays",
     code: "TB",
     color: "#092c5c",
@@ -650,14 +703,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "25,025",
     address: "1 Tropicana Dr, St. Petersburg, FL 33705",
     city: "St. Petersburg, FL",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rays.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rays.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 35,
     espnID: 13,
     name: "Rangers",
+    shortName: "Rangers",
     fullName: "Texas Rangers",
     code: "TEX",
     color: "#003278",
@@ -671,14 +726,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "40,300",
     address: "734 Stadium Dr, Arlington, TX 76011",
     city: "Arlington, TX",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rangers.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rangers.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 36,
     espnID: 14,
     name: "Blue Jays",
+    shortName: "Blue Jays",
     fullName: "Toronto Blue Jays",
     code: "TOR",
     color: "#134a8e",
@@ -692,14 +749,16 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "49,282",
     address: "1 Blue Jays Way, Toronto, ON M5V 1J1",
     city: "Toronto, Ontario",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/bluejays.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/bluejays.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
   {
     id: 37,
     espnID: 20,
     name: "Nationals",
+    shortName: "Nationals",
     fullName: "Washington Nationals",
     code: "WSH",
     color: "#ab0003",
@@ -713,22 +772,21 @@ export const mlbTeams: MLBTeam[] = [
     venueCapacity: "41,339",
     address: "1500 S Capitol St SE, Washington, DC 20003",
     city: "Washington, DC",
-    venueImage: "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/nationals.jpg",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/nationals.jpg",
     isAllStar: false,
-    isActive: true
+    isActive: true,
   },
 ];
 
 export const getMLBTeam = (id: number | string) =>
-  mlbTeams.find((t) => String(t.id) === String(id)) || null;
+  mlbTeams.find((t) => String(t.id) === String(id));
 
 export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
   const team = mlbTeams.find((t) => String(t.id) === String(id));
   if (!team) return PlaceholderLogo;
-
-  // adjust based on your actual team fields
   return isDark ? team.logoLight || team.logo : team.logo;
 };
 
 export const getMLBTeamByEspnId = (id: number | string) =>
-  mlbTeams.find((t) => String(t.espnID) === String(id)) || null;
+  mlbTeams.find((t) => String(t.espnID) === String(id));

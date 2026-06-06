@@ -1,14 +1,14 @@
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { getTeamByESPNId } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
-import usePlayersByTeam from "hooks/NBAHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import { Image, LayoutChangeEvent, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
-type NBALastPlay = {
+type LastPlayType = {
   id?: string;
   text: string;
   teamId?: string;
@@ -40,10 +40,11 @@ type NBALastPlay = {
 };
 
 type LastPlayProps = {
-  lastPlay?: string | NBALastPlay;
-  homeTeamId?: string;
-  awayTeamId?: string;
+  lastPlay?: string | LastPlayType;
+  homeTeamId: number;
+  awayTeamId: number;
   gameStatusDescription: string | undefined;
+  league: "NBA" | "WNBA" | "CBB" | "WCBB";
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";
@@ -53,6 +54,7 @@ export default function LastPlay({
   homeTeamId,
   awayTeamId,
   gameStatusDescription,
+  league,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -67,18 +69,18 @@ export default function LastPlay({
     setCurrentPlay(lastPlay);
   }, [lastPlay]);
 
-  const homePlayersResult = usePlayersByTeam(homeTeamId || "");
-  const awayPlayersResult = usePlayersByTeam(awayTeamId || "");
+  const homePlayersResult = useRoster(homeTeamId, league);
+  const awayPlayersResult = useRoster(awayTeamId, league);
 
   const homePlayers = homePlayersResult.players || [];
   const awayPlayers = awayPlayersResult.players || [];
 
   const getPlayerAvatar = (espnId?: string, fallbackUrl?: string): string => {
     if (!espnId) return fallbackUrl || DEFAULT_HEADSHOT;
-    const dbPlayer =
+    const player =
       homePlayers.find((p) => String(p.espn_id) === String(espnId)) ||
       awayPlayers.find((p) => String(p.espn_id) === String(espnId));
-    return dbPlayer?.avatarUrl || fallbackUrl || DEFAULT_HEADSHOT;
+    return player?.headshot_url || fallbackUrl || DEFAULT_HEADSHOT;
   };
 
   const participantsToAthletes = (participants?: any[]) => {
@@ -100,12 +102,12 @@ export default function LastPlay({
     isObject(currentPlay) && "participants" in currentPlay
       ? participantsToAthletes((currentPlay as any).participants)
       : isObject(currentPlay)
-        ? (currentPlay as NBALastPlay).athletes || []
+        ? (currentPlay as LastPlayType).athletes || []
         : [];
 
   const firstAthlete = athletes[0];
 
-  const getTextColor = (currentPlay: NBALastPlay, text?: string) => {
+  const getTextColor = (currentPlay: LastPlayType, text?: string) => {
     const defaultColor = isDark ? Colors.white : Colors.black;
     if (!text) return defaultColor;
     const lower = text.toLowerCase();
@@ -122,7 +124,7 @@ export default function LastPlay({
     return defaultColor;
   };
 
-  const getIcon = (currentPlay: NBALastPlay) => {
+  const getIcon = (currentPlay: LastPlayType) => {
     if (currentPlay.text.includes("timeout"))
       return (
         <Ionicons
@@ -143,12 +145,13 @@ export default function LastPlay({
       : team?.color || Colors.light.green;
   }
 
-  if (!currentPlay) return null;
   if (
     gameStatusDescription === "Final" ||
-    gameStatusDescription === "Scheduled"
+    gameStatusDescription === "Scheduled" ||
+    !currentPlay
   )
     return null;
+
   if (typeof currentPlay === "string") {
     return (
       <View style={styles.simpleContainer} onLayout={onLayout}>
@@ -181,6 +184,7 @@ export default function LastPlay({
             {currentPlay.text}
           </Text>
         </View>
+
         <View style={styles.statusContainer}>
           <Text style={styles.subText}>
             {currentPlay.clock.displayValue} {currentPlay.period.displayValue}

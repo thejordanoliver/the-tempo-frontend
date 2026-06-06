@@ -1,4 +1,5 @@
 // components/NFL/GameLeaders.tsx
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
@@ -7,10 +8,10 @@ import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFootballGameLeaders } from "hooks/FootballHooks/useFootballGameLeaders";
-import usePlayersByTeam from "hooks/FootballHooks/usePlayersByTeam";
 import { useMemo, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+
 const CATEGORIES = [
   "Passing",
   "Rushing",
@@ -155,19 +156,19 @@ export default function GameLeaders({
   } = useFootballGameLeaders(gameId, awayTeamId);
 
   /* 🔑 USE TEAM PLAYERS (FIX) */
-  const { players: homeRoster } = usePlayersByTeam(Number(homeTeamId), league);
-  const { players: awayRoster } = usePlayersByTeam(Number(awayTeamId), league);
+  const { players: homeRoster } = useRoster(Number(homeTeamId), league);
+  const { players: awayRoster } = useRoster(Number(awayTeamId), league);
 
   const home = useMemo(
     () =>
       normalizePlayers(rawHome ?? [], Number(homeTeamId), homeRoster, league),
-    [rawHome, homeRoster, league],
+    [rawHome, homeTeamId, homeRoster, league],
   );
 
   const away = useMemo(
     () =>
       normalizePlayers(rawAway ?? [], Number(awayTeamId), awayRoster, league),
-    [rawAway, awayRoster, league],
+    [rawAway, awayTeamId, awayRoster, league],
   );
 
   const leadersByCategory = useMemo(() => {

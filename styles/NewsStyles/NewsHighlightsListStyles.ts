@@ -6,6 +6,7 @@ export const newsHighlightsListStyles = (isDark: boolean) =>
     container: {
       gap: 12,
       paddingHorizontal: 12,
+      paddingBottom: 100
     },
     emptyText: {
       fontFamily: Fonts.OSLIGHT,

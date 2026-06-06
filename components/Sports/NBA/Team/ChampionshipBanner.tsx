@@ -14,7 +14,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
 
 type Props = {
-  isDark: boolean
+  isDark: boolean;
   years?: (number | string)[];
   currentYear?: number;
   logo?: any;
@@ -190,7 +190,7 @@ export default function ChampionshipBanner({
             />
 
             <Image
-              source={isColorDark(team?.color) ? OutlineLight : Outline}
+              source={isColorDark(team?.color ?? "") ? OutlineLight : Outline}
               style={styles.bannerOutline}
               resizeMode="contain"
             />
@@ -211,60 +211,61 @@ export default function ChampionshipBanner({
   );
 }
 
-const championshipBannerStyles = (isDark: boolean) => StyleSheet.create({
-  wrapper: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    justifyContent: "center",
-    marginVertical: 16,
-  },
+const championshipBannerStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    wrapper: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+      justifyContent: "center",
+      marginVertical: 16,
+    },
 
-  bannerWrapper: {
-    width: 120,
-    height: 165,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    bannerWrapper: {
+      width: 120,
+      height: 165,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  bannerFill: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-  },
+    bannerFill: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+    },
 
-  bannerOutline: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-  },
+    bannerOutline: {
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+    },
 
-  contentOverlay: {
-    position: "absolute",
-    top: 16,
-    width: "100%",
-    alignItems: "center",
-  },
+    contentOverlay: {
+      position: "absolute",
+      top: 16,
+      width: "100%",
+      alignItems: "center",
+    },
 
-  yearText: {
-    color: Colors.white,
-    fontSize: 22,
-    fontFamily: Fonts.OSBOLD,
-    marginTop: 4,
-  },
+    yearText: {
+      color: Colors.white,
+      fontSize: 22,
+      fontFamily: Fonts.OSBOLD,
+      marginTop: 4,
+    },
 
-  teamLogo: {
-    width: 40,
-    height: 40,
-    marginTop: 8,
-    resizeMode: "contain",
-  },
+    teamLogo: {
+      width: 40,
+      height: 40,
+      marginTop: 8,
+      resizeMode: "contain",
+    },
 
-  leagueLabel: {
-    color: Colors.white,
-    fontSize: 12,
-    width: 100,
-    textAlign: "center",
-    fontFamily: Fonts.OSBOLD,
-  },
-});
+    leagueLabel: {
+      color: Colors.white,
+      fontSize: 12,
+      width: 100,
+      textAlign: "center",
+      fontFamily: Fonts.OSBOLD,
+    },
+  });

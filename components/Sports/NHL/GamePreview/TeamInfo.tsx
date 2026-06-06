@@ -1,7 +1,6 @@
-import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NHLTeam } from "types/types";
+import { NHLTeam } from "types/hockey";
 type TeamInfoProps = {
   team?: NHLTeam;
   logo: any;
@@ -14,7 +13,6 @@ type TeamInfoProps = {
 };
 
 export default function TeamInfo({
-  team,
   logo,
   name,
   score,
@@ -30,11 +28,7 @@ export default function TeamInfo({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isCanceled = gameStatusDescription === "Canceled";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "Halftime" ||
-    gameStatusDescription === "End of Period";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+
   // --- Winner / opacity logic ---
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 
@@ -46,7 +40,7 @@ export default function TeamInfo({
         : 0.4;
 
   // --- Detect record vs score → dynamic font size ---
-  const isRecord = isScheduled || isDelayed || isPostponed;
+  const isRecord = isScheduled || isDelayed || isPostponed || isCanceled;
   const valueFontSize = isRecord ? 22 : 36;
 
   // --- Value shown ---
@@ -55,27 +49,6 @@ export default function TeamInfo({
     : score !== undefined
       ? score
       : "-";
-
-  const renderTimeouts = (remaining: number) => {
-    const totalTimeouts = 7;
-    return (
-      <View style={{ flexDirection: "row", marginTop: 4 }}>
-        {Array.from({ length: totalTimeouts }).map((_, i) => (
-          <View
-            key={i}
-            style={{
-              width: 5,
-              height: 2,
-              borderRadius: 2,
-              backgroundColor: Colors.white,
-              opacity: i < remaining ? 1 : 0.3,
-              marginHorizontal: 2,
-            }}
-          />
-        ))}
-      </View>
-    );
-  };
 
   return (
     <View

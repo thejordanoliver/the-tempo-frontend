@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
 import { BracketMatchup } from "types/nba";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getBroadcastDisplay } from "utils/games";
 import { TeamRow } from "./TeamRow";
 
 type CardLayout = {

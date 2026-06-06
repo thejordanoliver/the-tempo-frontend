@@ -1,273 +1,250 @@
-// components/League/WeekSelector.tsx
-import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
-import { Colors, Fonts } from "constants/styles";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Colors, Fonts } from "@/constants/styles";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
+  Animated,
+  LayoutChangeEvent,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
+import WeekSelectorSkeleton from "../Skeletons/WeekSelectorSkeleton";
 
-export type FootballCalendarItem = {
+export type FootballWeekGroup = {
+  key: string;
   label: string;
-  stage: string;
-  alternateLabel?: string;
-  detail?: string;
-  weekNumber?: number;
-  startDate?: string;
-  endDate?: string;
+  season: {
+    year: number | null;
+    type: number | null;
+    slug: string | null;
+  };
+  week: {
+    number: number | null;
+  };
+  count: number;
+  games?: unknown[];
 };
 
-export type MMACalendarItem = {
-  label: string;
-  stage?: string;
-  eventNumber?: number;
-  startDate?: string;
-  endDate?: string;
-  eventRef?: string | null;
-  eventId?: string | null;
-};
-
-type SharedProps = {
-  loading?: boolean;
-  isDark: boolean;
-};
-
-type FootballProps = SharedProps & {
-  mode?: "football";
-  weeks: FootballCalendarItem[];
+type Props = {
+  groups: FootballWeekGroup[];
+  loading: boolean;
   selectedWeekIndex?: number;
   onSelectWeek: (index: number) => void;
-
-  events?: never;
-  selectedEventIndex?: never;
-  onSelectEvent?: never;
+  isDark: boolean;
+  containerStyle?: ViewStyle;
+  itemWidth?: number;
 };
 
-type MMAProps = SharedProps & {
-  mode?: "mma";
-  events: MMACalendarItem[];
-  selectedEventIndex?: number;
-  onSelectEvent: (index: number) => void;
+const DEFAULT_ITEM_WIDTH = 100;
+const SIDE_PADDING = 12;
+const ITEM_SPACING = 0;
+const ITEM_HEIGHT = 32;
 
-  weeks?: never;
-  selectedWeekIndex?: never;
-  onSelectWeek?: never;
-};
+function getWeekLabel(group: FootballWeekGroup) {
+  const label = group.label || "";
+  const weekNumber = group.week?.number;
 
-type Props = FootballProps | MMAProps;
-
-const FOOTBALL_ITEM_WIDTH = 100;
-const MMA_ITEM_WIDTH = 132;
-const SPACING = 12;
-
-const LABEL_OVERRIDES: Record<string, string> = {
-  "Conference Championship": "Conf Champ",
-  "Divisional Round": "Div Round",
-  "Hall of Fame Weekend": "HOF Week",
-  "Preseason Week 1": "Pre Week 1",
-  "Preseason Week 2": "Pre Week 2",
-  "Preseason Week 3": "Pre Week 3",
-};
-
-const isMMAProps = (props: Props): props is MMAProps => {
-  return Array.isArray((props as MMAProps).events);
-};
-
-const formatDateLabel = (date?: string) => {
-  if (!date) return null;
-
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return null;
+  if (label.includes("Preseason Week")) {
+    return `Pre Week ${weekNumber}`;
   }
 
-  return parsedDate.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const getMMAPrimaryLabel = (event: MMACalendarItem, index: number) => {
-  const label = event.label?.trim();
-
-  if (!label) {
-    return `Event ${event.eventNumber ?? index + 1}`;
+  if (label.includes("Hall of Fame")) {
+    return "HOF Week";
   }
 
-  const freedomMatch = label.match(/^UFC\s+Freedom\s+\d+/i);
-  if (freedomMatch) {
-    return freedomMatch[0].replace(/^UFC\s+/i, "");
+  if (label.includes("Conference")) {
+    return "Conf Round";
   }
 
-  const numberedUFCMatch = label.match(/^UFC\s+\d+/i);
-  if (numberedUFCMatch) {
-    return numberedUFCMatch[0].toUpperCase();
+  if (label.includes("Divisional")) {
+    return "Div Round";
   }
 
-  if (/^UFC\s+Fight Night/i.test(label)) {
-    return `Fight Night ${event.eventNumber ?? index + 1}`;
+  if (label.includes("Wild Card")) {
+    return "Wild Card";
   }
 
-  return label.split(":")[0].replace(/^UFC\s+/i, "");
-};
-
-const getMMASecondaryLabel = (event: MMACalendarItem) => {
-  const matchup = event.label?.split(":")?.[1]?.trim();
-
-  if (matchup) {
-    return matchup;
+  if (label.includes("Super Bowl")) {
+    return "Super Bowl";
   }
 
-  return formatDateLabel(event.startDate);
-};
+  if (weekNumber !== null && weekNumber !== undefined) {
+    return label || `Week ${weekNumber}`;
+  }
 
-const getFootballLabel = (week: FootballCalendarItem) => {
-  return LABEL_OVERRIDES[week.label] ?? week.alternateLabel ?? week.label;
-};
+  return label || "Week";
+}
 
-export default function WeekSelector(props: Props) {
-  const scrollRef = useRef<ScrollView>(null);
+export default function WeekSelector({
+  groups,
+  loading,
+  selectedWeekIndex = 0,
+  onSelectWeek,
+  isDark,
+  containerStyle,
+  itemWidth = DEFAULT_ITEM_WIDTH,
+}: Props) {
+  const styles = WeekSelectorStyles(isDark, itemWidth);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const indicatorX = useRef(new Animated.Value(0)).current;
+
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const isMMA = isMMAProps(props);
+  const itemStep = itemWidth + ITEM_SPACING;
 
-  const itemWidth = isMMA ? MMA_ITEM_WIDTH : FOOTBALL_ITEM_WIDTH;
-  const snapInterval = itemWidth + SPACING;
+  const safeSelectedIndex = useMemo(() => {
+    if (!groups.length) return 0;
 
-  const selectedIndex = isMMA
-    ? props.selectedEventIndex ?? 0
-    : props.selectedWeekIndex ?? 0;
+    return Math.min(Math.max(selectedWeekIndex, 0), groups.length - 1);
+  }, [groups.length, selectedWeekIndex]);
 
-  const itemCount = isMMA ? props.events.length : props.weeks.length;
+  const onLayoutContainer = (event: LayoutChangeEvent) => {
+    setContainerWidth(event.nativeEvent.layout.width);
+  };
 
-  const styles = useMemo(
-    () => WeekSelectorStyles(props.isDark, itemWidth, isMMA),
-    [props.isDark, itemWidth, isMMA],
+  const computeScrollOffset = useCallback(
+    (index: number) => {
+      if (!containerWidth || !groups.length) return 0;
+
+      const targetOffset =
+        SIDE_PADDING + index * itemStep - containerWidth / 2 + itemWidth / 2;
+
+      const totalWidth =
+        SIDE_PADDING * 2 +
+        groups.length * itemWidth +
+        ITEM_SPACING * Math.max(groups.length - 1, 0);
+
+      const maxOffset = Math.max(0, totalWidth - containerWidth);
+
+      return Math.max(0, Math.min(targetOffset, maxOffset));
+    },
+    [containerWidth, groups.length, itemStep, itemWidth],
+  );
+
+  const handleSelectWeek = useCallback(
+    (index: number) => {
+      onSelectWeek(index);
+
+      scrollViewRef.current?.scrollTo({
+        x: computeScrollOffset(index),
+        animated: true,
+      });
+    },
+    [computeScrollOffset, onSelectWeek],
   );
 
   useEffect(() => {
-    if (!scrollRef.current || containerWidth === 0 || itemCount === 0) {
-      return;
-    }
+    if (!groups.length) return;
 
-    const targetX =
-      selectedIndex * snapInterval - containerWidth / 2 + itemWidth / 2;
+    Animated.spring(indicatorX, {
+      toValue: safeSelectedIndex * itemStep,
+      useNativeDriver: true,
+      tension: 90,
+      friction: 12,
+    }).start();
+  }, [safeSelectedIndex, itemStep, groups.length, indicatorX]);
 
-    scrollRef.current.scrollTo({
-      x: Math.max(0, targetX),
+  useEffect(() => {
+    if (!scrollViewRef.current || !containerWidth || !groups.length) return;
+
+    scrollViewRef.current.scrollTo({
+      x: computeScrollOffset(safeSelectedIndex),
       animated: true,
     });
-  }, [selectedIndex, containerWidth, itemCount, itemWidth, snapInterval]);
+  }, [safeSelectedIndex, containerWidth, groups.length, computeScrollOffset]);
 
-  if (props.loading) return <WeekSelectorSkeleton />;
+  if (loading && !groups.length) {
+    return <WeekSelectorSkeleton />;
+  }
+
+  if (!groups.length) {
+    return null;
+  }
 
   return (
-    <View
-      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
-      style={styles.wrapper}
-    >
+    <View style={[styles.wrapper, containerStyle]} onLayout={onLayoutContainer}>
       <ScrollView
+        ref={scrollViewRef}
         horizontal
-        ref={scrollRef}
-        snapToInterval={snapInterval}
-        decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
+        snapToInterval={itemStep}
+        decelerationRate="fast"
         contentContainerStyle={styles.contentContainerStyle}
       >
-        {isMMA
-          ? props.events.map((event, index) => {
-              const isSelected = index === selectedIndex;
-              const primaryLabel = getMMAPrimaryLabel(event, index);
-              const secondaryLabel = getMMASecondaryLabel(event);
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.slidingSelectedContainer,
+            {
+              transform: [{ translateX: indicatorX }],
+            },
+          ]}
+        />
 
-              return (
-                <TouchableOpacity
-                  key={`${event.eventId ?? event.label}-${index}`}
-                  onPress={() => props.onSelectEvent(index)}
-                  activeOpacity={0.75}
-                  style={[styles.label, isSelected && styles.labelSelected]}
-                >
-                  <Text
-                    style={
-                      isSelected ? styles.monthTextSelected : styles.monthText
-                    }
-                    numberOfLines={1}
-                  >
-                    {primaryLabel}
-                  </Text>
+        {groups.map((group, index) => {
+          const isSelected = index === safeSelectedIndex;
 
-                  {secondaryLabel ? (
-                    <Text
-                      style={
-                        isSelected
-                          ? styles.detailTextSelected
-                          : styles.detailText
-                      }
-                      numberOfLines={1}
-                    >
-                      {secondaryLabel}
-                    </Text>
-                  ) : null}
-                </TouchableOpacity>
-              );
-            })
-          : props.weeks.map((week, index) => {
-              const isSelected = index === selectedIndex;
-              const primaryLabel = getFootballLabel(week);
-
-              return (
-                <TouchableOpacity
-                  key={`${week.stage}-${week.label}-${index}`}
-                  onPress={() => props.onSelectWeek(index)}
-                  activeOpacity={0.75}
-                  style={[styles.label, isSelected && styles.labelSelected]}
-                >
-                  <Text
-                    style={
-                      isSelected ? styles.monthTextSelected : styles.monthText
-                    }
-                    numberOfLines={1}
-                  >
-                    {primaryLabel}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+          return (
+            <TouchableOpacity
+              key={group.key || `${group.season?.slug}-${group.week?.number}`}
+              activeOpacity={0.75}
+              onPress={() => handleSelectWeek(index)}
+              style={styles.label}
+            >
+              <Text
+                numberOfLines={1}
+                style={isSelected ? styles.monthTextSelected : styles.monthText}
+              >
+                {getWeekLabel(group)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </View>
   );
 }
 
-const WeekSelectorStyles = (
-  isDark: boolean,
-  itemWidth: number,
-  isMMA: boolean,
-) =>
+const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
   StyleSheet.create({
     wrapper: {
       marginVertical: 8,
     },
     contentContainerStyle: {
-      paddingHorizontal: SPACING,
+      position: "relative",
+      paddingHorizontal: SIDE_PADDING,
       alignItems: "center",
-      gap: SPACING,
+    },
+    slidingSelectedContainer: {
+      position: "absolute",
+      left: SIDE_PADDING,
+      top: 0,
+      width: itemWidth,
+      height: ITEM_HEIGHT,
+      borderRadius: 12,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     label: {
       width: itemWidth,
+      height: ITEM_HEIGHT,
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: isMMA ? 8 : 6,
-      paddingHorizontal: 10,
-      borderRadius: 14,
-    },
-    labelSelected: {
-      backgroundColor: isDark
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(0,0,0,0.06)",
+      padding: 4,
+      borderRadius: 12,
+      zIndex: 2,
     },
     monthText: {
       fontFamily: Fonts.OSREGULAR,
@@ -276,25 +253,9 @@ const WeekSelectorStyles = (
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     monthTextSelected: {
+      fontFamily: Fonts.OSMEDIUM,
       fontSize: 16,
       textAlign: "center",
-      fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.white : Colors.black,
-    },
-    detailText: {
-      marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      textAlign: "center",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      opacity: 0.75,
-    },
-    detailTextSelected: {
-      marginTop: 2,
-      fontFamily: Fonts.OSMEDIUM,
-      fontSize: 12,
-      textAlign: "center",
-      color: isDark ? Colors.white : Colors.black,
-      opacity: 0.9,
     },
   });

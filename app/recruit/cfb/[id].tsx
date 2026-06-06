@@ -1,9 +1,9 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import OfferList from "components/Sports/CFB/Recruiting/OfferLists";
-import PredictionRing from "components/Sports/CFB/Recruiting/PredictionRing";
-import RecruitHeader from "components/Sports/CFB/Recruiting/RecruitHeader";
-import StarRating from "components/Sports/CFB/Recruiting/StarRating";
+import OfferList from "components/League/Recruiting/CFB/OfferLists";
+import PredictionRing from "components/League/Recruiting/CFB/PredictionRing";
+import RecruitHeader from "components/League/Recruiting/CFB/RecruitHeader";
+import StarRating from "components/League/Recruiting/CFB/StarRating";
 import { globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";

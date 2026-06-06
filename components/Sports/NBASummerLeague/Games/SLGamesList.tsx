@@ -6,12 +6,12 @@ import React, { useState } from "react";
 import { FlatList, View, ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import type { SummerGame } from "../../../../types/types";
+import { BasketballGame } from "types/basketball";
 import SLStackedGameCard from "./SLeagueStackedGameCard";
 import SLGameCard from "./SLGameCard";
 import SLSquareGameCard from "./SLSquareGameCard";
 type Props = {
-  games: SummerGame[];
+  games: BasketballGame[];
   loading: boolean;
   refreshing?: boolean;
   onRefresh: () => void;
@@ -28,16 +28,16 @@ const SLGamesList: React.FC<Props> = ({
   scrollEnabled = true, // default to true
 }) => {
   const styles = gameListStyles;
-  const [previewGame, setPreviewGame] = useState<SummerGame | null>(null);
+  const [previewGame, setPreviewGame] = useState<BasketballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const { viewMode } = usePreferences();
 
-  const handleLongPress = (game: SummerGame) => {
+  const handleLongPress = (game: BasketballGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
   };
-  const renderGameCard = (game: SummerGame) => {
+  const renderGameCard = (game: BasketballGame) => {
     if ((game as any)?._isPlaceholder) {
       return <View style={styles.gridItem} />;
     }

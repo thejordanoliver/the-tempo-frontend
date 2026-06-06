@@ -59,14 +59,14 @@ const FULLSCREEN_OPTIONS = { enable: true };
 // ---------------------------------------------------------------------------
 
 export const HighlightVideoItem = React.memo(
-  ({
+  function HighlightVideoItem({
     item,
     isActive,
     onPlay,
     hasPlayed,
     setHasPlayed,
     styles,
-  }: HighlightVideoItemProps) => {
+  }: HighlightVideoItemProps) {
     const videoSource = useMemo(() => getPlayableUrl(item), [item]);
 
     // Hooks before early return — Rules of Hooks compliant

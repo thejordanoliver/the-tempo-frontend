@@ -115,9 +115,10 @@ export default function Roster({
                     positionNameMap[player.position?.toUpperCase() ?? ""] ??
                     player.position
                   }
-                  team={teamFullName}
-                  avatarUrl={player.imageUrl}
+                  teamId={Number(player.teamId ?? 0)}
+                  headshot={player.imageUrl}
                   number={player.jersey}
+                  league="NHL"
                 />
               </View>
             ))}

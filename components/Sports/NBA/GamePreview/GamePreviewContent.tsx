@@ -12,11 +12,21 @@ import {
   TeamInjuries,
 } from "components/Sports/NBA/GameDetails";
 import React from "react";
-import { NBATeam } from "types/nba";
+import { LeagueType } from "types/types";
 
 type GamePreviewContentProps = {
-  home: NBATeam;
-  away: NBATeam;
+  homeTeamId: any;
+  homeEspnId: number;
+  homeColor: string;
+  homeName: string;
+  homeCode: string;
+  homeLogo: any;
+  awayTeamId: number;
+  awayEspnId: number;
+  awayColor: string;
+  awayName: string;
+  awayCode: string;
+  awayLogo: any;
   homeChance: number;
   awayChance: number;
   lineScore?: {
@@ -29,7 +39,6 @@ type GamePreviewContentProps = {
   teamStats: any[];
   officials: any[];
   injuries: any[];
-  loading: boolean;
   error?: string | null;
   teamPlayersMap: Record<string, any[]>;
   detailsLoading?: boolean;
@@ -41,12 +50,25 @@ type GamePreviewContentProps = {
   venueCapacity?: string | null;
   venueAttendance?: number | null;
   weather?: any;
+  gameLeadersLoading: boolean;
+  gameLeadersError: string | null;
   gameStatusDescription: string;
+  league: LeagueType;
 };
 
 export default function GamePreviewContent({
-  home,
-  away,
+  homeTeamId,
+  homeEspnId,
+  homeColor,
+  homeName,
+  homeCode,
+  homeLogo,
+  awayTeamId,
+  awayEspnId,
+  awayColor,
+  awayName,
+  awayCode,
+  awayLogo,
   homeChance,
   awayChance,
   lineScore,
@@ -56,10 +78,9 @@ export default function GamePreviewContent({
   teamStats,
   officials,
   injuries,
-  loading,
-  error,
   teamPlayersMap,
-  detailsLoading,
+  gameLeadersError,
+  gameLeadersLoading,
   gameLeaders,
   venueImage,
   venueName,
@@ -69,98 +90,102 @@ export default function GamePreviewContent({
   venueAttendance,
   weather,
   gameStatusDescription,
+  league,
 }: GamePreviewContentProps) {
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
     >
-      <MatchupPredictor
-        home={{
-          name: home.code,
-          logo: home.logoLight || home.logo,
-          color: home.secondaryColor,
-          chance: homeChance,
-        }}
-        away={{
-          name: away.code,
-          logo: away.logoLight || away.logo,
-          color: away.secondaryColor,
-          chance: awayChance,
-        }}
-        size={180}
+      <LineScore
+        linescore={lineScore}
+        awayCode={awayCode}
+        homeCode={homeCode}
+        league={league}
         isDark
         gameStatusDescription={gameStatusDescription}
       />
 
-      <LineScore
-        linescore={lineScore}
-        homeCode={home?.code}
-        awayCode={away?.code}
+      <MatchupPredictor
+        homeCode={homeCode}
+        homeLogo={homeLogo}
+        homeChance={homeChance}
+        homeColor={homeColor}
+        awayCode={awayCode}
+        awayLogo={awayLogo}
+        awayChance={awayChance}
+        awayColor={awayColor}
+        size={180}
         isDark
         gameStatusDescription={gameStatusDescription}
       />
 
       <GameLeaders
         gameLeaders={gameLeaders}
-        awayTeamId={away?.id}
-        homeTeamId={home?.id}
-        loading={loading}
-        error={error}
+        awayTeamId={awayTeamId}
+        homeTeamId={homeTeamId}
+        loading={gameLeadersLoading}
+        error={gameLeadersError}
         isDark
         gameStatusDescription={gameStatusDescription}
       />
 
       <BoxScore
         playerStats={playerStats}
-        awayTeamId={away?.espnID}
-        homeTeamId={home?.espnID}
-        league={"NBA"}
-        gameStatusDescription={gameStatusDescription}
+        awayTeamId={Number(awayEspnId)}
+        homeTeamId={Number(homeEspnId)}
+        homeLogo={homeLogo}
+        awayLogo={awayLogo}
+        homeName={homeName}
+        awayName={awayName}
         isDark
+        league={league}
+        gameStatusDescription={gameStatusDescription}
       />
 
       <GameTeamStats
-        homeCode={home.code}
-        awayCode={away.code}
-        homeLogo={home.logoLight || home.logo}
-        awayLogo={away.logoLight || away.logo}
         stats={teamStats}
+        homeLogo={homeLogo}
+        awayLogo={awayLogo}
+        homeCode={homeCode}
+        awayCode={awayCode}
         isDark
         gameStatusDescription={gameStatusDescription}
       />
+
       <HeadToHeadGames
-        awayTeamId={away.id}
-        homeTeamId={home.id}
-        homeTeamColor={home?.color}
-        awayTeamColor={away?.color}
+        awayTeamId={awayTeamId}
+        homeTeamId={homeTeamId}
+        homeTeamColor={homeColor}
+        awayTeamColor={awayColor}
         isDark
       />
 
       <LastFiveGames
+        isDark
         home={{
-          teamId: home.id,
-          teamCode: home.code,
+          teamId: homeTeamId,
+          teamCode: homeCode,
           games: homeLastGames.games,
         }}
         away={{
-          teamId: away.id,
-          teamCode: away.code,
+          teamId: awayTeamId,
+          teamCode: awayCode,
           games: awayLastGames.games,
         }}
-        league="NBA"
-        isDark
+        league={league}
+        gameStatusDescription={gameStatusDescription}
       />
 
       <TeamInjuries
         injuries={injuries}
-        loading={detailsLoading}
-        isDark
         teamPlayersMap={teamPlayersMap}
+        league={league === "WNBA" ? "WNBA" : "NBA"}
+        isDark
       />
 
       <Officials
-        officials={officials ?? []}
+        officials={officials}
         gameStatusDescription={gameStatusDescription}
         isDark
       />

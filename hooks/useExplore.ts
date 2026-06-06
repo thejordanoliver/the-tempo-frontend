@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PlayerResult,
   ResultItem,
@@ -7,164 +7,269 @@ import {
   UserResult,
 } from "types/explore";
 import { apiClient } from "utils/apiClient";
+
 const RECENT_SEARCHES_KEY = "recentSearches";
+const RECENT_SEARCHES_LIMIT = 10;
+const SEARCH_DEBOUNCE_MS = 400;
+
+type ExploreSearchResponse = {
+  players: PlayerResult[];
+  teams: TeamResult[];
+  users: UserResult[];
+};
+
+function getResultKey(item: ResultItem) {
+  if (item.type === "player") return String(item.player_id);
+  if (item.type === "team") return String(item.id);
+  if (item.type === "user") return String(item.id);
+  return null;
+}
+
+function isValidResultItem(item: unknown): item is ResultItem {
+  if (!item || typeof item !== "object") return false;
+
+  const value = item as Partial<ResultItem>;
+
+  if (!("type" in value)) return false;
+
+  if (value.type === "player") {
+    return "player_id" in value && value.player_id !== undefined;
+  }
+
+  if (value.type === "team") {
+    return "id" in value && value.id !== undefined;
+  }
+
+  if (value.type === "user") {
+    return "id" in value && value.id !== undefined;
+  }
+
+  return false;
+}
+
+function safeParseRecentSearches(value: string | null): ResultItem[] {
+  if (!value) return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(isValidResultItem).slice(0, RECENT_SEARCHES_LIMIT);
+  } catch {
+    return [];
+  }
+}
+
+function isCanceledRequest(error: unknown) {
+  const err = error as {
+    name?: string;
+    code?: string;
+    message?: string;
+  };
+
+  return (
+    err?.name === "CanceledError" ||
+    err?.code === "ERR_CANCELED" ||
+    err?.message === "canceled"
+  );
+}
+
+function sortByScoreDesc<T extends { score?: number | null }>(items: T[]) {
+  return [...items].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+}
+
+function normalizeUsers(users: UserResult[], query: string): ResultItem[] {
+  const q = query.toLowerCase();
+
+  return users.map((user) => {
+    const username = user.username?.toLowerCase() ?? "";
+    let score = user.score ?? 0;
+
+    if (username === q) {
+      score += 1000;
+    } else if (username.startsWith(q)) {
+      score += 500;
+    }
+
+    return {
+      ...user,
+      type: "user" as const,
+      score,
+    };
+  });
+}
+
+function normalizePlayers(players: PlayerResult[]): ResultItem[] {
+  return players.map((player) => ({
+    ...player,
+    type: "player" as const,
+  }));
+}
+
+function normalizeTeams(teams: TeamResult[]): ResultItem[] {
+  return teams.map((team) => ({
+    ...team,
+    type: "team" as const,
+  }));
+}
+
+function buildResults(data: ExploreSearchResponse, query: string): ResultItem[] {
+  const teams = sortByScoreDesc(normalizeTeams(data.teams));
+  const users = sortByScoreDesc(normalizeUsers(data.users, query));
+  const players = sortByScoreDesc(normalizePlayers(data.players));
+
+  return [...teams, ...users, ...players];
+}
+
+function removeDuplicateRecentSearch(
+  searches: ResultItem[],
+  itemToRemove: ResultItem,
+) {
+  const itemKey = getResultKey(itemToRemove);
+  if (!itemKey) return searches;
+
+  return searches.filter((item) => {
+    const key = getResultKey(item);
+    return key !== itemKey || item.type !== itemToRemove.type;
+  });
+}
+
+async function persistRecentSearches(searches: ResultItem[]) {
+  await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+}
 
 export function useExplore() {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState<ResultItem[]>([]);
   const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [debouncedQuery, setDebouncedQuery] = useState(query);
-  const isSearching =
-    loading || (query.trim().length > 0 && debouncedQuery !== query);
+
+  const requestIdRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const normalizedQuery = query.trim();
+  const normalizedDebouncedQuery = debouncedQuery.trim();
+
+  const isSearching = useMemo(() => {
+    return (
+      loading ||
+      (normalizedQuery.length > 0 && normalizedQuery !== normalizedDebouncedQuery)
+    );
+  }, [loading, normalizedQuery, normalizedDebouncedQuery]);
+
+  const loadRecentSearches = useCallback(async () => {
+    try {
+      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      setRecentSearches(safeParseRecentSearches(stored));
+    } catch (err) {
+      console.warn("Error loading recent searches", err);
+      setRecentSearches([]);
+    }
+  }, []);
+
+  const search = useCallback(async (searchQuery: string) => {
+    const trimmedQuery = searchQuery.trim();
+
+    requestIdRef.current += 1;
+    const requestId = requestIdRef.current;
+
+    abortControllerRef.current?.abort();
+
+    if (!trimmedQuery) {
+      setResults([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await apiClient.get<ExploreSearchResponse>(
+        "api/explore/search",
+        {
+          params: { query: trimmedQuery },
+          signal: controller.signal,
+        },
+      );
+
+      if (requestId !== requestIdRef.current) return;
+
+      setResults(buildResults(res.data, trimmedQuery));
+      setError(null);
+    } catch (err: any) {
+      if (isCanceledRequest(err)) return;
+      if (requestId !== requestIdRef.current) return;
+
+      setError(err?.message || "Failed to fetch data");
+      setResults([]);
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  const saveToRecentSearches = useCallback(async (item: ResultItem) => {
+    const key = getResultKey(item);
+    if (!key) return;
+
+    try {
+      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      const existing = safeParseRecentSearches(stored);
+
+      const nextSearches = [
+        item,
+        ...removeDuplicateRecentSearch(existing, item),
+      ].slice(0, RECENT_SEARCHES_LIMIT);
+
+      await persistRecentSearches(nextSearches);
+      setRecentSearches(nextSearches);
+    } catch (err) {
+      console.warn("Failed to save recent search", err);
+    }
+  }, []);
+
+  const deleteRecentSearch = useCallback(async (itemToDelete: ResultItem) => {
+    try {
+      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      const existing = safeParseRecentSearches(stored);
+      const nextSearches = removeDuplicateRecentSearch(existing, itemToDelete);
+
+      await persistRecentSearches(nextSearches);
+      setRecentSearches(nextSearches);
+    } catch (err) {
+      console.warn("Failed to delete recent search", err);
+    }
+  }, []);
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 400); // wait 400ms after last keystroke
+    }, SEARCH_DEBOUNCE_MS);
 
     return () => {
       clearTimeout(handler);
     };
   }, [query]);
 
-  // trigger search only when debouncedQuery changes
   useEffect(() => {
-    if (debouncedQuery.trim()) {
-      search(debouncedQuery);
-    } else {
-      setResults([]); // clear results if input is empty
-    }
-  }, [debouncedQuery]);
+    search(debouncedQuery);
+  }, [debouncedQuery, search]);
 
   useEffect(() => {
     loadRecentSearches();
-  }, []);
 
-  const loadRecentSearches = async () => {
-    try {
-      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const validResults = parsed.filter(
-          (item: any) =>
-            item &&
-            typeof item === "object" &&
-            "type" in item &&
-            ("id" in item || "player_id" in item),
-        );
-        setRecentSearches(validResults);
-      }
-    } catch (err) {
-      console.warn("Error loading recent searches", err);
-    }
-  };
-
-  const saveToRecentSearches = async (item: ResultItem) => {
-    const key = getResultKey(item);
-    if (!key) return;
-
-    try {
-      const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
-
-      parsed = parsed.filter(
-        (r) => getResultKey(r) !== key || r.type !== item.type,
-      );
-      parsed.unshift(item);
-      parsed = parsed.slice(0, 10);
-
-      await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
-      setRecentSearches(parsed);
-    } catch (err) {
-      console.warn("Failed to save recent search", err);
-    }
-  };
-
-  const deleteRecentSearch = async (itemToDelete: ResultItem) => {
-    try {
-      const deleteKey = getResultKey(itemToDelete);
-      if (!deleteKey) return;
-
-      const existing = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
-      let parsed: ResultItem[] = existing ? JSON.parse(existing) : [];
-      parsed = parsed.filter(
-        (r) => getResultKey(r) !== deleteKey || r.type !== itemToDelete.type,
-      );
-
-      await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(parsed));
-      setRecentSearches(parsed);
-    } catch (err) {
-      console.warn("Failed to delete recent search", err);
-    }
-  };
-
-  const search = async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      setError(null);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await apiClient.get<{
-        players: PlayerResult[];
-        teams: TeamResult[];
-        users: UserResult[];
-      }>(`api/explore/search`, { params: { query: searchQuery } });
-
-      const q = searchQuery.toLowerCase();
-
-      // Add scoring for users
-      const scoredUsers: ResultItem[] = res.data.users.map((u) => {
-        let score = u.score ?? 0;
-        const uname = u.username.toLowerCase();
-        if (uname === q)
-          score += 1000; // exact match boost
-        else if (uname.startsWith(q)) score += 500; // prefix boost
-        return { ...u, type: "user" as const, score };
-      });
-
-      // Sort users by score descending
-      const sortedUsers = scoredUsers.sort(
-        (a, b) => (b.score ?? 0) - (a.score ?? 0),
-      );
-
-      // Sort players by score descending
-      const sortedPlayers = res.data.players
-        .map((p) => ({ ...p, type: "player" as const }))
-        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-
-      // Sort teams by score descending
-      const sortedTeams = res.data.teams
-        .map((t) => ({ ...t, type: "team" as const }))
-        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-
-      // Combine results: users first, then players, then teams
-      const combined: ResultItem[] = [
-        ...sortedTeams,
-        ...sortedUsers,
-        ...sortedPlayers,
-      ];
-
-      setResults(combined);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data");
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getResultKey = (item: ResultItem) => {
-    if (item.type === "player") return String(item.player_id);
-    if (item.type === "team") return String(item.id);
-    if (item.type === "user") return String(item.id);
-    return null;
-  };
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, [loadRecentSearches]);
 
   return {
     query,

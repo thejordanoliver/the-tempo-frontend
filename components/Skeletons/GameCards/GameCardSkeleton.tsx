@@ -1,42 +1,21 @@
+import {
+  SkeletonBlock,
+  SkeletonCircle,
+} from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function GameCardSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  // Shared pulse animation for all skeleton parts
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [pulseAnim]);
-
-  function SkeletonBlock({ style }: { style: any }) {
-    return <Animated.View style={[style, { opacity: pulseAnim }]} />;
-  }
-
   return (
     <View style={styles.card}>
       {/* Top Team */}
       <View style={styles.teamSection}>
-        <SkeletonBlock style={styles.logoSkeleton} />
+        <SkeletonCircle size={40} style={styles.logoSkeleton} />
         <SkeletonBlock style={styles.nameSkeleton} />
       </View>
 
@@ -54,7 +33,7 @@ export default function GameCardSkeleton() {
 
       {/* Bottom Team */}
       <View style={styles.teamSection}>
-        <SkeletonBlock style={styles.logoSkeleton} />
+        <SkeletonCircle size={40} style={styles.logoSkeleton} />
         <SkeletonBlock style={styles.nameSkeleton} />
       </View>
     </View>

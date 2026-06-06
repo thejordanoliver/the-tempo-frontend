@@ -1,7 +1,7 @@
 export type BasketballTeam = {
   id: number;
   wid?: number;
-  espnID?: number;
+  espnID: number | null;
   name: string;
   shortName?: string;
   fullName?: string;
@@ -99,7 +99,9 @@ export type BasketballGame = {
 
 export type BasketballGameCardProps = {
   game: BasketballGame;
-  isWomen?: boolean;
+  isCBB?: boolean;
+  isWCBB?: boolean;
+  isWNBA?: boolean;
 };
 
 export type Conference = {

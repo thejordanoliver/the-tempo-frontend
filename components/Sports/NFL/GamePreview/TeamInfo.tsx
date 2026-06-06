@@ -1,32 +1,31 @@
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Image, Text, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { FootballTeam } from "types/football";
 
 type TeamInfoProps = {
-  team: FootballTeam;
-  logo: any;
+  logo: ImageSourcePropType;
   name: string;
-  rank?: number;
   score: number;
-  opponentScore: number;
+  isWinner: boolean;
+  isTie: boolean;
   record?: string;
-  possessionTeamId?: number | null;
+  hasPossession: boolean;
   side: "home" | "away";
   timeouts?: number;
   gameStatusDescription: string | undefined;
+  rank: number | null;
 };
 
 export default function TeamInfo({
-  team,
   logo,
   name,
   score,
-  opponentScore,
+  isWinner,
+  isTie,
   record,
   rank,
   gameStatusDescription,
-  possessionTeamId,
+  hasPossession,
   side,
   timeouts,
 }: TeamInfoProps) {
@@ -41,16 +40,13 @@ export default function TeamInfo({
     gameStatusDescription === "Scheduled" ||
     gameStatusDescription === "Not Started";
 
-  const isTie = isFinal && score === opponentScore;
-  const isWinner = isFinal && !isTie && score > opponentScore;
+
+ 
   const scoreOpacity = !isFinal ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
 
   const isRecord = isScheduled;
   const valueFontSize = isRecord ? 22 : 36;
   const displayValue = isScheduled ? (record ?? "-") : (score ?? "-");
-
-  const hasPossession =
-    gameStatusDescription && String(possessionTeamId) === String(team?.espnID);
 
   // --------------------------------------------------------------
   // TIMEOUTS RENDERING

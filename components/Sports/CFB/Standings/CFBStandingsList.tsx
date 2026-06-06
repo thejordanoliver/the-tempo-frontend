@@ -22,9 +22,9 @@ import {
   View,
 } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+
 export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();

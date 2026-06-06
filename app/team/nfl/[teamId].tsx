@@ -1,19 +1,22 @@
+import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
+import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import { Roster } from "components/Sports/CFB/Team/Roster";
-import { FootballRosterStats } from "components/Sports/CFB/Team/RosterStats";
+import Roster from "components/Sports/CFB/Team/Roster";
+import RosterStats from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
-import NFLGamesList from "components/Sports/NFL/Games/NFLGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useFootballTeamGames } from "hooks/FootballHooks/useFootballTeamGames";
+import { useRosterStats } from "hooks/FootballHooks/useRosterStats";
+import { useTeamStats } from "hooks/FootballHooks/useTeamStats";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLayoutEffect, useRef, useState } from "react";
@@ -33,6 +36,7 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
   const team = getNFLTeam(teamIdNum);
+  const espnId = team?.espnID ?? 0;
   const teamLogo = getNFLTeamLogo(teamIdNum, true);
   const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
@@ -40,7 +44,6 @@ export default function TeamDetailScreen() {
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
-  const rosterRef = useRef<{ refresh: () => void }>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs("NFL");
   const pagerRef = useRef<PagerView>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -57,14 +60,35 @@ export default function TeamDetailScreen() {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, league);
+  } = useLeaguesNews(league, 10);
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+    refreshPlayers,
+  } = useRoster(teamIdNum, league);
 
   const {
     games: teamGames,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum ?? 0, String(getFootballSeason()), 2);
+  } = useTeamGames(teamIdNum, "nfl");
+
+  const {
+    rosterStats,
+    loading: statsLoading,
+    error: statsError,
+    refreshingStats,
+    onRefresh: refreshRosterStats,
+  } = useRosterStats(league, teamIdNum);
+
+  const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
+    {
+      teamId: espnId,
+      league,
+    },
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -72,7 +96,9 @@ export default function TeamDetailScreen() {
       if (selectedTab === "schedule") {
         await refreshTeamGames?.();
       } else if (selectedTab === "roster") {
-        rosterRef.current?.refresh();
+        await refreshPlayers();
+      } else if (selectedTab === "stats") {
+        await Promise.all([refreshRosterStats(), refresh?.()]);
       }
     } catch (err) {
       console.error("Refresh failed:", err);
@@ -97,7 +123,7 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [navigation, isDark, team, favorited]);
+  }, [navigation, isDark, team, teamLogo, toggleFavorite, favorited]);
 
   if (!team) {
     return (
@@ -122,14 +148,16 @@ export default function TeamDetailScreen() {
         initialPage={0}
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
-        {/* Schedule Page */}
+        {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
-          <NFLGamesList
+          <FootballGamesList
             games={teamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            error={gamesError}
             showHeaders={true}
+            isNFL={true}
           />
         </View>
 
@@ -156,27 +184,34 @@ export default function TeamDetailScreen() {
           </ScrollView>
         </View>
 
-        {/* Roster Page */}
+        {/* ROSTER */}
         <View key="roster" style={styles.contentArea}>
           <Roster
-            ref={rosterRef}
-            teamId={String(team.id)}
-            teamName={team.name}
+            players={players}
+            loading={playersLoading}
+            error={playersError}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
             league={league}
           />
         </View>
 
-        {/* Stats Page */}
-        <ScrollView key="stats" contentContainerStyle={{ paddingBottom: 100 }}>
-          {team?.espnID && team?.id && (
-            <FootballRosterStats
-              espnID={Number(team.espnID)}
-              teamID={Number(team.id)}
-            />
-          )}
-        </ScrollView>
+        {/* STATS */}
+        <View key="stats" style={styles.contentArea}>
+          <RosterStats
+            rosterStats={rosterStats}
+            teamStats={teamStats}
+            loading={statsLoading || teamStatsLoading}
+            error={statsError || teamStatsError}
+            refreshing={refreshingStats}
+            onRefresh={refreshRosterStats}
+            teamId={teamIdNum}
+            teamID={Number(team.id)}
+            league={league}
+          />
+        </View>
 
-        {/* Standings Page */}
+        {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
@@ -185,7 +220,7 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Forum Page */}
+        {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league={league} />
         </View>

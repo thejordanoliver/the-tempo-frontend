@@ -38,14 +38,10 @@ export type FootballTeamRowProps = {
 };
 
 export type BasketballTeamRowProps = {
-  team: {
-    name: string | undefined;
-    record: string | undefined;
-    logo: any;
-    code?: string;
-    id?: number;
-    wid?: number; // ✅ ADD THIS
-  };
+  id: number | null;
+  logo: any;
+  name: string;
+  record: string;
   timeouts?: number;
   bonusState: string | undefined | null;
   size?: SizeType;
@@ -61,8 +57,8 @@ export type BasketballTeamRowProps = {
     score: string;
     winnerScore: string;
   };
-
   gameStatusDescription?: string;
+  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
 };
 
 export type MMAProps = {
@@ -76,29 +72,43 @@ export type MMAProps = {
   gameStatusDescription?: string;
 };
 
-export type MLBProps = {
-  team: TeamRowTeam;
+export type BaseballProps = {
+  id: number;
+  name: string;
+  logo: any;
+  record: string;
   size?: SizeType;
-  rank?: string;
+  rank: number | undefined | null;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
-  isWinner?: boolean;
+  isWinner?: boolean | undefined | null;
   hideRecord?: boolean;
   gameStatusDescription?: string;
-  league: "mlb" | "cbb";
+  league: string;
 };
+
 export type NHLProps = {
-  team: TeamRowTeam;
-  size?: SizeType;
+  id: number | null;
+  logo: any;
+  name: string;
+  record: string;
   timeouts?: number;
-  rank?: string;
+  size?: SizeType;
+  rank?: number | null;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
   isWinner?: boolean;
   hideRecord?: boolean;
+  colors?: {
+    text: string;
+    record: string;
+    score: string;
+    winnerScore: string;
+  };
   gameStatusDescription?: string;
+  league: string;
 };
 
 // Main static styles
@@ -107,6 +117,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     row: ViewStyle;
     teamInfoContainer: ViewStyle;
     headshotContainer: ViewStyle;
+    timeoutsContainer: ViewStyle;
     teamInfo: ViewStyle;
     nameRow: ViewStyle;
     teamName: TextStyle;
@@ -151,7 +162,6 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     rank: {
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
       color: Colors.lightGray,
     },
     record: {
@@ -189,6 +199,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       top: "54%",
       alignSelf: "center",
     },
+    timeoutsContainer: { alignItems: "center" },
     bonus: {
       marginTop: 2,
       position: "absolute",

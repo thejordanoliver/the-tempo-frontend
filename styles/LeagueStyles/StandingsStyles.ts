@@ -184,6 +184,11 @@ export const standingsStyles = (isDark: boolean) =>
       alignItems: "center",
       marginBottom: 12,
     },
+    legendLabel: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+    },
 
     droppedoutNames: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -207,3 +212,5 @@ export const standingsStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });
+
+export const getStyles = standingsStyles;

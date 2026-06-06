@@ -13,8 +13,8 @@ type TeamColors = {
   id?: string | number;
   name?: string;
   fullName?: string;
-  color?: string;
-  secondaryColor?: string;
+  color?: string | null;
+  secondaryColor?: string | null;
 };
 
 type Props = {

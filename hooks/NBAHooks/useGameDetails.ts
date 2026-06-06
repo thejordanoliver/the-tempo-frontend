@@ -118,7 +118,7 @@ export type Predictor = {
 
 export type GameDetails = {
   homeRank: number;
-  awayRank: number;
+  awayRank: number | null;
   broadcast?: string | null;
   broadcasts?: string[];
   officials: any[];

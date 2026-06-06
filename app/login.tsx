@@ -1,19 +1,19 @@
 // login.tsx
-import ConfirmModal from "components/ConfirmModal";
-import CropEditorModal from "components/CropEditorModal";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import SignInForm from "components/Forms/SignInForm";
-import SignUpForm from "components/Forms/SignUpForm";
-import TabBar from "components/TabBars/TabBar";
-import { usePreferences } from "contexts/PreferencesContext";
+import ConfirmModal from "../components/ConfirmModal";
+import CropEditorModal from "../components/CropEditorModal";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import SignInForm from "../components/Forms/SignInForm";
+import SignUpForm from "../components/Forms/SignUpForm";
+import TabBar from "../components/TabBars/TabBar";
+import { usePreferences } from "../contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
-import { useAuth } from "hooks/UserHooks/useAuth";
+import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
-import { formStyles } from "styles/FormStyles";
-import { AlertConfig } from "types/alert";
-import { LeagueType } from "types/types";
+import { formStyles } from "../styles/FormStyles";
+import { AlertConfig } from "../types/alert";
+import { LeagueType } from "../types/types";
 
 const SIGNUP_HEADER_TITLES: Record<number, string> = {
   0: "Create Account",

@@ -10,8 +10,7 @@ import {
 } from "styles/ExploreStyles/GameWidgetStyles";
 import { Game } from "types/nba";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 type GameWidgetProps = {
@@ -233,14 +232,14 @@ export default function NBAGameWidget({
 
             {inProgress && !isHalftime && endOfPeriod && (
               <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period)}
+                End of {formatQuarter(period ?? 0)}
               </Text>
             )}
 
             {inProgress && !isHalftime && !endOfPeriod && (
               <View style={styles.infoWrapper}>
                 <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period)}
+                  {formatQuarter(period ?? 0)}
                 </Text>
                 <View style={styles.divider} />
                 {displayClock && (
@@ -323,14 +322,14 @@ export default function NBAGameWidget({
 
             {inProgress && !isHalftime && endOfPeriod && (
               <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period)}
+                End of {formatQuarter(period ?? 0)}
               </Text>
             )}
 
             {inProgress && !isHalftime && !endOfPeriod && (
               <View style={styles.infoWrapper}>
                 <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period)}
+                  {formatQuarter(period ?? 0)}
                 </Text>
                 <View style={styles.divider} />
                 {displayClock && (

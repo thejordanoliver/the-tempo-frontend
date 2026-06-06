@@ -1,9 +1,9 @@
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
+import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
 import { formatQuarter } from "utils/games";
 
-type NFLGameCenterInfoProps = {
+type GameInfoProps = {
   date: string;
   time: string;
   period?: number;
@@ -17,7 +17,7 @@ type NFLGameCenterInfoProps = {
   redzone: boolean;
 };
 
-export function NFLGameCenterInfo({
+export function GameInfo({
   date,
   time,
   period,
@@ -28,7 +28,7 @@ export function NFLGameCenterInfo({
   gameStatusDescription,
   gameStatusShortDetail,
   redzone = false,
-}: NFLGameCenterInfoProps) {
+}: GameInfoProps) {
   const inProgress =
     gameStatusDescription === "In Progress" ||
     gameStatusDescription === "End of Period";
@@ -39,7 +39,7 @@ export function NFLGameCenterInfo({
   const isScheduled =
     gameStatusDescription === "Scheduled" ||
     gameStatusDescription === "Not Started";
-  const styles = getStyles(isDark);
+  const styles = gameInfoStyles(isDark);
   const isRedzone = redzone;
 
   const renderDownAndDistance = () => {
@@ -87,7 +87,7 @@ export function NFLGameCenterInfo({
         <>
           <View style={styles.infoWrapper}>
             <>
-              <Text style={styles.date}>{formatQuarter(period)}</Text>
+              <Text style={styles.date}>{formatQuarter(period ?? 0)}</Text>
               <View style={styles.statusDivider} />
               <Text style={styles.clock}>{clock}</Text>
             </>
@@ -100,7 +100,7 @@ export function NFLGameCenterInfo({
         <>
           <View style={styles.infoWrapper}>
             <>
-              <Text style={styles.date}>{formatQuarter(period)}</Text>
+              <Text style={styles.date}>{formatQuarter(period ?? 0)}</Text>
               <View style={styles.statusDivider} />
               <Text style={styles.clock}>{clock}</Text>
             </>

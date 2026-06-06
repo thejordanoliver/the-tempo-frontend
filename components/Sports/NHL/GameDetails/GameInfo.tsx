@@ -1,14 +1,13 @@
 import { Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/CenterInfoStyles";
-import { formatNHLQuarter, formatQuarter } from "utils/games";
+import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
+import { formatQuarter } from "utils/games";
 type GameInfoProps = {
   date: string;
   time?: string;
   period?: number | string;
   clock?: string;
   isDark: boolean;
-  playoffInfo?: string | string[];
-  broadcastNetworks: string;
+  broadcast: string;
   gameStatusDescription: string;
   gameStatusShortDescription: string;
 };
@@ -19,11 +18,11 @@ export function GameInfo({
   period,
   clock,
   isDark,
-  broadcastNetworks,
+  broadcast,
   gameStatusDescription,
   gameStatusShortDescription,
 }: GameInfoProps) {
-  const styles = getStyles(isDark);
+  const styles = gameInfoStyles(isDark);
 
   const inProgress =
     gameStatusDescription === "In Progress" ||
@@ -49,7 +48,7 @@ export function GameInfo({
 
       {inProgress && !endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatNHLQuarter(period)}</Text>
+          <Text style={styles.date}>{formatQuarter(period, false, true)}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
@@ -65,9 +64,7 @@ export function GameInfo({
 
       {endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>
-            End of {formatQuarter(period)}
-          </Text>
+          <Text style={styles.finalText}>End of {formatQuarter(period)}</Text>
         </View>
       )}
       {isHalftime && (
@@ -97,9 +94,7 @@ export function GameInfo({
       )}
 
       {/* Broadcast */}
-      {broadcastNetworks && (
-        <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
-      )}
+      {broadcast && <Text style={styles.broadcasts}>{broadcast}</Text>}
     </View>
   );
 }

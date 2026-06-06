@@ -4,6 +4,7 @@ const normalize = (s?: unknown) => {
   if (typeof s !== "string") return "";
   return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 };
+
 export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
   // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
   if (!isNeutralSite) return null;
@@ -26,34 +27,6 @@ export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
       normalizedKey.includes(normalizedInput)
     ) {
       return neutralVenues[key];
-    }
-  }
-
-  return null;
-}
-
-export function getNeutralStadium(venueName?: string, isNeutralSite?: boolean) {
-  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
-  if (!isNeutralSite) return null;
-
-  if (!venueName) return null;
-
-  const normalizedInput = normalize(venueName);
-
-  // 1. Exact match (fast path)
-  if (neutralStadiums[venueName]) {
-    return neutralStadiums[venueName];
-  }
-
-  // 2. Fuzzy match
-  for (const key of Object.keys(neutralStadiums)) {
-    const normalizedKey = normalize(key);
-
-    if (
-      normalizedInput.includes(normalizedKey) ||
-      normalizedKey.includes(normalizedInput)
-    ) {
-      return neutralStadiums[key];
     }
   }
 
@@ -382,16 +355,6 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766680000/arenas/mma/meta-apex.jpg",
   },
-  "Lucas Oil Stadium": {
-    name: "Lucas Oil Stadium",
-    city: "Indianapolis",
-    address: "500 S Capitol Ave, Indianapolis, IN 46225",
-    latitude: 39.7601,
-    longitude: -86.1639,
-    venueCapacity: "67,000",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
-  },
   "Kaseya Center": {
     name: "Kaseya Center",
     city: "Miami",
@@ -402,9 +365,6 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/basketball/heat.jpg",
   },
-};
-
-export const neutralStadiums: Record<string, Venue> = {
   "Corinthians Arena": {
     name: "Corinthians Arena",
     city: "São Paulo",
@@ -517,7 +477,6 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1769676975/stadiums/football/moscone-center.png",
   },
-
   "Lucas Oil Stadium": {
     name: "Lucas Oil Stadium",
     city: "Indianapolis",
@@ -528,7 +487,6 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/colts.jpg",
   },
-
   "Levi's® Stadium": {
     name: "Levi's® Stadium",
     city: "San Francisco",
@@ -539,7 +497,6 @@ export const neutralStadiums: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/stadiums/football/niners.jpg",
   },
-
   "Aviva Stadium": {
     name: "Aviva Stadium",
     city: "Dublin",
@@ -703,15 +660,14 @@ export const neutralStadiums: Record<string, Venue> = {
   },
   "Independence Stadium": {
     name: "Independence Stadium",
-    latitude: 32.5252, // Shreveport, LA
+    latitude: 32.5252,
     longitude: -93.7502,
-    venueCapacity: "50,000", // updated approximate capacity
+    venueCapacity: "50,000",
     address: "4000 Clyde Fant Pkwy, Shreveport, LA 71101",
     city: "Shreveport, LA",
     venueImage:
       "https://assets.simpleviewinc.com/simpleview/image/upload/crm/shreveport/20241228_202959_032B00EF-CD4D-7480-D2225FCC188209DC-032af8dfb2655d3_032b0ebc-a656-af67-f8cec304f3a2e5c1.jpg",
   },
-
   "Yankee Stadium": {
     name: "Yankee Stadium",
     latitude: 40.8296,
@@ -730,5 +686,15 @@ export const neutralStadiums: Record<string, Venue> = {
     venueCapacity: "51,500",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1767220397/stadiums/football/cfb_57_sun_bowl_stadium.jpg",
+  },
+  "T-Mobile Arena": {
+    name: "T-Mobile Arena",
+    city: "Las Vegas",
+    address: "3780 Las Vegas Blvd S, Las Vegas, NV 89158",
+    latitude: 36.1029,
+    longitude: -115.1783,
+    venueCapacity: "17,500",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/hockey/goldenknights.jpg",
   },
 };

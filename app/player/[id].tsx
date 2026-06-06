@@ -1,52 +1,61 @@
+import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LatestGame from "components/Sports/NBA/Player/LatestGame";
 import PlayerAwardList from "components/Sports/NBA/Player/PlayerAwardList";
-import PlayerHeader from "components/Sports/NBA/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NBA/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
-import { globalStyles } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { Colors, globalStyles } from "constants/styles";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { usePlayerById } from "hooks/NBAHooks/usePlayerById";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLastTeamGame } from "hooks/NBAHooks/useLastTeamGame";
+import { usePlayerSeasons } from "hooks/NBAHooks/usePlayerSeasons";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
-  const styles = playerScreenStyles;
+  const { id, teamId, league } = useLocalSearchParams<{
+    id?: string;
+    teamId: string;
+    league: any
+  }>();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const styles = playerScreenStyles;
   const global = globalStyles(isDark);
-  const { id, teamId } = useLocalSearchParams();
-  const router = useRouter();
   const navigation = useNavigation();
+  const playerId = Number(id);
+  const { player, loading, error } = usePlayerById(playerId, league);
+  const isActive = player?.active;
+  const team = teamId ? getNBATeam(teamId) : null;
+  const teamLogo = getTeamLogo(teamId, true);
+  const teamColor = team?.color ?? Colors.midTone;
+  const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(playerId);
+  const {
+    game,
+    loading: gameLoading,
+    error: gameError,
+  } = useLastTeamGame(player?.team_id, isActive);
 
-  const { player, loading, error, team, lastGame, teamGameLoading } =
-    usePlayerById(
-      Array.isArray(id) ? id[0] : id,
-      Array.isArray(teamId) ? teamId[0] : teamId,
-    );
-  const teamLogo = getTeamLogo(player?.team_id, true);
-  const teamColor = team?.color;
-  const teamSecondaryColor = team?.secondaryColor;
-  const teamName = team?.name;
-
+  // -------------------------
+  // Header
+  // -------------------------
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           logo={teamLogo}
-          teamColor={team?.color}
-          teamCode={team?.code}
-          isTeamScreen={!!team}
+          teamColor={teamColor}
+          onBack={() => navigation.goBack()}
+          isTeamScreen
           isPlayerScreen
-          onBack={() => router.back()}
         />
       ),
     });
-  }, [navigation, isDark, teamLogo]);
+  }, [navigation, teamLogo, teamColor]);
 
   if (loading)
     return (
@@ -54,6 +63,7 @@ export default function PlayerDetailScreen() {
         <CustomActivityIndicator />
       </View>
     );
+
   if (error || !player)
     return (
       <View style={global.emptyContainer}>
@@ -63,18 +73,29 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader
-        player={player}
-        avatarUrl={player.headshot_url}
+      <PlayerHeader player={player} isDark={isDark} />
+
+      {isActive && (
+        <SeasonStatCard
+          season={seasons}
+          loading={seasonsLoading}
+          error={seasonsError}
+        />
+      )}
+
+      <LatestGame
+        game={game}
+        loading={gameLoading}
+        error={gameError}
         isDark={isDark}
-        team_name={teamName}
+        league={league}
       />
 
-      {player.active && <SeasonStatCard playerId={player.player_id} />}
-
-      <LatestGame game={lastGame} loading={teamGameLoading} isDark={isDark} />
-
-      <PlayerStatTable playerId={player.player_id} />
+      <PlayerStatTable
+        seasons={seasons}
+        loading={seasonsLoading}
+        error={seasonsError}
+      />
 
       <PlayerAwardList player={player} />
     </ScrollView>

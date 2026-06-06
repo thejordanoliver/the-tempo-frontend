@@ -1,65 +1,24 @@
+import { SkeletonBlock } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
-
-type PulseBlockProps = {
-  style?: any;
-};
+import { StyleSheet, View } from "react-native";
 
 export default function NewsCardSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = newsCardSkeletonStyles(isDark);
 
-  // 🔁 Master animation value
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [pulseAnim]);
-
-  const baseColor = isDark
-    ? Colors.dark.itemBackground
-    : Colors.light.itemBackground;
-
-  const shimmerColor = isDark ? Colors.darkGray : Colors.lightGray;
-
-  const PulseBlock = ({ style }: PulseBlockProps) => (
-    <Animated.View
-      style={[
-        style,
-        {
-          opacity: pulseAnim,
-        },
-      ]}
-    />
-  );
-
   return (
     <View style={styles.card}>
       {/* Thumbnail */}
-      <PulseBlock style={styles.thumbnail} />
+      <SkeletonBlock style={styles.thumbnail} />
 
       <View style={styles.content}>
         {/* Title */}
-        <PulseBlock style={styles.title} />
+        <SkeletonBlock style={styles.title} />
 
         {/* Source */}
-        <PulseBlock style={styles.source} />
+        <SkeletonBlock style={styles.source} />
       </View>
     </View>
   );

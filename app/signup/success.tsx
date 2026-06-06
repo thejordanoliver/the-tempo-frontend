@@ -69,7 +69,7 @@ export default function SignupSuccessScreen() {
           { color: isDark ? "#fff" : "#1d1d1d", opacity: textFade },
         ]}
       >
-        You're All Set!
+        {"You're All Set!"}
       </Animated.Text>
     </Animated.View>
   );

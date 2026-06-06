@@ -1,30 +1,57 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, Dimensions, StyleSheet, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Animated,
+  Dimensions,
+  LayoutChangeEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 
 const ITEM_WIDTH = 70;
-const SPACING = 12;
+const ITEM_HEIGHT = 44;
+const SIDE_PADDING = 12;
+const ITEM_SPACING = 0;
 
-export default function MonthSelectorSkeleton({
-  itemCount = 4,
-}: {
+type Props = {
   itemCount?: number;
-}) {
+};
+
+export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
 
-  const screenWidth = Dimensions.get("window").width;
-  const contentWidth = itemCount * ITEM_WIDTH + (itemCount - 1) * SPACING;
-
-  const needsScroll = contentWidth > screenWidth;
-
-  // Pulse animation
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
+  const [containerWidth, setContainerWidth] = useState(
+    Dimensions.get("window").width,
+  );
+
+  const itemStep = ITEM_WIDTH + ITEM_SPACING;
+
+  const rawItemsWidth = useMemo(() => {
+    return (
+      itemCount * ITEM_WIDTH +
+      ITEM_SPACING * Math.max(0, itemCount - 1)
+    );
+  }, [itemCount]);
+
+  const needsScroll = rawItemsWidth + SIDE_PADDING * 2 > containerWidth;
+
+  const horizontalPadding = needsScroll
+    ? SIDE_PADDING
+    : Math.max((containerWidth - rawItemsWidth) / 2, SIDE_PADDING);
+
+  const styles = getStyles(isDark, horizontalPadding);
+
+  const onLayoutContainer = (event: LayoutChangeEvent) => {
+    setContainerWidth(event.nativeEvent.layout.width);
+  };
+
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 0.4,
@@ -37,58 +64,69 @@ export default function MonthSelectorSkeleton({
           useNativeDriver: true,
         }),
       ]),
-    ).start();
+    );
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
   }, [pulseAnim]);
 
-  const SkeletonBlock = ({ style }: { style: any }) => (
+  const SkeletonBlock = ({ style }: { style: object }) => (
     <Animated.View style={[style, { opacity: pulseAnim }]} />
   );
 
   return (
-    <View
-      style={[
-        styles.container,
-        !needsScroll && {
-          width: screenWidth,
-          justifyContent: "space-around",
-        },
-      ]}
-    >
-      {Array.from({ length: itemCount }).map((_, i) => (
-        <View
-          key={i}
-          style={[styles.buttonContainer, { marginHorizontal: SPACING / 2 }]}
-        >
-          <SkeletonBlock style={styles.month} />
-          <SkeletonBlock style={styles.gameCount} />
-        </View>
-      ))}
+    <View style={styles.monthSelector} onLayout={onLayoutContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={itemStep}
+        decelerationRate="fast"
+        scrollEnabled={needsScroll}
+        contentContainerStyle={styles.contentContainerStyle}
+      >
+        {Array.from({ length: itemCount }).map((_, index) => (
+          <View key={index} style={styles.monthButton}>
+            <SkeletonBlock style={styles.monthText} />
+            <SkeletonBlock style={styles.gameCountText} />
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const getStyles = (isDark: boolean, horizontalPadding: number) =>
   StyleSheet.create({
-    container: {
+    monthSelector: {
       flexDirection: "row",
-      paddingVertical: 6,
-      paddingHorizontal: SPACING / 2,
+      marginVertical: 8,
     },
-    buttonContainer: {
-      width: ITEM_WIDTH,
+    contentContainerStyle: {
+      position: "relative",
+      paddingHorizontal: horizontalPadding,
       alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
     },
-    month: {
-      width: 40,
-      height: 18, // closer to fontSize 20
+    monthButton: {
+      width: ITEM_WIDTH,
+      height: ITEM_HEIGHT,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 4,
+      borderRadius: 12,
+    },
+    monthText: {
+      width: 38,
+      height: 17,
       borderRadius: 8,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    gameCount: {
+    gameCountText: {
+      marginTop: 4,
       width: 52,
-      height: 12,
+      height: 10,
       borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },

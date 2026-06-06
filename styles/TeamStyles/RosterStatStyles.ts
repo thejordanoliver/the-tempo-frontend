@@ -24,12 +24,12 @@ export const rosterStatsStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
-      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      overflow: "hidden",
     },
     tableWrapper: {
       flexDirection: "row",
       borderRadius: 8,
-      overflow: "hidden", // 🔑 REQUIRED for clipping rows
+      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
@@ -63,7 +63,6 @@ export const rosterStatsStyles = (isDark: boolean) =>
     },
     cardWrapper: { flexDirection: "row", alignItems: "flex-end" },
     cardContainer: {
-      flexDirection: "column",
       justifyContent: "center",
       alignItems: "flex-start",
     },

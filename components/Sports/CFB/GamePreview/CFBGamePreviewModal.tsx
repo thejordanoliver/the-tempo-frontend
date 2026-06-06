@@ -1,7 +1,8 @@
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CenterInfo } from "components/Sports/CFB/GamePreview/CenterInfo";
-import { getNeutralStadium } from "constants/neutralVenues";
+import { CenterInfo } from "components/Sports/NFL/GamePreview/CenterInfo";
+import TeamInfo from "components/Sports/NFL/GamePreview/TeamInfo";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
@@ -17,7 +18,6 @@ import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: FootballGame;
@@ -138,7 +138,7 @@ export default function CFBGamePreviewModal({ game, visible, onClose }: Props) {
     : undefined;
 
   const baseVenue = details?.venue;
-  const neutralVenue = getNeutralStadium(baseVenue?.fullName, neutralSite);
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
   const venueName = neutralSite
     ? neutralVenue?.name
     : homeTeam?.venue || baseVenue?.fullName;

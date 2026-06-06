@@ -5,7 +5,7 @@ import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
-import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
+import TeamDrives from "components/Sports/NFL/GameDetails/InjuryReport/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import React from "react";
 import { FootballGame } from "types/football";
@@ -115,6 +115,7 @@ export default function GamePreviewContent({
           games: awayLastGames.games,
         }}
         league={LEAGUE}
+        gameStatusDescription={gameStatusDescription}
         isDark
       />
 

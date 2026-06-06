@@ -1,132 +1,125 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { Team } from "types/types";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  home: Team | null;
-  away: Team | null;
+  homeId: number | null;
+  awayId: number | null;
+  homeName: string;
+  awayName: string;
   awayLogo: any;
   homeLogo: any;
-  rankHome?: number;
-  rankAway?: number;
+  homeRank?: number;
+  awayRank?: number | null;
   homeScore: number;
   awayScore: number;
   homeBonusState?: string | null;
   awayBonusState?: string | null;
   homeTimeouts?: number;
   awayTimeouts?: number;
-  period?: number;
-  displayClock?: string;
+  homeWins: boolean;
+  awayWins: boolean;
+  period: string | number;
+  clock: string;
   isDark: boolean;
-  formattedDate?: string;
-  headlineText?: string;
-  time?: string;
-  networkString?: string;
-  seriesSummary?: string;
-  homeRecord?: string;
-  awayRecord?: string;
-  halftime?: boolean;
-  league?: "nba";
+  date: string;
+  headline: string;
+  time: string;
+  broadcast: string | null;
+  homeRecord: string;
+  awayRecord: string;
   gameStatusDetail: string;
   gameStatusDescription: string | undefined;
+  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
 };
 
 export default function GameHeader({
-  headlineText,
-  home,
-  away,
-  awayLogo,
+  headline,
+  homeId,
+  awayId,
   homeLogo,
-  rankHome,
-  rankAway,
+  awayLogo,
+  homeName,
+  awayName,
+  homeRank,
+  awayRank,
   homeScore,
+  awayScore,
+  homeWins,
+  awayWins,
   homeBonusState,
   awayBonusState,
-  awayScore,
   homeTimeouts = 0,
   awayTimeouts = 0,
   period,
-  displayClock,
+  clock,
   isDark,
-  formattedDate = "",
+  date = "",
   time = "",
-  networkString = "",
+  broadcast,
   homeRecord,
   awayRecord,
-  halftime,
-  league = "nba",
   gameStatusDetail,
   gameStatusDescription,
+  league = "NBA",
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 
-  const awayIsWinner =
-    gameStatusDescription === "Final" && (awayScore ?? 0) > (homeScore ?? 0);
-  const homeIsWinner =
-    gameStatusDescription === "Final" && (homeScore ?? 0) > (awayScore ?? 0);
-
   return (
     <View style={styles.container}>
-      {headlineText ? (
+      {headline && (
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={2}>
-            {headlineText}
+            {headline}
           </Text>
         </View>
-      ) : null}
+      )}
 
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
-          key={`away`}
-          team={{
-            id: away?.id,
-            code: away?.code,
-            name: away?.name,
-            record: awayRecord,
-            logo: awayLogo,
-          }}
-          isDark={isDark}
+          id={awayId}
+          name={awayName}
+          logo={awayLogo}
           bonusState={awayBonusState}
-          rank={rankAway}
+          rank={awayRank}
           score={awayScore}
-          isWinner={awayIsWinner}
+          record={awayRecord}
+          isWinner={awayWins}
           timeouts={awayTimeouts}
           gameStatusDescription={gameStatusDescription}
+          isDark={isDark}
+          isHome={false}
+          league={league}
         />
 
         {/* Game Info */}
         <GameInfo
-          date={formattedDate || new Date().toISOString()}
+          date={date}
           time={time}
-          clock={displayClock}
+          clock={clock}
           period={period}
           isDark={isDark}
-          broadcastNetworks={networkString}
+          broadcast={broadcast}
           gameStatusShortDescription={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
         />
 
-        {/* Home Team Row */}
         <TeamRow
-          key={`home`}
-          team={{
-            id: home?.id,
-            code: home?.code,
-            name: home?.name,
-            record: homeRecord,
-            logo: homeLogo,
-          }}
-          isDark={isDark}
-          rank={rankHome}
-          isHome
+          id={homeId}
+          name={homeName}
+          logo={homeLogo}
+          rank={homeRank}
           score={homeScore}
+          record={homeRecord}
           bonusState={homeBonusState}
-          isWinner={homeIsWinner}
-          timeouts={league === "nba" ? homeTimeouts : undefined}
+          isWinner={homeWins}
+          timeouts={homeTimeouts}
           gameStatusDescription={gameStatusDescription}
+          isDark={isDark}
+          isHome={true}
+          league={league}
         />
       </View>
     </View>

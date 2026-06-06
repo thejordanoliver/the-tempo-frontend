@@ -1,14 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import Button from "components/Button";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
-import { usePreferences } from "contexts/PreferencesContext";
+import Button from "../components/Button";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
+import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
+import { usePreferences } from "../contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
-import { editFavoritesStyles } from "styles/EditFavoriteStyles";
-import { favoriteTeamsList } from "utils/teams";
+import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
+import { favoriteTeamsList } from "../utils/teams";
 
 export default function EditFavoritesScreen() {
   const {

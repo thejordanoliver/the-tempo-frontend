@@ -1,30 +1,23 @@
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import LeagueForum from "components/Forum/LeagueForum";
+import { useNavigation, useRouter } from "expo-router";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
+import PagerView from "react-native-pager-view";
+import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import LeagueForum from "../../components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
-} from "components/League/SportsListModal";
-import WeekSelector from "components/League/WeekSelector";
-import NewsList from "components/News/NewsList";
-import MMAChampionsList from "components/Sports/MMA/Champions/MMAChampionsList";
-import MMAGamesList from "components/Sports/MMA/Games/MMAGamesList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation, useRouter } from "expo-router";
-import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useSeasonFights } from "hooks/MMAHooks/useSeasonFights";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
-import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
+} from "../../components/League/SportsListModal";
+import WeekSelector from "../../components/League/WeekSelector";
+import NewsList from "../../components/News/NewsList";
+import MMAChampionsList from "../../components/Sports/MMA/Champions/MMAChampionsList";
+import MMAGamesList from "../../components/Sports/MMA/Games/MMAGamesList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useSeasonFights } from "../../hooks/MMAHooks/useSeasonFights";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
 const getComparableValue = (value: unknown) => {
   if (value === null || value === undefined) return "";
@@ -69,14 +62,13 @@ export default function UFCLeagueScreen() {
 
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState(0);
-  const [refreshingNews, setRefreshingNews] = useState(false);
 
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("MMA");
 
-  const {
-    calendar: mmaCalendar,
-    loading: calendarLoading,
-  } = useLeagueCalendar(league, "mma");
+  const { calendar: mmaCalendar, loading: calendarLoading } = useLeagueCalendar(
+    league,
+    "mma",
+  );
 
   const {
     events,
@@ -89,8 +81,10 @@ export default function UFCLeagueScreen() {
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
-  } = useLeaguesNews(10, "MMA");
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
   useEffect(() => {
     if (mmaCalendar.length === 0) {
@@ -171,18 +165,6 @@ export default function UFCLeagueScreen() {
     [selectedFightEvent],
   );
 
-  const handleRefresh = useCallback(async () => {
-    setRefreshingNews(true);
-
-    try {
-      await refreshFights();
-    } catch (error) {
-      console.warn("Failed to refresh MMA screen:", error);
-    } finally {
-      setRefreshingNews(false);
-    }
-  }, [refreshFights]);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -250,26 +232,16 @@ export default function UFCLeagueScreen() {
             />
           </View>
 
+          {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshingNews}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing={refreshingNews}
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           <View key="champions" style={styles.contentArea}>

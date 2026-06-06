@@ -1,38 +1,41 @@
 // app/league/cbb.tsx (WOMEN)
 
 import { useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/Awards/AwardSeasons";
-import NewsList from "components/News/NewsList";
-import CBBGamesList from "components/Sports/CBB/Games/CBBGamesList";
-import { CBBConferenceStandingsList } from "components/Sports/CBB/Standings/CBBConferenceStandingsList";
-import { CBBStandingsList } from "components/Sports/CBB/Standings/CBBStandingsList";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "components/Sports/CFB/ConferenceListModal";
-import SeasonLeadersList from "components/Sports/NFL/SeasonLeaderList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
-import { getCBBTeam } from "constants/teamsCBB";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCBBSeasonGames } from "hooks/CBBHooks/useCBBSeasonGames";
-import { useSeasonLeaders } from "hooks/FootballHooks/useSeasonLeaders";
-import { useLeagueCalendar } from "hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { filterBasketballGames, useAPTop25 } from "utils/CBBUtils/cbbGameUtils";
+import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import DateNavigator from "../../components/DateNavigator";
+import LeagueForum from "../../components/Forum/LeagueForum";
+import AwardSeasons from "../../components/League/Awards/AwardSeasons";
+import NewsList from "../../components/News/NewsList";
+import BasketballGamesList from "../../components/Sports/Basketball/Games/BasketballGamesList";
+import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
+import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "../../components/Sports/CFB/ConferenceListModal";
+import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { Colors } from "../../constants/styles";
+import { getCBBTeam } from "../../constants/teamsCBB";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useBasketballSeasonGames } from "../../hooks/BasketballHooks/useBasketballSeasonGames";
+import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import {
+  filterBasketballGames,
+  useAPTop25,
+} from "../../utils/CBBUtils/cbbGameUtils";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -58,7 +61,7 @@ export default function WCBBLeagueScreen() {
     games: seasonGames,
     loading: cbbloading,
     refreshBasketballGames,
-  } = useCBBSeasonGames({ isWomen: true });
+  } = useBasketballSeasonGames({ isWomen: true });
   const { calendar } = useLeagueCalendar(league);
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
@@ -95,8 +98,10 @@ export default function WCBBLeagueScreen() {
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
-  } = useLeaguesNews(10, league);
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
   /* -------------------------------
      WOMEN’S AP TOP 25 (FIXED)
   -------------------------------- */
@@ -193,7 +198,7 @@ export default function WCBBLeagueScreen() {
               isDark={isDark}
             />
 
-            <CBBGamesList
+            <BasketballGamesList
               games={filteredGames}
               loading={cbbloading}
               refreshing={refreshing}
@@ -203,25 +208,14 @@ export default function WCBBLeagueScreen() {
 
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           {/* STANDINGS */}
@@ -244,7 +238,6 @@ export default function WCBBLeagueScreen() {
               error={error}
               categories={categories}
               league={league}
-              isDark={isDark}
             />
           </View>
 

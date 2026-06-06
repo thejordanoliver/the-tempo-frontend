@@ -1,10 +1,31 @@
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import {
-  BasketballTeamRowProps,
+  SizeType,
   sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
+
+type SummerLeagueTeamRowProps = {
+  team: {
+    id?: string | number;
+    logo: any;
+    code?: string;
+    name?: string;
+    record?: string;
+  };
+  rank?: number | null;
+  isDark: boolean;
+  isHome?: boolean;
+  score?: number | null;
+  isWinner?: boolean;
+  gameStatusDescription?: string;
+  size?: SizeType;
+  timeouts?: number | null;
+  bonusState?: string | null;
+  status?: string;
+  league?: "summerVegas" | "summerUtah";
+};
 
 export const TeamRow = ({
   team,
@@ -18,10 +39,7 @@ export const TeamRow = ({
   timeouts,
   bonusState,
   league = "summerVegas",
-}: BasketballTeamRowProps & {
-  status?: string;
-  league?: "summerVegas" | "summerUtah";
-}) => {
+}: SummerLeagueTeamRowProps) => {
   const styles = teamRowStyles(isDark);
 
   const logo = team.logo;

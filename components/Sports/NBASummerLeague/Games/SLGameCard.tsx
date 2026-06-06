@@ -5,11 +5,10 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, View } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
 export default function SLGameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
@@ -40,7 +39,7 @@ export default function SLGameCard({ game }: BasketballGameCardProps) {
   const gameDateStr = gameDate.toISOString();
 
   const holidayLabel = getHolidayLabel(gameDate);
-  const styles = GameCardStyles(isDark);
+  const styles = gameCardStyles(isDark);
   const league = game.league.id;
   const isVegas = league === 17;
   const { score: liveScore, details } = useGameDetails(
@@ -130,7 +129,7 @@ export default function SLGameCard({ game }: BasketballGameCardProps) {
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
@@ -143,7 +142,7 @@ export default function SLGameCard({ game }: BasketballGameCardProps) {
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfPeriod)
-      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+      return <Text style={styles.clock}>End of {formatQuarter(period ?? 0)}</Text>;
 
     if (isFinal)
       return (

@@ -1,30 +1,30 @@
 // profile.tsx
 import { useFocusEffect } from "@react-navigation/native";
-import ConfirmModal from "components/ConfirmModal";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
-import BioSection from "components/Profile/BioSection";
-import FollowStats from "components/Profile/FollowStats";
-import ProfileBanner from "components/Profile/ProfileBanner";
-import ProfileHeader from "components/Profile/ProfileHeader";
-import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
-import { teams } from "constants/teams";
-import { cbbTeams } from "constants/teamsCBB";
-import { cfbTeams } from "constants/teamsCFB";
-import { mlbTeams } from "constants/teamsMLB";
-import { nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
-import { wnbaTeams } from "constants/teamsWNBA";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
-import { usePreferences } from "contexts/PreferencesContext";
+import ConfirmModal from "../../components/ConfirmModal";
+import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
+import BioSection from "../../components/Profile/BioSection";
+import FollowStats from "../../components/Profile/FollowStats";
+import ProfileBanner from "../../components/Profile/ProfileBanner";
+import ProfileHeader from "../../components/Profile/ProfileHeader";
+import { SkeletonProfileScreen } from "../../components/Skeletons/SkeletonProfileScreen";
+import { teams } from "../../constants/teams";
+import { cbbTeams } from "../../constants/teamsCBB";
+import { cfbTeams } from "../../constants/teamsCFB";
+import { mlbTeams } from "../../constants/teamsMLB";
+import { nflTeams } from "../../constants/teamsNFL";
+import { nhlTeams } from "../../constants/teamsNHL";
+import { wnbaTeams } from "../../constants/teamsWNBA";
+import { useFavoriteTeamsContext } from "../../contexts/FavoriteTeamsContext";
+import { usePreferences } from "../../contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
-import { useAuth } from "hooks/UserHooks/useAuth";
-import { useProfile } from "hooks/UserHooks/useProfile";
+import { useAuth } from "../../hooks/UserHooks/useAuth";
+import { useProfile } from "../../hooks/UserHooks/useProfile";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
-import { useFollowersStore } from "store/followersStore";
-import { useSettingsModalStore } from "store/settingsModalStore";
-import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
+import { useFollowersStore } from "../../store/followersStore";
+import { useSettingsModalStore } from "../../store/settingsModalStore";
+import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 export default function ProfileScreen() {
   const { favorites, loadFavorites, clearFavorites } =

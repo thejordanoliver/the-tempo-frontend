@@ -1,15 +1,23 @@
 // hooks/NBAHooks/useNBAWidgetLeaders.ts
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useGameLeaders } from "hooks/NBAHooks/useGameLeaders";
 import { useMemo } from "react";
 import { PlayerLeader } from "types/playerLeader";
-const STAT_CATEGORIES = ["points", "totReb", "assists", "steals"] as const;
+const STAT_CATEGORIES = ["points", "rebounds", "assists", "steals"] as const;
 type StatField = (typeof STAT_CATEGORIES)[number];
 
 const STAT_LABEL_MAP: Record<StatField, string> = {
   points: "PTS",
-  totReb: "REB",
+  rebounds: "REB",
   assists: "AST",
   steals: "STL",
+};
+
+const STAT_VALUE_KEY: Record<StatField, string> = {
+  points: "points",
+  rebounds: "totReb",
+  assists: "assists",
+  steals: "steals",
 };
 
 export function useNBAWidgetLeaders(
@@ -17,49 +25,48 @@ export function useNBAWidgetLeaders(
   homeTeamId: number,
   awayTeamId: number,
 ): { leaders: PlayerLeader[]; isLoading: boolean } {
-  const { data, isLoading } = useGameLeaders(gameId, homeTeamId, awayTeamId);
+  const { gameLeaders, gameLeadersLoading } = useGameLeaders(
+    Number(gameId),
+    homeTeamId,
+    awayTeamId,
+  );
 
   const leaders = useMemo<PlayerLeader[]>(() => {
-    if (!data?.length) return [];
+    if (!gameLeaders?.length) return [];
 
     const result: PlayerLeader[] = [];
 
     for (const field of STAT_CATEGORIES) {
-      const validPlayers = data.filter(
-        (p) => p.localPlayer && typeof p[field] === "number",
-      );
+      for (const teamBlock of gameLeaders) {
+        const leader = teamBlock?.leaders?.[field];
+        const player = leader?.player;
+        const stats = leader?.stats;
+        const teamId = Number(teamBlock?.team?.id);
+        const team = getNBATeam(teamId);
 
-      // Top player per team for this stat
-      const teamIds = [...new Set(validPlayers.map((p) => p.team.id))];
-
-      for (const teamId of teamIds) {
-        const best = validPlayers
-          .filter((p) => p.team.id === teamId)
-          .sort((a, b) => (b[field] ?? 0) - (a[field] ?? 0))[0];
-
-        if (!best) continue;
-
-        const p = best.localPlayer;
+        if (!player || !stats || !teamId) continue;
 
         result.push({
-          id: p.id,
-          firstName: p.first_name,
-          lastName: p.last_name,
-          headshot_url: p.headshot_url,
-          jersey_number: p.jersey_number,
+          id: Number(player.id),
+          firstName: player.first_name,
+          lastName: player.last_name,
+          headshot_url: player.headshot_url,
+          jersey_number: player.jersey_number,
           team: {
-            id: best.team.id,
+            id: teamId,
+            code: team?.code ?? teamBlock?.team?.abbreviation ?? "",
+            logo: getTeamLogo(teamId, false),
           },
           leaderStat: {
             name: STAT_LABEL_MAP[field],
-            value: best[field] ?? 0,
+            value: Number(stats?.[STAT_VALUE_KEY[field]] ?? 0),
           },
         });
       }
     }
 
     return result;
-  }, [data]);
+  }, [gameLeaders]);
 
-  return { leaders, isLoading };
+  return { leaders, isLoading: gameLeadersLoading };
 }

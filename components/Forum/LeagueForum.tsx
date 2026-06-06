@@ -97,7 +97,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
               size={48}
               color={Colors.midTone}
             />
-            <Text style={global.emptyText}>It's Quiet Here</Text>
+            <Text style={global.emptyText}>{"It's Quiet Here"}</Text>
             <Text style={global.emptySubText}>
               No posts yet. Be the first to start the conversation.
             </Text>

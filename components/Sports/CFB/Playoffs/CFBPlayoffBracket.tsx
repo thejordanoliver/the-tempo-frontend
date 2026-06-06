@@ -1,8 +1,8 @@
 // components/Bracket/Bracket.tsx
 
-import CFPLogoLight from "assets/College_Logos/CFPLight.png";
-import CFPLogo from "assets/College_Logos/CFPLogo.png";
-import cfpTrophy from "assets/College_Logos/cfptrophy.webp";
+import CFPLogoLight from "@/assets/College_Logos/Conference_Logos/CFPLight.png";
+import CFPLogo from "@/assets/College_Logos/Conference_Logos/CFPLogo.png";
+import cfpTrophy from "@/assets/College_Logos/Conference_Logos/cfptrophy.webp";
 import ChampionTape from "assets/Placeholders/ChampionTape.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -122,7 +122,11 @@ function getChampion(bracket: BracketData | null) {
 }
 // ─── ConnectorLayer ───────────────────────────────────────────────────────────
 
-const ConnectorLayer = React.memo(({ isDark }: { isDark: boolean }) => {
+const ConnectorLayer = React.memo(function ConnectorLayer({
+  isDark,
+}: {
+  isDark: boolean;
+}) {
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
   const styles = bracketStyles;
 
@@ -247,11 +251,13 @@ const RoundLabel = ({
 
 export function CFBPlayoffBracket({
   bracket,
+  error,
   loading,
   refreshing,
   onRefresh,
 }: {
   bracket: BracketData | null;
+  error: string | null;
   loading: boolean;
   refreshing: any;
   onRefresh: any;
@@ -262,8 +268,9 @@ export function CFBPlayoffBracket({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const winner = useMemo(() => getChampion(bracket), [bracket]);
   const winnerTeam = getTeamByESPNId(winner?.espnID ?? 0);
-  const winnerLogo = getCFBTeamLogo(winnerTeam?.id, isDark)
+  const winnerLogo = getCFBTeamLogo(winnerTeam?.id, isDark);
   const cfpLogo = useMemo(() => (isDark ? CFPLogoLight : CFPLogo), [isDark]);
+  const champCenter = getCardCenter(COLS.CHAMPIONSHIP);
 
   if (loading) {
     return (
@@ -272,8 +279,13 @@ export function CFBPlayoffBracket({
       </View>
     );
   }
-
-  const champCenter = getCardCenter(COLS.CHAMPIONSHIP);
+  if (error) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView

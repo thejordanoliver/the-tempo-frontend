@@ -892,7 +892,7 @@ export const nflTeams: FootballTeam[] = [
 export const getNFLTeam = (id: number | string) =>
   nflTeams.find((t) => String(t.id) === String(id));
 
-export function getNFLTeamLogo(id: number | undefined, isDark: boolean) {
+export function getNFLTeamLogo(id: string | number | undefined, isDark: boolean) {
   if (!id) return PlaceholderLogo; // fallback
 
   const searchStr = String(id).toLowerCase();

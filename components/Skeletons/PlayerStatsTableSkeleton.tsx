@@ -1,8 +1,8 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
+import { SkeletonBlock } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
-import { Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 const STAT_COLUMNS = 22;
 const CELL_WIDTH = 30;
@@ -14,31 +14,6 @@ export default function PlayerStatTableSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
-
-  // Pulse animation for ALL cells
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    const anim = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 0.3,
-          duration: 900,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 900,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-
-    anim.start();
-    return () => anim.stop();
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -55,9 +30,7 @@ export default function PlayerStatTableSkeleton() {
                 i % 2 === 0 ? styles.altRow : null, // ✅ full-row alternating background
               ]}
             >
-              <Animated.View
-                style={[styles.fixedCell, { opacity: pulseAnim }]}
-              />
+              <SkeletonBlock style={styles.fixedCell} />
             </View>
           ))}
         </View>
@@ -78,10 +51,7 @@ export default function PlayerStatTableSkeleton() {
                 ]}
               >
                 {Array.from({ length: STAT_COLUMNS - 1 }).map((_, colIndex) => (
-                  <Animated.View
-                    key={colIndex}
-                    style={[styles.cell, { opacity: pulseAnim }]}
-                  />
+                  <SkeletonBlock key={colIndex} style={styles.cell} />
                 ))}
               </View>
             ))}

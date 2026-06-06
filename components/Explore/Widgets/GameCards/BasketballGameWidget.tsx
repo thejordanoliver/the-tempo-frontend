@@ -11,8 +11,7 @@ import {
 } from "styles/ExploreStyles/GameWidgetStyles";
 import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 type GameWidgetProps = {
@@ -267,14 +266,14 @@ export default function BasketballGameWidget({
 
             {inProgress && !isHalftime && endOfPeriod && (
               <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period)}
+                End of {formatQuarter(period ?? 0)}
               </Text>
             )}
 
             {inProgress && !isHalftime && !endOfPeriod && (
               <View style={styles.infoWrapper}>
                 <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period)}
+                  {formatQuarter(period ?? 0)}
                 </Text>
                 <View style={styles.divider} />
                 {displayClock && (
@@ -297,7 +296,7 @@ export default function BasketballGameWidget({
             )}
           </View>
         )}
-        
+
         {/* ---------------------- */}
         {/* Home Team Section */}
         {/* ---------------------- */}
@@ -314,79 +313,79 @@ export default function BasketballGameWidget({
             </>
           )}
         </View>
-      {isSmallLayout && (
-        <View style={styles.gameInfo}>
-          {isScheduled && (
-            <View style={styles.infoWrapper}>
-              <Text style={styles.dateTime} numberOfLines={1}>
-                {formattedDate}
-              </Text>
-              <View style={styles.divider} />
-              <Text style={styles.dateTime} numberOfLines={1}>
-                {formattedTime}
-              </Text>
-            </View>
-          )}
-
-          {isFinal && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              {gameStatusDetail}
-            </Text>
-          )}
-
-          {isPostponed && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              {gameStatusDescription}
-            </Text>
-          )}
-          {isCanceled && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              {gameStatusDescription}
-            </Text>
-          )}
-          {isDelayed && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              {gameStatusDescription}
-            </Text>
-          )}
-          {isForfeited && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              {gameStatusDescription}
-            </Text>
-          )}
-
-          {inProgress && !isHalftime && endOfPeriod && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              End of {formatQuarter(period)}
-            </Text>
-          )}
-
-          {inProgress && !isHalftime && !endOfPeriod && (
-            <View style={styles.infoWrapper}>
-              <Text style={styles.period} numberOfLines={1}>
-                {formatQuarter(period)}
-              </Text>
-              <View style={styles.divider} />
-              {displayClock && (
-                <Text style={styles.clock} numberOfLines={1}>
-                  {displayClock}
+        {isSmallLayout && (
+          <View style={styles.gameInfo}>
+            {isScheduled && (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.dateTime} numberOfLines={1}>
+                  {formattedDate}
                 </Text>
-              )}
-            </View>
-          )}
+                <View style={styles.divider} />
+                <Text style={styles.dateTime} numberOfLines={1}>
+                  {formattedTime}
+                </Text>
+              </View>
+            )}
 
-          {isHalftime && (
-            <Text style={styles.finalText} numberOfLines={1}>
-              Halftime
-            </Text>
-          )}
-          {showBroadcast && (
-            <Text style={styles.broadcast} numberOfLines={1}>
-              {broadcastText}
-            </Text>
-          )}
-        </View>
-      )}
+            {isFinal && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDetail}
+              </Text>
+            )}
+
+            {isPostponed && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isCanceled && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isDelayed && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+            {isForfeited && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                {gameStatusDescription}
+              </Text>
+            )}
+
+            {inProgress && !isHalftime && endOfPeriod && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                End of {formatQuarter(period ?? 0)}
+              </Text>
+            )}
+
+            {inProgress && !isHalftime && !endOfPeriod && (
+              <View style={styles.infoWrapper}>
+                <Text style={styles.period} numberOfLines={1}>
+                  {formatQuarter(period ?? 0)}
+                </Text>
+                <View style={styles.divider} />
+                {displayClock && (
+                  <Text style={styles.clock} numberOfLines={1}>
+                    {displayClock}
+                  </Text>
+                )}
+              </View>
+            )}
+
+            {isHalftime && (
+              <Text style={styles.finalText} numberOfLines={1}>
+                Halftime
+              </Text>
+            )}
+            {showBroadcast && (
+              <Text style={styles.broadcast} numberOfLines={1}>
+                {broadcastText}
+              </Text>
+            )}
+          </View>
+        )}
       </View>
     </View>
   );

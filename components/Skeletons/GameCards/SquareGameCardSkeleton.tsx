@@ -1,7 +1,10 @@
+import {
+  SkeletonBlock,
+  SkeletonCircle,
+} from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
-import { Animated, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 type SquareGameCardSkeletonProps = {
   style?: StyleProp<ViewStyle>;
@@ -14,56 +17,32 @@ export default function SquareGameCardSkeleton({
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  // Pulse animation value
-  const pulse = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 0.6,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulse, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
-  const Skeleton = ({ style }: { style: any }) => (
-    <Animated.View style={[style, { opacity: pulse }]} />
-  );
-
   return (
     <View style={[styles.card, style]}>
       <View style={styles.cardWrapper}>
         {/* Away team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} />
-            <Skeleton style={styles.nameSkeleton} />
+            <SkeletonCircle size={28} style={styles.logoSkeleton} />
+            <SkeletonBlock style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} />
+          <SkeletonBlock style={styles.scoreSkeleton} />
         </View>
 
         {/* Home team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} />
-            <Skeleton style={styles.nameSkeleton} />
+            <SkeletonCircle size={28} style={styles.logoSkeleton} />
+            <SkeletonBlock style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} />
+          <SkeletonBlock style={styles.scoreSkeleton} />
         </View>
       </View>
 
       {/* Game info section */}
       <View style={styles.info}>
-        <Skeleton style={styles.dateSkeleton} />
-        <Skeleton style={styles.timeSkeleton} />
+        <SkeletonBlock style={styles.dateSkeleton} />
+        <SkeletonBlock style={styles.timeSkeleton} />
       </View>
     </View>
   );

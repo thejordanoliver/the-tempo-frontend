@@ -1,68 +1,67 @@
 // app/player/cfb/[id].tsx
+import { useTeamLatestGame } from "@/hooks/FootballHooks/useTeamLatestGame";
+import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import LatestGame from "components/Sports/NFL/Player/LatestGame";
+import LatestGame from "components/Sports/NBA/Player/LatestGame";
 import PlayerHeader from "components/Sports/NFL/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/NFL/Player/PlayerStatTable";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useFootballPlayerSeasons } from "hooks/FootballHooks/useFootballPlayerSeasons";
-import { useLastTeamGame } from "hooks/FootballHooks/useLastTeamGame";
-import { usePlayerById } from "hooks/FootballHooks/usePlayerById";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
-import { getFootballSeason } from "utils/dateUtils";
 
 export default function PlayerDetailScreen() {
+  const { id, teamId, league } = useLocalSearchParams<{
+    id?: string;
+    teamId: string;
+    league: any;
+  }>();
+
   const styles = playerScreenStyles;
   const navigation = useNavigation();
-  const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
-  const { id } = useLocalSearchParams<{ id: string }>();
   const playerId = Number(id);
-  const { player, loading, error } = usePlayerById(playerId, "CFB");
-  const fullName = player?.name ?? "Player";
-  const team = player?.team_id ? getCFBTeam(player.team_id) : null;
-  const teamLogo = getCFBTeamLogo(team?.id ?? 0, true);
-  const isTeamAvailable = !!team;
+  const { player, loading, error } = usePlayerById(playerId, league);
+  const team = getCFBTeam(teamId);
+  const teamLogo = getCFBTeamLogo(teamId, true);
+  const teamColor = team?.color ?? Colors.midTone;
+
   const {
-    lastGame,
-    loading: lastGameLoading,
-    error: lastGameError,
-  } = useLastTeamGame(player?.team_id ?? 0, getFootballSeason());
+    game,
+    loading: gameLoading,
+    error: gameError,
+  } = useTeamLatestGame(league, teamId);
 
   const {
     data: seasons,
     loading: seasonsLoading,
     error: seasonsError,
-  } = useFootballPlayerSeasons(playerId, "CFB");
+  } = useFootballPlayerSeasons(playerId, league);
 
-  /* ---------------- Header ---------------- */
+  // -------------------------
+  // Header
+  // -------------------------
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => {
-        if (loading) return null;
-
-        return (
-          <CustomHeaderTitle
-            playerName={fullName}
-            logo={teamLogo}
-            teamColor={team?.color ?? "#1D428A"}
-            onBack={() => router.back()}
-            isTeamScreen={!!team}
-            teamCode={team?.code}
-            isPlayerScreen
-            league="CFB"
-          />
-        );
-      },
+      header: () => (
+        <CustomHeaderTitle
+          logo={teamLogo}
+          teamColor={teamColor}
+          onBack={() => navigation.goBack()}
+          isTeamScreen
+          isPlayerScreen
+        />
+      ),
     });
-  }, [navigation, fullName, team, isTeamAvailable, isDark, loading]);
+  }, [navigation, teamLogo, teamColor]);
+
   if (loading)
     return (
       <View style={global.emptyContainer}>
@@ -80,26 +79,22 @@ export default function PlayerDetailScreen() {
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       {/* Player Header */}
-      <PlayerHeader
-        player={player}
-        avatarUrl={player.headshot_url}
-        isDark={isDark}
-        teamColor={team?.color}
-        team_name={player.team}
-        isCollegePlayer
-      />
+      <PlayerHeader player={player} isDark={isDark} isCollegePlayer />
 
       <LatestGame
-        game={lastGame}
-        loading={lastGameLoading}
+        game={game}
+        loading={gameLoading}
+        error={gameError}
         isDark={isDark}
-        league="CFB"
+        league={league}
+        isCFB={true}
       />
 
       <PlayerStatTable
         data={seasons || []}
         loading={seasonsLoading}
         error={seasonsError}
+        position={player.position}
       />
     </ScrollView>
   );

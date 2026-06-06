@@ -1,11 +1,29 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const StackedGameCardStyles = (
+export const stackedGameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
-) =>
-  StyleSheet.create({
+) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const borderColor =
+    isChampionship && isDark
+      ? Colors.lightGray
+      : isChampionship
+        ? Colors.darkGray
+        : isDark
+          ? Colors.darkGray
+          : Colors.lightGray;
+
+  const headlineColor = isChampionship
+    ? isDark
+      ? Colors.white
+      : Colors.black
+    : subTextColor;
+
+  return StyleSheet.create({
     card: {
       flexDirection: "row",
       flex: 1,
@@ -15,35 +33,24 @@ export const StackedGameCardStyles = (
         : Colors.light.itemBackground,
       justifyContent: "space-between",
       borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
+      padding: 12,
     },
     cardWrapper: {
-      flexDirection: "column",
       justifyContent: "center",
-      borderRightColor:
-        isChampionship && isDark
-          ? Colors.lightGray
-          : isChampionship
-            ? Colors.darkGray
-            : isDark
-              ? Colors.darkGray
-              : Colors.lightGray,
+      borderRightColor: borderColor,
       borderRightWidth: 0.5,
       paddingRight: 12,
-      gap: 8,
+      gap: 4,
       flex: 1,
     },
     teamSection: {
       flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      gap: 4,
+      justifyContent: "center",
+      alignContent: "center",
+      gap: 8,
     },
     teamWrapper: {
       flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center",
       gap: 8,
       width: 100,
       flex: 1,
@@ -54,25 +61,25 @@ export const StackedGameCardStyles = (
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       flexShrink: 1,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       textAlign: "left",
     },
     rank: {
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: subTextColor,
     },
     teamScore: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       width: 40,
     },
     teamRecord: {
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
       textAlign: "right",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     info: {
       alignItems: "center",
@@ -81,27 +88,27 @@ export const StackedGameCardStyles = (
       width: 100,
     },
     finalText: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
     },
     date: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     dateFinal: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: subTextColor,
       fontSize: 12,
     },
     time: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     infoWrapper: {
       flexDirection: "row",
@@ -109,38 +116,48 @@ export const StackedGameCardStyles = (
       justifyContent: "center",
       gap: 4,
     },
+    basesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 2,
+    },
+    outsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
     period: {
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     clock: {
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
+    },
+    outs: {
+      fontSize: 12,
+      fontFamily: Fonts.OSREGULAR,
+      color: accentRed,
+      textAlign: "center",
     },
     broadcast: {
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: subTextColor,
     },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 8,
-      color: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-      textAlign: "center",
+      color: headlineColor,
       position: "absolute",
-      top: 4,
       left: 12,
+      top: 4,
     },
     downDistance: {
       fontSize: 10,
@@ -156,12 +173,12 @@ export const StackedGameCardStyles = (
     statusDivider: {
       height: 14,
       width: 1,
-      backgroundColor: isDark ? Colors.dark.text : Colors.light.text,
+      backgroundColor: textColor,
     },
     finalStatusDivider: {
       height: 14,
       width: 1,
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+      backgroundColor: accentRed,
     },
     notificationBell: {
       position: "absolute",
@@ -187,43 +204,6 @@ export const StackedGameCardStyles = (
       textAlign: "center",
     },
 
-    headlineContainer: {
-      flexDirection: "row",
-      alignItems: "center", // ← ensures vertical centering
-      justifyContent: "center", // ← centers entire group horizontally
-      position: "absolute",
-      top: 4,
-      width: "100%",
-      gap: 4,
-    },
-    postSeasonHeadlineContainer: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      position: "absolute",
-      flexDirection: "row",
-      width: "100%",
-      top: 4,
-      left: 8,
-      alignItems: "center",
-    },
-    postSeasonHeadlineText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    headlineDivider: {
-      height: 8,
-      width: 0.5,
-      backgroundColor: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-      marginHorizontal: 4,
-    },
     winnerContainer: {
       alignItems: "center",
       justifyContent: "center",
@@ -240,7 +220,7 @@ export const StackedGameCardStyles = (
       borderWidth: 1,
       alignItems: "center",
       borderRadius: 100,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderColor: subTextColor,
       overflow: "hidden",
     },
 
@@ -249,3 +229,4 @@ export const StackedGameCardStyles = (
       height: 20,
     },
   });
+};

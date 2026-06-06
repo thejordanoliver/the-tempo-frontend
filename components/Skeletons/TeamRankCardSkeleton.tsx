@@ -1,36 +1,9 @@
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { SkeletonBlock } from "components/Skeletons/primitives";
+import { StyleSheet, View } from "react-native";
 
 export default function TeamRankCardSkeleton() {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-
-  // Pulse animation
-  const opacity = useRef(new Animated.Value(0.4)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
-  const bg = isDark ? Colors.darkGray : Colors.lightGray;
-
   return (
-    <Animated.View style={[styles.cardWrapper, { opacity }]}>
+    <View style={styles.cardWrapper}>
       {/* Right-side watermark block */}
 
       {/* Fake gradient strip */}
@@ -40,16 +13,16 @@ export default function TeamRankCardSkeleton() {
       <View style={styles.cardContent}>
         <View style={styles.row}>
           {/* Rank block */}
-          <View style={[styles.rankBlock, { backgroundColor: bg }]} />
+          <SkeletonBlock style={styles.rankBlock} />
 
           {/* Team name block */}
-          <View style={[styles.teamNameBlock, { backgroundColor: bg }]} />
+          <SkeletonBlock style={styles.teamNameBlock} />
         </View>
 
         {/* Points line */}
-        <View style={[styles.pointsBlock, { backgroundColor: bg }]} />
+        <SkeletonBlock style={styles.pointsBlock} />
       </View>
-    </Animated.View>
+    </View>
   );
 }
 

@@ -38,9 +38,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   highlights,
   isDark,
 }) => {
-  if (!highlights || highlights.length === 0) {
-    return null;
-  }
   const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
@@ -207,6 +204,8 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       hasPlayed,
     ],
   );
+
+  if (!highlights || highlights.length === 0) return null;
 
   if (highlights?.length > 0) return null;
 

@@ -1,37 +1,41 @@
 // components/Skeletons/WeekSelectorSkeleton.tsx
+
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
-const FOOTBALL_ITEM_WIDTH = 100;
-const MMA_ITEM_WIDTH = 132;
-const SPACING = 12;
+const ITEM_HEIGHT = 32;
+const SIDE_PADDING = 12;
+const ITEM_SPACING = 0;
 
 type Props = {
   itemCount?: number;
-  mode?: "football" | "mma";
+  itemWidth?: number;
 };
 
 export default function WeekSelectorSkeleton({
   itemCount = 10,
-  mode = "football",
+  itemWidth = 100,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const isMMA = mode === "mma";
-  const itemWidth = isMMA ? MMA_ITEM_WIDTH : FOOTBALL_ITEM_WIDTH;
-
-  const styles = getStyles(isDark, itemWidth, isMMA);
-
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
+  // Mirror the real component: selected index is the 3rd item (index 2),
+  // a reasonable mid-list default so the skeleton looks "in progress"
+  const selectedSkeletonIndex = Math.min(0, itemCount - 1);
+
+  const itemStep = itemWidth + ITEM_SPACING;
+
+  const styles = getStyles({ isDark, itemWidth });
+
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 0.4,
+          toValue: 0.45,
           duration: 700,
           useNativeDriver: true,
         }),
@@ -41,7 +45,9 @@ export default function WeekSelectorSkeleton({
           useNativeDriver: true,
         }),
       ]),
-    ).start();
+    );
+    animation.start();
+    return () => animation.stop();
   }, [pulseAnim]);
 
   return (
@@ -50,57 +56,89 @@ export default function WeekSelectorSkeleton({
         horizontal
         scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
+        snapToInterval={itemStep}
+        decelerationRate="fast"
         contentContainerStyle={styles.contentContainerStyle}
       >
-        {Array.from({ length: itemCount }).map((_, i) => (
-          <Animated.View
-            key={i}
-            style={[styles.item, { opacity: pulseAnim }]}
-          >
-            {/* Primary label bar */}
-            <View style={styles.primaryBar} />
-            {/* Secondary label bar — only for MMA */}
-            {isMMA && <View style={styles.secondaryBar} />}
-          </Animated.View>
-        ))}
+        {/*
+         * Mirrors WeekSelector's sliding indicator: an absolute-positioned
+         * rect that sits behind the labels at the selected item's offset.
+         */}
+        <View
+          pointerEvents="none"
+          style={[
+            styles.slidingSelectedContainer,
+            { left: SIDE_PADDING + selectedSkeletonIndex * itemStep },
+          ]}
+        />
+
+        {Array.from({ length: itemCount }).map((_, index) => {
+          const isSelected = index === selectedSkeletonIndex;
+          return (
+            <View key={index} style={styles.label}>
+              <Animated.View
+                style={[
+                  styles.innerBar,
+                  {
+                    opacity: pulseAnim,
+                    // Selected pill uses a slightly wider bar to mimic
+                    // the bolder/heavier text of the real selected label
+                    width: isSelected ? "72%" : "60%",
+                  },
+                ]}
+              />
+            </View>
+          );
+        })}
       </ScrollView>
     </View>
   );
 }
 
-const getStyles = (isDark: boolean, itemWidth: number, isMMA: boolean) => {
-  const barColor = isDark ? Colors.darkGray : Colors.lightGray;
+type StyleParams = {
+  isDark: boolean;
+  itemWidth: number;
+};
 
-  return StyleSheet.create({
+const getStyles = ({ isDark, itemWidth }: StyleParams) =>
+  StyleSheet.create({
     wrapper: {
+      // Matches WeekSelector's wrapper exactly
       marginVertical: 8,
     },
     contentContainerStyle: {
-      paddingHorizontal: SPACING,
+      // Matches WeekSelector's contentContainerStyle exactly
+      position: "relative",
+      paddingHorizontal: SIDE_PADDING,
       alignItems: "center",
-      gap: SPACING,
     },
-    item: {
+    slidingSelectedContainer: {
+      // Mirrors WeekSelector's slidingSelectedContainer 1-to-1
+      position: "absolute",
+      top: 0,
       width: itemWidth,
-      paddingVertical: isMMA ? 8 : 6,
-      paddingHorizontal: 10,
-      borderRadius: 14,
+      height: ITEM_HEIGHT,
+      borderRadius: 12,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.white : Colors.black,
+    },
+    label: {
+      // Mirrors WeekSelector's label style exactly
+      width: itemWidth,
+      height: ITEM_HEIGHT,
       justifyContent: "center",
       alignItems: "center",
-      gap: 6,
+      padding: 4,
+      borderRadius: 12,
+      zIndex: 2,
     },
-    primaryBar: {
-      width: "70%",
-      height: 14,
-      borderRadius: 6,
-      backgroundColor: barColor,
-    },
-    secondaryBar: {
-      width: "55%",
-      height: 10,
-      borderRadius: 5,
-      backgroundColor: barColor,
-      opacity: 0.6,
+    innerBar: {
+      // Placeholder for the text — matches the visual weight of the real labels
+      height: 13,
+      borderRadius: 7,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });
-};

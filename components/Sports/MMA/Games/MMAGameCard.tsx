@@ -6,10 +6,9 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { Text, TouchableOpacity, View } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { MMAFightCardProps } from "types/mma";
-import { formatRound } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatRound, getBroadcastDisplay } from "utils/games";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
 export default function MMAGameCard({ game }: MMAFightCardProps) {
@@ -90,7 +89,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const period = details?.fight?.status.period;
   const displayClock = details?.fight?.status.displayClock;
   const headlineText = details?.event?.shortName;
-  const styles = GameCardStyles(isDark);
+  const styles = gameCardStyles(isDark);
 
   const isTie =
     game.fighters.first.winner === false &&

@@ -1,79 +1,98 @@
-// hooks/CFBHooks/useCFBConferenceStandings.ts
-import { useEffect, useState } from "react";
+// hooks/CFB/useCFBConferenceStandings.ts
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export type CFBTeamStanding = {
+export interface CFBStandingTeam {
   teamId: string;
-  teamName: string;
-  conference: string;
-  division?: string | null;
-  rank: number | null;
-  overall: string | null;
-  confOverall: string | null;
-  divisionOverall: string | null;
-  homeOverall: string | null;
-  awayOverall: string | null;
-  streak?: number | null;
-  gamesBehind?: number | null;
-  vsAPTop25: string | null;
-  pointsFor?: number | null;
-  pointsAgainst?: number | null;
-};
+  name: string;
+  abbreviation: string;
+  rank: string;
+  overall: string;
+  confOverall: string;
+  homeOverall: string;
+  awayOverall: string;
+  streak: string;
+  gamesBehind: string;
+  vsAPTop25: string;
+  pointsFor: string;
+  pointsAgainst: string;
+}
 
-export function useCFBConferenceStandings() {
-  const [standings, setStandings] = useState<CFBTeamStanding[]>([]);
+export interface CFBStandingDivision {
+  name: string;
+  teams: CFBStandingTeam[];
+}
+
+export interface CFBStandingConference {
+  id: string;
+  name: string;
+  abbreviation: string;
+  shortName: string;
+  divisions: CFBStandingDivision[];
+}
+
+interface CFBConferenceStandingsResponse {
+  conferences: Partial<CFBStandingConference>[];
+}
+
+export const useCFBConferenceStandings = () => {
+  const [conferences, setConferences] = useState<CFBStandingConference[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchStandings = async () => {
-      try {
+  const fetchStandings = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
         setLoading(true);
-        setError(null);
-
-        const res = await apiClient.get(`api/standings/cfb/conference`);
-
-        const parsed: CFBTeamStanding[] = [];
-
-        for (const conf of res.data.conferences || []) {
-          const confName = conf.name || "Unknown";
-
-          for (const div of conf.divisions || []) {
-            const divName = div.name || null;
-
-            for (const team of div.teams || []) {
-              parsed.push({
-                teamId: team.teamId,
-                teamName: team.name,
-                conference: confName,
-                division: divName,
-                rank: team.rank ?? null,
-                overall: team.overall ?? null,
-                confOverall: team.confOverall ?? null,
-                divisionOverall: team.divisionOverall ?? null,
-                homeOverall: team.homeOverall ?? null,
-                awayOverall: team.awayOverall ?? null,
-                streak: team.streak ?? null,
-                gamesBehind: team.gamesBehind ?? null,
-                vsAPTop25: team.vsAPTop25 ?? null,
-                pointsFor: team.pointsFor ?? null,
-                pointsAgainst: team.pointsAgainst ?? null,
-              });
-            }
-          }
-        }
-
-        setStandings(parsed);
-      } catch (err: any) {
-        console.error("Error fetching standings:", err);
-        setError(err.response?.data?.message || "Failed to load standings");
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchStandings();
+      setError(null);
+
+      const response = await apiClient.get<CFBConferenceStandingsResponse>(
+        "api/standings/cfb/conference",
+      );
+
+      const rawConferences = response.data?.conferences ?? [];
+
+      const cleanedConferences = rawConferences.filter(
+        (conference): conference is CFBStandingConference =>
+          Boolean(
+            conference &&
+            conference.id &&
+            conference.name &&
+            conference.abbreviation &&
+            conference.shortName &&
+            Array.isArray(conference.divisions),
+          ),
+      );
+
+      setConferences(cleanedConferences);
+    } catch (err) {
+      console.error("🔥 CFB CONFERENCE STANDINGS ERROR:", err);
+      setError("Failed to load CFB conference standings");
+      setConferences([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, []);
 
-  return { standings, loading, error };
-}
+  useEffect(() => {
+    fetchStandings();
+  }, [fetchStandings]);
+
+  const refresh = useCallback(() => {
+    fetchStandings(true);
+  }, [fetchStandings]);
+
+  return {
+    conferences,
+    loading,
+    refreshing,
+    error,
+    refresh,
+  };
+};

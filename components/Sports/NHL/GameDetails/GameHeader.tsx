@@ -1,128 +1,119 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { Team } from "types/types";
 import { GameInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  home: Team;
-  away: Team;
-  rankHome?: number;
-  rankAway?: number;
+  homeId: number | null;
+  awayId: number | null;
+  homeName: string;
+  awayName: string;
+  awayLogo: any;
+  homeLogo: any;
+  homeRank?: number;
+  awayRank?: number;
   homeScore: number;
   awayScore: number;
-  homeBonusState?: string | null;
-  awayBonusState?: string | null;
   homeTimeouts?: number;
   awayTimeouts?: number;
-  period?: number;
-  displayClock?: string;
+  homeWins: boolean;
+  awayWins: boolean;
+  period: string | number;
+  clock: string;
   isDark: boolean;
-  formattedDate?: string;
-  headlineText?: string | null;
-  time?: string;
-  networkString?: string;
-  seriesSummary?: string;
-  homeRecord?: string;
-  awayRecord?: string;
-  halftime?: boolean;
+  date: string | undefined;
+  time: string | undefined;
+  headline: string;
+  broadcast: string;
+  homeRecord: string;
+  awayRecord: string;
   gameStatusDetail: string;
   gameStatusDescription: string;
+  league: string;
 };
 
 export default function GameHeader({
-  headlineText,
-  home,
-  away,
-  rankHome,
-  rankAway,
+  headline,
+  homeId,
+  awayId,
+  homeLogo,
+  awayLogo,
+  homeName,
+  awayName,
+  homeRank,
+  awayRank,
   homeScore,
-  homeBonusState,
-  awayBonusState,
   awayScore,
+  homeWins,
+  awayWins,
   homeTimeouts = 0,
   awayTimeouts = 0,
   period,
-  displayClock,
+  clock,
   isDark,
-  formattedDate = "",
+  date = "",
   time = "",
-  networkString = "",
+  broadcast,
   homeRecord,
   awayRecord,
-  halftime,
   gameStatusDetail,
   gameStatusDescription,
+  league = "NHL",
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 
-  const awayIsWinner =
-    gameStatusDescription === "Final" && (awayScore ?? 0) > (homeScore ?? 0);
-  const homeIsWinner =
-    gameStatusDescription === "Final" && (homeScore ?? 0) > (awayScore ?? 0);
-
   return (
     <View style={styles.container}>
-      {headlineText ? (
+      {headline && (
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={2}>
-            {headlineText}
+            {headline}
           </Text>
         </View>
-      ) : null}
+      )}
 
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
-          key={`away`}
-          team={{
-            id: away.id,
-            code: away.code,
-            name: away.name,
-            record: awayRecord,
-            logo:
-              isDark && away.logoLight
-                ? away.logoLight
-                : away.logo ||
-                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
-          }}
-          isDark={isDark}
+          id={awayId}
+          name={awayName}
+          logo={awayLogo}
+          rank={awayRank}
           score={awayScore}
-          isWinner={awayIsWinner}
+          record={awayRecord}
+          isWinner={awayWins}
+          timeouts={awayTimeouts}
           gameStatusDescription={gameStatusDescription}
+          isDark={isDark}
+          isHome={false}
+          league={league}
         />
 
         {/* Game Info */}
         <GameInfo
-          date={formattedDate || new Date().toISOString()}
+          date={date}
           time={time}
-          clock={displayClock}
+          clock={clock}
           period={period}
           isDark={isDark}
-          broadcastNetworks={networkString}
+          broadcast={broadcast}
           gameStatusShortDescription={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
         />
 
-        {/* Home Team Row */}
         <TeamRow
-          key={`home`}
-          team={{
-            id: home.id,
-            code: home.code,
-            name: home.name,
-            record: homeRecord,
-            logo:
-              isDark && home.logoLight
-                ? home.logoLight
-                : home.logo ||
-                  require("../../../../assets/Placeholders/teamPlaceholder.png"),
-          }}
-          isDark={isDark}
-          isHome
+          id={homeId}
+          name={homeName}
+          logo={homeLogo}
+          rank={homeRank}
           score={homeScore}
-          isWinner={homeIsWinner}
+          record={homeRecord}
+          isWinner={homeWins}
+          timeouts={homeTimeouts}
           gameStatusDescription={gameStatusDescription}
+          isDark={isDark}
+          isHome={true}
+          league={league}
         />
       </View>
     </View>

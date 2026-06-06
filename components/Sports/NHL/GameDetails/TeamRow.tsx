@@ -7,41 +7,51 @@ import {
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
+/* -----------------------------------------------------
+ * Helpers
+ * --------------------------------------------------- */
+
 export const TeamRow = ({
-  team,
+  id,
+  name,
   rank,
+  logo,
+  record,
   isDark,
   isHome = false,
   score,
   isWinner,
   size = "medium",
   gameStatusDescription,
+  timeouts,
+  league,
 }: NHLProps) => {
   const router = useRouter();
   const styles = teamRowStyles(isDark);
 
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period";
+  /* -----------------------------------------------------
+   * Game State
+   * --------------------------------------------------- */
   const isFinal = gameStatusDescription === "Final";
+  const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Postponed";
 
-  const code = team.code;
-  const record = team.record === "-" ? "" : team.record;
-  const isInvalidRecord = record === "-";
-  const displayRecord = isInvalidRecord ? "" : record;
+  const inProgress = ["In Progress", "Halftime", "End of Period"].includes(
+    gameStatusDescription ?? "",
+  );
 
-  // -----------------------------------------------------
-  // Routing
-  // -----------------------------------------------------
-  const handleTeamPress = () => {
-    if (team.id) router.push(`/team/nhl/${team.id}`);
-  };
-
-  // -----------------------------------------------------
-  // Score color logic
-  // -----------------------------------------------------
   const showRecordInsteadOfScore = isScheduled || score == null;
+
+  /* -----------------------------------------------------
+   * Routing
+   * --------------------------------------------------- */
+  const handleTeamPress = () => {
+    if (league === "NHL") {
+      router.push(`/team/nhl/${id}`);
+    }
+  };
 
   /* -----------------------------------------------------
    * Styles
@@ -68,38 +78,71 @@ export const TeamRow = ({
     return { color: Colors.midTone };
   };
 
-  // -----------------------------------------------------
-  // RENDER
-  // -----------------------------------------------------
+  /* -----------------------------------------------------
+   * Render Helpers
+   * --------------------------------------------------- */
+  const renderTimeouts = (remaining: number) => {
+    const total = 7;
+
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 4,
+              height: 2,
+              borderRadius: 4,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              opacity: i < remaining ? 1 : 0.5,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  /* -----------------------------------------------------
+   * Render
+   * --------------------------------------------------- */
   return (
     <View style={styles.row}>
       {/* Home Score */}
       {isHome && (
-        <Text
-          style={
-            showRecordInsteadOfScore
-              ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-              : [styles.score, sizeStyles[size].score, getScoreStyle()]
-          }
-        >
-          {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
-        </Text>
+        <View style={styles.scoreWrapper}>
+          <Text
+            style={
+              showRecordInsteadOfScore
+                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
+                : [styles.score, sizeStyles[size].score, getScoreStyle()]
+            }
+          >
+            {showRecordInsteadOfScore ? record : (score ?? "")}
+          </Text>
+        </View>
       )}
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={team.logo} style={sizeStyles[size].logo} />
+          <Image source={logo} style={sizeStyles[size].logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
           <Text style={styles.teamName}>
             {rank && <Text style={styles.rank}>{rank} </Text>}
-            {code}
+            {name}
           </Text>
 
           {!showRecordInsteadOfScore && !inProgress && (
-            <Text style={styles.record}>{team.record}</Text>
+            <Text style={styles.record}>{record}</Text>
+          )}
+
+          {inProgress && timeouts != null && (
+            <View style={styles.timeoutsContainer}>
+              {renderTimeouts(timeouts)}
+            </View>
           )}
         </View>
       </View>

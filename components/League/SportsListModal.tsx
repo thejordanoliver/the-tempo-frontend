@@ -64,7 +64,7 @@ const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
 };
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
-  ({ onSelect, onClose }, ref) => {
+  function SportsListModal({ onSelect, onClose }, ref) {
     const { resolvedColorScheme } = usePreferences();
     const isDark = resolvedColorScheme === "dark";
     const styles = sportsListModalStyles(isDark);

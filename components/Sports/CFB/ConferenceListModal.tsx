@@ -1,3 +1,7 @@
+import {
+  cfbConferences,
+  getCFBConferenceLogo,
+} from "@/constants/cfbConferences";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -7,6 +11,7 @@ import {
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
+import { Image } from "expo-image";
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -23,50 +28,22 @@ export type ConferenceListModalRef = {
   close: () => void;
 };
 
+type ConferenceOption = {
+  label: string;
+  value: number | string | null;
+  logo?: any;
+};
+
 type Props = {
-  onSelect: (conference: string | null) => void;
+  onSelect: (conference: number | string | null) => void;
   onOpen?: () => void;
   onClose?: () => void;
   league?: string;
 };
 
-// 🔥 Base conference sets
-const CBB_CONFERENCES = [
-  "All Conferences",
-  "NCAA Tournament",
-  "Top 25",
-  "SEC",
-  "Big Ten",
-  "Big 12",
-  "ACC",
-  "Pac-12",
-  "AAC",
-  "MWC",
-  "Sun Belt",
-  "CUSA",
-  "MAC",
-  "Atlantic 10",
-  "FBS Independents",
-];
-const CFB_CONFERENCES = [
-  "All Conferences",
-  "Top 25",
-  "SEC",
-  "Big Ten",
-  "Big 12",
-  "ACC",
-  "Pac-12",
-  "AAC",
-  "MWC",
-  "Sun Belt",
-  "CUSA",
-  "MAC",
-  "FBS Independents",
-];
-
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
-  ({ onSelect, onOpen, onClose, league }, ref) => {
-    const [selected, setSelected] = useState<string | null>(null);
+  function ConferenceListModal({ onSelect, onOpen, onClose }, ref) {
+    const [selected, setSelected] = useState<number | string | null>(null);
     const { resolvedColorScheme } = usePreferences();
     const isDark = resolvedColorScheme === "dark";
     const styles = conferenceListModalStyles(isDark);
@@ -78,18 +55,33 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
       close: () => modalRef.current?.close(),
     }));
 
-    // 🔥 Pick conferences based on league
-    const conferences = useMemo(() => {
-      if (league?.toLowerCase() === "cbb") {
-        return CBB_CONFERENCES;
-      }
-      return CFB_CONFERENCES;
-    }, [league]);
+    const conferences = useMemo<ConferenceOption[]>(() => {
+      return [
+        {
+          label: "All Conferences",
+          value: null,
+          logo: null,
+        },
+        {
+          label: "Top 25",
+          value: "top25",
+          logo: null,
+        },
+        ...cfbConferences
+          .filter((conference) => conference.parentGroupId !== null)
+          .map((conference) => ({
+            label: conference.shortName || conference.name,
+            value: conference.groupId,
+            logo: getCFBConferenceLogo(conference.groupId, isDark),
+          })),
+      ];
+    }, [isDark]);
 
     return (
       <BottomSheetModal
         ref={modalRef}
         index={2}
+        enableDynamicSizing={false}
         snapPoints={snapPoints}
         onChange={(index) => {
           if (index >= 0) onOpen?.();
@@ -112,7 +104,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
       >
         <View style={styles.container}>
           <BlurView
-            intensity={80}
+            intensity={100}
             tint="systemThinMaterial"
             style={StyleSheet.absoluteFill}
           />
@@ -121,24 +113,45 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             contentContainerStyle={styles.contentContainerStyle}
           >
             {conferences.map((conf) => {
+              const isSelected = selected === conf.value;
+
               return (
                 <TouchableOpacity
-                  key={conf}
+                  key={`${conf.label}-${conf.value}`}
                   onPress={() => {
-                    const selectedValue =
-                      conf === "All Conferences" ? null : conf;
-
-                    setSelected(selectedValue);
-                    onSelect(selectedValue);
+                    setSelected(conf.value);
+                    onSelect(conf.value);
                     modalRef.current?.close();
                   }}
                   activeOpacity={0.7}
                   style={styles.leagueButton}
                 >
-                  <Text style={styles.leagueText}>{conf}</Text>
+                  <View style={styles.leftContent}>
+                    {conf.logo ? (
+                      <Image
+                        source={conf.logo}
+                        style={styles.logo}
+                        contentFit="contain"
+                      />
+                    ) : (
+                      <View style={styles.logoPlaceholder}>
+                        <Ionicons
+                          name={
+                            conf.value === "top25"
+                              ? "star"
+                              : "american-football-outline"
+                          }
+                          size={18}
+                          color={isDark ? Colors.white : Colors.black}
+                        />
+                      </View>
+                    )}
+
+                    <Text style={styles.leagueText}>{conf.label}</Text>
+                  </View>
 
                   <Ionicons
-                    name="chevron-forward"
+                    name={isSelected ? "checkmark" : "chevron-forward"}
                     size={20}
                     color={isDark ? Colors.white : Colors.black}
                   />

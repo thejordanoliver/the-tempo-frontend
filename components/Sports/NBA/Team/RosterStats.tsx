@@ -16,6 +16,28 @@ import {
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 import { PlayerStats, RosterStatsProps } from "types/types";
 
+const numberFormatter = new Intl.NumberFormat("en-US");
+
+const formatStatValue = (value: unknown): string => {
+  if (value === null || value === undefined || value === "") return "—";
+
+  if (typeof value === "number") {
+    return numberFormatter.format(value);
+  }
+
+  const raw = String(value).trim();
+
+  if (raw.endsWith("%")) {
+    const numeric = Number(raw.replace("%", ""));
+    return Number.isFinite(numeric)
+      ? `${numberFormatter.format(numeric)}%`
+      : raw;
+  }
+
+  const numeric = Number(raw);
+  return Number.isFinite(numeric) ? numberFormatter.format(numeric) : raw;
+};
+
 export default function RosterStats({
   rosterStats,
   teamId,
@@ -73,33 +95,33 @@ export default function RosterStats({
     total: number;
   }) => (
     <View style={styles.cardWrapper}>
-      <View style={styles.cardContainer}>
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={() =>
+          router.push(`/player/${player.playerId}?teamId=${teamId}`)
+        }
+        style={styles.cardContainer}
+      >
         <Text style={styles.cardLabel}>{label}</Text>
-        <TouchableOpacity
-          activeOpacity={0.75}
-          onPress={() =>
-            router.push(`/player/${player.playerId}?teamId=${teamId}`)
-          }
-        >
-          <View style={styles.statCard}>
-            <Image
-              source={{
-                uri: player.headshot_url ?? "https://via.placeholder.com/60",
-              }}
-              style={styles.avatar}
-            />
-            <View style={styles.nameValue}>
-              <Text style={styles.cardName}>
-                {player.short_name}{" "}
-                <Text style={styles.number}>#{player.jersey_number}</Text>
-              </Text>
-              <Text style={styles.cardValue}>
-                {player.latestSeason![statKey]}
-              </Text>
-            </View>
+        <View style={styles.statCard}>
+          <Image
+            source={{
+              uri: player.headshot_url,
+            }}
+            style={styles.avatar}
+          />
+          <View style={styles.nameValue}>
+            <Text style={styles.cardName}>
+              {player.short_name}{" "}
+              <Text style={styles.number}>#{player.jersey_number}</Text>
+            </Text>
+            <Text style={styles.cardValue}>
+              {formatStatValue(player.latestSeason![statKey])}
+            </Text>
           </View>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableOpacity>
+
       {index < total - 1 && <View style={styles.divider} />}
     </View>
   );
@@ -130,24 +152,38 @@ export default function RosterStats({
     ];
 
     const displayTotals = [
-      { label: "Total Points", value: teamStats.totalPoints },
-      { label: "Total Rebounds", value: teamStats.totalRebounds },
-      { label: "Total Assists", value: teamStats.totalAssists },
+      { label: "Total Points", value: formatStatValue(teamStats.totalPoints) },
+      {
+        label: "Total Rebounds",
+        value: formatStatValue(teamStats.totalRebounds),
+      },
+      {
+        label: "Total Assists",
+        value: formatStatValue(teamStats.totalAssists),
+      },
       {
         label: "Total Steals",
-        value: Math.round(teamStats.stealsPerGame * teamStats.gamesPlayed),
+        value: formatStatValue(
+          Math.round(teamStats.stealsPerGame * teamStats.gamesPlayed),
+        ),
       },
       {
         label: "Total Blocks",
-        value: Math.round(teamStats.blocksPerGame * teamStats.gamesPlayed),
+        value: formatStatValue(
+          Math.round(teamStats.blocksPerGame * teamStats.gamesPlayed),
+        ),
       },
       {
         label: "Total Turnovers",
-        value: Math.round(teamStats.turnoversPerGame * teamStats.gamesPlayed),
+        value: formatStatValue(
+          Math.round(teamStats.turnoversPerGame * teamStats.gamesPlayed),
+        ),
       },
       {
         label: "Total Fouls",
-        value: Math.round(teamStats.foulsPerGame * teamStats.gamesPlayed),
+        value: formatStatValue(
+          Math.round(teamStats.foulsPerGame * teamStats.gamesPlayed),
+        ),
       },
     ];
 
@@ -180,6 +216,21 @@ export default function RosterStats({
     return (
       <View style={{ gap: 20 }}>
         <View>
+          <Text style={styles.categoryTitle}>Team Summary</Text>
+          {renderTable([
+            {
+              label: "Team",
+              value: teamStats?.team?.fullName || teamStats?.team?.name,
+            },
+            { label: "Record", value: teamStats?.team?.recordSummary || "—" },
+            {
+              label: "Standing",
+              value: teamStats?.team?.standingSummary || "—",
+            },
+            { label: "Season", value: teamStats?.season?.displayName || "—" },
+          ])}
+        </View>
+        <View>
           <Text style={styles.categoryTitle}>Per-Game Averages</Text>
           {renderTable(displayAverages)}
         </View>
@@ -197,6 +248,7 @@ export default function RosterStats({
         <CustomActivityIndicator />
       </View>
     );
+
   if (error) return <Text style={global.errorText}>{error.name}</Text>;
   if (!rosterStats?.length)
     return <Text style={global.emptyText}>No player stats available.</Text>;
@@ -398,7 +450,7 @@ export default function RosterStats({
                               { width: 80 },
                             ]}
                           >
-                            {val}
+                            {formatStatValue(val)}
                           </Text>
                         ))}
                       </View>

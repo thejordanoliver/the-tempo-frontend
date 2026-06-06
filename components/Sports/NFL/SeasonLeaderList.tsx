@@ -1,5 +1,7 @@
+import { globalStyles } from "@/constants/styles";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
+import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
@@ -24,17 +26,18 @@ interface SeasonLeadersListProps {
   error?: string | null;
   categories?: Category[];
   league: "NFL" | "NHL" | "CFB" | "MLB" | "CBB" | "WCBB";
-  isDark: boolean;
 }
 
 export default function SeasonLeadersList({
   loading,
   error,
   league,
-  isDark,
   categories = [],
 }: SeasonLeadersListProps) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = leadersListStyles(isDark);
+  const global = globalStyles(isDark);
   const cacheRef = useRef<
     Partial<Record<SeasonLeadersListProps["league"], Category[]>>
   >({});
@@ -60,10 +63,6 @@ export default function SeasonLeadersList({
     return (
       <ScrollView contentContainerStyle={styles.skeletonList}>
         <PlayerCardSkeletonList />
-        <PlayerCardSkeletonList />
-        <PlayerCardSkeletonList />
-        <PlayerCardSkeletonList />
-        <PlayerCardSkeletonList />
       </ScrollView>
     );
   }
@@ -71,7 +70,7 @@ export default function SeasonLeadersList({
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.infoText}>Failed to load stats: {error}</Text>
+        <Text style={global.errorText}>Failed to load stats: {error}</Text>
       </View>
     );
   }
@@ -105,11 +104,10 @@ export default function SeasonLeadersList({
                     id={Number(player.playerId ?? player.athleteId)}
                     name={player.shortName}
                     position={player.position}
-                    team={teamObj?.name ?? "Unknown Team"}
-                    avatarUrl={player.headshot}
+                    headshot={player.headshot}
                     statNumber={isMLB ? player.value : player.displayValue}
                     league={league}
-                    teamId={teamObj?.id}
+                    teamId={teamObj?.id ?? 0}
                   />
                 );
               })}

@@ -1,41 +1,105 @@
+import { globalStyles } from "@/constants/styles";
+import { BaseballGame } from "@/types/baseball";
+import { BasketballGame } from "@/types/basketball";
+import { FootballGame } from "@/types/football";
+import { HockeyGame } from "@/types/hockey";
+import { LeagueType } from "@/types/types";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
+import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
+import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
+import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
+import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
 import GameCard from "components/Sports/NBA/Games/GameCard";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
-import { View } from "react-native";
-import type { Game } from "types/types";
-import GamePreviewModal from "../GamePreview/GamePreviewModal";
-import {
-  LongPressGestureHandler,
-  State,
-} from "react-native-gesture-handler";
+import { Text, View } from "react-native";
+import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import { Game } from "types/nba";
+import BasketballGamePreviewModal from "../../Basketball/GamePreview/BasketballGamePreviewModal";
+import BasketballGameCard from "../../Basketball/Games/BasketballGameCard";
+import FootballGameCard from "../../NFL/Games/FootballGameCard";
+import HockeyGamePreviewModal from "../../NHL/GamePreview/HockeyGamePreviewModal";
+import HockeyGameCard from "../../NHL/Games/HockeyGameCard";
 
-type Props = {
-  game: Game | null;
+type BaseProps = {
+  error: string | null;
   loading?: boolean;
+  isCBB?: boolean;
+  isWNBA?: boolean;
+  isWCBB?: boolean;
+  isSB?: boolean;
+  isNFL?: boolean;
+  isCFB?: boolean;
+  isCB?: boolean;
   isDark: boolean;
 };
 
+type Props =
+  | ({
+      league: "NBA";
+      game: Game | null;
+    } & BaseProps)
+  | ({
+      league: "MLB";
+      game: BaseballGame | null;
+    } & BaseProps)
+  | ({
+      league: "NHL";
+      game: HockeyGame | null;
+    } & BaseProps)
+  | ({
+      league: "CBB" | "WCBB" | "WNBA";
+      game: BasketballGame | null;
+    } & BaseProps)
+  | ({
+      league: "NFL" | "CFB";
+      game: FootballGame | null;
+    } & BaseProps)
+  | ({
+      league: Exclude<
+        LeagueType,
+        "NBA" | "CBB" | "WCBB" | "WNBA" | "MLB" | "NHL"
+      >;
+      game: FootballGame | null;
+    } & BaseProps);
+
 export default function LatestGame({
   game,
+  error,
+  league,
   loading = false,
+  isCBB = false,
+  isNFL = false,
+  isCFB = false,
+  isWNBA = false,
+  isWCBB = false,
   isDark,
 }: Props) {
-  const [previewGame, setPreviewGame] = useState<Game | null>(null);
+  const global = globalStyles(isDark);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (event: any) => {
-    if (event.nativeEvent.state === State.ACTIVE && game) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setPreviewGame(game);
-      setModalVisible(true);
-    }
+  const handleLongPress = (event: { nativeEvent: { state: State } }) => {
+    if (event.nativeEvent.state !== State.ACTIVE || !game) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
   };
 
   if (loading) {
-    return <GameCardSkeleton />;
+    return (
+      <View>
+        <HeaderSkeleton />
+        <GameCardSkeleton />
+      </View>
+    );
   }
+
+  if (error) return <Text style={global.errorText}>{error}</Text>;
 
   if (!game) {
     return null;
@@ -46,23 +110,82 @@ export default function LatestGame({
       <View>
         <HeadingTwo isDark={isDark}>Latest Game</HeadingTwo>
 
-        {/* ✅ Long Press Wrapper */}
         <LongPressGestureHandler
           onHandlerStateChange={handleLongPress}
-          minDurationMs={400} // adjust sensitivity
+          minDurationMs={400}
         >
           <View>
-            <GameCard game={game} />
+            {league === "NBA" && <GameCard game={game} />}
+
+            {league === "MLB" && (
+              <BaseballGameCard
+                game={game}
+                isMLB={true}
+                isCB={false}
+                isSB={false}
+              />
+            )}
+            {league === "NFL" && (
+              <FootballGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
+            )}
+            {league === "CFB" && (
+              <FootballGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
+            )}
+            {league === "NHL" && (
+              <HockeyGameCard game={game} isNHL={true} isMCH={false} />
+            )}
+            {league === "CBB" && (
+              <BasketballGameCard game={game} isCBB={isCBB} />
+            )}
+            {league === "WCBB" && (
+              <BasketballGameCard game={game} isWCBB={isWCBB} />
+            )}
+            {league === "WNBA" && (
+              <BasketballGameCard game={game} isWNBA={isWNBA} />
+            )}
+
+            {league !== "NBA" && league !== "MLB" && null}
           </View>
         </LongPressGestureHandler>
       </View>
 
-      {/* ✅ Modal */}
-      {modalVisible && previewGame && (
+      {league === "NBA" && modalVisible && (
         <GamePreviewModal
-          game={previewGame}
+          game={game}
           visible={modalVisible}
-          onClose={() => setModalVisible(false)}
+          onClose={handleCloseModal}
+        />
+      )}
+
+      {(league === "CBB" || league === "WCBB" || league === "WNBA") &&
+        modalVisible && (
+          <BasketballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isCBB={isCBB}
+            isWCBB={isWCBB}
+            isWNBA={isWNBA}
+          />
+        )}
+
+      {league === "MLB" && modalVisible && (
+        <BaseballGamePreviewModal
+          game={game}
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          isMLB={true}
+          isCB={false}
+          isSB={false}
+        />
+      )}
+      {league === "NHL" && modalVisible && (
+        <HockeyGamePreviewModal
+          game={game}
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          isNHL={true}
+          isMCH={false}
         />
       )}
     </>

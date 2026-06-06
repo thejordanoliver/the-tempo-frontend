@@ -1,10 +1,7 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
-import {
-  GameLocation,
-  GameOddsSection,
-} from "components/Sports/NBA/GameDetails";
+import { GameLocation } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { getNeutralVenue } from "constants/neutralVenues";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -17,11 +14,11 @@ import React, { useLayoutEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { emptyFighter, MMAFight } from "types/mma";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getBroadcastDisplay } from "utils/games";
 import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
 
- const LEAGUE = "NHL";
- 
+const LEAGUE = "NHL";
+
 export default function GameDetailsScreen() {
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
@@ -32,8 +29,7 @@ export default function GameDetailsScreen() {
   const parsedGame: MMAFight | null = game
     ? (JSON.parse(game as string) as MMAFight)
     : null;
-  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
-    useScrollFade();
+  const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
     const d = new Date(date);
@@ -60,14 +56,6 @@ export default function GameDetailsScreen() {
   const firstFighterId = parsedGame?.fighters?.first.id;
   const secondFighterId = parsedGame?.fighters?.second.id;
 
-  const firstFighterName =
-    parsedGame?.fighters?.first?.info?.short_name ??
-    parsedGame?.fighters?.first.name ??
-    "";
-  const secondFighterName =
-    parsedGame?.fighters?.second?.info?.short_name ??
-    parsedGame?.fighters?.second.name ??
-    "";
   const firstFighterLastName =
     parsedGame?.fighters?.first?.info?.last_name ?? "";
 
@@ -101,14 +89,20 @@ export default function GameDetailsScreen() {
           awayTeamId={secondFighterId}
           homeTeamCode={firstFighterLastName}
           awayTeamCode={secondFighterLastName}
-          firstFighterId={firstFighterId}
-          secondFighterId={secondFighterId}
           isNeutralSite
           league={LEAGUE}
         />
       ),
     });
-  }, [navigation, isLoading, details, firstFighterName, secondFighterName]);
+  }, [
+    navigation,
+    isLoading,
+    details,
+    firstFighterId,
+    secondFighterId,
+    firstFighterLastName,
+    secondFighterLastName,
+  ]);
 
   const rawWonType = parsedGame?.result?.wonType;
   const firstFighterWinner = parsedGame?.fighters?.first?.winner === true;
@@ -123,7 +117,6 @@ export default function GameDetailsScreen() {
   const firstFighterRecord = parsedGame?.fighters?.first?.info?.record;
   const secondFighterRecord = parsedGame?.fighters?.second?.info?.record;
   const gameStatusDescription = details?.fight?.status.description ?? "";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -141,7 +134,7 @@ export default function GameDetailsScreen() {
   const venueLocation = neutralVenue?.city;
   const venueLat = neutralVenue?.latitude ?? 0;
   const venueLon = neutralVenue?.longitude ?? 0;
-  const { weather, weatherLoading, weatherError } = useWeatherForecast(
+  const { weather } = useWeatherForecast(
     venueLat,
     venueLon,
     gameDateStr,
@@ -187,19 +180,6 @@ export default function GameDetailsScreen() {
         />
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <GameOddsSection
-              date={parsedGame?.date ?? ""}
-              homeId={firstFighterId}
-              awayId={secondFighterId}
-              gameDate={formattedDate}
-              homeCode={firstFighterName}
-              awayCode={secondFighterName}
-              homeLogo={""}
-              awayLogo={""}
-              league={"mma"}
-              isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
-            />
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}
@@ -212,12 +192,12 @@ export default function GameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      {!dontShowDetails && !isFinal && (
-        <GameLiveChatOverlay
-          gameId={String(parsedGame?.id)}
-          opacityAnim={opacityAnim}
-        />
-      )}
+
+      <GameLiveChatOverlay
+        gameId={String(parsedGame?.id)}
+        opacityAnim={opacityAnim}
+        gameStatusDescription={gameStatusDescription}
+      />
     </>
   );
 }

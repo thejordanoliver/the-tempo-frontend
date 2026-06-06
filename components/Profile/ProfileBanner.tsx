@@ -4,9 +4,9 @@ import { ProfileBannerProps } from "types/user";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 const bannerPlaceholder =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder.png";
 const profilePlaceholder =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
 
 export default function ProfileBanner({
   bannerImage,

@@ -1,22 +1,28 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import AddWidgetModal from "components/Explore/AddWidgetModal";
-import EmptyState from "components/Explore/EmptyState";
-import SearchResultsList from "components/Explore/SearchResultsList";
-import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useExplore } from "hooks/useExplore";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { View } from "react-native";
-import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import { ResultItem } from "types/explore";
+import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import AddWidgetModal from "../../components/Explore/AddWidgetModal";
+import EmptyState from "../../components/Explore/EmptyState";
+import SearchBar from "../../components/Explore/SearchBar";
+import SearchResultsList from "../../components/Explore/SearchResultsList";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useExplore } from "../../hooks/useExplore";
+import { exploreStyles } from "../../styles/ExploreStyles/ExploreStyles";
+import { ResultItem } from "../../types/explore";
 import {
   ExploreWidgetConfig,
   ExploreWidgetSize,
   ExploreWidgetType,
-} from "types/widgets";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
-import SearchBar from "../../components/Explore/SearchBar";
+} from "../../types/widgets";
 
 const tabs = ["All", "Teams", "Players", "Accounts"] as const;
 
@@ -51,9 +57,7 @@ const isExploreWidgetType = (value: unknown): value is ExploreWidgetType =>
 const isExploreWidgetSize = (value: unknown): value is ExploreWidgetSize =>
   value === "small" || value === "medium" || value === "large";
 
-const getDefaultWidgetSize = (
-  type: ExploreWidgetType,
-): ExploreWidgetSize => {
+const getDefaultWidgetSize = (type: ExploreWidgetType): ExploreWidgetSize => {
   switch (type) {
     case "trending_news":
     case "standings":
@@ -104,7 +108,10 @@ const normalizeStoredWidgets = (value: unknown): ExploreWidgetConfig[] => {
       size: isExploreWidgetSize(widget.size)
         ? widget.size
         : getDefaultWidgetSize(widget.type as ExploreWidgetType),
-      order: typeof widget.order === "number" ? widget.order : Number.MAX_SAFE_INTEGER,
+      order:
+        typeof widget.order === "number"
+          ? widget.order
+          : Number.MAX_SAFE_INTEGER,
     }));
 
   return withSequentialOrder(normalized);
@@ -190,6 +197,14 @@ export default function ExplorePage() {
               teamId: String(item.team_id ?? ""),
             },
           });
+        else if (item.isNHL)
+          router.push({
+            pathname: "/player/nhl/[id]",
+            params: {
+              id: String(item.player_id),
+              teamId: String(item.team_id ?? ""),
+            },
+          });
         else if (item.isWNBA)
           router.push({
             pathname: "/player/wnba/[id]",
@@ -212,7 +227,7 @@ export default function ExplorePage() {
             pathname: "/player/[id]",
             params: {
               id: String(item.player_id),
-              teamId: String(item.team_id ?? ""),
+              teamId: item.team_id,
             },
           });
         break;
@@ -290,7 +305,6 @@ export default function ExplorePage() {
               return !prev;
             });
           }}
-
         />
       ),
     });
@@ -325,10 +339,7 @@ export default function ExplorePage() {
     );
   };
 
-  const handleResizeWidget = (
-    widgetId: string,
-    size: ExploreWidgetSize,
-  ) => {
+  const handleResizeWidget = (widgetId: string, size: ExploreWidgetSize) => {
     setWidgets((prev) =>
       prev.map((widget) =>
         widget.id === widgetId ? { ...widget, size } : widget,
@@ -339,7 +350,9 @@ export default function ExplorePage() {
   const handleMoveWidget = (widgetId: string, direction: -1 | 1) => {
     setWidgets((prev) => {
       const ordered = withSequentialOrder(prev);
-      const currentIndex = ordered.findIndex((widget) => widget.id === widgetId);
+      const currentIndex = ordered.findIndex(
+        (widget) => widget.id === widgetId,
+      );
       const nextIndex = currentIndex + direction;
 
       if (currentIndex < 0 || nextIndex < 0 || nextIndex >= ordered.length) {

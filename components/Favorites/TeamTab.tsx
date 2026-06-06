@@ -29,7 +29,7 @@ type TeamWithLeague = {
 // -------------------------
 // Render item
 // -------------------------
-export const teamTab = ({
+export const TeamTab = ({
   item,
   drag,
   isActive,
@@ -91,6 +91,8 @@ export const teamTab = ({
           CFB: "/team/cfb/[teamId]",
           CBB: "/team/cbb/[teamId]",
           WCBB: "/team/wcbb/[teamId]",
+          CB: "/team/mlb/[teamId]",
+          SB: "/team/mlb/[teamId]",
           MLB: "/team/mlb/[teamId]",
           NHL: "/team/nhl/[teamId]",
           MMA: "/player/mma/[id]",

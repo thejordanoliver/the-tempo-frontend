@@ -1,11 +1,29 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const SquareGameCardStyles = (
+export const squareGameCardStyles = (
   isDark: boolean,
   isChampionship?: boolean,
-) =>
-  StyleSheet.create({
+) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const borderColor =
+    isChampionship && isDark
+      ? Colors.lightGray
+      : isChampionship
+        ? Colors.darkGray
+        : isDark
+          ? Colors.darkGray
+          : Colors.lightGray;
+
+  const headlineColor = isChampionship
+    ? isDark
+      ? Colors.white
+      : Colors.black
+    : subTextColor;
+
+  return StyleSheet.create({
     card: {
       flexDirection: "row",
       height: 120,
@@ -20,14 +38,7 @@ export const SquareGameCardStyles = (
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor:
-        isChampionship && isDark
-          ? Colors.lightGray
-          : isChampionship
-            ? Colors.darkGray
-            : isDark
-              ? Colors.darkGray
-              : Colors.lightGray,
+      borderRightColor: borderColor,
       borderRightWidth: 0.5,
       gap: 8,
       width: 120,
@@ -54,11 +65,11 @@ export const SquareGameCardStyles = (
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     rank: {
       fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: borderColor,
     },
 
     teamScore: {
@@ -71,109 +82,83 @@ export const SquareGameCardStyles = (
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "right",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     info: { alignItems: "center", justifyContent: "center", width: 60 },
+    infoWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
     date: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       textAlign: "center",
     },
+
     period: {
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       textAlign: "center",
     },
     dateFinal: {
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
       fontSize: 12,
     },
     time: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      color: textColor,
     },
     clock: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
+    },
+    basesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 2,
     },
     outs: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
     },
     finalText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 12,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      color: accentRed,
       textAlign: "center",
     },
     broadcast: {
+      paddingHorizontal: 4,
       fontSize: 10,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      position: "absolute",
-      top: 4,
-      left: 8,
+      color: subTextColor,
     },
     headlineText: {
       fontFamily: Fonts.OSREGULAR,
       fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: headlineColor,
       position: "absolute",
       width: "100%",
-      bottom: 4,
+      top: 4,
       left: 8,
     },
-    headlineContainer: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      position: "absolute",
-      width: "100%",
-      bottom: 4,
-      left: 8,
-    },
-    postSeasonHeadlineContainer: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      position: "absolute",
-      flexDirection: "row",
-      width: "100%",
-      bottom: 4,
-      left: 8,
-      alignItems: "center",
-    },
-    postSeasonHeadlineText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    headlineDivider: {
-      height: 8,
-      width: 0.5,
-      backgroundColor: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-      marginHorizontal: 4,
-    },
+
     downDistance: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: borderColor,
       textAlign: "center",
     },
     notificationBell: {
@@ -197,7 +182,7 @@ export const SquareGameCardStyles = (
       borderWidth: 1,
       alignItems: "center",
       borderRadius: 100,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderColor: borderColor,
       overflow: "hidden",
     },
 
@@ -206,3 +191,4 @@ export const SquareGameCardStyles = (
       height: 20,
     },
   });
+};

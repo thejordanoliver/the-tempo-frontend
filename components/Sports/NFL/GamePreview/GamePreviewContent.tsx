@@ -5,12 +5,11 @@ import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
-import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
+import TeamDrives from "components/Sports/NFL/GameDetails/InjuryReport/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
 import React from "react";
 import { FootballGame } from "types/football";
-import TeamInjuries from "../GameDetails/TeamInjuries";
-
+import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
 
 type GamePreviewContentProps = {
   game: FootballGame;
@@ -38,7 +37,7 @@ type GamePreviewContentProps = {
   injuries: any;
 };
 
-const LEAGUE ="NFL"
+const LEAGUE = "NFL";
 
 export default function GamePreviewContent({
   game,
@@ -119,22 +118,21 @@ export default function GamePreviewContent({
         }}
         isDark
         league={LEAGUE}
+        gameStatusDescription={gameStatusDescription}
       />
 
       <HighlightVideoList highlights={highlights} isDark />
 
-      {!injuries && (
-        <TeamInjuries
-          injuries={injuries}
-          loading={false}
-          error={null}
-          homeTeamId={home.espnID}
-          awayTeamId={away.espnID}
-          awayTeamAbbr={away.code}
-          homeTeamAbbr={away.code}
-          isDark
-        />
-      )}
+      <TeamInjuries
+        injuries={injuries}
+        loading={false}
+        error={null}
+        homeTeamId={home.espnID}
+        awayTeamId={away.espnID}
+        awayTeamAbbr={away.code}
+        homeTeamAbbr={away.code}
+        isDark
+      />
 
       <Officials
         officials={officials}

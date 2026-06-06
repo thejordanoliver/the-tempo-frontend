@@ -1,12 +1,12 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { Team } from "types/football";
-import { NFLGameCenterInfo } from "./GameInfo";
+import { FootballTeam } from "types/football";
+import { GameInfo as GameCenterInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
-type Props = {
-  home: Team;
-  away: Team;
+type GameHeaderProps = {
+  home: FootballTeam;
+  away: FootballTeam;
   awayLogo: any;
   homeLogo: any;
   homeScore: number;
@@ -54,7 +54,7 @@ export default function GameHeader({
   gameStatusDescription,
   league,
   redzone = false,
-}: Props) {
+}: GameHeaderProps) {
   const styles = gameHeaderStyles(isDark);
 
   return (
@@ -89,7 +89,7 @@ export default function GameHeader({
         />
 
         {/* Game Info */}
-        <NFLGameCenterInfo
+        <GameCenterInfo
           date={formattedDate}
           time={formattedTime}
           period={period}

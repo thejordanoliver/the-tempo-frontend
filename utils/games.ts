@@ -1,14 +1,12 @@
 // utils/games.ts
-import { neutralStadiums, neutralVenues } from "constants/neutralVenues";
-import { neutralStadiums as cfbNeutralStadiums } from "constants/teamsCFB";
-import { neutralVenues as nhlNeutralVenues } from "constants/teamsNHL";
+import { neutralVenues } from "constants/neutralVenues";
+
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// ---------- 🧩 Types ----------
 export type TeamLike = {
   id: string;
   name: string;
@@ -38,11 +36,7 @@ type ResolveVenueParams = {
   neutralStadiums: Record<string, any>;
 };
 
-export const normalizeGames = (
-  games: any[],
-  leagueType: string,
-  isWomen = false,
-) =>
+export const normalizeGames = (games: any[], leagueType: string) =>
   games
     .map((game: any) => {
       let date: dayjs.Dayjs | null = null;
@@ -61,27 +55,35 @@ export const normalizeGames = (
       let home, away;
 
       if (leagueType === "NBA") {
-        home = { ...game.home, id: String(game.home?.id) };
-        away = {
-          ...game.away,
-          id: String(game.away?.id),
-        };
+        home = { ...game.home };
+        away = { ...game.away };
       } else if (leagueType === "NFL" || leagueType === "CFB") {
-        home = { ...game.teams?.home, id: String(game.teams?.home?.id) };
-        away = { ...game.teams?.away, id: String(game.teams?.away?.id) };
+        home = { ...game.teams?.home };
+        away = { ...game.teams?.away };
       } else if (leagueType === "MLB") {
-        home = {
-          id: game.teams?.home?.id,
-          name: game.teams?.home?.name,
-        };
-
-        away = {
-          id: game.teams?.away?.id,
-          name: game.teams?.away?.name,
-        };
+        home = { ...game.home };
+        away = { ...game.away };
+      } else if (leagueType === "NHL") {
+        home = { ...game.home };
+        away = { ...game.away };
+      } else if (leagueType === "CB") {
+        home = { ...game.home };
+        away = { ...game.away };
+      } else if (leagueType === "SB") {
+        home = { ...game.home };
+        away = { ...game.away };
+      } else if (leagueType === "CBB") {
+        home = { ...game.teams?.home };
+        away = { ...game.teams?.away };
+      } else if (leagueType === "WCBB") {
+        home = { ...game.teams?.home };
+        away = { ...game.teams?.away };
+      } else if (leagueType === "WNBA") {
+        home = { ...game.teams?.home };
+        away = { ...game.teams?.away };
       } else {
-        home = normalizeTeam(game.teams?.home, isWomen);
-        away = normalizeTeam(game.teams?.away, isWomen);
+        home = null;
+        away = null;
       }
 
       return {
@@ -96,11 +98,6 @@ export const normalizeGames = (
     .filter(Boolean);
 
 // ---------- 🧩 Team Helpers ----------
-export const hasIdAndName = (team: any): team is TeamLike =>
-  team &&
-  (typeof team.id === "string" || typeof team.id === "number") &&
-  typeof team.name === "string";
-
 export function normalizeTeam(team: any, isWomen = false) {
   if (!team) return null;
 
@@ -112,65 +109,7 @@ export function normalizeTeam(team: any, isWomen = false) {
   };
 }
 
-// ---------- 🗓️ Date Helpers ----------
-export const localDateOnly = (date: string | Date) => {
-  const d = new Date(date);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-};
-
-export function toLocalDate(apiDate: any) {
-  const nowLocal = dayjs();
-
-  if (!apiDate) {
-    return {
-      date: nowLocal.toDate(),
-      dateString: nowLocal.format("YYYY-MM-DD"),
-    };
-  }
-
-  let local;
-  if (apiDate.timestamp) {
-    local = dayjs.unix(apiDate.timestamp).local();
-  } else if (apiDate.date) {
-    local = dayjs(apiDate.date).local();
-  } else {
-    local = dayjs(apiDate).local();
-  }
-
-  return {
-    date: local.toDate(),
-    dateString: local.format("YYYY-MM-DD"),
-  };
-}
-
-/**
- * Filters games by a selected local date.
- */
-export function filterByDate(games: any[], date: Date) {
-  const selectedLocal = dayjs(date).format("YYYY-MM-DD");
-
-  return games.filter((g) => {
-    if (!g.date) return false;
-    const gameLocal = dayjs(g.date).format("YYYY-MM-DD");
-    return gameLocal === selectedLocal;
-  });
-}
-
-export const filterMLBByDate = (games: any[], selectedDate: Date) => {
-  return games.filter((game) => {
-    if (!game.date) return false;
-
-    const gameDate = new Date(game.date);
-
-    return (
-      gameDate.getFullYear() === selectedDate.getFullYear() &&
-      gameDate.getMonth() === selectedDate.getMonth() &&
-      gameDate.getDate() === selectedDate.getDate()
-    );
-  });
-};
-
-// ---------- ⏱️ Live Game Check ----------
+// ----------  Live Game ----------
 export function isLiveGame(game: any) {
   const statusLong = String(game.status?.long ?? "").toLowerCase();
   const statusShort = game.status?.short;
@@ -194,79 +133,10 @@ export function isLiveGame(game: any) {
   return true;
 }
 
-export const formatQuarter = (period?: number | string) => {
-  if (!period) return "";
-
-  const p = Number(period);
-  if (!isNaN(p)) {
-    if (p <= 4) return ["1st", "2nd", "3rd", "4th"][p - 1];
-    const otNumber = p - 4;
-    return otNumber === 1 ? "OT" : `OT${otNumber}`;
-  }
-
-  // fallback for string values like "ot", "overtime"
-  const val = String(period).toLowerCase();
-  if (val.includes("ot") || val.includes("overtime")) {
-    const match = val.match(/\d+/);
-    return match ? `OT${match[0]}` : "OT";
-  }
-
-  return period;
-};
-
-export const formatNHLQuarter = (period?: number | string) => {
-  if (!period) return "";
-
-  const p = Number(period);
-  if (!isNaN(p)) {
-    if (p <= 3) return ["1st", "2nd", "3rd"][p - 1];
-    const otNumber = p - 3;
-    return otNumber === 1 ? "OT" : `OT${otNumber}`;
-  }
-
-  // fallback for string values like "ot", "overtime"
-  const val = String(period).toLowerCase();
-  if (val.includes("ot") || val.includes("overtime")) {
-    const match = val.match(/\d+/);
-    return match ? `OT${match[0]}` : "OT";
-  }
-
-  return period;
-};
-export const formatMLBQuarter = (period?: number | string) => {
-  if (!period) return "";
-
-  const p = Number(period);
-  if (!isNaN(p)) {
-    if (p <= 3) return ["1st", "2nd", "3rd"][p - 1];
-    const otNumber = p - 3;
-    return otNumber === 1 ? "OT" : `OT${otNumber}`;
-  }
-
-  // fallback for string values like "ot", "overtime"
-  const val = String(period).toLowerCase();
-  if (val.includes("ot") || val.includes("overtime")) {
-    const match = val.match(/\d+/);
-    return match ? `OT${match[0]}` : "OT";
-  }
-
-  return period;
-};
-
-export const formatRound = (round?: number | string) => {
-  if (!round) return "";
-
-  const r = Number(round);
-  if (isNaN(r)) return "";
-
-  const rounds = ["1st", "2nd", "3rd", "4th", "5th"];
-
-  return rounds[r - 1] ?? "";
-};
-
-export const formatCBBQuarter = (
+export const formatQuarter = (
   period?: number | string,
-  isWomen?: boolean,
+  isCBB?: boolean,
+  isNHL?: boolean,
   statusText?: string,
 ) => {
   if (!period && !statusText) return "";
@@ -280,25 +150,45 @@ export const formatCBBQuarter = (
 
   const p = Number(period);
 
-  // ✅ WOMEN: 4 quarters
-  if (isWomen) {
+  // ✅ MEN: 2 halves
+  if (isCBB) {
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
-    if (p === 3) return "3rd";
-    if (p === 4) return "4th";
 
-    const ot = p - 4;
+    const ot = p - 2;
     return ot === 1 ? "OT" : `${ot}OT`;
   }
 
-  // ✅ MEN: 2 halves
+  if (isNHL) {
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+    if (p === 3) return "3rd";
+
+    const ot = p - 3;
+    return ot === 1 ? "OT" : `${ot}OT`;
+  }
+
   if (p === 1) return "1st";
   if (p === 2) return "2nd";
+  if (p === 3) return "3rd";
+  if (p === 4) return "4th";
 
-  const ot = p - 2;
+  const ot = p - 4;
   return ot === 1 ? "OT" : `${ot}OT`;
 };
 
+export const formatRound = (round?: number | string) => {
+  if (!round) return "";
+
+  const r = Number(round);
+  if (isNaN(r)) return "";
+
+  const rounds = ["1st", "2nd", "3rd", "4th", "5th"];
+
+  return rounds[r - 1] ?? "";
+};
+
+// ---------- Venue----------
 export function resolveVenue({
   espnVenue,
   homeTeam,
@@ -319,13 +209,13 @@ export function resolveVenue({
 
   switch (leagueKey) {
     case "nhl":
-      neutralMap = nhlNeutralVenues;
+      neutralMap = neutralVenues;
       break;
     case "nfl":
-      neutralMap = neutralStadiums;
+      neutralMap = neutralVenues;
       break;
     case "cfb":
-      neutralMap = cfbNeutralStadiums;
+      neutralMap = neutralVenues;
       break;
     case "cbb":
     case "wcbb":
@@ -495,3 +385,78 @@ export const resolveFootballVenue = ({
 
   return resolved;
 };
+
+export const formatVenueAddress = (address?: {
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+}) => {
+  if (!address) return undefined;
+
+  return [address.city, address.state, address.zipCode, address.country]
+    .filter(Boolean)
+    .join(" ");
+};
+
+// ---------- Broadcast ----------
+export function getBroadcastDisplay(broadcasts?: string[]) {
+  if (!broadcasts?.length) return "";
+
+  const allNames = broadcasts.map((n) => n.toLowerCase()).filter(Boolean);
+
+  const networkMap: [string, string][] = [
+    ["espn2", "ESPN2"],
+    ["espn3", "ESPN3"],
+    ["espn+", "ESPN+"],
+    ["espnu", "ESPNU"],
+    ["sec network", "SECN"],
+    ["secn+", "SECN+"],
+    ["acc network", "ACCN"],
+    ["abc", "ABC"],
+    ["tnt", "TNT"],
+    ["btn", "BTN"],
+    ["tbs", "TBS"],
+    ["fox sports", "FS1"],
+    ["fs1", "FS1"],
+    ["fox", "FOX"],
+    ["cbs", "CBS"],
+    ["peacock", "Peacock"],
+    ["nbc", "NBC"],
+    ["netflix", "Netflix"],
+    ["prime video", "Prime"],
+    ["amazon", "Prime"],
+    ["nba league pass", "NBA League Pass"],
+    ["nba tv", "NBA TV"],
+    ["hbo max", "MAX"],
+    ["max", "MAX"],
+    ["espn", "ESPN"],
+  ];
+
+  // special combos
+  if (
+    allNames.some((n) => n.includes("abc")) &&
+    allNames.some((n) => n.includes("espn"))
+  )
+    return "ABC/ESPN";
+  if (
+    allNames.some((n) => n.includes("nbc")) &&
+    allNames.some((n) => n.includes("peacock"))
+  )
+    return "NBC/Peacock";
+  if (
+    allNames.some((n) => n.includes("tnt")) &&
+    allNames.some((n) => n.includes("max"))
+  )
+    return "TNT/MAX";
+
+  for (const [key, value] of networkMap) {
+    if (allNames.some((n) => n.includes(key))) {
+      return value;
+    }
+  }
+
+  // fallback
+  const first = broadcasts[0];
+  return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
+}

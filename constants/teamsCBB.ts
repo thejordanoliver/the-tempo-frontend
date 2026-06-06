@@ -1,30 +1,6 @@
 // constants/teamsCBB.ts
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { BasketballTeam, Conference } from "types/basketball";
-import { neutralVenues } from "./neutralVenues";
-export type Venue = {
-  name: string;
-  city?: string;
-  address: string;
-  latitude?: number;
-  longitude?: number;
-  venueCapacity?: string;
-  venueImage: any;
-};
-
-//Conference Logos
-import MountainWestConference from "assets/College_Logos/MWC.png";
-import NCAALogo from "assets/College_Logos/NCAA.png";
-import A10Conference from "../assets/College_Logos/A10.png";
-import AtlanticCoastConference from "../assets/College_Logos/ACC.png";
-import AmericanAthleticConference from "../assets/College_Logos/American.png";
-import BIG10Conference from "../assets/College_Logos/BIG10.png";
-import BIG12Conference from "../assets/College_Logos/BIG12.png";
-import ConferenceUSA from "../assets/College_Logos/CUSA.png";
-import MidAmericanConference from "../assets/College_Logos/MAC.png";
-import PAC12Conference from "../assets/College_Logos/PAC12.png";
-import SoutheasternConference from "../assets/College_Logos/SEC.png";
-import SunBeltConference from "../assets/College_Logos/SunBelt.png";
+import { BasketballTeam } from "types/basketball";
 
 //Logos
 import AirForceLogo from "assets/College_Logos/AirForce.png";
@@ -4259,7 +4235,7 @@ export const cbbTeams: BasketballTeam[] = [
   {
     id: 1828,
     wid: 6767,
-    espnID: 302,
+    espnID: 3246,
     name: "Bethesda",
     fullName: "Bethesda University Flames",
     code: "BTHS",
@@ -4682,7 +4658,7 @@ export const cbbTeams: BasketballTeam[] = [
   {
     id: 5737,
     wid: 6831,
-    espnID: 2506,
+    espnID: 130129,
     name: "Clinton College",
     fullName: "Clinton College Golden Bears",
     shortName: "Clinton",
@@ -8392,6 +8368,7 @@ export const cbbTeams: BasketballTeam[] = [
     logo: "https://media.api-sports.io/american-football/teams/299.png",
     isActive: true,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 199,
@@ -8428,6 +8405,7 @@ export const cbbTeams: BasketballTeam[] = [
     longitude: -117.7704,
     isActive: true,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 2026,
@@ -8700,6 +8678,7 @@ export const cbbTeams: BasketballTeam[] = [
     longitude: -77.9086,
     isActive: false,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 187,
@@ -8911,6 +8890,7 @@ export const cbbTeams: BasketballTeam[] = [
     longitude: -84.4151,
     isActive: false,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 1871,
@@ -9250,6 +9230,7 @@ export const cbbTeams: BasketballTeam[] = [
     longitude: -120.5465,
     isActive: true,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 6686,
@@ -9400,6 +9381,7 @@ export const cbbTeams: BasketballTeam[] = [
     longitude: -112.5348,
     isActive: false,
     isAllStar: false,
+    espnID: null,
   },
   {
     id: 7564,
@@ -10037,271 +10019,6 @@ export const conferenceListMap: Record<string, string[]> = {
   ],
 };
 
-// Conference teams
-export const conferenceObjectListMap: Conference[] = [
-  {
-    name: "AAC",
-    logo: AmericanAthleticConference,
-    color: {
-      primary: "#041E41",
-      secondary: "#EE2231",
-    },
-    teams: [
-      "Army",
-      "Charlotte",
-      "East Carolina",
-      "Florida Atlantic",
-      "Memphis",
-      "Navy",
-      "North Texas",
-      "Rice",
-      "South Florida",
-      "Temple",
-      "Tulane",
-      "Tulsa",
-      "UAB",
-      "UTSA",
-    ],
-  },
-  {
-    name: "ACC",
-    logo: AtlanticCoastConference,
-    color: {
-      primary: "#013CA6",
-      secondary: "#A5A9AB",
-    },
-    teams: [
-      "Boston College",
-      "California",
-      "Clemson",
-      "Duke",
-      "Florida State",
-      "Georgia Tech",
-      "Louisville",
-      "Miami (FL)",
-      "NC State",
-      "North Carolina",
-      "Pittsburgh",
-      "SMU",
-      "Stanford",
-      "Syracuse",
-      "Virginia",
-      "Virginia Tech",
-      "Wake Forest",
-    ],
-  },
-
-  {
-    name: "Atlantic 10",
-    logo: A10Conference,
-    color: {
-      primary: "#E12726",
-      secondary: "#231F20",
-    },
-    teams: [
-      "Davidson",
-      "Dayton",
-      "Duquesne",
-      "Fordham",
-      "George Mason",
-      "George Washington",
-      "La Salle",
-      "Loyola Chicago",
-      "Rhode Island",
-      "Richmond",
-      "Saint Joseph’s",
-      "Saint Louis",
-      "St. Bonaventure",
-      "VCU",
-      "UMass Lowell",
-    ],
-  },
-
-  {
-    name: "Big 12",
-    logo: BIG12Conference,
-    color: {
-      primary: "#C41230",
-      secondary: "#FFFFFF",
-    },
-    teams: [
-      "Arizona",
-      "Arizona State",
-      "Baylor",
-      "BYU",
-      "Cincinnati",
-      "Colorado",
-      "Houston",
-      "Iowa State",
-      "Kansas",
-      "Kansas State",
-      "Oklahoma State",
-      "TCU",
-      "Texas Tech",
-      "UCF",
-      "Utah",
-      "West Virginia",
-    ],
-  },
-  {
-    name: "Big Ten",
-    logo: BIG10Conference,
-    color: {
-      primary: "#0088CE",
-      secondary: "#000000",
-    },
-    teams: [
-      "Illinois",
-      "Indiana",
-      "Iowa",
-      "Maryland",
-      "Michigan",
-      "Michigan State",
-      "Minnesota",
-      "Nebraska",
-      "Northwestern",
-      "Ohio State",
-      "Oregon",
-      "Penn State",
-      "Purdue",
-      "Rutgers",
-      "UCLA",
-      "USC",
-      "Washington",
-      "Wisconsin",
-    ],
-  },
-  {
-    name: "CUSA",
-    logo: ConferenceUSA,
-    color: {
-      primary: "#003865",
-      secondary: "#A6192E",
-    },
-    teams: [
-      "Delaware",
-      "FIU",
-      "Jacksonville State",
-      "Kennesaw State",
-      "Liberty",
-      "Louisiana Tech",
-      "Middle Tennessee",
-      "Missouri State",
-      "New Mexico State",
-      "Sam Houston",
-      "UTEP",
-      "Western Kentucky",
-    ],
-  },
-  {
-    name: "MAC",
-    logo: MidAmericanConference,
-    color: {
-      primary: "#0B213E",
-      secondary: "#019E4F",
-    },
-    teams: [
-      "Akron",
-      "Ball State",
-      "Bowling Green",
-      "Buffalo",
-      "Central Michigan",
-      "Eastern Michigan",
-      "Kent State",
-      "UMass",
-      "Miami (OH)",
-      "Northern Illinois",
-      "Ohio",
-      "Toledo",
-      "Western Michigan",
-    ],
-  },
-  {
-    name: "MWC",
-    logo: MountainWestConference,
-    color: {
-      primary: "#4F2D7F",
-      secondary: "#AFAFAF",
-    },
-    teams: [
-      "Air Force",
-      "Hawai'i",
-      "Nevada",
-      "New Mexico",
-      "San José State",
-      "UNLV",
-      "Wyoming",
-    ],
-  },
-  {
-    name: "SEC",
-    logo: SoutheasternConference,
-    color: {
-      primary: "#22356B",
-      secondary: "#FFFFFF",
-    },
-    teams: [
-      "Alabama",
-      "Arkansas",
-      "Auburn",
-      "Florida",
-      "Georgia",
-      "Kentucky",
-      "LSU",
-      "Mississippi State",
-      "Missouri",
-      "Oklahoma",
-      "Ole Miss",
-      "South Carolina",
-      "Tennessee",
-      "Texas",
-      "Texas A&M",
-      "Vanderbilt",
-    ],
-  },
-  {
-    name: "Sun Belt",
-    logo: SunBeltConference,
-    color: {
-      primary: "#F6A800",
-      secondary: "#0A2240",
-    },
-    teams: [
-      "Appalachian State",
-      "Arkansas State",
-      "Coastal Carolina",
-      "Georgia Southern",
-      "Georgia State",
-      "James Madison",
-      "Louisiana",
-      "UL Monroe",
-      "Marshall",
-      "Old Dominion",
-      "South Alabama",
-      "Southern Miss",
-      "Troy",
-    ],
-  },
-  {
-    name: "Pac-12",
-    logo: PAC12Conference,
-    color: {
-      primary: "#092346",
-      secondary: "#FFFFFF",
-    },
-    teams: ["Oregon State", "Washington State"],
-  },
-  {
-    name: "FBS Independents",
-    logo: NCAALogo,
-    color: {
-      primary: "#009CDE",
-      secondary: "#fff",
-    },
-    teams: ["UConn", "Notre Dame"],
-  },
-];
-
 // --- Helper mapping from modal name to conference key ---
 export const modalToMapKey: Record<string, string> = {
   SEC: "SEC",
@@ -10317,7 +10034,10 @@ export const modalToMapKey: Record<string, string> = {
   "FBS Independents": "FBS Independents",
 };
 
-const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
+export const getCBBTeam = (
+  id: number | string | undefined,
+  isWomen = false,
+) => {
   if (id == null) return undefined;
 
   return cbbTeams.find(
@@ -10328,50 +10048,8 @@ const resolveCBBTeam = (id: number | string | undefined, isWomen = false) => {
   );
 };
 
-export const getCBBTeam = (id: string | number, isWomen = false) =>
-  resolveCBBTeam(id, isWomen) || null || undefined;
-
-export const getTeamByESPNId = (id: number | string): BasketballTeam | null => {
-  if (!id) return null;
-
-  const searchStr = String(id);
-
-  // Try fast lookup first
-  if (teamMapByESPNID[searchStr]) {
-    return teamMapByESPNID[searchStr];
-  }
-
-  // Otherwise, search the array
-  const team = cbbTeams.find((t) => String(t.espnID) === searchStr);
-
-  return team || null;
-};
-
-export const getTeamLogo = (id?: number | string, isDark = false) => {
-  if (!id) return PlaceholderLogo;
-
-  // Try MEN first
-  let team = cbbTeams.find((t) => String(t.id) === String(id));
-
-  // Fallback to WOMEN
-  let isWomen = false;
-  if (!team) {
-    team = cbbTeams.find((t) => String(t.wid) === String(id));
-    isWomen = !!team;
-  }
-
-  if (!team) return PlaceholderLogo;
-
-  // Return logo based on team type
-  if (isWomen) {
-    // Use women’s logo if available
-    return isDark
-      ? (team.wLogo ?? team.logoLight ?? team.logo)
-      : (team.wLogo ?? team.logo ?? PlaceholderLogo);
-  }
-
-  // Men’s logo
-  return isDark ? (team.logoLight ?? team.logo) : team.logo;
+export const getCBBTeamByESPNId = (espnId: number | string) => {
+  return cbbTeams.find((t) => String(t.espnID) === String(espnId))!;
 };
 
 export const getCBBTeamLogo = (
@@ -10400,40 +10078,3 @@ export const getCBBTeamLogo = (
   // Men's logo logic
   return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
-
-export const teamMapByESPNID = Object.fromEntries(
-  cbbTeams.map((t) => [t.espnID, t]),
-);
-
-const normalize = (s?: unknown) => {
-  if (typeof s !== "string") return "";
-  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
-};
-
-export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
-  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
-  if (!isNeutralSite) return null;
-
-  if (!venueName) return null;
-
-  const normalizedInput = normalize(venueName);
-
-  // 1. Exact match (fast path)
-  if (neutralVenues[venueName]) {
-    return neutralVenues[venueName];
-  }
-
-  // 2. Fuzzy match
-  for (const key of Object.keys(neutralVenues)) {
-    const normalizedKey = normalize(key);
-
-    if (
-      normalizedInput.includes(normalizedKey) ||
-      normalizedKey.includes(normalizedInput)
-    ) {
-      return neutralVenues[key];
-    }
-  }
-
-  return null;
-}

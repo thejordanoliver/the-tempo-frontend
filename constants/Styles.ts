@@ -11,112 +11,112 @@ export const PLACEHOLDER_COLOR = "#888";
 export const Colors = {
   light: {
     text: "#1d1d1d",
-    transparentText: "#1d1d1d80",
+    transparentText: "#1d1d1d50",
 
     itemBackground: "#eee",
-    transparentItemBackground: "#eeeeee80",
+    transparentItemBackground: "#eeeeee50",
 
     red: "#cc0000",
-    transparentRed: "#cc000080",
+    transparentRed: "#cc000050",
 
     green: "#177901ff",
-    transparentGreen: "#17790180",
+    transparentGreen: "#17790150",
 
     yellow: "#dcb000ff",
-    transparentYellow: "#dcb00080",
+    transparentYellow: "#dcb00050",
 
     orange: "#fa7115",
-    transparentOrange: "#fa711580",
+    transparentOrange: "#fa711550",
 
     blue: "#007AFF",
-    transparentBlue: "#007AFF80",
+    transparentBlue: "#007AFF50",
 
     black: "#1d1d1d",
-    transparentBlack: "#1d1d1d80",
+    transparentBlack: "#1d1d1d50",
 
-    gold: "#dbb145",
-    transparentGold: "#dbb14580",
+    gold: "#dbb505",
+    transparentGold: "#dbb14550",
 
     background: "#fff",
-    transparentBackground: "#ffffff80",
+    transparentBackground: "#ffffff50",
 
     tint: tintColorLight,
-    transparentTint: "#0a7ea480",
+    transparentTint: "#0a7ea450",
 
     icon: "#687076",
-    transparentIcon: "#68707680",
+    transparentIcon: "#68707650",
 
     tabIconDefault: "#687076",
-    transparentTabIconDefault: "#68707680",
+    transparentTabIconDefault: "#68707650",
 
     tabIconSelected: tintColorLight,
-    transparentTabIconSelected: "#0a7ea480",
+    transparentTabIconSelected: "#0a7ea450",
 
     errorBackground: "#ffdada",
-    transparentErrorBackground: "#ffdada80",
+    transparentErrorBackground: "#ffdada50",
   },
 
   dark: {
     text: "#fff",
-    transparentText: "#ffffff80",
+    transparentText: "#ffffff50",
 
     lightRed: "#ff4444",
-    transparentLightRed: "#ff444480",
+    transparentLightRed: "#ff444450",
 
     limeGreen: "#2fff00ff",
-    transparentLimeGreen: "#2fff0080",
+    transparentLimeGreen: "#2fff0050",
 
     leafGreen: "#4CAF50",
-    transparentLeafGreen: "#4CAF5080",
+    transparentLeafGreen: "#4CAF5050",
 
     green: "#4CAF50",
-    transparentGreen: "#4CAF5080",
+    transparentGreen: "#4CAF5050",
 
     yellow: "#facc15",
-    transparentYellow: "#facc1580",
+    transparentYellow: "#facc1550",
 
     orange: "#fa7115",
-    transparentOrange: "#fa711580",
+    transparentOrange: "#fa711550",
 
     blue: "#007AFF",
-    transparentBlue: "#007AFF80",
+    transparentBlue: "#007AFF50",
 
     gold: "#7a6839",
-    transparentGold: "#7a683980",
+    transparentGold: "#7a683950",
 
     itemBackground: "#2e2e2e",
-    transparentItemBackground: "#2e2e2e80",
+    transparentItemBackground: "#2e2e2e50",
 
     white: "#fff",
-    transparentWhite: "#ffffff80",
+    transparentWhite: "#ffffff50",
 
     background: "#1d1d1d",
-    transparentBackground: "#1d1d1d80",
+    transparentBackground: "#1d1d1d50",
 
     tint: tintColorDark,
-    transparentTint: "#ffffff80",
+    transparentTint: "#ffffff50",
 
     icon: "#9BA1A6",
-    transparentIcon: "#9BA1A680",
+    transparentIcon: "#9BA1A650",
 
     tabIconDefault: "#9BA1A6",
-    transparentTabIconDefault: "#9BA1A680",
+    transparentTabIconDefault: "#9BA1A650",
 
     tabIconSelected: tintColorDark,
-    transparentTabIconSelected: "#ffffff80",
+    transparentTabIconSelected: "#ffffff50",
 
     errorBackground: "#5a1f1f",
-    transparentErrorBackground: "#5a1f1f80",
+    transparentErrorBackground: "#5a1f1f50",
   },
 
   white: "#fff",
-  transparentWhite: "#ffffff80",
+  transparentWhite: "#ffffff50",
 
   black: "#1d1d1d",
-  transparentBlack: "#1d1d1d80",
+  transparentBlack: "#1d1d1d50",
 
   midTone: "#888",
-  transparentMidTone: "#88888880",
+  transparentMidTone: "#88888850",
 
   lightGray: "#aaa",
   transparentLightGray: "#aaaaaa88",

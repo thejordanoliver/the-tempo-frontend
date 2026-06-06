@@ -1,19 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
-import Button from "components/Button";
-import ConfirmModal from "components/ConfirmModal";
-import CropEditorModal from "components/CropEditorModal";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import PollEditorModal, { PollData } from "components/Forum/PollEditorModal";
-import VideoEditorModal from "components/Forum/VideoEditorModal";
-import { GiphySearchModal } from "components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
-import { Colors, globalStyles } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
+import Button from "../components/Button";
+import ConfirmModal from "../components/ConfirmModal";
+import CropEditorModal from "../components/CropEditorModal";
+import CustomActivityIndicator from "../components/CustomActivityIndicator";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import PollEditorModal, { PollData } from "../components/Forum/PollEditorModal";
+import VideoEditorModal from "../components/Forum/VideoEditorModal";
+import { GiphySearchModal } from "../components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
+import { Colors, globalStyles } from "../constants/styles";
+import { usePreferences } from "../contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { MediaItem, useCreatePost } from "hooks/ForumHooks/useCreatePost";
-import { useAuth } from "hooks/UserHooks/useAuth";
+import { MediaItem, useCreatePost } from "../hooks/ForumHooks/useCreatePost";
+import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useCallback, useLayoutEffect, useState } from "react";
 import {
   Animated,
@@ -26,8 +26,8 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { createPostStyles } from "styles/ForumStyles/CreatePostStyles";
-import { LeagueType } from "types/types";
+import { createPostStyles } from "../styles/ForumStyles/CreatePostStyles";
+import { LeagueType } from "../types/types";
 
 export default function CreatePostScreen() {
   const { teamId, league } = useLocalSearchParams<{

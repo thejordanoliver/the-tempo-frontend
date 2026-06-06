@@ -1,4 +1,4 @@
-import { formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export default function NewsCard({ content, isDark }: NewsCardProps) {
   const title = content.headline;
   const published = formattedDate;
   const source = content.byline;
-  const timeAgo = formatDistanceToNowStrict(new Date(content.published), {
+  const timeAgo = formatDistanceToNow(new Date(content.published), {
     addSuffix: true,
   });
 

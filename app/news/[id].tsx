@@ -3,7 +3,7 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useArticle } from "hooks/NewsHooks/useArticle";
@@ -48,7 +48,7 @@ export default function ArticleScreen() {
 
   const publishedDate = article?.published ? new Date(article.published) : null;
   const timeAgo = publishedDate
-    ? formatDistanceToNowStrict(publishedDate, { addSuffix: true })
+    ? formatDistanceToNow(publishedDate, { addSuffix: true })
     : "";
   const formattedDate = publishedDate
     ? publishedDate.toLocaleDateString("en-US", {

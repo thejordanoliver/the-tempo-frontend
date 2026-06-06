@@ -1,19 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import FavoritesScroll from "components/Favorites/FavoritesScroll";
-import CombinedGamesList from "components/League/CombinedGamesList";
-import { XFeed } from "components/League/Social/XFeed";
-import NewsList from "components/News/NewsList";
-import TabBar from "components/TabBars/TabBar";
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useHomeData } from "hooks/useHomeData";
-import { mockSocialFeed } from "mocks/social";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { homeStyles } from "styles/HomeStyles/HomeStyles";
+import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
+import CombinedGamesList from "../../components/League/CombinedGamesList";
+import { XFeed } from "../../components/League/Social/XFeed";
+import NewsList from "../../components/News/NewsList";
+import TabBar from "../../components/TabBars/TabBar";
+import { Colors } from "../../constants/styles";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useHomeData } from "../../hooks/useHomeData";
+import { mockSocialFeed } from "../../mocks/social";
+import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
   const { resolvedColorScheme, viewMode } = usePreferences();
@@ -111,7 +111,7 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          {/* NEWS PAGE */}
+          {/* NEWS */}
           <View key="news" style={{ flex: 1 }}>
             <ScrollView
               showsVerticalScrollIndicator={false}

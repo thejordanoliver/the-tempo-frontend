@@ -217,6 +217,16 @@ export default function GameTeamStats({
   ).current;
   const isScheduled = gameStatusDescription === "Scheduled";
 
+  useEffect(() => {
+    const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
+
+    Animated.timing(heightAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [expanded, fullHeight, heightAnim]);
+
   if (!Array.isArray(stats) || stats.length < 2) return null;
 
   const away = stats[0];
@@ -231,16 +241,6 @@ export default function GameTeamStats({
 
   const awayStats = mapStats(away.stats);
   const homeStats = mapStats(home.stats);
-
-  useEffect(() => {
-    const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
-
-    Animated.timing(heightAnim, {
-      toValue,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [expanded, fullHeight]);
 
   const awayTeam = getTeamByESPNId(away.team.id);
   const homeTeam = getTeamByESPNId(home.team.id);

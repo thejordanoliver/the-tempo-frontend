@@ -20,9 +20,22 @@ export const playerHeaderStyles = (isDark: boolean) => {
     // ── Avatar ──────────────────────────────────────────────
     avatarWrapper: {
       alignItems: "center",
-      zIndex: 10,
+      justifyContent: "center",
     },
     avatarRing: {
+      alignItems: "center",
+      zIndex: 10,
+      width: 140,
+      height: 140,
+      borderRadius: "100%",
+      borderWidth: 2,
+      borderColor: text,
+      backgroundColor: bg,
+      overflow: "hidden",
+    },
+    avatarContainer: {
+      alignItems: "center",
+      zIndex: 10,
       width: 140,
       height: 140,
       borderRadius: "100%",

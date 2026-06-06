@@ -1,3 +1,9 @@
+import BasketballGamesList from "@/components/Sports/Basketball/Games/BasketballGamesList";
+import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
+import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
+import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -5,21 +11,18 @@ import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import Roster from "components/Sports/CBB/Team/Roster";
+import Roster from "components/Sports/NBA/Team/Roster";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
-import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import usePlayersByTeam from "hooks/CBBHooks/usePlayersByTeam";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useWNBATeamGames } from "hooks/WNBAHooks/useWNBATeamGames";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getWNBASeason, scrollToMonth } from "utils/dateUtils";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
@@ -34,7 +37,10 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamId) ?? 0;
   const team = getWNBATeam(Number(teamIdNum));
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
+  const teamColor = team?.color;
+  const espnId = team?.espnID ?? 0;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
+  const favorited = team ? isFavorite(league, team.id) : false;
   const [standingsYear, setStandingsYear] = useState(
     getWNBASeason().toString(),
   );
@@ -61,61 +67,79 @@ export default function TeamDetailScreen() {
   };
 
   const {
+    rosterStats,
+    loading: statsLoading,
+    error: statsError,
+    refreshingStats,
+    onRefresh: refreshRosterStats,
+  } = useRosterStats(league, teamIdNum);
+
+  const {
+    teamStats,
+    loading: teamStatsLoading,
+    error: teamStatsError,
+  } = useTeamStats({ teamId: espnId, league: league });
+
+  const {
     players,
-    loading,
-    error,
-    refreshing: refreshingRoster,
-    onRefresh,
-  } = usePlayersByTeam(team?.id ?? "", false, true);
+    loading: playersLoading,
+    error: playersError,
+  } = useRoster(teamIdNum, league);
 
   const {
     articles,
     loading: newsLoading,
     error: newsError,
-  } = useLeaguesNews(10, league);
+    refreshing: refreshingNews,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
   const {
-    games,
+    games: selectedMonthGames,
     gamesByMonth,
+    selectedMonth,
     loading: gamesLoading,
     error: gamesError,
     refreshGames,
-  } = useWNBATeamGames(teamIdNum ? teamIdNum.toString() : "", {
-    selectedDate,
+  } = useBasketballTeamGames(teamIdNum, {
+    isWNBA: true,
+    selectedDate: selectedDate,
   });
 
-  const monthsToShow = useMemo(
-    () =>
-      gamesByMonth.map((group) => ({
-        key: group.key,
-        month: group.month,
-        year: group.year,
-        label: group.label,
-        count: group.count,
-      })),
-    [gamesByMonth],
-  );
-
   const gameCountByMonth = useMemo(() => {
-    return new Map<string, number>(
-      gamesByMonth.map((group) => [group.key, group.count]),
-    );
+    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
+  }, [gamesByMonth]);
+
+  const monthsToShow = useMemo(() => {
+    return gamesByMonth.map((group) => ({
+      key: group.key,
+      year: group.year,
+      month: group.month,
+      label: group.label,
+      count: group.count,
+    }));
   }, [gamesByMonth]);
 
   useEffect(() => {
-    if (selectedDate || gamesByMonth.length === 0) return;
+    if (selectedDate || monthsToShow.length === 0) return;
+
+    if (selectedMonth) {
+      setSelectedDate(new Date(selectedMonth.year, selectedMonth.month, 1));
+      return;
+    }
 
     const today = new Date();
 
-    const currentMonth = gamesByMonth.find(
-      (group) =>
-        group.month === today.getMonth() && group.year === today.getFullYear(),
+    const currentMonth = monthsToShow.find(
+      (monthGroup) =>
+        monthGroup.month === today.getMonth() &&
+        monthGroup.year === today.getFullYear(),
     );
 
-    const start = currentMonth ?? gamesByMonth[0];
+    const start = currentMonth ?? monthsToShow[0];
 
     setSelectedDate(new Date(start.year, start.month, 1));
-  }, [gamesByMonth, selectedDate]);
+  }, [monthsToShow, selectedDate, selectedMonth]);
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
@@ -129,34 +153,36 @@ export default function TeamDetailScreen() {
       if (selectedTab === "schedule") {
         await refreshGames();
       }
-
-      if (selectedTab === "roster") {
-        await onRefresh();
-      }
     } finally {
       setRefreshing(false);
     }
   };
 
-  const favorited = team ? isFavorite(league, team.id) : false;
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, team, favorited, toggleFavorite]);
+  }, [
+    navigation,
+    team,
+    teamLogo,
+    teamColor,
+    favorited,
+    toggleFavorite,
+    teamIdNum,
+  ]);
 
   if (!team) {
     return (
@@ -181,7 +207,7 @@ export default function TeamDetailScreen() {
         initialPage={tabToIndex(selectedTab)}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
-        {/* Schedule Page */}
+        {/* SCHEDULE*/}
         <View key="schedule" style={styles.contentArea}>
           <View style={styles.monthSelector}>
             <MonthSelector
@@ -190,13 +216,12 @@ export default function TeamDetailScreen() {
               onSelect={(month, year, index) =>
                 handleSelectMonth(month, year, index)
               }
-              loading={gamesLoading}
               gameCountByMonth={gameCountByMonth}
             />
           </View>
 
-          <WNBAGamesList
-            games={games}
+          <BasketballGamesList
+            games={selectedMonthGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
@@ -205,47 +230,45 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* News Page */}
+        {/* NEWS */}
         <View key="news" style={styles.contentArea}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          >
-            <NewsList
-              items={articles}
-              isDark={isDark}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
-        </View>
-
-        {/* Roster Page */}
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={loading}
-            error={error}
-            refreshing={refreshingRoster}
-            onRefresh={onRefresh}
-            teamFullName={team?.fullName ?? "Unknown Team"}
-            teamId={team.id}
-            isWNBA
+          <NewsList
+            items={articles}
+            loading={newsLoading}
+            error={newsError}
+            refreshing={refreshingNews}
+            onRefresh={refreshNews}
+            isDark={isDark}
           />
         </View>
 
-        {/* Stats Page */}
-        <View key="stats" style={styles.contentArea} />
+        {/* ROSTER */}
+        <View key="roster" style={styles.contentArea}>
+          <Roster
+            players={players}
+            loading={playersLoading}
+            error={playersError}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            league={league}
+          />
+        </View>
 
-        {/* Standings Page */}
+        {/* STATS */}
+        <View key="stats" style={styles.contentArea}>
+          <RosterStats
+            teamStats={teamStats}
+            rosterStats={rosterStats}
+            teamId={espnId}
+            league={league}
+            loading={statsLoading || teamStatsLoading}
+            error={statsError || teamStatsError}
+            refreshing={refreshingStats}
+            onRefresh={refreshRosterStats}
+          />
+        </View>
+
+        {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
@@ -254,7 +277,7 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Forum Page */}
+        {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league={league} />
         </View>

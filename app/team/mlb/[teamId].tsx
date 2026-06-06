@@ -1,3 +1,7 @@
+import GamesList from "@/components/Sports/Baseball/Games/GamesList";
+import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
+import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -5,8 +9,7 @@ import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import MLBGamesList from "components/Sports/MLB/Games/MLBGamesList";
-import Roster from "components/Sports/MLB/Team/Roster";
+import Roster from "components/Sports/Baseball/Team/Roster";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -14,14 +17,40 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import {
+  BaseballScheduleMonth,
+  useBaseballTeamGames,
+} from "hooks/BaseballHooks/useBaseballTeamGames";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useMLBTeamGames } from "hooks/MLBHooks/useMLBTeamGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getMLBSeason, scrollToMonth } from "utils/dateUtils";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+
+type MonthSelectorItem = {
+  key: string;
+  year: number;
+  month: number;
+  label: string;
+  count: number;
+};
+
+function getMonthKeyFromDate(date: Date | null) {
+  if (!date) return null;
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+function getMonthIndex(monthGroup: BaseballScheduleMonth) {
+  if (typeof monthGroup.month !== "number") return null;
+
+  return monthGroup.month - 1;
+}
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -32,35 +61,49 @@ export default function TeamDetailScreen() {
   const league = "MLB";
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
-  const teamIdNum = Number(teamId);
+  const teamIdNum = Number(teamIdStr);
   const team = getMLBTeam(teamIdNum);
+  const espnId = team?.espnID ?? 0;
   const teamLogo = getMLBTeamLogo(teamIdNum, true);
+  const teamColor = team?.color ?? "#1D428A";
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
-
   const pagerRef = useRef<PagerView>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const favorited = team ? isFavorite(league, team.id) : false;
 
   const {
     articles,
     loading: newsLoading,
     error: newsError,
+    refreshing: refreshingNews,
     refresh: refreshNews,
-  } = useLeaguesNews(10, league);
+  } = useLeaguesNews(league, 10);
 
   const {
-    games: selectedMonthGames,
-    gamesByMonth,
-    selectedMonth,
+    teamStats,
+    loading: teamStatsLoading,
+    error: teamStatsError,
+    refresh: teamStatsRefresh,
+  } = useTeamStats({ teamId: espnId, league: league });
+
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+  } = useRoster(teamIdNum, league);
+
+  const {
+    games,
+    months,
     loading: gamesLoading,
-    refreshGames: refreshTeamGames,
-  } = useMLBTeamGames(teamIdNum ? teamIdNum.toString() : "", {
-    season: "2024",
-    selectedDate,
-  });
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+  } = useBaseballTeamGames("mlb", teamIdNum);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -78,27 +121,59 @@ export default function TeamDetailScreen() {
     }
   };
 
-  const gameCountByMonth = useMemo(() => {
-    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
-  }, [gamesByMonth]);
+  const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
+    return months
+      .map((monthGroup) => {
+        const monthIndex = getMonthIndex(monthGroup);
 
-  const monthsToShow = useMemo(() => {
-    return gamesByMonth.map((group) => ({
-      key: group.key,
-      year: group.year,
-      month: group.month,
-      label: group.label,
-      count: group.count,
-    }));
-  }, [gamesByMonth]);
+        if (
+          typeof monthGroup.year !== "number" ||
+          typeof monthIndex !== "number"
+        ) {
+          return null;
+        }
+
+        return {
+          key: monthGroup.key,
+          year: monthGroup.year,
+          month: monthIndex,
+          label: monthGroup.label,
+          count: monthGroup.games.length,
+        };
+      })
+      .filter((monthGroup): monthGroup is MonthSelectorItem =>
+        Boolean(monthGroup),
+      );
+  }, [months]);
+
+  const gameCountByMonth = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    monthsToShow.forEach((monthGroup) => {
+      counts.set(monthGroup.key, monthGroup.count);
+    });
+
+    return counts;
+  }, [monthsToShow]);
+
+  const selectedMonthKey = useMemo(
+    () => getMonthKeyFromDate(selectedDate),
+    [selectedDate],
+  );
+
+  const selectedMonthGames = useMemo(() => {
+    if (!selectedMonthKey) {
+      return games;
+    }
+
+    return (
+      months.find((monthGroup) => monthGroup.key === selectedMonthKey)?.games ??
+      []
+    );
+  }, [games, months, selectedMonthKey]);
 
   useEffect(() => {
     if (selectedDate || monthsToShow.length === 0) return;
-
-    if (selectedMonth) {
-      setSelectedDate(new Date(selectedMonth.year, selectedMonth.month, 1));
-      return;
-    }
 
     const today = new Date();
 
@@ -108,17 +183,24 @@ export default function TeamDetailScreen() {
         monthGroup.year === today.getFullYear(),
     );
 
-    const start = currentMonth ?? monthsToShow[0];
+    const upcomingMonth = monthsToShow.find((monthGroup) => {
+      if (monthGroup.year > today.getFullYear()) return true;
+
+      return (
+        monthGroup.year === today.getFullYear() &&
+        monthGroup.month >= today.getMonth()
+      );
+    });
+
+    const start = currentMonth ?? upcomingMonth ?? monthsToShow[0];
 
     setSelectedDate(new Date(start.year, start.month, 1));
-  }, [monthsToShow, selectedDate, selectedMonth]);
+  }, [monthsToShow, selectedDate]);
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
     scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
   };
-
-  const favorited = team ? isFavorite(league, team.id) : false;
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -142,7 +224,7 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={team?.id}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -152,7 +234,7 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [navigation, team, favorited, toggleFavorite]);
+  }, [favorited, navigation, team, teamLogo, teamColor, toggleFavorite]);
 
   if (!team) {
     return (
@@ -177,7 +259,7 @@ export default function TeamDetailScreen() {
         initialPage={tabToIndex(selectedTab)}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
-        {/* Schedule */}
+        {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
           <MonthSelector
             months={monthsToShow}
@@ -185,55 +267,57 @@ export default function TeamDetailScreen() {
             onSelect={(month, year, index) =>
               handleSelectMonth(month, year, index)
             }
-            loading={gamesLoading}
             gameCountByMonth={gameCountByMonth}
           />
 
-          <MLBGamesList
-            games={selectedMonthGames}
+          <GamesList
+            games={selectedMonthGames as any}
+            error={gamesError}
             loading={gamesLoading}
-            refreshing={refreshing}
+            refreshing={gamesRefreshing || refreshing}
             onRefresh={handleRefresh}
+            scrollEnabled={true}
           />
         </View>
 
-        {/* News */}
+        {/* NEWS */}
         <View key="news" style={styles.contentArea}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          >
-            <NewsList
-              items={articles}
-              isDark={isDark}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
-        </View>
-
-        {/* Roster */}
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            teamId={Number(team.id)}
-            teamFullName={team.fullName}
-            teamColor={team.color}
+          <NewsList
+            items={articles}
+            loading={newsLoading}
+            error={newsError}
+            refreshing={refreshingNews}
+            onRefresh={refreshNews}
             isDark={isDark}
           />
         </View>
 
-        {/* Stats */}
-        <ScrollView key="stats" style={{ flex: 1 }} />
+        {/* ROSTER */}
+        <View key="roster" style={styles.contentArea}>
+          <Roster
+            players={players}
+            loading={playersLoading}
+            error={playersError}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            league={league}
+          />
+        </View>
 
-        {/* Standings */}
+        {/* STATS */}
+        <View key="stats" style={styles.contentArea}>
+          <RosterStats
+            teamStats={teamStats}
+            rosterStats={[]}
+            teamId={String(teamIdNum)}
+            loading={teamStatsLoading}
+            error={teamStatsError}
+            onRefresh={teamStatsRefresh}
+            refreshing={false}
+          />
+        </View>
+
+        {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <StandingsList
             year={standingsYear}
@@ -242,7 +326,7 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* Forum */}
+        {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamIdStr ?? ""} league={league} />
         </View>

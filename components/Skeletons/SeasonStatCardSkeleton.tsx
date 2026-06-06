@@ -1,72 +1,44 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
+import { SkeletonBlock } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native"
-;
+import { StyleSheet, View } from "react-native";
 export default function SeasonStatCardSkeleton() {
-  const opacity = useRef(new Animated.Value(0.3)).current;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  // Pulse animation
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.3,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
   const bg = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
-  const bar = isDark ? Colors.darkGray : Colors.lightGray;
   const styles = statSeasonCardSkeleton(isDark);
   return (
-    <>
+    <View>
+      {/* Title bar */}
       <HeaderSkeleton style={styles.title} />
-      <View style={[styles.card, { backgroundColor: bg }]}>
-        {/* Title bar */}
-
+      <View style={[styles.wrapper, { backgroundColor: bg }]}>
         {/* Stat row */}
         <View style={styles.statHeader}>
           {[1, 2, 3, 4].map((i) => (
-            <Animated.View
-              key={i}
-              style={[styles.statBox, { opacity, backgroundColor: bar }]}
-            />
+            <SkeletonBlock key={i} style={styles.statBox} />
           ))}
         </View>
         {/* Stat row */}
         <View style={styles.statRow}>
           {[1, 2, 3, 4].map((i) => (
-            <Animated.View
-              key={i}
-              style={[styles.statBox, { opacity, backgroundColor: bar }]}
-            />
+            <SkeletonBlock key={i} style={styles.statBox} />
           ))}
         </View>
       </View>
-    </>
+    </View>
   );
 }
 
 export const statSeasonCardSkeleton = (isDark: boolean) =>
   StyleSheet.create({
-    card: {
-      borderRadius: 8,
-      padding: 16,
+    wrapper: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      padding: 12,
+      borderRadius: 8,
     },
     title: {
       alignItems: "center",

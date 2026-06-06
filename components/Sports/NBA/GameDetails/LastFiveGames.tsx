@@ -2,37 +2,59 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
-import { LeagueType } from "types/types";
+
+type LastFiveGame = {
+  id: number;
+  date: string;
+  homeTeam?: string;
+  awayTeam?: string;
+  homeScore: number;
+  awayScore: number;
+  isHome: boolean;
+  won: boolean;
+  opponentId?: number | null;
+  opponent?: string | { id?: number; name?: string; code?: string };
+  opponentLogo?: any;
+};
 
 type TeamData = {
-  teamId?: number; // 👈 make optional to reflect real data
+  teamId?: number;
   teamCode: string | undefined;
-  games: any[];
+  games: LastFiveGame[];
 };
 
 type Props = {
   isDark: boolean;
   home: TeamData;
   away: TeamData;
-  league: LeagueType;
-  gameStatusDescription: string
+  league: string;
+  gameStatusDescription: string;
 };
 
-export default function LastFiveGames({ isDark, home, away, league, gameStatusDescription }: Props) {
+export default function LastFiveGames({
+  isDark,
+  home,
+  away,
+  league,
+  gameStatusDescription,
+}: Props) {
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
 
   const styles = lastFiveGameStyles(isDark);
-  const resolveTeam = (teamId?: number) => {
+
+  const resolveTeam = (teamId?: number | null) => {
     if (!teamId) return undefined;
 
     switch (league) {
@@ -46,6 +68,10 @@ export default function LastFiveGames({ isDark, home, away, league, gameStatusDe
         return getNHLTeam(teamId);
       case "MLB":
         return getMLBTeam(teamId);
+      case "CB":
+        return getCBTeam(teamId);
+      case "SB":
+        return getSBTeam(teamId);
       case "CBB":
         return getCBBTeam(teamId, false);
       case "WCBB":
@@ -57,7 +83,7 @@ export default function LastFiveGames({ isDark, home, away, league, gameStatusDe
     }
   };
 
-  const resolveLogo = (teamId?: number) => {
+  const resolveLogo = (teamId?: number | null) => {
     if (!teamId) return undefined;
 
     switch (league) {
@@ -69,8 +95,14 @@ export default function LastFiveGames({ isDark, home, away, league, gameStatusDe
         return getNFLTeamLogo(teamId, isDark);
       case "NHL":
         return getNHLTeamLogo(teamId, isDark);
-      case "MLB":
-        return getMLBTeamLogo(teamId, isDark);
+      case "MLB": {
+        const mlbTeam = getMLBTeam(teamId);
+        return getMLBTeamLogo(mlbTeam?.id ?? teamId, isDark);
+      }
+      case "CB":
+        return getCBTeamLogo(teamId, isDark);
+      case "SB":
+        return getSBTeamLogo(teamId, isDark);
       case "CBB":
         return getCBBTeamLogo(teamId, isDark, false);
       case "WCBB":
@@ -82,14 +114,40 @@ export default function LastFiveGames({ isDark, home, away, league, gameStatusDe
     }
   };
 
-  const renderRow = ({ item, index }: { item: any; index: number }) => {
+  const getOpponentId = (item: LastFiveGame) => {
+    if (item.opponentId) return item.opponentId;
+
+    if (typeof item.opponent === "object" && item.opponent?.id) {
+      return Number(item.opponent.id);
+    }
+
+    return null;
+  };
+
+  const getOpponentCode = (item: LastFiveGame, fallbackTeam?: any) => {
+    if (fallbackTeam?.code) return fallbackTeam.code;
+
+    if (typeof item.opponent === "string") return item.opponent;
+
+    return item.opponent?.code || item.opponent?.name || "TBD";
+  };
+
+  const renderRow = ({
+    item,
+    index,
+  }: {
+    item: LastFiveGame;
+    index: number;
+  }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
     const resultSymbol = item.won ? "W" : "L";
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
-    const opponent = resolveTeam(item.opponent.id);
-    const opponentLogo = resolveLogo(item.opponent.id);
-    const opponentCode = opponent?.code;
+    const opponentId = getOpponentId(item);
+    const opponent = resolveTeam(opponentId);
+    const opponentLogo = resolveLogo(opponentId);
+    const opponentCode = getOpponentCode(item, opponent);
+
     return (
       <View
         style={[
@@ -126,9 +184,13 @@ export default function LastFiveGames({ isDark, home, away, league, gameStatusDe
 
   const tabs: readonly ("away" | "home")[] = ["away", "home"];
 
-  if (home?.games?.length > 0 || away?.games?.length > 0) return null;
+  const hasHomeGames = home?.games?.length > 0;
+  const hasAwayGames = away?.games?.length > 0;
 
-  if (gameStatusDescription === "Final") return null
+  if (!hasHomeGames && !hasAwayGames) return null;
+
+  if (gameStatusDescription === "Final") return null;
+
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Last Five Games</HeadingTwo>

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
@@ -32,16 +31,12 @@ type TeamGamesResponse = {
   games?: GameWithStatusText[];
 };
 
-export function useTeamGames(
-  teamId?: string,
-  season = getNBASeason(),
-  selectedDate?: Date | null,
-) {
+export function useTeamGames(teamId?: string, selectedDate?: Date | null) {
   const [gamesByMonth, setGamesByMonth] = useState<TeamGamesMonthGroup[]>([]);
   const [games, setGames] = useState<GameWithStatusText[]>([]);
   const [loading, setLoading] = useState(Boolean(teamId));
   const [error, setError] = useState<Error | null>(null);
-
+  const season = getNBASeason();
   const fetchGames = useCallback(async () => {
     if (!teamId) {
       setGamesByMonth([]);

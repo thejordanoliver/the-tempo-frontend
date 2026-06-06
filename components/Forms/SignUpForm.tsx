@@ -383,7 +383,6 @@ export default function SignUpForm({
 
       <Button
         isDark={isDark}
-        children={signupStep === 4 ? "Sign Up" : "Next"}
         onPress={async () => {
           if (signupStep === 4) {
             await onSubmit();
@@ -392,7 +391,9 @@ export default function SignUpForm({
           }
         }}
         disabled={isSubmitting}
-      />
+      >
+        {signupStep === 4 ? "Sign Up" : "Next"}
+      </Button>
     </View>
   );
 }

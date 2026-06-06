@@ -1,27 +1,29 @@
 import { ImageSourcePropType } from "react-native";
 
-export interface MLBTeam {
+export interface BaseballTeam {
   id: number;
-  espnID: number;
+  espnID?: number;
   name: string;
+  shortName: string;
   fullName: string;
-  code: string | undefined;
-  color: string;
+  code: string;
+  color: string | null;
   secondaryColor: string;
-  logo: any;
-  logoLight?: any;
-  established?: number;
-  latitude?: number;
-  longitude?: number;
-  venueName?: string;
-  venueCapacity?: string;
-  venueImage?: string;
-  address?: string;
-  city?: string;
-  championships?: number[];
+  logo: ImageSourcePropType | null;
+  logoLight: ImageSourcePropType | null;
+  established: number;
+  latitude: number;
+  longitude: number;
+  venueName: string;
+  venueCapacity: string;
+  venueImage: string;
+  address: string;
+  city: string;
   isAllStar: boolean;
   isActive: boolean;
 }
+
+export type MLBTeam = BaseballTeam;
 
 export interface MLBScoreSide {
   total: number;
@@ -64,8 +66,8 @@ export interface MLBGame {
   };
 
   teams: {
-    home: MLBTeam;
-    away: MLBTeam;
+    home: BaseballTeam;
+    away: BaseballTeam;
   };
 
   scores: {
@@ -74,47 +76,52 @@ export interface MLBGame {
   };
 }
 
-export type BaseballGameCardProps = {
-  game: MLBGame;
-};
-
 export interface MLBPlayer {
-  id: string;
-  name: string;
-  shortName: string;
-  firstName: string;
-  lastName: string;
-  jersey: string;
-  position: string;
+  id: number;
+  team_id: number;
+  slug: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  short_name: string;
   height: string;
-  weight: string;
-  age: number;
-  team: string;
-  teamId: string;
-  imageUrl: string;
+  weight: number;
+  birth_date: string;
+  debut_year: number;
+  experience_years: number;
+  birth_city: string;
+  birth_country: string;
+  birth_display: string;
+  position: string;
+  jersey_number: string;
+  headshot_url: string;
+  draft_round: number;
+  draft_year: number;
+  draft_number: number;
+  active: true;
 }
 
-export type CollegeBaseballTeam = {
-  id: number;
-  name: string;
-  fullName: string;
-  shortName: string;
-  code: string;
-  color: string | null;
-  logo: ImageSourcePropType;
-  logoLight?: ImageSourcePropType;
-  isActive: boolean;
-  isAllStar: boolean;
-};
-
-export type CollegeBaseballGame = {
-  id: string;
+export type BaseballGame = {
+  league: {
+    id: number;
+    uid: string;
+    code: string;
+    name: string;
+    slug: string;
+  };
+  id: string | number;
   uid: string;
   name: string;
   shortName: string;
+  headline: string;
   date: string;
   startDate: string;
   timestamp: number;
+  season: {
+    year: number;
+    type: number;
+    slug: string;
+  };
   status: {
     state: string;
     description: string;
@@ -132,34 +139,35 @@ export type CollegeBaseballGame = {
   };
   broadcasts: [];
   geoBroadcasts: [];
-  innings: 9;
-  homeTeam: {
-    id: string;
-    uid: string;
+  innings: number;
+  home: {
+    id: number;
+    espnId: number;
     name: string;
     code: string;
-    location: string;
-    logo: any;
-    color: string;
+    primaryColor: string;
+    secondaryColor: string;
     score: number;
     hits: number;
     errors: number;
     record: string;
-    homeRank: number
+    homeRank: number;
+    winner: boolean;
   };
-  awayTeam: {
-    id: string;
-    uid: string;
+  away: {
+    id: number;
+    espnId: number;
     name: string;
+    fullName: string;
     code: string;
-    location: string;
-    logo: any;
-    color: string;
+    primaryColor: string;
+    secondaryColor: string;
     score: number;
     hits: number;
     errors: number;
     record: string;
-    awayRank: number
+    awayRank: number;
+    winner: boolean;
   };
   isConferenceGame: boolean;
   isNeutralSite: boolean;
@@ -167,12 +175,65 @@ export type CollegeBaseballGame = {
   playByPlayAvailable: boolean;
   recent: true;
   wasSuspended: boolean;
+  situation: {
+    balls: number;
+    strikes: number;
+    outs: number;
+    outsText: string;
+    onFirst: boolean;
+    onSecond: boolean;
+    onThird: boolean;
+    pitcher: {
+      playerId: number;
+      period: number;
+      summary: string;
+      athlete: {
+        id: string;
+        fullName: string;
+        displayName: string;
+        shortName: string;
+        position: string;
+      };
+    };
+    batter: {
+      id: string;
+      fullName: string | null;
+      displayName: string | null;
+      shortName: string | null;
+      position: string | null;
+    };
+    lastPlay: {
+      id: string;
+      text: string;
+      scoreValue: number;
+      summaryType: string;
+      atBatId: string;
+      type: {
+        id: string;
+        text: string;
+        abbreviation: string;
+      };
+      teamId: string;
+      athletesInvolved: [
+        {
+          id: string;
+          fullName: string;
+          displayName: string;
+          shortName: string;
+          position: string;
+        },
+      ];
+    };
+  };
   raw: {
     eventId: string;
     competitionId: string;
   };
 };
-export type CollegeBaseballGameCardProps = {
-  game: CollegeBaseballGame;
-  isWomens: boolean
+
+export type BaseballGameCardProps = {
+  game: BaseballGame;
+  isMLB: boolean;
+  isSB: boolean;
+  isCB: boolean;
 };

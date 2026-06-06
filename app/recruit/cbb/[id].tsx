@@ -1,14 +1,14 @@
+import { useCBBRecruit } from "@/hooks/BasketballHooks/useCBBRecruit";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import PredictionRing from "components/Sports/CBB/Recruiting/PredictionRing";
-import RecruitHeader from "components/Sports/CBB/Recruiting/RecruitHeader";
-import OfferList from "components/Sports/CFB/Recruiting/OfferLists";
-import StarRating from "components/Sports/CFB/Recruiting/StarRating";
+import PredictionRing from "components/League/Recruiting/CBB/PredictionRing";
+import RecruitHeader from "components/League/Recruiting/CBB/RecruitHeader";
+import OfferList from "components/League/Recruiting/CFB/OfferLists";
+import StarRating from "components/League/Recruiting/CFB/StarRating";
 import { globalStyles } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useCBBRecruit } from "hooks/CBBHooks/useCBBRecruit";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 

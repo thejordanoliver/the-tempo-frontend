@@ -317,7 +317,7 @@ export const StandingsList = ({
 
   const renderRightItem =
     (activeColumns: string[]) =>
-    ({
+    function StandingsRightItem({
       item,
       index,
       data,
@@ -325,7 +325,7 @@ export const StandingsList = ({
       item: StandingsTeam;
       index: number;
       data: StandingsTeam[];
-    }) => {
+    }) {
       const team =
         league === "NBA"
           ? getTeamByESPNId(Number(item.teamId))

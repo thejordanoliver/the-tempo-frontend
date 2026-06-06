@@ -12,7 +12,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";

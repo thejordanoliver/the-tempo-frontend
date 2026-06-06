@@ -40,7 +40,7 @@ export const statsTableStyles = (isDark: boolean) => {
 
     row: {
       flexDirection: "row",
-      paddingVertical: 8,
+      minHeight: 38,
       alignItems: "center",
       borderBottomColor: borderColor,
       borderBottomWidth: 1,
@@ -51,7 +51,7 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     careerCell: {
-      minWidth: 60,
+      minWidth: 80,
       flex: 1,
       textAlign: "center",
       fontSize: 14,
@@ -61,7 +61,7 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     cell: {
-      minWidth: 60,
+      minWidth: 80,
       flex: 1,
       textAlign: "center",
       fontSize: 14,
@@ -70,8 +70,57 @@ export const statsTableStyles = (isDark: boolean) => {
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
+    fixedColumn: {
+      width: 80,
+    },
+
+    seasonColumn: {
+      width: 82,
+    },
+
+    teamColumn: {
+      width: 64,
+    },
+
+    statScrollContent: {
+      flexGrow: 0,
+    },
+
+    fixedCell: {
+      width: 80,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: textColor,
+    },
+
+    fixedTeamCell: {
+      width: 64,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: textColor,
+    },
+
+    fixedHeaderCell: {
+      fontFamily: Fonts.OSBOLD,
+      color: textColor,
+      textTransform: "uppercase",
+    },
+
+    fixedCareerCell: {
+      width: 64,
+      textAlign: "center",
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      paddingHorizontal: 4,
+      color: Colors.white,
+    },
+
     seasonHeaderCell: {
-      minWidth: 60,
+      minWidth: 80,
       flex: 1,
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
@@ -115,7 +164,7 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     seasons: {
-      minWidth: 60,
+      minWidth: 80,
       flex: 1,
       textAlign: "left",
       fontSize: 14,
@@ -190,6 +239,9 @@ export const statsTableStyles = (isDark: boolean) => {
       fontSize: 12,
       color: textColor,
       fontFamily: Fonts.OSREGULAR,
+    },
+    glossaryRow: {
+      flexDirection: "row",
     },
     rowAltLight: {
       backgroundColor: Colors.light.itemBackground,

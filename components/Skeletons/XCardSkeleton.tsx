@@ -1,7 +1,7 @@
+import { SkeletonBlock } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export const XCARD_WIDTH = 240;
 export const XCARD_HEIGHT = 280;
@@ -10,45 +10,41 @@ export default function XCardSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = xCardStyles(isDark);
-  // Pulse animation
-  const opacity = useRef(new Animated.Value(0.4)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
 
   return (
-    <Animated.View style={[styles.container, { opacity }]}>
-      <View style={styles.thumbnail}></View>
+    <View style={styles.container}>
+      <SkeletonBlock style={styles.thumbnail} />
 
       <View style={styles.body}>
         <View style={styles.authorRow}>
           <View style={styles.authorInfo}>
-            <View style={styles.nameRow}></View>
+            <SkeletonBlock width={120} height={14} radius={7} />
           </View>
         </View>
 
         <View style={styles.footer}>
-          <View style={styles.metricContainer}></View>
-          <View style={styles.metricContainer}></View>
+          <SkeletonBlock
+            width={44}
+            height={12}
+            radius={6}
+            style={styles.metricContainer}
+          />
+          <SkeletonBlock
+            width={44}
+            height={12}
+            radius={6}
+            style={styles.metricContainer}
+          />
 
-          <View style={[styles.metricRight]}></View>
+          <SkeletonBlock
+            width={28}
+            height={12}
+            radius={6}
+            style={styles.metricRight}
+          />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 }
 

@@ -37,7 +37,7 @@ export default function CenterInfo({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isEndOfPeriod = gameStatusDescription === "End of Period";
-  const displayPeriod = formatQuarter(period);
+  const displayPeriod = formatQuarter(period ?? 0);
 
   return (
     <View style={styles.container}>

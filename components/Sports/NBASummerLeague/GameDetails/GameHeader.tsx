@@ -104,7 +104,7 @@ export default function GameHeader({
           date={formattedDate || new Date().toISOString()}
           time={time}
           clock={halftime ? undefined : displayClock}
-          period={formatQuarter(period)}
+          period={formatQuarter(period ?? 0)}
           isDark={isDark}
           broadcastNetworks={networkString}
           gameStatusDescription={gameStatusDescription}

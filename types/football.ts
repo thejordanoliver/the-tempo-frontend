@@ -6,19 +6,51 @@ import { ImageSourcePropType } from "react-native";
 
 export interface NFLPlayer {
   id: number;
-  name: string;
-  birth_date?: string;
-  age?: number | null;
-  height?: string;
-  weight?: string;
-  college?: string | null;
-  group?: string;
-  position?: string;
-  number?: number;
-  salary?: string | null;
-  experience?: number | null;
-  image?: string;
-  teamId: number;
+  player_id: number;
+  espn_id: number;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  short_name: string;
+  height: string;
+  weight: string;
+  birth_date: string;
+  birth_city: string;
+  birth_state: string;
+  birth_country: string;
+  college: string;
+  position: string;
+  jersey_number: string;
+  experience: number;
+  group_name: string;
+  team_id: number;
+  headshot_url: string;
+  draft_round: number;
+  draft_year: number;
+  draft_number: number;
+}
+
+export interface CFBPlayer {
+  id: number;
+  player_id: number;
+  espn_id: number;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  short_name: string;
+  height: string;
+  weight: string;
+  position: string;
+  jersey_number: string;
+  experience_years: number;
+  experience_display: string;
+  experience_abbr: string;
+  birth_city: string;
+  birth_state: string;
+  birth_country: string;
+  birth_display: string;
+  team_id: number;
+  headshot_url: string;
 }
 
 export type FootballTeam = {
@@ -51,61 +83,194 @@ export type FootballTeam = {
   isActive: boolean;
 };
 
+// export type FootballGame = {
+//   game: {
+//     id: string; // ✅
+//     stage: string;
+//     week: string;
+//     date: {
+//       timezone: string;
+//       date: string;
+//       time: string;
+//       timestamp: number;
+//       utc?: string;
+//       local?: string;
+//     };
+//     venue: {
+//       name: string;
+//       city: string;
+//     };
+//     status: {
+//       short: string;
+//       long: string;
+//       timer?: string | null; // allow null too
+//     };
+//   };
+//   league: {
+//     id: number;
+//     name: string;
+//     season: string;
+//     logo: string;
+//   };
+//   teams: {
+//     home: FootballTeam;
+//     away: FootballTeam;
+//   };
+//   scores: {
+//     home: {
+//       total: number;
+//       quarter_1: number;
+//       quarter_2: number;
+//       quarter_3: number;
+//       quarter_4: number;
+//       overtime: number;
+//     };
+//     away: {
+//       total: number;
+//       quarter_1: number;
+//       quarter_2: number;
+//       quarter_3: number;
+//       quarter_4: number;
+//       overtime: number;
+//     };
+//   };
+// };
+
 export type FootballGame = {
-  game: {
-    id: string; // ✅
-    stage: string;
-    week: string;
-    date: {
-      timezone: string;
-      date: string;
-      time: string;
-      timestamp: number;
-      utc?: string;
-      local?: string;
-    };
-    venue: {
-      name: string;
-      city: string;
-    };
-    status: {
-      short: string;
-      long: string;
-      timer?: string | null; // allow null too
-    };
-  };
   league: {
     id: number;
+    uid: string;
+    code: string;
     name: string;
-    season: string;
+    slug: string;
+  };
+  id: number;
+  uid: string;
+  name: string;
+  shortName: string;
+  headline: string;
+  date: string;
+  startDate: string;
+  timestamp: string;
+  season: {
+    year: 2026;
+    type: 2;
+    slug: "pre-season" | "regular-season" | "post-season";
+  };
+  week: {
+    number: string;
+  };
+  status: {
+    state: string;
+    description: string;
+    detail: string;
+    shortDetail: string;
+    period: number;
+    quarter: number;
+    clock: number;
+    displayClock: string;
+    completed: false;
+  };
+  venue: {
+    id: number;
+    name: string;
+    city: string;
+    state: string;
+    country: string;
+    indoor: string;
+  };
+  broadcasts: string[];
+  geoBroadcasts: [
+    {
+      type: string;
+      market: string;
+      media: string;
+      region: string;
+    },
+  ];
+  odds: {
+    provider: string;
+    details: string;
+    spread: number;
+    overUnder: number;
+    homeMoneyline: null;
+    awayMoneyline: null;
+  };
+  periods: number;
+  period: number;
+  quarter: number;
+  clock: number;
+  displayClock: string;
+  down: null;
+  distance: null;
+  yardLine: null;
+  possession: null;
+  possessionText: null;
+  redZone: boolean;
+  drive: null;
+  lastPlay: null;
+  teamWithPossession: null;
+  home: {
+    id: number;
+    espnId: number;
+    uid: string;
+    name: string;
+    code: string;
+    location: string;
     logo: string;
+    primaryColor: string;
+    secondaryColor: string;
+    conferenceId: number | null;
+    record: string;
+    rank: number | null;
+    score: number;
+    winner: boolean | null;
   };
-  teams: {
-    home: FootballTeam;
-    away: FootballTeam;
+  away: {
+    id: number;
+    espnId: number;
+    uid: string;
+    name: string;
+    code: string;
+    location: string;
+    logo: string;
+    primaryColor: string;
+    secondaryColor: string;
+    conferenceId: number | null;
+    record: string;
+    rank: number | null;
+    score: number;
+    winner: boolean | null;
   };
-  scores: {
-    home: {
-      total: number;
-      quarter_1: number;
-      quarter_2: number;
-      quarter_3: number;
-      quarter_4: number;
-      overtime: number;
-    };
-    away: {
-      total: number;
-      quarter_1: number;
-      quarter_2: number;
-      quarter_3: number;
-      quarter_4: number;
-      overtime: number;
-    };
+  isConferenceGame: boolean;
+  isNeutralSite: boolean;
+  attendance: number;
+  playByPlayAvailable: boolean;
+  recent: boolean;
+  wasSuspended: boolean;
+  situation: {
+    down: null;
+    distance: null;
+    downDistanceText: string | null;
+    shortDownDistanceText: string | null;
+    yardLine: null;
+    possession: null;
+    possessionText: null;
+    isRedZone: false;
+    drive: null;
+    lastPlay: null;
+    teamWithPossession: null;
+  };
+  raw: {
+    eventId: string;
+    competitionId: string;
   };
 };
 
 export type FootballGameCardProps = {
   game: FootballGame;
+  isNFL?: boolean;
+  isCFB?: boolean;
 };
 
 export const emptyTeam: FootballTeam = {
@@ -238,6 +403,11 @@ export interface CFBPlayoffBracketRound {
   title: string;
   games: CFBPlayoffBracketGame[];
 }
+
+export type BracketTeam = CFBPlayoffBracketTeam;
+export type BracketGame = CFBPlayoffBracketGame;
+export type BracketRound = CFBPlayoffBracketRound;
+export type Game = FootballGame;
 
 export interface BracketData {
   first: CFBPlayoffBracketRound;

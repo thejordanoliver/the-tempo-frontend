@@ -94,8 +94,9 @@ export function getNBACalendarSeason(): string {
 export function getFootballSeason(date = new Date()) {
   const year = date.getFullYear();
   const month = date.getMonth();
-  return month < 7 ? year - 1 : year;
+  return month < 5 ? year - 1 : year;
 }
+
 export function getRecruitYear(date = new Date()) {
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -211,7 +212,6 @@ export const scrollToMonth = (
   });
 };
 
-/* ---------------- Helpers ---------------- */
 export const calculateAge = (birthDate?: string) => {
   if (!birthDate) return null;
   const d = new Date(birthDate);
@@ -224,9 +224,21 @@ export const calculateAge = (birthDate?: string) => {
   return age;
 };
 
-export const calculateExperience = (draftYear?: number | string) => {
-  if (!draftYear) return null;
-  const year = typeof draftYear === "string" ? Number(draftYear) : draftYear;
-  if (isNaN(year)) return null;
-  return new Date().getFullYear() - year;
+export const formatBirth = (birthDate: string | null) => {
+  if (!birthDate) return null;
+  return new Date(birthDate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
+
+export function filterByDate(games: any[], date: Date) {
+  const selectedLocal = dayjs(date).format("YYYY-MM-DD");
+
+  return games.filter((g) => {
+    if (!g.date) return false;
+    const gameLocal = dayjs(g.date).format("YYYY-MM-DD");
+    return gameLocal === selectedLocal;
+  });
+}

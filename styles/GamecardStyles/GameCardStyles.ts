@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
@@ -38,7 +38,6 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 4,
     },
 
     winnerContainer: {
@@ -155,11 +154,24 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       textAlign: "center",
     },
 
+    outsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
     outs: {
       fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       color: accentRed,
       textAlign: "center",
+    },
+
+    basesContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 2,
     },
 
     downDistance: {
@@ -171,21 +183,23 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     broadcast: {
       fontFamily: Fonts.OSREGULAR,
-      color: subTextColor,
       fontSize: 10,
       textAlign: "center",
+      color: subTextColor,
     },
 
     statusDivider: {
       height: 12,
       width: 1,
       backgroundColor: textColor,
+      marginHorizontal: 4,
     },
 
     finalStatusDivider: {
       height: 12,
       width: 1,
       backgroundColor: accentRed,
+      marginHorizontal: 4,
     },
 
     /* =========================
@@ -218,19 +232,19 @@ export const GameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        ⚾ POSSESSION / EXTRAS
     ========================= */
     awayPossession: {
-      width: 24,
-      height: 24,
+      width: 22,
+      height: 22,
       resizeMode: "contain",
       position: "absolute",
-      bottom: -20,
+      bottom: -14,
     },
 
     homePossession: {
-      width: 24,
-      height: 24,
+      width: 22,
+      height: 22,
       resizeMode: "contain",
       position: "absolute",
-      bottom: -20,
+      bottom: -14,
     },
   });
 };

@@ -1,22 +1,65 @@
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { usePlayerSeasons } from "hooks/usePlayerSeasons";
+import { PlayerSeason } from "hooks/NBAHooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
-  playerId: number;
+  seasons: PlayerSeason[];
+  loading: boolean;
+  error: string | null;
 }
+
 type StatView = "totals" | "pergame" | "per36";
+
+type CareerTotals = {
+  g: number;
+  pts: number;
+  mp: number;
+  fg: number;
+  fga: number;
+  three_p: number;
+  three_pa: number;
+  ft: number;
+  fta: number;
+  trb: number;
+  ast: number;
+  stl: number;
+  blk: number;
+  tov: number;
+  pf: number;
+};
 
 const STAT_OPTIONS = [
   { label: "Totals", value: "totals" },
   { label: "Per Game", value: "pergame" },
   { label: "Per 36 Minutes", value: "per36" },
+];
+
+const TABLE_HEADERS = [
+  "AGE",
+  "GP",
+  "MIN",
+  "PTS",
+  "FG",
+  "FGA",
+  "FG%",
+  "3P",
+  "3PA",
+  "3P%",
+  "FT",
+  "FTA",
+  "FT%",
+  "REB",
+  "AST",
+  "STL",
+  "BLK",
+  "TO",
+  "PF",
 ];
 
 const NBA_STAT_GLOSSARY = [
@@ -40,107 +83,186 @@ const NBA_STAT_GLOSSARY = [
   { abbr: "PF", label: "Personal Fouls" },
 ];
 
+const EMPTY_CAREER_TOTALS: CareerTotals = {
+  g: 0,
+  pts: 0,
+  mp: 0,
+  fg: 0,
+  fga: 0,
+  three_p: 0,
+  three_pa: 0,
+  ft: 0,
+  fta: 0,
+  trb: 0,
+  ast: 0,
+  stl: 0,
+  blk: 0,
+  tov: 0,
+  pf: 0,
+};
+
 const chunk = <T,>(arr: T[], size: number): T[][] => {
   const out: T[][] = [];
+
   for (let i = 0; i < arr.length; i += size) {
     out.push(arr.slice(i, i + size));
   }
+
   return out;
 };
 
-const perGame = (stat?: number | null, g?: number | null) =>
-  !g ? "0.0" : (Number(stat || 0) / g).toFixed(1);
+const toNumber = (value?: number | string | null) => {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : 0;
+};
 
-const pct = (val?: number | string | null) =>
-  val == null || isNaN(Number(val))
-    ? "—"
-    : `${(Number(val) * 100).toFixed(1)}%`;
+const formatNumber = (value?: number | string | null) => {
+  if (value === null || value === undefined || value === "") return "—";
+  return String(value);
+};
 
-export default function PlayerStatTable({ playerId }: Props) {
+const perGame = (stat?: number | null, games?: number | null) => {
+  const g = toNumber(games);
+  if (g <= 0) return "0.0";
+
+  return (toNumber(stat) / g).toFixed(1);
+};
+
+const per36 = (stat?: number | null, minutes?: number | null) => {
+  const mp = toNumber(minutes);
+  if (mp <= 0) return "0.0";
+
+  return ((toNumber(stat) / mp) * 36).toFixed(1);
+};
+
+const pct = (value?: number | string | null) => {
+  const num = Number(value);
+
+  if (!Number.isFinite(num)) {
+    return "—";
+  }
+
+  return `${(num * 100).toFixed(1)}%`;
+};
+
+const getStatValue = (
+  statView: StatView,
+  stat?: number | null,
+  games?: number | null,
+  minutes?: number | null,
+) => {
+  if (statView === "pergame") {
+    return perGame(stat, games);
+  }
+
+  if (statView === "per36") {
+    return per36(stat, minutes);
+  }
+
+  return formatNumber(stat);
+};
+
+export default function PlayerStatTable({ seasons, loading, error }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
-  
+
   const [statView, setStatView] = useState<StatView>("totals");
-  const { seasons, loading, error } = usePlayerSeasons(playerId);
-  const per36 = (stat?: number | null, mp?: number | null) => {
-    if (!stat || !mp) return "0.0";
-    return ((stat / mp) * 36).toFixed(1);
-  };
 
-
-  // 🔥 Best season by PPG
   const bestSeason = useMemo(() => {
     let best: string | null = null;
-    let max = -1;
+    let maxPpg = -1;
 
-    seasons.forEach((s) => {
-      const g = s.g ?? 0;
-      const pts = s.pts ?? 0;
-      const ppg = g > 0 ? pts / g : 0;
+    seasons.forEach((season) => {
+      const games = toNumber(season.g);
+      const points = toNumber(season.pts);
+      const ppg = games > 0 ? points / games : 0;
 
-      if (ppg > max) {
-        max = ppg;
-        best = s.season;
+      if (ppg > maxPpg) {
+        maxPpg = ppg;
+        best = season.season;
       }
     });
 
     return best;
   }, [seasons]);
 
-  if (loading) return;
+  const career = useMemo(() => {
+    return seasons.reduce<CareerTotals>(
+      (acc, season) => {
+        acc.g += toNumber(season.g);
+        acc.pts += toNumber(season.pts);
+        acc.mp += toNumber(season.mp);
+        acc.fg += toNumber(season.fg);
+        acc.fga += toNumber(season.fga);
+        acc.three_p += toNumber(season.three_p);
+        acc.three_pa += toNumber(season.three_pa);
+        acc.ft += toNumber(season.ft);
+        acc.fta += toNumber(season.fta);
+        acc.trb += toNumber(season.trb);
+        acc.ast += toNumber(season.ast);
+        acc.stl += toNumber(season.stl);
+        acc.blk += toNumber(season.blk);
+        acc.tov += toNumber(season.tov);
+        acc.pf += toNumber(season.pf);
 
-  <View style={styles.container}>
-    <PlayerStatTableSkeleton />;
-  </View>;
+        return acc;
+      },
+      { ...EMPTY_CAREER_TOTALS },
+    );
+  }, [seasons]);
 
-  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
-  if (!seasons.length)
-    return <Text style={global.errorText}>No stats available</Text>;
+  const getRowStyle = (index: number, season?: string | null) => {
+    const isAlt = index % 2 === 1;
 
-  // 🧮 Career totals (season-level)
-  const career = seasons.reduce(
-    (acc, s) => {
-      acc.g += s.g || 0;
-      acc.pts += s.pts || 0;
-      acc.mp += s.mp || 0;
-      acc.fg += s.fg || 0;
-      acc.fga += s.fga || 0;
-      acc.three_p += s.three_p || 0;
-      acc.three_pa += s.three_pa || 0;
-      acc.ft += s.ft || 0;
-      acc.fta += s.fta || 0;
-      acc.trb += s.trb || 0;
-      acc.ast += s.ast || 0;
-      acc.stl += s.stl || 0;
-      acc.blk += s.blk || 0;
-      acc.tov += s.tov || 0;
-      acc.pf += s.pf || 0;
-      return acc;
-    },
-    {
-      g: 0,
-      pts: 0,
-      mp: 0,
-      fg: 0,
-      fga: 0,
-      three_p: 0,
-      three_pa: 0,
-      ft: 0,
-      fta: 0,
-      trb: 0,
-      ast: 0,
-      stl: 0,
-      blk: 0,
-      tov: 0,
-      pf: 0,
-    },
-  );
+    const zebra = isAlt
+      ? isDark
+        ? styles.rowAltDark
+        : styles.rowAltLight
+      : null;
+
+    const highlight = season === bestSeason ? styles.best : null;
+
+    return [styles.row, zebra, highlight];
+  };
+
+  const getCareerStatValue = (
+    stat?: number | null,
+    games?: number | null,
+    minutes?: number | null,
+  ) => {
+    return getStatValue(statView, stat, games, minutes);
+  };
+
+  if (loading) {
+    return (
+      <View>
+        <PlayerStatTableSkeleton />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load stats</Text>
+      </View>
+    );
+  }
+
+  if (!seasons.length) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>No stats available</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
+
       <Dropdown
         isDark={isDark}
         options={STAT_OPTIONS}
@@ -150,217 +272,242 @@ export default function PlayerStatTable({ playerId }: Props) {
       />
 
       <View style={styles.tableWrapper}>
-        {/* Season column */}
-        <View>
+        <View style={styles.seasonColumn}>
           <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.seasonHeaderCell, styles.headerCell]}>
+            <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
               SEASON
             </Text>
           </View>
 
-          {seasons.map((s, i) => {
-            const isAlt = i % 2 === 1;
-
-            const zebra = isAlt
-              ? isDark
-                ? styles.rowAltDark
-                : styles.rowAltLight
-              : null;
-
-            const highlight = s.season === bestSeason ? styles.best : null;
-
-            return (
-              <View key={s.season} style={[styles.row, zebra, highlight]}>
-                <Text style={styles.seasonText}>{s.season}</Text>
-              </View>
-            );
-          })}
+          {seasons.map((season, index) => (
+            <View
+              key={`${season.season}-${season.team ?? index}`}
+              style={getRowStyle(index, season.season)}
+            >
+              <Text style={styles.fixedCell}>
+                {formatNumber(season.season)}
+              </Text>
+            </View>
+          ))}
 
           <View style={[styles.row, styles.careerRow]}>
-            <Text style={styles.careerHeaderCell}>CAREER</Text>
+            <Text
+              style={[
+                styles.fixedCell,
+                styles.fixedHeaderCell,
+                { color: Colors.white },
+              ]}
+            >
+              CAREER
+            </Text>
           </View>
         </View>
 
-        {/* Stats */}
-        <ScrollView horizontal>
-          <View>
+        <View style={styles.teamColumn}>
+          <View style={[styles.row, styles.headerRow]}>
+            <Text style={[styles.fixedTeamCell, styles.fixedHeaderCell]}>
+              TEAM
+            </Text>
+          </View>
+
+          {seasons.map((season, index) => (
+            <View
+              key={`${season.season}-${season.team ?? index}-team`}
+              style={getRowStyle(index, season.season)}
+            >
+              <Text style={styles.fixedTeamCell}>
+                {formatNumber(season.team)}
+              </Text>
+            </View>
+          ))}
+
+          <View style={[styles.row, styles.careerRow]}>
+            <Text style={styles.fixedCareerCell}></Text>
+          </View>
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.statScrollContent}>
             <View style={[styles.row, styles.headerRow]}>
-              {[
-                "TEAM",
-                "AGE",
-                "GP",
-                "MIN",
-                "PTS",
-                "FG",
-                "FGA",
-                "FG%",
-                "3P",
-                "3PA",
-                "3P%",
-                "FT",
-                "FTA",
-                "FT%",
-                "REB",
-                "AST",
-                "STL",
-                "BLK",
-                "TO",
-                "PF",
-              ].map((h) => (
-                <Text key={h} style={[styles.cell, styles.headerCell]}>
-                  {h}
+              {TABLE_HEADERS.map((header) => (
+                <Text key={header} style={[styles.cell, styles.headerCell]}>
+                  {header}
                 </Text>
               ))}
             </View>
 
-            {seasons.map((s, i) => {
-              const isAlt = i % 2 === 1;
-
-              const zebra = isAlt
-                ? isDark
-                  ? styles.rowAltDark
-                  : styles.rowAltLight
-                : null;
-
-              const highlight = s.season === bestSeason ? styles.best : null;
-
-              const renderStat = (stat?: number | null) =>
-                statView === "totals"
-                  ? stat
-                  : statView === "pergame"
-                    ? perGame(stat, s.g)
-                    : per36(stat, s.mp);
+            {seasons.map((season, index) => {
+              const games = season.g;
+              const minutes = season.mp;
 
               return (
-                <View key={s.season} style={[styles.row, zebra, highlight]}>
-                  {/* TEAM */}
-                  <Text style={styles.cell}>{s.team}</Text>
+                <View
+                  key={`${season.season}-${season.team ?? index}-stats`}
+                  style={getRowStyle(index, season.season)}
+                >
+                  <Text style={styles.cell}>{formatNumber(season.age)}</Text>
+                  <Text style={styles.cell}>{formatNumber(season.g)}</Text>
 
-                  {/* AGE */}
-                  <Text style={styles.cell}>{s.age}</Text>
-
-                  {/* GP */}
-                  <Text style={styles.cell}>{s.g}</Text>
-
-                  {/* MIN */}
                   <Text style={styles.cell}>
                     {statView === "totals"
-                      ? s.mp
+                      ? formatNumber(season.mp)
                       : statView === "pergame"
-                        ? perGame(s.mp, s.g)
+                        ? perGame(season.mp, games)
                         : "36.0"}
                   </Text>
 
-                  {/* PTS */}
-                  <Text style={styles.cell}>{renderStat(s.pts)}</Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.pts, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.fg, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.fga, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>{pct(season.fg_pct)}</Text>
 
-                  {/* FG / FGA */}
-                  <Text style={styles.cell}>{renderStat(s.fg)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.fga)}</Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.three_p, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.three_pa, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>{pct(season.three_pct)}</Text>
 
-                  {/* FG% */}
-                  <Text style={styles.cell}>{pct(s.fg_pct)}</Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.ft, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.fta, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>{pct(season.ft_pct)}</Text>
 
-                  {/* 3P / 3PA */}
-                  <Text style={styles.cell}>{renderStat(s.three_p)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.three_pa)}</Text>
-
-                  {/* 3P% */}
-                  <Text style={styles.cell}>{pct(s.three_pct)}</Text>
-
-                  {/* FT / FTA */}
-                  <Text style={styles.cell}>{renderStat(s.ft)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.fta)}</Text>
-
-                  {/* FT% */}
-                  <Text style={styles.cell}>{pct(s.ft_pct)}</Text>
-
-                  {/* REB / AST / STL / BLK / TO / PF */}
-                  <Text style={styles.cell}>{renderStat(s.trb)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.ast)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.stl)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.blk)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.tov)}</Text>
-                  <Text style={styles.cell}>{renderStat(s.pf)}</Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.trb, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.ast, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.stl, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.blk, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.tov, games, minutes)}
+                  </Text>
+                  <Text style={styles.cell}>
+                    {getStatValue(statView, season.pf, games, minutes)}
+                  </Text>
                 </View>
               );
             })}
 
-            {/* Career totals */}
             <View style={[styles.row, styles.careerRow]}>
               <Text style={styles.careerCell}>{""}</Text>
-              <Text style={styles.careerCell}>{""}</Text>
-              <Text style={styles.careerCell}>{career.g}</Text>
-              <Text style={styles.careerCell}>{career.mp}</Text>
-              <Text style={styles.careerCell}>{career.pts}</Text>
-              <Text style={styles.careerCell}>{career.fg}</Text>
-              <Text style={styles.careerCell}>{career.fga}</Text>
+
+              <Text style={styles.careerCell}>{formatNumber(career.g)}</Text>
+
+              <Text style={styles.careerCell}>
+                {statView === "totals"
+                  ? formatNumber(career.mp)
+                  : statView === "pergame"
+                    ? perGame(career.mp, career.g)
+                    : "36.0"}
+              </Text>
+
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.pts, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.fg, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.fga, career.g, career.mp)}
+              </Text>
               <Text style={styles.careerCell}>
                 {pct(career.fg / career.fga)}
               </Text>
-              <Text style={styles.careerCell}>{career.three_p}</Text>
-              <Text style={styles.careerCell}>{career.three_pa}</Text>
+
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.three_p, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.three_pa, career.g, career.mp)}
+              </Text>
               <Text style={styles.careerCell}>
                 {pct(career.three_p / career.three_pa)}
               </Text>
-              <Text style={styles.careerCell}>{career.ft}</Text>
-              <Text style={styles.careerCell}>{career.fta}</Text>
+
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.ft, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.fta, career.g, career.mp)}
+              </Text>
               <Text style={styles.careerCell}>
                 {pct(career.ft / career.fta)}
               </Text>
-              <Text style={styles.careerCell}>{career.trb}</Text>
-              <Text style={styles.careerCell}>{career.ast}</Text>
-              <Text style={styles.careerCell}>{career.stl}</Text>
-              <Text style={styles.careerCell}>{career.blk}</Text>
-              <Text style={styles.careerCell}>{career.tov}</Text>
-              <Text style={styles.careerCell}>{career.pf}</Text>
+
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.trb, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.ast, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.stl, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.blk, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.tov, career.g, career.mp)}
+              </Text>
+              <Text style={styles.careerCell}>
+                {getCareerStatValue(career.pf, career.g, career.mp)}
+              </Text>
             </View>
           </View>
         </ScrollView>
       </View>
 
-      {/* --- Stat Glossary --- */}
       <View style={styles.glossaryContainer}>
         <Text style={styles.headerName}>Stat Glossary</Text>
 
-        {chunk(NBA_STAT_GLOSSARY, 2).map((row, rowIdx) => (
-          <View
-            key={rowIdx}
-            style={{
-              flexDirection: "row",
-              marginTop: 6,
-            }}
-          >
-            {row.map((item, colIdx) => {
-              const isAlt = rowIdx % 2 === 1;
+        {chunk(NBA_STAT_GLOSSARY, 2).map((row, rowIndex) => {
+          const isAlt = rowIndex % 2 === 1;
 
-              return (
+          return (
+            <View key={`glossary-row-${rowIndex}`} style={styles.glossaryRow}>
+              {row.map((item, colIndex) => (
                 <View
                   key={item.abbr}
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
+                    alignItems: "center",
+                    padding: 12,
                     backgroundColor: isAlt
                       ? isDark
                         ? styles.rowAltDark.backgroundColor
                         : styles.rowAltLight.backgroundColor
                       : "transparent",
-                    borderRightWidth: colIdx === 0 ? 1 : 0,
+                    borderRightWidth: colIndex === 0 ? 1 : 0,
                     borderRightColor: isDark
                       ? "rgba(255,255,255,0.15)"
                       : "rgba(0,0,0,0.1)",
                   }}
                 >
                   <Text style={styles.glossaryAbbr}>{item.abbr}</Text>
-
                   <Text style={styles.glossaryDisplayName}>{item.label}</Text>
                 </View>
-              );
-            })}
-          </View>
-        ))}
+              ))}
+            </View>
+          );
+        })}
       </View>
     </View>
   );

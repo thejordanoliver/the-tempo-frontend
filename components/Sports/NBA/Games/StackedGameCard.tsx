@@ -1,3 +1,4 @@
+import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -5,16 +6,23 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+import { useCallback } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { StackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
+import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { Game } from "types/nba";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
 export default function StackedGameCard({ game }: { game: Game }) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const handlePress = useCallback(() => {
+    router.push({
+      pathname: "/game/[game]",
+      params: { game: JSON.stringify(game) },
+    });
+  }, [router, game]);
+
   const homeId = game.home?.id;
   const awayId = game.away?.id;
 
@@ -39,21 +47,6 @@ export default function StackedGameCard({ game }: { game: Game }) {
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-  const isChampionship =
-    gameDate.getMonth() === 5 &&
-    gameDate.getDate() >= 5 &&
-    gameDate.getDate() <= 22;
-  const isChristmasDay =
-    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
-  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
-
-  const styles = StackedGameCardStyles(isDark, isChampionship);
-
   const { score: liveScore, details } = useGameDetails(
     "nba",
     String(homeEspnId),
@@ -61,13 +54,16 @@ export default function StackedGameCard({ game }: { game: Game }) {
     gameDateStr,
   );
 
+  const isChampionship = details?.headline?.includes("NBA Finals");
+  const styles = stackedGameCardStyles(isDark, isChampionship);
+
   const period =
     liveScore?.period ?? Number(game.periods?.current ?? game.period);
   const displayClock = liveScore?.displayClock;
   const homeScore =
     liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
   const awayScore =
-    liveScore?.away.total ?? game.scores?.visitors?.points ?? game.awayScore;
+    liveScore?.away.total ?? game.scores?.away?.points ?? game.awayScore;
 
   const gameStatusDescription = liveScore?.gameStatusDescription;
   const gameStatusDetail = liveScore?.gameStatusDetail;
@@ -81,7 +77,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const headlineText = details?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = headlineText || getHolidayLabel(gameDate);
 
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
@@ -177,6 +173,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
 
   const renderCardContent = () => (
     <>
+      <Text style={styles.headlineText}>{headline}</Text>
       <View style={styles.cardWrapper}>
         {/* Away Team */}
         <View style={styles.teamSection}>
@@ -188,7 +185,7 @@ export default function StackedGameCard({ game }: { game: Game }) {
             />
             <Text style={styles.teamName}>{awayName}</Text>
           </View>
-          {/* Away Score / Record */}
+
           <ScoreText
             score={awayScore}
             record={awayRecord}
@@ -206,7 +203,6 @@ export default function StackedGameCard({ game }: { game: Game }) {
             />
             <Text style={styles.teamName}>{homeName}</Text>
           </View>
-          {/* Home Score / Record */}
           <ScoreText
             score={homeScore}
             record={homeRecord}
@@ -222,28 +218,17 @@ export default function StackedGameCard({ game }: { game: Game }) {
           <Text style={styles.broadcast}>{broadcastText}</Text>
         )}
       </View>
-
-      {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
     </>
   );
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() =>
-        router.push({
-          pathname: "/game/[game]",
-          params: { game: JSON.stringify(game) },
-        })
-      }
-    >
+    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
-              : ([Colors.dark.gold, Colors.dark.gold] as [string, string])
+              : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

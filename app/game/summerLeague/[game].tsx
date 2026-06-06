@@ -1,14 +1,18 @@
+import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
+import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
+import GameTeamStats from "@/components/Sports/Basketball/GameDetails/GameTeamStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import BoxScore from "components/Sports/CBB/GameDetails/BoxScore";
-import GameLeaders from "components/Sports/CBB/GameDetails/GameLeaders";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import {
+  GameHeader,
+  GameLocation,
+  LineScore,
+} from "components/Sports/NBA/GameDetails";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import LastPlay from "components/Sports/NBA/GameDetails/LastPlay";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import GameHeader from "components/Sports/NBASummerLeague/GameDetails/GameHeader";
 import { getNeutralVenue } from "constants/neutralVenues";
-import { getTeamBySummerId, teams } from "constants/teams";
+import { getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -18,7 +22,8 @@ import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BasketballGame } from "types/basketball";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { getHolidayLabel } from "utils/dateUtils";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 /* ------------------------------------------------------------------ */
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
@@ -32,14 +37,7 @@ function parseGameDate(raw: any) {
 const LEAGUE = "SL";
 
 export default function GameDetailsScreen() {
-  const styles = gameDetailsScreenStyles;
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const { game } = useLocalSearchParams();
-  const navigation = useNavigation();
-
-  /* ---------------- Parse Game ---------------- */
-
   const gameObj: BasketballGame | null = useMemo(() => {
     try {
       return typeof game === "string" ? JSON.parse(game) : null;
@@ -51,53 +49,44 @@ export default function GameDetailsScreen() {
 
   if (!gameObj) return null;
 
+  return <SummerLeagueGameDetailsContent gameObj={gameObj} />;
+}
+
+function SummerLeagueGameDetailsContent({
+  gameObj,
+}: {
+  gameObj: BasketballGame;
+}) {
+  const styles = gameDetailsScreenStyles;
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const navigation = useNavigation();
+
   /* ---------------- League ---------------- */
 
   const isLasVegas = gameObj.league.name === "NBA - Las Vegas Summer League";
 
   /* ---------------- Teams ---------------- */
-
   const homeTeamId = Number(gameObj?.teams?.home?.id);
   const awayTeamId = Number(gameObj?.teams?.away?.id);
-
   const homeTeam = getTeamBySummerId(homeTeamId);
   const awayTeam = getTeamBySummerId(awayTeamId);
-
-  if (!homeTeam || !awayTeam) {
-    const sampleTeams = teams.slice(0, 5).map((t) => ({
-      name: t.name,
-      id: t.id,
-      espnID: t.espnID,
-    }));
-
-    console.warn("⚠️ Missing team  in GameDetailsScreen", {
-      league: isLasVegas ? "SummerVegas" : "SummerUtah",
-      apiTeamIds: {
-        homeTeamId,
-        awayTeamId,
-      },
-
-      game: {
-        homeName: gameObj?.teams?.home?.name,
-        awayName: gameObj?.teams?.away?.name,
-        date:
-          (gameObj as any)?.timestamp ?? (gameObj as any)?.date ?? "unknown",
-      },
-      found: {
-        homeTeamFound: !!homeTeam,
-        awayTeamFound: !!awayTeam,
-      },
-      teamSample: sampleTeams,
-    });
-
-    return null;
-  }
-
-  const homeLogo = isDark ? homeTeam.logoLight || homeTeam.logo : homeTeam.logo;
-  const awayLogo = isDark ? awayTeam.logoLight || awayTeam.logo : awayTeam.logo;
-
-  const homeEspnId = homeTeam.espnID ?? 0;
-  const awayEspnId = awayTeam.espnID ?? 0;
+  const homeLogo = getTeamLogo(homeTeam?.id, isDark);
+  const awayLogo = getTeamLogo(awayTeam?.id, isDark);
+  const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
+  const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
+  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+  const awayName = useMemo(
+    () => awayTeam?.fullName ?? "",
+    [awayTeam?.fullName],
+  );
+  const homeName = useMemo(
+    () => homeTeam?.fullName ?? "",
+    [homeTeam?.fullName],
+  );
+  const homeEspnId = homeTeam?.espnID ?? 0;
+  const awayEspnId = awayTeam?.espnID ?? 0;
 
   /* ---------------- Date ---------------- */
 
@@ -138,27 +127,41 @@ export default function GameDetailsScreen() {
 
   const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
   const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
-  const period = liveScore?.period;
-  const displayClock = liveScore?.displayClock;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
+  const period = formatQuarter(liveScore?.period ?? 0);
+  const clock = liveScore?.displayClock ?? "0:00";
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
-  const homeRank = details?.homeRank;
-  const awayRank = details?.awayRank;
-  const headlineText = details?.headline;
+  const homeScore = liveScore?.home.total ?? 0;
+  const awayScore = liveScore?.away.total ?? 0;
+  const homeWins = homeScore > awayScore;
+  const awayWins = awayScore > homeScore;
+  const homeRecord = details?.records?.home?.overall ?? "0-0";
+  const awayRecord = details?.records?.away?.overall ?? "0-0";
+  const fouls = liveScore?.fouls;
+  const awayBonus = fouls?.away?.bonusState;
+  const homeBonus = fouls?.home?.bonusState;
+  const homeTimeouts = liveScore?.timeouts?.home ?? 0;
+  const awayTimeouts = liveScore?.timeouts?.away ?? 0;
   const highlights = details?.highlights ?? [];
   const officials = details?.officials ?? [];
-  const neutralSite = details?.neutralSite;
-  const leaders = liveScore?.leaders ?? [];
+  const lastPlay = liveScore?.lastPlay;
   const playerStats = liveScore?.playerStats ?? [];
-  const lastPlay = liveScore?.lastPlay ?? "";
+  const teamStats = liveScore?.teamStats ?? [];
+  const neutralSite = details?.neutralSite;
   const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
+  const broadcast = getBroadcastDisplay(broadcasts);
+  const leaders = liveScore?.leaders ?? [];
+  const headlineText = details?.headline;
+  const holidayLabel = getHolidayLabel(gameDateObj);
+  const headline = headlineText ?? holidayLabel ?? "";
+  const lineScore = liveScore?.periodScores?.length
+    ? {
+        home: liveScore.periodScores.map((p) => p.home.toString()),
+        away: liveScore.periodScores.map((p) => p.away.toString()),
+      }
+    : undefined;
 
   /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;
@@ -184,29 +187,9 @@ export default function GameDetailsScreen() {
     ? (neutralVenue?.longitude ?? 0)
     : (homeTeam?.longitude ?? 0);
   const venueAttendance = details?.attendance || null;
-  const { weather, weatherError, weatherLoading } = useWeatherForecast(
-    venueLat,
-    venueLon,
-    gameDateISO,
-  );
-
-  /* ---------------- Status / linescore ---------------- */
-
-  const homeScore = liveScore?.home.total ?? 0;
-  const awayScore = liveScore?.away.total ?? 0;
-
-  // --- Period scores / line score ---
-  const lineScore = liveScore?.periodScores?.length
-    ? {
-        home: liveScore.periodScores.map((p) => p.home.toString()),
-        away: liveScore.periodScores.map((p) => p.away.toString()),
-      }
-    : undefined;
-
-  /* ---------------- Header ---------------- */
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateISO);
 
   useLayoutEffect(() => {
-    // While loading or missing  → NO HEADER
     if (isLoadingGame || !homeTeam || !awayTeam) {
       navigation.setOptions({
         header: () => null,
@@ -214,7 +197,6 @@ export default function GameDetailsScreen() {
       return;
     }
 
-    // Once loaded → show custom header
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
@@ -226,12 +208,24 @@ export default function GameDetailsScreen() {
           awayTeamCode={awayTeam.code}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
+          homeColor={homeColor}
+          awayColor={awayColor}
           isNeutralSite={!!neutralSite}
           league={"NBA"}
         />
       ),
     });
-  }, [navigation, isLoadingGame, neutralSite, homeTeam?.code, awayTeam?.code]);
+  }, [
+    navigation,
+    isLoadingGame,
+    homeTeam,
+    awayTeam,
+    homeLogo,
+    awayLogo,
+    homeColor,
+    awayColor,
+    neutralSite,
+  ]);
 
   if (isLoadingGame) {
     return (
@@ -249,47 +243,57 @@ export default function GameDetailsScreen() {
       stickyHeaderIndices={[0]}
     >
       <GameHeader
-        headlineText={headlineText ?? ""}
-        homeTeamData={homeTeam}
-        awayTeamData={awayTeam}
+        headline={headline}
+        homeId={homeTeamId}
+        awayId={awayTeamId}
         homeLogo={homeLogo}
         awayLogo={awayLogo}
-        rankHome={homeRank}
-        rankAway={awayRank}
+        homeName={homeName}
+        awayName={awayName}
         homeScore={homeScore}
         awayScore={awayScore}
-        home={homeTeam}
-        away={awayTeam}
         homeRecord={homeRecord}
         awayRecord={awayRecord}
-        displayClock={displayClock}
+        homeBonusState={homeBonus}
+        awayBonusState={awayBonus}
+        homeTimeouts={homeTimeouts}
+        awayTimeouts={awayTimeouts}
+        homeWins={homeWins}
+        awayWins={awayWins}
+        clock={clock}
         period={period}
-        isDark={isDark}
-        formattedDate={formattedDate}
+        date={formattedDate}
         time={formattedTime}
-        networkString={broadcastText}
-        league={detailsLeague} // ✅ FIX
+        broadcast={broadcast}
         gameStatusDescription={gameStatusDescription}
-        gameStatusShortDescription={gameStatusDetail}
+        gameStatusDetail={gameStatusDetail}
+        isDark={isDark}
+        league={LEAGUE}
       />
 
       {!dontShowDetails && (
         <View style={styles.innerContainer}>
           <LastPlay
             lastPlay={lastPlay}
+            homeTeamId={homeTeamId}
+            awayTeamId={awayTeamId}
             gameStatusDescription={gameStatusDescription}
           />
 
           <LineScore
             linescore={lineScore}
-            homeCode={homeTeam.code}
-            awayCode={awayTeam.code}
+            homeCode={homeName}
+            awayCode={awayName}
             isDark={isDark}
             gameStatusDescription={gameStatusDescription}
           />
 
           <GameLeaders
             leaders={leaders}
+            homeCode={homeCode}
+            homeLogo={homeLogo}
+            awayCode={awayCode}
+            awayLogo={awayLogo}
             awayTeamId={Number(awayEspnId)}
             homeTeamId={Number(homeEspnId)}
             league={"summerleague"}
@@ -299,11 +303,27 @@ export default function GameDetailsScreen() {
 
           <BoxScore
             playerStats={playerStats}
+            homeName={homeName}
+            homeLogo={homeLogo}
+            awayName={awayName}
+            awayLogo={awayLogo}
             homeTeamId={Number(homeEspnId)}
             awayTeamId={Number(awayEspnId)}
             league={LEAGUE}
             isDark={isDark}
             gameStatusDescription={gameStatusDescription}
+          />
+
+          <GameTeamStats
+            stats={teamStats}
+            homeName={homeCode}
+            homeLogo={homeLogo}
+            homeColor={homeColor}
+            awayName={awayCode}
+            awayLogo={awayLogo}
+            awayColor={awayColor}
+            gameStatusDescription={gameStatusDescription}
+            isDark={isDark}
           />
 
           <HighlightVideoList highlights={highlights} isDark={isDark} />

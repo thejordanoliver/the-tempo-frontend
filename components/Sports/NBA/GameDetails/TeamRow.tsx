@@ -12,27 +12,23 @@ import {
  * --------------------------------------------------- */
 
 export const TeamRow = ({
-  team,
+  id,
+  name,
   rank,
+  logo,
+  record,
   isDark,
   isHome = false,
   score,
   isWinner,
   size = "medium",
+  gameStatusDescription,
   timeouts,
   bonusState,
-  gameStatusDescription,
+  league,
 }: BasketballTeamRowProps) => {
   const router = useRouter();
   const styles = teamRowStyles(isDark);
-
-  /* -----------------------------------------------------
-   * Team Resolution
-   * --------------------------------------------------- */
-
-  const logo = team.logo;
-  const code = team.code;
-  const record = team.record === "-" ? "" : team.record;
 
   /* -----------------------------------------------------
    * Game State
@@ -53,8 +49,17 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (team.id) {
-      router.push(`/team/${team.id}`);
+    if (league === "NBA") {
+      router.push(`/team/${id}`);
+    }
+    if (league === "WNBA") {
+      router.push(`/team/wnba/${id}`);
+    }
+    if (league === "CBB") {
+      router.push(`/team/cbb/${id}`);
+    }
+    if (league === "WCBB") {
+      router.push(`/team/wcbb/${id}`);
     }
   };
 
@@ -143,7 +148,7 @@ export const TeamRow = ({
         <View style={styles.teamInfo}>
           <Text style={styles.teamName}>
             {rank && <Text style={styles.rank}>{rank} </Text>}
-            {code}
+            {name}
           </Text>
 
           {!showRecordInsteadOfScore && !inProgress && (
@@ -151,7 +156,7 @@ export const TeamRow = ({
           )}
 
           {inProgress && timeouts != null && (
-            <View style={{ alignItems: "center" }}>
+            <View style={styles.timeoutsContainer}>
               {renderTimeouts(timeouts)}
             </View>
           )}

@@ -1,3 +1,4 @@
+import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -5,17 +6,22 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import React from "react";
+import React, { useCallback } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { GameCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { Game } from "types/nba";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
 export default function GameCard({ game }: { game: Game }) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const handlePress = useCallback(() => {
+    router.push({
+      pathname: "/game/[game]",
+      params: { game: JSON.stringify(game) },
+    });
+  }, [router, game]);
 
   const homeId = game.home?.id;
   const awayId = game.away?.id;
@@ -41,27 +47,15 @@ export default function GameCard({ game }: { game: Game }) {
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
 
-  const isChampionship =
-    gameDate.getMonth() === 5 &&
-    gameDate.getDate() >= 5 &&
-    gameDate.getDate() <= 22;
-  const isChristmasDay =
-    gameDate.getMonth() === 11 && gameDate.getDate() === 25;
-  const isNewYearsDay = gameDate.getMonth() === 0 && gameDate.getDate() === 1;
-  const holidayLabel = isChristmasDay
-    ? "Christmas Day"
-    : isNewYearsDay
-      ? "New Year's Day"
-      : null;
-
-  const styles = GameCardStyles(isDark, isChampionship);
-
   const { score: liveScore, details } = useGameDetails(
     "nba",
     String(homeEspnId),
     String(awayEspnId),
     gameDateStr,
   );
+
+  const isChampionship = details?.headline?.includes("NBA Finals");
+  const styles = gameCardStyles(isDark, isChampionship);
 
   const period =
     liveScore?.period ?? Number(game.periods?.current ?? game.period);
@@ -83,7 +77,7 @@ export default function GameCard({ game }: { game: Game }) {
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const headlineText = details?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = headlineText || getHolidayLabel(gameDate);
 
   // Team records
   const homeRecord = details?.records.home.overall ?? "0-0";
@@ -220,21 +214,13 @@ export default function GameCard({ game }: { game: Game }) {
   );
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() =>
-        router.push({
-          pathname: "/game/[game]",
-          params: { game: JSON.stringify(game) },
-        })
-      }
-    >
+    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={
             isDark
               ? ["#846f4a", "#50412a"]
-              : ([Colors.dark.gold, Colors.dark.gold] as [string, string])
+              : (["#dbb145ff", "#CDA765"] as [string, string])
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}

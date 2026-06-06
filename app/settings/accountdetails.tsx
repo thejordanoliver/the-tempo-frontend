@@ -184,9 +184,10 @@ export default function AccountDetailsScreen() {
       <Button
         onPress={handleChangePassword}
         disabled={isChangingPassword}
-        children="Change Password"
         isDark={isDark}
-      />
+      >
+        Change Password
+      </Button>
 
       <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>
     </KeyboardAwareScrollView>

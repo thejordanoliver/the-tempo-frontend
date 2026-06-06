@@ -53,6 +53,8 @@ export const TEAM_TABS = {
   WNBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
   NFL: ["schedule", "news", "roster", "stats", "standings", "forum"],
   MLB: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  CB: ["schedule", "news", "standings", "forum"],
+  SB: ["schedule", "news", "standings", "forum"],
   NHL: ["schedule", "news", "roster", "stats", "standings", "forum"],
   CFB: ["schedule", "news", "roster", "stats", "standings", "forum"],
   CBB: ["schedule", "news", "roster", "stats", "standings", "forum"],

@@ -1,52 +1,28 @@
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import {
+  SkeletonBlock,
+  SkeletonCircle,
+} from "components/Skeletons/primitives";
+import { StyleSheet, View } from "react-native";
 
 export default function RecruitCardSkeleton() {
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-
-  // Pulse animation
-  const opacity = useRef(new Animated.Value(0.4)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
-  const bg = isDark ? Colors.darkGray : Colors.lightGray;
-
   return (
-    <Animated.View style={[styles.container, { opacity }]}>
+    <View style={styles.container}>
       {/* Headshot + Name Row */}
       <View style={styles.headerRow}>
-        <View style={[styles.headshot, { backgroundColor: bg }]} />
-        <View style={[styles.nameBar, { backgroundColor: bg }]} />
-        <View style={[styles.rankBadge, { backgroundColor: bg }]} />
+        <SkeletonCircle size={50} />
+        <SkeletonBlock style={styles.nameBar} />
+        <SkeletonBlock style={styles.rankBadge} />
       </View>
 
       {/* Stars + position line */}
-      <View style={[styles.starLine, { backgroundColor: bg }]} />
+      <SkeletonBlock style={styles.starLine} />
 
       {/* Location line */}
-      <View style={[styles.locationLine, { backgroundColor: bg }]} />
+      <SkeletonBlock style={styles.locationLine} />
 
       {/* Commit line */}
-      <View style={[styles.commitLine, { backgroundColor: bg }]} />
-    </Animated.View>
+      <SkeletonBlock style={styles.commitLine} />
+    </View>
   );
 }
 
@@ -62,12 +38,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
-  },
-
-  headshot: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
   },
 
   nameBar: {

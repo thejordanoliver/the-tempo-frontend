@@ -1,7 +1,7 @@
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import React from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
 import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import NewsCard from "./NewsCard";
@@ -40,17 +40,23 @@ export default function NewsList({
   }
 
   return (
-    <FlatList
-      data={items}
-      keyExtractor={(item) => item.keyId ?? item.id.toString()}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-      scrollEnabled={false}
-      contentContainerStyle={styles.container}
-      renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
-      ListEmptyComponent={
-        <Text style={global.emptyText}>No news or highlights found.</Text>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-    />
+    >
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.keyId ?? item.id.toString()}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        scrollEnabled={false}
+        contentContainerStyle={styles.container}
+        renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
+        ListEmptyComponent={
+          <Text style={global.emptyText}>No news or highlights found.</Text>
+        }
+      />
+    </ScrollView>
   );
 }

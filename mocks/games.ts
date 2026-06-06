@@ -1,6 +1,14 @@
 import { getMLBTeam } from "constants/teamsMLB";
 import { MLBGame } from "types/baseball";
 
+const requireMLBTeam = (id: number) => {
+  const team = getMLBTeam(id);
+  if (!team) {
+    throw new Error(`Missing MLB team ${id}`);
+  }
+  return team;
+};
+
 export const mockMLBGames: MLBGame[] = [
   // --- Scheduled Game ---
   {
@@ -27,8 +35,8 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: getMLBTeam(17),  // Yankees
-      away: getMLBTeam(21), // Red Sox
+      home: requireMLBTeam(17),  // Yankees
+      away: requireMLBTeam(21), // Red Sox
     },
     scores: {
       home: {
@@ -71,8 +79,8 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: getMLBTeam(17),  // Yankees
-      away: getMLBTeam(21), // Red Sox
+      home: requireMLBTeam(17),  // Yankees
+      away: requireMLBTeam(21), // Red Sox
     },
     scores: {
       home: {
@@ -116,8 +124,8 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: getMLBTeam(17),  // Yankees
-      away: getMLBTeam(21), // Red Sox
+      home: requireMLBTeam(17),  // Yankees
+      away: requireMLBTeam(21), // Red Sox
     },
     scores: {
       home: {

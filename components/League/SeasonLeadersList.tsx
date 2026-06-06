@@ -107,8 +107,7 @@ export default function SeasonLeadersList({
               const statValue = player.value ?? "0";
               const name = player.player.short_name;
 
-              const headshotUrl =
-                player.player.headshot_url || "https://via.placeholder.com/40";
+              const headshotUrl = player.player.headshot_url;
 
               const team = getNBATeam(player.player.team_id);
               const teamName = team?.name ?? "";
@@ -130,11 +129,10 @@ export default function SeasonLeadersList({
                   <PlayerCard
                     id={player.player.player_id}
                     teamId={player.player.team_id}
+                    headshot={headshotUrl}
                     rank={player.rank}
                     name={name}
-                    team={teamName}
-                    avatarUrl={headshotUrl}
-                    statNumber={statValue} // ✅ NEW — shows as stat number
+                    statNumber={statValue}
                   />
                 </TouchableOpacity>
               );

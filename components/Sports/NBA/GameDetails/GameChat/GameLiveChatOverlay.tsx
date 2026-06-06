@@ -9,6 +9,11 @@ type GameChatSessionProps = {
   gameId: string;
   onClose: () => void;
 };
+type GameLiveChat = {
+  gameId: string;
+  gameStatusDescription: string;
+  opacityAnim: Animated.Value;
+};
 
 const GameChatSession = memo(function GameChatSession({
   gameId,
@@ -45,11 +50,9 @@ const GameChatSession = memo(function GameChatSession({
 
 export default function GameLiveChatOverlay({
   gameId,
+  gameStatusDescription,
   opacityAnim,
-}: {
-  gameId: string;
-  opacityAnim: Animated.Value;
-}) {
+}: GameLiveChat) {
   const [chatOpen, setChatOpen] = useState(false);
 
   const handleCloseChat = useCallback(() => {
@@ -63,6 +66,8 @@ export default function GameLiveChatOverlay({
   useEffect(() => {
     setChatOpen(false);
   }, [gameId]);
+
+  if (gameStatusDescription === "Final") return null;
 
   return (
     <>

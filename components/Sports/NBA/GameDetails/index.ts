@@ -1,6 +1,6 @@
 // components/GameDetails/index.ts
-export { default as BoxScore } from "../../CBB/GameDetails/BoxScore";
-export { default as PlayersOnCourt } from "../../CBB/GameDetails/PlayersOnCourt";
+export { default as BoxScore } from "../../Basketball/GameDetails/BoxScore";
+export { default as PlayersOnCourt } from "../../Basketball/GameDetails/PlayersOnCourt";
 export { default as GameOddsSection } from "../../Odds/GameOddsSection";
 export { default as FanPredictionVote } from "./FanPredictionVote";
 export { default as ChatButton } from "./GameChat/ChatButton";

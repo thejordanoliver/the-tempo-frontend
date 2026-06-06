@@ -40,5 +40,10 @@ export const seasonStatCardStyles = (isDark: boolean) => {
       height: 32,
       backgroundColor: divider,
     },
+    errorText: {
+      color: muted,
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+    },
   });
 };

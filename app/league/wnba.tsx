@@ -1,38 +1,38 @@
 // app/league/wnba.tsx
 
+import { useBasketballSeasonGames } from "@/hooks/BasketballHooks/useBasketballSeasonGames";
 import { useNavigation } from "@react-navigation/native";
-import CalendarModal from "components/CalendarModal";
-import DateNavigator from "components/DateNavigator";
-import LeagueForum from "components/Forum/LeagueForum";
-import AwardSeasons from "components/League/Awards/AwardSeasons";
-import DraftList, {
-  getDefaultDraftYear,
-} from "components/League/Draft/DraftList";
-import SportsListModal, {
-  SportsListModalRef,
-} from "components/League/SportsListModal";
-import { StandingsList } from "components/League/Standings/StandingsList";
-import NewsList from "components/News/NewsList";
-import WNBAGamesList from "components/Sports/WNBA/Games/WNBAGamesList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { Colors } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLeagueTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useWNBASeasonGames } from "hooks/WNBAHooks/useWNBASeasonGames";
 import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { getScoresStyles } from "styles/LeagueStyles/LeagueStyles";
-import { getWNBASeason } from "utils/dateUtils";
-import { filterByDate } from "utils/games";
+import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import DateNavigator from "../../components/DateNavigator";
+import LeagueForum from "../../components/Forum/LeagueForum";
+import AwardSeasons from "../../components/League/Awards/AwardSeasons";
+import DraftList, {
+  getDefaultDraftYear,
+} from "../../components/League/Draft/DraftList";
+import SportsListModal, {
+  SportsListModalRef,
+} from "../../components/League/SportsListModal";
+import { StandingsList } from "../../components/League/Standings/StandingsList";
+import NewsList from "../../components/News/NewsList";
+import BasketballGamesList from "../../components/Sports/Basketball/Games/BasketballGamesList";
+import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+import { Colors } from "../../constants/styles";
+import { usePreferences } from "../../contexts/PreferencesContext";
+import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
+import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { filterByDate, getWNBASeason } from "../../utils/dateUtils";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
@@ -63,11 +63,17 @@ export default function WNBALeagueScreen() {
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
     error: newsError,
-  } = useLeaguesNews(10, league);
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
-  const { wnbaGames, wnbaLoading, refreshGames } = useWNBASeasonGames({
-    season: getWNBASeason(),
+  const {
+    games: wnbaGames,
+    loading: wnbaLoading,
+    refreshBasketballGames: refreshGames,
+  } = useBasketballSeasonGames({
+    isWNBA: true,
   });
 
   const filteredSeasonGames = filterByDate(wnbaGames, selectedDate);
@@ -161,7 +167,7 @@ export default function WNBALeagueScreen() {
               isDark={isDark}
             />
 
-            <WNBAGamesList
+            <BasketballGamesList
               games={filteredSeasonGames}
               loading={wnbaLoading}
               refreshing={refreshing}
@@ -171,25 +177,14 @@ export default function WNBALeagueScreen() {
 
           {/* NEWS */}
           <View key="news" style={styles.contentArea}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            >
-              <NewsList
-                items={articles}
-                isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing
-                onRefresh={handleRefresh}
-              />
-            </ScrollView>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
           </View>
 
           {/* STANDINGS */}

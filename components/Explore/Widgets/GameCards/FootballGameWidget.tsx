@@ -238,7 +238,7 @@ export default function FootballGameWidget({
 
           {inProgress && !isHalftime && endOfPeriod && (
             <Text style={styles.finalText} numberOfLines={1}>
-              End of {formatQuarter(period)}
+              End of {formatQuarter(period ?? 0)}
             </Text>
           )}
 

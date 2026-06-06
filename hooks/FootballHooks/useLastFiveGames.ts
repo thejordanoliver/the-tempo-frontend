@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 import { getFootballSeason } from "utils/dateUtils";
@@ -19,19 +18,18 @@ export type LastFiveGamesResult = {
   opponentLogoLight?: any; // added light logo here
 };
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 export const useLastFiveGames = (teamId: number) => {
   const [games, setGames] = useState<LastFiveGamesResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
+  const season = getFootballSeason();
   useEffect(() => {
     const fetchLastGames = async () => {
       try {
         setLoading(true);
 
         const res = await apiClient.get(
-          `api/games/football/last-five/${teamId}/${getFootballSeason()}`,
+          `api/games/football/last-five/${teamId}/${season}`,
         );
 
         setGames(res.data.games);

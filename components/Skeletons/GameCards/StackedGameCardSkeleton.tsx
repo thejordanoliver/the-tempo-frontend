@@ -1,49 +1,15 @@
+import {
+  SkeletonBlock,
+  SkeletonCircle,
+} from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function StackedGameCardSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
-
-  // Smooth breathing pulse animation
-  const pulse = useRef(new Animated.Value(0.3)).current;
-
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 1.1,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulse, {
-          toValue: 0.3,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-      { resetBeforeIteration: false }, // ensures a perfect continuous loop
-    );
-
-    animation.start();
-    return () => animation.stop();
-  }, [pulse]);
-
-  const Skeleton = ({ style }: { style: any }) => (
-    <Animated.View
-      style={[
-        style,
-        {
-          opacity: pulse,
-        },
-      ]}
-    />
-  );
 
   return (
     <View style={styles.card}>
@@ -51,10 +17,10 @@ export default function StackedGameCardSkeleton() {
       <View style={styles.cardWrapper}>
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} />
-            <Skeleton style={styles.nameSkeleton} />
+            <SkeletonCircle size={24} style={styles.logoSkeleton} />
+            <SkeletonBlock style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} />
+          <SkeletonBlock style={styles.scoreSkeleton} />
         </View>
 
         {/* Spacer */}
@@ -63,17 +29,17 @@ export default function StackedGameCardSkeleton() {
         {/* Home Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <Skeleton style={styles.logoSkeleton} />
-            <Skeleton style={styles.nameSkeleton} />
+            <SkeletonCircle size={24} style={styles.logoSkeleton} />
+            <SkeletonBlock style={styles.nameSkeleton} />
           </View>
-          <Skeleton style={styles.scoreSkeleton} />
+          <SkeletonBlock style={styles.scoreSkeleton} />
         </View>
       </View>
 
       {/* Game Info */}
       <View style={styles.info}>
-        <Skeleton style={styles.dateSkeleton} />
-        <Skeleton style={styles.timeSkeleton} />
+        <SkeletonBlock style={styles.dateSkeleton} />
+        <SkeletonBlock style={styles.timeSkeleton} />
       </View>
     </View>
   );

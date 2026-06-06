@@ -114,8 +114,7 @@ export default function AwardSeasons({ league }: Props) {
   /* ------------------------------------------------ */
 
   const showChampionTopThree = viewMode === "champions";
-
-  const championTeamsResult =
+  const supportsChampionTeams =
     league === "NHL" ||
     league === "MLB" ||
     league === "CFB" ||
@@ -123,14 +122,14 @@ export default function AwardSeasons({ league }: Props) {
     league === "WCBB" ||
     league === "WNBA" ||
     league === "NBA" ||
-    league === "NFL"
-      ? useChampionTeams({
-          league,
-          enabled: showChampionTopThree,
-        })
-      : { data: [], loading: false };
+    league === "NFL";
 
-  const championTeams = championTeamsResult.data;
+  const championTeamsResult = useChampionTeams({
+    league,
+    enabled: supportsChampionTeams && showChampionTopThree,
+  });
+
+  const championTeams = supportsChampionTeams ? championTeamsResult.data : [];
   const awards = AWARD_CONFIG[league] ?? [];
 
   /* ------------------------------------------------ */

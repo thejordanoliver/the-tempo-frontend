@@ -20,28 +20,39 @@ type VoteTeam = {
   id: string | number;
   code?: string;
   logo: any;
-  color?: string;
-  secondaryColor?: string;
+  color?: string | null;
 };
 
 type Props = {
   gameId: string;
-  awayTeam: VoteTeam;
-  homeTeam: VoteTeam;
+  awayId: string | number;
+  awayCode?: string;
+  awayLogo: any;
+  awayColor?: string | null;
+  homeId: string | number;
+  homeCode?: string;
+  homeLogo: any;
+  homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
   gameStatusDescription: string | undefined;
 };
 
 export default function FanPredictionVote({
   gameId,
-  awayTeam,
-  homeTeam,
+  awayId,
+  awayCode,
+  awayLogo,
+  awayColor,
+  homeId,
+  homeCode,
+  homeLogo,
+  homeColor,
   onVoteCast,
   gameStatusDescription,
 }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = fanPredictionVoteStyles(isDark);
   const global = globalStyles(isDark);
 
   const [loading, setLoading] = useState(true);
@@ -126,11 +137,11 @@ export default function FanPredictionVote({
     activeVotes.reduce((sum, r) => sum + Number(r.votes), 0) || 0;
   const votesAway =
     Number(
-      activeVotes.find((r) => String(r.team_id) === String(awayTeam.id))?.votes,
+      activeVotes.find((r) => String(r.team_id) === String(awayId))?.votes,
     ) || 0;
   const votesHome =
     Number(
-      activeVotes.find((r) => String(r.team_id) === String(homeTeam.id))?.votes,
+      activeVotes.find((r) => String(r.team_id) === String(homeId))?.votes,
     ) || 0;
 
   const pctAway = totalVotes > 0 ? votesAway / totalVotes : 0;
@@ -140,8 +151,8 @@ export default function FanPredictionVote({
   const displayPctHome = resultsRevealed ? pctHome : 0.5;
 
   useEffect(() => {
-    const isAwayVoted = resultsRevealed && userVote === awayTeam.id;
-    const isHomeVoted = resultsRevealed && userVote === homeTeam.id;
+    const isAwayVoted = resultsRevealed && userVote === awayId;
+    const isHomeVoted = resultsRevealed && userVote === homeId;
 
     let awayOffset = 0;
     let homeOffset = 0;
@@ -222,7 +233,7 @@ export default function FanPredictionVote({
     );
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
 
       <View
@@ -238,14 +249,14 @@ export default function FanPredictionVote({
               style={[
                 styles.fillAway,
                 {
-                  backgroundColor: awayTeam.color || Colors.darkGray,
+                  backgroundColor: awayColor || Colors.darkGray,
                   justifyContent: "center",
                   alignItems: "center",
                 },
               ]}
             >
               <TouchableOpacity
-                onPress={() => castVote(awayTeam.id)}
+                onPress={() => castVote(awayId)}
                 disabled={!!userVote || submitting}
                 activeOpacity={userVote ? 1 : 0.7}
                 style={{ alignItems: "center", justifyContent: "center" }}
@@ -262,7 +273,7 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={awayTeam.logo}
+                    source={awayLogo}
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />
@@ -271,7 +282,7 @@ export default function FanPredictionVote({
                     ellipsizeMode="tail"
                     style={styles.teamName}
                   >
-                    {awayTeam.code}
+                    {awayCode}
                   </Text>
                 </Animated.View>
               </TouchableOpacity>
@@ -284,14 +295,14 @@ export default function FanPredictionVote({
               style={[
                 styles.fillHome,
                 {
-                  backgroundColor: homeTeam.color || Colors.lightGray,
+                  backgroundColor: homeColor || Colors.lightGray,
                   justifyContent: "center",
                   alignItems: "center",
                 },
               ]}
             >
               <TouchableOpacity
-                onPress={() => castVote(homeTeam.id)}
+                onPress={() => castVote(homeId)}
                 disabled={!!userVote || submitting}
                 activeOpacity={userVote ? 1 : 0.7}
                 style={{ alignItems: "center", justifyContent: "center" }}
@@ -308,7 +319,7 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={homeTeam.logo}
+                    source={homeLogo}
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />
@@ -317,7 +328,7 @@ export default function FanPredictionVote({
                     ellipsizeMode="tail"
                     style={styles.teamName}
                   >
-                    {homeTeam.code}
+                    {homeCode}
                   </Text>
                 </Animated.View>
               </TouchableOpacity>
@@ -345,9 +356,8 @@ export default function FanPredictionVote({
   );
 }
 
-const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
+const fanPredictionVoteStyles = (isDark: boolean, LOGO_SIZE = 150) =>
   StyleSheet.create({
-    container: {},
     barContainer: {
       height: 50,
       width: "100%",

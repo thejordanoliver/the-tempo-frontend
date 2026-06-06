@@ -1,20 +1,19 @@
 import { Colors } from "constants/styles";
 import { getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Text, TouchableOpacity, View } from "react-native";
-import { SquareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
+import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter } from "utils/games";
-import { getBroadcastDisplay } from "utils/matchBroadcast";
+import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
-export default function SLSquareGameCard({
-  game,
-  isDark,
-}: BasketballGameCardProps) {
+export default function SLSquareGameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const homeId = Number(game.teams.home?.id);
   const awayId = Number(game.teams.away?.id);
@@ -40,7 +39,7 @@ export default function SLSquareGameCard({
   const gameDate = safeDate(game.date);
   const gameDateStr = gameDate.toISOString();
   const holidayLabel = getHolidayLabel(gameDate);
-  const styles = SquareGameCardStyles(isDark);
+  const styles = squareGameCardStyles(isDark);
 
   const isLasVegas = game.league.id === 17;
   const detailsLeague = isLasVegas ? "summerVegas" : "summerUtah";
@@ -128,7 +127,7 @@ export default function SLSquareGameCard({
     if (inProgress)
       return (
         <View>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
       );

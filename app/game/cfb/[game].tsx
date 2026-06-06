@@ -13,10 +13,10 @@ import Officials from "components/Sports/NBA/GameDetails/Officials";
 import GameHeader from "components/Sports/NFL/GameDetails/GameHeader";
 import GameLeaders from "components/Sports/NFL/GameDetails/GameLeaders";
 import GameTeamStats from "components/Sports/NFL/GameDetails/GameTeamStats";
+import TeamDrives from "components/Sports/NFL/GameDetails/InjuryReport/TeamDrives";
 import PlayByPlayField from "components/Sports/NFL/GameDetails/PlayByPlayField";
-import TeamDrives from "components/Sports/NFL/GameDetails/TeamDrives";
 import TeamScoringSummary from "components/Sports/NFL/GameDetails/TeamScoringSummary";
-import { getNeutralStadium } from "constants/neutralVenues";
+import { getNeutralVenue } from "constants/neutralVenues";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -35,24 +35,29 @@ import { getHolidayLabel } from "utils/dateUtils";
 const LEAGUE = "CFB";
 
 export default function CFBGameDetailsScreen() {
-  const styles = gameDetailsScreenStyles;
   const { game: gameParam } = useLocalSearchParams();
+  const parsedGame = useMemo(() => {
+    if (typeof gameParam !== "string") return null;
+
+    try {
+      return JSON.parse(gameParam) as FootballGame;
+    } catch {
+      console.warn("Failed to parse game:", gameParam);
+      return null;
+    }
+  }, [gameParam]);
+
+  if (!parsedGame) return null;
+
+  return <CFBGameDetailsContent parsedGame={parsedGame} />;
+}
+
+function CFBGameDetailsContent({ parsedGame }: { parsedGame: FootballGame }) {
+  const styles = gameDetailsScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
-  const { opacityAnim, handleScrollStart, handleScrollEnd, showDetails } =
-    useScrollFade();
-
-  if (typeof gameParam !== "string") return null;
-
-  let parsedGame: FootballGame;
-
-  try {
-    parsedGame = JSON.parse(gameParam) as FootballGame;
-  } catch (e) {
-    console.warn("Failed to parse game:", gameParam);
-    return null;
-  }
+  const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
   const { teams, game } = parsedGame;
   const gameId = String(game.id);
   const homeTeamId = teams?.home?.id ?? 0;
@@ -63,10 +68,12 @@ export default function CFBGameDetailsScreen() {
   const awayEspnId = awayTeam?.espnID;
   const homeLogo = getCFBTeamLogo(homeTeamId, isDark);
   const awayLogo = getCFBTeamLogo(awayTeamId, isDark);
-  const headerHomeLogo = getCFBTeamLogo(homeTeamId, true);
-  const headerAwayLogo = getCFBTeamLogo(awayTeamId, true);
+  const homeHeaderLogo = getCFBTeamLogo(homeTeamId, true);
+  const awayHeaderLogo = getCFBTeamLogo(awayTeamId, true);
   const homeCode = homeTeam?.code;
   const awayCode = awayTeam?.code;
+  const awayColor = useMemo(() => awayTeam?.color, [awayTeam?.color]);
+  const homeColor = useMemo(() => homeTeam?.color, [homeTeam?.color]);
   const gameDateObj = useMemo(() => {
     if (!game?.date) return null;
 
@@ -102,17 +109,15 @@ export default function CFBGameDetailsScreen() {
   const { stats } = useFootballTeamStats(parsedGame.game.id);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
+  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
+  const dontShowDetails = isCanceled || isDelayed || isPostponed || isForfeited;
   const displayClock = score?.displayClock;
   const period = score?.period;
   const redzone = score?.possession?.isRedZone;
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+
   const isGameLoading = !details || !score;
   const headlineText = details?.headline;
   const broadcast = details?.broadcast ?? "";
@@ -142,7 +147,7 @@ export default function CFBGameDetailsScreen() {
     : undefined;
   const baseVenue = details?.venue;
 
-  const neutralVenue = getNeutralStadium(baseVenue?.fullName, neutralSite);
+  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
   const venueName = neutralSite
     ? neutralVenue?.name
     : homeTeam?.venue || baseVenue?.fullName;
@@ -185,8 +190,10 @@ export default function CFBGameDetailsScreen() {
           awayTeamId={awayTeamId}
           homeTeamCode={homeCode}
           awayTeamCode={awayCode}
-          homeLogo={headerHomeLogo}
-          awayLogo={headerAwayLogo}
+          homeLogo={homeHeaderLogo}
+          awayLogo={awayHeaderLogo}
+          homeColor={homeColor}
+          awayColor={awayColor}
           isNeutralSite={neutralSite}
           league={LEAGUE}
         />
@@ -198,8 +205,15 @@ export default function CFBGameDetailsScreen() {
     details,
     homeCode,
     awayCode,
-    headerHomeLogo,
-    headerAwayLogo,
+    homeHeaderLogo,
+    awayHeaderLogo,
+    homeTeam,
+    awayTeam,
+    homeTeamId,
+    awayTeamId,
+    homeColor,
+    awayColor,
+    neutralSite,
   ]);
 
   if (!parsedGame || !homeTeam || !awayTeam) return <View />;
@@ -250,18 +264,14 @@ export default function CFBGameDetailsScreen() {
           <View style={styles.innerContainer}>
             <FanPredictionVote
               gameId={gameId}
-              awayTeam={{
-                id: awayTeamId,
-                code: awayCode,
-                logo: headerAwayLogo,
-                color: awayTeam?.color,
-              }}
-              homeTeam={{
-                id: homeTeamId,
-                code: homeCode,
-                logo: headerHomeLogo,
-                color: homeTeam?.color,
-              }}
+              awayId={awayTeamId}
+              awayCode={awayCode}
+              awayLogo={awayHeaderLogo}
+              awayColor={awayColor}
+              homeId={homeTeamId}
+              homeCode={homeCode}
+              homeLogo={homeHeaderLogo}
+              homeColor={homeColor}
               gameStatusDescription={gameStatusDescription}
             />
 
@@ -327,6 +337,7 @@ export default function CFBGameDetailsScreen() {
                 games: awayLastGames.games,
               }}
               league={LEAGUE}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -352,12 +363,12 @@ export default function CFBGameDetailsScreen() {
           </View>
         )}
       </ScrollView>
-      {!dontShowDetails && !isFinal && (
-        <GameLiveChatOverlay
-          gameId={String(parsedGame.game.id)}
-          opacityAnim={opacityAnim}
-        />
-      )}
+
+      <GameLiveChatOverlay
+        gameId={String(parsedGame.game.id)}
+        opacityAnim={opacityAnim}
+        gameStatusDescription={gameStatusDescription}
+      />
     </>
   );
 }

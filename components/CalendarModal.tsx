@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
+import { Colors, Fonts } from "../constants/styles";
+import { usePreferences } from "../contexts/PreferencesContext";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import { useEffect, useMemo, useState } from "react";

@@ -6,7 +6,7 @@ import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -94,26 +94,28 @@ export default function ResultItemRow({
   // PLAYER
   // -------------------------
   const renderPlayer = (player: PlayerResult) => {
-    const avatarUrl =
-      player.avatarUrl ?? player.headshot_url ?? playerPlaceholderImage;
+    const headshot = player.headshot_url ?? playerPlaceholderImage;
+    const playerName = player.full_name;
     const teamId = player.team_id ?? null;
 
     const localTeam =
-      teamId && player.isNFL
-        ? getNFLTeam(teamId)
-        : teamId && player.isMLB
-          ? getMLBTeam(teamId)
-          : teamId && player.isCFB
-            ? getCFBTeam(teamId)
-            : teamId && player.isCBB
-              ? getCBBTeam(teamId)
-              : teamId && player.isWCBB
-                ? getCBBTeam(teamId, true)
-                : teamId && player.isNBA
-                  ? getNBATeam(teamId)
-                  : teamId && player.isWNBA
-                    ? getWNBATeam(teamId)
-                    : null;
+      teamId && player.isNBA
+        ? getNBATeam(teamId)
+        : teamId && player.isWNBA
+          ? getWNBATeam(teamId)
+          : teamId && player.isCBB
+            ? getCBBTeam(teamId)
+            : teamId && player.isWCBB
+              ? getCBBTeam(teamId, true)
+              : teamId && player.isNFL
+                ? getNFLTeam(teamId)
+                : teamId && player.isCFB
+                  ? getCFBTeam(teamId)
+                  : teamId && player.isMLB
+                    ? getMLBTeam(teamId)
+                    : teamId && player.isNHL
+                      ? getNHLTeam(teamId)
+                      : null;
 
     return (
       <View style={styles.itemRow}>
@@ -123,10 +125,10 @@ export default function ResultItemRow({
         >
           <View style={styles.playerRow}>
             <View style={styles.playerAvatarContainer}>
-              <Image source={{ uri: avatarUrl }} style={styles.playerAvatar} />
+              <Image source={{ uri: headshot }} style={styles.playerAvatar} />
             </View>
             <View>
-              <Text style={styles.name}>{player.name}</Text>
+              <Text style={styles.name}>{playerName}</Text>
               {localTeam?.fullName && (
                 <Text style={styles.playerTeam}>
                   {localTeam?.fullName || "Free Agent"}

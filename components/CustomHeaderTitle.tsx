@@ -1,20 +1,18 @@
+import { cfbConferences } from "@/constants/cfbConferences";
+import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
-import {
-  cbbTeams,
-  conferenceObjectListMap,
-  getCBBTeam,
-} from "constants/teamsCBB";
+import { cbTeams } from "constants/teamsCB";
 import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam, mlbTeams } from "constants/teamsMLB";
 import { getNFLTeam, nflTeams } from "constants/teamsNFL";
 import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
+import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -52,12 +50,12 @@ type CustomHeaderTitleProps = {
   onToggleLayout?: () => void;
   isGrid?: boolean;
   logo?: any;
-  logoLight?: any;
   homeLogo?: any;
   awayLogo?: any;
+  homeColor?: string | null;
+  awayColor?: string | null;
   teamColor?: string;
   isTeamScreen?: boolean;
-  transparentColor?: string;
   onSearchToggle?: () => void;
   onAddWidget?: () => void;
   teamCode?: string;
@@ -66,26 +64,12 @@ type CustomHeaderTitleProps = {
   awayTeamCode?: string;
   homeTeamId?: string | number;
   awayTeamId?: string | number;
-  firstFighterId?: number;
-  secondFighterId?: number;
   teamCoach?: string;
   teamHistory?: string;
   selectedConferenceName?: string;
   isPlayerScreen?: boolean;
   showBackButton?: boolean;
-  league?:
-    | "NBA"
-    | "WNBA"
-    | "NFL"
-    | "CFB"
-    | "CB"
-    | "SB"
-    | "CBB"
-    | "WCBB"
-    | "MLB"
-    | "NHL"
-    | "MMA"
-    | "Leagues";
+  league?: string | "Leagues";
   isNeutralSite?: boolean;
   isFavorite?: boolean;
   isNotified?: boolean;
@@ -184,7 +168,7 @@ const ConferenceBackground = ({
   insets: { top: number };
   isDark: boolean;
   selectedTeam?: any;
-  logo?: ImageSourcePropType | null;
+  logo?: ImageSourcePropType | string | null;
   conferenceColor?: string;
   isConferenceScreen: boolean;
 }) => {
@@ -460,63 +444,72 @@ const GameHeader = ({
   tabName,
   homeTeam,
   awayTeam,
+  homeCode,
+  awayCode,
   homeLogo,
   awayLogo,
+  homeColor,
+  awayColor,
   isNeutralSite,
-  firstFighterId,
-  secondFighterId,
-  league,
 }: {
   tabName?: string;
   homeTeam: any;
   awayTeam: any;
+  homeCode: string | undefined;
+  awayCode: string | undefined;
   homeLogo: any;
   awayLogo: any;
-  firstFighterId?: number;
-  secondFighterId?: number;
-  league?: string;
+  homeColor: any;
+  awayColor: any;
   isNeutralSite: boolean;
-  isWomen: boolean;
 }) => {
-  if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
-
   const styles = customHeaderStyles;
-  const isMMA = league === "MMA";
   const dividerText = isNeutralSite ? "vs" : "@";
-
-  const { fighter: firstFighter } = useMMAFighter(firstFighterId ?? 0);
-  const { fighter: secondFighter } = useMMAFighter(secondFighterId ?? 0);
-
-  const homeColor = homeTeam?.color ?? Colors.lightGray;
-  const awayColor = awayTeam?.color ?? Colors.midTone;
-
-  const awayName = secondFighter?.last_name || "UNK";
-  const homeName = firstFighter?.last_name || "UNK";
 
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
 
-  const awayLetters: string[] = isMMA
-    ? awayName.split("")
-    : (awayTeam.code ?? "AWY").split("");
+  const getTeamCodeLetters = (value: any, fallback: string) => {
+    const code =
+      typeof value === "string"
+        ? value
+        : value?.code ||
+          value?.abbreviation ||
+          value?.shortDisplayName ||
+          value?.name ||
+          fallback;
 
-  const homeLetters: string[] = isMMA
-    ? homeName.split("")
-    : (homeTeam.code ?? "HOM").split("");
+    return String(code || fallback)
+      .toUpperCase()
+      .slice(0, 4)
+      .split("");
+  };
+
+  const awayLetters = useMemo(
+    () => getTeamCodeLetters(awayCode, "AWY"),
+    [awayCode],
+  );
+
+  const homeLetters = useMemo(
+    () => getTeamCodeLetters(homeCode, "HOM"),
+    [homeCode],
+  );
 
   const awayLetterAnims: Animated.Value[] = useMemo(
     () => awayLetters.map(() => new Animated.Value(0)),
-    [awayLetters.join("")],
+    [awayLetters],
   );
 
   const homeLetterAnims: Animated.Value[] = useMemo(
     () => homeLetters.map(() => new Animated.Value(0)),
-    [homeLetters.join("")],
+    [homeLetters],
   );
 
   useEffect(() => {
+    if (tabName !== "Game" || !homeTeam || !awayTeam) return;
+
     Animated.sequence([
       Animated.parallel([
         Animated.timing(opacity, {
@@ -573,7 +566,9 @@ const GameHeader = ({
         ]),
       ]),
     ]).start();
-  }, [awayTeam.code, homeTeam.code, firstFighter?.color, secondFighter?.color]);
+  }, [awayTeam?.code, homeTeam?.code, tabName]);
+
+  if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
 
   return (
     <Animated.View
@@ -717,8 +712,8 @@ export function CustomHeaderTitle({
   awayTeamId,
   homeLogo,
   awayLogo,
-  firstFighterId,
-  secondFighterId,
+  homeColor,
+  awayColor,
   isFavorite,
   isNotified,
   selectedConferenceName,
@@ -773,42 +768,26 @@ export function CustomHeaderTitle({
     }
   }, [tabName]);
 
-  const modalToMapKey: Record<string, string> = {
-    SEC: "SEC",
-    "Big Ten": "Big Ten",
-    "Big 12": "Big 12",
-    ACC: "ACC",
-    "Pac-12": "Pac-12",
-    AAC: "AAC",
-    MWC: "MWC",
-    "Sun Belt": "Sun Belt",
-    CUSA: "CUSA",
-    MAC: "MAC",
-    "Atlantic 10": "Atlantic 10",
-    "FBS Independents": "FBS Independents",
-  };
-
-  const conferenceMap: Record<string, (typeof conferenceObjectListMap)[0]> =
-    conferenceObjectListMap.reduce(
-      (acc, conf) => {
-        acc[conf.name] = conf;
-        return acc;
-      },
-      {} as Record<string, (typeof conferenceObjectListMap)[0]>,
-    );
-
   const selectedConference = useMemo(() => {
     if (!selectedConferenceName) return null;
-    const mapKey =
-      modalToMapKey[selectedConferenceName] || selectedConferenceName;
 
-    return conferenceMap[mapKey] ?? null;
+    return (
+      cfbConferences.find(
+        (conf) =>
+          conf.shortName === selectedConferenceName ||
+          conf.name === selectedConferenceName ||
+          String(conf.groupId) === String(selectedConferenceName),
+      ) ?? null
+    );
   }, [selectedConferenceName]);
 
-  const conferenceLogo = selectedConference?.logo ?? null;
-  const primaryColor =
-    selectedConference?.color?.primary ||
-    (isDark ? Colors.black : Colors.white);
+  const conferenceLogo = selectedConference?.logoLight ?? null;
+
+  const primaryColor = selectedConference
+    ? Colors.black
+    : isDark
+      ? Colors.black
+      : Colors.white;
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -858,11 +837,15 @@ export function CustomHeaderTitle({
           ? cbbTeams
           : league === "MLB"
             ? mlbTeams
-            : league === "NHL"
-              ? nhlTeams
-              : league === "WNBA"
-                ? wnbaTeams
-                : nbaTeams;
+            : league === "CB"
+              ? cbTeams
+              : league === "SB"
+                ? sbTeams
+                : league === "NHL"
+                  ? nhlTeams
+                  : league === "WNBA"
+                    ? wnbaTeams
+                    : nbaTeams;
 
   const homeTeam = useMemo(() => {
     const team =
@@ -875,7 +858,6 @@ export function CustomHeaderTitle({
         id: homeTeamId,
         code: homeTeamCode ?? "HOM",
         color: Colors.lightGray,
-        logo: null,
       }
     );
   }, [homeTeamId, homeTeamCode, league, teamsForLeague]);
@@ -891,12 +873,9 @@ export function CustomHeaderTitle({
         id: awayTeamId,
         code: awayTeamCode ?? "AWY",
         color: Colors.midTone,
-        logo: null,
       }
     );
   }, [awayTeamId, awayTeamCode, league, teamsForLeague]);
-
-  const isWomenLeague = league === "WCBB";
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
@@ -997,13 +976,13 @@ export function CustomHeaderTitle({
             tabName={tabName}
             homeTeam={homeTeam}
             awayTeam={awayTeam}
+            homeCode={homeTeamCode}
+            awayCode={awayTeamCode}
             homeLogo={homeLogo}
             awayLogo={awayLogo}
+            homeColor={homeColor}
+            awayColor={awayColor}
             isNeutralSite={isNeutralSite}
-            isWomen={isWomenLeague}
-            firstFighterId={firstFighterId}
-            secondFighterId={secondFighterId}
-            league={league}
           />
         ) : tabName === "League" ? (
           <View

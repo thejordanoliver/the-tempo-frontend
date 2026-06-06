@@ -2,12 +2,13 @@ import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { Game } from "types/nba";
 import { apiClient } from "utils/apiClient";
+import { getNBASeason } from "utils/dateUtils";
 
-export function useSeasonGames(season: string) {
+export function useSeasonGames() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
+  const season = getNBASeason();
   const cacheRef = useRef<Map<string, Game[]>>(new Map());
 
   const normalizeGames = (rawGames: any[]): Game[] => {
