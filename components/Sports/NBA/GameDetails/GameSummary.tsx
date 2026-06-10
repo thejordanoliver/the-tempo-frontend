@@ -20,7 +20,6 @@ import {
 } from "react-native";
 import { BasketballTeam } from "types/basketball";
 import { NBATeam } from "types/nba";
-import { LeagueType } from "types/types";
 
 type AnyTeam = NBATeam | BasketballTeam;
 
@@ -43,7 +42,7 @@ interface Play {
 type Props = {
   plays?: Play[];
   loading?: boolean;
-  league?: LeagueType;
+  league?: string;
   gameStatusDescription: string;
 };
 
@@ -85,7 +84,7 @@ function AnimatedPlayRow({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [isLatest]);
+  }, [isLatest, opacity, translateX]);
 
   return (
     <Animated.View style={[style, { transform: [{ translateX }], opacity }]}>
@@ -154,7 +153,7 @@ export default function GameSummary({
         return seqA - seqB;
       })
       .reverse(); // latest play on top
-  }, [plays, selectedQuarter]);
+  }, [plays, selectedQuarter, QUARTER_MAP]);
 
   if (!loading && plays?.length === 0) return null;
 
@@ -192,7 +191,7 @@ export default function GameSummary({
                   : (nbaTeams as NBATeam[]);
 
             const teamObj = allTeams.find(
-              (team) => String(team.espnID) === playTeamId,
+              (team) => String(team.espnId) === playTeamId,
             );
 
             const showLogo =

@@ -1,55 +1,68 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { FootballTeam } from "types/football";
 import { GameInfo as GameCenterInfo } from "./GameInfo";
 import { TeamRow } from "./TeamRow";
 
 type GameHeaderProps = {
-  home: FootballTeam;
-  away: FootballTeam;
+  homeId: number;
+  awayId: number;
   awayLogo: any;
   homeLogo: any;
+  homeName: string;
+  awayName: string;
+  homeRank: number | null | undefined;
+  awayRank: number | null | undefined;
   homeScore: number;
   awayScore: number;
-  possessionTeamId?: number | null;
   homeTimeouts?: number | null;
   awayTimeouts?: number | null;
-  period?: number;
-  displayClock?: string;
-  possessionText?: string | null;
+  period: number | undefined | null;
+  clock: string;
+  downDistance: string | undefined | null;
+  awayPossesion: boolean | null;
+  homePossesion: boolean | null;
+  homeWins: boolean | null;
+  awayWins: boolean | null;
   isDark: boolean;
-  homeRecord?: string;
-  awayRecord?: string;
-  formattedDate?: string;
-  formattedTime?: string;
-  broadcast?: string;
-  headlineText?: string;
-  gameStatusShortDetail?: string;
-  gameStatusDescription?: string;
-  league: "nfl" | "cfb";
+  homeRecord: string | undefined;
+  awayRecord: string | undefined;
+  date: string;
+  time: string;
+  broadcast: string;
+  headline: string | null;
+  gameStatusShortDetail: string;
+  gameStatusDescription: string;
+  league: string;
   redzone: boolean | undefined;
 };
 
 export default function GameHeader({
-  home,
-  away,
+  homeId,
+  awayId,
   awayLogo,
   homeLogo,
+  homeName,
+  awayName,
+  homeRank,
+  awayRank,
+  homeWins,
+  awayWins,
   homeScore,
   awayScore,
-  possessionTeamId,
+  awayPossesion,
+  homePossesion,
   homeTimeouts = 0,
   awayTimeouts = 0,
   period,
-  displayClock,
-  possessionText,
+  clock,
+  downDistance,
   isDark,
   homeRecord,
   awayRecord,
   broadcast = "",
-  formattedDate = "",
-  formattedTime = "",
-  headlineText,
+  date = "",
+  time = "",
+  headline,
   gameStatusShortDetail,
   gameStatusDescription,
   league,
@@ -59,68 +72,60 @@ export default function GameHeader({
 
   return (
     <View style={styles.container}>
-      {headlineText ? (
+      {headline ? (
         <View style={styles.headlineContainer}>
           <Text style={styles.headlineText} numberOfLines={2}>
-            {headlineText}
+            {headline}
           </Text>
         </View>
       ) : null}
       <View style={styles.teamsContainer}>
-        {/* Away Team */}
+        {/* Away Team Row */}
         <TeamRow
-          key={`away`}
-          team={{
-            id: away.id,
-            code: away.code,
-            name: away.name,
-            record: awayRecord,
-            logo: awayLogo,
-          }}
-          isDark={isDark}
-          isHome={false}
+          id={awayId}
+          name={awayName}
+          logo={awayLogo}
+          rank={awayRank}
           score={awayScore}
-          opponentScore={homeScore}
-          isWinner={awayScore > homeScore}
-          possessionTeamId={possessionTeamId}
+          record={awayRecord}
+          isWinner={awayWins}
           timeouts={awayTimeouts}
-          league={league}
           gameStatusDescription={gameStatusDescription}
+          hasPossession={awayPossesion}
+          isDark={isDark}
+          league={league}
+          isHome={false}
         />
 
         {/* Game Info */}
         <GameCenterInfo
-          date={formattedDate}
-          time={formattedTime}
+          date={date}
+          time={time}
           period={period}
-          clock={displayClock}
+          clock={clock}
           isDark={isDark}
           broadcast={broadcast}
-          downAndDistance={possessionText}
+          downDistance={downDistance}
           gameStatusShortDetail={gameStatusShortDetail}
           gameStatusDescription={gameStatusDescription}
           redzone={redzone}
         />
 
-        {/* Home Team */}
+        {/* Home Team Row */}
         <TeamRow
-          key={`home`}
-          team={{
-            id: home.id,
-            code: home.code,
-            name: home.name,
-            record: homeRecord,
-            logo: homeLogo,
-          }}
-          isDark={isDark}
-          isHome
+          id={homeId}
+          name={homeName}
+          logo={homeLogo}
+          rank={homeRank}
           score={homeScore}
-          opponentScore={awayScore}
-          isWinner={homeScore > awayScore}
-          possessionTeamId={possessionTeamId}
+          record={homeRecord}
+          isWinner={homeWins}
           timeouts={homeTimeouts}
-          league={league}
           gameStatusDescription={gameStatusDescription}
+          hasPossession={homePossesion}
+          isDark={isDark}
+          league={league}
+          isHome={true}
         />
       </View>
     </View>

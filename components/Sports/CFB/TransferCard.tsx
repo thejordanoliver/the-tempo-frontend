@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
-type PortalPlayer = {
+export type PortalPlayer = {
   season: number;
   firstName: string;
   lastName: string;
@@ -71,7 +71,7 @@ export default function TransferPlayerCard({ recruit, index }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fade, slideX, index]);
 
   const isFiveStar = recruit.stars === 5;
 

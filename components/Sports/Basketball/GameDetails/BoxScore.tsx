@@ -1,10 +1,10 @@
+import { Athlete } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import { getTeamByESPNId as getNBATeamByESPNId } from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { router } from "expo-router";
-import { Athlete } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -29,8 +29,6 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-type LeagueType = "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
 
 type TeamInfo = {
   id?: number | string | null;

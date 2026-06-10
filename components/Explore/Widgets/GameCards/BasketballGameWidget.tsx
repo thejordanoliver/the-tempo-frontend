@@ -1,9 +1,8 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
-import { getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
-import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
 import { Image, Text, View } from "react-native";
 import {
   gameWidgetStyles,
@@ -20,69 +19,75 @@ type GameWidgetProps = {
   width?: number;
   isDark: boolean;
   loading?: boolean;
-  league: "CBB" | "WCBB" | "WNBA" | "SL";
+  isWCBB?: boolean;
+  isCBB?: boolean;
+  isWNBA?: boolean;
 };
 
 export default function BasketballGameWidget({
   game,
-  league,
   height = 150,
   width = 150,
   loading = false,
   isDark,
+  isCBB,
+  isWCBB,
+  isWNBA,
 }: GameWidgetProps) {
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
   const global = globalStyles(isDark);
-  const homeId = Number(game?.teams.home?.id);
-  const awayId = Number(game?.teams.away?.id);
-  const isWNBA = league === "WNBA";
-  const isWCBB = league === "WCBB";
-  const isSL = league === "SL";
-  const isLasVegas = game.league.id === 17;
-  const detailLeague = isWNBA
-    ? "wnba"
+
+  const home = game.home;
+  const away = game.away;
+
+  const homeId = isWCBB ? (home.wid ?? 0) : home?.id;
+  const awayId = isWCBB ? (away.wid ?? 0) : away?.id;
+
+  const homeTeam = isCBB
+    ? getCBBTeam(homeId, false)
     : isWCBB
-      ? "wcbb"
-      : isSL && isLasVegas
-        ? "summerVegas"
-        : isSL && !isLasVegas
-          ? "summerUtah"
-          : "cbb";
+      ? getCBBTeam(homeId, true)
+      : isWNBA
+        ? getWNBATeam(homeId)
+        : getNBATeam(homeId);
 
-  const home = isSL
-    ? getTeamBySummerId(homeId)
-    : isWNBA
-      ? getWNBATeam(homeId)
-      : isWCBB
-        ? getCBBTeam(homeId, true)
-        : getCBBTeam(homeId);
-  const away = isSL
-    ? getTeamBySummerId(awayId)
-    : isWNBA
-      ? getWNBATeam(awayId)
-      : isWCBB
-        ? getCBBTeam(awayId, true)
-        : getCBBTeam(awayId);
-
-  const homeName = home?.code;
-  const awayName = away?.code;
+  const awayTeam = isCBB
+    ? getCBBTeam(awayId, false)
+    : isWCBB
+      ? getCBBTeam(awayId, true)
+      : isWNBA
+        ? getWNBATeam(awayId)
+        : getNBATeam(awayId);
 
   const homeLogo = isWNBA
     ? getWNBATeamLogo(homeId, isDark)
-    : isSL
-      ? getTeamLogo(homeId, isDark)
-      : getCBBTeamLogo(homeId, isDark, isWCBB);
+    : isCBB
+      ? getCBBTeamLogo(homeId, isDark, false)
+      : isWCBB
+        ? getCBBTeamLogo(homeId, isDark, true)
+        : getTeamLogo(homeId, isDark);
 
   const awayLogo = isWNBA
     ? getWNBATeamLogo(awayId, isDark)
-    : isSL
-      ? getTeamLogo(awayId, isDark)
-      : getCBBTeamLogo(awayId, isDark, isWCBB);
+    : isCBB
+      ? getCBBTeamLogo(awayId, isDark, false)
+      : isWCBB
+        ? getCBBTeamLogo(awayId, isDark, true)
+        : getTeamLogo(awayId, isDark);
 
-  const homeEspnId = home?.espnID ?? 0;
-  const awayEspnId = away?.espnID ?? 0;
+  const homeName = homeTeam?.code;
+  const awayName = awayTeam?.code;
+
+  const homeRank = home?.rank;
+  const awayRank = away?.rank;
+
+  const homeScore = home.score;
+  const awayScore = away.score;
+
+  const homeRecord = game.home.record ?? "0-0";
+  const awayRecord = game.away.record ?? "0-0";
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -90,22 +95,13 @@ export default function BasketballGameWidget({
     return isNaN(d.getTime()) ? new Date() : d;
   };
   const gameDate = safeDate(game?.date);
-  const gameDateStr = gameDate.toISOString();
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const { score: liveScore, details } = useGameDetails(
-    detailLeague,
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-  );
+  const period = formatQuarter(game.status?.period, isCBB);
+  const clock = game?.status.clock;
 
-  const period = liveScore?.period;
-  const displayClock = liveScore?.displayClock;
-  const homeScore = liveScore?.home.total;
-  const awayScore = liveScore?.away.total;
-  const gameStatusDescription = liveScore?.gameStatusDescription;
-  const gameStatusDetail = liveScore?.gameStatusDetail;
+  const gameStatusDescription = game.status?.description;
+  const gameStatusDetail = game.status?.shortDetail;
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
@@ -115,17 +111,11 @@ export default function BasketballGameWidget({
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const headlineText = details?.headline;
+  const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
-  const isLoading = !liveScore;
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
+  const broadcast = getBroadcastDisplay(game.broadcasts);
   const showBroadcast =
-    Boolean(broadcastText) && (!isSmallLayout || height >= 180);
+    Boolean(broadcast) && (!isSmallLayout || height >= 180);
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -158,6 +148,7 @@ export default function BasketballGameWidget({
     height,
     width,
   );
+
   const awayDisplay = displayeValue(
     false,
     isScheduled,
@@ -173,7 +164,7 @@ export default function BasketballGameWidget({
   // -------------------------
   // Loading state
   // -------------------------
-  if (loading || isLoading) {
+  if (loading) {
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
@@ -185,6 +176,7 @@ export default function BasketballGameWidget({
     <View style={styles.teamWrapper}>
       <Image style={styles.teamLogo} source={awayLogo} />
       <Text style={styles.teamName} numberOfLines={1}>
+        <Text style={styles.teamName}>{awayRank} </Text>
         {awayName}
       </Text>
     </View>
@@ -194,10 +186,46 @@ export default function BasketballGameWidget({
     <View style={styles.teamWrapper}>
       <Image style={styles.teamLogo} source={homeLogo} />
       <Text style={styles.teamName} numberOfLines={1}>
+        <Text style={styles.teamName}>{homeRank} </Text>
         {homeName}
       </Text>
     </View>
   );
+
+  const renderStatus = () => {
+    if (inProgress)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{period}</Text>
+          <View style={styles.divider} />
+          <Text style={styles.clock}>{clock}</Text>
+        </View>
+      );
+
+    if (isDelayed || isCanceled || isPostponed || isForfeited)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+
+    if (isFinal)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalDivder} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      );
+
+    return (
+      <View style={styles.infoWrapper}>
+        <Text style={styles.dateTime}>{formattedDate}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.dateTime}>{formattedTime}</Text>
+      </View>
+    );
+  };
 
   // -------------------------
   // Render widget
@@ -225,73 +253,10 @@ export default function BasketballGameWidget({
         {/* ---------------------- */}
         {!isSmallLayout && (
           <View style={styles.gameInfo}>
-            {isScheduled && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedDate}
-                </Text>
-                <View style={styles.divider} />
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedTime}
-                </Text>
-              </View>
-            )}
-
-            {isFinal && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDetail}
-              </Text>
-            )}
-
-            {isPostponed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isCanceled && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isDelayed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isForfeited && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && endOfPeriod && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period ?? 0)}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && !endOfPeriod && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period ?? 0)}
-                </Text>
-                <View style={styles.divider} />
-                {displayClock && (
-                  <Text style={styles.clock} numberOfLines={1}>
-                    {displayClock}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {isHalftime && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                Halftime
-              </Text>
-            )}
+            {renderStatus()}
             {showBroadcast && (
               <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcastText}
+                {broadcast}
               </Text>
             )}
           </View>
@@ -315,73 +280,10 @@ export default function BasketballGameWidget({
         </View>
         {isSmallLayout && (
           <View style={styles.gameInfo}>
-            {isScheduled && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedDate}
-                </Text>
-                <View style={styles.divider} />
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedTime}
-                </Text>
-              </View>
-            )}
-
-            {isFinal && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDetail}
-              </Text>
-            )}
-
-            {isPostponed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isCanceled && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isDelayed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isForfeited && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && endOfPeriod && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period ?? 0)}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && !endOfPeriod && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period ?? 0)}
-                </Text>
-                <View style={styles.divider} />
-                {displayClock && (
-                  <Text style={styles.clock} numberOfLines={1}>
-                    {displayClock}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {isHalftime && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                Halftime
-              </Text>
-            )}
+            {renderStatus()}
             {showBroadcast && (
               <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcastText}
+                {broadcast}
               </Text>
             )}
           </View>

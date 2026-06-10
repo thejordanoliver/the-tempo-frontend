@@ -1,11 +1,10 @@
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
-import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { useMemo } from "react";
+
 import { Text, View } from "react-native";
 import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
 import { BracketMatchup } from "types/nba";
-import { getBroadcastDisplay } from "utils/games";
+import { formatQuarter } from "utils/games";
 import { TeamRow } from "./TeamRow";
 
 type CardLayout = {
@@ -49,13 +48,6 @@ const getTeamGamePoints = (
   if (game.teams.visitors.id === teamId)
     return game.scores.visitors.points ?? 0;
   return 0;
-};
-
-const formatQuarter = (period: number) => {
-  if (period === 1) return "1st";
-  if (period === 2) return "2nd";
-  if (period === 3) return "3rd";
-  if (period === 4) return "4th";
 };
 
 const getLiveGameStatus = (
@@ -143,24 +135,6 @@ export const MatchupCard = ({
 
   const topTeam = getNBATeam(matchup?.topTeam?.id ?? 0);
   const bottomTeam = getNBATeam(matchup?.bottomTeam?.id ?? 0);
-  const topTeamEspnId = String(topTeam?.espnID);
-  const bottomTeamEspnId = String(bottomTeam?.espnID ?? 0);
-  const gameDateObj = useMemo(() => {
-    if (!liveGame?.date.start) return new Date(); // fallback to now
-    const d = new Date(liveGame?.date.start);
-    return isNaN(d.getTime()) ? new Date() : d;
-  }, [liveGame?.date.start]);
-  const gameDate = useMemo(
-    () => gameDateObj?.toISOString().split("T")[0],
-    [gameDateObj],
-  );
-  const { details } = useGameDetails(
-    "nba",
-    topTeamEspnId,
-    bottomTeamEspnId,
-    gameDate,
-  );
-  const broadcast = getBroadcastDisplay(details?.broadcasts);
 
   return (
     <View
@@ -204,7 +178,6 @@ export const MatchupCard = ({
       />
       {liveGame && (
         <View style={styles.statusContainer}>
-          <Text style={styles.broadcast}>{broadcast}</Text>
           <Text style={styles.clock}>
             {getLiveGameStatus(liveGame, isDark)}
           </Text>

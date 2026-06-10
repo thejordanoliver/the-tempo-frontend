@@ -2,7 +2,7 @@ import { getCBBTeam } from "constants/teamsCBB";
 import { useEffect, useState } from "react";
 import { BasketballPlayer } from "types/basketball";
 import { apiClient } from "utils/apiClient";
-import { useLastTeamGame } from "./useLastTeamGame";
+import { useLastTeamGame } from "./useTeamLatestGame";
 
 export function usePlayerDetail(
   playerId?: string,

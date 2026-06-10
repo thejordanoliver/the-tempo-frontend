@@ -58,8 +58,8 @@ export const normalizeGames = (games: any[], leagueType: string) =>
         home = { ...game.home };
         away = { ...game.away };
       } else if (leagueType === "NFL" || leagueType === "CFB") {
-        home = { ...game.teams?.home };
-        away = { ...game.teams?.away };
+        home = { ...game.home };
+        away = { ...game.away };
       } else if (leagueType === "MLB") {
         home = { ...game.home };
         away = { ...game.away };
@@ -73,14 +73,14 @@ export const normalizeGames = (games: any[], leagueType: string) =>
         home = { ...game.home };
         away = { ...game.away };
       } else if (leagueType === "CBB") {
-        home = { ...game.teams?.home };
-        away = { ...game.teams?.away };
+        home = { ...game.home };
+        away = { ...game.away };
       } else if (leagueType === "WCBB") {
-        home = { ...game.teams?.home };
-        away = { ...game.teams?.away };
+        home = { ...game.home };
+        away = { ...game.away };
       } else if (leagueType === "WNBA") {
-        home = { ...game.teams?.home };
-        away = { ...game.teams?.away };
+        home = { ...game.home };
+        away = { ...game.away };
       } else {
         home = null;
         away = null;

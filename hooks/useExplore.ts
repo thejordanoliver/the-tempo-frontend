@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PlayerResult,
@@ -8,7 +9,8 @@ import {
 } from "types/explore";
 import { apiClient } from "utils/apiClient";
 
-const RECENT_SEARCHES_KEY = "recentSearches";
+const RECENT_SEARCHES_KEY_PREFIX = "recentSearches";
+const RECENT_SEARCHES_LEGACY_KEY = RECENT_SEARCHES_KEY_PREFIX;
 const RECENT_SEARCHES_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -23,6 +25,14 @@ function getResultKey(item: ResultItem) {
   if (item.type === "team") return String(item.id);
   if (item.type === "user") return String(item.id);
   return null;
+}
+
+const getRecentSearchesKey = (userId: string | number) =>
+  `${RECENT_SEARCHES_KEY_PREFIX}:${userId}`;
+
+async function getCurrentRecentSearchesKey() {
+  const userId = await AsyncStorage.getItem("userId");
+  return userId ? getRecentSearchesKey(userId) : null;
 }
 
 function isValidResultItem(item: unknown): item is ResultItem {
@@ -134,8 +144,11 @@ function removeDuplicateRecentSearch(
   });
 }
 
-async function persistRecentSearches(searches: ResultItem[]) {
-  await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+async function persistRecentSearches(
+  storageKey: string,
+  searches: ResultItem[],
+) {
+  await AsyncStorage.setItem(storageKey, JSON.stringify(searches));
 }
 
 export function useExplore() {
@@ -143,10 +156,14 @@ export function useExplore() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState<ResultItem[]>([]);
   const [recentSearches, setRecentSearches] = useState<ResultItem[]>([]);
+  const [recentSearchesKey, setRecentSearchesKey] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const requestIdRef = useRef(0);
+  const recentSearchLoadRequestIdRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const normalizedQuery = query.trim();
@@ -160,11 +177,30 @@ export function useExplore() {
   }, [loading, normalizedQuery, normalizedDebouncedQuery]);
 
   const loadRecentSearches = useCallback(async () => {
+    const requestId = ++recentSearchLoadRequestIdRef.current;
+
     try {
-      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      const storageKey = await getCurrentRecentSearchesKey();
+
+      if (requestId !== recentSearchLoadRequestIdRef.current) return;
+
+      setRecentSearchesKey(storageKey);
+      AsyncStorage.removeItem(RECENT_SEARCHES_LEGACY_KEY).catch(() => {});
+
+      if (!storageKey) {
+        setRecentSearches([]);
+        return;
+      }
+
+      const stored = await AsyncStorage.getItem(storageKey);
+
+      if (requestId !== recentSearchLoadRequestIdRef.current) return;
+
       setRecentSearches(safeParseRecentSearches(stored));
     } catch (err) {
+      if (requestId !== recentSearchLoadRequestIdRef.current) return;
       console.warn("Error loading recent searches", err);
+      setRecentSearchesKey(null);
       setRecentSearches([]);
     }
   }, []);
@@ -221,7 +257,16 @@ export function useExplore() {
     if (!key) return;
 
     try {
-      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      const storageKey = await getCurrentRecentSearchesKey();
+
+      setRecentSearchesKey(storageKey);
+
+      if (!storageKey) {
+        setRecentSearches([]);
+        return;
+      }
+
+      const stored = await AsyncStorage.getItem(storageKey);
       const existing = safeParseRecentSearches(stored);
 
       const nextSearches = [
@@ -229,7 +274,7 @@ export function useExplore() {
         ...removeDuplicateRecentSearch(existing, item),
       ].slice(0, RECENT_SEARCHES_LIMIT);
 
-      await persistRecentSearches(nextSearches);
+      await persistRecentSearches(storageKey, nextSearches);
       setRecentSearches(nextSearches);
     } catch (err) {
       console.warn("Failed to save recent search", err);
@@ -238,16 +283,24 @@ export function useExplore() {
 
   const deleteRecentSearch = useCallback(async (itemToDelete: ResultItem) => {
     try {
-      const stored = await AsyncStorage.getItem(RECENT_SEARCHES_KEY);
+      const storageKey =
+        recentSearchesKey ?? (await getCurrentRecentSearchesKey());
+
+      if (!storageKey) {
+        setRecentSearches([]);
+        return;
+      }
+
+      const stored = await AsyncStorage.getItem(storageKey);
       const existing = safeParseRecentSearches(stored);
       const nextSearches = removeDuplicateRecentSearch(existing, itemToDelete);
 
-      await persistRecentSearches(nextSearches);
+      await persistRecentSearches(storageKey, nextSearches);
       setRecentSearches(nextSearches);
     } catch (err) {
       console.warn("Failed to delete recent search", err);
     }
-  }, []);
+  }, [recentSearchesKey]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -263,13 +316,17 @@ export function useExplore() {
     search(debouncedQuery);
   }, [debouncedQuery, search]);
 
-  useEffect(() => {
-    loadRecentSearches();
+  useFocusEffect(
+    useCallback(() => {
+      loadRecentSearches();
+    }, [loadRecentSearches]),
+  );
 
+  useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
     };
-  }, [loadRecentSearches]);
+  }, []);
 
   return {
     query,

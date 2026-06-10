@@ -1,10 +1,14 @@
-import CBBGamesList from "@/components/Sports/Basketball/Games/BasketballGamesList";
+import BasketballGamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
-import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
+import {
+  BasketballScheduleMonth,
+  useBasketballTeamGames,
+} from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { scrollToMonth } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
@@ -21,10 +25,33 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+
+type MonthSelectorItem = {
+  key: string;
+  year: number;
+  month: number;
+  label: string;
+  count: number;
+};
+
+function getMonthKeyFromDate(date: Date | null) {
+  if (!date) return null;
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+function getMonthIndex(monthGroup: BasketballScheduleMonth) {
+  if (typeof monthGroup.month !== "number") return null;
+
+  return monthGroup.month - 1;
+}
 
 export default function TeamDetailScreen() {
   const league = "CBB";
@@ -32,27 +59,22 @@ export default function TeamDetailScreen() {
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
-
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
-
   const team = getCBBTeam(teamIdNum, false);
   const teamLogo = getCBBTeamLogo(teamIdNum, true, false);
   const teamColor = team?.color;
-  const espnId = team?.espnID ?? 0;
-
+  const espnId = team?.espnId ?? 0;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-
   const pagerRef = useRef<PagerView>(null);
   const rosterRef = useRef<{ refresh: () => void }>(null);
-
   const favorited = team ? isFavorite(league, team.id) : false;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -98,37 +120,67 @@ export default function TeamDetailScreen() {
   } = useLeaguesNews(league, 10);
 
   const {
-    games: selectedMonthGames,
-    gamesByMonth,
-    selectedMonth,
+    games,
+    months,
     loading: gamesLoading,
+    refreshing: gamesRefreshing,
     error: gamesError,
-    refreshGames,
-  } = useBasketballTeamGames(teamIdNum, {
-    selectedDate,
-  });
+    refresh: refreshTeamGames,
+  } = useBasketballTeamGames("cbb", teamIdNum);
+
+  const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
+    return months
+      .map((monthGroup) => {
+        const monthIndex = getMonthIndex(monthGroup);
+
+        if (
+          typeof monthGroup.year !== "number" ||
+          typeof monthIndex !== "number"
+        ) {
+          return null;
+        }
+
+        return {
+          key: monthGroup.key,
+          year: monthGroup.year,
+          month: monthIndex,
+          label: monthGroup.label,
+          count: monthGroup.games.length,
+        };
+      })
+      .filter((monthGroup): monthGroup is MonthSelectorItem =>
+        Boolean(monthGroup),
+      );
+  }, [months]);
 
   const gameCountByMonth = useMemo(() => {
-    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
-  }, [gamesByMonth]);
+    const counts = new Map<string, number>();
 
-  const monthsToShow = useMemo(() => {
-    return gamesByMonth.map((group) => ({
-      key: group.key,
-      year: group.year,
-      month: group.month,
-      label: group.label,
-      count: group.count,
-    }));
-  }, [gamesByMonth]);
+    monthsToShow.forEach((monthGroup) => {
+      counts.set(monthGroup.key, monthGroup.count);
+    });
+
+    return counts;
+  }, [monthsToShow]);
+
+  const selectedMonthKey = useMemo(
+    () => getMonthKeyFromDate(selectedDate),
+    [selectedDate],
+  );
+
+  const selectedMonthGames = useMemo(() => {
+    if (!selectedMonthKey) {
+      return games;
+    }
+
+    return (
+      months.find((monthGroup) => monthGroup.key === selectedMonthKey)?.games ??
+      []
+    );
+  }, [games, months, selectedMonthKey]);
 
   useEffect(() => {
-    if (gamesLoading || selectedDate || monthsToShow.length === 0) return;
-
-    if (selectedMonth) {
-      setSelectedDate(new Date(selectedMonth.year, selectedMonth.month, 1));
-      return;
-    }
+    if (selectedDate || monthsToShow.length === 0) return;
 
     const today = new Date();
 
@@ -138,13 +190,23 @@ export default function TeamDetailScreen() {
         monthGroup.year === today.getFullYear(),
     );
 
-    const start = currentMonth ?? monthsToShow[0];
+    const upcomingMonth = monthsToShow.find((monthGroup) => {
+      if (monthGroup.year > today.getFullYear()) return true;
+
+      return (
+        monthGroup.year === today.getFullYear() &&
+        monthGroup.month >= today.getMonth()
+      );
+    });
+
+    const start = currentMonth ?? upcomingMonth ?? monthsToShow[0];
 
     setSelectedDate(new Date(start.year, start.month, 1));
-  }, [gamesLoading, monthsToShow, selectedDate, selectedMonth]);
+  }, [monthsToShow, selectedDate]);
 
-  const handleSelectMonth = (month: number, year: number) => {
+  const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
+    scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
   };
 
   const handleRefresh = async () => {
@@ -152,7 +214,7 @@ export default function TeamDetailScreen() {
 
     try {
       if (selectedTab === "schedule") {
-        await refreshGames();
+        await refreshTeamGames();
       }
 
       if (selectedTab === "news") {
@@ -220,24 +282,25 @@ export default function TeamDetailScreen() {
         initialPage={tabToIndex(selectedTab)}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
+        {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
-          <View style={styles.monthSelector}>
-            <MonthSelector
-              months={monthsToShow}
-              selectedDate={selectedDate}
-              onSelect={handleSelectMonth}
-              loading={gamesLoading}
-              gameCountByMonth={gameCountByMonth}
-            />
-          </View>
-
-          <CBBGamesList
-            games={selectedMonthGames}
+          <MonthSelector
+            months={monthsToShow}
+            selectedDate={selectedDate}
+            onSelect={(month, year, index) =>
+              handleSelectMonth(month, year, index)
+            }
             loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
+            gameCountByMonth={gameCountByMonth}
+          />
+
+          <BasketballGamesList
+            games={selectedMonthGames as any}
             error={gamesError}
-            showHeaders={false}
+            loading={gamesLoading}
+            refreshing={gamesRefreshing || refreshing}
+            onRefresh={handleRefresh}
+            scrollEnabled={true}
           />
         </View>
 

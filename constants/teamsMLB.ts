@@ -89,7 +89,7 @@ import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 export const mlbTeams: BaseballTeam[] = [
   {
     id: 2,
-    espnID: 29,
+    espnId: 29,
     name: "Diamondbacks",
     shortName: "Diamondbacks",
     fullName: "Arizona Diamondbacks",
@@ -112,7 +112,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 963,
-    espnID: 11,
+    espnId: 11,
     name: "Athletics",
     shortName: "Athletics",
     fullName: "Oakland Athletics",
@@ -135,7 +135,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 3,
-    espnID: 15,
+    espnId: 15,
     name: "Braves",
     shortName: "Braves",
     fullName: "Atlanta Braves",
@@ -158,7 +158,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 4,
-    espnID: 1,
+    espnId: 1,
     name: "Orioles",
     shortName: "Orioles",
     fullName: "Baltimore Orioles",
@@ -181,7 +181,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 5,
-    espnID: 2,
+    espnId: 2,
     name: "Red Sox",
     shortName: "Red Sox",
     fullName: "Boston Red Sox",
@@ -204,7 +204,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 6,
-    espnID: 16,
+    espnId: 16,
     name: "Cubs",
     shortName: "Cubs",
     fullName: "Chicago Cubs",
@@ -227,7 +227,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 7,
-    espnID: 4,
+    espnId: 4,
     name: "White Sox",
     shortName: "White Sox",
     fullName: "Chicago White Sox",
@@ -250,7 +250,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 8,
-    espnID: 17,
+    espnId: 17,
     name: "Reds",
     shortName: "Reds",
     fullName: "Cincinnati Reds",
@@ -273,7 +273,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 9,
-    espnID: 5,
+    espnId: 5,
     name: "Guardians",
     shortName: "Guardians",
     fullName: "Cleveland Guardians",
@@ -296,7 +296,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 10,
-    espnID: 27,
+    espnId: 27,
     name: "Rockies",
     shortName: "Rockies",
     fullName: "Colorado Rockies",
@@ -319,7 +319,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 12,
-    espnID: 6,
+    espnId: 6,
     name: "Tigers",
     shortName: "Tigers",
     fullName: "Detroit Tigers",
@@ -342,7 +342,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 15,
-    espnID: 18,
+    espnId: 18,
     name: "Astros",
     shortName: "Astros",
     fullName: "Houston Astros",
@@ -365,7 +365,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 16,
-    espnID: 7,
+    espnId: 7,
     name: "Royals",
     shortName: "Royals",
     fullName: "Kansas City Royals",
@@ -388,7 +388,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 17,
-    espnID: 3,
+    espnId: 3,
     name: "Angels",
     shortName: "Angels",
     fullName: "Los Angeles Angels",
@@ -411,7 +411,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 18,
-    espnID: 19,
+    espnId: 19,
     name: "Dodgers",
     shortName: "Dodgers",
     fullName: "Los Angeles Dodgers",
@@ -434,7 +434,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 19,
-    espnID: 28,
+    espnId: 28,
     name: "Marlins",
     shortName: "Marlins",
     fullName: "Miami Marlins",
@@ -457,7 +457,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 20,
-    espnID: 8,
+    espnId: 8,
     name: "Brewers",
     shortName: "Brewers",
     fullName: "Milwaukee Brewers",
@@ -480,7 +480,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 22,
-    espnID: 9,
+    espnId: 9,
     name: "Twins",
     shortName: "Twins",
     fullName: "Minnesota Twins",
@@ -503,7 +503,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 24,
-    espnID: 21,
+    espnId: 21,
     name: "Mets",
     shortName: "Mets",
     fullName: "New York Mets",
@@ -526,7 +526,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 25,
-    espnID: 10,
+    espnId: 10,
     name: "Yankees",
     shortName: "Yankees",
     fullName: "New York Yankees",
@@ -549,7 +549,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 27,
-    espnID: 22,
+    espnId: 22,
     name: "Phillies",
     shortName: "Phillies",
     fullName: "Philadelphia Phillies",
@@ -572,7 +572,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 28,
-    espnID: 23,
+    espnId: 23,
     name: "Pirates",
     shortName: "Pirates",
     fullName: "Pittsburgh Pirates",
@@ -595,7 +595,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 30,
-    espnID: 25,
+    espnId: 25,
     name: "Padres",
     shortName: "Padres",
     fullName: "San Diego Padres",
@@ -618,7 +618,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 31,
-    espnID: 26,
+    espnId: 26,
     name: "Giants",
     shortName: "Giants",
     fullName: "San Francisco Giants",
@@ -641,7 +641,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 32,
-    espnID: 12,
+    espnId: 12,
     name: "Mariners",
     shortName: "Mariners",
     fullName: "Seattle Mariners",
@@ -664,7 +664,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 33,
-    espnID: 24,
+    espnId: 24,
     name: "Cardinals",
     shortName: "Cardinals",
     fullName: "St. Louis Cardinals",
@@ -687,7 +687,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 34,
-    espnID: 30,
+    espnId: 30,
     name: "Rays",
     shortName: "Rays",
     fullName: "Tampa Bay Rays",
@@ -710,7 +710,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 35,
-    espnID: 13,
+    espnId: 13,
     name: "Rangers",
     shortName: "Rangers",
     fullName: "Texas Rangers",
@@ -733,7 +733,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 36,
-    espnID: 14,
+    espnId: 14,
     name: "Blue Jays",
     shortName: "Blue Jays",
     fullName: "Toronto Blue Jays",
@@ -756,7 +756,7 @@ export const mlbTeams: BaseballTeam[] = [
   },
   {
     id: 37,
-    espnID: 20,
+    espnId: 20,
     name: "Nationals",
     shortName: "Nationals",
     fullName: "Washington Nationals",
@@ -789,4 +789,4 @@ export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
 };
 
 export const getMLBTeamByEspnId = (id: number | string) =>
-  mlbTeams.find((t) => String(t.espnID) === String(id));
+  mlbTeams.find((t) => String(t.espnId) === String(id));

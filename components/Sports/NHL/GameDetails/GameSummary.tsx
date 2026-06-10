@@ -161,7 +161,7 @@ export default function GameSummary({
             const teamLogo = getNHLTeamLogo(team?.id, isDark);
 
             const showLogo =
-              !!team?.espnID &&
+              !!team?.espnId &&
               play.text &&
               !play.text.toLowerCase().includes("start of") &&
               !play.text.toLowerCase().includes("end of");

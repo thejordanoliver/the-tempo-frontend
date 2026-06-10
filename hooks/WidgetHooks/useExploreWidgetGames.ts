@@ -1,34 +1,30 @@
+import { FootballGame } from "@/types/football";
+import { HockeyGame } from "@/types/hockey";
+import type { ExploreGameWidgetType } from "constants/exploreWidgets";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useCallback, useMemo } from "react";
+import { BaseballGame } from "types/baseball";
 import { BasketballGame } from "types/basketball";
-import { MLBGame } from "types/baseball";
-import { FootballGame } from "types/football";
-import { NHLGame } from "types/hockey";
-import { Game } from "types/nba";
 import type { LeagueType } from "types/types";
-import {
-  getCBBSeason,
-  getFootballSeason,
-  getMLBSeason,
-  getNBASeason,
-  getNHLSeason,
-} from "utils/dateUtils";
-import { useMultipleCBBTeamGames } from "./useMultipleCBBTeamGames";
+import { useMultipleBaseballTeamGames } from "./useMultipleBaseballTeamGames";
+import { useMultipleBasketballTeamGames } from "./useMultipleBasketballTeamGames";
 import { useMultipleFootballTeamGames } from "./useMultipleFootballTeamGames";
-import { useMultipleMLBTeamGames } from "./useMultipleMLBTeamGames";
-import { useMultipleNHLTeamGames } from "./useMultipleNHLTeamGames";
-import { useMultipleTeamGames } from "./useMultipleTeamGames";
-import { useMultipleWNBATeamGames } from "./useMultipleWNBATeamGames";
+import { useMultipleHockeyTeamGames } from "./useMultipleHockeyTeamGames";
 
 type SupportedGameLeague =
   | "NBA"
-  | "NFL"
   | "MLB"
-  | "NHL"
   | "WNBA"
   | "CBB"
   | "WCBB"
-  | "CFB";
+  | "NFL"
+  | "CFB"
+  | "UFL"
+  | "NHL";
+
+type UseExploreWidgetGamesOptions = {
+  enabledWidgetTypes?: ExploreGameWidgetType[];
+};
 
 export type ExploreFavoriteTeam = {
   key: string;
@@ -39,17 +35,21 @@ export type ExploreFavoriteTeam = {
 
 const SUPPORTED_LEAGUES = new Set<SupportedGameLeague>([
   "NBA",
-  "NFL",
   "MLB",
-  "NHL",
   "WNBA",
   "CBB",
   "WCBB",
+  "NFL",
   "CFB",
+  "UFL",
+  "NHL",
 ]);
 
 const normalizeLeague = (league: unknown): SupportedGameLeague | null => {
-  const normalized = String(league ?? "").trim().toUpperCase();
+  const normalized = String(league ?? "")
+    .trim()
+    .toUpperCase();
+
   return SUPPORTED_LEAGUES.has(normalized as SupportedGameLeague)
     ? (normalized as SupportedGameLeague)
     : null;
@@ -65,7 +65,7 @@ const getObjectFavoriteId = (
     favorite.id ??
     favorite.team_id ??
     favorite.teamId ??
-    favorite.espnID ??
+    favorite.espnId ??
     favorite.espn_id ??
     favorite.wid
   );
@@ -92,9 +92,11 @@ export const normalizeExploreFavoriteTeam = (
   if (!favorite || typeof favorite !== "object") return null;
 
   const favoriteObject = favorite as Record<string, unknown>;
+
   const league = normalizeLeague(
     favoriteObject.league ?? favoriteObject.type ?? favoriteObject.sport,
   );
+
   const idValue = getObjectFavoriteId(favoriteObject, league);
   const id = String(idValue ?? "").trim();
 
@@ -108,33 +110,43 @@ export const normalizeExploreFavoriteTeam = (
   };
 };
 
-const mapToArray = <T,>(
+const mapToArray = <T>(
   games: Record<string, T | null>,
   allowedTeamIds: (string | number)[],
 ) => {
   const seen = new Set<string>();
   const allowedIds = new Set(allowedTeamIds.map(String));
 
-  return Object.entries(games).filter((entry): entry is [string, T] => {
-    const [teamId, game] = entry;
-    if (!allowedIds.has(String(teamId))) return false;
-    if (!game) return false;
+  return Object.entries(games)
+    .filter((entry): entry is [string, T] => {
+      const [teamId, game] = entry;
 
-    const id = String((game as { id?: string | number }).id ?? "");
-    if (!id) return true;
-    if (seen.has(id)) return false;
+      if (!allowedIds.has(String(teamId))) return false;
+      if (!game) return false;
 
-    seen.add(id);
-    return true;
-  }).map(([, game]) => game);
+      const id = String((game as { id?: string | number }).id ?? "");
+
+      if (!id) return true;
+      if (seen.has(id)) return false;
+
+      seen.add(id);
+      return true;
+    })
+    .map(([, game]) => game);
 };
 
 const getIdsByLeague = (
   favoriteTeams: ExploreFavoriteTeam[],
   league: SupportedGameLeague,
-) => favoriteTeams.filter((team) => team.league === league).map((team) => team.id);
+) => {
+  return favoriteTeams
+    .filter((team) => team.league === league)
+    .map((team) => team.id);
+};
 
-export function useExploreWidgetGames() {
+export function useExploreWidgetGames({
+  enabledWidgetTypes = [],
+}: UseExploreWidgetGamesOptions = {}) {
   const { favorites, isLoading, ready } = useFavoriteTeamsContext();
 
   const favoriteTeams = useMemo(
@@ -151,16 +163,8 @@ export function useExploreWidgetGames() {
     () => getIdsByLeague(favoriteTeams, "NBA"),
     [favoriteTeams],
   );
-  const nflTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "NFL"),
-    [favoriteTeams],
-  );
   const mlbTeamIds = useMemo(
     () => getIdsByLeague(favoriteTeams, "MLB"),
-    [favoriteTeams],
-  );
-  const nhlTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "NHL"),
     [favoriteTeams],
   );
   const wnbaTeamIds = useMemo(
@@ -175,76 +179,139 @@ export function useExploreWidgetGames() {
     () => getIdsByLeague(favoriteTeams, "WCBB"),
     [favoriteTeams],
   );
+  const nflTeamIds = useMemo(
+    () => getIdsByLeague(favoriteTeams, "NFL"),
+    [favoriteTeams],
+  );
   const cfbTeamIds = useMemo(
     () => getIdsByLeague(favoriteTeams, "CFB"),
     [favoriteTeams],
   );
+  const nhlTeamIds = useMemo(
+    () => getIdsByLeague(favoriteTeams, "NHL"),
+    [favoriteTeams],
+  );
+
+  const enabledWidgetTypeSet = useMemo(
+    () => new Set<ExploreGameWidgetType>(enabledWidgetTypes),
+    [enabledWidgetTypes],
+  );
+  const needsAllGameLeagues = enabledWidgetTypeSet.has("favorite_games");
+  const shouldFetchNBA =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("nba_games");
+  const shouldFetchMLB =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("mlb_games");
+  const shouldFetchWNBA =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("wnba_games");
+  const shouldFetchCBB =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("cbb_games");
+  const shouldFetchWCBB =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("wcbb_games");
+  const shouldFetchNFL =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("nfl_games");
+  const shouldFetchCFB =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("cfb_games");
+  const shouldFetchNHL =
+    needsAllGameLeagues || enabledWidgetTypeSet.has("nhl_games");
+
+  const enabledNbaTeamIds = shouldFetchNBA ? nbaTeamIds : [];
+  const enabledMlbTeamIds = shouldFetchMLB ? mlbTeamIds : [];
+  const enabledWnbaTeamIds = shouldFetchWNBA ? wnbaTeamIds : [];
+  const enabledCbbTeamIds = shouldFetchCBB ? cbbTeamIds : [];
+  const enabledWcbbTeamIds = shouldFetchWCBB ? wcbbTeamIds : [];
+  const enabledNflTeamIds = shouldFetchNFL ? nflTeamIds : [];
+  const enabledCfbTeamIds = shouldFetchCFB ? cfbTeamIds : [];
+  const enabledNhlTeamIds = shouldFetchNHL ? nhlTeamIds : [];
 
   const {
     lastGames: nbaGamesMap,
     loading: nbaLoading,
     error: nbaError,
     refresh: refreshNBA,
-  } = useMultipleTeamGames(nbaTeamIds, getNBASeason());
-  const {
-    lastGames: nflGamesMap,
-    loading: nflLoading,
-    error: nflError,
-    refresh: refreshNFL,
-  } = useMultipleFootballTeamGames(nflTeamIds, getFootballSeason());
-  const {
-    lastGames: cfbGamesMap,
-    loading: cfbLoading,
-    error: cfbError,
-    refresh: refreshCFB,
-  } = useMultipleFootballTeamGames(cfbTeamIds, getFootballSeason());
+  } = useMultipleBasketballTeamGames({
+    league: "nba",
+    teamIds: enabledNbaTeamIds,
+  });
+
   const {
     lastGames: mlbGamesMap,
     loading: mlbLoading,
     error: mlbError,
     refresh: refreshMLB,
-  } = useMultipleMLBTeamGames({ teamIds: mlbTeamIds, season: getMLBSeason() });
-  const {
-    lastGames: nhlGamesMap,
-    loading: nhlLoading,
-    error: nhlError,
-    refresh: refreshNHL,
-  } = useMultipleNHLTeamGames({ teamIds: nhlTeamIds, season: getNHLSeason() });
+  } = useMultipleBaseballTeamGames({
+    league: "mlb",
+    teamIds: enabledMlbTeamIds,
+  });
+
   const {
     lastGames: wnbaGamesMap,
     loading: wnbaLoading,
     error: wnbaError,
     refresh: refreshWNBA,
-  } = useMultipleWNBATeamGames({ teamIds: wnbaTeamIds });
+  } = useMultipleBasketballTeamGames({
+    league: "wnba",
+    teamIds: enabledWnbaTeamIds,
+  });
+
   const {
     lastGames: cbbGamesMap,
     loading: cbbLoading,
     error: cbbError,
     refresh: refreshCBB,
-  } = useMultipleCBBTeamGames({
-    teamIds: cbbTeamIds,
-    season: getCBBSeason(),
+  } = useMultipleBasketballTeamGames({
+    league: "cbb",
+    teamIds: enabledCbbTeamIds,
   });
+
   const {
     lastGames: wcbbGamesMap,
     loading: wcbbLoading,
     error: wcbbError,
     refresh: refreshWCBB,
-  } = useMultipleCBBTeamGames({
-    teamIds: wcbbTeamIds,
-    season: getCBBSeason(),
-    isWomen: true,
+  } = useMultipleBasketballTeamGames({
+    league: "wcbb",
+    teamIds: enabledWcbbTeamIds,
+  });
+
+  const {
+    lastGames: nflGamesMap,
+    loading: nflLoading,
+    error: nflError,
+    refresh: refreshNFL,
+  } = useMultipleFootballTeamGames({
+    league: "nfl",
+    teamIds: enabledNflTeamIds,
+  });
+
+  const {
+    lastGames: cfbGamesMap,
+    loading: cfbLoading,
+    error: cfbError,
+    refresh: refreshCFB,
+  } = useMultipleFootballTeamGames({
+    league: "cfb",
+    teamIds: enabledCfbTeamIds,
+  });
+
+  const {
+    lastGames: nhlGamesMap,
+    loading: nhlLoading,
+    error: nhlError,
+    refresh: refreshNHL,
+  } = useMultipleHockeyTeamGames({
+    league: "nhl",
+    teamIds: enabledNhlTeamIds,
   });
 
   const refresh = useCallback(() => {
     refreshNBA();
-    refreshNFL();
     refreshMLB();
-    refreshNHL();
     refreshWNBA();
     refreshCBB();
     refreshWCBB();
+    refreshNFL();
     refreshCFB();
+    refreshNHL();
   }, [
     refreshCBB,
     refreshCFB,
@@ -257,35 +324,39 @@ export function useExploreWidgetGames() {
   ]);
 
   return {
-    nbaGames: mapToArray<Game>(nbaGamesMap, nbaTeamIds),
-    nflGames: mapToArray<FootballGame>(nflGamesMap, nflTeamIds),
-    mlbGames: mapToArray<MLBGame>(mlbGamesMap, mlbTeamIds),
-    nhlGames: mapToArray<NHLGame>(nhlGamesMap, nhlTeamIds),
-    wnbaGames: mapToArray<BasketballGame>(wnbaGamesMap, wnbaTeamIds),
-    cbbGames: mapToArray<BasketballGame>(cbbGamesMap, cbbTeamIds),
-    wcbbGames: mapToArray<BasketballGame>(wcbbGamesMap, wcbbTeamIds),
-    cfbGames: mapToArray<FootballGame>(cfbGamesMap, cfbTeamIds),
+    nbaGames: mapToArray<BasketballGame>(nbaGamesMap, enabledNbaTeamIds),
+    mlbGames: mapToArray<BaseballGame>(mlbGamesMap, enabledMlbTeamIds),
+    wnbaGames: mapToArray<BasketballGame>(wnbaGamesMap, enabledWnbaTeamIds),
+    cbbGames: mapToArray<BasketballGame>(cbbGamesMap, enabledCbbTeamIds),
+    wcbbGames: mapToArray<BasketballGame>(wcbbGamesMap, enabledWcbbTeamIds),
+    nflGames: mapToArray<FootballGame>(nflGamesMap, enabledNflTeamIds),
+    cfbGames: mapToArray<FootballGame>(cfbGamesMap, enabledCfbTeamIds),
+    nhlGames: mapToArray<HockeyGame>(nhlGamesMap, enabledNhlTeamIds),
+
     favoriteTeams,
+
     loading:
       isLoading ||
       !ready ||
-      (nbaTeamIds.length > 0 && nbaLoading) ||
-      (nflTeamIds.length > 0 && nflLoading) ||
-      (mlbTeamIds.length > 0 && mlbLoading) ||
-      (nhlTeamIds.length > 0 && nhlLoading) ||
-      (wnbaTeamIds.length > 0 && wnbaLoading) ||
-      (cbbTeamIds.length > 0 && cbbLoading) ||
-      (wcbbTeamIds.length > 0 && wcbbLoading) ||
-      (cfbTeamIds.length > 0 && cfbLoading),
+      (enabledNbaTeamIds.length > 0 && nbaLoading) ||
+      (enabledMlbTeamIds.length > 0 && mlbLoading) ||
+      (enabledWnbaTeamIds.length > 0 && wnbaLoading) ||
+      (enabledCbbTeamIds.length > 0 && cbbLoading) ||
+      (enabledWcbbTeamIds.length > 0 && wcbbLoading) ||
+      (enabledNflTeamIds.length > 0 && nflLoading) ||
+      (enabledCfbTeamIds.length > 0 && cfbLoading) ||
+      (enabledNhlTeamIds.length > 0 && nhlLoading),
+
     error:
-      nbaError ??
-      nflError ??
-      mlbError ??
-      nhlError ??
-      wnbaError ??
-      cbbError ??
-      wcbbError ??
-      cfbError,
+      (enabledNbaTeamIds.length > 0 ? nbaError : null) ??
+      (enabledMlbTeamIds.length > 0 ? mlbError : null) ??
+      (enabledWnbaTeamIds.length > 0 ? wnbaError : null) ??
+      (enabledCbbTeamIds.length > 0 ? cbbError : null) ??
+      (enabledWcbbTeamIds.length > 0 ? wcbbError : null) ??
+      (enabledNflTeamIds.length > 0 ? nflError : null) ??
+      (enabledCfbTeamIds.length > 0 ? cfbError : null) ??
+      (enabledNhlTeamIds.length > 0 ? nhlError : null),
+
     refresh,
   };
 }

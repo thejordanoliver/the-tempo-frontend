@@ -1,3 +1,4 @@
+import { BasketballGameCardProps } from "@/types/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
@@ -5,38 +6,26 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import React, { useCallback } from "react";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { Game } from "types/nba";
 import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
-export default function GameCard({ game }: { game: Game }) {
+export default function GameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const handlePress = useCallback(() => {
+
+  const handlePress = () => {
     router.push({
       pathname: "/game/[game]",
-      params: { game: JSON.stringify(game) },
+      params: {
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
     });
-  }, [router, game]);
-
-  const homeId = game.home?.id;
-  const awayId = game.away?.id;
-
-  const home = getNBATeam(homeId);
-  const away = getNBATeam(awayId);
-
-  const homeName = home?.name;
-  const awayName = away?.name;
-
-  const homeLogo = getTeamLogo(homeId, isDark);
-  const awayLogo = getTeamLogo(awayId, isDark);
-
-  const homeEspnId = home?.espnID ?? 0;
-  const awayEspnId = away?.espnID ?? 0;
+  };
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -45,28 +34,43 @@ export default function GameCard({ game }: { game: Game }) {
   };
 
   const gameDate = safeDate(game.date);
-  const gameDateStr = gameDate.toISOString();
 
-  const { score: liveScore, details } = useGameDetails(
-    "nba",
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-  );
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
-  const isChampionship = details?.headline?.includes("NBA Finals");
+  const formattedTime =
+    gameDate?.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
+
+  const league = game?.league?.id;
+
+  const homeId = Number(game.home?.id);
+  const awayId = Number(game.away?.id);
+
+  const home = getNBATeam(homeId);
+  const away = getNBATeam(awayId);
+
+  const homeName = home?.name || game.home?.name;
+  const awayName = away?.name || game.away?.name;
+
+  const homeLogo = getTeamLogo(homeId, isDark);
+  const awayLogo = getTeamLogo(awayId, isDark);
+
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headlineText = game?.headline;
+  const headline = headlineText || holidayLabel;
+  const isChampionship = headline?.includes("NBA Finals");
   const styles = gameCardStyles(isDark, isChampionship);
-
-  const period =
-    liveScore?.period ?? Number(game.periods?.current ?? game.period);
-  const displayClock = liveScore?.displayClock;
-  const homeScore =
-    liveScore?.home.total ?? game.scores?.home?.points ?? game.homeScore;
-  const awayScore =
-    liveScore?.away.total ?? game.scores?.away?.points ?? game.awayScore;
-
-  const gameStatusDescription = liveScore?.gameStatusDescription;
-  const gameStatusDetail = liveScore?.gameStatusDetail;
+  const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const period = formatQuarter(game.status.period);
+  const clock = game.status.clock;
+  const gameStatusDescription = game.status?.description;
+  const gameStatusDetail = game.status.shortDetail;
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
@@ -76,38 +80,21 @@ export default function GameCard({ game }: { game: Game }) {
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const headlineText = details?.headline;
-  const headline = headlineText || getHolidayLabel(gameDate);
 
-  // Team records
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const homeScore = game.home.score ?? 0;
+  const awayScore = game.away.score ?? 0;
+  const homeRecord = game.home.record ?? "0-0";
+  const awayRecord = game.away.record ?? "0-0";
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
   const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
 
   const winnerStyle = (teamWins: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isFinal ? (teamWins ? 1 : 0.5) : 1,
   });
 
   const ScoreText = ({
@@ -138,20 +125,18 @@ export default function GameCard({ game }: { game: Game }) {
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{displayClock}</Text>
+          <Text style={styles.clock}>{clock}</Text>
         </View>
       );
 
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+    if (isDelayed || isCanceled || isPostponed || isForfeited)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
-    if (endOfPeriod)
-      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (
@@ -185,16 +170,16 @@ export default function GameCard({ game }: { game: Game }) {
       {/* Away Score / Record */}
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-      {/* headlineText */}
+      {/* headline */}
       <View style={styles.headlineContainer}>
-        <Text style={styles.headlineText}>{headline}</Text>
+        <Text style={[styles.headlineText]}>{headline}</Text>
       </View>
 
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcastText && (
-          <Text style={styles.broadcast}>{broadcastText}</Text>
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>
 

@@ -35,12 +35,13 @@ export default function ResultItemRow({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
+  const isRecentSearch = query.trim().length === 0;
 
   // -------------------------
   // TEAM
   // -------------------------
   const renderTeam = (team: TeamResult) => {
-    if (team.is_active === false) return null; // 👈 add this
+    if (team.is_active === false) return null;
     let localTeamLogo: string | undefined;
 
     if (team.isNFL && team.id != null)
@@ -64,6 +65,8 @@ export default function ResultItemRow({
         <TouchableOpacity
           onPress={() => onSelect(team)}
           style={styles.itemContainer}
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${team.full_name || team.name}`}
         >
           <View style={styles.userRow}>
             {localTeamLogo && (
@@ -77,8 +80,12 @@ export default function ResultItemRow({
             </View>
           </View>
         </TouchableOpacity>
-        {query.length === 0 && onDelete && (
-          <TouchableOpacity onPress={() => onDelete(team)}>
+        {isRecentSearch && onDelete && (
+          <TouchableOpacity
+            onPress={() => onDelete(team)}
+            accessibilityRole="button"
+            accessibilityLabel={`Delete ${team.full_name || team.name} from recent searches`}
+          >
             <Ionicons
               name="close"
               size={20}
@@ -122,6 +129,8 @@ export default function ResultItemRow({
         <TouchableOpacity
           onPress={() => onSelect(player)}
           style={styles.itemContainer}
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${playerName}`}
         >
           <View style={styles.playerRow}>
             <View style={styles.playerAvatarContainer}>
@@ -137,8 +146,12 @@ export default function ResultItemRow({
             </View>
           </View>
         </TouchableOpacity>
-        {query.length === 0 && onDelete && (
-          <TouchableOpacity onPress={() => onDelete(player)}>
+        {isRecentSearch && onDelete && (
+          <TouchableOpacity
+            onPress={() => onDelete(player)}
+            accessibilityRole="button"
+            accessibilityLabel={`Delete ${playerName} from recent searches`}
+          >
             <Ionicons
               name="close"
               size={20}
@@ -161,6 +174,8 @@ export default function ResultItemRow({
         <TouchableOpacity
           onPress={() => onSelect(user)}
           style={styles.itemContainer}
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${user.username}`}
         >
           <View style={styles.userRow}>
             <View style={styles.avatarContainer}>
@@ -176,8 +191,12 @@ export default function ResultItemRow({
             </View>
           </View>
         </TouchableOpacity>
-        {query.length === 0 && onDelete && (
-          <TouchableOpacity onPress={() => onDelete(user)}>
+        {isRecentSearch && onDelete && (
+          <TouchableOpacity
+            onPress={() => onDelete(user)}
+            accessibilityRole="button"
+            accessibilityLabel={`Delete ${user.username} from recent searches`}
+          >
             <Ionicons
               name="close"
               size={20}

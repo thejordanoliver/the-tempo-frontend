@@ -1,156 +1,214 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import GameCard from "components/Sports/NBA/Games/GameCard";
-import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
-import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import {
+  FlatList,
+  SectionList,
+  SectionListData,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import { Game } from "types/nba";
+import GamePreviewModal from "../GamePreview/GamePreviewModal";
+import GameCard from "./GameCard";
+import SquareGameCard from "./SquareGameCard";
+import StackedGameCard from "./StackedGameCard";
 
-type GamesListProps = {
-  games: Game[];
+type Props = {
+  games: any[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
+  error: Error | null;
   expectedCount?: number;
   day?: "todayTomorrow";
+  showHeaders?: boolean;
   scrollEnabled?: boolean;
-  error: Error | null;
+  isCBB?: boolean;
+  isWCBB?: boolean;
+  isWNBA?: boolean;
 };
 
-type GameWithPlaceholder = Game & { _isPlaceholder?: boolean };
-
-const ItemSeparator = () => <View style={{ height: 12 }} />;
+type GameSection = {
+  title: string;
+  data: any[];
+};
 
 export default function GamesList({
   games,
   loading,
-  error,
   refreshing,
   onRefresh,
+  error,
   expectedCount,
   day,
+  showHeaders,
   scrollEnabled = true,
-}: GamesListProps) {
-  const { viewMode } = usePreferences();
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const { viewMode } = usePreferences();
   const styles = gameListStyles;
-  const global = useMemo(() => globalStyles(isDark), [isDark]);
+  const global = globalStyles(isDark);
 
-  const [previewGame, setPreviewGame] = useState<Game | null>(null);
+  const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = useCallback((game: Game) => {
+  const isCBBGame = (game: any) => String(game?.league?.id) === "10";
+  const isWCBBGame = (game: any) => String(game?.league?.id) === "54";
+  const isWNBAGame = (game: any) => String(game?.league?.id) === "59";
+
+  /* ----------------------------- Sections ----------------------------- */
+
+  const sections: GameSection[] = useMemo(() => {
+    if (!showHeaders) return [{ title: "All", data: games }];
+    return [{ title: "Regular Season", data: games }];
+  }, [games, showHeaders]);
+
+  /* --------------------------- Interactions ---------------------------- */
+
+  const handleLongPress = (game: any) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
-  }, []);
+  };
 
-  const handleCloseModal = useCallback(() => setModalVisible(false), []);
+  /* -------------------------- Game Renderer ---------------------------- */
 
-  const renderGameCard = useCallback(
-    (game: GameWithPlaceholder) => {
-      if (game._isPlaceholder) {
-        return <View style={{ flex: 1 }} />;
-      }
+  const renderGameCard = (game: any) => {
+    if ((game as any)?._isPlaceholder) {
+      return <View style={styles.gridItem} />;
+    }
 
-      const cardContent =
-        viewMode === "list" ? (
-          <GameCard game={game} />
-        ) : viewMode === "grid" ? (
-          <SquareGameCard game={game} />
-        ) : (
-          <StackedGameCard game={game} />
-        );
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <LongPressGestureHandler
+        key={game?.game?.id ?? game?.id}
+        minDurationMs={300}
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+        }}
+      >
+        <View style={viewMode === "grid" ? styles.gridItem : undefined}>
+          {children}
+        </View>
+      </LongPressGestureHandler>
+    );
 
+    if (viewMode === "list") {
       return (
-        <LongPressGestureHandler
-          minDurationMs={300}
-          onHandlerStateChange={({ nativeEvent }) => {
-            if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
-          }}
-        >
-          <View style={viewMode === "grid" ? styles.gridItem : undefined}>
-            {cardContent}
-          </View>
-        </LongPressGestureHandler>
+        <Wrapper>
+          <GameCard
+            game={game}
+            isCBB={isCBBGame(game)}
+            isWNBA={isWNBAGame(game)}
+            isWCBB={isWCBBGame(game)}
+          />
+        </Wrapper>
       );
-    },
-    [viewMode, handleLongPress, styles.gridItem],
-  );
+    }
 
-  const renderItem = useCallback(
-    ({ item }: { item: GameWithPlaceholder }) => renderGameCard(item),
-    [renderGameCard],
-  );
+    if (viewMode === "grid") {
+      return (
+        <Wrapper>
+          <SquareGameCard
+            game={game}
+            isCBB={isCBBGame(game)}
+            isWNBA={isWNBAGame(game)}
+            isWCBB={isWCBBGame(game)}
+          />
+        </Wrapper>
+      );
+    }
 
-  const renderSkeletons = useCallback(
-    (count: number) => {
-      if (viewMode === "list") {
-        return (
-          <View style={styles.skeletonWrapper}>
-            {Array.from({ length: count }).map((_, i) => (
-              <GameCardSkeleton key={`list-skel-${i}`} />
-            ))}
-          </View>
-        );
-      }
+    return (
+      <Wrapper>
+        <StackedGameCard
+          game={game}
+          isCBB={isCBBGame(game)}
+          isWNBA={isWNBAGame(game)}
+          isWCBB={isWCBBGame(game)}
+        />
+      </Wrapper>
+    );
+  };
 
-      if (viewMode === "grid") {
-        const pairs: number[][] = [];
-        for (let i = 0; i < count; i += 2) {
-          pairs.push(i + 1 < count ? [i, i + 1] : [i]);
-        }
+  /* --------------------------- Skeletons ------------------------------- */
 
-        return (
-          <View style={styles.skeletonGridWrapper}>
-            {pairs.map((pair, rowIndex) => (
-              <View key={`skel-row-${rowIndex}`} style={styles.gridRow}>
-                <SquareGameCardSkeleton style={{ flex: 1 }} />
-                {pair.length === 2 ? (
-                  <SquareGameCardSkeleton style={{ flex: 1 }} />
-                ) : (
-                  <View style={{ flex: 1 }} />
-                )}
-              </View>
-            ))}
-          </View>
-        );
-      }
-
+  const renderSkeletons = (count: number) => {
+    if (viewMode === "list") {
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, i) => (
-            <StackedGameCardSkeleton key={`stack-skel-${i}`} />
+            <GameCardSkeleton key={`list-skel-${i}`} />
           ))}
         </View>
       );
-    },
-    [viewMode, styles],
-  );
+    }
 
-  const gridData = useMemo<GameWithPlaceholder[]>(
-    () =>
-      viewMode === "grid" && games.length % 2 === 1
-        ? [...games, { _isPlaceholder: true } as any]
-        : games,
-    [games, viewMode],
-  );
+    if (viewMode === "grid") {
+      const skeletons = Array.from({ length: count }).map((_, i) => ({
+        _id: `grid-skel-${i}`,
+      }));
+
+      // Add placeholder if odd count
+      const dataWithPlaceholder =
+        count % 2 === 1
+          ? [...skeletons, { _id: `grid-skel-placeholder` }]
+          : skeletons;
+
+      return (
+        <FlatList
+          data={dataWithPlaceholder}
+          keyExtractor={(item) => item._id}
+          numColumns={2}
+          renderItem={({ item, index }) => {
+            if (item._id.includes("placeholder")) {
+              return (
+                <View
+                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
+                />
+              );
+            }
+
+            const isLastOdd = count % 2 === 1 && index === count - 1;
+
+            const itemStyle: ViewStyle = {
+              flex: 1,
+              marginLeft: isLastOdd ? 12 : index % 2 === 0 ? 12 : 6,
+              marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
+            };
+
+            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
+          }}
+          scrollEnabled={scrollEnabled}
+          contentContainerStyle={styles.skeletonGridWrapper}
+        />
+      );
+    }
+
+    return (
+      <View style={styles.skeletonWrapper}>
+        {Array.from({ length: count }).map((_, i) => (
+          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
+        ))}
+      </View>
+    );
+  };
+
+  /* ----------------------------- LOADING ------------------------------ */
 
   if (loading) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
   }
 
-  if (games.length === 0) {
+  if (!loading && games.length === 0) {
     return (
       <View style={styles.emptyWrapper}>
         <Text style={global.emptyText}>
@@ -162,36 +220,56 @@ export default function GamesList({
     );
   }
 
+  /* ----------------------------- CONTENT ------------------------------ */
+
   return (
     <>
-      <FlatList
-        data={viewMode === "grid" ? gridData : games}
-        keyExtractor={(item, index) =>
-          (item as any)?._isPlaceholder
-            ? `placeholder-${index}`
-            : `game-${item.id}`
-        }
-        renderItem={renderItem}
-        numColumns={viewMode === "grid" ? 2 : 1}
-        key={viewMode}
-        columnWrapperStyle={viewMode === "grid" ? styles.gridRow : undefined}
-        ItemSeparatorComponent={viewMode !== "grid" ? ItemSeparator : undefined}
-        contentContainerStyle={
-          viewMode === "grid"
-            ? styles.gridListContainer
-            : styles.contentContainer
-        }
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={scrollEnabled}
-      />
+      {viewMode === "grid" ? (
+        <FlatList
+          data={
+            games.length % 2 === 1
+              ? [...games, { _isPlaceholder: true } as any]
+              : games
+          }
+          keyExtractor={(item, index) =>
+            (item as any)?._isPlaceholder
+              ? `placeholder-${index}`
+              : `game-${item?.game?.id ?? index}`
+          }
+          numColumns={2}
+          columnWrapperStyle={styles.gridRow}
+          renderItem={({ item }) => renderGameCard(item)}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          scrollEnabled={scrollEnabled}
+          contentContainerStyle={styles.gridListContainer}
+          ListEmptyComponent={
+            <Text style={global.emptyText}>
+              {day === "todayTomorrow"
+                ? "No games found for today or tomorrow."
+                : "No games found."}
+            </Text>
+          }
+        />
+      ) : (
+        <SectionList
+          sections={sections as SectionListData<any, GameSection>[]}
+          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+          renderItem={({ item }) => renderGameCard(item)}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          stickySectionHeadersEnabled={false}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          contentContainerStyle={styles.contentContainer}
+          scrollEnabled={scrollEnabled}
+        />
+      )}
 
       {modalVisible && previewGame && (
         <GamePreviewModal
           game={previewGame}
           visible={modalVisible}
-          onClose={handleCloseModal}
+          onClose={() => setModalVisible(false)}
         />
       )}
     </>

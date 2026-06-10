@@ -90,12 +90,13 @@ function FootballSquareGameCard({
   const homeRank = game.home.rank ?? null;
   const awayRank = game.home.rank ?? null;
   const football = isDark ? FootballLight : Football;
+ const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
-    game.headline.includes("Super Bowl") ??
-    game.headline.includes("Championship");
+    headlineMatch?.includes("super bowl") ||
+    headlineMatch?.includes("national championship");
   const styles = squareGameCardStyles(isDark, isChampionship);
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnID;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnID;
+  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
+  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------

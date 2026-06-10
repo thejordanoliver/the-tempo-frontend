@@ -101,7 +101,7 @@ import WizardsHome from "../assets/Uniforms/WizardsHome.png";
 export const teams: NBATeam[] = [
   {
     id: 1,
-    espnID: 1,
+    espnId: 1,
     summerLeagueId: 132,
     name: "Hawks",
     shortName: "Hawks",
@@ -130,7 +130,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 2,
-    espnID: 2,
+    espnId: 2,
     summerLeagueId: 133,
     name: "Celtics",
     shortName: "Celtics",
@@ -159,7 +159,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 4,
-    espnID: 17,
+    espnId: 17,
     summerLeagueId: 134,
     name: "Nets",
     shortName: "Nets",
@@ -188,7 +188,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 5,
-    espnID: 30,
+    espnId: 30,
     summerLeagueId: 135,
     name: "Hornets",
     shortName: "Hornets",
@@ -217,7 +217,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 6,
-    espnID: 4,
+    espnId: 4,
     summerLeagueId: 136,
     name: "Bulls",
     shortName: "Bulls",
@@ -246,7 +246,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 7,
-    espnID: 5,
+    espnId: 5,
     summerLeagueId: 137,
     name: "Cavaliers",
     shortName: "Cavaliers",
@@ -275,7 +275,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 8,
-    espnID: 6,
+    espnId: 6,
     summerLeagueId: 138,
     name: "Mavericks",
     shortName: "Mavericks",
@@ -304,7 +304,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 9,
-    espnID: 7,
+    espnId: 7,
     summerLeagueId: 139,
     name: "Nuggets",
     shortName: "Nuggets",
@@ -333,7 +333,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 10,
-    espnID: 8,
+    espnId: 8,
     summerLeagueId: 140,
     name: "Pistons",
     shortName: "Pistons",
@@ -362,7 +362,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 11,
-    espnID: 9,
+    espnId: 9,
     summerLeagueId: 141,
     name: "Warriors",
     shortName: "Warriors",
@@ -391,7 +391,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 14,
-    espnID: 10,
+    espnId: 10,
     summerLeagueId: 142,
     name: "Rockets",
     shortName: "Rockets",
@@ -420,7 +420,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 15,
-    espnID: 11,
+    espnId: 11,
     summerLeagueId: 143,
     name: "Pacers",
     shortName: "Pacers",
@@ -449,7 +449,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 16,
-    espnID: 12,
+    espnId: 12,
     summerLeagueId: 144,
     name: "Clippers",
     shortName: "Clippers",
@@ -478,7 +478,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 17,
-    espnID: 13,
+    espnId: 13,
     summerLeagueId: 145,
     name: "Lakers",
     shortName: "Lakers",
@@ -507,7 +507,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 19,
-    espnID: 29,
+    espnId: 29,
     summerLeagueId: 146,
     name: "Grizzlies",
     shortName: "Grizzlies",
@@ -536,7 +536,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 20,
-    espnID: 14,
+    espnId: 14,
     summerLeagueId: 147,
     name: "Heat",
     shortName: "Heat",
@@ -565,7 +565,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 21,
-    espnID: 15,
+    espnId: 15,
     summerLeagueId: 148,
     name: "Bucks",
     shortName: "Bucks",
@@ -594,7 +594,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 22,
-    espnID: 16,
+    espnId: 16,
     summerLeagueId: 149,
     name: "Timberwolves",
     shortName: "Timberwolves",
@@ -624,7 +624,7 @@ export const teams: NBATeam[] = [
 
   {
     id: 23,
-    espnID: 3,
+    espnId: 3,
     summerLeagueId: 150,
     name: "Pelicans",
     shortName: "Pelicans",
@@ -653,7 +653,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 24,
-    espnID: 18,
+    espnId: 18,
     summerLeagueId: 151,
     name: "Knicks",
     shortName: "Knicks",
@@ -682,7 +682,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 25,
-    espnID: 25,
+    espnId: 25,
     summerLeagueId: 152,
     name: "Thunder",
     shortName: "Thunder",
@@ -712,7 +712,7 @@ export const teams: NBATeam[] = [
 
   {
     id: 26,
-    espnID: 19,
+    espnId: 19,
     summerLeagueId: 153,
     name: "Magic",
     shortName: "Magic",
@@ -741,7 +741,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 27,
-    espnID: 20,
+    espnId: 20,
     summerLeagueId: 154,
     name: "76ers",
     shortName: "76ers",
@@ -770,7 +770,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 28,
-    espnID: 21,
+    espnId: 21,
     summerLeagueId: 155,
     name: "Suns",
     shortName: "Suns",
@@ -799,7 +799,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 29,
-    espnID: 22,
+    espnId: 22,
     summerLeagueId: 156,
     name: "Trail Blazers",
     shortName: "Trail Blazers",
@@ -828,7 +828,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 30,
-    espnID: 23,
+    espnId: 23,
     summerLeagueId: 157,
     name: "Kings",
     shortName: "Kings",
@@ -857,7 +857,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 31,
-    espnID: 24,
+    espnId: 24,
     summerLeagueId: 158,
     name: "Spurs",
     shortName: "Spurs",
@@ -886,7 +886,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 38,
-    espnID: 28,
+    espnId: 28,
     summerLeagueId: 159,
     name: "Raptors",
     shortName: "Raptors",
@@ -915,7 +915,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 40,
-    espnID: 26,
+    espnId: 26,
     summerLeagueId: 160,
     name: "Jazz",
     shortName: "Jazz",
@@ -944,7 +944,7 @@ export const teams: NBATeam[] = [
   },
   {
     id: 41,
-    espnID: 27,
+    espnId: 27,
     summerLeagueId: 161,
     name: "Wizards",
     shortName: "Wizards",
@@ -974,7 +974,7 @@ export const teams: NBATeam[] = [
 ];
 
 export const getTeamByESPNId = (espnId: number | string) => {
-  return teams.find((t) => t.espnID?.toString() === espnId?.toString());
+  return teams.find((t) => t.espnId?.toString() === espnId?.toString());
 };
 
 export const getTeamBySummerId = (id?: number | string) =>

@@ -24,7 +24,7 @@ import SportsListModal, {
 } from "../../components/League/SportsListModal";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
-import BasketballGamesList from "../../components/Sports/Basketball/Games/BasketballGamesList";
+import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";

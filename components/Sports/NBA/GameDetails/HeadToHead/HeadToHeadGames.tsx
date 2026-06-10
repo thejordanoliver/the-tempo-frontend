@@ -36,13 +36,10 @@ export default function HeadToHeadGames({
   const homeTeamCode = homeTeam?.code;
   const awayTeamCode = awayTeam?.code;
 
-  const homeTeamEspnId = String(homeTeam?.espnID) ?? "";
-  const awayTeamEspnId = String(awayTeam?.espnID) ?? "";
+  const homeTeamEspnId = String(homeTeam?.espnId) ?? "";
+  const awayTeamEspnId = String(awayTeam?.espnId) ?? "";
 
-  const { data, loading, error } = useHeadToHeadGames(
-    homeTeamId,
-    awayTeamId,
-  );
+  const { data, loading, error } = useHeadToHeadGames(homeTeamId, awayTeamId);
 
   if (loading) return <HeadToHeadSkeleton />;
   if (error) return <Text style={global.errorText}>Error loading games</Text>;

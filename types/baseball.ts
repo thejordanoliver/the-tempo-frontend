@@ -2,7 +2,7 @@ import { ImageSourcePropType } from "react-native";
 
 export interface BaseballTeam {
   id: number;
-  espnID?: number;
+  espnId?: number;
   name: string;
   shortName: string;
   fullName: string;

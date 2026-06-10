@@ -1,11 +1,8 @@
 import { BaseballGame } from "@/types/baseball";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
-export type BaseballTeamScheduleLeague =
-  | "mlb"
-  | "cb"
-  | "sb";
 
+export type BaseballTeamScheduleLeague = "mlb" | "cb" | "sb";
 
 export type BaseballScheduleMonth = {
   key: string;
@@ -37,6 +34,11 @@ export type BaseballTeamScheduleResponse = {
   months: BaseballScheduleMonth[];
 };
 
+type FetchScheduleOptions = {
+  isRefresh?: boolean;
+  silent?: boolean;
+};
+
 interface UseBaseballTeamGamesResult {
   league: string | null;
   team: BaseballTeamScheduleTeam | null;
@@ -47,6 +49,25 @@ interface UseBaseballTeamGamesResult {
   refreshing: boolean;
   error: Error | null;
   refresh: () => Promise<void>;
+}
+
+const LIVE_STATES = new Set(["in", "half"]);
+
+function isLiveBaseballGame(game: any) {
+  const state = String(game?.status?.state || "").toLowerCase();
+  const description = String(game?.status?.description || "").toLowerCase();
+  const detail = String(game?.status?.detail || "").toLowerCase();
+  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
+
+  return (
+    LIVE_STATES.has(state) ||
+    description.includes("in progress") ||
+    detail.includes("in progress") ||
+    shortDetail.includes("in progress") ||
+    description.includes("live") ||
+    detail.includes("live") ||
+    shortDetail.includes("live")
+  );
 }
 
 function groupGamesByMonth(games: BaseballGame[]): BaseballScheduleMonth[] {
@@ -102,22 +123,23 @@ function groupGamesByMonth(games: BaseballGame[]): BaseballScheduleMonth[] {
   });
 }
 
+function getGameTime(game: BaseballGame) {
+  const timestamp = Number((game as any).timestamp);
+
+  if (Number.isFinite(timestamp) && timestamp > 0) {
+    return timestamp;
+  }
+
+  if (game.date) {
+    const dateTime = new Date(game.date).getTime();
+    return Number.isNaN(dateTime) ? 0 : dateTime;
+  }
+
+  return 0;
+}
+
 function sortGamesByDate(games: BaseballGame[]) {
-  return [...games].sort((a, b) => {
-    const aTime = Number.isFinite(a.timestamp)
-      ? Number(a.timestamp)
-      : a.date
-        ? new Date(a.date).getTime()
-        : 0;
-
-    const bTime = Number.isFinite(b.timestamp)
-      ? Number(b.timestamp)
-      : b.date
-        ? new Date(b.date).getTime()
-        : 0;
-
-    return aTime - bTime;
-  });
+  return [...games].sort((a, b) => getGameTime(a) - getGameTime(b));
 }
 
 export function useBaseballTeamGames(
@@ -130,7 +152,7 @@ export function useBaseballTeamGames(
   const [error, setError] = useState<Error | null>(null);
 
   const fetchSchedule = useCallback(
-    async (isRefresh = false) => {
+    async ({ isRefresh = false, silent = false }: FetchScheduleOptions = {}) => {
       if (!league || !teamId) {
         setData(null);
         setLoading(false);
@@ -142,7 +164,7 @@ export function useBaseballTeamGames(
       try {
         if (isRefresh) {
           setRefreshing(true);
-        } else {
+        } else if (!silent) {
           setLoading(true);
         }
 
@@ -153,6 +175,7 @@ export function useBaseballTeamGames(
         );
 
         const games = sortGamesByDate(response.data.games || []);
+
         const months =
           Array.isArray(response.data.months) && response.data.months.length > 0
             ? response.data.months
@@ -165,27 +188,54 @@ export function useBaseballTeamGames(
           months,
         });
       } catch (err: any) {
+        console.error(err);
+
         const message =
           err?.response?.data?.error ||
           err?.message ||
-          "Failed to fetch baseball team schedule";
+          `Failed to fetch ${league} baseball team schedule`;
 
-        setError(message);
-        setData(null);
+        setError(new Error(message));
+
+        // Do not wipe existing schedule during silent live polling.
+        if (!silent) {
+          setData(null);
+        }
       } finally {
-        setLoading(false);
-        setRefreshing(false);
+        if (isRefresh) {
+          setRefreshing(false);
+        }
+
+        if (!silent) {
+          setLoading(false);
+        }
       }
     },
     [league, teamId],
   );
 
   useEffect(() => {
-    fetchSchedule(false);
+    fetchSchedule();
   }, [fetchSchedule]);
 
+  const games = useMemo(() => data?.games ?? [], [data]);
+
+  const hasLiveGame = useMemo(() => {
+    return games.some(isLiveBaseballGame);
+  }, [games]);
+
+  useEffect(() => {
+    if (!hasLiveGame) return;
+
+    const interval = setInterval(() => {
+      fetchSchedule({ silent: true });
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [hasLiveGame, fetchSchedule]);
+
   const refresh = useCallback(async () => {
-    await fetchSchedule(true);
+    await fetchSchedule({ isRefresh: true });
   }, [fetchSchedule]);
 
   return useMemo(
@@ -193,13 +243,13 @@ export function useBaseballTeamGames(
       league: data?.league ?? null,
       team: data?.team ?? null,
       season: data?.season ?? null,
-      games: data?.games ?? [],
+      games,
       months: data?.months ?? [],
       loading,
       refreshing,
       error,
       refresh,
     }),
-    [data, loading, refreshing, error, refresh],
+    [data, games, loading, refreshing, error, refresh],
   );
 }

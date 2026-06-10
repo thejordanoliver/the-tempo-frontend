@@ -1,7 +1,4 @@
-import {
-  SkeletonBlock,
-  SkeletonCircle,
-} from "components/Skeletons/primitives";
+import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { StyleSheet, View } from "react-native";
@@ -45,7 +42,7 @@ const getStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     /* =========================
-       🧱 CARD LAYOUT (match real)
+       🧱 LAYOUT
     ========================= */
     card: {
       flexDirection: "row",
@@ -63,7 +60,7 @@ const getStyles = (isDark: boolean) => {
     ========================= */
     teamSection: {
       alignItems: "center",
-      width: 60,
+      width: 70,
     },
 
     logoSkeleton: {
@@ -97,12 +94,12 @@ const getStyles = (isDark: boolean) => {
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 120,
+      width: 100,
     },
 
     timeSkeleton: {
       width: 70,
-      height: 14,
+      height: 12,
       borderRadius: 6,
       backgroundColor: skeletonColor,
       marginBottom: 6,

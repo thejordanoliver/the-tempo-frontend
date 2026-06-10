@@ -1,4 +1,5 @@
 import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -10,7 +11,6 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useLastTeamGame } from "hooks/NBAHooks/useLastTeamGame";
 import { usePlayerSeasons } from "hooks/NBAHooks/usePlayerSeasons";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -20,7 +20,7 @@ export default function PlayerDetailScreen() {
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
     teamId: string;
-    league: any
+    league: any;
   }>();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -34,11 +34,12 @@ export default function PlayerDetailScreen() {
   const teamLogo = getTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
   const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(playerId);
+
   const {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useLastTeamGame(player?.team_id, isActive);
+  } = useTeamLatestGame("nba", teamId);
 
   // -------------------------
   // Header

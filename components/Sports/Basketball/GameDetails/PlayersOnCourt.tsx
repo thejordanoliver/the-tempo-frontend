@@ -2,7 +2,6 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamByESPNId } from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
-import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -34,7 +33,7 @@ type Props = {
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  league: string;
   gameStatusDescription: string | undefined;
 };
 
@@ -74,9 +73,6 @@ export default function PlayersOnCourt({
   const router = useRouter();
   const isWomen = league === "WCBB";
   const isNBA = league === "NBA";
-  const isWNBA = league === "WNBA";
-
-
 
   const tabs = [
     { key: "away", label: awayCode ?? "Away Team" },

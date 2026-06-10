@@ -1,6 +1,8 @@
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
+import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { useBasketballSeasonGames } from "@/hooks/BasketballHooks/useBasketballSeasonGames";
-import { filterByDate } from "@/utils/dateUtils";
+import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
+import { filterByDate, getFootballSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -19,9 +21,7 @@ import SportsListModal, {
 import { Colors } from "../../constants/styles";
 import { useFavoriteTeamsContext } from "../../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import { useFootballSeasonGames } from "../../hooks/FootballHooks/useFootballSeasonGames";
 import { useHockeyGames } from "../../hooks/HockeyHooks/useHockeyGames";
-import { useSeasonGames } from "../../hooks/NBAHooks/useSeasonGames";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { isLiveGame, normalizeGames } from "../../utils/games";
 
@@ -31,6 +31,7 @@ dayjs.extend(timezone);
 export default function LeagueScreen() {
   const { favorites } = useFavoriteTeamsContext();
   const navigation = useNavigation();
+  const currentFootballSeason = getFootballSeason();
   const { resolvedColorScheme, viewMode } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
@@ -54,7 +55,7 @@ export default function LeagueScreen() {
     games: nbaGames,
     loading: nbaLoading,
     refreshGames: refreshNBAGames,
-  } = useSeasonGames();
+  } = useBasketballGames(selectedDate, "nba");
 
   const {
     games: mlbGames,
@@ -75,16 +76,57 @@ export default function LeagueScreen() {
   } = useBaseballGames(selectedDate, "sb");
 
   const {
+    games: slvGames,
+    loading: slvLoading,
+    refreshGames: refreshSLVGames,
+  } = useBasketballGames(selectedDate, "summervegas");
+  const {
+    games: sluGames,
+    loading: sluLoading,
+    refreshGames: refreshSLUGames,
+  } = useBasketballGames(selectedDate, "summerutah");
+
+  const {
+    games: cfbGames,
+    loading: cfbLoading,
+    refreshGames: refreshCFBGames,
+  } = useFootballGames({
+    date: selectedDate,
+    season: currentFootballSeason,
+    league: "cfb",
+  });
+
+  const {
+    games: nflGames,
+    loading: nflLoading,
+    refreshGames: refreshNFLGames,
+  } = useFootballGames({
+    date: selectedDate,
+    season: currentFootballSeason,
+    league: "nfl",
+  });
+
+  const {
+    games: uflGames,
+    loading: uflLoading,
+    refreshGames: refreshUFLGames,
+  } = useFootballGames({
+    date: selectedDate,
+    season: currentFootballSeason,
+    league: "ufl",
+  });
+
+  const {
     games: mensBasketballGames,
     loading: mensCBBLoading,
-    refreshBasketballGames: refreshMensCBB,
-  } = useBasketballSeasonGames();
+    refreshGames: refreshMensCBB,
+  } = useBasketballGames(selectedDate, "cbb");
 
   const {
     games: womensBasketballGames,
     loading: womensCBBLoading,
-    refreshBasketballGames: refreshWomensCBB,
-  } = useBasketballSeasonGames({ isWomen: true });
+    refreshGames: refreshWomensCBB,
+  } = useBasketballGames(selectedDate, "wcbb");
 
   const {
     games: wnbaGames,
@@ -93,22 +135,10 @@ export default function LeagueScreen() {
   } = useBasketballSeasonGames({ isWNBA: true });
 
   const {
-    games: nflGames,
-    loading: nflLoading,
-    refetch: refreshNFLGames,
-  } = useFootballSeasonGames(1);
-
-  const {
     games: nhlGames,
     loading: nhlLoading,
     refreshGames: refreshNHLGames,
   } = useHockeyGames(selectedDate, "nhl");
-
-  const {
-    games: cfbGames,
-    loading: cfbLoading,
-    refetch: refreshCFBGames,
-  } = useFootballSeasonGames(2);
 
   // --------------------------------------------------
   // Header
@@ -147,14 +177,27 @@ export default function LeagueScreen() {
   );
   const normalizedCB = useMemo(() => normalizeGames(cbGames, "CB"), [cbGames]);
   const normalizedSB = useMemo(() => normalizeGames(sbGames, "SB"), [sbGames]);
-  const normalizedNFL = useMemo(
-    () => normalizeGames(nflGames, "NFL"),
-    [nflGames],
+  const normalizedSLV = useMemo(
+    () => normalizeGames(slvGames, "NBA"),
+    [slvGames],
   );
-  const normalizedCFB = useMemo(
-    () => normalizeGames(cfbGames, "CFB"),
-    [cfbGames],
+  const normalizedSLU = useMemo(
+    () => normalizeGames(sluGames, "NBA"),
+    [sluGames],
   );
+
+  const normalizedNFL = useMemo(() => {
+    return Array.isArray(nflGames) ? nflGames : [];
+  }, [nflGames]);
+
+  const normalizedCFB = useMemo(() => {
+    return Array.isArray(cfbGames) ? cfbGames : [];
+  }, [cfbGames]);
+
+  const normalizedUFL = useMemo(() => {
+    return Array.isArray(uflGames) ? uflGames : [];
+  }, [uflGames]);
+
   const normalizedMensCBB = useMemo(
     () => normalizeGames(mensBasketballGames, "CBB"),
     [mensBasketballGames],
@@ -176,15 +219,15 @@ export default function LeagueScreen() {
   const filteredMLB = filterByDate(normalizedMLB, selectedDate);
   const filteredCB = filterByDate(normalizedCB, selectedDate);
   const filteredSB = filterByDate(normalizedSB, selectedDate);
+  const filteredSLV = filterByDate(normalizedSLV, selectedDate);
+  const filteredSLU = filterByDate(normalizedSLU, selectedDate);
   const filteredNHL = filterByDate(normalizedNHL, selectedDate);
   const filteredCFB = filterByDate(normalizedCFB, selectedDate);
+  const filteredUFL = filterByDate(normalizedUFL, selectedDate);
   const filteredMensCBB = filterByDate(normalizedMensCBB, selectedDate);
   const filteredWomensCBB = filterByDate(normalizedWomensCBB, selectedDate);
   const filteredWNBA = filterByDate(normalizedWNBA, selectedDate);
 
-  // --------------------------------------------------
-  // Favorites helpers
-  // --------------------------------------------------
   // --------------------------------------------------
   // Favorites helpers
   // --------------------------------------------------
@@ -218,7 +261,10 @@ export default function LeagueScreen() {
 
     return [
       ...collect(filteredNBA, "NBA"),
+      ...collect(filteredSLV, "NBA"),
+      ...collect(filteredSLU, "NBA"),
       ...collect(filteredNFL, "NFL"),
+      ...collect(filteredUFL, "UFL"),
       ...collect(filteredCFB, "CFB"),
       ...collect(filteredMLB, "MLB"),
       ...collect(filteredCB, "CB"),
@@ -231,7 +277,10 @@ export default function LeagueScreen() {
   }, [
     filteredNBA,
     filteredWNBA,
+    filteredSLV,
+    filteredSLU,
     filteredNFL,
+    filteredUFL,
     filteredCFB,
     filteredNHL,
     filteredMLB,
@@ -249,18 +298,14 @@ export default function LeagueScreen() {
     const sections: CombinedGamesSection[] = [
       { category: "Favorites", data: sortLiveFirst(favoriteGames) },
       { category: "NBA", data: limitNonFavorites(filteredNBA, "NBA") },
-      { category: "WNBA", data: limitNonFavorites(filteredWNBA, "WNBA") },
-      { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
-      { category: "MLB", data: limitNonFavorites(filteredMLB, "MLB") },
       {
-        category: "College Baseball",
-        data: limitNonFavorites(filteredCB, "CB"),
+        category: "NBA Summer League",
+        data: limitNonFavorites(filteredSLV, "NBA"),
       },
       {
-        category: "College Softball",
-        data: limitNonFavorites(filteredSB, "SB"),
+        category: "NBA Summer League",
+        data: limitNonFavorites(filteredSLU, "NBA"),
       },
-      { category: "NHL", data: limitNonFavorites(filteredNHL, "NHL") },
       {
         category: "College Football",
         data: limitNonFavorites(filteredCFB, "CFB"),
@@ -273,14 +318,30 @@ export default function LeagueScreen() {
         category: "Women's College Basketball",
         data: limitNonFavorites(filteredWomensCBB, "WCBB"),
       },
+      { category: "WNBA", data: limitNonFavorites(filteredWNBA, "WNBA") },
+      { category: "NFL", data: limitNonFavorites(filteredNFL, "NFL") },
+      { category: "UFL", data: limitNonFavorites(filteredUFL, "UFL") },
+      { category: "MLB", data: limitNonFavorites(filteredMLB, "MLB") },
+      {
+        category: "College Baseball",
+        data: limitNonFavorites(filteredCB, "CB"),
+      },
+      {
+        category: "College Softball",
+        data: limitNonFavorites(filteredSB, "SB"),
+      },
+      { category: "NHL", data: limitNonFavorites(filteredNHL, "NHL") },
     ];
 
     return sections.filter((s) => s.data.length > 0);
   }, [
     favoriteGames,
     filteredNBA,
+    filteredSLV,
+    filteredSLU,
     filteredWNBA,
     filteredNFL,
+    filteredUFL,
     filteredCFB,
     filteredMLB,
     filteredNHL,
@@ -300,8 +361,11 @@ export default function LeagueScreen() {
     try {
       await Promise.all([
         refreshNBAGames(),
+        refreshSLVGames(),
+        refreshSLUGames(),
         refreshWNBAGames(),
         refreshNFLGames(),
+        refreshUFLGames(),
         refreshMLBGames(),
         refreshCBGames(),
         refreshSBGames(),
@@ -321,6 +385,8 @@ export default function LeagueScreen() {
   const markedDates = useMemo(() => {
     const all = [
       ...normalizedNBA,
+      ...normalizedSLV,
+      ...normalizedSLU,
       ...normalizedWNBA,
       ...normalizedNFL,
       ...normalizedMLB,
@@ -342,6 +408,8 @@ export default function LeagueScreen() {
     );
   }, [
     normalizedNBA,
+    normalizedSLV,
+    normalizedSLU,
     normalizedWNBA,
     normalizedNFL,
     normalizedMLB,
@@ -387,8 +455,11 @@ export default function LeagueScreen() {
               gamesByCategory={gamesByCategory}
               loading={
                 nbaLoading ||
+                slvLoading ||
+                sluLoading ||
                 wnbaLoading ||
                 nflLoading ||
+                uflLoading ||
                 mlbLoading ||
                 cbLoading ||
                 sbLoading ||

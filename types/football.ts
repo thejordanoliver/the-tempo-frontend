@@ -55,8 +55,8 @@ export interface CFBPlayer {
 
 export type FootballTeam = {
   id: number;
-  espnID: number;
-  oddsID?: string;
+  espnId: number;
+  oddsId?: string;
   name: string;
   shortName?: string;
   fullName: string;
@@ -68,7 +68,7 @@ export type FootballTeam = {
   conference?: string;
   conferenceShortName?: string;
   owner?: string;
-  venue: string;
+  venueName: string;
   established: number;
   logo: any;
   logoLight?: any;
@@ -96,7 +96,7 @@ export type FootballTeam = {
 //       utc?: string;
 //       local?: string;
 //     };
-//     venue: {
+//     venueName: {
 //       name: string;
 //       city: string;
 //     };
@@ -171,7 +171,7 @@ export type FootballGame = {
     displayClock: string;
     completed: false;
   };
-  venue: {
+  venueName: {
     id: number;
     name: string;
     city: string;
@@ -275,8 +275,8 @@ export type FootballGameCardProps = {
 
 export const emptyTeam: FootballTeam = {
   id: 0,
-  espnID: 0,
-  oddsID: "0",
+  espnId: 0,
+  oddsId: "0",
   name: "Unknown",
   fullName: "Unknown",
   code: "UNK",
@@ -284,7 +284,7 @@ export const emptyTeam: FootballTeam = {
   location: "Unknown",
   conference: "Unknown",
   owner: "Unknown",
-  venue: "Unknown",
+  venueName: "Unknown",
   address: "Unknown",
   established: 0,
   logo: PlaceholderLogo,
@@ -301,7 +301,7 @@ export const emptyTeam: FootballTeam = {
 
 export const emptyAwayTeam: FootballTeam = {
   id: 0,
-  espnID: -2,
+  espnId: -2,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -311,7 +311,7 @@ export const emptyAwayTeam: FootballTeam = {
   location: "Unknown",
   conference: "Unknown",
   owner: "Unknown",
-  venue: "Unknown",
+  venueName: "Unknown",
   established: 0,
   color: Colors.darkGray,
   secondaryColor: Colors.black,
@@ -325,7 +325,7 @@ export const emptyAwayTeam: FootballTeam = {
 
 export const emptyHomeTeam: FootballTeam = {
   id: 0,
-  espnID: -1,
+  espnId: -1,
   logo: PlaceholderLogo,
   logoLight: PlaceholderLogo,
   name: "TBD",
@@ -335,7 +335,7 @@ export const emptyHomeTeam: FootballTeam = {
   location: "Unknown",
   conference: "Unknown",
   owner: "Unknown",
-  venue: "Unknown",
+  venueName: "Unknown",
   established: 0,
   color: Colors.lightGray,
   secondaryColor: Colors.black,
@@ -359,8 +359,8 @@ export type Conference = {
 
 export interface CFBPlayoffBracketTeam {
   id: number | string;
-  espnID?: string | number;
-  oddsID?: string;
+  espnId?: string | number;
+  oddsId?: string;
   name: string;
   shortName?: string;
   fullName?: string;
@@ -373,7 +373,7 @@ export interface CFBPlayoffBracketTeam {
   address?: string;
   coach?: string;
   coachImage?: string;
-  venue?: string;
+  venueName?: string;
   established?: number;
   seed?: number | null;
   score?: number;
@@ -443,7 +443,7 @@ export type NFLPlayoffGameMeta = {
     time: string;
     timestamp: number;
   };
-  venue: {
+  venueName: {
     name: string;
     city: string;
   };

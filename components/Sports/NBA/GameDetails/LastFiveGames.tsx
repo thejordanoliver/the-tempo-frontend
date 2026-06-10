@@ -1,4 +1,5 @@
 // ---- LastFiveGames.tsx ----
+import { getUFLTeamLogo } from "@/constants/teamsUFL";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
@@ -93,6 +94,8 @@ export default function LastFiveGames({
         return getWNBATeamLogo(teamId, isDark);
       case "NFL":
         return getNFLTeamLogo(teamId, isDark);
+      case "UFL":
+        return getUFLTeamLogo(teamId, isDark);
       case "NHL":
         return getNHLTeamLogo(teamId, isDark);
       case "MLB": {

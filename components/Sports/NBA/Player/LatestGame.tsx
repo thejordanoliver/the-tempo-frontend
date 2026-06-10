@@ -10,14 +10,13 @@ import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
 import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import GameCard from "components/Sports/NBA/Games/GameCard";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { Game } from "types/nba";
 import BasketballGamePreviewModal from "../../Basketball/GamePreview/BasketballGamePreviewModal";
 import BasketballGameCard from "../../Basketball/Games/BasketballGameCard";
+import FootballGamePreviewModal from "../../NFL/GamePreview/FootballGamePreviewModal";
 import FootballGameCard from "../../NFL/Games/FootballGameCard";
 import HockeyGamePreviewModal from "../../NHL/GamePreview/HockeyGamePreviewModal";
 import HockeyGameCard from "../../NHL/Games/HockeyGameCard";
@@ -38,7 +37,7 @@ type BaseProps = {
 type Props =
   | ({
       league: "NBA";
-      game: Game | null;
+      game: BasketballGame | null;
     } & BaseProps)
   | ({
       league: "MLB";
@@ -115,7 +114,7 @@ export default function LatestGame({
           minDurationMs={400}
         >
           <View>
-            {league === "NBA" && <GameCard game={game} />}
+            {league === "NBA" && <BasketballGameCard game={game} />}
 
             {league === "MLB" && (
               <BaseballGameCard
@@ -188,6 +187,16 @@ export default function LatestGame({
           isMCH={false}
         />
       )}
+      {league === "NFL" ||
+        (league === "CFB" && modalVisible && (
+          <FootballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isNFL={isNFL}
+            isCFB={isCFB}
+          />
+        ))}
     </>
   );
 }

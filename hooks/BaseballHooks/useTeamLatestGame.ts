@@ -1,5 +1,5 @@
 import { BaseballGame } from "@/types/baseball";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type BaseballLeague = "mlb" | "cb" | "sb";
@@ -12,6 +12,30 @@ export interface LastBaseballTeamGameResponse {
   games?: BaseballGame[];
 }
 
+type FetchLastGameOptions = {
+  isRefresh?: boolean;
+  silent?: boolean;
+};
+
+const LIVE_STATES = new Set(["in", "half"]);
+
+function isLiveBaseballGame(game: any) {
+  const state = String(game?.status?.state || "").toLowerCase();
+  const description = String(game?.status?.description || "").toLowerCase();
+  const detail = String(game?.status?.detail || "").toLowerCase();
+  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
+
+  return (
+    LIVE_STATES.has(state) ||
+    description.includes("in progress") ||
+    detail.includes("in progress") ||
+    shortDetail.includes("in progress") ||
+    description.includes("live") ||
+    detail.includes("live") ||
+    shortDetail.includes("live")
+  );
+}
+
 export function useTeamLatestGame(
   league: BaseballLeague,
   teamId: number | string | null | undefined,
@@ -22,7 +46,10 @@ export function useTeamLatestGame(
   const [error, setError] = useState<string | null>(null);
 
   const fetchLastGame = useCallback(
-    async (isRefresh = false) => {
+    async ({
+      isRefresh = false,
+      silent = false,
+    }: FetchLastGameOptions = {}) => {
       if (!teamId) {
         setGame(null);
         setLoading(false);
@@ -34,7 +61,7 @@ export function useTeamLatestGame(
       try {
         if (isRefresh) {
           setRefreshing(true);
-        } else {
+        } else if (!silent) {
           setLoading(true);
         }
 
@@ -53,24 +80,49 @@ export function useTeamLatestGame(
         setGame(resolvedGame);
       } catch (err) {
         console.error("LAST BASEBALL TEAM GAME ERROR:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load last game",
-        );
-        setGame(null);
+
+        const message =
+          err instanceof Error ? err.message : "Failed to load last game";
+
+        setError(message);
+
+        // Do not clear the current game during silent polling.
+        if (!silent) {
+          setGame(null);
+        }
       } finally {
-        setLoading(false);
-        setRefreshing(false);
+        if (isRefresh) {
+          setRefreshing(false);
+        }
+
+        if (!silent) {
+          setLoading(false);
+        }
       }
     },
     [league, teamId],
   );
 
   useEffect(() => {
-    fetchLastGame(false);
+    fetchLastGame();
   }, [fetchLastGame]);
 
-  const refresh = useCallback(() => {
-    fetchLastGame(true);
+  const hasLiveGame = useMemo(() => {
+    return isLiveBaseballGame(game);
+  }, [game]);
+
+  useEffect(() => {
+    if (!hasLiveGame) return;
+
+    const interval = setInterval(() => {
+      fetchLastGame({ silent: true });
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [hasLiveGame, fetchLastGame]);
+
+  const refresh = useCallback(async () => {
+    await fetchLastGame({ isRefresh: true });
   }, [fetchLastGame]);
 
   return {

@@ -1,4 +1,8 @@
 // app/league/cbb.tsx
+import ConferenceListModal from "@/components/Sports/Basketball/ConferenceListModal";
+import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
+import { cbbConferences } from "@/constants/cbbConferences";
+import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -6,7 +10,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
@@ -16,32 +20,25 @@ import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
 import RecruitsList from "../../components/League/Recruiting/CBB/RecruitsList";
 import NewsList from "../../components/News/NewsList";
-import BasketballGamesList from "../../components/Sports/Basketball/Games/BasketballGamesList";
-import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
+import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "../../components/Sports/CFB/ConferenceListModal";
+import { ConferenceListModalRef } from "../../components/Sports/CFB/ConferenceListModal";
 import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
-import { getCBBTeam } from "../../constants/teamsCBB";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import { useBasketballSeasonGames } from "../../hooks/BasketballHooks/useBasketballSeasonGames";
-import { useCBBTournamentGames } from "../../hooks/BasketballHooks/useCBBTournamentGames";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import {
-  filterBasketballGames,
-  useAPTop25,
-} from "../../utils/CBBUtils/cbbGameUtils";
 import { getRecruitYear } from "../../utils/dateUtils";
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
+
+type SelectedConference = number | string | null;
 
 export default function CBBLeagueScreen() {
   const league = "CBB";
@@ -51,16 +48,19 @@ export default function CBBLeagueScreen() {
   const styles = getScoresStyles(isDark);
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const [selectedConference, setSelectedConference] =
-    useState<string>("Top 25");
+    useState<SelectedConference>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const {
-    games: seasonGames,
-    loading: cbbloading,
-    refreshBasketballGames,
-  } = useBasketballSeasonGames();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const { calendar } = useLeagueCalendar(league);
-  const tournamentFilter = useCBBTournamentGames();
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useBasketballGames(selectedDate);
+
   const {
     articles,
     loading: newsLoading,
@@ -70,7 +70,7 @@ export default function CBBLeagueScreen() {
   } = useLeaguesNews(league, 10);
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-  const [refreshing, setRefreshing] = useState(false);
+  const [gamesRefreshing, setGamesRefreshing] = useState(false);
   const [recruitTeam, setRecruitTeam] = useState("all");
   const [recruitYear, setRecruitYear] = useState(() =>
     String(getRecruitYear()),
@@ -80,10 +80,28 @@ export default function CBBLeagueScreen() {
     "players",
   );
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const apTop25 = useAPTop25(league);
-  const top25Teams = apTop25.map((t) => String(t?.id));
   const { categories, loading, error } = useSeasonLeaders(2026, league);
+
+  const selectedConferenceName = useMemo(() => {
+    if (!selectedConference) return undefined;
+
+    if (selectedConference === "top25") {
+      return "Top 25";
+    }
+
+    const conference = cbbConferences.find(
+      (conf) => String(conf.groupId) === String(selectedConference),
+    );
+
+    return conference?.shortName || conference?.name || undefined;
+  }, [selectedConference]);
+
+  const selectedConferenceGroupId = useMemo(() => {
+    if (!selectedConference || selectedConference === "top25") return null;
+
+    const conferenceId = Number(selectedConference);
+    return Number.isFinite(conferenceId) ? conferenceId : null;
+  }, [selectedConference]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -95,22 +113,23 @@ export default function CBBLeagueScreen() {
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
           onBack={goBack}
-          selectedConferenceName={selectedConference ?? undefined}
+          selectedConferenceName={selectedConferenceName}
         />
       ),
     });
-  }, [navigation, selectedConference, isDropdownOpen]);
+  }, [navigation, selectedConferenceName, isDropdownOpen]);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
+  const handleScoresRefresh = React.useCallback(async () => {
+    setGamesRefreshing(true);
+
     try {
-      await Promise.all([refreshBasketballGames()]);
+      await refreshGames();
     } catch (error) {
-      console.warn("Failed to refresh:", error);
+      console.warn("Failed to refresh games:", error);
     } finally {
-      setRefreshing(false);
+      setGamesRefreshing(false);
     }
-  };
+  }, [refreshGames]);
 
   const changeDateByDays = (days: number) => {
     setSelectedDate((prev) =>
@@ -132,54 +151,6 @@ export default function CBBLeagueScreen() {
       },
       {} as Record<string, { marked: boolean; dotColor: string }>,
     );
-
-  const filteredGames = React.useMemo(() => {
-    const gamesForDate = seasonGames.filter((game) =>
-      dayjs.utc(game.date).local().isSame(dayjs(selectedDate), "day"),
-    );
-
-    let result = gamesForDate;
-
-    if (selectedConference === "Top 25") {
-      result = gamesForDate.filter((game) => {
-        const home = getCBBTeam(game?.teams?.home?.id, false);
-        const away = getCBBTeam(game?.teams?.away?.id, false);
-        const homeESPN = home?.espnID;
-        const awayESPN = away?.espnID;
-
-        return (
-          (homeESPN && top25Teams.includes(String(homeESPN))) ||
-          (awayESPN && top25Teams.includes(String(awayESPN)))
-        );
-      });
-    }
-    if (selectedConference === "NCAA Tournament") {
-      result = gamesForDate.filter((game) => {
-        const home = getCBBTeam(game?.teams?.home?.id, false);
-        const away = getCBBTeam(game?.teams?.away?.id, false);
-        const homeESPN = home?.espnID;
-        const awayESPN = away?.espnID;
-        const seasonStage =
-          tournamentFilter?.games[0]?.competitions[0]?.tournamentId === 22;
-
-        return (seasonStage && homeESPN) || (seasonStage && awayESPN);
-      });
-    } else if (selectedConference) {
-      result = filterBasketballGames({
-        games: gamesForDate,
-        selectedConference,
-        top25Teams,
-      });
-    }
-
-    return result;
-  }, [
-    seasonGames,
-    selectedDate,
-    selectedConference,
-    top25Teams,
-    tournamentFilter.games,
-  ]);
 
   return (
     <>
@@ -214,10 +185,12 @@ export default function CBBLeagueScreen() {
             />
 
             <BasketballGamesList
-              games={filteredGames}
-              loading={cbbloading}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
+              games={games}
+              error={gamesError}
+              loading={loadingGames}
+              refreshing={gamesRefreshing}
+              onRefresh={handleScoresRefresh}
+              isCBB={true}
             />
           </View>
 
@@ -242,7 +215,7 @@ export default function CBBLeagueScreen() {
                 <CBBStandingsList league={league} />
               ) : (
                 <CBBConferenceStandingsList
-                  selectedConference={selectedConference}
+                  selectedConference={String(selectedConferenceGroupId)}
                 />
               )}
             </>

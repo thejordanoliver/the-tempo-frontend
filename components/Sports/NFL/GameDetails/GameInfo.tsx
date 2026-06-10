@@ -6,9 +6,9 @@ import { formatQuarter } from "utils/games";
 type GameInfoProps = {
   date: string;
   time: string;
-  period?: number;
-  clock?: string;
-  downAndDistance?: string | null;
+  period: number | undefined | null;
+  clock: string;
+  downDistance: string | undefined | null;
   isDark: boolean;
   broadcast?: string;
   headlineText?: string;
@@ -22,31 +22,32 @@ export function GameInfo({
   time,
   period,
   clock,
-  downAndDistance,
-  isDark,
+  downDistance,
   broadcast,
   gameStatusDescription,
   gameStatusShortDetail,
   redzone = false,
+  isDark,
 }: GameInfoProps) {
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period";
-  const isHalftime = gameStatusShortDetail === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
-  const endOfPeriod = gameStatusDescription === "End Of Period";
-  const isCanceled = gameStatusDescription == "Canceled";
-  const isScheduled =
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Not Started";
   const styles = gameInfoStyles(isDark);
   const isRedzone = redzone;
 
-  const renderDownAndDistance = () => {
-    if (!downAndDistance) return null;
+  const inProgress =
+    gameStatusDescription === "In Progress" ||
+    gameStatusDescription === "End of Period";
+  const endOfPeriod = gameStatusDescription === "End of Period";
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isHalftime = gameStatusDescription === "Halftime";
 
-    // Split only once on " at "
-    const [beforeAt, afterAt] = downAndDistance.split(" at ");
+  const renderdownDistance = () => {
+    if (!downDistance) return null;
+
+    const [beforeAt, afterAt] = downDistance.split(" at ");
 
     return (
       <Text style={styles.downAndDistance}>
@@ -70,10 +71,8 @@ export function GameInfo({
     );
   };
 
-  // ---- Render ----
   return (
     <View style={styles.container}>
-      {/* Scheduled */}
       {isScheduled && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date || "TBD"}</Text>
@@ -82,7 +81,6 @@ export function GameInfo({
         </View>
       )}
 
-      {/* In Progress + End of Period */}
       {inProgress && (
         <>
           <View style={styles.infoWrapper}>
@@ -92,10 +90,10 @@ export function GameInfo({
               <Text style={styles.clock}>{clock}</Text>
             </>
           </View>
-          {renderDownAndDistance()}
+          {renderdownDistance()}
         </>
       )}
-      {/* In Progress + End of Period */}
+
       {endOfPeriod && (
         <>
           <View style={styles.infoWrapper}>
@@ -105,14 +103,12 @@ export function GameInfo({
               <Text style={styles.clock}>{clock}</Text>
             </>
           </View>
-          {renderDownAndDistance()}
+          {renderdownDistance()}
         </>
       )}
 
-      {/* Halftime */}
       {isHalftime && <Text style={styles.clock}>Halftime</Text>}
 
-      {/* Final */}
       {isFinal && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
@@ -121,8 +117,9 @@ export function GameInfo({
         </View>
       )}
 
-      {/* Canceled / Delayed / Postponed */}
-      {isCanceled && <Text style={styles.finalText}>Canceled</Text>}
+      {(isCanceled || isDelayed || isForfeited || isPostponed) && (
+        <Text style={styles.finalText}>{gameStatusDescription}</Text>
+      )}
 
       {/* 📺 Broadcast */}
       {broadcast && <Text style={styles.broadcasts}>{broadcast}</Text>}

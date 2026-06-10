@@ -370,7 +370,7 @@ import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 export const cfbTeams: FootballTeam[] = [
   {
     id: 241,
-    espnID: 2000,
+    espnId: 2000,
     name: "Abilene Christian",
     fullName: "Abilene Christian Wildcats",
     code: "ACU",
@@ -380,7 +380,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AbileneChristianLogo,
     location: "Abilene, TX",
     city: "Abilene",
-    venue: "Anthony Field at Wildcat Stadium",
+    venueName: "Anthony Field at Wildcat Stadium",
     address: "1949 ACU Dr, Abilene, TX 79699",
     venueCapacity: "12,000",
     established: 1919,
@@ -394,7 +394,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 149,
-    espnID: 2005,
+    espnId: 2005,
     name: "Air Force",
     fullName: "Air Force Falcons",
     code: "AF",
@@ -404,7 +404,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AirForceLogoLight,
     location: "Colorado Springs, CO",
     city: "Colorado Springs",
-    venue: "Falcon Stadium",
+    venueName: "Falcon Stadium",
     address: "2168 Field House Dr, USAF Academy, CO 80840",
     venueCapacity: "46,692",
     established: 1955,
@@ -418,7 +418,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 67,
-    espnID: 2006,
+    espnId: 2006,
     name: "Akron",
     fullName: "Akron Zips",
     code: "AKR",
@@ -428,7 +428,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AkronLogo,
     location: "Akron, OH",
     city: "Akron",
-    venue: "InfoCision Stadium–Summa Field",
+    venueName: "InfoCision Stadium–Summa Field",
     address: "375 E Exchange St, Akron, OH 44304",
     venueCapacity: "27,881",
     established: 1891,
@@ -442,7 +442,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 106,
-    espnID: 333,
+    espnId: 333,
     name: "Alabama",
     fullName: "Alabama Crimson Tide",
     code: "ALA",
@@ -452,7 +452,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AlabamaLogoLight,
     location: "Tuscaloosa, AL",
     city: "Tuscaloosa",
-    venue: "Bryant–Denny Stadium",
+    venueName: "Bryant–Denny Stadium",
     address: "1920 Paul W Bryant Dr Gate 34, Tuscaloosa, AL 35401",
     venueCapacity: "100,077",
     established: 1892,
@@ -466,7 +466,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 82,
-    espnID: 2010,
+    espnId: 2010,
     name: "Alabama A&M",
     fullName: "Alabama A&M Bulldogs",
     code: "AAMU",
@@ -476,7 +476,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AlabamaAMLogoLight,
     location: "Normal, AL",
     city: "Normal",
-    venue: "Louis Crews Stadium",
+    venueName: "Louis Crews Stadium",
     address: "3535 Meridian St N, Huntsville, AL 35811",
     venueCapacity: "21,000",
     established: 1912,
@@ -489,7 +489,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 221,
-    espnID: 2011,
+    espnId: 2011,
     name: "Alabama State",
     fullName: "Alabama State Hornets",
     code: "ALST",
@@ -499,7 +499,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AlabamaStLogo,
     location: "Montgomery, AL",
     city: "Montgomery",
-    venue: "ASU Stadium",
+    venueName: "ASU Stadium",
     address: "915 S Jackson St, Montgomery, AL 36104",
     venueCapacity: "26,500",
     established: 1901,
@@ -513,7 +513,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 228,
-    espnID: 2016,
+    espnId: 2016,
     name: "Alcorn State",
     fullName: "Alcorn State Braves",
     code: "ALCN",
@@ -523,7 +523,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AlcornStLogo,
     location: "Lorman, MS",
     city: "Lorman",
-    venue: "Jack Spinks Stadium",
+    venueName: "Jack Spinks Stadium",
     address: "1010 ASU Dr, Lorman, MS 39096",
     venueCapacity: "22,500",
     established: 1921,
@@ -537,7 +537,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 144,
-    espnID: 2026,
+    espnId: 2026,
     name: "App State",
     fullName: "App State Mountaineers",
     code: "APP",
@@ -547,7 +547,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AppalachianStateLogo,
     location: "Boone, NC",
     city: "Boone",
-    venue: "Kidd Brewer Stadium",
+    venueName: "Kidd Brewer Stadium",
     address: "135 Jack Branch Dr, Boone, NC 28608",
     venueCapacity: "30,000",
     established: 1929,
@@ -561,7 +561,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 156,
-    espnID: 12,
+    espnId: 12,
     name: "Arizona",
     fullName: "Arizona Wildcats",
     code: "ARIZ",
@@ -571,7 +571,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArizonaLogo,
     location: "Tucson, AZ",
     city: "Tucson",
-    venue: "Arizona Stadium",
+    venueName: "Arizona Stadium",
     address: "1 N National Championship Dr, Tucson, AZ 85721",
     venueCapacity: "50,782",
     established: 1899,
@@ -585,7 +585,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 86,
-    espnID: 9,
+    espnId: 9,
     name: "Arizona State",
     fullName: "Arizona State Sun Devils",
     code: "ASU",
@@ -595,7 +595,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArizonaStateLogo,
     location: "Tempe, AZ",
     city: "Tempe",
-    venue: "Mountain America Stadium",
+    venueName: "Mountain America Stadium",
     address: "500 E Veterans Way, Tempe, AZ 85281",
     venueCapacity: "53,599",
     established: 1897,
@@ -609,7 +609,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 127,
-    espnID: 8,
+    espnId: 8,
     name: "Arkansas",
     fullName: "Arkansas Razorbacks",
     code: "ARK",
@@ -619,7 +619,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArkansasLogoLight,
     location: "Fayetteville, AR",
     city: "Fayetteville",
-    venue: "Donald W. Reynolds Razorback Stadium",
+    venueName: "Donald W. Reynolds Razorback Stadium",
     address: "350 N Razorback Rd, Fayetteville, AR 72701",
     venueCapacity: "76,000",
     established: 1894,
@@ -633,7 +633,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 184,
-    espnID: 2032,
+    espnId: 2032,
     name: "Arkansas State",
     fullName: "Arkansas State Red Wolves",
     code: "ARST",
@@ -643,7 +643,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArkansasStateLogo,
     location: "Jonesboro, AR",
     city: "Jonesboro",
-    venue: "Centennial Bank Stadium",
+    venueName: "Centennial Bank Stadium",
     address: "2180 Aggie Rd, Jonesboro, AR 72401",
     venueCapacity: "30,706",
     established: 1911,
@@ -657,7 +657,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 237,
-    espnID: 2029,
+    espnId: 2029,
     name: "Arkansas-Pine Bluff",
     fullName: "Arkansas-Pine Bluff Golden Lions",
     shortName: "AR-Pine Bluff",
@@ -668,7 +668,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArkansasPineBluffLogo,
     location: "Pine Bluff, AR",
     city: "Pine Bluff",
-    venue: "Simmons Bank Field",
+    venueName: "Simmons Bank Field",
     address: "1200 N University Dr, Pine Bluff, AR 71601",
     venueCapacity: "16,000",
     established: 1916,
@@ -682,7 +682,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 177,
-    espnID: 349,
+    espnId: 349,
     name: "Army",
     fullName: "Army Black Knights",
     code: "ARMY",
@@ -692,7 +692,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ArmyLogo,
     location: "West Point, NY",
     city: "West Point",
-    venue: "Michie Stadium",
+    venueName: "Michie Stadium",
     address: "700 Mills Rd, West Point, NY 10996",
     venueCapacity: "38,000",
     established: 1890,
@@ -706,7 +706,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 171,
-    espnID: 2,
+    espnId: 2,
     name: "Auburn",
     fullName: "Auburn Tigers",
     code: "AUB",
@@ -716,7 +716,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AuburnLogoLight,
     location: "Auburn, AL",
     city: "Auburn",
-    venue: "Jordan–Hare Stadium",
+    venueName: "Jordan–Hare Stadium",
     address: "251 S Donahue Dr, Auburn, AL 36849",
     venueCapacity: "88,043",
     established: 1892,
@@ -730,7 +730,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 40,
-    espnID: 2046,
+    espnId: 2046,
     name: "Austin Peay",
     fullName: "Austin Peay Governors",
     code: "APSU",
@@ -740,7 +740,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: AustinPeayLogo,
     location: "Clarksville, TN",
     city: "Clarksville",
-    venue: "Fortera Stadium",
+    venueName: "Fortera Stadium",
     address: "601 College St, Clarksville, TN 37044",
     venueCapacity: "10,000",
     established: 1930,
@@ -754,7 +754,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 136,
-    espnID: 252,
+    espnId: 252,
     name: "BYU",
     fullName: "BYU Cougars",
     code: "BYU",
@@ -764,7 +764,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BYULogoLight,
     location: "Provo, UT",
     city: "Provo",
-    venue: "LaVell Edwards Stadium",
+    venueName: "LaVell Edwards Stadium",
     address: "1700 N Canyon Rd, Provo, UT 84604",
     venueCapacity: "63,470",
     established: 1922,
@@ -778,7 +778,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 70,
-    espnID: 2050,
+    espnId: 2050,
     name: "Ball State",
     fullName: "Ball State Cardinals",
     code: "BALL",
@@ -788,7 +788,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BallStateLogo,
     location: "Muncie, IN",
     city: "Muncie",
-    venue: "Scheumann Stadium",
+    venueName: "Scheumann Stadium",
     address: "2801 W Bethel Ave, Muncie, IN 47304",
     venueCapacity: "22,500",
     established: 1924,
@@ -802,7 +802,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 118,
-    espnID: 239,
+    espnId: 239,
     name: "Baylor",
     fullName: "Baylor Bears",
     code: "BAY",
@@ -812,7 +812,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BaylorLogoLight,
     location: "Waco, TX",
     city: "Waco",
-    venue: "McLane Stadium",
+    venueName: "McLane Stadium",
     address: "1001 S Martin Luther King Jr Blvd, Waco, TX 76704",
     venueCapacity: "45,140",
     established: 1899,
@@ -826,7 +826,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 467,
-    espnID: 2757,
+    espnId: 2757,
     name: "Berry College",
     fullName: "Berry College Vikings",
     code: "BER",
@@ -836,7 +836,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BerryCollegeLogo,
     location: "Mount Berry, GA",
     city: "Mount Berry",
-    venue: "Valhalla Stadium",
+    venueName: "Valhalla Stadium",
     address: "2277 Martha Berry Hwy NW, Mount Berry, GA 30149",
     venueCapacity: "2500",
     established: 2013,
@@ -850,7 +850,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 124,
-    espnID: 2065,
+    espnId: 2065,
     name: "Bethune-Cookman",
     fullName: "Bethune-Cookman Wildcats",
     shortName: "Bethune",
@@ -861,7 +861,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BethuneCookmanLogo,
     location: "Daytona Beach, FL",
     city: "Daytona Beach",
-    venue: "Daytona Stadium",
+    venueName: "Daytona Stadium",
     address: "3917 LPGA Blvd, Daytona Beach, FL 32124",
     venueCapacity: "15,000",
     established: 1925,
@@ -875,7 +875,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 204,
-    espnID: 68,
+    espnId: 68,
     name: "Boise State",
     fullName: "Boise State Broncos",
     code: "BOIS",
@@ -885,7 +885,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BoiseStateLogo,
     location: "Boise, ID",
     city: "Boise",
-    venue: "Albertsons Stadium",
+    venueName: "Albertsons Stadium",
     address: "1400 Bronco Ln, Boise, ID 83706",
     venueCapacity: "36,363",
     established: 1933,
@@ -899,7 +899,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 142,
-    espnID: 103,
+    espnId: 103,
     name: "Boston College",
     fullName: "Boston College Eagles",
     code: "BC",
@@ -909,7 +909,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BostonCollegeLogoLight,
     location: "Chestnut Hill, MA",
     city: "Chestnut Hill",
-    venue: "Alumni Stadium",
+    venueName: "Alumni Stadium",
     address: "2604 Beacon St, Chestnut Hill, MA 02467",
     venueCapacity: "44,500",
     established: 1893,
@@ -923,7 +923,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 154,
-    espnID: 189,
+    espnId: 189,
     name: "Bowling Green",
     fullName: "Bowling Green Falcons",
     code: "BGSU",
@@ -933,7 +933,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BowlingGreenLogo,
     location: "Bowling Green, OH",
     city: "Bowling Green",
-    venue: "Doyt L. Perry Stadium",
+    venueName: "Doyt L. Perry Stadium",
     address: "1610 Stadium Dr, Bowling Green, OH 43403",
     venueCapacity: "24,000",
     established: 1919,
@@ -947,7 +947,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 377,
-    espnID: 2079,
+    espnId: 2079,
     name: "Bridgewater (VA)",
     fullName: "Bridgewater (VA) Eagles",
     code: "BRVA",
@@ -957,7 +957,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BridgewaterVALogo,
     location: "Bridgewater, VA",
     city: "Bridgewater",
-    venue: "Jopson Field",
+    venueName: "Jopson Field",
     address: "402 E College St, Bridgewater, VA 22812",
     venueCapacity: "4,000",
     established: 1889,
@@ -971,7 +971,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 74,
-    espnID: 2803,
+    espnId: 2803,
     name: "Bryant",
     fullName: "Bryant Bulldogs",
     code: "BRY",
@@ -981,7 +981,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BryantLogo,
     location: "Smithfield, RI",
     city: "Smithfield",
-    venue: "Beirne Stadium",
+    venueName: "Beirne Stadium",
     address: "1150 Douglas Pike, Smithfield, RI 02917",
     venueCapacity: "7,000",
     established: 1999,
@@ -995,7 +995,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 245,
-    espnID: 2083,
+    espnId: 2083,
     name: "Bucknell",
     fullName: "Bucknell Bison",
     code: "BUCK",
@@ -1005,7 +1005,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BucknellLogo,
     location: "Lewisburg, PA",
     city: "Lewisburg",
-    venue: "Christy Mathewson–Memorial Stadium",
+    venueName: "Christy Mathewson–Memorial Stadium",
     address: "701 Moore Ave, Lewisburg, PA 17837",
     venueCapacity: "13,100",
     established: 1883,
@@ -1019,7 +1019,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 141,
-    espnID: 2084,
+    espnId: 2084,
     name: "Buffalo",
     fullName: "Buffalo Bulls",
     code: "BUF",
@@ -1029,7 +1029,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: BuffaloLogo,
     location: "Buffalo, NY",
     city: "Buffalo",
-    venue: "UB Stadium",
+    venueName: "UB Stadium",
     address: "102 Alumni Arena, Buffalo, NY 14260",
     venueCapacity: "29,013",
     established: 1894,
@@ -1042,7 +1042,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 281,
-    espnID: 2086,
+    espnId: 2086,
     name: "Butler",
     fullName: "Butler Bulldogs",
     code: "BUT",
@@ -1052,7 +1052,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ButlerLogo,
     location: "Indianapolis, IN",
     city: "Indianapolis",
-    venue: "Bud and Jackie Sellick Bowl",
+    venueName: "Bud and Jackie Sellick Bowl",
     address: "510 W 49th St, Indianapolis, IN 46208",
     venueCapacity: "7,500",
     established: 1884,
@@ -1066,7 +1066,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 89,
-    espnID: 13,
+    espnId: 13,
     name: "Cal Poly",
     fullName: "Cal Poly Mustangs",
     code: "CP",
@@ -1076,7 +1076,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CalPolyLogo,
     location: "San Luis Obispo, CA",
     city: "San Luis Obispo",
-    venue: "Alex G. Spanos Stadium",
+    venueName: "Alex G. Spanos Stadium",
     address: "1 Grand Ave, San Luis Obispo, CA 93407",
     venueCapacity: "11,075",
     established: 1915,
@@ -1090,7 +1090,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 161,
-    espnID: 25,
+    espnId: 25,
     name: "California",
     fullName: "California Golden Bears",
     code: "CAL",
@@ -1100,7 +1100,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CaliforniaLogoLight,
     location: "Berkeley, CA",
     city: "Berkeley",
-    venue: "California Memorial Stadium",
+    venueName: "California Memorial Stadium",
     address: "2227 Piedmont Ave, Berkeley, CA 94720",
     venueCapacity: "62,467",
     established: 1886,
@@ -1114,7 +1114,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 249,
-    espnID: 2097,
+    espnId: 2097,
     name: "Campbell",
     fullName: "Campbell Fighting Camels",
     code: "CAM",
@@ -1124,7 +1124,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CampbellLogo,
     location: "Buies Creek, NC",
     city: "Buies Creek",
-    venue: "Barker-Lane Stadium",
+    venueName: "Barker-Lane Stadium",
     address: "180 Wade Stewart Cir, Buies Creek, NC 27506",
     venueCapacity: "5,500",
     established: 1925,
@@ -1138,7 +1138,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 214,
-    espnID: 2110,
+    espnId: 2110,
     name: "Central Arkansas",
     fullName: "Central Arkansas Bears",
     code: "CARK",
@@ -1148,7 +1148,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CentralArkansasLogo,
     location: "Conway, AR",
     city: "Conway",
-    venue: "Estes Stadium",
+    venueName: "Estes Stadium",
     address: "201 Donaghey Ave, Conway, AR 72035",
     venueCapacity: "10,000",
     established: 1908,
@@ -1162,7 +1162,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 137,
-    espnID: 2115,
+    espnId: 2115,
     name: "Central Connecticut",
     fullName: "Central Connecticut Blue Devils",
     shortName: "C Connecticut",
@@ -1173,7 +1173,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CentralConnecticutLogo,
     location: "New Britain, CT",
     city: "New Britain",
-    venue: "Arute Field",
+    venueName: "Arute Field",
     address: "1615 Stanley St, New Britain, CT 06050",
     venueCapacity: "5,500",
     established: 1935,
@@ -1187,7 +1187,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 62,
-    espnID: 2117,
+    espnId: 2117,
     name: "Central Michigan",
     fullName: "Central Michigan Chippewas",
     code: "CMU",
@@ -1197,7 +1197,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CentralMichiganLogoLight,
     location: "Mount Pleasant, MI",
     city: "Mount Pleasant",
-    venue: "Kelly/Shorts Stadium",
+    venueName: "Kelly/Shorts Stadium",
     address: "360 E Broomfield St, Mount Pleasant, MI 48859",
     venueCapacity: "30,255",
     established: 1896,
@@ -1211,7 +1211,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 609,
-    espnID: 2120,
+    espnId: 2120,
     name: "Central Washington",
     fullName: "Central Washington",
     shortName: "C Wash",
@@ -1222,7 +1222,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CentralWashingtonLogo,
     location: "Ellensburg, WA",
     city: "Ellensburg",
-    venue: "Tomlinson Stadium",
+    venueName: "Tomlinson Stadium",
     address: "1150 Wildcat Way, Ellensburg, WA 98926",
     venueCapacity: "4,000",
     established: 1893,
@@ -1236,7 +1236,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 213,
-    espnID: 2127,
+    espnId: 2127,
     name: "Charleston Southern",
     fullName: "Charleston Southern Buccaneers",
     code: "CHSO",
@@ -1246,7 +1246,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CharlestonSouthernLogo,
     location: "Charleston, SC",
     city: "Charleston",
-    venue: "Buccaneer Field",
+    venueName: "Buccaneer Field",
     address: "9200 University Blvd, North Charleston, SC 29406",
     venueCapacity: "4,000",
     established: 1991,
@@ -1260,7 +1260,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 52,
-    espnID: 2429,
+    espnId: 2429,
     name: "Charlotte",
     fullName: "Charlotte 49ers",
     code: "CLT",
@@ -1270,7 +1270,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CharlotteLogoLight,
     location: "Charlotte, NC",
     city: "Charlotte",
-    venue: "Jerry Richardson Stadium",
+    venueName: "Jerry Richardson Stadium",
     address: "9201 University City Blvd, Charlotte, NC 28262",
     venueCapacity: "15,314",
     established: 1946,
@@ -1284,7 +1284,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 255,
-    espnID: 236,
+    espnId: 236,
     name: "Chattanooga",
     fullName: "Chattanooga Mocs",
     code: "UTC",
@@ -1294,7 +1294,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ChattanoogaLogo,
     location: "Chattanooga, TN",
     city: "Chattanooga",
-    venue: "Finley Stadium",
+    venueName: "Finley Stadium",
     address: "1826 Reggie White Blvd, Chattanooga, TN 37408",
     venueCapacity: "20,668",
     established: 1904,
@@ -1308,7 +1308,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 431,
-    espnID: 80,
+    espnId: 80,
     name: "Chicago",
     fullName: "Chicago Maroons",
     code: "CHI",
@@ -1318,7 +1318,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ChicagoLogoLight,
     location: "Chicago, IL",
     city: "Chicago",
-    venue: "Stagg Field",
+    venueName: "Stagg Field",
     address: "5550 S University Ave, Chicago, IL 60637",
     venueCapacity: "1,650",
     established: 1892,
@@ -1332,7 +1332,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 710,
-    espnID: 3112,
+    espnId: 3112,
     name: "Christopher Newport",
     fullName: "Christopher Newport Captains",
     code: "CHR",
@@ -1342,7 +1342,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ChristopherNewportLogo,
     location: "Newport News, VA",
     city: "Newport News",
-    venue: "POMOCO Stadium",
+    venueName: "POMOCO Stadium",
     address: "1 University Pl, Newport News, VA 23606",
     venueCapacity: "4,200",
     established: 2001,
@@ -1356,7 +1356,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 128,
-    espnID: 2132,
+    espnId: 2132,
     name: "Cincinnati",
     fullName: "Cincinnati Bearcats",
     code: "CIN",
@@ -1366,7 +1366,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CincinnatiLogoLight,
     location: "Cincinnati, OH",
     city: "Cincinnati",
-    venue: "Nippert Stadium",
+    venueName: "Nippert Stadium",
     address: "2700 Bearcat Way, Cincinnati, OH 45221",
     venueCapacity: "38,088",
     established: 1885,
@@ -1380,7 +1380,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 209,
-    espnID: 228,
+    espnId: 228,
     name: "Clemson",
     fullName: "Clemson Tigers",
     code: "CLEM",
@@ -1390,7 +1390,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ClemsonLogoLight,
     location: "Clemson, SC",
     city: "Clemson",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "1 Avenue of Champions, Clemson, SC 29634",
     venueCapacity: "81,500",
     established: 1896,
@@ -1404,7 +1404,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 176,
-    espnID: 324,
+    espnId: 324,
     name: "Coastal Carolina",
     fullName: "Coastal Carolina Chanticleers",
     code: "CCU",
@@ -1414,7 +1414,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CoastalCarolinaLogo,
     location: "Conway, SC",
     city: "Conway",
-    venue: "Brooks Stadium",
+    venueName: "Brooks Stadium",
     address: "540 University Blvd, Conway, SC 29528",
     venueCapacity: "21,000",
     established: 2003,
@@ -1428,7 +1428,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 192,
-    espnID: 2142,
+    espnId: 2142,
     name: "Colgate",
     fullName: "Colgate Raiders",
     code: "COLG",
@@ -1438,7 +1438,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ColgateLogoLight,
     location: "Hamilton, NY",
     city: "Hamilton",
-    venue: "Andy Kerr Stadium",
+    venueName: "Andy Kerr Stadium",
     address: "13 Oak Dr, Hamilton, NY 13346",
     venueCapacity: "10,221",
     established: 1890,
@@ -1452,7 +1452,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 104,
-    espnID: 38,
+    espnId: 38,
     name: "Colorado",
     fullName: "Colorado Buffaloes",
     code: "COLO",
@@ -1462,7 +1462,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ColoradoLogo,
     location: "Boulder, CO",
     city: "Boulder",
-    venue: "Folsom Field",
+    venueName: "Folsom Field",
     address: "2400 Colorado Ave, Boulder, CO 80302",
     venueCapacity: "50,183",
     established: 1890,
@@ -1475,7 +1475,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 116,
-    espnID: 36,
+    espnId: 36,
     name: "Colorado State",
     fullName: "Colorado State Rams",
     code: "CSU",
@@ -1485,7 +1485,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ColoradoStateLogo,
     location: "Fort Collins, CO",
     city: "Fort Collins",
-    venue: "Canvas Stadium",
+    venueName: "Canvas Stadium",
     address: "751 W Pitkin St, Fort Collins, CO 80521",
     venueCapacity: "36,500",
     established: 1892,
@@ -1499,7 +1499,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 330,
-    espnID: 171,
+    espnId: 171,
     name: "Columbia",
     fullName: "Columbia Lions",
     code: "COLU",
@@ -1509,7 +1509,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ColumbiaLogo,
     location: "New York, NY",
     city: "New York",
-    venue: "Robert K. Kraft Field at Lawrence A. Wien Stadium",
+    venueName: "Robert K. Kraft Field at Lawrence A. Wien Stadium",
     address: "533 W 218th St, New York, NY 10034",
     venueCapacity: "17,000",
     established: 1870,
@@ -1523,7 +1523,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 326,
-    espnID: 172,
+    espnId: 172,
     name: "Cornell",
     fullName: "Cornell Big Red",
     code: "COR",
@@ -1533,7 +1533,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: CornellLogo,
     location: "Ithaca, NY",
     city: "Ithaca",
-    venue: "Schoellkopf Field",
+    venueName: "Schoellkopf Field",
     address: "512 Campus Rd, Ithaca, NY 14853",
     venueCapacity: "25,597",
     established: 1887,
@@ -1547,7 +1547,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 327,
-    espnID: 159,
+    espnId: 159,
     name: "Dartmouth",
     fullName: "Dartmouth Big Green",
     code: "DART",
@@ -1557,7 +1557,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DartmouthLogo,
     location: "Hanover, NH",
     city: "Hanover",
-    venue: "Memorial Field",
+    venueName: "Memorial Field",
     address: "4 Crosby St, Hanover, NH 03755",
     venueCapacity: "11,000",
     established: 1881,
@@ -1571,7 +1571,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 283,
-    espnID: 2166,
+    espnId: 2166,
     name: "Davidson",
     fullName: "Davidson Wildcats",
     code: "DAV",
@@ -1581,7 +1581,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DavidsonLogo,
     location: "Davidson, NC",
     city: "Davidson",
-    venue: "Richardson Stadium",
+    venueName: "Richardson Stadium",
     address: "405 N Main St, Davidson, NC 28035",
     venueCapacity: "6,000",
     established: 1896,
@@ -1595,7 +1595,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 277,
-    espnID: 2168,
+    espnId: 2168,
     name: "Dayton",
     fullName: "Dayton Flyers",
     code: "DAY",
@@ -1605,7 +1605,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DaytonLogoLight,
     location: "Dayton, OH",
     city: "Dayton",
-    venue: "Welcome Stadium",
+    venueName: "Welcome Stadium",
     address: "1601 S Edwin C Moses Blvd, Dayton, OH 45417",
     venueCapacity: "11,000",
     established: 1905,
@@ -1619,7 +1619,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 146,
-    espnID: 48,
+    espnId: 48,
     name: "Delaware",
     fullName: "Delaware Blue Hens",
     code: "DEL",
@@ -1629,7 +1629,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DelawareLogo,
     location: "Newark, DE",
     city: "Newark",
-    venue: "Delaware Stadium",
+    venueName: "Delaware Stadium",
     address: "625 S College Ave, Newark, DE 19716",
     venueCapacity: "18,500",
     established: 1889,
@@ -1642,7 +1642,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 284,
-    espnID: 2169,
+    espnId: 2169,
     name: "Delaware State",
     fullName: "Delaware State Hornets",
     code: "DSU",
@@ -1652,7 +1652,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DelawareStateLogo,
     location: "Dover, DE",
     city: "Dover",
-    venue: "Alumni Stadium",
+    venueName: "Alumni Stadium",
     address: "1200 N Dupont Hwy, Dover, DE 19901",
     venueCapacity: "7,193",
     established: 1924,
@@ -1666,7 +1666,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 375,
-    espnID: 83,
+    espnId: 83,
 
     name: "Depauw",
     fullName: "Depauw Tigers",
@@ -1677,7 +1677,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DepauwLogo,
     location: "Greencastle, IN",
     city: "Greencastle",
-    venue: "Blackstock Stadium",
+    venueName: "Blackstock Stadium",
     address: "702 S College Ave, Greencastle, IN 46135",
     venueCapacity: "8,000",
     established: 1884,
@@ -1690,7 +1690,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 289,
-    espnID: 2181,
+    espnId: 2181,
     name: "Drake",
     fullName: "Drake Bulldogs",
     code: "DRKE",
@@ -1700,7 +1700,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DrakeLogo,
     location: "Des Moines, IA",
     city: "Des Moines",
-    venue: "Drake Stadium",
+    venueName: "Drake Stadium",
     address: "2719 Forest Ave, Des Moines, IA 50311",
     venueCapacity: "14,557",
     established: 1893,
@@ -1714,7 +1714,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 99,
-    espnID: 150,
+    espnId: 150,
     name: "Duke",
     fullName: "Duke Blue Devils",
     code: "DUKE",
@@ -1724,7 +1724,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DukeLogoLight,
     location: "Durham, NC",
     city: "Durham",
-    venue: "Wallace Wade Stadium",
+    venueName: "Wallace Wade Stadium",
     address: "110 Bassett Dr, Durham, NC 27708",
     venueCapacity: "40,004",
     established: 1888,
@@ -1738,7 +1738,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 50,
-    espnID: 2184,
+    espnId: 2184,
     name: "Duquesne",
     fullName: "Duquesne Dukes",
     code: "DUQ",
@@ -1748,7 +1748,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: DuquesneLogoLight,
     location: "Pittsburgh, PA",
     city: "Pittsburgh",
-    venue: "Arthur J. Rooney Athletic Field",
+    venueName: "Arthur J. Rooney Athletic Field",
     address: "815 Magee St, Pittsburgh, PA 15219",
     venueCapacity: "2,200",
     established: 1891,
@@ -1762,7 +1762,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 120,
-    espnID: 151,
+    espnId: 151,
     name: "East Carolina",
     fullName: "East Carolina Pirates",
     code: "ECU",
@@ -1772,7 +1772,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ECULogo,
     location: "Greenville, NC",
     city: "Greenville",
-    venue: "Dowdy-Ficklen Stadium",
+    venueName: "Dowdy-Ficklen Stadium",
     address: "1 Ficklen Dr, Greenville, NC 27858",
     venueCapacity: "50,000",
     established: 1932,
@@ -1786,7 +1786,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 262,
-    espnID: 2193,
+    espnId: 2193,
     name: "East Tennessee State",
     fullName: "East Tennessee State Buccaneers",
     code: "ETSU",
@@ -1796,7 +1796,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: EastTennesseeStateLogo,
     location: "Johnson City, TN",
     city: "Johnson City",
-    venue: "William B. Greene Jr. Stadium",
+    venueName: "William B. Greene Jr. Stadium",
     address: "1231 Gilbreath Dr, Johnson City, TN 37614",
     venueCapacity: "7,694",
     established: 1920,
@@ -1810,7 +1810,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 272,
-    espnID: 2837,
+    espnId: 2837,
     name: "East Texas A&M",
     fullName: "East Texas A&M Lions",
     code: "ETAM",
@@ -1820,7 +1820,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ETAMLogo,
     location: "Commerce, TX",
     city: "Commerce",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "1900 Interstate Hwy 50, Commerce, TX 75428",
     venueCapacity: "10,000",
     established: 1915,
@@ -1834,7 +1834,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 80,
-    espnID: 2197,
+    espnId: 2197,
     name: "Eastern Illinois",
     fullName: "Eastern Illinois Panthers",
     code: "EIU",
@@ -1844,7 +1844,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: EasternIllinoisLogo,
     location: "Charleston, IL",
     city: "Charleston",
-    venue: "O'Brien Field",
+    venueName: "O'Brien Field",
     address: "1520 4th St, Charleston, IL 61920",
     venueCapacity: "10,000",
     established: 1899,
@@ -1858,7 +1858,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 95,
-    espnID: 2198,
+    espnId: 2198,
     name: "Eastern Kentucky",
     fullName: "Eastern Kentucky Colonels",
     code: "EKU",
@@ -1868,7 +1868,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: EasternKentuckyLogoLight,
     location: "Richmond, KY",
     city: "Richmond",
-    venue: "Roy Kidd Stadium",
+    venueName: "Roy Kidd Stadium",
     address: "521 Lancaster Ave, Richmond, KY 40475",
     venueCapacity: "20,000",
     established: 1891,
@@ -1882,7 +1882,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 94,
-    espnID: 2199,
+    espnId: 2199,
     name: "Eastern Michigan",
     fullName: "Eastern Michigan Eagles",
     code: "EMU",
@@ -1892,7 +1892,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: EasternMichiganLogoLight,
     location: "Ypsilanti, MI",
     city: "Ypsilanti",
-    venue: "Rynearson Stadium",
+    venueName: "Rynearson Stadium",
     address: "799 N Hewitt Rd, Ypsilanti, MI 48197",
     venueCapacity: "30,200",
     established: 1891,
@@ -1906,7 +1906,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 236,
-    espnID: 331,
+    espnId: 331,
     name: "Eastern Washington",
     fullName: "Eastern Washington Eagles",
     shortName: "E Washington",
@@ -1917,7 +1917,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: EasternWashingtonLogoLight,
     location: "Cheney, WA",
     city: "Cheney",
-    venue: "Roos Field",
+    venueName: "Roos Field",
     address: "Roos Field, Cheney, WA 99004",
     venueCapacity: "8,600",
     established: 1901,
@@ -1931,7 +1931,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 173,
-    espnID: 2210,
+    espnId: 2210,
     name: "Elon",
     fullName: "Elon Phoenix",
     code: "ELON",
@@ -1941,7 +1941,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ElonLogo,
     location: "Elon, NC",
     city: "Elon",
-    venue: "Rhodes Stadium",
+    venueName: "Rhodes Stadium",
     address: "100 Campus Dr, Elon, NC 27244",
     venueCapacity: "11,250",
     established: 1909,
@@ -1955,7 +1955,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 51,
-    espnID: 2226,
+    espnId: 2226,
     name: "FAU",
     fullName: "Florida Atlantic Owls",
     code: "FAU",
@@ -1965,7 +1965,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FAULogo,
     location: "Boca Raton, FL",
     city: "Boca Raton",
-    venue: "FAU Stadium",
+    venueName: "FAU Stadium",
     address: "777 Glades Rd, Boca Raton, FL 33431",
     venueCapacity: "29,419",
     established: 2001,
@@ -1979,7 +1979,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 73,
-    espnID: 2229,
+    espnId: 2229,
     name: "FIU",
     fullName: "Florida International Panthers",
     code: "FIU",
@@ -1989,7 +1989,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FIULogoLight,
     location: "Miami, FL",
     city: "Miami",
-    venue: "Pitbull Stadium",
+    venueName: "Pitbull Stadium",
     address: "11310 SW 17th St, Miami, FL 33199",
     venueCapacity: "23,500",
     established: 2002,
@@ -2003,7 +2003,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 113,
-    espnID: 57,
+    espnId: 57,
     name: "Florida",
     fullName: "Florida Gators",
     code: "FLA",
@@ -2013,7 +2013,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FloridaLogo,
     location: "Gainesville, FL",
     city: "Gainesville",
-    venue: "Ben Hill Griffin Stadium",
+    venueName: "Ben Hill Griffin Stadium",
     address: "157 Gale Lemerand Dr, Gainesville, FL 32611",
     venueCapacity: "88,548",
     established: 1906,
@@ -2027,7 +2027,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 54,
-    espnID: 50,
+    espnId: 50,
     name: "Florida A&M",
     fullName: "Florida A&M Rattlers",
     code: "FAMU",
@@ -2037,7 +2037,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FAMULogo,
     location: "Tallahassee, FL",
     city: "Tallahassee",
-    venue: "Bragg Memorial Stadium",
+    venueName: "Bragg Memorial Stadium",
     address: "1835 Wahnish Way, Tallahassee, FL 32310",
     venueCapacity: "25,500",
     established: 1907,
@@ -2051,7 +2051,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 49,
-    espnID: 52,
+    espnId: 52,
     name: "Florida State",
     fullName: "Florida State Seminoles",
     code: "FSU",
@@ -2061,7 +2061,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FloridaStateLogo,
     location: "Tallahassee, FL",
     city: "Tallahassee",
-    venue: "Doak Campbell Stadium",
+    venueName: "Doak Campbell Stadium",
     address: "403 Stadium Dr, Tallahassee, FL 32304",
     venueCapacity: "79,560",
     established: 1902,
@@ -2075,7 +2075,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 257,
-    espnID: 2230,
+    espnId: 2230,
     name: "Fordham",
     fullName: "Fordham Rams",
     code: "FOR",
@@ -2085,7 +2085,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FordhamLogo,
     location: "Bronx, NY",
     city: "New York",
-    venue: "Jack Coffey Field",
+    venueName: "Jack Coffey Field",
     address: "441 E Fordham Rd, Bronx, NY 10458",
     venueCapacity: "7,000",
     established: 1882,
@@ -2099,7 +2099,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 88,
-    espnID: 278,
+    espnId: 278,
     name: "Fresno State",
     fullName: "Fresno State Bulldogs",
     code: "FRES",
@@ -2109,7 +2109,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FresnoStLogo,
     location: "Fresno, CA",
     city: "Fresno",
-    venue: "Valley Children's Stadium",
+    venueName: "Valley Children's Stadium",
     address: "1600 E Bulldog Ln, Fresno, CA 93710",
     venueCapacity: "40,727",
     established: 1921,
@@ -2122,7 +2122,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 371,
-    espnID: 341,
+    espnId: 341,
 
     name: "Frostburg State",
     fullName: "Frostburg State Bobcats",
@@ -2133,7 +2133,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FrostburgStateLogo,
     location: "Frostburg, MD",
     city: "Frostburg",
-    venue: "Bobcat Stadium",
+    venueName: "Bobcat Stadium",
     address: "101 Braddock Rd, Frostburg, MD 21532",
     venueCapacity: "4,000",
     established: 1891,
@@ -2146,7 +2146,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 211,
-    espnID: 231,
+    espnId: 231,
     name: "Furman",
     fullName: "Furman Paladins",
     code: "FUR",
@@ -2156,7 +2156,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FurmanLogo,
     location: "Greenville, SC",
     city: "Greenville",
-    venue: "Paladin Stadium",
+    venueName: "Paladin Stadium",
     address: "3300 Poinsett Hwy, Greenville, SC 29613",
     venueCapacity: "16,000",
     established: 1889,
@@ -2170,7 +2170,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 225,
-    espnID: 2241,
+    espnId: 2241,
     name: "Gardner-Webb",
     fullName: "Gardner-Webb Runnin' Bulldogs",
     code: "GWEB",
@@ -2180,7 +2180,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GardnerWebbLogo,
     location: "Boiling Springs, NC",
     city: "Boiling Springs",
-    venue: "Spangler Stadium",
+    venueName: "Spangler Stadium",
     address: "110 S Main St, Boiling Springs, NC 28017",
     venueCapacity: "9,000",
     established: 1970,
@@ -2194,7 +2194,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 279,
-    espnID: 46,
+    espnId: 46,
     name: "Georgetown",
     fullName: "Georgetown Hoyas",
     code: "GTWN",
@@ -2204,7 +2204,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GeorgetownLogo,
     location: "Washington, DC",
     city: "Washington",
-    venue: "Cooper Field",
+    venueName: "Cooper Field",
     address: "3700 O St NW, Washington, DC 20057",
     venueCapacity: "3,500",
     established: 1874,
@@ -2218,7 +2218,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 109,
-    espnID: 61,
+    espnId: 61,
     name: "Georgia",
     fullName: "Georgia Bulldogs",
     code: "UGA",
@@ -2228,7 +2228,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GeorgiaLogo,
     location: "Athens, GA",
     city: "Athens",
-    venue: "Sanford Stadium",
+    venueName: "Sanford Stadium",
     address: "100 Sanford Dr, Athens, GA 30602",
     venueCapacity: "92,746",
     established: 1892,
@@ -2242,7 +2242,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 166,
-    espnID: 290,
+    espnId: 290,
     name: "Georgia Southern",
     fullName: "Georgia Southern Eagles",
     code: "GASO",
@@ -2252,7 +2252,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GeorgiaSouthernLogo,
     location: "Statesboro, GA",
     city: "Statesboro",
-    venue: "Allen E. Paulson Stadium",
+    venueName: "Allen E. Paulson Stadium",
     address: "207 Lanier Dr, Statesboro, GA 30458",
     venueCapacity: "25,000",
     established: 1924,
@@ -2266,7 +2266,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 189,
-    espnID: 2247,
+    espnId: 2247,
     name: "Georgia State",
     fullName: "Georgia State Panthers",
     code: "GAST",
@@ -2276,7 +2276,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GeorgiaStateLogo,
     location: "Atlanta, GA",
     city: "Atlanta",
-    venue: "Center Parc Stadium",
+    venueName: "Center Parc Stadium",
     address: "755 Hank Aaron Dr SE, Atlanta, GA 30315",
     venueCapacity: "24,333",
     established: 2010,
@@ -2290,7 +2290,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 208,
-    espnID: 59,
+    espnId: 59,
     name: "Georgia Tech",
     fullName: "Georgia Tech Yellow Jackets",
     code: "GT",
@@ -2300,7 +2300,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GeorgiaTechLogoLight,
     location: "Atlanta, GA",
     city: "Atlanta",
-    venue: "Bobby Dodd Stadium",
+    venueName: "Bobby Dodd Stadium",
     address: "150 Bobby Dodd Way NW, Atlanta, GA 30332",
     venueCapacity: "55,000",
     established: 1892,
@@ -2314,7 +2314,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 185,
-    espnID: 2755,
+    espnId: 2755,
     name: "Grambling",
     fullName: "Grambling Tigers",
     code: "GRAM",
@@ -2324,7 +2324,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: GramblingLogo,
     location: "Grambling, LA",
     city: "Grambling",
-    venue: "Eddie G. Robinson Memorial Stadium",
+    venueName: "Eddie G. Robinson Memorial Stadium",
     address: "406 Stadium Dr, Grambling, LA 71245",
     venueCapacity: "19,600",
     established: 1928,
@@ -2338,7 +2338,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 660,
-    espnID: 125,
+    espnId: 125,
 
     name: "Grand Valley State University",
     fullName: "Grand Valley State University Lakers",
@@ -2349,7 +2349,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UTRioGrandeValleyLogo,
     location: "Allendale, MI",
     city: "Allendale",
-    venue: "Lubbers Stadium",
+    venueName: "Lubbers Stadium",
     address: "4450 NE Century Blvd, Hillsboro, OR 97124",
     venueCapacity: "10,444",
     established: 1973,
@@ -2363,7 +2363,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 293,
-    espnID: 2261,
+    espnId: 2261,
     name: "Hampton",
     fullName: "Hampton Pirates",
     code: "HAMP",
@@ -2373,7 +2373,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HamptonLogo,
     location: "Hampton, VA",
     city: "Hampton",
-    venue: "Armstrong Stadium",
+    venueName: "Armstrong Stadium",
     address: "121 Holland Hall, Hampton, VA 23668",
     venueCapacity: "12,000",
     established: 1902,
@@ -2387,7 +2387,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 321,
-    espnID: 108,
+    espnId: 108,
     name: "Harvard",
     fullName: "Harvard Crimson",
     code: "HARV",
@@ -2397,7 +2397,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HarvardLogo,
     location: "Boston, MA",
     city: "Boston",
-    venue: "Harvard Stadium",
+    venueName: "Harvard Stadium",
     address: "65 N Harvard St, Boston, MA 02163",
     venueCapacity: "30,323",
     established: 1873,
@@ -2410,7 +2410,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 59,
-    espnID: 62,
+    espnId: 62,
     name: "Hawai'i",
     fullName: "Hawai'i Rainbow Warriors",
     code: "HAW",
@@ -2420,7 +2420,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HawaiiLogo,
     location: "Honolulu, HI",
     city: "Honolulu",
-    venue: "Clarence T.C. Ching Athletics Complex",
+    venueName: "Clarence T.C. Ching Athletics Complex",
     address: "2680 Campus Rd, Honolulu, HI 96822",
     venueCapacity: "15,000",
     established: 1909,
@@ -2434,7 +2434,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 374,
-    espnID: 2274,
+    espnId: 2274,
 
     name: "Hiram College",
     fullName: "Hiram College Terriers",
@@ -2445,7 +2445,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HiramCollegeLogo,
     location: "Hiram, OH",
     city: "Hiram",
-    venue: "Charles A. Henry Field",
+    venueName: "Charles A. Henry Field",
     address: "11715 Garfield Rd, Hiram, OH 44234",
     venueCapacity: "5,500",
     established: 1892,
@@ -2458,7 +2458,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 223,
-    espnID: 107,
+    espnId: 107,
     name: "Holy Cross",
     fullName: "Holy Cross Crusaders",
     code: "HC",
@@ -2468,7 +2468,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HolyCrossLogo,
     location: "Worcester, MA",
     city: "Worcester",
-    venue: "Fitton Field",
+    venueName: "Fitton Field",
     address: "1 College St, Worcester, MA 01610",
     venueCapacity: "23,500",
     established: 1891,
@@ -2482,7 +2482,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 134,
-    espnID: 248,
+    espnId: 248,
     name: "Houston",
     fullName: "Houston Cougars",
     code: "HOU",
@@ -2492,7 +2492,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HoustonLogo,
     location: "Houston, TX",
     city: "Houston",
-    venue: "TDECU Stadium",
+    venueName: "TDECU Stadium",
     address: "3874 Holman St, Houston, TX 77204",
     venueCapacity: "40,000",
     established: 1946,
@@ -2506,7 +2506,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 259,
-    espnID: 2277,
+    espnId: 2277,
     name: "Houston Christian",
     fullName: "Houston Christian",
     code: "HCU",
@@ -2516,7 +2516,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HoustonChristianLogo,
     location: "Houston, TX",
     city: "Houston",
-    venue: "Husky Stadium",
+    venueName: "Husky Stadium",
     address: "7502 Fondren Rd, Houston, TX 77074",
     venueCapacity: "5,000",
     established: 2013,
@@ -2530,7 +2530,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 230,
-    espnID: 47,
+    espnId: 47,
     name: "Howard",
     fullName: "Howard Bison",
     code: "HOW",
@@ -2540,7 +2540,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HowardLogo,
     location: "Washington, DC",
     city: "Washington",
-    venue: "William H. Greene Stadium",
+    venueName: "William H. Greene Stadium",
     address: "2400 6th St NW, Washington, DC 20059",
     venueCapacity: "7,086",
     established: 1893,
@@ -2554,7 +2554,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 202,
-    espnID: 70,
+    espnId: 70,
     name: "Idaho",
     fullName: "Idaho Vandals",
     code: "IDHO",
@@ -2564,7 +2564,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IdahoLogo,
     location: "Moscow, ID",
     city: "Moscow",
-    venue: "Kibbie Dome",
+    venueName: "Kibbie Dome",
     address: "1000 Stadium Dr, Moscow, ID 83844",
     venueCapacity: "16,000",
     established: 1893,
@@ -2578,7 +2578,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 44,
-    espnID: 304,
+    espnId: 304,
     name: "Idaho State",
     fullName: "Idaho State Bengals",
     code: "IDST",
@@ -2588,7 +2588,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IdahoStateLogo,
     location: "Pocatello, ID",
     city: "Pocatello",
-    venue: "Holt Arena",
+    venueName: "Holt Arena",
     address: "921 S 8th Ave, Pocatello, ID 83209",
     venueCapacity: "12,000",
     established: 1902,
@@ -2602,7 +2602,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 47,
-    espnID: 356,
+    espnId: 356,
     name: "Illinois",
     fullName: "Illinois Fighting Illini",
     code: "ILL",
@@ -2612,7 +2612,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IllinoisLogo,
     location: "Champaign, IL",
     city: "Champaign",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "1402 S 1st St, Champaign, IL 61820",
     venueCapacity: "60,670",
     established: 1890,
@@ -2626,7 +2626,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 126,
-    espnID: 2287,
+    espnId: 2287,
     name: "Illinois State",
     fullName: "Illinois State Redbirds",
     code: "ILST",
@@ -2636,7 +2636,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IllinoisStateLogo,
     location: "Normal, IL",
     city: "Normal",
-    venue: "Hancock Stadium",
+    venueName: "Hancock Stadium",
     address: "211 N Main St, Normal, IL 61761",
     venueCapacity: "13,391",
     established: 1887,
@@ -2650,7 +2650,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 222,
-    espnID: 2916,
+    espnId: 2916,
     name: "Incarnate Word",
     fullName: "Incarnate Word Cardinals",
     code: "UIW",
@@ -2660,7 +2660,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IncarnateWordLogo,
     location: "San Antonio, TX",
     city: "San Antonio",
-    venue: "Gayle and Tom Benson Stadium",
+    venueName: "Gayle and Tom Benson Stadium",
     address: "4301 Broadway, San Antonio, TX 78209",
     venueCapacity: "6,000",
     established: 2009,
@@ -2674,7 +2674,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 103,
-    espnID: 84,
+    espnId: 84,
     name: "Indiana",
     fullName: "Indiana Hoosiers",
     code: "IU",
@@ -2684,7 +2684,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IndianaLogoLight,
     location: "Bloomington, IN",
     city: "Bloomington",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "701 E 17th St, Bloomington, IN 47408",
     venueCapacity: "52,626",
     established: 1887,
@@ -2698,7 +2698,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 218,
-    espnID: 282,
+    espnId: 282,
     name: "Indiana State",
     fullName: "Indiana State Sycamores",
     code: "INST",
@@ -2708,7 +2708,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IndianaStateLogo,
     location: "Terre Haute, IN",
     city: "Terre Haute",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "3300 Wabash Ave, Terre Haute, IN 47803",
     venueCapacity: "12,764",
     established: 1896,
@@ -2722,7 +2722,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 138,
-    espnID: 2294,
+    espnId: 2294,
     name: "Iowa",
     fullName: "Iowa Hawkeyes",
     code: "IOWA",
@@ -2732,7 +2732,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IowaLogoLight,
     location: "Iowa City, IA",
     city: "Iowa City",
-    venue: "Kinnick Stadium",
+    venueName: "Kinnick Stadium",
     address: "825 Stadium Dr, Iowa City, IA 52242",
     venueCapacity: "69,250",
     established: 1889,
@@ -2746,7 +2746,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 151,
-    espnID: 66,
+    espnId: 66,
     name: "Iowa State",
     fullName: "Iowa State Cyclones",
     code: "ISU",
@@ -2756,7 +2756,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: IowaStateLogo,
     location: "Ames, IA",
     city: "Ames",
-    venue: "Jack Trice Stadium",
+    venueName: "Jack Trice Stadium",
     address: "1732 S 4th St, Ames, IA 50011",
     venueCapacity: "61,500",
     established: 1892,
@@ -2770,7 +2770,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 169,
-    espnID: 256,
+    espnId: 256,
     name: "JMU",
     fullName: "James Madison Dukes",
     code: "JMU",
@@ -2780,7 +2780,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: JamesMadisonLogo,
     location: "Harrisonburg, VA",
     city: "Harrisonburg",
-    venue: "Bridgeforth Stadium",
+    venueName: "Bridgeforth Stadium",
     address: "251 Bluestone Dr, Harrisonburg, VA 22807",
     venueCapacity: "24,877",
     established: 1972,
@@ -2794,7 +2794,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 303,
-    espnID: 2296,
+    espnId: 2296,
     name: "Jackson State",
     fullName: "Jackson State Tigers",
     code: "JKST",
@@ -2804,7 +2804,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: JacksonStateLogo,
     location: "Jackson, MS",
     city: "Jackson",
-    venue: "Mississippi Veterans Memorial Stadium",
+    venueName: "Mississippi Veterans Memorial Stadium",
     address: "2531 N State St, Jackson, MS 39216",
     venueCapacity: "44,215",
     established: 1911,
@@ -2818,7 +2818,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 250,
-    espnID: 55,
+    espnId: 55,
     name: "Jax State",
     fullName: "Jacksonville State Gamecocks",
     code: "JVST",
@@ -2828,7 +2828,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: JaxStateLogo,
     location: "Jacksonville, AL",
     city: "Jacksonville",
-    venue: "Burgess-Snow Field at JSU Stadium",
+    venueName: "Burgess-Snow Field at JSU Stadium",
     address: "700 Pelham Rd N, Jacksonville, AL 36265",
     venueCapacity: "24,000",
     established: 1904,
@@ -2842,7 +2842,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 101,
-    espnID: 2305,
+    espnId: 2305,
     name: "Kansas",
     fullName: "Kansas Jayhawks",
     code: "KU",
@@ -2852,7 +2852,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KansasLogo,
     location: "Lawrence, KS",
     city: "Lawrence",
-    venue: "David Booth Kansas Memorial Stadium",
+    venueName: "David Booth Kansas Memorial Stadium",
     address: "1101 Mississippi St, Lawrence, KS 66044",
     venueCapacity: "47,233",
     established: 1890,
@@ -2866,7 +2866,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 174,
-    espnID: 2306,
+    espnId: 2306,
     name: "Kansas State",
     fullName: "Kansas State Wildcats",
     code: "KSU",
@@ -2876,7 +2876,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KansasStLogoLight,
     location: "Manhattan, KS",
     city: "Manhattan",
-    venue: "Bill Snyder Family Stadium",
+    venueName: "Bill Snyder Family Stadium",
     address: "1800 College Ave, Manhattan, KS 66502",
     venueCapacity: "50,000",
     established: 1896,
@@ -2890,7 +2890,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 217,
-    espnID: 338,
+    espnId: 338,
     name: "Kennesaw State",
     fullName: "Kennesaw State Owls",
     code: "KENN",
@@ -2900,7 +2900,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KennesawStateLogo,
     location: "Kennesaw, GA",
     city: "Kennesaw",
-    venue: "Fifth Third Bank Stadium",
+    venueName: "Fifth Third Bank Stadium",
     address: "3200 George Busbee Pkwy NW, Kennesaw, GA 30144",
     venueCapacity: "8,318",
     established: 2015,
@@ -2914,7 +2914,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 206,
-    espnID: 2309,
+    espnId: 2309,
     name: "Kent State",
     fullName: "Kent State Golden Flashes",
     code: "KENT",
@@ -2924,7 +2924,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KentStateLogo,
     location: "Kent, OH",
     city: "Kent",
-    venue: "Dix Stadium",
+    venueName: "Dix Stadium",
     address: "2213 Summit St, Kent, OH 44242",
     venueCapacity: "25,319",
     established: 1920,
@@ -2938,7 +2938,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 129,
-    espnID: 96,
+    espnId: 96,
     name: "Kentucky",
     fullName: "Kentucky Wildcats",
     code: "UK",
@@ -2948,7 +2948,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KentuckyLogoLight,
     location: "Lexington, KY",
     city: "Lexington",
-    venue: "Kroger Field",
+    venueName: "Kroger Field",
     address: "1540 University Dr, Lexington, KY 40506",
     venueCapacity: "61,000",
     established: 1881,
@@ -2962,7 +2962,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 325,
-    espnID: 2310,
+    espnId: 2310,
     name: "Kentucky State",
     fullName: "Kentucky State Thorobreds",
     code: "KYST",
@@ -2972,7 +2972,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KentuckyStateLogo,
     location: "Frankfort, KY",
     city: "Frankfort",
-    venue: "Alumni Stadium",
+    venueName: "Alumni Stadium",
     address: "102 Julian M Carroll Dr, Frankfort, KY 40601",
     venueCapacity: "6,000",
     established: 1907,
@@ -2986,7 +2986,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 382,
-    espnID: 2315,
+    espnId: 2315,
     name: "Kutztown",
     fullName: "Kutztown Golden Bears",
     code: "KUT",
@@ -2996,7 +2996,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: KutztownLogo,
     location: "Kutztown, PA",
     city: "Kutztown",
-    venue: "Andre Reed Stadium",
+    venueName: "Andre Reed Stadium",
     address: "15200 Kutztown Rd, Kutztown, PA 19530",
     venueCapacity: "5,600",
     established: 1895,
@@ -3010,7 +3010,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 76,
-    espnID: 2341,
+    espnId: 2341,
     name: "LIU",
     fullName: "LIU",
     code: "LIU",
@@ -3020,7 +3020,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LIULogo,
     location: "Brookville, NY",
     city: "Brookville",
-    venue: "Bethpage Federal Credit Union Stadium",
+    venueName: "Bethpage Federal Credit Union Stadium",
     address: "720 Northern Blvd, Brookville, NY 11548",
     venueCapacity: "6,000",
     established: 1928,
@@ -3034,7 +3034,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 207,
-    espnID: 99,
+    espnId: 99,
     name: "LSU",
     fullName: "LSU Tigers",
     code: "LSU",
@@ -3044,7 +3044,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LSULogoLight,
     location: "Baton Rouge, LA",
     city: "Baton Rouge",
-    venue: "Tiger Stadium",
+    venueName: "Tiger Stadium",
     address: "N Stadium Dr, Baton Rouge, LA 70803",
     venueCapacity: "102,321",
     established: 1893,
@@ -3058,7 +3058,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 216,
-    espnID: 322,
+    espnId: 322,
     name: "Lafayette",
     fullName: "Lafayette Leopards",
     code: "LAF",
@@ -3068,7 +3068,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LafayetteLogo,
     location: "Easton, PA",
     city: "Easton",
-    venue: "Fisher Stadium",
+    venueName: "Fisher Stadium",
     address: "218 March St, Easton, PA 18042",
     venueCapacity: "13,132",
     established: 1882,
@@ -3082,7 +3082,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 229,
-    espnID: 2320,
+    espnId: 2320,
     name: "Lamar",
     fullName: "Lamar Cardinals",
     code: "LAM",
@@ -3092,7 +3092,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LamarLogo,
     location: "Beaumont, TX",
     city: "Beaumont",
-    venue: "Provost Umphrey Stadium",
+    venueName: "Provost Umphrey Stadium",
     address: "4400 S M L King Jr Pkwy, Beaumont, TX 77705",
     venueCapacity: "16,000",
     established: 1923,
@@ -3106,7 +3106,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 275,
-    espnID: 161,
+    espnId: 161,
     name: "Lehigh",
     fullName: "Lehigh Mountain Hawks",
     code: "LEH",
@@ -3116,7 +3116,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LehighLogo,
     location: "Bethlehem, PA",
     city: "Bethlehem",
-    venue: "Goodman Stadium",
+    venueName: "Goodman Stadium",
     address: "150 Goodman Dr, Bethlehem, PA 18015",
     venueCapacity: "16,000",
     established: 1884,
@@ -3130,7 +3130,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 179,
-    espnID: 2335,
+    espnId: 2335,
     name: "Liberty",
     fullName: "Liberty Flames",
     code: "LIB",
@@ -3140,7 +3140,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LibertyLogo,
     location: "Lynchburg, VA",
     city: "Lynchburg",
-    venue: "Williams Stadium",
+    venueName: "Williams Stadium",
     address: "1971 University Blvd, Lynchburg, VA 24515",
     venueCapacity: "25,000",
     established: 1973,
@@ -3154,7 +3154,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 316,
-    espnID: 2815,
+    espnId: 2815,
     name: "Lindenwood",
     fullName: "Lindenwood Lions",
     code: "LIN",
@@ -3164,7 +3164,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LindenwoodLogo,
     location: "St. Charles, MO",
     city: "St. Charles",
-    venue: "Harlen C. Hunter Stadium",
+    venueName: "Harlen C. Hunter Stadium",
     address: "209 S Kingshighway St, St. Charles, MO 63301",
     venueCapacity: "7,450",
     established: 1990,
@@ -3178,7 +3178,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 182,
-    espnID: 309,
+    espnId: 309,
     name: "Louisiana",
     fullName: "Louisiana Ragin' Cajuns",
     code: "UL",
@@ -3188,7 +3188,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LouisianaLogo,
     location: "Lafayette, LA",
     city: "Lafayette",
-    venue: "Cajun Field",
+    venueName: "Cajun Field",
     address: "2351 W Congress St, Lafayette, LA 70506",
     venueCapacity: "41,426",
     established: 1901,
@@ -3202,7 +3202,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 84,
-    espnID: 2348,
+    espnId: 2348,
     name: "Louisiana Tech",
     fullName: "Louisiana Tech Bulldogs",
     code: "LT",
@@ -3212,7 +3212,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LATechLogo,
     location: "Ruston, LA",
     city: "Ruston",
-    venue: "Joe Aillet Stadium",
+    venueName: "Joe Aillet Stadium",
     address: "1450 W Arkansas Ave, Ruston, LA 71272",
     venueCapacity: "28,562",
     established: 1901,
@@ -3226,7 +3226,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 198,
-    espnID: 97,
+    espnId: 97,
     name: "Louisville",
     fullName: "Louisville Cardinals",
     code: "LOU",
@@ -3236,7 +3236,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: LouisvilleLogo,
     location: "Louisville, KY",
     city: "Louisville",
-    venue: "L&N Federal Credit Union Stadium",
+    venueName: "L&N Federal Credit Union Stadium",
     address: "2800 South Floyd Street, Louisville, Kentucky 40209",
     venueCapacity: "60,800",
     established: 1912,
@@ -3250,7 +3250,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 200,
-    espnID: 311,
+    espnId: 311,
     name: "Maine",
     fullName: "Maine Black Bears",
     code: "ME",
@@ -3260,7 +3260,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MaineLogo,
     location: "Orono, ME",
     city: "Orono",
-    venue: "Harold Alfond Sports Stadium",
+    venueName: "Harold Alfond Sports Stadium",
     address: "20 Belgrade Rd, Orono, ME 04469",
     venueCapacity: "10,000",
     established: 1892,
@@ -3274,7 +3274,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 278,
-    espnID: 2368,
+    espnId: 2368,
     name: "Marist",
     fullName: "Marist Red Foxes",
     code: "MRST",
@@ -3284,7 +3284,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MaristLogo,
     location: "Poughkeepsie, NY",
     city: "Poughkeepsie",
-    venue: "Tenney Stadium at Leonidoff Field",
+    venueName: "Tenney Stadium at Leonidoff Field",
     address: "3399 North Rd, Poughkeepsie, NY 12601",
     venueCapacity: "5,000",
     established: 1965,
@@ -3298,7 +3298,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 158,
-    espnID: 276,
+    espnId: 276,
     name: "Marshall",
     fullName: "Marshall Thundering Herd",
     code: "MRSH",
@@ -3308,7 +3308,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MarshallLogo,
     location: "Huntington, WV",
     city: "Huntington",
-    venue: "Joan C. Edwards Stadium",
+    venueName: "Joan C. Edwards Stadium",
     address: "2001 3rd Ave, Huntington, WV 25703",
     venueCapacity: "30,475",
     established: 1895,
@@ -3322,7 +3322,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 140,
-    espnID: 120,
+    espnId: 120,
     name: "Maryland",
     fullName: "Maryland Terrapins",
     code: "MD",
@@ -3332,7 +3332,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MarylandLogo,
     location: "College Park, MD",
     city: "College Park",
-    venue: "SECU Stadium",
+    venueName: "SECU Stadium",
     address: "90 Stadium Dr, College Park, MD 20742",
     venueCapacity: "51,802",
     established: 1892,
@@ -3346,7 +3346,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 234,
-    espnID: 2377,
+    espnId: 2377,
     name: "McNeese",
     fullName: "McNeese Cowboys",
     code: "MCN",
@@ -3356,7 +3356,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: McNeeseLogo,
     location: "Lake Charles, LA",
     city: "Lake Charles",
-    venue: "Cowboy Stadium",
+    venueName: "Cowboy Stadium",
     address: "700 E McNeese St, Lake Charles, LA 70607",
     venueCapacity: "17,410",
     established: 1940,
@@ -3370,7 +3370,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 187,
-    espnID: 235,
+    espnId: 235,
     name: "Memphis",
     fullName: "Memphis Tigers",
     code: "MEM",
@@ -3380,7 +3380,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MemphisLogo,
     location: "Memphis, TN",
     city: "Memphis",
-    venue: "Simmons Bank Liberty Stadium",
+    venueName: "Simmons Bank Liberty Stadium",
     address: "335 S Hollywood St, Memphis, TN 38104",
     venueCapacity: "58,325",
     established: 1912,
@@ -3394,7 +3394,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 172,
-    espnID: 2382,
+    espnId: 2382,
     name: "Mercer",
     fullName: "Mercer Bears",
     code: "MER",
@@ -3404,7 +3404,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MercerLogo,
     location: "Macon, GA",
     city: "Macon",
-    venue: "Five Star Stadium",
+    venueName: "Five Star Stadium",
     address: "1501 Mercer University Dr, Macon, GA 31207",
     venueCapacity: "10,200",
     established: 1891,
@@ -3418,7 +3418,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 276,
-    espnID: 2771,
+    espnId: 2771,
     name: "Merrimack",
     fullName: "Merrimack",
     code: "MRMK",
@@ -3428,7 +3428,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MerrimackLogo,
     location: "North Andover, MA",
     city: "North Andover",
-    venue: "Duane Stadium",
+    venueName: "Duane Stadium",
     address: "315 Turnpike St, North Andover, MA 01845",
     venueCapacity: "4,000",
     established: 1903,
@@ -3442,7 +3442,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 123,
-    espnID: 2390,
+    espnId: 2390,
     name: "Miami",
     fullName: "Miami Hurricanes",
     code: "MIA",
@@ -3452,7 +3452,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MiamiLogo,
     location: "Miami Gardens, FL",
     city: "Miami",
-    venue: "Hard Rock Stadium",
+    venueName: "Hard Rock Stadium",
     address: "347 Don Shula Dr, Miami Gardens, FL 33056",
     venueCapacity: "65,326",
     established: 1926,
@@ -3466,7 +3466,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 130,
-    espnID: 193,
+    espnId: 193,
     name: "Miami (OH)",
     fullName: "Miami (OH) RedHawks",
     code: "M-OH",
@@ -3476,7 +3476,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MiamiOHLogo,
     location: "Oxford, OH",
     city: "Oxford",
-    venue: "Yager Stadium",
+    venueName: "Yager Stadium",
     address: "700 E High St, Oxford, OH 45056",
     venueCapacity: "23,724",
     established: 1888,
@@ -3490,7 +3490,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 115,
-    espnID: 130,
+    espnId: 130,
     name: "Michigan",
     fullName: "Michigan Wolverines",
     code: "MICH",
@@ -3500,7 +3500,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MichiganLogo,
     location: "Ann Arbor, MI",
     city: "Ann Arbor",
-    venue: "Michigan Stadium",
+    venueName: "Michigan Stadium",
     address: "1201 S Main St, Ann Arbor, MI 48104",
     venueCapacity: "107,601",
     established: 1879,
@@ -3514,7 +3514,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 92,
-    espnID: 127,
+    espnId: 127,
     name: "Michigan State",
     fullName: "Michigan State Spartans",
     code: "MSU",
@@ -3524,7 +3524,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MichiganStateLogoLight,
     location: "East Lansing, MI",
     city: "East Lansing",
-    venue: "Spartan Stadium",
+    venueName: "Spartan Stadium",
     address: "325 W Shaw Ln, East Lansing, MI 48824",
     venueCapacity: "75,005",
     established: 1896,
@@ -3538,7 +3538,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 170,
-    espnID: 2393,
+    espnId: 2393,
     name: "Middle Tennessee",
     fullName: "Middle Tennessee Blue Raiders",
     code: "MTSU",
@@ -3548,7 +3548,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MiddleTennesseeLogo,
     location: "Murfreesboro, TN",
     city: "Murfreesboro",
-    venue: 'Johnny "Red" Floyd Stadium',
+    venueName: 'Johnny "Red" Floyd Stadium',
     address: "1500 Greenland Dr, Murfreesboro, TN 37132",
     venueCapacity: "30,788",
     established: 1911,
@@ -3562,7 +3562,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 85,
-    espnID: 135,
+    espnId: 135,
     name: "Minnesota",
     fullName: "Minnesota Golden Gophers",
     code: "MINN",
@@ -3572,7 +3572,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MinnesotaLogoLight,
     location: "Minneapolis, MN",
     city: "Minneapolis",
-    venue: "Huntington Bank Stadium",
+    venueName: "Huntington Bank Stadium",
     address: "420 SE 23rd Ave, Minneapolis, MN 55455",
     venueCapacity: "50,805",
     established: 1882,
@@ -3586,7 +3586,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 186,
-    espnID: 344,
+    espnId: 344,
     name: "Mississippi State",
     shortName: "Miss State",
     fullName: "Mississippi State Bulldogs",
@@ -3597,7 +3597,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MissStLogo,
     location: "Starkville, MS",
     city: "Starkville",
-    venue: "Davis Wade Stadium at Scott Field",
+    venueName: "Davis Wade Stadium at Scott Field",
     address: "90 BS Hood Dr, Starkville, MS 39759",
     venueCapacity: "61,337",
     established: 1895,
@@ -3611,7 +3611,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 271,
-    espnID: 2400,
+    espnId: 2400,
     name: "Mississippi Valley St",
     fullName: "Mississippi Valley State Delta Devils",
     code: "MVSU",
@@ -3621,7 +3621,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MississippiValleyStateLogo,
     location: "Itta Bena, MS",
     city: "Itta Bena",
-    venue: "Rice–Totten Stadium",
+    venueName: "Rice–Totten Stadium",
     address: "14000 Highway 82 W, Itta Bena, MS 38941",
     venueCapacity: "10,000",
     established: 1953,
@@ -3635,7 +3635,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 83,
-    espnID: 142,
+    espnId: 142,
     name: "Missouri",
     fullName: "Missouri Tigers",
     code: "MIZ",
@@ -3645,7 +3645,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MissouriLogo,
     location: "Columbia, MS",
     city: "Columbia",
-    venue: "Faurot Field at Memorial Stadium",
+    venueName: "Faurot Field at Memorial Stadium",
     address: "600 East Stadium Boulevard Columbia, Missouri 65201",
     venueCapacity: "62,621",
     established: 1890,
@@ -3659,7 +3659,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 239,
-    espnID: 2623,
+    espnId: 2623,
     name: "Missouri State",
     fullName: "Missouri State Bears",
     code: "MOST",
@@ -3669,7 +3669,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MissouriStateLogo,
     location: "Springfield, MO",
     city: "Springfield",
-    venue: "Plaster Stadium",
+    venueName: "Plaster Stadium",
     address: "741 Bear Blvd, Springfield, MO 65897",
     venueCapacity: "17,500",
     established: 1909,
@@ -3683,7 +3683,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 267,
-    espnID: 2405,
+    espnId: 2405,
     name: "Monmouth",
     fullName: "Monmouth Hawks",
     code: "MONM",
@@ -3693,7 +3693,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MonmouthLogo,
     location: "West Long Branch, NJ",
     city: "West Long Branch",
-    venue: "Kessler Stadium",
+    venueName: "Kessler Stadium",
     address: "400 Cedar Ave, West Long Branch, NJ 07764",
     venueCapacity: "4,200",
     established: 1993,
@@ -3707,7 +3707,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 288,
-    espnID: 149,
+    espnId: 149,
     name: "Montana",
     fullName: "Montana Grizzlies",
     code: "MONT",
@@ -3717,7 +3717,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MontanaLogoLight,
     location: "Missoula, MT",
     city: "Missoula",
-    venue: "Washington–Grizzly Stadium",
+    venueName: "Washington–Grizzly Stadium",
     address: "32 Campus Dr, Missoula, MT 59812",
     venueCapacity: "25,217",
     established: 1897,
@@ -3731,7 +3731,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 253,
-    espnID: 147,
+    espnId: 147,
     name: "Montana State",
     fullName: "Montana State Bobcats",
     code: "MTST",
@@ -3741,7 +3741,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MontanaStateLogo,
     location: "Bozeman, MT",
     city: "Bozeman",
-    venue: "Bobcat Stadium",
+    venueName: "Bobcat Stadium",
     address: "1 Bobcat Cir, Bozeman, MT 59717",
     venueCapacity: "17,777",
     established: 1897,
@@ -3754,7 +3754,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 265,
-    espnID: 2413,
+    espnId: 2413,
     name: "Morehead State",
     fullName: "Morehead State Eagles",
     code: "MORE",
@@ -3764,7 +3764,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MoreheadStateLogo,
     location: "Morehead, KY",
     city: "Morehead",
-    venue: "Jayne Stadium",
+    venueName: "Jayne Stadium",
     address: "111 Playforth Pl, Morehead, KY 40351",
     venueCapacity: "10,000",
     established: 1927,
@@ -3777,7 +3777,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 167,
-    espnID: 2415,
+    espnId: 2415,
     name: "Morgan State",
     fullName: "Morgan State Bears",
     code: "MORG",
@@ -3787,7 +3787,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MorganStateLogo,
     location: "Baltimore, MD",
     city: "Baltimore",
-    venue: "Hughes Stadium",
+    venueName: "Hughes Stadium",
     address: "1700 E Cold Spring Ln, Baltimore, MD 21251",
     venueCapacity: "10,000",
     established: 1898,
@@ -3801,7 +3801,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 194,
-    espnID: 93,
+    espnId: 93,
     name: "Murray State",
     fullName: "Murray State Racers",
     code: "MUR",
@@ -3811,7 +3811,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: MurrayStateLogo,
     location: "Murray, KY",
     city: "Murray",
-    venue: "Roy Stewart Stadium",
+    venueName: "Roy Stewart Stadium",
     address: "1400 Elm St, Murray, KY 42071",
     venueCapacity: "16,800",
     established: 1924,
@@ -3825,7 +3825,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 121,
-    espnID: 152,
+    espnId: 152,
     name: "NC State",
     fullName: "NC State Wolfpack",
     code: "NCSU",
@@ -3835,7 +3835,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NCStateLogo,
     location: "Raleigh, NC",
     city: "Raleigh",
-    venue: "Carter-Finley Stadium",
+    venueName: "Carter-Finley Stadium",
     address: "4600 Trinity Rd, Raleigh, NC 27607",
     venueCapacity: "57,583",
     established: 1892,
@@ -3849,7 +3849,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 376,
-    espnID: 286,
+    espnId: 286,
 
     name: "NC Wesleyan",
     fullName: "North Carolina Wesleyan Battling Bishops",
@@ -3860,7 +3860,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NCWesleyanLogo,
     location: "Rocky Mount, NC",
     city: "Rocky Mount",
-    venue: "Scotty Whitelaw Field at Rocky Mount Stadium",
+    venueName: "Scotty Whitelaw Field at Rocky Mount Stadium",
     address: "600 Independence Dr, Rocky Mount, NC 27804",
     venueCapacity: "5,000",
     established: 1960,
@@ -3874,7 +3874,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 145,
-    espnID: 2426,
+    espnId: 2426,
     name: "Navy",
     fullName: "Navy Midshipmen",
     code: "NAVY",
@@ -3884,7 +3884,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NavyLogo,
     location: "Annapolis, MD",
     city: "Annapolis",
-    venue: "Navy-Marine Corps Memorial Stadium",
+    venueName: "Navy-Marine Corps Memorial Stadium",
     address: "550 Taylor Ave, Annapolis, MD 21401",
     venueCapacity: "34,000",
     established: 1879,
@@ -3898,7 +3898,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 42,
-    espnID: 158,
+    espnId: 158,
     name: "Nebraska",
     fullName: "Nebraska Cornhuskers",
     code: "NEB",
@@ -3908,7 +3908,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NebraskaLogoLight,
     location: "Lincoln, NE",
     city: "Lincoln",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "600 Stadium Dr, Lincoln, NE 68588",
     venueCapacity: "85,458",
     established: 1890,
@@ -3922,7 +3922,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 56,
-    espnID: 2440,
+    espnId: 2440,
     name: "Nevada",
     fullName: "Nevada Wolf Pack",
     code: "NEV",
@@ -3932,7 +3932,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NevadaLogoLight,
     location: "Reno, NV",
     city: "Reno",
-    venue: "Mackay Stadium",
+    venueName: "Mackay Stadium",
     address: "1664 N Virginia St, Reno, NV 89557",
     venueCapacity: "27,000",
     established: 1896,
@@ -3946,7 +3946,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 261,
-    espnID: 160,
+    espnId: 160,
     name: "New Hampshire",
     fullName: "New Hampshire Wildcats",
     code: "UNH",
@@ -3956,7 +3956,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NewHampshireLogo,
     location: "Durham, NH",
     city: "Durham",
-    venue: "Wildcat Stadium",
+    venueName: "Wildcat Stadium",
     address: "155 Main St, Durham, NH 03824",
     venueCapacity: "11,015",
     established: 1893,
@@ -3969,7 +3969,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 199,
-    espnID: 167,
+    espnId: 167,
     name: "New Mexico",
     fullName: "New Mexico Lobos",
     code: "UNM",
@@ -3979,7 +3979,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NewMexicoLogo,
     location: "Albuquerque, NM",
     city: "Albuquerque",
-    venue: "University Stadium",
+    venueName: "University Stadium",
     address: "1111 University Blvd SE, Albuquerque, NM 87106",
     venueCapacity: "39,224",
     established: 1892,
@@ -3992,7 +3992,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 55,
-    espnID: 166,
+    espnId: 166,
     name: "New Mexico State",
     fullName: "New Mexico State Aggies",
     code: "NMSU",
@@ -4002,7 +4002,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NewMexicoStateLogo,
     location: "Las Cruces, NM",
     city: "Las Cruces",
-    venue: "Aggie Memorial Stadium",
+    venueName: "Aggie Memorial Stadium",
     address: "1780 E University Ave, Las Cruces, NM 88003",
     venueCapacity: "28,853",
     established: 1893,
@@ -4015,7 +4015,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 164,
-    espnID: 2447,
+    espnId: 2447,
     name: "Nicholls",
     fullName: "Nicholls Colonels",
     code: "NICH",
@@ -4025,7 +4025,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NichollsLogo,
     location: "Thibodaux, LA",
     city: "Thibodaux",
-    venue: "John L. Guidry Stadium",
+    venueName: "John L. Guidry Stadium",
     address: "906 E 1st St, Thibodaux, LA 70301",
     venueCapacity: "10,500",
     established: 1972,
@@ -4038,7 +4038,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 393,
-    espnID: 2884,
+    espnId: 2884,
     name: "Nichols",
     fullName: "Nichols College Bison",
     code: "NICHOLS",
@@ -4048,7 +4048,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NicholsLogo,
     location: "Dudley, MA",
     city: "Dudley",
-    venue: "Michael Vendetti Field",
+    venueName: "Michael Vendetti Field",
     address: "122 Center Rd, Dudley, MA 01571",
     venueCapacity: "3,000",
     established: 1920,
@@ -4062,7 +4062,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 159,
-    espnID: 2450,
+    espnId: 2450,
     name: "Norfolk State",
     fullName: "Norfolk State Spartans",
     code: "NORF",
@@ -4072,7 +4072,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorfolkStLogo,
     location: "Norfolk, VA",
     city: "Norfolk",
-    venue: 'William "Dick" Price Stadium',
+    venueName: 'William "Dick" Price Stadium',
     address: "700 Park Ave, Norfolk, VA 23504",
     venueCapacity: "30,000",
     established: 1938,
@@ -4085,7 +4085,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 263,
-    espnID: 2453,
+    espnId: 2453,
     name: "North Alabama",
     fullName: "North Alabama Lions",
     code: "UNA",
@@ -4095,7 +4095,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthAlabamaLogo,
     location: "Florence, AL",
     city: "Florence",
-    venue: "Braly Municipal Stadium",
+    venueName: "Braly Municipal Stadium",
     address: "521 N Royal Ave, Florence, AL 35630",
     venueCapacity: "14,215",
     established: 1912,
@@ -4109,7 +4109,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 53,
-    espnID: 153,
+    espnId: 153,
     name: "North Carolina",
     fullName: "North Carolina Tar Heels",
     code: "UNC",
@@ -4119,7 +4119,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UNCLogo,
     location: "Chapel Hill, NC",
     city: "Chapel Hill",
-    venue: "Kenan Memorial Stadium",
+    venueName: "Kenan Memorial Stadium",
     address: "104 Stadium Dr, Chapel Hill, NC 27514",
     venueCapacity: "50,500",
     established: 1888,
@@ -4133,7 +4133,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 248,
-    espnID: 2448,
+    espnId: 2448,
     name: "North Carolina A&T",
     fullName: "North Carolina A&T Aggies",
     shortName: "NC A&T",
@@ -4144,7 +4144,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthCarolinaATLogo,
     location: "Greensboro, NC",
     city: "Greensboro",
-    venue: "Truist Stadium",
+    venueName: "Truist Stadium",
     address: "1601 E Market St, Greensboro, NC 27411",
     venueCapacity: "21,500",
     established: 1901,
@@ -4158,7 +4158,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 717,
-    espnID: 2222,
+    espnId: 2222,
     name: "Ferris State",
     fullName: "Ferris State Bulldogs",
     shortName: "Ferris St",
@@ -4169,7 +4169,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: FerrisStateLogo,
     location: "Big Rapids, MI",
     city: "Big Rapids",
-    venue: "Top Taggart Field",
+    venueName: "Top Taggart Field",
     address: "805 Campus Dr, Big Rapids, MI 49307",
     venueCapacity: "6,500",
     established: 1884,
@@ -4182,7 +4182,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 454,
-    espnID: 2444,
+    espnId: 2444,
     name: "Newberry",
     fullName: "Newberry Wolves",
     shortName: "Newberry",
@@ -4193,7 +4193,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NewberryLogo,
     location: "Newberry, SC",
     city: "Newberry",
-    venue: "Setzler Field",
+    venueName: "Setzler Field",
     address: "1100 College St, Newberry, SC 29108",
     venueCapacity: "4,000",
     established: 1856,
@@ -4205,7 +4205,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 302,
-    espnID: 2428,
+    espnId: 2428,
     name: "North Carolina Central",
     fullName: "North Carolina Central Eagles",
     shortName: "NC Central",
@@ -4216,7 +4216,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthCarolinaCentralLogo,
     location: "Durham, NC",
     city: "Durham",
-    venue: "O'Kelly-Riddick Stadium",
+    venueName: "O'Kelly-Riddick Stadium",
     address: "500 Fayetteville St, Durham, NC 27707",
     venueCapacity: "10,000",
     established: 1922,
@@ -4228,7 +4228,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 731,
-    espnID: 2627,
+    espnId: 2627,
     name: "Tarleton State",
     fullName: "Tarleton State Texans",
     shortName: "Tarleton St",
@@ -4239,7 +4239,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TarletonStateLogo,
     location: "Stephenville, TX",
     city: "Stephenville",
-    venue: "Memorial Stadium",
+    venueName: "Memorial Stadium",
     address: "1940 W Washington St, Stephenville, TX 76401",
     venueCapacity: "24,000",
     established: 1899,
@@ -4251,7 +4251,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 518,
-    espnID: 2302,
+    espnId: 2302,
     name: "John Carroll University",
     fullName: "John Carroll University Blue Streaks",
     shortName: "John Carroll",
@@ -4262,7 +4262,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: JohnCarrollLogo,
     location: "University Heights, OH",
     city: "University Heights",
-    venue: "Don Shula Stadium",
+    venueName: "Don Shula Stadium",
     address: "20700 North Park Blvd, University Heights, OH 44118",
     venueCapacity: "5,416",
     established: 1886,
@@ -4274,7 +4274,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 678,
-    espnID: 2723,
+    espnId: 2723,
     name: "Wisconsin-River Falls",
     fullName: "Wisconsin-River Falls Falcons",
     shortName: "UW River Falls",
@@ -4285,7 +4285,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WisconsinRiverFallsLogo,
     location: "River Falls, WI",
     city: "River Falls",
-    venue: "Ramer Field",
+    venueName: "Ramer Field",
     address: "410 S 3rd St, River Falls, WI 54022",
     venueCapacity: "3,000",
     established: 1874,
@@ -4297,7 +4297,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 860,
-    espnID: 3071,
+    espnId: 3071,
     name: "North Central College",
     fullName: "North Central College Cardinals",
     shortName: "N Central (IL)",
@@ -4308,7 +4308,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthCentralCollegeLogo,
     location: "Naperville, IL",
     city: "Naperville",
-    venue: "Benedict Field",
+    venueName: "Benedict Field",
     address: "33 E Chicago Ave, Naperville, IL 60540",
     venueCapacity: "5,500",
     established: 1861,
@@ -4321,7 +4321,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 837,
-    espnID: 118,
+    espnId: 118,
     name: "Johns Hopkins University",
     fullName: "Johns Hopkins University Blue Jays",
     shortName: "Johns Hopkins",
@@ -4332,7 +4332,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: JohnsHopkinsLogo,
     location: "Baltimore, MD",
     city: "Baltimore",
-    venue: "Homewood Field",
+    venueName: "Homewood Field",
     address: "3400 N Charles St, Baltimore, MD 21218",
     venueCapacity: "8,500",
     established: 1876,
@@ -4345,7 +4345,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 157,
-    espnID: 155,
+    espnId: 155,
     name: "North Dakota",
     fullName: "North Dakota Fighting Hawks",
     code: "UND",
@@ -4355,7 +4355,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthDakotaLogo,
     location: "Grand Forks, ND",
     city: "Grand Forks",
-    venue: "Alerus Center",
+    venueName: "Alerus Center",
     address: "1200 S 42nd St, Grand Forks, ND 58201",
     venueCapacity: "12,283",
     established: 1894,
@@ -4368,7 +4368,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 652,
-    espnID: 2264,
+    espnId: 2264,
     name: "Harding University",
     fullName: "Harding University Bisons",
     shortName: "Harding",
@@ -4379,7 +4379,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: HardingLogo,
     location: "Searcy, AR",
     city: "Searcy",
-    venue: "First Security Stadium at Estes Stadium",
+    venueName: "First Security Stadium at Estes Stadium",
     address: "2000 W Maple St, Searcy, AR 72143",
     venueCapacity: "10,000",
     established: 1924,
@@ -4392,7 +4392,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 254,
-    espnID: 2449,
+    espnId: 2449,
     name: "North Dakota State",
     fullName: "North Dakota State Bison",
     code: "NDSU",
@@ -4402,7 +4402,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthDakotaStateLogo,
     location: "Fargo, ND",
     city: "Fargo",
-    venue: "Fargodome",
+    venueName: "Fargodome",
     address: "1800 N University Dr, Fargo, ND 58102",
     venueCapacity: "18,700",
     established: 1894,
@@ -4416,7 +4416,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 266,
-    espnID: 2822,
+    espnId: 2822,
     name: "North Greenville",
     fullName: "North Greenville Crusaders",
     code: "NG",
@@ -4426,7 +4426,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthGreenvilleLogo,
     location: "Tigerville, SC",
     city: "Tigerville",
-    venue: "Younts Stadium",
+    venueName: "Younts Stadium",
     address: "7801 N Tigerville Rd, Tigerville, SC 29688",
     venueCapacity: "5,000",
     established: 1994,
@@ -4439,7 +4439,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 58,
-    espnID: 249,
+    espnId: 249,
     name: "North Texas",
     fullName: "North Texas Mean Green",
     code: "UNT",
@@ -4449,7 +4449,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthTexasLogo,
     location: "Denton, TX",
     city: "Denton",
-    venue: "DATCU Stadium",
+    venueName: "DATCU Stadium",
     address: "1251 S Bonnie Brae St, Denton, TX 76207",
     venueCapacity: "30,850",
     established: 1913,
@@ -4463,7 +4463,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 87,
-    espnID: 2464,
+    espnId: 2464,
     name: "Northern Arizona",
     fullName: "Northern Arizona Lumberjacks",
     code: "NAU",
@@ -4473,7 +4473,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthernArizonaLogoLight,
     location: "Flagstaff, AZ",
     city: "Flagstaff",
-    venue: "Walkup Skydome",
+    venueName: "Walkup Skydome",
     address: "1701 S San Francisco St, Flagstaff, AZ 86011",
     venueCapacity: "10,000",
     established: 1915,
@@ -4487,7 +4487,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 220,
-    espnID: 2458,
+    espnId: 2458,
     name: "Northern Colorado",
     fullName: "Northern Colorado Bears",
     code: "UNCO",
@@ -4497,7 +4497,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthernColoradoLogo,
     location: "Greeley, CO",
     city: "Greeley",
-    venue: "Nottingham Field",
+    venueName: "Nottingham Field",
     address: "2100 17th Ave, Greeley, CO 80639",
     venueCapacity: "8,533",
     established: 1893,
@@ -4511,7 +4511,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 79,
-    espnID: 2459,
+    espnId: 2459,
     name: "Northern Illinois",
     fullName: "Northern Illinois Huskies",
     code: "NIU",
@@ -4521,7 +4521,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthernIllinoisLogo,
     location: "DeKalb, IL",
     city: "DeKalb",
-    venue: "Huskie Stadium",
+    venueName: "Huskie Stadium",
     address: "1245 Stadium Dr, DeKalb, IL 60115",
     venueCapacity: "23,595",
     established: 1899,
@@ -4535,7 +4535,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 150,
-    espnID: 2460,
+    espnId: 2460,
     name: "Northern Iowa",
     fullName: "Northern Iowa Panthers",
     code: "UNI",
@@ -4545,7 +4545,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthernIowaLogo,
     location: "Cedar Falls, IA",
     city: "Cedar Falls",
-    venue: "UNI-Dome",
+    venueName: "UNI-Dome",
     address: "2501 Hudson Rd, Cedar Falls, IA 50614",
     venueCapacity: "16,324",
     established: 1895,
@@ -4559,7 +4559,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 41,
-    espnID: 77,
+    espnId: 77,
     name: "Northwestern",
     fullName: "Northwestern Wildcats",
     code: "NU",
@@ -4569,7 +4569,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthwesternLogo,
     location: "Evanston, IL",
     city: "Evanston",
-    venue: "Ryan Field",
+    venueName: "Ryan Field",
     address: "1501 Central St, Evanston, IL 60208",
     venueCapacity: "47,000",
     established: 1876,
@@ -4582,7 +4582,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 251,
-    espnID: 2466,
+    espnId: 2466,
     name: "Northwestern State",
     fullName: "Northwestern State Demons",
     shortName: "N'Western St",
@@ -4593,7 +4593,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthwesternStateLogo,
     location: "Natchitoches, LA",
     city: "Natchitoches",
-    venue: "Harry Turpin Stadium",
+    venueName: "Harry Turpin Stadium",
     address: "220 S Jefferson St, Natchitoches, LA 71457",
     venueCapacity: "15,971",
     established: 1907,
@@ -4607,7 +4607,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 734,
-    espnID: 2886,
+    espnId: 2886,
 
     name: "Northwood",
     fullName: "Northwood (MI) Timberwolves",
@@ -4618,7 +4618,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NorthwoodLogo,
     location: "Midland, MI",
     city: "Midland",
-    venue: "Hantz Stadium",
+    venueName: "Hantz Stadium",
     address: "4000 Whiting Dr, Midland, MI 48640",
     venueCapacity: "3,800",
     established: 1979,
@@ -4632,7 +4632,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 108,
-    espnID: 87,
+    espnId: 87,
     name: "Notre Dame",
     fullName: "Notre Dame Fighting Irish",
     code: "ND",
@@ -4642,7 +4642,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: NotreDameLogoLight,
     location: "South Bend, IN",
     city: "South Bend",
-    venue: "Notre Dame Stadium",
+    venueName: "Notre Dame Stadium",
     address: "2010 Moose Krause Cir, Notre Dame, IN 46556",
     venueCapacity: "77,622",
     established: 1887,
@@ -4656,7 +4656,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 168,
-    espnID: 195,
+    espnId: 195,
     name: "Ohio",
     fullName: "Ohio Bobcats",
     code: "OHIO",
@@ -4666,7 +4666,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OhioLogo,
     location: "Athens, OH",
     city: "Athens",
-    venue: "Peden Stadium",
+    venueName: "Peden Stadium",
     address: "216 Richland Ave, Athens, OH 45701",
     venueCapacity: "27,000",
     established: 1894,
@@ -4680,7 +4680,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 107,
-    espnID: 194,
+    espnId: 194,
     name: "Ohio State",
     fullName: "Ohio State Buckeyes",
     code: "OSU",
@@ -4690,7 +4690,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OhioStLogoLight,
     location: "Columbus, OH",
     city: "Columbus",
-    venue: "Ohio Stadium",
+    venueName: "Ohio Stadium",
     address: "411 Woody Hayes Dr, Columbus, OH 43210",
     venueCapacity: "102,780",
     established: 1890,
@@ -4704,7 +4704,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 117,
-    espnID: 201,
+    espnId: 201,
     name: "Oklahoma",
     fullName: "Oklahoma Sooners",
     code: "OU",
@@ -4714,7 +4714,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OklahomaLogoLight,
     location: "Norman, OK",
     city: "Norman",
-    venue: "Gaylord Family Oklahoma Memorial Stadium",
+    venueName: "Gaylord Family Oklahoma Memorial Stadium",
     address: "180 W Brooks St, Norman, OK 73019",
     venueCapacity: "86,112",
     established: 1895,
@@ -4728,7 +4728,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 61,
-    espnID: 197,
+    espnId: 197,
     name: "Oklahoma State",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
@@ -4738,7 +4738,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OKStateLogo,
     location: "Stillwater, OK",
     city: "Stillwater",
-    venue: "Boone Pickens Stadium",
+    venueName: "Boone Pickens Stadium",
     address: "700 W Hall of Fame Ave, Stillwater, OK 74075",
     venueCapacity: "55,509",
     established: 1901,
@@ -4752,7 +4752,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 96,
-    espnID: 295,
+    espnId: 295,
     name: "Old Dominion",
     fullName: "Old Dominion Monarchs",
     code: "ODU",
@@ -4762,7 +4762,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ODULogo,
     location: "Norfolk, VA",
     city: "Norfolk",
-    venue: "S.B. Ballard Stadium",
+    venueName: "S.B. Ballard Stadium",
     address: "5115 Hampton Blvd, Norfolk, VA 23508",
     venueCapacity: "22,480",
     established: 1930,
@@ -4775,7 +4775,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 131,
-    espnID: 145,
+    espnId: 145,
     name: "Ole Miss",
     fullName: "Ole Miss Rebels",
     code: "MISS",
@@ -4785,7 +4785,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OleMissLogoLight,
     location: "Oxford, MS",
     city: "Oxford",
-    venue: "Vaught–Hemingway Stadium at Hollingsworth Field",
+    venueName: "Vaught–Hemingway Stadium at Hollingsworth Field",
     address: "46 Manning Way, University, MS 38677",
     venueCapacity: "64,038",
     established: 1893,
@@ -4799,7 +4799,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 110,
-    espnID: 2483,
+    espnId: 2483,
     name: "Oregon",
     fullName: "Oregon Ducks",
     code: "ORE",
@@ -4809,7 +4809,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OregonLogoLight,
     location: "Eugene, OR",
     city: "Eugene",
-    venue: "Autzen Stadium",
+    venueName: "Autzen Stadium",
     address: "2700 Martin Luther King Jr Blvd, Eugene, OR 97401",
     venueCapacity: "54,000",
     established: 1893,
@@ -4822,7 +4822,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 203,
-    espnID: 204,
+    espnId: 204,
     name: "Oregon State",
     fullName: "Oregon State Beavers",
     code: "ORST",
@@ -4832,7 +4832,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: OregonStateLogo,
     location: "Corvallis, OR",
     city: "Corvallis",
-    venue: "Reser Stadium",
+    venueName: "Reser Stadium",
     address: "660 SW 26th St, Corvallis, OR 97331",
     venueCapacity: "43,363",
     established: 1893,
@@ -4846,7 +4846,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 78,
-    espnID: 213,
+    espnId: 213,
     name: "Penn State",
     fullName: "Penn State Nittany Lions",
     code: "PSU",
@@ -4856,7 +4856,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PennStateLogo,
     location: "University Park, PA",
     city: "State College",
-    venue: "Beaver Stadium",
+    venueName: "Beaver Stadium",
     address: "1 Beaver Stadium, University Park, PA 16802",
     venueCapacity: "106,572",
     established: 1887,
@@ -4870,7 +4870,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 324,
-    espnID: 219,
+    espnId: 219,
     name: "Pennsylvania",
     fullName: "Pennsylvania Quakers",
     code: "PENN",
@@ -4880,7 +4880,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PennLogo,
     location: "Philadelphia, PA",
     city: "Philadelphia",
-    venue: "Franklin Field",
+    venueName: "Franklin Field",
     address: "235 S 33rd St, Philadelphia, PA 19104",
     venueCapacity: "52,958",
     established: 1876,
@@ -4894,7 +4894,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 2074,
-    espnID: 2492,
+    espnId: 2492,
 
     name: "Pepperdine",
     fullName: "Pepperdine Waves",
@@ -4905,7 +4905,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PepperdineLogo,
     location: "Malibu, CA",
     city: "Malibu",
-    venue: "Ralphs-Straus Stadium",
+    venueName: "Ralphs-Straus Stadium",
     address: "24255 Pacific Coast Hwy, Malibu, CA 90263",
     venueCapacity: "1,800",
     established: 1946,
@@ -4918,7 +4918,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 63,
-    espnID: 221,
+    espnId: 221,
     name: "Pittsburgh",
     fullName: "Pittsburgh Panthers",
     code: "PITT",
@@ -4928,7 +4928,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PittsburghLogoLight,
     location: "Pittsburgh, PA",
     city: "Pittsburgh",
-    venue: "Acrisure Stadium",
+    venueName: "Acrisure Stadium",
     address: "100 Art Rooney Ave, Pittsburgh, PA 15212",
     venueCapacity: "68,400",
     established: 1890,
@@ -4942,7 +4942,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 91,
-    espnID: 2502,
+    espnId: 2502,
     name: "Portland State",
     fullName: "Portland State Vikings",
     code: "PRST",
@@ -4952,7 +4952,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PortlandStateLogo,
     location: "Portland, OR",
     city: "Portland",
-    venue: "Hillsboro Stadium",
+    venueName: "Hillsboro Stadium",
     address: "4450 NE Century Blvd, Hillsboro, OR 97124",
     venueCapacity: "7,600",
     established: 1947,
@@ -4966,7 +4966,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 295,
-    espnID: 2504,
+    espnId: 2504,
     name: "Prairie View",
     fullName: "Prairie View A&M Panthers",
     code: "PVAM",
@@ -4976,7 +4976,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PrairieViewAMLogo,
     location: "Prairie View, TX",
     city: "Prairie View",
-    venue: "Panther Stadium at Blackshear Field",
+    venueName: "Panther Stadium at Blackshear Field",
     address: "700 University Dr, Prairie View, TX 77446",
     venueCapacity: "15,000",
     established: 1907,
@@ -4990,7 +4990,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 294,
-    espnID: 2506,
+    espnId: 2506,
     name: "Presbyterian",
     fullName: "Presbyterian Blue Hose",
     code: "PRES",
@@ -5000,7 +5000,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PresbyterianLogo,
     location: "Clinton, SC",
     city: "Clinton",
-    venue: "Bailey Memorial Stadium",
+    venueName: "Bailey Memorial Stadium",
     address: "2034 Simpkins St, Clinton, SC 29325",
     venueCapacity: "6500",
     established: 1913,
@@ -5014,7 +5014,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 323,
-    espnID: 163,
+    espnId: 163,
     name: "Princeton",
     fullName: "Princeton Tigers",
     code: "PRIN",
@@ -5024,7 +5024,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PrincetonLogo,
     location: "Princeton, NJ",
     city: "Princeton",
-    venue: "Powers Field at Princeton Stadium",
+    venueName: "Powers Field at Princeton Stadium",
     address: "91 University Pl, Princeton, NJ 08544",
     venueCapacity: "27,773",
     established: 1869,
@@ -5038,7 +5038,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 77,
-    espnID: 2509,
+    espnId: 2509,
     name: "Purdue",
     fullName: "Purdue Boilermakers",
     code: "PUR",
@@ -5048,7 +5048,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: PurdueLogo,
     location: "West Lafayette, IN",
     city: "West Lafayette",
-    venue: "Ross–Ade Stadium",
+    venueName: "Ross–Ade Stadium",
     address: "850 Steven Beering Dr, West Lafayette, IN 47907",
     venueCapacity: "57,236",
     established: 1887,
@@ -5062,7 +5062,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 256,
-    espnID: 227,
+    espnId: 227,
     name: "Rhode Island",
     fullName: "Rhode Island Rams",
     code: "URI",
@@ -5072,7 +5072,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: RhodeIslandLogo,
     location: "Kingston, RI",
     city: "Kingston",
-    venue: "Meade Stadium",
+    venueName: "Meade Stadium",
     address: "10 Tootell Rd, Kingston, RI 02881",
     venueCapacity: "6,555",
     established: 1895,
@@ -5086,7 +5086,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 36,
-    espnID: 242,
+    espnId: 242,
     name: "Rice",
     fullName: "Rice Owls",
     code: "RICE",
@@ -5096,7 +5096,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: RiceLogoLight,
     location: "Houston, TX",
     city: "Houston",
-    venue: "Rice Stadium",
+    venueName: "Rice Stadium",
     address: "6100 Main St, Houston, TX 77005",
     venueCapacity: "47,000",
     established: 1912,
@@ -5109,7 +5109,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 148,
-    espnID: 257,
+    espnId: 257,
     name: "Richmond",
     fullName: "Richmond Spiders",
     code: "RICH",
@@ -5119,7 +5119,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: RichmondLogoLight,
     location: "Richmond, VA",
     city: "Richmond",
-    venue: "E. Claiborne Robins Stadium",
+    venueName: "E. Claiborne Robins Stadium",
     address: "23B Boatwright Dr, Richmond, VA 23173",
     venueCapacity: "8,217",
     established: 1881,
@@ -5133,7 +5133,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 224,
-    espnID: 2523,
+    espnId: 2523,
     name: "Robert Morris",
     fullName: "Robert Morris Colonials",
     code: "RMU",
@@ -5143,7 +5143,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: RobertMorrisLogo,
     location: "Moon Township, PA",
     city: "Moon Township",
-    venue: "Joe Walton Stadium",
+    venueName: "Joe Walton Stadium",
     address: "6001 University Blvd, Moon Township, PA 15108",
     venueCapacity: "3,000",
     established: 1994,
@@ -5157,7 +5157,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 143,
-    espnID: 164,
+    espnId: 164,
     name: "Rutgers",
     fullName: "Rutgers Scarlet Knights",
     code: "RUTG",
@@ -5167,7 +5167,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: RutgersLogo,
     location: "Piscataway, NJ",
     city: "Piscataway",
-    venue: "SHI Stadium",
+    venueName: "SHI Stadium",
     address: "1 Scarlet Knight Way, Piscataway, NJ 08854",
     venueCapacity: "52,454",
     established: 1869,
@@ -5181,7 +5181,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 183,
-    espnID: 2545,
+    espnId: 2545,
     name: "SE Louisiana",
     fullName: "SE Louisiana Lions",
     code: "SELA",
@@ -5191,7 +5191,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SELouisianaLogo,
     location: "Hammond, LA",
     city: "Hammond",
-    venue: "Strawberry Stadium",
+    venueName: "Strawberry Stadium",
     address: "1301 N General Pershing St, Hammond, LA 70401",
     venueCapacity: "7,408",
     established: 1930,
@@ -5205,7 +5205,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 152,
-    espnID: 2546,
+    espnId: 2546,
     name: "SE Missouri State",
     fullName: "Southeast Missouri State Redhawks",
     code: "SEMO",
@@ -5215,7 +5215,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SoutheastMissouriStateLogo,
     location: "Cape Girardeau, MO",
     city: "Cape Girardeau",
-    venue: "Houck Stadium",
+    venueName: "Houck Stadium",
     address: "920 Broadway St, Cape Girardeau, MO 63701",
     venueCapacity: "11,015",
     established: 1902,
@@ -5229,7 +5229,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 190,
-    espnID: 2567,
+    espnId: 2567,
     name: "SMU",
     fullName: "SMU Mustangs",
     code: "SMU",
@@ -5239,7 +5239,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SMULogo,
     location: "Dallas, TX",
     city: "Dallas",
-    venue: "Gerald J. Ford Stadium",
+    venueName: "Gerald J. Ford Stadium",
     address: "5800 Ownby Dr, Dallas, TX 75205",
     venueCapacity: "32,000",
     established: 1915,
@@ -5253,7 +5253,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 258,
-    espnID: 16,
+    espnId: 16,
     name: "Sacramento State",
     fullName: "Sacramento State Hornets",
     code: "SAC",
@@ -5263,7 +5263,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SacramentoStateLogo,
     location: "Sacramento, CA",
     city: "Sacramento",
-    venue: "Hornet Stadium",
+    venueName: "Hornet Stadium",
     address: "6000 J St, Sacramento, CA 95819",
     venueCapacity: "21,195",
     established: 1954,
@@ -5277,7 +5277,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 280,
-    espnID: 2529,
+    espnId: 2529,
     name: "Sacred Heart",
     fullName: "Sacred Heart Pioneers",
     code: "SHU",
@@ -5287,7 +5287,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SacredHeartLogo,
     location: "Fairfield, CT",
     city: "Fairfield",
-    venue: "Campus Field",
+    venueName: "Campus Field",
     address: "5151 Park Ave, Fairfield, CT 06825",
     venueCapacity: "3,334",
     established: 1991,
@@ -5301,7 +5301,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 884,
-    espnID: 2598,
+    espnId: 2598,
     name: "Saint Francis",
     fullName: "Saint Francis Red Flash",
     code: "SFPA",
@@ -5311,7 +5311,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SaintFrancisLogo,
     location: "Loretto, PA",
     city: "Loretto",
-    venue: "DeGol Field",
+    venueName: "DeGol Field",
     address: "140 Lakeview Dr, Loretto, PA 15940",
     venueCapacity: "3,450",
     established: 1892,
@@ -5324,7 +5324,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 813,
-    espnID: 2534,
+    espnId: 2534,
     name: "Sam Houston",
     fullName: "Sam Houston Bearkats",
     code: "SHSU",
@@ -5334,7 +5334,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SamHoustonLogoLight,
     location: "Huntsville, TX",
     city: "Huntsville",
-    venue: "Elliott T. Bowers Stadium",
+    venueName: "Elliott T. Bowers Stadium",
     address: "620 Bowers Blvd, Huntsville, TX 77340",
     venueCapacity: "14,000",
     established: 1912,
@@ -5348,7 +5348,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 210,
-    espnID: 2535,
+    espnId: 2535,
     name: "Samford",
     fullName: "Samford Bulldogs",
     code: "SAM",
@@ -5358,7 +5358,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SamfordLogo,
     location: "Homewood, AL",
     city: "Homewood",
-    venue: "Seibert Stadium",
+    venueName: "Seibert Stadium",
     address: "800 Lakeshore Dr, Homewood, AL 35229",
     venueCapacity: "6,700",
     established: 1902,
@@ -5372,7 +5372,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 300,
-    espnID: 301,
+    espnId: 301,
     name: "San Diego",
     fullName: "San Diego Toreros",
     code: "USD",
@@ -5382,7 +5382,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SanDiegoLogo,
     location: "San Diego, CA",
     city: "San Diego",
-    venue: "Torero Stadium",
+    venueName: "Torero Stadium",
     address: "5998 Alcalá Park, San Diego, CA 92110",
     venueCapacity: "6,000",
     established: 1956,
@@ -5396,7 +5396,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 155,
-    espnID: 21,
+    espnId: 21,
     name: "San Diego State",
     fullName: "San Diego State Aztecs",
     shortName: "San Diego St",
@@ -5407,7 +5407,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SanDiegoStLogo,
     location: "San Diego, CA",
     city: "San Diego",
-    venue: "Snapdragon Stadium",
+    venueName: "Snapdragon Stadium",
     address: "2101 Stadium Way, San Diego, CA 92108",
     venueCapacity: "35,000",
     established: 1921,
@@ -5421,7 +5421,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 90,
-    espnID: 23,
+    espnId: 23,
     name: "San José State",
     fullName: "San José State Spartans",
     code: "SJSU",
@@ -5431,7 +5431,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SanJoseStateLogo,
     location: "San Jose, CA",
     city: "San Jose",
-    venue: "CEFCU Stadium",
+    venueName: "CEFCU Stadium",
     address: "1257 S 10th St, San Jose, CA 95112",
     venueCapacity: "21,520",
     established: 1892,
@@ -5445,7 +5445,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 163,
-    espnID: 6,
+    espnId: 6,
     name: "South Alabama",
     fullName: "South Alabama Jaguars",
     code: "USA",
@@ -5455,7 +5455,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthAlabamaLogo,
     location: "Mobile, AL",
     city: "Mobile",
-    venue: "Hancock Whitney Stadium",
+    venueName: "Hancock Whitney Stadium",
     address: "500 Stadium Dr, Mobile, AL 36688",
     venueCapacity: "25,450",
     established: 2009,
@@ -5469,7 +5469,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 188,
-    espnID: 2579,
+    espnId: 2579,
     name: "South Carolina",
     fullName: "South Carolina Gamecocks",
     code: "SC",
@@ -5479,7 +5479,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthCarolinaLogoLight,
     location: "Columbia, SC",
     city: "Columbia",
-    venue: "Williams–Brice Stadium",
+    venueName: "Williams–Brice Stadium",
     address: "1125 George Rogers Blvd, Columbia, SC 29201",
     venueCapacity: "77,559",
     established: 1892,
@@ -5493,7 +5493,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 72,
-    espnID: 2569,
+    espnId: 2569,
     name: "South Carolina St",
     fullName: "South Carolina State Bulldogs",
     shortName: "SC State",
@@ -5504,7 +5504,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthCarolinaStateLogo,
     location: "Orangeburg, SC",
     city: "Orangeburg",
-    venue: "Oliver C. Dawson Stadium",
+    venueName: "Oliver C. Dawson Stadium",
     address: "300 College St NE, Orangeburg, SC 29117",
     venueCapacity: "22,000",
     established: 1907,
@@ -5518,7 +5518,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 175,
-    espnID: 233,
+    espnId: 233,
     name: "South Dakota",
     fullName: "South Dakota Coyotes",
     code: "SDAK",
@@ -5528,7 +5528,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthDakotaLogo,
     location: "Vermillion, SD",
     city: "Vermillion",
-    venue: "DakotaDome",
+    venueName: "DakotaDome",
     address: "414 E Clark St, Vermillion, SD 57069",
     venueCapacity: "9,100",
     established: 1889,
@@ -5541,7 +5541,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 600,
-    espnID: 613,
+    espnId: 613,
     name: "South Dakota Mines",
     fullName: "South Dakota Mines Hardrockers",
     shortName: "SD Mines",
@@ -5552,7 +5552,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthDakotaMinesLogoLight,
     location: "Rapid City, SD",
     city: "Rapid City",
-    venue: "O'Harra Stadium",
+    venueName: "O'Harra Stadium",
     address: "330 Founders Park Dr, Rapid City, SD 57701",
     venueCapacity: "6,500",
     established: 1889,
@@ -5565,7 +5565,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 139,
-    espnID: 2571,
+    espnId: 2571,
     name: "South Dakota State",
     fullName: "South Dakota State Jackrabbits",
     code: "SDST",
@@ -5575,7 +5575,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthDakotaStateLogo,
     location: "Brookings, SD",
     city: "Brookings",
-    venue: "Dana J. Dykhouse Stadium",
+    venueName: "Dana J. Dykhouse Stadium",
     address: "1396 Stadium Rd, Brookings, SD 57007",
     venueCapacity: "19,340",
     established: 1900,
@@ -5589,7 +5589,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 135,
-    espnID: 58,
+    espnId: 58,
     name: "South Florida",
     fullName: "South Florida Bulls",
     code: "USF",
@@ -5599,7 +5599,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: USFLogo,
     location: "Tampa, FL",
     city: "Tampa",
-    venue: "Raymond James Stadium",
+    venueName: "Raymond James Stadium",
     address: "4201 N Dale Mabry Hwy, Tampa, FL 33607",
     venueCapacity: "65,618",
     established: 1997,
@@ -5613,7 +5613,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 232,
-    espnID: 2582,
+    espnId: 2582,
     name: "Southern",
     fullName: "Southern Jaguars",
     code: "SOU",
@@ -5623,7 +5623,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthernLogo,
     location: "Baton Rouge, LA",
     city: "Baton Rouge",
-    venue: "A. W. Mumford Stadium",
+    venueName: "A. W. Mumford Stadium",
     address: "801 Harding Blvd, Baton Rouge, LA 70807",
     venueCapacity: "28,500",
     established: 1916,
@@ -5637,7 +5637,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 243,
-    espnID: 79,
+    espnId: 79,
     name: "Southern Illinois",
     fullName: "Southern Illinois Salukis",
     code: "SIU",
@@ -5647,7 +5647,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthernIllinoisLogo,
     location: "Carbondale, IL",
     city: "Carbondale",
-    venue: "Saluki Stadium",
+    venueName: "Saluki Stadium",
     address: "1415 Arena Dr, Carbondale, IL 62901",
     venueCapacity: "15,000",
     established: 1913,
@@ -5661,7 +5661,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 178,
-    espnID: 2572,
+    espnId: 2572,
     name: "Southern Miss",
     fullName: "Southern Miss Golden Eagles",
     code: "USM",
@@ -5671,7 +5671,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthernMissLogo,
     location: "Hattiesburg, MS",
     city: "Hattiesburg",
-    venue: "M.M. Roberts Stadium",
+    venueName: "M.M. Roberts Stadium",
     address: "118 College Dr, Hattiesburg, MS 39406",
     venueCapacity: "36,000",
     established: 1912,
@@ -5685,7 +5685,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 212,
-    espnID: 253,
+    espnId: 253,
     name: "Southern Utah",
     fullName: "Southern Utah Thunderbirds",
     code: "SUU",
@@ -5695,7 +5695,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SouthernUtahLogo,
     location: "Cedar City, UT",
     city: "Cedar City",
-    venue: "Eccles Coliseum",
+    venueName: "Eccles Coliseum",
     address: "350 W University Blvd, Cedar City, UT 84720",
     venueCapacity: "8,500",
     established: 1963,
@@ -5709,7 +5709,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 191,
-    espnID: 24,
+    espnId: 24,
     name: "Stanford",
     fullName: "Stanford Cardinal",
     code: "STAN",
@@ -5719,7 +5719,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: StanfordLogo,
     location: "Stanford, CA",
     city: "Stanford",
-    venue: "Stanford Stadium",
+    venueName: "Stanford Stadium",
     address: "625 Nelson Rd, Stanford, CA 94305",
     venueCapacity: "50,424",
     established: 1891,
@@ -5733,7 +5733,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 231,
-    espnID: 2617,
+    espnId: 2617,
     name: "Stephen F. Austin",
     fullName: "Stephen F. Austin Lumberjacks",
     code: "SFA",
@@ -5743,7 +5743,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: StephenFAustinLogo,
     location: "Nacogdoches, TX",
     city: "Nacogdoches",
-    venue: "Homer Bryce Stadium",
+    venueName: "Homer Bryce Stadium",
     address: "700 E College St, Nacogdoches, TX 75962",
     venueCapacity: "14,575",
     established: 1923,
@@ -5757,7 +5757,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 290,
-    espnID: 56,
+    espnId: 56,
     name: "Stetson",
     fullName: "Stetson Hatters",
     code: "STET",
@@ -5767,7 +5767,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: StetsonLogo,
     location: "DeLand, FL",
     city: "DeLand",
-    venue: "Spec Martin Municipal Stadium",
+    venueName: "Spec Martin Municipal Stadium",
     address: "260 E Euclid Ave, DeLand, FL 32724",
     venueCapacity: "6,000",
     established: 1901,
@@ -5781,7 +5781,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 287,
-    espnID: 284,
+    espnId: 284,
     name: "Stonehill",
     fullName: "Stonehill Skyhawks",
     code: "STO",
@@ -5791,7 +5791,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: StonehillLogo,
     location: "Easton, MA",
     city: "Easton",
-    venue: "W.B. Mason Stadium",
+    venueName: "W.B. Mason Stadium",
     address: "320 Washington St, Easton, MA 02357",
     venueCapacity: "5,000",
     established: 1988,
@@ -5805,7 +5805,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 246,
-    espnID: 2619,
+    espnId: 2619,
     name: "Stony Brook",
     fullName: "Stony Brook Seawolves",
     code: "STBK",
@@ -5815,7 +5815,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: StonyBrookLogo,
     location: "Stony Brook, NY",
     city: "Stony Brook",
-    venue: "Kenneth P. LaValle Stadium",
+    venueName: "Kenneth P. LaValle Stadium",
     address: "100 Nichols Rd, Stony Brook, NY 11794",
     venueCapacity: "12,300",
     established: 1984,
@@ -5829,7 +5829,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 833,
-    espnID: 216,
+    espnId: 216,
 
     name: "Susquehanna",
     fullName: "Susquehanna River Hawks",
@@ -5840,7 +5840,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SusquehannaLogo,
     location: "Selinsgrove, PA",
     city: "Selinsgrove",
-    venue: "Amos Alonzo Stagg Field at Nicholas A. Stadium",
+    venueName: "Amos Alonzo Stagg Field at Nicholas A. Stadium",
     address: "514 University Ave, Selinsgrove, PA 17870",
     venueCapacity: "3,500",
     established: 1895,
@@ -5854,7 +5854,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 197,
-    espnID: 183,
+    espnId: 183,
     name: "Syracuse",
     fullName: "Syracuse Orange",
     code: "SYR",
@@ -5864,7 +5864,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: SyracuseLogoLight,
     location: "Syracuse, NY",
     city: "Syracuse",
-    venue: "JMA Wireless Dome",
+    venueName: "JMA Wireless Dome",
     address: "900 Irving Ave, Syracuse, NY 13244",
     venueCapacity: "49,057",
     established: 1889,
@@ -5878,7 +5878,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 105,
-    espnID: 2628,
+    espnId: 2628,
     name: "TCU",
     fullName: "TCU Horned Frogs",
     code: "TCU",
@@ -5888,7 +5888,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TCULogoLight,
     location: "Fort Worth, TX",
     city: "Fort Worth",
-    venue: "Amon G. Carter Stadium",
+    venueName: "Amon G. Carter Stadium",
     address: "2850 Stadium Dr, Fort Worth, TX 76109",
     venueCapacity: "44,008",
     established: 1896,
@@ -5902,7 +5902,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 100,
-    espnID: 218,
+    espnId: 218,
     name: "Temple",
     fullName: "Temple Owls",
     code: "TEM",
@@ -5912,7 +5912,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TempleLogoLight,
     location: "Philadelphia, PA",
     city: "Philadelphia",
-    venue: "Lincoln Financial Field",
+    venueName: "Lincoln Financial Field",
     address: "1 Lincoln Financial Field Way, Philadelphia, PA 19148",
     venueCapacity: "69,796",
     established: 1894,
@@ -5926,7 +5926,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 69,
-    espnID: 2633,
+    espnId: 2633,
     name: "Tennessee",
     fullName: "Tennessee Volunteers",
     code: "TENN",
@@ -5936,7 +5936,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TennesseeLogoLight,
     location: "Knoxville, TN",
     city: "Knoxville",
-    venue: "Neyland Stadium",
+    venueName: "Neyland Stadium",
     address: "1300 Phillip Fulmer Way, Knoxville, TN 37916",
     venueCapacity: "101,915",
     established: 1891,
@@ -5950,7 +5950,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 252,
-    espnID: 2634,
+    espnId: 2634,
     name: "Tennessee State",
     fullName: "Tennessee State Tigers",
     code: "TNST",
@@ -5960,7 +5960,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TennesseeStateLogo,
     location: "Nashville, TN",
     city: "Nashville",
-    venue: "Nissan Stadium",
+    venueName: "Nissan Stadium",
     address: "1 Titans Way, Nashville, TN 37213",
     venueCapacity: "69,143",
     established: 1912,
@@ -5974,7 +5974,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 102,
-    espnID: 2635,
+    espnId: 2635,
     name: "Tennessee Tech",
     fullName: "Tennessee Tech Golden Eagles",
     code: "TNTC",
@@ -5984,7 +5984,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TennesseeTechLogo,
     location: "Cookeville, TN",
     city: "Cookeville",
-    venue: "Tucker Stadium",
+    venueName: "Tucker Stadium",
     address: "590 N Dixie Ave, Cookeville, TN 38505",
     venueCapacity: "16,500",
     established: 1922,
@@ -5998,7 +5998,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 195,
-    espnID: 251,
+    espnId: 251,
     name: "Texas",
     fullName: "Texas Longhorns",
     code: "TEX",
@@ -6008,7 +6008,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TexasLogoLight,
     location: "Austin, TX",
     city: "Austin",
-    venue: "Darrell K Royal Texas Memorial Stadium",
+    venueName: "Darrell K Royal Texas Memorial Stadium",
     address: "2139 San Jacinto Blvd, Austin, TX 78712",
     venueCapacity: "88,548",
     established: 1893,
@@ -6022,7 +6022,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 111,
-    espnID: 245,
+    espnId: 245,
     name: "Texas A&M",
     fullName: "Texas A&M Aggies",
     code: "TA&M",
@@ -6032,7 +6032,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TexasAMLogoLight,
     location: "College Station, TX",
     city: "College Station",
-    venue: "Kyle Field",
+    venueName: "Kyle Field",
     address: "1 Kyle Field Dr, College Station, TX 77843",
     venueCapacity: "102,733",
     established: 1894,
@@ -6046,7 +6046,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 233,
-    espnID: 2640,
+    espnId: 2640,
     name: "Texas Southern",
     fullName: "Texas Southern Tigers",
     code: "TXSO",
@@ -6056,7 +6056,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TexasSouthernLogo,
     location: "Houston, TX",
     city: "Houston",
-    venue: "Shell Energy Stadium",
+    venueName: "Shell Energy Stadium",
     address: "2200 Texas Ave, Houston, TX 77003",
     venueCapacity: "22,039",
     established: 1947,
@@ -6070,7 +6070,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 165,
-    espnID: 326,
+    espnId: 326,
     name: "Texas State",
     fullName: "Texas State Bobcats",
     code: "TXST",
@@ -6080,7 +6080,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TexasStLogo,
     location: "San Marcos, TX",
     city: "San Marcos",
-    venue: "Bobcat Stadium",
+    venueName: "Bobcat Stadium",
     address: "1100 Aquarena Springs Dr, San Marcos, TX 78666",
     venueCapacity: "30,000",
     established: 1904,
@@ -6093,7 +6093,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 193,
-    espnID: 2641,
+    espnId: 2641,
     name: "Texas Tech",
     fullName: "Texas Tech Red Raiders",
     code: "TTU",
@@ -6103,7 +6103,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TexasTechLogo,
     location: "Lubbock, TX",
     city: "Lubbock",
-    venue: "Jones AT&T Stadium",
+    venueName: "Jones AT&T Stadium",
     address: "2526 Mac Davis Ln, Lubbock, TX 79409",
     venueCapacity: "60,454",
     established: 1925,
@@ -6117,7 +6117,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 260,
-    espnID: 2643,
+    espnId: 2643,
     name: "The Citadel",
     fullName: "The Citadel Bulldogs",
     code: "CIT",
@@ -6127,7 +6127,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TheCitadelLogoLight,
     location: "Charleston, SC",
     city: "Charleston",
-    venue: "Johnson Hagood Stadium",
+    venueName: "Johnson Hagood Stadium",
     address: "68 Hagood Ave, Charleston, SC 29403",
     venueCapacity: "11,500",
     established: 1905,
@@ -6141,7 +6141,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 75,
-    espnID: 2649,
+    espnId: 2649,
     name: "Toledo",
     fullName: "Toledo Rockets",
     code: "TOL",
@@ -6151,7 +6151,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ToledoLogoLight,
     location: "Toledo, OH",
     city: "Toledo",
-    venue: "Glass Bowl",
+    venueName: "Glass Bowl",
     address: "1745 Stadium Dr, Toledo, OH 43606",
     venueCapacity: "26,248",
     established: 1917,
@@ -6165,7 +6165,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 244,
-    espnID: 119,
+    espnId: 119,
     name: "Towson",
     fullName: "Towson Tigers",
     code: "TOW",
@@ -6175,7 +6175,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TowsonLogo,
     location: "Towson, MD",
     city: "Towson",
-    venue: "Johnny Unitas Stadium",
+    venueName: "Johnny Unitas Stadium",
     address: "7621 Osler Dr, Towson, MD 21204",
     venueCapacity: "11,198",
     established: 1969,
@@ -6189,7 +6189,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 847,
-    espnID: 386,
+    espnId: 386,
 
     name: "Trinity University TX",
     fullName: "Trinity University TX Tigers",
@@ -6200,7 +6200,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TrinityUniversityTXLogo,
     location: "San Antonio, TX",
     city: "San Antonio",
-    venue: "Trinity University Stadium",
+    venueName: "Trinity University Stadium",
     address: "1 Trinity Pl, San Antonio, TX 78212",
     venueCapacity: "3500",
     established: 1900,
@@ -6214,7 +6214,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 132,
-    espnID: 2653,
+    espnId: 2653,
     name: "Troy",
     fullName: "Troy Trojans",
     code: "TROY",
@@ -6224,7 +6224,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TroyLogo,
     location: "Troy, AL",
     city: "Troy",
-    venue: "Veterans Memorial Stadium",
+    venueName: "Veterans Memorial Stadium",
     address: "5000 Veterans Stadium Dr, Troy, AL 36082",
     venueCapacity: "30,402",
     established: 1909,
@@ -6238,7 +6238,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 180,
-    espnID: 2655,
+    espnId: 2655,
     name: "Tulane",
     fullName: "Tulane Green Wave",
     code: "TULN",
@@ -6248,7 +6248,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TulaneLogo,
     location: "New Orleans, LA",
     city: "New Orleans",
-    venue: "Yulman Stadium",
+    venueName: "Yulman Stadium",
     address: "2900 Ben Weiner Dr, New Orleans, LA 70118",
     venueCapacity: "30,000",
     established: 1893,
@@ -6262,7 +6262,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 160,
-    espnID: 202,
+    espnId: 202,
     name: "Tulsa",
     fullName: "Tulsa Golden Hurricane",
     code: "TLSA",
@@ -6272,7 +6272,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: TulsaLogoLight,
     location: "Tulsa, OK",
     city: "Tulsa",
-    venue: "H.A. Chapman Stadium",
+    venueName: "H.A. Chapman Stadium",
     address: "3112 E 8th St, Tulsa, OK 74104",
     venueCapacity: "30,000",
     established: 1895,
@@ -6286,7 +6286,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 81,
-    espnID: 5,
+    espnId: 5,
     name: "UAB",
     fullName: "UAB Blazers",
     code: "UAB",
@@ -6296,7 +6296,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UABLogoLight,
     location: "Birmingham, AL",
     city: "Birmingham",
-    venue: "Protective Stadium",
+    venueName: "Protective Stadium",
     address: "1020 24th St N, Birmingham, AL 35203",
     venueCapacity: "47,100",
     established: 1991,
@@ -6310,7 +6310,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 730,
-    espnID: 399,
+    espnId: 399,
     name: "UAlbany",
     fullName: "UAlbany Great Danes",
     code: "UALB",
@@ -6320,7 +6320,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UAlbanyLogo,
     location: "Albany, NY",
     city: "Albany",
-    venue: "Bob Ford Field at Tom & Mary Casey Stadium",
+    venueName: "Bob Ford Field at Tom & Mary Casey Stadium",
     address: "1400 Washington Ave, Albany, NY 12222",
     venueCapacity: "11,000",
     established: 1970,
@@ -6334,7 +6334,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 162,
-    espnID: 302,
+    espnId: 302,
     name: "UC Davis",
     fullName: "UC Davis Aggies",
     code: "UCD",
@@ -6344,7 +6344,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UCDavisLogoLight,
     location: "Davis, CA",
     city: "Davis",
-    venue: "UC Davis Health Stadium",
+    venueName: "UC Davis Health Stadium",
     address: "1 Shields Ave, Davis, CA 95616",
     venueCapacity: "10,743",
     established: 1915,
@@ -6357,7 +6357,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 71,
-    espnID: 2116,
+    espnId: 2116,
     name: "UCF",
     fullName: "UCF Knights",
     code: "UCF",
@@ -6367,7 +6367,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UCFLogo,
     location: "Orlando, FL",
     city: "Orlando",
-    venue: "Acrisure Bounce House",
+    venueName: "Acrisure Bounce House",
     address: "4465 Knights Victory Way, Orlando, FL 32816",
     venueCapacity: "45,301",
     established: 1979,
@@ -6380,7 +6380,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 153,
-    espnID: 26,
+    espnId: 26,
     name: "UCLA",
     fullName: "UCLA Bruins",
     code: "UCLA",
@@ -6390,7 +6390,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UCLALogoLight,
     location: "Pasadena, CA",
     city: "Pasadena",
-    venue: "Rose Bowl",
+    venueName: "Rose Bowl",
     address: "1001 Rose Bowl Dr, Pasadena, CA 91103",
     venueCapacity: "88,565",
     established: 1919,
@@ -6404,7 +6404,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 46,
-    espnID: 41,
+    espnId: 41,
     name: "UConn",
     fullName: "UConn Huskies",
     code: "CONN",
@@ -6414,7 +6414,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UConnLogo,
     location: "East Hartford, CT",
     city: "East Hartford",
-    venue: "Pratt & Whitney Stadium at Rentschler Field",
+    venueName: "Pratt & Whitney Stadium at Rentschler Field",
     address: "615 Silver Ln, East Hartford, CT 06118",
     venueCapacity: "40,000",
     established: 1896,
@@ -6428,7 +6428,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 196,
-    espnID: 2433,
+    espnId: 2433,
     name: "UL Monroe",
     fullName: "UL Monroe Warhawks",
     code: "ULM",
@@ -6438,7 +6438,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ULMLogo,
     location: "Monroe, LA",
     city: "Monroe",
-    venue: "Malone Stadium",
+    venueName: "Malone Stadium",
     address: "5137 University Ave, Monroe, LA 71209",
     venueCapacity: "31,175",
     established: 1931,
@@ -6452,7 +6452,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 181,
-    espnID: 113,
+    espnId: 113,
     name: "UMass",
     fullName: "Massachusetts Minutemen",
     code: "MASS",
@@ -6462,7 +6462,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UmassLogo,
     location: "Amherst, MA",
     city: "Amherst",
-    venue: "Warren McGuirk Alumni Stadium",
+    venueName: "Warren McGuirk Alumni Stadium",
     address: "300 Stadium Dr, Hadley, MA 01035",
     venueCapacity: "17,000",
     established: 1879,
@@ -6476,7 +6476,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 43,
-    espnID: 2439,
+    espnId: 2439,
     name: "UNLV",
     fullName: "UNLV Rebels",
     code: "UNLV",
@@ -6486,7 +6486,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UNLVLogoLight,
     location: "Las Vegas, NV",
     city: "Las Vegas",
-    venue: "Allegiant Stadium",
+    venueName: "Allegiant Stadium",
     address: "3333 Al Davis Way, Las Vegas, NV 89118",
     venueCapacity: "65,000",
     established: 1968,
@@ -6500,7 +6500,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 122,
-    espnID: 30,
+    espnId: 30,
     name: "USC",
     fullName: "USC Trojans",
     code: "USC",
@@ -6510,7 +6510,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: USCLogoLight,
     location: "Los Angeles, CA",
     city: "Los Angeles",
-    venue: "Los Angeles Memorial Coliseum",
+    venueName: "Los Angeles Memorial Coliseum",
     address: "3911 S Figueroa St, Los Angeles, CA 90037",
     venueCapacity: "77,500",
     established: 1888,
@@ -6524,7 +6524,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 247,
-    espnID: 2630,
+    espnId: 2630,
     name: "UT Martin",
     fullName: "UT Martin Skyhawks",
     code: "UTM",
@@ -6534,7 +6534,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UTMartinLogo,
     location: "Martin, TN",
     city: "Martin",
-    venue: "Hardy M. Graham Stadium",
+    venueName: "Hardy M. Graham Stadium",
     address: "31 Moody St, Martin, TN 38238",
     venueCapacity: "7,500",
     established: 1925,
@@ -6548,7 +6548,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 57,
-    espnID: 2638,
+    espnId: 2638,
     name: "UTEP",
     fullName: "UTEP Miners",
     code: "UTEP",
@@ -6558,7 +6558,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UTEPLogoLight,
     location: "El Paso, TX",
     city: "El Paso",
-    venue: "Sun Bowl Stadium",
+    venueName: "Sun Bowl Stadium",
     address: "2701 Sun Bowl Dr, El Paso, TX 79902",
     venueCapacity: "46,670",
     established: 1914,
@@ -6572,7 +6572,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 133,
-    espnID: 2636,
+    espnId: 2636,
     name: "UTSA",
     fullName: "UTSA Roadrunners",
     code: "UTSA",
@@ -6582,7 +6582,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UTSALogo,
     location: "San Antonio, TX",
     city: "San Antonio",
-    venue: "Alamodome",
+    venueName: "Alamodome",
     address: "100 Montana St, San Antonio, TX 78203",
     venueCapacity: "64,000",
     established: 2011,
@@ -6596,7 +6596,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 114,
-    espnID: 254,
+    espnId: 254,
     name: "Utah",
     fullName: "Utah Utes",
     code: "UTAH",
@@ -6606,7 +6606,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UtahLogoLight,
     location: "Salt Lake City, UT",
     city: "Salt Lake City",
-    venue: "Rice-Eccles Stadium",
+    venueName: "Rice-Eccles Stadium",
     address: "451 S 1400 E, Salt Lake City, UT 84112",
     venueCapacity: "51,444",
     established: 1892,
@@ -6620,7 +6620,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 45,
-    espnID: 328,
+    espnId: 328,
     name: "Utah State",
     fullName: "Utah State Aggies",
     code: "USU",
@@ -6630,7 +6630,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UtahStateLogoLight,
     location: "Logan, UT",
     city: "Logan",
-    venue: "Maverik Stadium",
+    venueName: "Maverik Stadium",
     address: "1000 N 800 E, Logan, UT 84341",
     venueCapacity: "25,513",
     established: 1892,
@@ -6644,7 +6644,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 264,
-    espnID: 3101,
+    espnId: 3101,
     name: "Utah Tech",
     fullName: "Utah Tech Trailblazers",
     code: "UTU",
@@ -6654,7 +6654,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: UtahTechLogo,
     location: "St. George, UT",
     city: "St. George",
-    venue: "Greater Zion Stadium",
+    venueName: "Greater Zion Stadium",
     address: "225 S University Ave, St. George, UT 84770",
     venueCapacity: "10,500",
     established: 2006,
@@ -6668,7 +6668,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 66,
-    espnID: 2678,
+    espnId: 2678,
     name: "VMI",
     fullName: "VMI Keydets",
     code: "VMI",
@@ -6678,7 +6678,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: VMILogo,
     location: "Lexington, VA",
     city: "Lexington",
-    venue: "Alumni Memorial Field at Foster Stadium",
+    venueName: "Alumni Memorial Field at Foster Stadium",
     address: "319 Letcher Ave, Lexington, VA 24450",
     venueCapacity: "10,000",
     established: 1873,
@@ -6692,7 +6692,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 298,
-    espnID: 2674,
+    espnId: 2674,
     name: "Valparaiso",
     fullName: "Valparaiso Beacons",
     code: "VAL",
@@ -6702,7 +6702,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: ValparaisoLogo,
     location: "Valparaiso, IN",
     city: "Valparaiso",
-    venue: "Brown Field",
+    venueName: "Brown Field",
     address: "1009 Union St, Valparaiso, IN 46383",
     venueCapacity: "5,000",
     established: 1919,
@@ -6715,7 +6715,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 60,
-    espnID: 238,
+    espnId: 238,
     name: "Vanderbilt",
     fullName: "Vanderbilt Commodores",
     code: "VAN",
@@ -6725,7 +6725,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: VanderbiltLogo,
     location: "Nashville, TN",
     city: "Nashville",
-    venue: "FirstBank Stadium",
+    venueName: "FirstBank Stadium",
     address: "2601 Jess Neely Dr, Nashville, TN 37212",
     venueCapacity: "28,500",
     established: 1890,
@@ -6739,7 +6739,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 242,
-    espnID: 222,
+    espnId: 222,
     name: "Villanova",
     fullName: "Villanova Wildcats",
     code: "VILL",
@@ -6749,7 +6749,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: VillanovaLogo,
     location: "Villanova, PA",
     city: "Villanova",
-    venue: "Villanova Stadium",
+    venueName: "Villanova Stadium",
     address: "800 E Lancaster Ave, Villanova, PA 19085",
     venueCapacity: "12,000",
     established: 1894,
@@ -6762,7 +6762,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 147,
-    espnID: 258,
+    espnId: 258,
     name: "Virginia",
     fullName: "Virginia Cavaliers",
     code: "UVA",
@@ -6772,7 +6772,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: VirginiaLogoLight,
     location: "Charlottesville, VA",
     city: "Charlottesville",
-    venue: "Scott Stadium",
+    venueName: "Scott Stadium",
     address: "1815 Stadium Rd, Charlottesville, VA 22903",
     venueCapacity: "61,500",
     established: 1887,
@@ -6785,7 +6785,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 97,
-    espnID: 259,
+    espnId: 259,
     name: "Virginia Tech",
     fullName: "Virginia Tech Hokies",
     code: "VT",
@@ -6795,7 +6795,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: VirginiaTechLogoLight,
     location: "Blacksburg, VA",
     city: "Blacksburg",
-    venue: "Lane Stadium",
+    venueName: "Lane Stadium",
     address: "185 Beamer Way, Blacksburg, VA 24061",
     venueCapacity: "65,632",
     established: 1892,
@@ -6808,7 +6808,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 219,
-    espnID: 2681,
+    espnId: 2681,
     name: "Wagner",
     fullName: "Wagner Seahawks",
     code: "WAG",
@@ -6818,7 +6818,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WagnerLogo,
     location: "Staten Island, NY",
     city: "New York",
-    venue: "Hameline Field at Wagner College Stadium",
+    venueName: "Hameline Field at Wagner College Stadium",
     address: "1 Campus Rd, Staten Island, NY 10301",
     venueCapacity: "3,300",
     established: 1927,
@@ -6831,7 +6831,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 65,
-    espnID: 154,
+    espnId: 154,
     name: "Wake Forest",
     fullName: "Wake Forest Demon Deacons",
     code: "WAKE",
@@ -6841,7 +6841,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WakeForestLogoLight,
     location: "Winston-Salem, NC",
     city: "Winston-Salem",
-    venue: "Truist Field at Wake Forest",
+    venueName: "Truist Field at Wake Forest",
     address: "499 Deacon Blvd, Winston-Salem, NC 27105",
     venueCapacity: "31,500",
     established: 1888,
@@ -6853,7 +6853,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 205,
-    espnID: 264,
+    espnId: 264,
     name: "Washington",
     fullName: "Washington Huskies",
     code: "WASH",
@@ -6863,7 +6863,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WashingtonLogoLight,
     location: "Seattle, WA",
     city: "Seattle",
-    venue: "Husky Stadium",
+    venueName: "Husky Stadium",
     address: "3800 Montlake Blvd NE, Seattle, WA 98195",
     venueCapacity: "70,083",
     established: 1889,
@@ -6875,8 +6875,9 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 201,
-    espnID: 265,
+    espnId: 265,
     name: "Washington State",
+    shortName: "Washington St.",
     fullName: "Washington State Cougars",
     code: "WSU",
     color: "#981e32",
@@ -6885,7 +6886,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WashingtonStateLogoLight,
     location: "Pullman, WA",
     city: "Pullman",
-    venue: "Martin Stadium",
+    venueName: "Martin Stadium",
     address: "1775 NE Stadium Way, Pullman, WA 99164",
     venueCapacity: "32,952",
     established: 1894,
@@ -6897,7 +6898,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 227,
-    espnID: 2692,
+    espnId: 2692,
     name: "Weber State",
     fullName: "Weber State Wildcats",
     code: "WEB",
@@ -6907,7 +6908,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WeberStateLogo,
     location: "Ogden, UT",
     city: "Ogden",
-    venue: "Stewart Stadium",
+    venueName: "Stewart Stadium",
     address: "1356 E 1900 N, Ogden, UT 84408",
     venueCapacity: "17,500",
     established: 1962,
@@ -6920,7 +6921,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 592,
-    espnID: 2695,
+    espnId: 2695,
     name: "West Alabama",
     fullName: "West Alabama Tigers",
     code: "WES",
@@ -6930,7 +6931,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WestAlabamaLogoLight,
     location: "Livingston, AL",
     city: "Livingston",
-    venue: "Tiger Stadium",
+    venueName: "Tiger Stadium",
     address: "409 Wallace Hall, Livingston, AL 35470",
     venueCapacity: "7,000",
     established: 1938,
@@ -6943,7 +6944,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 716,
-    espnID: 2698,
+    espnId: 2698,
     name: "West Georgia",
     fullName: "West Georgia Wolves",
     code: "WGA",
@@ -6953,7 +6954,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WestGeorgiaLogo,
     location: "Carrollton, GA",
     city: "Carrollton",
-    venue: "University Stadium",
+    venueName: "University Stadium",
     address: "325 West Georgia Dr, Carrollton, GA 30118",
     venueCapacity: "10,000",
     established: 1946,
@@ -6966,7 +6967,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 373,
-    espnID: 2699,
+    espnId: 2699,
     name: "West Liberty",
     fullName: "West Liberty Hilltoppers",
     code: "WLIBST",
@@ -6976,7 +6977,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WestLibertyLogoLight,
     location: "West Liberty, WV",
     city: "West Liberty",
-    venue: "West Family Stadium",
+    venueName: "West Family Stadium",
     address: "208 University Dr, West Liberty, WV 26074",
     venueCapacity: "4,000",
     established: 1904,
@@ -6989,7 +6990,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 64,
-    espnID: 277,
+    espnId: 277,
     name: "West Virginia",
     fullName: "West Virginia Mountaineers",
     code: "WVU",
@@ -6999,7 +7000,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WestVirginiaLogoLight,
     location: "Morgantown, WV",
     city: "Morgantown",
-    venue: "Milan Puskar Stadium",
+    venueName: "Milan Puskar Stadium",
     address: "1 Ira Errett Rodgers Dr, Morgantown, WV 26505",
     venueCapacity: "60,000",
     established: 1891,
@@ -7012,7 +7013,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 226,
-    espnID: 2717,
+    espnId: 2717,
     name: "Western Carolina",
     fullName: "Western Carolina Catamounts",
     code: "WCU",
@@ -7022,7 +7023,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WCarolinaLogo,
     location: "Cullowhee, NC",
     city: "Cullowhee",
-    venue: "E.J. Whitmire Stadium",
+    venueName: "E.J. Whitmire Stadium",
     address: "1 University Way, Cullowhee, NC 28723",
     venueCapacity: "13,742",
     established: 1931,
@@ -7035,7 +7036,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 215,
-    espnID: 2710,
+    espnId: 2710,
     name: "Western Illinois",
     fullName: "Western Illinois Leathernecks",
     code: "WIU",
@@ -7045,7 +7046,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WIllinoisLogo,
     location: "Macomb, IL",
     city: "Macomb",
-    venue: "Hanson Field",
+    venueName: "Hanson Field",
     address: "1 University Cir, Macomb, IL 61455",
     venueCapacity: "16,368",
     established: 1902,
@@ -7058,7 +7059,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 39,
-    espnID: 98,
+    espnId: 98,
     name: "Western Kentucky",
     fullName: "Western Kentucky Hilltoppers",
     code: "WKU",
@@ -7068,7 +7069,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WesternKentuckyLogo,
     location: "Bowling Green, KY",
     city: "Bowling Green",
-    venue: "Houchens Industries–L. T. Smith Stadium",
+    venueName: "Houchens Industries–L. T. Smith Stadium",
     address: "1906 College Heights Blvd, Bowling Green, KY 42101",
     venueCapacity: "23,776",
     established: 1908,
@@ -7081,7 +7082,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 93,
-    espnID: 2711,
+    espnId: 2711,
     name: "Western Michigan",
     fullName: "Western Michigan Broncos",
     code: "WMU",
@@ -7091,7 +7092,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WesternMichiganLogo,
     location: "Kalamazoo, MI",
     city: "Kalamazoo",
-    venue: "Waldo Stadium",
+    venueName: "Waldo Stadium",
     address: "1903 W Michigan Ave, Kalamazoo, MI 49008",
     venueCapacity: "30,200",
     established: 1906,
@@ -7104,7 +7105,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 274,
-    espnID: 2848,
+    espnId: 2848,
     name: "Western Oregon",
     fullName: "Western Oregon Wolves",
     code: "WORE",
@@ -7114,7 +7115,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WesternOregonLogo,
     location: "Monmouth, OR",
     city: "Monmouth",
-    venue: "McArthur Field",
+    venueName: "McArthur Field",
     address: "34 Stadium Dr N, Monmouth, OR 97361",
     venueCapacity: "4,000",
     established: 1928,
@@ -7127,7 +7128,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 98,
-    espnID: 2729,
+    espnId: 2729,
     name: "William & Mary",
     fullName: "William & Mary Tribe",
     code: "W&M",
@@ -7137,7 +7138,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WilliamMaryLogo,
     location: "Williamsburg, VA",
     city: "Williamsburg",
-    venue: "Zable Stadium",
+    venueName: "Zable Stadium",
     address: "100 Stadium Dr, Williamsburg, VA 23186",
     venueCapacity: "11,686",
     established: 1893,
@@ -7150,7 +7151,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 125,
-    espnID: 275,
+    espnId: 275,
     name: "Wisconsin",
     fullName: "Wisconsin Badgers",
     code: "WIS",
@@ -7160,7 +7161,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WisconsinLogo,
     location: "Madison, WI",
     city: "Madison",
-    venue: "Camp Randall Stadium",
+    venueName: "Camp Randall Stadium",
     address: "1440 Monroe St, Madison, WI 53711",
     venueCapacity: "80,321",
     established: 1889,
@@ -7173,7 +7174,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 240,
-    espnID: 2747,
+    espnId: 2747,
     name: "Wofford",
     fullName: "Wofford Terriers",
     code: "WOF",
@@ -7183,7 +7184,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WoffordLogo,
     location: "Spartanburg, SC",
     city: "Spartanburg",
-    venue: "Gibbs Stadium",
+    venueName: "Gibbs Stadium",
     address: "429 N Campus Dr, Spartanburg, SC 29303",
     venueCapacity: "13,000",
     established: 1889,
@@ -7196,7 +7197,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 48,
-    espnID: 2751,
+    espnId: 2751,
     name: "Wyoming",
     fullName: "Wyoming Cowboys",
     code: "WYO",
@@ -7206,7 +7207,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: WyomingLogoLight,
     location: "Laramie, WY",
     city: "Laramie",
-    venue: "War Memorial Stadium",
+    venueName: "War Memorial Stadium",
     address: "1000 E University Ave, Laramie, WY 82071",
     venueCapacity: "29,181",
     established: 1893,
@@ -7219,7 +7220,7 @@ export const cfbTeams: FootballTeam[] = [
 
   {
     id: 328,
-    espnID: 43,
+    espnId: 43,
     name: "Yale",
     fullName: "Yale Bulldogs",
     code: "YALE",
@@ -7229,7 +7230,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: YaleLogo,
     location: "New Haven, CT",
     city: "New Haven",
-    venue: "Yale Bowl",
+    venueName: "Yale Bowl",
     address: "81 Central Ave, New Haven, CT 06515",
     venueCapacity: "61,446",
     established: 1872,
@@ -7241,7 +7242,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 482,
-    espnID: 2441,
+    espnId: 2441,
     name: "New Haven",
     fullName: "New Haven Chargers",
     shortName: "New Haven",
@@ -7251,7 +7252,7 @@ export const cfbTeams: FootballTeam[] = [
     logo: NewHavenLogo,
     location: "West Haven, CT",
     city: "West Haven",
-    venue: "Ralph F. DellaCamera Stadium",
+    venueName: "Ralph F. DellaCamera Stadium",
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774347223/stadiums/football/cfb_482_Ralph_F_DellaCamera_Stadium.png",
     address: "300 Boston Post Rd, West Haven, CT 06516",
@@ -7264,7 +7265,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 381,
-    espnID: 2385,
+    espnId: 2385,
     name: "Mercyhurst",
     fullName: "Mercyhurst Lakers",
     shortName: "Mercyhurst",
@@ -7274,7 +7275,7 @@ export const cfbTeams: FootballTeam[] = [
     logo: MercyhurstLogo,
     location: "Erie, PA",
     city: "Erie",
-    venue: "Saxon Stadium",
+    venueName: "Saxon Stadium",
     address: "501 E 38th St, Erie, PA 16546",
     venueCapacity: "4,000",
     established: 1926,
@@ -7287,7 +7288,7 @@ export const cfbTeams: FootballTeam[] = [
   },
   {
     id: 238,
-    espnID: 2754,
+    espnId: 2754,
     name: "Youngstown State",
     fullName: "Youngstown State Penguins",
     shortName: "Youngstown St",
@@ -7298,7 +7299,7 @@ export const cfbTeams: FootballTeam[] = [
     logoLight: YoungstownStateLogo,
     location: "Youngstown, OH",
     city: "Youngstown",
-    venue: "Stambaugh Stadium",
+    venueName: "Stambaugh Stadium",
     address: "577 5th Ave, Youngstown, OH 44502",
     venueCapacity: "20,630",
     established: 1938,
@@ -7850,7 +7851,7 @@ export function getCFBTeamLogo(id: number | string, isDark: boolean) {
 }
 
 export const getTeamByESPNId = (espnId: number | string) => {
-  return cfbTeams.find((t) => t.espnID.toString() === espnId.toString())!;
+  return cfbTeams.find((t) => t.espnId.toString() === espnId.toString())!;
 };
 
 export function getRivalryHeadline(homeId?: number, awayId?: number) {

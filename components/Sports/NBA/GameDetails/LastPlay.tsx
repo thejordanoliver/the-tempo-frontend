@@ -44,7 +44,7 @@ type LastPlayProps = {
   homeTeamId: number;
   awayTeamId: number;
   gameStatusDescription: string | undefined;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  league: string;
 };
 
 const DEFAULT_HEADSHOT = "https://via.placeholder.com/40?text=👤";

@@ -4,7 +4,7 @@ import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StatusBadge, statusConfigs } from "./StatusBadge";
 import { usePreferences } from "contexts/PreferencesContext";
 
-export type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
+export type PlayoffLeague = "MLB" | "NFL" | "UFL"  | "NBA" | "WNBA" | "NHL";
 
 interface StatusLegendProps {
   league: PlayoffLeague;

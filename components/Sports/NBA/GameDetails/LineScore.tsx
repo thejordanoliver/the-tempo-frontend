@@ -27,7 +27,7 @@ export default function LineScore({
   awayCode,
   isDark,
   loading,
-  league = "NBA",
+  league = "nba",
   gameStatusDescription,
 }: Props) {
   const styles = lineScoreStyles(isDark);
@@ -57,15 +57,15 @@ export default function LineScore({
     score != null ? String(score) : "-";
 
   const baseColumns =
-    league === "CBB"
+    league === "cbb"
       ? 2
-      : league === "NHL"
+      : league === "nhl"
         ? 3
-        : league === "MLB"
+        : league === "mlb"
           ? 9
-          : league === "CB"
+          : league === "cb"
             ? 9
-            : league === "SB"
+            : league === "sb"
               ? 7
               : 4;
 
@@ -76,24 +76,24 @@ export default function LineScore({
   );
 
   const getPeriodLabel = (index: number): string => {
-    // ---------------- MLB ----------------
-    if (league === "MLB" || league === "CB") {
+    // ---------------- mlb ----------------
+    if (league === "mlb" || league === "cb") {
       return `${index + 1}`;
     }
 
-    if (league === "SB") {
+    if (league === "sb") {
       return String(index + 1);
     }
 
-    // ---------------- NHL ----------------
-    if (league === "NHL") {
+    // ---------------- nhl ----------------
+    if (league === "nhl") {
       if (index < 3) return `${index + 1}`;
       if (index === 3) return "OT";
       return `${index - 2}OT`;
     }
 
-    // ---------------- CBB ----------------
-    if (league === "CBB") {
+    // ---------------- cbb ----------------
+    if (league === "cbb") {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "OT";

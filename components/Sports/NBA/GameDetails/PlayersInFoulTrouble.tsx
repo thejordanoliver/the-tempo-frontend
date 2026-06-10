@@ -23,7 +23,7 @@ type Props = {
   homePlayers: Player[];
   awayPlayers: Player[];
   isDark: boolean;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  league: string;
  gameStatusDescription: string | undefined;
 };
 

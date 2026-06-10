@@ -1,6 +1,6 @@
 export interface NHLTeam {
   id: number;
-  espnID: number;
+  espnId: number;
   name: string;
   fullName: string;
   code: string;

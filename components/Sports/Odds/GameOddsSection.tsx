@@ -12,7 +12,7 @@ export default function GameOddsSection({
   awayCode,
   awayLogo,
   homeLogo,
-  league = "nba",
+  league,
   isDark = false,
   gameStatusDescription,
 }: GameOddsSectionProps) {

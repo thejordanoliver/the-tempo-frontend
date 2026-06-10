@@ -1,5 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import {
+  EXPLORE_WIDGET_OPTIONS,
+  getDefaultWidgetSize,
+} from "constants/exploreWidgets";
 import { Colors, Fonts } from "constants/styles";
 import {
   Modal,
@@ -16,15 +20,6 @@ import {
   ExploreWidgetType,
 } from "types/widgets";
 
-type WidgetOption = {
-  type: ExploreWidgetType;
-  title: string;
-  description: string;
-  badge?: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  sizes?: ExploreWidgetSize[];
-};
-
 type AddWidgetModalProps = {
   visible: boolean;
   isDark: boolean;
@@ -36,109 +31,6 @@ type AddWidgetModalProps = {
     size: ExploreWidgetSize,
   ) => void;
 };
-
-const DEFAULT_SIZE: ExploreWidgetSize = "medium";
-const RESIZABLE_WIDGET_SIZES: ExploreWidgetSize[] = [
-  "small",
-  "medium",
-  "large",
-];
-
-export const WIDGET_OPTIONS: WidgetOption[] = [
-  {
-    type: "nba_games",
-    title: "NBA Games",
-    description: "Track recent and upcoming games for favorite NBA teams.",
-    badge: "NBA",
-    icon: "basketball-outline",
-  },
-  {
-    type: "nfl_games",
-    title: "NFL Games",
-    description: "Follow football matchups for your NFL favorites.",
-    badge: "NFL",
-    icon: "american-football-outline",
-  },
-  {
-    type: "mlb_games",
-    title: "MLB Games",
-    description: "Keep baseball scores close on Explore.",
-    badge: "MLB",
-    icon: "baseball-outline",
-  },
-  {
-    type: "nhl_games",
-    title: "NHL Games",
-    description: "Track hockey game cards from your NHL favorites.",
-    badge: "NHL",
-    icon: "ice-cream-outline",
-  },
-  {
-    type: "wnba_games",
-    title: "WNBA Games",
-    description: "Follow WNBA games for selected teams.",
-    badge: "WNBA",
-    icon: "basketball-outline",
-  },
-  {
-    type: "cbb_games",
-    title: "CBB Games",
-    description: "Track men's college basketball team games.",
-    badge: "CBB",
-    icon: "school-outline",
-  },
-  {
-    type: "wcbb_games",
-    title: "WCBB Games",
-    description: "Track women's college basketball team games.",
-    badge: "WCBB",
-    icon: "school-outline",
-  },
-  {
-    type: "cfb_games",
-    title: "CFB Games",
-    description: "Follow college football games from favorite teams.",
-    badge: "CFB",
-    icon: "american-football-outline",
-  },
-  {
-    type: "favorite_games",
-    title: "Favorites Games",
-    description: "Combine all favorite-team games into one slider.",
-    badge: "Games",
-    icon: "albums-outline",
-  },
-  {
-    type: "favorite_teams",
-    title: "Favorite Teams",
-    description: "Quick access to your saved teams and leagues.",
-    badge: "Teams",
-    icon: "star-outline",
-  },
-  {
-    type: "trending_news",
-    title: "Trending News",
-    description: "Surface the latest stories across your sports.",
-    badge: "News",
-    icon: "newspaper-outline",
-    sizes: RESIZABLE_WIDGET_SIZES,
-  },
-  {
-    type: "player_leaders",
-    title: "Player Leaders",
-    description: "Monitor leaders and standout player performances.",
-    badge: "Players",
-    icon: "podium-outline",
-  },
-  {
-    type: "standings",
-    title: "Standings",
-    description: "Add standings snapshots for leagues you follow.",
-    badge: "Tables",
-    icon: "stats-chart-outline",
-    sizes: RESIZABLE_WIDGET_SIZES,
-  },
-];
 
 export default function AddWidgetModal({
   visible,
@@ -179,6 +71,8 @@ export default function AddWidgetModal({
               activeOpacity={0.85}
               onPress={onClose}
               style={styles.closeButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close add widget"
             >
               <Ionicons
                 name="close"
@@ -195,9 +89,10 @@ export default function AddWidgetModal({
             nestedScrollEnabled
             contentContainerStyle={styles.options}
           >
-            {WIDGET_OPTIONS.map((option) => {
+            {EXPLORE_WIDGET_OPTIONS.map((option) => {
               const isSelected = selectedSet.has(option.type);
-              const sizes = option.sizes ?? [DEFAULT_SIZE];
+              const sizes = option.sizes;
+              const defaultSize = getDefaultWidgetSize(option.type);
 
               return (
                 <View
@@ -235,6 +130,8 @@ export default function AddWidgetModal({
                               onAddWidget(option.type, option.title, size)
                             }
                             style={styles.sizeButton}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Add ${option.title} ${size} widget`}
                           >
                             <Text style={styles.sizeButtonText}>
                               {size[0].toUpperCase()}
@@ -258,9 +155,11 @@ export default function AddWidgetModal({
                       <TouchableOpacity
                         activeOpacity={0.85}
                         onPress={() =>
-                          onAddWidget(option.type, option.title, DEFAULT_SIZE)
+                          onAddWidget(option.type, option.title, defaultSize)
                         }
                         style={styles.addButton}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Add ${option.title} widget`}
                       >
                         <Text style={styles.addText}>Add</Text>
                       </TouchableOpacity>

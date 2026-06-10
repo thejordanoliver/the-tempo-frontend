@@ -1,4 +1,5 @@
 // components/NBAStandingsList.tsx
+import { getUFLTeam } from "@/constants/teamsUFL";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
@@ -95,6 +96,7 @@ type LeagueConferenceConfig = {
     conferences: Record<string, ConferenceInfo>;
   };
 };
+
 export const leagueConferences: LeagueConferenceConfig = {
   MLB: {
     conferences: {
@@ -129,6 +131,16 @@ export const leagueConferences: LeagueConferenceConfig = {
       },
     },
   },
+
+  UFL: {
+    conferences: {
+      conferenceA: {
+        name: "United Football League",
+        abbreviation: "UFL",
+      },
+    },
+  },
+
   NBA: {
     conferences: {
       conferenceA: {
@@ -175,33 +187,32 @@ export const StandingsList = ({
 }: Props) => {
   const {
     standings: conferences,
+    regularSeasonOptions,
     loading,
     error,
   } = useLeagueStandings(league, year);
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
+
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference",
   );
+
   const { isFavorite } = useFavoriteTeamsContext();
 
-  const yearOptions = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    const startYear = 2000;
+  const yearOptions = regularSeasonOptions;
 
-    const arr = [];
-    for (let y = currentYear; y >= startYear; y--) {
-      arr.push({ label: String(y), value: String(y) });
-    }
+  const safeYear = useMemo(() => {
+    if (!yearOptions.length) return year ?? "";
 
-    return arr;
-  }, []);
+    const selectedExists = yearOptions.some((option) => option.value === year);
 
-  const safeYear =
-    Number(year) > Number(yearOptions[0]?.value) ? yearOptions[0].value : year;
+    return selectedExists ? year : yearOptions[0].value;
+  }, [year, yearOptions]);
 
   if (loading)
     return (
@@ -259,20 +270,24 @@ export const StandingsList = ({
           ? getWNBATeamByESPNId(Number(item.teamId))
           : league === "NFL"
             ? getNFLTeamByESPNId(Number(item.teamId))
-            : league === "MLB"
-              ? getMLBTeamByEspnId(item.teamId)
-              : getNHLTeamByESPNId(Number(item.teamId));
+            : league === "UFL"
+              ? getUFLTeam(Number(item.teamId))
+              : league === "MLB"
+                ? getMLBTeamByEspnId(item.teamId)
+                : getNHLTeamByESPNId(Number(item.teamId));
 
     const route =
       league === "NBA"
         ? "/team/[teamId]"
         : league === "NFL"
           ? "/team/nfl/[teamId]"
-          : league === "WNBA"
-            ? "/team/wnba/[teamId]"
-            : league === "MLB"
-              ? "/team/mlb/[teamId]"
-              : "/team/nhl/[teamId]";
+          : league === "UFL"
+            ? "/team/ufl/[teamId]"
+            : league === "WNBA"
+              ? "/team/wnba/[teamId]"
+              : league === "MLB"
+                ? "/team/mlb/[teamId]"
+                : "/team/nhl/[teamId]";
 
     const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
     const teamCode = team?.code;
@@ -315,8 +330,7 @@ export const StandingsList = ({
     );
   };
 
-  const renderRightItem =
-    (activeColumns: string[]) =>
+  const renderRightItem = (activeColumns: string[]) =>
     function StandingsRightItem({
       item,
       index,
@@ -333,9 +347,11 @@ export const StandingsList = ({
             ? getWNBATeamByESPNId(Number(item.teamId))
             : league === "NFL"
               ? getNFLTeamByESPNId(Number(item.teamId))
-              : league === "MLB"
-                ? getMLBTeamByEspnId(item.teamId)
-                : getNHLTeamByESPNId(Number(item.teamId));
+              : league === "UFL"
+                ? getUFLTeam(Number(item.teamId))
+                : league === "MLB"
+                  ? getMLBTeamByEspnId(item.teamId)
+                  : getNHLTeamByESPNId(Number(item.teamId));
 
       const favorited = team ? isFavorite(league, team.id) : false;
       const isLastRow = index === data.length - 1;
@@ -486,10 +502,10 @@ export const StandingsList = ({
           />
         )}
 
-        {onYearChange && (
+        {onYearChange && yearOptions.length > 0 && (
           <Dropdown
             options={yearOptions}
-            selectedValue={safeYear ?? ""}
+            selectedValue={safeYear}
             onSelect={onYearChange}
             isDark={isDark}
             style={{ marginLeft: 10 }}

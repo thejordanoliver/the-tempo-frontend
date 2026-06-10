@@ -1,41 +1,5 @@
-import {
-  COLLAPSED_PLAYER_COUNT,
-  EXPANDED_MAX_PLAYERS,
-  EXPANDED_PLAYERS_PER_TEAM,
-} from "constants/widgetLeaders";
 import { Text } from "react-native";
 import { gameWidgetStyles } from "styles/ExploreStyles/GameWidgetStyles";
-
-type PlayerLeader = {
-  team: { id: number };
-  leaderStat?: { value: number };
-};
-
-export function getTopLeaders<T extends PlayerLeader>(
-  players: T[],
-  isExpanded: boolean,
-): T[] {
-  const sorted = [...players].sort(
-    (a, b) => (b.leaderStat?.value ?? 0) - (a.leaderStat?.value ?? 0),
-  );
-
-  if (!isExpanded) {
-    return sorted.slice(0, COLLAPSED_PLAYER_COUNT);
-  }
-
-  const byTeam = sorted.reduce<Record<number, T[]>>((acc, player) => {
-    (acc[player.team.id] ??= []).push(player);
-    return acc;
-  }, {});
-
-  return Object.values(byTeam)
-    .flatMap((teamPlayers) =>
-      teamPlayers
-        .sort((a, b) => (b.leaderStat?.value ?? 0) - (a.leaderStat?.value ?? 0))
-        .slice(0, EXPANDED_PLAYERS_PER_TEAM),
-    )
-    .slice(0, EXPANDED_MAX_PLAYERS);
-}
 
 export default function displayeValue(
   isHome = true,

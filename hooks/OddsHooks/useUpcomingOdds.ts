@@ -44,7 +44,7 @@ export type OddsLeague =
 const cache: Record<string, GameOdds[]> = {};
 
 interface UseUpcomingOddsOptions {
-  league?: OddsLeague;
+  league?: string;
   timestamp?: string | number;
   team1?: string;
   team2?: string;

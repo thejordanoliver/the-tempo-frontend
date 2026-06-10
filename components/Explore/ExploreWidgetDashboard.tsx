@@ -4,15 +4,26 @@ import {
   EXPLORE_WIDGET_MAX_HEIGHTS,
   EXPLORE_WIDGET_MIN_HEIGHTS,
 } from "constants/exploreWidgetSizes";
+import {
+  EXPLORE_WIDGET_EMPTY_COPY,
+  getWidgetOption,
+  getWidgetSizeOptions,
+  isGameWidgetType,
+} from "constants/exploreWidgets";
 import { Colors } from "constants/styles";
 import { useExploreWidgetGames } from "hooks/WidgetHooks/useExploreWidgetGames";
-import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   FlatList,
+  PanResponder,
+  StyleProp,
+  StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
+  ViewStyle,
 } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import { widgetDashboardStyles } from "styles/ExploreStyles/WidgetDashboardStyles";
@@ -21,6 +32,10 @@ import {
   ExploreWidgetSize,
   ExploreWidgetType,
 } from "types/widgets";
+import {
+  buildWidgetRows,
+  DashboardWidgetRow,
+} from "utils/exploreWidgetLayout";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
 import NewsWidget from "./Widgets/NewsWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
@@ -44,16 +59,6 @@ type GameWidgetSection = {
   slides: WidgetSlide[];
 };
 
-type DashboardWidgetCell = {
-  widget: ExploreWidgetConfig;
-  index: number;
-};
-
-type DashboardWidgetRow = {
-  id: string;
-  cells: DashboardWidgetCell[];
-};
-
 type WidgetEditProps = {
   widgetId: string;
   widgetSize: ExploreWidgetSize;
@@ -67,59 +72,91 @@ type WidgetEditProps = {
   placeholderHeight?: number;
 };
 
-const nonGameCopy: Partial<Record<ExploreWidgetType, string>> = {
-  player_leaders: "Player leader snapshots will appear here.",
+type DraggableWidgetFrameProps = {
+  children: ReactNode;
+  dragEnabled: boolean;
+  style: StyleProp<ViewStyle>;
+  widgetId: string;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
 };
 
-const WIDGET_SIZE_OPTIONS: ExploreWidgetSize[] = ["small", "medium", "large"];
+const WIDGET_FRAME_DRAG_THRESHOLD = 44;
 
-const emptyGameCopy: Partial<Record<ExploreWidgetType, string>> = {
-  nba_games: "Add favorite NBA teams to see their games here.",
-  nfl_games: "Add favorite NFL teams to see their games here.",
-  mlb_games: "Add favorite MLB teams to see their games here.",
-  nhl_games: "Add favorite NHL teams to see their games here.",
-  wnba_games: "Add favorite WNBA teams to see their games here.",
-  cbb_games: "Add favorite CBB teams to see their games here.",
-  wcbb_games: "Add favorite WCBB teams to see their games here.",
-  cfb_games: "Add favorite CFB teams to see their games here.",
-  favorite_games: "Add favorite teams to see all of their games in one slider.",
-};
+function DraggableWidgetFrame({
+  children,
+  dragEnabled,
+  style,
+  widgetId,
+  canMoveUp,
+  canMoveDown,
+  onMoveWidget,
+}: DraggableWidgetFrameProps) {
+  const dragOffsetRef = useRef(0);
+  const canMoveUpRef = useRef(canMoveUp);
+  const canMoveDownRef = useRef(canMoveDown);
+  const onMoveWidgetRef = useRef(onMoveWidget);
 
-const buildWidgetRows = (
-  widgets: ExploreWidgetConfig[],
-): DashboardWidgetRow[] => {
-  const rows: DashboardWidgetRow[] = [];
-  let pendingSmallCells: DashboardWidgetCell[] = [];
+  canMoveUpRef.current = canMoveUp;
+  canMoveDownRef.current = canMoveDown;
+  onMoveWidgetRef.current = onMoveWidget;
 
-  const flushSmallCells = () => {
-    if (pendingSmallCells.length === 0) return;
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponderCapture: (_, gestureState) =>
+          dragEnabled &&
+          Math.abs(gestureState.dy) > 8 &&
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx),
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+          dragEnabled &&
+          Math.abs(gestureState.dy) > 8 &&
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx),
+        onPanResponderTerminationRequest: () => false,
+        onPanResponderGrant: () => {
+          dragOffsetRef.current = 0;
+        },
+        onPanResponderMove: (_, gestureState) => {
+          const delta = gestureState.dy - dragOffsetRef.current;
 
-    rows.push({
-      id: pendingSmallCells.map((cell) => cell.widget.id).join(":"),
-      cells: pendingSmallCells,
-    });
-    pendingSmallCells = [];
-  };
+          if (delta <= -WIDGET_FRAME_DRAG_THRESHOLD && canMoveUpRef.current) {
+            onMoveWidgetRef.current(widgetId, -1);
+            dragOffsetRef.current = gestureState.dy;
+          }
 
-  widgets.forEach((widget, index) => {
-    const cell = { widget, index };
+          if (
+            delta >= WIDGET_FRAME_DRAG_THRESHOLD &&
+            canMoveDownRef.current
+          ) {
+            onMoveWidgetRef.current(widgetId, 1);
+            dragOffsetRef.current = gestureState.dy;
+          }
+        },
+        onPanResponderRelease: () => {
+          dragOffsetRef.current = 0;
+        },
+        onPanResponderTerminate: () => {
+          dragOffsetRef.current = 0;
+        },
+        onShouldBlockNativeResponder: () => true,
+      }),
+    [dragEnabled, widgetId],
+  );
 
-    if (widget.size === "small") {
-      pendingSmallCells.push(cell);
-
-      if (pendingSmallCells.length === 2) {
-        flushSmallCells();
+  return (
+    <View
+      style={[style, dragEnabled && draggableFrameStyles.dragEnabled]}
+      {...(dragEnabled ? panResponder.panHandlers : {})}
+      accessibilityHint={
+        dragEnabled ? "Drag up or down to reposition this widget" : undefined
       }
-      return;
-    }
-
-    flushSmallCells();
-    rows.push({ id: widget.id, cells: [cell] });
-  });
-
-  flushSmallCells();
-  return rows;
-};
+    >
+      {children}
+    </View>
+  );
+}
 
 export default function ExploreWidgetDashboard({
   isDark,
@@ -136,101 +173,128 @@ export default function ExploreWidgetDashboard({
   const dashboardWidth = Math.max(screenWidth - 24, 1);
   const gridGap = 12;
   const smallWidgetWidth = Math.max((dashboardWidth - gridGap) / 2, 1);
+  const visibleWidgets = useMemo(
+    () =>
+      selectedWidgets
+        .filter((widget) => Boolean(getWidgetOption(widget.type)))
+        .slice()
+        .sort((a, b) => a.order - b.order || a.createdAt - b.createdAt),
+    [selectedWidgets],
+  );
+  const selectedGameWidgetTypes = useMemo(
+    () =>
+      visibleWidgets
+        .map((widget) => widget.type)
+        .filter(isGameWidgetType),
+    [visibleWidgets],
+  );
   const {
     nbaGames,
-    nflGames,
     mlbGames,
-    nhlGames,
     wnbaGames,
     cbbGames,
     wcbbGames,
+    nflGames,
     cfbGames,
+    nhlGames,
     favoriteTeams,
-    loading,
     error,
     refresh,
-  } = useExploreWidgetGames();
+  } = useExploreWidgetGames({
+    enabledWidgetTypes: selectedGameWidgetTypes,
+  });
 
-  const favoriteGameSlides: WidgetSlide[] = [
-    ...nbaGames.map((game) => ({ type: "NBA" as const, data: game })),
-    ...nflGames.map((game) => ({ type: "NFL" as const, data: game })),
-    ...mlbGames.map((game) => ({ type: "MLB" as const, data: game })),
-    ...nhlGames.map((game) => ({ type: "NHL" as const, data: game })),
-    ...wnbaGames.map((game) => ({ type: "WNBA" as const, data: game })),
-    ...cbbGames.map((game) => ({ type: "CBB" as const, data: game })),
-    ...wcbbGames.map((game) => ({ type: "WCBB" as const, data: game })),
-    ...cfbGames.map((game) => ({ type: "CFB" as const, data: game })),
-  ];
-
-  const gameSections: GameWidgetSection[] = [
-    {
-      type: "favorite_games",
-      title: "Favorites Games",
-      slides: favoriteGameSlides,
-    },
-    {
-      type: "nba_games",
-      title: "NBA Games",
-      slides: nbaGames.map((game) => ({ type: "NBA", data: game })),
-    },
-    {
-      type: "nfl_games",
-      title: "NFL Games",
-      slides: nflGames.map((game) => ({ type: "NFL", data: game })),
-    },
-    {
-      type: "mlb_games",
-      title: "MLB Games",
-      slides: mlbGames.map((game) => ({ type: "MLB", data: game })),
-    },
-    {
-      type: "nhl_games",
-      title: "NHL Games",
-      slides: nhlGames.map((game) => ({ type: "NHL", data: game })),
-    },
-    {
-      type: "wnba_games",
-      title: "WNBA Games",
-      slides: wnbaGames.map((game) => ({ type: "WNBA", data: game })),
-    },
-    {
-      type: "cbb_games",
-      title: "CBB Games",
-      slides: cbbGames.map((game) => ({ type: "CBB", data: game })),
-    },
-    {
-      type: "wcbb_games",
-      title: "WCBB Games",
-      slides: wcbbGames.map((game) => ({ type: "WCBB", data: game })),
-    },
-    {
-      type: "cfb_games",
-      title: "CFB Games",
-      slides: cfbGames.map((game) => ({ type: "CFB", data: game })),
-    },
-  ];
-
-  const visibleWidgets = selectedWidgets
-    .filter(
-      (widget) =>
-        gameSections.some((section) => section.type === widget.type) ||
-        widget.type === "favorite_teams" ||
-        widget.type === "trending_news" ||
-        widget.type === "standings" ||
-        Boolean(nonGameCopy[widget.type]),
-    )
-    .slice()
-    .sort((a, b) => a.order - b.order || a.createdAt - b.createdAt);
+  const favoriteGameSlides: WidgetSlide[] = useMemo(
+    () => [
+      ...nbaGames.map((game) => ({ type: "NBA" as const, data: game })),
+      ...mlbGames.map((game) => ({ type: "MLB" as const, data: game })),
+      ...wnbaGames.map((game) => ({ type: "WNBA" as const, data: game })),
+      ...cbbGames.map((game) => ({ type: "CBB" as const, data: game })),
+      ...wcbbGames.map((game) => ({ type: "WCBB" as const, data: game })),
+      ...nflGames.map((game) => ({ type: "NFL" as const, data: game })),
+      ...cfbGames.map((game) => ({ type: "CFB" as const, data: game })),
+      ...nhlGames.map((game) => ({ type: "NHL" as const, data: game })),
+    ],
+    [
+      cbbGames,
+      cfbGames,
+      mlbGames,
+      nbaGames,
+      nflGames,
+      nhlGames,
+      wcbbGames,
+      wnbaGames,
+    ],
+  );
+  const gameSections: GameWidgetSection[] = useMemo(
+    () => [
+      {
+        type: "favorite_games",
+        title: "Favorites Games",
+        slides: favoriteGameSlides,
+      },
+      {
+        type: "nba_games",
+        title: "NBA Games",
+        slides: nbaGames.map((game) => ({ type: "NBA", data: game })),
+      },
+      {
+        type: "mlb_games",
+        title: "MLB Games",
+        slides: mlbGames.map((game) => ({ type: "MLB", data: game })),
+      },
+      {
+        type: "wnba_games",
+        title: "WNBA Games",
+        slides: wnbaGames.map((game) => ({ type: "WNBA", data: game })),
+      },
+      {
+        type: "cbb_games",
+        title: "CBB Games",
+        slides: cbbGames.map((game) => ({ type: "CBB", data: game })),
+      },
+      {
+        type: "wcbb_games",
+        title: "WCBB Games",
+        slides: wcbbGames.map((game) => ({ type: "WCBB", data: game })),
+      },
+      {
+        type: "nfl_games",
+        title: "NFL Games",
+        slides: nflGames.map((game) => ({ type: "NFL", data: game })),
+      },
+      {
+        type: "cfb_games",
+        title: "CFB Games",
+        slides: cfbGames.map((game) => ({ type: "CFB", data: game })),
+      },
+      {
+        type: "nhl_games",
+        title: "NHL Games",
+        slides: nhlGames.map((game) => ({ type: "NHL", data: game })),
+      },
+    ],
+    [
+      cbbGames,
+      cfbGames,
+      favoriteGameSlides,
+      mlbGames,
+      nbaGames,
+      nflGames,
+      nhlGames,
+      wcbbGames,
+      wnbaGames,
+    ],
+  );
   const widgetRows = useMemo(
     () => buildWidgetRows(visibleWidgets),
     [visibleWidgets],
   );
-  const favoriteLeagues = Array.from(
-    new Set(favoriteTeams.map((team) => team.league)),
+  const favoriteLeagues = useMemo(
+    () => Array.from(new Set(favoriteTeams.map((team) => team.league))),
+    [favoriteTeams],
   );
-  const hasSelectedGameWidget = visibleWidgets.some((widget) =>
-    gameSections.some((section) => section.type === widget.type),
-  );
+  const hasSelectedGameWidget = selectedGameWidgetTypes.length > 0;
 
   const renderEmptyBoard = () => (
     <View style={[styles.centerPrompt, dashboardStyles.emptyWrap]}>
@@ -249,6 +313,8 @@ export default function ExploreWidgetDashboard({
         activeOpacity={0.85}
         onPress={onAddWidget}
         style={dashboardStyles.cta}
+        accessibilityRole="button"
+        accessibilityLabel="Add your first widget"
       >
         <Ionicons
           name="add"
@@ -275,7 +341,7 @@ export default function ExploreWidgetDashboard({
     >
       <Text style={dashboardStyles.placeholderTitle}>{title}</Text>
       <Text style={dashboardStyles.placeholderText}>
-        {emptyGameCopy[type] ??
+        {EXPLORE_WIDGET_EMPTY_COPY[type] ??
           "This widget has been added to your Explore board."}
       </Text>
       {editProps?.isEditing && (
@@ -317,7 +383,7 @@ export default function ExploreWidgetDashboard({
       widgetId: widget.id,
       widgetSize: widget.size,
       isEditing: isEditMode,
-      availableSizeOptions: WIDGET_SIZE_OPTIONS,
+      availableSizeOptions: getWidgetSizeOptions(widget.type),
       onResizeWidget,
       onRemoveWidget,
       onMoveWidget,
@@ -405,8 +471,13 @@ export default function ExploreWidgetDashboard({
           const widgetHeight = EXPLORE_WIDGET_HEIGHTS[cell.widget.size];
 
           return (
-            <View
+            <DraggableWidgetFrame
               key={cell.widget.id}
+              dragEnabled={isEditMode}
+              widgetId={cell.widget.id}
+              canMoveUp={cell.index > 0}
+              canMoveDown={cell.index < visibleWidgets.length - 1}
+              onMoveWidget={onMoveWidget}
               style={[
                 dashboardStyles.gridCell,
                 isSmallRow
@@ -425,7 +496,7 @@ export default function ExploreWidgetDashboard({
                 widgetWidth,
                 widgetHeight,
               })}
-            </View>
+            </DraggableWidgetFrame>
           );
         })}
 
@@ -443,6 +514,8 @@ export default function ExploreWidgetDashboard({
           activeOpacity={0.85}
           onPress={onAddWidget}
           style={dashboardStyles.toolbarButton}
+          accessibilityRole="button"
+          accessibilityLabel="Add widget"
         >
           <Ionicons
             name="add"
@@ -459,6 +532,8 @@ export default function ExploreWidgetDashboard({
             dashboardStyles.toolbarButton,
             isEditMode && dashboardStyles.toolbarButtonSelected,
           ]}
+          accessibilityRole="button"
+          accessibilityLabel={isEditMode ? "Finish editing widgets" : "Edit widgets"}
         >
           <Ionicons
             name={isEditMode ? "checkmark" : "create-outline"}
@@ -489,6 +564,8 @@ export default function ExploreWidgetDashboard({
           activeOpacity={0.85}
           onPress={refresh}
           style={dashboardStyles.errorCard}
+          accessibilityRole="button"
+          accessibilityLabel="Retry loading widget games"
         >
           <Text style={dashboardStyles.placeholderTitle}>
             Unable to load widget games
@@ -508,6 +585,13 @@ export default function ExploreWidgetDashboard({
       contentContainerStyle={dashboardStyles.content}
       renderItem={renderWidgetRow}
       ListHeaderComponent={renderDashboardHeader}
+      scrollEnabled={!isEditMode}
     />
   );
 }
+
+const draggableFrameStyles = StyleSheet.create({
+  dragEnabled: {
+    zIndex: 20,
+  },
+});

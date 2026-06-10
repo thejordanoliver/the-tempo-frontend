@@ -267,7 +267,7 @@ export function CFBPlayoffBracket({
   const styles = bracketStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const winner = useMemo(() => getChampion(bracket), [bracket]);
-  const winnerTeam = getTeamByESPNId(winner?.espnID ?? 0);
+  const winnerTeam = getTeamByESPNId(winner?.espnId ?? 0);
   const winnerLogo = getCFBTeamLogo(winnerTeam?.id, isDark);
   const cfpLogo = useMemo(() => (isDark ? CFPLogoLight : CFPLogo), [isDark]);
   const champCenter = getCardCenter(COLS.CHAMPIONSHIP);

@@ -19,7 +19,7 @@ type DropdownOption = {
 
 type DropdownProps = {
   options: DropdownOption[];
-  selectedValue: string;
+  selectedValue: string | undefined;
   onSelect: (value: string) => void;
   isDark: boolean;
   width?: number;

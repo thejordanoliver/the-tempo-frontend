@@ -1,9 +1,8 @@
 // utils/CBBUtils/BasketballGameUtils.ts
 
+import { cbbConferences } from "@/constants/cbbConferences";
 import { useCBBRankings } from "@/hooks/BasketballHooks/useCBBRankings";
 import {
-  cbbTeams,
-  conferenceObjectListMap,
   getCBBTeam,
   getCBBTeamByESPNId,
   modalToMapKey,
@@ -20,200 +19,6 @@ dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
 /* =====================================================
-   TYPES
-===================================================== */
-
-export type CBBWeek = {
-  label: string;
-  stage: string;
-  weekNumber: number;
-  start: dayjs.Dayjs;
-  end: dayjs.Dayjs;
-};
-
-export type GameStatus =
-  | "Scheduled"
-  | "In Progress"
-  | "Halftime"
-  | "Final"
-  | "Canceled"
-  | "Postponed"
-  | "Delayed";
-
-/* =====================================================
-   DATE / STATUS HELPERS
-===================================================== */
-
-const statusMap: Record<string, GameStatus> = {
-  NS: "Scheduled",
-  Q1: "In Progress",
-  Q2: "In Progress",
-  Q3: "In Progress",
-  Q4: "In Progress",
-  OT: "In Progress",
-  OVERTIME: "In Progress",
-  HT: "Halftime",
-  FT: "Final",
-  AOT: "Final",
-  CANC: "Canceled",
-  PST: "Postponed",
-  DELAYED: "Delayed",
-};
-
-type RawVenue = {
-  id?: string;
-  name?: string;
-  fullName?: string;
-  city?: string;
-  address?: any;
-  latitude?: number;
-  longitude?: number;
-  capacity?: number | string;
-  images?: any[];
-};
-
-function normalizeVenueName(v?: RawVenue, fallback?: string) {
-  return (v?.fullName ?? v?.name ?? fallback ?? "").trim().toLowerCase();
-}
-
-export function formatVenueAddress(address: any) {
-  if (!address) return "";
-  if (typeof address === "string") return address;
-  if (typeof address === "object") {
-    return [address.city, address.state].filter(Boolean).join(", ");
-  }
-  return "";
-}
-
-export function resolveVenue({
-  venue,
-  homeTeamData,
-  neutralVenues,
-}: {
-  venue?: RawVenue;
-  homeTeamData: any;
-  neutralVenues: Record<string, any>;
-}) {
-  const venueName = normalizeVenueName(venue, homeTeamData?.venueName);
-
-  const neutralEntry = Object.entries(neutralVenues).find(([key]) =>
-    venueName.includes(key.toLowerCase()),
-  );
-
-  // Base venue (ESPN → team fallback)
-  let resolved = {
-    isNeutral: false,
-    name: venue?.fullName ?? venue?.name ?? homeTeamData?.venueName ?? "",
-    image: venue?.images?.[0]?.href ?? homeTeamData?.venueImage ?? "",
-    city: venue?.city ?? homeTeamData?.city ?? homeTeamData?.location ?? "",
-    address: formatVenueAddress(venue?.address ?? homeTeamData?.address),
-    capacity: venue?.capacity ?? homeTeamData?.venueCapacity ?? "",
-    latitude: venue?.latitude ?? homeTeamData?.latitude ?? null,
-    longitude: venue?.longitude ?? homeTeamData?.longitude ?? null,
-  };
-
-  // Override if neutral
-  if (neutralEntry) {
-    const [, neutral] = neutralEntry;
-
-    resolved = {
-      ...resolved,
-      isNeutral: true,
-      name: neutral.name ?? resolved.name,
-      image: neutral.venueImage ?? resolved.image,
-      city: neutral.city ?? resolved.city,
-      address: formatVenueAddress(neutral.address ?? resolved.address),
-      capacity: neutral.venueCapacity ?? resolved.capacity,
-      latitude: neutral.latitude ?? resolved.latitude,
-      longitude: neutral.longitude ?? resolved.longitude,
-    };
-  }
-
-  return resolved;
-}
-
-export function getGameStatus(raw?: string): GameStatus {
-  if (!raw) return "Scheduled";
-  return statusMap[raw.toUpperCase()] ?? "Scheduled";
-}
-
-export function parseGameDate(rawDate: any): Date | null {
-  if (!rawDate) return null;
-
-  const raw =
-    typeof rawDate === "object"
-      ? rawDate.timestamp
-        ? rawDate.timestamp * 1000
-        : rawDate.date
-      : rawDate;
-
-  const date = raw ? new Date(raw) : null;
-  return date && !isNaN(date.getTime()) ? date : null;
-}
-
-export function formatGameDateTime(date: Date | null) {
-  if (!date) return { formattedDate: "", formattedTime: "", iso: "" };
-
-  return {
-    iso: date.toISOString(),
-    formattedDate: date.toLocaleDateString("en-US", {
-      month: "numeric",
-      day: "numeric",
-    }),
-    formattedTime: date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }),
-  };
-}
-
-/* =====================================================
-   LINE SCORE
-===================================================== */
-
-export function buildLineScore(scores: any) {
-  if (!scores) return { home: [], away: [] };
-
-  const extract = (teamScores: any) => {
-    if (!teamScores) return [];
-
-    const base = [
-      teamScores.quarter_1,
-      teamScores.quarter_2,
-      teamScores.quarter_3,
-      teamScores.quarter_4,
-    ];
-
-    const ot = Object.keys(teamScores)
-      .filter((k) => k.toLowerCase().startsWith("overtime"))
-      .map((k) => teamScores[k])
-      .filter(Boolean);
-
-    return [...base, ...ot].map((v) => (v != null ? String(v) : "-"));
-  };
-
-  return {
-    home: extract(scores.home),
-    away: extract(scores.away),
-  };
-}
-
-export const resolveConferenceTeamNameToESPN = (
-  name: string,
-): string | null => {
-  const normalized = name.toLowerCase().trim();
-
-  const team = cbbTeams.find(
-    (t) =>
-      t.fullName?.toLowerCase() === normalized ||
-      t.name?.toLowerCase() === normalized,
-  );
-
-  return team?.espnID ? String(team.espnID) : null;
-};
-
-/* =====================================================
    MAIN FILTER FUNCTION
 ===================================================== */
 
@@ -223,7 +28,7 @@ export function filterBasketballGames({
   top25Teams,
 }: {
   games: BasketballGame[];
-  selectedConference: string;
+  selectedConference: string | number;
   top25Teams: string[]; // ESPN IDs
 }): BasketballGame[] {
   if (!games?.length) return [];
@@ -240,8 +45,8 @@ export function filterBasketballGames({
   return uniqueGames.filter((game) => {
     const home = getCBBTeam(Number(game.teams.home.id));
     const away = getCBBTeam(Number(game.teams.away.id));
-    const homeESPN = home?.espnID;
-    const awayESPN = away?.espnID;
+    const homeESPN = home?.espnId;
+    const awayESPN = away?.espnId;
 
     if (!homeESPN && !awayESPN) return false;
 
@@ -257,16 +62,13 @@ export function filterBasketballGames({
     if (selectedConference) {
       const mapKey = modalToMapKey[selectedConference] || selectedConference;
 
-      const conference = conferenceObjectListMap.find((c) => c.name === mapKey);
+      const conference = cbbConferences.find((c) => c.name === mapKey);
 
       if (!conference) return false;
 
-      const conferenceESPNIds = conference.teams.filter(Boolean) as string[];
+      const conferenceESPNIds = conference.id;
 
-      return (
-        (homeESPN && conferenceESPNIds.includes(String(homeESPN))) ||
-        (awayESPN && conferenceESPNIds.includes(String(awayESPN)))
-      );
+      return conferenceESPNIds === homeESPN || conferenceESPNIds === awayESPN;
     }
 
     return true;
@@ -292,7 +94,7 @@ export function useAPTop25(league: "CBB" | "WCBB") {
         if (!team) return null;
 
         return {
-          id: String(team.espnID), // ✅ canonical ESPN ID
+          id: String(team.espnId), // ✅ canonical ESPN ID
           name: team.fullName || team.name, // ✅ consistent naming
           rank: r.current,
           code: team.code,

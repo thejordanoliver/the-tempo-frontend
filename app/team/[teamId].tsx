@@ -1,13 +1,16 @@
+import GamesList from "@/components/Sports/NBA/Games/GamesList";
+import {
+  BasketballScheduleMonth,
+  useBasketballTeamGames,
+} from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import GamesList from "components/Sports/NBA/Games/GamesList";
 import Roster from "components/Sports/NBA/Team/Roster";
 import RosterStats from "components/Sports/NBA/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
@@ -19,13 +22,36 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
-import { useTeamGames } from "hooks/NBAHooks/useTeamGames";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getNBASeason } from "utils/dateUtils";
+import { getNBASeason, scrollToMonth } from "utils/dateUtils";
+
+type MonthSelectorItem = {
+  key: string;
+  year: number;
+  month: number;
+  label: string;
+  count: number;
+};
+
+function getMonthKeyFromDate(date: Date | null) {
+  if (!date) return null;
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+function getMonthIndex(monthGroup: BasketballScheduleMonth) {
+  if (typeof monthGroup.month !== "number") return null;
+
+  return monthGroup.month - 1;
+}
 
 export default function TeamDetailScreen() {
   const league = "NBA";
@@ -43,31 +69,15 @@ export default function TeamDetailScreen() {
 
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color;
-  const espnId = team?.espnID ?? 0;
+  const espnId = team?.espnId ?? 0;
   const teamLogo = getTeamLogo(teamIdNum, true);
-
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
-
-  const {
-    games: selectedMonthGames,
-    gamesByMonth,
-    loading: gamesLoading,
-    error: gamesError,
-    refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum.toString(), selectedDate);
-
-  const { monthsToShow, gameCountByMonth, handleSelectMonth } =
-    useTeamMonthSelector({
-      gamesByMonth,
-      selectedDate,
-      setSelectedDate,
-    });
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -114,6 +124,115 @@ export default function TeamDetailScreen() {
 
   const favorited = team ? isFavorite(league, team.id) : false;
 
+  const {
+    games,
+    months,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    error: gamesError,
+    refresh: refreshTeamGames,
+  } = useBasketballTeamGames("nba", teamIdNum);
+
+  const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
+    return months
+      .map((monthGroup) => {
+        const monthIndex = getMonthIndex(monthGroup);
+
+        if (
+          typeof monthGroup.year !== "number" ||
+          typeof monthIndex !== "number"
+        ) {
+          return null;
+        }
+
+        return {
+          key: monthGroup.key,
+          year: monthGroup.year,
+          month: monthIndex,
+          label: monthGroup.label,
+          count: monthGroup.games.length,
+        };
+      })
+      .filter((monthGroup): monthGroup is MonthSelectorItem =>
+        Boolean(monthGroup),
+      );
+  }, [months]);
+
+  const gameCountByMonth = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    monthsToShow.forEach((monthGroup) => {
+      counts.set(monthGroup.key, monthGroup.count);
+    });
+
+    return counts;
+  }, [monthsToShow]);
+
+  const selectedMonthKey = useMemo(
+    () => getMonthKeyFromDate(selectedDate),
+    [selectedDate],
+  );
+
+  const selectedMonthGames = useMemo(() => {
+    if (!selectedMonthKey) {
+      return games;
+    }
+
+    return (
+      months.find((monthGroup) => monthGroup.key === selectedMonthKey)?.games ??
+      []
+    );
+  }, [games, months, selectedMonthKey]);
+
+  useEffect(() => {
+    if (selectedDate || monthsToShow.length === 0) return;
+
+    const today = new Date();
+
+    const currentMonth = monthsToShow.find(
+      (monthGroup) =>
+        monthGroup.month === today.getMonth() &&
+        monthGroup.year === today.getFullYear(),
+    );
+
+    const upcomingMonth = monthsToShow.find((monthGroup) => {
+      if (monthGroup.year > today.getFullYear()) return true;
+
+      return (
+        monthGroup.year === today.getFullYear() &&
+        monthGroup.month >= today.getMonth()
+      );
+    });
+
+    const start = currentMonth ?? upcomingMonth ?? monthsToShow[0];
+
+    setSelectedDate(new Date(start.year, start.month, 1));
+  }, [monthsToShow, selectedDate]);
+
+  const handleSelectMonth = (month: number, year: number, index: number) => {
+    setSelectedDate(new Date(year, month, 1));
+    scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
+  };
+  const handleRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      if (selectedTab === "schedule") {
+        await refreshTeamGames();
+      }
+
+      if (selectedTab === "news") {
+        await refreshNews();
+      }
+
+      if (selectedTab === "stats") {
+        await refetch();
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -140,26 +259,6 @@ export default function TeamDetailScreen() {
     teamIdNum,
   ]);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-
-    try {
-      if (selectedTab === "schedule") {
-        await refreshTeamGames();
-      }
-
-      if (selectedTab === "news") {
-        await refreshNews();
-      }
-
-      if (selectedTab === "stats") {
-        await refetch();
-      }
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   if (!team) {
     return (
       <View style={styles.loadContainer}>
@@ -184,23 +283,23 @@ export default function TeamDetailScreen() {
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
         <View key="schedule" style={styles.contentArea}>
-          <View style={styles.monthSelector}>
-            <MonthSelector
-              months={monthsToShow}
-              selectedDate={selectedDate}
-              onSelect={handleSelectMonth}
-              loading={gamesLoading}
-              gameCountByMonth={gameCountByMonth}
-            />
-          </View>
+          <MonthSelector
+            months={monthsToShow}
+            selectedDate={selectedDate}
+            onSelect={(month, year, index) =>
+              handleSelectMonth(month, year, index)
+            }
+            loading={gamesLoading}
+            gameCountByMonth={gameCountByMonth}
+          />
 
           <GamesList
-            games={selectedMonthGames}
-            loading={gamesLoading}
+            games={selectedMonthGames as any}
             error={gamesError}
-            refreshing={refreshing}
-            onRefresh={refreshTeamGames}
-            expectedCount={selectedMonthGames.length}
+            loading={gamesLoading}
+            refreshing={gamesRefreshing || refreshing}
+            onRefresh={handleRefresh}
+            scrollEnabled={true}
           />
         </View>
 

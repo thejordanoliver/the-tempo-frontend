@@ -1,14 +1,15 @@
 import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
+import Roster from "@/components/Sports/NFL/Team/Roster";
+import RosterStats from "@/components/Sports/NFL/Team/RosterStats";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { getFootballSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsList from "components/News/NewsList";
 import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
-import Roster from "components/Sports/CFB/Team/Roster";
-import RosterStats from "components/Sports/CFB/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -27,6 +28,7 @@ import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 
 export default function TeamDetailScreen() {
   const league = "CFB";
+  const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -34,7 +36,7 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
   const team = getCFBTeam(teamIdNum);
-  const espnId = team?.espnID ?? 0;
+  const espnId = team?.espnId ?? 0;
   const teamLogo = getCFBTeamLogo(teamIdNum, true);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const favorited = team ? isFavorite(league, teamIdNum) : false;
@@ -72,7 +74,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum, "cfb");
+  } = useTeamGames(teamIdNum, league, currentSeason);
 
   const {
     rosterStats,

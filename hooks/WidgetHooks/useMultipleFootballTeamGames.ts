@@ -1,60 +1,224 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FootballGame } from "types/football";
 import { apiClient } from "utils/apiClient";
 
-type RawGamesMap = Record<string, FootballGame | null>; // now typed
+type League = "nfl" | "cfb";
 
-export function useMultipleFootballTeamGames(
-  teamIds: (string | number)[],
-  season: string | number,
-) {
+type RawGamesMap = Record<string, FootballGame | null>;
+
+type UseBasketballTeamGamesOptions = {
+  teamIds: (string | number)[];
+  league?: League;
+};
+
+type FetchLastGamesOptions = {
+  forceRefresh?: boolean;
+};
+
+const LIVE_STATES = new Set(["in", "half"]);
+
+function isLiveFootballGame(game: FootballGame | null | undefined) {
+  const status = game?.status as any;
+
+  const state = String(status?.state || "").toLowerCase();
+  const description = String(status?.description || "").toLowerCase();
+  const detail = String(status?.detail || "").toLowerCase();
+  const shortDetail = String(status?.shortDetail || "").toLowerCase();
+
+  return (
+    LIVE_STATES.has(state) ||
+    description.includes("in progress") ||
+    detail.includes("in progress") ||
+    shortDetail.includes("in progress")
+  );
+}
+
+function isFootballGameLike(value: unknown): value is FootballGame {
+  if (!value || typeof value !== "object") return false;
+
+  const game = value as Record<string, unknown>;
+
+  return Boolean(
+    game.id ??
+      game.uid ??
+      game.name ??
+      game.shortName ??
+      game.date ??
+      game.startDate ??
+      game.status,
+  );
+}
+
+function getGameTimestamp(game: FootballGame) {
+  const rawDate =
+    (game as any).date ??
+    (game as any).startDate ??
+    (game as any).timestamp ??
+    null;
+
+  if (!rawDate) return 0;
+
+  const timestamp =
+    typeof rawDate === "number" ? rawDate : new Date(rawDate).getTime();
+
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function extractFootballGames(
+  data: unknown,
+  seen = new WeakSet<object>(),
+): FootballGame[] {
+  if (!data) return [];
+
+  if (Array.isArray(data)) {
+    return data.flatMap((item) => extractFootballGames(item, seen));
+  }
+
+  if (typeof data !== "object") return [];
+
+  if (seen.has(data)) return [];
+  seen.add(data);
+
+  const object = data as Record<string, unknown>;
+
+  const nestedValues = [
+    object.response,
+    object.games,
+    object.game,
+    object.lastGame,
+    object.event,
+    object.events,
+    object.data,
+  ];
+
+  for (const value of nestedValues) {
+    const games = extractFootballGames(value, seen);
+
+    if (games.length) {
+      return games;
+    }
+  }
+
+  if (isFootballGameLike(object)) {
+    return [object as FootballGame];
+  }
+
+  return [];
+}
+
+function normalizeFootballGameResponse(data: unknown): FootballGame | null {
+  const games = extractFootballGames(data);
+
+  if (!games.length) return null;
+
+  const sortedGames = [...games].sort(
+    (a, b) => getGameTimestamp(b) - getGameTimestamp(a),
+  );
+
+  const liveGame = sortedGames.find((game) => isLiveFootballGame(game));
+
+  return liveGame ?? sortedGames[0] ?? null;
+}
+
+function normalizeTeamIds(teamIds: (string | number)[]) {
+  return Array.from(
+    new Set(
+      teamIds
+        .map((teamId) => String(teamId ?? "").trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+export function useMultipleFootballTeamGames({
+  teamIds,
+  league = "nfl",
+}: UseBasketballTeamGamesOptions) {
   const [lastGames, setLastGames] = useState<RawGamesMap>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // cache for each team-season combination
   const cacheRef = useRef<Map<string, FootballGame | null>>(new Map());
+  const requestIdRef = useRef(0);
 
-  const fetchLastGames = async () => {
-    if (!teamIds || teamIds.length === 0) return;
+  const teamIdsKey = useMemo(() => {
+    return normalizeTeamIds(teamIds).sort().join(",");
+  }, [teamIds]);
 
-    setLoading(true);
-    setError(null);
+  const fetchLastGames = useCallback(
+    async ({ forceRefresh = false }: FetchLastGamesOptions = {}) => {
+      const ids = teamIdsKey ? teamIdsKey.split(",") : [];
+      const requestId = requestIdRef.current + 1;
 
-    try {
-      const results = await Promise.all(
-        teamIds.map(async (teamId) => {
-          const cacheKey = `${teamId}-${season}`;
+      requestIdRef.current = requestId;
 
-          const cached = cacheRef.current.get(cacheKey);
-          if (cached !== undefined) {
-            return [teamId, cached ?? null] as const; // <-- ensure null instead of undefined
-          }
+      if (!ids.length) {
+        setLastGames({});
+        setLoading(false);
+        setError(null);
+        return;
+      }
 
-          const res = await apiClient.get<{ game?: FootballGame }>(
-            `api/games/football/last/${teamId}/${season}`,
-          );
+      setLoading(true);
+      setError(null);
 
-          const game: FootballGame | null = res.data?.game ?? null;
+      try {
+        const results = await Promise.all(
+          ids.map(async (teamId) => {
+            const cacheKey = `${league}-${teamId}`;
 
-          cacheRef.current.set(cacheKey, game);
-          return [teamId, game] as const;
-        }),
-      );
+            if (!forceRefresh && cacheRef.current.has(cacheKey)) {
+              return [teamId, cacheRef.current.get(cacheKey) ?? null] as const;
+            }
 
-      setLastGames(Object.fromEntries(results));
-    } catch (err: any) {
-      console.error("Error fetching last team games:", err);
-      setError(err.message || "Failed to fetch last games");
-    } finally {
-      setLoading(false);
-    }
-  };
+            try {
+              const res = await apiClient.get(
+                `/api/games/football/team/last/${league}/${teamId}`,
+              );
+
+              const game = normalizeFootballGameResponse(res.data);
+
+              cacheRef.current.set(cacheKey, game);
+
+              return [teamId, game] as const;
+            } catch (teamErr) {
+              console.error(
+                `Failed to fetch ${league.toUpperCase()} last game for team ${teamId}`,
+                teamErr,
+              );
+
+              cacheRef.current.set(cacheKey, null);
+
+              return [teamId, null] as const;
+            }
+          }),
+        );
+
+        if (requestIdRef.current !== requestId) return;
+
+        setLastGames(Object.fromEntries(results));
+      } catch (err: any) {
+        if (requestIdRef.current !== requestId) return;
+
+        console.error(`Error fetching ${league.toUpperCase()} team games:`, err);
+        setError(err?.message || "Failed to fetch last games");
+      } finally {
+        if (requestIdRef.current === requestId) {
+          setLoading(false);
+        }
+      }
+    },
+    [teamIdsKey, league],
+  );
 
   useEffect(() => {
-    if (!teamIds || teamIds.length === 0) return;
     fetchLastGames();
-  }, [teamIds, season]);
+  }, [fetchLastGames]);
 
-  return { lastGames, loading, error, refresh: fetchLastGames };
+  return {
+    lastGames,
+    loading,
+    error,
+    refresh: fetchLastGames,
+  };
 }

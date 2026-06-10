@@ -2,7 +2,6 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { getNeutralVenue } from "@/constants/neutralVenues";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useWeatherForecast } from "@/hooks/useWeather";
-import { formatVenueAddress } from "@/utils/CBBUtils/cbbGameUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import TeamInfo from "components/Sports/Baseball/GamePreview/TeamInfo";
 import { Colors } from "constants/styles";
@@ -16,7 +15,7 @@ import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BaseballGame } from "types/baseball";
-import { getBroadcastDisplay } from "utils/games";
+import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
@@ -58,7 +57,7 @@ export default function BaseballGamePreviewModal({
     minute: "2-digit",
   });
 
-  const LEAGUE = isMLB ? "MLB" : isCB ? "CB" : "SB";
+  const LEAGUE = game.league.code;
   const gameId = game?.id;
   const home = game?.home;
   const away = game?.away;
@@ -105,6 +104,7 @@ export default function BaseballGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
+  const isLoading = !!details;
   const isChampionship = game?.season.slug === "championship-series";
   const styles = gamePreviewModalStyle(isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
@@ -166,8 +166,6 @@ export default function BaseballGamePreviewModal({
     : (homeTeam?.longitude ?? 0);
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
-
-  const isLoading = !!details;
 
   return (
     <BottomSheetModal

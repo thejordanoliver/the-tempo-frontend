@@ -3,11 +3,11 @@ import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
-import { teams } from "constants/teams";
-import { cbbTeams } from "constants/teamsCBB";
-import { wnbaTeams } from "constants/teamsWNBA";
+import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
@@ -18,7 +18,7 @@ interface Play {
   coordinate: { x: number; y: number };
   pointsAttempted?: number;
   scoreValue?: number;
-  team?: { id: string };
+  team?: { id: string | number };
   text?: string;
   period?: { number: number; displayValue: string };
   type: {
@@ -29,105 +29,146 @@ interface Play {
 
 interface ShotChartProps {
   plays?: Play[];
-  homeTeamId?: string;
-  awayTeamId?: string;
-  league?: "NBA" | "WNBA" | "CBB" | "WCBB";
+  homeId: string | number;
+  awayId: string | number;
+  homeEspnId: string | number;
+  awayEspnId: string | number;
+  homeLogo: any;
+  awayLogo: any;
+  league: string;
   neutralSite?: boolean;
- gameStatusDescription: string | undefined;
+  gameStatusDescription: string | undefined;
 }
+
+type ShotChartTab =
+  | "All"
+  | "1st"
+  | "2nd"
+  | "3rd"
+  | "4th"
+  | "1st Half"
+  | "2nd Half";
 
 export default function ShotChart({
   plays = [],
-  homeTeamId,
-  awayTeamId,
+  homeId,
+  awayId,
+  homeEspnId = "0",
+  awayEspnId = "0",
+  homeLogo,
+  awayLogo,
   league,
   neutralSite = false,
   gameStatusDescription,
 }: ShotChartProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = shortChartStyles(isDark);
 
-  const COURT_LENGTH = league === "CBB" || "WCBB" ? 82 : 84;
+  const normalizedLeague = league.toLowerCase();
+
+  const isMensCBB = normalizedLeague === "cbb";
+  const isWCBB = normalizedLeague === "wcbb";
+  const isCollegeBasketball = isMensCBB || isWCBB;
+  const isWNBA = normalizedLeague === "wnba";
+
+  /**
+   * ESPN shot coordinates are based on a 94x50 court.
+   * Keep the SVG viewBox matching the real coordinate system.
+   */
+  const COURT_LENGTH = 94;
   const COURT_WIDTH = 50;
 
+  const homeEspnIdString = String(homeEspnId);
+  const awayEspnIdString = String(awayEspnId);
+
   const [layout, setLayout] = useState({ width: 0, height: 0 });
-  const [selectedQuarter, setSelectedQuarter] = useState<
-    "All" | "1st" | "2nd" | "3rd" | "4th" | "1st Half" | "2nd Half"
-  >("All");
+  const [selectedQuarter, setSelectedQuarter] = useState<ShotChartTab>("All");
 
-  const isCBB = league === "CBB" || league === "WCBB";
-  const isWomen = league === "WCBB";
-  const isWNBA = league === "WNBA";
+  const homeTeam = useMemo(() => {
+    if (isCollegeBasketball) return getCBBTeamByESPNId(homeEspnId);
+    if (isWNBA) return getWNBATeamByESPNId(homeEspnId);
+    return getTeamByESPNId(homeEspnId);
+  }, [homeEspnId, isCollegeBasketball, isWNBA]);
 
-  const teamArray = isWNBA ? wnbaTeams : isCBB ? cbbTeams : teams;
+  const awayTeam = useMemo(() => {
+    if (isCollegeBasketball) return getCBBTeamByESPNId(awayEspnId);
+    if (isWNBA) return getWNBATeamByESPNId(awayEspnId);
+    return getTeamByESPNId(awayEspnId);
+  }, [awayEspnId, isCollegeBasketball, isWNBA]);
 
-  const homeTeam = teamArray.find(
-    (t) => t.espnID?.toString() === homeTeamId?.toString(),
-  );
-
-  const awayTeam = teamArray.find(
-    (t) => t.espnID?.toString() === awayTeamId?.toString(),
-  );
-
-  const getLogo = (team?: typeof homeTeam, isDark?: boolean) => {
-    if (!team) return undefined;
-
-    if (isWomen && "wLogo" in team && team.wLogo) {
-      return team.wLogo;
+  const courtLogo = useMemo(() => {
+    if (isCollegeBasketball) {
+      return getCBBTeamLogo(homeId, false, isWCBB);
     }
 
-    return isDark ? (team.logoLight ?? team.logo) : team.logo;
-  };
+    if (isWNBA) {
+      return getWNBATeamLogo(homeId, false);
+    }
 
-  const homeLogo = getLogo(homeTeam, isDark);
-  const awayLogo = getLogo(awayTeam, isDark);
+    return getTeamLogo(homeId, false);
+  }, [homeId, isCollegeBasketball, isWCBB, isWNBA]);
 
-  const courtLogo = getLogo(homeTeam, false);
-  const courtImage = league === "CBB" || "WCBB" ? CBBCourtImage : CourtImage;
+  const courtImage = isCollegeBasketball ? CBBCourtImage : CourtImage;
 
-  // Tabs
-  const TABS =
-    league === "CBB"
-      ? ["All", "1st Half", "2nd Half"]
-      : ["All", "1st", "2nd", "3rd", "4th"];
+  const TABS: ShotChartTab[] = isCollegeBasketball
+    ? ["All", "1st Half", "2nd Half"]
+    : ["All", "1st", "2nd", "3rd", "4th"];
 
-  const PERIOD_MAP: Record<string, number> =
-    league === "CBB"
-      ? { "1st Half": 1, "2nd Half": 2 }
-      : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
+  const PERIOD_MAP: Record<string, number> = isCollegeBasketball
+    ? {
+        "1st Half": 1,
+        "2nd Half": 2,
+      }
+    : {
+        "1st": 1,
+        "2nd": 2,
+        "3rd": 3,
+        "4th": 4,
+      };
 
   const filteredPlays = plays.filter((p) => {
     if (!p.coordinate || !p.shootingPlay) return false;
+
     if (selectedQuarter !== "All") {
       return p.period?.number === PERIOD_MAP[selectedQuarter];
     }
+
     return true;
   });
 
   const renderShots = filteredPlays.map((p) => {
-    const rawX = p.coordinate.x; // 0–50 (half court width)
-    const rawY = p.coordinate.y; // 0–94 (full court length)
+    const rawX = p.coordinate.x; // 0-50 court width
+    const rawY = p.coordinate.y; // 0-94 court length
 
-    let svgX = COURT_LENGTH - (rawY / 94) * COURT_LENGTH; // horizontal
-    let svgY = (rawX / 50) * COURT_WIDTH; // vertical
+    let svgX = COURT_LENGTH - (rawY / COURT_LENGTH) * COURT_LENGTH;
+    let svgY = (rawX / COURT_WIDTH) * COURT_WIDTH;
 
-    if (p.team?.id === awayTeamId) {
+    const playTeamId = String(p.team?.id ?? "");
+
+    const isHomeShot = playTeamId === homeEspnIdString;
+    const isAwayShot = playTeamId === awayEspnIdString;
+
+    /**
+     * Flip away team shots so both teams are oriented correctly.
+     */
+    if (isAwayShot) {
       svgX = COURT_LENGTH - svgX;
-    }
-    if (p.team?.id === awayTeamId) {
       svgY = COURT_WIDTH - svgY;
     }
 
     const made = p.scoringPlay === true;
 
-    let color = "gray";
-    if (p.team?.id === homeTeamId) color = homeTeam?.color ?? "#007AFF";
-    else if (p.team?.id === awayTeamId) color = awayTeam?.color ?? "#FF3B30";
+    let color = Colors.midTone;
 
-    const size = 1.2;
+    if (isHomeShot) {
+      color = homeTeam?.color ?? "#00274c";
+    } else if (isAwayShot) {
+      color = awayTeam?.color ?? "#FF3B30";
+    }
 
-    // MADE SHOT = solid circle
+    const missSize = 1.2;
+
     if (made) {
       return (
         <Circle
@@ -141,17 +182,14 @@ export default function ShotChart({
       );
     }
 
-    // MISSED SHOT = donut + X
     return (
       <React.Fragment key={p.id}>
-        {/* Donut white background */}
-        <Circle cx={svgX} cy={svgY} r={size} fill="white" opacity={0.95} />
+        <Circle cx={svgX} cy={svgY} r={missSize} fill="white" opacity={0.95} />
 
-        {/* Colored ring outline */}
         <Circle
           cx={svgX}
           cy={svgY}
-          r={size}
+          r={missSize}
           stroke={color}
           strokeWidth={0.9}
           fill="none"
@@ -160,6 +198,7 @@ export default function ShotChart({
       </React.Fragment>
     );
   });
+
   const MadeView = ({ color }: { color: string }) => (
     <View
       style={{
@@ -198,12 +237,12 @@ export default function ShotChart({
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Shot Chart</HeadingTwo>
+
       <View style={styles.wrapper}>
-        {/* TabBar for quarters */}
         <TabBar
           tabs={TABS}
           selected={selectedQuarter}
-          onTabPress={(tab) => setSelectedQuarter(tab as any)}
+          onTabPress={(tab) => setSelectedQuarter(tab as ShotChartTab)}
           isDark={isDark}
         />
 
@@ -227,13 +266,14 @@ export default function ShotChart({
                   left: layout.width / 2 - 75,
                   top: layout.height / 2 - 75,
                 }}
+                resizeMode="contain"
               />
             )}
 
           <Svg
             width="100%"
             height="100%"
-            viewBox={`0 0 ${COURT_LENGTH} ${COURT_WIDTH}`} // 94 (wide) × 50 (tall)
+            viewBox={`0 0 ${COURT_LENGTH} ${COURT_WIDTH}`}
             style={StyleSheet.absoluteFill}
           >
             {renderShots}
@@ -243,10 +283,17 @@ export default function ShotChart({
         <View style={styles.legendContainer}>
           {awayTeam && (
             <View style={styles.legendItem}>
-              <Image source={awayLogo} style={styles.legendLogo} />
+              <Image
+                source={awayLogo}
+                style={styles.legendLogo}
+                resizeMode="contain"
+              />
+
               <View style={styles.divider} />
+
               <Text style={styles.legendText}>Make</Text>
               <MadeView color={awayTeam.color ?? Colors.midTone} />
+
               <Text style={styles.legendText}>Miss</Text>
               <MissView color={awayTeam.color ?? Colors.midTone} />
             </View>
@@ -256,10 +303,17 @@ export default function ShotChart({
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
               <MadeView color={homeTeam.color ?? Colors.midTone} />
+
               <Text style={styles.legendText}>Miss</Text>
               <MissView color={homeTeam.color ?? Colors.midTone} />
+
               <View style={styles.divider} />
-              <Image source={homeLogo} style={styles.legendLogo} />
+
+              <Image
+                source={homeLogo}
+                style={styles.legendLogo}
+                resizeMode="contain"
+              />
             </View>
           )}
         </View>
@@ -268,21 +322,27 @@ export default function ShotChart({
   );
 }
 
-const getStyles = (isDark: boolean) =>
+export const shortChartStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { width: "100%" },
+    container: {
+      width: "100%",
+    },
+
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
       paddingTop: 12,
+      overflow: "hidden",
     },
+
     chartWrapper: {
       width: "100%",
       aspectRatio: 94 / 50,
       overflow: "hidden",
       position: "relative",
     },
+
     courtImage: {
       width: "100%",
       height: "100%",
@@ -290,18 +350,21 @@ const getStyles = (isDark: boolean) =>
       top: 0,
       left: 0,
     },
+
     legendContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       marginTop: 10,
       padding: 12,
+      gap: 12,
     },
 
     legendItem: {
       flexDirection: "row",
-      alignItems: "center", // <-- centers icons & text vertically
+      alignItems: "center",
       gap: 6,
+      flexShrink: 1,
     },
 
     colorDot: {
@@ -311,15 +374,18 @@ const getStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderColor: isDark ? Colors.white : Colors.black,
     },
+
     legendText: {
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSBOLD,
     },
+
     legendLogo: {
       width: 20,
       height: 20,
     },
+
     divider: {
       height: 14,
       width: 1,

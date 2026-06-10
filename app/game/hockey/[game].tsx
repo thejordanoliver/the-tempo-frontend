@@ -21,8 +21,7 @@ import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { formatVenueAddress } from "utils/CBBUtils/cbbGameUtils";
-import { getBroadcastDisplay } from "utils/games";
+import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 
 type RouteParams = {
   game?: string | string[];
@@ -88,13 +87,6 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const leagueId = Number(
-    getFirstParam(params.leagueId) ??
-      getFirstParam(params.league) ??
-      game?.league?.id ??
-      0,
-  );
-
   const gameDateObj = game?.date ? new Date(game.date) : null;
 
   const formattedDate =
@@ -114,8 +106,6 @@ export default function GameDetailsScreen(
       : "TBD";
 
   const LEAGUE = game?.league?.code ?? "nhl";
-  const isNHL = leagueId === 90;
-  const isMCH = leagueId === 91;
   const gameId = game?.id;
 
   const home = game?.home;
@@ -126,8 +116,8 @@ export default function GameDetailsScreen(
   const homeTeam = getNHLTeam(home?.id ?? 0) ?? null;
   const awayTeam = getNHLTeam(away?.id ?? 0) ?? null;
 
-  const homeEspnId = homeTeam?.espnID;
-  const awayEspnId = awayTeam?.espnID;
+  const homeEspnId = homeTeam?.espnId;
+  const awayEspnId = awayTeam?.espnId;
 
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
@@ -196,7 +186,6 @@ export default function GameDetailsScreen(
   const venueLon = neutralSite
     ? (neutralVenue?.longitude ?? 0)
     : (homeTeam?.longitude ?? 0);
-
   const { weather } = useWeatherForecast(venueLat, venueLon, "");
 
   useLayoutEffect(() => {

@@ -36,7 +36,7 @@ type Props = {
   injuries: TeamInjury[];
   isDark: boolean;
   loading?: boolean;
-  league: "NBA" | "WNBA";
+  league: string;
   teamPlayersMap?: Record<string, Player[]>;
 };
 
@@ -49,7 +49,7 @@ export default function TeamInjuries({
 }: Props) {
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const styles = teamInjuryStyles(isDark);
-  const isWNBA = league === "WNBA";
+  const isWNBA = league === "wnba";
 
   const reorderedInjuries =
     injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);

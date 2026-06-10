@@ -1,23 +1,27 @@
+import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
-import {
-  getTeamByESPNId as getNFLTeamByESPNId,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
-import { ScoringPlays } from "hooks/FootballHooks/useGameDetails";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { LeagueType } from "types/types";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 type Props = {
   scoringPlays?: ScoringPlays | null;
   loading?: boolean;
-  awayTeamId?: number;
-  homeTeamId?: number;
+
+  awayTeamId?: number | string | null;
+  homeTeamId?: number | string | null;
+
+  awayLogo: any;
+  homeLogo: any;
+  awayCode: string;
+  homeCode: string;
+
+  awayTeamEspnId?: number | string | null;
+  homeTeamEspnId?: number | string | null;
+
   isDark: boolean;
-  league?: LeagueType;
+  league: string;
   gameStatusDescription: string;
 };
 
@@ -26,79 +30,108 @@ export default function TeamScoringSummary({
   loading = false,
   awayTeamId,
   homeTeamId,
+  awayLogo,
+  homeLogo,
+  awayCode,
+  homeCode,
+  awayTeamEspnId,
+  homeTeamEspnId,
   isDark,
-  league = "NFL",
+  league = "nfl",
   gameStatusDescription,
 }: Props) {
   const styles = TeamScoringSummaryStyles(isDark);
 
-  const normalizeESPNId = (id?: number | string | null): string | null => {
-    if (id === null || id === undefined) return null;
+  const [selectedTab, setSelectedTab] = useState<"away" | "home">("away");
+
+  const normalizeId = (id?: number | string | null): string | null => {
+    if (id === null || id === undefined || id === "") return null;
     return String(id);
   };
 
-  // 🧠 Build tabs from ESPN IDs, not ESPN abbreviations
-  const teams = useMemo(() => {
-    const tabs: string[] = ["ALL"];
+  const plays = useMemo(() => {
+    return Array.isArray(scoringPlays) ? scoringPlays : [];
+  }, [scoringPlays]);
 
-    const away = normalizeESPNId(awayTeamId);
-    const home = normalizeESPNId(homeTeamId);
+  const awayLocalId = useMemo(() => normalizeId(awayTeamId), [awayTeamId]);
+  const homeLocalId = useMemo(() => normalizeId(homeTeamId), [homeTeamId]);
 
-    if (away) tabs.push(away);
-    if (home && home !== away) tabs.push(home);
+  const awayEspnId = useMemo(
+    () => normalizeId(awayTeamEspnId ?? awayTeamId),
+    [awayTeamEspnId, awayTeamId],
+  );
 
-    const uniqueIds = Array.from(
-      new Set(
-        scoringPlays
-          ?.map((sp) => normalizeESPNId(sp.team?.id))
-          .filter((id): id is string => !!id),
-      ),
-    );
+  const homeEspnId = useMemo(
+    () => normalizeId(homeTeamEspnId ?? homeTeamId),
+    [homeTeamEspnId, homeTeamId],
+  );
 
-    uniqueIds.forEach((id) => {
-      if (!tabs.includes(id)) {
-        tabs.push(id);
-      }
-    });
+  const tabs = useMemo(
+    () =>
+      [
+        {
+          key: "away",
+          label: awayCode ?? "Away",
+          logo: awayLogo,
+          localId: awayLocalId,
+          espnId: awayEspnId,
+        },
+        {
+          key: "home",
+          label: homeCode ?? "Home",
+          logo: homeLogo,
+          localId: homeLocalId,
+          espnId: homeEspnId,
+        },
+      ] as const,
+    [
+      awayCode,
+      awayLogo,
+      awayLocalId,
+      awayEspnId,
+      homeCode,
+      homeLogo,
+      homeLocalId,
+      homeEspnId,
+    ],
+  );
 
-    return tabs;
-  }, [scoringPlays, awayTeamId, homeTeamId]);
+  const selectedTeam = useMemo(() => {
+    return tabs.find((team) => team.key === selectedTab);
+  }, [tabs, selectedTab]);
 
-  const [selectedTeam, setSelectedTeam] = useState<string>(teams[0] ?? "");
-
-  useEffect(() => {
-    if (!teams.includes(selectedTeam)) {
-      setSelectedTeam(teams[0] ?? "");
-    }
-  }, [teams, selectedTeam]);
-
-  // 🧠 Filter by ESPN ID → internal id
   const teamPlays = useMemo(() => {
-    if (selectedTeam === "ALL") return scoringPlays;
+    if (!selectedTeam) return plays;
 
-    return scoringPlays?.filter(
-      (sp) => normalizeESPNId(sp.team?.id) === selectedTeam,
-    );
-  }, [scoringPlays, selectedTeam]);
+    return plays.filter((play) => {
+      const playTeamId = normalizeId(play.team?.id);
 
-  if (!loading && scoringPlays?.length === 0) return null;
+      return (
+        playTeamId === selectedTeam.espnId ||
+        playTeamId === selectedTeam.localId
+      );
+    });
+  }, [plays, selectedTeam]);
 
   const periodMap: Record<string, string> = {
-    1: "1st",
-    2: "2nd",
-    3: "3rd",
-    4: "4th",
+    "1": "1st",
+    "2": "2nd",
+    "3": "3rd",
+    "4": "4th",
     OT: "OT",
     OVERTIME: "OT",
   };
+
+  if (!loading && plays.length === 0) return null;
 
   if (
     gameStatusDescription === "Scheduled" ||
     gameStatusDescription === "Canceled" ||
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Postponed"
-  )
+  ) {
     return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -106,37 +139,20 @@ export default function TeamScoringSummary({
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar
-          tabs={teams}
-          selected={selectedTeam}
-          onTabPress={setSelectedTeam}
+          tabs={tabs.map((tab) => tab.key)}
+          selected={selectedTab}
+          onTabPress={(tabKey) => setSelectedTab(tabKey as "away" | "home")}
           isDark={isDark}
-          renderLabel={(id, isSelected, tabStyles) => {
-            // ALL tab
-            if (id === "ALL") {
-              return (
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  ALL
-                </Text>
-              );
-            }
+          renderLabel={(tabKey, isSelected, tabStyles) => {
+            const team = tabs.find((tab) => tab.key === tabKey);
 
-            // team tab
-            const team =
-              league === "CFB" ? getTeamByESPNId(id) : getNFLTeamByESPNId(id);
-            const teamId = team?.id ?? 0;
-            const teamCode = team?.code;
-            const logo =
-              league === "CFB"
-                ? getCFBTeamLogo(teamId, isDark)
-                : getNFLTeamLogo(teamId, isDark);
+            if (!team) return null;
 
             return (
               <View style={styles.tabLabel}>
-                {logo && (
+                {team.logo && (
                   <Image
-                    source={logo}
+                    source={team.logo}
                     style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}
@@ -144,7 +160,7 @@ export default function TeamScoringSummary({
                 <Text
                   style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
                 >
-                  {teamCode}
+                  {team.label}
                 </Text>
               </View>
             );
@@ -152,8 +168,11 @@ export default function TeamScoringSummary({
         />
 
         <View style={styles.listContainer}>
-          {teamPlays?.map((play, index) => (
-            <View key={index} style={styles.playRow}>
+          {teamPlays.map((play, index) => (
+            <View
+              key={`${selectedTab}-score-play-${index}`}
+              style={styles.playRow}
+            >
               <Text style={styles.periodText}>
                 {periodMap[String(play.period?.number)] ?? "-"}
                 <Text style={styles.clockText}>
@@ -166,14 +185,14 @@ export default function TeamScoringSummary({
                 <Text style={styles.playDesc}>{play.text}</Text>
               </View>
 
-              <Text style={styles.clockText}>
+              <Text style={styles.scoreText}>
                 {play.awayScore}-{play.homeScore}
               </Text>
             </View>
           ))}
 
-          {teamPlays?.length === 0 && (
-            <Text style={styles.empty}>No scoring plays</Text>
+          {teamPlays.length === 0 && !loading && (
+            <Text style={styles.empty}>No scoring plays for this team.</Text>
           )}
         </View>
       </View>
@@ -183,7 +202,9 @@ export default function TeamScoringSummary({
 
 const TeamScoringSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { marginTop: 10 },
+    container: {
+      marginTop: 10,
+    },
     wrapper: {
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderWidth: 1,
@@ -191,9 +212,20 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       overflow: "hidden",
       paddingTop: 12,
     },
-    tabLabel: { flexDirection: "row", alignItems: "center", gap: 4 },
-    logo: { width: 26, height: 26 },
-    listContainer: { marginTop: 12, gap: 12 },
+    tabLabel: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    tabLogo: {
+      width: 28,
+      height: 28,
+      resizeMode: "contain",
+    },
+    listContainer: {
+      marginTop: 12,
+      gap: 12,
+    },
     playRow: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -218,15 +250,16 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       width: 45,
       textAlign: "right",
     },
+    scoreText: {
+      fontFamily: Fonts.OSREGULAR,
+      color: isDark ? Colors.midTone : Colors.darkGray,
+      width: 45,
+      textAlign: "right",
+    },
     empty: {
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       padding: 20,
       color: isDark ? Colors.midTone : Colors.darkGray,
-    },
-    tabLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
     },
   });

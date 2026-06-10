@@ -12,6 +12,8 @@ import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
+import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
+import UFLLogolight from "assets/Football/UFL_Logos/UFLLight.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import WNBALogo from "assets/Logos/WNBA/WNBA.png";
@@ -21,7 +23,13 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { forwardRef, useImperativeHandle, useMemo } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { sportsListModalStyles } from "styles/LeagueStyles/SportsListModalStyles";
 import { LeagueType } from "types/types";
 import { snapPoints } from "utils/modalUtils";
@@ -41,6 +49,7 @@ const leagues: LeagueType[] = [
   "WNBA",
   "NFL",
   "CFB",
+  "UFL",
   "CB",
   "SB",
   "CBB",
@@ -49,18 +58,26 @@ const leagues: LeagueType[] = [
   "NHL",
   "MMA",
 ];
-const leagueConfig: Record<LeagueType, { label: string; logo: any }> = {
-  NBA: { label: "NBA", logo: NBALogo },
-  WNBA: { label: "WNBA", logo: WNBALogo },
-  NFL: { label: "NFL", logo: NFLLogo },
-  CFB: { label: "College Football", logo: CFBLogo },
-  CB: { label: "College Baseball", logo: CBLogo },
-  SB: { label: "College Softball", logo: SBLogo },
-  CBB: { label: "Men's College Basketball", logo: CBBLogo },
-  WCBB: { label: "Women's College Basketball", logo: WCBBLogo },
-  MLB: { label: "MLB", logo: MLBLogo },
-  NHL: { label: "NHL", logo: NHLLogo },
-  MMA: { label: "MMA", logo: MMALogo },
+const leagueConfig: Record<
+  LeagueType,
+  { label: string; logo: ImageSourcePropType; logoLight: ImageSourcePropType }
+> = {
+  NBA: { label: "NBA", logo: NBALogo, logoLight: NBALogo },
+  WNBA: { label: "WNBA", logo: WNBALogo, logoLight: WNBALogo },
+  NFL: { label: "NFL", logo: NFLLogo, logoLight: NFLLogo },
+  CFB: { label: "College Football", logo: CFBLogo, logoLight: CFBLogo },
+  UFL: { label: "UFL", logo: UFLLogo, logoLight: UFLLogolight },
+  CB: { label: "College Baseball", logo: CBLogo, logoLight: CBLogo },
+  SB: { label: "College Softball", logo: SBLogo, logoLight: SBLogo },
+  CBB: { label: "Men's College Basketball", logo: CBBLogo, logoLight: CBBLogo },
+  WCBB: {
+    label: "Women's College Basketball",
+    logo: WCBBLogo,
+    logoLight: WCBBLogo,
+  },
+  MLB: { label: "MLB", logo: MLBLogo, logoLight: MLBLogo },
+  NHL: { label: "NHL", logo: NHLLogo, logoLight: NHLLogo },
+  MMA: { label: "MMA", logo: MMALogo, logoLight: MMALogo },
 };
 
 const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
@@ -83,6 +100,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       | "/league/nba"
       | "/league/wnba"
       | "/league/nfl"
+      | "/league/ufl"
       | "/league/cb"
       | "/league/sb"
       | "/league/cfb"
@@ -105,19 +123,21 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
               ? "/league/nfl"
               : league === "CFB"
                 ? "/league/cfb"
-                : league === "CB"
-                  ? "/league/cb"
-                : league === "SB"
-                  ? "/league/sb"
-                  : league === "CBB"
-                    ? "/league/cbb"
-                    : league === "WCBB"
-                      ? "/league/wcbb"
-                      : league === "NHL"
-                        ? "/league/nhl"
-                        : league === "MMA"
-                          ? "/league/mma"
-                          : "/league/mlb";
+                : league === "UFL"
+                  ? "/league/ufl"
+                  : league === "CB"
+                    ? "/league/cb"
+                    : league === "SB"
+                      ? "/league/sb"
+                      : league === "CBB"
+                        ? "/league/cbb"
+                        : league === "WCBB"
+                          ? "/league/wcbb"
+                          : league === "NHL"
+                            ? "/league/nhl"
+                            : league === "MMA"
+                              ? "/league/mma"
+                              : "/league/mlb";
       router.push(route);
       onSelect(league);
     };
@@ -153,7 +173,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
             showsVerticalScrollIndicator={false}
           >
             {leagues.map((league) => {
-              const { label, logo } = leagueConfig[league];
+              const { label, logo, logoLight } = leagueConfig[league];
 
               return (
                 <View key={league} style={styles.buttonContainer}>
@@ -163,7 +183,10 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
                     activeOpacity={0.6}
                   >
                     <View style={styles.buttonWrapper}>
-                      <Image style={styles.leagueLogo} source={logo} />
+                      <Image
+                        style={styles.leagueLogo}
+                        source={isDark ? logoLight : logo}
+                      />
                       <Text style={styles.leagueText}>{label}</Text>
                     </View>
                     <Ionicons

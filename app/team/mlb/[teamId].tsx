@@ -63,7 +63,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
   const team = getMLBTeam(teamIdNum);
-  const espnId = team?.espnID ?? 0;
+  const espnId = team?.espnId ?? 0;
   const teamLogo = getMLBTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? "#1D428A";
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

@@ -1,13 +1,13 @@
+import { BasketballGame } from "@/types/basketball";
 import { Colors } from "constants/styles";
 import { Image } from "expo-image";
-import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
+
 import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
-import { Game } from "types/nba";
 import { formatQuarter } from "utils/games";
 
 type Props = {
-  game: Game;
+  game: BasketballGame;
   homeTeamEspnId: string;
   awayTeamEspnId: string;
   homeTeamId: number;
@@ -42,20 +42,11 @@ export default function HeadToHeadGameRow({
 
   const gameDate = safeDate(game.date);
 
-  const gameDateStr = gameDate.toISOString();
+  const homeRecord = game?.home.record ?? "";
+  const awayRecord = game?.home.record ?? "";
 
-  const { details, score: liveScore } = useGameDetails(
-    "nba",
-    homeTeamEspnId,
-    awayTeamEspnId,
-    gameDateStr,
-  );
-
-  const homeRecord = details?.records.home.overall ?? "";
-  const awayRecord = details?.records.away.overall ?? "";
-
-  const gameStatusDescription = liveScore?.gameStatusDescription ?? "";
-  const gameStatusDetail = liveScore?.gameStatusDetail ?? "";
+  const gameStatusDescription = game.status.description ?? "";
+  const gameStatusDetail = game?.status.shortDetail ?? "";
 
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -67,8 +58,8 @@ export default function HeadToHeadGameRow({
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const period = liveScore?.period ?? Number(game.periods?.current ?? 0);
-  const displayClock = liveScore?.displayClock;
+  const period = formatQuarter(game.status?.period);
+  const displayClock = game.status?.clock;
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -83,8 +74,8 @@ export default function HeadToHeadGameRow({
 
   // --- Corrected score mapping ---
   const getTeamScore = (teamId: number) => {
-    if (game?.home?.id === teamId) return game.homeScore ?? 0;
-    if (game?.away?.id === teamId) return game.awayScore ?? 0;
+    if (game?.home?.id === teamId) return game.home.score ?? 0;
+    if (game?.away?.id === teamId) return game.away.score ?? 0;
     return 0;
   };
 
@@ -126,7 +117,7 @@ export default function HeadToHeadGameRow({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
@@ -136,8 +127,7 @@ export default function HeadToHeadGameRow({
     if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-    if (endOfPeriod)
-      return <Text style={styles.clock}>End of {formatQuarter(period)}</Text>;
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>

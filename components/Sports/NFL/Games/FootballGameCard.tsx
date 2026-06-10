@@ -1,4 +1,5 @@
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/styles";
@@ -49,18 +50,30 @@ function FootballGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const home = isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId);
-  const away = isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId);
+  const home = isNFL
+    ? getNFLTeam(homeId)
+    : isCFB
+      ? getCFBTeam(homeId)
+      : getUFLTeam(homeId);
+  const away = isNFL
+    ? getNFLTeam(awayId)
+    : isCFB
+      ? getCFBTeam(awayId)
+      : getUFLTeam(awayId);
 
   const homeName = home?.shortName ?? home?.name ?? game.home.name;
   const awayName = away?.shortName ?? away?.name ?? game.away.name;
 
   const homeLogo = isNFL
     ? getNFLTeamLogo(homeId, isDark)
-    : getCFBTeamLogo(homeId, isDark);
+    : isCFB
+      ? getCFBTeamLogo(homeId, isDark)
+      : getUFLTeamLogo(homeId, isDark);
   const awayLogo = isNFL
     ? getNFLTeamLogo(awayId, isDark)
-    : getCFBTeamLogo(awayId, isDark);
+    : isCFB
+      ? getCFBTeamLogo(awayId, isDark)
+      : getUFLTeamLogo(awayId, isDark);
 
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
@@ -72,9 +85,10 @@ function FootballGameCard({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
+  const isSuspended = gameStatusDescription === "Suspended";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const displayClock = game.status?.displayClock;
-  const period = game.status?.period;
+  const clock = game.status?.clock;
+  const period = formatQuarter(game.status?.period);
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
@@ -90,12 +104,13 @@ function FootballGameCard({
   const homeRank = game.home.rank ?? null;
   const awayRank = game.away.rank ?? null;
   const football = isDark ? FootballLight : Football;
+  const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
-    game?.headline?.includes("Super Bowl") ??
-    game?.headline?.includes("Championship");
+    headlineMatch?.includes("super bowl") ||
+    headlineMatch?.includes("national championship");
   const styles = gameCardStyles(isDark, isChampionship);
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnID;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnID;
+  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
+  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -162,25 +177,23 @@ function FootballGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatQuarter(Number(period))}</Text>
+          <Text style={styles.date}>{period}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
+          <Text style={styles.clock}>{clock}</Text>
         </View>
       );
 
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
-    if (endOfPeriod)
-      return <Text style={styles.clock}>{gameStatusDetail}</Text>;
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
 
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail || "Final"}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>

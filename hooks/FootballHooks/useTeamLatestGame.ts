@@ -41,7 +41,7 @@ export function useTeamLatestGame(
         setError(null);
 
         const { data } = await apiClient.get<LastFootballTeamGameResponse>(
-          `api/games/football/team/last/${league}/${teamId}`,
+          `api/games/football/last/team/${league}/${teamId}`,
         );
 
         if (!data.success) {

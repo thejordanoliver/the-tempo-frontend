@@ -15,7 +15,7 @@ import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
 import NewsList from "../../components/News/NewsList";
-import BasketballGamesList from "../../components/Sports/Basketball/Games/BasketballGamesList";
+import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import ConferenceListModal, {
@@ -144,8 +144,8 @@ export default function WCBBLeagueScreen() {
       result = gamesForDate.filter((game) => {
         const home = getCBBTeam(game.teams.home.id, true);
         const away = getCBBTeam(game.teams.away.id, true);
-        const homeESPN = home?.espnID;
-        const awayESPN = away?.espnID;
+        const homeESPN = home?.espnId;
+        const awayESPN = away?.espnId;
 
         return (
           (homeESPN && top25Teams.includes(String(homeESPN))) ||

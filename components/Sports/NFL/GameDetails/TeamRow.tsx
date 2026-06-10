@@ -10,56 +10,54 @@ import Football from "../../../../assets/icons8/Football.png";
 import FootballLight from "../../../../assets/icons8/FootballLight.png";
 
 export const TeamRow = ({
-  league,
-  team,
+  id,
+  name,
   rank,
+  logo,
+  record,
   isDark,
   isHome = false,
   score,
   isWinner,
-  gameStatusDescription,
-  possessionTeamId,
   size = "medium",
-  timeouts = 3,
-  opponentScore,
+  gameStatusDescription,
+  hasPossession = false,
+  timeouts,
+  league,
 }: FootballTeamRowProps) => {
   const router = useRouter();
+  const styles = teamRowStyles(isDark);
 
-  // 🔥 Routing based on league
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isFinal = gameStatusDescription === "Final";
+  const showRecordInsteadOfScore = isScheduled || score == null;
+
   const handleTeamPress = () => {
-    const id = team.id;
-    if (!id) return;
-    router.push(`/team/${league}/${id}`);
+    if (!id || league === "ufl") return;
+
+    if (league === "nfl") {
+      router.push(`/team/nfl/${id}`);
+      return;
+    }
+
+    if (league === "cfb") {
+      router.push(`/team/cfb/${id}`);
+    }
   };
 
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled =
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Not Started";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period" ||
-    gameStatusDescription === "Halftime";
 
-  // 🔥 CFB uses team.espnID, NFL uses team.id
-  const teamIdentifier = team.espnID;
-  const hasPossession =
-    inProgress && String(possessionTeamId) === String(teamIdentifier);
-
-  const isTie =
-    isFinal &&
-    score != null &&
-    opponentScore != null &&
-    score === opponentScore;
-
-  const styles = teamRowStyles(isDark, isTie);
 
   const getScoreStyle = () => {
-    if (score == null) return { color: Colors.midTone, opacity: 0.5 };
-    if (inProgress) return { color: isDark ? Colors.white : Colors.black };
+    if (score == null) {
+      return { color: Colors.midTone, opacity: 0.5 };
+    }
+
+    if (inProgress) {
+      return { color: isDark ? Colors.white : Colors.black };
+    }
+
     if (isFinal) {
-      if (isTie)
-        return { color: isDark ? Colors.white : Colors.black, opacity: 1 };
       return {
         color: isWinner
           ? isDark
@@ -68,24 +66,24 @@ export const TeamRow = ({
           : Colors.midTone,
       };
     }
+
     return { color: Colors.midTone };
   };
 
-  const renderTimeouts = (remaining: number | null) => {
-    const totalTimeouts = 3;
-    const safeRemaining = remaining ?? 0; // 👈 fix
+  const renderTimeouts = (remaining: number) => {
+    const total = 3;
 
     return (
-      <View style={{ flexDirection: "row" }}>
-        {Array.from({ length: totalTimeouts }).map((_, i) => (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: total }).map((_, i) => (
           <View
             key={i}
             style={{
-              width: 8,
+              width: 4,
               height: 2,
               borderRadius: 4,
               backgroundColor: isDark ? Colors.white : Colors.black,
-              opacity: i < safeRemaining ? 1 : 0.5,
+              opacity: i < remaining ? 1 : 0.5,
               marginHorizontal: 2,
             }}
           />
@@ -93,96 +91,56 @@ export const TeamRow = ({
       </View>
     );
   };
-  const displayScore = isScheduled
-    ? (team.record ?? "0-0")
-    : score != null
-      ? score
-      : inProgress
-        ? "..."
-        : (team.record ?? "0-0");
+
+  const renderScore = () => (
+    <View style={styles.scoreWrapper}>
+      <Text
+        style={[
+          isScheduled
+            ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
+            : [styles.score, sizeStyles[size].score, getScoreStyle()],
+        ]}
+      >
+        {showRecordInsteadOfScore ? (record ?? "0-0") : score}
+      </Text>
+
+      {hasPossession && (
+        <Image
+          source={isDark ? FootballLight : Football}
+          style={styles.possessionIcon}
+        />
+      )}
+    </View>
+  );
 
   return (
     <View style={styles.row}>
-      {/* Home Score */}
-      {isHome && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={[
-              isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-                : [styles.score, sizeStyles[size].score, getScoreStyle()],
-            ]}
-          >
-            {displayScore}
-          </Text>
+      {isHome && renderScore()}
 
-          {hasPossession && (
-            <Image
-              source={isDark ? FootballLight : Football}
-              style={styles.possessionIcon}
-            />
-          )}
-        </View>
-      )}
-
-      {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={team.logo} style={sizeStyles[size].logo} />
+          <Image source={logo} style={sizeStyles[size].logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
-          <View style={styles.nameRow}>
-            {/* 🔥 League-specific name formatting */}
-            {league === "cfb" ? (
-              <Text style={styles.teamName}>
-                {rank && <Text style={styles.rank}>{rank} </Text>}
-                {team.code}
-              </Text>
-            ) : (
-              <Text style={styles.teamName}>{team.code}</Text>
-            )}
-          </View>
+          <Text style={styles.teamName}>
+            {rank ? <Text style={styles.rank}>{rank} </Text> : null}
+            {name}
+          </Text>
 
-          {inProgress && (
-            <View
-              style={{
-                alignItems: "center",
-              }}
-            >
-              {renderTimeouts(timeouts)}
-            </View>
+          {!showRecordInsteadOfScore && !inProgress && (
+            <Text style={styles.record}>{record}</Text>
           )}
 
-          {isFinal && (
-            <Text style={[styles.record, sizeStyles[size].record]}>
-              {team.record ?? "0-0"}
-            </Text>
+          {inProgress && timeouts != null && (
+            <View style={styles.timeoutsContainer}>
+              {renderTimeouts(timeouts)}
+            </View>
           )}
         </View>
       </View>
 
-      {/* Away Score */}
-      {!isHome && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={[
-              isScheduled
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-                : [styles.score, sizeStyles[size].score, getScoreStyle()],
-            ]}
-          >
-            {displayScore}
-          </Text>
-
-          {hasPossession && (
-            <Image
-              source={isDark ? FootballLight : Football}
-              style={styles.possessionIcon}
-            />
-          )}
-        </View>
-      )}
+      {!isHome && renderScore()}
     </View>
   );
 };

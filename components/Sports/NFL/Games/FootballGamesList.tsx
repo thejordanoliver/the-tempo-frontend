@@ -63,7 +63,7 @@ export default function FootballGamesList({
   const [modalVisible, setModalVisible] = useState(false);
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
-  const league = isNFL ? "NFL" : "CFB";
+  const league = isNFL ? "NFL" : isCFB ? "CFB" : "UFL";
 
   const chunkIntoRows = (
     data: FootballGame[],
@@ -359,18 +359,19 @@ export default function FootballGamesList({
           sections={sections as SectionListData<any, FootballGameSection>[]}
           keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
           renderItem={({ item, index }) => renderGameCard(item, index)}
-          renderSectionHeader={({ section }) =>
-            showHeaders && section.data.length > 0 ? (
-              <View
-                style={[
-                  (section.title === "Postseason" ||
-                    section.title === "Regular Season") && { marginTop: 12 },
-                ]}
-              >
+          renderSectionHeader={({ section }) => {
+            if (!showHeaders) return null;
+
+            const sectionIndex = gridSections.findIndex(
+              (s) => s.title === section.title,
+            );
+
+            return (
+              <View style={{ marginTop: sectionIndex > 0 ? 12 : 0 }}>
                 <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
               </View>
-            ) : null
-          }
+            );
+          }}
           refreshing={refreshing}
           onRefresh={onRefresh}
           contentContainerStyle={styles.contentContainer}
@@ -404,6 +405,7 @@ export default function FootballGamesList({
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           isNFL={isNFL}
+          isCFB={isCFB}
         />
       )}
     </>

@@ -1,14 +1,10 @@
-import { useCBBConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import {
-  conferenceListMap,
-  getCBBTeamByESPNId,
-  getCBBTeamLogo,
-} from "constants/teamsCBB";
+import { getCBBTeamLogo, getCBBTeamByESPNId } from "constants/teamsCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
+import { useCBBConferenceStandings } from "hooks/BasketballHooks/useCBBConferenceStandings";
 import {
   FlatList,
   Image,
@@ -22,75 +18,130 @@ import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 type Props = {
   selectedConference?: string;
   onlyTeamConference?: boolean;
-  teamName?: string; // expects full name like "Ohio State Buckeyes"
-  women?: boolean; // NEW: fetch women's standings
+  teamName?: string;
 };
 
-// --- Helpers ---
-function getTeamConference(teamName?: string): string | null {
-  if (!teamName) return null;
-  for (const [conference, teamNames] of Object.entries(conferenceListMap)) {
-    if (teamNames.includes(teamName)) return conference;
+type ConferenceTeam = {
+  teamId?: number | string | null;
+  name?: string | null;
+  abbreviation?: string | null;
+  rank?: number | string | null;
+  overall?: string | null;
+  confOverall?: string | null;
+  divisionOverall?: string | null;
+  homeOverall?: string | null;
+  awayOverall?: string | null;
+  gamesBehind?: string | number | null;
+  streak?: string | number | null;
+  vsAPTop25?: string | null;
+  pointsFor?: string | number | null;
+  pointsAgainst?: string | number | null;
+};
+
+type ConferenceDivision = {
+  name: string;
+  teams: ConferenceTeam[];
+};
+
+type ConferenceStanding = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  shortName: string;
+  divisions: ConferenceDivision[];
+};
+
+function getStandingRankValue(rank: ConferenceTeam["rank"]) {
+  const value = Number(rank);
+  return Number.isFinite(value) ? value : 999;
+}
+
+function getStreakText(streak: ConferenceTeam["streak"]) {
+  if (streak === null || streak === undefined || streak === "-") {
+    return "-";
   }
+
+  const streakValue = Number(streak);
+
+  if (!Number.isNaN(streakValue)) {
+    if (streakValue > 0) return `W${streakValue}`;
+    if (streakValue < 0) return `L${Math.abs(streakValue)}`;
+    return "-";
+  }
+
+  return String(streak);
+}
+
+function normalizeValue(value: unknown) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
+}
+
+function findTeamConferenceId(
+  conferences: ConferenceStanding[],
+  teamName?: string,
+) {
+  if (!teamName) return null;
+
+  const target = normalizeValue(teamName);
+
+  for (const conference of conferences) {
+    for (const division of conference.divisions ?? []) {
+      const foundTeam = division.teams?.find((team) => {
+        return (
+          normalizeValue(team.name) === target ||
+          normalizeValue(team.abbreviation) === target
+        );
+      });
+
+      if (foundTeam) {
+        return conference.id;
+      }
+    }
+  }
+
   return null;
 }
 
-const CONFERENCE_ALIASES: Record<string, string> = {
-  SEC: "Southeastern Conference",
-  ACC: "Atlantic Coast Conference",
-  "Big 12": "Big 12 Conference",
-  "Big Ten": "Big Ten Conference",
-  "Pac-12": "Pac-12 Conference",
-  AAC: "American Conference",
-  MWC: "Mountain West Conference",
-  "Sun Belt": "Sun Belt Conference",
-  MAC: "Mid-American Conference",
-  CUSA: "Conference USA",
-};
-
-function stripParen(s: string) {
-  return s.replace(/\s*\(.*?\)\s*/g, "").trim();
-}
-
-function resolveConferenceKey(
-  input: string | null | undefined,
-  groupedKeys: string[],
-): string | null {
-  if (!input) return null;
-
-  if (groupedKeys.includes(input)) return input;
-  const alias = CONFERENCE_ALIASES[input];
-  if (alias && groupedKeys.includes(alias)) return alias;
-
-  const stripped = stripParen(input);
-  const exactStrip = groupedKeys.find((k) => stripParen(k) === stripped);
-  if (exactStrip) return exactStrip;
-
-  const target = stripped.toLowerCase();
-  return (
-    groupedKeys.find((k) => {
-      const key = stripParen(k).toLowerCase();
-      return key === target || key.includes(target) || target.includes(key);
-    }) ?? null
-  );
-}
-
-// --- Component ---
 export const CBBConferenceStandingsList = ({
   selectedConference,
   teamName,
   onlyTeamConference = false,
-  women = false,
 }: Props) => {
-  const { standings, loading, error } = useCBBConferenceStandings({ women });
+  const { conferences, loading, error } = useCBBConferenceStandings();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
-  const teamConference = getTeamConference(teamName);
-  const league = women ? "WCBB" : "CBB";
   const { isFavorite } = useFavoriteTeamsContext();
+
+  const safeConferences = Array.isArray(conferences)
+    ? (conferences as ConferenceStanding[])
+    : [];
+
+  const teamConferenceId = findTeamConferenceId(safeConferences, teamName);
+
+  const selectedConferenceId = onlyTeamConference
+    ? teamConferenceId
+    : selectedConference;
+
+  const selectedConferenceData =
+    selectedConferenceId && selectedConferenceId !== "top25"
+      ? safeConferences.find(
+          (conference) =>
+            String(conference.id) === String(selectedConferenceId),
+        )
+      : null;
+
+  const conferenceSections =
+    selectedConferenceId && selectedConferenceId !== "top25"
+      ? selectedConferenceData
+        ? [selectedConferenceData]
+        : []
+      : safeConferences;
 
   if (loading) {
     return (
@@ -100,64 +151,45 @@ export const CBBConferenceStandingsList = ({
     );
   }
 
-  if (error)
+  if (error) {
     return (
-      <View style={styles.center}>
+      <View style={global.emptyContainer}>
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
+  }
 
-  const safeStandings = Array.isArray(standings) ? standings : [];
+  if (conferenceSections.length < 0)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>
+          No standings found for{" "}
+          {onlyTeamConference
+            ? "team conference"
+            : selectedConference || "selected conference"}
+          .
+        </Text>
+      </View>
+    );
 
-  // --- Group by ESPN conference string ---
-  const grouped = safeStandings.reduce(
-    (acc, team) => {
-      const key = team?.conference ?? "Unknown";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(team);
-      return acc;
-    },
-    {} as Record<string, typeof safeStandings>,
-  );
-
-  const groupedKeys = Object.keys(grouped);
-
-  const conferences = (() => {
-    // Top 25 = all conferences
-    if (selectedConference === "Top 25") {
-      return groupedKeys.sort();
-    }
-
-    // onlyTeamConference = resolve team’s map conference -> actual grouped key
-    if (onlyTeamConference) {
-      const resolved = resolveConferenceKey(teamConference, groupedKeys);
-      return resolved ? [resolved] : [];
-    }
-
-    // normal single selected conference
-    const resolved = resolveConferenceKey(selectedConference, groupedKeys);
-    return resolved ? [resolved] : [];
-  })();
-
-  // --- Render Functions ---
   const renderLeftItem = ({
     item,
-    index,
     isLastRow,
   }: {
-    item: any;
+    item: ConferenceTeam;
     index: number;
     isLastRow: boolean;
   }) => {
-    const team = getCBBTeamByESPNId(item.teamId);
-    const teamId = women ? team?.wid : team?.id;
-    const teamLogo = getCBBTeamLogo(teamId, isDark, women);
-    const teamCode = team?.code;
-    const favorited = team ? isFavorite(league, String(teamId)) : false;
+    const espnId = item.teamId;
+    const team = getCBBTeamByESPNId(espnId ?? 0);
+    const teamId = team.id;
+    const teamLogo = espnId ? getCBBTeamLogo(Number(teamId), isDark) : null;
+    const teamCode = item.abbreviation || "-";
+    const favorited = teamId ? isFavorite("CBB", String(teamId)) : false;
 
     const handleTeamPress = () => {
-      if (!item.teamId) return;
-      router.push(`/team/cbb/${teamId}`);
+      if (!espnId) return;
+      router.push(`/team/cfb/${teamId}`);
     };
 
     return (
@@ -181,6 +213,7 @@ export const CBBConferenceStandingsList = ({
 
         <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
+
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
         </TouchableOpacity>
       </View>
@@ -192,38 +225,27 @@ export const CBBConferenceStandingsList = ({
     isLastRow,
     showDivision,
   }: {
-    item: any;
+    item: ConferenceTeam;
     isLastRow: boolean;
     showDivision: boolean;
   }) => {
-    const team = getCBBTeamByESPNId(item.teamId);
-    const teamId = women ? team?.wid : team?.id;
-    const favorited = team ? isFavorite(league, String(teamId)) : false;
+    const espnId = item.teamId;
+    const team = getCBBTeamByESPNId(espnId ?? 0);
+    const teamId = team.id;
+    const favorited = teamId ? isFavorite("CBB", String(teamId)) : false;
+    const streakText = getStreakText(item.streak);
 
-    let streakText = "-";
-
-    let streakColor = item.streak?.startsWith("W")
+    const streakColor = streakText.startsWith("W")
       ? isDark
         ? Colors.dark.leafGreen
         : Colors.light.green
-      : item.streak?.startsWith("L")
+      : streakText.startsWith("L")
         ? isDark
           ? Colors.dark.lightRed
           : Colors.light.red
         : isDark
           ? Colors.white
           : Colors.black;
-
-    if (item.streak != null && item.streak !== "-") {
-      const streakValue = Number(item.streak);
-
-      if (!isNaN(streakValue)) {
-        if (streakValue > 0) streakText = `W${streakValue}`;
-        else if (streakValue < 0) streakText = `L${Math.abs(streakValue)}`;
-      } else if (typeof item.streak === "string") {
-        streakText = item.streak;
-      }
-    }
 
     return (
       <View
@@ -241,29 +263,29 @@ export const CBBConferenceStandingsList = ({
         ]}
       >
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.overall}</Text>
+          <Text style={styles.statText}>{item.overall ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.confOverall}</Text>
+          <Text style={styles.statText}>{item.confOverall ?? "-"}</Text>
         </View>
 
         {showDivision && (
           <View style={styles.statCell}>
-            <Text style={styles.statText}>{item.divisionOverall}</Text>
+            <Text style={styles.statText}>{item.divisionOverall ?? "-"}</Text>
           </View>
         )}
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.homeOverall}</Text>
+          <Text style={styles.statText}>{item.homeOverall ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.awayOverall}</Text>
+          <Text style={styles.statText}>{item.awayOverall ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.gamesBehind}</Text>
+          <Text style={styles.statText}>{item.gamesBehind ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
@@ -273,15 +295,15 @@ export const CBBConferenceStandingsList = ({
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.vsAPTop25}</Text>
+          <Text style={styles.statText}>{item.vsAPTop25 ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.pointsFor}</Text>
+          <Text style={styles.statText}>{item.pointsFor ?? "-"}</Text>
         </View>
 
         <View style={styles.statCell}>
-          <Text style={styles.statText}>{item.pointsAgainst}</Text>
+          <Text style={styles.statText}>{item.pointsAgainst ?? "-"}</Text>
         </View>
       </View>
     );
@@ -292,11 +314,13 @@ export const CBBConferenceStandingsList = ({
       <View style={styles.rankContainer}>
         <Text style={styles.rankText}>#</Text>
       </View>
+
       <View>
         <Text style={styles.teamHeaderText}>Team</Text>
       </View>
     </View>
   );
+
   const renderStatsHeader = (showDivision: boolean) => (
     <View style={styles.statsHeaderRow}>
       {[
@@ -319,75 +343,84 @@ export const CBBConferenceStandingsList = ({
   );
 
   function ConferenceSection({
-    title,
-    data,
+    conference,
     isLast,
   }: {
-    title: string;
-    data: typeof safeStandings;
+    conference: ConferenceStanding;
     isLast: boolean;
   }) {
-    const divisions = data.reduce(
-      (acc, team) => {
-        const div = team.division || "Overall";
-        if (!acc[div]) acc[div] = [];
-        acc[div].push(team);
-        return acc;
-      },
-      {} as Record<string, typeof data>,
+    const validDivisions = (conference.divisions ?? []).filter(
+      (division) => Array.isArray(division.teams) && division.teams.length > 0,
     );
 
-    const hasDivisions = Object.keys(divisions).length > 1;
+    const hasDivisions =
+      validDivisions.length > 1 ||
+      validDivisions.some((division) => division.name !== "Overall");
 
     return (
       <View style={[styles.wrapper, { marginBottom: isLast ? 0 : 12 }]}>
         <View style={styles.header}>
-          <Text style={styles.heading}>{title}</Text>
+          <Text style={styles.heading}>
+            {conference.shortName || conference.name}
+          </Text>
         </View>
-        {Object.keys(divisions).map((div) => (
-          <View key={div}>
-            {Object.keys(divisions).length > 1 && (
-              <Text style={styles.collegeDivisionHeader}>{div}</Text>
-            )}
 
-            <View style={{ flexDirection: "row" }}>
-              <FlatList
-                data={divisions[div]}
-                keyExtractor={(item) => item.teamId}
-                renderItem={({ item, index }) =>
-                  renderLeftItem({
-                    item,
-                    index,
-                    isLastRow: index === divisions[div].length - 1,
-                  })
-                }
-                scrollEnabled={false}
-                ListHeaderComponent={renderHeader}
-                stickyHeaderIndices={[0]}
-              />
-              <ScrollView
-                horizontal
-                style={{ width: 280 }}
-                showsHorizontalScrollIndicator={false}
-              >
+        {validDivisions.map((division) => {
+          const sortedTeams = division.teams
+            .slice()
+            .sort(
+              (a, b) =>
+                getStandingRankValue(a.rank) - getStandingRankValue(b.rank),
+            );
+
+          return (
+            <View key={`${conference.id}-${division.name}`}>
+              {hasDivisions && (
+                <Text style={styles.collegeDivisionHeader}>
+                  {division.name}
+                </Text>
+              )}
+
+              <View style={{ flexDirection: "row" }}>
                 <FlatList
-                  data={divisions[div]}
-                  keyExtractor={(item) => item.teamId}
+                  data={sortedTeams}
+                  keyExtractor={(item) => String(item.teamId)}
                   renderItem={({ item, index }) =>
-                    renderRightItem({
+                    renderLeftItem({
                       item,
-                      showDivision: hasDivisions,
-                      isLastRow: index === divisions[div].length - 1,
+                      index,
+                      isLastRow: index === sortedTeams.length - 1,
                     })
                   }
                   scrollEnabled={false}
-                  ListHeaderComponent={renderStatsHeader(hasDivisions)}
+                  ListHeaderComponent={renderHeader}
                   stickyHeaderIndices={[0]}
                 />
-              </ScrollView>
+
+                <ScrollView
+                  horizontal
+                  style={{ width: 280 }}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <FlatList
+                    data={sortedTeams}
+                    keyExtractor={(item) => String(item.teamId)}
+                    renderItem={({ item, index }) =>
+                      renderRightItem({
+                        item,
+                        showDivision: hasDivisions,
+                        isLastRow: index === sortedTeams.length - 1,
+                      })
+                    }
+                    scrollEnabled={false}
+                    ListHeaderComponent={renderStatsHeader(hasDivisions)}
+                    stickyHeaderIndices={[0]}
+                  />
+                </ScrollView>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
     );
   }
@@ -396,28 +429,21 @@ export const CBBConferenceStandingsList = ({
     <ScrollView
       contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
     >
-      {conferences.length > 0 ? (
-        conferences.map((conf, index) => {
-          const data = (grouped[conf] ?? [])
-            .slice()
-            .sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
-
-          return (
-            <ConferenceSection
-              key={conf}
-              title={conf}
-              data={data}
-              isLast={index === conferences.length - 1}
-            />
-          );
-        })
+      {conferenceSections.length > 0 ? (
+        conferenceSections.map((conference, index) => (
+          <ConferenceSection
+            key={conference.id}
+            conference={conference}
+            isLast={index === conferenceSections.length - 1}
+          />
+        ))
       ) : (
         <View style={{ alignItems: "center", marginTop: 40 }}>
           <Text style={styles.emptyText}>
             No standings found for{" "}
             {onlyTeamConference
-              ? (teamConference ?? "team conference")
-              : selectedConference}
+              ? "team conference"
+              : selectedConference || "selected conference"}
             .
           </Text>
         </View>

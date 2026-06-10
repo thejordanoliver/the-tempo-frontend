@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-type League = "nfl" | "cfb";
+type League = "nfl" | "cfb" | "ufl";
 
 type UseFootballGamesParams = {
   date?: Date;
@@ -54,7 +54,9 @@ type FootballGamesResponse = {
 function getEndpoint(league: League) {
   return league === "cfb"
     ? "/api/games/football/cfb"
-    : "/api/games/football/nfl";
+    : league === "nfl"
+      ? "/api/games/football/nfl"
+      : "/api/games/football/ufl";
 }
 
 function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
@@ -111,7 +113,7 @@ export function useFootballGames({
   date,
   week = null,
   season = null,
-  seasontype = 2,
+  seasontype = null,
   league = "nfl",
   conferenceId = null,
 }: UseFootballGamesParams = {}) {
@@ -133,12 +135,22 @@ export function useFootballGames({
       if (week) {
         params.week = week;
         params.season = season || dayjs().year();
-        params.seasontype = seasontype || 2;
+
+        if (seasontype) {
+          params.seasontype = seasontype;
+        }
       } else if (date) {
         params.date = dayjs(date).format("YYYYMMDD");
+
+        if (season) {
+          params.season = season;
+        }
+
+        if (seasontype) {
+          params.seasontype = seasontype;
+        }
       }
 
-      // ✅ Send selected CFB conference to backend
       if (league === "cfb" && conferenceId) {
         params.conferenceId = conferenceId;
       }

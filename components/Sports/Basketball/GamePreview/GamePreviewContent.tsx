@@ -10,7 +10,6 @@ import {
 import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
-import { LeagueType } from "types/types";
 
 type GamePreviewContentProps = {
   homeTeamId: any;
@@ -46,7 +45,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   gameStatusDescription: string;
-  league: LeagueType;
+  league: string;
 };
 
 export default function GamePreviewContent({

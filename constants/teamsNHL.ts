@@ -69,7 +69,7 @@ import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 export const nhlTeams: NHLTeam[] = [
   {
     id: 670,
-    espnID: 25,
+    espnId: 25,
     code: "ANA",
     name: "Ducks",
     fullName: "Anaheim Ducks",
@@ -92,7 +92,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 673,
-    espnID: 1,
+    espnId: 1,
     code: "BOS",
     name: "Bruins",
     fullName: "Boston Bruins",
@@ -115,7 +115,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 674,
-    espnID: 2,
+    espnId: 2,
     code: "BUF",
     name: "Sabres",
     fullName: "Buffalo Sabres",
@@ -138,7 +138,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 675,
-    espnID: 3,
+    espnId: 3,
     code: "CGY",
     name: "Flames",
     fullName: "Calgary Flames",
@@ -161,7 +161,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 676,
-    espnID: 7,
+    espnId: 7,
     code: "CAR",
     name: "Hurricanes",
     fullName: "Carolina Hurricanes",
@@ -184,7 +184,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 678,
-    espnID: 4,
+    espnId: 4,
     code: "CHI",
     name: "Blackhawks",
     fullName: "Chicago Blackhawks",
@@ -207,7 +207,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 679,
-    espnID: 17,
+    espnId: 17,
     code: "COL",
     name: "Avalanche",
     fullName: "Colorado Avalanche",
@@ -230,7 +230,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 680,
-    espnID: 29,
+    espnId: 29,
     code: "CBJ",
     name: "Blue Jackets",
     fullName: "Columbus Blue Jackets",
@@ -253,7 +253,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 681,
-    espnID: 9,
+    espnId: 9,
     code: "DAL",
     name: "Stars",
     fullName: "Dallas Stars",
@@ -276,7 +276,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 682,
-    espnID: 5,
+    espnId: 5,
     code: "DET",
     name: "Red Wings",
     fullName: "Detroit Red Wings",
@@ -299,7 +299,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 683,
-    espnID: 6,
+    espnId: 6,
     code: "EDM",
     name: "Oilers",
     fullName: "Edmonton Oilers",
@@ -322,7 +322,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 684,
-    espnID: 26,
+    espnId: 26,
     code: "FLA",
     name: "Panthers",
     fullName: "Florida Panthers",
@@ -345,7 +345,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 685,
-    espnID: 8,
+    espnId: 8,
     code: "LA",
     name: "Kings",
     fullName: "Los Angeles Kings",
@@ -368,7 +368,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 687,
-    espnID: 30,
+    espnId: 30,
     code: "MIN",
     name: "Wild",
     fullName: "Minnesota Wild",
@@ -391,7 +391,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 688,
-    espnID: 10,
+    espnId: 10,
     code: "MTL",
     name: "Canadiens",
     fullName: "Montreal Canadiens",
@@ -414,7 +414,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 689,
-    espnID: 27,
+    espnId: 27,
     code: "NSH",
     name: "Predators",
     fullName: "Nashville Predators",
@@ -437,7 +437,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 690,
-    espnID: 11,
+    espnId: 11,
     code: "NJ",
     name: "Devils",
     fullName: "New Jersey Devils",
@@ -460,7 +460,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 691,
-    espnID: 12,
+    espnId: 12,
     code: "NYI",
     name: "Islanders",
     fullName: "New York Islanders",
@@ -483,7 +483,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 692,
-    espnID: 13,
+    espnId: 13,
     code: "NYR",
     name: "Rangers",
     fullName: "New York Rangers",
@@ -506,7 +506,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 693,
-    espnID: 14,
+    espnId: 14,
     code: "OTT",
     name: "Senators",
     fullName: "Ottawa Senators",
@@ -529,7 +529,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 695,
-    espnID: 15,
+    espnId: 15,
     code: "PHI",
     name: "Flyers",
     fullName: "Philadelphia Flyers",
@@ -552,7 +552,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 696,
-    espnID: 16,
+    espnId: 16,
     code: "PIT",
     name: "Penguins",
     fullName: "Pittsburgh Penguins",
@@ -575,7 +575,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 697,
-    espnID: 18,
+    espnId: 18,
     code: "SJ",
     name: "Sharks",
     fullName: "San Jose Sharks",
@@ -598,7 +598,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 1436,
-    espnID: 124292,
+    espnId: 124292,
     code: "SEA",
     name: "Kraken",
     fullName: "Seattle Kraken",
@@ -621,7 +621,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 698,
-    espnID: 19,
+    espnId: 19,
     code: "STL",
     name: "Blues",
     fullName: "St. Louis Blues",
@@ -644,7 +644,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 699,
-    espnID: 20,
+    espnId: 20,
     code: "TB",
     name: "Lightning",
     fullName: "Tampa Bay Lightning",
@@ -667,7 +667,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 700,
-    espnID: 21,
+    espnId: 21,
     code: "TOR",
     name: "Maple Leafs",
     fullName: "Toronto Maple Leafs",
@@ -690,7 +690,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 2483,
-    espnID: 129764,
+    espnId: 129764,
     code: "UTAH",
     name: "Mammoth",
     fullName: "Utah Mammoth",
@@ -713,7 +713,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 701,
-    espnID: 22,
+    espnId: 22,
     code: "VAN",
     name: "Canucks",
     fullName: "Vancouver Canucks",
@@ -736,7 +736,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 702,
-    espnID: 37,
+    espnId: 37,
     code: "VGK",
     name: "Golden Knights",
     fullName: "Vegas Golden Knights",
@@ -759,7 +759,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 703,
-    espnID: 23,
+    espnId: 23,
     code: "WSH",
     name: "Capitals",
     fullName: "Washington Capitals",
@@ -782,7 +782,7 @@ export const nhlTeams: NHLTeam[] = [
   },
   {
     id: 704,
-    espnID: 28,
+    espnId: 28,
     code: "WPG",
     name: "Jets",
     fullName: "Winnipeg Jets",
@@ -820,4 +820,4 @@ export const getNHLTeamLogo = (
 };
 
 export const getNHLTeamByEspnId = (id: number | string) =>
-  nhlTeams.find((t) => String(t.espnID) === String(id)) || null;
+  nhlTeams.find((t) => String(t.espnId) === String(id)) || null;

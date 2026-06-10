@@ -82,12 +82,12 @@ function buildTeam(c: any): BracketTeam | null {
   if (seed === 99) return null;
 
   const overallRecord =
-    c.records?.find((r: any) => r.name?.toLowerCase() === "overall")
-      ?.summary ?? null;
+    c.records?.find((r: any) => r.name?.toLowerCase() === "overall")?.summary ??
+    null;
 
   return {
     id: c.team.id,
-    espnID: c.team.id,
+    espnId: c.team.id,
     name: c.team.name ?? "",
     code: c.team.abbreviation ?? "",
     seed,
@@ -105,12 +105,8 @@ function buildTeam(c: any): BracketTeam | null {
 function transformEventToBracketGame(ev: any): BracketGame {
   const comp = ev.competitions?.[0];
 
-  const awayRaw = comp?.competitors?.find(
-    (x: any) => x.homeAway === "away",
-  );
-  const homeRaw = comp?.competitors?.find(
-    (x: any) => x.homeAway === "home",
-  );
+  const awayRaw = comp?.competitors?.find((x: any) => x.homeAway === "away");
+  const homeRaw = comp?.competitors?.find((x: any) => x.homeAway === "home");
 
   const away = awayRaw ? buildTeam(awayRaw) : null;
   const home = homeRaw ? buildTeam(homeRaw) : null;
@@ -169,10 +165,7 @@ function sortFirstRoundGames(games: BracketGame[]) {
 
       return {
         game: g,
-        key:
-          seeds.length === 2
-            ? map[`${seeds[0]}-${seeds[1]}`] ?? 99
-            : 99,
+        key: seeds.length === 2 ? (map[`${seeds[0]}-${seeds[1]}`] ?? 99) : 99,
       };
     })
     .sort((a, b) => a.key - b.key)
@@ -221,9 +214,7 @@ function buildBracket(events: any[]): BracketData {
   return {
     first: {
       title: "First Round",
-      games: sortFirstRoundGames(
-        rounds.first.map(transformEventToBracketGame),
-      ),
+      games: sortFirstRoundGames(rounds.first.map(transformEventToBracketGame)),
     },
     quarterfinal: {
       title: "Quarterfinals",
@@ -262,9 +253,7 @@ export function useCFPBracket() {
       const dates = generateDateRange("2025-12-19", "2026-01-20");
 
       // 🔥 parallel fetch (faster)
-      const results = await Promise.all(
-        dates.map((d) => fetchScoreboard(d)),
-      );
+      const results = await Promise.all(dates.map((d) => fetchScoreboard(d)));
 
       const map = new Map<string, any>();
 

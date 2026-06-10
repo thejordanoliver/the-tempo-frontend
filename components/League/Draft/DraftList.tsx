@@ -207,7 +207,7 @@ export default function DraftList({
   const teamOptions = useMemo(() => {
     const formatted = TEAM_LIST.map((t) => ({
       label: t.name,
-      value: String(t.espnID),
+      value: String(t.espnId),
     })).sort((a, b) => a.label.localeCompare(b.label));
 
     return [{ label: "All Teams", value: "all" }, ...formatted];
@@ -220,7 +220,7 @@ export default function DraftList({
     const map: Record<string, string> = {};
 
     TEAM_LIST.forEach((t) => {
-      map[String(t.espnID)] = t.name.toLowerCase();
+      map[String(t.espnId)] = t.name.toLowerCase();
     });
 
     return map;

@@ -1,10 +1,10 @@
-import { Colors } from "constants/styles";
+import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import {
   getTeamByESPNId as getNFLTeamByESPNId,
   getNFLTeamLogo,
 } from "constants/teamsNFL";
-import { PlayObject } from "hooks/FootballHooks/useGameDetails";
 import { FlatList, Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
@@ -15,7 +15,7 @@ type Props = {
   loading?: boolean;
   error?: string | null;
   isDark: boolean;
-  league?: "NFL" | "CFB";
+  league?: string;
 };
 
 export default function DrivesList({
@@ -24,9 +24,10 @@ export default function DrivesList({
   loading,
   error,
   isDark,
-  league = "NFL",
+  league = "nfl",
 }: Props) {
   const styles = getStyles(isDark);
+  const global = globalStyles(isDark);
 
   // Normalize
   const safePrevious = Array.isArray(previousDrives) ? previousDrives : [];
@@ -47,9 +48,12 @@ export default function DrivesList({
   if (loading) return <Text style={styles.emptyText}>Loading drives...</Text>;
   if (error) return <Text style={styles.emptyText}>{error}</Text>;
   if (drives.length === 0)
-    return <Text style={styles.emptyText}>No drives available</Text>;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No drives available</Text>
+      </View>
+    );
 
-  const textColor = isDark ? Colors.white : Colors.black;
   const subTextColor = isDark ? Colors.midTone : Colors.darkGray;
 
   const borderColor = isDark ? Colors.midTone : Colors.lightGray;
@@ -63,11 +67,11 @@ export default function DrivesList({
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item, index }) => {
-            const isNFL = league === "NFL";
+            const isNFL = league === "nfl";
             const teamId = item.team?.id ?? "ALL";
 
             const team =
-              league === "CFB"
+              league === "cfb"
                 ? getTeamByESPNId(teamId)
                 : getNFLTeamByESPNId(teamId);
             const isLast = index === drives.length - 1;

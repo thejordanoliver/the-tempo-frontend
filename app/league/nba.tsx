@@ -1,3 +1,4 @@
+import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -23,19 +24,16 @@ import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/NBA/Games/GamesList";
 import { NBAPlayoffBracket } from "../../components/Sports/NBA/Playoffs/NBAPlayoffBracket";
-import SLGamesList from "../../components/Sports/NBASummerLeague/Games/SLGamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
-import { useNBASLGames } from "../../hooks/NBAHooks/useNBASLGames";
 import { usePlayoffGames } from "../../hooks/NBAHooks/usePlayoffGames";
-import { useSeasonGames } from "../../hooks/NBAHooks/useSeasonGames";
-import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { useSeasonLeaders } from "../../hooks/NBAHooks/useSeasonLeaders";
+import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { filterByDate, getNBACalendarSeason } from "../../utils/dateUtils";
+import { getNBACalendarSeason } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -46,25 +44,18 @@ export default function NBALeagueScreen() {
   const styles = getScoresStyles(isDark);
   const league = "NBA";
 
-  const {
-    games,
-    error: errorGames,
-    loading: loadingGames,
-    refreshGames: refreshGames,
-  } = useSeasonGames();
-
-  const {
-    games: summerGames,
-    loading: loadingSummer,
-    refreshSummerGames,
-  } = useNBASLGames();
   const { calendar } = useLeagueCalendar(league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
-  const filteredSeasonGames = filterByDate(games, selectedDate);
-  const filteredSummerGames = filterByDate(summerGames, selectedDate);
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useBasketballGames(selectedDate);
+
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const navigation = useNavigation();
@@ -118,7 +109,7 @@ export default function NBALeagueScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshGames(), refreshSummerGames()]);
+      await Promise.all([refreshGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -178,25 +169,14 @@ export default function NBALeagueScreen() {
               onOpenCalendar={() => setShowCalendarModal(true)}
               isDark={isDark}
             />
-
-            {filteredSummerGames.length > 0 ? (
-              <SLGamesList
-                games={filteredSummerGames}
-                loading={loadingSummer}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={true}
-              />
-            ) : (
-              <GamesList
-                games={filteredSeasonGames}
-                error={errorGames}
-                loading={loadingGames}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-                scrollEnabled={true}
-              />
-            )}
+            <GamesList
+              games={games}
+              error={gamesError}
+              loading={loadingGames}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              scrollEnabled={true}
+            />
           </View>
 
           {/* NEWS */}

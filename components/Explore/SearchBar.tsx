@@ -47,7 +47,7 @@ export default function SearchBar({
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [visible]);
+  }, [inputAnim, visible]);
 
   return (
     <View>
@@ -82,11 +82,14 @@ export default function SearchBar({
             autoCorrect={false}
             onFocus={onFocus}
             onBlur={onBlur}
+            accessibilityLabel="Explore search"
           />
           {value.length > 0 && (
             <Pressable
               onPress={() => onChangeText("")}
               style={styles.clearButton}
+              accessibilityRole="button"
+              accessibilityLabel="Clear search"
             >
               <Ionicons name="close-circle" size={20} color={Colors.midTone} />
             </Pressable>

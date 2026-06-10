@@ -17,7 +17,7 @@ type Props = {
   injuries: TeamInjury[];
   teamPlayersMap: Record<string, Player[]>;
   isDark: boolean;
-  league: "NBA" | "WNBA";
+  league: string;
 };
 
 type FlatItem = {
@@ -107,11 +107,11 @@ const findMatchingPlayer = (
 
 const getTeamPlayers = (
   teamId: string,
-  league: "NBA" | "WNBA",
+  league: string,
   teamPlayersMap: Record<string, Player[]>,
 ) => {
   const localTeam =
-    league === "WNBA" ? getWNBATeamByESPNId(teamId) : getTeamByESPNId(teamId);
+    league === "wnba" ? getWNBATeamByESPNId(teamId) : getTeamByESPNId(teamId);
 
   const possibleKeys = [teamId, String(localTeam?.id ?? "")].filter(Boolean);
 

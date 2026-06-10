@@ -1,89 +1,98 @@
-// hooks/CBBHooks/useCBBConferenceStandings.ts
-import { useEffect, useState } from "react";
+// hooks/CBB/useCBBConferenceStandings.ts
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export type CBBTeamStanding = {
+export interface CBBStandingTeam {
   teamId: string;
-  teamName: string;
-  conference: string;
-  division?: string | null;
-  rank: number | null;
-  overall: string | null;
-  confOverall: string | null;
-  divisionOverall: string | null;
-  homeOverall: string | null;
-  awayOverall: string | null;
-  streak?: number | null;
-  gamesBehind?: number | null;
-  vsAPTop25: string | null;
-  pointsFor?: number | null;
-  pointsAgainst?: number | null;
-};
-
-interface UseCBBConferenceStandingsOptions {
-  women?: boolean;
+  name: string;
+  abbreviation: string;
+  rank: string;
+  overall: string;
+  confOverall: string;
+  homeOverall: string;
+  awayOverall: string;
+  streak: string;
+  gamesBehind: string;
+  vsAPTop25: string;
+  pointsFor: string;
+  pointsAgainst: string;
 }
 
-export function useCBBConferenceStandings({
-  women = false,
-}: UseCBBConferenceStandingsOptions = {}) {
-  const [standings, setStandings] = useState<CBBTeamStanding[]>([]);
+export interface CBBStandingDivision {
+  name: string;
+  teams: CBBStandingTeam[];
+}
+
+export interface CBBStandingConference {
+  id: string;
+  name: string;
+  abbreviation: string;
+  shortName: string;
+  divisions: CBBStandingDivision[];
+}
+
+interface CBBConferenceStandingsResponse {
+  conferences: Partial<CBBStandingConference>[];
+}
+
+export const useCBBConferenceStandings = () => {
+  const [conferences, setConferences] = useState<CBBStandingConference[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchStandings = async () => {
-      try {
+  const fetchStandings = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
         setLoading(true);
-        setError(null);
-
-        const res = await apiClient.get(`/api/standings/cbb/conference`, {
-          params: { women: women || undefined },
-        });
-
-        const json = res.data;
-
-        const parsed: CBBTeamStanding[] = [];
-
-        for (const conf of json.conferences || []) {
-          const confName = conf.name || "Unknown";
-
-          for (const div of conf.divisions || []) {
-            const divName = div.name || null;
-
-            for (const team of div.teams || []) {
-              parsed.push({
-                teamId: String(team.teamId),
-                teamName: team.name,
-                conference: confName,
-                division: divName,
-                rank: team.rank ?? null,
-                overall: team.overall ?? null,
-                confOverall: team.confOverall ?? null,
-                divisionOverall: team.divisionOverall ?? null,
-                homeOverall: team.homeOverall ?? null,
-                awayOverall: team.awayOverall ?? null,
-                streak: team.streak ?? null,
-                gamesBehind: team.gamesBehind ?? null,
-                vsAPTop25: team.vsAPTop25 ?? null,
-                pointsFor: team.pointsFor ?? null,
-                pointsAgainst: team.pointsAgainst ?? null,
-              });
-            }
-          }
-        }
-
-        setStandings(parsed);
-      } catch (err: any) {
-        console.error("Error fetching standings:", err);
-        setError(err?.message || "Failed to load standings");
-      } finally {
-        setLoading(false);
       }
-    };
 
+      setError(null);
+
+      const response = await apiClient.get<CBBConferenceStandingsResponse>(
+        "api/standings/cbb/conference",
+      );
+
+      const rawConferences = response.data?.conferences ?? [];
+
+      const cleanedConferences = rawConferences.filter(
+        (conference): conference is CBBStandingConference =>
+          Boolean(
+            conference &&
+            conference.id &&
+            conference.name &&
+            conference.abbreviation &&
+            conference.shortName &&
+            Array.isArray(conference.divisions),
+          ),
+      );
+
+      setConferences(cleanedConferences);
+    } catch (err) {
+      console.error("🔥 CBB CONFERENCE STANDINGS ERROR:", err);
+      setError("Failed to load CBB conference standings");
+      setConferences([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
     fetchStandings();
-  }, [women]);
+  }, [fetchStandings]);
 
-  return { standings, loading, error };
-}
+  const refresh = useCallback(() => {
+    fetchStandings(true);
+  }, [fetchStandings]);
+
+  return {
+    conferences,
+    loading,
+    refreshing,
+    error,
+    refresh,
+  };
+};

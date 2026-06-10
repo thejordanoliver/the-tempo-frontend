@@ -165,12 +165,8 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
         </View>
       );
 
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
-    if (isSuspended) return <Text style={styles.finalText}>Suspended</Text>;
-
+    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
     if (endOfInning)
       return <Text style={styles.clock}>{gameStatusDetail}</Text>;
 

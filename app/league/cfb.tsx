@@ -50,10 +50,8 @@ export default function CFBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
-
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
-
   const [selectedConference, setSelectedConference] =
     useState<SelectedConference>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -142,39 +140,40 @@ export default function CFBLeagueScreen() {
 
   const selectedWeekNumber = weekGroups[selectedWeekIndex]?.week.number ?? 1;
 
-const {
-  games: selectedWeekGames,
-  loading: gamesLoading,
-  refreshing: gamesRefreshing,
-  refreshGames,
-} = useFootballGames({
-  league: "cfb",
-  season: currentSeason,
-  week: selectedWeekNumber,
-  seasontype: weekGroups[selectedWeekIndex]?.season.type ?? 2,
-  conferenceId:
-    selectedConference && selectedConference !== "top25"
-      ? String(selectedConference)
-      : undefined,
-});
+  const {
+    games: selectedWeekGames,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    refreshGames,
+  } = useFootballGames({
+    league: "cfb",
+    season: currentSeason,
+    week: selectedWeekNumber,
+    seasontype: weekGroups[selectedWeekIndex]?.season.type ?? 2,
+    conferenceId:
+      selectedConference && selectedConference !== "top25"
+        ? String(selectedConference)
+        : undefined,
+  });
 
-const filteredWeekGames = useMemo(() => {
-  if (!selectedConference) return selectedWeekGames;
+  const filteredWeekGames = useMemo(() => {
+    if (!selectedConference) return selectedWeekGames;
 
-  if (selectedConference === "top25") {
-    return selectedWeekGames.filter(
-      (game) => game.home?.rank !== null || game.away?.rank !== null,
-    );
-  }
+    if (selectedConference === "top25") {
+      return selectedWeekGames.filter(
+        (game) => game.home?.rank !== null || game.away?.rank !== null,
+      );
+    }
 
-  // Backend already fetched the selected conference.
-  return selectedWeekGames;
-}, [selectedWeekGames, selectedConference]);
+    // Backend already fetched the selected conference.
+    return selectedWeekGames;
+  }, [selectedWeekGames, selectedConference]);
+
   const {
     categories,
     loading: leadersLoading,
     error: leadersError,
-  } = useSeasonLeaders(getFootballSeason(), league);
+  } = useSeasonLeaders(2025, league);
 
   const {
     articles,

@@ -27,8 +27,7 @@ import { useScrollFade } from "../../../hooks/useScrollFade";
 import { useWeatherForecast } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "../../../types/baseball";
-import { formatVenueAddress } from "../../../utils/CBBUtils/cbbGameUtils";
-import { getBroadcastDisplay } from "../../../utils/games";
+import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
 
 type RouteParams = {
   game?: string | string[];
@@ -371,7 +370,7 @@ export default function GameDetailsScreen(
               awayCode={awayCode}
               isDark={isDark}
               gameStatusDescription={gameStatusDescription}
-              league={LEAGUE?.toUpperCase() ?? ""}
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />

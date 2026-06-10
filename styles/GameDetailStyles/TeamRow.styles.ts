@@ -6,7 +6,7 @@ export type SizeType = "small" | "medium" | "large";
 
 export type TeamRowTeam = {
   id?: string | number;
-  espnID?: string | number;
+  espnId?: string | number;
   logo: any;
   code?: string;
   shortName?: string;
@@ -15,7 +15,7 @@ export type TeamRowTeam = {
 };
 export type FighterRow = {
   id?: string | number;
-  espnID?: string | number;
+  espnId?: string | number;
   headshot: any;
   shortName?: string;
   name?: string;
@@ -23,18 +23,21 @@ export type FighterRow = {
 };
 
 export type FootballTeamRowProps = {
-  league: "nfl" | "cfb";
-  team: TeamRowTeam;
-  rank?: number;
+  id: number | null;
+  logo: any;
+  name: string;
+  record: string | null | undefined;
+  timeouts: number | null;
+  rank: number | null | undefined;
   isDark: boolean;
   isHome?: boolean;
   score?: number | null;
-  isWinner?: boolean;
+  isWinner: boolean | null;
   gameStatusDescription?: string;
-  size?: SizeType; // sizes for font scaling
-  possessionTeamId?: string | number | null;
-  timeouts?: number | null;
+  size?: SizeType;
+  hasPossession: boolean | null;
   opponentScore?: number | null;
+  league: string;
 };
 
 export type BasketballTeamRowProps = {
@@ -58,7 +61,7 @@ export type BasketballTeamRowProps = {
     winnerScore: string;
   };
   gameStatusDescription?: string;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
+  league: string;
 };
 
 export type MMAProps = {
@@ -196,7 +199,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       height: 40,
       resizeMode: "contain",
       position: "absolute",
-      top: "54%",
+      top: "30%",
       alignSelf: "center",
     },
     timeoutsContainer: { alignItems: "center" },

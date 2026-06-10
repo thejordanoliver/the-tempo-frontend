@@ -1,155 +1,254 @@
+import { BasketballGame } from "@/types/basketball";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
-import { getCBBSeason, getWNBASeason } from "utils/dateUtils";
 
-// Leagues
-const MEN_CBB_LEAGUE = "116";
-const WOMEN_CBB_LEAGUE = "423";
-const WNBA_LEAGUE = "13";
+export type BasketballTeamScheduleLeague = "nba" | "cbb" | "wcbb" | "wnba";
 
-export type BasketballTeamGamesMonthGroup = {
+export type BasketballScheduleMonth = {
   key: string;
-  year: number;
-  month: number;
   label: string;
-  count: number;
-};
-
-export type BasketballTeamGamesSelectedMonth = BasketballTeamGamesMonthGroup & {
+  year: number | null;
+  month: number | null;
   games: BasketballGame[];
 };
 
-type useBasketballGameOptions = {
-  selectedDate?: any
-  isWNBA?: boolean;
-  isWomen?: boolean;
+export type BasketballTeamScheduleTeam = {
+  id?: string;
+  code?: string;
+  location?: string;
+  name?: string;
+  displayName?: string;
+  logo?: string;
+  recordSummary?: string;
+  seasonSummary?: string;
+  standingSummary?: string;
+  groups?: any;
 };
 
-type BasketballTeamGamesResponse = {
-  success?: boolean;
-  league?: string;
-  count?: number;
-  gamesByMonth?: BasketballTeamGamesMonthGroup[];
-  selectedMonth?: BasketballTeamGamesSelectedMonth | null;
-  games?: BasketballGame[];
+export type BasketballTeamScheduleResponse = {
+  league: string;
+  team: BasketballTeamScheduleTeam | null;
+  season: any;
+  games: BasketballGame[];
+  months: BasketballScheduleMonth[];
 };
 
-function getSelectedDateParts(selectedDate: Date | null) {
-  if (!selectedDate) {
-    return {
-      year: null,
-      month: null,
-    };
-  }
+type FetchScheduleOptions = {
+  isRefresh?: boolean;
+  silent?: boolean;
+};
 
-  return {
-    year: selectedDate.getFullYear(),
-    month: selectedDate.getMonth(),
-  };
+interface UseBasketballTeamGamesResult {
+  league: string | null;
+  team: BasketballTeamScheduleTeam | null;
+  season: any;
+  games: BasketballGame[];
+  months: BasketballScheduleMonth[];
+  loading: boolean;
+  refreshing: boolean;
+  error: Error | null;
+  refresh: () => Promise<void>;
 }
 
-export function useBasketballTeamGames(
-  teamId: string | number,
-  { selectedDate = null,   isWNBA = false,
-  isWomen = false,
-}: useBasketballGameOptions = {}) {
-  const [games, setGames] = useState<BasketballGame[]>([]);
-  const [gamesByMonth, setGamesByMonth] = useState<
-    BasketballTeamGamesMonthGroup[]
-  >([]);
-  const [selectedMonth, setSelectedMonth] =
-    useState<BasketballTeamGamesSelectedMonth | null>(null);
-  const [loading, setLoading] = useState(Boolean(teamId));
-  const [error, setError] = useState<string | null>(null);
-  const selectedDateParts = useMemo(
-    () => getSelectedDateParts(selectedDate),
-    [selectedDate],
-  );
-  const season = isWNBA ? getWNBASeason() : getCBBSeason();
-  const league = isWNBA
-    ? WNBA_LEAGUE
-    : isWomen
-      ? WOMEN_CBB_LEAGUE
-      : MEN_CBB_LEAGUE;
+const LIVE_STATES = new Set(["in", "half"]);
 
-  const fetchGames = useCallback(async () => {
-    if (!teamId) {
-      setGames([]);
-      setGamesByMonth([]);
-      setSelectedMonth(null);
-      setLoading(false);
-      setError(null);
+function isLiveBasketballGame(game: any) {
+  const state = String(game?.status?.state || "").toLowerCase();
+  const description = String(game?.status?.description || "").toLowerCase();
+  const detail = String(game?.status?.detail || "").toLowerCase();
+  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
+
+  return (
+    LIVE_STATES.has(state) ||
+    description.includes("in progress") ||
+    detail.includes("in progress") ||
+    shortDetail.includes("in progress") ||
+    description.includes("live") ||
+    detail.includes("live") ||
+    shortDetail.includes("live")
+  );
+}
+
+function groupGamesByMonth(games: BasketballGame[]): BasketballScheduleMonth[] {
+  const monthFormatter = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
+  const monthMap = new Map<string, BasketballScheduleMonth>();
+
+  games.forEach((game) => {
+    const date = game.date ? new Date(game.date) : null;
+
+    if (!date || Number.isNaN(date.getTime())) {
+      const key = "unknown";
+
+      if (!monthMap.has(key)) {
+        monthMap.set(key, {
+          key,
+          label: "Unknown Date",
+          year: null,
+          month: null,
+          games: [],
+        });
+      }
+
+      monthMap.get(key)?.games.push(game);
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const key = `${year}-${String(month).padStart(2, "0")}`;
 
-    try {
-      const params: Record<string, string | number> = {
-        season,
-        league,
-      };
+    if (!monthMap.has(key)) {
+      monthMap.set(key, {
+        key,
+        label: monthFormatter.format(date),
+        year,
+        month,
+        games: [],
+      });
+    }
 
-      if (
-        Number.isInteger(selectedDateParts.year) &&
-        Number.isInteger(selectedDateParts.month)
-      ) {
-        params.year = selectedDateParts.year as number;
-        params.month = selectedDateParts.month as number;
+    monthMap.get(key)?.games.push(game);
+  });
+
+  return Array.from(monthMap.values()).sort((a, b) => {
+    if (a.key === "unknown") return 1;
+    if (b.key === "unknown") return -1;
+    return a.key.localeCompare(b.key);
+  });
+}
+
+function getGameTime(game: BasketballGame) {
+  const timestamp = Number((game as any).timestamp);
+
+  if (Number.isFinite(timestamp) && timestamp > 0) {
+    return timestamp;
+  }
+
+  if (game.date) {
+    const dateTime = new Date(game.date).getTime();
+    return Number.isNaN(dateTime) ? 0 : dateTime;
+  }
+
+  return 0;
+}
+
+function sortGamesByDate(games: BasketballGame[]) {
+  return [...games].sort((a, b) => getGameTime(a) - getGameTime(b));
+}
+
+export function useBasketballTeamGames(
+  league: BasketballTeamScheduleLeague,
+  teamId?: string | number | null,
+): UseBasketballTeamGamesResult {
+  const [data, setData] = useState<BasketballTeamScheduleResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchSchedule = useCallback(
+    async ({ isRefresh = false, silent = false }: FetchScheduleOptions = {}) => {
+      if (!league || !teamId) {
+        setData(null);
+        setLoading(false);
+        setRefreshing(false);
+        setError(null);
+        return;
       }
 
-      const res = await apiClient.get<BasketballTeamGamesResponse>(
-        `api/games/basketball/team/${teamId}`,
-        { params },
-      );
-
-      const nextGamesByMonth = Array.isArray(res.data?.gamesByMonth)
-        ? res.data.gamesByMonth
-        : [];
-
-      const nextSelectedMonth = res.data?.selectedMonth ?? null;
-      const nextGames = Array.isArray(res.data?.games) ? res.data.games : [];
-
-      setGamesByMonth((prevGamesByMonth) => {
-        if (nextGamesByMonth.length > 0) {
-          return nextGamesByMonth;
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else if (!silent) {
+          setLoading(true);
         }
 
-        return prevGamesByMonth;
-      });
+        setError(null);
 
-      setSelectedMonth(nextSelectedMonth);
-      setGames(nextGames);
-    } catch (err: any) {
-      console.error(
-        "Error fetching basketball team games:",
-        err?.response?.data || err?.message || err,
-      );
+        const response = await apiClient.get<BasketballTeamScheduleResponse>(
+          `api/games/basketball/team/${league}/${teamId}`,
+        );
 
-      setError("Failed to load team games");
-      setGames([]);
-      setSelectedMonth(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [teamId, season, league, selectedDateParts.year, selectedDateParts.month]);
+        const games = sortGamesByDate(response.data.games || []);
+
+        const months =
+          Array.isArray(response.data.months) && response.data.months.length > 0
+            ? response.data.months
+            : groupGamesByMonth(games);
+
+        setData({
+          ...response.data,
+          team: response.data.team ?? null,
+          games,
+          months,
+        });
+      } catch (err: any) {
+        console.error("BASKETBALL TEAM SCHEDULE ERROR:", err);
+
+        const message =
+          err?.response?.data?.error ||
+          err?.message ||
+          `Failed to fetch ${league} basketball team schedule`;
+
+        setError(new Error(message));
+
+        // Do not clear the current schedule during silent live polling.
+        if (!silent) {
+          setData(null);
+        }
+      } finally {
+        if (isRefresh) {
+          setRefreshing(false);
+        }
+
+        if (!silent) {
+          setLoading(false);
+        }
+      }
+    },
+    [league, teamId],
+  );
 
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+    fetchSchedule();
+  }, [fetchSchedule]);
 
-  const refreshGames = useCallback(async () => {
-    await fetchGames();
-  }, [fetchGames]);
+  const games = useMemo(() => data?.games ?? [], [data]);
 
-  return {
-    games,
-    gamesByMonth,
-    selectedMonth,
-    loading,
-    error,
-    refreshGames,
-  };
+  const hasLiveGame = useMemo(() => {
+    return games.some(isLiveBasketballGame);
+  }, [games]);
+
+  useEffect(() => {
+    if (!hasLiveGame) return;
+
+    const interval = setInterval(() => {
+      fetchSchedule({ silent: true });
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [hasLiveGame, fetchSchedule]);
+
+  const refresh = useCallback(async () => {
+    await fetchSchedule({ isRefresh: true });
+  }, [fetchSchedule]);
+
+  return useMemo(
+    () => ({
+      league: data?.league ?? null,
+      team: data?.team ?? null,
+      season: data?.season ?? null,
+      games,
+      months: data?.months ?? [],
+      loading,
+      refreshing,
+      error,
+      refresh,
+    }),
+    [data, games, loading, refreshing, error, refresh],
+  );
 }

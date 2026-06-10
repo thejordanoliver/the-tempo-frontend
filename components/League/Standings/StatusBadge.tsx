@@ -2,8 +2,7 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-
-type PlayoffLeague = "MLB" | "NFL" | "NBA" | "WNBA" | "NHL";
+import { PlayoffLeague } from "./StatusLegend";
 
 type StatusConfig = {
   colors: Record<string, string>;
@@ -37,6 +36,19 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
       "*": "Clinched Division + Bye",
       z: "Clinched Division",
       y: "Clinched Wild Card",
+      e: "Eliminated from Playoff Contention",
+    },
+  },
+
+  UFL: {
+    colors: {
+      z: Colors.dark.blue,
+      x: Colors.dark.leafGreen,
+      e: Colors.dark.lightRed,
+    },
+    labels: {
+      z: "Clinched Division",
+      x: "Clinched Playoff Berth",
       e: "Eliminated from Playoff Contention",
     },
   },

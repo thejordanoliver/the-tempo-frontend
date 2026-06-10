@@ -49,16 +49,16 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (league === "NBA") {
+    if (league === "nba") {
       router.push(`/team/${id}`);
     }
-    if (league === "WNBA") {
+    if (league === "wnba") {
       router.push(`/team/wnba/${id}`);
     }
-    if (league === "CBB") {
+    if (league === "cbb") {
       router.push(`/team/cbb/${id}`);
     }
-    if (league === "WCBB") {
+    if (league === "wcbb") {
       router.push(`/team/wcbb/${id}`);
     }
   };

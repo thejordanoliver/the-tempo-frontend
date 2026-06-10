@@ -31,7 +31,7 @@ type Props = {
   awayRecord: string;
   gameStatusDetail: string;
   gameStatusDescription: string | undefined;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB" | "SL";
+  league: string;
 };
 
 export default function GameHeader({
@@ -62,7 +62,7 @@ export default function GameHeader({
   awayRecord,
   gameStatusDetail,
   gameStatusDescription,
-  league = "NBA",
+  league = "nba",
 }: Props) {
   const styles = gameHeaderStyles(isDark);
 

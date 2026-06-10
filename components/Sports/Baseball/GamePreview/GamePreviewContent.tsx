@@ -35,7 +35,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   gameStatusDescription: string;
-  league: LeagueType;
+  league: string;
   isChampionship: boolean;
 };
 

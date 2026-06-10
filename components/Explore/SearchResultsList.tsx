@@ -2,7 +2,14 @@ import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/explore";
 import ResultItemRow from "./ResultItemRow";
@@ -47,13 +54,21 @@ export default function SearchResultsList({
     return null;
   }
 
+  const trimmedQuery = query.trim();
   const visibleData = showAll ? data : data.slice(0, 5);
+
+  const handleSelect = (item: ResultItem) => {
+    Keyboard.dismiss();
+    onSelect(item);
+  };
 
   const SeeAllRow = () => (
     <TouchableOpacity
       activeOpacity={0.85}
       onPress={onSeeAll}
       style={styles.seeAllRow}
+      accessibilityRole="button"
+      accessibilityLabel={`See all ${data.length} search results`}
     >
       <Text style={styles.seeAllText}>See all results ({data.length})</Text>
     </TouchableOpacity>
@@ -70,12 +85,12 @@ export default function SearchResultsList({
 
   if (error) return <Text style={global.errorText}>{error}</Text>;
 
-  if (!loading && data.length === 0 && query.length > 0)
+  if (!loading && data.length === 0 && trimmedQuery.length > 0)
     return <Text style={global.emptyText}>No results found.</Text>;
 
   return (
     <>
-      {query.length === 0 && data.length > 0 && (
+      {trimmedQuery.length === 0 && data.length > 0 && (
         <HeadingThree>Recents</HeadingThree>
       )}
 
@@ -99,14 +114,21 @@ export default function SearchResultsList({
         renderItem={({ item }) => (
           <ResultItemRow
             item={item}
-            onSelect={onSelect}
+            onSelect={handleSelect}
             onDelete={onDelete}
             query={query}
           />
         )}
         ListFooterComponent={!showAll && data.length > 5 ? <SeeAllRow /> : null}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={searchResultsListStyles.content}
+        keyboardShouldPersistTaps="handled"
       />
     </>
   );
 }
+
+const searchResultsListStyles = StyleSheet.create({
+  content: {
+    paddingBottom: 100,
+  },
+});

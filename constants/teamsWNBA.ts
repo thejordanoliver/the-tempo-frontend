@@ -23,7 +23,7 @@ import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 export const wnbaTeams: NBATeam[] = [
   {
     id: 162,
-    espnID: 20,
+    espnId: 20,
     name: "Dream",
     shortName: "Dream",
     fullName: "Atlanta Dream",
@@ -46,7 +46,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 163,
-    espnID: 19,
+    espnId: 19,
     name: "Sky",
     shortName: "Sky",
     fullName: "Chicago Sky",
@@ -68,7 +68,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 164,
-    espnID: 18,
+    espnId: 18,
     name: "Sun",
     shortName: "Sun",
     fullName: "Connecticut Sun",
@@ -91,7 +91,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 165,
-    espnID: 3,
+    espnId: 3,
     name: "Wings",
     shortName: "Wings",
     fullName: "Dallas Wings",
@@ -114,7 +114,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 7326,
-    espnID: 129689,
+    espnId: 129689,
     name: "Valkyries",
     shortName: "Valkyries",
     fullName: "Golden State Valkyries",
@@ -137,7 +137,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 166,
-    espnID: 5,
+    espnId: 5,
     name: "Fever",
     shortName: "Fever",
     fullName: "Indiana Fever",
@@ -160,7 +160,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 167,
-    espnID: 17,
+    espnId: 17,
     name: "Aces",
     shortName: "Aces",
     fullName: "Las Vegas Aces",
@@ -183,7 +183,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 168,
-    espnID: 6,
+    espnId: 6,
     name: "Sparks",
     shortName: "Sparks",
     fullName: "Los Angeles Sparks",
@@ -206,7 +206,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 169,
-    espnID: 8,
+    espnId: 8,
     name: "Lynx",
     shortName: "Lynx",
     fullName: "Minnesota Lynx",
@@ -229,7 +229,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 170,
-    espnID: 9,
+    espnId: 9,
     name: "Liberty",
     shortName: "Liberty",
     fullName: "New York Liberty",
@@ -252,7 +252,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 171,
-    espnID: 11,
+    espnId: 11,
     name: "Mercury",
     shortName: "Mercury",
     fullName: "Phoenix Mercury",
@@ -275,7 +275,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 7100,
-    espnID: 132052,
+    espnId: 132052,
     name: "Fire",
     shortName: "Fire",
     fullName: "Portland Fire",
@@ -298,7 +298,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 172,
-    espnID: 14,
+    espnId: 14,
     name: "Storm",
     shortName: "Storm",
     fullName: "Seattle Storm",
@@ -321,7 +321,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 7870,
-    espnID: 131935,
+    espnId: 131935,
     name: "Tempo",
     shortName: "Tempo",
     fullName: "Toronto Tempo",
@@ -344,7 +344,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 175,
-    espnID: 16,
+    espnId: 16,
     name: "Mystics",
     shortName: "Mystics",
     fullName: "Washington Mystics",
@@ -367,7 +367,7 @@ export const wnbaTeams: NBATeam[] = [
   },
   {
     id: 3807,
-    espnID: 130927,
+    espnId: 130927,
     name: "Antelopes",
     shortName: "Antelopes",
     fullName: "Toyota Antelopes",
@@ -390,7 +390,7 @@ export const wnbaTeams: NBATeam[] = [
 ];
 
 export const getWNBATeamByESPNId = (espnId: number | string) => {
-  return wnbaTeams.find((t) => t.espnID?.toString() === espnId?.toString());
+  return wnbaTeams.find((t) => t.espnId?.toString() === espnId?.toString());
 };
 
 export const getWNBATeam = (id: number | string) => {

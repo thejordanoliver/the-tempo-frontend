@@ -1,13 +1,18 @@
 // components/Games/CombinedGamesList.tsx
-import BasketballStackedGameCard from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
 import {
-  default as FootballGameCard,
-  default as NFLGameCard,
-} from "@/components/Sports/NFL/Games/FootballGameCard";
+  default as BasketballGameCard,
+  default as SummerGameCard,
+} from "@/components/Sports/Basketball/Games/BasketballGameCard";
 import {
-  default as FootballStackedGameCard,
-  default as NFLStackedGameCard,
-} from "@/components/Sports/NFL/Games/FootballStackedGameCard";
+  default as BasketballSquareGameCard,
+  default as SummerSquareGameCard,
+} from "@/components/Sports/Basketball/Games/BasketballSquareGameCard";
+import {
+  default as BasketballStackedGameCard,
+  default as SummerStackedGameCard,
+} from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
+import { default as FootballGameCard } from "@/components/Sports/NFL/Games/FootballGameCard";
+import { default as FootballStackedGameCard } from "@/components/Sports/NFL/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/NHL/Games/HockeyStackedGameCard";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
@@ -19,17 +24,12 @@ import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal
 import GameCard from "components/Sports/NBA/Games/GameCard";
 import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
 import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
-import SummerStackedGameCard from "components/Sports/NBASummerLeague/Games/SLeagueStackedGameCard";
-import SummerGameCard from "components/Sports/NBASummerLeague/Games/SLGameCard";
-import SummerSquareGameCard from "components/Sports/NBASummerLeague/Games/SLSquareGameCard";
-import { globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
   FlatList,
   SectionList,
   SectionListData,
-  Text,
   View,
   ViewStyle,
 } from "react-native";
@@ -40,41 +40,39 @@ import { BasketballGame } from "types/basketball";
 import { FootballGame } from "types/football";
 import { HockeyGame } from "types/hockey";
 import { MMAFight } from "types/mma";
-import { Game as NBAGameType, SummerGame } from "types/nba";
 import HeadingTwo from "../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../Skeletons/GameCards/SquareGameCardSkeleton";
 import HeaderSkeleton from "../Skeletons/HeaderSkeleton";
 import BasketballGamePreviewModal from "../Sports/Basketball/GamePreview/BasketballGamePreviewModal";
-import BasketballGameCard from "../Sports/Basketball/Games/BasketballGameCard";
-import BasketballSquareGameCard from "../Sports/Basketball/Games/BasketballSquareGameCard";
-import CFBGamePreviewModal from "../Sports/CFB/GamePreview/CFBGamePreviewModal";
 import MMAGamePreviewModal from "../Sports/MMA/GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "../Sports/MMA/Games/MMAGameCard";
 import MMASquareGameCard from "../Sports/MMA/Games/MMASquareGameCard";
 import MMAStackedGameCard from "../Sports/MMA/Games/MMAStackedGameCard";
 import FootballGamePreviewModal from "../Sports/NFL/GamePreview/FootballGamePreviewModal";
-import {
-  default as FootballSquareGameCard,
-  default as NFLSquareGameCard,
-} from "../Sports/NFL/Games/FootballSquareGameCard";
+import FootballSquareGameCard from "../Sports/NFL/Games/FootballSquareGameCard";
 import NHLGamePreviewModal from "../Sports/NHL/GamePreview/HockeyGamePreviewModal";
 import NHLGameCard from "../Sports/NHL/Games/HockeyGameCard";
 import NHLGameSquareCard from "../Sports/NHL/Games/HockeySqaureGameCard";
 
-const NCAA_FOOTBALL_LEAGUE_ID = 2;
+const NBA_LEAGUE_ID = 46;
+const NBA_SUMMER_LEAGUE_ID = 46;
+const NCAA_FOOTBALL_LEAGUE_ID = 23;
+const NFL_FOOTBALL_LEAGUE_ID = 28;
+const UFL_FOOTBALL_LEAGUE_ID = 37;
 const NCAA_COLLEGE_BASEBALL_LEAGUE_ID = 14;
 const NCAA_COLLEGE_SOFTBALL_LEAGUE_ID = 102;
 const NCAA_MENS_BASKETBALL_LEAGUE_ID = 116;
 const NCAA_WOMENS_BASKETBALL_LEAGUE_ID = 423;
-const WNBA_LEAGUE_ID = 13;
+const WNBA_LEAGUE_ID = 59;
 
 type SportsCategory =
-  | "College Football"
-  | "NFL"
   | "NBA"
   | "WNBA"
+  | "NFL"
+  | "UFL"
   | "MLB"
   | "NHL"
+  | "College Football"
   | "College Baseball"
   | "College Softball"
   | "Men's College Basketball"
@@ -84,28 +82,28 @@ type SportsCategory =
   | "Favorites";
 
 export type CombinedGamesSection =
+  | { category: "NBA"; data: BasketballGame[] }
+  | { category: "WNBA"; data: BasketballGame[] }
+  | { category: "NFL"; data: FootballGame[] }
+  | { category: "UFL"; data: FootballGame[] }
+  | { category: "MLB"; data: BaseballGame[] }
+  | { category: "NHL"; data: HockeyGame[] }
   | { category: "College Football"; data: FootballGame[] }
   | { category: "Men's College Basketball"; data: BasketballGame[] }
   | { category: "Women's College Basketball"; data: BasketballGame[] }
-  | { category: "NFL"; data: FootballGame[] }
-  | { category: "MLB"; data: BaseballGame[] }
   | { category: "College Baseball"; data: BaseballGame[] }
   | { category: "College Softball"; data: BaseballGame[] }
-  | { category: "NHL"; data: HockeyGame[] }
-  | { category: "NBA"; data: NBAGameType[] }
-  | { category: "WNBA"; data: BasketballGame[] }
-  | { category: "NBA Summer League"; data: SummerGame[] }
+  | { category: "NBA Summer League"; data: BasketballGame[] }
   | { category: "MMA"; data: MMAFight[] }
   | { category: "Favorites"; data: CombinedGame[] };
 
 type CombinedGame =
   | FootballGame
   | BaseballGame
-  | NBAGameType
   | BasketballGame
   | HockeyGame
   | MMAFight
-  | SummerGame;
+  | BasketballGame;
 
 type CombinedGamesListProps = {
   gamesByCategory: CombinedGamesSection[];
@@ -123,7 +121,10 @@ type CombinedGamesListProps = {
 const getCategoryForFavorites = (item: CombinedGame): SportsCategory => {
   const league = (item as any).league;
 
-  if (!league) return "NBA";
+  // NBA Summer League
+  if (league.id === NBA_LEAGUE_ID) {
+    return "NBA";
+  }
 
   // Women's CBB
   if (league.id === NCAA_WOMENS_BASKETBALL_LEAGUE_ID) {
@@ -150,16 +151,28 @@ const getCategoryForFavorites = (item: CombinedGame): SportsCategory => {
     return "WNBA";
   }
 
+  // NFL
+  if (league.id === NFL_FOOTBALL_LEAGUE_ID) {
+    return "NFL";
+  }
+
+  // UFL
+  if (league.id === UFL_FOOTBALL_LEAGUE_ID) {
+    return "UFL";
+  }
+
   // College Football
   if (league.id === NCAA_FOOTBALL_LEAGUE_ID) {
     return "College Football";
   }
+  // NBA Summer League
+  if (league.id === NBA_SUMMER_LEAGUE_ID) {
+    return "NBA Summer League";
+  }
 
-  if (league.name === "NFL") return "NFL";
   if (league.name === "MLB") return "MLB";
   if (league.name === "NHL") return "NHL";
   if (league.name === "MLB - Spring Training") return "MLB";
-  if (league.name === "NBA Summer League") return "NBA Summer League";
   if (league.name === "MMA") return "MMA";
 
   return "NBA";
@@ -174,7 +187,6 @@ export default function CombinedGamesList({
   isDark,
 }: CombinedGamesListProps) {
   const styles = combinedGameListStyles(isDark);
-  const global = globalStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
   const [previewCategory, setPreviewCategory] = useState<SportsCategory | null>(
     null,
@@ -237,7 +249,7 @@ export default function CombinedGamesList({
 
     // ✅ NBA
     if (category === "NBA") {
-      const nbaGame = item as NBAGameType;
+      const nbaGame = item as BasketballGame;
       if (viewMode === "list") return wrapper(<GameCard game={nbaGame} />);
       if (viewMode === "grid")
         return wrapper(<SquareGameCard game={nbaGame} />, index);
@@ -298,7 +310,10 @@ export default function CombinedGamesList({
     // ✅ NBA Summer League
     if (category === "NBA Summer League") {
       const slGame = item as BasketballGame;
-      if (viewMode === "list") return wrapper(<SummerGameCard game={slGame} />);
+      if (viewMode === "list")
+        return wrapper(
+          <SummerGameCard game={slGame} isCBB={false} isWCBB={false} />,
+        );
       if (viewMode === "grid")
         return wrapper(<SummerSquareGameCard game={slGame} />, index);
       return wrapper(<SummerStackedGameCard game={slGame} />);
@@ -307,20 +322,41 @@ export default function CombinedGamesList({
     // ✅ NFL
     if (category === "NFL") {
       const nflGame = item as FootballGame;
-      if (viewMode === "list") return wrapper(<NFLGameCard game={nflGame} />);
+      if (viewMode === "list")
+        return wrapper(<FootballGameCard game={nflGame} isNFL={true} />);
       if (viewMode === "grid")
-        return wrapper(<NFLSquareGameCard game={nflGame} />, index);
-      return wrapper(<NFLStackedGameCard game={nflGame} />);
+        return wrapper(<FootballGameCard game={nflGame} isNFL={true} />, index);
+      return wrapper(<FootballGameCard game={nflGame} isNFL={true} />);
     }
 
     // ✅ College Football
     if (category === "College Football") {
       const cfbGame = item as FootballGame;
       if (viewMode === "list")
-        return wrapper(<FootballGameCard game={cfbGame} />);
+        return wrapper(<FootballGameCard game={cfbGame} isCFB={true} />);
       if (viewMode === "grid")
-        return wrapper(<FootballSquareGameCard game={cfbGame} />, index);
-      return wrapper(<FootballStackedGameCard game={cfbGame} />);
+        return wrapper(
+          <FootballSquareGameCard game={cfbGame} isCFB={true} />,
+          index,
+        );
+      return wrapper(<FootballStackedGameCard game={cfbGame} isCFB={true} />);
+    }
+
+    // ✅ UFL
+    if (category === "UFL") {
+      const uflGame = item as FootballGame;
+      if (viewMode === "list")
+        return wrapper(
+          <FootballGameCard game={uflGame} isNFL={false} isCFB={false} />,
+        );
+      if (viewMode === "grid")
+        return wrapper(
+          <FootballSquareGameCard game={uflGame} isNFL={false} isCFB={false} />,
+          index,
+        );
+      return wrapper(
+        <FootballStackedGameCard game={uflGame} isNFL={false} isCFB={false} />,
+      );
     }
 
     // ✅ MLB
@@ -539,6 +575,7 @@ export default function CombinedGamesList({
       case "NBA Summer League":
       case "College Football":
       case "NFL":
+      case "UFL":
       case "MLB":
       case "College Baseball":
       case "College Softball":
@@ -639,33 +676,22 @@ export default function CombinedGamesList({
           }
           return <View style={{ height: 16 }} />;
         }}
-        ListEmptyComponent={() => (
-          <View style={global.emptyContainer}>
-            <Text style={global.emptyText}>No games today</Text>
-          </View>
-        )}
       />
 
       {modalVisible &&
         previewGame &&
         (previewCategory === "NFL" ||
-          previewCategory === "College Football") && (
+          previewCategory === "College Football" ||
+          previewCategory === "UFL") && (
           <FootballGamePreviewModal
             visible={modalVisible}
             game={previewGame as FootballGame}
             onClose={() => setModalVisible(false)}
             isNFL={previewCategory === "NFL"}
+            isCFB={previewCategory === "College Football"}
           />
         )}
-      {modalVisible &&
-        previewGame &&
-        previewCategory === "College Football" && (
-          <CFBGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as FootballGame}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+
       {modalVisible &&
         previewGame &&
         (previewCategory === "MLB" ||
@@ -708,7 +734,7 @@ export default function CombinedGamesList({
       {modalVisible && previewGame && previewCategory === "NBA" && (
         <GamePreviewModal
           visible={modalVisible}
-          game={previewGame as NBAGameType}
+          game={previewGame as BasketballGame}
           onClose={() => setModalVisible(false)}
         />
       )}

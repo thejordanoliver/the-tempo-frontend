@@ -1,118 +1,136 @@
+import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
-import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { Colors } from "constants/styles";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
-import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useGameDetails } from "hooks/NBAHooks/useGameDetails";
-import { memo, useCallback, useMemo } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
+import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter, getBroadcastDisplay } from "utils/games";
 
-function BasketabllStackedGameCard({
+export default function BasketballStackedGameCard({
   game,
-  isCBB = false,
-  isWCBB = false,
-  isWNBA = false,
+  isCBB,
+  isWCBB,
+  isWNBA,
 }: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const handlePress = useCallback(() => {
+  const handlePress = () => {
     router.push({
       pathname: "/game/basketball/[game]",
-      params: { game: JSON.stringify(game) },
+      params: {
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
     });
-  }, [router, game]);
+  };
 
-  const detailsLeague = isWNBA ? "wnba" : isWCBB ? "wcbb" : "cbb";
+  const safeDate = (date?: string | null) => {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
 
-  const homeId = game?.teams?.home?.id;
-  const awayId = game?.teams?.away?.id;
+  const gameDate = safeDate(game.date);
 
-  const home = isWNBA ? getWNBATeam(homeId) : getCBBTeam(homeId, isWCBB);
-  const away = isWNBA ? getWNBATeam(awayId) : getCBBTeam(awayId, isWCBB);
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
-  const homeName = home?.fullName ?? game?.teams?.home.name;
-  const awayName = away?.fullName ?? game?.teams?.away.name;
+  const formattedTime =
+    gameDate?.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
 
-  const homeLogo = isWNBA
-    ? getWNBATeamLogo(homeId, isDark)
-    : getCBBTeamLogo(homeId, isDark, isWCBB);
-  const awayLogo = isWNBA
-    ? getWNBATeamLogo(awayId, isDark)
-    : getCBBTeamLogo(awayId, isDark, isWCBB);
+  const league = game?.league?.id;
 
-  const homeEspnId = home?.espnID ?? 0;
-  const awayEspnId = away?.espnID ?? 0;
+  const home = game?.home;
+  const away = game?.away;
+  const homeId = isWCBB ? (home.wid ?? 0) : home?.id;
+  const awayId = isWCBB ? (away.wid ?? 0) : away?.id;
 
-  // --- Date ---
-  const gameDate = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+  const homeTeam = isCBB
+    ? getCBBTeam(homeId)
+    : isWCBB
+      ? getCBBTeam(homeId, isWCBB)
+      : isWNBA
+        ? getWNBATeam(homeId)
+        : getNBATeam(homeId);
 
-  const gameDateStr = gameDate ? gameDate.toISOString().split("T")[0] : "";
+  const awayTeam = isCBB
+    ? getCBBTeam(awayId)
+    : isWCBB
+      ? getCBBTeam(awayId, isWCBB)
+      : isWNBA
+        ? getWNBATeam(awayId)
+        : getNBATeam(awayId);
 
-  const { score: liveScore, details } = useGameDetails(
-    detailsLeague,
-    String(homeEspnId),
-    String(awayEspnId),
-    gameDateStr,
-  );
+  const homeName = homeTeam?.name || game.home?.name;
+  const awayName = awayTeam?.name || game.away?.name;
 
-  // --- Game status ---
-  const gameStatusDescription = liveScore?.gameStatusDescription;
-  const gameStatusDetail = liveScore?.gameStatusDetail;
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isHalftime = gameStatusDescription === "Halftime";
-  const endOfPeriod = gameStatusDescription === "End of Period";
+  const homeLogo = isCBB
+    ? getCBBTeamLogo(homeId, isDark)
+    : isWCBB
+      ? getCBBTeamLogo(homeId, isDark, true)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, isDark)
+        : getTeamLogo(homeId, isDark);
+
+  const awayLogo = isCBB
+    ? getCBBTeamLogo(awayId, isDark)
+    : isWCBB
+      ? getCBBTeamLogo(awayId, isDark, true)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, isDark)
+        : getTeamLogo(awayId, isDark);
+
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headlineText = game?.headline;
+  const headline = headlineText || holidayLabel;
+  const isChampionship =
+    headline?.includes("NBA Summer League - Final") ||
+    headline?.includes(
+      "Men's Basketball Championship - National Championship",
+    ) ||
+    headline?.includes(
+      "Women's Basketball Championship - National Championship",
+    );
+
+  const styles = stackedGameCardStyles(isDark, isChampionship);
+
+  const homeScore = game.home.score ?? 0;
+  const awayScore = game.away.score ?? 0;
+
+  const period = game.status.period;
+  const clock = game.status.displayClock;
+  const gameStatusDescription = game.status?.description;
+  const gameStatusDetail = game.status.shortDetail;
   const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
-  const period = liveScore?.period ?? game.status.long ?? "";
-  const displayClock = liveScore?.displayClock ?? game.status.timer ?? "0:00";
-  const inProgress = gameStatusDescription === "In Progress";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const endOfPeriod = gameStatusDescription === "End of Period";
+  const broadcast = getBroadcastDisplay(game?.broadcasts);
 
-  // --- Team Rankings ---
-  const homeRank = details?.homeRank;
-  const awayRank = details?.awayRank;
+  const homeRecord = game.home.record ?? "0-0";
+  const awayRecord = game.away.record ?? "0-0";
 
-  const headlineText = details?.headline;
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-  const homeScore = liveScore?.home.total ?? game.scores?.home?.total ?? 0;
-  const awayScore = liveScore?.away.total ?? game.scores?.away?.total ?? 0;
-
-  const isChampionship = isWCBB
-    ? headlineText === "Women's Basketball Championship - National Championship"
-    : headlineText === "Men's Basketball Championship - National Championship";
-
-  const styles = stackedGameCardStyles(isDark, isChampionship);
-
-  // --- Broadcasts ---
-  const broadcasts = details?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-
-  const { formattedDate, formattedTime } = useMemo(() => {
-    if (!gameDate) return { formattedDate: "", formattedTime: "" };
-
-    return {
-      formattedDate: gameDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
-      formattedTime: gameDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      }),
-    };
-  }, [gameDate]);
-
+  // -----------------------------------------------------
+  // SCORE TEXT COMPONENT
+  // -----------------------------------------------------
   const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
   const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
   const isTie = (awayScore ?? 0) === (homeScore ?? 0);
@@ -150,21 +168,20 @@ function BasketabllStackedGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period, isCBB)}</Text>
+          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{displayClock}</Text>
+          <Text style={styles.clock}>{clock}</Text>
         </View>
       );
 
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
+    if (isDelayed || isCanceled || isPostponed || isForfeited)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
     if (endOfPeriod)
       return (
-        <Text style={styles.clock}>End of {formatQuarter(period, isCBB)}</Text>
+        <Text style={styles.clock}>End of {formatQuarter(period ?? 0)}</Text>
       );
 
     if (isFinal)
@@ -193,14 +210,12 @@ function BasketabllStackedGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={awayLogo}
-              style={[styles.logo]}
+              style={styles.logo}
               accessibilityLabel={`${awayName} logo`}
             />
-            <Text style={styles.teamName}>
-              {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
-              {awayName}
-            </Text>
+            <Text style={styles.teamName}>{awayName}</Text>
           </View>
+          {/* Away Score / Record */}
           <ScoreText
             score={awayScore}
             record={awayRecord}
@@ -213,14 +228,13 @@ function BasketabllStackedGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={homeLogo}
-              style={[styles.logo]}
+              style={styles.logo}
               accessibilityLabel={`${homeName} logo`}
             />
-            <Text style={styles.teamName}>
-              {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
-              {homeName}
-            </Text>
+            <Text style={styles.teamName}>{homeName}</Text>
           </View>
+
+          {/* Home Score / Record */}
           <ScoreText
             score={homeScore}
             record={homeRecord}
@@ -228,15 +242,14 @@ function BasketabllStackedGameCard({
           />
         </View>
       </View>
-
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
+      <Text style={[styles.headlineText]}>{headline}</Text>
 
-      {/* Center Info */}
+      {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcastText && (
-          <Text style={styles.broadcast}>{broadcastText}</Text>
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>
     </>
@@ -244,23 +257,7 @@ function BasketabllStackedGameCard({
 
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
-      {isChampionship ? (
-        <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.card}
-        >
-          {renderCardContent()}
-        </LinearGradient>
-      ) : (
-        <View style={styles.card}>{renderCardContent()}</View>
-      )}
+      <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );
 }
-export default memo(BasketabllStackedGameCard);

@@ -1,9 +1,12 @@
+import {
+  Athlete,
+  PlayObject,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Athlete, PlayObject } from "hooks/FootballHooks/useGameDetails";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, LayoutChangeEvent, Text, View } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
@@ -75,8 +78,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const awayTeam = getTeamInfo(awayTeamId) ?? emptyAwayTeam;
   const homeColor = homeTeam?.color ?? emptyHomeTeam?.color;
   const awayColor = awayTeam?.color ?? emptyAwayTeam?.color;
-  const homeEspnID = homeTeam?.espnID;
-  const awayEspnID = awayTeam?.espnID;
+  const homeEspnID = homeTeam?.espnId;
+  const awayEspnID = awayTeam?.espnId;
   const homeLogo =
     league === "NFL"
       ? getNFLTeamLogo(homeTeamId, isDark)

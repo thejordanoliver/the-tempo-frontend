@@ -1,32 +1,31 @@
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { LeagueType } from "types/types";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
-/**
- * Generic team type for any league
- */
 export type StandingsTeam = {
-  // Basic identifiers
-  id: string; // internal or generated id
-  teamId: string; // ESPN team id
-  name: string; // Full team name
-  abbreviation: string; // Team abbreviation
-  conference: string; // e.g., "Eastern" | "Western" | "AFC" | "NFC"
-  division: string; // Division name
+  id?: string;
+  teamId: string;
+  name: string;
+  shortName?: string | null;
+  abbreviation: string;
 
-  // Record
+  logo?: string | null;
+  logoDark?: string | null;
+
+  conference: string;
+  division: string;
+
   wins: number;
   losses: number;
   ties: number;
-  otLosses?: number | null; // For NHL OT losses
+  otLosses?: number | null;
   winPercent: number;
   gamesAhead?: number | null;
   gamesBehind?: number | null;
-  streak: string;
+  streak: string | null;
 
-  rank: number;
-  // Split records
+  rank?: number | null;
+
   overallRecord?: string | null;
   homeRecord?: string | null;
   roadRecord?: string | null;
@@ -34,7 +33,6 @@ export type StandingsTeam = {
   vsDiv?: string | null;
   vsConf?: string | null;
 
-  // Points / scoring
   pointsFor?: number | null;
   pointsAgainst?: number | null;
   avgPointsFor?: number | null;
@@ -43,18 +41,13 @@ export type StandingsTeam = {
   avgDifferential?: number | null;
   points?: number | null;
 
-  // Advanced stats
   divisionWinPercent?: number | null;
   leagueWinPercent?: number | null;
 
-  // Playoff info
-  clincher?: string | null; // e.g., "X", "Y", "E", etc.
+  clincher?: string | null;
   playoffSeed?: number | null;
 };
 
-/**
- * Conference or division grouping
- */
 export type ConferenceStandings = {
   id: string;
   name: string;
@@ -62,52 +55,113 @@ export type ConferenceStandings = {
   standings: StandingsTeam[];
 };
 
-/**
- * Generic league standings data
- */
+export type SeasonType = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  startDate: string | null;
+  endDate: string | null;
+  hasStandings: boolean;
+};
+
+export type Season = {
+  year: number;
+  displayName: string;
+  startDate: string | null;
+  endDate: string | null;
+  types: SeasonType[];
+};
+
 export type LeagueStandingsData = {
-  season: number;
-  seasonDisplayName: string;
+  season: number | null;
+  seasonDisplayName: string | null;
+  seasonType?: number | string | null;
+  availableSeasons: Season[];
   conferences: ConferenceStandings[];
   divisions: Record<string, StandingsTeam[]>;
 };
 
-export function useLeagueStandings(league: LeagueType, year?: string) {
+type UseLeagueStandingsOptions = {
+  seasonType?: string;
+};
+
+export function useLeagueStandings(
+  league: LeagueType,
+  year?: string,
+  options?: UseLeagueStandingsOptions,
+) {
   const [data, setData] = useState<LeagueStandingsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const seasonType = options?.seasonType ?? "2";
 
   const fetchStandings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(
-        `${BASE_URL}/api/standings/${league.toLowerCase()}`,
+      const res = await apiClient.get<LeagueStandingsData>(
+        `/api/standings/${league.toLowerCase()}`,
         {
-          params: year ? { season: year } : undefined,
+          params: {
+            ...(year ? { season: year } : {}),
+            seasontype: seasonType,
+          },
         },
       );
 
-      setData(res.data);
+      setData({
+        ...res.data,
+        availableSeasons: res.data.availableSeasons ?? [],
+        conferences: res.data.conferences ?? [],
+        divisions: res.data.divisions ?? {},
+      });
     } catch (err: any) {
       console.error(`Failed to fetch ${league} standings:`, err);
-      setError(err.message || `Failed to fetch ${league} standings`);
+
+      setError(
+        err?.response?.data?.error ||
+          err?.message ||
+          `Failed to fetch ${league} standings`,
+      );
+
       setData(null);
     } finally {
       setLoading(false);
     }
-  }, [league, year]);
+  }, [league, year, seasonType]);
 
   useEffect(() => {
     fetchStandings();
   }, [fetchStandings]);
 
+  const availableSeasons = useMemo(() => {
+    return data?.availableSeasons ?? [];
+  }, [data?.availableSeasons]);
+
+  const regularSeasonOptions = useMemo(() => {
+    return availableSeasons
+      .filter((season) =>
+        season.types.some(
+          (type) =>
+            type.id === "2" && type.abbreviation === "reg" && type.hasStandings,
+        ),
+      )
+      .map((season) => ({
+        label: season.displayName,
+        value: String(season.year),
+      }));
+  }, [availableSeasons]);
+
   return {
     standings: data?.conferences ?? [],
+    availableSeasons,
+    regularSeasonOptions,
     divisions: data?.divisions ?? {},
     season: data?.season ?? null,
     seasonDisplayName: data?.seasonDisplayName ?? null,
+    seasonType: data?.seasonType ?? null,
     loading,
     error,
     refetch: fetchStandings,

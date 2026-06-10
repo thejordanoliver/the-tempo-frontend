@@ -1,7 +1,7 @@
 export type BasketballTeam = {
   id: number;
-  wid?: number;
-  espnID: number | null;
+  wid: number;
+  espnId: number | null;
   name: string;
   shortName?: string;
   fullName?: string;
@@ -33,85 +33,111 @@ export type BasketballTeam = {
 };
 
 export type BasketballGame = {
-  id: number;
-  date: string;
-  time: string;
-  timestamp: number;
-  timezone: string;
-
-  stage: string | null;
-  week: string | null;
-  venue: string | null;
-
-  status: {
-    long: string;
-    short: string;
-    timer: string | null;
-  };
-
   league: {
     id: number;
+    uid: string;
+    code: string;
     name: string;
-    type: string;
-    season: string;
+    slug: string;
+  };
+  id: string;
+  uid: string;
+  name: string;
+  shortName: string;
+  headline: string;
+  date: string;
+  startDate: string;
+  timestamp: number;
+  season: {
+    year: number;
+    type: number;
+    slug: string;
+  };
+  status: {
+    state: string;
+    description: string;
+    detail: string;
+    shortDetail: string;
+    period: number;
+    clock: string;
+    displayClock: string;
+    completed: boolean;
+  };
+  venue: {
+    id: string;
+    name: string;
+    city: string;
+    state: string;
+    indoor: boolean;
+  };
+  broadcasts: [];
+  geoBroadcasts: [
+    {
+      type: string;
+      market: string;
+      media: string;
+      region: string;
+    },
+  ];
+  periods: number;
+  home: {
+    id: number;
+    wid: number | null;
+    espnId: number;
+    uid: string;
+    name: string;
+    shortName: string;
+    code: string;
+    city: string;
+    state: string;
+    location: string;
     logo: string;
-    country: {
-      id: number;
-      name: string;
-      code: string;
-      flag: string;
-    };
-    isWomen?: boolean;
+    primaryColor: string;
+    secondaryColor: string;
+    nbaAPIID: number;
+    rank: number;
+    score: number;
+    record: string;
+    winner: boolean;
   };
-
-  teams: {
-    home: {
-      id: number;
-      name: string;
-      logo: string;
-    };
-    away: {
-      id: number;
-      name: string;
-      logo: string;
-    };
+  away: {
+    id: number;
+    wid: number | null;
+    espnId: number;
+    uid: string;
+    name: string;
+    shortName: string;
+    code: string;
+    city: string;
+    state: string;
+    location: string;
+    logo: string;
+    primaryColor: string;
+    secondaryColor: string;
+    nbaAPIID: number;
+    rank: number;
+    score: number;
+    record: string;
+    winner: boolean;
   };
-
-  scores: {
-    home: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
-    away: {
-      quarter_1: number | null;
-      quarter_2: number | null;
-      quarter_3: number | null;
-      quarter_4: number | null;
-      over_time: number | null;
-      total: number | null;
-    };
+  isConferenceGame: boolean;
+  isNeutralSite: boolean;
+  attendance: 0;
+  playByPlayAvailable: boolean;
+  recent: boolean;
+  wasSuspended: boolean;
+  raw: {
+    eventId: string;
+    competitionId: string;
   };
 };
 
 export type BasketballGameCardProps = {
   game: BasketballGame;
+  isNBA?: boolean;
   isCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
-};
-
-export type Conference = {
-  name: string;
-  logo: any;
-  teams: string[];
-  color?: {
-    primary: string;
-    secondary: string;
-  };
 };
 
 export interface BasketballPlayer {

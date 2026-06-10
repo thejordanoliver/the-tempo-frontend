@@ -132,7 +132,7 @@ export type RosterStatsProps = {
 export type Team = {
   id: number;
   wid?: any;
-  espnID?: string | number;
+  espnId?: string | number;
   name: string;
   fullName?: string;
   logo?: any;
@@ -162,6 +162,7 @@ export type LeagueType =
   | "WNBA"
   | "NFL"
   | "CFB"
+  | "UFL"
   | "CB"
   | "SB"
   | "CBB"

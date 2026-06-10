@@ -27,25 +27,25 @@ export const gameWidgetStyles = (
   // Logo scales with the shorter of the two so it never overflows horizontally,
   // but the envelope is wider to allow filling vertical space.
   const logo = isSmallLayout
-    ? clamp(Math.min(w * 0.14, h * 0.2), 26, 34)
-    : clamp(Math.min(w * 0.18, h * 0.22), 40, 50);
+    ? clamp(Math.min(w * 0.14, h * 0.2), 30, 30)
+    : clamp(Math.min(w * 0.18, h * 0.22), 60, 60);
   const scoreFz = isSmallLayout
-    ? clamp(Math.min(w * 0.12, h * 0.18), 22, 30)
+    ? clamp(Math.min(w * 0.12, h * 0.18), 20, 24)
     : clamp(unit * 5.5, 30, 60);
   const recordFz = isSmallLayout
     ? clamp(Math.min(w * 0.07, h * 0.11), 14, 18)
     : clamp(unit * 3.2, 18, 32);
   const nameFz = isSmallLayout
-    ? clamp(Math.min(w * 0.065, h * 0.1), 13, 16)
-    : clamp(unit * 2.4, 10, 24);
+    ? clamp(Math.min(w * 0.12, h * 0.18), 16, 16)
+    : clamp(unit * 5.5, 30, 60);
   const rankFz = isSmallLayout
     ? clamp(Math.min(w * 0.055, h * 0.08), 11, 14)
     : clamp(unit * 1.8, 9, 18);
   const infoFz = isSmallLayout
-    ? clamp(Math.min(w * 0.065, h * 0.1), 13, 16)
+    ? clamp(Math.min(w * 0.065, h * 0.1), 12, 12)
     : clamp(unit * 20, 14, 18);
   const metaFz = isSmallLayout
-    ? clamp(Math.min(w * 0.055, h * 0.085), 12, 15)
+    ? clamp(Math.min(w * 0.055, h * 0.085), 12, 12)
     : clamp(unit * 2.8, 11, 28);
   const gap = isSmallLayout ? clamp(w * 0.035, 6, 10) : clamp(w * 0.04, 10, 28);
   const divH = isSmallLayout
@@ -183,7 +183,7 @@ export const gameWidgetStyles = (
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: isSmallLayout ? gap : gap * 1.5,
       minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
-      textAlign: "center",
+      textAlign: "right",
     },
 
     homeRecord: {
@@ -193,7 +193,7 @@ export const gameWidgetStyles = (
       marginLeft: isSmallLayout ? gap : 0,
       marginRight: isSmallLayout ? 0 : gap * 1.5,
       minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
-      textAlign: "center",
+      textAlign: "right",
     },
 
     /* -------- CENTER INFO -------- */
@@ -282,15 +282,20 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.OSREGULAR,
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
       flexShrink: 1,
       maxWidth: "100%",
+      textAlign: "right",
     },
-    leadersContainer: {
-      marginTop: 6,
-      paddingTop: 6,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+    outsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    basesContainer: {
+      position: "absolute",
+      right: 12,
+      top: 12,
     },
   });
 };

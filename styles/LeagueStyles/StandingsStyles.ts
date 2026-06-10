@@ -96,13 +96,15 @@ export const standingsStyles = (isDark: boolean) =>
     logo: {
       width: 28,
       height: 28,
-      marginRight: 6,
+      marginRight: 4,
+      resizeMode: "contain"
     },
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSSEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 32,
+      marginRight: 8,
     },
     collegeTeamName: {
       fontSize: 14,

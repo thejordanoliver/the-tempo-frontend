@@ -94,7 +94,7 @@ export default function SeasonLeadersList({
             <View style={styles.playersList}>
               {item.leaders.slice(0, 5).map((player) => {
                 const teamObj = teamList.find(
-                  (t) => Number(t.espnID) === Number(player.teamId),
+                  (t) => Number(t.espnId) === Number(player.teamId),
                 );
 
                 return (

@@ -566,7 +566,20 @@ const GameHeader = ({
         ]),
       ]),
     ]).start();
-  }, [awayTeam?.code, homeTeam?.code, tabName]);
+  }, [
+    awayTeam?.code,
+    homeTeam?.code,
+    awayLetterAnims,
+    awayTeam,
+    dividerScale,
+    homeLetters,
+    homeLetterAnims,
+    homeTeam,
+    opacity,
+    scaleAway,
+    scaleHome,
+    tabName,
+  ]);
 
   if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
 
@@ -783,8 +796,8 @@ export function CustomHeaderTitle({
 
   const conferenceLogo = selectedConference?.logoLight ?? null;
 
-  const primaryColor = selectedConference
-    ? Colors.black
+  const primaryColor = selectedConference?.color
+    ? selectedConference.color
     : isDark
       ? Colors.black
       : Colors.white;
@@ -797,7 +810,7 @@ export function CustomHeaderTitle({
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [modalVisible]);
+  }, [modalVisible, rotateAnim]);
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],

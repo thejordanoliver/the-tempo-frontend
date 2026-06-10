@@ -1,8 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import { getFootballSeason } from "utils/dateUtils";
 
-export type LastFiveGamesResult = {
+type GameResult = {
   id: number;
   date: string;
   homeTeam: string;
@@ -15,25 +15,39 @@ export type LastFiveGamesResult = {
   opponentId: number;
   opponent: string;
   opponentLogo: any;
-  opponentLogoLight?: any; // added light logo here
+  opponentLogoLight?: any;
 };
 
-export const useLastFiveGames = (teamId: number) => {
-  const [games, setGames] = useState<LastFiveGamesResult[]>([]);
+export const useLastFiveGames = (
+  teamId: number,
+  league: string,
+  season: number,
+) => {
+  const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const season = getFootballSeason();
+
   useEffect(() => {
     const fetchLastGames = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        const res = await apiClient.get(
-          `api/games/football/last-five/${teamId}/${season}`,
+        const response = await apiClient.get(
+          `api/games/football/last-five/team/${league}/${teamId}/${season}`,
         );
 
-        setGames(res.data.games);
+        setGames(response.data.games);
+
+        await AsyncStorage.setItem(
+          `lastFiveGames_${teamId}`,
+          JSON.stringify({
+            timestamp: Date.now(),
+            data: response.data.games,
+          }),
+        );
       } catch (err) {
+        console.error("Error fetching last five games", err);
         setError(err as Error);
       } finally {
         setLoading(false);
@@ -41,7 +55,6 @@ export const useLastFiveGames = (teamId: number) => {
     };
 
     if (teamId) fetchLastGames();
-  }, [teamId]);
-
+  }, [teamId, league, season]);
   return { games, loading, error };
 };

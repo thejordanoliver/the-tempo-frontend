@@ -1,4 +1,4 @@
-import BasketballGamesList from "@/components/Sports/Basketball/Games/BasketballGamesList";
+import BasketballGamesList from "@/components/Sports/Basketball/Games/GamesList";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
@@ -38,7 +38,7 @@ export default function TeamDetailScreen() {
   const team = getWNBATeam(Number(teamIdNum));
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
   const teamColor = team?.color;
-  const espnId = team?.espnID ?? 0;
+  const espnId = team?.espnId ?? 0;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const favorited = team ? isFavorite(league, team.id) : false;
   const [standingsYear, setStandingsYear] = useState(

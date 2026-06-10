@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors } from "constants/styles";
 import { EXPANDED_HEIGHT_THRESHOLD } from "constants/widgetLeaders";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -17,17 +18,15 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { MLBGame } from "types/baseball";
+import { BaseballGame } from "types/baseball";
 import { BasketballGame } from "types/basketball";
 import { FootballGame } from "types/football";
-import { NHLGame } from "types/hockey";
-import { Game } from "types/nba";
+import { HockeyGame } from "types/hockey";
 import { ExploreWidgetSize } from "types/widgets";
 import BaseballGameWidget from "./GameCards/BaseballGameWidget";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";
-import NBAGameWidget from "./GameCards/NBAGameWidget";
-import NHLGameWidget from "./GameCards/NHLGameWidget";
+import NHLGameWidget from "./GameCards/HockeyGameWidget";
 
 // Outside component — never changes
 const ENABLE_AUTO_SLIDE = false;
@@ -40,14 +39,15 @@ if (
 }
 
 export type WidgetSlide =
-  | { type: "NBA"; data: Game }
+  | { type: "NBA"; data: BasketballGame }
   | { type: "NFL"; data: FootballGame }
   | { type: "CFB"; data: FootballGame }
-  | { type: "MLB"; data: MLBGame }
+  | { type: "UFL"; data: FootballGame }
+  | { type: "MLB"; data: BaseballGame }
   | { type: "CBB"; data: BasketballGame }
   | { type: "WCBB"; data: BasketballGame }
   | { type: "WNBA"; data: BasketballGame }
-  | { type: "NHL"; data: NHLGame };
+  | { type: "NHL"; data: HockeyGame };
 
 type WidgetSliderOrientation = "vertical" | "horizontal";
 
@@ -82,7 +82,7 @@ type WidgetEditControlsProps = {
   compact?: boolean;
 };
 
-const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = ["small", "medium", "large"];
+const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = [...EXPLORE_WIDGET_SIZES];
 
 export function WidgetEditControls({
   isDark,
@@ -91,9 +91,6 @@ export function WidgetEditControls({
   availableSizeOptions = DEFAULT_SIZE_OPTIONS,
   onResizeWidget,
   onRemoveWidget,
-  onMoveWidget,
-  canMoveUp = true,
-  canMoveDown = true,
   compact = false,
 }: WidgetEditControlsProps) {
   const styles = editControlStyles(isDark, compact);
@@ -113,6 +110,8 @@ export function WidgetEditControls({
                   widgetSize === size && styles.sizeButtonSelected,
                 ]}
                 hitSlop={4}
+                accessibilityRole="button"
+                accessibilityLabel={`Resize widget to ${size}`}
               >
                 <Text
                   style={[
@@ -127,44 +126,14 @@ export function WidgetEditControls({
           </View>
         )}
 
-        {onMoveWidget && (
-          <View style={styles.moveControls}>
-            <TouchableOpacity
-              activeOpacity={0.85}
-              disabled={!canMoveUp}
-              onPress={() => onMoveWidget(widgetId, -1)}
-              style={[styles.iconButton, !canMoveUp && styles.disabledButton]}
-              hitSlop={4}
-            >
-              <Ionicons
-                name="chevron-up"
-                size={compact ? 13 : 15}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.85}
-              disabled={!canMoveDown}
-              onPress={() => onMoveWidget(widgetId, 1)}
-              style={[styles.iconButton, !canMoveDown && styles.disabledButton]}
-              hitSlop={4}
-            >
-              <Ionicons
-                name="chevron-down"
-                size={compact ? 13 : 15}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
-
         {onRemoveWidget && (
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={() => onRemoveWidget(widgetId)}
             style={styles.removeButton}
             hitSlop={4}
+            accessibilityRole="button"
+            accessibilityLabel="Remove widget"
           >
             <Ionicons
               name="close"
@@ -191,9 +160,6 @@ export default function WidgetSlider({
   availableSizeOptions,
   onResizeWidget,
   onRemoveWidget,
-  onMoveWidget,
-  canMoveUp,
-  canMoveDown,
 }: WidgetSliderProps) {
   const { width: screenWidth, height: screenHeight } = useMemo(
     () => Dimensions.get("window"),
@@ -218,7 +184,6 @@ export default function WidgetSlider({
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentIndexRef = useRef(0);
 
-  const showPlayers = slideHeight >= 300;
   const isExpanded = slideHeight >= EXPANDED_HEIGHT_THRESHOLD;
   const isResizing = useRef(false);
   const lockedIndex = useRef(0);
@@ -447,7 +412,7 @@ export default function WidgetSlider({
         case "NBA":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
-              <NBAGameWidget
+              <BasketballGameWidget
                 game={item.data}
                 height={slideHeight}
                 width={slideWidth}
@@ -464,7 +429,8 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                league="NFL"
+                isNFL={true}
+                isCFB={false}
               />
             </View>
           );
@@ -477,7 +443,22 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                league="CFB"
+                isNFL={false}
+                isCFB={true}
+              />
+            </View>
+          );
+
+        case "UFL":
+          return (
+            <View style={{ height: slideHeight, width: slideWidth }}>
+              <FootballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                isNFL={false}
+                isCFB={true}
               />
             </View>
           );
@@ -502,7 +483,7 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                league="CBB"
+                isCBB={true}
               />
             </View>
           );
@@ -515,7 +496,7 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                league="WCBB"
+                isWCBB={true}
               />
             </View>
           );
@@ -528,7 +509,7 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                league="WNBA"
+                isWNBA={true}
               />
             </View>
           );
@@ -549,7 +530,7 @@ export default function WidgetSlider({
           return <View style={{ height: slideHeight, width: slideWidth }} />;
       }
     },
-    [slideHeight, slideWidth, showPlayers, isDark],
+    [slideHeight, slideWidth, isDark],
   );
 
   const styles = useMemo(
@@ -591,6 +572,7 @@ export default function WidgetSlider({
           onScroll={onScroll}
           scrollEventThrottle={16}
           renderItem={renderItem}
+          scrollEnabled={!showEditControls}
         />
 
         {canResize && (
@@ -605,9 +587,6 @@ export default function WidgetSlider({
             availableSizeOptions={availableSizeOptions}
             onResizeWidget={onResizeWidget}
             onRemoveWidget={onRemoveWidget}
-            onMoveWidget={onMoveWidget}
-            canMoveUp={canMoveUp}
-            canMoveDown={canMoveDown}
             compact={slideWidth < 240 || slideHeight < 260}
           />
         )}
@@ -750,24 +729,6 @@ const editControlStyles = (isDark: boolean, compact: boolean) =>
     },
     sizeButtonTextSelected: {
       color: isDark ? Colors.black : Colors.white,
-    },
-    moveControls: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 3,
-    },
-    iconButton: {
-      width: compact ? 22 : 24,
-      height: compact ? 22 : 24,
-      borderRadius: 999,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    disabledButton: {
-      opacity: 0.35,
     },
     removeButton: {
       width: compact ? 24 : 28,

@@ -697,4 +697,34 @@ export const neutralVenues: Record<string, Venue> = {
     venueImage:
       "https://res.cloudinary.com/dm3qtdhag/image/upload/v1766671698/arenas/hockey/goldenknights.jpg",
   },
+  "Audi Field": {
+    name: "Audi Field",
+    city: "Washington, D.C.",
+    address: "100 Potomac Ave SW, Washington, DC 20024",
+    latitude: 38.8689,
+    longitude: -77.0129,
+    venueCapacity: "20,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1780936671/stadiums/soccer/audi-field.jpg",
+  },
+  "The Dome at America's Center": {
+    name: "The Dome at America's Center",
+    city: "St. Louis",
+    address: "701 Convention Plaza, St. Louis, MO 63101",
+    latitude: 38.6327,
+    longitude: -90.1886,
+    venueCapacity: "67,277",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1780937202/stadiums/football/dome-at-americas-center.webp",
+  },
+  "Daytona Stadium": {
+    name: "Daytona Stadium",
+    city: "Daytona Beach",
+    address: "3777 LPGA Boulevard, Daytona Beach, FL 32114",
+    latitude: 29.1731,
+    longitude: -81.1175,
+    venueCapacity: "10,000",
+    venueImage:
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1780937202/stadiums/football/daytona-stadium.webp",
+  },
 };

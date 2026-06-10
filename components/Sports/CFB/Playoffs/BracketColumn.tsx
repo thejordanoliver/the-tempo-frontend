@@ -1,7 +1,7 @@
 // components/Bracket/BracketColumn.tsx
 
-import CFPLogoLight from "assets/College_Logos/CFPLight.png";
-import CFPLogo from "assets/College_Logos/CFPLogo.png";
+import CFPLogoLight from "assets/College_Logos/Conference_Logos/CFPLight.png";
+import CFPLogo from "assets/College_Logos/Conference_Logos/CFPLogo.png";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -94,7 +94,7 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      top: 28
+      top: 28,
     },
 
     title: {
